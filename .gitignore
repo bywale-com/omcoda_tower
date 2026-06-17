@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+*.local
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor & OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# IDE (keep shared settings; ignore personal overrides)
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Cursor / agent artifacts
+.cursor/
+*.cursor-*
+agent-transcripts/
+
+# Test & coverage
+coverage/
+.nyc_output/
+
+# Vite
+.vite/
+
+# TypeScript
+*.tsbuildinfo
+
+# Optional package manager stores
+.pnpm-store/
