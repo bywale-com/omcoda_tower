@@ -3,6 +3,7 @@ import { createContext, useContext, type ReactNode } from "react";
 type PanelContextValue = {
   isPanelOpen: boolean;
   togglePanel: () => void;
+  openPanel: () => void;
 };
 
 const PanelContext = createContext<PanelContextValue | null>(null);
@@ -10,10 +11,11 @@ const PanelContext = createContext<PanelContextValue | null>(null);
 export function PanelProvider({
   isPanelOpen,
   togglePanel,
+  openPanel,
   children,
 }: PanelContextValue & { children: ReactNode }) {
   return (
-    <PanelContext.Provider value={{ isPanelOpen, togglePanel }}>
+    <PanelContext.Provider value={{ isPanelOpen, togglePanel, openPanel }}>
       {children}
     </PanelContext.Provider>
   );

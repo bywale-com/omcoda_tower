@@ -1,8 +1,12 @@
-import { useState, type MouseEvent as ReactMouseEvent } from "react";
+import { useState, useEffect, type MouseEvent as ReactMouseEvent } from "react";
 import { BoardPanel } from "./components/BoardPanel";
+import { DocsPanel } from "./components/DocsPanel";
+import { ClientPortalPage } from "./components/client-portal/ClientPortalPage";
 import { Workspace } from "./components/Workspace";
 import { StatusBar } from "./components/StatusBar";
 import { PanelProvider } from "./context/PanelContext";
+import { DocsHighlightProvider, useDocsHighlight } from "./context/DocsHighlightContext";
+import { DocsRegistryProvider } from "./context/DocsRegistryContext";
 import { TouchpointFocusProvider, useTouchpointFocus } from "./context/TouchpointFocusContext";
 import { TaskProvider } from "./context/TaskContext";
 import { light, dark } from "./components/tokens";
@@ -11,6 +15,9 @@ import { parseTabId } from "./components/Workspace";
 import type { ConsultantTask } from "./data/tasks";
 import {
   DEFAULT_SIDEBAR_WIDTH,
+  DEFAULT_DOCS_PANEL_WIDTH,
+  MIN_DOCS_PANEL_WIDTH,
+  MAX_DOCS_PANEL_WIDTH,
   MIN_SIDEBAR_WIDTH,
   MAX_SIDEBAR_WIDTH,
 } from "./constants/layout";
@@ -45,7 +52,11 @@ export default function App() {
   return (
     <TouchpointFocusProvider>
       <TaskProvider>
-        <AppShell />
+        <DocsHighlightProvider>
+          <DocsRegistryProvider>
+            <AppShell />
+          </DocsRegistryProvider>
+        </DocsHighlightProvider>
       </TaskProvider>
     </TouchpointFocusProvider>
   );
@@ -53,6 +64,7 @@ export default function App() {
 
 function AppShell() {
   /* MARKER-MAKE-KIT-INVOKED */
+  const { setHoveredComponentId } = useDocsHighlight();
   const { focusTouchpointId, setFocusTouchpointId } = useTouchpointFocus();
   const [isDark, setIsDark] = useState(false);
   const t = isDark ? dark : light;
@@ -66,6 +78,14 @@ function AppShell() {
   ]);
   const [activeTabId, setActiveTabId] = useState("sarah-details");
   const [isPanelOpen, setIsPanelOpen] = useState(true);
+  const [isDocsModeOpen, setIsDocsModeOpen] = useState(false);
+  const [docsPanelWidth, setDocsPanelWidth] = useState(DEFAULT_DOCS_PANEL_WIDTH);
+  const [isResizingDocsPanel, setIsResizingDocsPanel] = useState(false);
+  const [portalClientId, setPortalClientId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isDocsModeOpen) setHoveredComponentId(null);
+  }, [isDocsModeOpen, setHoveredComponentId]);
 
   function handleIconClick(iconId: string) {
     setActiveIcon(iconId);
@@ -100,6 +120,27 @@ function AppShell() {
       ]);
     }
     setActiveTabId(tabId);
+  }
+
+  function onDocsPanelResizeMouseDown(e: ReactMouseEvent) {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startW = docsPanelWidth;
+
+    const handleMove = (ev: MouseEvent) => {
+      const delta = ev.clientX - startX;
+      setDocsPanelWidth(Math.min(MAX_DOCS_PANEL_WIDTH, Math.max(MIN_DOCS_PANEL_WIDTH, startW + delta)));
+    };
+
+    const handleUp = () => {
+      setIsResizingDocsPanel(false);
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("mouseup", handleUp);
+    };
+
+    setIsResizingDocsPanel(true);
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mouseup", handleUp);
   }
 
   function onSidebarResizeMouseDown(e: ReactMouseEvent) {
@@ -140,7 +181,20 @@ function AppShell() {
   }
 
   return (
-    <PanelProvider isPanelOpen={isPanelOpen} togglePanel={() => setIsPanelOpen((o) => !o)}>
+    <PanelProvider
+      isPanelOpen={isPanelOpen}
+      togglePanel={() => setIsPanelOpen((o) => !o)}
+      openPanel={() => setIsPanelOpen(true)}
+    >
+    {portalClientId && (
+      <ClientPortalPage
+        clientId={portalClientId}
+        onClose={() => setPortalClientId(null)}
+        t={t}
+        isDark={isDark}
+        onToggleTheme={() => setIsDark((d) => !d)}
+      />
+    )}
     <div
       style={{
         width: "100vw",
@@ -160,8 +214,36 @@ function AppShell() {
         display: "flex",
         overflow: "hidden",
         minHeight: 0,
-        userSelect: isResizingSidebar ? "none" : "auto",
+        userSelect: isResizingSidebar || isResizingDocsPanel ? "none" : "auto",
       }}>
+        {isDocsModeOpen && (
+          <DocsPanel width={docsPanelWidth} t={t} />
+        )}
+
+        {isDocsModeOpen && (
+          <div style={{ width: 0, flexShrink: 0, position: "relative", zIndex: 1 }}>
+            <div
+              onMouseDown={onDocsPanelResizeMouseDown}
+              style={{
+                position: "absolute",
+                left: -2,
+                top: 0,
+                bottom: 0,
+                width: 4,
+                cursor: "ew-resize",
+                background: isResizingDocsPanel ? t.accent : "transparent",
+                transition: isResizingDocsPanel ? "none" : "background 0.1s",
+              }}
+              onMouseEnter={(e) => {
+                if (!isResizingDocsPanel) (e.currentTarget as HTMLElement).style.background = `${t.accent}55`;
+              }}
+              onMouseLeave={(e) => {
+                if (!isResizingDocsPanel) (e.currentTarget as HTMLElement).style.background = "transparent";
+              }}
+            />
+          </div>
+        )}
+
         <BoardPanel
           width={sidebarWidth}
           activeClientId={activeClientId}
@@ -170,7 +252,10 @@ function AppShell() {
           onTaskClick={handleTaskClick}
           activeIcon={activeIcon}
           onIconClick={handleIconClick}
+          isDocsModeOpen={isDocsModeOpen}
+          onToggleDocsMode={() => setIsDocsModeOpen((open) => !open)}
           onViewInActivity={handleViewInActivity}
+          onViewAsClient={setPortalClientId}
           t={t}
           isDark={isDark}
         />

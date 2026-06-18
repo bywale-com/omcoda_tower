@@ -1,6 +1,10 @@
 /** Shared height for sidebar activity strip and editor tab bar — borders must align. */
 export const SIDEBAR_HEADER_HEIGHT = 35;
 
+export const DEFAULT_DOCS_PANEL_WIDTH = 280;
+export const MIN_DOCS_PANEL_WIDTH = 200;
+export const MAX_DOCS_PANEL_WIDTH = 480;
+
 export const DEFAULT_SIDEBAR_WIDTH = 260;
 export const MIN_SIDEBAR_WIDTH = 180;
 export const MAX_SIDEBAR_WIDTH = 480;

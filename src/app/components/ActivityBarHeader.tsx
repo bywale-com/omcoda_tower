@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   LayoutDashboard, Search, GitBranch, ChevronDown,
-  Users, Settings, UserCircle,
+  Users, Settings, UserCircle, MonitorCog,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { SIDEBAR_HEADER_HEIGHT } from "../constants/layout";
+import { HolonBoundary } from "./docs/HolonBoundary";
+import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
 import type { Tokens } from "./tokens";
 
 type NavItem = {
@@ -31,11 +33,20 @@ const ALL_NAV: NavItem[] = [
 type ActivityBarHeaderProps = {
   activeIcon: string;
   onIconClick: (id: string) => void;
+  isDocsModeOpen: boolean;
+  onToggleDocsMode: () => void;
   t: Tokens;
   isDark: boolean;
 };
 
-export function ActivityBarHeader({ activeIcon, onIconClick, t, isDark }: ActivityBarHeaderProps) {
+export function ActivityBarHeader({
+  activeIcon,
+  onIconClick,
+  isDocsModeOpen,
+  onToggleDocsMode,
+  t,
+  isDark,
+}: ActivityBarHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -162,13 +173,18 @@ export function ActivityBarHeader({ activeIcon, onIconClick, t, isDark }: Activi
 
   return (
     <>
-      <div
+      <HolonBoundary
+        id="primary-navigation"
+        label="Primary Navigation"
+        icon="compass"
+        order={SHELL_HOLON_ORDER["primary-navigation"]}
+        t={t}
         style={{
           height: SIDEBAR_HEADER_HEIGHT,
           flexShrink: 0,
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "flex-start",
           padding: "0 8px",
           gap: 2,
           borderBottom: `1px solid ${t.border}`,
@@ -179,6 +195,30 @@ export function ActivityBarHeader({ activeIcon, onIconClick, t, isDark }: Activi
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <button
+            type="button"
+            title="Docs mode"
+            onClick={onToggleDocsMode}
+            style={{
+              width: 28,
+              height: 28,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: isDocsModeOpen ? t.activeRowBg : "transparent",
+              border: "none",
+              borderRadius: 4,
+              cursor: "pointer",
+              flexShrink: 0,
+            }}
+          >
+            <MonitorCog
+              size={16}
+              color={isDocsModeOpen ? t.accent : t.textMuted}
+              strokeWidth={1.5}
+            />
+          </button>
+
           {PRIMARY_NAV.map(({ id, Icon, label }) => iconBtn(id, Icon, label))}
 
           <button
@@ -210,7 +250,7 @@ export function ActivityBarHeader({ activeIcon, onIconClick, t, isDark }: Activi
             />
           </button>
         </div>
-      </div>
+      </HolonBoundary>
       {menu}
     </>
   );

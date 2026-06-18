@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Info, LineChart as LineChartIcon, Zap, ExternalLink } from "lucide-react";
 import { JourneyTab } from "./JourneyTab";
 import { getClientDetail } from "../data/clients";
@@ -7,6 +7,15 @@ import {
   ReferenceLine, ResponsiveContainer, CartesianGrid,
 } from "recharts";
 import type { Tokens } from "./tokens";
+import { HolonBoundary } from "./docs/HolonBoundary";
+import {
+  CLIENT_DATA_OPEN_TAB_HOLON,
+  CLIENT_DATA_TAB_HOLONS,
+  PANEL_CHIPS,
+  tabHolonId,
+  type PanelTab,
+} from "./docs/clientDataHolons";
+import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
 import { usePanel } from "../context/PanelContext";
 
 type Snapshot = {
@@ -34,13 +43,11 @@ const HISTORY: Snapshot[] = [
 
 const CHART_DATA = HISTORY.map((s, i) => ({ ...s, idx: i }));
 
-type PanelTab = "read" | "data" | "logs";
-
-const PANEL_CHIPS: { id: PanelTab; label: string; Icon: typeof Info }[] = [
-  { id: "read", label: "Information", Icon: Info },
-  { id: "data", label: "History",     Icon: LineChartIcon },
-  { id: "logs", label: "Activity",    Icon: Zap },
-];
+const CHIP_ICONS: Record<PanelTab, typeof Info> = {
+  read: Info,
+  data: LineChartIcon,
+  logs: Zap,
+};
 
 const COLLAPSED_H = 0;
 const DEFAULT_H   = 420;
@@ -64,8 +71,30 @@ export function ClientDataContent({
   fullPage = false,
   onOpenFullPage,
 }: ClientDataContentProps) {
+  const { isPanelOpen, openPanel } = usePanel();
   const [activeTab, setActiveTab] = useState<PanelTab>(defaultTab);
   const [scrubIdx, setScrubIdx] = useState(HISTORY.length - 1);
+
+  const revealTab = useCallback((tab: PanelTab) => {
+    if (!isPanelOpen) openPanel();
+    setActiveTab(tab);
+  }, [isPanelOpen, openPanel]);
+
+  const revealOpenInTab = useCallback(() => {
+    if (!isPanelOpen) openPanel();
+    onOpenFullPage?.();
+  }, [isPanelOpen, openPanel, onOpenFullPage]);
+
+  const renderTabBody = (tabId: PanelTab) => {
+    switch (tabId) {
+      case "read":
+        return <InformationTab clientId={clientId} t={t} />;
+      case "data":
+        return <CrsHistoryTab scrubIdx={scrubIdx} setScrubIdx={setScrubIdx} t={t} isDark={isDark} />;
+      case "logs":
+        return <JourneyTab t={t} clientId={clientId} />;
+    }
+  };
 
   return (
     <div style={{
@@ -75,72 +104,130 @@ export function ClientDataContent({
       overflow: "hidden",
       minHeight: 0,
     }}>
-      <div style={{ flexShrink: 0, padding: fullPage ? "20px 28px 0" : "10px 28px 0", background: t.bgPrimary }}>
+      <HolonBoundary
+        id="data-panel-header"
+        label="Client Data Header"
+        icon="information-circle"
+        order={SHELL_HOLON_ORDER["data-panel-header"]}
+        t={t}
+        style={{ flexShrink: 0, padding: fullPage ? "20px 28px 0" : "10px 28px 0", background: t.bgPrimary }}
+      >
         <div style={{ marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ fontSize: 16, fontWeight: 600, color: t.textPrimary, margin: 0 }}>
             Client Data
           </span>
           {!fullPage && onOpenFullPage && (
-            <button
-              type="button"
-              title="Open Client Data in new tab"
-              onClick={onOpenFullPage}
-              style={{
-                width: 22,
-                height: 22,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 0,
-                border: "none",
-                borderRadius: 4,
-                background: "transparent",
-                cursor: "pointer",
-                flexShrink: 0,
-              }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = t.hoverBg; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+            <HolonBoundary
+              id={CLIENT_DATA_OPEN_TAB_HOLON.id}
+              label={CLIENT_DATA_OPEN_TAB_HOLON.label}
+              lucideIcon={CLIENT_DATA_OPEN_TAB_HOLON.lucideIcon}
+              order={CLIENT_DATA_OPEN_TAB_HOLON.order}
+              onFocus={revealOpenInTab}
+              t={t}
+              style={{ display: "inline-flex" }}
             >
-              <ExternalLink size={14} color={t.accent} strokeWidth={2} />
-            </button>
+              <button
+                type="button"
+                title="Open Client Data in new tab"
+                onClick={onOpenFullPage}
+                style={{
+                  width: 22,
+                  height: 22,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 0,
+                  border: "none",
+                  borderRadius: 4,
+                  background: "transparent",
+                  cursor: "pointer",
+                  flexShrink: 0,
+                }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = t.hoverBg; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+              >
+                <ExternalLink size={14} color={t.accent} strokeWidth={2} />
+              </button>
+            </HolonBoundary>
           )}
         </div>
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, paddingBottom: 14 }}>
-          {PANEL_CHIPS.map(({ id, label, Icon }) => {
-            const isActive = activeTab === id;
+          {PANEL_CHIPS.map((chip) => {
+            const isActive = activeTab === chip.id;
+            const tabMeta = CLIENT_DATA_TAB_HOLONS[chip.id];
+            const Icon = CHIP_ICONS[chip.id];
             return (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setActiveTab(id)}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 4,
-                  padding: "0 8px",
-                  borderRadius: 999,
-                  border: "none",
-                  cursor: "pointer",
-                  fontSize: 13,
-                  fontWeight: 400,
-                  lineHeight: 1.4,
-                  color: t.textPrimary,
-                  background: isActive ? t.accentBg : "transparent",
-                }}
+              <HolonBoundary
+                key={chip.id}
+                id={tabHolonId(chip.id)}
+                label={chip.label}
+                icon={tabMeta.icon}
+                order={tabMeta.order}
+                onFocus={() => revealTab(chip.id)}
+                t={t}
+                style={{ display: "inline-flex" }}
               >
-                <Icon size={12} color={t.textPrimary} strokeWidth={1.75} />
-                {label}
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab(chip.id)}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 4,
+                    padding: "0 8px",
+                    borderRadius: 999,
+                    border: "none",
+                    cursor: "pointer",
+                    fontSize: 13,
+                    fontWeight: 400,
+                    lineHeight: 1.4,
+                    color: t.textPrimary,
+                    background: isActive ? t.accentBg : "transparent",
+                  }}
+                >
+                  <Icon size={12} color={t.textPrimary} strokeWidth={1.75} />
+                  {chip.label}
+                </button>
+              </HolonBoundary>
             );
           })}
         </div>
-      </div>
+      </HolonBoundary>
 
-      <div style={{ flex: 1, display: "flex", overflow: "hidden", minHeight: 0 }}>
-        {activeTab === "read" && <InformationTab clientId={clientId} t={t} />}
-        {activeTab === "data" && <CrsHistoryTab scrubIdx={scrubIdx} setScrubIdx={setScrubIdx} t={t} isDark={isDark} />}
-        {activeTab === "logs" && <JourneyTab t={t} clientId={clientId} />}
+      <div style={{ flex: 1, display: "flex", overflow: "hidden", minHeight: 0, position: "relative" }}>
+        {PANEL_CHIPS.map((chip) => {
+          const { content } = CLIENT_DATA_TAB_HOLONS[chip.id];
+          if (activeTab === chip.id) return null;
+          return (
+            <HolonBoundary
+              key={chip.id}
+              id={content.id}
+              label={content.label}
+              icon={content.icon}
+              parentId={tabHolonId(chip.id)}
+              registerOnly
+              onFocus={() => revealTab(chip.id)}
+              t={t}
+            />
+          );
+        })}
+        {(() => {
+          const { content } = CLIENT_DATA_TAB_HOLONS[activeTab];
+          return (
+            <HolonBoundary
+              key={activeTab}
+              id={content.id}
+              label={content.label}
+              icon={content.icon}
+              parentId={tabHolonId(activeTab)}
+              t={t}
+              style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minHeight: 0 }}
+            >
+              {renderTabBody(activeTab)}
+            </HolonBoundary>
+          );
+        })()}
       </div>
     </div>
   );
@@ -223,7 +310,19 @@ function InformationTab({ clientId, t }: { clientId: string; t: Tokens }) {
   return <ProfileTable rows={rows} t={t} />;
 }
 
-function CrsHistoryTab({ scrubIdx, setScrubIdx, t, isDark }: { scrubIdx: number; setScrubIdx: (i: number) => void; t: Tokens; isDark: boolean }) {
+function CrsHistoryTab({
+  scrubIdx,
+  setScrubIdx,
+  t,
+  isDark,
+  paddingX = 28,
+}: {
+  scrubIdx: number;
+  setScrubIdx: (i: number) => void;
+  t: Tokens;
+  isDark: boolean;
+  paddingX?: number;
+}) {
   const snap = HISTORY[scrubIdx];
   const gridColor = isDark ? t.borderLight : t.borderLight;
 
@@ -234,7 +333,7 @@ function CrsHistoryTab({ scrubIdx, setScrubIdx, t, isDark }: { scrubIdx: number;
         alignItems: "center",
         justifyContent: "flex-end",
         gap: 10,
-        padding: "8px 28px",
+        padding: `8px ${paddingX}px`,
         flexShrink: 0,
       }}>
         <span style={{ fontSize: 10, color: t.textDim }}>{HISTORY[0].shortDate}</span>
@@ -253,7 +352,7 @@ function CrsHistoryTab({ scrubIdx, setScrubIdx, t, isDark }: { scrubIdx: number;
       </div>
 
       <div style={{ flex: 1, display: "flex", overflow: "hidden", minHeight: 0 }}>
-        <div style={{ width: 160, flexShrink: 0, padding: "16px 28px", display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ width: 160, flexShrink: 0, padding: `16px ${paddingX}px`, display: "flex", flexDirection: "column", gap: 14 }}>
           {[
             ["CRS score", String(snap.crs), t.accent],
             ["Draw threshold", String(snap.drawThreshold), t.textPrimary],
@@ -280,6 +379,44 @@ function CrsHistoryTab({ scrubIdx, setScrubIdx, t, isDark }: { scrubIdx: number;
             </LineChart>
           </ResponsiveContainer>
         </div>
+      </div>
+    </div>
+  );
+}
+
+export function ClientHistorySection({
+  t,
+  isDark,
+  paddingX = 28,
+  layout = "fixed",
+  chartHeight = 420,
+}: {
+  t: Tokens;
+  isDark: boolean;
+  paddingX?: number;
+  layout?: "fixed" | "stacked";
+  chartHeight?: number;
+}) {
+  const [scrubIdx, setScrubIdx] = useState(HISTORY.length - 1);
+  const isStacked = layout === "stacked";
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        borderTop: `1px solid ${t.borderLight}`,
+        ...(isStacked
+          ? { marginTop: 32, paddingBottom: 8 }
+          : { flexShrink: 0, height: chartHeight }),
+      }}
+    >
+      <div style={{ padding: `16px ${paddingX}px 0`, flexShrink: 0 }}>
+        <h2 style={{ fontSize: 16, fontWeight: 600, color: t.textPrimary, margin: 0 }}>History</h2>
+      </div>
+      <div style={{ height: isStacked ? chartHeight : undefined, flex: isStacked ? undefined : 1, minHeight: 0 }}>
+        <CrsHistoryTab scrubIdx={scrubIdx} setScrubIdx={setScrubIdx} t={t} isDark={isDark} paddingX={paddingX} />
       </div>
     </div>
   );

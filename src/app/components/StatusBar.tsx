@@ -1,6 +1,8 @@
 import { GitBranch, PanelLeft, PanelBottom, Settings2 } from "lucide-react";
 import type { ReactNode } from "react";
 import type { Tokens } from "./tokens";
+import { HolonBoundary } from "./docs/HolonBoundary";
+import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
 import { usePanel } from "../context/PanelContext";
 
 type StatusBarProps = {
@@ -70,17 +72,25 @@ export function StatusBar({ t, isDark }: StatusBarProps) {
   const iconColor = "rgba(255,255,255,0.88)";
 
   return (
-    <div style={{
-      width: "100%",
-      height: 22,
-      background: t.accent,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      flexShrink: 0,
-      color: "rgba(255,255,255,0.9)",
-      userSelect: "none",
-    }}>
+    <HolonBoundary
+      id="status-bar"
+      label="Status Bar"
+      icon="chart-bar-horizontal"
+      order={SHELL_HOLON_ORDER["status-bar"]}
+      highlightColor="rgba(255,255,255,0.9)"
+      t={t}
+      style={{
+        width: "100%",
+        height: 22,
+        background: t.accent,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        flexShrink: 0,
+        color: "rgba(255,255,255,0.9)",
+        userSelect: "none",
+      }}
+    >
       {/* Left: main · utility icons · Agents Window */}
       <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
         <StatusItem>
@@ -127,6 +137,6 @@ export function StatusBar({ t, isDark }: StatusBarProps) {
         <StatusItem><span>UTF-8</span></StatusItem>
         <StatusItem><span>Tower v2.1</span></StatusItem>
       </div>
-    </div>
+    </HolonBoundary>
   );
 }

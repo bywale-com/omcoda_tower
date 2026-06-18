@@ -1,27 +1,45 @@
 import { useState, type CSSProperties } from "react";
 import {
-  Bell,
-  BellOff,
   Check,
   CheckSquare,
+  ChevronDown,
   ChevronRight,
-  Loader,
-  User,
-  Users,
-  Zap,
-  type LucideIcon,
+  Eye,
+  MoreHorizontal,
 } from "lucide-react";
 import { PhaseTooltip } from "./PhaseTooltip";
 import { ActivityBarHeader } from "./ActivityBarHeader";
+import { HolonBoundary } from "./docs/HolonBoundary";
+import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
+import { docsBranchLabelStyle, docsChildLabelStyle } from "./docs/treeTypography";
+import {
+  DOCS_TREE_ACTIVE_BORDER,
+  DOCS_TREE_CHEVRON_SIZE,
+  DOCS_TREE_ICON_SIZE,
+  DOCS_TREE_ICON_SLOT,
+  DOCS_TREE_LABEL_SIZE,
+  DOCS_TREE_ROW_GAP,
+  DOCS_TREE_ROW_H,
+  DOCS_TREE_ROW_PAD_LEFT,
+  DOCS_TREE_ROW_PAD_X,
+  docsTreeChildPadLeft,
+  s,
+} from "./docs/treeLayout";
+import { NotionIcon } from "./icons/NotionIcon";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "./ui/popover";
 import { clientList, getClientPhaseSnapshot } from "../data/clients";
 import type { ClientMeta, ClientPhaseSnapshot } from "../data/clients";
 import type { ConsultantTask } from "../data/tasks";
 import { useTasks } from "../context/TaskContext";
 import type { Tokens } from "./tokens";
 
-const CLIENT_ROW_H = 30;
-const CLIENT_ICON_SLOT = 20;
-const CLIENT_LABEL_SIZE = 13;
+const CLIENT_ROW_H = DOCS_TREE_ROW_H;
+const CLIENT_ICON_SLOT = DOCS_TREE_ICON_SLOT;
+const CLIENT_LABEL_SIZE = DOCS_TREE_LABEL_SIZE;
 const REACTIVATION_ORANGE = "#f97316";
 const NUDGE_YELLOW = "#eab308";
 
@@ -58,46 +76,31 @@ function ClientPhaseIcon({
     case "reactivation":
       return (
         <span style={slot}>
-          <Zap
-            size={16}
-            color={REACTIVATION_ORANGE}
-            fill={REACTIVATION_ORANGE}
-            strokeWidth={2.5}
-          />
+          <NotionIcon name="lightning-bolt" size={DOCS_TREE_ICON_SIZE} color={REACTIVATION_ORANGE} />
         </span>
       );
     case "nudge":
       return (
         <span style={slot}>
-          <Loader
-            size={16}
-            color={NUDGE_YELLOW}
-            strokeWidth={2.25}
-            style={{ animation: "towerSpin 1.1s linear infinite" }}
-          />
+          <NotionIcon name="circle-dashed" size={DOCS_TREE_ICON_SIZE} color={NUDGE_YELLOW} spin />
         </span>
       );
     case "opt-in":
       return (
         <span style={slot}>
-          <User
-            size={16}
-            color={t.accent}
-            fill={t.accent}
-            strokeWidth={2.25}
-          />
+          <NotionIcon name="user" size={DOCS_TREE_ICON_SIZE} color={t.accent} />
         </span>
       );
     case "opted-out":
       return (
         <span style={slot}>
-          <BellOff size={16} color={textTone} strokeWidth={2} />
+          <NotionIcon name="bell-slash" size={DOCS_TREE_ICON_SIZE} color={textTone} />
         </span>
       );
     case "monitoring":
       return (
         <span style={slot}>
-          <Bell size={16} color={textTone} strokeWidth={2} />
+          <NotionIcon name="bell" size={DOCS_TREE_ICON_SIZE} color={textTone} />
         </span>
       );
   }
@@ -136,6 +139,101 @@ function ClientRowIcon({
   );
 }
 
+function ClientRow({
+  client,
+  isActive,
+  t,
+  isDark,
+  onClientClick,
+  onViewInActivity,
+  onViewAsClient,
+}: {
+  client: ClientMeta;
+  isActive: boolean;
+  t: Tokens;
+  isDark: boolean;
+  onClientClick: (id: string) => void;
+  onViewInActivity: (clientId: string, activityNodeId: string) => void;
+  onViewAsClient?: (client: ClientMeta) => void;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const showRowMenu = client.id === "sarah" && (hovered || menuOpen);
+
+  return (
+    <div
+      onClick={() => onClientClick(client.id)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: DOCS_TREE_ROW_GAP,
+        height: CLIENT_ROW_H,
+        padding: `0 ${DOCS_TREE_ROW_PAD_X}px`,
+        paddingLeft: docsTreeChildPadLeft(isActive),
+        cursor: "pointer",
+        background: isActive ? t.activeRowBg : hovered ? t.hoverBg : "transparent",
+        borderLeft: isActive ? `${DOCS_TREE_ACTIVE_BORDER}px solid ${t.accent}` : `${DOCS_TREE_ACTIVE_BORDER}px solid transparent`,
+        borderRadius: 4,
+        boxSizing: "border-box",
+      }}
+    >
+      <ClientRowIcon
+        client={client}
+        t={t}
+        isDark={isDark}
+        isRowActive={isActive}
+        onViewInActivity={onViewInActivity}
+      />
+
+      <span style={{
+        ...docsChildLabelStyle(CLIENT_LABEL_SIZE, t.textPrimary, t),
+        flex: 1,
+      }}>
+        {client.name}
+      </span>
+
+      {client.id === "sarah" && (
+        <Popover open={menuOpen} onOpenChange={setMenuOpen}>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              title="Client actions"
+              aria-label="Client actions"
+              aria-hidden={!showRowMenu}
+              tabIndex={showRowMenu ? 0 : -1}
+              onClick={(e) => e.stopPropagation()}
+              className={`flex shrink-0 cursor-pointer items-center justify-center border-0 bg-transparent p-0 text-muted-foreground outline-none ${showRowMenu ? "" : "pointer-events-none invisible"}`}
+            >
+              <MoreHorizontal size={14} strokeWidth={2} />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent
+            side="right"
+            align="start"
+            sideOffset={6}
+            className="w-48 p-1"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+              onClick={() => {
+                onViewAsClient?.(client);
+                setMenuOpen(false);
+              }}
+            >
+              <Eye size={14} strokeWidth={2} className="text-muted-foreground" />
+              View as Client
+            </button>
+          </PopoverContent>
+        </Popover>
+      )}
+    </div>
+  );
+}
+
 type BoardPanelProps = {
   width: number;
   activeClientId: string;
@@ -144,24 +242,118 @@ type BoardPanelProps = {
   onTaskClick: (task: ConsultantTask) => void;
   activeIcon: string;
   onIconClick: (id: string) => void;
+  isDocsModeOpen: boolean;
+  onToggleDocsMode: () => void;
   onViewInActivity: (clientId: string, activityNodeId: string) => void;
+  onViewAsClient?: (clientId: string) => void;
   t: Tokens;
   isDark: boolean;
 };
+
+function ClientsSectionHeader({
+  count,
+  open,
+  onToggle,
+  t,
+}: {
+  count: number;
+  open: boolean;
+  onToggle: () => void;
+  t: Tokens;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const labelColor = t.textDim;
+
+  return (
+    <HolonBoundary
+      id="clients-section"
+      label="Clients Section"
+      icon="people"
+      order={SHELL_HOLON_ORDER["clients-section"]}
+      t={t}
+      onClick={onToggle}
+      onMouseEnter={(e) => {
+        setHovered(true);
+        (e.currentTarget as HTMLElement).style.background = t.hoverBg;
+      }}
+      onMouseLeave={(e) => {
+        setHovered(false);
+        (e.currentTarget as HTMLElement).style.background = "transparent";
+      }}
+      style={{
+        height: DOCS_TREE_ROW_H,
+        display: "flex",
+        alignItems: "center",
+        gap: DOCS_TREE_ROW_GAP,
+        padding: `0 ${DOCS_TREE_ROW_PAD_X}px`,
+        paddingLeft: DOCS_TREE_ROW_PAD_LEFT,
+        cursor: "pointer",
+        userSelect: "none",
+        flexShrink: 0,
+        boxSizing: "border-box",
+      }}
+    >
+      <span
+        style={{
+          width: DOCS_TREE_ICON_SLOT,
+          height: DOCS_TREE_ICON_SLOT,
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+        }}
+      >
+        <NotionIcon name="people" size={DOCS_TREE_ICON_SIZE} color={labelColor} />
+      </span>
+      <span style={docsBranchLabelStyle(DOCS_TREE_LABEL_SIZE, labelColor, hovered || open)}>
+        Clients
+      </span>
+      <span style={{ flex: 1, minWidth: 0 }} />
+      <span
+        style={{
+          minWidth: DOCS_TREE_ICON_SLOT,
+          height: DOCS_TREE_ICON_SLOT,
+          padding: "0 5px",
+          borderRadius: 999,
+          background: t.sidebarBadgeBg,
+          color: t.sidebarBadgeFg,
+          fontSize: s(10),
+          fontWeight: 500,
+          lineHeight: 1,
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+          boxSizing: "border-box",
+        }}
+      >
+        {count}
+      </span>
+      <ChevronDown
+        size={DOCS_TREE_CHEVRON_SIZE}
+        color={t.textMuted}
+        strokeWidth={2}
+        style={{
+          flexShrink: 0,
+          transform: open ? "rotate(0deg)" : "rotate(-90deg)",
+          transition: "transform 0.12s ease",
+        }}
+      />
+    </HolonBoundary>
+  );
+}
 
 function AccordionHeader({
   label,
   count,
   open,
   onToggle,
-  icon: Icon,
   t,
 }: {
   label: string;
   count: number;
   open: boolean;
   onToggle: () => void;
-  icon?: LucideIcon;
   t: Tokens;
 }) {
   return (
@@ -186,9 +378,6 @@ function AccordionHeader({
         strokeWidth={2}
         style={{ transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform 0.12s ease", flexShrink: 0 }}
       />
-      {Icon && (
-        <Icon size={13} color={t.textDim} strokeWidth={2} style={{ flexShrink: 0 }} />
-      )}
       <span style={{
         fontSize: 11,
         color: t.textDim,
@@ -218,7 +407,10 @@ export function BoardPanel({
   onTaskClick,
   activeIcon,
   onIconClick,
+  isDocsModeOpen,
+  onToggleDocsMode,
   onViewInActivity,
+  onViewAsClient,
   t,
   isDark,
 }: BoardPanelProps) {
@@ -241,67 +433,39 @@ export function BoardPanel({
       <ActivityBarHeader
         activeIcon={activeIcon}
         onIconClick={onIconClick}
+        isDocsModeOpen={isDocsModeOpen}
+        onToggleDocsMode={onToggleDocsMode}
         t={t}
         isDark={isDark}
       />
 
-      <AccordionHeader
-        label="Clients"
-        icon={Users}
+      <ClientsSectionHeader
         count={clientList.length}
         open={clientsOpen}
         onToggle={() => setClientsOpen((o) => !o)}
         t={t}
       />
 
-      <div style={{ flex: 1, overflowY: "auto", minHeight: 0 }}>
-        {clientsOpen && clientList.map((client) => {
-            const isActive = activeClientId === client.id;
-            return (
-              <div
-                key={client.id}
-                onClick={() => onClientClick(client.id)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  height: CLIENT_ROW_H,
-                  padding: "0 10px",
-                  paddingLeft: isActive ? 10 : 12,
-                  cursor: "pointer",
-                  background: isActive ? t.activeRowBg : "transparent",
-                  borderLeft: isActive ? `2px solid ${t.accent}` : "2px solid transparent",
-                  borderRadius: 4,
-                  boxSizing: "border-box",
-                }}
-                onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = t.hoverBg; }}
-                onMouseLeave={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
-              >
-                <ClientRowIcon
-                  client={client}
-                  t={t}
-                  isDark={isDark}
-                  isRowActive={isActive}
-                  onViewInActivity={onViewInActivity}
-                />
-
-                <span style={{
-                  fontSize: CLIENT_LABEL_SIZE,
-                  color: isActive ? t.textPrimary : t.textSidebar,
-                  flex: 1,
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  minWidth: 0,
-                  fontWeight: 500,
-                  lineHeight: 1.25,
-                  letterSpacing: "-0.01em",
-                }}>
-                  {client.name}
-                </span>
-              </div>
-            );
-          })}
+      <HolonBoundary
+        id="board-body"
+        label="Board Body"
+        icon="list-bullet"
+        order={SHELL_HOLON_ORDER["board-body"]}
+        t={t}
+        style={{ flex: 1, overflowY: "auto", minHeight: 0 }}
+      >
+        {clientsOpen && clientList.map((client) => (
+            <ClientRow
+              key={client.id}
+              client={client}
+              isActive={activeClientId === client.id}
+              t={t}
+              isDark={isDark}
+              onClientClick={onClientClick}
+              onViewInActivity={onViewInActivity}
+              onViewAsClient={(client) => onViewAsClient?.(client.id)}
+            />
+          ))}
 
         <AccordionHeader
           label="Tasks"
@@ -390,7 +554,7 @@ export function BoardPanel({
             </div>
           );
         })}
-      </div>
+      </HolonBoundary>
     </div>
   );
 }

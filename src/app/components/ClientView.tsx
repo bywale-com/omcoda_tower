@@ -1,8 +1,10 @@
 import { Mail, MessageSquare, Phone, CheckCircle, XCircle, MoreHorizontal } from "lucide-react";
 import type { Tokens } from "./tokens";
 import { DataPanel } from "./DataPanel";
+import { HolonBoundary } from "./docs/HolonBoundary";
+import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
 import { getClientDetail } from "../data/clients";
-import type { ClientDetail } from "../data/clients";
+import { ClientPageHeader } from "./ClientPageHeader";
 
 function BriefSection({ title, children, t }: { title: string; children: React.ReactNode; t: Tokens }) {
   return (
@@ -89,38 +91,6 @@ function ClientNarrative({ clientId, t }: { clientId: string; t: Tokens }) {
   return <div>{render(t)}</div>;
 }
 
-function PageHeader({ client, t }: { client: ClientDetail; t: Tokens }) {
-  const fields: [string, string][] = [
-    ["Created time", client.addedDate],
-    ["Pathway", client.pathway],
-    ["Status", client.statusLabel],
-    ["Expiry", client.workPermitExpiry],
-  ];
-
-  return (
-    <div style={{ padding: "24px 28px 10px", flexShrink: 0, background: t.bgPrimary }}>
-      <h1 style={{
-        fontSize: 28,
-        fontWeight: 600,
-        color: t.textPrimary,
-        margin: 0,
-        letterSpacing: "-0.02em",
-        lineHeight: 1.2,
-      }}>
-        {client.name}
-      </h1>
-      <div style={{ marginTop: 16, display: "flex", flexWrap: "wrap", gap: "4px 32px" }}>
-        {fields.map(([label, value]) => (
-          <div key={label} style={{ minWidth: 100 }}>
-            <div style={{ fontSize: 11, color: t.textDim, marginBottom: 3 }}>{label}</div>
-            <div style={{ fontSize: 13, color: t.textPrimary, lineHeight: 1.4 }}>{value}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 type ClientViewProps = {
   clientId: string;
   t: Tokens;
@@ -133,12 +103,19 @@ export function ClientView({ clientId, t, isDark, onOpenClientDataFullPage }: Cl
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", minWidth: 0, background: t.bgPrimary }}>
-      <PageHeader client={client} t={t} />
+      <ClientPageHeader client={client} t={t} />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minHeight: 0 }}>
-        <div style={{ flex: 1, overflowY: "auto", padding: "28px 28px 24px" }}>
+        <HolonBoundary
+          id="client-brief"
+          label="Client Brief"
+          icon="documents"
+          order={SHELL_HOLON_ORDER["client-brief"]}
+          t={t}
+          style={{ flex: 1, overflowY: "auto", padding: "28px 28px 24px" }}
+        >
           <ClientNarrative clientId={clientId} t={t} />
-        </div>
+        </HolonBoundary>
 
         <DataPanel clientId={clientId} t={t} isDark={isDark} onOpenFullPage={onOpenClientDataFullPage} />
       </div>
