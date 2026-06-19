@@ -9,7 +9,21 @@ import {
 } from "lucide-react";
 import { PhaseTooltip } from "./PhaseTooltip";
 import { ActivityBarHeader } from "./ActivityBarHeader";
+import { ContactsBody } from "./contacts/ContactsBody";
+import { ContactsSectionHeader } from "./contacts/ContactsSectionHeader";
 import { HolonBoundary } from "./docs/HolonBoundary";
+import {
+  CLIENT_NAME_HOLON,
+  CLIENT_ROW_HOLON,
+  PHASE_SIGNAL_HOLON,
+  ROW_ACTIONS_HOLON,
+  TASK_LABEL_HOLON,
+  TASK_META_HOLON,
+  TASK_ROW_HOLON,
+  TASK_STATUS_TOGGLE_HOLON,
+  TASKS_SECTION_HOLON,
+} from "./docs/boardBodyHolons";
+import { docsTargetHighlight, useIsDocsTarget } from "./docs/docsHighlight";
 import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
 import { docsBranchLabelStyle, docsChildLabelStyle } from "./docs/treeTypography";
 import {
@@ -32,6 +46,8 @@ import {
   PopoverTrigger,
 } from "./ui/popover";
 import { clientList, getClientPhaseSnapshot } from "../data/clients";
+import { contactList } from "../data/contacts";
+import { importList } from "../data/imports";
 import type { ClientMeta, ClientPhaseSnapshot } from "../data/clients";
 import type { ConsultantTask } from "../data/tasks";
 import { useTasks } from "../context/TaskContext";
@@ -121,6 +137,7 @@ function ClientRowIcon({
 }) {
   const snapshot = getClientPhaseSnapshot(client);
   const iconKind = resolveClientPhaseIconKind(client, snapshot);
+  const isPhaseHighlighted = useIsDocsTarget(PHASE_SIGNAL_HOLON.id);
 
   return (
     <PhaseTooltip
@@ -130,12 +147,119 @@ function ClientRowIcon({
       onViewInActivity={() => onViewInActivity(client.id, snapshot.activityNodeId)}
     >
       <span
-        style={{ display: "flex", flexShrink: 0, cursor: "default" }}
+        style={{
+          display: "flex",
+          flexShrink: 0,
+          cursor: "default",
+          borderRadius: 4,
+          ...docsTargetHighlight(isPhaseHighlighted, t.accent),
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         <ClientPhaseIcon kind={iconKind} t={t} isRowActive={isRowActive} />
       </span>
     </PhaseTooltip>
+  );
+}
+
+function TaskRow({
+  task,
+  isActive,
+  t,
+  onTaskClick,
+  onToggleStatus,
+}: {
+  task: ConsultantTask;
+  isActive: boolean;
+  t: Tokens;
+  onTaskClick: (task: ConsultantTask) => void;
+  onToggleStatus: (taskId: string) => void;
+}) {
+  const isOpen = task.status === "open";
+  const statusColor = isOpen ? t.red : t.success;
+  const isDocsHighlighted = useIsDocsTarget(TASK_ROW_HOLON.id);
+  const isStatusHighlighted = useIsDocsTarget(TASK_STATUS_TOGGLE_HOLON.id);
+  const isLabelHighlighted = useIsDocsTarget(TASK_LABEL_HOLON.id);
+  const isMetaHighlighted = useIsDocsTarget(TASK_META_HOLON.id);
+
+  return (
+    <div
+      onClick={() => onTaskClick(task)}
+      title={`${task.label} · ${task.clientName} · opens in Activity`}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        minHeight: CLIENT_ROW_H,
+        padding: "4px 10px",
+        paddingLeft: isActive ? 10 : 12,
+        cursor: "pointer",
+        background: isActive ? t.activeRowBg : "transparent",
+        borderLeft: `2px solid ${statusColor}`,
+        borderRadius: 4,
+        boxSizing: "border-box",
+        ...docsTargetHighlight(isDocsHighlighted, t.accent),
+      }}
+      onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = t.hoverBg; }}
+      onMouseLeave={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+    >
+      <button
+        type="button"
+        title={isOpen ? "Mark complete" : "Reopen task"}
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleStatus(task.id);
+        }}
+        style={{
+          width: CLIENT_ICON_SLOT,
+          height: CLIENT_ICON_SLOT,
+          borderRadius: 6,
+          flexShrink: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: `1px solid ${statusColor}66`,
+          background: isOpen ? "transparent" : `${t.success}22`,
+          cursor: "pointer",
+          padding: 0,
+          ...docsTargetHighlight(isStatusHighlighted, t.accent),
+        }}
+      >
+        {isOpen
+          ? <CheckSquare size={10} color={statusColor} strokeWidth={1.75} />
+          : <Check size={10} color={statusColor} strokeWidth={3} />}
+      </button>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{
+          fontSize: CLIENT_LABEL_SIZE,
+          color: isOpen ? (isActive ? t.textPrimary : t.textSidebar) : t.textMuted,
+          fontWeight: 500,
+          lineHeight: 1.25,
+          letterSpacing: "-0.01em",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          textDecoration: isOpen ? "none" : "line-through",
+          borderRadius: 4,
+          ...docsTargetHighlight(isLabelHighlighted, t.accent),
+        }}>
+          {task.label}
+        </div>
+        <div style={{
+          fontSize: 10,
+          color: t.textDim,
+          lineHeight: 1.3,
+          marginTop: 1,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          borderRadius: 4,
+          ...docsTargetHighlight(isMetaHighlighted, t.accent),
+        }}>
+          {task.clientName} · {task.createdAt}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -159,6 +283,9 @@ function ClientRow({
   const [hovered, setHovered] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const showRowMenu = client.id === "sarah" && (hovered || menuOpen);
+  const isDocsHighlighted = useIsDocsTarget(CLIENT_ROW_HOLON.id);
+  const isNameHighlighted = useIsDocsTarget(CLIENT_NAME_HOLON.id);
+  const isRowActionsHighlighted = useIsDocsTarget(ROW_ACTIONS_HOLON.id);
 
   return (
     <div
@@ -177,6 +304,7 @@ function ClientRow({
         borderLeft: isActive ? `${DOCS_TREE_ACTIVE_BORDER}px solid ${t.accent}` : `${DOCS_TREE_ACTIVE_BORDER}px solid transparent`,
         borderRadius: 4,
         boxSizing: "border-box",
+        ...docsTargetHighlight(isDocsHighlighted, t.accent),
       }}
     >
       <ClientRowIcon
@@ -190,11 +318,21 @@ function ClientRow({
       <span style={{
         ...docsChildLabelStyle(CLIENT_LABEL_SIZE, t.textPrimary, t),
         flex: 1,
+        borderRadius: 4,
+        ...docsTargetHighlight(isNameHighlighted, t.accent),
       }}>
         {client.name}
       </span>
 
       {client.id === "sarah" && (
+        <span
+          style={{
+            display: "flex",
+            flexShrink: 0,
+            borderRadius: 4,
+            ...docsTargetHighlight(isRowActionsHighlighted, t.accent),
+          }}
+        >
         <Popover open={menuOpen} onOpenChange={setMenuOpen}>
           <PopoverTrigger asChild>
             <button
@@ -229,6 +367,7 @@ function ClientRow({
             </button>
           </PopoverContent>
         </Popover>
+        </span>
       )}
     </div>
   );
@@ -242,6 +381,8 @@ type BoardPanelProps = {
   onTaskClick: (task: ConsultantTask) => void;
   activeIcon: string;
   onIconClick: (id: string) => void;
+  activeContactId: string | null;
+  onContactClick: (id: string) => void;
   isDocsModeOpen: boolean;
   onToggleDocsMode: () => void;
   onViewInActivity: (clientId: string, activityNodeId: string) => void;
@@ -343,21 +484,24 @@ function ClientsSectionHeader({
   );
 }
 
-function AccordionHeader({
-  label,
+function TasksSectionHeader({
   count,
   open,
   onToggle,
   t,
 }: {
-  label: string;
   count: number;
   open: boolean;
   onToggle: () => void;
   t: Tokens;
 }) {
   return (
-    <div
+    <HolonBoundary
+      id={TASKS_SECTION_HOLON.id}
+      label={TASKS_SECTION_HOLON.label}
+      icon={TASKS_SECTION_HOLON.icon}
+      order={TASKS_SECTION_HOLON.order}
+      t={t}
       onClick={onToggle}
       style={{
         height: 24,
@@ -384,7 +528,7 @@ function AccordionHeader({
         fontWeight: 600,
         letterSpacing: "0.01em",
       }}>
-        {label}
+        Tasks
       </span>
       <span style={{
         fontSize: 10,
@@ -395,7 +539,7 @@ function AccordionHeader({
       }}>
         {count}
       </span>
-    </div>
+    </HolonBoundary>
   );
 }
 
@@ -407,6 +551,8 @@ export function BoardPanel({
   onTaskClick,
   activeIcon,
   onIconClick,
+  activeContactId,
+  onContactClick,
   isDocsModeOpen,
   onToggleDocsMode,
   onViewInActivity,
@@ -417,6 +563,8 @@ export function BoardPanel({
   const [clientsOpen, setClientsOpen] = useState(true);
   const [tasksOpen, setTasksOpen] = useState(true);
   const { tasks, openTaskCount, toggleTaskStatus } = useTasks();
+  const clientsInView = clientsOpen && clientList.length > 0;
+  const tasksInView = tasksOpen && tasks.length > 0;
 
   return (
     <div style={{
@@ -439,6 +587,19 @@ export function BoardPanel({
         isDark={isDark}
       />
 
+      {activeIcon === "contacts" ? (
+        <>
+          <ContactsSectionHeader count={contactList.length} t={t} />
+          <ContactsBody
+            contacts={contactList}
+            imports={importList}
+            activeContactId={activeContactId}
+            onContactClick={onContactClick}
+            t={t}
+          />
+        </>
+      ) : (
+        <>
       <ClientsSectionHeader
         count={clientList.length}
         open={clientsOpen}
@@ -454,6 +615,53 @@ export function BoardPanel({
         t={t}
         style={{ flex: 1, overflowY: "auto", minHeight: 0 }}
       >
+        <HolonBoundary
+          id={CLIENT_ROW_HOLON.id}
+          label={CLIENT_ROW_HOLON.label}
+          icon={CLIENT_ROW_HOLON.icon}
+          order={CLIENT_ROW_HOLON.order}
+          registerOnly
+          inView={clientsInView}
+          onFocus={() => setClientsOpen(true)}
+          t={t}
+        >
+          <HolonBoundary
+            id={PHASE_SIGNAL_HOLON.id}
+            label={PHASE_SIGNAL_HOLON.label}
+            icon={PHASE_SIGNAL_HOLON.icon}
+            order={PHASE_SIGNAL_HOLON.order}
+            registerOnly
+            inView={clientsInView}
+            onFocus={() => setClientsOpen(true)}
+            t={t}
+          >
+            {null}
+          </HolonBoundary>
+          <HolonBoundary
+            id={CLIENT_NAME_HOLON.id}
+            label={CLIENT_NAME_HOLON.label}
+            icon={CLIENT_NAME_HOLON.icon}
+            order={CLIENT_NAME_HOLON.order}
+            registerOnly
+            inView={clientsInView}
+            onFocus={() => setClientsOpen(true)}
+            t={t}
+          >
+            {null}
+          </HolonBoundary>
+          <HolonBoundary
+            id={ROW_ACTIONS_HOLON.id}
+            label={ROW_ACTIONS_HOLON.label}
+            lucideIcon={ROW_ACTIONS_HOLON.lucideIcon}
+            order={ROW_ACTIONS_HOLON.order}
+            registerOnly
+            inView={clientsInView}
+            onFocus={() => setClientsOpen(true)}
+            t={t}
+          >
+            {null}
+          </HolonBoundary>
+        </HolonBoundary>
         {clientsOpen && clientList.map((client) => (
             <ClientRow
               key={client.id}
@@ -467,94 +675,75 @@ export function BoardPanel({
             />
           ))}
 
-        <AccordionHeader
-          label="Tasks"
+        <HolonBoundary
+          id={TASK_ROW_HOLON.id}
+          label={TASK_ROW_HOLON.label}
+          icon={TASK_ROW_HOLON.icon}
+          order={TASK_ROW_HOLON.order}
+          parentId={TASKS_SECTION_HOLON.id}
+          registerOnly
+          inView={tasksInView}
+          onFocus={() => setTasksOpen(true)}
+          t={t}
+        >
+          <HolonBoundary
+            id={TASK_STATUS_TOGGLE_HOLON.id}
+            label={TASK_STATUS_TOGGLE_HOLON.label}
+            lucideIcon={TASK_STATUS_TOGGLE_HOLON.lucideIcon}
+            order={TASK_STATUS_TOGGLE_HOLON.order}
+            registerOnly
+            inView={tasksInView}
+            onFocus={() => setTasksOpen(true)}
+            t={t}
+          >
+            {null}
+          </HolonBoundary>
+          <HolonBoundary
+            id={TASK_LABEL_HOLON.id}
+            label={TASK_LABEL_HOLON.label}
+            icon={TASK_LABEL_HOLON.icon}
+            order={TASK_LABEL_HOLON.order}
+            registerOnly
+            inView={tasksInView}
+            onFocus={() => setTasksOpen(true)}
+            t={t}
+          >
+            {null}
+          </HolonBoundary>
+          <HolonBoundary
+            id={TASK_META_HOLON.id}
+            label={TASK_META_HOLON.label}
+            icon={TASK_META_HOLON.icon}
+            order={TASK_META_HOLON.order}
+            registerOnly
+            inView={tasksInView}
+            onFocus={() => setTasksOpen(true)}
+            t={t}
+          >
+            {null}
+          </HolonBoundary>
+        </HolonBoundary>
+
+        <TasksSectionHeader
           count={openTaskCount}
           open={tasksOpen}
           onToggle={() => setTasksOpen((o) => !o)}
           t={t}
         />
 
-        {tasksOpen && tasks.map((task) => {
-          const isActive = activeTouchpointId === task.touchpointId;
-          const isOpen = task.status === "open";
-          const statusColor = isOpen ? t.red : t.success;
-          return (
-            <div
-              key={task.id}
-              onClick={() => onTaskClick(task)}
-              title={`${task.label} · ${task.clientName} · opens in Activity`}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                minHeight: CLIENT_ROW_H,
-                padding: "4px 10px",
-                paddingLeft: isActive ? 10 : 12,
-                cursor: "pointer",
-                background: isActive ? t.activeRowBg : "transparent",
-                borderLeft: `2px solid ${statusColor}`,
-                borderRadius: 4,
-                boxSizing: "border-box",
-              }}
-              onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = t.hoverBg; }}
-              onMouseLeave={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
-            >
-              <button
-                type="button"
-                title={isOpen ? "Mark complete" : "Reopen task"}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleTaskStatus(task.id);
-                }}
-                style={{
-                  width: CLIENT_ICON_SLOT,
-                  height: CLIENT_ICON_SLOT,
-                  borderRadius: 6,
-                  flexShrink: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  border: `1px solid ${statusColor}66`,
-                  background: isOpen ? "transparent" : `${t.success}22`,
-                  cursor: "pointer",
-                  padding: 0,
-                }}
-              >
-                {isOpen
-                  ? <CheckSquare size={10} color={statusColor} strokeWidth={1.75} />
-                  : <Check size={10} color={statusColor} strokeWidth={3} />}
-              </button>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{
-                  fontSize: CLIENT_LABEL_SIZE,
-                  color: isOpen ? (isActive ? t.textPrimary : t.textSidebar) : t.textMuted,
-                  fontWeight: 500,
-                  lineHeight: 1.25,
-                  letterSpacing: "-0.01em",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  textDecoration: isOpen ? "none" : "line-through",
-                }}>
-                  {task.label}
-                </div>
-                <div style={{
-                  fontSize: 10,
-                  color: t.textDim,
-                  lineHeight: 1.3,
-                  marginTop: 1,
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}>
-                  {task.clientName} · {task.createdAt}
-                </div>
-              </div>
-            </div>
-          );
-        })}
+        {tasksOpen && tasks.map((task) => (
+          <TaskRow
+            key={task.id}
+            task={task}
+            isActive={activeTouchpointId === task.touchpointId}
+            t={t}
+            onTaskClick={onTaskClick}
+            onToggleStatus={toggleTaskStatus}
+          />
+        ))}
       </HolonBoundary>
+        </>
+      )}
     </div>
   );
 }

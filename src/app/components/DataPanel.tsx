@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Info, LineChart as LineChartIcon, Zap, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { JourneyTab } from "./JourneyTab";
 import { getClientDetail } from "../data/clients";
 import {
@@ -11,12 +11,18 @@ import { HolonBoundary } from "./docs/HolonBoundary";
 import {
   CLIENT_DATA_OPEN_TAB_HOLON,
   CLIENT_DATA_TAB_HOLONS,
+  CRS_CHART_HOLON,
+  CRS_SCRUBBER_HOLON,
+  CRS_STATS_HOLON,
   PANEL_CHIPS,
   tabHolonId,
   type PanelTab,
 } from "./docs/clientDataHolons";
+import { RegisterContentChildHolonsFromConfig } from "./docs/RegisterContentChildHolons";
 import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
+import { docsLabelStyle, DOCS_FONT_PROFILE } from "./docs/treeTypography";
 import { usePanel } from "../context/PanelContext";
+import { NotionIcon } from "./icons/NotionIcon";
 
 type Snapshot = {
   date: string; shortDate: string;
@@ -43,11 +49,10 @@ const HISTORY: Snapshot[] = [
 
 const CHART_DATA = HISTORY.map((s, i) => ({ ...s, idx: i }));
 
-const CHIP_ICONS: Record<PanelTab, typeof Info> = {
-  read: Info,
-  data: LineChartIcon,
-  logs: Zap,
-};
+const CLIENT_DATA_TITLE_SIZE = 16;
+const CLIENT_DATA_CHIP_SIZE = 13;
+const CLIENT_DATA_CHIP_ICON_SIZE = 12;
+const CLIENT_DATA_CHIP_ACTIVE_BORDER = 2;
 
 const COLLAPSED_H = 0;
 const DEFAULT_H   = 420;
@@ -113,7 +118,14 @@ export function ClientDataContent({
         style={{ flexShrink: 0, padding: fullPage ? "20px 28px 0" : "10px 28px 0", background: t.bgPrimary }}
       >
         <div style={{ marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontSize: 16, fontWeight: 600, color: t.textPrimary, margin: 0 }}>
+          <span
+            style={{
+              ...DOCS_FONT_PROFILE,
+              fontSize: CLIENT_DATA_TITLE_SIZE,
+              color: t.textPrimary,
+              margin: 0,
+            }}
+          >
             Client Data
           </span>
           {!fullPage && onOpenFullPage && (
@@ -152,46 +164,50 @@ export function ClientDataContent({
           )}
         </div>
 
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, paddingBottom: 14 }}>
-          {PANEL_CHIPS.map((chip) => {
-            const isActive = activeTab === chip.id;
-            const tabMeta = CLIENT_DATA_TAB_HOLONS[chip.id];
-            const Icon = CHIP_ICONS[chip.id];
-            return (
-              <HolonBoundary
-                key={chip.id}
-                id={tabHolonId(chip.id)}
-                label={chip.label}
-                icon={tabMeta.icon}
-                order={tabMeta.order}
-                onFocus={() => revealTab(chip.id)}
-                t={t}
-                style={{ display: "inline-flex" }}
-              >
-                <button
-                  type="button"
-                  onClick={() => setActiveTab(chip.id)}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 4,
-                    padding: "0 8px",
-                    borderRadius: 999,
-                    border: "none",
-                    cursor: "pointer",
-                    fontSize: 13,
-                    fontWeight: 400,
-                    lineHeight: 1.4,
-                    color: t.textPrimary,
-                    background: isActive ? t.accentBg : "transparent",
-                  }}
+        <div style={{ borderBottom: `1px solid ${t.borderLight}`, marginBottom: 14 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+            {PANEL_CHIPS.map((chip) => {
+              const isActive = activeTab === chip.id;
+              const tabMeta = CLIENT_DATA_TAB_HOLONS[chip.id];
+              return (
+                <HolonBoundary
+                  key={chip.id}
+                  id={tabHolonId(chip.id)}
+                  label={chip.label}
+                  icon={tabMeta.icon}
+                  order={tabMeta.order}
+                  onFocus={() => revealTab(chip.id)}
+                  t={t}
+                  style={{ display: "inline-flex" }}
                 >
-                  <Icon size={12} color={t.textPrimary} strokeWidth={1.75} />
-                  {chip.label}
-                </button>
-              </HolonBoundary>
-            );
-          })}
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab(chip.id)}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 4,
+                      padding: "0 2px 8px",
+                      marginBottom: -1,
+                      border: "none",
+                      borderBottom: `${CLIENT_DATA_CHIP_ACTIVE_BORDER}px solid ${isActive ? t.accent : "transparent"}`,
+                      borderRadius: 0,
+                      cursor: "pointer",
+                      background: "transparent",
+                      ...docsLabelStyle(CLIENT_DATA_CHIP_SIZE, t.textPrimary),
+                    }}
+                  >
+                    <NotionIcon
+                      name={tabMeta.icon}
+                      size={CLIENT_DATA_CHIP_ICON_SIZE}
+                      color={t.textPrimary}
+                    />
+                    {chip.label}
+                  </button>
+                </HolonBoundary>
+              );
+            })}
+          </div>
         </div>
       </HolonBoundary>
 
@@ -209,7 +225,14 @@ export function ClientDataContent({
               registerOnly
               onFocus={() => revealTab(chip.id)}
               t={t}
-            />
+            >
+              <RegisterContentChildHolonsFromConfig
+                children={content.children}
+                inView={false}
+                onFocus={() => revealTab(chip.id)}
+                t={t}
+              />
+            </HolonBoundary>
           );
         })}
         {(() => {
@@ -328,14 +351,21 @@ function CrsHistoryTab({
 
   return (
     <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-      <div style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "flex-end",
-        gap: 10,
-        padding: `8px ${paddingX}px`,
-        flexShrink: 0,
-      }}>
+      <HolonBoundary
+        id={CRS_SCRUBBER_HOLON.id}
+        label={CRS_SCRUBBER_HOLON.label}
+        icon={CRS_SCRUBBER_HOLON.icon}
+        order={CRS_SCRUBBER_HOLON.order}
+        t={t}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          gap: 10,
+          padding: `8px ${paddingX}px`,
+          flexShrink: 0,
+        }}
+      >
         <span style={{ fontSize: 10, color: t.textDim }}>{HISTORY[0].shortDate}</span>
         <input
           type="range"
@@ -349,10 +379,24 @@ function CrsHistoryTab({
         <span style={{ fontSize: 10, background: t.accentBg, color: t.accent, padding: "2px 8px", borderRadius: 3, fontWeight: 500 }}>
           {snap.date}
         </span>
-      </div>
+      </HolonBoundary>
 
       <div style={{ flex: 1, display: "flex", overflow: "hidden", minHeight: 0 }}>
-        <div style={{ width: 160, flexShrink: 0, padding: `16px ${paddingX}px`, display: "flex", flexDirection: "column", gap: 14 }}>
+        <HolonBoundary
+          id={CRS_STATS_HOLON.id}
+          label={CRS_STATS_HOLON.label}
+          icon={CRS_STATS_HOLON.icon}
+          order={CRS_STATS_HOLON.order}
+          t={t}
+          style={{
+            width: 160,
+            flexShrink: 0,
+            padding: `16px ${paddingX}px`,
+            display: "flex",
+            flexDirection: "column",
+            gap: 14,
+          }}
+        >
           {[
             ["CRS score", String(snap.crs), t.accent],
             ["Draw threshold", String(snap.drawThreshold), t.textPrimary],
@@ -364,9 +408,21 @@ function CrsHistoryTab({
               <div style={{ fontSize: 13, color: color as string }}>{value}</div>
             </div>
           ))}
-        </div>
+        </HolonBoundary>
 
-        <div style={{ flex: 1, padding: "12px 16px 8px 0", overflow: "hidden", minWidth: 0 }}>
+        <HolonBoundary
+          id={CRS_CHART_HOLON.id}
+          label={CRS_CHART_HOLON.label}
+          icon={CRS_CHART_HOLON.icon}
+          order={CRS_CHART_HOLON.order}
+          t={t}
+          style={{
+            flex: 1,
+            padding: "12px 16px 8px 0",
+            overflow: "hidden",
+            minWidth: 0,
+          }}
+        >
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={CHART_DATA} margin={{ top: 6, right: 10, bottom: 0, left: -20 }}>
               <CartesianGrid stroke={gridColor} strokeDasharray="2 4" vertical={false} />
@@ -378,7 +434,7 @@ function CrsHistoryTab({
               <ReferenceLine x={CHART_DATA[scrubIdx]?.shortDate} stroke={t.amber} strokeWidth={1.5} strokeDasharray="3 3" label={{ value: "▼", position: "top", fill: t.amber, fontSize: 8 }} />
             </LineChart>
           </ResponsiveContainer>
-        </div>
+        </HolonBoundary>
       </div>
     </div>
   );

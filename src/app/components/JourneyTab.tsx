@@ -6,6 +6,31 @@ import {
   ZoomIn, ZoomOut, Eye, Reply, MousePointerClick, Send, FileText, PenLine, Link2,
 } from "lucide-react";
 import type { Tokens } from "./tokens";
+import { HolonBoundary } from "./docs/HolonBoundary";
+import { RegisterContentChildHolonsFromConfig } from "./docs/RegisterContentChildHolons";
+import { docsTargetHighlight, useIsDocsTarget } from "./docs/docsHighlight";
+import {
+  ENGAGEMENT_ATTEMPT_ROW_HOLON,
+  ENGAGEMENT_CHANNEL_ROW_HOLON,
+  ENGAGEMENT_ESCALATION_ROW_HOLON,
+  ENGAGEMENT_EVENT_ROW_HOLON,
+  ENGAGEMENT_FORM_VISIT_ROW_HOLON,
+  ENGAGEMENT_LIST_ROW_HOLONS_LIST,
+  ENGAGEMENT_SEQUENCE_ROW_HOLON,
+  engagementRowInViewFromKinds,
+} from "./docs/engagementListHolons";
+import {
+  ENGAGEMENT_ATTEMPT_BAND_HOLON,
+  ENGAGEMENT_ESCALATION_BAND_HOLON,
+  ENGAGEMENT_EVENT_MARKER_HOLON,
+  ENGAGEMENT_SEGMENT_BAR_HOLON,
+  ENGAGEMENT_SEQUENCE_BAR_HOLON,
+  ENGAGEMENT_TIMELINE_CHILD_HOLONS_LIST,
+} from "./docs/engagementTimelineHolons";
+import {
+  ENGAGEMENT_LIST_HOLON,
+  ENGAGEMENT_TIMELINE_HOLON,
+} from "./docs/clientDataHolons";
 import {
   DEFAULT_JOURNEY_LIST_WIDTH,
   MIN_JOURNEY_LIST_WIDTH,
@@ -408,6 +433,16 @@ function buildRows(openIds: Set<string>, sequences: NudgeGroup[]): Row[] {
     }
   }
   return rows;
+}
+
+function timelineChannelBarVisible(
+  row: Extract<Row, { kind: "nudgeChannel" } | { kind: "journeyStandalone" }>,
+  formOwnerBarById: Map<string, { startDay: number; endDay: number }>,
+): boolean {
+  if (row.kind === "nudgeChannel" && row.tp.channel === "form" && formOwnerBarById.has(row.tp.id)) {
+    return true;
+  }
+  return !!row.tp.barSegment;
 }
 
 const ROW_H = 36;
@@ -913,6 +948,7 @@ function NudgeGroupHeader({
   const badgeBg = sectionStyle === "historical" ? HISTORICAL_TEAL : sectionStyle === "armed" ? t.amberBg : t.accent;
   const badgeColor = sectionStyle === "historical" ? "#fff" : sectionStyle === "armed" ? t.amber : "#fff";
   const isActive = status === "active";
+  const isHighlighted = useIsDocsTarget(ENGAGEMENT_SEQUENCE_ROW_HOLON.id);
 
   return (
     <button
@@ -938,6 +974,7 @@ function NudgeGroupHeader({
         textAlign: "left",
         boxSizing: "border-box",
         borderRadius: 4,
+        ...docsTargetHighlight(isHighlighted, t.accent),
       }}
     >
       <span style={{ display: "flex", alignItems: "center", flexShrink: 0, width: 14 }}>
@@ -984,6 +1021,7 @@ function NudgeAttemptHeader({
 }) {
   const [hovered, setHovered] = useState(false);
   const color = ATTEMPT_BAR_COLORS[attempt.colorIndex % ATTEMPT_BAR_COLORS.length];
+  const isHighlighted = useIsDocsTarget(ENGAGEMENT_ATTEMPT_ROW_HOLON.id);
 
   return (
     <button
@@ -1010,6 +1048,7 @@ function NudgeAttemptHeader({
         boxSizing: "border-box",
         borderRadius: 4,
         position: "relative",
+        ...docsTargetHighlight(isHighlighted, t.accent),
       }}
     >
       <div style={{
@@ -1117,6 +1156,7 @@ function FormVisitTreeRow({
   const [hovered, setHovered] = useState(false);
   const padLeft = nudgePadLeft(depth);
   const showChain = visit.origin === "prior_email";
+  const isHighlighted = useIsDocsTarget(ENGAGEMENT_FORM_VISIT_ROW_HOLON.id);
 
   return (
     <div
@@ -1134,6 +1174,7 @@ function FormVisitTreeRow({
         boxSizing: "border-box",
         borderRadius: 4,
         position: "relative",
+        ...docsTargetHighlight(isHighlighted, t.accent),
       }}
     >
       <div style={{
@@ -1329,6 +1370,7 @@ function NudgeChannelHeader({
   const historical = sectionStyle === "historical" || tp.status === "historical";
   const complete = nudgeChannelIconPhase(tp.channel, tp.engagementSignals, tp.channelPhase) === "complete";
   const inspectable = isInspectableChannel(tp.channel) && !!onInspect;
+  const isHighlighted = useIsDocsTarget(ENGAGEMENT_CHANNEL_ROW_HOLON.id);
 
   return (
     <div
@@ -1346,6 +1388,7 @@ function NudgeChannelHeader({
         boxSizing: "border-box",
         borderRadius: 4,
         position: "relative",
+        ...docsTargetHighlight(isHighlighted, t.accent),
       }}
     >
       <div style={{
@@ -1586,6 +1629,7 @@ function NudgeEscalationRow({
   onRevealThought: (stepId: string) => void;
 }) {
   const padLeft = nudgePadLeft(depth);
+  const isHighlighted = useIsDocsTarget(ENGAGEMENT_ESCALATION_ROW_HOLON.id);
 
   return (
     <div
@@ -1596,6 +1640,8 @@ function NudgeEscalationRow({
         position: "relative",
         boxSizing: "border-box",
         overflow: "hidden",
+        borderRadius: 4,
+        ...docsTargetHighlight(isHighlighted, t.accent),
       }}
     >
       <div style={{
@@ -1727,6 +1773,7 @@ function NudgeEventRow({
   const Icon = channelIcon[tp.channel];
   const historical = sectionStyle === "historical" || tp.status === "historical";
   const ghost = sectionStyle === "armed" || tp.status === "ghost";
+  const isHighlighted = useIsDocsTarget(ENGAGEMENT_EVENT_ROW_HOLON.id);
 
   return (
     <div
@@ -1740,6 +1787,8 @@ function NudgeEventRow({
         position: "relative",
         boxSizing: "border-box",
         opacity: ghost ? 0.65 : historical ? 0.75 : 1,
+        borderRadius: 4,
+        ...docsTargetHighlight(isHighlighted, t.accent),
       }}
     >
       <div style={{
@@ -2641,6 +2690,45 @@ export function JourneyTab({ t, clientId = "sarah" }: { t: Tokens; clientId?: st
   };
 
   const rows = buildRows(openIds, sequences);
+  const engagementRowInView = useMemo(
+    () => engagementRowInViewFromKinds(rows.map((row) => row.kind)),
+    [rows],
+  );
+  const engagementTimelineInView = useMemo(() => {
+    let sequenceBar = false;
+    let attemptBand = false;
+    let segmentBar = false;
+    let eventMarker = false;
+    let escalationBand = false;
+
+    for (const row of rows) {
+      if (row.kind === "nudgeGroup" && ganttByGroup[row.group.id]) sequenceBar = true;
+      if (row.kind === "nudgeAttempt") attemptBand = true;
+      if (row.kind === "nudgeFormVisit") segmentBar = true;
+      if (row.kind === "nudgeEvent") eventMarker = true;
+      if (row.kind === "nudgeEscalation") escalationBand = true;
+      if (row.kind === "journeyTaskEscalation" && row.tp.barSegment) escalationBand = true;
+      if (
+        (row.kind === "nudgeChannel" || row.kind === "journeyStandalone") &&
+        timelineChannelBarVisible(row, formOwnerBarById)
+      ) {
+        segmentBar = true;
+      }
+    }
+
+    return {
+      [ENGAGEMENT_SEQUENCE_BAR_HOLON.id]: sequenceBar,
+      [ENGAGEMENT_ATTEMPT_BAND_HOLON.id]: attemptBand,
+      [ENGAGEMENT_SEGMENT_BAR_HOLON.id]: segmentBar,
+      [ENGAGEMENT_EVENT_MARKER_HOLON.id]: eventMarker,
+      [ENGAGEMENT_ESCALATION_BAND_HOLON.id]: escalationBand,
+    };
+  }, [rows, ganttByGroup, formOwnerBarById]);
+  const isSequenceBarHighlighted = useIsDocsTarget(ENGAGEMENT_SEQUENCE_BAR_HOLON.id);
+  const isAttemptBandHighlighted = useIsDocsTarget(ENGAGEMENT_ATTEMPT_BAND_HOLON.id);
+  const isSegmentBarHighlighted = useIsDocsTarget(ENGAGEMENT_SEGMENT_BAR_HOLON.id);
+  const isEventMarkerHighlighted = useIsDocsTarget(ENGAGEMENT_EVENT_MARKER_HOLON.id);
+  const isEscalationBandHighlighted = useIsDocsTarget(ENGAGEMENT_ESCALATION_BAND_HOLON.id);
   const totalBodyH = rows.reduce((sum, r) => sum + rowHeight(r, expandedReasoning, revealedThoughts), 0);
 
   const scrollToActivityNode = useCallback((nodeId: string) => {
@@ -2771,12 +2859,32 @@ export function JourneyTab({ t, clientId = "sarah" }: { t: Tokens; clientId?: st
       {/* Split body */}
       <div style={{ flex: 1, display: "flex", minHeight: 0, margin: "0 28px" }}>
         {/* Left — touchpoint list */}
+        <HolonBoundary
+          id={ENGAGEMENT_LIST_HOLON.id}
+          label={ENGAGEMENT_LIST_HOLON.label}
+          icon={ENGAGEMENT_LIST_HOLON.icon}
+          order={ENGAGEMENT_LIST_HOLON.order}
+          t={t}
+          style={{
+            width: listWidth,
+            flexShrink: 0,
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+            minHeight: 0,
+          }}
+        >
+          <RegisterContentChildHolonsFromConfig
+            children={ENGAGEMENT_LIST_ROW_HOLONS_LIST}
+            inView={false}
+            inViewById={engagementRowInView}
+            t={t}
+          />
         <div
           ref={leftScrollRef}
           onScroll={() => syncScroll("left")}
           style={{
-            width: listWidth,
-            flexShrink: 0,
+            flex: 1,
             overflowY: "auto",
             overflowX: "hidden",
           }}
@@ -2919,6 +3027,7 @@ export function JourneyTab({ t, clientId = "sarah" }: { t: Tokens; clientId?: st
             );
           })}
         </div>
+        </HolonBoundary>
 
         {/* Resize handle */}
         <div
@@ -2936,6 +3045,27 @@ export function JourneyTab({ t, clientId = "sarah" }: { t: Tokens; clientId?: st
         />
 
         {/* Right — timeline */}
+        <HolonBoundary
+          id={ENGAGEMENT_TIMELINE_HOLON.id}
+          label={ENGAGEMENT_TIMELINE_HOLON.label}
+          icon={ENGAGEMENT_TIMELINE_HOLON.icon}
+          order={ENGAGEMENT_TIMELINE_HOLON.order}
+          t={t}
+          style={{
+            flex: 1,
+            minWidth: 0,
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+            minHeight: 0,
+          }}
+        >
+          <RegisterContentChildHolonsFromConfig
+            children={ENGAGEMENT_TIMELINE_CHILD_HOLONS_LIST}
+            inView={false}
+            inViewById={engagementTimelineInView}
+            t={t}
+          />
         <div
           ref={rightScrollRef}
           onScroll={() => syncScroll("right")}
@@ -3032,7 +3162,15 @@ export function JourneyTab({ t, clientId = "sarah" }: { t: Tokens; clientId?: st
                           width: timelineW,
                         }}
                       >
-                        {ganttData && <NudgeGanttBar data={ganttData} dayW={dayWidth} t={t} rowH={h} />}
+                        {ganttData && (
+                          <NudgeGanttBar
+                            data={ganttData}
+                            dayW={dayWidth}
+                            t={t}
+                            rowH={h}
+                            docsHighlighted={isSequenceBarHighlighted}
+                          />
+                        )}
                       </div>
                     );
                   }
@@ -3056,6 +3194,7 @@ export function JourneyTab({ t, clientId = "sarah" }: { t: Tokens; clientId?: st
                           color={color}
                           label={row.attempt.label}
                           variant="attempt"
+                          docsHighlighted={isAttemptBandHighlighted}
                           t={t}
                         />
                       </div>
@@ -3100,6 +3239,7 @@ export function JourneyTab({ t, clientId = "sarah" }: { t: Tokens; clientId?: st
                           dayW={dayWidth}
                           rowH={h}
                           interactive
+                          docsHighlighted={isSegmentBarHighlighted}
                           onSegmentClick={visitInspectable ? () => openNodeInspector(row.visit.id, row.nudgeGroupId) : undefined}
                           selected={nodeInspector?.touchpointId === row.visit.id}
                           t={t}
@@ -3154,6 +3294,7 @@ export function JourneyTab({ t, clientId = "sarah" }: { t: Tokens; clientId?: st
                             dayW={dayWidth}
                             rowH={h}
                             interactive
+                            docsHighlighted={isSegmentBarHighlighted}
                             onSegmentClick={emailBarClickable ? () => openNodeInspector(row.tp.id, row.nudgeGroupId) : undefined}
                             selected={nodeInspector?.touchpointId === row.tp.id}
                             t={t}
@@ -3181,6 +3322,7 @@ export function JourneyTab({ t, clientId = "sarah" }: { t: Tokens; clientId?: st
                             color={t.textDim}
                             label={row.tp.label}
                             variant="armed"
+                            docsHighlighted={isEscalationBandHighlighted}
                             t={t}
                           />
                         )}
@@ -3206,6 +3348,7 @@ export function JourneyTab({ t, clientId = "sarah" }: { t: Tokens; clientId?: st
                           color={t.amber}
                           label={row.escalation.scheduledLabel}
                           variant="armed"
+                          docsHighlighted={isEscalationBandHighlighted}
                           t={t}
                         />
                       </div>
@@ -3226,6 +3369,7 @@ export function JourneyTab({ t, clientId = "sarah" }: { t: Tokens; clientId?: st
                           dayW={dayWidth}
                           t={t}
                           rowH={h}
+                          docsHighlighted={isEventMarkerHighlighted}
                           variant={row.sectionStyle === "historical" ? "historical" : row.sectionStyle === "armed" ? "armed" : "default"}
                         />
                       </div>
@@ -3299,6 +3443,7 @@ export function JourneyTab({ t, clientId = "sarah" }: { t: Tokens; clientId?: st
             )}
           </div>
         </div>
+        </HolonBoundary>
       </div>
 
       <div style={{

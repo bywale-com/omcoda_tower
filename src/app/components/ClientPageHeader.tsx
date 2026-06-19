@@ -1,9 +1,13 @@
-import { Calendar, CircleDot, Clock, Route } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import type { ClientDetail } from "../data/clients";
+import type { NotionIconName } from "../icons/notion-icon-urls";
 import { HolonBoundary } from "./docs/HolonBoundary";
 import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
+import { docsLabelStyle } from "./docs/treeTypography";
+import { NotionIcon } from "./icons/NotionIcon";
 import type { Tokens } from "./tokens";
+
+const CLIENT_HEADER_PROPERTY_LABEL_SIZE = 13;
+const CLIENT_HEADER_PROPERTY_ICON_SIZE = 14;
 
 type PillTone = "neutral" | "success" | "amber";
 
@@ -44,7 +48,7 @@ function PropertyPill({ children, tone, t }: { children: string; tone: PillTone;
 }
 
 type PropertyRow = {
-  icon: LucideIcon;
+  icon: NotionIconName;
   label: string;
   value: string;
   kind: "plain" | "pill";
@@ -68,17 +72,17 @@ export function ClientPageHeader({
   paddingX?: number;
 }) {
   const rows: PropertyRow[] = [
-    { icon: Calendar, label: "Created time", value: client.addedDate, kind: "plain" },
-    { icon: Route, label: "Pathway", value: client.pathway, kind: "pill", pillTone: "neutral" },
+    { icon: "calendar", label: "Created time", value: client.addedDate, kind: "plain" },
+    { icon: "directional-sign", label: "Pathway", value: client.pathway, kind: "pill", pillTone: "neutral" },
     {
-      icon: CircleDot,
+      icon: "dot-circle",
       label: "Status",
       value: client.statusLabel,
       kind: "pill",
       pillTone: statusPillTone(client.status),
     },
     {
-      icon: Clock,
+      icon: "clock",
       label: "Expiry",
       value: client.workPermitExpiry,
       kind: "plain",
@@ -109,7 +113,7 @@ export function ClientPageHeader({
       </h1>
 
       <div style={{ marginTop: 14, display: "flex", flexDirection: "column", gap: 2 }}>
-        {rows.map(({ icon: Icon, label, value, kind, pillTone, valueColor }) => (
+        {rows.map(({ icon, label, value, kind, pillTone, valueColor }) => (
           <div
             key={label}
             style={{
@@ -121,8 +125,14 @@ export function ClientPageHeader({
               padding: "2px 0",
             }}
           >
-            <Icon size={14} color={t.textDim} strokeWidth={1.75} style={{ flexShrink: 0 }} />
-            <span style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.4 }}>{label}</span>
+            <NotionIcon
+              name={icon}
+              size={CLIENT_HEADER_PROPERTY_ICON_SIZE}
+              color={t.textDim}
+            />
+            <span style={docsLabelStyle(CLIENT_HEADER_PROPERTY_LABEL_SIZE, t.textMuted)}>
+              {label}
+            </span>
             <div style={{ minWidth: 0 }}>
               {kind === "pill" && pillTone ? (
                 <PropertyPill tone={pillTone} t={t}>

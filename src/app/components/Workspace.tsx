@@ -1,10 +1,13 @@
 import { X, Sun, Moon, ChevronRight, Zap } from "lucide-react";
 import { ClientView } from "./ClientView";
+import { ContactView } from "./ContactView";
 import { ClientDataPage } from "./ClientDataPage";
 import { ClientIcon } from "./ClientIcon";
 import { HolonBoundary } from "./docs/HolonBoundary";
 import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
 import { getClientMeta } from "../data/clients";
+import { getContact, type ContactIndicator } from "../data/contacts";
+import { NotionIcon } from "./icons/NotionIcon";
 import { SIDEBAR_HEADER_HEIGHT } from "../constants/layout";
 import type { Tokens } from "./tokens";
 
@@ -13,11 +16,22 @@ export type Tab = {
   label: string;
 };
 
-export function parseTabId(tabId: string): { clientId: string; kind: "details" | "activity" } {
-  if (tabId.endsWith("-activity")) {
-    return { clientId: tabId.slice(0, -"-activity".length), kind: "activity" };
+export type ParsedTabId =
+  | { kind: "details"; clientId: string }
+  | { kind: "activity"; clientId: string }
+  | { kind: "contact"; contactId: string };
+
+export function parseTabId(tabId: string): ParsedTabId {
+  if (tabId.startsWith("contact-")) {
+    return { kind: "contact", contactId: tabId.slice("contact-".length) };
   }
-  return { clientId: tabId.split("-")[0], kind: "details" };
+  if (tabId.endsWith("-activity")) {
+    return { kind: "activity", clientId: tabId.slice(0, -"-activity".length) };
+  }
+  const clientId = tabId.endsWith("-details")
+    ? tabId.slice(0, -"-details".length)
+    : tabId.split("-")[0];
+  return { kind: "details", clientId };
 }
 
 type WorkspaceProps = {
@@ -32,7 +46,13 @@ type WorkspaceProps = {
 };
 
 function getBreadcrumb(tabId: string): string[] {
-  const { clientId, kind } = parseTabId(tabId);
+  const parsed = parseTabId(tabId);
+  if (parsed.kind === "contact") {
+    const contact = getContact(parsed.contactId);
+    return ["Contacts", contact?.name ?? parsed.contactId];
+  }
+
+  const { clientId, kind } = parsed;
   const nameMap: Record<string, string> = {
     sarah: "Sarah Jenkins", mark: "Mark Zhao", aisha: "Aisha Khan",
     priya: "Priya Nair", daniel: "Daniel Osei", fatima: "Fatima Al-Hassan",
@@ -40,6 +60,12 @@ function getBreadcrumb(tabId: string): string[] {
   };
   const leaf = kind === "activity" ? "Activity" : "Details";
   return ["Board", nameMap[clientId] ?? clientId, leaf];
+}
+
+function contactTabIconColor(indicator: ContactIndicator, t: Tokens) {
+  if (indicator === "sequenced") return t.accent;
+  if (indicator === "silenced") return t.red;
+  return t.textMuted;
 }
 
 export function Workspace({
@@ -52,7 +78,7 @@ export function Workspace({
   onToggleTheme,
   onOpenActivityTab,
 }: WorkspaceProps) {
-  const { clientId: activeClientId, kind: activeTabKind } = parseTabId(activeTabId);
+  const parsedActiveTab = parseTabId(activeTabId);
   const breadcrumb = getBreadcrumb(activeTabId);
 
   return (
@@ -85,14 +111,24 @@ export function Workspace({
         <div style={{ display: "flex", alignItems: "stretch", flex: 1, overflowX: "auto" }}>
           {tabs.map((tab) => {
             const isActive = tab.id === activeTabId;
-            const { clientId, kind } = parseTabId(tab.id);
-            const meta = getClientMeta(clientId);
+            const parsed = parseTabId(tab.id);
             const tabInner = (
               <>
-                {kind === "activity" ? (
+                {parsed.kind === "activity" ? (
                   <Zap size={13} color={isActive ? t.accent : t.textMuted} strokeWidth={1.5} />
+                ) : parsed.kind === "contact" ? (
+                  (() => {
+                    const contact = getContact(parsed.contactId);
+                    return (
+                      <NotionIcon
+                        name="user"
+                        size={13}
+                        color={contact ? contactTabIconColor(contact.indicator, t) : t.textMuted}
+                      />
+                    );
+                  })()
                 ) : (
-                  <ClientIcon initials={meta.initials} status={meta.status} size={13} />
+                  <ClientIcon initials={getClientMeta(parsed.clientId).initials} status={getClientMeta(parsed.clientId).status} size={13} />
                 )}
                 <span style={{
                   fontSize: 12,
@@ -205,14 +241,23 @@ export function Workspace({
           }}
         >
           {breadcrumb.map((segment, i) => {
-            const isClientSegment = i === 1;
-            const clientMeta = isClientSegment ? getClientMeta(activeClientId) : null;
+            const isContactSegment = parsedActiveTab.kind === "contact" && i === 1;
+            const isClientSegment = parsedActiveTab.kind !== "contact" && i === 1;
+            const clientMeta = isClientSegment ? getClientMeta(parsedActiveTab.clientId) : null;
+            const contact = isContactSegment ? getContact(parsedActiveTab.contactId) : null;
             return (
               <span key={i} style={{ display: "flex", alignItems: "center", gap: 2 }}>
                 {i > 0 && <ChevronRight size={10} color={t.textDim} strokeWidth={1.5} />}
                 <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
                   {isClientSegment && clientMeta && (
                     <ClientIcon initials={clientMeta.initials} status={clientMeta.status} size={11} />
+                  )}
+                  {isContactSegment && contact && (
+                    <NotionIcon
+                      name="user"
+                      size={11}
+                      color={contactTabIconColor(contact.indicator, t)}
+                    />
                   )}
                   <span style={{
                     fontSize: 11,
@@ -232,14 +277,18 @@ export function Workspace({
 
       {tabs.length > 0 ? (
         <div style={{ flex: 1, overflow: "hidden" }}>
-          {activeTabKind === "activity"
-            ? <ClientDataPage clientId={activeClientId} t={t} isDark={isDark} />
-            : <ClientView
-                clientId={activeClientId}
-                t={t}
-                isDark={isDark}
-                onOpenClientDataFullPage={() => onOpenActivityTab(activeClientId)}
-              />}
+          {parsedActiveTab.kind === "activity" ? (
+            <ClientDataPage clientId={parsedActiveTab.clientId} t={t} isDark={isDark} />
+          ) : parsedActiveTab.kind === "contact" ? (
+            <ContactView contactId={parsedActiveTab.contactId} t={t} />
+          ) : (
+            <ClientView
+              clientId={parsedActiveTab.clientId}
+              t={t}
+              isDark={isDark}
+              onOpenClientDataFullPage={() => onOpenActivityTab(parsedActiveTab.clientId)}
+            />
+          )}
         </div>
       ) : (
         <HolonBoundary

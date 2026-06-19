@@ -77,7 +77,11 @@ export function HolonBoundary({
   }, [id, onFocus, registerFocus, unregisterFocus]);
 
   if (registerOnly) {
-    return <>{children}</>;
+    return (
+      <HolonParentContext.Provider value={id}>
+        {children}
+      </HolonParentContext.Provider>
+    );
   }
 
   return (

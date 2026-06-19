@@ -1,4 +1,4 @@
-import { ExternalLink } from "lucide-react";
+import { CheckSquare, ExternalLink, MoreHorizontal } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { NotionIconName } from "../../icons/notion-icon-urls";
 import type { HolonLucideIconName } from "./holonIcons";
@@ -6,6 +6,8 @@ import { NotionIcon } from "../icons/NotionIcon";
 
 const HOLON_LUCIDE_ICONS: Record<HolonLucideIconName, LucideIcon> = {
   "external-link": ExternalLink,
+  "more-horizontal": MoreHorizontal,
+  "check-square": CheckSquare,
 };
 
 type HolonTreeIconProps = {

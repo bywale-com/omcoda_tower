@@ -1,23 +1,29 @@
 import { useState, useEffect, type MouseEvent as ReactMouseEvent } from "react";
 import { BoardPanel } from "./components/BoardPanel";
 import { DocsPanel } from "./components/DocsPanel";
+import { HolonDetailPanel } from "./components/HolonDetailPanel";
 import { ClientPortalPage } from "./components/client-portal/ClientPortalPage";
 import { Workspace } from "./components/Workspace";
 import { StatusBar } from "./components/StatusBar";
 import { PanelProvider } from "./context/PanelContext";
 import { DocsHighlightProvider, useDocsHighlight } from "./context/DocsHighlightContext";
 import { DocsRegistryProvider } from "./context/DocsRegistryContext";
+import { HolonDetailProvider, useHolonDetail } from "./context/HolonDetailContext";
 import { TouchpointFocusProvider, useTouchpointFocus } from "./context/TouchpointFocusContext";
 import { TaskProvider } from "./context/TaskContext";
 import { light, dark } from "./components/tokens";
 import type { Tab } from "./components/Workspace";
 import { parseTabId } from "./components/Workspace";
+import { contactTabId, getContact } from "./data/contacts";
 import type { ConsultantTask } from "./data/tasks";
 import {
   DEFAULT_SIDEBAR_WIDTH,
   DEFAULT_DOCS_PANEL_WIDTH,
+  DEFAULT_HOLON_DETAIL_PANEL_WIDTH,
   MIN_DOCS_PANEL_WIDTH,
   MAX_DOCS_PANEL_WIDTH,
+  MIN_HOLON_DETAIL_PANEL_WIDTH,
+  MAX_HOLON_DETAIL_PANEL_WIDTH,
   MIN_SIDEBAR_WIDTH,
   MAX_SIDEBAR_WIDTH,
 } from "./constants/layout";
@@ -54,7 +60,9 @@ export default function App() {
       <TaskProvider>
         <DocsHighlightProvider>
           <DocsRegistryProvider>
-            <AppShell />
+            <HolonDetailProvider>
+              <AppShell />
+            </HolonDetailProvider>
           </DocsRegistryProvider>
         </DocsHighlightProvider>
       </TaskProvider>
@@ -65,6 +73,7 @@ export default function App() {
 function AppShell() {
   /* MARKER-MAKE-KIT-INVOKED */
   const { setHoveredComponentId } = useDocsHighlight();
+  const { detailHolonId, closeHolonDetail } = useHolonDetail();
   const { focusTouchpointId, setFocusTouchpointId } = useTouchpointFocus();
   const [isDark, setIsDark] = useState(false);
   const t = isDark ? dark : light;
@@ -81,11 +90,19 @@ function AppShell() {
   const [isDocsModeOpen, setIsDocsModeOpen] = useState(false);
   const [docsPanelWidth, setDocsPanelWidth] = useState(DEFAULT_DOCS_PANEL_WIDTH);
   const [isResizingDocsPanel, setIsResizingDocsPanel] = useState(false);
+  const [detailPanelWidth, setDetailPanelWidth] = useState(DEFAULT_HOLON_DETAIL_PANEL_WIDTH);
+  const [isResizingDetailPanel, setIsResizingDetailPanel] = useState(false);
   const [portalClientId, setPortalClientId] = useState<string | null>(null);
 
+  const activeTab = parseTabId(activeTabId);
+  const activeContactId = activeTab.kind === "contact" ? activeTab.contactId : null;
+
   useEffect(() => {
-    if (!isDocsModeOpen) setHoveredComponentId(null);
-  }, [isDocsModeOpen, setHoveredComponentId]);
+    if (!isDocsModeOpen) {
+      setHoveredComponentId(null);
+      closeHolonDetail();
+    }
+  }, [isDocsModeOpen, setHoveredComponentId, closeHolonDetail]);
 
   function handleIconClick(iconId: string) {
     setActiveIcon(iconId);
@@ -108,6 +125,16 @@ function AppShell() {
 
   function handleViewInActivity(clientId: string, activityNodeId: string) {
     openActivityTab(clientId, activityNodeId);
+  }
+
+  function handleContactClick(contactId: string) {
+    const contact = getContact(contactId);
+    if (!contact) return;
+    const tabId = contactTabId(contactId);
+    if (!tabs.find((tab) => tab.id === tabId)) {
+      setTabs((prev) => [...prev, { id: tabId, label: contact.name }]);
+    }
+    setActiveTabId(tabId);
   }
 
   function handleClientClick(clientId: string) {
@@ -139,6 +166,29 @@ function AppShell() {
     };
 
     setIsResizingDocsPanel(true);
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mouseup", handleUp);
+  }
+
+  function onDetailPanelResizeMouseDown(e: ReactMouseEvent) {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startW = detailPanelWidth;
+
+    const handleMove = (ev: MouseEvent) => {
+      const delta = startX - ev.clientX;
+      setDetailPanelWidth(
+        Math.min(MAX_HOLON_DETAIL_PANEL_WIDTH, Math.max(MIN_HOLON_DETAIL_PANEL_WIDTH, startW + delta)),
+      );
+    };
+
+    const handleUp = () => {
+      setIsResizingDetailPanel(false);
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("mouseup", handleUp);
+    };
+
+    setIsResizingDetailPanel(true);
     window.addEventListener("mousemove", handleMove);
     window.addEventListener("mouseup", handleUp);
   }
@@ -176,7 +226,10 @@ function AppShell() {
     if (activeTabId === tabId && remaining.length > 0) {
       const last = remaining[remaining.length - 1];
       setActiveTabId(last.id);
-      setActiveClientId(parseTabId(last.id).clientId);
+      const parsed = parseTabId(last.id);
+      if (parsed.kind !== "contact") {
+        setActiveClientId(parsed.clientId);
+      }
     }
   }
 
@@ -214,7 +267,7 @@ function AppShell() {
         display: "flex",
         overflow: "hidden",
         minHeight: 0,
-        userSelect: isResizingSidebar || isResizingDocsPanel ? "none" : "auto",
+        userSelect: isResizingSidebar || isResizingDocsPanel || isResizingDetailPanel ? "none" : "auto",
       }}>
         {isDocsModeOpen && (
           <DocsPanel width={docsPanelWidth} t={t} />
@@ -252,6 +305,8 @@ function AppShell() {
           onTaskClick={handleTaskClick}
           activeIcon={activeIcon}
           onIconClick={handleIconClick}
+          activeContactId={activeContactId}
+          onContactClick={handleContactClick}
           isDocsModeOpen={isDocsModeOpen}
           onToggleDocsMode={() => setIsDocsModeOpen((open) => !open)}
           onViewInActivity={handleViewInActivity}
@@ -287,7 +342,10 @@ function AppShell() {
           activeTabId={activeTabId}
           onTabClick={(id) => {
             setActiveTabId(id);
-            setActiveClientId(parseTabId(id).clientId);
+            const parsed = parseTabId(id);
+            if (parsed.kind !== "contact") {
+              setActiveClientId(parsed.clientId);
+            }
           }}
           onTabClose={handleTabClose}
           t={t}
@@ -295,6 +353,34 @@ function AppShell() {
           onToggleTheme={() => setIsDark((d) => !d)}
           onOpenActivityTab={openActivityTab}
         />
+
+        {isDocsModeOpen && detailHolonId && (
+          <div style={{ width: 0, flexShrink: 0, position: "relative", zIndex: 1 }}>
+            <div
+              onMouseDown={onDetailPanelResizeMouseDown}
+              style={{
+                position: "absolute",
+                left: -2,
+                top: 0,
+                bottom: 0,
+                width: 4,
+                cursor: "ew-resize",
+                background: isResizingDetailPanel ? t.accent : "transparent",
+                transition: isResizingDetailPanel ? "none" : "background 0.1s",
+              }}
+              onMouseEnter={(e) => {
+                if (!isResizingDetailPanel) (e.currentTarget as HTMLElement).style.background = `${t.accent}55`;
+              }}
+              onMouseLeave={(e) => {
+                if (!isResizingDetailPanel) (e.currentTarget as HTMLElement).style.background = "transparent";
+              }}
+            />
+          </div>
+        )}
+
+        {isDocsModeOpen && detailHolonId && (
+          <HolonDetailPanel width={detailPanelWidth} t={t} />
+        )}
       </div>
 
       <StatusBar t={t} isDark={isDark} />

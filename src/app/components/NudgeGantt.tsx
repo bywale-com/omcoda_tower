@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { useState } from "react";
+import type { LucideIcon } from "lucide-react";
 import type { Tokens } from "./tokens";
 import {
   ATTEMPT_BAR_COLORS,
@@ -43,11 +44,13 @@ export function NudgeGanttBar({
   dayW,
   t,
   rowH,
+  docsHighlighted = false,
 }: {
   data: JourneyGanttData;
   dayW: number;
   t: Tokens;
   rowH?: number;
+  docsHighlighted?: boolean;
 }) {
   const left = data.startDay * dayW;
   const width = Math.max((data.endDay - data.startDay) * dayW, 40);
@@ -86,6 +89,8 @@ export function NudgeGanttBar({
           borderRadius: 3,
           boxSizing: "border-box",
           ...groupBarStyle(sectionStyle, t),
+          ...(docsHighlighted ? { boxShadow: `0 0 0 2px ${t.accent}`, zIndex: 20 } : {}),
+          transition: "box-shadow 0.12s ease",
         }}
       />
 
@@ -119,6 +124,7 @@ export function HoverGanttBand({
   variant = "default",
   selected,
   onClick,
+  docsHighlighted = false,
   t,
 }: {
   left: number;
@@ -129,6 +135,7 @@ export function HoverGanttBand({
   variant?: ChannelBarSegment["variant"] | "attempt";
   selected?: boolean;
   onClick?: () => void;
+  docsHighlighted?: boolean;
   t: Tokens;
 }) {
   const [hovered, setHovered] = useState(false);
@@ -164,12 +171,15 @@ export function HoverGanttBand({
         display: "flex",
         alignItems: "center",
         justifyContent: "flex-start",
-        boxShadow: selected
-          ? `0 0 0 2px ${t.textPrimary}`
-          : hovered
-            ? `0 2px 8px ${t.border}`
-            : undefined,
+        boxShadow: docsHighlighted
+          ? `0 0 0 2px ${t.accent}`
+          : selected
+            ? `0 0 0 2px ${t.textPrimary}`
+            : hovered
+              ? `0 2px 8px ${t.border}`
+              : undefined,
         pointerEvents: "auto",
+        ...(docsHighlighted ? { zIndex: 20 } : {}),
       }}
     >
       {showLabel && (
@@ -188,6 +198,80 @@ export function HoverGanttBand({
   );
 }
 
+/** Flow-layout gantt band chip — same visuals as HoverGanttBand with label always shown. */
+export function GanttBandChip({
+  colorIndex,
+  label,
+  variant = "default",
+  selected,
+  onClick,
+  t,
+  fullWidth = true,
+  icon: Icon,
+  width = "100%",
+  height = 26,
+}: {
+  colorIndex: number;
+  label: string;
+  variant?: ChannelBarSegment["variant"] | "default";
+  selected?: boolean;
+  onClick?: () => void;
+  t: Tokens;
+  fullWidth?: boolean;
+  icon?: LucideIcon;
+  width?: string | number;
+  height?: number;
+}) {
+  const armed = variant === "armed";
+  const historical = variant === "historical";
+  const color = barColor(colorIndex, historical ? "historical" : variant === "armed" ? "armed" : undefined);
+  const labelColor = armed || historical ? color : "#fff";
+  const iconColor = labelColor;
+
+  return (
+    <button
+      type="button"
+      title={label}
+      onClick={onClick}
+      style={{
+        width,
+        alignSelf: width === "100%" ? "stretch" : "flex-start",
+        height,
+        background: armed ? "transparent" : color,
+        border: armed ? `1px dashed ${color}` : `1px solid ${color}`,
+        borderRadius: 3,
+        boxSizing: "border-box",
+        opacity: historical ? 0.55 : armed ? 0.85 : 1,
+        cursor: onClick ? "pointer" : "default",
+        padding: Icon ? "6px 8px" : "0 8px",
+        display: "flex",
+        flexDirection: Icon ? "column" : "row",
+        alignItems: "flex-start",
+        justifyContent: "flex-start",
+        gap: Icon ? 4 : 0,
+        overflow: "hidden",
+        boxShadow: selected ? `0 0 0 2px ${t.textPrimary}` : undefined,
+      }}
+    >
+      {Icon && <Icon size={12} color={iconColor} strokeWidth={2} />}
+      <span
+        style={{
+          width: "100%",
+          fontSize: 10,
+          fontWeight: 500,
+          color: labelColor,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          textAlign: "left",
+        }}
+      >
+        {label}
+      </span>
+    </button>
+  );
+}
+
 export function ChannelMiniGanttBar({
   segments,
   dayW,
@@ -196,6 +280,7 @@ export function ChannelMiniGanttBar({
   interactive,
   onSegmentClick,
   selected,
+  docsHighlighted = false,
   t,
 }: {
   segments: ChannelBarSegment[];
@@ -205,6 +290,7 @@ export function ChannelMiniGanttBar({
   interactive?: boolean;
   onSegmentClick?: (index: number) => void;
   selected?: boolean;
+  docsHighlighted?: boolean;
   t?: Tokens;
 }) {
   if (!segments.length) return null;
@@ -236,6 +322,7 @@ export function ChannelMiniGanttBar({
               label={labels?.[i]}
               variant={variant}
               selected={selected}
+              docsHighlighted={docsHighlighted}
               onClick={onSegmentClick ? () => onSegmentClick(i) : undefined}
               t={t}
             />
@@ -278,6 +365,8 @@ export function ChannelMiniGanttBar({
               borderRadius: 3,
               boxSizing: "border-box",
               opacity: variant === "historical" ? 0.55 : armed ? 0.85 : 1,
+              ...(docsHighlighted && t ? { boxShadow: `0 0 0 2px ${t.accent}`, zIndex: 20 } : {}),
+              transition: "box-shadow 0.12s ease",
             }}
           />
         );
@@ -381,12 +470,14 @@ export function EventTimelineMarker({
   t,
   rowH,
   variant = "default",
+  docsHighlighted = false,
 }: {
   atDay: number;
   dayW: number;
   t: Tokens;
   rowH: number;
   variant?: ChannelBarSegment["variant"];
+  docsHighlighted?: boolean;
 }) {
   const left = atDay * dayW;
   const width = Math.max(3, dayW / 48);
@@ -406,6 +497,8 @@ export function EventTimelineMarker({
         borderRadius: 2,
         pointerEvents: "none",
         opacity: historical ? 0.55 : armed ? 0.5 : 1,
+        ...(docsHighlighted ? { boxShadow: `0 0 0 2px ${t.accent}`, zIndex: 20 } : {}),
+        transition: "box-shadow 0.12s ease",
       }}
     />
   );

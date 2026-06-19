@@ -1,34 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import {
-  LayoutDashboard, Search, GitBranch, ChevronDown,
-  Users, Settings, UserCircle, MonitorCog,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import { SIDEBAR_HEADER_HEIGHT } from "../constants/layout";
 import { HolonBoundary } from "./docs/HolonBoundary";
+import {
+  ALL_NAV,
+  DOCS_MODE_NAV_ICON,
+  MORE_NAV_ICON,
+  PRIMARY_NAV,
+} from "./docs/primaryNavigationIcons";
 import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
+import { NotionIcon } from "./icons/NotionIcon";
+import type { NotionIconName } from "../icons/notion-icon-urls";
 import type { Tokens } from "./tokens";
 
-type NavItem = {
-  id: string;
-  Icon: LucideIcon;
-  label: string;
-  shortcut: string;
-};
-
-const PRIMARY_NAV: NavItem[] = [
-  { id: "board",  Icon: LayoutDashboard, label: "Board",      shortcut: "Ctrl+Shift+E" },
-  { id: "search", Icon: Search,          label: "Search",     shortcut: "Ctrl+Shift+F" },
-  { id: "git",    Icon: GitBranch,       label: "Pipeline",   shortcut: "Ctrl+Shift+G" },
-];
-
-const ALL_NAV: NavItem[] = [
-  ...PRIMARY_NAV,
-  { id: "clients", Icon: Users,      label: "Clients",  shortcut: "Ctrl+Shift+C" },
-  { id: "account", Icon: UserCircle, label: "Account",  shortcut: "" },
-  { id: "settings", Icon: Settings,  label: "Settings", shortcut: "Ctrl+," },
-];
+const NAV_ICON_SIZE = 16;
+const MENU_ICON_SIZE = 14;
+const MORE_ICON_SIZE = 14;
 
 type ActivityBarHeaderProps = {
   activeIcon: string;
@@ -81,7 +68,7 @@ export function ActivityBarHeader({
     return () => document.removeEventListener("mousedown", handleClick);
   }, [menuOpen]);
 
-  const iconBtn = (id: string, Icon: LucideIcon, label: string) => {
+  const iconBtn = (id: string, icon: NotionIconName, label: string) => {
     const isActive = activeIcon === id;
     return (
       <button
@@ -102,10 +89,10 @@ export function ActivityBarHeader({
           flexShrink: 0,
         }}
       >
-        <Icon
-          size={16}
+        <NotionIcon
+          name={icon}
+          size={NAV_ICON_SIZE}
           color={isActive ? t.accent : t.textMuted}
-          strokeWidth={1.5}
         />
       </button>
     );
@@ -130,7 +117,7 @@ export function ActivityBarHeader({
             zIndex: 10000,
           }}
         >
-          {ALL_NAV.map(({ id, Icon, label, shortcut }) => {
+          {ALL_NAV.map(({ id, icon, label, shortcut }) => {
             const isActive = activeIcon === id;
             return (
               <button
@@ -158,7 +145,11 @@ export function ActivityBarHeader({
                   if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = "transparent";
                 }}
               >
-                <Icon size={14} color={isActive ? t.accent : t.textMuted} strokeWidth={1.5} />
+                <NotionIcon
+                  name={icon}
+                  size={MENU_ICON_SIZE}
+                  color={isActive ? t.accent : t.textMuted}
+                />
                 <span style={{ flex: 1, fontSize: 12, color: t.textPrimary }}>{label}</span>
                 {shortcut && (
                   <span style={{ fontSize: 10, color: t.textDim }}>{shortcut}</span>
@@ -212,14 +203,14 @@ export function ActivityBarHeader({
               flexShrink: 0,
             }}
           >
-            <MonitorCog
-              size={16}
+            <NotionIcon
+              name={DOCS_MODE_NAV_ICON}
+              size={NAV_ICON_SIZE}
               color={isDocsModeOpen ? t.accent : t.textMuted}
-              strokeWidth={1.5}
             />
           </button>
 
-          {PRIMARY_NAV.map(({ id, Icon, label }) => iconBtn(id, Icon, label))}
+          {PRIMARY_NAV.map(({ id, icon, label }) => iconBtn(id, icon, label))}
 
           <button
             ref={triggerRef}
@@ -239,15 +230,15 @@ export function ActivityBarHeader({
               flexShrink: 0,
             }}
           >
-            <ChevronDown
-              size={14}
-              color={t.textMuted}
-              strokeWidth={1.5}
+            <span
               style={{
+                display: "inline-flex",
                 transform: menuOpen ? "rotate(180deg)" : "rotate(0deg)",
                 transition: "transform 0.12s ease",
               }}
-            />
+            >
+              <NotionIcon name={MORE_NAV_ICON} size={MORE_ICON_SIZE} color={t.textMuted} />
+            </span>
           </button>
         </div>
       </HolonBoundary>
