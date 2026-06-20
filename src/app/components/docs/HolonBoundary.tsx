@@ -28,11 +28,11 @@ export type HolonBoundaryProps = {
   highlightColor?: string;
   /** When false, hover won't draw a ring (holon still appears in tree) */
   highlightWhen?: boolean;
-  /** Register in docs tree without rendering a wrapper (for off-screen holons) */
+  /** Register in Console tree without rendering a wrapper (for off-screen holons) */
   registerOnly?: boolean;
-  /** Override in-view state for docs tree eye indicator */
+  /** Override in-view state for Console tree eye indicator */
   inView?: boolean;
-  /** Called when user clicks the closed-eye reveal control in the docs tree */
+  /** Called when user clicks the closed-eye reveal control in the Console tree */
   onFocus?: () => void;
   style?: CSSProperties;
   t: Tokens;

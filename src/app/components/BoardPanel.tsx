@@ -1,7 +1,5 @@
 import { useState, type CSSProperties } from "react";
 import {
-  Check,
-  CheckSquare,
   ChevronDown,
   ChevronRight,
   Eye,
@@ -11,17 +9,13 @@ import { PhaseTooltip } from "./PhaseTooltip";
 import { ActivityBarHeader } from "./ActivityBarHeader";
 import { ContactsBody } from "./contacts/ContactsBody";
 import { ContactsSectionHeader } from "./contacts/ContactsSectionHeader";
+import { HubBody } from "./hub/HubBody";
 import { HolonBoundary } from "./docs/HolonBoundary";
 import {
   CLIENT_NAME_HOLON,
   CLIENT_ROW_HOLON,
   PHASE_SIGNAL_HOLON,
   ROW_ACTIONS_HOLON,
-  TASK_LABEL_HOLON,
-  TASK_META_HOLON,
-  TASK_ROW_HOLON,
-  TASK_STATUS_TOGGLE_HOLON,
-  TASKS_SECTION_HOLON,
 } from "./docs/boardBodyHolons";
 import { docsTargetHighlight, useIsDocsTarget } from "./docs/docsHighlight";
 import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
@@ -45,12 +39,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "./ui/popover";
+import {
+  TOWER_POPOVER_CONTENT_CLASS,
+  TOWER_POPOVER_MENU_ITEM_CLASS,
+} from "./ui/towerChrome";
 import { clientList, getClientPhaseSnapshot } from "../data/clients";
 import { contactList } from "../data/contacts";
+import { useAudits } from "../context/AuditContext";
+import { hubAgentList, hubAutomationList } from "../data/hub";
+import type { HubToolRef } from "../data/hub";
 import { importList } from "../data/imports";
 import type { ClientMeta, ClientPhaseSnapshot } from "../data/clients";
 import type { ConsultantTask } from "../data/tasks";
 import { useTasks } from "../context/TaskContext";
+import { TasksBody } from "./tasks/TasksBody";
 import type { Tokens } from "./tokens";
 
 const CLIENT_ROW_H = DOCS_TREE_ROW_H;
@@ -162,107 +164,6 @@ function ClientRowIcon({
   );
 }
 
-function TaskRow({
-  task,
-  isActive,
-  t,
-  onTaskClick,
-  onToggleStatus,
-}: {
-  task: ConsultantTask;
-  isActive: boolean;
-  t: Tokens;
-  onTaskClick: (task: ConsultantTask) => void;
-  onToggleStatus: (taskId: string) => void;
-}) {
-  const isOpen = task.status === "open";
-  const statusColor = isOpen ? t.red : t.success;
-  const isDocsHighlighted = useIsDocsTarget(TASK_ROW_HOLON.id);
-  const isStatusHighlighted = useIsDocsTarget(TASK_STATUS_TOGGLE_HOLON.id);
-  const isLabelHighlighted = useIsDocsTarget(TASK_LABEL_HOLON.id);
-  const isMetaHighlighted = useIsDocsTarget(TASK_META_HOLON.id);
-
-  return (
-    <div
-      onClick={() => onTaskClick(task)}
-      title={`${task.label} · ${task.clientName} · opens in Activity`}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 8,
-        minHeight: CLIENT_ROW_H,
-        padding: "4px 10px",
-        paddingLeft: isActive ? 10 : 12,
-        cursor: "pointer",
-        background: isActive ? t.activeRowBg : "transparent",
-        borderLeft: `2px solid ${statusColor}`,
-        borderRadius: 4,
-        boxSizing: "border-box",
-        ...docsTargetHighlight(isDocsHighlighted, t.accent),
-      }}
-      onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = t.hoverBg; }}
-      onMouseLeave={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
-    >
-      <button
-        type="button"
-        title={isOpen ? "Mark complete" : "Reopen task"}
-        onClick={(e) => {
-          e.stopPropagation();
-          onToggleStatus(task.id);
-        }}
-        style={{
-          width: CLIENT_ICON_SLOT,
-          height: CLIENT_ICON_SLOT,
-          borderRadius: 6,
-          flexShrink: 0,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          border: `1px solid ${statusColor}66`,
-          background: isOpen ? "transparent" : `${t.success}22`,
-          cursor: "pointer",
-          padding: 0,
-          ...docsTargetHighlight(isStatusHighlighted, t.accent),
-        }}
-      >
-        {isOpen
-          ? <CheckSquare size={10} color={statusColor} strokeWidth={1.75} />
-          : <Check size={10} color={statusColor} strokeWidth={3} />}
-      </button>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{
-          fontSize: CLIENT_LABEL_SIZE,
-          color: isOpen ? (isActive ? t.textPrimary : t.textSidebar) : t.textMuted,
-          fontWeight: 500,
-          lineHeight: 1.25,
-          letterSpacing: "-0.01em",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          textDecoration: isOpen ? "none" : "line-through",
-          borderRadius: 4,
-          ...docsTargetHighlight(isLabelHighlighted, t.accent),
-        }}>
-          {task.label}
-        </div>
-        <div style={{
-          fontSize: 10,
-          color: t.textDim,
-          lineHeight: 1.3,
-          marginTop: 1,
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          borderRadius: 4,
-          ...docsTargetHighlight(isMetaHighlighted, t.accent),
-        }}>
-          {task.clientName} · {task.createdAt}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function ClientRow({
   client,
   isActive,
@@ -351,12 +252,12 @@ function ClientRow({
             side="right"
             align="start"
             sideOffset={6}
-            className="w-48 p-1"
+            className={TOWER_POPOVER_CONTENT_CLASS}
             onClick={(e) => e.stopPropagation()}
           >
             <button
               type="button"
-              className="flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+              className={TOWER_POPOVER_MENU_ITEM_CLASS}
               onClick={() => {
                 onViewAsClient?.(client);
                 setMenuOpen(false);
@@ -383,8 +284,10 @@ type BoardPanelProps = {
   onIconClick: (id: string) => void;
   activeContactId: string | null;
   onContactClick: (id: string) => void;
-  isDocsModeOpen: boolean;
-  onToggleDocsMode: () => void;
+  activeHubTool: HubToolRef | null;
+  onHubToolClick: (tool: HubToolRef) => void;
+  isConsoleOpen: boolean;
+  onToggleConsole: () => void;
   onViewInActivity: (clientId: string, activityNodeId: string) => void;
   onViewAsClient?: (clientId: string) => void;
   t: Tokens;
@@ -484,65 +387,6 @@ function ClientsSectionHeader({
   );
 }
 
-function TasksSectionHeader({
-  count,
-  open,
-  onToggle,
-  t,
-}: {
-  count: number;
-  open: boolean;
-  onToggle: () => void;
-  t: Tokens;
-}) {
-  return (
-    <HolonBoundary
-      id={TASKS_SECTION_HOLON.id}
-      label={TASKS_SECTION_HOLON.label}
-      icon={TASKS_SECTION_HOLON.icon}
-      order={TASKS_SECTION_HOLON.order}
-      t={t}
-      onClick={onToggle}
-      style={{
-        height: 24,
-        display: "flex",
-        alignItems: "center",
-        padding: "0 10px",
-        gap: 6,
-        cursor: "pointer",
-        userSelect: "none",
-        flexShrink: 0,
-      }}
-      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = t.hoverBg; }}
-      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
-    >
-      <ChevronRight
-        size={12}
-        color={t.textMuted}
-        strokeWidth={2}
-        style={{ transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform 0.12s ease", flexShrink: 0 }}
-      />
-      <span style={{
-        fontSize: 11,
-        color: t.textDim,
-        fontWeight: 600,
-        letterSpacing: "0.01em",
-      }}>
-        Tasks
-      </span>
-      <span style={{
-        fontSize: 10,
-        color: t.textDim,
-        fontWeight: 500,
-        marginLeft: 2,
-        opacity: 0.85,
-      }}>
-        {count}
-      </span>
-    </HolonBoundary>
-  );
-}
-
 export function BoardPanel({
   width,
   activeClientId,
@@ -553,8 +397,10 @@ export function BoardPanel({
   onIconClick,
   activeContactId,
   onContactClick,
-  isDocsModeOpen,
-  onToggleDocsMode,
+  activeHubTool,
+  onHubToolClick,
+  isConsoleOpen,
+  onToggleConsole,
   onViewInActivity,
   onViewAsClient,
   t,
@@ -563,8 +409,12 @@ export function BoardPanel({
   const [clientsOpen, setClientsOpen] = useState(true);
   const [tasksOpen, setTasksOpen] = useState(true);
   const { tasks, openTaskCount, toggleTaskStatus } = useTasks();
+  const { audits, createAndRunAudit } = useAudits();
   const clientsInView = clientsOpen && clientList.length > 0;
-  const tasksInView = tasksOpen && tasks.length > 0;
+
+  function handleAuditImportsContinue(importIds: string[]) {
+    createAndRunAudit(importIds);
+  }
 
   return (
     <div style={{
@@ -581,8 +431,8 @@ export function BoardPanel({
       <ActivityBarHeader
         activeIcon={activeIcon}
         onIconClick={onIconClick}
-        isDocsModeOpen={isDocsModeOpen}
-        onToggleDocsMode={onToggleDocsMode}
+        isConsoleOpen={isConsoleOpen}
+        onToggleConsole={onToggleConsole}
         t={t}
         isDark={isDark}
       />
@@ -598,6 +448,17 @@ export function BoardPanel({
             t={t}
           />
         </>
+      ) : activeIcon === "hub" ? (
+        <HubBody
+          audits={audits}
+          agents={hubAgentList}
+          automations={hubAutomationList}
+          imports={importList}
+          activeTool={activeHubTool}
+          onToolClick={onHubToolClick}
+          onAuditImportsContinue={handleAuditImportsContinue}
+          t={t}
+        />
       ) : (
         <>
       <ClientsSectionHeader
@@ -675,73 +536,18 @@ export function BoardPanel({
             />
           ))}
 
-        <HolonBoundary
-          id={TASK_ROW_HOLON.id}
-          label={TASK_ROW_HOLON.label}
-          icon={TASK_ROW_HOLON.icon}
-          order={TASK_ROW_HOLON.order}
-          parentId={TASKS_SECTION_HOLON.id}
-          registerOnly
-          inView={tasksInView}
-          onFocus={() => setTasksOpen(true)}
-          t={t}
-        >
-          <HolonBoundary
-            id={TASK_STATUS_TOGGLE_HOLON.id}
-            label={TASK_STATUS_TOGGLE_HOLON.label}
-            lucideIcon={TASK_STATUS_TOGGLE_HOLON.lucideIcon}
-            order={TASK_STATUS_TOGGLE_HOLON.order}
-            registerOnly
-            inView={tasksInView}
-            onFocus={() => setTasksOpen(true)}
-            t={t}
-          >
-            {null}
-          </HolonBoundary>
-          <HolonBoundary
-            id={TASK_LABEL_HOLON.id}
-            label={TASK_LABEL_HOLON.label}
-            icon={TASK_LABEL_HOLON.icon}
-            order={TASK_LABEL_HOLON.order}
-            registerOnly
-            inView={tasksInView}
-            onFocus={() => setTasksOpen(true)}
-            t={t}
-          >
-            {null}
-          </HolonBoundary>
-          <HolonBoundary
-            id={TASK_META_HOLON.id}
-            label={TASK_META_HOLON.label}
-            icon={TASK_META_HOLON.icon}
-            order={TASK_META_HOLON.order}
-            registerOnly
-            inView={tasksInView}
-            onFocus={() => setTasksOpen(true)}
-            t={t}
-          >
-            {null}
-          </HolonBoundary>
-        </HolonBoundary>
+      </HolonBoundary>
 
-        <TasksSectionHeader
-          count={openTaskCount}
+        <TasksBody
+          tasks={tasks}
           open={tasksOpen}
-          onToggle={() => setTasksOpen((o) => !o)}
+          onToggleOpen={() => setTasksOpen((o) => !o)}
+          openTaskCount={openTaskCount}
+          activeTouchpointId={activeTouchpointId}
+          onTaskClick={onTaskClick}
+          onToggleStatus={toggleTaskStatus}
           t={t}
         />
-
-        {tasksOpen && tasks.map((task) => (
-          <TaskRow
-            key={task.id}
-            task={task}
-            isActive={activeTouchpointId === task.touchpointId}
-            t={t}
-            onTaskClick={onTaskClick}
-            onToggleStatus={toggleTaskStatus}
-          />
-        ))}
-      </HolonBoundary>
         </>
       )}
     </div>

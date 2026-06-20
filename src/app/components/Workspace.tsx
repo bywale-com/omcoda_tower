@@ -1,12 +1,23 @@
-import { X, Sun, Moon, ChevronRight, Zap } from "lucide-react";
+import { X, Sun, Moon, ChevronRight, Zap, CircleCheck } from "lucide-react";
 import { ClientView } from "./ClientView";
 import { ContactView } from "./ContactView";
 import { ClientDataPage } from "./ClientDataPage";
 import { ClientIcon } from "./ClientIcon";
 import { HolonBoundary } from "./docs/HolonBoundary";
 import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
+import type { Audit } from "../data/audits";
+import { AUDIT_NUDGE_YELLOW } from "../data/audits";
+import { useAudits } from "../context/AuditContext";
 import { getClientMeta } from "../data/clients";
 import { getContact, type ContactIndicator } from "../data/contacts";
+import {
+  getHubToolLabel,
+  hubToolIcon,
+  hubToolSectionLabel,
+  parseHubToolTabId,
+  type HubToolRef,
+} from "../data/hub";
+import { HubToolDetailView } from "./hub/HubToolDetailView";
 import { NotionIcon } from "./icons/NotionIcon";
 import { SIDEBAR_HEADER_HEIGHT } from "../constants/layout";
 import type { Tokens } from "./tokens";
@@ -19,9 +30,14 @@ export type Tab = {
 export type ParsedTabId =
   | { kind: "details"; clientId: string }
   | { kind: "activity"; clientId: string }
-  | { kind: "contact"; contactId: string };
+  | { kind: "contact"; contactId: string }
+  | { kind: "hub"; tool: HubToolRef };
 
 export function parseTabId(tabId: string): ParsedTabId {
+  const hubTool = parseHubToolTabId(tabId);
+  if (hubTool) {
+    return { kind: "hub", tool: hubTool };
+  }
   if (tabId.startsWith("contact-")) {
     return { kind: "contact", contactId: tabId.slice("contact-".length) };
   }
@@ -45,8 +61,11 @@ type WorkspaceProps = {
   onOpenActivityTab: (clientId: string) => void;
 };
 
-function getBreadcrumb(tabId: string): string[] {
+function getBreadcrumb(tabId: string, audits: Audit[]): string[] {
   const parsed = parseTabId(tabId);
+  if (parsed.kind === "hub") {
+    return ["Hub", hubToolSectionLabel(parsed.tool.kind), getHubToolLabel(parsed.tool, audits)];
+  }
   if (parsed.kind === "contact") {
     const contact = getContact(parsed.contactId);
     return ["Contacts", contact?.name ?? parsed.contactId];
@@ -78,8 +97,9 @@ export function Workspace({
   onToggleTheme,
   onOpenActivityTab,
 }: WorkspaceProps) {
+  const { audits, getAuditById } = useAudits();
   const parsedActiveTab = parseTabId(activeTabId);
-  const breadcrumb = getBreadcrumb(activeTabId);
+  const breadcrumb = getBreadcrumb(activeTabId, audits);
 
   return (
     <div style={{
@@ -124,6 +144,36 @@ export function Workspace({
                         name="user"
                         size={13}
                         color={contact ? contactTabIconColor(contact.indicator, t) : t.textMuted}
+                      />
+                    );
+                  })()
+                ) : parsed.kind === "hub" ? (
+                  (() => {
+                    if (parsed.tool.kind === "audit") {
+                      const audit = getAuditById(parsed.tool.id);
+                      if (audit?.status === "running") {
+                        return (
+                          <NotionIcon
+                            name="circle-dashed"
+                            size={13}
+                            color={AUDIT_NUDGE_YELLOW}
+                            spin
+                          />
+                        );
+                      }
+                      return (
+                        <CircleCheck
+                          size={13}
+                          strokeWidth={2}
+                          color={isActive ? t.accent : t.accent}
+                        />
+                      );
+                    }
+                    return (
+                      <NotionIcon
+                        name={hubToolIcon(parsed.tool.kind)}
+                        size={13}
+                        color={isActive ? t.accent : t.textMuted}
                       />
                     );
                   })()
@@ -241,9 +291,15 @@ export function Workspace({
           }}
         >
           {breadcrumb.map((segment, i) => {
+            const isHubSectionSegment = parsedActiveTab.kind === "hub" && i === 1;
+            const isHubToolSegment = parsedActiveTab.kind === "hub" && i === 2;
             const isContactSegment = parsedActiveTab.kind === "contact" && i === 1;
-            const isClientSegment = parsedActiveTab.kind !== "contact" && i === 1;
-            const clientMeta = isClientSegment ? getClientMeta(parsedActiveTab.clientId) : null;
+            const isClientSegment =
+              (parsedActiveTab.kind === "details" || parsedActiveTab.kind === "activity") && i === 1;
+            const clientMeta =
+              parsedActiveTab.kind === "details" || parsedActiveTab.kind === "activity"
+                ? getClientMeta(parsedActiveTab.clientId)
+                : null;
             const contact = isContactSegment ? getContact(parsedActiveTab.contactId) : null;
             return (
               <span key={i} style={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -257,6 +313,20 @@ export function Workspace({
                       name="user"
                       size={11}
                       color={contactTabIconColor(contact.indicator, t)}
+                    />
+                  )}
+                  {isHubSectionSegment && parsedActiveTab.kind === "hub" && (
+                    <NotionIcon
+                      name={hubToolIcon(parsedActiveTab.tool.kind)}
+                      size={11}
+                      color={t.textMuted}
+                    />
+                  )}
+                  {isHubToolSegment && parsedActiveTab.kind === "hub" && (
+                    <NotionIcon
+                      name={hubToolIcon(parsedActiveTab.tool.kind)}
+                      size={11}
+                      color={t.accent}
                     />
                   )}
                   <span style={{
@@ -281,6 +351,8 @@ export function Workspace({
             <ClientDataPage clientId={parsedActiveTab.clientId} t={t} isDark={isDark} />
           ) : parsedActiveTab.kind === "contact" ? (
             <ContactView contactId={parsedActiveTab.contactId} t={t} />
+          ) : parsedActiveTab.kind === "hub" ? (
+            <HubToolDetailView tool={parsedActiveTab.tool} t={t} isDark={isDark} />
           ) : (
             <ClientView
               clientId={parsedActiveTab.clientId}

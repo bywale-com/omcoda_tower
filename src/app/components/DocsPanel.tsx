@@ -42,6 +42,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "./ui/popover";
+import {
+  TOWER_POPOVER_CONTENT_CLASS,
+  TOWER_POPOVER_MENU_ITEM_CLASS,
+} from "./ui/towerChrome";
 import { HolonTreeIcon } from "./docs/HolonTreeIcon";
 import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
 import type { NotionIconName } from "../icons/notion-icon-urls";
@@ -230,12 +234,12 @@ function DocsOutlineRow({
               side="right"
               align="start"
               sideOffset={6}
-              className="w-48 p-1"
+              className={TOWER_POPOVER_CONTENT_CLASS}
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 type="button"
-                className="flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                className={TOWER_POPOVER_MENU_ITEM_CLASS}
                 onClick={() => {
                   onViewDetails?.(docsTargetId);
                   setMenuOpen(false);
@@ -375,7 +379,7 @@ export function DocsPanel({ width, t }: DocsPanelProps) {
 
       <HolonBoundary
         id="docs-registry"
-        label="Docs Registry"
+        label="Console Registry"
         icon="list"
         order={SHELL_HOLON_ORDER["docs-registry"]}
         t={t}

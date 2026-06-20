@@ -102,4 +102,4 @@ Deeper design rationale for the engagement chart: [`docs/product/engagement-char
 
 ## Status
 
-Prototype only. No authentication, API, or persistence. Styling rules and component conventions are documented in [`rules.md`](rules.md).
+Prototype only. No authentication, API, or persistence. Styling rules and component conventions are in [`rules.md`](rules.md). Console (visual register) state doc: [`docs/product/console-state.md`](docs/product/console-state.md).

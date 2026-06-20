@@ -50,3 +50,21 @@ The token system lives in `src/app/components/tokens.ts` and exports two objects
 `App.tsx` selects between them based on state and passes the result down.
 
 **No component imports from `tokens.ts` directly or makes its own theme decision.**
+
+## Sidebar & Console typography
+
+Board sidebar rows, Contacts/Imports directory rows, and the Console tree share scaled dimensions from `treeLayout.ts` and label styling from `treeTypography.ts` (`docsLabelStyle`, `DOCS_FONT_PROFILE` — weight 500, 13px scaled).
+
+Directory lists (Contacts, Imports) use `contacts/directoryRowStyles.ts` for ellipsized primary labels and a fixed-width trailing meta column (`DIRECTORY_ROW_META_WIDTH = 96`).
+
+## shadcn popovers & dialogs
+
+Flyouts beside the sidebar (row actions, Add audit, Add import) and centered dialogs must use **`src/app/components/ui/towerChrome.ts`** — not raw shadcn `text-sm` / `text-xs`. Typography is aligned to the tree via `tower-chrome-*` classes in `src/styles/theme.css`. See `.cursor/rules/tower-shadcn-chrome.mdc`.
+
+## Icons
+
+Notion icons for holon registry, primary nav, board sidebar, and Client Data tab chips. Lucide for interactive controls (chevrons, menus, close buttons). See `.cursor/rules/tower-icons.mdc`.
+
+## Console (holon register)
+
+UI surfaces register via `HolonBoundary` at container boundaries — not static registry files. Console opens from the document icon in the primary navigation strip. See `.cursor/rules/tower-holon-registry.mdc` and `docs/product/console-state.md`.

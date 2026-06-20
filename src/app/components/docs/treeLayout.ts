@@ -1,4 +1,5 @@
 export const TREE_SCALE = 0.9;
+/** Keep `--tower-tree-scale` in `src/styles/theme.css` in sync with TREE_SCALE */
 export const s = (n: number) => n * TREE_SCALE;
 
 export const DOCS_TREE_ROW_H = s(30);

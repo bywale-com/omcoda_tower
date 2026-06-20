@@ -11,7 +11,7 @@ export type PrimaryNavItem = {
 export const PRIMARY_NAV: PrimaryNavItem[] = [
   { id: "board", icon: "grid-square-2x2", label: "Board", shortcut: "Ctrl+Shift+E" },
   { id: "contacts", icon: "user-squares", label: "Contacts", shortcut: "Ctrl+Shift+U" },
-  { id: "git", icon: "git", label: "Pipeline", shortcut: "Ctrl+Shift+G" },
+  { id: "hub", icon: "compass", label: "Hub", shortcut: "Ctrl+Shift+G" },
 ];
 
 export const ALL_NAV: PrimaryNavItem[] = [
@@ -21,5 +21,5 @@ export const ALL_NAV: PrimaryNavItem[] = [
   { id: "settings", icon: "gear", label: "Settings", shortcut: "Ctrl+," },
 ];
 
-export const DOCS_MODE_NAV_ICON: NotionIconName = "document";
+export const CONSOLE_NAV_ICON: NotionIconName = "document";
 export const MORE_NAV_ICON: NotionIconName = "chevrons-down";

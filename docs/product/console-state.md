@@ -1,7 +1,7 @@
-# Docs Mode — State Document
+# Console — State Document
 
 **Project:** Tower  
-**Surface:** Docs Mode / Visual Register  
+**Surface:** Console / Visual Register  
 **Status:** Foundation shipped (June 2026)  
 **Audience:** Product, design, engineering — anyone extending the shell or domain holons
 
@@ -9,17 +9,19 @@
 
 ## 1. What it is
 
-Docs Mode is a **live visual register** embedded in Tower. It sits beside the consultant’s working shell (board, workspace, status bar) and answers two questions at once:
+Console is a **live visual register** embedded in Tower. It sits beside the consultant’s working shell (board, workspace, status bar) and answers two questions at once:
 
 1. **What is this region called?** — functional names (Client Brief, Board Body, Client Data Header), not React component filenames.
 2. **Where does it live?** — hover a tree row and the matching surface in the live app receives an accent inset ring.
 
-The mental model is **holons**: bounded UI regions that map to real surfaces. The register is not a separate wiki or Storybook; it is an index that **grounds names in the running product**.
+The mental model is **holons**: bounded UI regions that map to real surfaces. Console is not a separate wiki or Storybook; it is an index that **grounds names in the running product**.
 
-Docs Mode opens from the **MonitorCog** control in the primary navigation strip. A resizable left column (`DocsPanel`, default 280px, 200–480px) shows:
+Console opens from the **document icon** in the primary navigation strip. A resizable left column (`DocsPanel`, default 280px, 200–480px) shows:
 
 - **Home** — conceptual branches (Learning, Softwares, Tools, Inspiration, Brain Dump). Placeholder today; not wired to holons.
 - **Panels** — runtime tree of registered UI holons, built from what is mounted in the app.
+
+Row actions (⋯) on outline rows open **View Details** → resizable **holon detail panel** on the right (`HolonDetailPanel`, content from `holonDetailContent.ts`).
 
 ---
 
@@ -38,9 +40,10 @@ Early iteration hand-maintained a flat `panelsRegistry.ts`: each holon required 
 | **Panels vs Home** | Panels = *where* in the shell; Home = *why/concepts* (future cross-links to domain holons). |
 | **Functional names** | “Client Brief” not `ClientView`; names describe role in the workflow. |
 | **Hover highlight** | Immediate proof of mapping without a separate diagram tool. |
-| **Notion icons in tree** | Sidebar and docs tree share Notion SVG set; tint via mask + theme tokens. |
-| **Lucide in live chrome** | Tab chips, buttons, metadata rows stay Lucide; registry may use `lucideIcon` when the surface itself is Lucide (e.g. Open in Tab → `ExternalLink`). |
-| **Self-reference** | Docs Header and Docs Registry are holons in the tree — the register documents itself. |
+| **Notion icons in tree** | Sidebar and Console tree share Notion SVG set; tint via mask + theme tokens. |
+| **Notion in nav & data chrome** | Primary nav, Client Data tab chips, and client header property rows use Notion; Lucide remains for controls (chevrons, menus, close). |
+| **Self-reference** | Console Header and Console Registry are holons in the tree — Console documents itself. |
+| **Contacts ≠ Clients** | Contacts nav swaps board sidebar content; unsequenced contacts vs sequenced clients; detail in workspace tabs. |
 
 ### 2.3 Architecture shift: runtime registry
 
@@ -49,9 +52,11 @@ The current system replaces static registry files with **registration at contain
 - **`HolonBoundary`** — wrap a region once; registers `{ id, label, icon, parentId, order, inView }`, applies highlight, provides parent context to descendants.
 - **`DocsRegistryContext`** — collects registrations, builds nested tree for `DocsPanel`.
 - **`DocsHighlightContext`** — `hoveredComponentId` drives inset ring on the matching holon.
-- **Parent-owned children** — e.g. `PANEL_CHIPS` + `CLIENT_DATA_TAB_HOLONS` in `clientDataHolons.ts` drive both UI labels and docs tree children; adding a tab updates the tree without editing `DocsPanel`.
+- **`HolonDetailContext`** — selected holon for the detail panel (View Details).
+- **Parent-owned children** — e.g. `PANEL_CHIPS` + `CLIENT_DATA_TAB_HOLONS` in `clientDataHolons.ts` drive both UI labels and Console tree children; adding a tab updates the tree without editing `DocsPanel`.
+- **Pattern holons** — one id for repeating rows (client row, contact row); `registerOnly` in container + `useIsDocsTarget` highlight in live row components.
 
-**Do not** add static panel lists or per-leaf `useIsDocsTarget` calls. Cursor rules in `.cursor/rules/` encode this (holon registry, icons, theme tokens).
+**Do not** add static panel lists. Cursor rules in `.cursor/rules/` encode this (holon registry, icons, theme tokens).
 
 ### 2.4 Visibility and reveal
 
@@ -78,10 +83,13 @@ Holons appear when their React subtree is mounted (e.g. client holons only when 
 | Holon | Notes |
 |-------|--------|
 | Primary Navigation | Activity bar strip |
-| Docs Header / Docs Registry | Self-referential docs column |
+| Console Header / Console Registry | Self-referential Console column |
 | Clients Section / Board Body | Sidebar header + scroll list |
+| Contacts Section / Contacts Body / Imports Section | Contacts nav view |
 | Tab Bar / Workspace Tab / Breadcrumb / Workspace Empty | Workspace chrome |
 | Client Header / Client Brief | Client details surface |
+| Contact Header / Contact Record | Contact workspace tab |
+| Holon Detail Header / Body | Right detail panel when View Details open |
 | Status Bar | White inset ring on accent background |
 
 ### Client Data (nested proof case)
@@ -91,7 +99,7 @@ Under **Client Data Header**:
 - **Open in Tab** — Lucide `external-link`; opens Activity workspace tab.
 - **Information** → Profile Table  
 - **History** → CRS History  
-- **Activity** → Engagement Chart  
+- **Activity** → Engagement Chart (+ engagement list/timeline holons)
 
 Tab chips are always `inView` when the panel is open; tab bodies use `registerOnly` when inactive.
 
@@ -101,12 +109,15 @@ Tab chips are always `inView` when the panel is open; tab bodies use `registerOn
 
 | Path | Role |
 |------|------|
-| `src/app/components/DocsPanel.tsx` | Home + Panels UI, recursive holon tree, eye/reveal |
+| `src/app/components/DocsPanel.tsx` | Home + Panels UI, recursive holon tree, eye/reveal, View Details |
+| `src/app/components/HolonDetailPanel.tsx` | Resizable holon detail column |
 | `src/app/components/docs/HolonBoundary.tsx` | Registration + highlight wrapper |
+| `src/app/components/docs/holonDetailContent.ts` | Holon article copy (partial — grows per module) |
 | `src/app/components/docs/clientDataHolons.ts` | Single source for Client Data tabs + children |
+| `src/app/components/docs/contactsBodyHolons.ts` | Contacts/Imports holon metadata |
 | `src/app/components/docs/shellHolonOrder.ts` | Top-level holon sort order |
 | `src/app/context/DocsRegistryContext.tsx` | Runtime tree + `focusHolon` |
-| `src/app/context/DocsHighlightContext.tsx` | Hover target id |
+| `src/app/context/HolonDetailContext.tsx` | Detail panel selection |
 | `src/app/icons/notion-icon-urls.ts` | Notion slug → URL registry |
 | `src/app/components/docs/HolonTreeIcon.tsx` | Notion or Lucide icon in tree rows |
 | `.cursor/rules/tower-holon-registry.mdc` | Build conventions |
@@ -115,7 +126,7 @@ Tab chips are always `inView` when the panel is open; tab bodies use `registerOn
 
 ## 5. Typography and tree styling
 
-Docs tree reuses scaled constants (`treeLayout.ts`, `treeTypography.ts`) aligned with board sidebar rows: register profile weight, underline offsets on child labels, chevron-after-label on branches. Panel header “Docs” uses a fixed 13px label (not tree-scaled).
+Console tree reuses scaled constants (`treeLayout.ts`, `treeTypography.ts`) aligned with board sidebar rows: register profile weight, underline offsets on child labels, chevron-after-label on branches. Panel header “Console” uses a fixed 13px label (not tree-scaled).
 
 ---
 
@@ -124,13 +135,13 @@ Docs tree reuses scaled constants (`treeLayout.ts`, `treeTypography.ts`) aligned
 ### Near term (shell completion)
 
 - **Group Panels tree** — Shell / Board / Workspace / Client / Data section headers without flattening 20+ rows.
-- **Holon detail pane** — click row → right column with purpose, fields, states (index → article).
-- **Persist branch expand/collapse** — remember which subtrees are open in docs mode.
-- **More shell holons** — Tasks accordion, theme toggle, data panel resize handle, workspace canvas when tabs open (distinct from Client Brief).
+- **Persist branch expand/collapse** — remember which subtrees are open in Console.
+- **More holon detail copy** — fill `holonDetailContent.ts` as modules ship.
+- **Contacts holons in Console tree** — register Contacts directory when nav active.
+- **Import row click** → workspace tab.
 
 ### Medium term (domain register)
 
-- **Activity / Engagement holons** — Gantt rows, channel headers, sequence bands under Activity panel (opt-in depth in `clientDataHolons` or journey-specific config).
 - **Home cross-links** — Home entries link to Panels holons and domain concepts (Client, Sequence, Touchpoint).
 - **Bidirectional inspect** — modifier + hover live UI → jump to tree row (inverse of today’s hover).
 
@@ -150,13 +161,14 @@ Docs tree reuses scaled constants (`treeLayout.ts`, `treeTypography.ts`) aligned
 4. Use `registerOnly` + `onFocus` for off-screen but listed holons.
 5. Add Notion slug to `notion-icon-urls.ts` if needed; or `lucideIcon` in `holonIcons.ts` if matching live Lucide.
 6. Assign `order` among siblings; use `shellHolonOrder.ts` for top-level shell.
+7. For holon articles, add entry to `holonDetailContent.ts`.
 
 ---
 
 ## 8. Known limitations
 
 - Tree contents **depend on mount state** — holons unregister when unmounted (no tabs → no client holons; collapsed data panel → no Client Data subtree).
-- **No content pages yet** — selection does not open holon documentation.
+- **Holon detail copy is partial** — only holons with `holonDetailContent` entries show full articles; others show placeholder.
 - **Viewport scroll** — `inView` means “rendered in React,” not IntersectionObserver visibility in the viewport.
 - **Home branch** — placeholder only.
 
@@ -164,4 +176,4 @@ Docs tree reuses scaled constants (`treeLayout.ts`, `treeTypography.ts`) aligned
 
 ## 9. Summary
 
-Docs Mode is a **spatial register with hover and reveal**: names holons, nests them from parent declarations, shows whether each is currently rendered, and can focus the UI to off-screen holons. Client Data Header is the reference implementation for parent-driven children. Next layers are grouping, holon articles, and domain depth under Activity — without returning to manual per-component registry wiring.
+Console is a **spatial register with hover, reveal, and detail**: names holons, nests them from parent declarations, shows whether each is currently rendered, can focus the UI to off-screen holons, and opens holon articles on demand. Client Data Header is the reference implementation for parent-driven children. Next layers are grouping, fuller holon articles, and domain depth — without returning to manual per-component registry wiring.

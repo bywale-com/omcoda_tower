@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import type { NotionIconName } from "../../icons/notion-icon-urls";
 import { HolonBoundary } from "../docs/HolonBoundary";
 import { docsBranchLabelStyle } from "../docs/treeTypography";
@@ -94,6 +94,7 @@ type DirectorySectionHeaderProps = {
   plusTitle: string;
   sortTitle: string;
   marginTop?: number;
+  plusButton?: ReactNode;
   t: Tokens;
 };
 
@@ -108,6 +109,7 @@ export function DirectorySectionHeader({
   plusTitle,
   sortTitle,
   marginTop = 0,
+  plusButton,
   t,
 }: DirectorySectionHeaderProps) {
   const [hovered, setHovered] = useState(false);
@@ -157,7 +159,9 @@ export function DirectorySectionHeader({
         {label}
       </span>
       <span style={{ flex: 1, minWidth: 0 }} />
-      <DirectorySectionIconButton icon="plus" title={plusTitle} t={t} />
+      {plusButton ?? (
+        <DirectorySectionIconButton icon="plus" title={plusTitle} t={t} />
+      )}
       <DirectorySectionIconButton icon="arrows-up-down" title={sortTitle} t={t} />
       <DirectorySectionCountBadge count={count} t={t} />
     </HolonBoundary>

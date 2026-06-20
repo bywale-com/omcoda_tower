@@ -1,4 +1,5 @@
 import { IMPORTS_SECTION_HOLON } from "../docs/contactsBodyHolons";
+import { CsvImportFlow } from "../imports/CsvImportFlow";
 import { SHELL_HOLON_ORDER } from "../docs/shellHolonOrder";
 import { s } from "../docs/treeLayout";
 import type { Tokens } from "../tokens";
@@ -23,6 +24,7 @@ export function ImportsSectionHeader({
       plusTitle="Add import"
       sortTitle="Sort imports"
       marginTop={s(4)}
+      plusButton={<CsvImportFlow t={t} />}
       t={t}
     />
   );

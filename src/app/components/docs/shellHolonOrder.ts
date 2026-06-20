@@ -1,4 +1,4 @@
-/** Display order for top-level shell holons in the docs Panels tree */
+/** Display order for top-level shell holons in the Console Panels tree */
 export const SHELL_HOLON_ORDER: Record<string, number> = {
   "primary-navigation": 10,
   "docs-header": 20,
@@ -6,7 +6,12 @@ export const SHELL_HOLON_ORDER: Record<string, number> = {
   "clients-section": 40,
   "contacts-section": 45,
   "board-body": 50,
+  "tasks-section": 52,
   "contacts-body": 55,
+  "hub-body": 54,
+  "audits-section": 57,
+  "agents-section": 58,
+  "automations-section": 59,
   "imports-section": 56,
   "tab-bar": 60,
   "workspace-tab": 70,
@@ -16,6 +21,8 @@ export const SHELL_HOLON_ORDER: Record<string, number> = {
   "client-brief": 110,
   "contact-header": 115,
   "contact-record": 116,
+  "hub-tool-header": 117,
+  "hub-tool-body": 118,
   "data-panel-header": 120,
   "status-bar": 130,
   "holon-detail-header": 140,

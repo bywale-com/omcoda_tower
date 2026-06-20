@@ -4,24 +4,27 @@ import { SIDEBAR_HEADER_HEIGHT } from "../constants/layout";
 import { HolonBoundary } from "./docs/HolonBoundary";
 import {
   ALL_NAV,
-  DOCS_MODE_NAV_ICON,
+  CONSOLE_NAV_ICON,
   MORE_NAV_ICON,
   PRIMARY_NAV,
 } from "./docs/primaryNavigationIcons";
 import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
+import { TowerAppLogo } from "./icons/TowerAppLogo";
 import { NotionIcon } from "./icons/NotionIcon";
 import type { NotionIconName } from "../icons/notion-icon-urls";
 import type { Tokens } from "./tokens";
 
 const NAV_ICON_SIZE = 16;
+/** Notion 64×64 icons draw ~44px of artwork; logo reads slightly larger — nudge up. */
+const NAV_LOGO_OPTICAL_SCALE = 56 / 64;
 const MENU_ICON_SIZE = 14;
 const MORE_ICON_SIZE = 14;
 
 type ActivityBarHeaderProps = {
   activeIcon: string;
   onIconClick: (id: string) => void;
-  isDocsModeOpen: boolean;
-  onToggleDocsMode: () => void;
+  isConsoleOpen: boolean;
+  onToggleConsole: () => void;
   t: Tokens;
   isDark: boolean;
 };
@@ -29,8 +32,8 @@ type ActivityBarHeaderProps = {
 export function ActivityBarHeader({
   activeIcon,
   onIconClick,
-  isDocsModeOpen,
-  onToggleDocsMode,
+  isConsoleOpen,
+  onToggleConsole,
   t,
   isDark,
 }: ActivityBarHeaderProps) {
@@ -174,10 +177,10 @@ export function ActivityBarHeader({
           height: SIDEBAR_HEADER_HEIGHT,
           flexShrink: 0,
           display: "flex",
-          alignItems: "center",
+          alignItems: "stretch",
           justifyContent: "flex-start",
-          padding: "0 8px",
-          gap: 2,
+          padding: 0,
+          gap: 0,
           borderBottom: `1px solid ${t.border}`,
           background: t.boardPanel,
           boxSizing: "border-box",
@@ -185,18 +188,34 @@ export function ActivityBarHeader({
           zIndex: menuOpen ? 100 : "auto",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
+        <span
+          title="Tower"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            paddingLeft: 10,
+            paddingRight: 10,
+            borderRight: `1px solid ${t.border}`,
+            flexShrink: 0,
+            boxSizing: "border-box",
+          }}
+        >
+          <TowerAppLogo size={NAV_ICON_SIZE} opticalScale={NAV_LOGO_OPTICAL_SCALE} />
+        </span>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 2, padding: "0 8px 0 2px" }}>
           <button
             type="button"
-            title="Docs mode"
-            onClick={onToggleDocsMode}
+            title="Console"
+            onClick={onToggleConsole}
             style={{
               width: 28,
               height: 28,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              background: isDocsModeOpen ? t.activeRowBg : "transparent",
+              background: isConsoleOpen ? t.activeRowBg : "transparent",
               border: "none",
               borderRadius: 4,
               cursor: "pointer",
@@ -204,9 +223,9 @@ export function ActivityBarHeader({
             }}
           >
             <NotionIcon
-              name={DOCS_MODE_NAV_ICON}
+              name={CONSOLE_NAV_ICON}
               size={NAV_ICON_SIZE}
-              color={isDocsModeOpen ? t.accent : t.textMuted}
+              color={isConsoleOpen ? t.accent : t.textMuted}
             />
           </button>
 

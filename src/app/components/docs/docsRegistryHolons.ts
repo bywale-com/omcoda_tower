@@ -14,15 +14,15 @@ export const DOCS_PANELS_BRANCH_HOLON = {
   order: 1,
 };
 
-/** Repeating docs column row — one registry entry, many live instances */
+/** Repeating Console column row — one registry entry, many live instances */
 export const DOCS_OUTLINE_ROW_HOLON = {
   id: "docs-outline-row",
-  label: "Docs Outline Row",
+  label: "Console Outline Row",
   icon: "list-bullet" as NotionIconName,
   order: 2,
 };
 
-/** Children of Docs Outline Row — UI slots shared by every outline row */
+/** Children of Console Outline Row — UI slots shared by every outline row */
 export const DOCS_OUTLINE_ROW_CHILD_HOLONS = {
   name: {
     id: "docs-row-name",

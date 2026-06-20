@@ -5,7 +5,7 @@ import { ENGAGEMENT_TIMELINE_CHILD_HOLONS_LIST } from "./engagementTimelineHolon
 
 export type PanelTab = "read" | "data" | "logs";
 
-/** Tab chips — single source for labels shown in UI and docs tree */
+/** Tab chips — single source for labels shown in UI and Console tree */
 export const PANEL_CHIPS: { id: PanelTab; label: string }[] = [
   { id: "read", label: "Information" },
   { id: "data", label: "History" },
