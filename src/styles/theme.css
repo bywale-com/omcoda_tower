@@ -143,6 +143,23 @@
     letter-spacing: var(--tower-chrome-tracking);
   }
 
+  /** Gray fill at rest; border appears on hover (replaces bordered ghost buttons) */
+  .tower-chrome-soft-button {
+    border: 1px solid transparent;
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+    transition:
+      border-color 0.12s ease,
+      background-color 0.12s ease,
+      color 0.12s ease;
+  }
+
+  .tower-chrome-soft-button:hover {
+    border-color: var(--border);
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
   .tower-chrome-meta {
     font-size: var(--tower-chrome-size);
     font-weight: var(--tower-chrome-weight);

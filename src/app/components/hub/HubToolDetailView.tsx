@@ -10,6 +10,8 @@ import { SHELL_HOLON_ORDER } from "../docs/shellHolonOrder";
 import { NotionIcon } from "../icons/NotionIcon";
 import type { Tokens } from "../tokens";
 import { AuditDetailView } from "./AuditDetailView";
+import { AgentDetailView } from "./agent/AgentDetailView";
+import { AutomationDetailView } from "./automation/AutomationDetailView";
 import { HubToolView } from "./HubToolView";
 
 type HubToolDetailViewProps = {
@@ -21,6 +23,14 @@ type HubToolDetailViewProps = {
 export function HubToolDetailView({ tool, t, isDark }: HubToolDetailViewProps) {
   if (tool.kind === "audit") {
     return <AuditDetailView auditId={tool.id} t={t} isDark={isDark} />;
+  }
+
+  if (tool.kind === "automation") {
+    return <AutomationDetailView automationId={tool.id} t={t} isDark={isDark} />;
+  }
+
+  if (tool.kind === "agent") {
+    return <AgentDetailView agentId={tool.id} t={t} isDark={isDark} />;
   }
 
   const label = getHubToolLabel(tool);

@@ -12,6 +12,10 @@ export const TOWER_POPOVER_CONTENT_CLASS =
 export const TOWER_POPOVER_SUBMENU_CLASS =
   "tower-chrome-surface absolute left-full top-0 z-50 ml-1 rounded-md border bg-popover p-1 text-popover-foreground shadow-md";
 
+/** Gray toolbar button — fill at rest, border on hover */
+export const TOWER_CHROME_SOFT_BUTTON_CLASS =
+  "tower-chrome-menu-item tower-chrome-soft-button cursor-pointer rounded-sm outline-none";
+
 /** Full-width menu row (overrides global `button` base styles from theme.css) */
 export const TOWER_POPOVER_MENU_ITEM_CLASS =
   "tower-chrome-menu-item flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-left outline-none hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-40";
