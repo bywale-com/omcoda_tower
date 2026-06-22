@@ -36,7 +36,7 @@ export default defineConfig({
     alias: {
       // Alias @ to the src directory
       '@': path.resolve(__dirname, './src'),
-      '@notion-icons': path.resolve(__dirname, '../notion-icons-svg-55534e'),
+      '@notion-icons': path.resolve(__dirname, './src/assets/notion-icons'),
     },
   },
 

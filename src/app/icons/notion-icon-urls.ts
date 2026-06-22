@@ -42,7 +42,7 @@ import userCircleUrl from "@notion-icons/user-circle-55534e-icon.svg?url";
 import userSquaresUrl from "@notion-icons/user-squares-55534e-icon.svg?url";
 import wrenchUrl from "@notion-icons/wrench-55534e-icon.svg?url";
 
-/** Slugs match filenames in `notion-icons-svg-55534e` (without `-55534e-icon.svg`). */
+/** Slugs match filenames in `src/assets/notion-icons` (without `-55534e-icon.svg`). */
 export const NOTION_ICON_URLS = {
   bell: bellUrl,
   "bell-slash": bellSlashUrl,
