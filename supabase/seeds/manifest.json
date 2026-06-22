@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "seeds": [
+    {
+      "id": "001_tower_platform",
+      "file": "001_tower_platform.sql",
+      "environments": ["development", "staging"],
+      "description": "Tower platform firm and admin consultant (admin@try-tower.com)",
+      "records": [
+        {
+          "table": "firms",
+          "id": "a1000000-0000-4000-8000-000000000001",
+          "name": "Tower"
+        },
+        {
+          "table": "users",
+          "id": "b1000000-0000-4000-8000-000000000001",
+          "email": "admin@try-tower.com",
+          "firm_id": "a1000000-0000-4000-8000-000000000001"
+        }
+      ]
+    }
+  ]
+}

@@ -44,6 +44,13 @@ export const LOGIN_VERIFY_OTP_STEP: RegisterFlowStep = {
       position: { x: 560, y: 48 },
     },
     {
+      id: "otp-challenges-table",
+      kind: "store",
+      label: OTP_CHALLENGES_TABLE.name,
+      boundary: "Supabase · otp_challenges",
+      position: { x: 560, y: 272 },
+    },
+    {
       id: "sessions-table",
       kind: "store",
       label: SESSIONS_TABLE.name,
@@ -117,6 +124,7 @@ export const LOGIN_VERIFY_OTP_STEP: RegisterFlowStep = {
         "Latest unconsumed challenge for email",
         "Not expired",
         "code_hash matches submitted code",
+        "Logical decomposition of step 7 — sequential in Auth Service; single transaction with 7b",
       ],
       via: {
         mechanism:
@@ -132,7 +140,7 @@ export const LOGIN_VERIFY_OTP_STEP: RegisterFlowStep = {
       sourceSystemNodeId: AUTH_SERVICE_NODE.id,
       targetTableNodeId: SESSIONS_TABLE.id,
       out: "{ user_id, firm_id, token_hash, expires_at, created_at }",
-      conditions: ["OTP verified", "Issue firm-scoped session"],
+      conditions: ["OTP verified", "Issue firm-scoped session", "Logical decomposition of step 7 — follows 7a in same transaction"],
       via: {
         mechanism: "INSERT INTO sessions (user_id, firm_id, token_hash, expires_at, created_at)",
         location: "Auth Service · session issuance",
@@ -144,10 +152,14 @@ export const LOGIN_VERIFY_OTP_STEP: RegisterFlowStep = {
       id: "auth-service-session-to-consultant-web-app",
       sourceSystemNodeId: AUTH_SERVICE_NODE.id,
       targetSystemNodeId: CONSULTANT_WEB_APP_NODE.id,
-      out: "{ session_token }",
-      conditions: ["Verify succeeded", "App stores session and navigates to Board"],
+      out: "Set-Cookie: tower_session",
+      conditions: [
+        "Verify succeeded",
+        "HTTP-only session cookie set (O-10 — no token in response body)",
+        "App navigates to Board",
+      ],
       via: {
-        mechanism: "HTTP 200 + Set-Cookie → navigate('/')",
+        mechanism: "HTTP 200 + Set-Cookie: tower_session → navigate('/')",
         location: "src/app/marketing/components/LoginForm.tsx · handleVerifySubmit",
       },
       edgeStyle: "dashed",
@@ -160,7 +172,7 @@ export const LOGIN_VERIFY_OTP_STEP: RegisterFlowStep = {
       out: "{ email }",
       conditions: [
         "User clicked Try sending again (handleResendCode)",
-        "Same send-OTP path as Log In — not a separate code path",
+        "Reuses send-OTP path (register steps 3–4) — abbreviated canvas slice",
         "Rate-limited by Auth Service",
       ],
       via: {

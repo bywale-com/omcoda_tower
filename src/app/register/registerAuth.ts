@@ -1,16 +1,38 @@
-const REGISTER_STORAGE_KEY = "tower.register.unlocked";
-const REGISTER_PASSWORD = "123456";
+import {
+  fetchRegisterStatus,
+  isRegisterRouteEnabled,
+  lockRegister as lockRegisterRequest,
+  unlockRegister as unlockRegisterRequest,
+} from "../auth/authClient";
 
-export function isRegisterUnlocked(): boolean {
-  return sessionStorage.getItem(REGISTER_STORAGE_KEY) === "1";
+export { isRegisterRouteEnabled };
+
+export async function isRegisterUnlocked(): Promise<boolean> {
+  if (!isRegisterRouteEnabled()) {
+    return false;
+  }
+
+  try {
+    const status = await fetchRegisterStatus();
+    return status.enabled && status.unlocked;
+  } catch {
+    return false;
+  }
 }
 
-export function unlockRegister(password: string): boolean {
-  if (password !== REGISTER_PASSWORD) return false;
-  sessionStorage.setItem(REGISTER_STORAGE_KEY, "1");
-  return true;
+export async function unlockRegister(password: string): Promise<boolean> {
+  try {
+    await unlockRegisterRequest(password);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
-export function lockRegister(): void {
-  sessionStorage.removeItem(REGISTER_STORAGE_KEY);
+export async function lockRegister(): Promise<void> {
+  try {
+    await lockRegisterRequest();
+  } catch {
+    // Best-effort lock.
+  }
 }

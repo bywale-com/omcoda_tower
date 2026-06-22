@@ -142,7 +142,7 @@ export const LOGIN_SEND_OTP_STEP: RegisterFlowStep = {
       sourceSystemNodeId: AUTH_SERVICE_NODE.id,
       targetTableNodeId: FIRMS_TABLE.id,
       out: "{ email } → lookup firm_id",
-      conditions: ["Firm provisioned before login (assisted onboarding)", "Match user email to firm tenancy"],
+      conditions: ["Firm provisioned before login (assisted onboarding)", "Match user email to firm tenancy", "Logical read — implemented as single JOIN with step 3b"],
       via: {
         mechanism: "SELECT firms JOIN users ON firm_id WHERE email = $1",
         location: "Auth Service · tenancy resolver",
@@ -155,7 +155,7 @@ export const LOGIN_SEND_OTP_STEP: RegisterFlowStep = {
       sourceSystemNodeId: AUTH_SERVICE_NODE.id,
       targetTableNodeId: USERS_TABLE.id,
       out: "{ email, firm_id }",
-      conditions: ["User row exists for consultant email", "Runs after firm resolved"],
+      conditions: ["User row exists for consultant email", "Runs after firm resolved", "Logical decomposition of step 3 — sequential in Auth Service"],
       via: {
         mechanism: "SELECT * FROM users WHERE email = $1 AND firm_id = $2",
         location: "Auth Service · user lookup",
@@ -168,7 +168,7 @@ export const LOGIN_SEND_OTP_STEP: RegisterFlowStep = {
       sourceSystemNodeId: AUTH_SERVICE_NODE.id,
       targetTableNodeId: OTP_CHALLENGES_TABLE.id,
       out: "{ firm_id, email, code_hash, expires_at, created_at }",
-      conditions: ["OTP generated (never store plaintext code)", "Prior unconsumed challenges may be invalidated"],
+      conditions: ["OTP generated (never store plaintext code)", "Prior unconsumed challenges invalidated on new send", "Logical decomposition of step 3 — sequential in Auth Service"],
       via: {
         mechanism: "INSERT INTO otp_challenges (firm_id, email, code_hash, expires_at, created_at)",
         location: "Auth Service · OTP persistence",
@@ -181,7 +181,7 @@ export const LOGIN_SEND_OTP_STEP: RegisterFlowStep = {
       sourceSystemNodeId: AUTH_SERVICE_NODE.id,
       targetSystemNodeId: RESEND_NODE.id,
       out: "{ to: email, subject, html with OTP }",
-      conditions: ["OTP row persisted", "Deliver code to consultant inbox"],
+      conditions: ["OTP row persisted", "Deliver code to consultant inbox", "Logical decomposition of step 3 — runs after commit; 503 if Resend fails"],
       via: {
         mechanism: "POST Resend API /emails",
         location: "Auth Service · email delivery",

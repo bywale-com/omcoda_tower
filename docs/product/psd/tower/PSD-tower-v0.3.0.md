@@ -55,7 +55,7 @@ related:
 | Hub → Automations | **Medium** | React Flow workflow editor, build palette, edge insert |
 | Console / holon register | **High** registry | Hover highlight + reveal; agent + automation holon trees |
 | **Systems Register** (`/register`) | **Medium–High** | Components tree + flow canvas + **Login flow map** (data-driven wires) |
-| **Marketing Login** (`/login`) | **Low–Medium** | Passwordless OTP UI; handlers stubbed (no API) |
+| **Marketing Login** (`/login`) | **Medium** | Passwordless OTP UI wired to Auth Service |
 | CSV import UX | **Medium** | Full dialog; **does not** mutate import list |
 | Backend / persistence | **None** | All seed + in-memory session state |
 
@@ -67,7 +67,7 @@ related:
 
 ### 1.3 Top 3 limits right now
 
-1. **No API, auth, or firm account model** — `LoginForm` stubs OTP send/verify; Auth Service is not implemented.
+1. **Auth Service is local/dev-first** — requires Supabase + Resend env; production host TBD (O-09).
 2. **Register flows are read-only maps** — wires document behavior; they do not execute or sync to Icepanel automatically.
 3. **Agent/automation edits remain session-only** — unchanged from v0.2.0.
 
@@ -99,7 +99,7 @@ Unchanged from v0.2.0 §3 for consultant shell (`/`).
 | Route | Surface | Gate |
 |-------|---------|------|
 | `/login` | Marketing login card | Public |
-| `/register` | Systems Register | Password (`registerAuth`) |
+| `/register` | Systems Register | Server gate (`REGISTER_PASSWORD`); disabled in prod by default |
 
 ---
 
@@ -169,11 +169,11 @@ Sections **4.1–4.6** unchanged from v0.2.0 (Board, Workspace, Client Data, Con
 |------|-----|
 | 1 | Log In → Consultant Web App (in-app) |
 | 2 | Consultant Web App → Auth Service (`POST /auth/otp/send`) |
-| 3a–3d | Auth Service → firms / users / `otp_challenges` / Resend (parallel) |
+| 3a–3d | Auth Service → firms / users / `otp_challenges` / Resend (logical decomposition; **sequential** in implementation) |
 | 4 | Auth Service → Consultant Web App (advance to verify view) |
 | 5 | Verify Email Address → Consultant Web App (in-app) |
 | 6 | Consultant Web App → Auth Service (`POST /auth/otp/verify`) |
-| 7a–7b | Auth Service → `otp_challenges` / `sessions` (parallel) |
+| 7a–7b | Auth Service → `otp_challenges` / `sessions` (logical decomposition; **one transaction**, sequential) |
 | 8 | Auth Service → Consultant Web App (session → Board) |
 | 9a–9b | Resend branch (solid wires, alternate path during verify) |
 
@@ -195,15 +195,15 @@ Supabase → table “hosted by” wires are **unnumbered** (infrastructure cont
 
 | Step | UI | Handler | Backend |
 |------|-----|---------|---------|
-| Sign in | Email + Log In | `handleEmailSubmit` | **Stub** (400ms delay) |
-| Verify | Code + Verify Email Address | `handleVerifySubmit` | **Stub** |
-| Branches | Resend, Change email | `handleResendCode`, `handleChangeEmail` | In-app / stub |
+| Sign in | Email + Log In | `handleEmailSubmit` | `POST /auth/otp/send` |
+| Verify | Code + Verify Email Address | `handleVerifySubmit` | `POST /auth/otp/verify` + `Set-Cookie` |
+| Branches | Resend, Change email | `handleResendCode`, `handleChangeEmail` | Resend → send path; change → `POST /auth/otp/abandon` |
 
-On stub success, verify step shows in-card; verify success navigates to `/` (consultant shell).
+On send success, verify step shows in-card; verify success navigates to `/` (consultant shell, **route-gated**).
 
 **Holons:** `login-form`, email field, submit controls, verify field — registered via `HolonBoundary` + `loginRegisterMeta`.
 
-**Not implemented:** Real Auth Service client, session cookie, firm scoping, error paths for unprovisioned email.
+**Contract:** [`auth-service-contract.md`](../../auth-service-contract.md)
 
 ---
 
@@ -224,16 +224,17 @@ Unchanged from v0.2.0 (Audit, Sequence/engagement, Import, Rule engine, Agents, 
 | **Execution** | **None** — documentation surface only |
 | **Persistence** | Node positions in `localStorage`; flow definitions in repo |
 
-### 5.9 Auth (planned, UI stub only)
+### 5.9 Auth
 
 | Aspect | Detail |
 |--------|--------|
 | **v1 model** | One firm, one login; email OTP only; consultant-only (no client portal) |
-| **Auth Service** | Tower-hosted; OTP generate/verify, sessions; firm-scoped |
+| **Auth Service** | `server/auth-service/` — Hono; local `npm run dev:auth`; **Vercel** `api/auth/[[...path]].ts` |
+| **Session (O-10)** | **Resolved:** HTTP-only cookie `tower_session` — no token in JSON body |
 | **Firm Data Store** | Supabase/Postgres — `firms`, `users`, `otp_challenges`, `sessions` |
-| **Email** | Resend (or equivalent) for OTP delivery |
-| **Icepanel** | Objects + ADR-004 spec; MCP sync in `icepanelLinks.ts` |
-| **Live implementation** | **Not started** |
+| **Email** | Resend |
+| **Route guard** | `/` requires valid session (`AuthGate` → `GET /auth/session`) |
+| **Contract** | [`auth-service-contract.md`](../../auth-service-contract.md) |
 
 ---
 
@@ -249,7 +250,8 @@ Unchanged from v0.2.0 (Audit, Sequence/engagement, Import, Rule engine, Agents, 
 | `AuditContext` | Session |
 | Agent / automation edits | Session |
 | Login OTP state (`LoginForm`) | Session (React state) |
-| API / DB | **None** |
+| Auth sessions | Supabase `sessions` + HTTP-only cookie |
+| API / DB | Auth Service + Supabase (login path) |
 
 ### 6.3 Key files (additions since v0.2.0)
 
@@ -261,7 +263,10 @@ Unchanged from v0.2.0 (Audit, Sequence/engagement, Import, Rule engine, Agents, 
 | `register/flows/types.ts` | Wire schema, `flowOrder` |
 | `register/systems/registry.ts` | App/service/provider nodes |
 | `register/tables/registry.ts` | Table schema cards |
-| `marketing/components/LoginForm.tsx` | Passwordless login UI (stub) |
+| `marketing/components/LoginForm.tsx` | Passwordless login UI (wired to Auth Service) |
+| `auth/authClient.ts` | Auth HTTP client |
+| `server/auth-service/` | Auth Service implementation |
+| `docs/product/database-seeding-protocol.md` | Manifest seeding + audit trail |
 | `marketing/pages/LoginPage.tsx` | `/login` route |
 
 All v0.2.0 seed files remain — see v0.2.0 §6.3.
@@ -284,13 +289,12 @@ All v0.2.0 seed files remain — see v0.2.0 §6.3.
 
 | # | Limitation | Tag |
 |---|------------|-----|
-| 1 | No backend | `[Arch]` |
-| 2 | Login handlers stubbed — no Auth Service | `[Arch]` |
-| 3 | Register flows not synced to Icepanel flows UI automatically | `[Doc]` |
-| 4 | CSV import does not append to `importList` | `[Data]` |
-| 5 | Agent/automation Save/Launch not wired | `[UX]` |
-| 6 | Register holon registration still multi-file (5-step workflow) | `[Arch]` |
-| 7 | v0.2.0 debt items still open | see v0.2.0 §8 |
+| 1 | Production deploy + verification pending — see `tasks/login-production-follow-ups.md` | `[Arch]` |
+| 2 | Register flows not synced to Icepanel flows UI automatically | `[Doc]` |
+| 3 | CSV import does not append to `importList` | `[Data]` |
+| 4 | Agent/automation Save/Launch not wired | `[UX]` |
+| 5 | Register holon registration still multi-file (5-step workflow) | `[Arch]` |
+| 6 | v0.2.0 debt items still open | see v0.2.0 §8 |
 
 ---
 
@@ -300,8 +304,8 @@ v0.2.0 decisions O-01–O-08 remain open.
 
 | ID | Question | Options |
 |----|----------|---------|
-| O-09 | Auth Service implementation host | Vercel functions vs dedicated API service |
-| O-10 | Session shape | HTTP-only cookie vs bearer token |
+| O-09 | Auth Service implementation host | **Resolved — Vercel Serverless Functions** (`api/auth/[[...path]].ts`) + local Hono |
+| O-10 | Session shape | **Resolved — HTTP-only cookie** (`tower_session`) |
 | O-11 | Register as agent input | Flow TS only vs generated JSON export |
 
 ---
@@ -317,7 +321,7 @@ v0.2.0 decisions O-01–O-08 remain open.
 - **Infrastructure nodes** — Consultant Web App, Auth Service, Resend, Supabase
 - **Table schema nodes** — `firms`, `users`, `otp_challenges`, `sessions`
 - **Wire UX** — numbered badges, line/badge hover, popover with endpoint labels
-- **Marketing `/login`** — passwordless two-step `LoginForm` (stubbed)
+- **Marketing `/login`** — passwordless two-step `LoginForm` wired to Auth Service
 - **Flow label resolver** — `flowWireEndpointLabels.ts` for popover headers
 
 ### Changed
@@ -386,7 +390,7 @@ Author verified on **2026-06-18**:
 - [x] Hover **Send OTP** / **Verify OTP** — composite slices with correct step numbers
 - [x] Badge hover — popover shows step badge + source → target + metadata
 - [x] Line hover — solid accent wire + same popover
-- [x] `/login` — email step → verify step (stub); no network
+- [x] `/login` — email → verify → session cookie → `/` (requires Auth Service + seed)
 - [x] v0.2.0 Hub Agents/Automations flows (assumed unchanged)
 
 ---

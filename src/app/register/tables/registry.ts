@@ -60,6 +60,9 @@ export const OTP_CHALLENGES_TABLE: RegisterTableDef = {
     { name: "code_hash", type: "String" },
     { name: "expires_at", type: "Timestamp" },
     { name: "consumed_at", type: "Timestamp", note: "nullable" },
+    { name: "invalidated_at", type: "Timestamp", note: "nullable" },
+    { name: "delivery_failed", type: "Boolean" },
+    { name: "verify_attempts", type: "Int" },
     { name: "created_at", type: "Timestamp" },
   ],
 };

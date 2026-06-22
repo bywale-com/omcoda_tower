@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Navigate } from "react-router";
 import { DocsHighlightProvider } from "../../context/DocsHighlightContext";
 import { light, type Tokens } from "../../components/tokens";
 import { RegisterSelectionProvider } from "../context/RegisterSelectionContext";
@@ -6,15 +7,46 @@ import { RegisterFlowCanvas } from "../components/RegisterFlowCanvas";
 import { RegisterGate } from "../components/RegisterGate";
 import { RegisterLeftPanel } from "../components/RegisterLeftPanel";
 import { RegisterHolonCatalogBootstrap } from "../RegisterHolonCatalogBootstrap";
-import { isRegisterUnlocked, lockRegister } from "../registerAuth";
+import { isRegisterRouteEnabled, isRegisterUnlocked, lockRegister } from "../registerAuth";
 import { RegisterErrorBoundary } from "../components/RegisterErrorBoundary";
 
 const LEFT_PANEL_WIDTH = 280;
 
 export function RegisterPage() {
-  const [unlocked, setUnlocked] = useState(() => isRegisterUnlocked());
+  const [unlocked, setUnlocked] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
   const t: Tokens = light;
   const isDark = false;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function checkUnlock() {
+      if (!isRegisterRouteEnabled()) {
+        setIsChecking(false);
+        return;
+      }
+
+      const open = await isRegisterUnlocked();
+      if (!cancelled) {
+        setUnlocked(open);
+        setIsChecking(false);
+      }
+    }
+
+    void checkUnlock();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (!isRegisterRouteEnabled()) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (isChecking) {
+    return null;
+  }
 
   if (!unlocked) {
     return (
@@ -84,8 +116,7 @@ export function RegisterPage() {
             <button
               type="button"
               onClick={() => {
-                lockRegister();
-                setUnlocked(false);
+                void lockRegister().then(() => setUnlocked(false));
               }}
               style={{
                 padding: "4px 10px",

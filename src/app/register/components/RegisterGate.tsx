@@ -10,18 +10,23 @@ type RegisterGateProps = {
 export function RegisterGate({ t, onUnlock }: RegisterGateProps) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    setIsSubmitting(true);
 
-    if (unlockRegister(password)) {
+    const ok = await unlockRegister(password);
+    if (ok) {
       onUnlock();
+      setIsSubmitting(false);
       return;
     }
 
     setError("Incorrect password.");
     setPassword("");
+    setIsSubmitting(false);
   }
 
   return (
@@ -91,6 +96,7 @@ export function RegisterGate({ t, onUnlock }: RegisterGateProps) {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             placeholder="Enter password"
+            disabled={isSubmitting}
             style={{
               width: "100%",
               padding: "8px 10px",
@@ -112,6 +118,7 @@ export function RegisterGate({ t, onUnlock }: RegisterGateProps) {
 
           <button
             type="submit"
+            disabled={isSubmitting}
             style={{
               marginTop: 4,
               padding: "8px 14px",
@@ -125,10 +132,11 @@ export function RegisterGate({ t, onUnlock }: RegisterGateProps) {
               cursor: "pointer",
             }}
           >
-            Enter
+            {isSubmitting ? "Checking…" : "Enter"}
           </button>
         </form>
       </div>
     </div>
   );
 }
+

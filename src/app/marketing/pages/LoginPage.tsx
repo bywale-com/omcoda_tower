@@ -1,9 +1,21 @@
+import { Navigate } from "react-router";
+import { useAuth } from "../../auth/AuthContext";
 import { DocsHighlightProvider } from "../../context/DocsHighlightContext";
 import { OmcodaNav } from "../components/OmcodaNav";
 import { LoginForm } from "../components/LoginForm";
 import { AuthHeroMedia } from "../components/AuthHeroMedia";
 
 export function LoginPage() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return null;
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
     <DocsHighlightProvider>
       <div className="marketing-page">

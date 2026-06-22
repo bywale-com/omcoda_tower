@@ -1,6 +1,8 @@
 import { FormEvent, useState } from "react";
 import { Cloud } from "lucide-react";
 import { useNavigate } from "react-router";
+import { abandonOtp, AuthRequestError, sendOtp, verifyOtp } from "../../auth/authClient";
+import { useAuth } from "../../auth/AuthContext";
 import { HolonBoundary } from "../../components/docs/HolonBoundary";
 import {
   LOGIN_EMAIL_FIELD_HOLON,
@@ -20,6 +22,7 @@ type LoginFormProps = {
 
 export function LoginForm({ onSuccess }: LoginFormProps) {
   const navigate = useNavigate();
+  const { refresh } = useAuth();
   const t = light;
   const [step, setStep] = useState<LoginStep>("email");
   const [email, setEmail] = useState("");
@@ -31,19 +34,28 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     event.preventDefault();
     setError(null);
 
-    if (!email.trim()) {
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail) {
       setError("Enter your email to continue.");
       return;
     }
 
     setIsSubmitting(true);
 
-    // Stub — wire to Auth Service magic-link / OTP send when backend is ready.
-    await new Promise((resolve) => window.setTimeout(resolve, 400));
-
-    setStep("verify");
-    setVerificationCode("");
-    setIsSubmitting(false);
+    try {
+      await sendOtp(trimmedEmail);
+      setEmail(trimmedEmail);
+      setStep("verify");
+      setVerificationCode("");
+    } catch (err) {
+      setError(
+        err instanceof AuthRequestError
+          ? err.message
+          : "We could not send a code. Try again shortly.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   async function handleVerifySubmit(event: FormEvent<HTMLFormElement>) {
@@ -57,25 +69,53 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
 
     setIsSubmitting(true);
 
-    // Stub — wire to Auth Service verify when backend is ready.
-    await new Promise((resolve) => window.setTimeout(resolve, 400));
-
-    onSuccess?.();
-    navigate("/");
-    setIsSubmitting(false);
+    try {
+      await verifyOtp(email, verificationCode.trim());
+      await refresh();
+      onSuccess?.();
+      navigate("/");
+    } catch (err) {
+      setError(
+        err instanceof AuthRequestError
+          ? err.message
+          : "Verification failed. Try again.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   async function handleResendCode() {
     setError(null);
     setIsSubmitting(true);
-    await new Promise((resolve) => window.setTimeout(resolve, 400));
-    setIsSubmitting(false);
+
+    try {
+      await sendOtp(email);
+    } catch (err) {
+      setError(
+        err instanceof AuthRequestError
+          ? err.message
+          : "We could not resend the code. Try again shortly.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
-  function handleChangeEmail() {
-    setStep("email");
-    setVerificationCode("");
-    setError(null);
+  async function handleChangeEmail() {
+    setIsSubmitting(true);
+    try {
+      if (email.trim()) {
+        await abandonOtp(email.trim());
+      }
+    } catch {
+      // Abandon is best-effort; user can still change email in UI.
+    } finally {
+      setStep("email");
+      setVerificationCode("");
+      setError(null);
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -227,3 +267,4 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     </HolonBoundary>
   );
 }
+
