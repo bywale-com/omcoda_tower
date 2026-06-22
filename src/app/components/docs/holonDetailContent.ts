@@ -35,6 +35,21 @@ import {
   ENGAGEMENT_FORM_VISIT_ROW_HOLON,
   ENGAGEMENT_SEQUENCE_ROW_HOLON,
 } from "./engagementListHolons";
+import {
+  DOCS_INVIEW_INDICATOR_HOLON,
+  DOCS_OUTLINE_ROW_HOLON,
+  DOCS_PANELS_BRANCH_HOLON,
+  DOCS_REGISTRY_HOLON,
+  DOCS_ROW_ACTIONS_HOLON,
+  DOCS_ROW_NAME_HOLON,
+} from "./docsRegistryHolons";
+import {
+  ADD_IMPORT_CONTROL_HOLON,
+  IMPORT_ROW_HOLON,
+  IMPORTS_SECTION_HOLON,
+} from "./contactsBodyHolons";
+import type { IcepanelObjectRef } from "./icepanelLinks";
+import { ICEPANEL_OBJECTS } from "./icepanelLinks";
 import { ENGAGEMENT_SEQUENCE_BAR_HOLON } from "./engagementTimelineHolons";
 import { CLIENT_DATA_TAB_HOLONS, ENGAGEMENT_LIST_HOLON } from "./clientDataHolons";
 
@@ -56,6 +71,8 @@ export type HolonDetailContent = {
   icon: NotionIconName;
   summary: string;
   sections: HolonDetailSection[];
+  /** Primary Icepanel object for systems-map cross-link (optional override). */
+  icepanel?: IcepanelObjectRef;
 };
 
 const ENGAGEMENT_CHART = CLIENT_DATA_TAB_HOLONS.logs.content;
@@ -177,6 +194,113 @@ export const HOLON_DETAIL_CONTENT: Partial<Record<HolonId, HolonDetailContent>> 
           { id: AGENT_STEP_NODE_PATTERN_HOLONS.task.id, label: AGENT_STEP_NODE_PATTERN_HOLONS.task.label },
           { id: AGENT_STEP_CONDITION_HOLON.id, label: AGENT_STEP_CONDITION_HOLON.label },
           { id: AGENT_ADD_STEP_HOLON.id, label: AGENT_ADD_STEP_HOLON.label },
+        ],
+      },
+    ],
+  },
+  [IMPORTS_SECTION_HOLON.id]: {
+    id: IMPORTS_SECTION_HOLON.id,
+    label: IMPORTS_SECTION_HOLON.label,
+    icon: IMPORTS_SECTION_HOLON.icon,
+    summary:
+      "Contacts sidebar import list header — batch labels, sort, count. The + control is a separate holon (Add Import).",
+    icepanel: ICEPANEL_OBJECTS.importsSection,
+    sections: [
+      {
+        title: "Role",
+        paragraphs: [
+          "Imports Section is the directory header for import batches. It does not trigger backend import by itself — the consultant uses Add Import (+) to start the CSV flow.",
+        ],
+        links: [
+          { id: ADD_IMPORT_CONTROL_HOLON.id, label: ADD_IMPORT_CONTROL_HOLON.label },
+          { id: IMPORT_ROW_HOLON.id, label: IMPORT_ROW_HOLON.label },
+        ],
+      },
+      {
+        title: "Systems map (Icepanel)",
+        paragraphs: [
+          `Flow container: **${ICEPANEL_OBJECTS.importsSection.path}** (\`${ICEPANEL_OBJECTS.importsSection.id}\`).`,
+          `Service action: **${ICEPANEL_OBJECTS.addImport.path}** — Uploads CSV via → **${ICEPANEL_OBJECTS.importService.name}** (future, on mapping confirm).`,
+        ],
+      },
+      {
+        title: "What it enables",
+        bullets: [
+          "Import batch labels in the directory (seed data today; persistence planned).",
+          "Selection of batches when creating Hub audits.",
+          "Hosts Add Import control and sort affordance (sort is UI-only).",
+        ],
+      },
+    ],
+  },
+  [ADD_IMPORT_CONTROL_HOLON.id]: {
+    id: ADD_IMPORT_CONTROL_HOLON.id,
+    label: ADD_IMPORT_CONTROL_HOLON.label,
+    icon: ADD_IMPORT_CONTROL_HOLON.icon,
+    summary:
+      "+ control in the Imports header — explicit consultant action that opens the CSV import flow and will call Import Service on confirm.",
+    icepanel: ICEPANEL_OBJECTS.addImport,
+    sections: [
+      {
+        title: "Role",
+        paragraphs: [
+          "Add Import is the trigger control in `CsvImportFlow`. Login does not import data; the consultant must click +, choose a file, map columns, and confirm.",
+        ],
+        links: [{ id: IMPORTS_SECTION_HOLON.id, label: IMPORTS_SECTION_HOLON.label }],
+      },
+      {
+        title: "Systems map (Icepanel)",
+        paragraphs: [
+          `**${ICEPANEL_OBJECTS.addImport.path}** — component \`${ICEPANEL_OBJECTS.addImport.id}\`.`,
+          `Connection **Uploads CSV via** → **${ICEPANEL_OBJECTS.importService.path}** → **${ICEPANEL_OBJECTS.firmDataStore.name}** (ADR-002).`,
+        ],
+      },
+      {
+        title: "What it enables",
+        bullets: [
+          "Opens drop menu (Import file…) and drag-and-drop for .csv / .tsv.",
+          "Launches column mapping dialog; confirm is the future API boundary.",
+          "Inspectable via Tower logo holon inspect mode.",
+        ],
+      },
+    ],
+  },
+  [DOCS_REGISTRY_HOLON.id]: {
+    id: DOCS_REGISTRY_HOLON.id,
+    label: DOCS_REGISTRY_HOLON.label,
+    icon: DOCS_REGISTRY_HOLON.icon,
+    summary:
+      "Live Console registry — Panels tree of holons with hover highlight, reveal, and holon inspect mode from the Tower logo.",
+    icepanel: ICEPANEL_OBJECTS.consoleRegistry,
+    sections: [
+      {
+        title: "Role",
+        paragraphs: [
+          "Console Registry is the scrollable Panels outline. Each row maps a functional UI region to a holon id. Hover highlights the live surface; View Details opens this panel.",
+        ],
+        links: [
+          { id: DOCS_PANELS_BRANCH_HOLON.id, label: DOCS_PANELS_BRANCH_HOLON.label },
+          { id: DOCS_OUTLINE_ROW_HOLON.id, label: DOCS_OUTLINE_ROW_HOLON.label },
+        ],
+      },
+      {
+        title: "Systems map (Icepanel)",
+        paragraphs: [
+          `**${ICEPANEL_OBJECTS.consoleRegistry.path}** — component \`${ICEPANEL_OBJECTS.consoleRegistry.id}\`.`,
+          "Complements Icepanel (services/stores/flows). UI modules live here; backend architecture lives in Icepanel ADRs.",
+        ],
+      },
+      {
+        title: "What it enables",
+        bullets: [
+          "Panels tree built from runtime HolonBoundary registration.",
+          "Tower logo → crosshair inspect mode → click any holon surface to open detail.",
+          "In-view eye control reveals off-screen holons (tab switch, panel open).",
+        ],
+        links: [
+          { id: DOCS_ROW_NAME_HOLON.id, label: DOCS_ROW_NAME_HOLON.label },
+          { id: DOCS_INVIEW_INDICATOR_HOLON.id, label: DOCS_INVIEW_INDICATOR_HOLON.label },
+          { id: DOCS_ROW_ACTIONS_HOLON.id, label: DOCS_ROW_ACTIONS_HOLON.label },
         ],
       },
     ],

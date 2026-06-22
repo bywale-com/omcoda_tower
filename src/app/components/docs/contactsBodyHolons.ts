@@ -28,6 +28,14 @@ export const IMPORTS_SECTION_HOLON = {
   order: 1,
 };
 
+/** + control in Imports section header — triggers CSV import flow (→ Import Service). */
+export const ADD_IMPORT_CONTROL_HOLON = {
+  id: "add-import-control",
+  label: "Add Import",
+  icon: "plus" as NotionIconName,
+  order: 0,
+};
+
 export const IMPORT_ROW_HOLON = {
   id: "import-row",
   label: "Import Row",

@@ -1,14 +1,14 @@
-import { useState, useEffect, type MouseEvent as ReactMouseEvent } from "react";
+import { useState, useEffect, useCallback, type MouseEvent as ReactMouseEvent } from "react";
 import { BoardPanel } from "./components/BoardPanel";
 import { DocsPanel } from "./components/DocsPanel";
 import { HolonDetailPanel } from "./components/HolonDetailPanel";
+import { HolonInspectLayer } from "./components/docs/HolonInspectLayer";
 import { ClientPortalPage } from "./components/client-portal/ClientPortalPage";
 import { Workspace } from "./components/Workspace";
 import { StatusBar } from "./components/StatusBar";
 import { AuditProvider, useAudits } from "./context/AuditContext";
 import { PanelProvider } from "./context/PanelContext";
 import { DocsHighlightProvider, useDocsHighlight } from "./context/DocsHighlightContext";
-import { DocsRegistryProvider } from "./context/DocsRegistryContext";
 import { HolonDetailProvider, useHolonDetail } from "./context/HolonDetailContext";
 import { TouchpointFocusProvider, useTouchpointFocus } from "./context/TouchpointFocusContext";
 import { TaskProvider } from "./context/TaskContext";
@@ -69,13 +69,11 @@ export default function App() {
     <TouchpointFocusProvider>
       <TaskProvider>
         <DocsHighlightProvider>
-          <DocsRegistryProvider>
-            <HolonDetailProvider>
+          <HolonDetailProvider>
               <AuditProvider>
                 <AppShell />
               </AuditProvider>
             </HolonDetailProvider>
-          </DocsRegistryProvider>
         </DocsHighlightProvider>
       </TaskProvider>
     </TouchpointFocusProvider>
@@ -117,6 +115,10 @@ function AppShell() {
       closeHolonDetail();
     }
   }, [isConsoleOpen, setHoveredComponentId, closeHolonDetail]);
+
+  const ensureConsoleOpen = useCallback(() => {
+    setIsConsoleOpen(true);
+  }, []);
 
   useEffect(() => {
     syncShadcnTheme(t, isDark);
@@ -270,6 +272,7 @@ function AppShell() {
       togglePanel={() => setIsPanelOpen((o) => !o)}
       openPanel={() => setIsPanelOpen(true)}
     >
+    <HolonInspectLayer onEnsureConsoleOpen={ensureConsoleOpen} />
     {portalClientId && (
       <ClientPortalPage
         clientId={portalClientId}

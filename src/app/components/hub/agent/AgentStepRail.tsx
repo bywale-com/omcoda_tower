@@ -35,10 +35,16 @@ function stepIcon(step: AgentStep, t: Tokens) {
 }
 
 function RailConditionNode({ step, t }: { step: AgentStep; t: Tokens }) {
-  const conditionHighlight = useHolonPatternHighlight(AGENT_STEP_CONDITION_HOLON.id, t.accent);
+  const { style: conditionHighlightStyle, ...conditionInspectProps } = useHolonPatternHighlight(
+    AGENT_STEP_CONDITION_HOLON.id,
+    t.accent,
+  );
 
   return (
-    <div style={{ ...agentStepConditionNode(t), ...conditionHighlight }}>
+    <div
+      {...conditionInspectProps}
+      style={{ ...agentStepConditionNode(t), ...conditionHighlightStyle }}
+    >
       <Clock size={10} strokeWidth={2} />
       <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
         {agentStepTimingLabel(step)}

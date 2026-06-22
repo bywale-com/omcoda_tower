@@ -10,7 +10,7 @@ import { workflowBodyText, workflowHintText, workflowNodeShell, workflowPill } f
 
 export function TriggerNode({ data, selected }: NodeProps<Node<WorkflowNodeData>>) {
   const { t } = useAutomationEditor();
-  const patternHighlight = useHolonPatternHighlight(
+  const { style: patternHighlightStyle, ...patternInspectProps } = useHolonPatternHighlight(
     AUTOMATION_NODE_PATTERN_HOLONS.trigger.id,
     t.accent,
   );
@@ -19,7 +19,10 @@ export function TriggerNode({ data, selected }: NodeProps<Node<WorkflowNodeData>
     : undefined;
 
   return (
-    <div style={{ ...workflowNodeShell(t, selected), ...patternHighlight }}>
+    <div
+      {...patternInspectProps}
+      style={{ ...workflowNodeShell(t, selected), ...patternHighlightStyle }}
+    >
       <Handle type="target" position={Position.Top} style={{ opacity: 0 }} />
       <div style={{ padding: "10px 12px 0" }}>
         <span style={workflowPill(t, "accent")}>

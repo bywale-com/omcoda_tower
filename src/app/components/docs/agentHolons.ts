@@ -60,7 +60,7 @@ export const AGENT_SETTINGS_TAB_HOLON = {
 export const AGENT_STEP_TOOLBAR_HOLON = {
   id: "agent-step-toolbar",
   label: "Step Toolbar",
-  icon: "list" as NotionIconName,
+  icon: "dependency" as NotionIconName,
   order: 0,
 };
 

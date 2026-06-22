@@ -14,6 +14,13 @@ export const DOCS_PANELS_BRANCH_HOLON = {
   order: 1,
 };
 
+export const DOCS_REGISTRY_HOLON = {
+  id: "docs-registry",
+  label: "Console Registry",
+  icon: "list" as NotionIconName,
+  order: 0,
+};
+
 /** Repeating Console column row — one registry entry, many live instances */
 export const DOCS_OUTLINE_ROW_HOLON = {
   id: "docs-outline-row",

@@ -9,7 +9,7 @@ import {
 import type { NotionIconName } from "../../icons/notion-icon-urls";
 import type { HolonLucideIconName } from "./holonIcons";
 import { useDocsRegistry } from "../../context/DocsRegistryContext";
-import { docsTargetHighlight, useIsDocsTarget } from "./docsHighlight";
+import { docsTargetHighlight, holonInspectTargetProps, useIsDocsTarget } from "./docsHighlight";
 import type { Tokens } from "../tokens";
 
 const HolonParentContext = createContext<string | null>(null);
@@ -87,6 +87,7 @@ export function HolonBoundary({
   return (
     <HolonParentContext.Provider value={id}>
       <div
+        {...holonInspectTargetProps(id)}
         style={{ ...style, ...docsTargetHighlight(isHighlighted, ringColor) }}
         onClick={onClick}
         onMouseEnter={onMouseEnter}

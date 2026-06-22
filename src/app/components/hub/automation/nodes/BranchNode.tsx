@@ -9,7 +9,7 @@ import { workflowBodyText, workflowHintText, workflowNodeShell, workflowPill } f
 
 export function BranchNode({ id, data, selected }: NodeProps<Node<WorkflowNodeData>>) {
   const { t } = useAutomationEditor();
-  const patternHighlight = useHolonPatternHighlight(
+  const { style: patternHighlightStyle, ...patternInspectProps } = useHolonPatternHighlight(
     AUTOMATION_NODE_PATTERN_HOLONS.branch.id,
     t.accent,
   );
@@ -17,7 +17,10 @@ export function BranchNode({ id, data, selected }: NodeProps<Node<WorkflowNodeDa
 
   return (
     <WorkflowNodeFrame nodeId={id} nodeType="branch" selected={!!selected}>
-      <div style={{ ...workflowNodeShell(t, selected, isDelay ? 280 : 320), ...patternHighlight }}>
+      <div
+        {...patternInspectProps}
+        style={{ ...workflowNodeShell(t, selected, isDelay ? 280 : 320), ...patternHighlightStyle }}
+      >
       <Handle type="target" position={Position.Top} style={{ background: t.border, width: 8, height: 8 }} />
       <div style={{ padding: "10px 12px 0" }}>
         <span style={workflowPill(t, "muted")}>

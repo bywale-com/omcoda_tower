@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { NotionIconName } from "../../icons/notion-icon-urls";
-import { docsTargetHighlight, useIsDocsTarget } from "../docs/docsHighlight";
+import { docsTargetHighlight, holonInspectTargetProps, useIsDocsTarget } from "../docs/docsHighlight";
 import {
   DOCS_TREE_ACTIVE_BORDER,
   DOCS_TREE_ICON_SIZE,
@@ -40,6 +40,7 @@ export function HubToolRow({
 
   return (
     <div
+      {...holonInspectTargetProps(holonId)}
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}

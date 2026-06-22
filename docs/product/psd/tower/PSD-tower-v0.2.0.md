@@ -2,7 +2,7 @@
 psd_id: PSD-tower-v0.2.0
 scope: tower
 version: 0.2.0
-status: current
+status: superseded
 supersedes: PSD-tower-v0.1.0
 as_of: 2026-06-18
 authors:

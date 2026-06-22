@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { SIDEBAR_HEADER_HEIGHT } from "../constants/layout";
+import { useDocsHighlight } from "../context/DocsHighlightContext";
 import { HolonBoundary } from "./docs/HolonBoundary";
 import {
   ALL_NAV,
@@ -37,6 +38,7 @@ export function ActivityBarHeader({
   t,
   isDark,
 }: ActivityBarHeaderProps) {
+  const { isHolonInspectMode, toggleHolonInspectMode } = useDocsHighlight();
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -167,12 +169,7 @@ export function ActivityBarHeader({
 
   return (
     <>
-      <HolonBoundary
-        id="primary-navigation"
-        label="Primary Navigation"
-        icon="compass"
-        order={SHELL_HOLON_ORDER["primary-navigation"]}
-        t={t}
+      <div
         style={{
           height: SIDEBAR_HEADER_HEIGHT,
           flexShrink: 0,
@@ -188,79 +185,102 @@ export function ActivityBarHeader({
           zIndex: menuOpen ? 100 : "auto",
         }}
       >
-        <span
-          title="Tower"
+        <button
+          type="button"
+          title={isHolonInspectMode ? "Exit holon inspect (Esc)" : "Inspect holons"}
+          aria-pressed={isHolonInspectMode}
+          onClick={(event) => {
+            event.stopPropagation();
+            toggleHolonInspectMode();
+          }}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             paddingLeft: 10,
             paddingRight: 10,
+            border: "none",
             borderRight: `1px solid ${t.border}`,
             flexShrink: 0,
             boxSizing: "border-box",
+            background: isHolonInspectMode ? t.activeRowBg : "transparent",
+            cursor: isHolonInspectMode ? "crosshair" : "pointer",
           }}
         >
           <TowerAppLogo size={NAV_ICON_SIZE} opticalScale={NAV_LOGO_OPTICAL_SCALE} />
-        </span>
+        </button>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 2, padding: "0 8px 0 2px" }}>
-          <button
-            type="button"
-            title="Console"
-            onClick={onToggleConsole}
-            style={{
-              width: 28,
-              height: 28,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: isConsoleOpen ? t.activeRowBg : "transparent",
-              border: "none",
-              borderRadius: 4,
-              cursor: "pointer",
-              flexShrink: 0,
-            }}
-          >
-            <NotionIcon
-              name={CONSOLE_NAV_ICON}
-              size={NAV_ICON_SIZE}
-              color={isConsoleOpen ? t.accent : t.textMuted}
-            />
-          </button>
-
-          {PRIMARY_NAV.map(({ id, icon, label }) => iconBtn(id, icon, label))}
-
-          <button
-            ref={triggerRef}
-            type="button"
-            title="More views"
-            onClick={() => setMenuOpen((o) => !o)}
-            style={{
-              width: 28,
-              height: 28,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: menuOpen ? t.activeRowBg : "transparent",
-              border: "none",
-              borderRadius: 4,
-              cursor: "pointer",
-              flexShrink: 0,
-            }}
-          >
-            <span
+        <HolonBoundary
+          id="primary-navigation"
+          label="Primary Navigation"
+          icon="compass"
+          order={SHELL_HOLON_ORDER["primary-navigation"]}
+          t={t}
+          style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            minWidth: 0,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 2, padding: "0 8px 0 2px" }}>
+            <button
+              type="button"
+              title="Console"
+              onClick={onToggleConsole}
               style={{
-                display: "inline-flex",
-                transform: menuOpen ? "rotate(180deg)" : "rotate(0deg)",
-                transition: "transform 0.12s ease",
+                width: 28,
+                height: 28,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: isConsoleOpen ? t.activeRowBg : "transparent",
+                border: "none",
+                borderRadius: 4,
+                cursor: "pointer",
+                flexShrink: 0,
               }}
             >
-              <NotionIcon name={MORE_NAV_ICON} size={MORE_ICON_SIZE} color={t.textMuted} />
-            </span>
-          </button>
-        </div>
-      </HolonBoundary>
+              <NotionIcon
+                name={CONSOLE_NAV_ICON}
+                size={NAV_ICON_SIZE}
+                color={isConsoleOpen ? t.accent : t.textMuted}
+              />
+            </button>
+
+            {PRIMARY_NAV.map(({ id, icon, label }) => iconBtn(id, icon, label))}
+
+            <button
+              ref={triggerRef}
+              type="button"
+              title="More views"
+              onClick={() => setMenuOpen((o) => !o)}
+              style={{
+                width: 28,
+                height: 28,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: menuOpen ? t.activeRowBg : "transparent",
+                border: "none",
+                borderRadius: 4,
+                cursor: "pointer",
+                flexShrink: 0,
+              }}
+            >
+              <span
+                style={{
+                  display: "inline-flex",
+                  transform: menuOpen ? "rotate(180deg)" : "rotate(0deg)",
+                  transition: "transform 0.12s ease",
+                }}
+              >
+                <NotionIcon name={MORE_NAV_ICON} size={MORE_ICON_SIZE} color={t.textMuted} />
+              </span>
+            </button>
+          </div>
+        </HolonBoundary>
+      </div>
       {menu}
     </>
   );

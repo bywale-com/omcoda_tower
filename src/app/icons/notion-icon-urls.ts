@@ -13,6 +13,7 @@ import clockUrl from "@notion-icons/clock-55534e-icon.svg?url";
 import compassUrl from "@notion-icons/compass-55534e-icon.svg?url";
 import computerWindowUrl from "@notion-icons/computer-window-55534e-icon.svg?url";
 import cursorClickUrl from "@notion-icons/cursor-click-55534e-icon.svg?url";
+import dependencyUrl from "@notion-icons/dependency-55534e-icon.svg?url";
 import directionalSignUrl from "@notion-icons/directional-sign-55534e-icon.svg?url";
 import documentArrowUpUrl from "@notion-icons/document-arrow-up-55534e-icon.svg?url";
 import documentUrl from "@notion-icons/document-55534e-icon.svg?url";
@@ -58,6 +59,7 @@ export const NOTION_ICON_URLS = {
   compass: compassUrl,
   "computer-window": computerWindowUrl,
   "cursor-click": cursorClickUrl,
+  dependency: dependencyUrl,
   "directional-sign": directionalSignUrl,
   document: documentUrl,
   "document-arrow-up": documentArrowUpUrl,

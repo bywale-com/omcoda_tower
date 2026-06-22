@@ -5,7 +5,7 @@ import {
   TASK_META_HOLON,
   TASK_ROW_HOLON,
 } from "../docs/boardBodyHolons";
-import { docsTargetHighlight, useIsDocsTarget } from "../docs/docsHighlight";
+import { docsTargetHighlight, holonInspectTargetProps, useIsDocsTarget } from "../docs/docsHighlight";
 import {
   DOCS_TREE_ACTIVE_BORDER,
   DOCS_TREE_ROW_GAP,
@@ -39,6 +39,7 @@ export function TaskRow({
 
   return (
     <div
+      {...holonInspectTargetProps(TASK_ROW_HOLON.id)}
       onClick={() => onTaskClick(task)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}

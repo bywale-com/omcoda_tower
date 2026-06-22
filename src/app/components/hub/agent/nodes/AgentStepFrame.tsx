@@ -3,7 +3,7 @@ import type { CSSProperties, ReactNode } from "react";
 import type { AgentStep } from "../../../../data/agentSteps";
 import { agentStepTimingLabel, agentStepTitle } from "../../../../data/agentSteps";
 import { AGENT_STEP_CONDITION_HOLON } from "../../../docs/agentHolons";
-import { useHolonPatternHighlight } from "../../../docs/docsHighlight";
+import { useHolonPatternHighlight, type HolonInspectTargetProps } from "../../../docs/docsHighlight";
 import { DOCS_TREE_LABEL_SIZE } from "../../../docs/treeLayout";
 import { cn } from "../../../ui/utils";
 import type { Tokens } from "../../../tokens";
@@ -21,6 +21,7 @@ type AgentStepFrameProps = {
   children: ReactNode;
   maxWidth?: number;
   shellHighlight?: CSSProperties;
+  shellInspectProps?: HolonInspectTargetProps;
 };
 
 export function AgentStepFrame({
@@ -35,13 +36,20 @@ export function AgentStepFrame({
   children,
   maxWidth = 920,
   shellHighlight,
+  shellInspectProps,
 }: AgentStepFrameProps) {
   const timingLabel = agentStepTimingLabel(step);
-  const conditionHighlight = useHolonPatternHighlight(AGENT_STEP_CONDITION_HOLON.id, t.accent);
+  const { style: conditionHighlightStyle, ...conditionInspectProps } = useHolonPatternHighlight(
+    AGENT_STEP_CONDITION_HOLON.id,
+    t.accent,
+  );
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
-      <div style={{ ...agentStepTimingPill(t), ...conditionHighlight }}>
+      <div
+        {...conditionInspectProps}
+        style={{ ...agentStepTimingPill(t), ...conditionHighlightStyle }}
+      >
         <Clock size={11} strokeWidth={2} />
         {timingLabel}
         <Pencil size={10} strokeWidth={2} style={{ opacity: 0.6 }} />
@@ -57,6 +65,7 @@ export function AgentStepFrame({
             onSelect();
           }
         }}
+        {...shellInspectProps}
         style={{ ...agentStepNodeShell(t, selected, maxWidth), ...shellHighlight }}
       >
         <div

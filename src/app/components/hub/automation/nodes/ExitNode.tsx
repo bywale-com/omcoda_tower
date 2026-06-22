@@ -8,7 +8,7 @@ import { WorkflowNodeFrame } from "../WorkflowNodeFrame";
 
 export function ExitNode({ id, selected }: NodeProps<Node<WorkflowNodeData>>) {
   const { t } = useAutomationEditor();
-  const patternHighlight = useHolonPatternHighlight(
+  const { style: patternHighlightStyle, ...patternInspectProps } = useHolonPatternHighlight(
     AUTOMATION_NODE_PATTERN_HOLONS.exit.id,
     t.accent,
   );
@@ -16,12 +16,13 @@ export function ExitNode({ id, selected }: NodeProps<Node<WorkflowNodeData>>) {
   return (
     <WorkflowNodeFrame nodeId={id} nodeType="exit" selected={!!selected}>
       <div
+        {...patternInspectProps}
         style={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           gap: 6,
-          ...patternHighlight,
+          ...patternHighlightStyle,
           borderRadius: 8,
           padding: 4,
         }}

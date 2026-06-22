@@ -35,10 +35,11 @@ export function TaskStepNode({
   onChange,
 }: TaskStepNodeProps) {
   const task = step.task ?? { priority: "medium" as const, note: "", skipAfterDays: 0 };
-  const patternHighlight = useHolonPatternHighlight(
+  const patternTarget = useHolonPatternHighlight(
     AGENT_STEP_NODE_PATTERN_HOLONS.task.id,
     t.accent,
   );
+  const { style: patternHighlightStyle, ...patternInspectProps } = patternTarget;
 
   return (
     <AgentStepFrame
@@ -51,7 +52,8 @@ export function TaskStepNode({
       onSelect={onSelect}
       icon={<CheckSquare size={14} strokeWidth={2} color={t.accent} />}
       maxWidth={560}
-      shellHighlight={patternHighlight}
+      shellHighlight={patternHighlightStyle}
+      shellInspectProps={patternInspectProps}
     >
       <div style={{ padding: panePadding, maxWidth: 520 }}>
         <label style={agentStepFieldLabel(t)}>

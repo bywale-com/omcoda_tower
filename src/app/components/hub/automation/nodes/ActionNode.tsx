@@ -16,7 +16,7 @@ const ACTION_ICONS: Record<string, "directional-sign" | "list" | "checkmark-list
 
 export function ActionNode({ id, data, selected }: NodeProps<Node<WorkflowNodeData>>) {
   const { t } = useAutomationEditor();
-  const patternHighlight = useHolonPatternHighlight(
+  const { style: patternHighlightStyle, ...patternInspectProps } = useHolonPatternHighlight(
     AUTOMATION_NODE_PATTERN_HOLONS.action.id,
     t.accent,
   );
@@ -24,7 +24,10 @@ export function ActionNode({ id, data, selected }: NodeProps<Node<WorkflowNodeDa
 
   return (
     <WorkflowNodeFrame nodeId={id} nodeType="action" selected={!!selected}>
-      <div style={{ ...workflowNodeShell(t, selected, 300), ...patternHighlight }}>
+      <div
+        {...patternInspectProps}
+        style={{ ...workflowNodeShell(t, selected, 300), ...patternHighlightStyle }}
+      >
       <Handle type="target" position={Position.Top} style={{ background: t.border, width: 8, height: 8 }} />
       <div style={{ padding: "10px 12px 0" }}>
         <span style={workflowPill(t, "muted")}>Action</span>

@@ -27,13 +27,14 @@ import { useHolonDetail } from "../context/HolonDetailContext";
 import type { HolonTreeNode } from "../context/DocsRegistryContext";
 import { useDocsRegistry } from "../context/DocsRegistryContext";
 import { HolonBoundary } from "./docs/HolonBoundary";
-import { docsTargetHighlight, useIsDocsTarget } from "./docs/docsHighlight";
+import { docsTargetHighlight, holonInspectTargetProps, useIsDocsTarget } from "./docs/docsHighlight";
 import {
   DOCS_HOME_BRANCH_HOLON,
   DOCS_HOME_PLACEHOLDER_ENTRIES,
   DOCS_INVIEW_INDICATOR_HOLON,
   DOCS_OUTLINE_ROW_HOLON,
   DOCS_PANELS_BRANCH_HOLON,
+  DOCS_REGISTRY_HOLON,
   DOCS_ROW_ACTIONS_HOLON,
   DOCS_ROW_NAME_HOLON,
 } from "./docs/docsRegistryHolons";
@@ -111,6 +112,7 @@ function DocsOutlineRow({
 
   return (
     <div
+      {...(docsTargetId ? holonInspectTargetProps(docsTargetId) : {})}
       onClick={() => {
         onSelect?.();
         onToggle?.();
@@ -378,9 +380,9 @@ export function DocsPanel({ width, t }: DocsPanelProps) {
       </HolonBoundary>
 
       <HolonBoundary
-        id="docs-registry"
-        label="Console Registry"
-        icon="list"
+        id={DOCS_REGISTRY_HOLON.id}
+        label={DOCS_REGISTRY_HOLON.label}
+        icon={DOCS_REGISTRY_HOLON.icon}
         order={SHELL_HOLON_ORDER["docs-registry"]}
         t={t}
         style={{

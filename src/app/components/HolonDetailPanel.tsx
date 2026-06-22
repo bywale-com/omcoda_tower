@@ -5,6 +5,7 @@ import { useHolonDetail } from "../context/HolonDetailContext";
 import { useDocsRegistry } from "../context/DocsRegistryContext";
 import { HolonBoundary } from "./docs/HolonBoundary";
 import { getHolonDetailContent } from "./docs/holonDetailContent";
+import { getIcepanelRefForHolon } from "./docs/icepanelLinks";
 import type { HolonDetailLink, HolonDetailSection } from "./docs/holonDetailContent";
 import { HolonTreeIcon } from "./docs/HolonTreeIcon";
 import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
@@ -130,6 +131,7 @@ function HolonDetailBody({
   const holon = holons.get(holonId);
 
   if (content) {
+    const icepanel = content.icepanel ?? getIcepanelRefForHolon(holonId);
     return (
       <div style={{ padding: `${s(10)}px ${s(12)}px ${s(12)}px` }}>
         <p
@@ -142,6 +144,27 @@ function HolonDetailBody({
         >
           {content.summary}
         </p>
+        {icepanel ? (
+          <p
+            style={{
+              margin: `0 0 ${s(14)}px`,
+              padding: `${s(8)}px ${s(10)}px`,
+              borderRadius: 6,
+              border: `1px solid ${t.borderLight}`,
+              background: t.hoverBg,
+              fontSize: s(11),
+              lineHeight: 1.45,
+              color: t.textMuted,
+            }}
+          >
+            <span style={{ color: t.textPrimary, fontWeight: 600 }}>Icepanel</span>
+            {" · "}
+            {icepanel.path}
+            <span style={{ display: "block", marginTop: s(4), fontFamily: "ui-monospace, monospace" }}>
+              {icepanel.id}
+            </span>
+          </p>
+        ) : null}
         {content.sections.map((section) => (
           <DetailSection
             key={section.title}

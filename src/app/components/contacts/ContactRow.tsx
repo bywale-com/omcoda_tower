@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Contact } from "../../data/contacts";
 import { CONTACT_ROW_HOLON } from "../docs/contactsBodyHolons";
-import { docsTargetHighlight, useIsDocsTarget } from "../docs/docsHighlight";
+import { docsTargetHighlight, holonInspectTargetProps, useIsDocsTarget } from "../docs/docsHighlight";
 import {
   DOCS_TREE_ACTIVE_BORDER,
   DOCS_TREE_ROW_GAP,
@@ -29,6 +29,7 @@ export function ContactRow({
 
   return (
     <div
+      {...holonInspectTargetProps(CONTACT_ROW_HOLON.id)}
       onClick={() => onContactClick(contact.id)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}

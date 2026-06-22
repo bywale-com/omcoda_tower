@@ -38,10 +38,11 @@ export function EmailStepNode({
   onChange,
 }: EmailStepNodeProps) {
   const email = step.email ?? { subject: "", body: "", threadType: "new" as const };
-  const patternHighlight = useHolonPatternHighlight(
+  const patternTarget = useHolonPatternHighlight(
     AGENT_STEP_NODE_PATTERN_HOLONS.email.id,
     t.accent,
   );
+  const { style: patternHighlightStyle, ...patternInspectProps } = patternTarget;
 
   return (
     <AgentStepFrame
@@ -54,7 +55,8 @@ export function EmailStepNode({
       onSelect={onSelect}
       icon={<Mail size={14} strokeWidth={2} color={t.accent} />}
       maxWidth={980}
-      shellHighlight={patternHighlight}
+      shellHighlight={patternHighlightStyle}
+      shellInspectProps={patternInspectProps}
     >
       <div
         style={{

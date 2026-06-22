@@ -1,6 +1,8 @@
 import { useCallback, useRef, useState } from "react";
 import { Upload } from "lucide-react";
 import { DOCS_TREE_ICON_SIZE, DOCS_TREE_ICON_SLOT } from "../docs/treeLayout";
+import { ADD_IMPORT_CONTROL_HOLON } from "../docs/contactsBodyHolons";
+import { HolonBoundary } from "../docs/HolonBoundary";
 import { NotionIcon } from "../icons/NotionIcon";
 import type { Tokens } from "../tokens";
 import { Popover, PopoverAnchor, PopoverContent } from "../ui/popover";
@@ -111,40 +113,49 @@ export function CsvImportFlow({ t, onImportConfirmed }: CsvImportFlowProps) {
   return (
     <>
       <Popover open={dropOpen} onOpenChange={setDropOpen}>
-        <PopoverAnchor asChild>
-          <button
-            type="button"
-            title="Add import"
-            aria-label="Add import"
-            onMouseEnter={() => {
-              setHovered(true);
-              openDrop();
-            }}
-            onMouseLeave={() => {
-              setHovered(false);
-              scheduleClose();
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              openDrop();
-            }}
-            style={{
-              width: DOCS_TREE_ICON_SLOT,
-              height: DOCS_TREE_ICON_SLOT,
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: 0,
-              border: "none",
-              borderRadius: 4,
-              background: hovered || dropOpen ? t.hoverBg : "transparent",
-              cursor: "pointer",
-              flexShrink: 0,
-            }}
-          >
-            <NotionIcon name="plus" size={DOCS_TREE_ICON_SIZE} color={t.textMuted} />
-          </button>
-        </PopoverAnchor>
+        <HolonBoundary
+          id={ADD_IMPORT_CONTROL_HOLON.id}
+          label={ADD_IMPORT_CONTROL_HOLON.label}
+          icon={ADD_IMPORT_CONTROL_HOLON.icon}
+          order={ADD_IMPORT_CONTROL_HOLON.order}
+          t={t}
+          style={{ display: "inline-flex", flexShrink: 0 }}
+        >
+          <PopoverAnchor asChild>
+            <button
+              type="button"
+              title="Add import"
+              aria-label="Add import"
+              onMouseEnter={() => {
+                setHovered(true);
+                openDrop();
+              }}
+              onMouseLeave={() => {
+                setHovered(false);
+                scheduleClose();
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                openDrop();
+              }}
+              style={{
+                width: DOCS_TREE_ICON_SLOT,
+                height: DOCS_TREE_ICON_SLOT,
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 0,
+                border: "none",
+                borderRadius: 4,
+                background: hovered || dropOpen ? t.hoverBg : "transparent",
+                cursor: "pointer",
+                flexShrink: 0,
+              }}
+            >
+              <NotionIcon name="plus" size={DOCS_TREE_ICON_SIZE} color={t.textMuted} />
+            </button>
+          </PopoverAnchor>
+        </HolonBoundary>
 
         <PopoverContent
           side="right"

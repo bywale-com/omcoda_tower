@@ -1,4 +1,4 @@
-import { ChevronsLeft, ChevronsRight, ListTree } from "lucide-react";
+import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   AGENT_EDITOR_TABS,
@@ -23,6 +23,7 @@ import {
 } from "../../docs/agentHolons";
 import { HolonBoundary } from "../../docs/HolonBoundary";
 import { DOCS_TREE_LABEL_SIZE } from "../../docs/treeLayout";
+import { NotionIcon } from "../../icons/NotionIcon";
 import { TOWER_CHROME_SOFT_BUTTON_CLASS } from "../../ui/towerChrome";
 import { cn } from "../../ui/utils";
 import type { Tokens } from "../../tokens";
@@ -226,7 +227,7 @@ export function AgentEditor({ agent, t }: AgentEditorProps) {
                 aria-label={railOpen ? "Collapse step rail" : "Expand step rail"}
                 title={railOpen ? "Collapse step rail" : "Expand step rail"}
               >
-                <ListTree size={14} strokeWidth={2} />
+                <NotionIcon name="dependency" size={14} color={t.textPrimary} />
                 {steps.length} {steps.length === 1 ? "step" : "steps"}
                 {railOpen ? (
                   <ChevronsLeft size={14} strokeWidth={2} color={t.textMuted} />

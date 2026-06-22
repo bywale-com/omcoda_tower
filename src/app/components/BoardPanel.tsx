@@ -17,7 +17,7 @@ import {
   PHASE_SIGNAL_HOLON,
   ROW_ACTIONS_HOLON,
 } from "./docs/boardBodyHolons";
-import { docsTargetHighlight, useIsDocsTarget } from "./docs/docsHighlight";
+import { docsTargetHighlight, holonInspectTargetProps, useIsDocsTarget } from "./docs/docsHighlight";
 import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
 import { docsBranchLabelStyle, docsChildLabelStyle } from "./docs/treeTypography";
 import {
@@ -149,6 +149,7 @@ function ClientRowIcon({
       onViewInActivity={() => onViewInActivity(client.id, snapshot.activityNodeId)}
     >
       <span
+        {...holonInspectTargetProps(PHASE_SIGNAL_HOLON.id)}
         style={{
           display: "flex",
           flexShrink: 0,
@@ -190,6 +191,7 @@ function ClientRow({
 
   return (
     <div
+      {...holonInspectTargetProps(CLIENT_ROW_HOLON.id)}
       onClick={() => onClientClick(client.id)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -216,7 +218,9 @@ function ClientRow({
         onViewInActivity={onViewInActivity}
       />
 
-      <span style={{
+      <span
+        {...holonInspectTargetProps(CLIENT_NAME_HOLON.id)}
+        style={{
         ...docsChildLabelStyle(CLIENT_LABEL_SIZE, t.textPrimary, t),
         flex: 1,
         borderRadius: 4,
