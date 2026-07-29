@@ -28,6 +28,7 @@ export function HubBody({
   activeTool,
   onToolClick,
   onAuditImportsContinue,
+  onAddAutomation,
   t,
 }: {
   audits: Audit[];
@@ -37,6 +38,7 @@ export function HubBody({
   activeTool: HubToolRef | null;
   onToolClick: (tool: HubToolRef) => void;
   onAuditImportsContinue?: (importIds: string[]) => void;
+  onAddAutomation?: () => void;
   t: Tokens;
 }) {
   const auditsInView = audits.length > 0;
@@ -108,7 +110,11 @@ export function HubBody({
         />
       ))}
 
-      <AutomationsSectionHeader count={automations.length} t={t} />
+      <AutomationsSectionHeader
+        count={automations.length}
+        onAddAutomation={onAddAutomation}
+        t={t}
+      />
 
       <HolonBoundary
         id={AUTOMATION_ROW_HOLON.id}

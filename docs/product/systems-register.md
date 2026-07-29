@@ -1,22 +1,25 @@
 # Systems Register — State Document
 
 **Project:** Tower  
-**Surface:** `/register` — repo-native systems map  
-**Status:** In progress (June 2026)  
-**Audience:** Product, design, engineering — anyone adding UI holons or register views
+**Surface:** `/register` — repo-native theory workspace  
+**Status:** In progress (July 2026 — pass hierarchy restructure)  
+**Audience:** Product, design, engineering — anyone adding UI holons or register views  
+**Model:** [`docs/register/THREE-SURFACE-MODEL.md`](../register/THREE-SURFACE-MODEL.md)
 
 ---
 
 ## 1. What it is
 
-The **Systems Register** is a password-gated route (`/register`) that mirrors the product UI as a **cosmetic systems map**:
+The **Systems Register** is a password-gated route (`/register`) for **pass-ordered product theory** on the left and **detail / How / flow canvases** on the right:
 
-- **Components tree** (left) — inventory of registered holons
-- **Flow canvas** (right) — draggable view artboards (e.g. Board · Clients, Login · Sign in)
+- **Left panel** — Seed → World → Personas & Function → SME → Enrichment → Furnish → Wiring → Components → CT Plant
+- **Right canvas** — Theory detail for the active pass; How canvas when a graph is selected; flow step canvas under Wiring
 
-It is **not** the live app. No logic, no data fetching, no auth flows — only layout and holon boundaries so you can read what exists and where it lives in context.
+It is **not** the live app. The live product (`/`) is the translation destination. **Console** documents what is mounted in the running app.
 
-Console (`/` docs mode) highlights holons in the **running app**. The register shows holons **assembled into views** on a zoomable canvas.
+**Legacy:** draggable hi-fi view artboards are retired as the default canvas. Components tree remains for holon inventory.
+
+Console (`/` docs mode) highlights holons in the **running app**. Register Components tree mirrors that inventory for traceability work.
 
 ---
 
@@ -121,3 +124,27 @@ Same holon ids; different surfaces. Registering feeds both when catalog and app 
 2. Derive `holonCatalogTree` from holon / registerMeta files
 3. Flows, dependencies, tables panels (metadata: purpose, in, via, out)
 4. Collapse steps 1–5 toward a single holon definition where possible
+
+---
+
+## 7. How Analysis
+
+The Register also hosts **How Analysis** — consultant-perspective decomposition from molecular outcomes down to true leaves, then into software flows.
+
+| Surface | Role |
+|---------|------|
+| How canvas | Epic graphs (React Flow); node card = parent **answer** (clarity) |
+| Detail panel | Question, clarity, when/conditions, components |
+| Left panel | Epic list sorted by `epicOrder` |
+
+**Methodology (authoring rules):** [`ui-first-build-methodology.md`](./ui-first-build-methodology.md)
+
+**Data:** `src/app/register/howAnalysis/` — one file per epic (e.g. `consultantOnTower.ts`, `towerCoreOutcome.ts`).
+
+Key rules in brief:
+
+- **DNA** — child questions cut phrases from the parent answer; no untraceable terms.
+- **Visibility** — consultant language until the true leaf; process language in leaf answers.
+- **Flow anchor** — Register flow lives at the last node before leaves; leaves are test cases.
+- **Components first** — point at what appears (Console) before naming systems.
+

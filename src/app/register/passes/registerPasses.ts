@@ -1,0 +1,110 @@
+/**
+ * Register pass ids — left panel section order (omcoda methodology).
+ * See docs/register/THREE-SURFACE-MODEL.md
+ */
+export type RegisterPassId =
+  | "seed"
+  | "world"
+  | "personas-function"
+  | "sme"
+  | "enrichment"
+  | "furnish"
+  | "wiring"
+  | "components"
+  | "ct-plant";
+
+export type RegisterPassMeta = {
+  id: RegisterPassId;
+  label: string;
+  /** Short note under section header in left panel */
+  hint?: string;
+  /** Has expandable tree content in left panel */
+  hasTree: boolean;
+};
+
+/** Authoritative pass order for Register left panel. */
+export const REGISTER_PASSES: RegisterPassMeta[] = [
+  {
+    id: "seed",
+    label: "Seed",
+    hint: "Complete product brief before World",
+    hasTree: false,
+  },
+  {
+    id: "world",
+    label: "World",
+    hint: "Personas, admission, shared objects",
+    hasTree: false,
+  },
+  {
+    id: "personas-function",
+    label: "Personas & Function",
+    hint: "How Analysis — outcomes by persona",
+    hasTree: true,
+  },
+  {
+    id: "sme",
+    label: "SME",
+    hint: "Domain considerations + Implementation",
+    hasTree: true,
+  },
+  {
+    id: "enrichment",
+    label: "Enrichment",
+    hint: "Can'ts — design gaps",
+    hasTree: false,
+  },
+  {
+    id: "furnish",
+    label: "Furnish",
+    hint: "Supporting affordances",
+    hasTree: false,
+  },
+  {
+    id: "wiring",
+    label: "Wiring",
+    hint: "Flow discovery + CTO facets",
+    hasTree: true,
+  },
+  {
+    id: "components",
+    label: "Components",
+    hint: "Live holon inventory",
+    hasTree: true,
+  },
+  {
+    id: "ct-plant",
+    label: "CT Plant",
+    hint: "Lo-fi click-through — coming soon",
+    hasTree: false,
+  },
+];
+
+export function getRegisterPass(id: RegisterPassId): RegisterPassMeta | undefined {
+  return REGISTER_PASSES.find((pass) => pass.id === id);
+}
+
+export function registerPassCanvasTitle(passId: RegisterPassId | null): string {
+  switch (passId) {
+    case "seed":
+      return "Seed";
+    case "world":
+      return "World";
+    case "personas-function":
+      return "Personas & Function";
+    case "sme":
+      return "SME";
+    case "enrichment":
+      return "Enrichment";
+    case "furnish":
+      return "Furnish";
+    case "wiring":
+      return "Wiring";
+    case "components":
+      return "Components";
+    case "ct-plant":
+      return "CT Plant";
+    default:
+      return "Register";
+  }
+}

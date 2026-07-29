@@ -1,28 +1,86 @@
-import { useCallback, useState } from "react";
-import { getWorkflowDefinition } from "../../../data/automationWorkflows";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { Edge, Node } from "@xyflow/react";
+import { useAutomations } from "../../../context/AutomationContext";
+import type { WorkflowNodeData } from "../../../data/automationWorkflows";
 import { HolonBoundary } from "../../docs/HolonBoundary";
 import { SHELL_HOLON_ORDER } from "../../docs/shellHolonOrder";
 import type { Tokens } from "../../tokens";
-import { AutomationWorkflowEditor } from "./AutomationWorkflowEditor";
+import { AutomationWorkflowEditor, type AutomationWorkflowEditorHandle } from "./AutomationWorkflowEditor";
 import { AutomationWorkflowHeader } from "./AutomationWorkflowHeader";
+import type { AutomationConstantIndustryId } from "../../../data/automationConstants";
 
 type AutomationDetailViewProps = {
   automationId: string;
   t: Tokens;
   isDark: boolean;
+  onOpenConstantsIndustry?: (industryId: AutomationConstantIndustryId) => void;
 };
 
-export function AutomationDetailView({ automationId, t, isDark }: AutomationDetailViewProps) {
-  const workflow = getWorkflowDefinition(automationId);
+type GraphSnapshot = {
+  nodes: Node<WorkflowNodeData>[];
+  edges: Edge[];
+};
+
+export function AutomationDetailView({
+  automationId,
+  t,
+  isDark,
+  onOpenConstantsIndustry,
+}: AutomationDetailViewProps) {
+  const { getWorkflowById, renameAutomation, updateWorkflow } = useAutomations();
+  const workflow = getWorkflowById(automationId);
   const [savedFlash, setSavedFlash] = useState(false);
+  const editorRef = useRef<AutomationWorkflowEditorHandle>(null);
+  const latestGraphRef = useRef<GraphSnapshot | null>(null);
+  const automationIdRef = useRef(automationId);
+  const updateWorkflowRef = useRef(updateWorkflow);
+
+  automationIdRef.current = automationId;
+  updateWorkflowRef.current = updateWorkflow;
+
+  const persistGraph = useCallback(
+    (nodes: Node<WorkflowNodeData>[], edges: Edge[]) => {
+      latestGraphRef.current = { nodes, edges };
+      updateWorkflow(automationId, { nodes, edges });
+    },
+    [automationId, updateWorkflow],
+  );
+
+  const handleRename = useCallback(
+    (name: string) => {
+      renameAutomation(automationId, name);
+    },
+    [automationId, renameAutomation],
+  );
 
   const handleSave = useCallback(() => {
+    const graph = editorRef.current?.getGraph() ?? latestGraphRef.current;
+    if (graph) {
+      persistGraph(graph.nodes, graph.edges);
+    }
     setSavedFlash(true);
     window.setTimeout(() => setSavedFlash(false), 1500);
-  }, []);
+  }, [persistGraph]);
 
   const handleLaunch = useCallback(() => {
     // Launch wiring will connect to workflow runtime later.
+  }, []);
+
+  useEffect(() => {
+    latestGraphRef.current = workflow
+      ? { nodes: structuredClone(workflow.nodes), edges: structuredClone(workflow.edges) }
+      : null;
+  }, [automationId]);
+
+  useEffect(() => {
+    return () => {
+      const graph = latestGraphRef.current;
+      if (!graph) return;
+      updateWorkflowRef.current(automationIdRef.current, {
+        nodes: graph.nodes,
+        edges: graph.edges,
+      });
+    };
   }, []);
 
   if (!workflow) {
@@ -60,6 +118,7 @@ export function AutomationDetailView({ automationId, t, isDark }: AutomationDeta
           workflow={workflow}
           t={t}
           savedFlash={savedFlash}
+          onRename={handleRename}
           onSave={handleSave}
           onLaunch={handleLaunch}
         />
@@ -78,7 +137,14 @@ export function AutomationDetailView({ automationId, t, isDark }: AutomationDeta
           flexDirection: "column",
         }}
       >
-        <AutomationWorkflowEditor workflow={workflow} t={t} isDark={isDark} />
+        <AutomationWorkflowEditor
+          ref={editorRef}
+          workflow={workflow}
+          t={t}
+          isDark={isDark}
+          onGraphChange={persistGraph}
+          onOpenConstantsIndustry={onOpenConstantsIndustry}
+        />
       </HolonBoundary>
     </div>
   );

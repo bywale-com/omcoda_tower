@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import type { WorkflowNodeRunStatus } from "../../../data/automationNodeRuntime";
 import { DOCS_TREE_LABEL_SIZE } from "../../docs/treeLayout";
 import type { Tokens } from "../../tokens";
 
@@ -6,14 +7,32 @@ export function workflowNodeShell(
   t: Tokens,
   selected: boolean,
   width = 320,
+  runStatus: WorkflowNodeRunStatus = "idle",
 ): CSSProperties {
+  const statusBorder =
+    runStatus === "success"
+      ? t.success
+      : runStatus === "failed"
+        ? t.red
+        : selected
+          ? t.accent
+          : t.border;
+
   return {
     width,
     borderRadius: 10,
-    border: `1px solid ${selected ? t.accent : t.border}`,
+    border: `1px solid ${statusBorder}`,
     background: t.bgPrimary,
-    boxShadow: selected ? `0 0 0 1px ${t.accent}` : undefined,
-    overflow: "hidden",
+    boxShadow:
+      runStatus === "success"
+        ? `0 0 0 1px ${t.success}`
+        : runStatus === "failed"
+          ? `0 0 0 1px ${t.red}`
+          : selected
+            ? `0 0 0 1px ${t.accent}`
+            : undefined,
+    overflow: runStatus === "running" ? "visible" : "hidden",
+    position: "relative",
   };
 }
 

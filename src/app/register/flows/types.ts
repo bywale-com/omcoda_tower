@@ -81,6 +81,9 @@ export type RegisterFlowStep = {
 
 export type RegisterFlow = {
   id: string;
+  /** Must match the How flow-anchor node clarity (traceable name — not epic labels like "Login"). */
   label: string;
+  /** How Analysis node id — last answer node before leaves. */
+  howAnchorId: string;
   steps: RegisterFlowStep[];
 };

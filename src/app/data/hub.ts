@@ -1,6 +1,7 @@
 import type { NotionIconName } from "../icons/notion-icon-urls";
 import type { Audit } from "./audits";
 import { getAudit } from "./audits";
+import { getAutomationConstantIndustry } from "./automationConstants";
 
 export type HubAgent = {
   id: string;
@@ -34,11 +35,14 @@ export function getHubAgent(id: string): HubAgent | undefined {
   return hubAgentList.find((item) => item.id === id);
 }
 
-export function getHubAutomation(id: string): HubAutomation | undefined {
-  return hubAutomationList.find((item) => item.id === id);
+export function getHubAutomation(
+  id: string,
+  automations: HubAutomation[] = hubAutomationList,
+): HubAutomation | undefined {
+  return automations.find((item) => item.id === id);
 }
 
-export type HubToolKind = "audit" | "agent" | "automation";
+export type HubToolKind = "audit" | "agent" | "automation" | "constants";
 
 export type HubToolRef = {
   kind: HubToolKind;
@@ -50,7 +54,7 @@ export function hubToolTabId(ref: HubToolRef): string {
 }
 
 export function parseHubToolTabId(tabId: string): HubToolRef | null {
-  const match = /^hub-(audit|agent|automation)-(.+)$/.exec(tabId);
+  const match = /^hub-(audit|agent|automation|constants)-(.+)$/.exec(tabId);
   if (!match) return null;
   return { kind: match[1] as HubToolKind, id: match[2] };
 }
@@ -63,17 +67,27 @@ export function hubToolSectionLabel(kind: HubToolKind): string {
       return "Agents";
     case "automation":
       return "Automations";
+    case "constants":
+      return "Constants";
   }
 }
 
-export function getHubToolLabel(ref: HubToolRef, audits: Audit[] = []): string {
+export function getHubToolLabel(
+  ref: HubToolRef,
+  audits: Audit[] = [],
+  automations: HubAutomation[] = hubAutomationList,
+): string {
   switch (ref.kind) {
     case "audit":
       return getHubAudit(ref.id, audits)?.label ?? ref.id;
     case "agent":
       return getHubAgent(ref.id)?.label ?? ref.id;
     case "automation":
-      return getHubAutomation(ref.id)?.label ?? ref.id;
+      return getHubAutomation(ref.id, automations)?.label ?? ref.id;
+    case "constants": {
+      const industry = getAutomationConstantIndustry(ref.id);
+      return industry?.label ?? ref.id;
+    }
   }
 }
 
@@ -85,5 +99,7 @@ export function hubToolIcon(kind: HubToolKind): NotionIconName {
       return "user";
     case "automation":
       return "circle-dashed";
+    case "constants":
+      return "documents";
   }
 }

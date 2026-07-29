@@ -4,6 +4,7 @@ import {
   BackgroundVariant,
   Controls,
   ReactFlow,
+  type Connection,
   type Edge,
   type Node,
   type OnEdgesChange,
@@ -11,25 +12,37 @@ import {
   type OnSelectionChangeFunc,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import type { PaletteBlock, WorkflowNodeData } from "../../../data/automationWorkflows";
+import type { AutomationDataClassId } from "../../../data/automationEvents";
+import type { PaletteBlock, WorkflowNodeData, WorkflowTriggerKind } from "../../../data/automationWorkflows";
 import { AUTOMATION_EDGE_TYPE } from "../../../data/automationWorkflows";
 import { AUTOMATION_CANVAS_CHILD_HOLONS } from "../../docs/automationHolons";
 import { RegisterContentChildHolonsFromConfig } from "../../docs/RegisterContentChildHolons";
 import type { Tokens } from "../../tokens";
 import { AutomationEditorProvider } from "./AutomationEditorContext";
+import { AutomationEmptyCanvas } from "./AutomationEmptyCanvas";
 import { automationEdgeTypes } from "./automationEdgeTypes";
 import { automationNodeTypes } from "./automationNodeTypes";
 
 type AutomationWorkflowCanvasProps = {
   t: Tokens;
   isDark: boolean;
+  workflowId: string;
   nodes: Node<WorkflowNodeData>[];
   edges: Edge[];
   selectedNodeId: string | null;
+  configPanelNodeId: string | null;
+  manualRunActive: boolean;
   onSelectNode: (id: string | null) => void;
   onInsertBlockOnEdge: (edgeId: string, block: PaletteBlock) => void;
   onDeleteNode: (nodeId: string) => void;
   onDuplicateNode: (nodeId: string) => void;
+  onAttachBlockAfterNode: (nodeId: string, block: PaletteBlock, sourceHandle?: string) => void;
+  onConnectNodes: (connection: Connection) => void;
+  onAddTrigger: (triggerKind: WorkflowTriggerKind) => void;
+  onOpenNodeConfig: (nodeId: string) => void;
+  onCloseNodeConfig: () => void;
+  onOpenClassFilter: (nodeId: string, classId: AutomationDataClassId) => void;
+  onToggleManualRun: (nodeId: string) => void;
   onNodesChange: OnNodesChange<Node<WorkflowNodeData>>;
   onEdgesChange: OnEdgesChange;
 };
@@ -37,13 +50,23 @@ type AutomationWorkflowCanvasProps = {
 export function AutomationWorkflowCanvas({
   t,
   isDark,
+  workflowId,
   nodes,
   edges,
   selectedNodeId,
+  configPanelNodeId,
+  manualRunActive,
   onSelectNode,
   onInsertBlockOnEdge,
   onDeleteNode,
   onDuplicateNode,
+  onAttachBlockAfterNode,
+  onConnectNodes,
+  onAddTrigger,
+  onOpenNodeConfig,
+  onCloseNodeConfig,
+  onOpenClassFilter,
+  onToggleManualRun,
   onNodesChange,
   onEdgesChange,
 }: AutomationWorkflowCanvasProps) {
@@ -80,13 +103,21 @@ export function AutomationWorkflowCanvas({
     <AutomationEditorProvider
       t={t}
       isDark={isDark}
+      workflowId={workflowId}
       selectedNodeId={selectedNodeId}
       hoveredEdgeId={hoveredEdgeId}
+      configPanelNodeId={configPanelNodeId}
+      manualRunActive={manualRunActive}
       onSelectNode={onSelectNode}
       onEdgeHover={handleEdgeHover}
       onInsertBlockOnEdge={onInsertBlockOnEdge}
       onDeleteNode={onDeleteNode}
       onDuplicateNode={onDuplicateNode}
+      onAttachBlockAfterNode={onAttachBlockAfterNode}
+      onOpenNodeConfig={onOpenNodeConfig}
+      onCloseNodeConfig={onCloseNodeConfig}
+      onOpenClassFilter={onOpenClassFilter}
+      onToggleManualRun={onToggleManualRun}
     >
       <div
         style={{
@@ -97,6 +128,7 @@ export function AutomationWorkflowCanvas({
           background: isDark ? t.bgSecondary : t.hoverBg,
           display: "flex",
           flexDirection: "column",
+          position: "relative",
         }}
       >
         <RegisterContentChildHolonsFromConfig
@@ -107,37 +139,30 @@ export function AutomationWorkflowCanvas({
         <ReactFlow
           nodes={nodes}
           edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onSelectionChange={onSelectionChange}
-          onEdgeMouseEnter={(_, edge) => handleEdgeHover(edge.id)}
-          onEdgeMouseLeave={() => handleEdgeHover(null)}
           nodeTypes={automationNodeTypes}
           edgeTypes={automationEdgeTypes}
           defaultEdgeOptions={{ type: AUTOMATION_EDGE_TYPE }}
-          nodesDraggable
-          nodesConnectable={false}
-          elementsSelectable
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnectNodes}
+          onSelectionChange={onSelectionChange}
           fitView
-          fitViewOptions={{ padding: 0.35, maxZoom: 1 }}
+          fitViewOptions={{ padding: 0.2 }}
           proOptions={{ hideAttribution: true }}
-          style={{ width: "100%", height: "100%", background: "transparent" }}
+          nodesDraggable
+          nodesConnectable
+          elementsSelectable
         >
           <Background
             variant={BackgroundVariant.Dots}
             gap={18}
-            size={1}
-            color={isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}
+            size={1.5}
+            color={isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.12)"}
           />
-          <Controls
-            showInteractive={false}
-            style={{
-              border: `1px solid ${t.border}`,
-              borderRadius: 6,
-              overflow: "hidden",
-              boxShadow: "none",
-            }}
-          />
+          <Controls showInteractive={false} />
+          {nodes.length === 0 && (
+            <AutomationEmptyCanvas t={t} onAddTrigger={onAddTrigger} />
+          )}
         </ReactFlow>
       </div>
     </AutomationEditorProvider>

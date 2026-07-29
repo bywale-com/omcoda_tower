@@ -7,6 +7,7 @@ import { ClientPortalPage } from "./components/client-portal/ClientPortalPage";
 import { Workspace } from "./components/Workspace";
 import { StatusBar } from "./components/StatusBar";
 import { AuditProvider, useAudits } from "./context/AuditContext";
+import { AutomationProvider, useAutomations } from "./context/AutomationContext";
 import { PanelProvider } from "./context/PanelContext";
 import { DocsHighlightProvider, useDocsHighlight } from "./context/DocsHighlightContext";
 import { HolonDetailProvider, useHolonDetail } from "./context/HolonDetailContext";
@@ -21,10 +22,12 @@ import { isAuditOpenable } from "./data/audits";
 import {
   getHubToolLabel,
   hubAgentList,
-  hubAutomationList,
   hubToolTabId,
+  parseHubToolTabId,
   type HubToolRef,
 } from "./data/hub";
+import type { AutomationConstantIndustryId } from "./data/automationConstants";
+import { getAutomationConstantIndustry } from "./data/automationConstants";
 import type { ConsultantTask } from "./data/tasks";
 import {
   DEFAULT_SIDEBAR_WIDTH,
@@ -71,7 +74,9 @@ export default function App() {
         <DocsHighlightProvider>
           <HolonDetailProvider>
               <AuditProvider>
-                <AppShell />
+                <AutomationProvider>
+                  <AppShell />
+                </AutomationProvider>
               </AuditProvider>
             </HolonDetailProvider>
         </DocsHighlightProvider>
@@ -108,6 +113,22 @@ function AppShell() {
   const activeContactId = activeTab.kind === "contact" ? activeTab.contactId : null;
   const activeHubTool = activeTab.kind === "hub" ? activeTab.tool : null;
   const { audits } = useAudits();
+  const { automations } = useAutomations();
+
+  useEffect(() => {
+    setTabs((prev) => {
+      let changed = false;
+      const next = prev.map((tab) => {
+        const tool = parseHubToolTabId(tab.id);
+        if (!tool || tool.kind !== "automation") return tab;
+        const label = getHubToolLabel(tool, audits, automations);
+        if (label === tab.label) return tab;
+        changed = true;
+        return { ...tab, label };
+      });
+      return changed ? next : prev;
+    });
+  }, [automations, audits]);
 
   useEffect(() => {
     if (!isConsoleOpen) {
@@ -163,11 +184,16 @@ function AppShell() {
       if (!audit || !isAuditOpenable(audit)) return;
     }
     const tabId = hubToolTabId(tool);
-    const label = getHubToolLabel(tool, audits);
+    const label = getHubToolLabel(tool, audits, automations);
     if (!tabs.find((tab) => tab.id === tabId)) {
       setTabs((prev) => [...prev, { id: tabId, label }]);
     }
     setActiveTabId(tabId);
+  }
+
+  function handleOpenConstantsIndustry(industryId: AutomationConstantIndustryId) {
+    if (!getAutomationConstantIndustry(industryId)) return;
+    handleHubToolClick({ kind: "constants", id: industryId });
   }
 
   function handleClientClick(clientId: string) {
@@ -379,7 +405,7 @@ function AppShell() {
           onTabClick={(id) => {
             setActiveTabId(id);
             const parsed = parseTabId(id);
-            if (parsed.kind !== "contact") {
+            if (parsed.kind === "details" || parsed.kind === "activity") {
               setActiveClientId(parsed.clientId);
             }
           }}
@@ -388,6 +414,7 @@ function AppShell() {
           isDark={isDark}
           onToggleTheme={() => setIsDark((d) => !d)}
           onOpenActivityTab={openActivityTab}
+          onOpenConstantsIndustry={handleOpenConstantsIndustry}
         />
 
         {isConsoleOpen && detailHolonId && (

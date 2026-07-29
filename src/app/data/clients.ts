@@ -167,6 +167,23 @@ export type ActivationLogEntry = {
   actions: string[];
 };
 
+/** Engine-readable eligibility fields on the client record (Directive 1 plumbing). */
+export type EcaStatus = "valid" | "expired" | "missing" | "not_required";
+
+export type ClientEligibility = {
+  eca_status: EcaStatus;
+  ee_profile_exists: boolean;
+  /** ISO date YYYY-MM-DD when EE profile was last updated */
+  ee_profile_last_updated: string | null;
+  foreign_work_years: number | null;
+  /** FST / PNP helpers already on the record for pathway evaluation */
+  foreign_trade_hours: number | null;
+  has_qualifying_job_offer: boolean;
+  has_trade_certificate: boolean;
+  has_ontario_job_offer: boolean;
+  oinp_student_context: boolean;
+};
+
 export type ClientDetail = {
   id: string;
   initials: string;
@@ -182,6 +199,7 @@ export type ClientDetail = {
   billingRef: string;
   narrative: string;
   profile: Record<string, string>;
+  eligibility: ClientEligibility;
   nudges: NudgeEntry[];
   activationLogs: ActivationLogEntry[];
 };
@@ -416,6 +434,17 @@ export const clientDetails: Record<string, ClientDetail> = {
       "Province": "British Columbia",
       "NOC": "21222 · Software engineer",
     },
+    eligibility: {
+      eca_status: "not_required",
+      ee_profile_exists: true,
+      ee_profile_last_updated: "2026-05-12",
+      foreign_work_years: 0.5,
+      foreign_trade_hours: null,
+      has_qualifying_job_offer: false,
+      has_trade_certificate: false,
+      has_ontario_job_offer: false,
+      oinp_student_context: false,
+    },
     nudges: [
       {
         id: "N-001", date: "11 Jun 2026",
@@ -463,6 +492,17 @@ export const clientDetails: Record<string, ClientDetail> = {
       "Province": "Ontario",
       "NOC": "41200 · Civil engineer",
     },
+    eligibility: {
+      eca_status: "missing",
+      ee_profile_exists: true,
+      ee_profile_last_updated: "2025-01-10",
+      foreign_work_years: 3.5,
+      foreign_trade_hours: null,
+      has_qualifying_job_offer: false,
+      has_trade_certificate: false,
+      has_ontario_job_offer: false,
+      oinp_student_context: true,
+    },
     nudges: [
       {
         id: "N-001", date: "15 Jan 2024",
@@ -489,8 +529,19 @@ export const clientDetails: Record<string, ClientDetail> = {
       "Canadian work exp.": "22 months",
       "TEER category": "TEER 3",
       "Language": "CLB 7",
-      "Province": "Alberta",
+      "Province": "Ontario",
       "NOC": "32102 · Medical lab tech",
+    },
+    eligibility: {
+      eca_status: "valid",
+      ee_profile_exists: false,
+      ee_profile_last_updated: null,
+      foreign_work_years: 1,
+      foreign_trade_hours: null,
+      has_qualifying_job_offer: true,
+      has_trade_certificate: false,
+      has_ontario_job_offer: true,
+      oinp_student_context: true,
     },
     nudges: [],
     activationLogs: [],
@@ -516,6 +567,17 @@ export const clientDetails: Record<string, ClientDetail> = {
       "Language": "CLB 8",
       "Province": "Ontario",
       "NOC": "21231 · Data scientist",
+    },
+    eligibility: {
+      eca_status: "expired",
+      ee_profile_exists: true,
+      ee_profile_last_updated: "2026-04-02",
+      foreign_work_years: 4,
+      foreign_trade_hours: 1800,
+      has_qualifying_job_offer: false,
+      has_trade_certificate: true,
+      has_ontario_job_offer: false,
+      oinp_student_context: false,
     },
     nudges: [
       {

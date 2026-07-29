@@ -14,8 +14,8 @@ import type { RegisterFlowStep } from "./types";
 
 export const LOGIN_VERIFY_OTP_STEP: RegisterFlowStep = {
   id: "login-verify-otp",
-  flowId: "login",
-  flowLabel: "Login",
+  flowId: "enter-email-verify-otp",
+  flowLabel: "Submit email, receive code, and finish signing in",
   stepLabel: "Verify OTP",
   purpose: "Complete passwordless sign-in and issue session",
   nodes: [

@@ -15,8 +15,8 @@ import type { RegisterFlowStep } from "./types";
 
 export const LOGIN_SEND_OTP_STEP: RegisterFlowStep = {
   id: "login-send-otp",
-  flowId: "login",
-  flowLabel: "Login",
+  flowId: "enter-email-verify-otp",
+  flowLabel: "Submit email, receive code, and finish signing in",
   stepLabel: "Send OTP",
   purpose: "Start passwordless sign-in",
   nodes: [

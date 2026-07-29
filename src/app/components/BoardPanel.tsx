@@ -46,7 +46,8 @@ import {
 import { clientList, getClientPhaseSnapshot } from "../data/clients";
 import { contactList } from "../data/contacts";
 import { useAudits } from "../context/AuditContext";
-import { hubAgentList, hubAutomationList } from "../data/hub";
+import { useAutomations } from "../context/AutomationContext";
+import { hubAgentList } from "../data/hub";
 import type { HubToolRef } from "../data/hub";
 import { importList } from "../data/imports";
 import type { ClientMeta, ClientPhaseSnapshot } from "../data/clients";
@@ -414,10 +415,16 @@ export function BoardPanel({
   const [tasksOpen, setTasksOpen] = useState(true);
   const { tasks, openTaskCount, toggleTaskStatus } = useTasks();
   const { audits, createAndRunAudit } = useAudits();
+  const { automations, createAutomation } = useAutomations();
   const clientsInView = clientsOpen && clientList.length > 0;
 
   function handleAuditImportsContinue(importIds: string[]) {
     createAndRunAudit(importIds);
+  }
+
+  function handleAddAutomation() {
+    const workflow = createAutomation();
+    onHubToolClick({ kind: "automation", id: workflow.id });
   }
 
   return (
@@ -456,11 +463,12 @@ export function BoardPanel({
         <HubBody
           audits={audits}
           agents={hubAgentList}
-          automations={hubAutomationList}
+          automations={automations}
           imports={importList}
           activeTool={activeHubTool}
           onToolClick={onHubToolClick}
           onAuditImportsContinue={handleAuditImportsContinue}
+          onAddAutomation={handleAddAutomation}
           t={t}
         />
       ) : (

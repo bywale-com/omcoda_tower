@@ -8,6 +8,7 @@ import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
 import type { Audit } from "../data/audits";
 import { AUDIT_NUDGE_YELLOW } from "../data/audits";
 import { useAudits } from "../context/AuditContext";
+import { useAutomations } from "../context/AutomationContext";
 import { getClientMeta } from "../data/clients";
 import { getContact, type ContactIndicator } from "../data/contacts";
 import {
@@ -15,8 +16,10 @@ import {
   hubToolIcon,
   hubToolSectionLabel,
   parseHubToolTabId,
+  type HubAutomation,
   type HubToolRef,
 } from "../data/hub";
+import type { AutomationConstantIndustryId } from "../data/automationConstants";
 import { HubToolDetailView } from "./hub/HubToolDetailView";
 import { NotionIcon } from "./icons/NotionIcon";
 import { SIDEBAR_HEADER_HEIGHT } from "../constants/layout";
@@ -59,12 +62,17 @@ type WorkspaceProps = {
   isDark: boolean;
   onToggleTheme: () => void;
   onOpenActivityTab: (clientId: string) => void;
+  onOpenConstantsIndustry?: (industryId: AutomationConstantIndustryId) => void;
 };
 
-function getBreadcrumb(tabId: string, audits: Audit[]): string[] {
+function getBreadcrumb(tabId: string, audits: Audit[], automations: HubAutomation[]): string[] {
   const parsed = parseTabId(tabId);
   if (parsed.kind === "hub") {
-    return ["Hub", hubToolSectionLabel(parsed.tool.kind), getHubToolLabel(parsed.tool, audits)];
+    return [
+      "Hub",
+      hubToolSectionLabel(parsed.tool.kind),
+      getHubToolLabel(parsed.tool, audits, automations),
+    ];
   }
   if (parsed.kind === "contact") {
     const contact = getContact(parsed.contactId);
@@ -96,10 +104,12 @@ export function Workspace({
   isDark,
   onToggleTheme,
   onOpenActivityTab,
+  onOpenConstantsIndustry,
 }: WorkspaceProps) {
   const { audits, getAuditById } = useAudits();
+  const { automations } = useAutomations();
   const parsedActiveTab = parseTabId(activeTabId);
-  const breadcrumb = getBreadcrumb(activeTabId, audits);
+  const breadcrumb = getBreadcrumb(activeTabId, audits, automations);
 
   return (
     <div style={{
@@ -352,7 +362,12 @@ export function Workspace({
           ) : parsedActiveTab.kind === "contact" ? (
             <ContactView contactId={parsedActiveTab.contactId} t={t} />
           ) : parsedActiveTab.kind === "hub" ? (
-            <HubToolDetailView tool={parsedActiveTab.tool} t={t} isDark={isDark} />
+            <HubToolDetailView
+              tool={parsedActiveTab.tool}
+              t={t}
+              isDark={isDark}
+              onOpenConstantsIndustry={onOpenConstantsIndustry}
+            />
           ) : (
             <ClientView
               clientId={parsedActiveTab.clientId}

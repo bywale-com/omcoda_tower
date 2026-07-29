@@ -48,6 +48,7 @@ import {
   TOWER_POPOVER_MENU_ITEM_CLASS,
 } from "./ui/towerChrome";
 import { HolonTreeIcon } from "./docs/HolonTreeIcon";
+import { HolonPurposeHoverCard } from "./docs/HolonPurposeHoverCard";
 import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
 import type { NotionIconName } from "../icons/notion-icon-urls";
 import type { HolonLucideIconName } from "./docs/holonIcons";
@@ -96,6 +97,7 @@ function DocsOutlineRow({
   const [hovered, setHovered] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { setHoveredComponentId } = useDocsHighlight();
+  const { focusHolon } = useDocsRegistry();
   const isHolonHighlighted = useIsDocsTarget(docsTargetId ?? "");
   const isOutlineRowHighlighted = useIsDocsTarget(DOCS_OUTLINE_ROW_HOLON.id);
   const isNameHighlighted = useIsDocsTarget(DOCS_ROW_NAME_HOLON.id);
@@ -110,7 +112,7 @@ function DocsOutlineRow({
     ? docsChildLabelStyle(DOCS_TREE_LABEL_SIZE, tone, t, DOCS_TREE_UNDERLINE_OFFSET)
     : docsBranchLabelStyle(DOCS_TREE_LABEL_SIZE, tone, isBranch && (hovered || isSelected));
 
-  return (
+  const row = (
     <div
       {...(docsTargetId ? holonInspectTargetProps(docsTargetId) : {})}
       onClick={() => {
@@ -255,6 +257,14 @@ function DocsOutlineRow({
         </span>
       )}
     </div>
+  );
+
+  if (!docsTargetId) return row;
+
+  return (
+    <HolonPurposeHoverCard holonId={docsTargetId} t={t} focusHolon={focusHolon}>
+      {row}
+    </HolonPurposeHoverCard>
   );
 }
 

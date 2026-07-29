@@ -12,6 +12,7 @@ type WorkflowNodeFrameProps = {
   nodeType: WorkflowNodeType;
   selected: boolean;
   children: ReactNode;
+  showBranchPicker?: boolean;
 };
 
 export function WorkflowNodeFrame({
@@ -19,17 +20,16 @@ export function WorkflowNodeFrame({
   nodeType,
   selected,
   children,
+  showBranchPicker = false,
 }: WorkflowNodeFrameProps) {
-  const { t, onDeleteNode, onDuplicateNode } = useAutomationEditor();
+  const { t, onDeleteNode, onDuplicateNode, onAttachBlockAfterNode } = useAutomationEditor();
   const [hovered, setHovered] = useState(false);
 
   const canDelete = canDeleteWorkflowNode(nodeType);
   const canDuplicate = canDuplicateWorkflowNode(nodeType);
-  const showToolbar = (selected || hovered) && (canDelete || canDuplicate);
-
-  if (!canDelete && !canDuplicate) {
-    return <>{children}</>;
-  }
+  const canAttach = nodeType !== "exit";
+  const showToolbar =
+    (selected || hovered) && (canDelete || canDuplicate || canAttach);
 
   return (
     <div
@@ -43,8 +43,13 @@ export function WorkflowNodeFrame({
           t={t}
           canDelete={canDelete}
           canDuplicate={canDuplicate}
+          canAttach={canAttach}
+          showBranchPicker={showBranchPicker}
           onDelete={() => onDeleteNode(nodeId)}
           onDuplicate={() => onDuplicateNode(nodeId)}
+          onAttachBlock={(block, sourceHandle) =>
+            onAttachBlockAfterNode(nodeId, block, sourceHandle)
+          }
         />
       )}
     </div>

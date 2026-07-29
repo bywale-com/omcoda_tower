@@ -507,11 +507,19 @@ export const HOLON_CATALOG_ENTRIES: HolonRegistration[] = [
     "inView": false
   },
   {
+    "id": "automation-runs-tab",
+    "label": "Runs Tab",
+    "icon": "list",
+    "parentId": "automation-editor-tabs",
+    "order": 2,
+    "inView": false
+  },
+  {
     "id": "automation-settings-tab",
     "label": "Settings Tab",
     "icon": "gear",
     "parentId": "automation-editor-tabs",
-    "order": 2,
+    "order": 3,
     "inView": false
   },
   {
@@ -519,7 +527,7 @@ export const HOLON_CATALOG_ENTRIES: HolonRegistration[] = [
     "label": "Enrollment Tab",
     "icon": "people",
     "parentId": "automation-editor-tabs",
-    "order": 3,
+    "order": 4,
     "inView": false
   },
   {

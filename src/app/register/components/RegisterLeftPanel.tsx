@@ -1,27 +1,47 @@
+import { useState } from "react";
 import { SIDEBAR_HEADER_HEIGHT } from "../../constants/layout";
 import type { Tokens } from "../../components/tokens";
+import { REGISTER_PASSES, type RegisterPassId } from "../passes/registerPasses";
 import { RegisterComponentsTree } from "./RegisterComponentsTree";
 import { RegisterFlowsTree } from "./RegisterFlowsTree";
+import { RegisterHowTree } from "./RegisterHowTree";
+import { RegisterPassSection } from "./RegisterPassSection";
+import { RegisterSmeTree } from "./RegisterSmeTree";
 
 type RegisterLeftPanelProps = {
   width: number;
   t: Tokens;
 };
 
-function sectionLabelStyle(t: Tokens) {
-  return {
-    margin: 0,
-    padding: "10px 12px 6px",
-    fontSize: 11,
-    fontWeight: 500 as const,
-    lineHeight: 1.25,
-    letterSpacing: "0.04em",
-    textTransform: "uppercase" as const,
-    color: t.textDim,
-  };
+function passTreeContent(passId: RegisterPassId, t: Tokens) {
+  switch (passId) {
+    case "personas-function":
+      return <RegisterHowTree t={t} />;
+    case "sme":
+      return <RegisterSmeTree t={t} />;
+    case "wiring":
+      return <RegisterFlowsTree t={t} />;
+    case "components":
+      return <RegisterComponentsTree t={t} />;
+    default:
+      return null;
+  }
 }
 
 export function RegisterLeftPanel({ width, t }: RegisterLeftPanelProps) {
+  const [openPassIds, setOpenPassIds] = useState<Set<RegisterPassId>>(
+    () => new Set(["world", "personas-function", "sme", "wiring", "components"]),
+  );
+
+  const togglePassOpen = (passId: RegisterPassId) => {
+    setOpenPassIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(passId)) next.delete(passId);
+      else next.add(passId);
+      return next;
+    });
+  };
+
   return (
     <aside
       style={{
@@ -58,17 +78,34 @@ export function RegisterLeftPanel({ width, t }: RegisterLeftPanelProps) {
         </span>
       </header>
 
-      <div style={{ flex: 1, overflowY: "auto", minHeight: 0, padding: "4px 0 12px" }}>
-        <p style={sectionLabelStyle(t)}>Flows</p>
-        <RegisterFlowsTree t={t} />
-
-        <p style={sectionLabelStyle(t)}>Components</p>
-        <RegisterComponentsTree t={t} />
-
-        <p style={sectionLabelStyle(t)}>Tables</p>
-        <p style={{ margin: 0, padding: "2px 12px 10px", fontSize: 13, color: t.textMuted }}>
-          Coming soon.
+      <div style={{ flex: 1, overflowY: "auto", minHeight: 0, padding: "6px 0 12px" }}>
+        <p
+          style={{
+            margin: "0 0 8px",
+            padding: "0 12px",
+            fontSize: 11,
+            color: t.textMuted,
+            lineHeight: 1.4,
+          }}
+        >
+          Theory passes — text-first. See{" "}
+          <code style={{ fontSize: 10 }}>docs/register/THREE-SURFACE-MODEL.md</code>
         </p>
+
+        {REGISTER_PASSES.map((pass) => (
+          <RegisterPassSection
+            key={pass.id}
+            passId={pass.id}
+            label={pass.label}
+            hint={pass.hint}
+            hasTree={pass.hasTree}
+            open={openPassIds.has(pass.id)}
+            onToggleOpen={() => togglePassOpen(pass.id)}
+            t={t}
+          >
+            {passTreeContent(pass.id, t)}
+          </RegisterPassSection>
+        ))}
       </div>
     </aside>
   );

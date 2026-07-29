@@ -12,25 +12,52 @@ import type { Tokens } from "../tokens";
 import { AuditDetailView } from "./AuditDetailView";
 import { AgentDetailView } from "./agent/AgentDetailView";
 import { AutomationDetailView } from "./automation/AutomationDetailView";
+import { ConstantsIndustryTableView } from "./automation/ConstantsIndustryTableView";
 import { HubToolView } from "./HubToolView";
+import type { AutomationConstantIndustryId } from "../../data/automationConstants";
+import { getAutomationConstantIndustry } from "../../data/automationConstants";
 
 type HubToolDetailViewProps = {
   tool: HubToolRef;
   t: Tokens;
   isDark: boolean;
+  onOpenConstantsIndustry?: (industryId: AutomationConstantIndustryId) => void;
 };
 
-export function HubToolDetailView({ tool, t, isDark }: HubToolDetailViewProps) {
+export function HubToolDetailView({
+  tool,
+  t,
+  isDark,
+  onOpenConstantsIndustry,
+}: HubToolDetailViewProps) {
   if (tool.kind === "audit") {
     return <AuditDetailView auditId={tool.id} t={t} isDark={isDark} />;
   }
 
   if (tool.kind === "automation") {
-    return <AutomationDetailView automationId={tool.id} t={t} isDark={isDark} />;
+    return (
+      <AutomationDetailView
+        automationId={tool.id}
+        t={t}
+        isDark={isDark}
+        onOpenConstantsIndustry={onOpenConstantsIndustry}
+      />
+    );
   }
 
   if (tool.kind === "agent") {
     return <AgentDetailView agentId={tool.id} t={t} isDark={isDark} />;
+  }
+
+  if (tool.kind === "constants") {
+    if (getAutomationConstantIndustry(tool.id)) {
+      return (
+        <ConstantsIndustryTableView
+          industryId={tool.id as AutomationConstantIndustryId}
+          t={t}
+        />
+      );
+    }
   }
 
   const label = getHubToolLabel(tool);

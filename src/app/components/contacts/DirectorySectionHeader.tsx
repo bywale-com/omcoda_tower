@@ -95,6 +95,7 @@ type DirectorySectionHeaderProps = {
   sortTitle: string;
   marginTop?: number;
   plusButton?: ReactNode;
+  onPlusClick?: () => void;
   t: Tokens;
 };
 
@@ -110,6 +111,7 @@ export function DirectorySectionHeader({
   sortTitle,
   marginTop = 0,
   plusButton,
+  onPlusClick,
   t,
 }: DirectorySectionHeaderProps) {
   const [hovered, setHovered] = useState(false);
@@ -160,7 +162,7 @@ export function DirectorySectionHeader({
       </span>
       <span style={{ flex: 1, minWidth: 0 }} />
       {plusButton ?? (
-        <DirectorySectionIconButton icon="plus" title={plusTitle} t={t} />
+        <DirectorySectionIconButton icon="plus" title={plusTitle} t={t} onClick={onPlusClick} />
       )}
       <DirectorySectionIconButton icon="arrows-up-down" title={sortTitle} t={t} />
       <DirectorySectionCountBadge count={count} t={t} />

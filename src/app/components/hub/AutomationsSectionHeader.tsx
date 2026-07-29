@@ -6,9 +6,11 @@ import { DirectorySectionHeader } from "../contacts/DirectorySectionHeader";
 
 export function AutomationsSectionHeader({
   count,
+  onAddAutomation,
   t,
 }: {
   count: number;
+  onAddAutomation?: () => void;
   t: Tokens;
 }) {
   return (
@@ -23,6 +25,7 @@ export function AutomationsSectionHeader({
       plusTitle="Add automation"
       sortTitle="Sort automations"
       marginTop={s(4)}
+      onPlusClick={onAddAutomation}
       t={t}
     />
   );
