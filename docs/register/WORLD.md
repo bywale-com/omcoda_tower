@@ -1,8 +1,9 @@
 # Tower V1 — World model
 
 **Derived from:** [`SEED.md`](./SEED.md) (validated 2026-07-27) — and from nothing else.  
-**Machine twin:** `src/app/register/theory/world.ts` — `admits(persona, object, state)`  
 **Posture:** under-claim. Where Seed leaves a hole, this document marks a **residual** instead of filling it. Where Seed forbids, see **Never invent**.
+
+**Assembly pass (2026-07-29):** This document is *ecosystem assembly* only — entities, value-chain relationships, and the assumptions that justify them. Prior craft output was quarantined to [`WORLD-CRAFT-ARCHIVE.md`](./WORLD-CRAFT-ARCHIVE.md). That archive is **not** an input to the craft-PM pass.
 
 ---
 
@@ -10,25 +11,14 @@
 
 ### 0.1 Shape
 
-| Layer | Shape in Tower V1 |
+**World's job.** World assembles the Seed into the ecosystem: the entities Seed names, the value-chain relationships between them, and the assumption that justifies each relationship — why each party exists in the system, why they follow the party before them, why they enter, why they stay. World does not birth product treatment of those parties, write admission, declare outcomes, or name platform-craft surfaces.
+
+| Layer | Ecosystem shape (from Seed) |
 |---|---|
-| **Acquisition** | **ALG** — one-tap Meta Approach yielding name + website + phone/email inside a click budget. Assisted/operator-led entry (**OLG**) is not deleted; it is a second real door into the same desk. |
+| **Acquisition** | **ALG** — one-tap Meta Approach yielding name + website + phone/email inside a click budget. Assisted / operator-led entry (**OLG**) is not deleted; it is a second real door into the same application. |
 | **Activation** | **Forward-deploy + agent-earned hard inputs.** A no-login prepared campaign is served first; database authorization and escrow acceptance are earned after readiness is legible. |
-| **Application** | **Consultant-operated desk** over a private firm book. Client-side engagement is **automation-led once armed** — the consultant does not hand-send the loop. |
+| **Application** | Always-on firm desk loop over a private firm book. Once the firm is running, engagement is automation-led when armed — opt-in → nudge → reactivation toward a booked meeting. |
 | **Evolution** | **Named, lightly held.** Running-firm friction becomes a documented gap, then a written affordance or backend facet, then regenerates into the product. Not a client lifecycle phase. |
-| **Agent** | **Presentation feature** (request / respond / route). Not a seat, not a column, never fulfillment. |
-| **Om Coda house (Operator)** | Lattice entity for acquisition/activation closure. **Not** a firm Board desk seat. |
-
-### 0.2 Persona emergence law
-
-> A Register persona exists only if omitting them leaves a **value-chain gap** — a capability or outcome with nowhere to land.
-
-Consequences, held strictly:
-
-- **Org-chart roles are delegation, not seats.** Firm admin, junior associate, virtual assistant, receptionist — same **Consultant** seat, differing later by permission features. They become a seat only when a capability cannot be attributed to the Consultant without breaking a chain. (Multi-consultant roles/permissions are an open Seed unknown — see residual 23.)
-- **Operator is named for closure, not for need.** Without Om Coda operating the ads, the capture, the scrape, the templates, the prepared workspace and the two hard-input requests, the Consultant's acquisition and activation capabilities dangle into "the system". Naming Operator keeps those hops honest. It does **not** grant Om Coda a product desk.
-- **The agent is not a seat.** It has no capability that is not a presentation of another entity's capability.
-- **The end-client's household is not a seat.** Spouse/dependant facts live on the engagement record; Seed provides no household entity, so World provides none.
 
 ### 0.3 World sentence
 
@@ -60,7 +50,7 @@ Consequences, held strictly:
 3. **Click budget lives in acquisition only.** Nothing hard may be pulled backwards into it.
 4. **Forward-deploy lives in activation.** Serving a prepared workspace is not acquisition work, no matter how much it looks like marketing.
 5. **Entry surfaces are product surfaces.** Approach gets the same Register discipline as the desk (decomposition, admission, gap writing, affordance writing) — with the caveat that affordance writing on Approach is mostly persuasion texture, not desk inhabit.
-6. **One Approach per acquired non-operator persona.** In V1 that is exactly one: the Consultant. Operator is never an acquired stranger; the Engagement contact is never acquired through Approach at all.
+6. **One Approach per acquired non-operator persona.** Leave which parties are acquired as a later treatment call. Seed doctrine also holds that the Om Coda house is never an acquired stranger through Approach, and that the engagement contact is never acquired through Approach at all.
 7. **Application does not reshape to make the growth bet cheaper.** If the ALG bet needs fewer inputs, that is a growth problem, not a licence to shrink the desk.
 8. **The desk is the same desk either way.** ALG-provisioned and assisted-provisioned firms land in one application, one session matrix.
 
@@ -106,177 +96,78 @@ Consequences, held strictly:
 
 ---
 
-## 1. Value-chain seats
+## 1. Ecosystem
 
-### 1.1 Consultant (firm operator) — desk seat, acquired persona
+Inventory and relationships only. Every party below appears because Seed names it (or names the house function). **No treatment rulings** — this section does not decide who gets a product surface, who logs in, or what is built versus merely referenced.
 
-| | |
-|---|---|
-| **Why they exist** | Omit them and there is no stranger to prepare a workspace for, no one to authorize a database, no one to accept terms, no one to arm audits/sequences/automations, no one whose book is being worked, and no one to take the booked meeting. Every other hop in the lattice terminates on them or starts from them. |
-| **Served how — acquisition** | Meta feed context → ad whose only job is to make one-tap output legible → capture of name + website + phone/email → **continue your scroll**. Pre-framed that an agent will follow and prepare, so the first message does not read as spam. No thank-you dashboard; the agent comes to them. |
-| **Served how — activation** | A no-login prepared workspace staged under their firm identity, built from public firm facts plus Om Coda's own launch → re-engagement → reactivation methodology. An agent walks beside them with narration and deep links, positioned as *"I prepared this campaign"* — not *"look at our platform."* Then two requests: authorize the database, accept escrow. Unbudgeted: effort here is allowed to be non-trivial because the agent is present. |
-| **Served how — application** | Passwordless sign-in into a firm-scoped workspace: **Board** (client list, phase signals, entry to a client), **Client Data** (profile, Q&A, forms, eligibility-relevant facts), **Activity / journey** (timeline of touchpoints, escalations, armed vs active), **Contacts** (directory, indicators, import), **Hub** (Audits, Agents, Automations and related workspace tabs). |
-| **Served how — assisted door** | Firm and users provisioned through versioned seed manifests, then one-time-code sign-in into the same desk. Assisted onboarding can also supply the activation inputs. |
-| **Purpose they serve** | So that an **Engagement contact** can be reached on a working channel, asked once for what they know, judged on current facts and current rules, left alone when they ask, and invited to a meeting that is worth their time. |
-| **Primary object, by facet** | Approach session (acquisition) → Prepared workspace (activation) → the firm's book of Engagement contacts plus Hub configuration (application). |
-| **Admit iff** | **Approach:** a stranger in a Meta feed who can complete seed capture. **Activation:** seed inputs landed and a prepared workspace served. **Desk:** a provisioned user row under a firm tenancy with a valid session — reached either post-activation or through assisted provision. |
-| **Never see** | Another firm's book. A "create your firm from nothing" self-serve path presented as the core door. Client-private channel content the firm was never admitted to. Om Coda's internal Register tooling as product chrome. Credits or a sales call offered as equal doors at the activation payment moment. |
-| **Natural needs — acquisition** | Understand what one tap yields. Give three cheap facts without a form. Be able to disbelieve cheaply and keep scrolling. Not be persuaded at. Not be asked for a database. |
-| **Natural needs — activation** | See something real before giving anything hard. Check the claim without logging in. Understand that firm branding on the workspace is identity, not a claim that Om Coda already holds their clients. Authorize a database on their own terms. Face one money door with held cost. Not be asked for client personal data before the database step. |
-| **Natural needs — application** | Land on a Board that looks like their own book. See phase and eligibility signals without opening every file. Bring contacts in. Know who is reachable. Author sequences that sound like the firm. Let automations re-evaluate. Read *why* someone is eligible in language, not machine output. See who is sequenced, silenced, unsequenced. Arrive at a meeting already briefed. Trust that no client is getting two motions at once. |
-| **Not a persona** | Firm admin, junior associate, virtual assistant, office manager — the same seat, plus future permission features. |
-| **Interest** | Booked consults and retainer starts are leaking out of a list that sits dark. Time is going into manually rechecking files as draws, permits, language results, work history and provincial facts move. Reputation is at risk from uninformed outreach. |
-| **Friction** | Distrust of an outsized claim in a feed. Fear of committing data or money before proof. Zero tolerance for click cost. A book so dirty they cannot start sequences at all. |
-| **Build honesty** | The desk exists in prototype shape: journeys and UI are there; runtime is largely mock or session-scoped; workflow, run and constants edits do not survive refresh; contact import opens but does not fully mutate the living list; operations and actions modules are stubs; event triggers are thinner than manual ones; one-time-code sign-in is real for provisioned users. **Approach, forward-deploy and the escrow door are a bet, not a build.** |
+### 1.1 Entity inventory
 
-### 1.2 Engagement contact (Client) — desk seat, touchpoint-only
-
-| | |
-|---|---|
-| **Why they exist** | Omit them and there is no eligibility subject, no fact to refresh, no meeting to book. The Consultant's entire application chain has nowhere to land, and the core outcome cannot close. |
-| **Served how** | Firm-branded touchpoints only — email, text, forms, question-and-answer — delivered when their state allows outreach. Not an operator console. Not a mirror of the firm's workspace. |
-| **Purpose they serve** | So that the **Consultant** can hold a current picture of their situation, offer a service that is actually available now, and close a booked meeting. |
-| **Primary object** | Their own engagement record, and the touchpoints currently addressed to them. Nothing else. |
-| **Admit iff** | Present in the firm's book **and** in a state that permits outreach — not silenced, past the reachability gate where the intended channel requires it, and enrolled by a sequence or automation. The firm must already be **running**; Approach never admits end-clients. |
-| **Never see** | The firm's Board. The Hub's Agents or Automations editors. Any other contact. Firm-wide audit results. Another row's Analysis. Om Coda's internal Register tooling. The Approach strip or the prepared-workspace activation chrome. Escrow or any firm money surface. |
-| **Natural needs** | Receive a consent request before deep collection. Understand *why this firm is messaging me*. Be asked once, for things they actually know, rather than field by field. Not be asked to produce paperwork through a form field. Be able to go quiet. Pay nothing. Be invited to a meeting only when there is a reason. |
-| **Not a persona** | A spouse or dependant on the same immigration file. Their facts live on the record; Seed provides no household entity. |
-| **Desk depth ceiling** | **Touchpoint-only.** Whether this ever becomes an authenticated client portal is an open Seed unknown. Do not plant a client console that mirrors the consultant's information architecture. |
-| **Interest** | Timely advice at the moment their situation or the rules changed, from a firm that already knows them. |
-| **Friction** | Outreach that feels like spam. Being asked repeatedly. Being asked for documents in a web form. Not being able to stop it. |
-| **Facets** | **No Approach** — one Approach per acquired non-operator persona, and that is the Consultant. **No activation inputs** — they are never the payer. They appear only in **application**, only once the firm is running. |
-| **Money** | Detection and engagement are free to them. They never transact with Om Coda. |
-
-### 1.3 Operator (Om Coda house) — lattice entity, **not** a desk seat
-
-| | |
-|---|---|
-| **Why they exist** | Omit them and the Consultant's acquisition and activation capabilities have no counterparty: no one serves the ad, holds the click budget, persists the capture, reads the public firm facts, instantiates the templates, serves the prepared workspace, presents the walkthrough, requests the two hard inputs, holds the terms, or flips the campaign to running. Those hops would dangle into "the system" — which is exactly the failure this law exists to prevent. |
-| **Served how** | Om Coda runs the Approach surfaces and instruments them; persists captures and attributes sessions; reads public firm facts; instantiates its own methodology templates; serves the prepared workspace; presents the agent walkthrough; requests database authorization and escrow acceptance; stores the authorization, holds escrow, and flips the campaign to running; and operates the assisted door (seeded provision plus one-time-code sign-in) when ALG is not the path. |
-| **Purpose they serve** | So that the **Consultant** can be acquired inside a click budget and carried to running without a sales call as a peer door, without prepayment, and without the application desk being shrunk to make the growth bet easier. |
-| **Primary object** | Approach surfaces and the Prepared workspace. **Not** the firm's engagement book as operator-of-record. |
-| **Admit iff** | An Om Coda house role on Approach or activation tooling. **Never** as a login on a firm's product desk. |
-| **Never see / never do** | Act as the firm's consultant inside Board or Hub as though Om Coda were the client desk. Appear as a third persona in the firm's own product. Take end-client outreach decisions that belong to the firm. |
-| **Natural needs** | Instrument the two acquisition failure modes separately: *did not understand* versus *understood and did not tap*. Treat continue-scroll as data rather than loss. Earn the hard inputs in the middle of activation rather than at the front. Keep escrow the only door at the payment moment. Hand off to a desk they did not have to redesign. |
-| **Not a persona (desk)** | Not a consultant desk seat, and not a Register product-user seat for immigration firms. Lattice entity only. |
-| **Facets** | Owns the **supply side** of acquisition (Approach) and activation (forward-deploy, hard-input requests, terms). Does **not** own application as a desk user. Feeds **evolution** by turning running-firm friction into documented gaps. |
-| **Boundary residual** | Om Coda also keeps immigration reference data current as versioned data, which lands inside application. World records this as **house supply**, not as promotion of Operator to an application desk seat. Who owns rule packs — and who carries the liability — is open (residual 19). |
-
-### 1.4 Agent — feature, not a seat
-
-Covered fully in §8. It has no admission column anywhere in this document, and no capability of its own.
-
----
-
-## 2. Facet map
-
-What must be true, per seat, per facet.
-
-| Facet | Consultant | Engagement contact | Operator (lattice) |
-|---|---|---|---|
-| **Acquisition** | Meets Approach in a Meta feed. Understands one-tap output. Gives name + website + phone/email inside the click budget. May continue scrolling at no cost. Is **not** asked for a database, a payment, or an onboarding form. | **Not acquired.** No Approach, no capture, no ad. Their entry into the world is the firm's book, after the firm is running. | Serves a legible ad (never a persuasive one). Pre-frames the agent follow-up. Holds the budget at one click. Persists the capture and attributes the session. Instruments *did not understand* versus *understood and did not tap*. |
-| **Activation** | Walks a no-login prepared campaign under their firm identity. Authorizes the database (or the equivalent that makes the campaign real). Accepts escrow. Effort is unbudgeted because the agent is beside them. Is not asked for client personal data before the database step. | **No role.** Never the payer, never a party to activation, never shown activation chrome. | Forward-deploys from public firm facts plus Om Coda templates. Serves the prepared workspace and narrates it. Requests the two hard inputs through the agent while automation stores, holds and flips. Keeps escrow the only door — no prepaid credits, no sales call as a peer. |
-| **Application** | Runs the desk loop over the private firm book, from intake through reachability, consent, nudges, re-evaluation, reactivation and booked meeting. | Receives touchpoints, answers what they know, goes quiet if they want, books when invited. | **Not a desk user.** House supply only: keeps versioned immigration reference data current so the firm's evaluations can move without a code deploy. |
-| **Evolution** | Their friction while running is the raw input. Named, not instrumented. | Their silence, non-response and complaint patterns are potential inputs. Named, not instrumented. | Turns running-firm friction into documented gaps, then written affordances or backend facets, then regenerated product. Named, not instrumented. |
-
-**Input-contract pins.** Acquisition finish line = name + website + phone/email. Activation finish line = database authorization + escrow acceptance, after which the campaign can **run**. Forward-deploy belongs to activation. The click budget belongs to acquisition only. Nothing in this table permits moving a hard input earlier or a prepared workspace later.
-
----
-
-## 3. Primary objects and admission matrices
-
-### 3.1 Object inventory
-
-| Object | Role in World | Has an admission matrix here |
+| Entity | Where Seed mentions it | Stated interest |
 |---|---|---|
-| **Firm** | Tenancy; owns users and the book | Via firm session |
-| **Consultant (user)** | Firm operator; the acquired persona | It is a seat, not an object |
-| **Engagement contact / Client** | Shared book object; touchpoint subject; eligibility subject | **Yes** (§3.2) |
-| **Approach surfaces** | The acquisition strip | **Yes** (§3.3) |
-| **Prepared workspace** | The activation artifact | **Yes** (§3.4) |
-| **Firm session** | Desk access, both doors | **Yes** (§3.5) |
-| **Audit batch** | Reachability gate over a set | Secondary — named by Consultant capability |
-| **Agent sequence** | Ordered channel + copy composite | Secondary |
-| **Automation workflow** | Trigger → evaluate → enroll/act | Secondary |
-| **Immigration reference tables** | Versioned rule inputs | Secondary; house-maintained |
-| **Signal / motion** | Detection record versus outreach decision | Not an object with states in V1 — it is the law that governs contact-state transitions |
+| **Firm (tenancy)** | Seed §2.4, §5.10, §10 | Holds the private contact book; owns users and contacts as the tenancy boundary. |
+| **Consultant / firm operator** | Seed §2.1–§2.2, §10 | Recover booked consults and retainer starts from a dark list; stop spending time manually rechecking files as rules and facts move; avoid reputation damage from uninformed outreach. |
+| **Engagement contact (Client)** | Seed §2.3, §5, §10 | Timely advice when their situation or the rules changed and nobody re-engaged them; free of any payment to Om Coda. |
+| **Om Coda house** | Seed §0.2–§0.3, §6, §7, §10 note | Convert immigration consultancies into *running* Tower clients under contingent cost; supply Approach and activation; hold escrow terms; operate the assisted door when ALG is not the path. |
+| **Om Coda Approach / ads supply** | Seed §0.2, §6.1–§6.2 (hand-built ads + automated post-click; Meta feed) | Reach consultants in a Meta feed; make one-tap output legible; capture name + website + channel inside the click budget; instrument *did not understand* versus *understood and did not tap*; treat continue-scroll as data. |
+| **Om Coda reference-data upkeep** | Seed §10 (immigration reference tables); §5.7 / §12 (shipped rule packs); §15 SME lane on IRCC reference currency | Keep versioned immigration categories, trades, cutoffs, and related tables current as data — so firm evaluations can move without a code deploy. |
+| **Om Coda Register / internal tooling** | Seed §5.10 (Register gate / `REGISTER_PASSWORD`); §11 (Systems Register) | House-side controls and Register methodology tooling. Seed states this is internal Om Coda tooling, not firm product chrome. |
+| **Agent presentation layer** | Seed §0.4, §6 (activation walkthrough), §5.5 | Present, ask, and route — on Approach, beside the prepared workspace, and toward desk actions. Seed's agent bet: never scrape, instantiate templates, fire sequences, evaluate rules, send OTP, or move money. |
 
-**Cell notation, all matrices.** **V** = the persona may see the object in this state. **—** = not in view; showing it is a world bug. **T** = the persona owns a named transition out of or into this state. **V · T** = both.
+**Not invented here.** Seed declines a household entity (spouse/dependant facts live on the engagement record). Seed leaves multi-consultant / roles / permissions inside a firm as an open unknown — World does not mint additional firm-side parties for that. Incumbent CRMs, marketing tools, and Meta-as-platform are channels or substitutes Seed names for contrast, not Tower ecosystem parties with a justifying stay-reason inside this chain.
 
-### 3.2 Engagement contact (application)
+### 1.2 Value-chain relationships
 
-| State | Meaning | Consultant | Engagement contact |
-|---|---|---|---|
-| `imported` | In the firm's book; not yet sequenced, no active consent | V · T *import / add* | — |
-| `audit_blocked` | Fails reachability for the intended channel | V · T *fix / exclude* | — |
-| `opt_in` | Consent launch active or first consent pending | V · T *arm / stop* | V · T *consent / ignore* |
-| `re_engagement` | Consented; nudge cycles collecting and refreshing facts | V | V · T *reply / submit form* |
-| `reactivation_armed` | Quiet or stale; criteria met; template ready, nothing sending | V | — |
-| `reactivation_active` | Reactivation sequence executing | V | V · T *reply / submit form* |
-| `eligible` | Rules and Analysis surfaced service eligibility | V | — *(firm-side unless a touchpoint carries it)* |
-| `meeting_booked` | Core outcome closed for this cycle | V | V · T *book* (when an invitation exists) |
-| `silenced` | Opted out or excluded from automatic outreach | V · T *mark / clear* | V · T *silence* |
+Adjacent pairs, with the assumption that justifies the hop. Assumptions are restated from Seed bets and explicit registers — not closed.
 
-**Happy spine.** `imported` → (reachability clear) → `opt_in` → `re_engagement` → `eligible` may assert at any point once facts exist → `reactivation_armed` / `reactivation_active` as warranted → `meeting_booked`.
-
-**Branches.** Any state → `silenced`. `imported` → `audit_blocked` until fixed or excluded.
-
-**Laws the matrix encodes.**
-
-- `eligible` is a **signal**, not a motion. Reaching it does not authorize a send; Engine 2 precedence decides that separately.
-- `reactivation_armed` is deliberately client-invisible. Armed means ready, not sent.
-- Whether `eligible` and `reactivation_armed` coexist with a nudge is decided by precedence, never by whichever module noticed first.
-- `meeting_booked` closes a **cycle**, not the relationship: facts and rules keep moving and the contact re-enters the loop.
-- Two motions on one contact at once is a world bug regardless of what the matrix permits row by row.
-
-### 3.3 Approach surfaces (acquisition) — Consultant | Operator only
-
-| State | Meaning | Consultant | Operator |
-|---|---|---|---|
-| `in_feed` | Scrolling Meta; Approach context available | V | V · T *serve ad* |
-| `ad_legible` | One-tap output is understood — or instrumented as understood | V | V |
-| `seed_captured` | Name + website + phone/email landed — **acquisition ends** | V · T *give seed inputs* | V · T *receive, persist, attribute* |
-| `continued_scroll` | Did not tap, or left — cheap disbelief | V · T *leave* | V · T *instrument* |
-
-**Spine.** `in_feed` → `ad_legible` → `seed_captured` → handoff into the prepared workspace. **Branch.** `in_feed` or `ad_legible` → `continued_scroll`.
-
-**Pins.** The click budget applies through `seed_captured` and nowhere else. Database authorization and escrow are **not** Approach states and must never be added as ones. `continued_scroll` is a legitimate terminal state producing data, not a funnel leak to be plugged with persuasion.
-
-**Engagement contact: never a column here.** Approach acquires the firm, not the firm's clients.
-
-### 3.4 Prepared workspace (activation) — Consultant | Operator only
-
-| State | Meaning | Consultant | Operator |
-|---|---|---|---|
-| `forward_deployed` | No-login prepared campaign under the firm's identity; walkthrough available | V · T *walk / inspect* | V · T *deploy / narrate* |
-| `db_auth_pending` | Hard input requested: authorize the firm database, or the equivalent that makes the campaign real | V · T *authorize* | V · T *request through the agent* |
-| `escrow_pending` | Hard input requested: accept contingent terms | V · T *accept* | V · T *present — one door only* |
-| `running` | Last activation input landed; the campaign can perform — **activation ends** | V · T *enter the desk* | V |
-| `abandoned` | Left before running | V · T *leave* | V · T *instrument* |
-
-**Spine.** `forward_deployed` → `db_auth_pending` and `escrow_pending` (order may interleave) → `running`. **Branch.** Any state → `abandoned`.
-
-**Pins.** Forward-deploy is activation work. The firm's identity on the workspace is branding and authentication detail — never a claim that Om Coda already holds their clients. The workspace proves **readiness**; value is proved by escrow plus a real run. Marginal cost is a public read plus compute — the agent presents, automation executes. Prepaid credits and a sales call are **not** peer cells at `escrow_pending`.
-
-**Engagement contact: never a column here.** No client PII is required to reach `running`.
-
-### 3.5 Firm session (application, both doors)
-
-| State | Meaning | Consultant |
+| From → To | Relationship | Justifying assumption (why the hop exists / why they enter / why they stay) |
 |---|---|---|
-| `unprovisioned` | Email is not a known user — generic success response, no code sent (so the surface cannot be used to enumerate who is a customer) | — |
-| `provisioned_signed_out` | User exists; no valid session | V · T *request and verify a one-time code* |
-| `provisioned_signed_in` | Valid session cookie | V · T *sign out* |
+| **Om Coda Approach / ads → Consultant** | House serves a Meta Approach (feed context → ad → capture → continue scroll) and collects seed inputs. | Consultants will give name + website + channel inside a click budget when one-tap output is legible; cheap disbelief is an acceptable outcome; Meta can reach them at acceptable cost. *(Seed §0.2, §12 ALG.)* |
+| **Consultant → Om Coda house (seed land)** | Stranger supplies the acquisition finish-line inputs. | Those three cheap public inputs are enough for the house to provision a credible prepared campaign from templates plus public firm facts. *(Seed §6.2, §12.)* |
+| **Om Coda house → Consultant (forward-deploy)** | House reads public firm facts, instantiates Om Coda methodology templates, and serves a no-login prepared workspace under the firm's identity. | Prepared workspace proves *readiness* without client PII before database authorization; Om Coda's own launch → re-engagement → reactivation methodology is sufficient readiness proof. *(Seed §6.3–§6.4, §12.)* |
+| **Agent presentation → Consultant (activation)** | Agent walks the prepared workspace and requests the two hard inputs. | An agent earning database authorization and escrow mid-activation converts the firm without a sales call as the primary door and without a long self-serve form. *(Seed §0.2, §0.4.)* |
+| **Consultant → Om Coda house (hard inputs)** | Firm operator authorizes the firm database (or equivalent) and accepts escrow. | Firms will authorize after a readiness demonstration; contingent terms are acceptable as the first money door; escrow is the only door at that payment moment. *(Seed §0.3, §7, §12.)* |
+| **Om Coda house → Firm (running)** | After the last activation input, the campaign can run; firm tenancy and users are provisioned (ALG path) or assisted via seed manifests (OLG path). | Same application either door; application desk need not reshape for the growth bet to be testable. *(Seed §6.5, §12.)* |
+| **Om Coda Register / internal tooling → Om Coda house** | House uses internal Register controls and methodology tooling. | Seed names the Register gate as internal tooling distinct from firm product chrome. *(Seed §5.10.)* |
+| **Om Coda reference-data upkeep → Firm book evaluations** | House maintains versioned immigration reference tables that firm-side evaluation consumes. | Shipped rule packs plus firm configuration can be made safe enough to ship; reference data is maintained as data, not a deploy. Ownership / IP / liability remain open. *(Seed §5.7, §10, §12–§13.)* |
+| **Firm / Consultant → Engagement contact** | Firm holds the list; once running, firm-branded touchpoints engage contacts (opt-in → nudges → reactivation) and refresh facts. | Firms have (or can export) lists worth engaging; always-on re-evaluation plus engagement beats manual chase; immigration-specific sequences are acceptable as a free firm→client value-add. *(Seed §2, §5, §12.)* |
+| **Engagement contact → Consultant** | Contact consents or silences, answers self-reportable facts, and books a meeting when invited. | Meeting booked is the V1 success measure; contacts want timely advice; consent/opt-in can coexist with firm database authorization (flagged, not closed). *(Seed §2.3, §4, §8, §12.)* |
+| **Agent presentation → Automations / Wiring (fulfillment side)** | Agent only presents and routes; Automations and Wiring perform scrape, template instantiate, enroll, evaluate, OTP, money moves. | Agent is never fulfillment — otherwise presentation quietly absorbs unaccountable work. *(Seed §0.4.)* |
 
-**Join note.** The ALG path provisions the user as part of activation reaching `running`. The assisted path provisions through versioned seed manifests. Same matrix, same desk, either way. Om Coda's internal Register gate is internal tooling and is not product chrome for firms.
+### 1.3 Ecosystem objects / artifacts
 
-**Engagement contact and Operator: never columns here.**
+Named in Seed (§10 and adjacent mechanics). Role only — no states, no visibility grids, no per-party admission.
+
+| Object / artifact | Role in the ecosystem | Seed trace |
+|---|---|---|
+| **Firm session** | Desk access after provision (ALG or assisted); passwordless one-time-code path for known users. | Seed §5.10 |
+| **Approach surfaces** | Acquisition strip: feed → ad → capture → continue scroll. | Seed §6, §10 |
+| **Prepared workspace** | No-login activation artifact produced by forward-deploy; proves readiness, not value. | Seed §6.3, §10 |
+| **Audit batch** | Reachability gate over a set of contacts — can we reach them and start a sequence? | Seed §5.2, §10 |
+| **Agent sequence** | Ordered channel + copy composite (launch / reactivation agents are composites of steps). | Seed §5.5, §10 |
+| **Automation workflow** | Trigger → conditions/rules evaluate → structured output → enroll or act. | Seed §5.6, §10 |
+| **Immigration reference tables** | Versioned rule inputs maintained as data. | Seed §10 |
+| **Signal / motion** | Detection (including a missing fact) versus the separate decision to send; Engine 2 precedence governs. | Seed §5.8, §10 |
+| **Engagement contact record** | Shared book object; touchpoint subject; eligibility subject. | Seed §10 |
+| **Escrow / contingent terms** | Commercial door between firm and Om Coda at activation; cost zero or held until outcome terms. | Seed §0.3, §7 |
+
+### 1.4 Four-facet structure (ecosystem layers)
+
+Seed names four layers the ecosystem is served through. Structure only — what any specific party *does* in each layer is a later treatment call.
+
+| Facet | Ecosystem meaning (from Seed) |
+|---|---|
+| **Acquisition** | Obtain the cheap inputs needed to *provision* something for a stranger, autonomously, inside a click budget. Ends when those inputs land. |
+| **Activation** | Systemized path from provisioned stranger to the last inputs required to *run* (forward-deploy + hard inputs). Ends when the campaign can run. |
+| **Application** | The desk / product performing once running — engage the book, refresh facts, re-evaluate eligibility, campaign toward a booked meeting. |
+| **Evolution** | Product change driven by running-firm feedback through Register passes. Named, lightly held — not a client lifecycle phase. |
+
+**Input-contract pins (Seed doctrine).** Acquisition finish line = name + website + phone/email. Activation finish line = database authorization + escrow acceptance. Forward-deploy belongs to activation. The click budget belongs to acquisition only.
 
 ---
 
-## 4. Gate versus decision ritual
+## 4. Hard human gates
 
-### 4.1 Hard human gates (what genuinely requires a person)
+What genuinely requires a person. Traced to Seed §9 — founder-ratified inventory, not craft.
 
 | Gate | Layer | Who acts | Why it cannot be automated away |
 |---|---|---|---|
@@ -290,36 +181,6 @@ What must be true, per seat, per facet.
 | Refusing illegal or unethical outreach | Application | Consultant | Firm responsibility, not platform policy |
 
 **Not Tower gates** (they belong to other products' worlds): power of attorney before an officer, finder licensure, disbursement of public funds.
-
-### 4.2 Gate versus decision chrome — bug and fix
-
-A **gate** is a hard human act that must happen. A **decision** is a rendering choice about what a persona sees. Confusing the two produces these bugs:
-
-| Bug | Fix |
-|---|---|
-| Showing "eligible" as client-facing chrome on a touchpoint that only asked for one form field | Eligibility is Consultant and automation view. Seed adds no client-facing eligibility notice — do not invent one |
-| Showing Board phase icons to a client | Clients never see the Board |
-| Treating `reactivation_armed` as client-visible | Armed is a firm-side ghost. Clients admit at `reactivation_active`, or on a sent touchpoint |
-| Implying a client can read Automations Analysis | Matrix cell is **—** |
-| Showing a client any Approach, prepared-workspace or escrow surface | Engagement contact never admits on those objects at all |
-| Presenting the reachability gate as a pass/fail score, a forecast, or a minimum-contact threshold | Audit asks one operational question: can we reach them and start a sequence |
-| Presenting an external assessment narrative as the in-app reachability product | Sales collateral may sell trust; the in-app surface stays operational |
-| Firing one nudge per missing field | One motion, one consolidated form, every outstanding self-reportable need |
-| Sending a nudge while something is reactivation-worthy | Reactivation outranks nudge, always. Secondary signals become brief agenda |
-| Showing a snapshot brief at the meeting | The brief is live; write-back re-evaluates immediately |
-| Offering credits or a sales call beside escrow at the payment moment | Escrow is the only door at that moment |
-| Asking for a database or a payment inside the Approach strip | Both are activation, both are outside the click budget |
-| Narrating automation work as "the agent did it" | The agent presents, asks and routes. See §8 |
-
-### 4.3 The ritual (run before any persona UI)
-
-1. Name the object in play and the persona in the seat.
-2. Name the state. If you cannot name it, the state is missing from World — write it here first.
-3. Walk the matrix row. Anything on screen that the row marks **—** is a world bug, not a design preference.
-4. Check ownership: is this persona actually the **T** for the action being offered, or are you offering someone else's transition?
-5. Check the motion law before rendering any outreach affordance: is there already a motion on this contact?
-6. Check the facet: is this surface asking for something that belongs to a different layer (a hard input inside acquisition, a click budget inside activation)?
-7. Only then design. Fix World before planting anything downstream.
 
 ---
 
@@ -394,44 +255,6 @@ World does not close any of these. They are Seed's own assumptions and open unkn
 32. Whether a silenced contact can re-consent, and through what, is unspecified. *(E-8.)*
 33. Whether outcome-family toggles remain the primary way rules are configured, or condition trees get exposed, is unresolved. *(C-APP-8.)*
 34. Which running-firm signals become documented product gaps is unresolved — **the evolution facet is named and empty for every seat.**
-
----
-
-## 7. Agent — feature, not a seat
-
-The conversational or text agent, and the Hub's sequence composer, are **presentation and configuration** over verbs that belong elsewhere. The agent requests, responds and routes. It never fulfils.
-
-| The agent does this (presentation) | This is **not** the agent — it is automation and wiring |
-|---|---|
-| Asks for name, website, phone or email on Approach | Persists the capture and attributes the session |
-| Explains what the prepared workspace already shows | Forward-deploys the workspace; reads public firm facts; instantiates methodology templates |
-| Asks the consultant to authorize the database and accept terms | Stores the authorization, holds the terms, flips the campaign to running |
-| Points at "arm this reachability check" or "send this sequence" in the Hub | Runs the reachability pull, enrols contacts, sends messages on schedule |
-| Answers "why is this person eligible?" by routing to Analysis | Evaluates immigration rules against Client Data |
-| Presents a consolidated form to a client | Decides that a nudge may fire at all, under precedence |
-| Narrates what the brief says | Re-evaluates on write-back and keeps the brief live |
-| — | Sends one-time codes, issues session cookies, moves money |
-
-**Consequences held in this document.**
-
-- The agent has **no admission column** in §3. It cannot, because it has no state of its own to be admitted to.
-- Every capability it appears to have is an Operator or Consultant capability being presented.
-- Composing a sequence is configuration; sending it is automation. Both may appear in the same Hub, and they are not the same act.
-- Never label the automation runtime or the authentication service as "the agent doing work." Doing so is how a presentation feature quietly becomes an unaccountable seat.
-
----
-
-## 8. Machine twin
-
-`src/app/register/theory/world.ts` is the machine twin of this document. It exports the world sentence and shape, the seat profiles, the four admission arrays, and `admits(persona, object, state)`.
-
-**Rules of the twin.**
-
-- Persona UI and anything downstream **must** call `admits()`. Never hand-roll visibility that contradicts §3.
-- `admits()` returns true for **V** and **V · T**, false for **—**. **T** is ownership of a transition, not a licence to view.
-- Structural guarantees the twin enforces: Operator never admits on the engagement contact or the firm session; the Engagement contact never admits on Approach or the prepared workspace; only the Consultant admits on the firm session, and never in the unprovisioned state.
-- State names in this document are unchanged from the current twin, so existing admission arrays and matrices remain valid as written.
-- If this document and the twin disagree, **this document wins** and the twin is a bug — and if Seed and this document disagree, **Seed wins** and this document is a bug.
 
 ---
 
@@ -759,7 +582,7 @@ The conversational or text agent, and the Hub's sequence composer, are **present
 
 **30. Om Coda accepts the liability exposure of shipped rule packs.** — *Why worth considering:* Ownership is flagged as open, but the operating position in the meantime is that the house carries it by default.
 
-**31. Om Coda can support running firms operationally without naming a support function.** — *Why worth considering:* Every seat is accounted for except the one that answers a running client's question at 4pm.
+**31. Om Coda can support running firms operationally without naming a support function.** — *Why worth considering:* The named parties in the chain cover acquisition, activation, and desk operation, but nobody is named for answering a running firm's question at 4pm — that gap is unnamed.
 
 **32. Someone at Om Coda will actually read running-firm friction and turn it into documented gaps.** — *Why worth considering:* The evolution facet is named and empty; without a staffed reader it stays empty by construction.
 
@@ -781,4 +604,4 @@ The conversational or text agent, and the Hub's sequence composer, are **present
 
 **41. Contingent cost is read by buyers as confidence rather than as a small vendor unable to charge.** — *Why worth considering:* The money posture is meant to remove risk for the buyer; it can equally signal that the product cannot command a price.
 
-**42. One acquired persona in V1 stays one — the house will not need a second Approach mid-experiment.** — *Why worth considering:* If the tapper turns out to be an assistant, an agency, or a partner rather than the authorizing consultant, the single-Approach rule quietly stops holding.
+**42. The single-Approach acquisition rule holds for the duration of the V1 experiment — the house will not need a second Approach mid-experiment.** — *Why worth considering:* If the tapper turns out to be an assistant, an agency, or a partner rather than the authorizing consultant, the single-Approach rule quietly stops holding.
