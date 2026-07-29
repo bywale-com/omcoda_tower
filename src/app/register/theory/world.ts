@@ -1,3 +1,4 @@
+// FROZEN/STALE as of 2026-07-29: superseded by craft-PM pass; do not treat as current World.
 /**
  * Tower World — machine twin of docs/register/WORLD.md
  * Persona UI / CT must call admits() — never hand-roll visibility.
