@@ -1,6 +1,7 @@
 /**
  * Register Prototype Canvas — hi-fi Tower desk host (replaces lo-fi CT stub).
  * Step 1: consultant Board | Contacts | Meetings; Halt outreach; Hub authorship stripped.
+ * Step 2: Operator densify + Configuration libraries / Book readiness re-homes.
  */
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { BoardPanel } from "../../components/BoardPanel";
@@ -15,15 +16,13 @@ import { useRegisterShell } from "../context/RegisterShellContext";
 import { useRegisterTrace } from "../trace/RegisterTraceContext";
 import {
   CONSULTANT_NAV_MODULES,
-  OPERATOR_HOUSE_MODULES,
-  OPERATOR_SUPPORT_MODULES,
-  OPERATOR_TENANCY_MODULES,
   SURFACE_CATALOG,
   getSurfaceByLabel,
   type RegisterSurfaceEntry,
 } from "../trace/surfaceCatalog";
 import { HiFiEmptyModule } from "./HiFiEmptyModule";
 import { MeetingsModule } from "./MeetingsModule";
+import { OperatorPrototypeScene } from "./OperatorPrototypeScene";
 
 type RegisterPrototypeCanvasProps = {
   t: Tokens;
@@ -253,7 +252,9 @@ function ConsultantDeskScene({
                       activeContactId={activeContactId}
                       onContactClick={setActiveContactId}
                       activeHubTool={null}
-                      onHubToolClick={(_tool: HubToolRef) => {}}
+                      onHubToolClick={(_tool: HubToolRef) => {
+                        /* Authorship re-homed to Operator → Configuration libraries / Book readiness */
+                      }}
                       isConsoleOpen={false}
                       onToggleConsole={() => {}}
                       onViewInActivity={() => {}}
@@ -300,82 +301,6 @@ function ConsultantDeskScene({
             <HiFiEmptyModule title={emptyTitle} t={t} status={emptyStatus} />
           </SurfaceMount>
         )}
-      </div>
-    </div>
-  );
-}
-
-function OperatorDeskScene({
-  t,
-  focusedEntry,
-  hoveredId,
-}: {
-  t: Tokens;
-  focusedEntry: RegisterSurfaceEntry | null;
-  hoveredId: string | null;
-}) {
-  const [module, setModule] = useState<string>(OPERATOR_HOUSE_MODULES[0]);
-
-  useEffect(() => {
-    if (!focusedEntry || focusedEntry.desk !== "operator") return;
-    setModule(focusedEntry.module);
-  }, [focusedEntry]);
-
-  const entry = getSurfaceByLabel(focusedEntry?.label ?? module) ?? focusedEntry;
-  const title = focusedEntry?.label ?? module;
-  const hoveredEntry = hoveredId
-    ? SURFACE_CATALOG.find((e) => e.id === hoveredId) ?? null
-    : null;
-
-  return (
-    <div style={{ flex: 1, minHeight: 0, display: "flex", overflow: "hidden" }}>
-      <aside
-        style={{
-          width: 180,
-          flexShrink: 0,
-          borderRight: `1px solid ${t.border}`,
-          background: t.bgSecondary,
-          overflowY: "auto",
-        }}
-      >
-        <div style={sectionLabelStyle(t)}>House-global</div>
-        {OPERATOR_HOUSE_MODULES.map((id) => (
-          <button key={id} type="button" onClick={() => setModule(id)} style={navBtnStyle(t, module === id)}>
-            {id}
-          </button>
-        ))}
-        <div style={sectionLabelStyle(t)}>Per-tenancy</div>
-        {OPERATOR_TENANCY_MODULES.map((id) => (
-          <button key={id} type="button" onClick={() => setModule(id)} style={navBtnStyle(t, module === id)}>
-            {id}
-          </button>
-        ))}
-        <div style={sectionLabelStyle(t)}>Support</div>
-        {OPERATOR_SUPPORT_MODULES.map((id) => (
-          <button key={id} type="button" onClick={() => setModule(id)} style={navBtnStyle(t, module === id)}>
-            {id}
-          </button>
-        ))}
-      </aside>
-
-      <div style={{ flex: 1, minWidth: 0, minHeight: 0, padding: 12, display: "flex" }}>
-        <SurfaceMount
-          label={title}
-          focused={Boolean(focusedEntry)}
-          hovered={hoveredEntry?.module === module || hoveredEntry?.label === title}
-          t={t}
-        >
-          <HiFiEmptyModule
-            title={title}
-            t={t}
-            status={entry?.status ?? "new"}
-            hint={
-              entry?.status === "wrong-seat"
-                ? "Re-homing from firm Hub — Configuration libraries / Book readiness destination"
-                : undefined
-            }
-          />
-        </SurfaceMount>
       </div>
     </div>
   );
@@ -430,7 +355,6 @@ export function RegisterPrototypeCanvas({ t, isDark }: RegisterPrototypeCanvasPr
       const el = findSurfaceEl(label) ?? findSurfaceEl(module);
       if (!el) return;
       el.scrollIntoView({ block: "nearest", behavior: "smooth" });
-      // Prefer ring on the specific surface when it is not the module SurfaceMount wrapper alone
       if (el.getAttribute("data-register-surface") === label) {
         applySurfaceRing(el, t.accent);
       }
@@ -442,7 +366,14 @@ export function RegisterPrototypeCanvas({ t, isDark }: RegisterPrototypeCanvasPr
   }, [focusedEntry, focusSeq, t.accent]);
 
   if (ctDesk === "operator") {
-    return <OperatorDeskScene t={t} focusedEntry={focusedEntry} hoveredId={hoveredSurfaceId} />;
+    return (
+      <OperatorPrototypeScene
+        t={t}
+        isDark={isDark}
+        focusedEntry={focusedEntry}
+        hoveredId={hoveredSurfaceId}
+      />
+    );
   }
   if (ctDesk === "contact") {
     return <ContactDeskScene t={t} focusedEntry={focusedEntry} hoveredId={hoveredSurfaceId} />;
