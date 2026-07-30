@@ -281,8 +281,8 @@ export function PersonasFunctionPane({ t }: PersonasFunctionPaneProps) {
   return (
     <div style={{ padding: 16, overflow: "auto", height: "100%", boxSizing: "border-box" }}>
       <p style={{ margin: "0 0 12px", fontSize: 13, color: t.textMuted, lineHeight: 1.45, fontStyle: "italic" }}>
-        Personas & Function — expand an outcome here in Theory. Leaf answers open Click-through on the right (HQ
-        hierarchy). Hide Click-through to widen this strip.
+        Personas & Function — twin of docs/register/OUTCOMES.md + how/*.md. Expand an outcome for its How tree; open a
+        leaf for click-path solutioning. Click-through stays on the right (HQ hierarchy).
       </p>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
