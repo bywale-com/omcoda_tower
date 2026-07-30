@@ -8,6 +8,7 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 
 - [x] `seed-complete` → World — [`SEED.md`](./SEED.md)
 - [x] `world-complete` → SME — [`WORLD.md`](./WORLD.md) + `admits()` twin
+- [x] `sme-graph-ready` → Pass1 spawn — [`../sme/SME-GRAPH.md`](../sme/SME-GRAPH.md) · law [`../sme/METHODOLOGY.md`](../sme/METHODOLOGY.md)
 - [ ] `sme-pass1-locked` → SME Pass2
 - [ ] `sme-handoff-ready` → Function ∥ Wiring Function (sync on CROSS-CUTTING)
 - [ ] `function-complete` → Enrichment
@@ -30,7 +31,8 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 | Personas & Function | How graphs exist (`consultantOnTower`, `towerCoreOutcome`) — surface join pending |
 | Wiring | Flow maps exist (login flows) — CTO twin pending |
 | Components | Holon tree live |
-| SME / Enrichment / Furnish | Stubs — do not start until you say; Seed chairs named |
+| SME | **Graph ready** — Engagement Manager residual roster ([`../sme/SME-GRAPH.md`](../sme/SME-GRAPH.md)); methodology ([`../sme/METHODOLOGY.md`](../sme/METHODOLOGY.md)); Pass1 not started |
+| Enrichment / Furnish | Stubs — after Function absorb of SME handoff |
 | CT Plant | Not started — lo-fi click-through placeholder |
 | Verify scripts | Not shipped |
 

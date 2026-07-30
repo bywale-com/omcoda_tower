@@ -1,5 +1,6 @@
 # Tower — SME Graph
 **Producer:** Engagement Manager (SME-scoping seat)
+**Methodology:** [`METHODOLOGY.md`](./METHODOLOGY.md)
 **Inputs:** Seed · World · Personas · Outcomes · How trees
 **Selection law:** residual of Founder / PM / CTO territory (defined in doc)
 **Status:** roster for Pass1 — not Pass1 itself
