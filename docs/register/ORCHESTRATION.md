@@ -9,8 +9,8 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 - [x] `seed-complete` → World — [`SEED.md`](./SEED.md)
 - [x] `world-complete` → SME — [`WORLD.md`](./WORLD.md) + `admits()` twin
 - [x] `sme-graph-ready` → Pass1 spawn — [`../sme/SME-GRAPH.md`](../sme/SME-GRAPH.md) · law [`../sme/METHODOLOGY.md`](../sme/METHODOLOGY.md)
-- [ ] `sme-pass1-locked` → SME Pass2
-- [ ] `sme-handoff-ready` → Function ∥ Wiring Function (sync on CROSS-CUTTING)
+- [x] `sme-pass1-locked` → SME Pass2 — combined Pass1+Pass2 per human instruction 2026-07-30 ([`../sme/ROSTER.md`](../sme/ROSTER.md))
+- [x] `sme-handoff-ready` → Function ∥ Wiring Function (sync on CROSS-CUTTING) — [`../sme/HANDOFF.md`](../sme/HANDOFF.md) · [`../sme/CROSS-CUTTING.md`](../sme/CROSS-CUTTING.md)
 - [ ] `function-complete` → Enrichment
 - [ ] `enrichment-complete` → Furnish
 - [ ] `furnish-written` → CT plant of Furnish
@@ -31,7 +31,7 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 | Personas & Function | How graphs exist (`consultantOnTower`, `towerCoreOutcome`) — surface join pending |
 | Wiring | Flow maps exist (login flows) — CTO twin pending |
 | Components | Holon tree live |
-| SME | **Graph ready** — Engagement Manager residual roster ([`../sme/SME-GRAPH.md`](../sme/SME-GRAPH.md)); methodology ([`../sme/METHODOLOGY.md`](../sme/METHODOLOGY.md)); Pass1 not started |
+| SME | **Pass2 + handoff + PM implementation paper** — 177 considerations · ~167 click-path impls ([`../sme/implementation/00-INDEX.md`](../sme/implementation/00-INDEX.md)); CT / CTO Wiring absorb not started |
 | Enrichment / Furnish | Stubs — after Function absorb of SME handoff |
 | CT Plant | Not started — lo-fi click-through placeholder |
 | Verify scripts | Not shipped |

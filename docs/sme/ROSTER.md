@@ -2,16 +2,19 @@
 
 **Methodology:** [`METHODOLOGY.md`](./METHODOLOGY.md)  
 **Graph (selection + Focus gaps):** [`SME-GRAPH.md`](./SME-GRAPH.md)  
-**Status:** Graph ready · Pass1 not started
+**Handoff:** [`HANDOFF.md`](./HANDOFF.md) · [`CROSS-CUTTING.md`](./CROSS-CUTTING.md)  
+**PM implementation (paper):** [`implementation/00-INDEX.md`](./implementation/00-INDEX.md)  
+**Status:** Pass2 + handoff + PM implementation writing complete · CT plant not started · CTO Wiring absorb not started
 
-| # | Seat | Pass1 | Pass2 |
+| # | Seat | Pass2 file | Items |
 |---|---|---|---|
-| 1 | Immigration pathway / service-eligibility ops | — | — |
-| 2 | IRCC reference-data currency | — | — |
-| 3 | Canadian privacy / CASL / SMS & email consent | — | — |
-| 4 | Immigration consultancy desk operations | — | — |
-| 5 | Platform ads / Meta policy & feed trust | — | — |
-| 6 | Payments / escrow (firm↔Om Coda) | — | — |
-| 7 | Consultancy CRM / book-connection | — | — |
+| 1 | Immigration pathway / service-eligibility ops | [`pass2/01-immigration-pathway-eligibility.md`](./pass2/01-immigration-pathway-eligibility.md) | 25 |
+| 2 | IRCC reference-data currency | [`pass2/02-ircc-reference-data.md`](./pass2/02-ircc-reference-data.md) | 26 |
+| 3 | Canadian privacy / CASL / SMS & email consent | [`pass2/03-canadian-privacy-casl.md`](./pass2/03-canadian-privacy-casl.md) | 25 |
+| 4 | Immigration consultancy desk operations | [`pass2/04-consultancy-desk-ops.md`](./pass2/04-consultancy-desk-ops.md) | 25 |
+| 5 | Platform ads / Meta policy & feed trust | [`pass2/05-platform-ads-meta-trust.md`](./pass2/05-platform-ads-meta-trust.md) | 25 |
+| 6 | Payments / escrow (firm↔Om Coda) | [`pass2/06-payments-escrow.md`](./pass2/06-payments-escrow.md) | 26 |
+| 7 | Consultancy CRM / book-connection | [`pass2/07-consultancy-crm-book-connect.md`](./pass2/07-consultancy-crm-book-connect.md) | 25 |
 
-Spawn rule: one seat per agent; brief = that seat’s **Focus gap** in SME-GRAPH §3.
+**Total:** 177 considerations with `<mechanism> so that <purpose>` solutions.
+

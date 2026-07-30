@@ -233,9 +233,14 @@ Each item should be able to grow into:
 
 ### 5.1 HANDOFF.md
 
-Every bullet traces to a specific Pass1/Pass2 item. Input for Register (PM) and Wiring (CTO) — **not a redesign**.
+Every bullet traces to a specific Pass1/Pass2 item. Input for Register (PM) and Wiring (CTO).
 
-- **For PM:** outcomes / states / never-sees / persona visibility / How corrections  
+**Absorb vs redesign**
+
+- **Absorb** = translate each finding into *existing* Register / Wiring commitments: outcomes, How leaves, never-sees, states, gates — and **modules / modals / blocks / elements** as needed so the mechanism is honored.
+- **Redesign** = reopen the product thesis. **New or changed personas / World seats are not forbidden**, but they are **unlikely** and require **strong rationale + explicit room sign-off**. They are not a normal Handoff side-effect.
+
+- **For PM:** outcomes / states / never-sees / persona visibility / How corrections / surface commitments  
 - **For CTO:** integrations / jobs / audit / gates / proof  
 - **NEEDS VERIFICATION:** unsettled — do not silently close  
 
