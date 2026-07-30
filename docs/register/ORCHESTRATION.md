@@ -31,7 +31,7 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 | Personas & Function | How graphs exist (`consultantOnTower`, `towerCoreOutcome`) — surface join pending |
 | Wiring | Flow maps exist (login flows) — CTO twin pending |
 | Components | Holon tree live |
-| SME | **Pass2 + handoff ready** — 7 seats · 177 considerations ([`../sme/ROSTER.md`](../sme/ROSTER.md)); absorb via [`../sme/HANDOFF.md`](../sme/HANDOFF.md) |
+| SME | **Pass2 + handoff + PM implementation paper** — 177 considerations · ~167 click-path impls ([`../sme/implementation/00-INDEX.md`](../sme/implementation/00-INDEX.md)); CT / CTO Wiring absorb not started |
 | Enrichment / Furnish | Stubs — after Function absorb of SME handoff |
 | CT Plant | Not started — lo-fi click-through placeholder |
 | Verify scripts | Not shipped |

@@ -3,7 +3,8 @@
 **Methodology:** [`METHODOLOGY.md`](./METHODOLOGY.md)  
 **Graph (selection + Focus gaps):** [`SME-GRAPH.md`](./SME-GRAPH.md)  
 **Handoff:** [`HANDOFF.md`](./HANDOFF.md) · [`CROSS-CUTTING.md`](./CROSS-CUTTING.md)  
-**Status:** Pass1+Pass2 complete · handoff written · PM/CTO absorb not started
+**PM implementation (paper):** [`implementation/00-INDEX.md`](./implementation/00-INDEX.md)  
+**Status:** Pass2 + handoff + PM implementation writing complete · CT plant not started · CTO Wiring absorb not started
 
 | # | Seat | Pass2 file | Items |
 |---|---|---|---|
