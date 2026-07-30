@@ -1,252 +1,176 @@
-# Tower V1 — Top-level outcomes (craft)
+# Tower V1 — Outcomes (clean)
 
-**Inputs:** [`WORLD.md`](./WORLD.md) · [`personas.md`](./personas.md) · format law [`08-outcome-so-that.md`](../build-foundation/08-outcome-so-that.md)  
-**Prior art (not edited):** `src/app/register/theory/outcomes.ts`  
-**Posture:** top-level outcome statements only — no How-tree, no leaves, no solutioning.
+**Source of truth for Function / How decomposition.** Prior PM lattice rewritten; see correction notes below.
 
----
+**Two rules this obeys:**
 
-## How I built the lattice
+1. **No "As Tower."** Outcomes belong only to human entities — the reference side of the coin.
+   Tower and its modules are what the leaves *require* (the build side). An outcome's subject is
+   never the app.
+2. **Engagement machinery is a requirement, not an outcome.** Opt-in, nudge, reactivation, refresh,
+   re-evaluate, detect — none of these are anyone's outcome. They fall out at the **leaves** when the
+   Consultant's "get clients booked without running any of it" and the Operator's "author / bind /
+   oversee" outcomes decompose. They appear nowhere as an "As X, I can engage…" line.
 
-### Entities and order
+**Subjects:** **Consultant** (the one acquired persona) · **Engagement contact** (referenced
+participant) · **Operator** (the single house/agency human — one entity working many surfaces, not
+many personas).
 
-The old lattice keyed outcomes to three seats (Consultant / Engagement contact / Operator-as-one). That world is gone. The current model has **one persona** and a first-class **operator/house layer** split into surfaces. Lattice entities, in value-chain read order:
+**Core:** reserved for the one product north-star — the Consultant's. Everything else is supply,
+marked secondary. (Candidate co-core: Operator · Activation & forward-deploy, the ALG onramp — left
+secondary here; promote it if you want two north-stars.)
 
-1. **House-global console surfaces** — acquire, activate, author packs, hold reference data, oversee fleet, audit, evolve (prototype tooling), bound the agency, queue support.
-2. **Per-tenancy admin surfaces** — provision, commercial, bind house packs, book readiness, firm health, activation state, support context.
-3. **Customer-support / customer-success** — agency ticket seat (house-global queue + per-tenancy context); so-that lands on the running Consultant.
-4. **Consultant** — the only application-desk persona.
-5. **Engagement contact** — not a persona; participation hop that closes the Consultant’s core so-that.
-
-### How the so-thats close
-
-```text
-House acquires (Approach)
-  → House activates / forward-deploys (and/or Per-tenancy provisions)
-    → House authors packs + reference data
-      → Per-tenancy binds packs + readies the book
-        → Consultant runs the desk loop
-          → Engagement contact consents / self-reports / books
-            → Consultant takes the meeting          ← closes onto Consultant
-
-Support answers the running firm
-  → Consultant’s firm stays running               ← closes onto Consultant
-
-Register (house prototype tooling) regenerates methodology
-  → Configuration libraries carry next ops
-    → … into Consultant’s desk                    ← same spine, never firm-facing
-```
-
-No so-that lands on “the system,” “the dashboard,” or process language. Register has **no firm-facing outcome**.
-
-### Carried vs rebuilt
-
-| Source (`outcomes.ts`) | Disposition |
-|---|---|
-| **Consultant core** | **Carried — capability verbs untouched.** So-that clause **added** (format law + lattice closure). **FLAGGED below.** |
-| Consultant Access | Carried (secondary; wording tightened to firm session). |
-| Engagement contact Consent / Refresh / Silence / Book | Carried; Book so-that made explicit so the chain closes onto Consultant. |
-| Operator Approach supply | Rebuilt under **Acquisition & ads** (same job; new home). |
-| Operator Activation supply (was operator core) | Rebuilt under **Activation & forward-deploy** — was the old combined operator core; now an honest house surface. |
-| Operator Assisted door | Rebuilt under **Per-tenancy Provision**. |
-| Everything else on the operator/house layer | **Added** — prior art had no honest outcomes for config libraries, reference data, bind, health, audit, Register-as-tooling, founder controls, or support. |
-
-### Core-outcome change (loud flag)
-
-**Consultant core — so-that only.** Capability clause is regarded as sound and is preserved verbatim in verbs and scope. I appended `— so that the Engagement contact can…` because (1) format law requires every core to carry a so-that to a lattice entity, and (2) the Engagement contact is the hop that closes the desk loop. Changing a core capability would change the product; this does not change the capability — only closes the lattice.
+**How trees:** [`how/`](./how/) — one MD tree per outcome, decomposed to leaves with click-path
+solutioning. Index: [`how/00-INDEX.md`](./how/00-INDEX.md).
 
 ---
 
-## Lattice
+## Correction from the prior PM lattice (why this rewrite)
 
-### A. Consultant (persona — firm desk)
+The consultant's inputs all live at **acquisition and activation** — hand over the book, authorize
+access, accept escrow, and hold the license the outreach runs under. In the **application** layer
+under ALG they initiate nothing and configure nothing — the engine runs. So the consultant's core
+is not *"I engage"* — it is *"I hand over the book and authorize it, and meetings show up without me
+running anything."*
 
-#### Access — secondary
+Their verbs are **hand over · authorize · receive** (plus standing governance). Everything the old
+sentence claimed as theirs — opt-in, nudge, reactivation, refresh, re-evaluate — is machinery; it
+surfaces as **requirements at leaves**, attributed to **operator-side** modules — not pulled back
+under the consultant workspace. That cross-attribution is correct; "fixing" it back under the
+consultant is the error this rewrite caught.
 
-> As Consultant, I can sign in to Tower and land in my firm workspace.
-
-- **Carried** from `consultant-access`; so-that omitted (local / obvious — access enables the desk).
-
-#### Core — **core**
-
-> As Consultant, I can keep my private contact book reachable, engage through opt-in → nudge → reactivation, refresh Client Data through touchpoints, re-evaluate service eligibility as facts and rules move, and campaign eligible people toward a booked meeting — without rechecking every file by hand — so that the Engagement contact can consent, answer self-reportable facts, and book a meeting when invited.
-
-- **Changed (so-that only; capability carried).** See loud flag above. Prior statement lacked a so-that; format law and lattice closure require one onto Engagement contact.
-
----
-
-### B. Engagement contact (referenced participation — closes the loop)
-
-Not a persona. Outcomes exist so the Consultant’s so-that has somewhere to land, and so the chain can close back onto the Consultant.
-
-#### Consent — secondary
-
-> As Engagement contact, I can receive a firm-branded consent request and agree or ignore before deeper collection.
-
-- **Carried** from `client-consent`.
-
-#### Refresh facts — secondary
-
-> As Engagement contact, I can answer one consolidated form for outstanding self-reportable facts, and reply when my situation changes.
-
-- **Carried** from `client-refresh`.
-
-#### Silence — secondary
-
-> As Engagement contact, I can silence or opt out at any point in my journey.
-
-- **Carried** from `client-silence`.
-
-#### Book — **core**
-
-> As Engagement contact, I can book a meeting when invited and arrive where the firm already knows my current facts — so that the Consultant can take the meeting with a live brief.
-
-- **Changed** from `client-book`: so-that made explicit onto Consultant (closes the lattice). Capability carried.
+Every house/per-tenancy subject is **"As Operator"** — one human, many surfaces — never "As House"
+(a place, not an actor).
 
 ---
 
-### C. House-global console surfaces
+## A. Consultant (persona — firm desk)
 
-#### Acquisition & ads — secondary (supply)
+**Core**
+> As Consultant, I can hand my private book to Tower and authorize it to work under my license, and
+> get eligible clients booked onto my calendar — without setting up, configuring, or running any of
+> the engagement myself — so that an eligible contact arrives at a booked meeting already re-engaged
+> and current.
 
-> As House (acquisition & ads), I can run Meta Approach surfaces (feed → ad → capture → continue scroll), keep capture to seed inputs inside the click budget, and instrument don’t-understand vs understand-don’t-tap — so that House (activation & forward-deploy) can stage a prepared workspace for a captured Consultant.
+> *Note — this is the fix. The consultant's verbs are **hand over · authorize · receive**. Their
+> inputs live at acquisition and activation; in the application layer under ALG they initiate and
+> configure nothing. The old "engage through opt-in → nudge → reactivation…" verbs were machinery
+> wearing a consultant wrapper — they are now requirements that decompose out of this outcome, not
+> an outcome. None of that configuration lives in the consultant's space, so none of it is theirs.*
 
-- **Carried/re-homed** from `operator-approach` into the Acquisition surface; so-that now names Activation (next lattice entity) instead of dangling.
+**Governance — secondary**
+> As Consultant, I can keep everything running under my license and halt anything I won't stand
+> behind — so that the book is worked lawfully in my name.
 
-#### Activation & forward-deploy — **core** (house supply finish line)
-
-> As House (activation & forward-deploy), I can forward-deploy a no-login prepared workspace from house templates plus public firm facts, present the readiness walkthrough, and earn database authorization plus escrow acceptance — so that the Consultant can reach a running firm desk.
-
-- **Rebuilt** from `operator-activation` (former operator core). Same capability spine; now owned by the Activation surface personas named. Remains a **core** because activation’s finish line is what makes the application desk runnable. **Not a silent core drop** — re-homed with reason: operator-as-one seat is retired; this surface is the honest owner.
-
-#### Reference data — secondary
-
-> As House (reference data), I can maintain versioned immigration reference tables as data without a code deploy — so that house-authored evaluation packs can re-score eligibility the Consultant acts on.
-
-- **Added.** World places versioned public-reference tables inside the operator/house layer; prior outcomes had no statement for this.
-
-#### Configuration libraries — **core** (agency authorship)
-
-> As House (configuration libraries), I can author and version open-box evaluation/rules packs, automation workflows, and sequence/campaign templates — so that Per-tenancy admin can bind those house-authored packs under a firm identity the Consultant’s desk runs.
-
-- **Added.** Agency thesis as architecture: house authors; firms do not. Prior art had no authorship outcome (Hub tooling existed in product awareness only). Covers evaluation open-box, automation admin, and sequence/template authoring as one authorship capability at top level.
-
-#### Oversight (cross-firm sequence health) — secondary
-
-> As House (oversight), I can observe sequence and engagement health across firms and drill into a tenancy — so that Customer support and Per-tenancy firm health can keep a Consultant’s engagement performing.
-
-- **Added.** Fleet observability the firm never asks for; so-that lands on Support / per-tenancy health → Consultant.
-
-#### Operator audit trail — secondary
-
-> As House (audit trail), I can examine who changed which open-box operations, when, and on which tenancy — so that Customer support and Founder controls can account for house changes over real firm books.
-
-- **Added.** Open-box over real books requires accountable change history.
-
-#### Register & evolution — secondary (prototype-time house tooling only)
-
-> As House (Register & evolution), I can document running-firm gaps and regenerate methodology into house build tooling — so that House (configuration libraries) can carry the next authored operations into tenancies the Consultant runs.
-
-- **Added.** House-side prototype tooling only. **No firm-facing Register outcome** — shipped product contains no Register. So-that lands on configuration libraries, not on the firm desk as a Register surface.
-
-#### Founder & agency controls — secondary
-
-> As House (founder & agency controls), I can set cross-firm bounds, kill-switches, and agency policy — so that house surfaces can configure and oversee many tenancies without leaking controls a Consultant never asked for.
-
-- **Added.** Multi-tenant agency necessity.
+**Access — secondary**
+> As Consultant, I can sign in and land in my firm workspace to see what's being done in my name and
+> take the meetings booked for me. *(so-that local/obvious — omitted)*
 
 ---
 
-### D. Per-tenancy admin surfaces
+## B. Engagement contact (referenced participant — closes the loop)
 
-#### Provision (assisted door) — secondary
+Not a persona. These exist so the Consultant's so-that has somewhere to land and the loop closes
+back onto the Consultant.
 
-> As Per-tenancy admin (provision), I can provision firm and user via the assisted door into the same application — so that the Consultant can access the same desk when ALG is not the path.
+**Consent — secondary**
+> As Engagement contact, I can receive a firm-branded consent request and agree or ignore before any
+> deeper collection.
 
-- **Carried/re-homed** from `operator-assisted`.
+**Refresh facts — secondary**
+> As Engagement contact, I can answer one consolidated form for outstanding self-reportable facts,
+> and reply when my situation changes.
 
-#### Commercial (escrow / contingent terms) — secondary
+**Silence — secondary**
+> As Engagement contact, I can silence or opt out at any point.
 
-> As Per-tenancy admin (commercial), I can oversee escrow and contingent terms for this firm — so that the Consultant can accept the money door and reach running.
-
-- **Added.** World’s activation hard input on the commercial side; house must operate the door the Consultant accepts.
-
-#### Firm operations bind — **core** (agency bind)
-
-> As Per-tenancy admin (firm operations bind), I can bind house-authored evaluation, automation, and campaign packs under this firm’s identity — so that the Consultant can run eligibility and engagement without authoring those operations.
-
-- **Added.** Completes the authorship→bind→desk spine. Firms do not author packs.
-
-#### Book readiness — secondary
-
-> As Per-tenancy admin (book readiness), I can run the reachability audit gate over this firm’s book — so that the Consultant can engage sequence-ready contacts.
-
-- **Added.** World’s reachability gate is a house/per-tenancy operational necessity before sequences run.
-
-#### Firm health — secondary
-
-> As Per-tenancy admin (firm health), I can see sequence and engagement health scoped to this tenancy — so that Customer support can restore performance and the Consultant’s desk can keep campaigning toward meetings.
-
-- **Added.** Per-tenancy slice of fleet oversight.
-
-#### Activation state — secondary
-
-> As Per-tenancy admin (activation state), I can see this firm’s forward-deploy and hard-input progress toward running — so that House (activation) and Customer support can move a Consultant to a running desk.
-
-- **Added.** Per-tenancy face of the Activation surface.
+**Book — secondary (closure hop)**
+> As Engagement contact, I can book a meeting when invited and arrive where the firm already knows my
+> current facts — so that the Consultant takes the meeting with a live brief.
 
 ---
 
-### E. Customer-support / customer-success
+## C. Operator — house-global surfaces
 
-#### Keep the firm running — **core**
+*Subject is the Operator throughout. What the engine does under these is requirement, surfaced at
+leaves — never restated here as the engine's outcome.*
 
-> As House (customer support), I can answer a running firm’s operational questions and work tickets with per-tenancy context (bind, health, commercial, recent house actions) — so that the Consultant’s running firm stays running.
+**Acquisition & ads — secondary**
+> As Operator, I can run the firm-acquisition Approach (feed → ad → capture, inside the click budget)
+> and read who understood-but-didn't-tap versus didn't-understand — so that a captured firm can be
+> staged for activation.
 
-- **Added.** Mandated miss from the persona pass. So-that closes onto Consultant. Not a persona — a house surface.
+**Activation & forward-deploy — secondary** *(candidate co-core)*
+> As Operator, I can stage a no-login prepared workspace for a captured firm from house templates and
+> public facts, walk the firm through readiness, and secure its database authorization and escrow —
+> so that the Consultant reaches a running desk.
+
+**Reference data — secondary**
+> As Operator, I can keep the immigration reference tables versioned and current as data, without a
+> code deploy — so that house-authored evaluation packs score eligibility on today's rules.
+
+**Configuration libraries — secondary**
+> As Operator, I can author and version the evaluation packs, automation workflows, and engagement
+> templates that run the product — so that a firm's operations can be bound from house-authored packs
+> rather than built per firm.
+
+**Oversight — secondary**
+> As Operator, I can watch engagement and sequence health across every firm and drill into any one —
+> so that a failing tenancy is caught before the Consultant loses meetings.
+
+**Audit trail — secondary**
+> As Operator, I can see who changed which operation, when, and on which firm — so that support and
+> founder oversight can account for every change over real client books.
+
+**Register & evolution — secondary** *(prototype-time house tooling only; no firm-facing surface)*
+> As Operator, I can document friction from running firms and regenerate the methodology into house
+> build tooling — so that the next authored operations reach the configuration libraries.
+
+**Founder & agency controls — secondary**
+> As Operator, I can set cross-firm bounds, kill-switches, and agency policy — so that many tenancies
+> are overseen without leaking controls into any firm's workspace.
 
 ---
 
-## Closure check
+## D. Operator — per-tenancy admin surfaces
 
-| Hop | Lands on |
-|---|---|
-| Acquisition → Activation | House surface (in lattice) |
-| Activation → Consultant running | Consultant (in lattice) |
-| Provision / Commercial → Consultant running | Consultant |
-| Configuration libraries → Firm operations bind | Per-tenancy (in lattice) |
-| Bind / Book readiness / Reference data → Consultant desk | Consultant |
-| Consultant core → Engagement contact | Engagement contact (in lattice) |
-| Engagement contact Book → Consultant takes meeting | **Consultant — closed** |
-| Support → Consultant stays running | **Consultant — closed** |
-| Register → Configuration libraries → … → Consultant | same spine; never firm-facing Register |
+**Provision (assisted door) — secondary**
+> As Operator, I can provision a firm and its user through the assisted door — so that the Consultant
+> reaches the same desk when ALG isn't the path.
+
+**Commercial (escrow / contingent terms) — secondary**
+> As Operator, I can hold and oversee a firm's escrow and contingent terms — so that the Consultant
+> can accept the terms and reach running.
+
+**Firm operations bind — secondary**
+> As Operator, I can bind house-authored evaluation, automation, and campaign packs under a firm's
+> identity — so that the Consultant's book is worked without the firm authoring anything.
+
+**Book readiness — secondary**
+> As Operator, I can run the reachability gate over a firm's book — so that only reachable contacts
+> enter engagement.
+
+**Firm health — secondary**
+> As Operator, I can see engagement health scoped to one firm — so that support can restore it and
+> the Consultant keeps getting meetings.
+
+**Activation state — secondary**
+> As Operator, I can see a firm's forward-deploy and hard-input progress toward running — so that a
+> stalled firm is moved to a running desk.
 
 ---
 
-## Inventory (carried / changed / added)
+## E. Operator — customer support / success
 
-| Outcome | Kind | Note |
-|---|---|---|
-| Consultant Access | secondary | Carried |
-| Consultant Core | **core** | **Changed — so-that only; capability carried. FLAGGED.** |
-| Engagement Consent | secondary | Carried |
-| Engagement Refresh facts | secondary | Carried |
-| Engagement Silence | secondary | Carried |
-| Engagement Book | **core** | Changed — so-that explicit onto Consultant |
-| Acquisition & ads | secondary | Carried/re-homed from operator-approach |
-| Activation & forward-deploy | **core** | Rebuilt from operator-activation (former operator core) |
-| Reference data | secondary | Added |
-| Configuration libraries | **core** | Added |
-| Oversight | secondary | Added |
-| Operator audit trail | secondary | Added |
-| Register & evolution | secondary | Added (house tooling only; no firm-facing Register) |
-| Founder & agency controls | secondary | Added |
-| Provision | secondary | Carried/re-homed from operator-assisted |
-| Commercial | secondary | Added |
-| Firm operations bind | **core** | Added |
-| Book readiness | secondary | Added |
-| Firm health | secondary | Added |
-| Activation state | secondary | Added |
-| Customer support | **core** | Added |
+**Keep the firm running — secondary**
+> As Operator, I can answer a running firm's questions and work its tickets with that firm's bind,
+> health, and commercial context — so that the Consultant's firm keeps running.
 
-`theory/outcomes.ts` left untouched — regenerate from this lattice in a later pass.
+---
+
+## Closure
+
+Consultant core → Engagement contact (arrives re-engaged) → Book → Consultant takes the meeting.
+Closed onto the Consultant. Operator surfaces each so-that forward to the next surface or to the
+Consultant reaching / staying running. No so-that lands on "the system," a module, or process
+language — and nothing is subjected to Tower.

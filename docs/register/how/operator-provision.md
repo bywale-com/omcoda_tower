@@ -1,0 +1,63 @@
+# Operator — Provision (assisted door)
+
+**Kind:** secondary  
+**Subject:** Operator (per-tenancy)
+
+**Statement**
+> As Operator, I can provision a firm and its user through the assisted door — so that the Consultant
+> reaches the same desk when ALG isn't the path.
+
+---
+
+## Root — outcome
+
+**Clarity:** *(statement)*  
+**Criteria — when:** OLG / assisted path chosen instead of ALG.  
+**Conditions:** Intentional mint — not self-serve; same application desk as ALG.
+
+---
+
+## Depth 1 — first How → leaves
+
+**Q:** How do I provision a firm and its user through the assisted door?
+
+**Clarity:** Starting from Provision, I create the Firm tenancy and User, then hand the consultant the same Login path into the desk.
+
+**DNA for children:**
+1. create the Firm tenancy and User
+2. hand the consultant the same Login path into the desk
+
+---
+
+### Leaf 1.1 — mint firm + user
+
+**Q:** How do I create the Firm tenancy and User?
+
+**Clarity:** Starting from Provision (per-tenancy admin), open New firm; On New firm, enter firm and user seed fields and Provision. (Seed manifests remain a valid backend path — leaf process.)
+
+**Criteria — when:** Assisted onboarding.  
+**Conditions:** Tenancy intentional; user email will OTP.
+
+| UI | Kind | Status |
+|---|---|---|
+| Provision | Module | **new** |
+| New firm | Modal | **new** |
+| Firm / user fields | Block | **new** |
+
+**Requirements:** Database seeding / manifests (existing protocol) at process leaf.
+
+---
+
+### Leaf 1.2 — same Login desk
+
+**Q:** How do I hand the consultant the same Login path into the desk?
+
+**Clarity:** On Provision complete, the consultant uses Login (OTP) into the same Board — no separate assisted app.
+
+**Criteria — when:** After provision succeeds.  
+**Conditions:** Same session matrix as ALG-provisioned firms.
+
+| UI | Kind | Status |
+|---|---|---|
+| Login | Module | **existing** (consultant-facing) |
+| Board | Module | **existing** |
