@@ -1,31 +1,28 @@
 import type { Tokens } from "../../components/tokens";
 import { RegisterTheoryPanel } from "../components/theory/RegisterTheoryPanel";
 import {
-  APPROACH_ADMISSION,
-  ENGAGEMENT_CONTACT_ADMISSION,
-  FIRM_SESSION_ADMISSION,
-  PREPARED_WORKSPACE_ADMISSION,
-  WORLD_SEATS,
+  PERSONAS_CRAFT_SUMMARY,
+  SEED_MAP_SECTIONS,
+  WORLD_ARCHIVE_NOTE,
+  WORLD_ENTITIES,
+  WORLD_FACET_DOCTRINE,
+  WORLD_HARD_GATES,
+  WORLD_INPUT_CONTRACT_PINS,
+  WORLD_JOB,
+  WORLD_NOT_GATES,
+  WORLD_OBJECTS,
+  WORLD_OPERATIONAL_LAWS,
   WORLD_SENTENCE,
-  WORLD_SHAPE,
+  WORLD_SHAPE_LAYERS,
+  WORLD_SHAPE_NECESSITIES,
+  WORLD_VALUE_CHAIN,
 } from "../theory/world";
 
 type WorldPaneProps = {
   t: Tokens;
 };
 
-function cellStyle(t: Tokens, cell: string) {
-  const muted = cell === "—";
-  return {
-    padding: "6px 8px",
-    borderBottom: `1px solid ${t.border}`,
-    color: muted ? t.textDim : t.textPrimary,
-    fontFamily: cell.includes("V") || cell === "—" ? ("ui-monospace, monospace" as const) : undefined,
-    fontSize: 12,
-  };
-}
-
-function AdmissionTable({
+function CompactTable({
   t,
   headers,
   rows,
@@ -63,19 +60,15 @@ function AdmissionTable({
             {row.cells.map((cell, i) => (
               <td
                 key={`${row.key}-${i}`}
-                style={
-                  i === 0
-                    ? {
-                        padding: "6px 8px",
-                        borderBottom: `1px solid ${t.border}`,
-                        fontFamily: "ui-monospace, monospace",
-                        fontSize: 12,
-                        color: t.textPrimary,
-                      }
-                    : i === 1
-                      ? { padding: "6px 8px", borderBottom: `1px solid ${t.border}`, color: t.textMuted }
-                      : cellStyle(t, cell)
-                }
+                style={{
+                  padding: "6px 8px",
+                  borderBottom: `1px solid ${t.border}`,
+                  color: i === 0 ? t.textPrimary : t.textMuted,
+                  fontFamily: i === 0 ? ("ui-monospace, monospace" as const) : undefined,
+                  fontSize: i === 0 ? 12 : 13,
+                  lineHeight: 1.45,
+                  verticalAlign: "top",
+                }}
               >
                 {cell}
               </td>
@@ -90,133 +83,152 @@ function AdmissionTable({
 export function WorldPane({ t }: WorldPaneProps) {
   return (
     <div style={{ padding: 16, overflow: "auto", height: "100%", boxSizing: "border-box" }}>
-      <p style={{ margin: "0 0 12px", fontSize: 13, color: t.textMuted, lineHeight: 1.45 }}>
-        Dense World from validated Seed. Twin: <code style={{ fontSize: 12 }}>docs/register/WORLD.md</code> +{" "}
-        <code style={{ fontSize: 12 }}>admits()</code>. Facet order: activation sets target → acquisition fulfills seed
-        quota → application retains.
+      <p style={{ margin: "0 0 12px", fontSize: 13, color: t.textMuted, lineHeight: 1.45, fontStyle: "italic" }}>
+        Ecosystem assembly twin of <code style={{ fontSize: 12 }}>docs/register/WORLD.md</code> (2026-07-29). Entities,
+        value-chain, shape necessities — not craft seats or admission grids. Under-claim; Seed holes stay holes.
       </p>
 
-      <RegisterTheoryPanel title="Shape" t={t}>
-        <div style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.5 }}>{WORLD_SHAPE}</div>
+      <RegisterTheoryPanel title="Shape layers" t={t}>
+        <p style={{ margin: "0 0 10px", fontSize: 13, color: t.textMuted, lineHeight: 1.5 }}>{WORLD_JOB}</p>
+        <CompactTable
+          t={t}
+          headers={["Layer", "Ecosystem shape"]}
+          rows={WORLD_SHAPE_LAYERS.map((row) => ({
+            key: row.layer,
+            cells: [row.layer, row.meaning],
+          }))}
+        />
       </RegisterTheoryPanel>
 
       <RegisterTheoryPanel title="World sentence" t={t}>
         <div style={{ fontSize: 13, color: t.textPrimary, lineHeight: 1.55 }}>{WORLD_SENTENCE}</div>
       </RegisterTheoryPanel>
 
-      {WORLD_SEATS.map((seat) => (
-        <RegisterTheoryPanel
-          key={seat.id}
-          title={seat.kind === "lattice" ? `${seat.name} · lattice` : seat.name}
+      <RegisterTheoryPanel title="Facet doctrine pins" t={t}>
+        <ol style={{ margin: "0 0 10px", paddingLeft: 18, fontSize: 13, color: t.textMuted, lineHeight: 1.55 }}>
+          {WORLD_FACET_DOCTRINE.map((pin) => (
+            <li key={pin} style={{ marginBottom: 4 }}>
+              {pin}
+            </li>
+          ))}
+        </ol>
+        <p style={{ margin: 0, fontSize: 12, color: t.textDim, lineHeight: 1.45 }}>
+          <span style={{ fontWeight: 600, color: t.textPrimary }}>Input-contract pins: </span>
+          {WORLD_INPUT_CONTRACT_PINS}
+        </p>
+      </RegisterTheoryPanel>
+
+      <RegisterTheoryPanel title="Entity inventory" t={t}>
+        <p style={{ margin: "0 0 10px", fontSize: 12, color: t.textDim, lineHeight: 1.4, fontStyle: "italic" }}>
+          Inventory and stated interest only — no treatment rulings (who logs in, what is built).
+        </p>
+        <CompactTable
           t={t}
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <div style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.45 }}>
-              <span style={{ fontWeight: 600, color: t.textPrimary }}>Why exist: </span>
-              {seat.whyExist}
+          headers={["Entity", "Stated interest"]}
+          rows={WORLD_ENTITIES.map((row) => ({
+            key: row.entity,
+            cells: [row.entity, row.interest],
+          }))}
+        />
+      </RegisterTheoryPanel>
+
+      <RegisterTheoryPanel title="Value-chain hops" t={t}>
+        <p style={{ margin: "0 0 10px", fontSize: 12, color: t.textDim, lineHeight: 1.4, fontStyle: "italic" }}>
+          Compact map — full justifying assumptions in WORLD.md §1.2.
+        </p>
+        <CompactTable
+          t={t}
+          headers={["From → To", "Relationship", "Assumption"]}
+          rows={WORLD_VALUE_CHAIN.map((row) => ({
+            key: row.fromTo,
+            cells: [row.fromTo, row.relationship, row.assumption],
+          }))}
+        />
+      </RegisterTheoryPanel>
+
+      <RegisterTheoryPanel title="Ecosystem objects" t={t}>
+        <p style={{ margin: "0 0 10px", fontSize: 12, color: t.textDim, lineHeight: 1.4, fontStyle: "italic" }}>
+          Role only — no states, no visibility grids.
+        </p>
+        <CompactTable
+          t={t}
+          headers={["Object", "Role"]}
+          rows={WORLD_OBJECTS.map((row) => ({
+            key: row.object,
+            cells: [row.object, row.role],
+          }))}
+        />
+      </RegisterTheoryPanel>
+
+      <RegisterTheoryPanel title="Shape necessities (§2)" t={t}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {WORLD_SHAPE_NECESSITIES.map((item) => (
+            <div key={item.title} style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.5 }}>
+              <span style={{ fontWeight: 600, color: t.textPrimary }}>{item.title}: </span>
+              {item.body}
             </div>
-            <div style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.45 }}>
-              <span style={{ fontWeight: 600, color: t.textPrimary }}>Served how: </span>
-              {seat.servedHow}
+          ))}
+        </div>
+      </RegisterTheoryPanel>
+
+      <RegisterTheoryPanel title="Operational laws (§3)" t={t}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {WORLD_OPERATIONAL_LAWS.map((item) => (
+            <div key={item.title} style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.5 }}>
+              <span style={{ fontWeight: 600, color: t.textPrimary }}>{item.title}: </span>
+              {item.body}
             </div>
-            <div style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.45 }}>
-              <span style={{ fontWeight: 600, color: t.textPrimary }}>Purpose they serve: </span>
-              {seat.purposeTheyServe}
-            </div>
-            <div style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.45 }}>
-              <span style={{ fontWeight: 600, color: t.textPrimary }}>Primary object: </span>
-              {seat.primaryObject}
-            </div>
-            <div style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.45 }}>
-              <span style={{ fontWeight: 600, color: t.textPrimary }}>Admit iff: </span>
-              {seat.admitIff}
-            </div>
-            <div style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.45 }}>
-              <span style={{ fontWeight: 600, color: t.textPrimary }}>Never see: </span>
-              {seat.neverSee.join("; ")}
-            </div>
-            <div style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.45 }}>
-              <span style={{ fontWeight: 600, color: t.textPrimary }}>Natural needs: </span>
-              {seat.naturalNeeds.join("; ")}
-            </div>
-            <div style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.45 }}>
-              <span style={{ fontWeight: 600, color: t.textPrimary }}>Not a persona: </span>
-              {seat.notAPersona}
-            </div>
-            {seat.deskDepth ? (
-              <div style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.45 }}>
-                <span style={{ fontWeight: 600, color: t.textPrimary }}>Desk depth: </span>
-                {seat.deskDepth}
-              </div>
-            ) : null}
-            {seat.facets ? (
-              <div style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.45 }}>
-                <span style={{ fontWeight: 600, color: t.textPrimary }}>Facets: </span>
-                {seat.facets}
-              </div>
-            ) : null}
-            {seat.interestFriction ? (
-              <div style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.45 }}>
-                <span style={{ fontWeight: 600, color: t.textPrimary }}>Interest / friction: </span>
-                {seat.interestFriction}
-              </div>
-            ) : null}
+          ))}
+        </div>
+      </RegisterTheoryPanel>
+
+      <RegisterTheoryPanel title="Hard human gates (§4)" t={t}>
+        <CompactTable
+          t={t}
+          headers={["Gate", "Layer", "Who", "Why human"]}
+          rows={WORLD_HARD_GATES.map((row) => ({
+            key: row.gate,
+            cells: [row.gate, row.layer, row.who, row.why],
+          }))}
+        />
+        <p style={{ margin: "10px 0 0", fontSize: 12, color: t.textDim, lineHeight: 1.4 }}>{WORLD_NOT_GATES}</p>
+      </RegisterTheoryPanel>
+
+      <RegisterTheoryPanel title="Personas craft note" t={t}>
+        <p style={{ margin: "0 0 10px", fontSize: 12, color: t.textDim, lineHeight: 1.4, fontStyle: "italic" }}>
+          Compact from <code style={{ fontSize: 11 }}>docs/register/personas.md</code> — World named the operator/house
+          class; craft names the members.
+        </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 13, color: t.textMuted, lineHeight: 1.5 }}>
+          <div>
+            <span style={{ fontWeight: 600, color: t.textPrimary }}>Sole persona: </span>
+            {PERSONAS_CRAFT_SUMMARY.solePersona}
           </div>
-        </RegisterTheoryPanel>
-      ))}
-
-      <RegisterTheoryPanel title="Approach admission (acquisition)" t={t}>
-        <p style={{ margin: "0 0 10px", fontSize: 12, color: t.textDim, lineHeight: 1.4 }}>
-          Finish line: seed_captured (name + website + channel). Click budget ends here. Engagement contact never
-          admits.
-        </p>
-        <AdmissionTable
-          t={t}
-          headers={["State", "Meaning", "Consultant", "Operator"]}
-          rows={APPROACH_ADMISSION.map((row) => ({
-            key: row.state,
-            cells: [row.state, row.meaning, row.consultant, row.operator],
-          }))}
-        />
+          <div>
+            <span style={{ fontWeight: 600, color: t.textPrimary }}>Engagement contact: </span>
+            {PERSONAS_CRAFT_SUMMARY.engagementContact}
+          </div>
+          <div>
+            <span style={{ fontWeight: 600, color: t.textPrimary }}>Operator surfaces: </span>
+            {PERSONAS_CRAFT_SUMMARY.operatorShape}
+          </div>
+          <div>
+            <span style={{ fontWeight: 600, color: t.textPrimary }}>House-global: </span>
+            {PERSONAS_CRAFT_SUMMARY.houseGlobal.join(" · ")}
+          </div>
+          <div>
+            <span style={{ fontWeight: 600, color: t.textPrimary }}>Per-tenancy admin: </span>
+            {PERSONAS_CRAFT_SUMMARY.perTenancy.join(" · ")}
+          </div>
+          <div>
+            <span style={{ fontWeight: 600, color: t.textPrimary }}>Ratified: </span>
+            {PERSONAS_CRAFT_SUMMARY.ratified.join(" ")}
+          </div>
+        </div>
       </RegisterTheoryPanel>
 
-      <RegisterTheoryPanel title="Prepared workspace admission (activation)" t={t}>
-        <p style={{ margin: "0 0 10px", fontSize: 12, color: t.textDim, lineHeight: 1.4 }}>
-          Forward-deploy ∈ activation. Finish line: running (DB auth + escrow). Escrow-only money door.
-        </p>
-        <AdmissionTable
-          t={t}
-          headers={["State", "Meaning", "Consultant", "Operator"]}
-          rows={PREPARED_WORKSPACE_ADMISSION.map((row) => ({
-            key: row.state,
-            cells: [row.state, row.meaning, row.consultant, row.operator],
-          }))}
-        />
-      </RegisterTheoryPanel>
-
-      <RegisterTheoryPanel title="Engagement contact admission (application)" t={t}>
-        <p style={{ margin: "0 0 10px", fontSize: 12, color: t.textDim, lineHeight: 1.4 }}>
-          Cells: V = in view · — = not in view · T = owns transition. Firm must be running before live outreach.
-        </p>
-        <AdmissionTable
-          t={t}
-          headers={["State", "Meaning", "Consultant", "Engagement contact"]}
-          rows={ENGAGEMENT_CONTACT_ADMISSION.map((row) => ({
-            key: row.state,
-            cells: [row.state, row.meaning, row.consultant, row.engagementContact],
-          }))}
-        />
-      </RegisterTheoryPanel>
-
-      <RegisterTheoryPanel title="Firm / session admission (desk)" t={t}>
-        <AdmissionTable
-          t={t}
-          headers={["State", "Meaning", "Consultant"]}
-          rows={FIRM_SESSION_ADMISSION.map((row) => ({
-            key: row.state,
-            cells: [row.state, row.meaning, row.consultant],
-          }))}
-        />
+      <RegisterTheoryPanel title="Craft archive (not current)" t={t}>
+        <p style={{ margin: 0, fontSize: 13, color: t.textMuted, lineHeight: 1.5 }}>{WORLD_ARCHIVE_NOTE}</p>
       </RegisterTheoryPanel>
     </div>
   );
@@ -225,56 +237,23 @@ export function WorldPane({ t }: WorldPaneProps) {
 export function SeedPane({ t }: { t: Tokens }) {
   return (
     <div style={{ padding: 16, overflow: "auto", height: "100%", boxSizing: "border-box" }}>
-      <p style={{ margin: "0 0 12px", fontSize: 13, color: t.textMuted, lineHeight: 1.45 }}>
-        Dense dump: <code style={{ fontSize: 12 }}>docs/register/SEED.md</code> (~17 sections). Validated 2026-07-27 —
-        World derived. Pane = map; file = source of truth.
+      <p style={{ margin: "0 0 12px", fontSize: 13, color: t.textMuted, lineHeight: 1.45, fontStyle: "italic" }}>
+        Navigable map of <code style={{ fontSize: 12 }}>docs/register/SEED.md</code> (~17 sections). Validated
+        2026-07-27 — World derived. File = source of truth; pane = key § only.
       </p>
 
-      <RegisterTheoryPanel title="§0 Product bet" t={t}>
-        <div style={{ fontSize: 13, color: t.textPrimary, lineHeight: 1.55 }}>
-          Always-on eligibility + engagement → surface campaign-worthy contacts → book meetings without manually
-          rechecking every file. Not a reactive CRM.
-        </div>
-      </RegisterTheoryPanel>
-
-      <RegisterTheoryPanel title="§0 Growth bet (ALG)" t={t}>
-        <div style={{ fontSize: 13, color: t.textPrimary, lineHeight: 1.55 }}>
-          One Meta tap → legible prepared workspace → seed inputs provision → agent earns DB auth + escrow → campaign
-          runs. Application desk not reshaped for the experiment.
-        </div>
-      </RegisterTheoryPanel>
-
-      <RegisterTheoryPanel title="§5 Application loop" t={t}>
-        <p style={{ margin: 0, fontSize: 13, color: t.textMuted, lineHeight: 1.55 }}>
-          Contacts → Audit (reachability only) → Agents (opt-in / nudge / reactivation) → Client Data via touchpoints →
-          Automations (R-*/B-*/Analysis) → Engine 2 motions → meeting booked. Nudges = data collection. Audit ≠ sales
-          ceremony.
-        </p>
-      </RegisterTheoryPanel>
-
-      <RegisterTheoryPanel title="§5.8 Engine 2 pins" t={t}>
-        <p style={{ margin: 0, fontSize: 13, color: t.textMuted, lineHeight: 1.55 }}>
-          Reactivation &gt; nudge; one form consolidates needs; one client one motion; live brief on meeting_booked.
-          D-01/D-02 open.
-        </p>
-      </RegisterTheoryPanel>
-
-      <RegisterTheoryPanel title="§6 Input contracts" t={t}>
-        <p style={{ margin: "0 0 8px", fontSize: 13, color: t.textMuted, lineHeight: 1.5 }}>
-          <span style={{ fontWeight: 600, color: t.textPrimary }}>Acquisition ends:</span> name + website + phone/email
-          (click budget).
-        </p>
-        <p style={{ margin: 0, fontSize: 13, color: t.textMuted, lineHeight: 1.5 }}>
-          <span style={{ fontWeight: 600, color: t.textPrimary }}>Activation ends:</span> DB auth + escrow → running.
-          Forward-deploy ∈ activation.
-        </p>
-      </RegisterTheoryPanel>
+      {SEED_MAP_SECTIONS.map((section) => (
+        <RegisterTheoryPanel key={section.id} title={section.title} t={t}>
+          <div style={{ fontSize: 13, color: t.textPrimary, lineHeight: 1.55 }}>{section.body}</div>
+        </RegisterTheoryPanel>
+      ))}
 
       <RegisterTheoryPanel title="Also in Seed file" t={t}>
         <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: t.textMuted, lineHeight: 1.55 }}>
-          <li>§2 Market & buyer · §3 Is / is not · §4 Molecular outcomes</li>
-          <li>§7 Money · §8 Trust/consent · §9 Hard gates · §10 Objects</li>
-          <li>§11 Prototype honesty · §12 Assumptions · §13 KUs · §14 Never invent</li>
+          <li>§1 What Seed is / is not · §2 Market & buyer · §3 Is / is not</li>
+          <li>§4 Molecular outcomes · §5.1–5.10 Hub modules, auth, visibility</li>
+          <li>§6 ALG lattice (input contracts, forward-deploy, OLG, pass order)</li>
+          <li>§10 Primary objects · §11 Prototype honesty · §12 Assumptions</li>
           <li>§15 SME chairs · §16 Doctrine pins</li>
         </ul>
       </RegisterTheoryPanel>

@@ -3,10 +3,10 @@ import { Navigate } from "react-router";
 import { DocsHighlightProvider } from "../../context/DocsHighlightContext";
 import { light, type Tokens } from "../../components/tokens";
 import { RegisterSelectionProvider } from "../context/RegisterSelectionContext";
-import { RegisterFlowStepCanvas } from "../flowCanvas/RegisterFlowStepCanvas";
-import { RegisterHowCanvas } from "../components/RegisterHowCanvas";
+import { RegisterShellProvider, useRegisterShell } from "../context/RegisterShellContext";
 import { RegisterGate } from "../components/RegisterGate";
 import { RegisterLeftPanel } from "../components/RegisterLeftPanel";
+import { RegisterClickThroughPanel } from "../components/RegisterClickThroughPanel";
 import { RegisterHolonCatalogBootstrap } from "../RegisterHolonCatalogBootstrap";
 import { isRegisterRouteEnabled, isRegisterUnlocked, lockRegister } from "../registerAuth";
 import { RegisterErrorBoundary } from "../components/RegisterErrorBoundary";
@@ -14,24 +14,12 @@ import { useRegisterSelection } from "../context/RegisterSelectionContext";
 import { RegisterTheoryCanvas } from "../components/RegisterTheoryCanvas";
 import { registerPassCanvasTitle } from "../passes/registerPasses";
 
-const LEFT_PANEL_WIDTH = 280;
+/** HQ shell constants — theory strip width when CT is open. */
+const RAIL_W = 280;
+const THEORY_W = 420;
 
-function registerCanvasTitle({
-  registerPassId,
-  selectedHowGraphId,
-  activeFlowStepId,
-}: {
-  registerPassId: ReturnType<typeof useRegisterSelection>["registerPassId"];
-  selectedHowGraphId: string | null;
-  activeFlowStepId: string | null;
-}): string {
-  if (selectedHowGraphId && registerPassId === "personas-function") {
-    return "How canvas";
-  }
-  if (activeFlowStepId && registerPassId === "wiring") {
-    return "Flow step";
-  }
-  return registerPassCanvasTitle(registerPassId);
+function theoryTitle(registerPassId: ReturnType<typeof useRegisterSelection>["registerPassId"]): string {
+  return `Theory · ${registerPassCanvasTitle(registerPassId)}`;
 }
 
 function RegisterPageBody({
@@ -43,11 +31,9 @@ function RegisterPageBody({
   isDark: boolean;
   onLock: () => void;
 }) {
-  const { registerPassId, selectedHowGraphId, activeFlowStepId } = useRegisterSelection();
-  const canvasTitle = registerCanvasTitle({ registerPassId, selectedHowGraphId, activeFlowStepId });
-
-  const showHowCanvas = registerPassId === "personas-function" && selectedHowGraphId != null;
-  const showFlowStepCanvas = registerPassId === "wiring" && activeFlowStepId != null;
+  const { registerPassId } = useRegisterSelection();
+  const { ctVisible } = useRegisterShell();
+  const title = theoryTitle(registerPassId);
 
   return (
     <div
@@ -62,15 +48,23 @@ function RegisterPageBody({
       }}
     >
       <RegisterHolonCatalogBootstrap t={t} />
-      <RegisterLeftPanel width={LEFT_PANEL_WIDTH} t={t} />
-      <div
+
+      {/* Rail — Tower design kept; Show click-through lives in rail footer */}
+      <RegisterLeftPanel width={RAIL_W} t={t} />
+
+      {/* Theory strip — fixed width when CT open; expands when CT hidden (HQ) */}
+      <section
         style={{
-          flex: 1,
-          minWidth: 0,
+          width: ctVisible ? THEORY_W : undefined,
+          flex: ctVisible ? undefined : 1,
+          flexShrink: 0,
+          minWidth: ctVisible ? THEORY_W : 0,
           minHeight: 0,
           display: "flex",
           flexDirection: "column",
-          background: t.hoverBg,
+          borderRight: ctVisible ? `1px solid ${t.border}` : undefined,
+          background: t.bgPrimary,
+          overflow: "hidden",
         }}
       >
         <header
@@ -93,7 +87,7 @@ function RegisterPageBody({
               letterSpacing: "-0.01em",
             }}
           >
-            {canvasTitle}
+            {title}
           </span>
           <button
             type="button"
@@ -113,14 +107,12 @@ function RegisterPageBody({
             Lock
           </button>
         </header>
-        {showHowCanvas && selectedHowGraphId ? (
-          <RegisterHowCanvas graphId={selectedHowGraphId} t={t} isDark={isDark} />
-        ) : showFlowStepCanvas && activeFlowStepId ? (
-          <RegisterFlowStepCanvas stepId={activeFlowStepId} t={t} isDark={isDark} />
-        ) : (
+        <div style={{ flex: 1, minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
           <RegisterTheoryCanvas t={t} />
-        )}
-      </div>
+        </div>
+      </section>
+
+      {ctVisible ? <RegisterClickThroughPanel t={t} isDark={isDark} /> : null}
     </div>
   );
 }
@@ -180,15 +172,17 @@ export function RegisterPage() {
   return (
     <DocsHighlightProvider>
       <RegisterSelectionProvider>
-        <RegisterErrorBoundary>
-          <RegisterPageBody
-            t={t}
-            isDark={isDark}
-            onLock={() => {
-              void lockRegister().then(() => setUnlocked(false));
-            }}
-          />
-        </RegisterErrorBoundary>
+        <RegisterShellProvider>
+          <RegisterErrorBoundary>
+            <RegisterPageBody
+              t={t}
+              isDark={isDark}
+              onLock={() => {
+                void lockRegister().then(() => setUnlocked(false));
+              }}
+            />
+          </RegisterErrorBoundary>
+        </RegisterShellProvider>
       </RegisterSelectionProvider>
     </DocsHighlightProvider>
   );

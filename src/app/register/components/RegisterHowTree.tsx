@@ -19,6 +19,11 @@ import { getHowGraph, getHowNodeChildren, truncateHowAnswer } from "../howAnalys
 import type { HowGraph, HowNode } from "../howAnalysis/types";
 import { OUTCOME_PERSONAS, type Outcome } from "../theory/outcomes";
 import { useRegisterSelection } from "../context/RegisterSelectionContext";
+import { useRegisterShell, type CtDeskId } from "../context/RegisterShellContext";
+
+function deskForPersona(personaId: string | undefined): CtDeskId {
+  return personaId === "operator" ? "operator" : "consultant";
+}
 
 type HowTreeNode = {
   id: string;
@@ -248,6 +253,7 @@ export function RegisterHowTree({ t }: RegisterHowTreeProps) {
     selectOutcome,
     selectPersona,
   } = useRegisterSelection();
+  const { revealCt } = useRegisterShell();
   const [closedBranchIds, setClosedBranchIds] = useState<Set<string>>(() => new Set());
   const howTree = useMemo(() => buildPersonaHowTree(), []);
 
@@ -298,6 +304,12 @@ export function RegisterHowTree({ t }: RegisterHowTreeProps) {
         if (node.kind === "how" && node.graphId && node.howNodeId) {
           selectHowGraph(node.graphId);
           selectHowNode(node.howNodeId);
+          const graph = getHowGraph(node.graphId);
+          const howNode = graph?.nodes.find((n) => n.id === node.howNodeId);
+          const leaf = howNode != null && (howNode.isLeaf === true || howNode.kind === "leaf");
+          if (leaf) {
+            revealCt(deskForPersona(graph?.personaId ?? selectedPersonaId ?? undefined));
+          }
         }
       }}
       t={t}

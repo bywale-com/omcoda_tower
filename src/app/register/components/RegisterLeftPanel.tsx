@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { SIDEBAR_HEADER_HEIGHT } from "../../constants/layout";
 import type { Tokens } from "../../components/tokens";
+import { useRegisterShell } from "../context/RegisterShellContext";
 import { REGISTER_PASSES, type RegisterPassId } from "../passes/registerPasses";
 import { RegisterComponentsTree } from "./RegisterComponentsTree";
 import { RegisterFlowsTree } from "./RegisterFlowsTree";
@@ -29,6 +30,7 @@ function passTreeContent(passId: RegisterPassId, t: Tokens) {
 }
 
 export function RegisterLeftPanel({ width, t }: RegisterLeftPanelProps) {
+  const { ctVisible, setCtVisible } = useRegisterShell();
   const [openPassIds, setOpenPassIds] = useState<Set<RegisterPassId>>(
     () => new Set(["world", "personas-function", "sme", "wiring", "components"]),
   );
@@ -52,6 +54,7 @@ export function RegisterLeftPanel({ width, t }: RegisterLeftPanelProps) {
         borderRight: `1px solid ${t.border}`,
         background: t.boardPanel,
         minHeight: 0,
+        height: "100%",
       }}
     >
       <header
@@ -107,6 +110,29 @@ export function RegisterLeftPanel({ width, t }: RegisterLeftPanelProps) {
           </RegisterPassSection>
         ))}
       </div>
+
+      {!ctVisible ? (
+        <div style={{ flexShrink: 0, padding: 10, borderTop: `1px solid ${t.border}` }}>
+          <button
+            type="button"
+            onClick={() => setCtVisible(true)}
+            style={{
+              width: "100%",
+              padding: "8px 10px",
+              border: `1px solid ${t.border}`,
+              borderRadius: 4,
+              background: t.bgSecondary,
+              color: t.accent,
+              fontSize: 12,
+              fontWeight: 600,
+              fontFamily: "inherit",
+              cursor: "pointer",
+            }}
+          >
+            Show click-through
+          </button>
+        </div>
+      ) : null}
     </aside>
   );
 }
