@@ -1,11 +1,11 @@
-# Implementation — Platform ads / Meta policy & feed trust
+# PM implementation — Platform ads / Meta policy & feed trust (seat 5)
 
-**Seat:** 5 — Platform ads / Meta policy & feed trust  
-**Writer:** PM (implementation bridge) — paper only  
-**Source:** [`../pass2/05-platform-ads-meta-trust.md`](../pass2/05-platform-ads-meta-trust.md)  
-**Surfaces:** **Acquisition & ads** · **Approach campaigns** · **Capture strip** · **Approach instrumentation**  
-**Skipped (NEEDS VERIFICATION):** `ads-09`, `ads-18`  
-**Item count written:** 23 of 25
+**Source:** `pass2/05-platform-ads-meta-trust.md`  
+**Vocab:** `implementation/00-SURFACE-VOCAB.md`  
+**Style:** implementationProblem / implementation / implementationAdds (paper only — no CT plant)  
+**Skipped (NEEDS VERIFICATION):** `ads-09` (KU #8), `ads-18` (KU #3)
+
+**Surfaces in play:** Acquisition & ads · Approach campaigns · Capture strip · Approach instrumentation
 
 ---
 
