@@ -5,7 +5,7 @@ import { uiKindStyle } from "../../theory/uiKindStyles";
 
 const ADD_STYLE = { color: "#B91C1C", bg: "rgba(220,38,38,0.12)" } as const;
 
-function UiRefChip({ ref: uiRef, t }: { ref: HowUiRef; t: Tokens }) {
+function UiRefChip({ uiRef, t }: { uiRef: HowUiRef; t: Tokens }) {
   const style = uiKindStyle(t, uiRef.kind);
   return (
     <span
@@ -111,7 +111,7 @@ export function TextWithUiRefs({
             {part.label}
           </span>
         ) : (
-          <UiRefChip key={i} ref={part.ref} t={t} />
+          <UiRefChip key={i} uiRef={part.ref} t={t} />
         ),
       )}
     </span>
