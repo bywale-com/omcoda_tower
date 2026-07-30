@@ -11,7 +11,7 @@ import {
   type ReactNode,
 } from "react";
 
-export type CtDeskId = "consultant" | "operator";
+export type CtDeskId = "consultant" | "operator" | "contact";
 
 export type RegisterShellContextValue = {
   ctVisible: boolean;
