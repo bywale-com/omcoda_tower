@@ -83,9 +83,9 @@ export function SmePane({ t }: SmePaneProps) {
 
   return (
     <div style={{ padding: 16, overflow: "auto", height: "100%", boxSizing: "border-box" }}>
-      <p style={{ margin: "0 0 12px", fontSize: 13, color: t.textMuted, lineHeight: 1.45 }}>
-        SME catches domain facts before PM and CTO build on guesses. Pass1 questions → Pass2 sourced answers →
-        Implementation with relative click-path (module → modal → block).
+      <p style={{ margin: "0 0 12px", fontSize: 13, color: t.textMuted, lineHeight: 1.45, fontStyle: "italic" }}>
+        SME — twin of docs/sme/pass2 + implementation (7 seats · 177 considerations). Pass2 solutions + PM click-path
+        Implementation. Select a seat/item in the left tree.
       </p>
 
       {!seat ? (
