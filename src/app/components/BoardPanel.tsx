@@ -1,14 +1,15 @@
 import { useState, type CSSProperties } from "react";
 import {
   ChevronDown,
-  ChevronRight,
   Eye,
+  Hand,
   MoreHorizontal,
 } from "lucide-react";
 import { PhaseTooltip } from "./PhaseTooltip";
 import { ActivityBarHeader } from "./ActivityBarHeader";
 import { ContactsBody } from "./contacts/ContactsBody";
 import { ContactsSectionHeader } from "./contacts/ContactsSectionHeader";
+import { HaltOutreachBar } from "./HaltOutreachBar";
 import { HubBody } from "./hub/HubBody";
 import { HolonBoundary } from "./docs/HolonBoundary";
 import {
@@ -17,6 +18,13 @@ import {
   PHASE_SIGNAL_HOLON,
   ROW_ACTIONS_HOLON,
 } from "./docs/boardBodyHolons";
+import {
+  ALL_NAV,
+  PRIMARY_NAV,
+  REGISTER_ALL_NAV,
+  REGISTER_PRIMARY_NAV,
+  type PrimaryNavItem,
+} from "./docs/primaryNavigationIcons";
 import { docsTargetHighlight, holonInspectTargetProps, useIsDocsTarget } from "./docs/docsHighlight";
 import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
 import { docsBranchLabelStyle, docsChildLabelStyle } from "./docs/treeTypography";
@@ -131,12 +139,14 @@ function ClientRowIcon({
   isDark,
   isRowActive,
   onViewInActivity,
+  registerMode,
 }: {
   client: ClientMeta;
   t: Tokens;
   isDark: boolean;
   isRowActive: boolean;
   onViewInActivity: (clientId: string, activityNodeId: string) => void;
+  registerMode?: boolean;
 }) {
   const snapshot = getClientPhaseSnapshot(client);
   const iconKind = resolveClientPhaseIconKind(client, snapshot);
@@ -151,6 +161,7 @@ function ClientRowIcon({
     >
       <span
         {...holonInspectTargetProps(PHASE_SIGNAL_HOLON.id)}
+        {...(registerMode ? { "data-register-surface": "Phase signal" } : {})}
         style={{
           display: "flex",
           flexShrink: 0,
@@ -174,6 +185,11 @@ function ClientRow({
   onClientClick,
   onViewInActivity,
   onViewAsClient,
+  registerMode,
+  showHalt,
+  contactHalted,
+  onHaltContact,
+  onResumeContact,
 }: {
   client: ClientMeta;
   isActive: boolean;
@@ -182,10 +198,16 @@ function ClientRow({
   onClientClick: (id: string) => void;
   onViewInActivity: (clientId: string, activityNodeId: string) => void;
   onViewAsClient?: (client: ClientMeta) => void;
+  registerMode?: boolean;
+  showHalt?: boolean;
+  contactHalted?: boolean;
+  onHaltContact?: (clientId: string) => void;
+  onResumeContact?: (clientId: string) => void;
 }) {
   const [hovered, setHovered] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const showRowMenu = client.id === "sarah" && (hovered || menuOpen);
+  const hasRowMenu = client.id === "sarah" || Boolean(showHalt);
+  const showRowMenu = hasRowMenu && (hovered || menuOpen || contactHalted);
   const isDocsHighlighted = useIsDocsTarget(CLIENT_ROW_HOLON.id);
   const isNameHighlighted = useIsDocsTarget(CLIENT_NAME_HOLON.id);
   const isRowActionsHighlighted = useIsDocsTarget(ROW_ACTIONS_HOLON.id);
@@ -193,6 +215,7 @@ function ClientRow({
   return (
     <div
       {...holonInspectTargetProps(CLIENT_ROW_HOLON.id)}
+      {...(registerMode ? { "data-register-surface": "Client row" } : {})}
       onClick={() => onClientClick(client.id)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -205,9 +228,14 @@ function ClientRow({
         paddingLeft: docsTreeChildPadLeft(isActive),
         cursor: "pointer",
         background: isActive ? t.activeRowBg : hovered ? t.hoverBg : "transparent",
-        borderLeft: isActive ? `${DOCS_TREE_ACTIVE_BORDER}px solid ${t.accent}` : `${DOCS_TREE_ACTIVE_BORDER}px solid transparent`,
+        borderLeft: isActive
+          ? `${DOCS_TREE_ACTIVE_BORDER}px solid ${t.accent}`
+          : contactHalted
+            ? `${DOCS_TREE_ACTIVE_BORDER}px solid ${t.red}`
+            : `${DOCS_TREE_ACTIVE_BORDER}px solid transparent`,
         borderRadius: 4,
         boxSizing: "border-box",
+        opacity: contactHalted ? 0.85 : 1,
         ...docsTargetHighlight(isDocsHighlighted, t.accent),
       }}
     >
@@ -217,6 +245,7 @@ function ClientRow({
         isDark={isDark}
         isRowActive={isActive}
         onViewInActivity={onViewInActivity}
+        registerMode={registerMode}
       />
 
       <span
@@ -228,9 +257,14 @@ function ClientRow({
         ...docsTargetHighlight(isNameHighlighted, t.accent),
       }}>
         {client.name}
+        {contactHalted ? (
+          <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 600, color: t.red }}>
+            Halted
+          </span>
+        ) : null}
       </span>
 
-      {client.id === "sarah" && (
+      {hasRowMenu && (
         <span
           style={{
             display: "flex",
@@ -260,17 +294,34 @@ function ClientRow({
             className={TOWER_POPOVER_CONTENT_CLASS}
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              type="button"
-              className={TOWER_POPOVER_MENU_ITEM_CLASS}
-              onClick={() => {
-                onViewAsClient?.(client);
-                setMenuOpen(false);
-              }}
-            >
-              <Eye size={14} strokeWidth={2} className="text-muted-foreground" />
-              View as Client
-            </button>
+            {client.id === "sarah" && (
+              <button
+                type="button"
+                className={TOWER_POPOVER_MENU_ITEM_CLASS}
+                onClick={() => {
+                  onViewAsClient?.(client);
+                  setMenuOpen(false);
+                }}
+              >
+                <Eye size={14} strokeWidth={2} className="text-muted-foreground" />
+                View as Client
+              </button>
+            )}
+            {showHalt && (
+              <button
+                type="button"
+                className={TOWER_POPOVER_MENU_ITEM_CLASS}
+                data-register-surface="Halt outreach"
+                onClick={() => {
+                  if (contactHalted) onResumeContact?.(client.id);
+                  else onHaltContact?.(client.id);
+                  setMenuOpen(false);
+                }}
+              >
+                <Hand size={14} strokeWidth={2} className="text-muted-foreground" />
+                {contactHalted ? "Resume outreach" : "Halt outreach"}
+              </button>
+            )}
           </PopoverContent>
         </Popover>
         </span>
@@ -297,6 +348,20 @@ type BoardPanelProps = {
   onViewAsClient?: (clientId: string) => void;
   t: Tokens;
   isDark: boolean;
+  /** Register canvas: tag surfaces + prefer Register nav. */
+  registerMode?: boolean;
+  /** Hide Hub strip / HubBody (Register firm desk). */
+  hideHub?: boolean;
+  /** Show Halt outreach (book + contact scope). Production App omits. */
+  showHalt?: boolean;
+  bookHalted?: boolean;
+  haltedContactIds?: ReadonlySet<string>;
+  onHaltBook?: () => void;
+  onResumeBook?: () => void;
+  onHaltContact?: (clientId: string) => void;
+  onResumeContact?: (clientId: string) => void;
+  primaryNav?: PrimaryNavItem[];
+  allNav?: PrimaryNavItem[];
 };
 
 function ClientsSectionHeader({
@@ -410,6 +475,17 @@ export function BoardPanel({
   onViewAsClient,
   t,
   isDark,
+  registerMode = false,
+  hideHub = false,
+  showHalt = false,
+  bookHalted = false,
+  haltedContactIds,
+  onHaltBook,
+  onResumeBook,
+  onHaltContact,
+  onResumeContact,
+  primaryNav,
+  allNav,
 }: BoardPanelProps) {
   const [clientsOpen, setClientsOpen] = useState(true);
   const [tasksOpen, setTasksOpen] = useState(true);
@@ -417,18 +493,33 @@ export function BoardPanel({
   const { audits, createAndRunAudit } = useAudits();
   const { automations, createAutomation } = useAutomations();
   const clientsInView = clientsOpen && clientList.length > 0;
+  const hubHidden = hideHub || registerMode;
+  const resolvedPrimaryNav =
+    primaryNav ?? (hubHidden ? REGISTER_PRIMARY_NAV : PRIMARY_NAV);
+  const resolvedAllNav = allNav ?? (hubHidden ? REGISTER_ALL_NAV : ALL_NAV);
+  const showHubBody = activeIcon === "hub" && !hubHidden;
+  const showContactsBody = activeIcon === "contacts";
+  const showBoardBody = !showContactsBody && !showHubBody;
 
   function handleAuditImportsContinue(importIds: string[]) {
     createAndRunAudit(importIds);
   }
 
   function handleAddAutomation() {
+    if (hubHidden) return;
     const workflow = createAutomation();
     onHubToolClick({ kind: "automation", id: workflow.id });
   }
 
+  function handleIconClick(id: string) {
+    if (hubHidden && id === "hub") return;
+    onIconClick(id);
+  }
+
   return (
-    <div style={{
+    <div
+      data-register-surface={registerMode && showBoardBody ? "Board" : undefined}
+      style={{
       width,
       flexShrink: 0,
       background: t.boardPanel,
@@ -441,14 +532,16 @@ export function BoardPanel({
 
       <ActivityBarHeader
         activeIcon={activeIcon}
-        onIconClick={onIconClick}
+        onIconClick={handleIconClick}
         isConsoleOpen={isConsoleOpen}
         onToggleConsole={onToggleConsole}
         t={t}
         isDark={isDark}
+        primaryNav={resolvedPrimaryNav}
+        allNav={resolvedAllNav}
       />
 
-      {activeIcon === "contacts" ? (
+      {showContactsBody ? (
         <>
           <ContactsSectionHeader count={contactList.length} t={t} />
           <ContactsBody
@@ -457,9 +550,10 @@ export function BoardPanel({
             activeContactId={activeContactId}
             onContactClick={onContactClick}
             t={t}
+            registerMode={registerMode}
           />
         </>
-      ) : activeIcon === "hub" ? (
+      ) : showHubBody ? (
         <HubBody
           audits={audits}
           agents={hubAgentList}
@@ -473,6 +567,15 @@ export function BoardPanel({
         />
       ) : (
         <>
+      {showHalt && (
+        <HaltOutreachBar
+          t={t}
+          bookHalted={bookHalted}
+          haltedContactCount={haltedContactIds?.size ?? 0}
+          onHaltBook={() => onHaltBook?.()}
+          onResumeBook={() => onResumeBook?.()}
+        />
+      )}
       <ClientsSectionHeader
         count={clientList.length}
         open={clientsOpen}
@@ -545,6 +648,11 @@ export function BoardPanel({
               onClientClick={onClientClick}
               onViewInActivity={onViewInActivity}
               onViewAsClient={(client) => onViewAsClient?.(client.id)}
+              registerMode={registerMode}
+              showHalt={showHalt}
+              contactHalted={haltedContactIds?.has(client.id) ?? false}
+              onHaltContact={onHaltContact}
+              onResumeContact={onResumeContact}
             />
           ))}
 

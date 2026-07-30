@@ -1,6 +1,6 @@
 /**
  * Register Prototype Canvas — hi-fi Tower desk host (replaces lo-fi CT stub).
- * Step 0: consultant mounts BoardPanel; operator / contact show hi-fi empty modules.
+ * Step 1: consultant Board | Contacts | Meetings; Halt outreach; Hub authorship stripped.
  */
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { BoardPanel } from "../../components/BoardPanel";
@@ -23,6 +23,7 @@ import {
   type RegisterSurfaceEntry,
 } from "../trace/surfaceCatalog";
 import { HiFiEmptyModule } from "./HiFiEmptyModule";
+import { MeetingsModule } from "./MeetingsModule";
 
 type RegisterPrototypeCanvasProps = {
   t: Tokens;
@@ -35,6 +36,20 @@ function findSurfaceEl(label: string): HTMLElement | null {
     if (el.getAttribute("data-register-surface") === label) return el;
   }
   return null;
+}
+
+function clearSurfaceRings() {
+  document.querySelectorAll<HTMLElement>("[data-register-surface-ring]").forEach((el) => {
+    el.removeAttribute("data-register-surface-ring");
+    el.style.outline = "";
+    el.style.outlineOffset = "";
+  });
+}
+
+function applySurfaceRing(el: HTMLElement, accent: string) {
+  el.setAttribute("data-register-surface-ring", "1");
+  el.style.outline = `2px solid ${accent}`;
+  el.style.outlineOffset = "-2px";
 }
 
 function navBtnStyle(t: Tokens, active: boolean) {
@@ -99,6 +114,16 @@ function SurfaceMount({
   );
 }
 
+function moduleForFocus(entry: RegisterSurfaceEntry): string {
+  return entry.module;
+}
+
+function boardIconForModule(module: string): string {
+  if (module === "Contacts") return "contacts";
+  if (module === "Meetings") return "meetings";
+  return "board";
+}
+
 function ConsultantDeskScene({
   t,
   isDark,
@@ -113,47 +138,78 @@ function ConsultantDeskScene({
   const [module, setModule] = useState<string>("Board");
   const [activeClientId, setActiveClientId] = useState("sarah");
   const [activeContactId, setActiveContactId] = useState<string | null>(null);
+  const [bookHalted, setBookHalted] = useState(false);
+  const [haltedContactIds, setHaltedContactIds] = useState<Set<string>>(() => new Set());
 
   useEffect(() => {
     if (!focusedEntry || focusedEntry.desk !== "consultant") return;
-    setModule(focusedEntry.module);
+    setModule(moduleForFocus(focusedEntry));
   }, [focusedEntry]);
 
-  const boardIcon = module === "Contacts" ? "contacts" : "board";
+  const boardIcon = boardIconForModule(module);
   const hoveredEntry = hoveredId
     ? SURFACE_CATALOG.find((e) => e.id === hoveredId) ?? null
     : null;
 
-  const showBoard = module === "Board" || module === "Contacts";
+  const showBoardPanel = module === "Board" || module === "Contacts";
+  const showMeetings = module === "Meetings";
+
   const emptyTitle =
-    module === "Meetings"
-      ? "Meetings"
-      : module === "Login"
-        ? "Login"
-        : module === "Prepared Workspace"
-          ? focusedEntry?.label ?? "Prepared Workspace"
-          : focusedEntry?.label ?? module;
+    module === "Login"
+      ? "Login"
+      : module === "Prepared Workspace"
+        ? focusedEntry?.label ?? "Prepared Workspace"
+        : focusedEntry?.label ?? module;
 
   const emptyStatus =
     getSurfaceByLabel(emptyTitle)?.status ?? focusedEntry?.status ?? "new";
 
-  const mountLabel = showBoard
+  const mountLabel = showBoardPanel
     ? module === "Contacts"
       ? "Contacts"
       : "Board"
-    : focusedEntry?.label ?? emptyTitle;
+    : showMeetings
+      ? "Meetings"
+      : focusedEntry?.label ?? emptyTitle;
 
   const focusedOnMount =
     Boolean(focusedEntry) &&
     (focusedEntry!.label === mountLabel ||
       focusedEntry!.module === module ||
-      (showBoard && (focusedEntry!.module === "Board" || focusedEntry!.module === "Contacts")));
+      (showBoardPanel &&
+        (focusedEntry!.module === "Board" || focusedEntry!.module === "Contacts")) ||
+      (showMeetings && focusedEntry!.module === "Meetings"));
 
   const hoveredOnMount =
     Boolean(hoveredEntry) &&
     (hoveredEntry!.label === mountLabel ||
       hoveredEntry!.module === module ||
-      (showBoard && (hoveredEntry!.module === "Board" || hoveredEntry!.module === "Contacts")));
+      (showBoardPanel &&
+        (hoveredEntry!.module === "Board" || hoveredEntry!.module === "Contacts")) ||
+      (showMeetings && hoveredEntry!.module === "Meetings"));
+
+  function handleIconClick(id: string) {
+    if (id === "contacts") setModule("Contacts");
+    else if (id === "meetings") setModule("Meetings");
+    else if (id === "board") setModule("Board");
+    // hub intentionally ignored — authorship stripped from Register consultant desk
+  }
+
+  function haltContact(clientId: string) {
+    setHaltedContactIds((prev) => {
+      const next = new Set(prev);
+      next.add(clientId);
+      return next;
+    });
+  }
+
+  function resumeContact(clientId: string) {
+    setHaltedContactIds((prev) => {
+      const next = new Set(prev);
+      next.delete(clientId);
+      return next;
+    });
+  }
 
   return (
     <div style={{ flex: 1, minHeight: 0, display: "flex", overflow: "hidden" }}>
@@ -180,7 +236,7 @@ function ConsultantDeskScene({
       </aside>
 
       <div style={{ flex: 1, minWidth: 0, minHeight: 0, display: "flex", overflow: "hidden" }}>
-        {showBoard ? (
+        {showBoardPanel ? (
           <SurfaceMount label={mountLabel} focused={focusedOnMount} hovered={hoveredOnMount} t={t}>
             <TaskProvider>
               <AuditProvider>
@@ -193,10 +249,7 @@ function ConsultantDeskScene({
                       activeTouchpointId={null}
                       onTaskClick={(_task: ConsultantTask) => {}}
                       activeIcon={boardIcon}
-                      onIconClick={(id) => {
-                        if (id === "contacts") setModule("Contacts");
-                        else if (id === "board") setModule("Board");
-                      }}
+                      onIconClick={handleIconClick}
                       activeContactId={activeContactId}
                       onContactClick={setActiveContactId}
                       activeHubTool={null}
@@ -206,6 +259,15 @@ function ConsultantDeskScene({
                       onViewInActivity={() => {}}
                       t={t}
                       isDark={isDark}
+                      registerMode
+                      hideHub
+                      showHalt={module === "Board"}
+                      bookHalted={bookHalted}
+                      haltedContactIds={haltedContactIds}
+                      onHaltBook={() => setBookHalted(true)}
+                      onResumeBook={() => setBookHalted(false)}
+                      onHaltContact={haltContact}
+                      onResumeContact={resumeContact}
                     />
                     <div
                       style={{
@@ -226,6 +288,12 @@ function ConsultantDeskScene({
                 </AutomationProvider>
               </AuditProvider>
             </TaskProvider>
+          </SurfaceMount>
+        ) : showMeetings ? (
+          <SurfaceMount label="Meetings" focused={focusedOnMount} hovered={hoveredOnMount} t={t}>
+            <div style={{ flex: 1, minHeight: 0, padding: 12, display: "flex" }}>
+              <MeetingsModule t={t} />
+            </div>
           </SurfaceMount>
         ) : (
           <SurfaceMount label={mountLabel} focused={focusedOnMount} hovered={hoveredOnMount} t={t}>
@@ -351,15 +419,27 @@ export function RegisterPrototypeCanvas({ t, isDark }: RegisterPrototypeCanvasPr
   }, [focusedSurfaceId]);
 
   useEffect(() => {
-    if (!focusedEntry || focusSeq === 0) return;
+    if (!focusedEntry || focusSeq === 0) {
+      clearSurfaceRings();
+      return;
+    }
     const label = focusedEntry.label;
     const module = focusedEntry.module;
     const id = window.setTimeout(() => {
+      clearSurfaceRings();
       const el = findSurfaceEl(label) ?? findSurfaceEl(module);
-      el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
-    }, 50);
-    return () => window.clearTimeout(id);
-  }, [focusedEntry, focusSeq]);
+      if (!el) return;
+      el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      // Prefer ring on the specific surface when it is not the module SurfaceMount wrapper alone
+      if (el.getAttribute("data-register-surface") === label) {
+        applySurfaceRing(el, t.accent);
+      }
+    }, 60);
+    return () => {
+      window.clearTimeout(id);
+      clearSurfaceRings();
+    };
+  }, [focusedEntry, focusSeq, t.accent]);
 
   if (ctDesk === "operator") {
     return <OperatorDeskScene t={t} focusedEntry={focusedEntry} hoveredId={hoveredSurfaceId} />;

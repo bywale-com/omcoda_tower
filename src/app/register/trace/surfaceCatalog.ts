@@ -48,7 +48,7 @@ export const SURFACE_CATALOG: RegisterSurfaceEntry[] = [
   entry("Engagement record", "consultant", "Contacts", "exists"),
   entry("Client Brief", "consultant", "Contacts", "exists"),
   entry("Live brief", "consultant", "Meetings", "exists"),
-  entry("Halt outreach", "consultant", "Contacts", "new"),
+  entry("Halt outreach", "consultant", "Board", "new"),
   entry("Imports", "consultant", "Contacts", "exists"),
   entry("Meeting row", "consultant", "Meetings", "new"),
   entry("Prepared Workspace", "consultant", "Prepared Workspace", "new"),
