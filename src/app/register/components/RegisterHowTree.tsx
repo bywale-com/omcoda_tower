@@ -264,7 +264,7 @@ export function RegisterHowTree({ t }: RegisterHowTreeProps) {
     selectOutcome,
     selectPersona,
   } = useRegisterSelection();
-  const { revealCt } = useRegisterShell();
+  const { revealCt, revealTheory } = useRegisterShell();
   const { focusSurface } = useRegisterTrace();
   const [closedBranchIds, setClosedBranchIds] = useState<Set<string>>(() => new Set());
   const howTree = useMemo(() => buildPersonaHowTree(), []);
@@ -305,6 +305,7 @@ export function RegisterHowTree({ t }: RegisterHowTreeProps) {
       closedIds={closedBranchIds}
       onToggleBranch={toggleBranch}
       onSelectNode={(node) => {
+        revealTheory();
         if (node.kind === "persona" && node.personaId) {
           selectPersona(node.personaId);
           return;
