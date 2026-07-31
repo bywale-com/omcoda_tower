@@ -1,15 +1,21 @@
 import {
   fetchRegisterStatus,
+  isAuthDisabled,
   isRegisterRouteEnabled,
   lockRegister as lockRegisterRequest,
   unlockRegister as unlockRegisterRequest,
 } from "../auth/authClient";
 
-export { isRegisterRouteEnabled };
+export { isRegisterRouteEnabled, isAuthDisabled };
 
 export async function isRegisterUnlocked(): Promise<boolean> {
   if (!isRegisterRouteEnabled()) {
     return false;
+  }
+
+  // Dev/demo bypass — same flag as product AuthGate.
+  if (isAuthDisabled()) {
+    return true;
   }
 
   try {
