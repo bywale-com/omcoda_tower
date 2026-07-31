@@ -1,4 +1,5 @@
 import { Navigate } from "react-router";
+import { isAuthDisabled } from "../../auth/authClient";
 import { useAuth } from "../../auth/AuthContext";
 import { DocsHighlightProvider } from "../../context/DocsHighlightContext";
 import { OmcodaNav } from "../components/OmcodaNav";
@@ -7,6 +8,11 @@ import { AuthHeroMedia } from "../components/AuthHeroMedia";
 
 export function LoginPage() {
   const { isAuthenticated, isLoading } = useAuth();
+
+  // Auth disabled for craft/demo — never park on the marketing Login page.
+  if (isAuthDisabled()) {
+    return <Navigate to="/" replace />;
+  }
 
   if (isLoading) {
     return null;

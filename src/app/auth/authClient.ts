@@ -1,8 +1,16 @@
 const AUTH_BASE = import.meta.env.VITE_AUTH_BASE_URL ?? "";
 
-/** Dev/demo: skip product AuthGate + Register password gate. Never enable in prod. */
+/**
+ * Dev/demo: skip product AuthGate + Register password gate.
+ * Accepts "true" / "1" / "yes". In Vite DEV, defaults ON unless explicitly "false".
+ * Never ship production with this enabled.
+ */
 export function isAuthDisabled(): boolean {
-  return import.meta.env.VITE_AUTH_DISABLED === "true";
+  const raw = String(import.meta.env.VITE_AUTH_DISABLED ?? "").trim().toLowerCase();
+  if (raw === "false" || raw === "0" || raw === "no") return false;
+  if (raw === "true" || raw === "1" || raw === "yes") return true;
+  // Craft/demo default: never trap the desk behind Login while developing.
+  return Boolean(import.meta.env.DEV);
 }
 
 export function isRegisterRouteEnabled(): boolean {

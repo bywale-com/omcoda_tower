@@ -9,6 +9,7 @@ type AuthGateProps = {
 export function AuthGate({ children }: AuthGateProps) {
   const { isAuthenticated, isLoading } = useAuth();
 
+  // Check on every render — never redirect to Login while auth is disabled.
   if (isAuthDisabled()) {
     return <>{children}</>;
   }
