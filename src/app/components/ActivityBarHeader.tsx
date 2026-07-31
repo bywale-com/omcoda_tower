@@ -8,6 +8,7 @@ import {
   CONSOLE_NAV_ICON,
   MORE_NAV_ICON,
   PRIMARY_NAV,
+  type PrimaryNavItem,
 } from "./docs/primaryNavigationIcons";
 import { SHELL_HOLON_ORDER } from "./docs/shellHolonOrder";
 import { TowerAppLogo } from "./icons/TowerAppLogo";
@@ -28,6 +29,10 @@ type ActivityBarHeaderProps = {
   onToggleConsole: () => void;
   t: Tokens;
   isDark: boolean;
+  /** Override primary strip (e.g. Register Board | Contacts | Meetings). */
+  primaryNav?: PrimaryNavItem[];
+  /** Override more-menu items. Defaults to ALL_NAV. */
+  allNav?: PrimaryNavItem[];
 };
 
 export function ActivityBarHeader({
@@ -37,6 +42,8 @@ export function ActivityBarHeader({
   onToggleConsole,
   t,
   isDark,
+  primaryNav = PRIMARY_NAV,
+  allNav = ALL_NAV,
 }: ActivityBarHeaderProps) {
   const { isHolonInspectMode, toggleHolonInspectMode } = useDocsHighlight();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -122,7 +129,7 @@ export function ActivityBarHeader({
             zIndex: 10000,
           }}
         >
-          {ALL_NAV.map(({ id, icon, label, shortcut }) => {
+          {allNav.map(({ id, icon, label, shortcut }) => {
             const isActive = activeIcon === id;
             return (
               <button
@@ -248,7 +255,7 @@ export function ActivityBarHeader({
               />
             </button>
 
-            {PRIMARY_NAV.map(({ id, icon, label }) => iconBtn(id, icon, label))}
+            {primaryNav.map(({ id, icon, label }) => iconBtn(id, icon, label))}
 
             <button
               ref={triggerRef}

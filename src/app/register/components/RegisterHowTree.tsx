@@ -20,9 +20,20 @@ import type { HowGraph, HowNode } from "../howAnalysis/types";
 import { OUTCOME_PERSONAS, type Outcome } from "../theory/outcomes";
 import { useRegisterSelection } from "../context/RegisterSelectionContext";
 import { useRegisterShell, type CtDeskId } from "../context/RegisterShellContext";
+import { useRegisterTrace } from "../trace/RegisterTraceContext";
+import { getSurfaceByLabel, resolveSurfaceLabel } from "../trace/surfaceCatalog";
 
 function deskForPersona(personaId: string | undefined): CtDeskId {
-  return personaId === "operator" ? "operator" : "consultant";
+  if (personaId === "operator") return "operator";
+  if (personaId === "engagement_contact" || personaId === "contact") return "contact";
+  return "consultant";
+}
+
+function firstCatalogSurfaceLabel(uiLabels: string[] | undefined): string | null {
+  for (const label of uiLabels ?? []) {
+    if (getSurfaceByLabel(label) || resolveSurfaceLabel(label)) return label;
+  }
+  return null;
 }
 
 type HowTreeNode = {
@@ -254,6 +265,7 @@ export function RegisterHowTree({ t }: RegisterHowTreeProps) {
     selectPersona,
   } = useRegisterSelection();
   const { revealCt } = useRegisterShell();
+  const { focusSurface } = useRegisterTrace();
   const [closedBranchIds, setClosedBranchIds] = useState<Set<string>>(() => new Set());
   const howTree = useMemo(() => buildPersonaHowTree(), []);
 
@@ -307,8 +319,10 @@ export function RegisterHowTree({ t }: RegisterHowTreeProps) {
           const graph = getHowGraph(node.graphId);
           const howNode = graph?.nodes.find((n) => n.id === node.howNodeId);
           const leaf = howNode != null && (howNode.isLeaf === true || howNode.kind === "leaf");
-          if (leaf) {
+          if (leaf && howNode) {
             revealCt(deskForPersona(graph?.personaId ?? selectedPersonaId ?? undefined));
+            const first = firstCatalogSurfaceLabel(howNode.components.ui);
+            if (first) focusSurface(first);
           }
         }
       }}

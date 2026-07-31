@@ -14,9 +14,20 @@ import type { HowUiRef, UiKind } from "../theory/types";
 import { UI_KIND_ORDER, uiKindStyle } from "../theory/uiKindStyles";
 import { useRegisterSelection } from "../context/RegisterSelectionContext";
 import { useRegisterShell, type CtDeskId } from "../context/RegisterShellContext";
+import { useRegisterTrace } from "../trace/RegisterTraceContext";
+import { getSurfaceByLabel, resolveSurfaceLabel } from "../trace/surfaceCatalog";
 
 function deskForPersona(personaId: string | undefined): CtDeskId {
-  return personaId === "operator" ? "operator" : "consultant";
+  if (personaId === "operator") return "operator";
+  if (personaId === "engagement_contact" || personaId === "contact") return "contact";
+  return "consultant";
+}
+
+function firstCatalogSurfaceLabel(uiLabels: string[] | undefined): string | null {
+  for (const label of uiLabels ?? []) {
+    if (getSurfaceByLabel(label) || resolveSurfaceLabel(label)) return label;
+  }
+  return null;
 }
 
 function uiRefsFromNode(node: HowNode): HowUiRef[] {
@@ -78,7 +89,7 @@ function LeafDrawer({ node, t }: { node: HowNode; t: Tokens }) {
       ) : null}
       <KindLegend t={t} />
       <p style={{ margin: "10px 0 0", fontSize: 11, color: t.textDim, fontStyle: "italic", lineHeight: 1.4 }}>
-        Click-through opens on the right — plant surfaces join later via surfaceId.
+        Click a highlighted surface chip to focus it on the prototype canvas.
       </p>
     </div>
   );
@@ -177,6 +188,7 @@ function OutcomeBlock({
   const graph = outcome.howGraphId ? getHowGraph(outcome.howGraphId) : undefined;
   const { selectedHowNodeId, selectHowGraph, selectHowNode } = useRegisterSelection();
   const { revealCt } = useRegisterShell();
+  const { focusSurface } = useRegisterTrace();
   const [leafId, setLeafId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -245,6 +257,8 @@ function OutcomeBlock({
                   selectHowGraph(graph.id);
                   selectHowNode(n.id);
                   revealCt(deskForPersona(personaId));
+                  const first = firstCatalogSurfaceLabel(n.components.ui);
+                  if (first) focusSurface(first);
                 }}
                 t={t}
               />

@@ -4,6 +4,7 @@ import { DocsHighlightProvider } from "../../context/DocsHighlightContext";
 import { light, type Tokens } from "../../components/tokens";
 import { RegisterSelectionProvider } from "../context/RegisterSelectionContext";
 import { RegisterShellProvider, useRegisterShell } from "../context/RegisterShellContext";
+import { RegisterTraceProvider } from "../trace/RegisterTraceContext";
 import { RegisterGate } from "../components/RegisterGate";
 import { RegisterLeftPanel } from "../components/RegisterLeftPanel";
 import { RegisterClickThroughPanel } from "../components/RegisterClickThroughPanel";
@@ -173,15 +174,17 @@ export function RegisterPage() {
     <DocsHighlightProvider>
       <RegisterSelectionProvider>
         <RegisterShellProvider>
-          <RegisterErrorBoundary>
-            <RegisterPageBody
-              t={t}
-              isDark={isDark}
-              onLock={() => {
-                void lockRegister().then(() => setUnlocked(false));
-              }}
-            />
-          </RegisterErrorBoundary>
+          <RegisterTraceProvider>
+            <RegisterErrorBoundary>
+              <RegisterPageBody
+                t={t}
+                isDark={isDark}
+                onLock={() => {
+                  void lockRegister().then(() => setUnlocked(false));
+                }}
+              />
+            </RegisterErrorBoundary>
+          </RegisterTraceProvider>
         </RegisterShellProvider>
       </RegisterSelectionProvider>
     </DocsHighlightProvider>

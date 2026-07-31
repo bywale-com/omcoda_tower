@@ -72,7 +72,10 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     try {
       await verifyOtp(email, verificationCode.trim());
       await refresh();
-      onSuccess?.();
+      if (onSuccess) {
+        onSuccess();
+        return;
+      }
       navigate("/");
     } catch (err) {
       setError(
