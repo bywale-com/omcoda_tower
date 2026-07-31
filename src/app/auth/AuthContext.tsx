@@ -7,7 +7,18 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { type AuthUser, fetchSession, logout as logoutRequest } from "./authClient";
+import {
+  type AuthUser,
+  fetchSession,
+  isAuthDisabled,
+  logout as logoutRequest,
+} from "./authClient";
+
+const DEV_BYPASS_USER: AuthUser = {
+  id: "auth-disabled",
+  firmId: "dev-firm",
+  email: "dev@localhost",
+};
 
 type AuthState = {
   user: AuthUser | null;
@@ -20,10 +31,16 @@ type AuthState = {
 const AuthContext = createContext<AuthState | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const authDisabled = isAuthDisabled();
+  const [user, setUser] = useState<AuthUser | null>(authDisabled ? DEV_BYPASS_USER : null);
+  const [isLoading, setIsLoading] = useState(!authDisabled);
 
   const refresh = useCallback(async () => {
+    if (isAuthDisabled()) {
+      setUser(DEV_BYPASS_USER);
+      setIsLoading(false);
+      return;
+    }
     setIsLoading(true);
     try {
       const session = await fetchSession();
@@ -36,6 +53,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
+    if (isAuthDisabled()) {
+      setUser(DEV_BYPASS_USER);
+      return;
+    }
     await logoutRequest();
     setUser(null);
   }, []);
@@ -48,11 +69,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       user,
       isLoading,
-      isAuthenticated: user !== null,
+      isAuthenticated: authDisabled || user !== null,
       refresh,
       logout,
     }),
-    [user, isLoading, refresh, logout],
+    [user, isLoading, authDisabled, refresh, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

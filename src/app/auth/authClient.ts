@@ -1,5 +1,10 @@
 const AUTH_BASE = import.meta.env.VITE_AUTH_BASE_URL ?? "";
 
+/** Dev/demo: skip product AuthGate + Register password gate. Never enable in prod. */
+export function isAuthDisabled(): boolean {
+  return import.meta.env.VITE_AUTH_DISABLED === "true";
+}
+
 export function isRegisterRouteEnabled(): boolean {
   return import.meta.env.VITE_REGISTER_ENABLED === "true";
 }

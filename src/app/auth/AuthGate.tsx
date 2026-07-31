@@ -1,4 +1,5 @@
 import { Navigate } from "react-router";
+import { isAuthDisabled } from "./authClient";
 import { useAuth } from "./AuthContext";
 
 type AuthGateProps = {
@@ -7,6 +8,10 @@ type AuthGateProps = {
 
 export function AuthGate({ children }: AuthGateProps) {
   const { isAuthenticated, isLoading } = useAuth();
+
+  if (isAuthDisabled()) {
+    return <>{children}</>;
+  }
 
   if (isLoading) {
     return (

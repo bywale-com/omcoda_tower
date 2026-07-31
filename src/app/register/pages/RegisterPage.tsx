@@ -9,7 +9,12 @@ import { RegisterGate } from "../components/RegisterGate";
 import { RegisterLeftPanel } from "../components/RegisterLeftPanel";
 import { RegisterClickThroughPanel } from "../components/RegisterClickThroughPanel";
 import { RegisterHolonCatalogBootstrap } from "../RegisterHolonCatalogBootstrap";
-import { isRegisterRouteEnabled, isRegisterUnlocked, lockRegister } from "../registerAuth";
+import {
+  isAuthDisabled,
+  isRegisterRouteEnabled,
+  isRegisterUnlocked,
+  lockRegister,
+} from "../registerAuth";
 import { RegisterErrorBoundary } from "../components/RegisterErrorBoundary";
 import { useRegisterSelection } from "../context/RegisterSelectionContext";
 import { RegisterTheoryCanvas } from "../components/RegisterTheoryCanvas";
@@ -90,23 +95,25 @@ function RegisterPageBody({
           >
             {title}
           </span>
-          <button
-            type="button"
-            onClick={onLock}
-            style={{
-              padding: "4px 10px",
-              border: `1px solid ${t.border}`,
-              borderRadius: 4,
-              background: t.bgSecondary,
-              color: t.textMuted,
-              fontSize: 12,
-              fontWeight: 500,
-              fontFamily: "inherit",
-              cursor: "pointer",
-            }}
-          >
-            Lock
-          </button>
+          {!isAuthDisabled() ? (
+            <button
+              type="button"
+              onClick={onLock}
+              style={{
+                padding: "4px 10px",
+                border: `1px solid ${t.border}`,
+                borderRadius: 4,
+                background: t.bgSecondary,
+                color: t.textMuted,
+                fontSize: 12,
+                fontWeight: 500,
+                fontFamily: "inherit",
+                cursor: "pointer",
+              }}
+            >
+              Lock
+            </button>
+          ) : null}
         </header>
         <div style={{ flex: 1, minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
           <RegisterTheoryCanvas t={t} />
