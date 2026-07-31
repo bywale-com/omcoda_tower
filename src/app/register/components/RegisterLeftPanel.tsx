@@ -8,6 +8,7 @@ import { RegisterFlowsTree } from "./RegisterFlowsTree";
 import { RegisterHowTree } from "./RegisterHowTree";
 import { RegisterPassSection } from "./RegisterPassSection";
 import { RegisterSmeTree } from "./RegisterSmeTree";
+import { ShellHideButton, ShellShowButton } from "./RegisterShellChrome";
 
 type RegisterLeftPanelProps = {
   width: number;
@@ -30,7 +31,14 @@ function passTreeContent(passId: RegisterPassId, t: Tokens) {
 }
 
 export function RegisterLeftPanel({ width, t }: RegisterLeftPanelProps) {
-  const { ctVisible, setCtVisible } = useRegisterShell();
+  const {
+    ctVisible,
+    setCtVisible,
+    theoryVisible,
+    setTheoryVisible,
+    setRailVisible,
+    revealTheory,
+  } = useRegisterShell();
   const [openPassIds, setOpenPassIds] = useState<Set<RegisterPassId>>(
     () => new Set(["world", "personas-function", "sme", "wiring", "components"]),
   );
@@ -63,6 +71,8 @@ export function RegisterLeftPanel({ width, t }: RegisterLeftPanelProps) {
           flexShrink: 0,
           display: "flex",
           alignItems: "center",
+          justifyContent: "space-between",
+          gap: 8,
           padding: "0 12px",
           borderBottom: `1px solid ${t.border}`,
           background: t.boardPanel,
@@ -79,6 +89,7 @@ export function RegisterLeftPanel({ width, t }: RegisterLeftPanelProps) {
         >
           Register
         </span>
+        <ShellHideButton t={t} onClick={() => setRailVisible(false)} />
       </header>
 
       <div style={{ flex: 1, overflowY: "auto", minHeight: 0, padding: "6px 0 12px" }}>
@@ -104,6 +115,10 @@ export function RegisterLeftPanel({ width, t }: RegisterLeftPanelProps) {
             hasTree={pass.hasTree}
             open={openPassIds.has(pass.id)}
             onToggleOpen={() => togglePassOpen(pass.id)}
+            onSelectPass={() => {
+              // Clicking a pass should surface its theory drawer if retracted.
+              revealTheory();
+            }}
             t={t}
           >
             {passTreeContent(pass.id, t)}
@@ -111,26 +126,23 @@ export function RegisterLeftPanel({ width, t }: RegisterLeftPanelProps) {
         ))}
       </div>
 
-      {!ctVisible ? (
-        <div style={{ flexShrink: 0, padding: 10, borderTop: `1px solid ${t.border}` }}>
-          <button
-            type="button"
-            onClick={() => setCtVisible(true)}
-            style={{
-              width: "100%",
-              padding: "8px 10px",
-              border: `1px solid ${t.border}`,
-              borderRadius: 4,
-              background: t.bgSecondary,
-              color: t.accent,
-              fontSize: 12,
-              fontWeight: 600,
-              fontFamily: "inherit",
-              cursor: "pointer",
-            }}
-          >
-            Show click-through
-          </button>
+      {!theoryVisible || !ctVisible ? (
+        <div
+          style={{
+            flexShrink: 0,
+            padding: 10,
+            borderTop: `1px solid ${t.border}`,
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+          }}
+        >
+          {!theoryVisible ? (
+            <ShellShowButton t={t} label="Show theory" onClick={() => setTheoryVisible(true)} />
+          ) : null}
+          {!ctVisible ? (
+            <ShellShowButton t={t} label="Show click-through" onClick={() => setCtVisible(true)} />
+          ) : null}
         </div>
       ) : null}
     </aside>

@@ -9,6 +9,7 @@ import { RegisterFlowStepCanvas } from "../flowCanvas/RegisterFlowStepCanvas";
 import { useRegisterSelection } from "../context/RegisterSelectionContext";
 import { useRegisterShell, type CtDeskId } from "../context/RegisterShellContext";
 import { RegisterPrototypeCanvas } from "../prototype/RegisterPrototypeCanvas";
+import { ShellHideButton, ShellShowButton } from "./RegisterShellChrome";
 
 type RegisterClickThroughPanelProps = {
   t: Tokens;
@@ -36,7 +37,15 @@ const DESK_TABS: { id: CtDeskId; label: string }[] = [
 ];
 
 export function RegisterClickThroughPanel({ t, isDark }: RegisterClickThroughPanelProps) {
-  const { setCtVisible, ctDesk, setCtDesk } = useRegisterShell();
+  const {
+    setCtVisible,
+    ctDesk,
+    setCtDesk,
+    railVisible,
+    theoryVisible,
+    setRailVisible,
+    setTheoryVisible,
+  } = useRegisterShell();
   const { registerPassId, activeFlowStepId } = useRegisterSelection();
 
   const showFlowStepCanvas = registerPassId === "wiring" && activeFlowStepId != null;
@@ -66,7 +75,7 @@ export function RegisterClickThroughPanel({ t, isDark }: RegisterClickThroughPan
           background: t.bgSecondary,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0, flexWrap: "wrap" }}>
           <span style={{ fontSize: 13, fontWeight: 500, letterSpacing: "-0.01em", color: t.textPrimary }}>
             {showFlowStepCanvas ? "Flow step" : "Click-through"}
           </span>
@@ -85,24 +94,15 @@ export function RegisterClickThroughPanel({ t, isDark }: RegisterClickThroughPan
             </div>
           ) : null}
         </div>
-        <button
-          type="button"
-          onClick={() => setCtVisible(false)}
-          style={{
-            padding: "4px 10px",
-            border: `1px solid ${t.border}`,
-            borderRadius: 4,
-            background: t.bgSecondary,
-            color: t.textMuted,
-            fontSize: 12,
-            fontWeight: 500,
-            fontFamily: "inherit",
-            cursor: "pointer",
-            flexShrink: 0,
-          }}
-        >
-          Hide
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+          {!railVisible ? (
+            <ShellShowButton t={t} label="Show register" onClick={() => setRailVisible(true)} />
+          ) : null}
+          {!theoryVisible ? (
+            <ShellShowButton t={t} label="Show theory" onClick={() => setTheoryVisible(true)} />
+          ) : null}
+          <ShellHideButton t={t} onClick={() => setCtVisible(false)} />
+        </div>
       </header>
 
       {showFlowStepCanvas && activeFlowStepId ? (

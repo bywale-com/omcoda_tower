@@ -17,6 +17,8 @@ type RegisterPassSectionProps = {
   hasTree: boolean;
   open: boolean;
   onToggleOpen: () => void;
+  /** Called when the pass row is activated (e.g. reveal theory if retracted). */
+  onSelectPass?: () => void;
   children?: ReactNode;
   t: Tokens;
 };
@@ -28,22 +30,28 @@ export function RegisterPassSection({
   hasTree,
   open,
   onToggleOpen,
+  onSelectPass,
   children,
   t,
 }: RegisterPassSectionProps) {
   const { registerPassId, selectRegisterPass } = useRegisterSelection();
   const isActive = registerPassId === passId;
 
+  const activate = () => {
+    selectRegisterPass(passId);
+    onSelectPass?.();
+  };
+
   return (
     <section style={{ marginBottom: 2 }}>
       <div
         role="button"
         tabIndex={0}
-        onClick={() => selectRegisterPass(passId)}
+        onClick={activate}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
-            selectRegisterPass(passId);
+            activate();
           }
         }}
         style={{
@@ -66,7 +74,7 @@ export function RegisterPassSection({
             onClick={(event) => {
               event.stopPropagation();
               onToggleOpen();
-              if (!isActive) selectRegisterPass(passId);
+              if (!isActive) activate();
             }}
             style={{
               display: "inline-flex",

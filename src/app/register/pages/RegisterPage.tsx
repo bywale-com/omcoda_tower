@@ -8,6 +8,11 @@ import { RegisterTraceProvider } from "../trace/RegisterTraceContext";
 import { RegisterGate } from "../components/RegisterGate";
 import { RegisterLeftPanel } from "../components/RegisterLeftPanel";
 import { RegisterClickThroughPanel } from "../components/RegisterClickThroughPanel";
+import {
+  RegisterRestoreDock,
+  ShellHideButton,
+  ShellShowButton,
+} from "../components/RegisterShellChrome";
 import { RegisterHolonCatalogBootstrap } from "../RegisterHolonCatalogBootstrap";
 import {
   isAuthDisabled,
@@ -38,8 +43,21 @@ function RegisterPageBody({
   onLock: () => void;
 }) {
   const { registerPassId } = useRegisterSelection();
-  const { ctVisible } = useRegisterShell();
+  const {
+    ctVisible,
+    setCtVisible,
+    railVisible,
+    theoryVisible,
+    setTheoryVisible,
+    setRailVisible,
+  } = useRegisterShell();
   const title = theoryTitle(registerPassId);
+
+  // Theory is fixed-width when CT is open; expands when CT is hidden.
+  const theoryFixed = ctVisible;
+  const theoryAlone = theoryVisible && !ctVisible;
+  // Slim left dock only when the rail is away (theory restore lives in rail footer otherwise).
+  const needRestoreDock = !railVisible;
 
   return (
     <div
@@ -55,72 +73,114 @@ function RegisterPageBody({
     >
       <RegisterHolonCatalogBootstrap t={t} />
 
-      {/* Rail — Tower design kept; Show click-through lives in rail footer */}
-      <RegisterLeftPanel width={RAIL_W} t={t} />
+      {needRestoreDock ? (
+        <RegisterRestoreDock
+          t={t}
+          showRail={!railVisible}
+          showTheory={!theoryVisible}
+          onShowRail={() => setRailVisible(true)}
+          onShowTheory={() => setTheoryVisible(true)}
+        />
+      ) : null}
 
-      {/* Theory strip — fixed width when CT open; expands when CT hidden (HQ) */}
-      <section
-        style={{
-          width: ctVisible ? THEORY_W : undefined,
-          flex: ctVisible ? undefined : 1,
-          flexShrink: 0,
-          minWidth: ctVisible ? THEORY_W : 0,
-          minHeight: 0,
-          display: "flex",
-          flexDirection: "column",
-          borderRight: ctVisible ? `1px solid ${t.border}` : undefined,
-          background: t.bgPrimary,
-          overflow: "hidden",
-        }}
-      >
-        <header
+      {railVisible ? <RegisterLeftPanel width={RAIL_W} t={t} /> : null}
+
+      {theoryVisible ? (
+        <section
           style={{
-            height: 35,
+            width: theoryFixed ? THEORY_W : undefined,
+            flex: theoryFixed ? undefined : 1,
             flexShrink: 0,
+            minWidth: theoryFixed ? THEORY_W : 0,
+            minHeight: 0,
             display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0 12px",
-            borderBottom: `1px solid ${t.border}`,
-            background: t.bgSecondary,
+            flexDirection: "column",
+            borderRight: ctVisible ? `1px solid ${t.border}` : undefined,
+            background: t.bgPrimary,
+            overflow: "hidden",
           }}
         >
-          <span
+          <header
             style={{
-              fontSize: 13,
-              fontWeight: 500,
-              lineHeight: 1.25,
-              letterSpacing: "-0.01em",
+              height: 35,
+              flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 8,
+              padding: "0 12px",
+              borderBottom: `1px solid ${t.border}`,
+              background: t.bgSecondary,
             }}
           >
-            {title}
-          </span>
-          {!isAuthDisabled() ? (
-            <button
-              type="button"
-              onClick={onLock}
+            <span
               style={{
-                padding: "4px 10px",
-                border: `1px solid ${t.border}`,
-                borderRadius: 4,
-                background: t.bgSecondary,
-                color: t.textMuted,
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: 500,
-                fontFamily: "inherit",
-                cursor: "pointer",
+                lineHeight: 1.25,
+                letterSpacing: "-0.01em",
+                minWidth: 0,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
               }}
             >
-              Lock
-            </button>
-          ) : null}
-        </header>
-        <div style={{ flex: 1, minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-          <RegisterTheoryCanvas t={t} />
-        </div>
-      </section>
+              {title}
+            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+              {!railVisible ? (
+                <ShellShowButton t={t} label="Show register" onClick={() => setRailVisible(true)} />
+              ) : null}
+              {theoryAlone && !ctVisible ? (
+                <ShellShowButton t={t} label="Show click-through" onClick={() => setCtVisible(true)} />
+              ) : null}
+              {!isAuthDisabled() ? (
+                <button
+                  type="button"
+                  onClick={onLock}
+                  style={{
+                    padding: "4px 10px",
+                    border: `1px solid ${t.border}`,
+                    borderRadius: 4,
+                    background: t.bgSecondary,
+                    color: t.textMuted,
+                    fontSize: 12,
+                    fontWeight: 500,
+                    fontFamily: "inherit",
+                    cursor: "pointer",
+                  }}
+                >
+                  Lock
+                </button>
+              ) : null}
+              <ShellHideButton t={t} onClick={() => setTheoryVisible(false)} />
+            </div>
+          </header>
+          <div style={{ flex: 1, minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+            <RegisterTheoryCanvas t={t} />
+          </div>
+        </section>
+      ) : null}
 
       {ctVisible ? <RegisterClickThroughPanel t={t} isDark={isDark} /> : null}
+
+      {/* Empty restorer when every column is hidden (shouldn't be common). */}
+      {!railVisible && !theoryVisible && !ctVisible ? (
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 10,
+            background: t.hoverBg,
+          }}
+        >
+          <ShellShowButton t={t} label="Show register" onClick={() => setRailVisible(true)} />
+          <ShellShowButton t={t} label="Show theory" onClick={() => setTheoryVisible(true)} />
+          <ShellShowButton t={t} label="Show click-through" onClick={() => setCtVisible(true)} />
+        </div>
+      ) : null}
     </div>
   );
 }
