@@ -13,8 +13,16 @@ export function isAuthDisabled(): boolean {
   return Boolean(import.meta.env.DEV);
 }
 
+/**
+ * Expose `/register` in the SPA. Accepts "true" / "1" / "yes".
+ * In Vite DEV, defaults ON unless explicitly "false" — same craft posture as auth bypass.
+ * Keep false/omit in production builds that should not ship Register.
+ */
 export function isRegisterRouteEnabled(): boolean {
-  return import.meta.env.VITE_REGISTER_ENABLED === "true";
+  const raw = String(import.meta.env.VITE_REGISTER_ENABLED ?? "").trim().toLowerCase();
+  if (raw === "false" || raw === "0" || raw === "no") return false;
+  if (raw === "true" || raw === "1" || raw === "yes") return true;
+  return Boolean(import.meta.env.DEV);
 }
 
 export type AuthUser = {
