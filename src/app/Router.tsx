@@ -1,6 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import App from "./App";
-import { isAuthDisabled, isRegisterRouteEnabled } from "./auth/authClient";
+import { isAuthDisabled } from "./auth/authClient";
 import { AuthGate } from "./auth/AuthGate";
 import { AuthProvider } from "./auth/AuthContext";
 import { DocsRegistryProvider } from "./context/DocsRegistryContext";
@@ -8,7 +8,6 @@ import { LoginPage } from "./marketing/pages/LoginPage";
 import { RegisterPage } from "./register/pages/RegisterPage";
 
 export function AppRouter() {
-  const registerEnabled = isRegisterRouteEnabled();
   const authOff = isAuthDisabled();
 
   return (
@@ -20,7 +19,11 @@ export function AppRouter() {
               path="/login"
               element={authOff ? <Navigate to="/" replace /> : <LoginPage />}
             />
-            {registerEnabled ? <Route path="/register" element={<RegisterPage />} /> : null}
+            {/* Always declare /register so a missing env flag cannot silently
+                fall through to "*" → Board. RegisterPage itself Navigates home
+                when the route is intentionally disabled. */}
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/Register" element={<Navigate to="/register" replace />} />
             <Route
               path="/"
               element={

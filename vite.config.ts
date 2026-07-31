@@ -24,11 +24,14 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  // Craft/demo: force auth bypass into the client bundle even if .env is missing
-  // on a preview host. Set VITE_AUTH_DISABLED=false in .env to re-enable Login.
+  // Craft/demo: force flags into the client bundle even if .env is missing
+  // on a preview host. Set either to "false" in .env to turn off.
   define: {
     'import.meta.env.VITE_AUTH_DISABLED': JSON.stringify(
       process.env.VITE_AUTH_DISABLED ?? 'true',
+    ),
+    'import.meta.env.VITE_REGISTER_ENABLED': JSON.stringify(
+      process.env.VITE_REGISTER_ENABLED ?? 'true',
     ),
   },
   server: {
