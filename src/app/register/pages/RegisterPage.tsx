@@ -126,8 +126,10 @@ function RegisterPageBody({
 }
 
 export function RegisterPage() {
-  const [unlocked, setUnlocked] = useState(false);
-  const [isChecking, setIsChecking] = useState(true);
+  // Sync bypass — don't flash RegisterGate while auth is disabled.
+  const bypass = isAuthDisabled();
+  const [unlocked, setUnlocked] = useState(bypass);
+  const [isChecking, setIsChecking] = useState(!bypass);
   const t: Tokens = light;
   const isDark = false;
 
@@ -137,6 +139,14 @@ export function RegisterPage() {
     async function checkUnlock() {
       if (!isRegisterRouteEnabled()) {
         setIsChecking(false);
+        return;
+      }
+
+      if (isAuthDisabled()) {
+        if (!cancelled) {
+          setUnlocked(true);
+          setIsChecking(false);
+        }
         return;
       }
 
