@@ -42,9 +42,8 @@ export function RegisterLeftPanel({ width, t }: RegisterLeftPanelProps) {
     setRailVisible,
     revealTheory,
   } = useRegisterShell();
-  const [openPassIds, setOpenPassIds] = useState<Set<RegisterPassId>>(
-    () => new Set(["world", "personas-function", "sme", "flows", "wiring", "components"]),
-  );
+  // Pass sections start collapsed — expand on demand.
+  const [openPassIds, setOpenPassIds] = useState<Set<RegisterPassId>>(() => new Set());
 
   const togglePassOpen = (passId: RegisterPassId) => {
     setOpenPassIds((prev) => {

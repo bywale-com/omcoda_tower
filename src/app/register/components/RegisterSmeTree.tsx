@@ -17,6 +17,7 @@ import {
 import type { Tokens } from "../../components/tokens";
 import { SME_SEATS } from "../theory/sme";
 import { useRegisterSelection } from "../context/RegisterSelectionContext";
+import { collectExpandableIds } from "./treeCollapse";
 
 type SmeTreeNode = {
   id: string;

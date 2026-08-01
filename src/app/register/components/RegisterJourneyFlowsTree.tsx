@@ -37,9 +37,8 @@ export function RegisterJourneyFlowsTree({ t }: RegisterJourneyFlowsTreeProps) {
     selectJourneyStep,
   } = useRegisterSelection();
   const trace = useOptionalRegisterTrace();
-  const [openFlowIds, setOpenFlowIds] = useState<Set<string>>(
-    () => new Set(JOURNEY_FLOWS.map((f) => f.id)),
-  );
+  // Journey flows start collapsed under Flows.
+  const [openFlowIds, setOpenFlowIds] = useState<Set<string>>(() => new Set());
 
   useEffect(() => {
     if (!selectedJourneyStepId) return;

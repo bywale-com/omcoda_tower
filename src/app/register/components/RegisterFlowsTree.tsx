@@ -19,6 +19,7 @@ import type { Tokens } from "../../components/tokens";
 import { REGISTER_FLOWS } from "../flows";
 import { getFlowFocusHolonIds, getFlowStepFocusHolonIds } from "../flows/flowFocus";
 import { useRegisterSelection } from "../context/RegisterSelectionContext";
+import { collectExpandableIds } from "./treeCollapse";
 
 type FlowTreeNode = {
   id: string;
