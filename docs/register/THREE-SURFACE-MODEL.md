@@ -45,7 +45,8 @@ Seed → World → Personas & Function → SME → Enrichment → Furnish → Wi
 | Former Register section | New home |
 |-------------------------|----------|
 | How Analysis | **Personas & Function** |
-| Flows | **Wiring** (flow discovery) |
+| Flows (persona journeys) | **Flows** (before Wiring) — play on click-through |
+| Wire / CTO discovery | **Wiring** |
 | Components | **Components** (unchanged — Console inventory mirror) |
 | View artboard canvas | Retired as default — replaced by theory detail, then lo-fi CT |
 

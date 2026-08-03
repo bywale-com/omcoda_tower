@@ -98,7 +98,7 @@ function secondaryBtn(t: Tokens, extra?: CSSProperties): CSSProperties {
   };
 }
 
-function CemFooter(t: Tokens) {
+function cemFooter(t: Tokens) {
   return (
     <div
       style={{
@@ -132,7 +132,7 @@ function CemFooter(t: Tokens) {
 }
 
 /** Firm-branded email / CEM chrome (Opt-in, Nudge, Meeting invitation). */
-function CemShell({
+function cemShell({
   t,
   surface,
   subject,

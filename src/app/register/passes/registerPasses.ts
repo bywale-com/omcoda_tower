@@ -9,6 +9,7 @@ export type RegisterPassId =
   | "sme"
   | "enrichment"
   | "furnish"
+  | "flows"
   | "wiring"
   | "components"
   | "ct-plant";
@@ -61,9 +62,15 @@ export const REGISTER_PASSES: RegisterPassMeta[] = [
     hasTree: false,
   },
   {
+    id: "flows",
+    label: "Flows",
+    hint: "Persona journeys — play on click-through",
+    hasTree: true,
+  },
+  {
     id: "wiring",
     label: "Wiring",
-    hint: "Flow discovery + CTO facets",
+    hint: "CTO wire graphs + facets",
     hasTree: true,
   },
   {
@@ -98,6 +105,8 @@ export function registerPassCanvasTitle(passId: RegisterPassId | null): string {
       return "Enrichment";
     case "furnish":
       return "Furnish";
+    case "flows":
+      return "Flows";
     case "wiring":
       return "Wiring";
     case "components":

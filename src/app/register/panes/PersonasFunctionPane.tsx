@@ -343,16 +343,17 @@ export function WiringOverviewPane({ t }: { t: Tokens }) {
       <RegisterTheoryPanel title="Wiring (CTO)" t={t}>
         <p style={{ margin: "0 0 10px", fontSize: 13, color: t.textMuted, lineHeight: 1.45 }}>
           Register captures what has a face. Wiring captures what must run whether or not anyone looks — jobs, state
-          machines, auth, automation runtime. Flow discovery (below in left panel) proves cross-system hops.
+          machines, auth, automation runtime. Persona happy paths live under <strong>Flows</strong> (above); Wiring
+          holds contract / holon wire graphs.
         </p>
         <p style={{ margin: 0, fontSize: 13, color: t.textPrimary, lineHeight: 1.45 }}>
           <strong>Next artifact:</strong> <code style={{ fontSize: 12 }}>docs/wiring/WIRING.md</code> +{" "}
           <code style={{ fontSize: 12 }}>register/trace/wiring.ts</code>
         </p>
       </RegisterTheoryPanel>
-      <RegisterTheoryPanel title="Flow maps" t={t}>
+      <RegisterTheoryPanel title="Wire maps" t={t}>
         <p style={{ margin: 0, fontSize: 13, color: t.textMuted, lineHeight: 1.45 }}>
-          Select a flow or step under Wiring in the left panel. Step canvas opens in Click-through when a step is
+          Select a wire flow or step under Wiring in the left panel. Step canvas opens in Click-through when a step is
           selected.
         </p>
       </RegisterTheoryPanel>

@@ -6,6 +6,7 @@ import { REGISTER_PASSES, type RegisterPassId } from "../passes/registerPasses";
 import { RegisterComponentsTree } from "./RegisterComponentsTree";
 import { RegisterFlowsTree } from "./RegisterFlowsTree";
 import { RegisterHowTree } from "./RegisterHowTree";
+import { RegisterJourneyFlowsTree } from "./RegisterJourneyFlowsTree";
 import { RegisterPassSection } from "./RegisterPassSection";
 import { RegisterSmeTree } from "./RegisterSmeTree";
 import { ShellHideButton, ShellShowButton } from "./RegisterShellChrome";
@@ -21,6 +22,8 @@ function passTreeContent(passId: RegisterPassId, t: Tokens) {
       return <RegisterHowTree t={t} />;
     case "sme":
       return <RegisterSmeTree t={t} />;
+    case "flows":
+      return <RegisterJourneyFlowsTree t={t} />;
     case "wiring":
       return <RegisterFlowsTree t={t} />;
     case "components":
@@ -39,9 +42,8 @@ export function RegisterLeftPanel({ width, t }: RegisterLeftPanelProps) {
     setRailVisible,
     revealTheory,
   } = useRegisterShell();
-  const [openPassIds, setOpenPassIds] = useState<Set<RegisterPassId>>(
-    () => new Set(["world", "personas-function", "sme", "wiring", "components"]),
-  );
+  // Pass sections start collapsed — expand on demand.
+  const [openPassIds, setOpenPassIds] = useState<Set<RegisterPassId>>(() => new Set());
 
   const togglePassOpen = (passId: RegisterPassId) => {
     setOpenPassIds((prev) => {

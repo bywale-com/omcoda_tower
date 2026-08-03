@@ -22,6 +22,7 @@ import { useRegisterSelection } from "../context/RegisterSelectionContext";
 import { useRegisterShell, type CtDeskId } from "../context/RegisterShellContext";
 import { useRegisterTrace } from "../trace/RegisterTraceContext";
 import { getSurfaceByLabel, resolveSurfaceLabel } from "../trace/surfaceCatalog";
+import { collectExpandableIds } from "./treeCollapse";
 
 function deskForPersona(personaId: string | undefined): CtDeskId {
   if (personaId === "operator") return "operator";
@@ -266,8 +267,10 @@ export function RegisterHowTree({ t }: RegisterHowTreeProps) {
   } = useRegisterSelection();
   const { revealCt, revealTheory } = useRegisterShell();
   const { focusSurface } = useRegisterTrace();
-  const [closedBranchIds, setClosedBranchIds] = useState<Set<string>>(() => new Set());
   const howTree = useMemo(() => buildPersonaHowTree(), []);
+  const [closedBranchIds, setClosedBranchIds] = useState<Set<string>>(
+    () => new Set(collectExpandableIds(buildPersonaHowTree())),
+  );
 
   useEffect(() => {
     const activeId = selectedHowNodeId

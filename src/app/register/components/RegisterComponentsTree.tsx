@@ -24,6 +24,7 @@ import {
   collectHolonAncestorIds,
   useRegisterSelection,
 } from "../context/RegisterSelectionContext";
+import { collectExpandableIds } from "./treeCollapse";
 
 function filterComponentsTree(nodes: HolonTreeNode[]): HolonTreeNode[] {
   return nodes

@@ -1,5 +1,6 @@
 import type { Tokens } from "../../components/tokens";
 import { useRegisterSelection } from "../context/RegisterSelectionContext";
+import { FlowsPane } from "../panes/FlowsPane";
 import { PersonasFunctionPane, WiringOverviewPane } from "../panes/PersonasFunctionPane";
 import { SmePane } from "../panes/SmePane";
 import {
@@ -42,6 +43,8 @@ export function RegisterTheoryCanvas({ t }: RegisterTheoryCanvasProps) {
           body="Supporting affordances that don't change Core Function — written with implementationProblem + relative click-path before CT plant."
         />
       );
+    case "flows":
+      return <FlowsPane t={t} />;
     case "wiring":
       return <WiringOverviewPane t={t} />;
     case "components":
