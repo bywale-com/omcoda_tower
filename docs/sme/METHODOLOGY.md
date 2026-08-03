@@ -2,7 +2,8 @@
 
 **Product:** Tower (Om Coda Register)  
 **Status:** Law for this product’s SME pass. Aligns with omcoda-hq `register-manual` SME chapter; **extends** it with the Engagement Manager (roster selector) and the **Founder / PM / CTO residual** selection engine.  
-**Worked roster:** [`SME-GRAPH.md`](./SME-GRAPH.md)
+**Worked roster:** [`SME-GRAPH.md`](./SME-GRAPH.md)  
+**Two-axis doctrine:** This file is the **practice / regime** Engagement Manager. The orthogonal **capability** axis (CTO as technical EM), surface intent, Think Stack, and decision constitution live in [`DOCTRINE-sme-cto-implementation.md`](./DOCTRINE-sme-cto-implementation.md) and its splits.
 
 ---
 

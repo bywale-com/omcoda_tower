@@ -2,13 +2,21 @@
  * Click-through panel — HQ hierarchy: flex:1 beside fixed theory strip.
  * Body: hi-fi RegisterPrototypeCanvas. Wiring flow steps may temporarily
  * inhabit this panel when a wiring step is selected.
+ * Flows pass: Prev/Next steps the persona journey on the same prototype.
  * Tower tokens + Inter.
  */
 import type { Tokens } from "../../components/tokens";
 import { RegisterFlowStepCanvas } from "../flowCanvas/RegisterFlowStepCanvas";
 import { useRegisterSelection } from "../context/RegisterSelectionContext";
 import { useRegisterShell, type CtDeskId } from "../context/RegisterShellContext";
+import {
+  CORE_CLOSE_FLOW,
+  getJourneyFlow,
+  getJourneyStep,
+} from "../journeyFlows";
 import { RegisterPrototypeCanvas } from "../prototype/RegisterPrototypeCanvas";
+import { useOptionalRegisterTrace } from "../trace/RegisterTraceContext";
+import { ShellHideButton, ShellShowButton, shellChromeBtnStyle } from "./RegisterShellChrome";
 
 type RegisterClickThroughPanelProps = {
   t: Tokens;
@@ -36,10 +44,41 @@ const DESK_TABS: { id: CtDeskId; label: string }[] = [
 ];
 
 export function RegisterClickThroughPanel({ t, isDark }: RegisterClickThroughPanelProps) {
-  const { setCtVisible, ctDesk, setCtDesk } = useRegisterShell();
-  const { registerPassId, activeFlowStepId } = useRegisterSelection();
+  const {
+    setCtVisible,
+    ctDesk,
+    setCtDesk,
+    railVisible,
+    theoryVisible,
+    setRailVisible,
+    setTheoryVisible,
+  } = useRegisterShell();
+  const {
+    registerPassId,
+    activeFlowStepId,
+    selectedJourneyFlowId,
+    selectedJourneyStepId,
+    selectJourneyFlow,
+    selectJourneyStep,
+  } = useRegisterSelection();
+  const trace = useOptionalRegisterTrace();
 
-  const showFlowStepCanvas = registerPassId === "wiring" && activeFlowStepId != null;
+  const showWiringStepCanvas = registerPassId === "wiring" && activeFlowStepId != null;
+  const journeyMode = registerPassId === "flows";
+  const journeyFlow =
+    (selectedJourneyFlowId ? getJourneyFlow(selectedJourneyFlowId) : null) ?? CORE_CLOSE_FLOW;
+  const journeyStep = selectedJourneyStepId ? getJourneyStep(selectedJourneyStepId) : null;
+  const journeyIndex = journeyStep
+    ? journeyFlow.steps.findIndex((s) => s.id === journeyStep.id)
+    : -1;
+
+  const goJourneyStep = (index: number) => {
+    const next = journeyFlow.steps[index];
+    if (!next) return;
+    selectJourneyFlow(journeyFlow.id);
+    selectJourneyStep(next.id);
+    trace?.focusSurface(next.surfaceLabel);
+  };
 
   return (
     <section
@@ -55,7 +94,7 @@ export function RegisterClickThroughPanel({ t, isDark }: RegisterClickThroughPan
     >
       <header
         style={{
-          height: 35,
+          height: journeyMode ? 40 : 35,
           flexShrink: 0,
           display: "flex",
           alignItems: "center",
@@ -66,11 +105,11 @@ export function RegisterClickThroughPanel({ t, isDark }: RegisterClickThroughPan
           background: t.bgSecondary,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0, flexWrap: "wrap" }}>
           <span style={{ fontSize: 13, fontWeight: 500, letterSpacing: "-0.01em", color: t.textPrimary }}>
-            {showFlowStepCanvas ? "Flow step" : "Click-through"}
+            {showWiringStepCanvas ? "Flow step" : journeyMode ? "Journey" : "Click-through"}
           </span>
-          {!showFlowStepCanvas ? (
+          {!showWiringStepCanvas ? (
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
               {DESK_TABS.map(({ id, label }) => (
                 <button
@@ -84,28 +123,52 @@ export function RegisterClickThroughPanel({ t, isDark }: RegisterClickThroughPan
               ))}
             </div>
           ) : null}
+          {journeyMode ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <button
+                type="button"
+                disabled={journeyIndex <= 0 && journeyStep != null}
+                onClick={() => {
+                  if (journeyStep == null) goJourneyStep(0);
+                  else goJourneyStep(Math.max(0, journeyIndex - 1));
+                }}
+                style={{
+                  ...shellChromeBtnStyle(t),
+                  opacity: journeyIndex <= 0 && journeyStep != null ? 0.45 : 1,
+                }}
+              >
+                Prev
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (journeyStep == null) goJourneyStep(0);
+                  else if (journeyIndex < journeyFlow.steps.length - 1) goJourneyStep(journeyIndex + 1);
+                }}
+                style={shellChromeBtnStyle(t, "accent")}
+              >
+                {journeyStep == null ? "Play" : journeyIndex >= journeyFlow.steps.length - 1 ? "End" : "Next"}
+              </button>
+              <span style={{ fontSize: 11, color: t.textMuted, whiteSpace: "nowrap" }}>
+                {journeyStep
+                  ? `${journeyIndex + 1}/${journeyFlow.steps.length} · ${journeyStep.label}`
+                  : `${journeyFlow.steps.length} steps · ${journeyFlow.label}`}
+              </span>
+            </div>
+          ) : null}
         </div>
-        <button
-          type="button"
-          onClick={() => setCtVisible(false)}
-          style={{
-            padding: "4px 10px",
-            border: `1px solid ${t.border}`,
-            borderRadius: 4,
-            background: t.bgSecondary,
-            color: t.textMuted,
-            fontSize: 12,
-            fontWeight: 500,
-            fontFamily: "inherit",
-            cursor: "pointer",
-            flexShrink: 0,
-          }}
-        >
-          Hide
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+          {!railVisible ? (
+            <ShellShowButton t={t} label="Show register" onClick={() => setRailVisible(true)} />
+          ) : null}
+          {!theoryVisible ? (
+            <ShellShowButton t={t} label="Show theory" onClick={() => setTheoryVisible(true)} />
+          ) : null}
+          <ShellHideButton t={t} onClick={() => setCtVisible(false)} />
+        </div>
       </header>
 
-      {showFlowStepCanvas && activeFlowStepId ? (
+      {showWiringStepCanvas && activeFlowStepId ? (
         <RegisterFlowStepCanvas stepId={activeFlowStepId} t={t} isDark={isDark} />
       ) : (
         <RegisterPrototypeCanvas t={t} isDark={isDark} />

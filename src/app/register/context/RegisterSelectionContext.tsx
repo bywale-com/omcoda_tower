@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import { getJourneyFlowForStep } from "../journeyFlows";
 import type { RegisterPassId } from "../passes/registerPasses";
 import {
   OUTCOME_PERSONAS,
@@ -15,13 +16,16 @@ type RegisterSelectionContextValue = {
   hoveredFlowStepId: string | null;
   selectedFlowId: string | null;
   hoveredFlowId: string | null;
+  /** Persona journey flow (Flows pass) — not Wiring wire graphs */
+  selectedJourneyFlowId: string | null;
+  selectedJourneyStepId: string | null;
   selectedHowGraphId: string | null;
   selectedHowNodeId: string | null;
   selectedPersonaId: string | null;
   selectedOutcomeId: string | null;
   selectedSmeSeatId: string | null;
   selectedSmeItemId: string | null;
-  /** Pinned or hovered composite step (Send OTP, Verify OTP) */
+  /** Pinned or hovered composite step (Send OTP, Verify OTP) — Wiring only */
   activeFlowStepId: string | null;
   /** Pinned or hovered parent flow (Login) — only when no step is active */
   activeFlowId: string | null;
@@ -33,6 +37,8 @@ type RegisterSelectionContextValue = {
   setHoveredFlowStepId: (stepId: string | null) => void;
   selectFlow: (flowId: string | null) => void;
   setHoveredFlowId: (flowId: string | null) => void;
+  selectJourneyFlow: (flowId: string | null) => void;
+  selectJourneyStep: (stepId: string | null) => void;
   selectHowGraph: (graphId: string | null) => void;
   selectHowNode: (nodeId: string | null) => void;
   selectPersona: (personaId: string | null) => void;
@@ -51,6 +57,8 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
   const [hoveredFlowStepId, setHoveredFlowStepIdState] = useState<string | null>(null);
   const [selectedFlowId, setSelectedFlowId] = useState<string | null>(null);
   const [hoveredFlowId, setHoveredFlowIdState] = useState<string | null>(null);
+  const [selectedJourneyFlowId, setSelectedJourneyFlowId] = useState<string | null>(null);
+  const [selectedJourneyStepId, setSelectedJourneyStepId] = useState<string | null>(null);
   const [selectedHowGraphId, setSelectedHowGraphId] = useState<string | null>(null);
   const [selectedHowNodeId, setSelectedHowNodeId] = useState<string | null>(null);
   const [selectedPersonaId, setSelectedPersonaId] = useState<string | null>(null);
@@ -70,6 +78,11 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
     setSelectedFlowId(null);
   }, []);
 
+  const clearJourneySelection = useCallback(() => {
+    setSelectedJourneyFlowId(null);
+    setSelectedJourneyStepId(null);
+  }, []);
+
   const clearSmeSelection = useCallback(() => {
     setSelectedSmeSeatId(null);
     setSelectedSmeItemId(null);
@@ -84,6 +97,9 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       if (id !== "wiring") {
         clearFlowSelection();
       }
+      if (id !== "flows") {
+        clearJourneySelection();
+      }
       if (id !== "personas-function") {
         clearHowSelection();
       }
@@ -91,7 +107,7 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
         clearSmeSelection();
       }
     },
-    [clearFlowSelection, clearHowSelection, clearSmeSelection],
+    [clearFlowSelection, clearHowSelection, clearJourneySelection, clearSmeSelection],
   );
 
   const selectHolon = useCallback(
@@ -100,9 +116,10 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       setSelectedHolonId(id);
       clearHowSelection();
       clearFlowSelection();
+      clearJourneySelection();
       clearSmeSelection();
     },
-    [clearFlowSelection, clearHowSelection, clearSmeSelection],
+    [clearFlowSelection, clearHowSelection, clearJourneySelection, clearSmeSelection],
   );
 
   const selectFlowStep = useCallback(
@@ -113,10 +130,11 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
         setSelectedFlowId(null);
         clearHowSelection();
         clearSmeSelection();
+        clearJourneySelection();
         setSelectedHolonId(null);
       }
     },
-    [clearHowSelection, clearSmeSelection],
+    [clearHowSelection, clearJourneySelection, clearSmeSelection],
   );
 
   const setHoveredFlowStepId = useCallback((stepId: string | null) => {
@@ -132,16 +150,48 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
         setSelectedFlowStepId(null);
         clearHowSelection();
         clearSmeSelection();
+        clearJourneySelection();
         setSelectedHolonId(null);
       }
     },
-    [clearHowSelection, clearSmeSelection],
+    [clearHowSelection, clearJourneySelection, clearSmeSelection],
   );
 
   const setHoveredFlowId = useCallback((flowId: string | null) => {
     setHoveredFlowIdState(flowId);
     if (flowId) setHoveredFlowStepIdState(null);
   }, []);
+
+  const selectJourneyFlow = useCallback(
+    (flowId: string | null) => {
+      setRegisterPassId("flows");
+      setSelectedJourneyFlowId(flowId);
+      if (flowId) {
+        setSelectedJourneyStepId(null);
+        clearHowSelection();
+        clearFlowSelection();
+        clearSmeSelection();
+        setSelectedHolonId(null);
+      }
+    },
+    [clearFlowSelection, clearHowSelection, clearSmeSelection],
+  );
+
+  const selectJourneyStep = useCallback(
+    (stepId: string | null) => {
+      setRegisterPassId("flows");
+      setSelectedJourneyStepId(stepId);
+      if (stepId) {
+        const parent = getJourneyFlowForStep(stepId);
+        if (parent) setSelectedJourneyFlowId(parent.id);
+        clearHowSelection();
+        clearFlowSelection();
+        clearSmeSelection();
+        setSelectedHolonId(null);
+      }
+    },
+    [clearFlowSelection, clearHowSelection, clearSmeSelection],
+  );
 
   const selectHowGraph = useCallback(
     (graphId: string | null) => {
@@ -154,13 +204,14 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
         setSelectedOutcomeId(outcome?.id ?? null);
         setSelectedPersonaId(persona?.id ?? null);
         clearFlowSelection();
+        clearJourneySelection();
         clearSmeSelection();
         setSelectedHolonId(null);
       } else {
         setSelectedOutcomeId(null);
       }
     },
-    [clearFlowSelection, clearSmeSelection],
+    [clearFlowSelection, clearJourneySelection, clearSmeSelection],
   );
 
   const selectHowNode = useCallback((nodeId: string | null) => {
@@ -177,11 +228,12 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       setSelectedHowNodeId(null);
       if (personaId) {
         clearFlowSelection();
+        clearJourneySelection();
         clearSmeSelection();
         setSelectedHolonId(null);
       }
     },
-    [clearFlowSelection, clearSmeSelection],
+    [clearFlowSelection, clearJourneySelection, clearSmeSelection],
   );
 
   const selectOutcome = useCallback(
@@ -195,10 +247,11 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       setSelectedHowNodeId(null);
       setSelectedPersonaId(persona?.id ?? null);
       clearFlowSelection();
+      clearJourneySelection();
       clearSmeSelection();
       setSelectedHolonId(null);
     },
-    [clearFlowSelection, clearSmeSelection],
+    [clearFlowSelection, clearJourneySelection, clearSmeSelection],
   );
 
   const selectSmeSeat = useCallback(
@@ -209,10 +262,11 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       if (seatId) {
         clearHowSelection();
         clearFlowSelection();
+        clearJourneySelection();
         setSelectedHolonId(null);
       }
     },
-    [clearFlowSelection, clearHowSelection],
+    [clearFlowSelection, clearHowSelection, clearJourneySelection],
   );
 
   const selectSmeItem = useCallback(
@@ -222,9 +276,10 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       setSelectedSmeItemId(itemId);
       clearHowSelection();
       clearFlowSelection();
+      clearJourneySelection();
       setSelectedHolonId(null);
     },
-    [clearFlowSelection, clearHowSelection],
+    [clearFlowSelection, clearHowSelection, clearJourneySelection],
   );
 
   const activeFlowStepId = selectedFlowStepId ?? hoveredFlowStepId;
@@ -239,6 +294,8 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       hoveredFlowStepId,
       selectedFlowId,
       hoveredFlowId,
+      selectedJourneyFlowId,
+      selectedJourneyStepId,
       selectedHowGraphId,
       selectedHowNodeId,
       selectedPersonaId,
@@ -255,6 +312,8 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       setHoveredFlowStepId,
       selectFlow,
       setHoveredFlowId,
+      selectJourneyFlow,
+      selectJourneyStep,
       selectHowGraph,
       selectHowNode,
       selectPersona,
@@ -270,6 +329,8 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       hoveredFlowStepId,
       selectedFlowId,
       hoveredFlowId,
+      selectedJourneyFlowId,
+      selectedJourneyStepId,
       selectedHowGraphId,
       selectedHowNodeId,
       selectedPersonaId,
@@ -284,6 +345,8 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       setHoveredFlowStepId,
       selectFlow,
       setHoveredFlowId,
+      selectJourneyFlow,
+      selectJourneyStep,
       selectHowGraph,
       selectHowNode,
       selectPersona,
