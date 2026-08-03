@@ -1,10 +1,14 @@
 # Tower — SME Roster (index)
 
-**Methodology:** [`METHODOLOGY.md`](./METHODOLOGY.md)  
+**Methodology:** [`METHODOLOGY.md`](./METHODOLOGY.md) (practice axis — Engagement Manager)  
+**Doctrine (two axes + columns):** [`DOCTRINE-sme-cto-implementation.md`](./DOCTRINE-sme-cto-implementation.md)  
+**Doctrine splits:** [`SURFACE-INTENT.md`](./SURFACE-INTENT.md) · [`HANDOFF-ROUTING.md`](./HANDOFF-ROUTING.md) · [`AGENT-VS-HUMAN-PROVISIONING.md`](./AGENT-VS-HUMAN-PROVISIONING.md) · [`../method/`](../method/) · [`../wiring/CTO-THINK-STACK.md`](../wiring/CTO-THINK-STACK.md)  
+**Capability axis (paper):** [`capability/`](./capability/) (entry `CAPABILITY-CONSIDERATIONS.md` on capability docs branch / PR)  
 **Graph (selection + Focus gaps):** [`SME-GRAPH.md`](./SME-GRAPH.md)  
-**Handoff:** [`HANDOFF.md`](./HANDOFF.md) · [`CROSS-CUTTING.md`](./CROSS-CUTTING.md)  
+**Handoff (absorb):** [`HANDOFF.md`](./HANDOFF.md) · [`CROSS-CUTTING.md`](./CROSS-CUTTING.md)  
 **PM implementation (paper):** [`implementation/00-INDEX.md`](./implementation/00-INDEX.md)  
-**Status:** Pass2 + handoff + PM implementation writing complete · CT plant not started · CTO Wiring absorb not started
+**CTO column:** [`../wiring/CTO-THINK-STACK.md`](../wiring/CTO-THINK-STACK.md) · paper instance [`../wiring/paper-trace/`](../wiring/paper-trace/) (steps 1–4 done; canvas/labels/design/plant not started)  
+**Status:** Pass2 + handoff + PM implementation writing complete · capability paper awaiting absorb · CT plant not started · Wiring paper Function/Can’ts/Furnish/buckets filed
 
 | # | Seat | Pass2 file | Items |
 |---|---|---|---|
