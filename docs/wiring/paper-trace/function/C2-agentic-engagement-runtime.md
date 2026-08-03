@@ -477,7 +477,7 @@
 3. When the posture is Armed at `firm_operations_bind`, prepare-only scheduling state can occur at `attempt_job_queue` but no contact-facing send occurs at `outbound_message`.
 4. When Active posture occurs at `firm_operations_bind`, contact-facing send eligibility occurs at `send_gate_decision`.
 5. When posture denies at `send_gate_decision`, blocked attempt state occurs at `engagement_attempt` and no send occurs at `outbound_message`.
-6. When inbound human-review need occurs while not Active at `conversation_thread`, escalation opening can still occur at `escalation_ticket`.
+6. When inbound human-review need occurs at `conversation_thread`, escalation opening still occurs at `escalation_ticket` while not Active.
 7. When posture allows or blocks motion at `firm_operations_bind` or `send_gate_decision`, posture chronology occurs at `engagement_record`.
 **Nodes touched:**
 - `firm_operations_bind`
