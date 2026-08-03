@@ -1,6 +1,7 @@
 # Capability SME — considerations · solutions · implementation
 
-**Status:** Paper only — **not** absorbed into Register twins, HANDOFF, or CT plant. Awaiting human validation.  
+**Status:** Paper only — **not** absorbed into Register twins, HANDOFF, or CT plant.  
+**Downstream (paper Wiring):** CTO Think Stack steps 1–4 filed under [`../../wiring/paper-trace/`](../../wiring/paper-trace/) — Function traces / Can’ts / Furnish / node buckets. Still awaiting human validation before absorb.  
 **Axis:** Capability (“who knows **how to accomplish** X”), not compliance (“who is responsible for X”).  
 **Roster source:** [`00-ROSTER.md`](./00-ROSTER.md) (C1–C7)  
 **Methodology:** [`../METHODOLOGY.md`](../METHODOLOGY.md) — Pass2 `<mechanism> so that <purpose>` + PM implementation bridge (`implementationProblem` / `implementation` / `implementationAdds`)  

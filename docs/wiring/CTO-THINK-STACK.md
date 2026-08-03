@@ -2,7 +2,7 @@
 
 **Parent doctrine:** [`../sme/DOCTRINE-sme-cto-implementation.md`](../sme/DOCTRINE-sme-cto-implementation.md) §7  
 **Audience:** CTO / technical column  
-**Status:** Method standing; **Tower instance not yet run** (outstanding artifact)  
+**Status:** Method standing; **Tower Function → Can'ts → Furnish paper instance:** [`paper-trace/`](./paper-trace/) (steps 1–4). Canvas / labels / design / plant still outstanding.  
 **Exemplar (hq):** `omcoda-hq` `register-manual/templates/EXEMPLAR-cto-think-stack.md`  
 **Companions:** [`WIRING-METHOD.md`](./WIRING-METHOD.md) · [`NODE-DEFINITION.md`](./NODE-DEFINITION.md)
 
@@ -63,7 +63,7 @@ The Think Stack then runs Function → Can'ts → Furnish over those facets to p
 4. **Tag builds:** `agent-codeable` vs `human-provisioning` (doctrine §4).  
 5. **Outputs:** Wiring Function graph · Can'ts on edges · Furnish ops modules · canonical node list (written-as-discovered).
 
-**Empty for Tower:** instantiate this Think Stack (facet sheets + traced walks) — do not invent UI arrangement here; stay in event/state language.
+**Tower paper instance:** [`paper-trace/00-INDEX.md`](./paper-trace/00-INDEX.md) — Function traces + Can'ts/Furnish + node buckets. Do not invent UI arrangement; stay in event/state language. Next (not started): labels off the graph, design, CT plant/build.
 
 ---
 

@@ -7,8 +7,8 @@
 **Graph (selection + Focus gaps):** [`SME-GRAPH.md`](./SME-GRAPH.md)  
 **Handoff (absorb):** [`HANDOFF.md`](./HANDOFF.md) · [`CROSS-CUTTING.md`](./CROSS-CUTTING.md)  
 **PM implementation (paper):** [`implementation/00-INDEX.md`](./implementation/00-INDEX.md)  
-**CTO column:** [`../wiring/CTO-THINK-STACK.md`](../wiring/CTO-THINK-STACK.md) (outstanding — do not run until asked)  
-**Status:** Pass2 + handoff + PM implementation writing complete · capability paper awaiting absorb · CT plant not started · CTO Think Stack / Wiring not started
+**CTO column:** [`../wiring/CTO-THINK-STACK.md`](../wiring/CTO-THINK-STACK.md) · paper instance [`../wiring/paper-trace/`](../wiring/paper-trace/) (steps 1–4 done; canvas/labels/design/plant not started)  
+**Status:** Pass2 + handoff + PM implementation writing complete · capability paper awaiting absorb · CT plant not started · Wiring paper Function/Can’ts/Furnish/buckets filed
 
 | # | Seat | Pass2 file | Items |
 |---|---|---|---|
