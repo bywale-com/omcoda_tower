@@ -78,7 +78,7 @@
 **Path:**
 1. When a firm-bound or campaign-bound occurrence starts at `firm_tenancy`, tenant and subject scope become required event dimensions.
 2. When an event is appended to `messaging_event_stream`, the active `event_taxonomy` requires `firm_id`, subject identity, sequence or campaign identity, attempt identity where present, channel, and `occurred_at`. [tenant key required; event time required]
-3. When those dimensions are present, `correlation_envelope` can stitch sequence, attempt, and channel state without collapsing orphan events into an unknown bucket.
+3. When those dimensions are present, `correlation_envelope` can stitch sequence, attempt, and channel state without collapsing orphan events into unknown scope.
 4. When metrics roll, `metrics_materialization` scopes Firm row and Sequence detail by firm and attempt while preserving drill-through to the stream.
 **Nodes touched:**
 - `firm_tenancy`
