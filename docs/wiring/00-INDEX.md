@@ -7,7 +7,10 @@
 |---|---|
 | [`WIRING-METHOD.md`](./WIRING-METHOD.md) | How we build Wiring — trace implementations one at a time |
 | [`NODE-DEFINITION.md`](./NODE-DEFINITION.md) | What counts as a node (altitude / named unit of state) |
+| [`CTO-THINK-STACK.md`](./CTO-THINK-STACK.md) | Ops: facets → Function → Can’ts → Furnish (run when ready) |
 
-**Upstream inputs:** SME handoff (practice + capability axes) · CTO Think Stack (facets).  
-**Related doctrine:** SME / CTO / Implementation (to be filed under `docs/sme/` or `docs/method/` when curated).  
-**Register pass order note:** Capability is additive → Wiring may run early / parallel to Design; see method §7 (design-invariance).
+**Upstream doctrine:** [`../sme/DOCTRINE-sme-cto-implementation.md`](../sme/DOCTRINE-sme-cto-implementation.md)  
+**Nearby splits:** [`../sme/SURFACE-INTENT.md`](../sme/SURFACE-INTENT.md) · [`../sme/HANDOFF-ROUTING.md`](../sme/HANDOFF-ROUTING.md) · [`../sme/AGENT-VS-HUMAN-PROVISIONING.md`](../sme/AGENT-VS-HUMAN-PROVISIONING.md)  
+**Method:** [`../method/DECISION-CONSTITUTION.md`](../method/DECISION-CONSTITUTION.md) · [`../method/TWO-COLUMN-SYNTHESIS.md`](../method/TWO-COLUMN-SYNTHESIS.md)
+
+**Register note:** Capability is additive → Wiring may run early / parallel to Design; see WIRING-METHOD (design-invariance).
