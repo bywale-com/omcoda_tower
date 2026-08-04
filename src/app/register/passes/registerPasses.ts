@@ -70,7 +70,7 @@ export const REGISTER_PASSES: RegisterPassMeta[] = [
   {
     id: "wiring",
     label: "Wiring",
-    hint: "CTO wire graphs + facets",
+    hint: "Paper Function traces · Can'ts · nodes",
     hasTree: true,
   },
   {
