@@ -39,11 +39,11 @@
 **Criteria — when:** Tickets exist.  
 **Conditions:** House-global queue; firm identity on each row.
 
-| UI | Kind | Status |
-|---|---|---|
-| Customer support | Module | **new** |
-| Ticket queue | Block | **new** |
-| Ticket row | Block | **new** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Customer support | Module | **new** | House queue |
+| Ticket queue | Block | **new** | Open ticket list |
+| Ticket row | Block | **new** | Click row; severity/owner **chips** |
 
 ---
 
@@ -51,16 +51,17 @@
 
 **Q:** How do I open a Ticket with that firm's Support context (bind, health, commercial)?
 
-**Clarity:** On Ticket, open Support context pane and use tabs for Firm operations bind, Firm health, Commercial / escrow, Activation state, and recent Audit trail events for that tenancy — without leaving the ticket.
+**Clarity:** On Ticket, open the **Support context** pane. Click tabs for Firm operations bind, Firm health, Commercial / escrow, Activation state, and recent Audit trail events for that tenancy — read/ops without leaving the ticket. Tab selection is view chrome; linked Jump controls open the scoped per-tenancy module when a fix is needed.
 
 **Criteria — when:** Ticket selected.  
 **Conditions:** Context is read/ops for this firm only; no cross-firm leak in the pane.
 
-| UI | Kind | Status |
-|---|---|---|
-| Ticket | Modal | **new** |
-| Support context | Block | **new** |
-| Firm operations bind / Firm health / Commercial / Activation state / Audit trail | Modules (linked) | **new** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Ticket | Modal | **new** | Ticket workspace |
+| Support context | Block | **new** | **Tabs** for bind / health / commercial / activation / audit |
+| Jump to scoped module | Block | **new** | Link control → per-tenancy fix surface |
+| Firm operations bind / Firm health / Commercial / Activation state / Audit trail | Modules (linked) | **new** | Downstream ops targets |
 
 ---
 
@@ -73,8 +74,8 @@
 **Criteria — when:** Root cause addressed.  
 **Conditions:** Resolution auditable; Consultant remains receive/govern only.
 
-| UI | Kind | Status |
-|---|---|---|
-| Resolve control | Block | **new** |
-| Linked per-tenancy actions | Block | **new** |
-| Audit trail | Module | **new** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Linked per-tenancy actions | Block | **new** | Jump / apply fix controls |
+| Resolve | Block | **new** | **Primary button** — closes ticket (Audit trail records) |
+| Audit trail | Module | **new** | Downstream record |

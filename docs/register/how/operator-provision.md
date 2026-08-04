@@ -38,11 +38,12 @@
 **Criteria — when:** Assisted onboarding.  
 **Conditions:** Tenancy intentional; user email will OTP.
 
-| UI | Kind | Status |
-|---|---|---|
-| Provision | Module | **new** |
-| New firm | Modal | **new** |
-| Firm / user fields | Block | **new** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Provision | Module | **new** | Assisted mint |
+| New firm | Modal | **new** | Seed form |
+| Firm / user fields | Block | **new** | Name / website / email / role inputs |
+| Provision | Block | **new** | **Primary button** — writes tenancy+user (read by Login OTP) |
 
 **Requirements:** Database seeding / manifests (existing protocol) at process leaf.
 
@@ -57,7 +58,8 @@
 **Criteria — when:** After provision succeeds.  
 **Conditions:** Same session matrix as ALG-provisioned firms.
 
-| UI | Kind | Status |
-|---|---|---|
-| Login | Module | **existing** (consultant-facing) |
-| Board | Module | **existing** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Copy Login path / Send invite | Block | **new** | **Button** — hands path to consultant |
+| Login | Module | **existing** (consultant-facing) | OTP entry (downstream) |
+| Board | Module | **existing** | Signed-in landing |

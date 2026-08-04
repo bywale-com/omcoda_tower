@@ -20,14 +20,16 @@
 
 **Q:** How do I silence or opt out at any point?
 
-**Clarity:** On any firm-branded touchpoint (or Consent request), choose Silence / Opt out. Further automatic outreach stops.
+**Clarity:** On any firm-branded touchpoint footer (Opt-in, Nudge, Meeting invitation) or on Consent request, click **Silence** / **Opt out** (or use List-Unsubscribe / one-click where the channel provides it). Confirm if prompted. That commit writes silenced state read by engagement runners, Send gates, and Book readiness (not sequence-ready for new automatic motion). Further automatic firm→client outreach stops; Consultant Halt must honor the same state.
 
 **Criteria — when:** Anytime a touchpoint is reachable.  
 **Conditions:** Silenced state recorded; bound sequences honor it.
 
-| UI | Kind | Status |
-|---|---|---|
-| Silence / Opt out control | Block | **partial-existing** / **new** |
-| Touchpoint footer | Block | **new** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Touchpoint footer | Block | **new** | Persistent **Silence / Opt out** control |
+| Silence / Opt out | Block | **partial-existing** / **new** | **Button** / link — writes silenced (read by runners / Send gates / Book readiness) |
+| Consent request | Modal / page | **new** / **partial** | May also expose Silence |
+| List-Unsubscribe / one-click | Block (channel) | **partial-existing** | Channel-native unsubscribe when present |
 
 **Requirements:** Engagement runners + Consultant Halt must respect silenced. Operator Book readiness treats silenced as not sequence-ready for new automatic motion.

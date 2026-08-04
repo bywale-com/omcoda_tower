@@ -38,10 +38,10 @@
 **Criteria — when:** Import landed or book connected.  
 **Conditions:** Data-validity / sequence-ready only — not CRS / sales ROI.
 
-| UI | Kind | Status |
-|---|---|---|
-| Book readiness | Module | **new** (rightful home) |
-| Audits / Audit run | Block / Modal | **existing-wrong-seat** as Hub Audits — **re-home** or dual-open from per-tenancy |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Book readiness | Module | **new** (rightful home) | Per-tenancy reachability |
+| Audits / Audit run | Block / Modal | **existing-wrong-seat** as Hub Audits — **re-home** or dual-open from per-tenancy | Batch **dropdown** + check **checkboxes** + **Start Audit run** |
 
 ---
 
@@ -54,9 +54,9 @@
 **Criteria — when:** Batch finishes.  
 **Conditions:** Passed = sequence-ready; silenced excluded from automatic motion.
 
-| UI | Kind | Status |
-|---|---|---|
-| Verdict list | Block | **partial-existing** / **new** |
-| Contacts reachability indicator | Block | consultant **existing** (inhabit) |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Verdict list | Block | **partial-existing** / **new** | reachable / partial / unreachable **chips** per row |
+| Contacts reachability indicator | Block | consultant **existing** (inhabit) | **View** only on consultant desk |
 
 **Requirements:** External validation providers may sit at leaf process. Engagement enrollment honors verdicts — machinery.

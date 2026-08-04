@@ -10,7 +10,8 @@
 3. **Consultant core stays short.** Hand-over · authorize · receive. Its How-tree **hands most leaves across** to operator surfaces. Do **not** "fix" that by pulling Automations / Agents / evaluation authorship back under the consultant desk.
 4. **Hub placement is a revision, not destination.** Audits / Agents / Automations live in the firm shell today; personas + this lattice put authorship on the Operator. Leaves name the **operator Module** as the rightful home and mark today's Hub parking as **existing-wrong-seat** when relevant.
 5. **Leaf click-path:** most-relative container; invent Title Case Module/Modal/Block names when nothing fits; mark **existing** vs **new**.
-6. **Writing only.** No CT plant, no implementation code this pass.
+6. **Affordance grain:** Clarity names controls and, for state-writing affordances, the downstream reader. Components: `UI · Kind · Status · Affordance`. See [`../sme/implementation/CLICKPATH-DENSIFICATION.md`](../sme/implementation/CLICKPATH-DENSIFICATION.md).
+7. **Writing only.** No CT plant, no implementation code this pass. Preference + requirements — not a doability verdict.
 
 ## Format per tree file
 

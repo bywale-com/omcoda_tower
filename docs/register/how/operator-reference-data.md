@@ -38,11 +38,11 @@
 **Criteria — when:** Criteria change known.  
 **Conditions:** Tables are data, not hard-coded deploys.
 
-| UI | Kind | Status |
-|---|---|---|
-| Reference data | Module | **new** |
-| Reference tables | Block | **new** |
-| Import criteria | Modal | **new** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Reference data | Module | **new** | House-global criteria |
+| Reference tables | Block | **new** | Table catalog + editable grid |
+| Import criteria | Modal | **new** | File import control |
 
 ---
 
@@ -55,9 +55,9 @@
 **Criteria — when:** Edits ready to go live.  
 **Conditions:** Version retained; packs read current published version.
 
-| UI | Kind | Status |
-|---|---|---|
-| Publish version | Modal | **new** |
-| Configuration libraries | Module | **new** (consumer) |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Publish version | Modal | **new** | Notes field + **Confirm** — published version (read by Evaluation packs) |
+| Configuration libraries | Module | **new** (consumer) | Downstream pack scoring |
 
 **Requirements:** Evaluation open-box uses published reference — machinery at runtime, not a separate outcome.
