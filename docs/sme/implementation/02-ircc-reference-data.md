@@ -28,7 +28,7 @@ Treating every provincial stream catalog as V1-critical bloats currency ops; omi
 
 **implementation:**
 On Reference tables, you can now see V1 must-have families marked current-required: NOC+TEER, category membership, round/cutoff ledger, CRS+FSW grids, language equivalency.
-On Reference tables, you can now defer multi-province deep stream catalogs until a pack asserts them; a single provincial EE identifier table appears only when an Evaluation pack asserts that PNP-* pathway.
+On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; when a pack asserts a PNP-* pathway, set Provincial EE identifier requirement to On and click Publish version. On Reference tables, you can now defer multi-province deep stream catalogs until that published Evaluation pack requires them.
 
 **implementationAdds:** ["must-have", "deferrable", "optional-until-asserted"]
 
@@ -80,7 +80,7 @@ Evaluators need 5-digit unit group + TEER; ESDC structural NOC revisions can lan
 **implementation:**
 On Reference tables for NOC+TEER, you can now store NOC code, title, TEER, classification version, and IRCC-effective-from date.
 On Reference tables, when ESDC publishes a new structural NOC before IRCC adopts it, you can now keep dual versions.
-On Evaluation pack editor, you can now pin the IRCC-effective NOC version so TEER gates do not flip on an ESDC-only publish.
+On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set NOC version pin to the IRCC-effective NOC version; click Publish version so TEER gates do not flip on an ESDC-only publish.
 
 **implementationAdds:** ["classification-version", "IRCC-effective-from", "dual-version"]
 
@@ -92,7 +92,7 @@ CRS factor changes (e.g. arranged-employment points removed) are law/public-refe
 
 **implementation:**
 On Reference tables, you can now publish CRS factor grids and the FSW 67/100 selection-factor tables as versioned constant packs with effective dates from Canada.ca CRS criteria + current MI + FSW pages.
-On Evaluation packs, evaluators can now read the version effective on evaluation time (or pack pin) — point-table changes ship via Publish version, not a code deploy.
+On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set point-table read policy to evaluation-time version or explicit pack pin; click Publish version. Point-table changes ship via Publish version, not a code deploy.
 
 **implementationAdds:** ["CRS factor grids", "FSW 67/100", "effective-from"]
 
@@ -118,7 +118,7 @@ Seed’s “OINP IDS” example can freeze closed-stream shape into V1; publishi
 **implementation:**
 On Reference tables for provincial EE identifiers, you can now set each stream/draw row to open, closed, or superseded with source URL and last-verified-at.
 On Reference tables, you can now refuse shipping closed OINP EE streams as current eligibility inputs.
-On Evaluation pack editor, when a pack needs Ontario PNP-*, you can now pin to the live ontario.ca program shape; historical NOI ledgers stay audit/replay only.
+On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; when a pack needs Ontario PNP-*, set the Ontario PNP-* pin to the live ontario.ca program shape; click Publish version. Historical NOI ledgers stay audit/replay only.
 
 **implementationAdds:** ["open", "closed", "superseded", "last-verified-at", "audit-replay-only"]
 
@@ -130,7 +130,7 @@ Without provenance, house cannot prove what was current when Analysis fired; lia
 
 **implementation:**
 On Publish version, you can now require source URL(s), source retrieved-at, importer identity, dual-check attestation, effective-from, supersedes-version-id, and content hash before a version goes live.
-On Evaluation packs, any mid-flight or post-hoc evaluation can now show which government page backed the constants used.
+On Analysis → Evaluation provenance, any mid-flight or post-hoc evaluation can now show which government page backed the constants used.
 
 **implementationAdds:** ["source-retrieved-at", "dual-check attestation", "supersedes-version-id", "content-hash"]
 
@@ -142,8 +142,8 @@ On Evaluation packs, any mid-flight or post-hoc evaluation can now show which go
 
 **implementation:**
 On Publish version, you can now separate draft from published-current — new publishes become current for subsequent evaluations only.
-On Evaluation packs, every evaluation result can now record the exact reference-version ids used; already-emitted signals/Analysis retain their pin for audit.
-On Evaluation pack editor, re-evaluation jobs can now explicitly adopt current or stay pinned per pack policy — mid-flight firms get explainable deltas, not silent rewrite.
+On Analysis → Evaluation provenance, every evaluation result can now record the exact reference-version ids used; already-emitted signals/Analysis retain their pin for audit.
+On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set Re-evaluation policy to Adopt current or Stay pinned; click Publish version so mid-flight firms get explainable deltas, not silent rewrite.
 
 **implementationAdds:** ["draft", "published-current", "reference-version-ids", "adopt-current", "stay-pinned"]
 
@@ -155,7 +155,7 @@ Immediate book-wide rescore is the product bet; uncontrolled fan-out without del
 
 **implementation:**
 On Publish version for a cutoff ledger, you can now enqueue book re-evaluation that adopts the new round ledger version.
-On Evaluation packs, you can now emit eligibility deltas (was below / now at-or-above observed floors by round type) as signals under Engine 2 precedence.
+On Analysis → Evaluation provenance, you can now see eligibility deltas (was below / now at-or-above observed floors by round type) emitted as signals under Engine 2 precedence.
 You never auto-fire outreach solely because a number moved — engagement law still owns motion.
 
 **implementationAdds:** ["was-below", "at-or-above", "round-type floor", "no-auto-outreach"]
@@ -167,9 +167,7 @@ You never auto-fire outreach solely because a number moved — engagement law st
 Always-latest without pin loses replay; forever-pin loses currency; firm-configured freezes without house oversight recreate stale-cutoff liability.
 
 **implementation:**
-On Evaluation pack editor, house packs can now default to follow published-current per table family.
-On Evaluation pack editor, you can now set an explicit pack pin only with expiry + reason (audit/replay, incident hold, supervised A/B).
-On Evaluation packs (and Oversight), you can now see pin age — freeze is a controlled exception, not the default currency model.
+On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set table-family policy to Follow published-current by default. On the same editor, set Explicit pack pin only by filling Expiry and Reason fields (audit/replay, incident hold, supervised A/B); click Publish version. On Oversight and Analysis → Evaluation provenance, you can now see pin age — freeze is a controlled exception, not the default currency model.
 
 **implementationAdds:** ["follow-published-current", "pin-expiry", "pin-reason", "pin-age"]
 
@@ -180,7 +178,7 @@ On Evaluation packs (and Oversight), you can now see pin age — freeze is a con
 Even with Reference data, engineers embed “last known” CRS floors, category NOC lists, CLB maps, or TEER thresholds in condition code “temporarily” — Directive 3 becomes aspirational.
 
 **implementation:**
-On Evaluation pack editor, you can now author only structural operators (comparisons, any/all pathway logic, Engine 2 precedence) — public-criteria values resolve from Reference tables.
+On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; author only structural operators (comparisons, any/all pathway logic, Engine 2 precedence); click Publish version. Public-criteria values resolve from Reference tables.
 On Reference tables, CRS round floors, category→NOC sets, FST trade sets, TEER program gates, CLB equivalency bands, CRS/FSW point grids, provincial stream identifiers/cutoffs, and asserted settlement-fund amounts live as published data only — review rejects evaluator literals for those.
 
 **implementationAdds:** ["no-evaluator-literals", "structural-operators-only"]
@@ -192,7 +190,7 @@ On Reference tables, CRS round floors, category→NOC sets, FST trade sets, TEER
 Pushing pathway interpretation into reference tables invents law or conflates seats; pushing everything into code re-breaks currency.
 
 **implementation:**
-On Evaluation pack editor, you can now keep outcome-family toggles, client-field combine logic (any pathway assertion), missing-data signal shapes, and narrative templates that cite reference rows.
+On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; keep outcome-family toggles, client-field combine logic (any pathway assertion), missing-data signal shapes, and narrative templates that cite reference rows; click Publish version.
 On Reference tables, you can now own all scrapeable public-criteria values and membership sets — seat 1 owns interpretation; seat 2 owns currency of inputs.
 
 **implementationAdds:** ["outcome-family toggles", "cite-reference-rows"]
@@ -243,7 +241,7 @@ Rolling forward without rollback leaves poisoned scores in motion; silent rollba
 **implementation:**
 On Publish version, you can now roll back to last-known-good reference versions with an operator incident flag.
 On Reference data, you can now pause draw/category-dependent reactivation enrollment until reconcile completes.
-On Evaluation packs, you can now re-score and emit corrective deltas with reference-correction cause — wrong-cutoff blast radius is contained without pretending the bad version never existed.
+On Analysis → Evaluation provenance, you can now see re-score corrective deltas with reference-correction cause — wrong-cutoff blast radius is contained without pretending the bad version never existed.
 
 **implementationAdds:** ["incident-flag", "last-known-good", "reference-correction", "pause-reactivation"]
 
@@ -255,7 +253,7 @@ A single “latest CRS cutoff” scalar misleads when recent rounds are CEC-only
 
 **implementation:**
 On Reference tables for the round/cutoff ledger, you can now store and score against round-type-scoped floors (and category id when category-based).
-On Publish version / Evaluation packs, you can now refuse collapsing all rounds into one current-cutoff constant.
+On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; refuse any current-cutoff constant that collapses all rounds into one value; click Publish version only when the pack reads round-type-scoped floor keys.
 On Analysis, comparisons can now name the round type/category of the floor used — wrong-cutoff “above/below the draw” handoffs cannot form from incomparable rounds.
 
 **implementationAdds:** ["round-type-scoped", "category-id floor", "no-single-current-cutoff"]
@@ -320,8 +318,7 @@ Engineering only builds the store/Import criteria pipeline — currency remains 
 Seat 1 packs that embed “example” cutoffs for narrative demos become production literals; seat 2 currency then cannot heal mis-scores.
 
 **implementation:**
-On Evaluation pack editor, you can now reference table keys and version pins only (category ids, round-type floor lookups, NOC membership checks, CLB chart ids).
-On Evaluation packs, demo fixture cutoffs stay in non-prod seeds; shared review rejects pack publishes that introduce numeric public-criteria literals — wrong-cutoff liability stays with Reference data; eligibility interpretation stays with seat 1.
+On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; reference table keys and version pins only (category ids, round-type floor lookups, NOC membership checks, CLB chart ids); click Publish version only after shared review rejects numeric public-criteria literals. Demo fixture cutoffs stay in non-prod seeds — wrong-cutoff liability stays with Reference data; eligibility interpretation stays with seat 1.
 
 **implementationAdds:** ["table-keys-only", "version-pins-only", "reject-numeric-literals"]
 

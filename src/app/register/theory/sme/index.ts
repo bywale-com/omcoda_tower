@@ -6,10 +6,9 @@ import { seat as seat04 } from "./seats/04-consultancy-desk-ops";
 import { seat as seat05 } from "./seats/05-platform-ads-meta-trust";
 import { seat as seat06 } from "./seats/06-payments-escrow";
 import { seat as seat07 } from "./seats/07-consultancy-crm-book-connect";
-import { CAPABILITY_SME_SEATS } from "./capability";
 
-/** Practice-axis SME seats (Pass2 + PM implementation). */
-export const PRACTICE_SME_SEATS: SmeSeat[] = [
+/** SME seats — Pass2 considerations + PM implementation (paper). */
+export const SME_SEATS: SmeSeat[] = [
   seat01,
   seat02,
   seat03,
@@ -18,11 +17,6 @@ export const PRACTICE_SME_SEATS: SmeSeat[] = [
   seat06,
   seat07,
 ];
-
-/** All SME seats — practice first, then capability (paper twins). */
-export const SME_SEATS: SmeSeat[] = [...PRACTICE_SME_SEATS, ...CAPABILITY_SME_SEATS];
-
-export { CAPABILITY_SME_SEATS };
 
 export function getSmeSeat(seatId: string): SmeSeat | undefined {
   return SME_SEATS.find((seat) => seat.id === seatId);

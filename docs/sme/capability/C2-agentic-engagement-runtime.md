@@ -37,7 +37,7 @@ Sequences advance on timers and open/click criteria while inbound replies are in
 **implementation:**  
 On **Conversations**, you can now see inbound replies as first-class thread events linked to the prior outbound on that channel.  
 On **Engagement record**, you can now examine reply-received chronology for the contact without opening provider consoles.  
-On **Firm operations bind**, Armed / Active sequences consume the same inbound event stream before scheduling the next attempt.
+On **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active); those sequences consume the same inbound event stream before scheduling the next attempt.
 
 **implementationAdds:** `["inbound-event", "conversation-thread", "reply-linkage"]`
 
@@ -60,7 +60,7 @@ Without a closed intent set, operators and automations invent per-template label
 **implementation:**  
 On **Conversations**, you can now see each inbound tagged with one of booked / question / stop / hostile / unsure.  
 On **Engagement record**, you can now examine the classified intent beside the reply event.  
-On **Agent / sequence editor**, you can now bind next-step and escalation policy to those classes — not free-text tags.
+On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; bind next-step and escalation policy to those classes with intent selectors — not free-text tags; click **Publish version**.
 
 **implementationAdds:** `["intent-booked", "intent-question", "intent-stop", "intent-hostile", "intent-unsure"]`
 
@@ -82,7 +82,7 @@ A stop reply can be misread as engagement or queued for a helpful follow-up. Aut
 
 **implementation:**  
 On **Conversations**, a stop-class inbound now shows intent `stop` and freezes further automatic attempts on that thread.  
-On **Firm operations bind** Send gates, you can now see the contact enrollment-blocked for automatic CEMs after stop.  
+On **Firm operations bind firm detail → Send gates panel**, you can now see the contact enrollment-blocked deny chip for automatic CEMs after stop.
 On **Engagement record**, you can now examine stop-class reply → suppression as chronology, not a soft badge.
 
 **implementationAdds:** `["intent-stop-terminal", "cem-suppress-on-stop", "stop-keyword"]`
@@ -106,7 +106,7 @@ Ambiguous replies are forced into a best-guess class. Wrong guesses drive wrong 
 **implementation:**  
 On **Conversations**, low-confidence replies now show intent `unsure` and do not auto-advance the attempt owner.  
 On **Escalation queue**, you can now open those threads for human classification before the runtime acts.  
-On **Firm operations bind**, you can now see that unsure blocks automatic next-attempt until resolved.
+On **Firm operations bind firm detail → Send gates panel**, you can now see unsure-pending-resolution as a deny chip that blocks automatic next-attempt until resolved.
 
 **implementationAdds:** `["confidence-floor", "intent-unsure", "fail-closed-classify"]`
 
@@ -127,8 +127,8 @@ On **Firm operations bind**, you can now see that unsure blocks automatic next-a
 Reply-driven “helpful” follow-ups skip the gates that calendar sends respect. Silenced or consent-lapsed contacts still get the next attempt because the runtime treated inbound as a new license to speak.
 
 **implementation:**  
-On **Firm operations bind** Send gates, you can now see post-reply re-check before any next attempt is scheduled.  
-On **Conversations**, choosing or confirming a next step stays blocked when Send gates deny.  
+On **Firm operations bind firm detail → Send gates panel**, you can now see post-reply re-check readiness rows before any next attempt is scheduled.
+On **Conversations**, choosing or confirming a next step stays blocked when the Firm operations bind firm detail → Send gates panel denies.
 On **Engagement record**, you can now examine gate-denied-after-reply as a chronology event.
 
 **implementationAdds:** `["send-gate-recheck", "post-reply-gate", "attempt-blocked-by-gate"]`
@@ -152,7 +152,7 @@ OOO messages finish the sequence as if the contact engaged, or trigger question-
 **implementation:**  
 On **Conversations**, OOO / auto-reply now shows as paused-OOTO (not booked, not stop).  
 On **Engagement record**, you can now examine pause and scheduled resume under the owning channel.  
-On **Agent / sequence editor**, you can now set OOO pause/resume policy without treating auto-reply as Finished (Replied).
+On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; set OOO pause/resume policy fields without treating auto-reply as Finished (Replied); click **Publish version**.
 
 **implementationAdds:** `["ooo-pause", "auto-reply-nonterminal", "resume-window"]`
 
@@ -176,8 +176,8 @@ Email and SMS attempts can fire in parallel “to improve reach.” Criteria win
 
 **implementation:**  
 On **Engagement record**, you can now see exactly one owning channel for the active sequence instance.  
-On **Firm operations bind**, Armed / Active runners refuse dual-owner schedules.  
-On **Agent / sequence editor**, channel rulesets author forward handoff — not parallel owners.
+On **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active); runners refuse dual-owner schedules.
+On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; author channel rulesets as forward handoff — not parallel owners; click **Publish version**.
 
 **implementationAdds:** `["single-channel-owner", "owner-nested-attempts"]`
 
@@ -198,7 +198,7 @@ On **Agent / sequence editor**, channel rulesets author forward handoff — not 
 Runtime “retries” bounce back to earlier channels outside attempt framing, creating loops that look alive but violate forward-only law.
 
 **implementation:**  
-On **Agent / sequence editor**, you can now author forward-only owner order for a sequence.  
+On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; author forward-only owner order for a sequence; click **Publish version**.
 On **Engagement record**, handoffs show only forward along that order (or a new local attempt under the failed owner).  
 On **Firm health** / **Sequence detail**, backward re-entry without a new attempt frame is not offered as healthy motion.
 
@@ -222,7 +222,7 @@ A global Attempt 2 spanning Text/Email/Form resets the wrong clocks and hides wh
 
 **implementation:**  
 On **Engagement record**, you can now see Attempt N nested under the failed owning channel — not as a top-level peer to Text/Email/Form.  
-On **Agent / sequence editor**, attempt logic authors local retries under a channel ruleset.  
+On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; author local retry fields under a channel ruleset; click **Publish version**.
 On **Conversations**, triage context shows the same nested attempt owner when a reply arrives mid-retry.
 
 **implementationAdds:** `["local-attempt", "attempt-under-owner", "no-global-attempt"]`
@@ -244,9 +244,9 @@ On **Conversations**, triage context shows the same nested attempt owner when a 
 Sequences advance on fixed delays regardless of opens, clicks, or form starts. Contacts who are mid-action still get the next channel CEM.
 
 **implementation:**  
-On **Agent / sequence editor**, you can now author criteria windows (delivered/opened/clicked/started/submitted + elapsed) per owner.  
+On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; author criteria window fields (delivered/opened/clicked/started/submitted + elapsed) per owner; click **Publish version**.
 On **Engagement record**, you can now examine which criteria event caused the handoff.  
-On **Firm operations bind**, Active runners only escalate when those criteria fire and Send gates still allow.
+On **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active); Active runners only escalate when those criteria fire and Firm operations bind firm detail → Send gates panel still allows.
 
 **implementationAdds:** `["criteria-window", "nonreply-escalation", "criteria-event"]`
 
@@ -269,7 +269,7 @@ A contact replies or opens the form while Attempt N is scheduled; the job still 
 **implementation:**  
 On **Conversations**, an inbound (or live form visit signal) now nullifies in-flight scheduled attempts before intent policy runs.  
 On **Engagement record**, you can now examine attempt-nullified-by-inbound as chronology.  
-On **Firm operations bind**, Active runners treat override as hard cancel, not soft preference.
+On **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active); Active runners treat override as hard cancel, not soft preference.
 
 **implementationAdds:** `["priority-override", "nullify-inflight", "inbound-wins-race"]`
 
@@ -291,7 +291,7 @@ Sequences never cleanly finish; reactivation arms while the nudge is still “ac
 
 **implementation:**  
 On **Engagement record**, you can now see finishing predicates close the sequence and optionally arm the next peer sequence.  
-On **Firm operations bind**, Armed vs Active updates from those finishing events — not from cosmetic toggles alone.  
+On **Firm operations bind firm detail**, the Armed / Active segmented control (Armed | Active) reflects those finishing events — not cosmetic toggles alone.
 On **Conversations**, a `booked` intent shows the sequence closed for further automatic attempts.
 
 **implementationAdds:** `["finishing-predicate", "arm-next-sequence", "sequence-closed"]`
@@ -313,8 +313,8 @@ On **Conversations**, a `booked` intent shows the sequence closed for further au
 Operators edit day calendars expecting attempt retries, or edit attempt logic expecting day-N copy changes. Two brains fight; failures are undiagnosable.
 
 **implementation:**  
-On **Engagement templates** / **Agent / sequence editor**, you can now see campaign calendar (day content) separate from channel-ownership / attempt rulesets.  
-On **Automation workflows**, enrollment selects a sequence instance; the attempt engine runs inside it.  
+On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; see campaign calendar (day content) separate from channel-ownership / attempt rulesets; click **Publish version**.
+On **Configuration libraries → Automation workflows catalog**, open **Workflow canvas**; enrollment action nodes select a sequence instance, and the attempt engine runs inside it; click **Publish version**.
 On **Engagement record**, chronology distinguishes calendar phase from owner/attempt events.
 
 **implementationAdds:** `["calendar-layer", "attempt-layer", "two-sequencing-layers"]`
@@ -336,9 +336,9 @@ On **Engagement record**, chronology distinguishes calendar phase from owner/att
 An LLM “helpfully” composes and sends replies outside channel ownership and Send gates. Audit cannot reconstruct which tool/law authorized the send.
 
 **implementation:**  
-On **Agent / sequence editor**, runtime actions are bound to the closed tool set (not free-form send).  
+On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; bind runtime actions to the closed tool set (not free-form send); click **Publish version**.
 On **Audit trail**, you can now open a Change event showing tool name, intent, owner, and gate result for each act.  
-On **Firm operations bind** Send gates, tool-initiated sends fail closed the same as calendar-initiated sends.
+On **Firm operations bind firm detail → Send gates panel**, tool-initiated sends fail closed with the same deny chips as calendar-initiated sends.
 
 **implementationAdds:** `["tool-bounded-runtime", "closed-tool-set", "no-freeform-send"]`
 
@@ -359,7 +359,7 @@ On **Firm operations bind** Send gates, tool-initiated sends fail closed the sam
 Criteria windows escalate to SMS because Text failed, even when Agree was email-only or the number is suppressed. Capability runtime becomes the consent bug.
 
 **implementation:**  
-On **Firm operations bind** Send gates, channel escalation now requires channel-scoped consent + suppression clearance.  
+On **Firm operations bind firm detail → Send gates panel**, channel escalation now requires channel-scoped consent row + suppression clearance row.
 On **Engagement record**, blocked-escalation-for-channel-scope is visible chronology.  
 On **Conversations**, operators see why the runtime did not escalate to the next channel.
 
@@ -525,7 +525,7 @@ Thread list shows raw messages only. Operators cannot see whether an attempt wil
 
 **implementation:**  
 On **Conversations**, you can now see intent, owning channel, Send-gate posture, pending or nullified attempt, and escalation status on the open thread.  
-On **Firm operations bind** Send gates, the same posture is what Conversations mirrors — not a second opinion.  
+On **Firm operations bind firm detail → Send gates panel**, the same posture appears as readiness rows and deny chips that Conversations mirrors — not a second opinion.
 On **Escalation queue**, deep links open the same Conversations thread with that context.
 
 **implementationAdds:** `["triage-context-pane", "owner-on-thread", "gate-posture-visible"]`
@@ -570,7 +570,7 @@ On **Conversations**, working a thread does not rewrite authorship — it only a
 Reply handlers and attempt jobs fire for firms that are not Active (or still unbound). Prepared demos and unbound tenancies accidentally CEM real contacts.
 
 **implementation:**  
-On **Firm operations bind**, you can now see Armed (prepare/schedule only) vs Active (contact-facing sends allowed) as the runtime posture the agent must obey.  
+On **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active) so Armed means prepare/schedule only and Active means contact-facing sends allowed as the runtime posture the agent must obey.
 On **Conversations**, outbound tool acts stay blocked while not Active (escalation Ticket may still open).  
 On **Engagement record**, you can now examine posture-blocked attempts as chronology when bind denies.
 
