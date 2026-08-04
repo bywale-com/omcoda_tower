@@ -52,7 +52,7 @@
 
 **Q:** How do I hand the consultant the same Login path into the desk?
 
-**Clarity:** On Provision complete, copy or send the Login path; the consultant uses Login (OTP) to reach the same Board module — no separate assisted app.
+**Clarity:** On Provision complete, click Copy Login path (or Send invite); the consultant opens Login, completes OTP, and lands on the same Board module — no separate assisted app.
 
 **Criteria — when:** After provision succeeds.  
 **Conditions:** Same session matrix as ALG-provisioned firms.

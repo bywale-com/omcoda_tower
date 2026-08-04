@@ -115,7 +115,7 @@ ITEM_HEADER_RE = re.compile(
     re.MULTILINE,
 )
 FIELD_RE = re.compile(
-    r"^\*\*(Question|Thesis gap|Solution|References|Handoff|implementationProblem|implementation|implementationAdds|Solution echo):\*\*\s*",
+    r"^\*\*(Question|Thesis gap|Solution|References|Handoff|implementationProblem|implementation|implementationAdds|implementationPlant|Solution echo):\*\*\s*",
     re.MULTILINE,
 )
 URL_RE = re.compile(r"https?://[^\s\)\]>,;]+")
@@ -314,24 +314,26 @@ def parse_adds(raw: str) -> list[str]:
     text = raw.strip()
     if not text:
         return []
-    # JSON-ish array, optionally wrapped in backticks
-    text = text.strip("`")
-    if text.startswith("["):
+    # Prefer a JSON-ish array anywhere in the field (handles trailing notes / plant lines)
+    bracket = re.search(r"\[[^\[\]]*\]", text)
+    if bracket:
+        candidate = bracket.group(0)
         try:
-            # Allow single quotes? stick to JSON double quotes + python literal-ish
-            arr = json.loads(text.replace("'", '"'))
+            arr = json.loads(candidate.replace("'", '"'))
             if isinstance(arr, list):
-                return [str(x) for x in arr]
+                return [str(x).strip() for x in arr if str(x).strip()]
         except json.JSONDecodeError:
-            inner = text.strip("[]")
-            return [p.strip().strip("\"'") for p in inner.split(",") if p.strip()]
+            inner = candidate.strip("[]")
+            return [p.strip().strip("\"'`") for p in inner.split(",") if p.strip().strip("\"'`")]
 
+    # Bare backtick wrap without brackets
+    text = text.strip("`").strip()
     # `tag` · `tag` or tag · tag
     parts = re.split(r"\s*[·•|,]\s*", text)
     adds: list[str] = []
     for part in parts:
         tag = part.strip().strip("`").strip()
-        if tag:
+        if tag and "implementationPlant" not in tag:
             adds.append(tag)
     return adds
 

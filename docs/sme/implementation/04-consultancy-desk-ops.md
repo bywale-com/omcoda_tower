@@ -112,7 +112,7 @@ On Live brief, opening the panel triggers recompute-on-open, and clicking Write 
 Agenda vs outreach is settled; desk practice still needs secondary Engine 2 signals actionable in the room without implying the firm already messaged each gap.
 
 **implementation:**  
-On Live brief, view secondary signals as consultant-only agenda bullet rows tied to current fact rows. They appear as agenda rows only, never as separate campaign buttons or implied outbound sends.
+On Live brief, open the Agenda panel and view secondary Engine 2 signals as consultant-only agenda bullet rows tied to current fact rows. They appear as agenda rows only — never as separate campaign buttons or implied outbound send controls.
 
 **implementationAdds:** ["agenda"]
 
@@ -148,7 +148,7 @@ On Live brief, view outstanding self-reportables captured pending the meeting an
 Eligibility narratives and B-* service hints can be read as guarantees or retained opinions if Live brief presents them as conclusions — Code marketing/honesty risk.
 
 **implementation:**  
-On Live brief, view eligibility/service read-out rows labeled with current evaluative signal chips for discussion. Success-guarantee chips and completed-representation labels do not appear.
+On Live brief, open the Eligibility / service panel and view read-out rows labeled with current evaluative signal chips for discussion. Success-guarantee chips and completed-representation labels do not appear.
 
 **implementationAdds:** ["evaluative-signal"]
 
@@ -263,7 +263,7 @@ Meeting-booked success nuance vs Seed Assump. 6 metric wording. No implementatio
 Always-on “staying informed” can look like ongoing advisory services without consultation/service agreements, putting the licensee offside on client/retainer boundaries.
 
 **implementation:**  
-On Board and Meetings, view touchpoint inhabit labels as firm-branded engagement / invitation toward consultation, not provision of immigration consulting services. On Live brief, advice and scoping rows stay inside the booked consult after required agreements; free value-add does not show as unretained-practice status.
+On Board and Meetings, open a contact or meeting row and view touchpoint inhabit labels as firm-branded engagement / invitation toward consultation — not provision of immigration consulting services. On Live brief, advice and scoping rows stay inside the booked consult after required agreements; free value-add does not show as an unretained-practice status chip.
 
 **implementationAdds:** ["invitation-toward-consultation"]
 

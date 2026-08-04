@@ -116,8 +116,8 @@ On Oversight Firm row, the firm filter dropdown scopes fleet metrics by firm_id 
 ESP retries can land the same complaint twice; Fleet health complaint rate spikes and quarantine logic (C1) or operator panic fires on a duplicate.
 
 **implementation:**  
-On Oversight Fleet health, complaint/bounce rate tiles read deduped stream counts only.  
-On Audit trail, provider delivery event rows show ingest outcome chips Accepted vs Duplicate-suppressed.
+On Oversight Fleet health, open complaint/bounce rate tiles that read deduped stream counts only.  
+On Audit trail, open provider delivery event rows and view ingest outcome chips Accepted vs Duplicate-suppressed.
 
 **implementationAdds:** `["idempotency-key", "upsert-ingest", "duplicate-suppressed"]`  
 **implementationPlant:** not_done
@@ -188,8 +188,8 @@ On Oversight Fleet health and Firm health, delivery outcome rows read from that 
 Analytics invents “bounce_rate” from mixed soft/hard labels while Send gates suppress only hard bounces — Firm health lies relative to control.
 
 **implementation:**  
-On Firm health Sequence health, hard-bounce, soft-bounce, complaint, deferred, and delivered appear as distinct stream-backed rate rows aligned with C1 classes.  
-On Oversight Fleet health, reputation-unit rollup rows are built from the same delivery-event types — not a parallel ESP metric dialect.
+On Firm health Sequence health, open hard-bounce, soft-bounce, complaint, deferred, and delivered rate rows as distinct stream-backed classes aligned with C1.  
+On Oversight Fleet health, open reputation-unit rollup rows built from the same delivery-event types — not a parallel ESP metric dialect.
 
 **implementationAdds:** `["delivery-event-schema", "hard-bounce", "soft-bounce", "complaint", "deferred", "delivered", "rejected"]`  
 **implementationPlant:** not_done
@@ -260,8 +260,8 @@ On Engagement record, the same chronology rows are sourced from the stream (read
 Oversight Fleet health either scans the whole event log (unusable) or shows hard-coded mock numbers left from shell construction.
 
 **implementation:**  
-On Oversight Fleet health and Firm health, rate and funnel-completion tiles read from the metrics store with drill-through links to underlying stream event ids.  
-On Approach instrumentation, aggregated step-rate cards read from the same store — not a browser-only counter.
+On Oversight Fleet health and Firm health, open rate and funnel-completion tiles that read from the metrics store; click a tile to drill through to underlying stream event ids.  
+On Approach instrumentation, open aggregated step-rate cards that read from the same store — not a browser-only counter.
 
 **implementationAdds:** `["metrics-store", "rollup-consumer", "drill-through-event-id"]`  
 **implementationPlant:** not_done
@@ -476,8 +476,8 @@ On Firm health, a Freshness state chip (within SLO / stale) appears beside Seque
 A deferred→delivered correction never updates Firm health; or a late reply falls into the wrong day and Sequence detail lies.
 
 **implementation:**  
-On Firm health Sequence detail, timeline rows order by event time, with late-correction chips applied inside the watermark.  
-On Approach instrumentation funnels, completion rows count inside the Funnel definition window even when the step event arrives late.
+On Firm health Sequence detail, open the attempt timeline panel; rows order by event time with late-correction chips applied inside the watermark.  
+On Approach instrumentation, open Funnel definition and view completion rows that count inside the window even when the step event arrives late.
 
 **implementationAdds:** `["event-time", "watermark", "late-correction", "processing-time-not-truth"]`  
 **implementationPlant:** not_done
