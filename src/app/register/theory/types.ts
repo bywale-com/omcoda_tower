@@ -39,6 +39,8 @@ export type SmeSeat = {
   label: string;
   domain: string;
   whyExists: string;
+  /** Practice/regime axis vs capability axis — omit/undefined treated as practice. */
+  axis?: "practice" | "capability";
   items: SmeItem[];
 };
 

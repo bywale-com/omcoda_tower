@@ -46,7 +46,7 @@ export const REGISTER_PASSES: RegisterPassMeta[] = [
   {
     id: "sme",
     label: "SME",
-    hint: "Domain considerations + Implementation",
+    hint: "Practice + capability · Implementation",
     hasTree: true,
   },
   {
