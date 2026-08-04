@@ -21,7 +21,7 @@
 
 **Q:** How do I watch engagement and sequence health across every firm and drill into any one?
 
-**Clarity:** Starting from Oversight, I read Fleet health across firms, then drill into a Tenancy slice when one is failing.
+**Clarity:** Starting from Oversight, open Fleet health, scan firm rows with deliverability / sequence / engagement status chips, then click an unhealthy Firm row to open that tenancy's Firm health slice.
 
 **DNA for children:**
 1. read Fleet health across firms
@@ -33,7 +33,7 @@
 
 **Q:** How do I read Fleet health across firms?
 
-**Clarity:** Starting from Oversight, open Fleet health and scan deliverability / sequence / engagement signals across tenancies.
+**Clarity:** Starting from Oversight, open Fleet health and scan the firm table by deliverability, sequence, and engagement status chips plus last-run timestamp across tenancies.
 
 **Criteria — when:** Ongoing agency ops.  
 **Conditions:** Silent sequence failure is visible at fleet level.
@@ -49,7 +49,7 @@
 
 **Q:** How do I drill into a Tenancy slice when one is failing?
 
-**Clarity:** On Fleet health, open a Firm row to land on Firm health (per-tenancy) for that tenancy's sequence and engagement detail.
+**Clarity:** On Fleet health, click a Firm row with an unhealthy chip to land on Firm health (per-tenancy), preserving that firm filter for Sequence health, Engagement health, and Sequence detail.
 
 **Criteria — when:** A firm shows unhealthy signals.  
 **Conditions:** Drill preserves firm scope; Support can pick up from same context.

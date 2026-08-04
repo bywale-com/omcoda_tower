@@ -22,7 +22,7 @@
 
 **Q:** How do I stage a no-login prepared workspace for a captured firm from house templates and public facts, walk the firm through readiness, and secure its database authorization and escrow?
 
-**Clarity:** I forward-deploy a Prepared Workspace from house templates and public facts, walk readiness with the firm, and secure database authorization plus escrow acceptance.
+**Clarity:** Starting from Activation & forward-deploy, open In-flight activations, run Forward-deploy for a captured firm row to create Prepared Workspace from published house templates and public facts, walk Readiness walkthrough, then verify Authorize book and Accept terms before running opens.
 
 **DNA for children:**
 1. forward-deploy a Prepared Workspace from house templates and public facts
@@ -35,7 +35,7 @@
 
 **Q:** How do I forward-deploy a Prepared Workspace from house templates and public facts?
 
-**Clarity:** Starting from Activation & forward-deploy, open In-flight activations; On a captured firm row, run Forward-deploy to stage Prepared Workspace under the firm's identity from Configuration libraries templates plus public firm facts — no client PII required yet.
+**Clarity:** Starting from Activation & forward-deploy, open In-flight activations; on a captured firm row, click Forward-deploy, choose a published Engagement template version, bind public firm-facts and brand package fields, then click Hydrate to stage Prepared Workspace under the firm's identity — no client PII required yet.
 
 **Criteria — when:** Seed inputs landed.  
 **Conditions:** Templates available; public facts readable; no-login artifact staged.
@@ -54,7 +54,7 @@
 
 **Q:** How do I walk readiness with the firm?
 
-**Clarity:** On Prepared Workspace, present Readiness walkthrough (agent presentation presents; fulfillment stays separate) so the consultant sees the staged campaign under their identity before hard inputs.
+**Clarity:** On Prepared Workspace, open Readiness walkthrough, step through template preview, public facts, brand state, and next-step chips; the agent presentation presents and routes only, so fulfillment stays separate while the consultant sees the staged campaign under their identity before hard inputs.
 
 **Criteria — when:** Prepared Workspace is staged.  
 **Conditions:** Readiness proof, not value proof; no-login still.
@@ -72,7 +72,7 @@
 
 **Q:** How do I secure database authorization plus escrow acceptance?
 
-**Clarity:** On Prepared Workspace, confirm Authorize book and Accept terms complete for that firm; On Activation state (per-tenancy), mark hard inputs landed so the desk can run.
+**Clarity:** On Prepared Workspace, confirm Authorize book completion and Accept terms completion chips for that firm; on Activation state → Progress, mark hard inputs landed only when book authorization and escrow acceptance rows are green so the desk can run.
 
 **Criteria — when:** After readiness is legible.  
 **Conditions:** Both hard inputs required; Commercial holds escrow terms.

@@ -21,7 +21,7 @@
 
 **Q:** How do I see who changed which operation, when, and on which firm?
 
-**Clarity:** Starting from Audit trail, filter by firm or actor, and open a Change event to see what operation changed.
+**Clarity:** Starting from Audit trail, use Firm filter or Actor filter dropdowns, then click a Change event row to inspect operation, before/after summary, timestamp, actor, and firm.
 
 **DNA for children:**
 1. filter by firm or actor
@@ -33,7 +33,7 @@
 
 **Q:** How do I filter by firm or actor?
 
-**Clarity:** Starting from Audit trail, use Firm filter and Actor filter to scope the log.
+**Clarity:** Starting from Audit trail, use Firm filter and Actor filter dropdowns to scope the log; selected filter chips stay visible above the Change event list.
 
 **Criteria — when:** Investigating or reviewing house changes.  
 **Conditions:** Tenancy-scoped events visible; cross-firm when unfiltered.
@@ -49,7 +49,7 @@
 
 **Q:** How do I open a Change event to see what operation changed?
 
-**Clarity:** On Audit trail, open Change event to read operation, before/after or summary, timestamp, and firm.
+**Clarity:** On Audit trail, click a Change event row to open Change event and read operation, before/after or summary, timestamp, actor, firm, and affected surface.
 
 **Criteria — when:** A row is selected.  
 **Conditions:** Open-box and bind changes both appear.

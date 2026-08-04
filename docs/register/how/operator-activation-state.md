@@ -21,7 +21,7 @@
 
 **Q:** How do I see a firm's forward-deploy and hard-input progress toward running?
 
-**Clarity:** Starting from Activation state, read Progress (forward-deployed → auth → escrow → running) for this firm; On a stalled step, jump to Activation & forward-deploy or Commercial to unblock.
+**Clarity:** Starting from Activation state, open Progress and read the forward-deployed, authorize-book, escrow-held, and running checklist rows for this firm; on a stalled row, click Jump to Activation & forward-deploy or Jump to Commercial to unblock the exact gate.
 
 **Criteria — when:** Monitoring in-flight activation.  
 **Conditions:** Stalled steps actionable; Support can use same context.
