@@ -27,7 +27,7 @@ requirement at leaves — not a Consultant outcome. Hub Automations / Agents tod
 
 **Q:** How do I author and version the evaluation packs, automation workflows, and engagement templates that run the product?
 
-**Clarity:** Starting from Configuration libraries, I open one of three catalog lists (Evaluation packs, Automation workflows, Engagement templates), edit in the editor/canvas, then click **Publish version** — so firms can later pick that version in Firm operations bind dropdowns. No firm picker exists on this module.
+**Clarity:** Starting from Configuration libraries, click **Evaluation packs**, **Automation workflows**, or **Engagement templates** in the Libraries nav (left list). On the chosen catalog, click a row (or **New**), edit in the editor/canvas, then click **Publish version** (primary button) — so firms can later pick that version in Firm operations bind dropdowns. No firm picker exists on this module.
 
 **DNA for children:**
 1. author Evaluation packs
@@ -62,7 +62,7 @@ requirement at leaves — not a Consultant outcome. Hub Automations / Agents tod
 
 **Q:** How do I author Automation workflows?
 
-**Clarity:** Starting from Configuration libraries, click **Automation workflows** in the Libraries nav. On Automation workflows catalog, click a workflow row (or **New workflow**). On Workflow canvas, author trigger → conditions/rules → actions (including enroll into an engagement template). Click **Publish version**. Catalog shows **Published** + version id; that version appears in Firm operations bind → Bind packs → Automation pack dropdown (published-only).
+**Clarity:** Starting from Configuration libraries, click **Automation workflows** in the Libraries nav. On Automation workflows catalog, click a workflow row (or **New workflow**). On Workflow canvas, edit trigger → conditions/rules → actions (including enroll into an engagement template). Click **Publish version** (primary button). Catalog shows **Published** + version id; that version appears in Firm operations bind → Bind packs → Automation pack dropdown (published-only).
 
 **Criteria — when:** Enrollment / eligibility motion graph must change.  
 **Conditions:** Graph shape holds across verticals; packs swap underneath; no firm bind from this screen.
@@ -80,7 +80,7 @@ requirement at leaves — not a Consultant outcome. Hub Automations / Agents tod
 
 **Q:** How do I author Engagement templates?
 
-**Clarity:** Starting from Configuration libraries, click **Engagement templates** in the Libraries nav. On Engagement templates catalog, click a template row (or **New template**). On Agent / sequence editor, author ordered channel + copy steps (opt-in, nudge, reactivation composites). Click **Publish version**. Catalog shows **Published** + version id; that version appears in Firm operations bind → Bind packs → Engagement template dropdown (published-only).
+**Clarity:** Starting from Configuration libraries, click **Engagement templates** in the Libraries nav. On Engagement templates catalog, click a template row (or **New template**). On Agent / sequence editor, edit ordered channel + copy steps (opt-in, nudge, reactivation composites). Click **Publish version** (primary button). Catalog shows **Published** + version id; that version appears in Firm operations bind → Bind packs → Engagement template dropdown (published-only).
 
 **Criteria — when:** Sequence methodology changes.  
 **Conditions:** Authorship upstream of engagement record; firm does not author; no firm bind from this screen.

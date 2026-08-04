@@ -33,7 +33,7 @@
 
 **Q:** How do I open a Reference table and edit or import the current criteria?
 
-**Clarity:** Starting from Reference data, open Reference tables; on a table row (categories, trades, cutoffs, provincial identifiers), edit grid rows directly or click Import criteria to load a criteria file.
+**Clarity:** Starting from Reference data, click **Reference tables**. On a table row (categories, trades, cutoffs, provincial identifiers), edit grid rows directly or click **Import criteria** to load a criteria file.
 
 **Criteria — when:** Criteria change known.  
 **Conditions:** Tables are data, not hard-coded deploys.
@@ -50,7 +50,7 @@
 
 **Q:** How do I publish a new version that evaluation packs consume?
 
-**Clarity:** On Reference table, click Publish version, enter version notes, and confirm; the published version chip becomes the reference that Configuration libraries evaluation packs score against.
+**Clarity:** On Reference table, click **Publish version**, type version notes, and click **Confirm** (primary button); the published version chip becomes the reference that Configuration libraries evaluation packs score against.
 
 **Criteria — when:** Edits ready to go live.  
 **Conditions:** Version retained; packs read current published version.

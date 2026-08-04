@@ -76,7 +76,7 @@
 
 **Q:** How do I open Meetings for what's booked?
 
-**Clarity:** Starting from Board, click **Meetings** in primary nav (or open Meetings directly). On Meetings, view Meeting rows booked for me; click a Meeting row to open Meeting. On Meeting, open **Live brief** panel to read current facts before joining. Booking rows are written by bound engagement (operator packs) — consultant does not enroll sequences here.
+**Clarity:** Starting from Board, click **Meetings** in primary nav (or open Meetings directly). On Meetings, view Meeting rows booked for me; click a Meeting row to open Meeting. On Meeting, click **Live brief** panel to view current fact rows before joining. Booking rows are written by bound engagement (operator packs) — consultant does not enroll sequences here.
 
 **Criteria — when:** When meetings exist or I check for them.  
 **Conditions:** Bookings created by bound engagement (requirement); consultant is recipient.

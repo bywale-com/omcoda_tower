@@ -78,8 +78,8 @@ On Reference data Detect, a discovery alert row can open an ingestion run, but t
 Scheduled polls without change-detect either spam Dual-check with identical drafts or miss same-business-day rounds between weekly reviews.
 
 **implementation:**
-On Reference data, the Detect schedule table shows one row per table family with poll cadence, last-seen content-hash, and ETag columns.
-On Reference data, a diverged-hash row opens an ingestion run automatically; the on-alert Detect row also has Open ingestion run, while identical hashes do not create Draft versions.
+On Reference data, view the Detect schedule table rows per table family (poll cadence, last-seen content-hash, ETag).
+On Reference data, view diverged-hash rows that opened an ingestion run; click Open ingestion run on on-alert Detect rows; identical hashes do not create Draft versions.
 
 **implementationAdds:** ["content-hash-detect", "ETag", "on-alert", "change-driven-run"]
 **implementationPlant:** not_done
@@ -101,7 +101,7 @@ Broken scrapes can ship empty category sets or swapped CRS columns if humans are
 
 **implementation:**
 On Import criteria, each Reference table family row has a Schema contract version dropdown plus required-column, type, and sanity-band fields.
-On Import criteria Validate, the Validate status row shows Draft-hold and alerts house upkeep on contract failure; Dual-check / Publish version stay blocked until Validate passes.
+On Import criteria Validate, view the Validate status row Draft-hold chip and house-upkeep alert on contract failure; Dual-check / Publish version stay blocked until Validate passes.
 
 **implementationAdds:** ["schema-contract", "draft-hold", "sanity-bands", "fail-closed-validate"]
 **implementationPlant:** not_done
@@ -250,7 +250,7 @@ On Publish version, open the Impact scope panel; it derives cohort rows from Ver
 One fan-out policy for all tenants either wakes armed-only noise or leaves pinned packs looking “current” when they are not.
 
 **implementation:**
-On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set re-score cohort mode with the selector (Active-follow-current | Armed-only | Pinned-shadow); click Publish version. On Oversight and the same Evaluation pack editor, Pin age and shadow-diff pending-adopt rows show which firms are active, armed-only, or pinned-shadow.
+On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set re-score cohort mode with the selector (Active-follow-current | Armed-only | Pinned-shadow); click Publish version. On Oversight and the same Evaluation pack editor, view Pin age and shadow-diff pending-adopt rows showing which firms are active, armed-only, or pinned-shadow.
 
 **implementationAdds:** ["active-follow-current", "armed-signal-only", "pinned-shadow", "shadow-diff"]
 **implementationPlant:** not_done
@@ -270,8 +270,8 @@ On Configuration libraries → Evaluation packs catalog, open Evaluation pack ed
 Publish updates “current” while already-shown Analysis rewrites in place with no cause, destroying consultant trust.
 
 **implementation:**
-On Publish version, click Enqueue Re-evaluation; the job table shows rows keyed by publish id and impact-scope.
-On Analysis → Evaluation provenance, delta rows show was / now with cause reference-publish or reference-correction; prior Analysis snapshots keep their reference-version ids for Audit trail.
+On Publish version, click Enqueue Re-evaluation; view job table rows keyed by publish id and impact-scope.
+On Analysis → Evaluation provenance, view delta rows with was / now and cause reference-publish or reference-correction; prior Analysis snapshots keep their reference-version ids for Audit trail.
 
 **implementationAdds:** ["re-evaluation-job", "cause:reference-publish", "cause:reference-correction", "was/now-delta"]
 **implementationPlant:** not_done
@@ -292,8 +292,8 @@ On Analysis → Evaluation provenance, delta rows show was / now with cause refe
 A naive “rescore then reactivate” hook on Publish version creates false reactivation storms on every draw.
 
 **implementation:**
-On Analysis → Evaluation provenance, reference-driven Re-evaluation job rows write signals and Board Phase signal only.
-On Firm operations bind firm detail → Send gates panel, the enrollment readiness row shows reference-publish auto-enrollment refused as a deny chip; runners still apply Engine 2 precedence when a separate motion decision runs.
+On Analysis → Evaluation provenance, view reference-driven Re-evaluation job rows writing signals and Board Phase signal only.
+On Firm operations bind firm detail → Send gates panel, view the enrollment readiness row reference-publish auto-enrollment refused deny chip; runners still apply Engine 2 precedence when a separate motion decision runs.
 
 **implementationAdds:** ["signals-only-on-reference-publish", "no-auto-enrollment", "phase-signal-update"]
 **implementationPlant:** not_done
@@ -334,8 +334,8 @@ On Configuration libraries → Evaluation packs catalog, open Evaluation pack ed
 Forms and consultant edits save facts while Analysis and Board stay stale until a batch job or page reload folklore.
 
 **implementation:**
-On Client Data, click Commit write-back; the save action emits a fact-change event and automatically enqueues Re-evaluation for that contact.
-On Board, the Client row Phase signal chip updates from cause fact-write-back; on Live brief, the same re-score feeds meeting-grade views.
+On Client Data, click Commit write-back; view fact-change event enqueue to Re-evaluation for that contact.
+On Board, view the Client row Phase signal chip updated from cause fact-write-back; on Live brief, view the same re-score in meeting-grade views.
 
 **implementationAdds:** ["fact-change-event", "cause:fact-write-back", "immediate-re-eval", "phase-signal-refresh"]
 **implementationPlant:** not_done
@@ -356,8 +356,8 @@ On Board, the Client row Phase signal chip updates from cause fact-write-back; o
 Two jobs rewriting Analysis for one contact produce duplicate Phase signals or a result that cites neither publish id nor write-back id.
 
 **implementation:**
-On Evaluation packs re-score job detail, the job row shows coalesced Re-evaluation for the same contact within a short merge window and stored trigger event ids for both fact-write-back and reference-publish when both apply.
-On Audit trail, a single result Change event row lists all trigger causes and the reference-version ids used.
+On Evaluation packs re-score job detail, view the job row coalescing Re-evaluation for the same contact within a short merge window with stored trigger event ids for both fact-write-back and reference-publish when both apply.
+On Audit trail, view a single result Change event row listing all trigger causes and the reference-version ids used.
 
 **implementationAdds:** ["job-idempotency-key", "merge-window", "multi-cause-result"]
 **implementationPlant:** not_done
@@ -378,8 +378,8 @@ On Audit trail, a single result Change event row lists all trigger causes and th
 Signals die in Client Data detail; Board still shows pre-write-back posture and consultants miss meeting-grade changes.
 
 **implementation:**
-On Board Client row Phase signal, the chip shows motion class and service-eligible posture refreshed after write-back re-score.
-On Board, open the Phase signal detail drawer to see pack + reference version pin ids for the signal without claiming an IRCC determination.
+On Board Client row Phase signal, view the chip with motion class and service-eligible posture refreshed after write-back re-score.
+On Board, open the Phase signal detail drawer to view pack + reference version pin ids for the signal without claiming an IRCC determination.
 
 **implementationAdds:** ["motion-class-on-board", "pack-version-pin", "reference-version-pin", "not-IRCC-determination"]
 **implementationPlant:** not_done
@@ -400,7 +400,7 @@ On Board, open the Phase signal detail drawer to see pack + reference version pi
 A contact becomes draw-cleared on Publish version or write-back while email is invalid / silenced; naive hooks enroll anyway.
 
 **implementation:**
-On Firm operations bind firm detail → Send gates panel, enrollment readiness rows require Book readiness reachable verdict even when Phase signal is reactivation-worthy.
+On Firm operations bind firm detail → Send gates panel, view enrollment readiness rows requiring Book readiness reachable verdict even when Phase signal is reactivation-worthy.
 On Book readiness Audit run → Verdict list, click Re-batch after import refresh without clearing eligibility signals — detection and reachability stay separate axes.
 
 **implementationAdds:** ["eligibility≠reachable", "audit-reachable-gate", "signal-retained"]
@@ -444,7 +444,7 @@ Packs pin a version id forever; without past-freshness, a week-old cutoff still 
 
 **implementation:**
 On Reference tables, each family row shows last-verified-at, freshness-SLA, and Past-freshness flag columns.
-On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set draw-cutoff and category-occupation assertions to require Published & not past freshness; click Publish version. Otherwise Analysis shows Reference data unavailable and those reactivation paths suppress.
+On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set draw-cutoff and category-occupation assertions to require Published & not past freshness; click Publish version. On Analysis, view Reference data unavailable and suppressed reactivation paths when freshness fails.
 
 **implementationAdds:** ["last-verified-at", "freshness-SLA", "past-freshness", "reference-data-unavailable"]
 **implementationPlant:** not_done
@@ -465,8 +465,8 @@ On Configuration libraries → Evaluation packs catalog, open Evaluation pack ed
 SLAs live in Pass2 prose; nothing pages house when a high-volatility table skips verify through a multi-draw week.
 
 **implementation:**
-On Reference data, open Recheck cadence; the cadence table shows next-due / last-verified per table family by Volatility class.
-On Oversight, SLA breach alert rows appear when Detect/verify misses the class deadline; draw-day on-call can jump to Import criteria from the alert row.
+On Reference data, open Recheck cadence; view the cadence table next-due / last-verified rows per table family by Volatility class.
+On Oversight, view SLA breach alert rows when Detect/verify misses the class deadline; click the alert row to jump to Import criteria for draw-day on-call.
 
 **implementationAdds:** ["recheck-cadence", "next-due", "SLA-breach-alert", "same-business-day"]
 **implementationPlant:** not_done
@@ -487,7 +487,7 @@ On Oversight, SLA breach alert rows appear when Detect/verify misses the class d
 After a clean publish, IRCC HTML or operator error can drift while packs keep scoring; no house alarm fires.
 
 **implementation:**
-On Reference data, the Reconciliation job row runs on a fixed cadence and shows drift-alert status vs live Canada.ca snapshot.
+On Reference data, view the Reconciliation job row drift-alert status vs live Canada.ca snapshot on the fixed cadence schedule.
 On Reference data, open the flip-sample drawer to spot-check evaluations that flipped on the last Publish version.
 On Audit trail, filter Change event rows by ingestion, publish, re-evaluation, and reconciliation to trace the pipeline end-to-end.
 

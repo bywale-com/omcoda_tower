@@ -34,7 +34,7 @@
 
 **Q:** How do I run Approach supply from feed through ad to capture inside the click budget?
 
-**Clarity:** Starting from Acquisition & ads, click **Approach campaigns**. On Approach campaigns list, click a campaign row (or **New campaign**). On Approach campaign editor, edit feed creative, ad copy, and Capture strip fields so name, website, and channel seed inputs land in one tap; click **Save** / **Publish campaign**. Captured seed writes hand to Activation & forward-deploy In-flight activations — no database or payment inside the click budget.
+**Clarity:** Starting from Acquisition & ads, click **Approach campaigns**. On Approach campaigns list, click a campaign row (or **New campaign**). On Approach campaign editor, type feed creative, ad copy, and Capture strip fields so name, website, and channel seed inputs land in one tap; click **Save** / **Publish campaign** (primary button). Captured seed writes state read by Activation & forward-deploy In-flight activations — no database or payment inside the click budget. Meta ad supply is external intent (Tower configures what to send; no Meta UI affordances in Tower).
 
 **Criteria — when:** Operating ALG acquisition.  
 **Conditions:** Capture limited to name + website + phone/email; continue-scroll allowed.
@@ -55,7 +55,7 @@
 
 **Q:** How do I read Approach instrumentation for understood-but-didn't-tap versus didn't-understand?
 
-**Clarity:** On Acquisition & ads, click **Approach instrumentation**. Use the campaign filter dropdown to select an Approach campaign; view don't-understand, understand-don't-tap, and continue-scroll count cards. Cards are view/metrics (read stream aggregates) — no write unless drilling to a linked Oversight / Support action.
+**Clarity:** On Acquisition & ads, click **Approach instrumentation**. Select an Approach campaign from the campaign filter dropdown; view don't-understand, understand-don't-tap, and continue-scroll count cards. Cards are view/metrics (read stream aggregates) — no write unless clicking a linked Oversight / Support action.
 
 **Criteria — when:** After impressions / taps accumulate.  
 **Conditions:** Instrumentation distinguishes the two disbelief modes.

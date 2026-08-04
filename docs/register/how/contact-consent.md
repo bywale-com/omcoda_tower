@@ -21,7 +21,7 @@
 
 **Q:** How do I receive a firm-branded consent request and agree or ignore before any deeper collection?
 
-**Clarity:** On a firm-branded Opt-in message I open Consent request, then click Agree or Ignore before any Nudge / deeper form.
+**Clarity:** Starting from the firm-branded Opt-in message, click the consent link / **Review request** control to open Consent request, then click **Agree** or **Ignore** before any Nudge / deeper form.
 
 **DNA for children:**
 1. get a firm-branded opt-in touchpoint on a channel I can reach
@@ -44,7 +44,7 @@
 | Consent link / Review request | Block | **new** / **partial** | Click opens Consent request |
 | Consent request | Modal / page | **new** / **partial** | Agree / Ignore surface |
 
-**Requirements:** Operator Configuration libraries author opt-in template; Firm operations bind runs it; Book readiness ensures reachable. Not a consultant-authored leaf.
+**Requirements:** Operator Configuration libraries author opt-in template; Firm operations bind arms bound packs; Book readiness ensures reachable. Not a consultant-authored leaf.
 
 ---
 

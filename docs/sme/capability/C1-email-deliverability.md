@@ -30,8 +30,8 @@
 Firm-branded Opt-in / Nudge can ship while the sending domain’s SPF omits the ESP (or return-path subdomain). Providers treat the hop as unauthenticated; reputation never forms cleanly.
 
 **implementation:**  
-On Sending infrastructure, open a sending-domain row; the Authentication panel shows an SPF status row with ESP-include and return-path chips before the domain may be bound for volume.  
-On Firm operations bind firm detail → Send gates panel, the Domain authentication readiness row shows an SPF-not-ready deny chip blocking Armed / Active volume until SPF passes.
+On Sending infrastructure, open a sending-domain row; view the Authentication panel SPF status row with ESP-include and return-path chips. External intent: publish SPF at the firm's DNS zone (ESP + return-path includes) — no in-app DNS editor.  
+On Firm operations bind firm detail → Send gates panel, view the Domain authentication readiness deny chip (SPF-not-ready) blocking Armed / Active volume until Sending infrastructure reads SPF pass.
 
 **implementationAdds:** `["spf-authorized", "esp-include", "return-path-spf", "domain-not-ready"]`
 
@@ -52,8 +52,8 @@ On Firm operations bind firm detail → Send gates panel, the Domain authenticat
 All firms can share one platform DKIM domain while From shows the firm. Alignment fails DMARC; contacts and Postmasters see Om Coda’s crypto identity, not the firm’s.
 
 **implementation:**  
-On Sending infrastructure, open the firm's sending identity row and click Generate DKIM keys; the Authentication panel shows signing status chips for aligned d= and From domain.  
-On Firm operations bind firm detail → Send gates panel, the DKIM-aligned identity readiness row must pass before Opt-in message or Nudge message CEM can leave.
+On Sending infrastructure, open the firm's sending identity row and click Generate DKIM keys; view signing status chips for aligned d= and From domain in the Authentication panel. External intent: publish DKIM TXT at the firm's DNS zone.  
+On Firm operations bind firm detail → Send gates panel, view the DKIM-aligned identity readiness row — must pass before Opt-in message or Nudge message CEM can leave.
 
 **implementationAdds:** `["dkim-per-firm", "dkim-aligned", "from-d-align"]`
 
@@ -74,8 +74,8 @@ On Firm operations bind firm detail → Send gates panel, the DKIM-aligned ident
 Firm From domains can be bound without a DMARC record. At volume, Gmail/Yahoo treat the sender as non-compliant bulk; placement collapses even when consent is clean.
 
 **implementation:**  
-On Sending infrastructure, open the From-domain row; the Authentication panel shows DMARC status chips for record present, policy ≥ p=none, rua configured, and alignment pass.  
-On Activation state Progress, the ready-to-send checklist row stays closed until DMARC readiness is green for the bound sending identity.
+On Sending infrastructure, open the From-domain row; view the Authentication panel DMARC status chips (record present, policy ≥ p=none, rua configured, alignment pass). External intent: publish DMARC (≥ p=none, rua) at the firm's DNS zone.  
+On Activation state Progress, view the ready-to-send checklist row — stays closed until DMARC readiness is green for the bound sending identity.
 
 **implementationAdds:** `["dmarc-present", "dmarc-p-none-min", "dmarc-alignment", "rua"]`
 
@@ -96,7 +96,7 @@ On Activation state Progress, the ready-to-send checklist row stays closed until
 Multiple firms can share one From apex. One bad book or complaint spike poisons placement for every tenancy on that identity.
 
 **implementation:**  
-On Sending infrastructure, click Allocate subdomain in the sending-domain pool; the new per-firm branded subdomain row shows separate auth and Warmup status chips.  
+On Sending infrastructure, click Allocate subdomain in the sending-domain pool; view the new per-firm branded subdomain row auth and Warmup status chips.  
 On Firm operations bind firm detail, choose Sending identity from the authenticated subdomain dropdown and click Save identity; optional custom-domain attach remains a later upgrade path on the same module.
 
 **implementationAdds:** `["sending-domain-pool", "per-firm-subdomain", "tenant-isolation", "custom-domain-attach"]`
@@ -117,8 +117,8 @@ On Firm operations bind firm detail, choose Sending identity from the authentica
 Shared send path has no quarantine unit. A single firm’s hard-bounce storm or complaint spike degrades Oversight fleet metrics and every peer firm’s inbox placement.
 
 **implementation:**  
-On Sending infrastructure, the Reputation units table shows one row per per-firm subdomain + IP tier with bounce, complaint, and Quarantine status chips when thresholds trip.  
-On Oversight Fleet health and Firm health, quarantined sending identities appear as status chips on the affected Firm row / Sequence health row. On Firm operations bind firm detail → Send gates panel, that firm shows a quarantined-identity deny chip while peers on other units continue.
+On Sending infrastructure, view the Reputation units table rows (per-firm subdomain + IP tier) with bounce, complaint, and Quarantine status chips when thresholds trip.  
+On Oversight Fleet health and Firm health, view quarantined sending identities as status chips on the affected Firm row / Sequence health row. On Firm operations bind firm detail → Send gates panel, view the quarantined-identity deny chip while peers on other units continue.
 
 **implementationAdds:** `["reputation-unit", "quarantine", "blast-radius-isolation", "threshold-trip"]`
 
@@ -141,8 +141,8 @@ On Oversight Fleet health and Firm health, quarantined sending identities appear
 Activation state can read ready while the sending identity is cold. First Armed day dumps the book; providers throttle or junk the domain permanently.
 
 **implementation:**  
-On Sending infrastructure → Warmup, the Warmup plan panel shows a ramp row per new domain/IP with daily unique-recipient cap, absolute-volume cap, and current stage status.  
-On Activation state Progress, the ready-to-send checklist requires Warmup stage complete or in-band capped status — cold full-book blast stays blocked.
+On Sending infrastructure → Warmup, view the Warmup plan panel ramp row per new domain/IP (daily unique-recipient cap, absolute-volume cap, current stage status).  
+On Activation state Progress, view the ready-to-send checklist — Warmup stage complete or in-band capped required; cold full-book blast stays blocked on Send gates.
 
 **implementationAdds:** `["warmup-ramp", "daily-unique-cap", "cold-domain-block"]`
 
@@ -163,8 +163,8 @@ On Activation state Progress, the ready-to-send checklist requires Warmup stage 
 Activation state Progress can show ready from escrow/book/consent alone. Operators arm sequences on unauthenticated or cold identities; failures look like “product bugs,” not placement gates.
 
 **implementation:**  
-On Activation state Progress, the readiness checklist shows deliverability rows beside commercial/consent rows: auth green, Warmup stage ok for planned volume, and reputation unit not quarantined.  
-On Firm operations bind firm detail → Send gates panel, Armed / Active readiness rows require those green status chips — consent-ready alone does not open volume.
+On Activation state Progress, view the readiness checklist deliverability rows beside commercial/consent rows (auth green, Warmup stage ok for planned volume, reputation unit not quarantined).  
+On Firm operations bind firm detail → Send gates panel, view Armed / Active readiness rows requiring those green status chips — consent-ready alone does not open volume.
 
 **implementationAdds:** `["ready-to-send-conjunction", "deliverability-readiness", "auth-green"]`
 
@@ -184,8 +184,8 @@ On Firm operations bind firm detail → Send gates panel, Armed / Active readine
 Warmup advice lives only in ESP docs. Automations enroll the full eligible book; daily caps are overrun before an operator notices Firm health drop.
 
 **implementation:**  
-On Firm operations bind firm detail → Send gates panel, the Warmup / throttle remaining row shows capacity chips for the bound sending identity; enrollment beyond the cap queues or blocks.
-On Sending infrastructure → Warmup, the consumed-vs-allowed volume row shows today's enforced budget — sequencer and ESP share one counter.
+On Firm operations bind firm detail → Send gates panel, view the Warmup / throttle remaining row capacity chips for the bound sending identity; enrollment beyond the cap queues or blocks.  
+On Sending infrastructure → Warmup, view the consumed-vs-allowed volume row for today's enforced budget — sequencer and ESP share one counter.
 
 **implementationAdds:** `["warmup-enforced-in-path", "throttle-remaining", "enrollment-cap"]`
 
@@ -205,8 +205,8 @@ On Sending infrastructure → Warmup, the consumed-vs-allowed volume row shows t
 A firm changes subdomain or sits idle for months, then reactivation fires at old volume. Providers see a cold or new identity bursting; placement collapses.
 
 **implementation:**  
-On Sending infrastructure → Warmup, re-warmup trigger rows name domain change, IP tier change, ESP migration, or idle-beyond-policy as the reason and show the active ramp status.  
-On Activation state Progress and Firm operations bind firm detail → Send gates panel, tightened-cap rows stay active until re-warmup completes — prior volume rights do not auto-restore.
+On Sending infrastructure → Warmup, view re-warmup trigger rows naming domain change, IP tier change, ESP migration, or idle-beyond-policy with active ramp status.  
+On Activation state Progress and Firm operations bind firm detail → Send gates panel, view tightened-cap rows active until re-warmup completes — prior volume rights do not auto-restore.
 
 **implementationAdds:** `["re-warmup", "idle-reset", "identity-change-trigger"]`
 
@@ -229,8 +229,8 @@ On Activation state Progress and Firm operations bind firm detail → Send gates
 Bounces may be logged as metrics only. Sequences keep hitting dead addresses; hard-bounce rate climbs; mailbox providers degrade the sending identity.
 
 **implementation:**  
-On Suppression list, provider-webhook hard bounces create address rows with scope chips (global and/or per-tenancy per policy) and reason hard-bounce.  
-On Firm operations bind firm detail → Send gates panel, suppressed hard-bounce addresses show deny chips and never enqueue; soft-bounce retry rows show bounded attempts on Firm health Sequence detail.
+On Suppression list, view address rows with scope chips (global and/or per-tenancy per policy) and reason hard-bounce from provider-webhook ingest.  
+On Firm operations bind firm detail → Send gates panel, view suppressed hard-bounce deny chips; on Firm health Sequence detail, view soft-bounce retry rows with bounded attempts.
 
 **implementationAdds:** `["bounce-hard", "bounce-soft", "hard-suppress", "soft-retry-bound"]`
 
@@ -251,8 +251,8 @@ On Firm operations bind firm detail → Send gates panel, suppressed hard-bounce
 Spam-button complaints can accumulate under “they Agreed.” No unit-level complaint ceiling means Gmail/Yahoo punish the domain while Send gates still show consent-ok.
 
 **implementation:**  
-On Oversight Fleet health and Firm health, complaint-rate rows show each reputation unit against ceiling (~0.3%) and target (≤0.1%) chips.  
-On Sending infrastructure, the reputation-unit row auto-throttles or shows Quarantine status when thresholds approach/exceed. On Firm operations bind firm detail → Send gates panel, operators see the complaint-rate block as a deny chip.
+On Oversight Fleet health and Firm health, view complaint-rate rows with each reputation unit against ceiling (~0.3%) and target (≤0.1%) chips.  
+On Sending infrastructure, view Quarantine status chips on the reputation-unit row when thresholds approach/exceed. On Firm operations bind firm detail → Send gates panel, view the complaint-rate block deny chip.
 
 **implementationAdds:** `["complaint-rate", "complaint-ceiling-0-3", "complaint-target-0-1", "auto-throttle"]`
 
@@ -273,8 +273,8 @@ On Sending infrastructure, the reputation-unit row auto-throttles or shows Quara
 Oversight Fleet health lacks provider-grade spam/reputation signals. Operators learn of filtering from consultants complaining — too late for the domain.
 
 **implementation:**  
-On Sending infrastructure, each sending-domain row shows Postmaster / FBL registration status chips and last-sync timestamp.  
-On Oversight Fleet health and Firm health, provider spam-rate and reputation signal rows show those feed names alongside ESP webhook status.
+On Sending infrastructure, view each sending-domain row Postmaster / FBL registration status chips and last-sync timestamp. External intent: register domains in Google Postmaster Tools and equivalent Yahoo/Microsoft sender programs — no in-app Postmaster UI.  
+On Oversight Fleet health and Firm health, view provider spam-rate and reputation signal rows with feed names alongside ESP webhook status chips.
 
 **implementationAdds:** `["postmaster-registered", "fbl-ingest", "provider-spam-rate", "snds-adjacent"]`
 
@@ -296,8 +296,8 @@ On Oversight Fleet health and Firm health, provider spam-rate and reputation sig
 Messages may show a body unsubscribe link (CASL) without List-Unsubscribe / List-Unsubscribe-Post headers. Bulk Gmail/Yahoo still punish the sender; Gmail’s spam button stays the easy path.
 
 **implementation:**  
-On Opt-in message and Nudge message, the header configuration row emits List-Unsubscribe and List-Unsubscribe-Post (one-click) on marketing CEMs.  
-On Silence / Opt out and Suppression list, a one-click POST creates the same withdrawal row as in-body unsubscribe. On Firm operations bind firm detail → Send gates panel, further CEMs show suppressed deny chips.
+On Configuration libraries → Engagement templates catalog, open Agent / sequence editor; on Opt-in message and Nudge message step header fields, configure List-Unsubscribe and List-Unsubscribe-Post (one-click) for marketing CEMs; click Publish version.  
+On Silence / Opt out and Suppression list, view one-click POST withdrawal rows matching in-body unsubscribe. On Firm operations bind firm detail → Send gates panel, view suppressed deny chips blocking further CEMs.
 
 **implementationAdds:** `["list-unsubscribe", "list-unsubscribe-post", "one-click", "rfc-8058"]`
 
@@ -318,8 +318,8 @@ On Silence / Opt out and Suppression list, a one-click POST creates the same wit
 Provider webhooks may feed a future metrics store only. Next-minute sends ignore hard bounces and complaints; Warmup advances on schedule instead of acceptance reality.
 
 **implementation:**  
-On Sending infrastructure, the Delivery event ingest panel shows rows for accepted, deferred, hard/soft bounce, complaint, delivered, and rejected, with linked updates to Warmup, Suppression list, and reputation-unit health.  
-On Audit trail, open deliverability Change event rows to see why Firm operations bind firm detail → Send gates panel blocked or capped a firm.
+On Sending infrastructure, view the Delivery event ingest panel rows (accepted, deferred, hard/soft bounce, complaint, delivered, rejected) with linked Warmup, Suppression list, and reputation-unit health updates from webhook ingest.  
+On Audit trail, open deliverability Change event rows to view why Firm operations bind firm detail → Send gates panel blocked or capped a firm.
 
 **implementationAdds:** `["delivery-event-schema", "webhook-normalize", "sync-gate-update"]`
 
@@ -341,8 +341,8 @@ On Audit trail, open deliverability Change event rows to see why Firm operations
 Firm A hard-bounces an address; Firm B imports the same person and sequences them. Shared IP/domain neighborhood pays twice; providers see persistent bad targeting.
 
 **implementation:**  
-On Suppression list (house-global), hard-bounce and spam-complaint rows carry a Global scope chip and apply to every tenancy.  
-On Firm operations bind firm detail → Send gates panel, global suppressions appear as deny chips that block enqueue even if the firm’s book marks the contact reachable.
+On Suppression list (house-global), view hard-bounce and spam-complaint rows with Global scope chip applying to every tenancy.  
+On Firm operations bind firm detail → Send gates panel, view global suppression deny chips blocking enqueue even if the firm’s book marks the contact reachable.
 
 **implementationAdds:** `["suppression-global", "toxic-address", "cross-tenant-block"]`
 
@@ -362,8 +362,8 @@ On Firm operations bind firm detail → Send gates panel, global suppressions ap
 Silence may live only on the consent ledger while Suppression list is empty (or the reverse). Sends slip through one gate; operators cannot see a single deny reason.
 
 **implementation:**  
-On Firm operations bind firm detail → Send gates panel, ordered deny chips render in row order: CASL silence/consent basis, then Suppression list (per-tenancy + global).
-On Suppression list (per-tenancy), opt-out / silence, complaint, and hard-bounce rows appear as technical denies alongside Book readiness permission-to-send.
+On Firm operations bind firm detail → Send gates panel, view ordered deny chips in row order: CASL silence/consent basis, then Suppression list (per-tenancy + global).  
+On Suppression list (per-tenancy), view opt-out / silence, complaint, and hard-bounce rows as technical denies alongside Book readiness permission-to-send.
 
 **implementationAdds:** `["suppression-per-tenancy", "silence-mirror", "ordered-deny"]`
 
@@ -383,7 +383,7 @@ On Suppression list (per-tenancy), opt-out / silence, complaint, and hard-bounce
 Suppression exists as a report. Manual resend or a workflow canvas edge skips it; ESP still accepts and reputation still burns.
 
 **implementation:**  
-On Firm operations bind firm detail → Send gates panel, every automated and manual firm-branded email/SMS path shows a Suppression list clearance row before provider accept — no override to Force send a suppressed address.
+On Firm operations bind firm detail → Send gates panel, view Suppression list clearance row on every automated and manual firm-branded email/SMS path before provider accept — no Force send override for suppressed addresses.  
 On Configuration libraries → Automation workflows catalog, open Workflow canvas; trigger → condition/rule → enroll-into-template action nodes show blocked-suppressed on the enrollment action when it would target a denied address; click Publish version. On Configuration libraries → Engagement templates catalog, open Agent / sequence editor; the step rail marks blocked-suppressed on send steps; click Publish version.
 
 **implementationAdds:** `["pre-send-suppression", "no-force-send", "provider-before-block"]`
@@ -404,8 +404,8 @@ On Configuration libraries → Automation workflows catalog, open Workflow canva
 Reactivation Armed dumps years-old non-openers. Complaint and spam-folder rates climb; Warmup gains are erased by stale-list volume.
 
 **implementation:**  
-On Book readiness Verdict list and Firm health Sequence health, contact rows show sunsetting / chronic non-engagement flags that block or require re-permission before reactivation volume.  
-On Firm operations bind firm detail → Send gates panel, reactivation bursts show sunsetting-suppressed deny chips and cannot enroll those addresses without a new engagement path.
+On Book readiness Verdict list and Firm health Sequence health, view contact rows with sunsetting / chronic non-engagement flags blocking or requiring re-permission before reactivation volume.  
+On Firm operations bind firm detail → Send gates panel, view sunsetting-suppressed deny chips on reactivation bursts — those addresses cannot enroll without a new engagement path.
 
 **implementationAdds:** `["sunsetting", "chronic-non-engage", "repermission-before-burst"]`
 
@@ -428,8 +428,8 @@ On Firm operations bind firm detail → Send gates panel, reactivation bursts sh
 CEMs can show a platform shared From while body claims the firm. Alignment and brand diverge; mailbox providers and contacts both distrust the message.
 
 **implementation:**  
-On Sending infrastructure, the From identity dropdown on the sending-identity row offers only authenticated branded subdomains with display name = firm.  
-On Opt-in message and Nudge message, the From header row shows that identity; platform shared From is not offered for firm-branded CEMs.
+On Sending infrastructure, select From identity from the dropdown on the sending-identity row (authenticated branded subdomains only; display name = firm).  
+On Configuration libraries → Engagement templates catalog, open Agent / sequence editor; on Opt-in message and Nudge message steps, view the From header row bound to that identity — platform shared From is not offered for firm-branded CEMs.
 
 **implementationAdds:** `["from-firm-subdomain", "display-name-firm", "no-shared-from-cem"]`
 
@@ -450,8 +450,8 @@ On Opt-in message and Nudge message, the From header row shows that identity; pl
 Bounce traffic either hits firm MX (unmanaged) or breaks SPF alignment because MAIL FROM and From are conflated without a designed split.
 
 **implementation:**  
-On Sending infrastructure, the Envelope panel shows Return-Path / custom MAIL FROM as a platform bounce-subdomain row with SPF-authenticated status separate from firm header From.  
-On Audit trail deliverability event rows, bounce correlation cites that Return-Path so Suppression list updates reliably.
+On Sending infrastructure, view the Envelope panel Return-Path / custom MAIL FROM row (platform bounce-subdomain with SPF-authenticated status separate from firm header From).  
+On Audit trail deliverability event rows, view bounce correlation citing that Return-Path so Suppression list updates stay reliable.
 
 **implementationAdds:** `["return-path-platform", "custom-mail-from", "from-vs-envelope-split"]`
 
@@ -472,8 +472,8 @@ On Audit trail deliverability event rows, bounce correlation cites that Return-P
 Replies go to an unmonitored From or a consultant’s personal inbox. Runtime cannot classify STOP/booked/question; silence and meeting signals leak.
 
 **implementation:**  
-On Sending infrastructure, the Reply-To strategy selector offers platform-captured (default for hands-free) or firm-monitored per Firm operations bind policy.  
-On Firm operations bind firm detail, set Reply-To policy with the selector (platform-captured | firm-monitored) and confirm replies land on the monitored path that feeds engagement runtime / Conversations — From stays firm-branded.
+On Sending infrastructure, select Reply-To strategy (platform-captured | firm-monitored) from the selector on the sending-identity row.  
+On Firm operations bind firm detail, set Reply-To policy with the same selector and click Save; view that replies feed engagement runtime / Conversations on the monitored path — From stays firm-branded.
 
 **implementationAdds:** `["reply-to-platform", "reply-to-firm-monitored", "reply-capture-path"]`
 
@@ -496,8 +496,8 @@ On Firm operations bind firm detail, set Reply-To policy with the selector (plat
 Every firm demands dedicated IP on day one (under-warmed) or all share one pool forever (noisy neighbor). Neither path is governed by volume/quality criteria.
 
 **implementation:**  
-On Sending infrastructure, the IP tier row shows shared pool vs dedicated with promotion-criteria chips for sustained volume and clean complaint/bounce.  
-On Warmup, dedicated IP assignment starts its own ramp row; PTR/rDNS hygiene status must be green before dedicated volume is allowed.
+On Sending infrastructure, view the IP tier row (shared pool vs dedicated) with promotion-criteria chips for sustained volume and clean complaint/bounce.  
+On Warmup, view dedicated IP ramp row; PTR/rDNS hygiene status chip must be green before dedicated volume is allowed. External intent: PTR/rDNS at the IP provider — no in-app DNS editor.
 
 **implementationAdds:** `["ip-shared-pool", "ip-dedicated", "promotion-criteria", "ptr-rdns"]`
 
@@ -518,8 +518,8 @@ On Warmup, dedicated IP assignment starts its own ramp row; PTR/rDNS hygiene sta
 Provider 4xx deferrals trigger naive immediate retries. Retry storms worsen blocks; Firm health shows failures without Send gates slowing the queue.
 
 **implementation:**  
-On Sending infrastructure, the Provider throttles panel shows per-provider rows driven by deferral/reject signals.  
-On Firm operations bind firm detail → Send gates panel and Firm health Sequence detail, adaptive-backoff status chips pause enrollment/send when ISPs defer — calendar due does not override throttle.
+On Sending infrastructure, view the Provider throttles panel per-provider rows driven by deferral/reject signals.  
+On Firm operations bind firm detail → Send gates panel and Firm health Sequence detail, view adaptive-backoff status chips pausing enrollment/send when ISPs defer — calendar due does not override throttle.
 
 **implementationAdds:** `["adaptive-throttle", "per-provider-backoff", "deferral-signal"]`
 
@@ -540,8 +540,8 @@ On Firm operations bind firm detail → Send gates panel and Firm health Sequenc
 SMS escalations ride email consent and email warmup mental models. Unregistered or over-throughput SMS fails carrier filters; STOP handling may not feed Suppression list.
 
 **implementation:**  
-On Sending infrastructure, the SMS identity row shows brand/campaign registration status and throughput tier chips for the firm’s messaging identity.  
-On Firm operations bind firm detail → Send gates panel, SMS sends require registration-ready row + throughput remaining row + Suppression list / STOP clear row — email Warmup green does not authorize SMS volume.
+On Sending infrastructure, view the SMS identity row brand/campaign registration status and throughput tier chips. External intent: complete A2P/brand/campaign registration with carriers (TCR) — no in-app TCR filing UI.  
+On Firm operations bind firm detail → Send gates panel, view registration-ready row + throughput remaining row + Suppression list / STOP clear row deny chips — email Warmup green does not authorize SMS volume.
 
 **implementationAdds:** `["sms-a2p", "sms-throughput", "sms-reputation-separate", "stop-to-suppression"]`
 

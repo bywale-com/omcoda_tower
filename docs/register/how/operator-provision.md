@@ -33,7 +33,7 @@
 
 **Q:** How do I create the Firm tenancy and User?
 
-**Clarity:** Starting from Provision (per-tenancy admin), open New firm; on New firm, enter firm name, website, primary user email, and role seed fields, then click Provision. (Seed manifests remain a valid backend path — leaf process.)
+**Clarity:** Starting from Provision (per-tenancy admin), click **New firm**. On New firm modal, type firm name, website, primary user email, and role seed fields, then click **Provision** (primary button). That commit writes tenancy+user state read by Login OTP. (Seed manifests remain a valid backend path — leaf process.)
 
 **Criteria — when:** Assisted onboarding.  
 **Conditions:** Tenancy intentional; user email will OTP.

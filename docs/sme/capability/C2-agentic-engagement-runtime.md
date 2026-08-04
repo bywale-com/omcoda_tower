@@ -35,9 +35,9 @@
 Sequences advance on timers and open/click criteria while inbound replies are invisible or buried in provider logs. The agent cannot override or stop motion because nothing durable enters Tower.
 
 **implementation:**  
-On **Conversations**, the thread timeline shows inbound replies as first-class event rows linked to the prior outbound on that channel.  
-On **Engagement record**, the chronology row shows reply-received with channel, prior outbound id, and timestamp without opening provider consoles.  
-On **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active); those sequences consume the same inbound event stream before scheduling the next attempt.
+On **Conversations**, view the thread timeline inbound reply event rows linked to the prior outbound on that channel.  
+On **Engagement record**, view the chronology reply-received row with channel, prior outbound id, and timestamp — no provider-console navigation.  
+On **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active); sequences consume the inbound event stream before scheduling the next attempt.
 
 **implementationAdds:** `["inbound-event", "conversation-thread", "reply-linkage"]`
 
@@ -58,8 +58,8 @@ On **Firm operations bind firm detail**, set Armed / Active with the segmented c
 Without a closed intent set, operators and automations invent per-template labels. Escalation and Send-gate reactions cannot be shared across firms or phases.
 
 **implementation:**  
-On **Conversations**, each inbound message row shows an intent chip: booked / question / stop / hostile / unsure.  
-On **Engagement record**, the reply event row shows the classified intent chip beside the reply body.  
+On **Conversations**, view each inbound message row intent chip: booked / question / stop / hostile / unsure.  
+On **Engagement record**, view the classified intent chip beside the reply body on the reply event row.  
 On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; in the step rail, bind next-step and escalation policy to those classes with intent selectors — not free-text tags; click **Publish version**.
 
 **implementationAdds:** `["intent-booked", "intent-question", "intent-stop", "intent-hostile", "intent-unsure"]`
@@ -81,9 +81,9 @@ On **Configuration libraries → Engagement templates catalog**, open **Agent / 
 A stop reply can be misread as engagement or queued for a helpful follow-up. Automatic attempts keep firing after the contact withdrew.
 
 **implementation:**  
-On **Conversations**, a stop-class inbound shows intent `stop`; the thread action bar flips automatic attempts to Frozen on that thread.  
-On **Firm operations bind firm detail → Send gates panel**, you can now see the contact enrollment-blocked deny chip for automatic CEMs after stop.
-On **Engagement record**, the chronology row shows stop-class reply → suppression, not a soft badge.
+On **Conversations**, view intent `stop` on stop-class inbound; view the thread Frozen status chip (automatic attempts halted on that thread).  
+On **Firm operations bind firm detail → Send gates panel**, view the contact enrollment-blocked deny chip for automatic CEMs after stop.  
+On **Engagement record**, view the chronology row stop-class reply → suppression, not a soft badge.
 
 **implementationAdds:** `["intent-stop-terminal", "cem-suppress-on-stop", "stop-keyword"]`
 
@@ -104,9 +104,9 @@ On **Engagement record**, the chronology row shows stop-class reply → suppress
 Ambiguous replies are forced into a best-guess class. Wrong guesses drive wrong channel escalations or polite CEM replies after hostility.
 
 **implementation:**  
-On **Conversations**, low-confidence replies show an `unsure` intent chip and the pending attempt row stays paused instead of auto-advancing the owner.  
+On **Conversations**, view the `unsure` intent chip on low-confidence replies; view the pending attempt row paused instead of auto-advancing the owner.  
 On **Escalation queue**, click the thread row to open those replies for human classification before the runtime acts.  
-On **Firm operations bind firm detail → Send gates panel**, you can now see unsure-pending-resolution as a deny chip that blocks automatic next-attempt until resolved.
+On **Firm operations bind firm detail → Send gates panel**, view the unsure-pending-resolution deny chip blocking automatic next-attempt until resolved.
 
 **implementationAdds:** `["confidence-floor", "intent-unsure", "fail-closed-classify"]`
 
@@ -127,9 +127,9 @@ On **Firm operations bind firm detail → Send gates panel**, you can now see un
 Reply-driven “helpful” follow-ups skip the gates that calendar sends respect. Silenced or consent-lapsed contacts still get the next attempt because the runtime treated inbound as a new license to speak.
 
 **implementation:**  
-On **Firm operations bind firm detail → Send gates panel**, post-reply re-check readiness rows appear before any next attempt is scheduled.
-On **Conversations**, the next-step action stays disabled when the Firm operations bind firm detail → Send gates panel returns a deny chip.
-On **Engagement record**, the chronology row records gate-denied-after-reply as the reason no next attempt fired.
+On **Firm operations bind firm detail → Send gates panel**, view post-reply re-check readiness rows before any next attempt is scheduled.  
+On **Conversations**, the next-step action stays disabled when Send gates returns a deny chip.  
+On **Engagement record**, view the chronology row gate-denied-after-reply as the reason no next attempt fired.
 
 **implementationAdds:** `["send-gate-recheck", "post-reply-gate", "attempt-blocked-by-gate"]`
 
@@ -150,8 +150,8 @@ On **Engagement record**, the chronology row records gate-denied-after-reply as 
 OOO messages finish the sequence as if the contact engaged, or trigger question-handling CEMs. Real human replies later have no owner state to resume.
 
 **implementation:**  
-On **Conversations**, OOO / auto-reply shows a paused-OOTO status chip on the thread (not booked, not stop).  
-On **Engagement record**, the pause row and scheduled-resume row appear under the owning channel.  
+On **Conversations**, view the paused-OOTO status chip on OOO / auto-reply threads (not booked, not stop).  
+On **Engagement record**, view the pause row and scheduled-resume row under the owning channel.  
 On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; set OOO pause/resume fields in the channel ruleset without treating auto-reply as Finished (Replied); click **Publish version**.
 
 **implementationAdds:** `["ooo-pause", "auto-reply-nonterminal", "resume-window"]`
@@ -175,8 +175,8 @@ On **Configuration libraries → Engagement templates catalog**, open **Agent / 
 Email and SMS attempts can fire in parallel “to improve reach.” Criteria windows conflict; Engagement record cannot show who owns the flow.
 
 **implementation:**  
-On **Engagement record**, the active sequence instance row shows exactly one owning-channel chip.  
-On **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active); runners refuse dual-owner schedules.
+On **Engagement record**, view exactly one owning-channel chip on the active sequence instance row.  
+On **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active); view dual-owner schedule refusal on Send gates when runners would race channels.  
 On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; the step rail lets channel rulesets author forward handoff — not parallel owners; click **Publish version**.
 
 **implementationAdds:** `["single-channel-owner", "owner-nested-attempts"]`
@@ -198,9 +198,9 @@ On **Configuration libraries → Engagement templates catalog**, open **Agent / 
 Runtime “retries” bounce back to earlier channels outside attempt framing, creating loops that look alive but violate forward-only law.
 
 **implementation:**  
-On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; use the channel-order fields in the step rail to author forward-only owner order for a sequence; click **Publish version**.
-On **Engagement record**, handoffs show only forward along that order (or a new local attempt under the failed owner).  
-On **Firm health** / **Sequence detail**, backward re-entry without a new attempt frame is not offered as healthy motion.
+On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; use the channel-order fields in the step rail to author forward-only owner order for a sequence; click **Publish version**.  
+On **Engagement record**, view handoffs only forward along that order (or a new local attempt under the failed owner).  
+On **Firm health** / **Sequence detail**, view that backward re-entry without a new attempt frame is not offered as healthy motion.
 
 **implementationAdds:** `["forward-only-handoff", "owner-order"]`
 
@@ -221,9 +221,9 @@ On **Firm health** / **Sequence detail**, backward re-entry without a new attemp
 A global Attempt 2 spanning Text/Email/Form resets the wrong clocks and hides which owner failed. Operators cannot tell what will fire next.
 
 **implementation:**  
-On **Engagement record**, Attempt N appears as a nested row under the failed owning channel — not as a top-level peer to Text/Email/Form.  
-On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; author local retry fields under the channel ruleset in the step rail; click **Publish version**.
-On **Conversations**, the thread context pane shows the same nested attempt owner when a reply arrives mid-retry.
+On **Engagement record**, view Attempt N as a nested row under the failed owning channel — not as a top-level peer to Text/Email/Form.  
+On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; author local retry fields under the channel ruleset in the step rail; click **Publish version**.  
+On **Conversations**, view the same nested attempt owner in the thread context pane when a reply arrives mid-retry.
 
 **implementationAdds:** `["local-attempt", "attempt-under-owner", "no-global-attempt"]`
 
@@ -244,9 +244,9 @@ On **Conversations**, the thread context pane shows the same nested attempt owne
 Sequences advance on fixed delays regardless of opens, clicks, or form starts. Contacts who are mid-action still get the next channel CEM.
 
 **implementation:**  
-On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; author criteria window fields (delivered/opened/clicked/started/submitted + elapsed) inside each owner channel ruleset; click **Publish version**.
-On **Engagement record**, the handoff row shows which criteria event caused the owner change.  
-On **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active); Active runners only escalate when those criteria fire and Firm operations bind firm detail → Send gates panel still allows.
+On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; author criteria window fields (delivered/opened/clicked/started/submitted + elapsed) inside each owner channel ruleset; click **Publish version**.  
+On **Engagement record**, view the handoff row naming which criteria event caused the owner change.  
+On **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active); Active runners escalate only when those criteria fire and Send gates still allows.
 
 **implementationAdds:** `["criteria-window", "nonreply-escalation", "criteria-event"]`
 
@@ -267,9 +267,9 @@ On **Firm operations bind firm detail**, set Armed / Active with the segmented c
 A contact replies or opens the form while Attempt N is scheduled; the job still sends. Double messages look broken and ignore the human.
 
 **implementation:**  
-On **Conversations**, an inbound (or live form visit signal) triggers the thread action that nullifies in-flight scheduled attempts before intent policy runs.  
-On **Engagement record**, the scheduled attempt row changes to attempt-nullified-by-inbound in chronology.  
-On **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active); Active runners treat override as hard cancel, not soft preference.
+On **Conversations**, view inbound (or live form visit signal) nullifying in-flight scheduled attempts before intent policy runs.  
+On **Engagement record**, view the scheduled attempt row changing to attempt-nullified-by-inbound in chronology.  
+On **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active); view hard-cancel override on Send gates when inbound wins the race.
 
 **implementationAdds:** `["priority-override", "nullify-inflight", "inbound-wins-race"]`
 
@@ -290,9 +290,9 @@ On **Firm operations bind firm detail**, set Armed / Active with the segmented c
 Sequences never cleanly finish; reactivation arms while the nudge is still “active,” or booked contacts keep receiving attempts.
 
 **implementation:**  
-On **Engagement record**, finishing predicate rows close the sequence and optionally arm the next peer sequence.  
-On **Firm operations bind firm detail**, the Armed / Active segmented control (Armed | Active) reflects those finishing events — not cosmetic toggles alone.
-On **Conversations**, a `booked` intent chip shows the sequence closed for further automatic attempts.
+On **Engagement record**, view finishing predicate rows closing the sequence and optionally arming the next peer sequence.  
+On **Firm operations bind firm detail**, the Armed / Active segmented control (Armed | Active) reflects those finishing events — not cosmetic toggles alone.  
+On **Conversations**, view the `booked` intent chip with sequence closed for further automatic attempts.
 
 **implementationAdds:** `["finishing-predicate", "arm-next-sequence", "sequence-closed"]`
 
@@ -313,9 +313,9 @@ On **Conversations**, a `booked` intent chip shows the sequence closed for furth
 Operators edit day calendars expecting attempt retries, or edit attempt logic expecting day-N copy changes. Two brains fight; failures are undiagnosable.
 
 **implementation:**  
-On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; the step rail keeps campaign calendar (day content) separate from channel-ownership / attempt rulesets; click **Publish version**.
-On **Configuration libraries → Automation workflows catalog**, open **Workflow canvas**; trigger → condition/rule → enroll-into-template action nodes select the sequence instance, and the attempt engine runs inside it; click **Publish version**.
-On **Engagement record**, chronology distinguishes calendar phase from owner/attempt events.
+On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; the step rail keeps campaign calendar (day content) separate from channel-ownership / attempt rulesets; click **Publish version**.  
+On **Configuration libraries → Automation workflows catalog**, open **Workflow canvas**; trigger → condition/rule → enroll-into-template action nodes select the sequence instance; click **Publish version**.  
+On **Engagement record**, view chronology distinguishing calendar phase from owner/attempt events.
 
 **implementationAdds:** `["calendar-layer", "attempt-layer", "two-sequencing-layers"]`
 
@@ -336,9 +336,9 @@ On **Engagement record**, chronology distinguishes calendar phase from owner/att
 An LLM “helpfully” composes and sends replies outside channel ownership and Send gates. Audit cannot reconstruct which tool/law authorized the send.
 
 **implementation:**  
-On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; bind runtime actions in the action dropdown to the closed tool set (not free-form send); click **Publish version**.
+On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; bind runtime actions in the action dropdown to the closed tool set (not free-form send); click **Publish version**.  
 On **Audit trail**, open the Change event row showing tool name, intent, owner, and gate result for each act.  
-On **Firm operations bind firm detail → Send gates panel**, tool-initiated sends fail closed with the same deny chips as calendar-initiated sends.
+On **Firm operations bind firm detail → Send gates panel**, view tool-initiated sends fail closed with the same deny chips as calendar-initiated sends.
 
 **implementationAdds:** `["tool-bounded-runtime", "closed-tool-set", "no-freeform-send"]`
 
@@ -359,9 +359,9 @@ On **Firm operations bind firm detail → Send gates panel**, tool-initiated sen
 Criteria windows escalate to SMS because Text failed, even when Agree was email-only or the number is suppressed. Capability runtime becomes the consent bug.
 
 **implementation:**  
-On **Firm operations bind firm detail → Send gates panel**, channel escalation requires green channel-scoped consent row + suppression clearance row.
-On **Engagement record**, blocked-escalation-for-channel-scope appears as a chronology row.  
-On **Conversations**, the thread context pane shows why the runtime did not escalate to the next channel.
+On **Firm operations bind firm detail → Send gates panel**, view channel escalation requiring green channel-scoped consent row + suppression clearance row.  
+On **Engagement record**, view blocked-escalation-for-channel-scope as a chronology row.  
+On **Conversations**, view the thread context pane explaining why the runtime did not escalate to the next channel.
 
 **implementationAdds:** `["escalation-needs-channel-consent", "suppression-clearance"]`
 
@@ -384,9 +384,9 @@ On **Conversations**, the thread context pane shows why the runtime did not esca
 Edge replies keep the sequence Active with guessed next steps. No human sees the thread until a complaint or desk halt.
 
 **implementation:**  
-On **Escalation queue**, list rows show unsure / policy-edge / failed-tool-precondition reason chips and open the thread for review.  
-On **Conversations**, the thread status chip shows automatic attempts paused pending resolution.  
-On **Engagement record**, escalation-opened and pause appear as chronology rows.
+On **Escalation queue**, view list rows with unsure / policy-edge / failed-tool-precondition reason chips; click a row to open the thread for review.  
+On **Conversations**, view the thread status chip automatic attempts paused pending resolution.  
+On **Engagement record**, view escalation-opened and pause chronology rows.
 
 **implementationAdds:** `["escalation-on-unsure", "pause-pending-human", "policy-edge"]`
 
@@ -407,9 +407,9 @@ On **Engagement record**, escalation-opened and pause appear as chronology rows.
 Hostile replies get a soothing auto-response or the next nudge. Firm reputation and license inhabit take the hit; no priority human path exists.
 
 **implementation:**  
-On **Conversations**, hostile intent shows a hostile chip and the thread action bar halts automatic CEMs on the thread.  
-On **Escalation queue**, a high-priority row opens with the reply context attached.  
-On **Engagement record** / **Halt outreach** adjacency, hostile → halt appears as chronology the consultant can trust.
+On **Conversations**, view the hostile intent chip and thread halted-automatic-CEMs status; automatic CEMs halted on the thread.  
+On **Escalation queue**, view the high-priority row with reply context attached; click to open.  
+On **Engagement record** / **Halt outreach** adjacency, view hostile → halt chronology the consultant can trust.
 
 **implementationAdds:** `["intent-hostile-halt", "priority-escalation", "suppress-on-hostile"]`
 
@@ -430,7 +430,7 @@ On **Engagement record** / **Halt outreach** adjacency, hostile → halt appears
 Escalations sit in an unnamed agent inbox. Customer support never sees them; SLAs and Support context do not apply; duplicates spawn.
 
 **implementation:**  
-On **Customer support** **Ticket queue**, engagement-escalation Tickets appear as queue rows opened by the runtime.  
+On **Customer support** **Ticket queue**, view engagement-escalation Ticket rows opened from runtime escalation.  
 On **Ticket**, open the Support context panel with thread, intent, channel owner, and last send.  
 On **Escalation queue**, work the same rows as a view onto Ticket queue — not a second system of record.
 
@@ -453,8 +453,8 @@ On **Escalation queue**, work the same rows as a view onto Ticket queue — not 
 Tickets say “needs review” with no reply text, confidence, or pending attempt. Operators burn time reconstructing state while the sequence stays paused.
 
 **implementation:**  
-On **Ticket** / **Support context**, the context panel shows reason code, priority, verbatim reply, confidence, sequence id, owner, pending attempt, and consent/silence snapshot.  
-On **Escalation queue**, list rows show reason and priority chips for triage sort.  
+On **Ticket** / **Support context**, view the context panel with reason code, priority, verbatim reply, confidence, sequence id, owner, pending attempt, and consent/silence snapshot.  
+On **Escalation queue**, view list rows with reason and priority chips for triage sort.  
 On **Audit trail**, open the escalation-opened Change event row with the same bundle.
 
 **implementationAdds:** `["escalation-reason-code", "escalation-priority", "context-bundle"]`
@@ -476,9 +476,9 @@ On **Audit trail**, open the escalation-opened Change event row with the same bu
 Escalated threads stay paused indefinitely, or a timer silently resumes without disposition. Nobody can tell whether a human decided.
 
 **implementation:**  
-On **Ticket** / **Escalation queue**, disposition buttons let the human choose reclassify, resume owner, close sequence, or keep suppressed.  
-On **Conversations**, the thread action bar shows the disposition and resulting runtime state.  
-On **Engagement record**, human-disposition → resume/close appears as chronology.
+On **Ticket** / **Escalation queue**, click disposition buttons to choose reclassify, resume owner, close sequence, or keep suppressed.  
+On **Conversations**, view the disposition and resulting runtime state on the thread action bar.  
+On **Engagement record**, view human-disposition → resume/close chronology.
 
 **implementationAdds:** `["human-disposition", "resume-after-hitl", "explicit-unpause"]`
 
@@ -502,7 +502,7 @@ Operators hunt replies inside Engagement record or firm email. No Conversations 
 
 **implementation:**  
 On **Conversations**, the thread list and action bar support live inbound triage: intent, pause state, escalate, and disposition.  
-On **Engagement record**, the same events appear as read-only chronology rows — not as an inbox.  
+On **Engagement record**, view the same events as read-only chronology rows — not as an inbox.  
 Starting from **Oversight** / firm context, click the Conversations link for reply work without editing attempt authorship.
 
 **implementationAdds:** `["conversations-surface", "triage-vs-chronology", "engagement-record-readonly"]`
@@ -524,9 +524,9 @@ Starting from **Oversight** / firm context, click the Conversations link for rep
 Thread list shows raw messages only. Operators cannot see whether an attempt will still fire, whether gates block, or whether HITL already owns the case.
 
 **implementation:**  
-On **Conversations**, the open thread context pane shows intent, owning channel, Send-gate posture, pending or nullified attempt, and escalation status.  
-On **Firm operations bind firm detail → Send gates panel**, the same posture appears as readiness rows and deny chips that Conversations mirrors — not a second opinion.
-On **Escalation queue**, deep-link rows open the same Conversations thread with that context.
+On **Conversations**, view the open thread context pane with intent, owning channel, Send-gate posture, pending or nullified attempt, and escalation status.  
+On **Firm operations bind firm detail → Send gates panel**, view the same posture as readiness rows and deny chips that Conversations mirrors — not a second opinion.  
+On **Escalation queue**, click deep-link rows to open the same Conversations thread with that context.
 
 **implementationAdds:** `["triage-context-pane", "owner-on-thread", "gate-posture-visible"]`
 
@@ -547,9 +547,9 @@ On **Escalation queue**, deep-link rows open the same Conversations thread with 
 Engagement record shows outbound sends only. Consultants cannot see why an attempt vanished after a reply or why escalation paused the sequence.
 
 **implementation:**  
-On **Engagement record**, chronology rows cover inbound, intent, nullify, handoff, gate-deny, escalation, and finished/armed events.  
-On **Board** / **Client row**, the Phase signal chip stays consistent with that chronology.  
-On **Conversations**, thread actions do not rewrite authorship — they only add recordable runtime events.
+On **Engagement record**, view chronology rows covering inbound, intent, nullify, handoff, gate-deny, escalation, and finished/armed events.  
+On **Board** / **Client row**, view the Phase signal chip consistent with that chronology.  
+On **Conversations**, thread actions add recordable runtime events — they do not rewrite authorship.
 
 **implementationAdds:** `["chronicle-classify", "chronicle-nullify", "chronicle-escalation", "chronicle-handoff"]`
 
@@ -570,9 +570,9 @@ On **Conversations**, thread actions do not rewrite authorship — they only add
 Reply handlers and attempt jobs fire for firms that are not Active (or still unbound). Prepared demos and unbound tenancies accidentally CEM real contacts.
 
 **implementation:**  
-On **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active) so Armed means prepare/schedule only and Active means contact-facing sends allowed as the runtime posture the agent must obey.
+On **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active) — Armed means prepare/schedule only; Active means contact-facing sends allowed as the runtime posture the agent must obey.  
 On **Conversations**, outbound tool buttons stay disabled while not Active (escalation Ticket may still open).  
-On **Engagement record**, posture-blocked attempts appear as chronology rows when bind denies.
+On **Engagement record**, view posture-blocked attempts as chronology rows when bind denies.
 
 **implementationAdds:** `["runtime-requires-bind", "armed-prepare-only", "active-contact-facing"]`
 

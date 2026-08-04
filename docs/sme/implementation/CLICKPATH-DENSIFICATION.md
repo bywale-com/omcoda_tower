@@ -11,6 +11,11 @@ already writes. Fold it into the How-analysis authoring rule.
 > A leaf's Clarity must be stated **down to the affordance grain** — every control named, what state
 > each touches, and **what downstream reads it** — not "I use module X."
 
+**App-boundary depth (ownership):**
+- **Inside the app** → grain: **person** + click-path language (`click` / `select` / `type` / `confirm` / `hover`) + named control + in-app reader. Never “ops runs…”.
+- **View-only** of a system/backend process → say `view`. Do not invent initiate clicks.
+- **Past the app edge** (Meta, ESP, Stripe, IRCC…) → **intent only**: what the person would like to do there. Do not invent that system’s affordances. CTO / capability SME return the envelope later.
+
 ---
 
 ## 1. The rule (grain, not module-naming)

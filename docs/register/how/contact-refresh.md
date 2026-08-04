@@ -21,7 +21,7 @@
 
 **Q:** How do I answer one consolidated form for outstanding self-reportable facts, and reply when my situation changes?
 
-**Clarity:** On Nudge form I answer consolidated self-reportable fields and Submit; later I can open Update facts / reply on a firm-branded thread when life changes.
+**Clarity:** Starting from the firm-branded Nudge message, click the form link to open **Nudge form**, type/select each outstanding self-reportable field, and click **Submit**; later, reply in a firm-branded thread or click **Update facts** / Change update link to edit changed fields and click **Submit** again.
 
 **DNA for children:**
 1. open one Nudge form that lists every outstanding self-reportable need and submit answers
@@ -33,7 +33,7 @@
 
 **Q:** How do I open one Nudge form that lists every outstanding self-reportable need and submit answers?
 
-**Clarity:** Starting from the firm-branded Nudge message, click the form link to open **Nudge form**. On Nudge form, answer each outstanding self-reportable field (text, dropdown, checkbox, or date as shown) and click **Submit** (primary button). Submit writes fact updates read by re-evaluate / Analysis and later Live brief. Document-dependent asks never appear as fields here.
+**Clarity:** Starting from the firm-branded Nudge message, click the form link to open **Nudge form**. On Nudge form, type/select each outstanding self-reportable field (text, dropdown, checkbox, or date as shown) and click **Submit** (primary button). Submit writes fact updates read by re-evaluate / Analysis and later Live brief. Document-dependent asks never appear as fields here.
 
 **Criteria — when:** When a nudge motion fires (nothing reactivation-worthy).  
 **Conditions:** One form consolidates outstanding needs; self-reportable only.

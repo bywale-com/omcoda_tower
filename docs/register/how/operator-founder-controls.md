@@ -51,12 +51,12 @@
 
 **Q:** How do I throw a Kill-switch?
 
-**Clarity:** On Founder & agency controls, open Kill-switch, choose Fleet-wide or Selected tenancies, enter a reason, and click Halt motion; Audit trail records actor and scope.
+**Clarity:** On Founder & agency controls, click **Kill-switch**. On Kill-switch modal, click **Fleet-wide** or **Selected tenancies** on the scope segmented control, type a reason in the reason field, and click **Halt motion** (primary button). Halt writes kill-switch state read by engagement runners and Send gates; Audit trail records actor and scope.
 
 **Criteria — when:** Emergency or policy enforcement.  
 **Conditions:** Honor by engagement runners; Audit trail records actor.
 
 | UI | Kind | Status | Affordance |
 |---|---|---|---|
-| Kill-switch | Modal | **new** | Scope choose + reason + **Halt motion** |
+| Kill-switch | Modal | **new** | Scope **segmented control** + reason field + **Halt motion** **primary button** |
 | Audit trail | Module | **new** (records) | Downstream Change event |

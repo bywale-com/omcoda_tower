@@ -52,8 +52,7 @@ On Publish version, the publish button stays disabled until the version has a go
 “Keep current” without an SLA is aspirational; mid-week multi-draw weeks break weekly-only review and leave draw-shaped Analysis a day-plus stale.
 
 **implementation:**
-Starting from Reference data, click the round/cutoff ledger row, then use the SLA panel to run the same-business-day flow: detect row -> import button -> dual-check CRS floor and round type checklist -> Publish version button.
-On Reference data, set the Canada.ca poll cadence with a schedule dropdown to at least daily, and click the on-alert action button when a round appears.
+Starting from Reference data, click the round/cutoff ledger row, then open the SLA panel. View new-round alert chips from scheduled Canada.ca poll (set at least daily cadence with the schedule dropdown); when an alert chip appears, click Import, complete the dual-check CRS floor and round type checklist, then click Publish version.
 On Publish version, view prior round versions as immutable rows with locked chips.
 
 **implementationAdds:** ["same-business-day", "daily-poll", "on-alert"]
@@ -65,9 +64,9 @@ On Publish version, view prior round versions as immutable rows with locked chip
 Category NOC lists and experience windows change; a one-time seed CSV goes stale while packs keep scoring against folklore.
 
 **implementation:**
-Starting from Reference data, click Reference tables, then click the EE category membership row. In the table editor, fill category id fields, eligibility predicate fields, and NOC+TEER rows sourced from the live Canada.ca category-based selection page.
+Starting from Reference data, click Reference tables, then click the EE category membership row. In the table editor, fill category id fields, eligibility predicate fields, and NOC+TEER rows from imported category snapshot rows (house would like current Canada.ca category definitions on Import criteria).
 Click Import criteria and set the re-check trigger checkboxes to every IRCC page change and annual category re-establishment.
-On Publish version, the merge checkbox for historical category lists into current stays unavailable; category assertions pin to a dated ministerial definition row.
+On Publish version, view the merge checkbox for historical category lists into current unavailable; category assertions pin to a dated ministerial definition row.
 
 **implementationAdds:** ["category-id", "dated-ministerial-definition"]
 
@@ -79,7 +78,7 @@ Evaluators need 5-digit unit group + TEER; ESDC structural NOC revisions can lan
 
 **implementation:**
 Starting from Reference data, click Reference tables, then click the NOC+TEER row. In the table editor, fill NOC code, title, TEER, classification version, and IRCC-effective-from date form fields.
-On Reference tables, when ESDC publishes a new structural NOC before IRCC adopts it, add a second version row and mark both rows with active/superseded chips.
+On Reference tables, when Import criteria shows a structural NOC revision before IRCC adopts it, add a second version row and mark both rows with active/superseded chips.
 Starting from Configuration libraries, click the Evaluation packs row and open Evaluation pack editor; choose the IRCC-effective NOC version from the NOC version pin dropdown, then click Publish version so TEER gates do not flip on an ESDC-only publish.
 
 **implementationAdds:** ["classification-version", "IRCC-effective-from", "dual-version"]
@@ -91,7 +90,7 @@ Starting from Configuration libraries, click the Evaluation packs row and open E
 CRS factor changes (e.g. arranged-employment points removed) are law/public-reference moves; hardcoding point tables in evaluator code freezes wrong scoring after MI changes.
 
 **implementation:**
-Starting from Reference data, click Reference tables, then click the CRS+FSW grids row. In the table editor, fill CRS factor grid rows and FSW 67/100 selection-factor rows with effective-date fields from Canada.ca CRS criteria, current MI, and FSW pages; click Publish version.
+Starting from Reference data, click Reference tables, then click the CRS+FSW grids row. In the table editor, fill CRS factor grid rows and FSW 67/100 selection-factor rows with effective-date fields from imported CRS/FSW snapshot rows (canonical source set on Import criteria); click Publish version.
 Starting from Configuration libraries, click the Evaluation packs row and open Evaluation pack editor; set Point-table read policy with a dropdown to Evaluation-time version or Explicit pack pin; click Publish version. Point-table changes ship via Publish version, not a code deploy.
 
 **implementationAdds:** ["CRS factor grids", "FSW 67/100", "effective-from"]
@@ -103,7 +102,7 @@ Starting from Configuration libraries, click the Evaluation packs row and open E
 Accepted tests and band→CLB maps change (PTE Core; future tests); embedding maps in code mis-scores language gates and CRS language points.
 
 **implementation:**
-Starting from Reference data, click Reference tables, then click the language CLB/NCLC equivalency row. In the table editor, maintain versioned chart rows per approved test and ability plus program-minimum CLB/NCLC rows for FSW, CEC, FST, and French category, sourced only from the IRCC language-test page.
+Starting from Reference data, click Reference tables, then click the language CLB/NCLC equivalency row. In the table editor, maintain versioned chart rows per approved test and ability plus program-minimum CLB/NCLC rows for FSW, CEC, FST, and French category from imported language-test snapshot rows (canonical source set on Import criteria).
 Click Import criteria and turn on the New approved test announcement checkbox for re-verification.
 On Publish version, language gates and CRS language points move as published data rows.
 
@@ -156,7 +155,7 @@ Immediate book-wide rescore is the product bet; uncontrolled fan-out without del
 **implementation:**
 On Publish version for a cutoff ledger, click the Enqueue book re-evaluation button to adopt the new round ledger version.
 On Analysis, click Evaluation provenance to view eligibility delta rows such as was below or now at-or-above observed floors by round type, emitted as signals under Engine 2 precedence.
-No outreach button or automatic enrollment fires solely because a number moved; engagement law still owns motion.
+On Analysis, view no outreach enrollment solely because a reference number moved; engagement law still owns motion.
 
 **implementationAdds:** ["was-below", "at-or-above", "round-type floor", "no-auto-outreach"]
 
@@ -179,7 +178,7 @@ Even with Reference data, engineers embed “last known” CRS floors, category 
 
 **implementation:**
 Starting from Configuration libraries, click the Evaluation packs row, then click an Evaluation pack row to open Evaluation pack editor. In the Rule structure panel, author only structural operators with comparison dropdowns, any/all pathway checkboxes, and Engine 2 precedence rows; click Publish version. Public-criteria values resolve from Reference tables.
-On Reference tables, CRS round floors, category->NOC sets, FST trade sets, TEER program gates, CLB equivalency bands, CRS/FSW point grids, provincial stream identifiers/cutoffs, and asserted settlement-fund amounts appear as published data rows only; review rejects evaluator-literal chips for those families.
+On Reference tables, CRS round floors, category->NOC sets, FST trade sets, TEER program gates, CLB equivalency bands, CRS/FSW point grids, provincial stream identifiers/cutoffs, and asserted settlement-fund amounts appear as published data rows only; on Publish version, view the shared-review checklist rejecting evaluator-literal chips for those families.
 
 **implementationAdds:** ["no-evaluator-literals", "structural-operators-only"]
 
@@ -214,9 +213,9 @@ On Import criteria, failed imports remain Draft rows and show an alert chip for 
 Firms inhabit Analysis; they are not paid to QA Om Coda’s Canada.ca mirror. Silent wrong data becomes consultant license risk before house notices.
 
 **implementation:**
-On Reference data, open the reconciliation panel, choose a fixed cadence from the schedule dropdown, and click Run reconciliation to compare published cutoff/category rows against the live Canada.ca snapshot; drift appears as an alert chip.
+On Reference data, open the reconciliation panel, choose a fixed cadence from the schedule dropdown, and click Run reconciliation to compare published cutoff/category rows against the canonical snapshot Import criteria targets; view drift as an alert chip.
 On Reference data, click the last Publish version row and use the Spot-check sample button to inspect firm evaluations that flipped.
-On Analysis, view the reference-version id chip for seat-1/desk sync so wrong data is caught by upkeep ops, not by a client complaint after outreach.
+On Analysis, view the reference-version id chip for seat-1/desk sync so wrong data is caught on Reference data reconciliation alerts before a client complaint after outreach.
 
 **implementationAdds:** ["reconciliation", "drift-alert", "reference-version-id"]
 
@@ -277,7 +276,7 @@ If shipped later on Reference tables, click the pool distribution snapshot row a
 ECA org lists and equivalency→points maps change rarely but unlock FSW/CRS education scoring; inventing them in packs creates silent education mis-scores.
 
 **implementation:**
-Starting from Reference data, click Reference tables, then click the ECA constants row. In the table editor, include designated ECA organization rows plus assessment-result-to-profile-level/FSW-points map rows sourced from the ECA Canada.ca page.
+Starting from Reference data, click Reference tables, then click the ECA constants row. In the table editor, include designated ECA organization rows plus assessment-result-to-profile-level/FSW-points map rows from imported ECA snapshot rows (canonical source set on Import criteria).
 Click Import criteria and set cadence with checkboxes for IRCC page change and quarterly verify; education points stay data-driven without weekly scrape pressure.
 
 **implementationAdds:** ["ECA organizations", "assessment-result map", "quarterly-verify"]
@@ -294,8 +293,8 @@ Click Import criteria and set cadence with checkboxes for IRCC page change and q
 Older secondary guidance still cites six-month category experience; scoring against stale predicates is a silent false-positive/negative class.
 
 **implementation:**
-Starting from Reference data, click Reference tables, then click the EE category membership row. In the table editor, store category eligibility predicates as versioned structured fields for min months, lookback years, continuity flag, and location scope copied from the live category page, not from year-end reports or blogs.
-On Publish version, use the Invalidate prior predicates checkbox when the live page changes so category assertions track IRCC's current instructions.
+Starting from Reference data, click Reference tables, then click the EE category membership row. In the table editor, store category eligibility predicates as versioned structured fields for min months, lookback years, continuity flag, and location scope from imported category snapshot rows, not from secondary reports or blogs.
+On Publish version, check Invalidate prior predicates when Import criteria reports a canonical source change so category assertions track current instructions.
 
 **implementationAdds:** ["min-months", "lookback-years", "continuity", "location-scope"]
 
@@ -307,7 +306,7 @@ Without a named house duty and SLA, currency collapses into engineering tickets 
 
 **implementation:**
 On Reference data, open the upkeep panel and set house ops owner with an Owner dropdown, draw-day on-call with a schedule field, dual-check publish rights with checkboxes, and a written SLA matrix row for draws (same business day) plus categories/NOC/CRS/language (on-change + scheduled verify).
-Engineering only owns the store and Import criteria pipeline rows; currency remains an operations practice on Reference data and Publish version, not a release train.
+View the pipeline ownership row showing currency as an operations practice on Reference data and Publish version, not an engineering release train.
 
 **implementationAdds:** ["house-ops on-call", "dual-check publish rights", "SLA matrix"]
 

@@ -33,7 +33,7 @@
 
 **Q:** How do I run an Audit batch for this firm's book?
 
-**Clarity:** Starting from Book readiness, open Audits; on Audit run, choose this firm's import/book batch from the batch dropdown, select email/phone validity, channel match, dedupe, consent/silenced, and name-present checks, then click Start Audit run.
+**Clarity:** Starting from Book readiness, click **Audits**. On Audit run, select this firm's import/book batch from the batch dropdown, check email/phone validity, channel match, dedupe, consent/silenced, and name-present checkboxes, then click **Start Audit run** (primary button).
 
 **Criteria — when:** Import landed or book connected.  
 **Conditions:** Data-validity / sequence-ready only — not CRS / sales ROI.
@@ -49,14 +49,14 @@
 
 **Q:** How do I read Reachability verdicts so only sequence-ready contacts enter engagement?
 
-**Clarity:** On Audit run, click Verdict list; read reachable / partial / unreachable chips per contact row, and only rows with reachable + sequence-ready may enter the bound engagement.
+**Clarity:** On Audit run, click **Verdict list**; view reachable / partial / unreachable chips per contact row. Only rows with reachable + sequence-ready may enter bound engagement (enrollment is autonomous backend — no Operator enroll control).
 
 **Criteria — when:** Batch finishes.  
 **Conditions:** Passed = sequence-ready; silenced excluded from automatic motion.
 
 | UI | Kind | Status | Affordance |
 |---|---|---|---|
-| Verdict list | Block | **partial-existing** / **new** | reachable / partial / unreachable **chips** per row |
+| Verdict list | Block | **partial-existing** / **new** | **View** — reachable / partial / unreachable **chips** per row |
 | Contacts reachability indicator | Block | consultant **existing** (inhabit) | **View** only on consultant desk |
 
 **Requirements:** External validation providers may sit at leaf process. Engagement enrollment honors verdicts — machinery.

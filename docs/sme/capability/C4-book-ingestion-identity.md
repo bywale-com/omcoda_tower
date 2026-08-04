@@ -339,8 +339,8 @@ On Verdict list, SMS-intended rows show Partial/Unreachable when line-type-class
 Authorize book land trigger without ingestion-complete lets Audits run on raw CSV.
 
 **implementation:**  
-On Imports, the Ingestion-complete status chip turns on only after Normalized preview, Match keys, and saved Field→Q-ID map version are all complete.  
-On Book readiness → Audits, Start Audit run is enabled only for Ingestion-complete batches; Verdict list shows validation-class pending when checks are not wired.
+On Imports, view the Ingestion-complete status chip turning on only after Normalized preview, Match keys, and saved Field→Q-ID map version are all complete.  
+On Book readiness → Audits, click Start Audit run only for Ingestion-complete batches; on Verdict list, view validation-class pending when checks are not wired.
 
 **implementationAdds:** `["ingestion-complete", "validation-class-pending"]`
 
@@ -359,7 +359,7 @@ Messy firm CSVs always contain bad rows; product needs quarantine, not false act
 
 **implementation:**  
 On Imports, click Commit land to commit Valid rows and send failed rows to Quarantine with reason-code chips (syntax, missing channel, map reject).  
-On Book readiness → Audit run, Quarantine is excluded from reachable counts; Verdict list shows quarantined rows separately and Contacts does not enroll them.
+On Book readiness → Audit run, Quarantine is excluded from reachable counts; Verdict list shows quarantined rows separately — view quarantined status; Contacts does not enroll quarantined rows.
 
 **implementationAdds:** `["quarantine", "reason-codes", "valid-rows"]`
 
@@ -416,8 +416,8 @@ On Contacts / Client row, a provenance chip distinguishes Imported fact from Cli
 If Incremental sync appears as a V1 Imports control, firms and operators will treat sync lag as activation failure.
 
 **implementation:**  
-On Authorize book hand-over into Imports, the Sync posture chip reads One-way land only / Incremental sync deferred (KU #7); no V1 sync-complete button appears beside Field→Q-ID map.  
-On Activation state → Progress, running can open without sync-complete; currency uses re-hand-over upsert until CDC ships.
+On Authorize book hand-over into Imports, view the Sync posture chip (One-way land only / Incremental sync deferred (KU #7)); no V1 sync-complete button beside Field→Q-ID map.  
+On Activation state → Progress, view running can open without sync-complete; currency uses re-hand-over upsert until CDC ships.
 
 **implementationAdds:** `["incremental-sync-deferred", "one-way-land", "sync-complete-not-required"]`
 
@@ -436,7 +436,7 @@ On Activation state → Progress, running can open without sync-complete; curren
 A privileged OAuth pull that skips Imports normalization would mint a second, dirtier book path.
 
 **implementation:**  
-On Authorize book / Imports, any future live-crm pull is labeled as feeding the same pipeline cards: Source header inventory → Normalized preview → Field→Q-ID map → Match keys → Quarantine; V1 shows Vertical continuous pull deferred (KU #7).  
+On Authorize book / Imports, view future live-crm pull labeled as feeding the same pipeline cards: Source header inventory → Normalized preview → Field→Q-ID map → Match keys → Quarantine; V1 shows Vertical continuous pull deferred (KU #7).  
 On Book readiness → Audit run, the batch picker uses the same Audit contract for file and future pull; Verdict list has no pull-specific bypass.
 
 **implementationAdds:** `["vertical-oauth-pull-deferred", "same-ingestion-pipeline"]`
