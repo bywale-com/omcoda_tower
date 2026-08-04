@@ -21,7 +21,7 @@
 
 **Q:** How do I answer a running firm's questions and work its tickets with that firm's bind, health, and commercial context?
 
-**Clarity:** Starting from Customer support, I work the Ticket queue, open a Ticket with that firm's Support context (bind, health, commercial), and resolve so the Consultant's firm keeps running.
+**Clarity:** Starting from Customer support, open Ticket queue, select a Ticket row, inspect Support context tabs for bind, health, commercial, activation, and audit facts, then click Resolve after the linked per-tenancy control is fixed.
 
 **DNA for children:**
 1. work the Ticket queue
@@ -34,7 +34,7 @@
 
 **Q:** How do I work the Ticket queue?
 
-**Clarity:** Starting from Customer support, open Ticket queue and pick an open Ticket for a running firm.
+**Clarity:** Starting from Customer support, open Ticket queue and click an open Ticket row for a running firm; row chips show firm, severity, source, and current owner.
 
 **Criteria — when:** Tickets exist.  
 **Conditions:** House-global queue; firm identity on each row.
@@ -51,7 +51,7 @@
 
 **Q:** How do I open a Ticket with that firm's Support context (bind, health, commercial)?
 
-**Clarity:** On Ticket, open Support context pane to see Firm operations bind, Firm health, Commercial / escrow, Activation state, and recent Audit trail events for that tenancy — without leaving the ticket.
+**Clarity:** On Ticket, open Support context pane and use tabs for Firm operations bind, Firm health, Commercial / escrow, Activation state, and recent Audit trail events for that tenancy — without leaving the ticket.
 
 **Criteria — when:** Ticket selected.  
 **Conditions:** Context is read/ops for this firm only; no cross-firm leak in the pane.
@@ -68,7 +68,7 @@
 
 **Q:** How do I resolve so the Consultant's firm keeps running?
 
-**Clarity:** On Ticket, apply the fix via the linked per-tenancy controls (re-bind, restore health, commercial unblock) and set Resolve; Consultant Access / Board / Meetings keep working without the firm authoring packs.
+**Clarity:** On Ticket, click the linked per-tenancy action (re-bind, restore health, commercial unblock), apply the fix on that scoped control, return to the Ticket, and click Resolve; Consultant Access / Board / Meetings keep working without the firm authoring packs.
 
 **Criteria — when:** Root cause addressed.  
 **Conditions:** Resolution auditable; Consultant remains receive/govern only.

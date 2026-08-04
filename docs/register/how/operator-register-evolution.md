@@ -51,7 +51,7 @@
 
 **Q:** How do I regenerate methodology so Configuration libraries can take the next authored operations?
 
-**Clarity:** On Gap, mark Affordance / backend facet written; On Register & evolution, run Regenerate handoff so the next authoring work lands in Configuration libraries — still never on the firm desk.
+**Clarity:** On Gap, toggle Affordance / backend facet to Written; on Register & evolution, click Regenerate handoff so the next authoring work lands in Configuration libraries — still never on the firm desk.
 
 **Criteria — when:** Gap resolved into written affordance.  
 **Conditions:** Output is house config evolution, not firm Register chrome.

@@ -1,9 +1,10 @@
 # PM implementation pass — index
 
 **Law:** [`../METHODOLOGY.md`](../METHODOLOGY.md) §5.3 · omcoda-hq click-path (Module → Modal → Block)  
+**Densify:** [`DENSIFY-LAW.md`](./DENSIFY-LAW.md) · full method [`CLICKPATH-DENSIFICATION.md`](./CLICKPATH-DENSIFICATION.md) — affordance grain; reuse module architecture already in the surface (canvas/DAG, audit run, bind modal, pack editor)  
 **Vocab:** [`00-SURFACE-VOCAB.md`](./00-SURFACE-VOCAB.md)  
 **Source:** Pass2 considerations · non-blocking only (NEEDS VERIFICATION skipped)  
-**Status:** Paper complete — no CT plant
+**Status:** Paper densified to affordance grain — Register twins via `scripts/sync-sme-from-docs.py` · no CT plant
 
 | Seat | File | Written | Skipped (NV / room) |
 |---|---|---|---|

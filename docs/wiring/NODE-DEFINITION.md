@@ -10,6 +10,8 @@ This doc is the companion the Wiring Method leans on. The moment we decided to t
 formula connects. Getting this altitude right is what keeps the graph in plain event language and out
 of code. Read this before tracing anything.
 
+**Counterpart (origins):** [`WIRING-CRITICAL-INTERACTION.md`](./WIRING-CRITICAL-INTERACTION.md) — which user interactions count as writes that land on a node.
+
 ---
 
 ## 1. The rule

@@ -15,8 +15,8 @@
 Approach creative has no bound claim object — ROI, revenue, “bookings guaranteed,” or “we already have your clients” can pass into feed. Review and skeptical consultants then test different objects; one rejects exaggeration, the other disbelieves bait.
 
 **implementation:**
-On Approach campaigns, you can now set Claim dictionary to deliverable-bounded readiness: prepared campaign workspace from public firm facts plus named agent follow-up.
-On Approach campaigns, Claim dictionary forbids roi-claim, revenue-claim, bookings-guaranteed, and clients-already-held language.
+On Approach campaigns, select the Campaign row and open the Claim dictionary panel; set the Claim shape dropdown to deliverable-bounded readiness: prepared campaign workspace from public firm facts plus named agent follow-up.
+In the Claim dictionary panel, the Forbidden terms list shows chips for roi-claim, revenue-claim, bookings-guaranteed, and clients-already-held, and the Save claim button stays disabled while any chip is present in copy.
 
 **implementationAdds:** ["deliverable-bounded", "roi-claim", "revenue-claim", "bookings-guaranteed", "clients-already-held"]
 
@@ -28,8 +28,8 @@ On Approach campaigns, Claim dictionary forbids roi-claim, revenue-claim, bookin
 Niche targeting tempts “you’re an immigration consultant who…” stacks. That implies personal attributes Meta bans and reads as feed creepiness to the consultant.
 
 **implementation:**
-On Approach campaigns, you can now set Claim dictionary Creative grammar to product-service-forward — what the tap yields for a firm desk.
-On Approach campaigns, Claim dictionary blocks you-attribute stacks (role anxiety, financial vulnerability, identity).
+On Approach campaigns, open the Campaign row's Claim dictionary panel and set the Creative grammar segmented control to product-service-forward: what the tap yields for a firm desk.
+The You-attribute blocker panel lists role anxiety, financial vulnerability, and identity chips; the Review copy button flags any direct "you are..." stack before publish.
 
 **implementationAdds:** ["product-service-forward", "you-attribute"]
 
@@ -41,8 +41,8 @@ On Approach campaigns, Claim dictionary blocks you-attribute stacks (role anxiet
 Ad promises a prepared campaign; if capture ends on thank-you theater, sales CTA, or empty shell, Meta destination-match and consultant check both treat the claim as bait.
 
 **implementation:**
-On Capture strip, you can now set Intro and Ending message to restate the same readiness deliverable and agent-follow as Claim dictionary.
-On Capture strip, Ending message has no peer sales-call or credits door.
+On Capture strip, edit the Intro text area and Ending message text area; both must match the Campaign row's Claim dictionary deliverable chip and agent-follow chip.
+In the Ending controls panel, the Completion CTA list allows only continue-scroll or prepared-workspace deep link, with book-a-call and buy-credits chips blocked.
 
 **implementationAdds:** ["claim-capture-continuity"]
 
@@ -54,8 +54,8 @@ On Capture strip, Ending message has no peer sales-call or credits door.
 Acquisition copy that screams FREE / ZERO-RISK clusters with Meta free-scheme enforcement while contingent cost lives only in activation. True deliverable gets lost inside scam-species language.
 
 **implementation:**
-On Approach campaigns, Claim dictionary prefers legible deliverable naming (“prepared campaign from your public site”) over free / zero-risk sensationalism.
-On Approach campaigns, money posture stays out of Claim dictionary — reserved for activation, not ads.
+On Approach campaigns, use the Claim dictionary panel's Deliverable name field for legible copy such as "prepared campaign from your public site"; the Free-scheme guard highlights free and zero-risk chips in proposed text.
+The Money posture field is locked to activation-only, so the Publish variant button refuses ad-copy money claims inside Claim dictionary.
 
 **implementationAdds:** ["legible-deliverable", "free-scheme", "zero-risk"]
 
@@ -67,8 +67,8 @@ On Approach campaigns, money posture stays out of Claim dictionary — reserved 
 “AI agent builds and runs your reactivation” is outsized but false under Seed — agent is presentation; automation executes. Review and consultant both punish the overclaim.
 
 **implementation:**
-On Approach campaigns, Claim dictionary describes agent as agent-follows / walks-through prepared workspace only.
-On Approach campaigns, Claim dictionary never claims agent-scrapes, agent-enrolls, or agent-runs-sequences.
+On Approach campaigns, set the Claim dictionary Agent role dropdown to agent-follows / walks-through prepared workspace only.
+The Agent overclaim blocker panel shows agent-scrapes, agent-enrolls, and agent-runs-sequences chips; the Publish variant button stays disabled while any blocker is active.
 
 **implementationAdds:** ["agent-follows", "agent-scrapes", "agent-enrolls", "agent-runs-sequences"]
 
@@ -80,8 +80,8 @@ On Approach campaigns, Claim dictionary never claims agent-scrapes, agent-enroll
 Seed requires name + website + channel; Meta Instant Form wants few questions + prefills. Website is not a standard prefill and threatens the one-tap budget if the form balloons.
 
 **implementation:**
-On Capture strip, you can now set fields to Prefill name, one Channel (email or phone), and one short-answer Website.
-On Capture strip, question count stays at the seed minimum — no higher-intent form type unless completion collapses.
+On Capture strip, use the Fields list to keep exactly three rows: Prefill name, Channel radio group (email or phone), and Website short-answer field.
+The Form type dropdown stays on seed-minimum; the Add question button is disabled unless the Friction ladder panel records completion collapse.
 
 **implementationAdds:** ["prefill-name", "channel", "website-short-answer"]
 
@@ -93,8 +93,8 @@ On Capture strip, question count stays at the seed minimum — no higher-intent 
 Temptation to qualify via CRM login, passwords, revenue, or government IDs would violate Lead Ads Standards and pull DB/escrow into acquisition click budget.
 
 **implementation:**
-On Capture strip, you can now see Never-ask list: usernames/passwords, financials, government IDs, and any DB-upload proxy stay off Instant Form questions.
-On Capture strip, only seed fields (name, website, channel) are askable.
+On Capture strip, the Never-ask list panel shows locked chips for usernames/passwords, financials, government IDs, and DB-upload proxy.
+The Fields list accepts only Name, Website, and Channel rows; the Add field button rejects any question mapped to a locked Never-ask chip.
 
 **implementationAdds:** ["never-ask", "password", "financials", "government-id", "db-upload-proxy"]
 
@@ -106,8 +106,8 @@ On Capture strip, only seed fields (name, website, channel) are askable.
 Usable firm website is required for forward-deploy credibility, but multi-screen qualification reintroduces persuasion theater and Meta short-answer completion risk.
 
 **implementation:**
-On Capture strip, Website short-answer is the only typed firm fact — no multi-screen “do you have a site?” branch.
-On Capture strip, URL repair stays off the form; bad URLs fail closed after capture, not via more Instant Form screens.
+On Capture strip, the Fields list marks Website short-answer as the only typed firm-fact row, with the Add branch button disabled for "do you have a site?" screens.
+The URL repair toggle is off in the Form behavior panel; malformed Website entries receive a post-capture fail-closed chip instead of additional Instant Form screens.
 
 **implementationAdds:** ["website-only-typed", "post-capture-normalize"]
 
@@ -125,8 +125,8 @@ On Capture strip, URL repair stays off the form; bad URLs fail closed after capt
 Lead Ads Terms require a live privacy URL and prominent notice; consultants also need to know why name/site/channel are taken — without turning Capture into legal theater.
 
 **implementation:**
-On Capture strip, you can now set Privacy policy URL to a live HTTPS policy (not PDF).
-On Capture strip, you can now set Prominent notice naming purposes: provision prepared workspace + agent follow-up on the stated channel only.
+On Capture strip, fill the Privacy policy URL field with a live HTTPS policy URL; the field validator rejects PDF and non-HTTPS destinations.
+Edit the Prominent notice text area to name only two purpose chips: provision prepared workspace and agent follow-up on the stated channel.
 
 **implementationAdds:** ["privacy-https", "prominent-notice", "purpose-workspace", "purpose-agent-follow"]
 
@@ -138,8 +138,8 @@ On Capture strip, you can now set Prominent notice naming purposes: provision pr
 Ad job is make one-tap output legible, never persuade. Meta intro “what you receive” slides easily into testimonials, urgency, and ROI hype.
 
 **implementation:**
-On Capture strip, Intro is constrained to three facts: what is prepared, from which inputs (public site + given seed), and that an agent will follow on the channel.
-On Capture strip, Intro has no testimonials, urgency, or ROI copy.
+On Capture strip, the Intro editor exposes three required rows: Prepared object, Inputs used (public site + given seed), and Agent follow channel.
+The Copy guard panel blocks testimonials, urgency, and ROI chips before the Save Intro button enables.
 
 **implementationAdds:** ["intro-three-facts"]
 
@@ -151,8 +151,8 @@ On Capture strip, Intro has no testimonials, urgency, or ROI copy.
 Without explicit pre-frame, first agent text fails consultant trust and sits adjacent to CEM posture as unsolicited spam.
 
 **implementation:**
-On Capture strip, Intro, Prominent notice, and Ending message name channel and purpose (“walkthrough of prepared campaign”) before submit.
-On Capture strip, Purpose lock marks agent-follow as expected contact for that stated purpose only.
+On Capture strip, the Intro editor, Prominent notice text area, and Ending message text area each require the same Channel chip and purpose text "walkthrough of prepared campaign" before submit.
+The Purpose lock panel sets agent-follow to expected contact for that stated purpose only, and the Save strip button refuses unrelated purpose chips.
 
 **implementationAdds:** ["pre-frame-agent-follow", "expected-contact"]
 
@@ -164,8 +164,8 @@ On Capture strip, Purpose lock marks agent-follow as expected contact for that s
 Meta completion CTAs push website / book-time; Seed wants continue-scroll + agent comes to them. Ending that becomes a sales peer door breaks ALG shape and Founder §14.
 
 **implementation:**
-On Capture strip, Ending message confirms agent-follow and may offer optional deep link to prepared workspace when ready.
-On Capture strip, Ending message never offers book-a-call or buy-credits as peer CTAs.
+On Capture strip, edit the Ending message text area to confirm agent-follow and optionally enable the Prepared workspace deep-link toggle when the workspace is ready.
+The Completion CTA list blocks book-a-call and buy-credits rows, leaving continue-scroll as the default completion action.
 
 **implementationAdds:** ["agent-follow-confirm", "workspace-deep-link", "book-a-call", "buy-credits"]
 
@@ -177,8 +177,8 @@ On Capture strip, Ending message never offers book-a-call or buy-credits as peer
 Pre-frame promises near-immediate agent follow. If ads run while outbound is dark, latency reads as scam/spam and Meta lead quality decays — without any desk redesign fixing it.
 
 **implementation:**
-On Approach campaigns, you can now see Outbound readiness before ads are armed.
-On Approach campaigns, you can now arm supply only when near-real-time lead pull → first agent text path is live.
+On Approach campaigns, the Campaign row shows an Outbound readiness panel with Lead pull status chip and First agent text status chip.
+The Arm ads button remains disabled until both chips are live, proving the near-real-time lead pull -> first agent text path is ready.
 
 **implementationAdds:** ["outbound-ready", "outbound-dark"]
 
@@ -190,8 +190,8 @@ On Approach campaigns, you can now arm supply only when near-real-time lead pull
 Seed requires both disbelief modes; Meta does not expose “understood.” Without proxies, Operator cannot split creative failure from offer decline.
 
 **implementation:**
-On Approach instrumentation, you can now read Proxy pair A: impression → no form open / bounce at Intro = don’t-understand-or-disbelieve-claim.
-On Approach instrumentation, you can now read Proxy pair B: form open / Intro complete → abandon before submit, or submit then silence = understand-enough-don’t-commit.
+On Approach instrumentation, the Proxy pair table includes row A with columns impression, no form open, and Intro bounce; its verdict chip reads don't-understand-or-disbelieve-claim.
+The Proxy pair table includes row B with columns form open, Intro complete, abandon before submit, and submit then silence; its verdict chip reads understand-enough-don't-commit.
 
 **implementationAdds:** ["dont-understand", "understand-dont-commit", "intro-bounce", "submit-silence"]
 
@@ -203,8 +203,8 @@ On Approach instrumentation, you can now read Proxy pair B: form open / Intro co
 Classic ads A/B optimizes CTR/persuasion. ALG needs which claim phrasing makes the deliverable understood — vanity CTR alone teaches the wrong lesson.
 
 **implementation:**
-On Approach campaigns, you can now set Variant matrix that holds deliverable constant and varies only claim phrasing / Intro clarity.
-On Approach instrumentation, you can now score variants on form-open and intro-complete rates (not vanity CTR alone).
+On Approach campaigns, the Variant matrix panel locks the Deliverable chip and exposes only Claim phrasing field and Intro clarity field per Variant row.
+On Approach instrumentation, the Variant score table shows form-open rate and intro-complete rate columns ahead of the CTR column, and the Promote variant button ignores CTR-only winners.
 
 **implementationAdds:** ["variant-matrix", "form-open", "intro-complete"]
 
@@ -216,8 +216,8 @@ On Approach instrumentation, you can now score variants on form-open and intro-c
 High ignore can mean bad targeting, bad claim, or healthy self-selection. Treating continue-scroll as failure pushes Operator into persuasion spend against Seed’s cheap-check doctrine.
 
 **implementation:**
-On Approach instrumentation, continue-scroll / non-open reads as valid self-selection — not a spend-escalation trigger by itself.
-On Approach instrumentation, you can now escalate only when form-open is healthy but submit is not (or the inverse).
+On Approach instrumentation, the Continue-scroll row marks non-open with a self-selection chip, and the Spend escalation button stays disabled for that row alone.
+The Escalation rule panel enables only when the form-open health chip and submit health chip diverge, in either direction.
 
 **implementationAdds:** ["continue-scroll", "self-selection"]
 
@@ -235,8 +235,8 @@ On Approach instrumentation, you can now escalate only when form-open is healthy
 Growth bet says learn on ads + planted click-through, but without pre-declared kill/continue signals product time absorbs a dead Meta door.
 
 **implementation:**
-On Approach instrumentation, you can now set Kill / continue criteria on: qualified cost per seed capture, % captures with valid website, % first-text answered, % reaching prepared-workspace open.
-On Approach instrumentation, you can now falsify the door when seed CAC or quality fails while claim variants are already legible.
+On Approach instrumentation, open the Kill / continue criteria panel and fill threshold fields for qualified cost per seed capture, valid-website percent, first-text-answered percent, and prepared-workspace-open percent.
+The Door verdict list can mark falsified only when seed CAC or quality threshold rows fail while the Claim legibility chip is already green.
 
 **implementationAdds:** ["kill-continue", "seed-cac", "valid-website-pct", "first-text-answered-pct", "workspace-open-pct"]
 
@@ -248,8 +248,8 @@ On Approach instrumentation, you can now falsify the door when seed CAC or quali
 Maximize leads cheapens CAC optics; garbage websites break provision credibility. Cheap volume fakes acquisition success.
 
 **implementation:**
-On Approach campaigns, you can now set Performance goal to maximize-qualified-leads once conversion/CRM signals exist.
-On Approach campaigns, until those signals exist, Performance goal stays constrained by tight geo + website-required Capture strip (reject-provision bad domains off-form).
+On Approach campaigns, set the Performance goal dropdown to maximize-qualified-leads only when the Conversion signal chip and CRM signal chip are present.
+Until those chips exist, the Campaign row keeps tight geo fields and the Website-required Capture strip chip locked, with bad domains rejected off-form by provision.
 
 **implementationAdds:** ["maximize-qualified-leads", "maximize-leads"]
 
@@ -261,8 +261,8 @@ On Approach campaigns, until those signals exist, Performance goal stays constra
 Immigration/finance-adjacent categories draw scam-watch verification. Approach dies if Business/Page assets are inauthentic or inconsistent with Om Coda identity.
 
 **implementation:**
-Starting from Acquisition & ads, you can now open Account hygiene and require verified Business + Page before Approach campaigns arm.
-On Account hygiene, you can now keep creative and domain consistent with Om Coda identity across Approach campaigns.
+Starting from Acquisition & ads, open the Account hygiene panel; its Business verification chip and Page verification chip must both read verified before any Approach campaigns row can arm.
+In the Account hygiene panel, the Creative identity field and Domain identity field must match Om Coda identity, and the Arm ads button blocks inconsistent rows.
 
 **implementationAdds:** ["verified-business", "verified-page"]
 
@@ -274,8 +274,8 @@ On Account hygiene, you can now keep creative and domain consistent with Om Coda
 Mild review destination + hard-sell live destination is cloaking — instant policy fail and consultant betrayal on the same claim object.
 
 **implementation:**
-On Approach campaigns, you can now set Destination freeze: same Instant Form + same Claim dictionary object across review and delivery.
-On Approach campaigns, Destination freeze blocks post-approval bait swap of Capture strip or claim object.
+On Approach campaigns, turn on the Destination freeze toggle for the Campaign row; it pins the Instant Form selector and Claim dictionary version field across review and delivery.
+The Capture strip selector and Claim dictionary version field become read-only after approval, blocking post-approval bait swaps.
 
 **implementationAdds:** ["destination-freeze", "bait-swap"]
 
@@ -287,8 +287,8 @@ On Approach campaigns, Destination freeze blocks post-approval bait swap of Capt
 “Under your firm identity” can be read as Om Coda already holds or scrapes the firm’s client book — false, scammy, and activation-boundary breaking.
 
 **implementation:**
-On Approach campaigns, Claim dictionary bounds firm identity to public branding / site facts only.
-On Approach campaigns, Claim dictionary states client book is never-required-at-tap.
+On Approach campaigns, the Claim dictionary panel sets the Firm identity source dropdown to public branding / site facts only.
+The Client book requirement chip is locked to never-required-at-tap, and the Publish variant button blocks copy implying existing client-list possession.
 
 **implementationAdds:** ["public-branding-only", "never-required-at-tap"]
 
@@ -300,8 +300,8 @@ On Approach campaigns, Claim dictionary states client book is never-required-at-
 Meta phone OTP / work-email validation raise lead quality but each step burns the one-tap constraint. Enabling by default violates Seed’s force-one-click; relax only as finding.
 
 **implementation:**
-On Capture strip, Friction ladder defaults Phone verification and work-email validation to off.
-On Capture strip, you can now enable Phone verification on Friction ladder only when bot/junk rate falsifies seed quality.
+On Capture strip, the Friction ladder panel defaults the Phone verification toggle and Work-email validation toggle to off.
+The Phone verification toggle unlocks only when the Bot/junk rate row has a seed-quality-failed chip; otherwise the Save strip button preserves one-tap capture.
 
 **implementationAdds:** ["friction-ladder", "phone-verification-off", "phone-verification-on"]
 
@@ -313,8 +313,8 @@ On Capture strip, you can now enable Phone verification on Friction ladder only 
 Meta Terms: use lead data only for stated purpose. Without purpose-lock, capture drifts into resale, unrelated nurture, or end-client messaging — breaking ads Terms and first-text adjacency (seat 3 owns CEM substance).
 
 **implementation:**
-On Capture strip, you can now set Purpose lock to activation-walkthrough-only (no resale, no unrelated nurture, no end-client messaging from this capture).
-On Capture strip, Purpose lock is the stated purpose Intro, Prominent notice, and Ending message must name before submit.
+On Capture strip, set the Purpose lock dropdown to activation-walkthrough-only; no-resale, no-unrelated-nurture, and no-end-client-messaging chips appear as locked exclusions.
+The Intro editor, Prominent notice text area, and Ending message text area must each include the same Purpose lock chip before the Submit form button is allowed.
 
 **implementationAdds:** ["activation-walkthrough-only", "no-resale", "no-unrelated-nurture"]
 

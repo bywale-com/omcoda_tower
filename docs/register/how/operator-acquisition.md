@@ -22,7 +22,7 @@
 
 **Q:** How do I run the firm-acquisition Approach (feed → ad → capture, inside the click budget) and read who understood-but-didn't-tap versus didn't-understand?
 
-**Clarity:** I run Approach supply from feed through ad to capture inside the click budget, and I read Approach instrumentation for understood-but-didn't-tap versus didn't-understand.
+**Clarity:** Starting from Acquisition & ads, open Approach campaigns, edit feed creative, ad, and Capture strip fields inside the click budget, then open Approach instrumentation to compare understand-don't-tap, don't-understand, and continue-scroll counts.
 
 **DNA for children:**
 1. run Approach supply from feed through ad to capture inside the click budget
@@ -34,7 +34,7 @@
 
 **Q:** How do I run Approach supply from feed through ad to capture inside the click budget?
 
-**Clarity:** Starting from Acquisition & ads, open Approach campaigns; On Approach campaign, set feed creative, ad, and Capture strip so seed inputs land in one tap — no database or payment inside the click budget.
+**Clarity:** Starting from Acquisition & ads, open Approach campaigns; on an Approach campaign row, edit feed creative, ad copy, and Capture strip fields so name, website, and channel seed inputs land in one tap — no database or payment inside the click budget.
 
 **Criteria — when:** Operating ALG acquisition.  
 **Conditions:** Capture limited to name + website + phone/email; continue-scroll allowed.
@@ -53,7 +53,7 @@
 
 **Q:** How do I read Approach instrumentation for understood-but-didn't-tap versus didn't-understand?
 
-**Clarity:** On Acquisition & ads, open Approach instrumentation and read don't-understand versus understand-don't-tap (and continue-scroll) counts.
+**Clarity:** On Acquisition & ads, open Approach instrumentation and read don't-understand, understand-don't-tap, and continue-scroll count cards for the selected Approach campaign.
 
 **Criteria — when:** After impressions / taps accumulate.  
 **Conditions:** Instrumentation distinguishes the two disbelief modes.

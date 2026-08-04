@@ -21,7 +21,7 @@
 
 **Q:** How do I set cross-firm bounds, kill-switches, and agency policy?
 
-**Clarity:** Starting from Founder & agency controls, I set Agency policy and Bounds, and I can throw a Kill-switch that stops motion across or within tenancies without putting those controls on a firm workspace.
+**Clarity:** Starting from Founder & agency controls, open Agency policy, edit Bounds rows, and use Kill-switch controls to halt motion fleet-wide or for selected tenancies without putting those controls on a firm workspace.
 
 **DNA for children:**
 1. set Agency policy and Bounds
@@ -33,7 +33,7 @@
 
 **Q:** How do I set Agency policy and Bounds?
 
-**Clarity:** Starting from Founder & agency controls, open Agency policy and edit Bounds (cross-firm limits, what may bind, what may send).
+**Clarity:** Starting from Founder & agency controls, open Agency policy and edit Bounds rows for cross-firm limits, what may bind, and what may send; save writes an Audit trail event.
 
 **Criteria — when:** Policy change.  
 **Conditions:** Changes audit-logged; not visible in Consultant nav.
@@ -50,7 +50,7 @@
 
 **Q:** How do I throw a Kill-switch?
 
-**Clarity:** On Founder & agency controls, open Kill-switch and halt motion fleet-wide or for selected tenancies.
+**Clarity:** On Founder & agency controls, open Kill-switch, choose Fleet-wide or Selected tenancies, enter a reason, and click Halt motion; Audit trail records actor and scope.
 
 **Criteria — when:** Emergency or policy enforcement.  
 **Conditions:** Honor by engagement runners; Audit trail records actor.

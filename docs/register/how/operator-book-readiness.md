@@ -21,7 +21,7 @@
 
 **Q:** How do I run the reachability gate over a firm's book?
 
-**Clarity:** Starting from Book readiness, I run an Audit batch for this firm's book and read Reachability verdicts so only sequence-ready contacts enter engagement.
+**Clarity:** Starting from Book readiness, open Audits, click Start Audit run for this firm's import/book batch, then open Verdict list and read reachable / partial / unreachable rows so only sequence-ready contacts enter engagement.
 
 **DNA for children:**
 1. run an Audit batch for this firm's book
@@ -33,7 +33,7 @@
 
 **Q:** How do I run an Audit batch for this firm's book?
 
-**Clarity:** Starting from Book readiness, open Audits; On Audit run, start a batch against this firm's import/book (email/phone validity, channel match, dedupe, consent/silenced, name present).
+**Clarity:** Starting from Book readiness, open Audits; on Audit run, choose this firm's import/book batch from the batch dropdown, select email/phone validity, channel match, dedupe, consent/silenced, and name-present checks, then click Start Audit run.
 
 **Criteria — when:** Import landed or book connected.  
 **Conditions:** Data-validity / sequence-ready only — not CRS / sales ROI.
@@ -49,7 +49,7 @@
 
 **Q:** How do I read Reachability verdicts so only sequence-ready contacts enter engagement?
 
-**Clarity:** On Audit run, open Verdict list (reachable / partial / unreachable); only reachable (sequence-ready) contacts are eligible to enter bound engagement.
+**Clarity:** On Audit run, click Verdict list; read reachable / partial / unreachable chips per contact row, and only rows with reachable + sequence-ready may enter the bound engagement.
 
 **Criteria — when:** Batch finishes.  
 **Conditions:** Passed = sequence-ready; silenced excluded from automatic motion.

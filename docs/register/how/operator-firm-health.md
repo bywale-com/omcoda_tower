@@ -21,7 +21,7 @@
 
 **Q:** How do I see engagement health scoped to one firm?
 
-**Clarity:** Starting from Firm health, read Sequence health and Engagement health for this tenancy; open a failing Sequence to see what's stuck, then hand context to Support if needed.
+**Clarity:** Starting from Firm health, read Sequence health and Engagement health status rows for this tenancy; click a failing Sequence row to open Sequence detail with stuck reason, last runner event, and channel gate chips, then click Open support context if Support needs the same scope.
 
 **Criteria — when:** Drill from Oversight or direct per-tenancy open.  
 **Conditions:** Scoped to one firm; actionable for Support restore.

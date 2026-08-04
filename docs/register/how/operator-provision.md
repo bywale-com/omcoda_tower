@@ -21,7 +21,7 @@
 
 **Q:** How do I provision a firm and its user through the assisted door?
 
-**Clarity:** Starting from Provision, I create the Firm tenancy and User, then hand the consultant the same Login path into the desk.
+**Clarity:** Starting from Provision, open New firm, enter firm and user seed fields, click Provision, then hand the consultant the same Login OTP path into Board.
 
 **DNA for children:**
 1. create the Firm tenancy and User
@@ -33,7 +33,7 @@
 
 **Q:** How do I create the Firm tenancy and User?
 
-**Clarity:** Starting from Provision (per-tenancy admin), open New firm; On New firm, enter firm and user seed fields and Provision. (Seed manifests remain a valid backend path — leaf process.)
+**Clarity:** Starting from Provision (per-tenancy admin), open New firm; on New firm, enter firm name, website, primary user email, and role seed fields, then click Provision. (Seed manifests remain a valid backend path — leaf process.)
 
 **Criteria — when:** Assisted onboarding.  
 **Conditions:** Tenancy intentional; user email will OTP.
@@ -52,7 +52,7 @@
 
 **Q:** How do I hand the consultant the same Login path into the desk?
 
-**Clarity:** On Provision complete, the consultant uses Login (OTP) into the same Board — no separate assisted app.
+**Clarity:** On Provision complete, click Copy Login path (or Send invite); the consultant opens Login, completes OTP, and lands on the same Board module — no separate assisted app.
 
 **Criteria — when:** After provision succeeds.  
 **Conditions:** Same session matrix as ALG-provisioned firms.

@@ -19,9 +19,7 @@
 House packs can name pathways in the catalog without encoding evaluable IRCC program minima, so “any-pathway” can fire from labels alone. Non–Express Entry base PNP streams risk being treated as in-pack pathway passes.
 
 **implementation:**  
-On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; in Program-minimum gates, require separate CEC, FSW, and FST gates plus Express Entry–aligned PNP nomination presence before overall pathway-pass may assert; set non–EE base PNP streams to Out-of-pack until a versioned stream pack exists; click Publish version. On Analysis, pathway-pass only appears when those gates evaluate.
-
-*Existing: Configuration libraries · Evaluation packs · Evaluation pack editor · Analysis. New: Program-minimum gates (Block).*
+Starting from Configuration libraries, click the Evaluation packs row, then click an Evaluation pack row to open Evaluation pack editor. In the Program-minimum gates panel, use the CEC, FSW, and FST gate rows plus the PNP nomination dropdown to require Express Entry-aligned nomination before overall pathway-pass may assert; set non-EE base PNP streams with the Stream scope dropdown to Out-of-pack until a versioned stream pack exists; click Publish version. On Analysis, view the pathway-pass chip only when those gate rows evaluate.
 
 **implementationAdds:** `program-minimum-gates` · `out-of-pack` · `ee-aligned-pnp-nomination`
 
@@ -34,9 +32,7 @@ On Configuration libraries → Evaluation packs catalog, open Evaluation pack ed
 PNP coverage that scores federal EE minima as if they predict provincial nomination creates Analysis claims a province would nominate. Stream-fit must not assert pathway pass without nomination fact or firm stream pack.
 
 **implementation:**  
-On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set PNP fact class with the selector to Nomination-held / EE-aligned (scoreable) or Stream-fit hypothesis (gap only); click Publish version. On Analysis, Stream-fit hypothesis emits Possible provincial interest / desk review without pathway-pass until verified nomination or a bound stream pack exists.
-
-*Existing: Evaluation pack editor · Analysis. New: PNP fact class (Block control).*
+Starting from Configuration libraries, click the Evaluation packs row, then click an Evaluation pack row to open Evaluation pack editor. In the PNP facts panel, choose Nomination-held / EE-aligned (scoreable) or Stream-fit hypothesis (gap only) from the PNP fact class dropdown; click Publish version. On Analysis, view Stream-fit hypothesis as a Possible provincial interest / desk review row without a pathway-pass chip until verified nomination or a bound stream pack exists.
 
 **implementationAdds:** `nomination-held` · `ee-aligned` · `stream-fit-hypothesis` · `possible-provincial-interest`
 
@@ -49,9 +45,7 @@ On Configuration libraries → Evaluation packs catalog, open Evaluation pack ed
 Analysis equates eligible with IRCC pool eligibility or draw odds. Desk needs language that maps only to retainerable firm services a licensee can stand behind.
 
 **implementation:**  
-On Analysis, you can now see Service-eligible only when a firm-offered service family has a positive B-* candidate with confidence tier (program-minimum met / partial / insufficient facts). Analysis never shows will-get-ITA or CRS-competitive as eligibility claims. On Live brief, the same Service-eligible framing carries into the meeting view.
-
-*Existing: Analysis · Live brief. New: Service-eligible claim language (copy contract on Analysis).*
+On Analysis, view the Service-eligible chip only when a firm-offered service-family row has a positive B-* candidate and a Confidence tier chip of Program-minimum met, Partial, or Insufficient facts. Analysis never shows will-get-ITA or CRS-competitive chips as eligibility claims. On Live brief, view the same Service-eligible panel in the meeting view.
 
 **implementationAdds:** `service-eligible` · `program-minimum-met` · `partial` · `insufficient-facts`
 
@@ -64,9 +58,7 @@ On Analysis, you can now see Service-eligible only when a firm-offered service f
 Engine 2 prefers reactivation when “reactivation-worthy,” but immigration practice never defined the predicate — meeting-grade change vs nudge-grade missing fields blur.
 
 **implementation:**  
-On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set Motion class tags to Reactivation-worthy when program-minimum newly met, category/draw newly cleared, nomination/offer/cert newly held, or time-critical ops windows fire; leave outstanding self-reportables as Nudge-only; click Publish version. On Analysis and Live brief, you can now see the motion class (reactivation vs nudge) that fired.
-
-*Existing: Evaluation pack editor · Analysis · Live brief. New: Reactivation-worthy / Nudge-only motion class tags.*
+Starting from Configuration libraries, click the Evaluation packs row, then click an Evaluation pack row to open Evaluation pack editor. In the Motion class panel, use checkboxes for program-minimum newly met, category/draw newly cleared, nomination/offer/cert newly held, and time-critical ops window to tag Reactivation-worthy; leave outstanding self-reportables with the Motion class dropdown set to Nudge-only; click Publish version. On Analysis and Live brief, view the fired motion as a Reactivation-worthy or Nudge-only chip.
 
 **implementationAdds:** `reactivation-worthy` · `nudge-only` · `time-critical-ops-window`
 
@@ -79,9 +71,7 @@ On Configuration libraries → Evaluation packs catalog, open Evaluation pack ed
 Field examples blur “status the client knows” with documents IRCC will verify, so consolidated forms risk becoming document intake.
 
 **implementation:**  
-On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set Collection class per fact with the selector (Self-reportable | Document-dependent | Employer-directed); click Publish version. On Nudge form, only Self-reportable facts appear. On Client Brief, you can now open Manage for Document-dependent asks (report PDFs, letters, bank proofs, certificates, police/medical).
-
-*Existing: Evaluation pack editor · Nudge form · Client Brief. New: Collection class · Manage (Block).*
+Starting from Configuration libraries, click the Evaluation packs row, then click an Evaluation pack row to open Evaluation pack editor. In the Fact collection panel, choose Self-reportable, Document-dependent, or Employer-directed from the Collection class dropdown on each fact row; click Publish version. On Nudge form, view only Self-reportable form fields. On Client Brief, click the Manage panel for Document-dependent asks such as report PDFs, letters, bank proofs, certificates, police, and medical documents.
 
 **implementationAdds:** `self-reportable` · `document-dependent` · `employer-directed`
 
@@ -94,9 +84,7 @@ On Configuration libraries → Evaluation packs catalog, open Evaluation pack ed
 Global `eca_status` checklist falsely gap-flags CEC-ready contacts; IRCC necessity is pathway-conditioned.
 
 **implementation:**  
-On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set ECA-missing conditions as Hard program-minimum on FSW when foreign education is claimed and as CRS-points gap on any pathway; do not offer ECA-missing as sole CEC pathway blocker; click Publish version. On Analysis, ECA still appears as a ranked B-* CRS-improvement candidate without denying CEC pathway-pass.
-
-*Existing: Evaluation pack editor · Analysis.*
+Starting from Configuration libraries, click the Evaluation packs row, then click an Evaluation pack row to open Evaluation pack editor. In the ECA conditions panel, use the FSW hard-minimum checkbox when foreign education is claimed and the CRS-points gap checkbox for any pathway; keep the CEC blocker checkbox off when ECA-missing is the only issue; click Publish version. On Analysis, view ECA as a ranked B-* CRS-improvement row without removing the CEC pathway-pass chip.
 
 **implementationAdds:** `eca-missing-hard-fsw` · `crs-points-gap` · `cec-eca-nonblocking`
 
@@ -109,9 +97,7 @@ On Configuration libraries → Evaluation packs catalog, open Evaluation pack ed
 Packs wire EE profile flags to ops/gaps without separating self-reportable existence from profile accuracy and supporting-document currency.
 
 **implementation:**  
-On Nudge form, you can now answer EE profile exists, approximate last-update / expiry window, and still-in-pool. On Client Brief → Manage, NOC lead-statement match, employment letters, and uploaded proofs stay desk verification after reactivation — never on Nudge form.
-
-*Existing: Nudge form · Client Brief. New: Manage (Block) — same as elig-05.*
+On Nudge form, answer EE profile exists with a checkbox, approximate last-update / expiry window with date form fields, and still-in-pool with a checkbox. On Client Brief, click the Manage panel to view NOC lead-statement match, employment letters, and uploaded proofs as desk-verification rows after reactivation; those rows never appear as Nudge form fields.
 
 **implementationAdds:** `ee-profile-exists` · `still-in-pool` · `manage-verification`
 
@@ -124,9 +110,7 @@ On Nudge form, you can now answer EE profile exists, approximate last-update / e
 Forms may collect “scores” while IRCC only accepts named products and refuses expired results — claimed CLB can outlive verifiable currency.
 
 **implementation:**  
-On Nudge form, you can now enter CLB-equivalent bands, test product name, and test date. On Client Brief → Manage, result verification numbers and certificate files live. On Analysis, language-dependent pathway and CRS claims expire when test date + 2 years is past the profile/application-relevant window.
-
-*Existing: Nudge form · Client Brief · Analysis. New: Manage (Block).*
+On Nudge form, enter CLB-equivalent bands with score-band dropdowns, test product name with a dropdown, and test date with a date form field. On Client Brief, click the Manage panel to view result-verification number fields and certificate-file rows. On Analysis, view language-dependent pathway and CRS chips expire when test date + 2 years is past the profile/application-relevant window.
 
 **implementationAdds:** `clb-equivalent` · `language-expired` · `ircc-test-product`
 
@@ -139,9 +123,7 @@ On Nudge form, you can now enter CLB-equivalent bands, test product name, and te
 Years-alone gates over-assert pathway pass while NOC duty match and authorization-to-work are the real refusal points.
 
 **implementation:**  
-On Nudge form, you can now self-report job title, country, start/end, hours/week, TEER guess, and student/self-employed flags for provisional pathway/gap signals. On Client Brief → Manage, reference letters, wage proofs, and duty narratives are required before Analysis confidence elevates from Provisional to Program-minimum met.
-
-*Existing: Nudge form · Client Brief · Analysis. New: Manage (Block).*
+On Nudge form, self-report job title, country, start/end dates, hours/week, TEER guess, and student/self-employed flags using form fields and checkboxes for provisional pathway/gap signals. On Client Brief, click the Manage panel to view reference-letter, wage-proof, and duty-narrative rows; Analysis keeps the Confidence tier chip at Provisional until those rows support Program-minimum met.
 
 **implementationAdds:** `provisional` · `program-minimum-met` · `teer-guess`
 
@@ -154,9 +136,7 @@ On Nudge form, you can now self-report job title, country, start/end, hours/week
 Eligibility-critical employer-side instruments cannot be truthfully attested by the immigrant alone, but forms may still ask them.
 
 **implementation:**  
-On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set Collection class to Employer-directed for LMIA/work-permit employer particulars, arranged-employment letter contents, PNP employer support, payroll/revenue evidence, and trade-assessment sponsorship; click Publish version. On Nudge form, the contact may only answer whether a job offer/certificate exists and its rough end date.
-
-*Existing: Evaluation pack editor · Nudge form. New: Employer-directed routing (Collection class value).*
+Starting from Configuration libraries, click the Evaluation packs row, then click an Evaluation pack row to open Evaluation pack editor. In the Fact collection panel, choose Employer-directed from the Collection class dropdown for LMIA/work-permit employer particulars, arranged-employment letter contents, PNP employer support, payroll/revenue evidence, and trade-assessment sponsorship; click Publish version. On Nudge form, the contact only sees job offer/certificate exists checkboxes and rough end-date fields.
 
 **implementationAdds:** `employer-directed` · `offer-exists-self-report` · `certificate-exists-self-report`
 
@@ -169,9 +149,7 @@ On Configuration libraries → Evaluation packs catalog, open Evaluation pack ed
 Prototype matrices may still score arranged-employment CRS boosts discontinued 2025-03-25, creating Analysis liability while offers remain program gates.
 
 **implementation:**  
-On Reference tables (CRS additional points), you can now publish Job-offer CRS points as Off unless a future Ministerial Instruction republishes them. On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; keep valid job offer / certificate-of-qualification as FST (and applicable FSW selection-factor / funds-exemption) inputs only; click Publish version. On Analysis, arranged-employment CRS boost never appears as a scored claim.
-
-*Existing: Reference data · Reference tables · Evaluation pack editor · Analysis.*
+Starting from Reference data, click Reference tables, then click the CRS additional points row. In the table editor, set Job-offer CRS points with the status dropdown to Off unless a future Ministerial Instruction republishes them, then click Publish version. Starting from Configuration libraries, click the Evaluation packs row and open Evaluation pack editor; keep valid job offer / certificate-of-qualification as FST and applicable FSW selection-factor / funds-exemption input rows only; click Publish version. On Analysis, the arranged-employment CRS boost score row never appears.
 
 **implementationAdds:** `job-offer-crs-off` · `offer-as-program-gate` · `certificate-of-qualification`
 
@@ -184,9 +162,7 @@ On Reference tables (CRS additional points), you can now publish Job-offer CRS p
 Proof of funds is program-minimum for FSW/FST (with exemptions) yet bank letters are document-dependent — forms must not harvest financial documents.
 
 **implementation:**  
-On Nudge form, you can now answer funds yes/no and approximate CAD availability against the published settlement-funds table for FSW/FST screening. On Client Brief → Manage, you can now track Obtain proof of funds — never bank letters or account numbers on Nudge form. On Analysis, CEC and authorized-worker-with-valid-offer paths show funds exempt.
-
-*Existing: Nudge form · Client Brief · Analysis · Reference tables. New: Manage (Block).*
+On Nudge form, answer funds available with a yes/no checkbox and approximate CAD availability with a currency form field against the published settlement-funds table for FSW/FST screening. On Client Brief, click the Manage panel to track an Obtain proof of funds row; bank-letter upload fields and account-number fields never appear on Nudge form. On Analysis, view CEC and authorized-worker-with-valid-offer paths with a Funds exempt chip.
 
 **implementationAdds:** `funds-approx-cad` · `obtain-proof-of-funds` · `funds-exempt`
 
@@ -199,9 +175,7 @@ On Nudge form, you can now answer funds yes/no and approximate CAD availability 
 Category/draw outcome families can fire from narrative interest without binding to Ministerial Instruction–versioned occupation lists.
 
 **implementation:**  
-On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set Category readiness assertions to require a version-pinned category occupation/French rule from Reference tables; click Publish version. On Analysis, a new category match or newly cleared draw cutoff marks Reactivation-worthy. Free-text STEM/healthcare interest never produces category-pass.
-
-*Existing: Evaluation pack editor · Reference tables · Analysis.*
+Starting from Configuration libraries, click the Evaluation packs row, then click an Evaluation pack row to open Evaluation pack editor. In the Category readiness panel, choose a version-pinned category occupation/French rule from the Reference tables dropdown before any category assertion can fire; click Publish version. On Analysis, view a new category match or newly cleared draw cutoff as a Reactivation-worthy chip. Free-text STEM/healthcare interest fields never produce a category-pass chip.
 
 **implementationAdds:** `category-readiness` · `version-pinned` · `reactivation-worthy`
 
@@ -214,9 +188,7 @@ On Configuration libraries → Evaluation packs catalog, open Evaluation pack ed
 Open-box Analysis headlines risk reading as licensee advice without marking self-report vs verified-document posture.
 
 **implementation:**  
-On Analysis, you can now see Confidence tier on every pathway/gap/ops/category assertion — Insufficient facts / Provisional (self-report) / Document-backed (firm-confirmed). On Analysis narrative templates, copy states IRCC decides applications and CRS is an estimate. On Live brief, the same tiers and disclaimer carry.
-
-*Existing: Analysis · Live brief. New: Confidence tier (Block field on Analysis).*
+On Analysis, view a Confidence tier chip on every pathway, gap, ops, and category assertion row: Insufficient facts, Provisional (self-report), or Document-backed (firm-confirmed). On Analysis narrative templates, view copy stating IRCC decides applications and CRS is an estimate. On Live brief, view the same tier chips and disclaimer in the meeting panel.
 
 **implementationAdds:** `insufficient-facts` · `provisional` · `document-backed`
 
@@ -229,9 +201,7 @@ On Analysis, you can now see Confidence tier on every pathway/gap/ops/category a
 House packs can be read as Om Coda legal conclusions. Regulated advice liability must stay with the practicing firm while IP stays with Om Coda.
 
 **implementation:**  
-On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; open Pack Terms panel and state packs are versioned screening/instrumentation libraries that propose service candidates and fact gaps only; click Publish version. On Analysis, copy forbids representing Tower output as IRCC determination or as the firm’s legal opinion until a licensee adopts it. On Live brief, screening-not-advice framing matches.
-
-*Existing: Evaluation pack editor · Analysis · Live brief. New: Pack Terms (Block).*
+Starting from Configuration libraries, click the Evaluation packs row, then click an Evaluation pack row to open Evaluation pack editor. Open the Pack Terms panel, fill the terms text field to state packs are versioned screening/instrumentation libraries that propose service candidates and fact gaps only, and click Publish version. On Analysis, view copy that forbids representing Tower output as an IRCC determination or the firm's legal opinion until a licensee adopts it. On Live brief, view the same screening-not-advice panel.
 
 **implementationAdds:** `screening-library` · `licensee-adopts`
 
@@ -244,9 +214,7 @@ On Configuration libraries → Evaluation packs catalog, open Evaluation pack ed
 Firms need specialization without silently rewriting federal program gates into unreviewable local truth.
 
 **implementation:**  
-On Firm operations bind, click firm row in firm-bind index. On firm detail, click Bind packs. On Bind packs modal, choose Evaluation pack version from the published-only dropdown; choose Automation pack version from the published-only dropdown; choose Engagement template version from the published-only dropdown; set Firm overlay with Service catalog mapping dropdown, Reactivation threshold fields, and Province-stream add-ons checklist; click Bind. On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; keep IRCC program-minimum and CRS arithmetic house-locked (bind-only, not mutable); click Publish version. On Analysis, overlay divergence appears in Evaluation provenance.
-
-*Existing: Firm operations bind · Bind packs · Evaluation pack editor · Analysis. New: Firm overlay · Evaluation provenance (Block fields).*
+On Firm operations bind, click a Firm row in the firm-bind index. On firm detail, click Bind packs. On Bind packs modal, choose Evaluation pack version, Automation pack version, and Engagement template version from the published-only dropdowns; set Firm overlay with the Service catalog mapping dropdown, Reactivation threshold form fields, and Province-stream add-ons checklist; click Bind. Starting from Configuration libraries, click the Evaluation packs row and open Evaluation pack editor; keep IRCC program-minimum and CRS arithmetic rows house-locked with bind-only chips, not mutable fields; click Publish version. On Analysis, view overlay divergence in the Evaluation provenance panel.
 
 **implementationAdds:** `firm-overlay` · `house-locked` · `overlay-divergence`
 
@@ -259,9 +227,7 @@ On Firm operations bind, click firm row in firm-bind index. On firm detail, clic
 Outcome toggles alone cannot explain why CEC passed and FSW failed on distinct grids — operators and desk need law-shaped reasons without authoring trees as primary UX.
 
 **implementation:**  
-On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set Outcome-family toggles as the enablement layer for which service families may fire; click Publish version. On Analysis, every fired R-*/B-* opens Condition provenance showing human-readable failures (e.g. failed FSW 67-grid language / missing ECA / TEER out of range) pinned to pack + reference versions — not toggle headline alone.
-
-*Existing: Evaluation pack editor · Analysis. New: Condition provenance (Block / Submodal).*
+Starting from Configuration libraries, click the Evaluation packs row, then click an Evaluation pack row to open Evaluation pack editor. In the Outcome-family panel, set service-family enablement with checkboxes for each R-*/B-* family; click Publish version. On Analysis, click any fired R-*/B-* row to open the Condition provenance panel showing human-readable failures such as failed FSW 67-grid language, missing ECA, or TEER out of range pinned to pack + reference versions, not the toggle headline alone.
 
 **implementationAdds:** `outcome-family-toggle` · `condition-provenance`
 
@@ -275,9 +241,7 @@ On Configuration libraries → Evaluation packs catalog, open Evaluation pack ed
 
 **implementation:**  
 Wiring absorb (CTO): model FSW evaluator as two-stage (67-grid eligibility then CRS estimate); forbid CRS-cutoff-alone for FSW pathway-pass.  
-On Analysis, you can now inspect FSW as Program-minimum + ≥67 selection-factor separate from CRS estimate; CRS cutoff alone never asserts or denies FSW pathway-pass. On Condition provenance, both stages show distinctly.
-
-*Existing: Analysis. New: Condition provenance (same as elig-17). FSW two-stage labels on Analysis.*
+On Analysis, click the FSW assertion row to view Program-minimum + >=67 selection-factor as separate stage chips from CRS estimate; CRS cutoff alone never asserts or denies FSW pathway-pass. In the Condition provenance panel, view both FSW stages as distinct rows.
 
 **implementationAdds:** `fsw-67-grid` · `crs-estimate` · `fsw-two-stage`
 
@@ -290,9 +254,7 @@ On Analysis, you can now inspect FSW as Program-minimum + ≥67 selection-factor
 Any-pathway includes FST, but thin TEER aliases of CEC miss FST-specific gates and document/employer dependence of offer/cert details.
 
 **implementation:**  
-On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; in Program-minimum gates, require FST checks for designated NOC groups, 3,120-hour / 2-year-in-5 experience, language minima, and (valid ≥1-year job offer **or** Canadian certificate of qualification); click Publish version. On Client Brief → Manage, certificate/offer details stay document- or employer-dependent before Document-backed confidence.
-
-*Existing: Evaluation pack editor · Client Brief. New: Program-minimum gates · Manage.*
+Starting from Configuration libraries, click the Evaluation packs row, then click an Evaluation pack row to open Evaluation pack editor. In the Program-minimum gates panel, turn on FST checkboxes for designated NOC groups, 3,120-hour / 2-year-in-5 experience, language minima, and valid >=1-year job offer or Canadian certificate of qualification; click Publish version. On Client Brief, click the Manage panel to view certificate/offer detail rows as document- or employer-dependent before the Analysis Confidence tier chip may become Document-backed.
 
 **implementationAdds:** `fst-noc-groups` · `3120-hours` · `offer-or-certificate`
 
@@ -305,9 +267,7 @@ On Configuration libraries → Evaluation packs catalog, open Evaluation pack ed
 Self-reported Canadian work years can falsely pass CEC when student/unauthorized/remote-abroad work is not asked.
 
 **implementation:**  
-On Nudge form, you can now answer CEC exclusion flags — work while full-time student, unpaid/volunteer, remote while physically outside Canada, unauthorized work — that veto CEC qualifying hours. On Client Brief → Manage, authorization documents and pay stubs confirm before Document-backed confidence. On Analysis, CEC pathway-pass respects those vetoes.
-
-*Existing: Nudge form · Client Brief · Analysis. New: Manage · CEC exclusion flags.*
+On Nudge form, answer CEC exclusion checkboxes for work while full-time student, unpaid/volunteer work, remote work while physically outside Canada, and unauthorized work; checked flags veto CEC qualifying hours. On Client Brief, click the Manage panel to view authorization-document and pay-stub rows before Document-backed confidence. On Analysis, view CEC pathway-pass only when those veto chips are clear.
 
 **implementationAdds:** `cec-exclusion` · `ft-student-work` · `remote-outside-canada` · `unauthorized-work`
 
@@ -320,9 +280,7 @@ On Nudge form, you can now answer CEC exclusion flags — work while full-time s
 B-* service map can outrun the firm’s retainer menu, producing reactivation that sells services the licensee will not deliver.
 
 **implementation:**  
-On Firm operations bind, click firm row in firm-bind index. On firm detail, click Bind packs. On Bind packs modal, choose Evaluation pack version from the published-only dropdown; choose Automation pack version from the published-only dropdown; choose Engagement template version from the published-only dropdown; set Service catalog with checkboxes for pathway application, ECA guidance, language retest plan, EE profile create/refresh, PNP strategy consult, and category readiness review; click Bind. On Analysis, B-* candidates only emit for enabled catalog entries; disabled services never appear as reactivation sellables. On Live brief, agenda services match the same catalog.
-
-*Existing: Firm operations bind · Bind packs · Analysis · Live brief. New: Service catalog (Block).*
+On Firm operations bind, click a Firm row in the firm-bind index. On firm detail, click Bind packs. On Bind packs modal, choose Evaluation pack version, Automation pack version, and Engagement template version from the published-only dropdowns; set Service catalog with checkboxes for pathway application, ECA guidance, language retest plan, EE profile create/refresh, PNP strategy consult, and category readiness review; click Bind. On Analysis, view B-* candidate rows only for enabled catalog entries; disabled services never appear as reactivation sellables. On Live brief, view agenda service rows from the same catalog.
 
 **implementationAdds:** `service-catalog` · `b-star-suppressed`
 
@@ -335,9 +293,7 @@ On Firm operations bind, click firm row in firm-bind index. On firm detail, clic
 Always-on detection can treat unknowns as optimistic pathway passes to generate meetings.
 
 **implementation:**  
-On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set Program-minimum unknown handling to Hard-fail pathway-pass when a required field is unknown; click Publish version. On Analysis, you can now see Insufficient facts plus outstanding self-reportable needs — never a B-* pathway-file candidate until minima are populated. On Nudge form, those outstanding needs consolidate for collection.
-
-*Existing: Evaluation pack editor · Analysis · Nudge form.*
+Starting from Configuration libraries, click the Evaluation packs row, then click an Evaluation pack row to open Evaluation pack editor. In the Program-minimum gates panel, set Unknown handling with the dropdown to Hard-fail pathway-pass when a required field is unknown; click Publish version. On Analysis, view an Insufficient facts chip plus outstanding self-reportable needs rows, never a B-* pathway-file candidate until minima are populated. On Nudge form, those needs appear as consolidated form fields.
 
 **implementationAdds:** `hard-fail-unknown-minimum` · `insufficient-facts` · `no-pathway-file-until-minima`
 
@@ -351,9 +307,7 @@ When IRCC cutoffs/categories move, the firm cannot explain what Tower believed a
 
 **implementation:**  
 Wiring absorb (CTO): persist pack version ID, reference-table version IDs, evaluation timestamp, confidence tier, and condition provenance on every signal/Analysis snapshot used for outreach or brief.  
-On Analysis and Live brief, you can now open Evaluation provenance to inspect pack version, reference pins, timestamp, confidence tier, and Condition provenance for what Tower believed at send time.
-
-*Existing: Analysis · Live brief. New: Evaluation provenance (Block / Submodal).*
+On Analysis and Live brief, click Evaluation provenance to open a panel showing pack version, reference pins, timestamp, Confidence tier chip, and Condition provenance rows for what Tower believed at send time.
 
 **implementationAdds:** `pack-version-id` · `reference-version-id` · `evaluation-timestamp` · `evaluation-provenance`
 
@@ -371,9 +325,7 @@ On Analysis and Live brief, you can now open Evaluation provenance to inspect pa
 Seat 1 evaluators can invent cutoffs/lists; wrong or stale reference pins silently create reactivation-worthy service eligibility.
 
 **implementation:**  
-On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set draw-cutoff and category-occupation assertions to require a Published & not past freshness SLA reference pin from Reference tables; click Publish version. On Analysis, when the pin is stale or missing, you can now see ops Reference data unavailable and draw/category reactivation is suppressed. On Reference data → Publish version, freshness SLA is what packs consume.
-
-*Existing: Evaluation pack editor · Reference data · Reference tables · Publish version · Analysis.*
+Starting from Configuration libraries, click the Evaluation packs row, then click an Evaluation pack row to open Evaluation pack editor. In the Reference pins panel, set draw-cutoff and category-occupation assertions to require a Published and not-past-freshness-SLA reference pin from the Reference tables dropdown; click Publish version. On Analysis, view a Reference data unavailable ops chip when the pin is stale or missing, and draw/category reactivation rows are suppressed. On Reference data, click Publish version to publish the freshness SLA that packs consume.
 
 **implementationAdds:** `freshness-sla` · `reference-data-unavailable` · `draw-category-suppressed`
 

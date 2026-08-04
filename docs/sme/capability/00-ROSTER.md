@@ -3,6 +3,7 @@
 **Axis:** not "who is *responsible* for X" (compliance) but "who knows **how to actually accomplish** X" (capability).
 **Why it matters:** compliance considerations mostly *modify* (copy, gates, flags). Capability considerations mostly *add* — modules, pipelines, syncs — because "we will need this to work" surfaces product that isn't in the register yet.
 **Residual rule (same engine, new axis):** a capability seat exists where the product committed to *doing* something whose **how** requires specialist depth a proficient generalist CTO would not own by default. Pure generalist wiring = CTO, not a seat.
+**Densify:** [`../implementation/DENSIFY-LAW.md`](../implementation/DENSIFY-LAW.md) — affordance grain on every `implementation` block; prefer existing module shapes (Audit run → Verdict list, Workflow canvas nodes, Bind packs modal). Register twins via `scripts/sync-capability-sme-from-docs.py`.
 
 Each seat: the capability · who holds the know-how · the residual · and the **revealed surfaces** (the payload) tagged `exists` / `partial` / `new` against the current register.
 

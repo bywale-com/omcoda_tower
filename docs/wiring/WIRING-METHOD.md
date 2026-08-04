@@ -9,7 +9,8 @@ These notes come at a specific moment. We had already run the Register all the w
 **What this is.** The method for producing Tower's Wiring: the CTO/technical layer that has no face.
 It is the backend twin of how we build UI — we do not design the whole system top-down, we **trace
 each implementation one at a time** and let the structure assemble itself. This doc is the formula;
-the companion [`NODE-DEFINITION.md`](./NODE-DEFINITION.md) defines what a node is (referenced throughout).
+the companion [`NODE-DEFINITION.md`](./NODE-DEFINITION.md) defines what a node is (referenced throughout);
+[`WIRING-CRITICAL-INTERACTION.md`](./WIRING-CRITICAL-INTERACTION.md) defines which interactions count as origins that land on those nodes.
 
 **Governing stance:** *connect first, classify later.* We never decide what a "flow," a "trigger," or
 a "category" is before the graph exists. Those are labels you read *off* a finished graph, never
