@@ -33,6 +33,71 @@ export function sectionLabelStyle(t: Tokens): CSSProperties {
   };
 }
 
+/** Tight primary control — matches operator primaryBtnStyle footprint. */
+export function primaryControlStyle(t: Tokens, disabled = false): CSSProperties {
+  return {
+    fontSize: 12,
+    fontWeight: 600,
+    fontFamily: "inherit",
+    color: disabled ? t.textDim : "#fff",
+    background: disabled ? t.hoverBg : t.accent,
+    border: "none",
+    borderRadius: 4,
+    padding: "7px 12px",
+    cursor: disabled ? "not-allowed" : "pointer",
+    opacity: disabled ? 0.7 : 1,
+    lineHeight: 1.2,
+  };
+}
+
+/** Tight secondary control. */
+export function secondaryControlStyle(t: Tokens): CSSProperties {
+  return {
+    fontSize: 12,
+    fontWeight: 600,
+    fontFamily: "inherit",
+    color: t.textPrimary,
+    background: t.bgPrimary,
+    border: `1px solid ${t.border}`,
+    borderRadius: 4,
+    padding: "7px 12px",
+    cursor: "pointer",
+    lineHeight: 1.2,
+  };
+}
+
+/** Leaf block mount — outline ring for Register trace focus. */
+export function LeafSurface({
+  label,
+  focused,
+  hovered,
+  t,
+  children,
+  style,
+}: {
+  label: string;
+  focused?: boolean;
+  hovered?: boolean;
+  t: Tokens;
+  children: ReactNode;
+  style?: CSSProperties;
+}) {
+  return (
+    <div
+      data-register-surface={label}
+      style={{
+        outline: focused ? `2px solid ${t.accent}` : hovered ? `1px solid ${t.accent}` : "none",
+        outlineOffset: focused || hovered ? 2 : 0,
+        borderRadius: 4,
+        transition: "outline-color 0.15s ease",
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 export function RegisterSurfaceMount({
   label,
   focused,

@@ -1,10 +1,12 @@
 /**
- * Oversight — Fleet health + Firm row list.
+ * Oversight — Fleet health firm table + Firm row drill cue.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { RegisterSurfaceMount } from "../registerSurfaceChrome";
 import {
   DEMO_FIRMS,
+  chipTone,
+  filterSelectStyle,
   moduleFocus,
   panelShell,
   resolveHoveredEntry,
@@ -13,26 +15,78 @@ import {
   type OperatorModuleProps,
 } from "./operatorChrome";
 
-const FLEET = [
-  { label: "Running", value: "12", tone: "success" as const },
-  { label: "In activation", value: "5", tone: "amber" as const },
-  { label: "At risk", value: "2", tone: "danger" as const },
-  { label: "Send-gate holds", value: "3", tone: "muted" as const },
-];
+const FLEET_ROWS = [
+  {
+    firmId: DEMO_FIRMS[0].id,
+    deliverability: "Healthy",
+    sequence: "Healthy",
+    engagement: "Watch",
+    lastRun: "Today · 14:02",
+  },
+  {
+    firmId: DEMO_FIRMS[1].id,
+    deliverability: "Healthy",
+    sequence: "Watch",
+    engagement: "Watch",
+    lastRun: "Today · 13:48",
+  },
+  {
+    firmId: DEMO_FIRMS[2].id,
+    deliverability: "Healthy",
+    sequence: "Healthy",
+    engagement: "Healthy",
+    lastRun: "Today · 12:15",
+  },
+  {
+    firmId: DEMO_FIRMS[3].id,
+    deliverability: "Watch",
+    sequence: "At risk",
+    engagement: "At risk",
+    lastRun: "Today · 11:52",
+  },
+] as const;
+
+function isUnhealthy(row: (typeof FLEET_ROWS)[number]) {
+  return (
+    row.deliverability !== "Healthy" ||
+    row.sequence !== "Healthy" ||
+    row.engagement !== "Healthy"
+  );
+}
 
 export function OversightModule({ t, focusedEntry, hoveredId }: OperatorModuleProps) {
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Oversight", focusedEntry, hoveredEntry);
-  const [selectedId, setSelectedId] = useState(DEMO_FIRMS[0].id);
+  const [sortBy, setSortBy] = useState("Last run");
+  const [healthFilter, setHealthFilter] = useState("All signals");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!focusedEntry || focusedEntry.module !== "Oversight") return;
     if (focusedEntry.label === "Firm row" || focusedEntry.label === "Fleet health") {
-      setSelectedId(DEMO_FIRMS[0].id);
+      setSelectedId(FLEET_ROWS.find(isUnhealthy)?.firmId ?? FLEET_ROWS[0].firmId);
     }
   }, [focusedEntry]);
 
-  const selected = DEMO_FIRMS.find((f) => f.id === selectedId) ?? DEMO_FIRMS[0];
+  const rows = useMemo(() => {
+    let list = [...FLEET_ROWS];
+    if (healthFilter === "Unhealthy only") list = list.filter(isUnhealthy);
+    if (sortBy === "Firm name") {
+      list.sort((a, b) => {
+        const fa = DEMO_FIRMS.find((f) => f.id === a.firmId)!.name;
+        const fb = DEMO_FIRMS.find((f) => f.id === b.firmId)!.name;
+        return fa.localeCompare(fb);
+      });
+    }
+    return list;
+  }, [sortBy, healthFilter]);
+
+  const selected = selectedId
+    ? DEMO_FIRMS.find((f) => f.id === selectedId)
+    : null;
+  const selectedRow = selectedId
+    ? FLEET_ROWS.find((r) => r.firmId === selectedId)
+    : null;
 
   return (
     <RegisterSurfaceMount
@@ -40,6 +94,7 @@ export function OversightModule({ t, focusedEntry, hoveredId }: OperatorModulePr
       focused={focus.focused && focusedEntry?.label === "Oversight"}
       hovered={hoveredEntry?.label === "Oversight"}
       t={t}
+      style={{ position: "relative" }}
     >
       {panelShell(
         t,
@@ -63,120 +118,142 @@ export function OversightModule({ t, focusedEntry, hoveredId }: OperatorModulePr
             focus.labelFocused("Fleet health"),
             focus.labelHovered("Fleet health"),
             <>
-              <div style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary, marginBottom: 10 }}>
-                Fleet health
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
-                {FLEET.map((tile) => (
-                  <div
-                    key={tile.label}
-                    style={{
-                      background: t.bgPrimary,
-                      border: `1px solid ${t.border}`,
-                      borderRadius: 4,
-                      padding: "10px 12px",
-                    }}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 10,
+                  marginBottom: 10,
+                }}
+              >
+                <span style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary }}>
+                  Fleet health
+                </span>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    style={filterSelectStyle(t)}
+                    aria-label="Sort firms"
                   >
-                    <div style={{ fontSize: 10, color: t.textDim }}>{tile.label}</div>
+                    <option>Last run</option>
+                    <option>Firm name</option>
+                  </select>
+                  <select
+                    value={healthFilter}
+                    onChange={(e) => setHealthFilter(e.target.value)}
+                    style={filterSelectStyle(t)}
+                    aria-label="Filter health"
+                  >
+                    <option>All signals</option>
+                    <option>Unhealthy only</option>
+                  </select>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  border: `1px solid ${t.border}`,
+                  borderRadius: 4,
+                  overflow: "hidden",
+                  background: t.bgPrimary,
+                }}
+              >
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1.4fr repeat(3, 0.7fr) 0.9fr",
+                    gap: 8,
+                    padding: "8px 12px",
+                    borderBottom: `1px solid ${t.border}`,
+                    fontSize: 10,
+                    fontWeight: 700,
+                    letterSpacing: "0.04em",
+                    textTransform: "uppercase",
+                    color: t.textDim,
+                  }}
+                >
+                  <span>Firm</span>
+                  <span>Deliverability</span>
+                  <span>Sequence</span>
+                  <span>Engagement</span>
+                  <span>Last run</span>
+                </div>
+                {rows.map((row) => {
+                  const firm = DEMO_FIRMS.find((f) => f.id === row.firmId)!;
+                  const active = row.firmId === selectedId;
+                  const unhealthy = isUnhealthy(row);
+                  return (
                     <div
+                      key={row.firmId}
+                      data-register-surface="Firm row"
+                      onClick={() => setSelectedId(row.firmId)}
                       style={{
-                        fontSize: 20,
-                        fontWeight: 650,
-                        color: t.textPrimary,
-                        marginTop: 4,
-                        letterSpacing: "-0.02em",
+                        display: "grid",
+                        gridTemplateColumns: "1.4fr repeat(3, 0.7fr) 0.9fr",
+                        gap: 8,
+                        padding: "10px 12px",
+                        borderBottom: `1px solid ${t.borderLight}`,
+                        background: active ? t.accentBg : "transparent",
+                        outline:
+                          (focus.labelFocused("Firm row") || focus.labelHovered("Firm row")) &&
+                          active
+                            ? `2px solid ${t.accent}`
+                            : "none",
+                        outlineOffset: -2,
+                        cursor: "pointer",
                       }}
                     >
-                      {tile.value}
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: t.textPrimary }}>
+                          {firm.name}
+                        </div>
+                        <div style={{ fontSize: 10, color: t.textDim, marginTop: 2 }}>
+                          {firm.stage}
+                        </div>
+                      </div>
+                      <div style={{ alignSelf: "center" }}>
+                        {statusChip(t, row.deliverability, chipTone(row.deliverability))}
+                      </div>
+                      <div style={{ alignSelf: "center" }}>
+                        {statusChip(t, row.sequence, chipTone(row.sequence))}
+                      </div>
+                      <div style={{ alignSelf: "center" }}>
+                        {statusChip(t, row.engagement, chipTone(row.engagement))}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: 11,
+                          color: t.textMuted,
+                          alignSelf: "center",
+                        }}
+                      >
+                        {row.lastRun}
+                      </div>
                     </div>
-                    <div style={{ marginTop: 6 }}>{statusChip(t, tile.tone, tile.tone)}</div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
+
+              {selected && selectedRow && isUnhealthy(selectedRow) ? (
+                <div
+                  style={{
+                    marginTop: 10,
+                    padding: "10px 12px",
+                    borderRadius: 4,
+                    background: t.amberBg,
+                    border: `1px solid ${t.amber}`,
+                    fontSize: 12,
+                    color: t.textPrimary,
+                  }}
+                >
+                  Drill cue · <strong>{selected.name}</strong> — open Firm health for Sequence
+                  health, Engagement health, and Sequence detail (firm scope preserved).
+                </div>
+              ) : null}
             </>,
           )}
-
-          <div
-            style={{
-              border: `1px solid ${t.border}`,
-              borderRadius: 6,
-              background: t.bgSecondary,
-              overflow: "hidden",
-              flex: 1,
-              minHeight: 180,
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <div
-              style={{
-                padding: "10px 14px",
-                borderBottom: `1px solid ${t.border}`,
-                fontSize: 12,
-                fontWeight: 600,
-                color: t.textPrimary,
-              }}
-            >
-              Firms
-            </div>
-            <div style={{ flex: 1, overflowY: "auto" }}>
-              {DEMO_FIRMS.map((firm) => {
-                const active = firm.id === selectedId;
-                return (
-                  <div
-                    key={firm.id}
-                    data-register-surface="Firm row"
-                    onClick={() => setSelectedId(firm.id)}
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "1.4fr 1fr 0.8fr",
-                      gap: 8,
-                      padding: "10px 14px",
-                      borderBottom: `1px solid ${t.borderLight}`,
-                      background: active ? t.accentBg : "transparent",
-                      outline:
-                        (focus.labelFocused("Firm row") || focus.labelHovered("Firm row")) && active
-                          ? `2px solid ${t.accent}`
-                          : "none",
-                      outlineOffset: -2,
-                      cursor: "pointer",
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: t.textPrimary }}>
-                        {firm.name}
-                      </div>
-                      <div style={{ fontSize: 10, color: t.textDim, marginTop: 2 }}>{firm.id}</div>
-                    </div>
-                    <div style={{ fontSize: 12, color: t.textMuted, alignSelf: "center" }}>
-                      {firm.stage}
-                    </div>
-                    <div style={{ alignSelf: "center" }}>
-                      {statusChip(
-                        t,
-                        firm.health,
-                        firm.health === "Healthy"
-                          ? "success"
-                          : firm.health === "Watch"
-                            ? "amber"
-                            : "danger",
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div
-              style={{
-                padding: "10px 14px",
-                borderTop: `1px solid ${t.border}`,
-                fontSize: 11,
-                color: t.textMuted,
-              }}
-            >
-              Selected · {selected.name} — open Firm health / Activation state for tenancy slice
-            </div>
-          </div>
         </div>,
       )}
     </RegisterSurfaceMount>

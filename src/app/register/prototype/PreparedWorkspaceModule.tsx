@@ -1,9 +1,14 @@
 /**
  * Prepared Workspace — activation Module (consultant acts).
- * Readiness chrome + Authorize book / Accept terms modals (Step 3).
+ * Leaves 2a.1 Authorize book + 2a.2 Accept terms hard inputs.
  */
 import { useEffect, useState, type ReactNode } from "react";
 import type { Tokens } from "../../components/tokens";
+import {
+  LeafSurface,
+  primaryControlStyle,
+  secondaryControlStyle,
+} from "./registerSurfaceChrome";
 
 type PreparedWorkspaceModuleProps = {
   t: Tokens;
@@ -12,6 +17,9 @@ type PreparedWorkspaceModuleProps = {
 };
 
 type ModalKind = "authorize" | "accept" | null;
+type ConnectPath = "crm" | "upload" | "file";
+
+const LICENSEES = ["Sarah Chen · RCIC R123456", "Marco Reyes · RCIC R654321"];
 
 function ModalShell({
   t,
@@ -112,34 +120,6 @@ function ModalShell({
   );
 }
 
-function primaryBtn(t: Tokens) {
-  return {
-    padding: "7px 14px",
-    border: "none",
-    borderRadius: 5,
-    background: t.accent,
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: 600 as const,
-    fontFamily: "inherit" as const,
-    cursor: "pointer" as const,
-  };
-}
-
-function secondaryBtn(t: Tokens) {
-  return {
-    padding: "7px 14px",
-    border: `1px solid ${t.border}`,
-    borderRadius: 5,
-    background: t.bgPrimary,
-    color: t.textPrimary,
-    fontSize: 12,
-    fontWeight: 500 as const,
-    fontFamily: "inherit" as const,
-    cursor: "pointer" as const,
-  };
-}
-
 function ghostActionBtn(t: Tokens, emphasis?: boolean) {
   return {
     display: "flex" as const,
@@ -165,21 +145,25 @@ export function PreparedWorkspaceModule({
   const [modal, setModal] = useState<ModalKind>(null);
   const [bookAuthorized, setBookAuthorized] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [licenseChecked, setLicenseChecked] = useState(false);
-  const [escrowChecked, setEscrowChecked] = useState(false);
+  const [connectPath, setConnectPath] = useState<ConnectPath>("file");
+  const [licenseExpanded, setLicenseExpanded] = useState(true);
+  const [licensee, setLicensee] = useState(LICENSEES[0]);
+  const [ackChecked, setAckChecked] = useState(false);
 
   useEffect(() => {
     if (!focusLabel) return;
-    if (focusLabel === "Authorize book") {
+    if (focusLabel === "Authorize book" || focusLabel === "Authorize") {
       setModal("authorize");
       return;
     }
     if (
       focusLabel === "Accept terms" ||
+      focusLabel === "Accept" ||
       focusLabel === "License acknowledgement" ||
       focusLabel === "Escrow terms"
     ) {
       setModal("accept");
+      if (focusLabel === "License acknowledgement") setLicenseExpanded(true);
     }
   }, [focusLabel, focusSeq]);
 
@@ -227,7 +211,14 @@ export function PreparedWorkspaceModule({
           background: t.bgSecondary,
         }}
       >
-        <span style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary, letterSpacing: "-0.01em" }}>
+        <span
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            color: t.textPrimary,
+            letterSpacing: "-0.01em",
+          }}
+        >
           Prepared Workspace
         </span>
         <span
@@ -247,9 +238,17 @@ export function PreparedWorkspaceModule({
       </header>
 
       <div style={{ flex: 1, minHeight: 0, overflowY: "auto", padding: 16 }}>
-        <p style={{ margin: "0 0 14px", fontSize: 12, lineHeight: 1.5, color: t.textMuted, maxWidth: 480 }}>
-          Staged campaign under your firm identity. Readiness theater only — Contacts stay empty of
-          private book until Authorize book lands. Constructing secondary copy is fine; chrome is live.
+        <p
+          style={{
+            margin: "0 0 14px",
+            fontSize: 12,
+            lineHeight: 1.5,
+            color: t.textMuted,
+            maxWidth: 480,
+          }}
+        >
+          Staged campaign under your firm identity. Complete Authorize book and Accept terms — hard
+          inputs Activation state and Commercial read.
         </p>
 
         <div
@@ -296,7 +295,7 @@ export function PreparedWorkspaceModule({
           >
             <span style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary }}>Authorize book</span>
             <span style={{ fontSize: 11, color: t.textMuted }}>
-              Grant the private book Tower will mutate — file export, assisted confirm, or live CRM.
+              Grant CRM, upload, or confirm assisted import — then Authorize.
             </span>
           </button>
 
@@ -308,7 +307,7 @@ export function PreparedWorkspaceModule({
           >
             <span style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary }}>Accept terms</span>
             <span style={{ fontSize: 11, color: t.textMuted }}>
-              License acknowledgement and escrow / contingent cost — the money-and-license door.
+              License acknowledgement + escrow view — Accept commits instrument held.
             </span>
           </button>
         </div>
@@ -322,53 +321,65 @@ export function PreparedWorkspaceModule({
           onClose={() => setModal(null)}
           footer={
             <>
-              <button type="button" onClick={() => setModal(null)} style={secondaryBtn(t)}>
+              <button type="button" onClick={() => setModal(null)} style={secondaryControlStyle(t)}>
                 Cancel
               </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setBookAuthorized(true);
-                  setModal(null);
-                }}
-                style={primaryBtn(t)}
+              <LeafSurface
+                label="Authorize"
+                focused={focusLabel === "Authorize"}
+                hovered={false}
+                t={t}
               >
-                Authorize this book
-              </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBookAuthorized(true);
+                    setModal(null);
+                  }}
+                  style={primaryControlStyle(t)}
+                >
+                  Authorize
+                </button>
+              </LeafSurface>
             </>
           }
         >
           <p style={{ margin: "0 0 12px", fontSize: 13, lineHeight: 1.55, color: t.textPrimary }}>
-            Choose the Connection stack your firm can authorize today. File-export and live CRM are
-            first-class — neither is labeled temporary.
+            Connect the private book Tower will mutate. Pick a path, then Authorize writes handover
+            state for Book readiness and Activation state.
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {["File export (authorized snapshot)", "Assisted confirm (imported book)", "Live CRM (scoped pull)"].map(
-              (opt) => (
-                <label
-                  key={opt}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                    padding: "10px 12px",
-                    border: `1px solid ${t.border}`,
-                    borderRadius: 5,
-                    fontSize: 12,
-                    color: t.textPrimary,
-                    cursor: "pointer",
-                    background: t.bgSecondary,
-                  }}
-                >
-                  <input type="radio" name="connection-stack" defaultChecked={opt.startsWith("File")} />
-                  {opt}
-                </label>
-              ),
-            )}
+            {[
+              { id: "crm" as ConnectPath, label: "Connect CRM / grant database access" },
+              { id: "upload" as ConnectPath, label: "Upload / confirm assisted import" },
+              { id: "file" as ConnectPath, label: "File export (authorized snapshot)" },
+            ].map((opt) => (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => setConnectPath(opt.id)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "10px 12px",
+                  border: `1px solid ${connectPath === opt.id ? t.accent : t.border}`,
+                  borderRadius: 5,
+                  fontSize: 12,
+                  color: t.textPrimary,
+                  cursor: "pointer",
+                  background: connectPath === opt.id ? t.accentBg : t.bgSecondary,
+                  fontFamily: "inherit",
+                  textAlign: "left",
+                }}
+              >
+                {opt.label}
+              </button>
+            ))}
           </div>
           <p style={{ margin: "12px 0 0", fontSize: 11, lineHeight: 1.45, color: t.textDim }}>
-            Completing Authorize book grants processing permission only — it does not mint per-contact
-            CEM consent.
+            Assisted path: Contacts → Imports → Confirm book for Tower sets the same handover without
+            sequences.
           </p>
         </ModalShell>
       ) : null}
@@ -381,113 +392,173 @@ export function PreparedWorkspaceModule({
           onClose={() => setModal(null)}
           footer={
             <>
-              <button type="button" onClick={() => setModal(null)} style={secondaryBtn(t)}>
+              <button type="button" onClick={() => setModal(null)} style={secondaryControlStyle(t)}>
                 Cancel
               </button>
-              <button
-                type="button"
-                disabled={!licenseChecked || !escrowChecked}
-                onClick={() => {
-                  setTermsAccepted(true);
-                  setModal(null);
-                }}
-                style={{
-                  ...primaryBtn(t),
-                  opacity: licenseChecked && escrowChecked ? 1 : 0.45,
-                  cursor: licenseChecked && escrowChecked ? "pointer" : "not-allowed",
-                }}
-              >
-                Accept terms
-              </button>
+              <LeafSurface label="Accept" focused={focusLabel === "Accept"} hovered={false} t={t}>
+                <button
+                  type="button"
+                  disabled={!ackChecked}
+                  onClick={() => {
+                    setTermsAccepted(true);
+                    setModal(null);
+                  }}
+                  style={primaryControlStyle(t, !ackChecked)}
+                >
+                  Accept
+                </button>
+              </LeafSurface>
             </>
           }
         >
-          <div
-            data-register-surface="License acknowledgement"
-            style={{
-              marginBottom: 12,
-              padding: 12,
-              border: `1px solid ${t.border}`,
-              borderRadius: 6,
-              background: t.bgSecondary,
-            }}
+          <LeafSurface
+            label="License acknowledgement"
+            focused={focusLabel === "License acknowledgement"}
+            hovered={false}
+            t={t}
+            style={{ marginBottom: 12 }}
           >
-            <div style={{ fontSize: 12, fontWeight: 600, color: t.textPrimary, marginBottom: 6 }}>
-              License acknowledgement
-            </div>
-            <p style={{ margin: "0 0 10px", fontSize: 12, lineHeight: 1.55, color: t.textMuted }}>
-              Firm-branded outreach will run continuously while armed/active. The licensee remains
-              responsible for refusing illegal or unethical motion. House-authored packs do not
-              transfer College duties. Halt outreach stays available without reconfiguring packs.
-            </p>
-            <label
+            <button
+              type="button"
+              onClick={() => setLicenseExpanded((e) => !e)}
               style={{
                 display: "flex",
-                alignItems: "flex-start",
-                gap: 8,
-                fontSize: 12,
-                color: t.textPrimary,
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "100%",
+                padding: "10px 12px",
+                border: `1px solid ${t.border}`,
+                borderRadius: 6,
+                background: t.bgSecondary,
                 cursor: "pointer",
+                fontFamily: "inherit",
+                fontSize: 12,
+                fontWeight: 600,
+                color: t.textPrimary,
               }}
             >
-              <input
-                type="checkbox"
-                checked={licenseChecked}
-                onChange={(e) => setLicenseChecked(e.target.checked)}
-                style={{ marginTop: 2 }}
-              />
-              I acknowledge outreach runs under my license.
-            </label>
-          </div>
+              License acknowledgement
+              <span style={{ fontSize: 10, color: t.textMuted }}>{licenseExpanded ? "▾" : "▸"}</span>
+            </button>
+            {licenseExpanded ? (
+              <div
+                style={{
+                  marginTop: 8,
+                  padding: 12,
+                  border: `1px solid ${t.border}`,
+                  borderRadius: 6,
+                  background: t.bgPrimary,
+                }}
+              >
+                <label
+                  htmlFor="licensee-select"
+                  style={{
+                    display: "block",
+                    fontSize: 10,
+                    fontWeight: 600,
+                    color: t.textDim,
+                    marginBottom: 5,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.04em",
+                  }}
+                >
+                  Authorizing licensee
+                </label>
+                <select
+                  id="licensee-select"
+                  value={licensee}
+                  onChange={(e) => setLicensee(e.target.value)}
+                  style={{
+                    width: "100%",
+                    fontSize: 12,
+                    fontFamily: "inherit",
+                    padding: "7px 8px",
+                    borderRadius: 4,
+                    border: `1px solid ${t.border}`,
+                    background: t.bgSecondary,
+                    color: t.textPrimary,
+                    marginBottom: 10,
+                  }}
+                >
+                  {LICENSEES.map((l) => (
+                    <option key={l} value={l}>{l}</option>
+                  ))}
+                </select>
+                <p style={{ margin: "0 0 10px", fontSize: 12, lineHeight: 1.55, color: t.textMuted }}>
+                  Firm-branded outreach runs under this licensee. Halt outreach stays available without
+                  reconfiguring packs.
+                </p>
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: 8,
+                    fontSize: 12,
+                    color: t.textPrimary,
+                    cursor: "pointer",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={ackChecked}
+                    onChange={(e) => setAckChecked(e.target.checked)}
+                    style={{ marginTop: 2 }}
+                  />
+                  I acknowledge outreach runs under my license and escrow terms below.
+                </label>
+              </div>
+            ) : null}
+          </LeafSurface>
 
-          <div
-            data-register-surface="Escrow terms"
-            style={{
-              padding: 12,
-              border: `1px solid ${t.border}`,
-              borderRadius: 6,
-              background: t.bgSecondary,
-            }}
+          <LeafSurface
+            label="Escrow terms"
+            focused={focusLabel === "Escrow terms"}
+            hovered={false}
+            t={t}
           >
-            <div style={{ fontSize: 12, fontWeight: 600, color: t.textPrimary, marginBottom: 6 }}>
-              Escrow terms
-            </div>
-            <p style={{ margin: "0 0 10px", fontSize: 12, lineHeight: 1.55, color: t.textMuted }}>
-              Contingent cost and release terms for this firm↔Om Coda escrow. Acceptance is the
-              money door — not a later settings screen.
-            </p>
             <div
               style={{
-                fontSize: 11,
-                color: t.textDim,
-                marginBottom: 10,
-                padding: "8px 10px",
-                borderRadius: 4,
-                background: t.hoverBg,
-                border: `1px solid ${t.borderLight}`,
+                padding: 12,
+                border: `1px solid ${t.border}`,
+                borderRadius: 6,
+                background: t.bgSecondary,
               }}
             >
-              Demo terms · release on meeting-booked outcomes · house Commercial mirror
+              <div
+                style={{
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: t.textPrimary,
+                  marginBottom: 8,
+                }}
+              >
+                Escrow terms
+              </div>
+              {[
+                { k: "Instrument", v: "Meeting-booked contingent release" },
+                { k: "Held by", v: "Om Coda Commercial (operator)" },
+                { k: "Release predicate", v: "Attributed booking + attendance window" },
+                { k: "Dispute path", v: "House-overseen return / forfeit" },
+              ].map((row) => (
+                <div
+                  key={row.k}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    gap: 12,
+                    padding: "6px 0",
+                    borderTop: `1px solid ${t.borderLight}`,
+                    fontSize: 11,
+                  }}
+                >
+                  <span style={{ color: t.textDim }}>{row.k}</span>
+                  <span style={{ color: t.textPrimary, fontWeight: 500, textAlign: "right" }}>
+                    {row.v}
+                  </span>
+                </div>
+              ))}
             </div>
-            <label
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                gap: 8,
-                fontSize: 12,
-                color: t.textPrimary,
-                cursor: "pointer",
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={escrowChecked}
-                onChange={(e) => setEscrowChecked(e.target.checked)}
-                style={{ marginTop: 2 }}
-              />
-              I accept escrow / contingent cost terms.
-            </label>
-          </div>
+          </LeafSurface>
         </ModalShell>
       ) : null}
     </div>

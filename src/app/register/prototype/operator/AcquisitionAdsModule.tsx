@@ -1,25 +1,47 @@
 /**
- * Acquisition & ads — Approach campaigns, Capture strip, Instrumentation.
+ * Acquisition & ads — Approach campaigns editor + instrumentation (How leaves 1.1–1.2).
  */
 import { useEffect, useState } from "react";
 import { RegisterSurfaceMount, sectionLabelStyle } from "../registerSurfaceChrome";
 import {
-  DEMO_FIRMS,
+  filterSelectStyle,
   moduleFocus,
   panelShell,
+  primaryBtnStyle,
   resolveHoveredEntry,
+  secondaryBtnStyle,
   statusChip,
   surfaceBlock,
   type OperatorModuleProps,
 } from "./operatorChrome";
 
-const CAMPAIGNS = [
+type CampaignStatus = "Live" | "Paused" | "Draft";
+
+type Campaign = {
+  id: string;
+  name: string;
+  status: CampaignStatus;
+  budget: string;
+  captures: number;
+  feedCreative: string;
+  adCopy: string;
+  captureName: string;
+  captureWebsite: string;
+  captureChannel: string;
+};
+
+const INITIAL_CAMPAIGNS: Campaign[] = [
   {
     id: "camp-q3",
-    name: "Meta Approach · Q3 RCIC pilots",
+    name: "Approach · Q3 RCIC pilots",
     status: "Live",
     budget: "≤ 3 clicks / lead",
     captures: 42,
+    feedCreative: "RCIC desk · one-tap firm capture",
+    adCopy: "Run your immigration desk on Tower — name + site in one tap.",
+    captureName: "Priya Desai, RCIC",
+    captureWebsite: "cedarpathways.ca",
+    captureChannel: "WhatsApp",
   },
   {
     id: "camp-retarget",
@@ -27,6 +49,11 @@ const CAMPAIGNS = [
     status: "Paused",
     budget: "≤ 2 clicks / lead",
     captures: 18,
+    feedCreative: "Still evaluating Tower?",
+    adCopy: "Return to your captured firm seed — continue in one tap.",
+    captureName: "Harbor RCIC Desk",
+    captureWebsite: "harborrcic.ca",
+    captureChannel: "Email",
   },
   {
     id: "camp-assist",
@@ -34,29 +61,86 @@ const CAMPAIGNS = [
     status: "Draft",
     budget: "Operator-led",
     captures: 0,
+    feedCreative: "Operator-assisted onboarding mirror",
+    adCopy: "Same desk as ALG — assisted door only.",
+    captureName: "",
+    captureWebsite: "",
+    captureChannel: "Email",
   },
-] as const;
+];
 
-const INSTRUMENTATION = [
-  { id: "ctr", label: "CTR (Approach)", value: "2.4%", note: "Last 7d" },
-  { id: "cpl", label: "Cost / capture", value: "$18.20", note: "Name+site+channel" },
-  { id: "budget", label: "Click budget burn", value: "61%", note: "Campaign ceiling" },
-  { id: "qualify", label: "Firm-ready rate", value: "38%", note: "Passed capture QA" },
-] as const;
+const INSTRUMENTATION_BY_CAMPAIGN: Record<
+  string,
+  { dontUnderstand: number; understandDontTap: number; continueScroll: number }
+> = {
+  "camp-q3": { dontUnderstand: 1240, understandDontTap: 380, continueScroll: 2100 },
+  "camp-retarget": { dontUnderstand: 420, understandDontTap: 95, continueScroll: 680 },
+  "camp-assist": { dontUnderstand: 0, understandDontTap: 0, continueScroll: 0 },
+};
 
 export function AcquisitionAdsModule({ t, focusedEntry, hoveredId }: OperatorModuleProps) {
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Acquisition & ads", focusedEntry, hoveredEntry);
-  const [selectedId, setSelectedId] = useState<string>(CAMPAIGNS[0].id);
+  const [campaigns, setCampaigns] = useState<Campaign[]>(INITIAL_CAMPAIGNS);
+  const [selectedId, setSelectedId] = useState(INITIAL_CAMPAIGNS[0].id);
+  const [instrFilterId, setInstrFilterId] = useState(INITIAL_CAMPAIGNS[0].id);
+  const [actionNote, setActionNote] = useState<string | null>(null);
 
   useEffect(() => {
     if (!focusedEntry || focusedEntry.module !== "Acquisition & ads") return;
-    if (focusedEntry.label === "Approach campaigns" || focusedEntry.label === "Capture strip") {
-      setSelectedId(CAMPAIGNS[0].id);
+    if (
+      focusedEntry.label === "Approach campaigns" ||
+      focusedEntry.label === "Capture strip" ||
+      focusedEntry.label === "Approach campaign editor" ||
+      focusedEntry.label === "Save / Publish campaign"
+    ) {
+      setSelectedId(INITIAL_CAMPAIGNS[0].id);
+    }
+    if (focusedEntry.label === "Approach instrumentation") {
+      setInstrFilterId(INITIAL_CAMPAIGNS[0].id);
     }
   }, [focusedEntry]);
 
-  const selected = CAMPAIGNS.find((c) => c.id === selectedId) ?? CAMPAIGNS[0];
+  const selected = campaigns.find((c) => c.id === selectedId) ?? campaigns[0];
+  const instr = INSTRUMENTATION_BY_CAMPAIGN[instrFilterId] ?? INSTRUMENTATION_BY_CAMPAIGN["camp-q3"];
+
+  const patchSelected = (patch: Partial<Campaign>) => {
+    setCampaigns((prev) =>
+      prev.map((c) => (c.id === selectedId ? { ...c, ...patch } : c)),
+    );
+  };
+
+  const newCampaign = () => {
+    const id = `camp-${Date.now().toString().slice(-5)}`;
+    const camp: Campaign = {
+      id,
+      name: "New Approach campaign",
+      status: "Draft",
+      budget: "≤ 3 clicks / lead",
+      captures: 0,
+      feedCreative: "",
+      adCopy: "",
+      captureName: "",
+      captureWebsite: "",
+      captureChannel: "Email",
+    };
+    setCampaigns((prev) => [...prev, camp]);
+    setSelectedId(id);
+    setActionNote("New campaign draft created");
+  };
+
+  const fieldLabel = { fontSize: 10, color: t.textDim, marginBottom: 4 };
+  const textInput = {
+    width: "100%",
+    fontSize: 12,
+    fontFamily: "inherit" as const,
+    padding: "7px 9px",
+    border: `1px solid ${t.border}`,
+    borderRadius: 4,
+    background: t.bgPrimary,
+    color: t.textPrimary,
+    boxSizing: "border-box" as const,
+  };
 
   return (
     <RegisterSurfaceMount
@@ -89,7 +173,7 @@ export function AcquisitionAdsModule({ t, focusedEntry, hoveredId }: OperatorMod
           >
             <div style={sectionLabelStyle(t)}>Approach campaigns</div>
             <div data-register-surface="Approach campaigns">
-              {CAMPAIGNS.map((camp) => (
+              {campaigns.map((camp) => (
                 <button
                   key={camp.id}
                   type="button"
@@ -116,6 +200,28 @@ export function AcquisitionAdsModule({ t, focusedEntry, hoveredId }: OperatorMod
                 </button>
               ))}
             </div>
+            <button
+              type="button"
+              onClick={newCampaign}
+              style={{
+                ...secondaryBtnStyle(t),
+                width: "calc(100% - 24px)",
+                margin: "8px 12px 12px",
+              }}
+            >
+              New campaign
+            </button>
+            <p
+              style={{
+                margin: "0 12px 12px",
+                fontSize: 10,
+                lineHeight: 1.45,
+                color: t.textDim,
+              }}
+            >
+              Meta ad supply is external intent — Tower configures what to send; no Meta UI in
+              Tower.
+            </p>
           </aside>
 
           <div
@@ -131,9 +237,12 @@ export function AcquisitionAdsModule({ t, focusedEntry, hoveredId }: OperatorMod
           >
             {surfaceBlock(
               t,
-              "Capture strip",
-              focus.labelFocused("Capture strip"),
-              focus.labelHovered("Capture strip"),
+              "Approach campaign editor",
+              focus.labelFocused("Approach campaign editor") ||
+                focus.labelFocused("Capture strip") ||
+                focus.labelFocused("Save / Publish campaign"),
+              focus.labelHovered("Approach campaign editor") ||
+                focus.labelHovered("Capture strip"),
               <>
                 <div
                   style={{
@@ -144,42 +253,111 @@ export function AcquisitionAdsModule({ t, focusedEntry, hoveredId }: OperatorMod
                   }}
                 >
                   <span style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary }}>
-                    Capture strip
+                    Approach campaign editor
                   </span>
-                  {statusChip(t, selected.status === "Live" ? "live" : "idle", selected.status === "Live" ? "success" : "muted")}
+                  {statusChip(
+                    t,
+                    selected.status === "Live" ? "live" : selected.status.toLowerCase(),
+                    selected.status === "Live" ? "success" : "muted",
+                  )}
                 </div>
                 <p style={{ margin: "0 0 12px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
-                  One-tap Meta Approach lands name + website + channel inside the click budget —{" "}
-                  {selected.name}.
+                  Feed → ad → Capture strip inside click budget ({selected.budget}). Captured seed
+                  writes state read by Activation & forward-deploy In-flight activations.
                 </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <label>
+                    <div style={fieldLabel}>Feed creative</div>
+                    <input
+                      value={selected.feedCreative}
+                      onChange={(e) => patchSelected({ feedCreative: e.target.value })}
+                      style={textInput}
+                    />
+                  </label>
+                  <label>
+                    <div style={fieldLabel}>Ad copy</div>
+                    <textarea
+                      value={selected.adCopy}
+                      onChange={(e) => patchSelected({ adCopy: e.target.value })}
+                      rows={2}
+                      style={{ ...textInput, resize: "vertical" }}
+                    />
+                  </label>
+                </div>
+
                 <div
+                  data-register-surface="Capture strip"
                   style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr 1fr",
-                    gap: 8,
+                    marginTop: 14,
+                    paddingTop: 14,
+                    borderTop: `1px solid ${t.border}`,
                   }}
                 >
-                  {[
-                    { k: "Name", v: "Priya Desai, RCIC" },
-                    { k: "Website", v: "cedarpathways.ca" },
-                    { k: "Channel", v: "WhatsApp · +1…" },
-                  ].map((field) => (
-                    <div
-                      key={field.k}
-                      style={{
-                        background: t.bgPrimary,
-                        border: `1px solid ${t.border}`,
-                        borderRadius: 4,
-                        padding: "8px 10px",
-                      }}
-                    >
-                      <div style={{ fontSize: 10, color: t.textDim, marginBottom: 3 }}>{field.k}</div>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: t.textPrimary }}>{field.v}</div>
-                    </div>
-                  ))}
+                  <div style={{ fontSize: 12, fontWeight: 600, color: t.textPrimary, marginBottom: 8 }}>
+                    Capture strip
+                  </div>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr 1fr",
+                      gap: 8,
+                    }}
+                  >
+                    <label>
+                      <div style={fieldLabel}>Name</div>
+                      <input
+                        value={selected.captureName}
+                        onChange={(e) => patchSelected({ captureName: e.target.value })}
+                        placeholder="Firm / consultant name"
+                        style={textInput}
+                      />
+                    </label>
+                    <label>
+                      <div style={fieldLabel}>Website</div>
+                      <input
+                        value={selected.captureWebsite}
+                        onChange={(e) => patchSelected({ captureWebsite: e.target.value })}
+                        placeholder="firm.ca"
+                        style={textInput}
+                      />
+                    </label>
+                    <label>
+                      <div style={fieldLabel}>Channel</div>
+                      <select
+                        value={selected.captureChannel}
+                        onChange={(e) => patchSelected({ captureChannel: e.target.value })}
+                        style={textInput}
+                      >
+                        <option value="Email">Email</option>
+                        <option value="WhatsApp">WhatsApp</option>
+                        <option value="Phone">Phone</option>
+                      </select>
+                    </label>
+                  </div>
                 </div>
-                <div style={{ marginTop: 10, fontSize: 11, color: t.textDim }}>
-                  Budget · {selected.budget} · next firm seed → {DEMO_FIRMS[1].name}
+
+                <div style={{ display: "flex", gap: 8, marginTop: 14, alignItems: "center" }}>
+                  <button
+                    type="button"
+                    style={secondaryBtnStyle(t)}
+                    onClick={() => setActionNote(`Saved draft · ${selected.name}`)}
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    data-register-surface="Save / Publish campaign"
+                    style={primaryBtnStyle(t)}
+                    onClick={() => {
+                      patchSelected({ status: "Live" });
+                      setActionNote(`Published · ${selected.name} live for capture`);
+                    }}
+                  >
+                    Publish campaign
+                  </button>
+                  {actionNote ? (
+                    <span style={{ fontSize: 11, color: t.accent }}>{actionNote}</span>
+                  ) : null}
                 </div>
               </>,
             )}
@@ -190,13 +368,55 @@ export function AcquisitionAdsModule({ t, focusedEntry, hoveredId }: OperatorMod
               focus.labelFocused("Approach instrumentation"),
               focus.labelHovered("Approach instrumentation"),
               <>
-                <div style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary, marginBottom: 10 }}>
-                  Approach instrumentation
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 10,
+                    marginBottom: 10,
+                  }}
+                >
+                  <span style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary }}>
+                    Approach instrumentation
+                  </span>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ fontSize: 11, color: t.textDim }}>Campaign</span>
+                    <select
+                      value={instrFilterId}
+                      onChange={(e) => setInstrFilterId(e.target.value)}
+                      style={filterSelectStyle(t)}
+                    >
+                      {campaigns.map((c) => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
+                  </label>
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                  {INSTRUMENTATION.map((block) => (
+                <p style={{ margin: "0 0 12px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
+                  View-only stream aggregates — distinguishes understood-but-didn&apos;t-tap vs
+                  didn&apos;t-understand. No write unless linked Oversight / Support action.
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                  {[
+                    {
+                      label: "don't-understand",
+                      value: instr.dontUnderstand.toLocaleString(),
+                      note: "Disbelief · copy unclear",
+                    },
+                    {
+                      label: "understand-don't-tap",
+                      value: instr.understandDontTap.toLocaleString(),
+                      note: "Understood · no tap",
+                    },
+                    {
+                      label: "continue-scroll",
+                      value: instr.continueScroll.toLocaleString(),
+                      note: "Scroll past capture",
+                    },
+                  ].map((card) => (
                     <div
-                      key={block.id}
+                      key={card.label}
                       style={{
                         background: t.bgPrimary,
                         border: `1px solid ${t.border}`,
@@ -204,7 +424,7 @@ export function AcquisitionAdsModule({ t, focusedEntry, hoveredId }: OperatorMod
                         padding: "10px 12px",
                       }}
                     >
-                      <div style={{ fontSize: 10, color: t.textDim }}>{block.label}</div>
+                      <div style={{ fontSize: 10, color: t.textDim }}>{card.label}</div>
                       <div
                         style={{
                           fontSize: 18,
@@ -214,9 +434,9 @@ export function AcquisitionAdsModule({ t, focusedEntry, hoveredId }: OperatorMod
                           letterSpacing: "-0.02em",
                         }}
                       >
-                        {block.value}
+                        {card.value}
                       </div>
-                      <div style={{ fontSize: 10, color: t.textMuted, marginTop: 2 }}>{block.note}</div>
+                      <div style={{ fontSize: 10, color: t.textMuted, marginTop: 2 }}>{card.note}</div>
                     </div>
                   ))}
                 </div>

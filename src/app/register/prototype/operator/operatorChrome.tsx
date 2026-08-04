@@ -241,3 +241,110 @@ export const DEMO_FIRMS = [
   { id: "firm-harbor", name: "Harbor RCIC Desk", stage: "Escrow held", health: "Healthy" },
   { id: "firm-atlas", name: "Atlas Mobility", stage: "Approach capture", health: "At risk" },
 ] as const;
+
+/** Centered modal overlay for operator prototype surfaces (Change event, Kill-switch, Gap, Sequence detail). */
+export function operatorModal(
+  t: Tokens,
+  surfaceLabel: string,
+  title: string,
+  focused: boolean,
+  hovered: boolean,
+  onClose: () => void,
+  children: ReactNode,
+  footer?: ReactNode,
+) {
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+      style={{
+        position: "absolute",
+        inset: 0,
+        zIndex: 20,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "rgba(15, 18, 28, 0.45)",
+        padding: 16,
+      }}
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{ width: "100%", maxWidth: 480, maxHeight: "90%", display: "flex", flexDirection: "column" }}
+      >
+        <RegisterSurfaceMount
+          label={surfaceLabel}
+          focused={focused}
+          hovered={hovered}
+          t={t}
+          style={{
+            flex: "unset",
+            minHeight: 0,
+            borderRadius: 8,
+            overflow: "hidden",
+            boxShadow: "0 12px 40px rgba(0,0,0,0.18)",
+            outlineOffset: 0,
+          }}
+        >
+        <header
+          style={{
+            height: 40,
+            flexShrink: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 10,
+            padding: "0 16px",
+            borderBottom: `1px solid ${t.border}`,
+            background: t.bgSecondary,
+          }}
+        >
+          <span style={{ fontSize: 14, fontWeight: 600, color: t.textPrimary }}>{title}</span>
+          <button
+            type="button"
+            onClick={onClose}
+            style={{
+              fontSize: 12,
+              fontFamily: "inherit",
+              color: t.textMuted,
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              padding: "4px 8px",
+            }}
+          >
+            Close
+          </button>
+        </header>
+        <div style={{ padding: 16, overflowY: "auto" }}>{children}</div>
+        {footer ? (
+          <footer
+            style={{
+              flexShrink: 0,
+              display: "flex",
+              gap: 8,
+              justifyContent: "flex-end",
+              padding: "12px 16px",
+              borderTop: `1px solid ${t.border}`,
+              background: t.bgSecondary,
+            }}
+          >
+            {footer}
+          </footer>
+        ) : null}
+        </RegisterSurfaceMount>
+      </div>
+    </div>
+  );
+}
+
+export function chipTone(
+  label: string,
+): "accent" | "amber" | "muted" | "success" | "danger" {
+  if (label === "Healthy" || label === "Released") return "success";
+  if (label === "Watch" || label === "Held") return "amber";
+  if (label === "At risk" || label === "Disputed" || label === "Stuck") return "danger";
+  return "muted";
+}

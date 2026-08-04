@@ -1,12 +1,11 @@
 /**
- * Register & evolution — Gaps list with Theory (SME) deep-link + Regenerate handoff.
+ * Register & evolution — Gaps catalog, Gap modal, Written toggle, Regenerate handoff.
  */
-import { useEffect, useMemo, useState } from "react";
-import { useRegisterSelection } from "../../context/RegisterSelectionContext";
-import { SME_SEATS } from "../../theory/sme";
+import { useEffect, useState } from "react";
 import { RegisterSurfaceMount, navBtnStyle, sectionLabelStyle } from "../registerSurfaceChrome";
 import {
   moduleFocus,
+  operatorModal,
   panelShell,
   primaryBtnStyle,
   resolveHoveredEntry,
@@ -17,51 +16,100 @@ import {
 } from "./operatorChrome";
 
 type GapRow = {
-  seatId: string;
-  seatLabel: string;
-  itemId: string;
-  consideration: string;
-  thesisGap: string;
-  plant: string;
+  id: string;
+  summary: string;
+  ticket?: string;
+  written: boolean;
 };
 
-function collectGaps(): GapRow[] {
-  const rows: GapRow[] = [];
-  for (const seat of SME_SEATS) {
-    for (const item of seat.items) {
-      if (item.implementationPlant === "planted") continue;
-      rows.push({
-        seatId: seat.id,
-        seatLabel: seat.label,
-        itemId: item.id,
-        consideration: item.consideration,
-        thesisGap: item.thesisGap,
-        plant: item.implementationPlant ?? "not_done",
-      });
-      if (rows.length >= 24) return rows;
-    }
-  }
-  return rows;
-}
+const SEED_GAPS: GapRow[] = [
+  {
+    id: "gap-seq-silence",
+    summary: "Sequence silence clock not visible on Fleet health — Atlas stuck 9 contacts unnoticed.",
+    ticket: "SUP-184",
+    written: false,
+  },
+  {
+    id: "gap-bind-gate",
+    summary: "Bind pack commit lacks before/after on Audit trail for Send gate reviewers.",
+    written: true,
+  },
+  {
+    id: "gap-approach-cap",
+    summary: "Approach click budget bound not enforced when firm re-binds mid-campaign.",
+    written: false,
+  },
+];
 
 export function RegisterEvolutionModule({ t, focusedEntry, hoveredId }: OperatorModuleProps) {
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Register & evolution", focusedEntry, hoveredEntry);
-  const { selectSmeItem } = useRegisterSelection();
-  const gaps = useMemo(() => collectGaps(), []);
-  const [selectedKey, setSelectedKey] = useState(
-    () => (gaps[0] ? `${gaps[0].seatId}:${gaps[0].itemId}` : ""),
-  );
+  const [gaps, setGaps] = useState<GapRow[]>(SEED_GAPS);
+  const [selectedId, setSelectedId] = useState(SEED_GAPS[0].id);
+  const [gapModalOpen, setGapModalOpen] = useState(false);
+  const [editingNew, setEditingNew] = useState(false);
+  const [formSummary, setFormSummary] = useState("");
+  const [formTicket, setFormTicket] = useState("");
   const [handoffNote, setHandoffNote] = useState<string | null>(null);
+
+  const selected = gaps.find((g) => g.id === selectedId) ?? gaps[0] ?? null;
 
   useEffect(() => {
     if (!focusedEntry || focusedEntry.module !== "Register & evolution") return;
-    if (focusedEntry.label === "Gaps" || focusedEntry.label === "Gap") {
-      if (gaps[0]) setSelectedKey(`${gaps[0].seatId}:${gaps[0].itemId}`);
+    if (focusedEntry.label === "Gap" || focusedEntry.label === "Gaps") {
+      setGapModalOpen(true);
+      if (gaps[0]) setSelectedId(gaps[0].id);
     }
   }, [focusedEntry, gaps]);
 
-  const selected = gaps.find((g) => `${g.seatId}:${g.itemId}` === selectedKey) ?? gaps[0] ?? null;
+  const openNewGap = () => {
+    setEditingNew(true);
+    setFormSummary("");
+    setFormTicket("");
+    setGapModalOpen(true);
+  };
+
+  const openEditGap = (gap: GapRow) => {
+    setEditingNew(false);
+    setFormSummary(gap.summary);
+    setFormTicket(gap.ticket ?? "");
+    setSelectedId(gap.id);
+    setGapModalOpen(true);
+  };
+
+  const saveGap = () => {
+    if (!formSummary.trim()) return;
+    if (editingNew) {
+      const id = `gap-${Date.now()}`;
+      const row: GapRow = {
+        id,
+        summary: formSummary.trim(),
+        ticket: formTicket.trim() || undefined,
+        written: false,
+      };
+      setGaps((prev) => [row, ...prev]);
+      setSelectedId(id);
+    } else if (selected) {
+      setGaps((prev) =>
+        prev.map((g) =>
+          g.id === selected.id
+            ? {
+                ...g,
+                summary: formSummary.trim(),
+                ticket: formTicket.trim() || undefined,
+              }
+            : g,
+        ),
+      );
+    }
+    setGapModalOpen(false);
+  };
+
+  const toggleWritten = (gapId: string) => {
+    setGaps((prev) =>
+      prev.map((g) => (g.id === gapId ? { ...g, written: !g.written } : g)),
+    );
+  };
 
   return (
     <RegisterSurfaceMount
@@ -69,11 +117,12 @@ export function RegisterEvolutionModule({ t, focusedEntry, hoveredId }: Operator
       focused={focus.focused && focusedEntry?.label === "Register & evolution"}
       hovered={hoveredEntry?.label === "Register & evolution"}
       t={t}
+      style={{ position: "relative" }}
     >
       {panelShell(
         t,
         "Register & evolution",
-        statusChip(t, "methodology"),
+        statusChip(t, "house-only"),
         <div style={{ flex: 1, minHeight: 0, display: "flex", overflow: "hidden" }}>
           <aside
             style={{
@@ -86,40 +135,54 @@ export function RegisterEvolutionModule({ t, focusedEntry, hoveredId }: Operator
           >
             <div style={sectionLabelStyle(t)}>Gaps</div>
             <div data-register-surface="Gaps">
-              {gaps.map((gap) => {
-                const key = `${gap.seatId}:${gap.itemId}`;
-                return (
-                  <button
-                    key={key}
-                    type="button"
-                    data-register-surface="Gap"
-                    onClick={() => setSelectedKey(key)}
+              <button
+                type="button"
+                style={{
+                  ...navBtnStyle(t, false),
+                  fontWeight: 600,
+                  color: t.accent,
+                }}
+                onClick={openNewGap}
+              >
+                + New gap
+              </button>
+              {gaps.map((gap) => (
+                <button
+                  key={gap.id}
+                  type="button"
+                  data-register-surface="Gap"
+                  onClick={() => {
+                    setSelectedId(gap.id);
+                    openEditGap(gap);
+                  }}
+                  style={{
+                    ...navBtnStyle(t, gap.id === selectedId),
+                    outline:
+                      (focus.labelFocused("Gap") || focus.labelHovered("Gap")) &&
+                      gap.id === selectedId
+                        ? `2px solid ${t.accent}`
+                        : undefined,
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", gap: 6 }}>
+                    <span style={{ fontWeight: 600, fontSize: 11 }}>{gap.id}</span>
+                    {gap.written ? statusChip(t, "Written", "success") : null}
+                  </div>
+                  <div
                     style={{
-                      ...navBtnStyle(t, key === selectedKey),
-                      outline:
-                        (focus.labelFocused("Gap") || focus.labelHovered("Gap")) &&
-                        key === selectedKey
-                          ? `2px solid ${t.accent}`
-                          : undefined,
+                      fontSize: 11,
+                      color: t.textMuted,
+                      marginTop: 2,
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
                     }}
                   >
-                    <div style={{ fontWeight: 600, fontSize: 11 }}>{gap.itemId}</div>
-                    <div
-                      style={{
-                        fontSize: 11,
-                        color: t.textMuted,
-                        marginTop: 2,
-                        display: "-webkit-box",
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
-                      }}
-                    >
-                      {gap.consideration}
-                    </div>
-                  </button>
-                );
-              })}
+                    {gap.summary}
+                  </div>
+                </button>
+              ))}
             </div>
           </aside>
 
@@ -139,9 +202,7 @@ export function RegisterEvolutionModule({ t, focusedEntry, hoveredId }: Operator
               surfaceBlock(
                 t,
                 "Gap",
-                focus.labelFocused("Gap") ||
-                  focusedEntry?.label === "Gaps" ||
-                  focusedEntry?.label === "Register & evolution",
+                focus.labelFocused("Gap"),
                 focus.labelHovered("Gap"),
                 <>
                   <div
@@ -154,30 +215,45 @@ export function RegisterEvolutionModule({ t, focusedEntry, hoveredId }: Operator
                     }}
                   >
                     <span style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary }}>
-                      {selected.itemId} · Gap
+                      {selected.id}
                     </span>
-                    {statusChip(t, selected.plant.replace("_", " "), "amber")}
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                        fontSize: 11,
+                        color: t.textPrimary,
+                        cursor: "pointer",
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selected.written}
+                        onChange={() => toggleWritten(selected.id)}
+                      />
+                      Affordance / backend facet · Written
+                    </label>
                   </div>
-                  <div style={{ fontSize: 11, color: t.textDim, marginBottom: 8 }}>
-                    Seat · {selected.seatLabel}
-                  </div>
-                  <p style={{ margin: "0 0 10px", fontSize: 12, lineHeight: 1.5, color: t.textPrimary }}>
-                    {selected.consideration}
+                  <p style={{ margin: "0 0 8px", fontSize: 12, lineHeight: 1.5, color: t.textPrimary }}>
+                    {selected.summary}
                   </p>
-                  <p style={{ margin: "0 0 14px", fontSize: 12, lineHeight: 1.55, color: t.textMuted }}>
-                    {selected.thesisGap}
-                  </p>
+                  {selected.ticket ? (
+                    <div style={{ fontSize: 11, color: t.textMuted }}>
+                      Support ticket · {selected.ticket}
+                    </div>
+                  ) : null}
                   <button
                     type="button"
-                    style={primaryBtnStyle(t)}
-                    onClick={() => selectSmeItem(selected.seatId, selected.itemId)}
+                    style={{ ...secondaryBtnStyle(t), marginTop: 12 }}
+                    onClick={() => openEditGap(selected)}
                   >
-                    Open in Theory · SME
+                    Edit gap
                   </button>
                 </>,
               )
             ) : (
-              <div style={{ fontSize: 12, color: t.textMuted }}>No open gaps in SME seats.</div>
+              <div style={{ fontSize: 12, color: t.textMuted }}>No gaps logged.</div>
             )}
 
             {surfaceBlock(
@@ -190,15 +266,16 @@ export function RegisterEvolutionModule({ t, focusedEntry, hoveredId }: Operator
                   Regenerate handoff
                 </div>
                 <p style={{ margin: "0 0 10px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
-                  Refresh PM handoff notes from open gaps and implementation plant status. Product
-                  ship has no firm Register — this stays methodology tooling.
+                  Writes handoff state for Configuration libraries authoring — never on the firm desk.
                 </p>
                 <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                   <button
                     type="button"
-                    style={secondaryBtnStyle(t)}
+                    style={primaryBtnStyle(t)}
                     onClick={() =>
-                      setHandoffNote(`Handoff draft refreshed · ${gaps.length} open gaps`)
+                      setHandoffNote(
+                        `Handoff regenerated · ${gaps.filter((g) => g.written).length} Written gaps`,
+                      )
                     }
                   >
                     Regenerate handoff
@@ -212,6 +289,78 @@ export function RegisterEvolutionModule({ t, focusedEntry, hoveredId }: Operator
           </div>
         </div>,
       )}
+
+      {gapModalOpen
+        ? operatorModal(
+            t,
+            "Gap",
+            editingNew ? "New gap" : "Gap",
+            focus.labelFocused("Gap"),
+            focus.labelHovered("Gap"),
+            () => setGapModalOpen(false),
+            <>
+              <label style={{ display: "block", fontSize: 12, color: t.textPrimary, marginBottom: 12 }}>
+                <div style={{ fontSize: 10, color: t.textDim, marginBottom: 4 }}>Friction summary</div>
+                <textarea
+                  value={formSummary}
+                  onChange={(e) => setFormSummary(e.target.value)}
+                  rows={4}
+                  style={{
+                    width: "100%",
+                    fontSize: 12,
+                    fontFamily: "inherit",
+                    padding: "8px 10px",
+                    border: `1px solid ${t.border}`,
+                    borderRadius: 4,
+                    background: t.bgPrimary,
+                    color: t.textPrimary,
+                    resize: "vertical",
+                  }}
+                />
+              </label>
+              <label style={{ display: "block", fontSize: 12, color: t.textPrimary }}>
+                <div style={{ fontSize: 10, color: t.textDim, marginBottom: 4 }}>
+                  Support ticket id (optional)
+                </div>
+                <input
+                  value={formTicket}
+                  onChange={(e) => setFormTicket(e.target.value)}
+                  placeholder="SUP-184"
+                  style={{
+                    width: "100%",
+                    fontSize: 12,
+                    fontFamily: "inherit",
+                    padding: "6px 8px",
+                    border: `1px solid ${t.border}`,
+                    borderRadius: 4,
+                    background: t.bgPrimary,
+                    color: t.textPrimary,
+                  }}
+                />
+              </label>
+            </>,
+            <>
+              <button type="button" style={secondaryBtnStyle(t)} onClick={() => setGapModalOpen(false)}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                data-register-surface="Save gap"
+                disabled={!formSummary.trim()}
+                style={{
+                  ...primaryBtnStyle(t, !formSummary.trim()),
+                  outline:
+                    focus.labelFocused("Save gap") || focus.labelHovered("Save gap")
+                      ? `2px solid ${t.textPrimary}`
+                      : "none",
+                }}
+                onClick={saveGap}
+              >
+                Save gap
+              </button>
+            </>,
+          )
+        : null}
     </RegisterSurfaceMount>
   );
 }
