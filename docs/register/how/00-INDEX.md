@@ -11,7 +11,8 @@
 4. **Hub placement is a revision, not destination.** Audits / Agents / Automations live in the firm shell today; personas + this lattice put authorship on the Operator. Leaves name the **operator Module** as the rightful home and mark today's Hub parking as **existing-wrong-seat** when relevant.
 5. **Leaf click-path:** most-relative container; invent Title Case Module/Modal/Block names when nothing fits; mark **existing** vs **new**.
 6. **Affordance grain:** Clarity names controls and, for state-writing affordances, the downstream reader. Components: `UI · Kind · Status · Affordance`. See [`../sme/implementation/CLICKPATH-DENSIFICATION.md`](../sme/implementation/CLICKPATH-DENSIFICATION.md).
-7. **Writing only.** No CT plant, no implementation code this pass. Preference + requirements — not a doability verdict.
+7. **Person vs view-only vs external:** Person acting → click-path language (`click` / `select` / …). View-only of backend → `view`. Past app edge → intent only (no invented external UI). Never “ops runs…”.
+8. **Writing only.** No CT plant. Preference + requirements — not a doability verdict.
 
 ## Format per tree file
 

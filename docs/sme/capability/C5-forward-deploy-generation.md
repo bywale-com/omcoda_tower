@@ -303,10 +303,10 @@ On Activation & forward-deploy → In-flight activations, each firm row tracks b
 Operators clone empty Prepared Workspace shells and paste facts by hand. Approach cannot scale; In-flight activations stall at “workspace exists” without content.
 
 **implementation:**  
-On Activation & forward-deploy → Forward-deploy, open Hydrate; choose Engagement template version from the published-only dropdown, choose Firm-facts snapshot from the snapshot dropdown, choose Brand package version from the package dropdown, and click Hydrate to create Prepared Workspace instance.
-On Prepared Workspace, you can now examine bound template version and snapshot IDs.  
-On Activation state Progress, hydrated becomes a distinct gate after enrichment — empty shells are not ready.
-Before Hydrate, start from Configuration libraries → Engagement templates catalog, open Agent / sequence editor, author the template, and click Publish version so only published versions appear in the Forward-deploy dropdown.
+Starting from Activation & forward-deploy, click In-flight activations, click the firm row, click Forward-deploy; select Engagement template version from the published-only dropdown, select Firm-facts snapshot from the snapshot dropdown, select Brand package version from the package dropdown, and click **Hydrate** (primary button) to create the Prepared Workspace instance.
+On Prepared Workspace, view bound template version and snapshot ID chips.
+On Activation state, click Progress; view hydrated as a distinct gate chip after enrichment — empty shells are not ready.
+Before Hydrate: Starting from Configuration libraries, click Engagement templates, click a template row (or New), edit in Agent / sequence editor, click Publish version so only published versions appear in the Forward-deploy dropdown.
 
 **implementationAdds:** `["hydrate-job", "template-version-pin", "workspace-instance", "hydrated"]`
 

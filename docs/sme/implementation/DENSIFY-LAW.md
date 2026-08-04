@@ -12,10 +12,10 @@
 - Configuration libraries → keep **catalog → editor → Publish version**.
 
 **Grammar**
-- Initiation: name the control (`click`, `dropdown`, `segmented control`, `primary button`, `canvas node`, `checkbox`).
-- View: name the chrome (`panel`, `chip`, `row`, `catalog status`).
-- Never stop at “On {Module}, you can now…” without the inner affordance.
-- Do not invent modules/surfaces absent from `00-SURFACE-VOCAB.md`.
-- Do not chase undocumented app chrome; only densify what implementations already touch.
+- **Person acting** (Operator · Consultant · Contact): click-path language only — `click`, `select`, `type`, `confirm`, `hover`, plus the named control. Never “ops runs…”.
+- **View-only:** say `view` / chips / rows. Do not invent initiate buttons for autonomous backend.
+- **In-app:** grain to the control; name the entity that writes state and the in-app surface that reads it.
+- **Past the app edge** (Meta, ESP, Stripe, IRCC, carrier…): stop inventing their UI. State **intent** — what the person would like to achieve there. CTO / capability SME later return the real envelope.
+- Prefer existing module shapes; do not invent modules absent from `00-SURFACE-VOCAB.md`.
 
 **Register:** After editing markdown, run `scripts/sync-sme-from-docs.py` and `scripts/sync-capability-sme-from-docs.py` so twins update.
