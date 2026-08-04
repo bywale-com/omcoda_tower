@@ -110,7 +110,7 @@ On Nudge form, answer EE profile exists with a checkbox, approximate last-update
 Forms may collect “scores” while IRCC only accepts named products and refuses expired results — claimed CLB can outlive verifiable currency.
 
 **implementation:**  
-On Nudge form, enter CLB-equivalent bands with score-band dropdowns, test product name with a dropdown, and test date with a date form field. On Client Brief, click the Manage panel to view result-verification number fields and certificate-file rows. On Analysis, view language-dependent pathway and CRS chips expire when test date + 2 years is past the profile/application-relevant window.
+On Nudge form, enter CLB-equivalent bands with score-band dropdowns, test product name with a dropdown, and test date with a date form field. On Client Brief, click the Manage panel to view result-verification number fields and certificate-file rows. On Analysis, view language-expired chips on language-dependent pathway and CRS rows when test date + 2 years is past the profile/application-relevant window.
 
 **implementationAdds:** `clb-equivalent` · `language-expired` · `ircc-test-product`
 
@@ -123,7 +123,7 @@ On Nudge form, enter CLB-equivalent bands with score-band dropdowns, test produc
 Years-alone gates over-assert pathway pass while NOC duty match and authorization-to-work are the real refusal points.
 
 **implementation:**  
-On Nudge form, self-report job title, country, start/end dates, hours/week, TEER guess, and student/self-employed flags using form fields and checkboxes for provisional pathway/gap signals. On Client Brief, click the Manage panel to view reference-letter, wage-proof, and duty-narrative rows; Analysis keeps the Confidence tier chip at Provisional until those rows support Program-minimum met.
+On Nudge form, enter job title, country, start/end dates, hours/week, TEER guess, and student/self-employed flags in form fields and checkboxes for provisional pathway/gap signals. On Client Brief, click the Manage panel to view reference-letter, wage-proof, and duty-narrative rows; Analysis keeps the Confidence tier chip at Provisional until those rows support Program-minimum met.
 
 **implementationAdds:** `provisional` · `program-minimum-met` · `teer-guess`
 
@@ -149,7 +149,7 @@ Starting from Configuration libraries, click the Evaluation packs row, then clic
 Prototype matrices may still score arranged-employment CRS boosts discontinued 2025-03-25, creating Analysis liability while offers remain program gates.
 
 **implementation:**  
-Starting from Reference data, click Reference tables, then click the CRS additional points row. In the table editor, set Job-offer CRS points with the status dropdown to Off unless a future Ministerial Instruction republishes them, then click Publish version. Starting from Configuration libraries, click the Evaluation packs row and open Evaluation pack editor; keep valid job offer / certificate-of-qualification as FST and applicable FSW selection-factor / funds-exemption input rows only; click Publish version. On Analysis, the arranged-employment CRS boost score row never appears.
+Starting from Reference data, click Reference tables, then click the CRS additional points row. In the table editor, set Job-offer CRS points with the status dropdown to Off unless a future Ministerial Instruction republishes them, then click Publish version. Starting from Configuration libraries, click the Evaluation packs row and open Evaluation pack editor; keep valid job offer / certificate-of-qualification as FST and applicable FSW selection-factor / funds-exemption input rows only; click Publish version. On Analysis, view no arranged-employment CRS boost score row.
 
 **implementationAdds:** `job-offer-crs-off` · `offer-as-program-gate` · `certificate-of-qualification`
 
@@ -240,8 +240,7 @@ Starting from Configuration libraries, click the Evaluation packs row, then clic
 “Points” language conflates FSW entry gate with pool ranking — false pathway pass/fail from CRS alone.
 
 **implementation:**  
-Wiring absorb (CTO): model FSW evaluator as two-stage (67-grid eligibility then CRS estimate); forbid CRS-cutoff-alone for FSW pathway-pass.  
-On Analysis, click the FSW assertion row to view Program-minimum + >=67 selection-factor as separate stage chips from CRS estimate; CRS cutoff alone never asserts or denies FSW pathway-pass. In the Condition provenance panel, view both FSW stages as distinct rows.
+Starting from Configuration libraries, click the Evaluation packs row, then click an Evaluation pack row to open Evaluation pack editor. In the FSW evaluation panel, set Stage order checkboxes so program-minimum + >=67 selection-factor run before CRS estimate and CRS-cutoff-alone cannot assert FSW pathway-pass; click Publish version. On Analysis, click the FSW assertion row to view Program-minimum + >=67 selection-factor as separate stage chips from CRS estimate; view no FSW pathway-pass chip from CRS cutoff alone. In the Condition provenance panel, view both FSW stages as distinct rows.
 
 **implementationAdds:** `fsw-67-grid` · `crs-estimate` · `fsw-two-stage`
 
@@ -306,8 +305,7 @@ Starting from Configuration libraries, click the Evaluation packs row, then clic
 When IRCC cutoffs/categories move, the firm cannot explain what Tower believed at send time unless evaluations freeze law/data versions.
 
 **implementation:**  
-Wiring absorb (CTO): persist pack version ID, reference-table version IDs, evaluation timestamp, confidence tier, and condition provenance on every signal/Analysis snapshot used for outreach or brief.  
-On Analysis and Live brief, click Evaluation provenance to open a panel showing pack version, reference pins, timestamp, Confidence tier chip, and Condition provenance rows for what Tower believed at send time.
+Starting from Configuration libraries, click the Evaluation packs row, then click an Evaluation pack row to open Evaluation pack editor. In the Snapshot provenance panel, turn on checkboxes for pack version ID, reference-table version IDs, evaluation timestamp, confidence tier, and condition provenance on outreach and brief snapshots; click Publish version. On Analysis and Live brief, click Evaluation provenance to open a panel showing pack version, reference pins, timestamp, Confidence tier chip, and Condition provenance rows for what Tower believed at send time.
 
 **implementationAdds:** `pack-version-id` · `reference-version-id` · `evaluation-timestamp` · `evaluation-provenance`
 

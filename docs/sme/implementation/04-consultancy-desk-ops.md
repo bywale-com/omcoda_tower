@@ -100,7 +100,7 @@ On Meetings, click a Meeting row to open Live brief. In Live brief, view current
 A frozen snapshot brief is a builder convenience that creates professional candour failure if the contact updated facts after booking.
 
 **implementation:**  
-On Live brief, opening the panel triggers recompute-on-open, and clicking Write back triggers recompute-on-write-back. View the as-of currency marker chip so advice preparation tracks facts the firm already holds, not a stale export.
+On Meetings, click a Meeting row to open Live brief. On Live brief, view recompute-on-open currency on panel open and recompute-on-write-back after clicking Write back. View the as-of currency marker chip so advice preparation tracks facts the firm already holds, not a stale export.
 
 **implementationAdds:** ["as-of", "recompute-on-open"]
 
@@ -263,7 +263,7 @@ Meeting-booked success nuance vs Seed Assump. 6 metric wording. No implementatio
 Always-on “staying informed” can look like ongoing advisory services without consultation/service agreements, putting the licensee offside on client/retainer boundaries.
 
 **implementation:**  
-On Board and Meetings, open a contact or meeting row and view touchpoint inhabit labels as firm-branded engagement / invitation toward consultation — not provision of immigration consulting services. On Live brief, advice and scoping rows stay inside the booked consult after required agreements; free value-add does not show as an unretained-practice status chip.
+On Board, click a Client row; on Meetings, click a Meeting row; view touchpoint inhabit labels as firm-branded engagement / invitation toward consultation — not provision of immigration consulting services. On Live brief, advice and scoping rows stay inside the booked consult after required agreements; free value-add does not show as an unretained-practice status chip.
 
 **implementationAdds:** ["invitation-toward-consultation"]
 
@@ -275,7 +275,7 @@ On Board and Meetings, open a contact or meeting row and view touchpoint inhabit
 Building multi-consultant RBAC early invents product seats World deferred (KU #6). Shipping zero accountability for who authorized/halted is also unsafe if a second human uses the same login informally. No second persona.
 
 **implementation:**  
-On Prepared Workspace, click Accept terms, then open License acknowledgement and choose one named authorizing licensee from the identity dropdown per tenancy. Halt outreach confirmations and meeting-take rows attribute to that firm desk session. Multi-consultant roles/permissions stay deferred: no new persona selector appears, and informal staff use remains a firm supervision problem under the Code, not a product RBAC seat.
+On Prepared Workspace, click Accept terms, then on License acknowledgement choose one named authorizing licensee from the identity dropdown per tenancy. Halt outreach confirmations and meeting-take rows attribute to that firm desk session. Multi-consultant roles/permissions stay deferred: no new persona selector appears, and informal staff use remains a firm supervision problem under the Code, not a product RBAC seat.
 
 **implementationAdds:** ["single-authorizing-licensee"]
 

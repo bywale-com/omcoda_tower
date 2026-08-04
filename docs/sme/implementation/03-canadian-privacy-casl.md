@@ -55,7 +55,7 @@ On Consent request, click Agree only after selecting an unchecked-by-default aff
 Opt-in phase risks cold-emailing the whole book to “get consent.” That first CEM itself needs a lawful basis; without one the launch is the violation.
 
 **implementation:**  
-Starting from Firm operations bind, click a Firm row to open firm detail, then open the Send gates panel. View the Consent basis required readiness row with allowed chips for Express already on file or Typed implied before the Opt-in message send button may fire.
+Starting from Firm operations bind, click a Firm row to open firm detail, then open the Send gates panel. View the Consent basis required readiness row with allowed chips for Express already on file or Typed implied; view the Opt-in message send button disabled until that row passes.
 Starting from Book readiness, click Audits, open an Audit run, then view the Verdict list. Contacts without a documented Consent basis show a not-ready-for-opt-in-CEM verdict row, so cold book-wide consent asks stay blocked.
 
 **implementationAdds:** `["consent-basis-required", "express-on-file", "implied-qualified"]`
@@ -70,7 +70,7 @@ Immigration books mix retainers, closed files, and cold leads. Implied consent i
 **implementation:**  
 Starting from Book readiness, click Audits, open an Audit run, then view the Verdict list row for a contact; the contact ledger panel shows implied-consent type, triggering event date, and expiry fields.  
 Starting from Firm operations bind, click a Firm row to open firm detail, then open the Send gates panel; opt-in and nudge rows under implied consent show an implied-expired deny chip when the clock has lapsed.
-On Imports, fill the implied type dropdown and event date form field so Book readiness can compute the window.
+On Imports, fill the implied type dropdown and event date form field; on Book readiness Audit verdict list, view computed implied-expiry chips from those import fields.
 
 **implementationAdds:** `["implied-ebr-purchase", "implied-ebr-inquiry", "implied-expiry", "event-date"]`
 
@@ -136,7 +136,7 @@ Starting from Firm operations bind, click a Firm row to open firm detail; view t
 Silence stops outreach in product language but does not bind CRTC bars: free, one-step, mechanism valid ≥60 days, effect within 10 business days. Delayed honor leaves continuing CEMs after withdrawal.
 
 **implementation:**  
-On Silence / Opt out, and in the Opt-in message / Nudge message footer, click a one-step no-cost unsubscribe button or send SMS STOP; the mechanism shows a valid-through date at least 60 days after send.  
+On Silence / Opt out, and in the Opt-in message / Nudge message footer, click a one-step no-cost unsubscribe button; on SMS channel surfaces, view STOP/Unsubscribe reply instructions. The mechanism shows a valid-through date at least 60 days after send.  
 Starting from Firm operations bind, click a Firm row to open firm detail, then open the Send gates panel; silenced contacts show a silenced deny chip that suppresses further CEMs immediately and never later than <=10 business days.
 
 **implementationAdds:** `["unsubscribe-immediate", "unsubscribe-leq-10bd", "mechanism-valid-60d"]`
@@ -149,8 +149,8 @@ Starting from Firm operations bind, click a Firm row to open firm detail, then o
 Silence How centers in-touchpoint controls. Carrier-style STOP/Unsubscribe replies can be ignored or treated as softer than Silence / Opt out — uneven ledger.
 
 **implementation:**  
-On Silence / Opt out state, inbound STOP / Unsubscribe and equivalent keywords set an authoritative silence chip for that SMS address, the same as the in-message Silence / Opt out button.  
-On Audit trail, click a Consent event row to open SMS stop-keyword silence alongside touchpoint Silence / Opt out.
+On Silence / Opt out state, view inbound STOP/Unsubscribe and equivalent keywords reflected as an authoritative silence chip for that SMS address — same ledger outcome as the in-message Silence / Opt out button.
+On Audit trail, click a Consent event row to view SMS stop-keyword silence alongside touchpoint Silence / Opt out.
 
 **implementationAdds:** `["sms-stop", "sms-unsubscribe-keyword", "silence-authoritative"]`
 
@@ -248,8 +248,8 @@ Starting from Activation & forward-deploy, click Forward-deploy; website-harvest
 Ads seat owns pre-frame trust; CASL still requires Om Coda ID, contact coords valid ≥60 days, unsubscribe, and relevance to the consultant’s business role. Thin pitch templates fail form and role-relevance.
 
 **implementation:**  
-Starting from Agent / sequence editor, open the Approach first-text adjacent template row. Require First-text copy fields to identify Om Coda, include prescribed contact info plus unsubscribe, and speak only to the captured consultant's professional interest in Prepared Workspace.  
-On Capture strip, click First-text; the send button stays disabled when required form fields are incomplete or off-role copy is flagged.
+Starting from Agent / sequence editor, click the Approach first-text adjacent template row. Fill First-text copy fields to identify Om Coda, include prescribed contact info plus unsubscribe, and speak only to the captured consultant's professional interest in Prepared Workspace.
+On Capture strip, click First-text; view the send button disabled when required form fields are incomplete or off-role copy is flagged.
 
 **implementationAdds:** `["om-coda-id", "role-relevant-b2b", "prescribed-contact-info"]`
 
