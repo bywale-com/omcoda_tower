@@ -1,0 +1,256 @@
+#!/usr/bin/env python3
+"""Parse docs/sme/capability C1–C7 into theory/sme/capability seat TS modules.
+
+Capability seats combine Pass2 + implementation in one markdown file (unlike practice
+seats which split pass2/ and implementation/). Reuses field parsers from the practice sync.
+"""
+
+from __future__ import annotations
+
+import importlib.util
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+CAP_DIR = ROOT / "docs" / "sme" / "capability"
+OUT_DIR = ROOT / "src" / "app" / "register" / "theory" / "sme" / "capability"
+SEATS_DIR = OUT_DIR / "seats"
+
+# Load practice sync helpers without running main()
+_spec = importlib.util.spec_from_file_location(
+    "sync_sme", ROOT / "scripts" / "sync-sme-from-docs.py"
+)
+assert _spec and _spec.loader
+sync_sme = importlib.util.module_from_spec(_spec)
+sys.modules["sync_sme"] = sync_sme
+_spec.loader.exec_module(sync_sme)
+
+CAP_SEATS = [
+    {
+        "id": "email-deliverability",
+        "file": "C1-email-deliverability",
+        "label": "C1 — Email / SMS deliverability & sending infra",
+        "domain": (
+            "Land firm-branded messages in inboxes at volume without burning reputation — "
+            "domain auth, warmup, reputation isolation, suppression, IP/SMS posture."
+        ),
+        "whyExists": (
+            "Deliverability is a genuine specialty not covered by “we use Resend/Twilio.” "
+            "Compliance gave consent; this seat owns inbox placement."
+        ),
+    },
+    {
+        "id": "agentic-engagement-runtime",
+        "file": "C2-agentic-engagement-runtime",
+        "label": "C2 — Agentic engagement runtime",
+        "domain": (
+            "Live sequence runtime: inbound capture, intent classification, one-owner "
+            "attempt/channel state machine, HITL escalation, Conversations triage."
+        ),
+        "whyExists": (
+            "Hands-free engagement depends on a specialist runtime beyond a static drip; "
+            "CTO generalist wiring does not own intent→action depth."
+        ),
+    },
+    {
+        "id": "eligibility-reference-pipeline",
+        "file": "C3-eligibility-reference-pipeline",
+        "label": "C3 — Eligibility + reference-data pipeline",
+        "domain": (
+            "Ingestion, immutable publish/versioning, diffs, impact-scoped re-score, "
+            "freshness/volatility, and reconciliation for immigration reference criteria."
+        ),
+        "whyExists": (
+            "Evaluation logic is specified; the pipeline that keeps criteria current and "
+            "re-scores clients is the capability gap."
+        ),
+    },
+    {
+        "id": "book-ingestion-identity",
+        "file": "C4-book-ingestion-identity",
+        "label": "C4 — Book ingestion & identity resolution",
+        "domain": (
+            "Messy book import → normalized, deduped, Q-ID-mapped, validation-ready contacts "
+            "(field mapping, identity, reachability class)."
+        ),
+        "whyExists": (
+            "Field mapping, dedup/identity, and validation-class are specialist data work "
+            "beyond a shallow CSV import form."
+        ),
+    },
+    {
+        "id": "forward-deploy-generation",
+        "file": "C5-forward-deploy-generation",
+        "label": "C5 — Forward-deploy generation",
+        "domain": (
+            "Public-facts enrichment, crawl/robots, branding extract, template hydration, "
+            "Prepared Workspace readiness, no-login token access."
+        ),
+        "whyExists": (
+            "Prepared Workspace generation is a specialist enrichment/hydrate pipeline, "
+            "not a static template drop."
+        ),
+    },
+    {
+        "id": "escrow-payment-mechanics",
+        "file": "C6-escrow-payment-mechanics",
+        "label": "C6 — Escrow / contingent-payment mechanics",
+        "domain": (
+            "Escrow ledger, hold/release rails, idempotent webhooks, verified-release, "
+            "refund/forfeit, evidence packages, PCI boundary (counsel-gated MT/MSB)."
+        ),
+        "whyExists": (
+            "Contingent-cost mechanics are specialist payment rail work beyond Accept-terms "
+            "copy; extends compliance seat 6."
+        ),
+    },
+    {
+        "id": "instrumentation-analytics",
+        "file": "C7-instrumentation-analytics",
+        "label": "C7 — Instrumentation / analytics pipeline",
+        "domain": (
+            "Messaging event stream, taxonomy, idempotent ingress, correlation, metrics "
+            "store, materializations, freshness SLO, tenant isolation, producer coverage."
+        ),
+        "whyExists": (
+            "Oversight / Firm health shells need a real event→metrics pipeline shared with "
+            "C1/C2 — not vanity dashboards."
+        ),
+    },
+]
+
+
+def emit_seat_ts(seat: dict, items: list[dict]) -> str:
+    """Same shape as practice seats, with axis: capability."""
+    lines: list[str] = [
+        'import type { SmeSeat } from "../../../types";',
+        "",
+        "/** Auto-generated by scripts/sync-capability-sme-from-docs.py — do not edit by hand. */",
+        f"export const seat: SmeSeat = {{",
+        f"  id: {sync_sme.js_str(seat['id'])},",
+        f"  label: {sync_sme.js_str(seat['label'])},",
+        f"  domain: {sync_sme.js_str(seat['domain'])},",
+        f"  whyExists: {sync_sme.js_str(seat['whyExists'])},",
+        '  axis: "capability",',
+        "  items: [",
+    ]
+    for item in items:
+        lines.append("    {")
+        lines.append(f"      id: {sync_sme.js_str(item['id'])},")
+        lines.append(f"      consideration: {sync_sme.js_str(item['consideration'])},")
+        lines.append(f"      thesisGap: {sync_sme.js_str(item['thesisGap'])},")
+        lines.append(f"      solution: {sync_sme.js_str(item['solution'])},")
+        lines.append("      references: [")
+        for ref in item["references"]:
+            lines.append(
+                f"        {{ title: {sync_sme.js_str(ref['title'])}, url: {sync_sme.js_str(ref['url'])} }},"
+            )
+        lines.append("      ],")
+        if "implementationProblem" in item:
+            lines.append(
+                f"      implementationProblem: {sync_sme.js_str(item['implementationProblem'])},"
+            )
+            lines.append(f"      implementation: {sync_sme.js_str(item['implementation'])},")
+            adds = item.get("implementationAdds") or []
+            lines.append(
+                "      implementationAdds: ["
+                + ", ".join(sync_sme.js_str(a) for a in adds)
+                + "],"
+            )
+            lines.append('      implementationPlant: "not_done",')
+        lines.append(f"      status: {sync_sme.js_str(item['status'])},")
+        lines.append("    },")
+    lines.append("  ],")
+    lines.append("};")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def main() -> None:
+    SEATS_DIR.mkdir(parents=True, exist_ok=True)
+    seat_files: list[str] = []
+    summary: list[tuple[str, int, int]] = []
+
+    for seat in CAP_SEATS:
+        path = CAP_DIR / f"{seat['file']}.md"
+        md = path.read_text(encoding="utf-8")
+        ordered = sync_sme.split_items(md)
+        items_out: list[dict] = []
+        with_impl = 0
+
+        for item_id, body in ordered:
+            fields = sync_sme.field_map(body)
+            consideration = fields.get("Question", "").strip()
+            thesis = fields.get("Thesis gap", "").strip()
+            solution = sync_sme.strip_solution_backticks(fields.get("Solution", ""))
+            references = sync_sme.parse_references(fields.get("References", ""))
+
+            item: dict = {
+                "id": item_id,
+                "consideration": consideration,
+                "thesisGap": thesis,
+                "solution": solution,
+                "references": references,
+            }
+
+            if "implementation" in fields and "implementationProblem" in fields:
+                item["implementationProblem"] = fields.get("implementationProblem", "").strip()
+                item["implementation"] = sync_sme.clean_implementation(fields["implementation"])
+                item["implementationAdds"] = sync_sme.parse_adds(
+                    fields.get("implementationAdds", "")
+                )
+                with_impl += 1
+                # Deferred / blocked stay paper with plant not_done
+                item["status"] = "partial" if "DEFERRED" in body or "BLOCKED" in body else "verified"
+            else:
+                item["status"] = "partial"
+
+            items_out.append(item)
+
+        out_name = seat["file"]
+        seat_files.append(out_name)
+        (SEATS_DIR / f"{out_name}.ts").write_text(emit_seat_ts(seat, items_out), encoding="utf-8")
+        summary.append((seat["id"], len(items_out), with_impl))
+
+    # Capability index
+    imports = []
+    names = []
+    for i, fname in enumerate(seat_files, start=1):
+        alias = f"cap{i:02d}"
+        imports.append(f'import {{ seat as {alias} }} from "./seats/{fname}";')
+        names.append(alias)
+    index = "\n".join(
+        [
+            'import type { SmeSeat } from "../../types";',
+            *imports,
+            "",
+            "/** Capability-axis SME seats — auto-generated; do not edit by hand. */",
+            "export const CAPABILITY_SME_SEATS: SmeSeat[] = [",
+            *[f"  {n}," for n in names],
+            "];",
+            "",
+            "export function getCapabilitySmeSeat(seatId: string): SmeSeat | undefined {",
+            "  return CAPABILITY_SME_SEATS.find((seat) => seat.id === seatId);",
+            "}",
+            "",
+            "export function getCapabilitySmeItem(seatId: string, itemId: string) {",
+            "  const seat = getCapabilitySmeSeat(seatId);",
+            "  return seat?.items.find((item) => item.id === itemId);",
+            "}",
+            "",
+        ]
+    )
+    (OUT_DIR / "index.ts").write_text(index, encoding="utf-8")
+
+    print("Capability SME sync complete")
+    total = 0
+    total_impl = 0
+    for seat_id, n, n_impl in summary:
+        total += n
+        total_impl += n_impl
+        print(f"  {seat_id}: {n} items, {n_impl} with implementation")
+    print(f"TOTAL: {total} items, {total_impl} with implementation")
+
+
+if __name__ == "__main__":
+    main()

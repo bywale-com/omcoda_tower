@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { RegisterSurfaceMount } from "../registerSurfaceChrome";
 import {
+  DEMO_FIRMS,
   moduleFocus,
   panelShell,
   primaryBtnStyle,
@@ -13,6 +14,8 @@ import {
   surfaceBlock,
   type OperatorModuleProps,
 } from "./operatorChrome";
+
+const KILL_SCOPE_TARGETS = [DEMO_FIRMS[0], DEMO_FIRMS[2], DEMO_FIRMS[3]] as const;
 
 export function FounderAgencyControlsModule({
   t,
@@ -25,6 +28,9 @@ export function FounderAgencyControlsModule({
   const [maxDaily, setMaxDaily] = useState("40");
   const [armed, setArmed] = useState(false);
   const [killed, setKilled] = useState(false);
+  const [killScope, setKillScope] = useState<string>("fleet");
+  const selectedScopeFirm = KILL_SCOPE_TARGETS.find((firm) => firm.id === killScope);
+  const killScopeLabel = selectedScopeFirm?.name ?? "Fleet";
 
   return (
     <RegisterSurfaceMount
@@ -36,7 +42,11 @@ export function FounderAgencyControlsModule({
       {panelShell(
         t,
         "Founder & agency controls",
-        statusChip(t, killed ? "killed" : "armed-ready", killed ? "danger" : "accent"),
+        statusChip(
+          t,
+          killed ? (selectedScopeFirm ? "tenancy halted" : "fleet halted") : "armed-ready",
+          killed ? "danger" : "accent",
+        ),
         <div
           style={{
             flex: 1,
@@ -158,12 +168,64 @@ export function FounderAgencyControlsModule({
                 <span style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary }}>
                   Kill-switch
                 </span>
-                {statusChip(t, killed ? "fleet halted" : "standby", killed ? "danger" : "muted")}
+                {statusChip(
+                  t,
+                  killed ? `${killScopeLabel} halted` : "standby",
+                  killed ? "danger" : "muted",
+                )}
               </div>
               <p style={{ margin: "0 0 12px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
-                Halts house-wide outbound and Approach spend. Requires dual confirmation — Founder
-                arm, then execute.
+                Halts outbound and Approach spend at fleet scope or for a named tenancy. Requires dual
+                confirmation — Founder arm, then execute.
               </p>
+              <div
+                style={{
+                  background: t.bgPrimary,
+                  border: `1px solid ${t.border}`,
+                  borderRadius: 4,
+                  padding: 10,
+                  marginBottom: 12,
+                }}
+              >
+                <div style={{ fontSize: 10, color: t.textDim, marginBottom: 8 }}>
+                  Kill scope · house control choosing fleet or named tenancy targets
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 8 }}>
+                  {[
+                    { id: "fleet", label: "Fleet-wide", meta: "all firm outbound + Approach spend" },
+                    ...KILL_SCOPE_TARGETS.map((firm) => ({
+                      id: firm.id,
+                      label: firm.name,
+                      meta: `${firm.stage} · ${firm.health}`,
+                    })),
+                  ].map((scope) => {
+                    const selected = scope.id === killScope;
+                    return (
+                      <button
+                        key={scope.id}
+                        type="button"
+                        onClick={() => {
+                          setKillScope(scope.id);
+                          setKilled(false);
+                        }}
+                        style={{
+                          textAlign: "left",
+                          fontFamily: "inherit",
+                          background: selected ? t.accentBg : t.bgSecondary,
+                          color: t.textPrimary,
+                          border: `1px solid ${selected ? t.accent : t.border}`,
+                          borderRadius: 4,
+                          padding: "8px 10px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <div style={{ fontSize: 12, fontWeight: 700 }}>{scope.label}</div>
+                        <div style={{ fontSize: 10, color: t.textDim, marginTop: 3 }}>{scope.meta}</div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
                 <button
                   type="button"
@@ -181,7 +243,7 @@ export function FounderAgencyControlsModule({
                   style={primaryBtnStyle(t, !armed || killed)}
                   onClick={() => setKilled(true)}
                 >
-                  Execute fleet halt
+                  Execute {selectedScopeFirm ? "tenancy" : "fleet"} halt
                 </button>
                 {killed ? (
                   <button
@@ -192,7 +254,7 @@ export function FounderAgencyControlsModule({
                       setArmed(false);
                     }}
                   >
-                    Restore fleet
+                    Restore {selectedScopeFirm ? "tenancy" : "fleet"}
                   </button>
                 ) : null}
               </div>

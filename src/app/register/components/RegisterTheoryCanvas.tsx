@@ -1,8 +1,9 @@
 import type { Tokens } from "../../components/tokens";
 import { useRegisterSelection } from "../context/RegisterSelectionContext";
 import { FlowsPane } from "../panes/FlowsPane";
-import { PersonasFunctionPane, WiringOverviewPane } from "../panes/PersonasFunctionPane";
+import { PersonasFunctionPane } from "../panes/PersonasFunctionPane";
 import { SmePane } from "../panes/SmePane";
+import { WiringPaperPane } from "../panes/WiringPaperPane";
 import {
   ComponentsPaneHint,
   CtPlantPlaceholderPane,
@@ -46,7 +47,7 @@ export function RegisterTheoryCanvas({ t }: RegisterTheoryCanvasProps) {
     case "flows":
       return <FlowsPane t={t} />;
     case "wiring":
-      return <WiringOverviewPane t={t} />;
+      return <WiringPaperPane t={t} />;
     case "components":
       return <ComponentsPaneHint t={t} />;
     case "ct-plant":

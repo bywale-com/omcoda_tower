@@ -4,12 +4,12 @@ import type { Tokens } from "../../components/tokens";
 import { useRegisterShell } from "../context/RegisterShellContext";
 import { REGISTER_PASSES, type RegisterPassId } from "../passes/registerPasses";
 import { RegisterComponentsTree } from "./RegisterComponentsTree";
-import { RegisterFlowsTree } from "./RegisterFlowsTree";
 import { RegisterHowTree } from "./RegisterHowTree";
 import { RegisterJourneyFlowsTree } from "./RegisterJourneyFlowsTree";
 import { RegisterPassSection } from "./RegisterPassSection";
 import { RegisterSmeTree } from "./RegisterSmeTree";
 import { ShellHideButton, ShellShowButton } from "./RegisterShellChrome";
+import { RegisterWiringPaperTree } from "./RegisterWiringPaperTree";
 
 type RegisterLeftPanelProps = {
   width: number;
@@ -25,7 +25,7 @@ function passTreeContent(passId: RegisterPassId, t: Tokens) {
     case "flows":
       return <RegisterJourneyFlowsTree t={t} />;
     case "wiring":
-      return <RegisterFlowsTree t={t} />;
+      return <RegisterWiringPaperTree t={t} />;
     case "components":
       return <RegisterComponentsTree t={t} />;
     default:

@@ -4,7 +4,7 @@ import { ImplementationBlock } from "../components/theory/ImplementationBlock";
 import { RegisterTheoryPanel, registerFieldLabelStyle } from "../components/theory/RegisterTheoryPanel";
 import { TextWithUiRefs } from "../components/theory/TextWithUiRefs";
 import type { SmeItem, SmeSeat } from "../theory/types";
-import { getSmeItem, getSmeSeat, SME_SEATS } from "../theory/sme";
+import { CAPABILITY_SME_SEATS, getSmeItem, getSmeSeat, PRACTICE_SME_SEATS } from "../theory/sme";
 import { useRegisterSelection } from "../context/RegisterSelectionContext";
 
 function SmeItemDetail({ item, t }: { item: SmeItem; t: Tokens }) {
@@ -84,22 +84,37 @@ export function SmePane({ t }: SmePaneProps) {
   return (
     <div style={{ padding: 16, overflow: "auto", height: "100%", boxSizing: "border-box" }}>
       <p style={{ margin: "0 0 12px", fontSize: 13, color: t.textMuted, lineHeight: 1.45, fontStyle: "italic" }}>
-        SME — twin of docs/sme/pass2 + implementation (7 seats · 177 considerations). Pass2 solutions + PM click-path
-        Implementation. Select a seat/item in the left tree.
+        SME — two axes. Practice: docs/sme/pass2 + implementation ({PRACTICE_SME_SEATS.length} seats ·{" "}
+        {PRACTICE_SME_SEATS.reduce((n, s) => n + s.items.length, 0)}). Capability: docs/sme/capability (
+        {CAPABILITY_SME_SEATS.length} seats · {CAPABILITY_SME_SEATS.reduce((n, s) => n + s.items.length, 0)}). Paper
+        only — not CT planted. Select a seat/item in the left tree.
       </p>
 
       {!seat ? (
-        <RegisterTheoryPanel title="SME roster" t={t}>
-          <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: t.textMuted, lineHeight: 1.55 }}>
-            {SME_SEATS.map((s) => (
-              <li key={s.id}>
-                <span style={{ fontWeight: 600, color: t.textPrimary }}>{s.label}</span>
-                {" — "}
-                {s.domain}
-              </li>
-            ))}
-          </ul>
-        </RegisterTheoryPanel>
+        <>
+          <RegisterTheoryPanel title="Practice (regime)" t={t}>
+            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: t.textMuted, lineHeight: 1.55 }}>
+              {PRACTICE_SME_SEATS.map((s) => (
+                <li key={s.id}>
+                  <span style={{ fontWeight: 600, color: t.textPrimary }}>{s.label}</span>
+                  {" — "}
+                  {s.domain}
+                </li>
+              ))}
+            </ul>
+          </RegisterTheoryPanel>
+          <RegisterTheoryPanel title="Capability" t={t}>
+            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: t.textMuted, lineHeight: 1.55 }}>
+              {CAPABILITY_SME_SEATS.map((s) => (
+                <li key={s.id}>
+                  <span style={{ fontWeight: 600, color: t.textPrimary }}>{s.label}</span>
+                  {" — "}
+                  {s.domain}
+                </li>
+              ))}
+            </ul>
+          </RegisterTheoryPanel>
+        </>
       ) : (
         <RegisterTheoryPanel
           title={seat.label}
@@ -107,7 +122,11 @@ export function SmePane({ t }: SmePaneProps) {
           right={
             item ? (
               <span style={{ fontSize: 11, color: t.textDim, fontFamily: "ui-monospace, monospace" }}>{item.id}</span>
-            ) : null
+            ) : (
+              <span style={{ fontSize: 11, color: t.textDim }}>
+                {seat.axis === "capability" ? "capability" : "practice"}
+              </span>
+            )
           }
         >
           {item ? <SmeItemDetail item={item} t={t} /> : <SeatOverview seat={seat} t={t} />}

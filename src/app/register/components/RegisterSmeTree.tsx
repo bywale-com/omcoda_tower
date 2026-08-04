@@ -27,8 +27,8 @@ type SmeTreeNode = {
   children: SmeTreeNode[];
 };
 
-function buildSmeTree(): SmeTreeNode[] {
-  return SME_SEATS.map((seat) => ({
+function seatBranch(seat: (typeof SME_SEATS)[number]): SmeTreeNode {
+  return {
     id: `sme-seat-${seat.id}`,
     label: seat.label,
     seatId: seat.id,
@@ -39,7 +39,24 @@ function buildSmeTree(): SmeTreeNode[] {
       itemId: item.id,
       children: [],
     })),
-  }));
+  };
+}
+
+function buildSmeTree(): SmeTreeNode[] {
+  const practice = SME_SEATS.filter((seat) => seat.axis !== "capability");
+  const capability = SME_SEATS.filter((seat) => seat.axis === "capability");
+  return [
+    {
+      id: "sme-axis-practice",
+      label: "Practice (regime)",
+      children: practice.map(seatBranch),
+    },
+    {
+      id: "sme-axis-capability",
+      label: "Capability",
+      children: capability.map(seatBranch),
+    },
+  ];
 }
 
 function SmeTreeRow({
@@ -215,7 +232,10 @@ type RegisterSmeTreeProps = {
 
 export function RegisterSmeTree({ t }: RegisterSmeTreeProps) {
   const { selectedSmeSeatId, selectedSmeItemId, selectSmeSeat, selectSmeItem } = useRegisterSelection();
-  const [closedBranchIds, setClosedBranchIds] = useState<Set<string>>(() => new Set());
+  // Axes open; seats start collapsed (335+ items across two axes).
+  const [closedBranchIds, setClosedBranchIds] = useState<Set<string>>(
+    () => new Set(SME_SEATS.map((seat) => `sme-seat-${seat.id}`)),
+  );
   const smeTree = useMemo(() => buildSmeTree(), []);
 
   useEffect(() => {
