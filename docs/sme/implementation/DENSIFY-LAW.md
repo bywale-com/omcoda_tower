@@ -1,5 +1,8 @@
 # Implementation densify law (affordance grain)
 
+**Full method:** [`CLICKPATH-DENSIFICATION.md`](./CLICKPATH-DENSIFICATION.md) (How Clarity grain, containment, requirement-gathering).  
+**Criticality (after densify):** [`../../wiring/WIRING-CRITICAL-INTERACTION.md`](../../wiring/WIRING-CRITICAL-INTERACTION.md)
+
 **Why:** Implementations are how committed outcomes get done. Stating them down to the control both (1) scopes wiring (silence = not load-bearing) and (2) hands the CTO per-module requirements. Not polish.
 
 **Disposition:** Prefer **using the architecture already inside** a referenced module over inventing a new shape.

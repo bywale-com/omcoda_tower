@@ -7,6 +7,7 @@
 |---|---|
 | [`WIRING-METHOD.md`](./WIRING-METHOD.md) | How we build Wiring — trace implementations one at a time |
 | [`NODE-DEFINITION.md`](./NODE-DEFINITION.md) | What counts as a node (altitude / named unit of state) |
+| [`WIRING-CRITICAL-INTERACTION.md`](./WIRING-CRITICAL-INTERACTION.md) | What counts as a critical interaction (user-originated counterpart to a node) |
 | [`CTO-THINK-STACK.md`](./CTO-THINK-STACK.md) | Ops: facets → Function → Can’ts → Furnish |
 | [`paper-trace/00-INDEX.md`](./paper-trace/00-INDEX.md) | Tower instance steps 1–4 (paper graph + human-provisioning set) |
 
