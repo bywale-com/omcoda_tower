@@ -241,6 +241,10 @@ def main() -> None:
         ]
     )
     (OUT_DIR / "index.ts").write_text(index, encoding="utf-8")
+    (ROOT / "src" / "app" / "register" / "theory" / "sme.ts").write_text(
+        sync_sme.emit_root_export(),
+        encoding="utf-8",
+    )
 
     print("Capability SME sync complete")
     total = 0

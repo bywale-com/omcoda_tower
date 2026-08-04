@@ -17,7 +17,7 @@
 Firm-branded Opt-in / Nudge / reactivation can fire email or SMS without a visible hard gate that consent, identification, and unsubscribe are all present. Contacts absorb unlawful CEMs; Om Coda absorbs CRTC exposure on the send path.
 
 **implementation:**  
-On Firm operations bind, you can now open Send gates and see CEM triad required (consent + identification + unsubscribe) before Armed / Active may ship any firm-branded email or SMS.  
+On Firm operations bind firm detail → Send gates panel, you can now see CEM triad required readiness row (consent + identification + unsubscribe) before Armed / Active may ship any firm-branded email or SMS.
 On Opt-in message and Nudge message, you can now see firm identification and a working unsubscribe path on every CEM — phase never drops the triad.
 
 **implementationAdds:** `["cem-triad", "consent", "identification", "unsubscribe"]`
@@ -30,7 +30,7 @@ On Opt-in message and Nudge message, you can now see firm identification and a w
 Channel pickers treat SMS as a lighter consent regime than email. Operators escalate to SMS as a shortcut; form duties get under-specified on short messages.
 
 **implementation:**  
-On Firm operations bind Send gates, you can now see email and SMS as one CEM class — channel choice does not relax consent.  
+On Firm operations bind firm detail → Send gates panel, you can now see email and SMS under one CEM class readiness row — channel choice does not relax consent.
 On Opt-in message and Nudge message, when the channel is SMS, you can now see STOP / Unsubscribe reply (or linked unsubscribe page); when email, you can now see a clear unsubscribe link.
 
 **implementationAdds:** `["cem-class", "channel-email", "channel-sms", "stop-reply", "unsubscribe-link"]`
@@ -55,7 +55,7 @@ On Consent request, you can now Agree only via affirmative unchecked-by-default 
 Opt-in phase risks cold-emailing the whole book to “get consent.” That first CEM itself needs a lawful basis; without one the launch is the violation.
 
 **implementation:**  
-On Firm operations bind Send gates, you can now require Consent basis (express already on file, or typed implied) before Opt-in message may fire.  
+On Firm operations bind firm detail → Send gates panel, you can now see Consent basis required with allowed values express already on file or typed implied before Opt-in message may fire.
 On Book readiness Verdict list, contacts without a documented Consent basis show not ready for opt-in CEM — cold book-wide consent asks stay blocked.
 
 **implementationAdds:** `["consent-basis-required", "express-on-file", "implied-qualified"]`
@@ -69,7 +69,7 @@ Immigration books mix retainers, closed files, and cold leads. Implied consent i
 
 **implementation:**  
 On Book readiness Audit run, you can now see implied-consent type, triggering event date, and expiry on the contact ledger.  
-On Firm operations bind Send gates, opt-in / nudge under implied consent fail closed when the clock has lapsed.  
+On Firm operations bind firm detail → Send gates panel, opt-in / nudge under implied consent show an implied-expired deny chip when the clock has lapsed.
 On Imports, you can now supply implied type + event date so Book readiness can compute the window.
 
 **implementationAdds:** `["implied-ebr-purchase", "implied-ebr-inquiry", "implied-expiry", "event-date"]`
@@ -83,7 +83,7 @@ Phase model (opt-in → nudge → reactivation) is misread as graduating into fo
 
 **implementation:**  
 On Nudge message (and reactivation CEM on the same channel surfaces), you can now always see firm identification and readily performed unsubscribe — Agree does not strip form.  
-On Firm operations bind Send gates, you can now see form duties required on every post-Agree CEM, not only Opt-in message.
+On Firm operations bind firm detail → Send gates panel, you can now see form-duty readiness rows required on every post-Agree CEM, not only Opt-in message.
 
 **implementationAdds:** `["form-duties-persist", "post-agree-cem"]`
 
@@ -109,7 +109,7 @@ Automations escalate email→SMS (or reverse) on a single Agree. Channel-limited
 
 **implementation:**  
 On Consent request, you can now set Channel scope (email, SMS, or clearly disclosed multi-channel) at Agree.  
-On Firm operations bind Send gates, SMS escalation requires an explicit SMS grant (or multi-channel Agree) — email-only consent does not authorize SMS CEMs.
+On Firm operations bind firm detail → Send gates panel, SMS escalation shows channel-scope deny chip unless an explicit SMS grant (or multi-channel Agree) exists — email-only consent does not authorize SMS CEMs.
 
 **implementationAdds:** `["channel-scope-email", "channel-scope-sms", "channel-scope-multi"]`
 
@@ -122,7 +122,7 @@ Firm-branded value-add can under-identify who sends and on whose behalf. Contact
 
 **implementation:**  
 On Opt-in message and Nudge message, you can now see the firm named as the person on whose behalf the CEM is sent, with required mailing/contact coordinates.  
-On Firm operations bind, you can now confirm firm ID block + coords are bound into every CEM template; Om Coda appears only as send-platform where needed.
+On Firm operations bind firm detail, you can now see Firm ID block + coords as bound CEM-template fields; Om Coda appears only as send-platform where needed.
 
 **implementationAdds:** `["on-whose-behalf-firm", "mailing-coords", "send-platform-disclosure"]`
 
@@ -137,7 +137,7 @@ Silence stops outreach in product language but does not bind CRTC bars: free, on
 
 **implementation:**  
 On Silence / Opt out (and Opt-in message / Nudge message footer), you can now unsubscribe in one no-cost step (or SMS STOP). Mechanism stays valid ≥60 days after send.  
-On Firm operations bind Send gates, silenced contacts suppress further CEMs immediately (and never later than ≤10 business days).
+On Firm operations bind firm detail → Send gates panel, silenced contacts show a silenced deny chip that suppresses further CEMs immediately (and never later than ≤10 business days).
 
 **implementationAdds:** `["unsubscribe-immediate", "unsubscribe-leq-10bd", "mechanism-valid-60d"]`
 
@@ -176,7 +176,7 @@ Consent/silenced flags exist without CRTC-grade proof: how consent was obtained,
 
 **implementation:**  
 On Audit trail, you can now filter Consent events and open a Change event showing basis type, capture method/time, scope, evidence pointer, implied expiry, and unsubscribe request/action.  
-Per-contact ledger backs Firm operations bind Send gates so firm and Om Coda can prove lawful send and honor withdrawal.
+On Firm operations bind firm detail → Send gates panel, each consent/silence deny row links back to that per-contact ledger so firm and Om Coda can prove lawful send and honor withdrawal.
 
 **implementationAdds:** `["consent-ledger", "evidence-pointer", "unsubscribe-action-log"]`
 
@@ -188,7 +188,7 @@ Per-contact ledger backs Firm operations bind Send gates so firm and Om Coda can
 Om Coda operates send paths at scale without operator-visible CEM policy, consent/unsubscribe procedure, or firm/platform role split. Section 9 aiding risk and due-diligence posture are unnamed on the desk that arms sends.
 
 **implementation:**  
-On Firm operations bind, you can now see Send gates policy summary: CEM consent/unsubscribe procedures and firm-vs-platform role split before arming.  
+On Firm operations bind firm detail → Send gates panel, you can now see policy summary rows for CEM consent/unsubscribe procedures and firm-vs-platform role split before arming.
 On Audit trail, you can now see Consent events and bind/arm actions that demonstrate accountability for firm-branded CEMs Om Coda enables.
 
 **implementationAdds:** `["cem-policy", "role-split-firm-platform", "due-diligence"]`
@@ -201,7 +201,7 @@ On Audit trail, you can now see Consent events and bind/arm actions that demonst
 Reactivation Armed / Active or a new campaign calendar can re-touch silenced contacts if silence is only a Board badge. Withdrawn consent reanimates without new Agree.
 
 **implementation:**  
-On Firm operations bind Send gates and Armed / Active, silenced is a hard enrollment inhibitor across opt-in, nudge, and reactivation until a new affirmative express Agree is recorded on Consent request.  
+On Firm operations bind firm detail → Send gates panel, silenced appears as a hard enrollment-inhibitor deny chip across opt-in, nudge, and reactivation until a new affirmative express Agree is recorded on Consent request. On Firm operations bind firm detail, set Armed / Active with the segmented control (Armed | Active) only after that deny clears.
 On Book readiness Verdict list, silenced contacts stay not sequence-ready for automatic CEMs until that re-consent.
 
 **implementationAdds:** `["silenced-sticky", "reconsent-required", "enrollment-inhibitor"]`
@@ -217,7 +217,7 @@ Agent follow-up after Approach capture can ship as cold commercial SMS/email und
 
 **implementation:**  
 On Capture strip (Approach first-text adjacent), first outbound is classified CEM by default.  
-Starting from Activation & forward-deploy, you can now send First-text only when Send gates show a documented consent basis plus Om Coda identification and unsubscribe — cold first-text stays blocked.
+Starting from Activation & forward-deploy, you can now send First-text only when the send path shows a Send gates panel with documented consent basis plus Om Coda identification and unsubscribe — cold first-text stays blocked.
 
 **implementationAdds:** `["first-text-cem", "consent-basis-gated"]`
 
@@ -264,7 +264,7 @@ Connected book after Authorize book is treated as send-ready. Firm→Om Coda pro
 
 **implementation:**  
 On Authorize book, completion grants processing/permission only — it does not mint client CEM consent.  
-On Firm operations bind Send gates and Book readiness, every client CEM still requires a separate per-contact Consent basis; activation hard inputs never skip Consent request / opt-in path.
+On Firm operations bind firm detail → Send gates panel and Book readiness Verdict list, every client CEM still requires a separate per-contact Consent basis; activation hard inputs never skip Consent request / opt-in path.
 
 **implementationAdds:** `["db-auth-orthogonal", "client-cem-consent-separate"]`
 
@@ -276,7 +276,7 @@ On Firm operations bind Send gates and Book readiness, every client CEM still re
 Firm holds the list; Om Coda runs send/evaluate. Accountability vs service-provider duty is unnamed — unclear who owns consent claims when a bad send fires.
 
 **implementation:**  
-On Firm operations bind Send gates, you can now see firm as accountable for client PI and CEM consent claims; Om Coda refuses sends lacking ledgered consent.  
+On Firm operations bind firm detail → Send gates panel, you can now see firm-accountable readiness row for client PI and CEM consent claims; Om Coda refuses sends lacking ledgered consent.
 On Audit trail Consent events, firm custody + platform fail-closed enforcement both appear so coexistence is visible to operators.
 
 **implementationAdds:** `["firm-accountable", "platform-fail-closed", "processing-intermediary"]`
@@ -302,8 +302,8 @@ On Book readiness, imported flags without proof force Tower Opt-in message path 
 Hands-free Automations could cause or permit CEMs on an unconsented book. CRTC s.9 reaches those who aid s.6 violations; configurable override would put Om Coda in the aiding path.
 
 **implementation:**  
-On Firm operations bind Send gates, send and enrollment stay fail-closed when consent/silenced ledger denies the CEM — no operator override to run sequences on an unconsented book.  
-On Armed / Active, you can now see blocked enrollment when ledger denies; Om Coda cannot be configured into aiding non-consensual firm-branded outreach.
+On Firm operations bind firm detail → Send gates panel, send and enrollment stay fail-closed when consent/silenced ledger denies the CEM — no operator override to run sequences on an unconsented book.
+On Firm operations bind firm detail, set Armed / Active with the segmented control (Armed | Active); when the ledger denies, the same firm detail shows blocked enrollment and Om Coda cannot be configured into aiding non-consensual firm-branded outreach.
 
 **implementationAdds:** `["section-9-fail-closed", "no-unconsented-override"]`
 
@@ -331,7 +331,7 @@ Reachability (syntax/channel validity) is conflated with legal permission to sen
 
 **implementation:**  
 On Book readiness Verdict list, you can now see channel-validity separate from permission-to-send. A contact may show reachable / partial yet enrollment-blocked when silenced or without a lawful Consent basis.  
-On Firm operations bind Send gates, deliverability never equates consent.
+On Firm operations bind firm detail → Send gates panel, deliverability readiness and consent readiness appear as separate rows so deliverability never equates consent.
 
 **implementationAdds:** `["channel-validity", "permission-to-send", "enrollment-blocked"]`
 
