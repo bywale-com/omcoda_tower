@@ -44,8 +44,8 @@
 Oversight and Firm health can render empty or invent counts from ad-hoc logs while Sending infrastructure and Conversations keep private side channels — shells never agree with send-path reality.
 
 **implementation:**  
-On Oversight Fleet health and Firm health, rate tiles and timeline rows read only from the messaging event stream — not from orphan ESP dashboard screenshots.  
-On Audit trail, open Change event rows that cite stream event ids for send / delivery / reply / act transitions.
+On Oversight Fleet health and Firm health, view rate tiles and timeline rows sourced only from the messaging event stream — not orphan ESP dashboard screenshots.  
+On Audit trail, open Change event rows citing stream event ids for send / delivery / reply / act transitions.
 
 **implementationAdds:** `["messaging-event-stream", "stream-system-of-record", "stream-event-id"]`  
 **implementationPlant:** not_done
@@ -68,8 +68,8 @@ On Audit trail, open Change event rows that cite stream event ids for send / del
 Producers can emit free-text “opened” / “clicked” / “replied” variants; Firm health and Approach instrumentation count different things under the same label.
 
 **implementation:**  
-On Oversight, open the Event taxonomy version chip to see which event names feed Fleet health and Firm row metrics.  
-On Approach instrumentation and Firm health Sequence detail, metric definition drawers show metric → taxonomy-name bindings; unknown names never increment shell counters.
+On Oversight, view Event taxonomy version chip showing which event names feed Fleet health and Firm row metrics.  
+On Approach instrumentation and Firm health Sequence detail, open metric definition drawers to view metric → taxonomy-name bindings; unknown names never increment shell counters.
 
 **implementationAdds:** `["event-taxonomy", "taxonomy-version", "unknown-name-reject"]`  
 **implementationPlant:** not_done
@@ -92,8 +92,8 @@ On Approach instrumentation and Firm health Sequence detail, metric definition d
 Delivery webhooks or reply captures land without attempt/sequence keys; Sequence health cannot attribute bounce or reply to the attempt that caused them.
 
 **implementation:**  
-On Firm health Sequence detail, click a rate cell to open stream event rows that carry sequence_id + attempt_id + channel.  
-On Oversight Firm row, the firm filter dropdown scopes fleet metrics by firm_id without orphan events collapsing into “unknown firm.”
+On Firm health Sequence detail, click a rate cell to open stream event rows carrying sequence_id + attempt_id + channel.  
+On Oversight Firm row, select firm from the firm filter dropdown; view fleet metrics scoped by firm_id without orphan events collapsing into unknown firm.
 
 **implementationAdds:** `["firm-id", "contact-id", "sequence-id", "attempt-id", "channel", "occurred-at"]`  
 **implementationPlant:** not_done
@@ -116,8 +116,8 @@ On Oversight Firm row, the firm filter dropdown scopes fleet metrics by firm_id 
 ESP retries can land the same complaint twice; Fleet health complaint rate spikes and quarantine logic (C1) or operator panic fires on a duplicate.
 
 **implementation:**  
-On Oversight Fleet health, open complaint/bounce rate tiles that read deduped stream counts only.  
-On Audit trail, open provider delivery event rows and view ingest outcome chips Accepted vs Duplicate-suppressed.
+On Oversight Fleet health, view complaint/bounce rate tiles from deduped stream counts only.  
+On Audit trail, open provider delivery event rows; view ingest outcome chips Accepted vs Duplicate-suppressed.
 
 **implementationAdds:** `["idempotency-key", "upsert-ingest", "duplicate-suppressed"]`  
 **implementationPlant:** not_done
@@ -140,8 +140,8 @@ On Audit trail, open provider delivery event rows and view ingest outcome chips 
 Firm health Sequence health can show “sends” guessed from ESP exports hours later; Activation state Progress and Oversight disagree with live Send gates.
 
 **implementation:**  
-On Firm operations bind firm detail → Send gates panel, the send-accepted readiness row requires stream emit before the attempt is treated as sent for Firm health.
-On Oversight, the Producer coverage panel lists taxonomy-name rows with Live emitter / Missing status chips as a pipeline health signal — not a vanity chart.
+On Firm operations bind firm detail → Send gates panel, view send-accepted readiness row with Send-accepted chip only after messaging-stream ingest confirms (stream ingest past app edge).  
+On Oversight, view Producer coverage panel taxonomy-name rows with Live emitter / Missing status chips as pipeline health signal — not a vanity chart.
 
 **implementationAdds:** `["producer-contract", "emit-on-path", "producer-coverage"]`  
 **implementationPlant:** not_done
@@ -164,8 +164,8 @@ On Oversight, the Producer coverage panel lists taxonomy-name rows with Live emi
 Without verified ingress, operators paste ESP CSVs into Oversight mental models; Send gates and Firm health never share one delivery timeline.
 
 **implementation:**  
-On Sending infrastructure, the Webhook ingress panel shows provider rows with signature verify pass/fail chips and last-event timestamp feeding the messaging stream.  
-On Oversight Fleet health and Firm health, delivery outcome rows read from that shared ingest — same events C1 uses for Suppression list / Warmup counters.
+On Sending infrastructure, view Webhook ingress panel provider rows with signature verify pass/fail chips and last-event timestamp feeding the messaging stream (ingress past app edge).  
+On Oversight Fleet health and Firm health, view delivery outcome rows from that shared ingest — same events C1 uses for Suppression list / Warmup counters.
 
 **implementationAdds:** `["webhook-ingress", "signature-verify", "normalize-enqueue"]`  
 **implementationPlant:** not_done
@@ -188,8 +188,8 @@ On Oversight Fleet health and Firm health, delivery outcome rows read from that 
 Analytics invents “bounce_rate” from mixed soft/hard labels while Send gates suppress only hard bounces — Firm health lies relative to control.
 
 **implementation:**  
-On Firm health Sequence health, open hard-bounce, soft-bounce, complaint, deferred, and delivered rate rows as distinct stream-backed classes aligned with C1.  
-On Oversight Fleet health, open reputation-unit rollup rows built from the same delivery-event types — not a parallel ESP metric dialect.
+On Firm health Sequence health, view hard-bounce, soft-bounce, complaint, deferred, and delivered rate rows as distinct stream-backed classes aligned with C1.  
+On Oversight Fleet health, view reputation-unit rollup rows built from the same delivery-event types — not a parallel ESP metric dialect.
 
 **implementationAdds:** `["delivery-event-schema", "hard-bounce", "soft-bounce", "complaint", "deferred", "delivered", "rejected"]`  
 **implementationPlant:** not_done
@@ -212,8 +212,8 @@ On Oversight Fleet health, open reputation-unit rollup rows built from the same 
 Approach instrumentation and Firm health can obsess over open/click while Activation and escrow care about meeting_booked — shells reward the wrong signal.
 
 **implementation:**  
-On Approach instrumentation and Firm health Engagement health, funnel step cards read from stream events (capture → opt-in → reply → meeting booked) with opens as optional diagnostics only.  
-On Activation state Progress, outcome-step coverage rows show first meeting_booked path events without treating open rate as activation success.
+On Approach instrumentation and Firm health Engagement health, view funnel step cards from stream events (capture → opt-in → reply → meeting booked); opens as optional diagnostics only.  
+On Activation state → Progress, view outcome-step coverage rows showing first meeting_booked path events — open rate is not activation success.
 
 **implementationAdds:** `["funnel-step", "capture-submit", "opt-in", "reply-classified", "meeting-booked", "open-diagnostic-only"]`  
 **implementationPlant:** not_done
@@ -236,8 +236,8 @@ On Activation state Progress, outcome-step coverage rows show first meeting_book
 Operators see a bounce and a reply in the same hour with no join; Sequence detail and Conversations cannot prove they belong to one attempt.
 
 **implementation:**  
-On Firm health Sequence detail, open an attempt timeline drawer that stitches send → delivery outcomes → reply classified → act from correlated stream events.  
-On Engagement record, the same chronology rows are sourced from the stream (read-only), not a second write model.
+On Firm health Sequence detail, click an attempt row to open attempt timeline drawer stitching send → delivery outcomes → reply classified → act from correlated stream events.  
+On Engagement record, view the same chronology rows sourced from the stream (read-only) — not a second write model.
 
 **implementationAdds:** `["attempt-envelope", "message-id", "correlated-timeline"]`  
 **implementationPlant:** not_done
@@ -260,8 +260,8 @@ On Engagement record, the same chronology rows are sourced from the stream (read
 Oversight Fleet health either scans the whole event log (unusable) or shows hard-coded mock numbers left from shell construction.
 
 **implementation:**  
-On Oversight Fleet health and Firm health, open rate and funnel-completion tiles that read from the metrics store; click a tile to drill through to underlying stream event ids.  
-On Approach instrumentation, open aggregated step-rate cards that read from the same store — not a browser-only counter.
+On Oversight Fleet health and Firm health, view rate and funnel-completion tiles from the metrics store; click a tile to drill through to underlying stream event ids.  
+On Approach instrumentation, view aggregated step-rate cards from the same store — not a browser-only counter.
 
 **implementationAdds:** `["metrics-store", "rollup-consumer", "drill-through-event-id"]`  
 **implementationPlant:** not_done
@@ -284,7 +284,7 @@ On Approach instrumentation, open aggregated step-rate cards that read from the 
 A metrics design that labels by contact_id or raw email makes Firm health expensive or empty; operators fall back to ESP vanity dashboards.
 
 **implementation:**  
-On Oversight Fleet health, aggregation controls offer firm / reputation unit / channel — not contact.  
+On Oversight Fleet health, view aggregation controls offering firm / reputation unit / channel — not contact.  
 On Firm health Sequence detail, click a rate to drill into contact stream events without those contacts existing as metric label series.
 
 **implementationAdds:** `["low-cardinality-labels", "contact-in-stream-only", "reputation-unit-label"]`  
@@ -308,7 +308,7 @@ On Firm health Sequence detail, click a rate to drill into contact stream events
 Oversight shows placeholder tiles; house cannot see which Firm row is burning reputation until consultants complain.
 
 **implementation:**  
-On Oversight Fleet health, fleet SLI tiles show volume, delivery success, hard-bounce, complaint, quarantine count, and ingest lag from the metrics store.  
+On Oversight Fleet health, view fleet SLI tiles (volume, delivery success, hard-bounce, complaint, quarantine count, ingest lag) from the metrics store.  
 On Oversight Firm row, click the firm SLI chip to open the same SLIs scoped to one firm and jump to Firm health.
 
 **implementationAdds:** `["fleet-sli", "delivery-success", "quarantine-count", "ingest-lag"]`  
@@ -332,8 +332,8 @@ On Oversight Firm row, click the firm SLI chip to open the same SLIs scoped to o
 Sequence health tiles stay zero or hand-waved; operators cannot tell Armed sequences from silently failing ones.
 
 **implementation:**  
-On Firm health Sequence health and Engagement health, windowed rate tiles show sent, delivered, replied, stop, booked, and suppressed-block from the metrics store.  
-On Firm health Sequence detail, the drop-off chart opens correlated attempt timelines for the selected step pair.
+On Firm health Sequence health and Engagement health, view windowed rate tiles (sent, delivered, replied, stop, booked, suppressed-block) from the metrics store.  
+On Firm health Sequence detail, open the drop-off chart; click a step pair to open correlated attempt timelines.
 
 **implementationAdds:** `["sequence-rates", "suppressed-block", "windowed-rate", "drop-off"]`  
 **implementationPlant:** not_done
@@ -356,8 +356,8 @@ On Firm health Sequence detail, the drop-off chart opens correlated attempt time
 Progress can show “engagement up” while Warmup, SPF, or ingest lag mean the firm is not actually ready — Activation lies.
 
 **implementation:**  
-On Activation state Progress, readiness checklist rows show producer coverage, delivery health, book-audit pass, and stream freshness sourced from the metrics store.  
-On Activation state Progress, vanity open/CTR tiles are not offered as readiness substitutes.
+On Activation state → Progress, view readiness checklist rows (producer coverage, delivery health, book-audit pass, stream freshness) sourced from the metrics store.  
+On Activation state → Progress, vanity open/CTR tiles are not offered as readiness substitutes.
 
 **implementationAdds:** `["readiness-sli", "producer-coverage", "stream-freshness", "not-vanity-ctr"]`  
 **implementationPlant:** not_done
@@ -380,8 +380,8 @@ On Activation state Progress, vanity open/CTR tiles are not offered as readiness
 Approach instrumentation can show Meta CTR while Capture strip submits never enter the stream — creative tests cannot falsify understanding.
 
 **implementation:**  
-On Approach instrumentation, proxy pair A/B cards sit beside first-party step rows (form open, intro complete, capture submit, first-text answered) joined by campaign/creative keys.  
-On Acquisition & ads / Approach campaigns, campaign rows require those keys on Capture strip emits before a variant is scoreable.
+On Approach instrumentation, view proxy pair A/B cards beside first-party step rows (form open, intro complete, capture submit, first-text answered) joined by campaign/creative keys.  
+On Acquisition & ads → Approach campaigns, view campaign rows requiring those keys on Capture strip emits before a variant is scoreable.
 
 **implementationAdds:** `["campaign-key", "creative-key", "proxy-pair-join", "first-party-steps"]`  
 **implementationPlant:** not_done
@@ -404,7 +404,7 @@ On Acquisition & ads / Approach campaigns, campaign rows require those keys on C
 Default aggregations surface CTR first; operators scale spend on legible-looking clicks that never become captures.
 
 **implementation:**  
-On Approach instrumentation, primary metric cards (form-open, intro-complete, qualified capture, first-text answered, prepared-workspace open) render ahead of diagnostic CTR/open.  
+On Approach instrumentation, view primary metric cards (form-open, intro-complete, qualified capture, first-text answered, prepared-workspace open) ahead of diagnostic CTR/open.  
 On Acquisition & ads, kill/continue criteria selectors bind to those primaries — not CTR alone.
 
 **implementationAdds:** `["primary-metric", "diagnostic-ctr", "qualified-capture", "prepared-workspace-open"]`  
@@ -428,8 +428,8 @@ On Acquisition & ads, kill/continue criteria selectors bind to those primaries �
 Each surface invents its own step list; a “reply rate” on Firm health is incomparable to Approach instrumentation “answered.”
 
 **implementation:**  
-On Approach instrumentation and Firm health, the Funnel definition version dropdown controls which version computes step drop-off.  
-On Oversight, Firm row summary chips show which funnel versions feed them — changing a definition creates a new version rather than rewriting history silently.
+On Approach instrumentation and Firm health, select Funnel definition version from the dropdown; view step drop-off computed from that version.  
+On Oversight Firm row, view summary chips showing which funnel versions feed them; changing a definition creates a new version rather than rewriting history silently.
 
 **implementationAdds:** `["funnel-definition", "conversion-window", "funnel-version"]`  
 **implementationPlant:** not_done
@@ -452,8 +452,8 @@ On Oversight, Firm row summary chips show which funnel versions feed them — ch
 Firm health can show yesterday’s complaint rate as current; operators arm volume into an already-burning reputation unit.
 
 **implementation:**  
-On Oversight Fleet health, the ingest-lag tile shows stream ingest lag against the freshness SLO and alerts when the lag budget burns.  
-On Firm health, a Freshness state chip (within SLO / stale) appears beside Sequence health rates.
+On Oversight Fleet health, view ingest-lag tile showing stream ingest lag against the freshness SLO; alerts when lag budget burns.  
+On Firm health, view Freshness state chip (within SLO / stale) beside Sequence health rates.
 
 **implementationAdds:** `["freshness-slo", "ingest-lag", "stale", "lag-budget"]`  
 **implementationPlant:** not_done
@@ -476,8 +476,8 @@ On Firm health, a Freshness state chip (within SLO / stale) appears beside Seque
 A deferred→delivered correction never updates Firm health; or a late reply falls into the wrong day and Sequence detail lies.
 
 **implementation:**  
-On Firm health Sequence detail, open the attempt timeline panel; rows order by event time with late-correction chips applied inside the watermark.  
-On Approach instrumentation, open Funnel definition and view completion rows that count inside the window even when the step event arrives late.
+On Firm health Sequence detail, open attempt timeline panel; view rows ordered by event time with late-correction chips applied inside the watermark.  
+On Approach instrumentation, open Funnel definition; view completion rows counting inside the window even when step events arrive late.
 
 **implementationAdds:** `["event-time", "watermark", "late-correction", "processing-time-not-truth"]`  
 **implementationPlant:** not_done
@@ -500,8 +500,8 @@ On Approach instrumentation, open Funnel definition and view completion rows tha
 A query bug or missing tenant key can show Firm B’s complaint spike on Firm A’s Firm health — or leak contact-level drill into the wrong tenancy.
 
 **implementation:**  
-On Firm health, the tenant-scope chip limits reads to the bound firm’s metric series and stream drills.  
-On Oversight Fleet health, fleet-rollup controls intentionally aggregate across firms; Firm row drill stays scoped when descending into Firm health.
+On Firm health, view tenant-scope chip limiting reads to the bound firm’s metric series and stream drills.  
+On Oversight Fleet health, view fleet-rollup controls aggregating across firms; Firm row drill stays scoped when descending into Firm health.
 
 **implementationAdds:** `["tenant-keyed-series", "fleet-rollup", "peer-series-deny"]`  
 **implementationPlant:** not_done
@@ -524,8 +524,8 @@ On Oversight Fleet health, fleet-rollup controls intentionally aggregate across 
 Two operators argue whether Sequence health “reply rate” includes stops or only positive intent — no definition artifact exists.
 
 **implementation:**  
-On Oversight, Firm health, and Approach instrumentation, click Metric definition on any tile to open the inputs, window, unit, taxonomy version, and owner drawer.  
-On Audit trail, a Change event row records when a metric definition version ships.
+On Oversight, Firm health, and Approach instrumentation, click Metric definition on any tile to open inputs, window, unit, taxonomy version, and owner drawer.  
+On Audit trail, view Change event row when a metric definition version ships.
 
 **implementationAdds:** `["metric-definition", "definition-version", "tile-binding"]`  
 **implementationPlant:** not_done
@@ -548,8 +548,8 @@ On Audit trail, a Change event row records when a metric definition version ship
 Webhook secret rotates or a consumer stalls; Oversight still paints zeros as if the fleet were healthy — the worst vanity failure mode.
 
 **implementation:**  
-On Oversight Fleet health, the Pipeline health panel shows ingress accept, verify-fail, dead-letter depth, consumer lag, and materialization success rows beside fleet deliverability SLIs.  
-On Oversight, alert-rule rows fire when Pipeline health burns its SLO even if vanity tiles still render.
+On Oversight Fleet health, view Pipeline health panel rows (ingress accept, verify-fail, dead-letter depth, consumer lag, materialization success) beside fleet deliverability SLIs.  
+On Oversight, view alert-rule rows firing when Pipeline health burns its SLO even if vanity tiles still render.
 
 **implementationAdds:** `["pipeline-sli", "verify-fail", "dead-letter-depth", "consumer-lag", "materialization-success"]`  
 **implementationPlant:** not_done
