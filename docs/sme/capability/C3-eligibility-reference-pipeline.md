@@ -34,8 +34,8 @@
 Reference data module exists as a shell; operators have no staged path from Canada.ca change to published-current, so currency work becomes engineering tickets or unlogged edits.
 
 **implementation:**
-On Reference data, you can now open an ingestion run and see stages Detect → Fetch → Parse → Validate → Draft → Dual-check → Publish version.
-On Import criteria, you can now advance or fail a stage with an immutable stage log; failed stages stay Draft and never become published-current.
+On Reference data, open an ingestion-run row; the run detail shows a stage rail Detect → Fetch → Parse → Validate → Draft → Dual-check → Publish version.
+On Import criteria, the stage rail has Advance stage / Fail stage controls and an immutable stage-log panel; failed stages stay Draft and never become published-current.
 
 **implementationAdds:** ["ingestion-run", "detect", "fetch", "parse", "validate", "draft", "dual-check", "stage-log"]
 **implementationPlant:** not_done
@@ -56,8 +56,8 @@ On Import criteria, you can now advance or fail a stage with an immutable stage 
 Without source-class enforcement in the pipeline, a same-day draw alert from a blog can be imported as if it were ministerial truth.
 
 **implementation:**
-On Import criteria, you can now bind each Reference table to canonical source URL(s) and mark other feeds Discovery-alert-only.
-On Reference data Detect, discovery alerts can now open an ingestion run that still must Fetch from the canonical Canada.ca / MI URL before Dual-check / Publish version.
+On Import criteria, each Reference table row has canonical-source URL fields and Discovery-alert-only feed chips.
+On Reference data Detect, a discovery alert row can open an ingestion run, but the Fetch stage still uses the canonical Canada.ca / MI URL before Dual-check / Publish version.
 
 **implementationAdds:** ["canonical-source", "discovery-alert-only", "source-class"]
 **implementationPlant:** not_done
@@ -78,8 +78,8 @@ On Reference data Detect, discovery alerts can now open an ingestion run that st
 Scheduled polls without change-detect either spam Dual-check with identical drafts or miss same-business-day rounds between weekly reviews.
 
 **implementation:**
-On Reference data, you can now schedule Detect polls per table family and store last-seen content-hash / ETag.
-On Reference data, you can now open an ingestion run automatically when hash diverges, or manually from an on-alert Detect — identical hashes do not create Draft versions.
+On Reference data, the Detect schedule table shows one row per table family with poll cadence, last-seen content-hash, and ETag columns.
+On Reference data, a diverged-hash row opens an ingestion run automatically; the on-alert Detect row also has Open ingestion run, while identical hashes do not create Draft versions.
 
 **implementationAdds:** ["content-hash-detect", "ETag", "on-alert", "change-driven-run"]
 **implementationPlant:** not_done
@@ -100,8 +100,8 @@ On Reference data, you can now open an ingestion run automatically when hash div
 Broken scrapes can ship empty category sets or swapped CRS columns if humans are the only gate after a green “import succeeded” toast.
 
 **implementation:**
-On Import criteria, you can now attach a Schema contract version per Reference table family with required columns, types, and sanity bands.
-On Import criteria Validate, failed contracts stay Draft-hold and alert house upkeep; Dual-check / Publish version stay blocked until Validate passes.
+On Import criteria, each Reference table family row has a Schema contract version dropdown plus required-column, type, and sanity-band fields.
+On Import criteria Validate, the Validate status row shows Draft-hold and alerts house upkeep on contract failure; Dual-check / Publish version stay blocked until Validate passes.
 
 **implementationAdds:** ["schema-contract", "draft-hold", "sanity-bands", "fail-closed-validate"]
 **implementationPlant:** not_done
@@ -121,8 +121,8 @@ On Import criteria Validate, failed contracts stay Draft-hold and alert house up
 If operators can edit published rows in place, Analysis that cited a version no longer matches what the store returns under that id.
 
 **implementation:**
-On Publish version, you can now freeze the published snapshot by content-hash; in-place edit of published-current is refused.
-On Reference tables, corrections open a new Draft → Dual-check → Publish version that sets supersedes-version-id; prior versions remain readable for pins and Audit trail.
+On Publish version, the publish modal shows the content-hash snapshot and freezes it when the primary Publish version button is clicked; in-place edit of published-current is refused.
+On Reference tables, click Open correction draft on a published row to create Draft → Dual-check → Publish version with supersedes-version-id; prior versions remain readable for pins and Audit trail.
 
 **implementationAdds:** ["immutable-publish", "content-addressed", "supersedes-version-id", "no-in-place-edit"]
 **implementationPlant:** not_done
@@ -143,8 +143,8 @@ On Reference tables, corrections open a new Draft → Dual-check → Publish ver
 Without pipeline-emitted Audit trail events, disputes collapse into “the system said so” with no retrieveable import lineage.
 
 **implementation:**
-On Publish version, you can now require full provenance before live; missing fields block publish.
-On Audit trail, you can now filter Change events by Reference table, ingestion-run id, and actor — each event links source URL and content-hash used.
+On Publish version, the provenance checklist requires source URL, retrieved-at, importer, dual-check attestation, effective-from, supersedes-version-id, content-hash, and ingestion-run id before the Publish version button unlocks.
+On Audit trail, filter Change event rows by Reference table, ingestion-run id, and actor; each row links the source URL and content-hash used.
 
 **implementationAdds:** ["ingestion-run-id", "dual-check-attestation", "change-event-provenance"]
 **implementationPlant:** not_done
@@ -164,8 +164,8 @@ On Audit trail, you can now filter Change events by Reference table, ingestion-r
 House SLA pressure on draw day encourages the same person to import and publish; policy without a hard gate fails.
 
 **implementation:**
-On Import criteria Dual-check, you can now attest only if your actor id differs from the importer (or a checksum job signature is present).
-On Publish version, you can now proceed only after Dual-check passes; same-actor self-approve is refused except under a logged break-glass incident flag.
+On Import criteria Dual-check, the Attest checkbox stays disabled when your actor id matches the importer unless a checksum job signature is present.
+On Publish version, the Publish version button unlocks only after Dual-check passes; same-actor self-approve is refused except under a logged break-glass incident flag.
 
 **implementationAdds:** ["dual-check-actor", "checksum-job", "break-glass-incident"]
 **implementationPlant:** not_done
@@ -185,8 +185,8 @@ On Publish version, you can now proceed only after Dual-check passes; same-actor
 Independent per-table publishes can interleave mid-flight evaluations across inconsistent category halves.
 
 **implementation:**
-On Reference tables, you can now declare a Publish group for co-dependent families.
-On Publish version, you can now publish the group atomically or keep all members Draft-hold. On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; the reference pin dropdown omits partial Draft-hold groups, so packs never pin a partial group.
+On Reference tables, each co-dependent family row can be assigned to a Publish group with a group-id chip.
+On Publish version, the group publish modal either publishes all members atomically or keeps every member Draft-hold. On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; the reference pin dropdown omits partial Draft-hold groups, so packs never pin a partial group.
 
 **implementationAdds:** ["publish-group", "atomic-publish", "co-dependent-families"]
 **implementationPlant:** not_done
@@ -207,8 +207,8 @@ On Publish version, you can now publish the group atomically or keep all members
 Publish bumps a version id with no field-level change set, so house cannot tell a new round row from a TEER remap that invalidates half the book.
 
 **implementation:**
-On Publish version, you can now open Version diff for the supersedes pair and see added / removed / changed rows typed by change class.
-On Reference data, you can now attach that Version diff to the Change event for Oversight and Analysis → Evaluation provenance consumers.
+On Publish version, click Version diff for the supersedes pair; the diff panel shows added / removed / changed rows typed by change class.
+On Reference data, attach that Version diff to the Change event row for Oversight and Analysis → Evaluation provenance consumers.
 
 **implementationAdds:** ["version-diff", "change-class", "added", "removed", "changed"]
 **implementationPlant:** not_done
@@ -229,7 +229,7 @@ On Reference data, you can now attach that Version diff to the Change event for 
 Without impact scoping, every Publish version either hammers the whole fleet or skips firms that actually consume the changed table.
 
 **implementation:**
-On Publish version, you can now see Impact scope derived from Version diff change-class and bound Evaluation pack versions. On Firm operations bind, click firm row in firm-bind index. On firm detail, click Bind packs. On Bind packs modal, choose Evaluation pack version from the published-only dropdown; choose Automation pack version from the published-only dropdown; choose Engagement template version from the published-only dropdown; click Bind. Those bound version chips become the re-score cohort inputs when they reference the affected table keys / outcome families.
+On Publish version, open the Impact scope panel; it derives cohort rows from Version diff change-class and bound Evaluation pack versions. On Firm operations bind, click firm row in firm-bind index. On firm detail, click Bind packs. On Bind packs modal, choose Evaluation pack version from the published-only dropdown; choose Automation pack version from the published-only dropdown; choose Engagement template version from the published-only dropdown; click Bind. Those bound version chips become the re-score cohort inputs when they reference the affected table keys / outcome families.
 
 **implementationAdds:** ["impact-scope", "change-class→cohort", "bound-pack-consumers"]
 **implementationPlant:** not_done
@@ -250,7 +250,7 @@ On Publish version, you can now see Impact scope derived from Version diff chang
 One fan-out policy for all tenants either wakes armed-only noise or leaves pinned packs looking “current” when they are not.
 
 **implementation:**
-On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set re-score cohort mode with the selector (Active-follow-current | Armed-only | Pinned-shadow); click Publish version. On Oversight and the same Evaluation pack editor, you can now see Pin age and shadow-diff pending adopt rows.
+On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set re-score cohort mode with the selector (Active-follow-current | Armed-only | Pinned-shadow); click Publish version. On Oversight and the same Evaluation pack editor, Pin age and shadow-diff pending-adopt rows show which firms are active, armed-only, or pinned-shadow.
 
 **implementationAdds:** ["active-follow-current", "armed-signal-only", "pinned-shadow", "shadow-diff"]
 **implementationPlant:** not_done
@@ -270,8 +270,8 @@ On Configuration libraries → Evaluation packs catalog, open Evaluation pack ed
 Publish updates “current” while already-shown Analysis rewrites in place with no cause, destroying consultant trust.
 
 **implementation:**
-On Publish version, you can now enqueue Re-evaluation jobs keyed by publish id and impact-scope.
-On Analysis → Evaluation provenance, you can now see deltas (was / now) with cause reference-publish or reference-correction; prior Analysis snapshots keep their reference-version ids for Audit trail.
+On Publish version, click Enqueue Re-evaluation; the job table shows rows keyed by publish id and impact-scope.
+On Analysis → Evaluation provenance, delta rows show was / now with cause reference-publish or reference-correction; prior Analysis snapshots keep their reference-version ids for Audit trail.
 
 **implementationAdds:** ["re-evaluation-job", "cause:reference-publish", "cause:reference-correction", "was/now-delta"]
 **implementationPlant:** not_done
@@ -292,8 +292,8 @@ On Analysis → Evaluation provenance, you can now see deltas (was / now) with c
 A naive “rescore then reactivate” hook on Publish version creates false reactivation storms on every draw.
 
 **implementation:**
-On Analysis → Evaluation provenance, reference-driven Re-evaluation jobs can now write signals and Board Phase signal only.
-On Firm operations bind firm detail → Send gates panel, you can now see reference-publish auto-enrollment refused as a deny chip; runners still apply Engine 2 precedence when a separate motion decision runs.
+On Analysis → Evaluation provenance, reference-driven Re-evaluation job rows write signals and Board Phase signal only.
+On Firm operations bind firm detail → Send gates panel, the enrollment readiness row shows reference-publish auto-enrollment refused as a deny chip; runners still apply Engine 2 precedence when a separate motion decision runs.
 
 **implementationAdds:** ["signals-only-on-reference-publish", "no-auto-enrollment", "phase-signal-update"]
 **implementationPlant:** not_done
@@ -313,7 +313,7 @@ On Firm operations bind firm detail → Send gates panel, you can now see refere
 Authors treat a cutoff diff as copy-paste fodder for pack conditions, re-breaking currency.
 
 **implementation:**
-On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; open Reference changelog (Version diff) as read-only table-key impact. In publish review, reject rule bodies that embed numeric public-criteria literals present in Reference tables; click Publish version only after review passes.
+On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; open Reference changelog (Version diff) as a read-only table-key impact panel. In publish review, the checklist rejects rule bodies that embed numeric public-criteria literals present in Reference tables; click Publish version only after review passes.
 
 **implementationAdds:** ["reference-changelog", "table-key-link-only", "reject-numeric-literals"]
 **implementationPlant:** not_done
@@ -334,8 +334,8 @@ On Configuration libraries → Evaluation packs catalog, open Evaluation pack ed
 Forms and consultant edits save facts while Analysis and Board stay stale until a batch job or page reload folklore.
 
 **implementation:**
-On Client Data, you can now commit write-back and automatically enqueue Re-evaluation for that contact.
-On Board, you can now see Phase signal update from cause fact-write-back; on Live brief, the same re-score feeds meeting-grade views.
+On Client Data, click Commit write-back; the save action emits a fact-change event and automatically enqueues Re-evaluation for that contact.
+On Board, the Client row Phase signal chip updates from cause fact-write-back; on Live brief, the same re-score feeds meeting-grade views.
 
 **implementationAdds:** ["fact-change-event", "cause:fact-write-back", "immediate-re-eval", "phase-signal-refresh"]
 **implementationPlant:** not_done
@@ -356,8 +356,8 @@ On Board, you can now see Phase signal update from cause fact-write-back; on Liv
 Two jobs rewriting Analysis for one contact produce duplicate Phase signals or a result that cites neither publish id nor write-back id.
 
 **implementation:**
-On Evaluation packs re-score job detail, you can now see coalesced Re-evaluation for the same contact within a short merge window and stored trigger event ids for both fact-write-back and reference-publish when both apply.
-On Audit trail, you can now see a single result Change event listing all trigger causes and the reference-version ids used.
+On Evaluation packs re-score job detail, the job row shows coalesced Re-evaluation for the same contact within a short merge window and stored trigger event ids for both fact-write-back and reference-publish when both apply.
+On Audit trail, a single result Change event row lists all trigger causes and the reference-version ids used.
 
 **implementationAdds:** ["job-idempotency-key", "merge-window", "multi-cause-result"]
 **implementationPlant:** not_done
@@ -378,8 +378,8 @@ On Audit trail, you can now see a single result Change event listing all trigger
 Signals die in Client Data detail; Board still shows pre-write-back posture and consultants miss meeting-grade changes.
 
 **implementation:**
-On Board Client row Phase signal, you can now see motion class and service-eligible posture refreshed after write-back re-score.
-On Board, you can now open the pin ids (pack + reference versions) for the signal without claiming an IRCC determination.
+On Board Client row Phase signal, the chip shows motion class and service-eligible posture refreshed after write-back re-score.
+On Board, open the Phase signal detail drawer to see pack + reference version pin ids for the signal without claiming an IRCC determination.
 
 **implementationAdds:** ["motion-class-on-board", "pack-version-pin", "reference-version-pin", "not-IRCC-determination"]
 **implementationPlant:** not_done
@@ -401,7 +401,7 @@ A contact becomes draw-cleared on Publish version or write-back while email is i
 
 **implementation:**
 On Firm operations bind firm detail → Send gates panel, enrollment readiness rows require Book readiness reachable verdict even when Phase signal is reactivation-worthy.
-On Book readiness Audits, you can now re-batch after import refresh without clearing eligibility signals — detection and reachability stay separate axes.
+On Book readiness Audit run → Verdict list, click Re-batch after import refresh without clearing eligibility signals — detection and reachability stay separate axes.
 
 **implementationAdds:** ["eligibility≠reachable", "audit-reachable-gate", "signal-retained"]
 **implementationPlant:** not_done
@@ -421,8 +421,8 @@ On Book readiness Audits, you can now re-batch after import refresh without clea
 One daily job either misses multi-draw days or burns Dual-check capacity re-verifying static grids every night.
 
 **implementation:**
-On Reference tables, you can now set Volatility class (high / medium / low) per family with default SLA from house matrix.
-On Reference data Detect, schedule and on-alert paths can now follow Volatility class; funds tables (when asserted) use low + mandatory source-URL re-resolve each verify cycle.
+On Reference tables, each family row has a Volatility class selector (high / medium / low) with default SLA from the house matrix.
+On Reference data Detect, schedule rows and on-alert rows follow Volatility class; funds tables (when asserted) show low + mandatory source-URL re-resolve each verify cycle.
 
 **implementationAdds:** ["volatility-class", "high", "medium", "low", "source-URL-re-resolve"]
 **implementationPlant:** not_done
@@ -443,7 +443,7 @@ On Reference data Detect, schedule and on-alert paths can now follow Volatility 
 Packs pin a version id forever; without past-freshness, a week-old cutoff still clears reactivation-worthy.
 
 **implementation:**
-On Reference tables, you can now see last-verified-at, freshness-SLA, and Past-freshness flag per family.
+On Reference tables, each family row shows last-verified-at, freshness-SLA, and Past-freshness flag columns.
 On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set draw-cutoff and category-occupation assertions to require Published & not past freshness; click Publish version. Otherwise Analysis shows Reference data unavailable and those reactivation paths suppress.
 
 **implementationAdds:** ["last-verified-at", "freshness-SLA", "past-freshness", "reference-data-unavailable"]
@@ -465,8 +465,8 @@ On Configuration libraries → Evaluation packs catalog, open Evaluation pack ed
 SLAs live in Pass2 prose; nothing pages house when a high-volatility table skips verify through a multi-draw week.
 
 **implementation:**
-On Reference data, you can now open Recheck cadence and see next-due / last-verified per table family by Volatility class.
-On Oversight, you can now receive SLA breach alerts when Detect/verify misses the class deadline; draw-day on-call can jump to Import criteria from the alert.
+On Reference data, open Recheck cadence; the cadence table shows next-due / last-verified per table family by Volatility class.
+On Oversight, SLA breach alert rows appear when Detect/verify misses the class deadline; draw-day on-call can jump to Import criteria from the alert row.
 
 **implementationAdds:** ["recheck-cadence", "next-due", "SLA-breach-alert", "same-business-day"]
 **implementationPlant:** not_done
@@ -487,9 +487,9 @@ On Oversight, you can now receive SLA breach alerts when Detect/verify misses th
 After a clean publish, IRCC HTML or operator error can drift while packs keep scoring; no house alarm fires.
 
 **implementation:**
-On Reference data, you can now run Reconciliation on a fixed cadence and alert on drift vs live Canada.ca snapshot.
-On Reference data, you can now sample evaluations that flipped on the last Publish version for spot-check.
-On Audit trail, you can now filter ingestion, publish, re-evaluation, and reconciliation Change events end-to-end.
+On Reference data, the Reconciliation job row runs on a fixed cadence and shows drift-alert status vs live Canada.ca snapshot.
+On Reference data, open the flip-sample drawer to spot-check evaluations that flipped on the last Publish version.
+On Audit trail, filter Change event rows by ingestion, publish, re-evaluation, and reconciliation to trace the pipeline end-to-end.
 
 **implementationAdds:** ["reconciliation-job", "drift-alert", "flip-sample", "pipeline-audit-end-to-end"]
 **implementationPlant:** not_done
