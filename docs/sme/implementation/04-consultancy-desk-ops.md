@@ -16,7 +16,7 @@
 License acknowledgement at Accept terms is a one-shot door. Practice still needs ongoing legibility of what motion is armed or active under the firm name. Without a defensible inhabit minimum, hands-free becomes unsupervised automation the licensee cannot stand behind.
 
 **implementation:**  
-On Board, you can now inhabit send-identity under which sends run, Armed / Active posture for the bound book, per-contact Phase signal (sequenced or silenced), and open Engagement record for the chronology of what already fired — as the standing accountability surface before standing behind always-on motion.
+On Board, view the send-identity chip for the identity under which sends run, the Armed / Active segmented control for the bound book, and each Client row Phase signal chip for sequenced or silenced. Click a Client row to open Engagement record and view the chronology of what already fired as the standing accountability surface before standing behind always-on motion.
 
 **implementationAdds:** ["send-identity"]
 
@@ -28,7 +28,7 @@ On Board, you can now inhabit send-identity under which sends run, Armed / Activ
 Product language distinguishes armed vs active, but desk accountability collapses if armed looks like already speaking as the licensee. Consultants will not authorize if those states are cosmetic.
 
 **implementation:**  
-On Board Phase signal, you can now read **armed** as bound-and-ready with no firm-branded client contact yet, and **active** as contact-facing motion already attributable to the firm identity — so inhabit maps to license risk and halt urgency.
+On Board, view each Client row Phase signal chip: Armed means bound-and-ready with no firm-branded client contact yet, and Active means contact-facing motion already attributable to the firm identity. The Phase signal view maps inhabit to license risk and Halt outreach urgency.
 
 **implementationAdds:** ["armed", "active"]
 
@@ -40,7 +40,7 @@ On Board Phase signal, you can now read **armed** as bound-and-ready with no fir
 Chronology without enough phase outcome is too thin for refusal judgment; full rule editors on the firm desk recreate the wrong seat (Automations authorship under consultant).
 
 **implementation:**  
-On Engagement record, you can now read send/touchpoint chronology plus phase outcome only. Halt outreach is the only control verb from that record — no pack editors on the firm desk.
+On Engagement record, view send/touchpoint chronology rows plus phase outcome chips only. Click Halt outreach as the only control button from that record; pack editor links and configuration fields do not appear on the firm desk.
 
 **implementationAdds:** ["chronology-only"]
 
@@ -52,7 +52,7 @@ On Engagement record, you can now read send/touchpoint chronology plus phase out
 Escrow and DB auth are hard inputs; License acknowledgement is underspecified as desk practice. Without clear affirmations, consultants treat Tower as vendor risk rather than their own professional responsibility.
 
 **implementation:**  
-On Prepared Workspace, open Accept terms. On License acknowledgement, you can now affirm that (1) firm-branded outreach will run continuously while armed/active, (2) the licensee remains responsible for refusing illegal/unethical motion, (3) house-authored packs do not transfer College duties off the licensee, and (4) Halt outreach remains available without reconfiguring packs.
+On Prepared Workspace, click Accept terms. On License acknowledgement, select acknowledgement checkboxes affirming that firm-branded outreach will run continuously while armed/active, the licensee remains responsible for refusing illegal/unethical motion, house-authored packs do not transfer College duties off the licensee, and Halt outreach remains available without reconfiguring packs.
 
 **implementationAdds:** ["license-affirmation"]
 
@@ -64,7 +64,7 @@ On Prepared Workspace, open Accept terms. On License acknowledgement, you can no
 Counts of enrolled, opened, or eligible without send-identity, silence/halt state, and recent touchpoint truth look operational but do not let a licensee stand behind motion. Vanity tallies must not satisfy inhabit.
 
 **implementation:**  
-On Board (and Meetings), you can now treat volume/eligibility tallies as secondary. Accountability minimum remains send-identity + Armed / Active + silence/halt + last firm-branded touch — inhabit cannot be satisfied by funnel cosmetics alone.
+On Board and Meetings, view volume/eligibility tallies as secondary counter chips. The accountability minimum panel still requires send-identity chip, Armed / Active segmented control state, silence/halt chip, and last firm-branded touch row; inhabit cannot be satisfied by funnel cosmetics alone.
 
 **implementationAdds:** ["accountability-minimum"]
 
@@ -76,7 +76,7 @@ On Board (and Meetings), you can now treat volume/eligibility tallies as seconda
 Always-on engine implies continuous risk under s. 38 supervision; product emphasizes the activation door more than post-running supervision. Daily sequence editing cannot be the discharge path.
 
 **implementation:**  
-On Board, you can now continuously inhabit Armed / Active motion. Halt outreach stays always available as the supervision surrogate — visibility plus refusal capacity, not daily pack editing.
+On Board, view Armed / Active motion continuously with the posture segmented control and Phase signal chips. Click Halt outreach from Board whenever refusal is needed; this supervision surrogate is visibility plus refusal capacity, not daily pack editing.
 
 **implementationAdds:** ["supervision-surrogate"]
 
@@ -88,7 +88,7 @@ On Board, you can now continuously inhabit Armed / Active motion. Halt outreach 
 Seed locks live-not-snapshot, but desk contents are unspecified. Snapshot briefs create wrong-advice risk; over-claiming Analysis as advice creates retainer/consultation-boundary risk.
 
 **implementation:**  
-On Meetings, open a Meeting row. On Live brief, you can now see current self-reportable facts, outstanding gaps still open, engagement phase that produced the meeting, and secondary signals as agenda — framed as prep for consultation, not a concluded service opinion.
+On Meetings, click a Meeting row to open Live brief. In Live brief, view current self-reportable fact rows, outstanding gap chips, the engagement phase row that produced the meeting, and secondary-signal agenda rows framed as prep for consultation, not a concluded service opinion.
 
 **implementationAdds:** ["consult-prep"]
 
@@ -100,7 +100,7 @@ On Meetings, open a Meeting row. On Live brief, you can now see current self-rep
 A frozen snapshot brief is a builder convenience that creates professional candour failure if the contact updated facts after booking.
 
 **implementation:**  
-On Live brief, you can now recompute on open and on write-back, with a visible as-of currency marker — advice preparation tracks facts the firm already holds, not a stale export.
+On Live brief, opening the panel triggers recompute-on-open, and clicking Write back triggers recompute-on-write-back. View the as-of currency marker chip so advice preparation tracks facts the firm already holds, not a stale export.
 
 **implementationAdds:** ["as-of", "recompute-on-open"]
 
@@ -112,7 +112,7 @@ On Live brief, you can now recompute on open and on write-back, with a visible a
 Agenda vs outreach is settled; desk practice still needs secondary Engine 2 signals actionable in the room without implying the firm already messaged each gap.
 
 **implementation:**  
-On Live brief, you can now read secondary signals as consultant-only agenda bullets tied to current facts — never as implied separate campaigns.
+On Live brief, view secondary signals as consultant-only agenda bullet rows tied to current fact rows. They appear as agenda rows only, never as separate campaign buttons or implied outbound sends.
 
 **implementationAdds:** ["agenda"]
 
@@ -124,7 +124,7 @@ On Live brief, you can now read secondary signals as consultant-only agenda bull
 Loop-closer collects self-reportable only. If the brief hides remaining document gaps, consultants look uninformed or invent certainty in the first meeting.
 
 **implementation:**  
-On Live brief, you can now see held self-reportables split from explicit unknowns / document-dependent outstanding — candid scoping of next work without implying file readiness is complete.
+On Live brief, view held self-reportables in one panel and explicit unknowns / document-dependent outstanding in a separate panel. The split scopes next work without showing a file-ready chip.
 
 **implementationAdds:** ["self-reportable", "document-dependent"]
 
@@ -136,7 +136,7 @@ On Live brief, you can now see held self-reportables split from explicit unknown
 D-01/D-02 builder debates risk erasing the non-negotiable: outstanding self-reportables must land before the consultant joins, and the meeting remains a consultation event. Consultation-agreement / retainer steps stay human post-book.
 
 **implementation:**  
-On Live brief, you can now rely on outstanding self-reportables captured pending the meeting and written back before join wherever possible — regardless of sequence packaging. Consultation agreement remains a human post-book act, not automated away on Meetings.
+On Live brief, view outstanding self-reportables captured pending the meeting and click Write back before join wherever possible, regardless of sequence packaging. On Meetings, consultation agreement remains a human post-book action row, not an automated checkbox cleared by the product.
 
 **implementationAdds:** ["write-back-before-join"]
 
@@ -148,7 +148,7 @@ On Live brief, you can now rely on outstanding self-reportables captured pending
 Eligibility narratives and B-* service hints can be read as guarantees or retained opinions if Live brief presents them as conclusions — Code marketing/honesty risk.
 
 **implementation:**  
-On Live brief, you can now read eligibility/service read-outs labeled as current evaluative signals for discussion — never as success guarantees or completed representation.
+On Live brief, view eligibility/service read-out rows labeled with current evaluative signal chips for discussion. Success-guarantee chips and completed-representation labels do not appear.
 
 **implementationAdds:** ["evaluative-signal"]
 
@@ -160,7 +160,7 @@ On Live brief, you can now read eligibility/service read-outs labeled as current
 Leaf text names contact or book halt, but practice thresholds are unspecified; cosmetic halt fails the hard gate. Refusal must work without opening Configuration libraries.
 
 **implementation:**  
-On Halt outreach, you can now refuse at two scopes — single-contact halt (surgical) and book/firm-wide halt (nuclear when the licensee will not stand behind further automated motion). Both stop further automatic firm→client sends without pack authorship.
+On Halt outreach, choose scope with a segmented control: single-contact halt for surgical refusal or book/firm-wide halt when the licensee will not stand behind further automated motion. Click Confirm halt to stop further automatic firm-to-client sends without opening pack authorship.
 
 **implementationAdds:** ["contact-halt", "book-halt"]
 
@@ -172,7 +172,7 @@ On Halt outreach, you can now refuse at two scopes — single-contact halt (surg
 If halt deletes chronology, the licensee cannot account for what already went out; if halt only flags UI, runners keep sending. Records must stay complaint-ready.
 
 **implementation:**  
-On Halt outreach, you can now apply a prospective stop of automatic outreach. On Engagement record, send chronology stays preserved — refusal is effective going forward; the file remains complaint-ready for what already fired.
+On Halt outreach, click Confirm halt to apply a prospective stop of automatic outreach. On Engagement record, view preserved send chronology rows; refusal is effective going forward while the file remains complaint-ready for what already fired.
 
 **implementationAdds:** ["prospective-stop"]
 
@@ -184,7 +184,7 @@ On Halt outreach, you can now apply a prospective stop of automatic outreach. On
 Conflating halt-outreach with cancel-meeting either leaves unethical pings running into a booked slot or silently cancels a human commitment the contact already made.
 
 **implementation:**  
-On Halt outreach, you can now stop further automatic outreach only. On Meetings / Meeting row, cancel or reschedule remains a separate human desk act after Live brief review — halt does not auto-cancel the consult.
+On Halt outreach, click Confirm halt to stop further automatic outreach only. On Meetings, click a Meeting row to review Live brief; cancel or reschedule remains a separate human desk button after review, so halt does not auto-cancel the consult.
 
 **implementationAdds:** ["meeting-disposition-separate"]
 
@@ -196,7 +196,7 @@ On Halt outreach, you can now stop further automatic outreach only. On Meetings 
 Without guidance, firms either never use book-halt (too scary) or use only book-halt (operationally blunt), leaving the hard gate unused.
 
 **implementation:**  
-On Halt outreach, you can now choose contact-level for situation-specific refusal (wrong person, unethical ask, conflict, known complaint risk) and book-level when withdrawing standing behind the automated program as a whole (pack/identity/trust failure).
+On Halt outreach, choose Contact-level in the scope segmented control for situation-specific refusal such as wrong person, unethical ask, conflict, or known complaint risk. Choose Book-level when withdrawing standing behind the automated program as a whole because of pack, identity, or trust failure.
 
 **implementationAdds:** ["contact-halt", "book-halt"]
 
@@ -208,7 +208,7 @@ On Halt outreach, you can now choose contact-level for situation-specific refusa
 If Halt outreach only appears after damage, Accept terms is a trapdoor. License refusal must be continuous with authorization, including while only armed.
 
 **implementation:**  
-On Board, Halt outreach is available whenever firm identity could send — including Armed (prevent first send) and Active (stop further sends).
+On Board, the Halt outreach button is visible whenever firm identity could send, including Armed posture to prevent the first send and Active posture to stop further sends.
 
 **implementationAdds:** ["halt-while-armed"]
 
@@ -220,7 +220,7 @@ On Board, Halt outreach is available whenever firm identity could send — inclu
 “Free value-add” can slide into spam, implied assessment-as-service, or guarantee-shaped eligibility claims that damage the firm while the product claims hands-free success.
 
 **implementation:**  
-On License acknowledgement (Prepared Workspace · Accept terms), you can now affirm free value-add as permissioned, firm-branded freshness/re-engagement that invites dialogue or booking — never unpaid full assessments, success guarantees, or government-adjacent claims. On Board Phase signal, inhabit shows that positioning, not assessment-as-service.
+On Prepared Workspace, click Accept terms, then select the License acknowledgement checkbox affirming free value-add as permissioned, firm-branded freshness/re-engagement that invites dialogue or booking, never unpaid full assessments, success guarantees, or government-adjacent claims. On Board, Phase signal chips show that positioning, not assessment-as-service.
 
 **implementationAdds:** ["free-value-add", "freshness"]
 
@@ -232,7 +232,7 @@ On License acknowledgement (Prepared Workspace · Accept terms), you can now aff
 Agency authorship can be misread as transferring College duties to Om Coda; that reading blocks authorization. World hard gate keeps refusal as firm responsibility, not platform policy.
 
 **implementation:**  
-On License acknowledgement, you can now affirm professional accountability stays on the licensee for what goes out under firm identity. Halt outreach, Board inhabit, and house pack oversight remain the refusal and quality path — Om Coda does not become the RCIC.
+On License acknowledgement, select the professional accountability checkbox affirming the licensee remains accountable for what goes out under firm identity. Halt outreach button, Board inhabit panel, and house pack oversight rows remain the refusal and quality path; Om Coda does not appear as the RCIC.
 
 **implementationAdds:** ["licensee-accountable"]
 
@@ -244,7 +244,7 @@ On License acknowledgement, you can now affirm professional accountability stays
 Hands-free fails if the desk cannot see that motion is tied to refreshed facts / eligibility posture rather than calendar spam. Informed outreach must be inhabit-verifiable without pack editors.
 
 **implementation:**  
-On Board, you can now see phase + last-touch + fact currency enough to verify motion follows evaluation/refresh. On Live brief, the same currency is bound to the meeting — without exposing pack editors on the firm desk.
+On Board, view Phase signal chips, last-touch rows, and fact-currency chips sufficient to verify motion follows evaluation/refresh. On Live brief, view the same currency panel bound to the meeting without exposing pack editor controls on the firm desk.
 
 **implementationAdds:** ["informed-motion"]
 
@@ -263,7 +263,7 @@ Meeting-booked success nuance vs Seed Assump. 6 metric wording. No implementatio
 Always-on “staying informed” can look like ongoing advisory services without consultation/service agreements, putting the licensee offside on client/retainer boundaries.
 
 **implementation:**  
-On Board and Meetings, touchpoint inhabit reads as firm-branded engagement / invitation toward consultation — not provision of immigration consulting services. On Live brief, advice and scoping stay inside the booked consult after required agreements; free value-add does not silently become unretained practice.
+On Board and Meetings, view touchpoint inhabit labels as firm-branded engagement / invitation toward consultation, not provision of immigration consulting services. On Live brief, advice and scoping rows stay inside the booked consult after required agreements; free value-add does not show as unretained-practice status.
 
 **implementationAdds:** ["invitation-toward-consultation"]
 
@@ -275,7 +275,7 @@ On Board and Meetings, touchpoint inhabit reads as firm-branded engagement / inv
 Building multi-consultant RBAC early invents product seats World deferred (KU #6). Shipping zero accountability for who authorized/halted is also unsafe if a second human uses the same login informally. No second persona.
 
 **implementation:**  
-On Prepared Workspace · Accept terms / License acknowledgement, you can now pin a single named authorizing licensee identity per tenancy. Halt outreach and meeting-take attribute to that firm desk session. Multi-consultant roles/permissions stay deferred — no new persona; informal staff use remains a firm supervision problem under the Code, not a product RBAC seat.
+On Prepared Workspace, click Accept terms, then open License acknowledgement and choose one named authorizing licensee from the identity dropdown per tenancy. Halt outreach confirmations and meeting-take rows attribute to that firm desk session. Multi-consultant roles/permissions stay deferred: no new persona selector appears, and informal staff use remains a firm supervision problem under the Code, not a product RBAC seat.
 
 **implementationAdds:** ["single-authorizing-licensee"]
 
@@ -287,7 +287,7 @@ On Prepared Workspace · Accept terms / License acknowledgement, you can now pin
 Deferring RBAC cannot mean the product encourages unlicensed advice from the brief or sends. Non-licensee staff operating Board day-to-day still must not get pack authorship or advice-issuing automation as a substitute for the licensee.
 
 **implementation:**  
-Starting from Board and Meetings, V1 verbs stay inhabit, Halt outreach, and receive meetings / Live brief only. Firm desk never exposes pack authorship or advice-issuing automation — deferred roles do not become unauthorized practice by product shape. Single authorizing licensee absorb only (same pin as desk-23).
+Starting from Board and Meetings, V1 controls stay limited to inhabit panels, Halt outreach buttons, and receive meetings / Live brief rows. Firm desk never exposes pack authorship controls or advice-issuing automation buttons; deferred roles do not become unauthorized practice by product shape. Single authorizing licensee absorb only, using the same License acknowledgement identity dropdown as desk-23.
 
 **implementationAdds:** ["inhabit-halt-receive"]
 
@@ -299,7 +299,7 @@ Starting from Board and Meetings, V1 verbs stay inhabit, Halt outreach, and rece
 Desk-ops can overclaim into CASL counsel, pathway packs, or CRM connectors — or underclaim and leave inhabit/halt/brief/reputation/roles unpressured. Pass2 must stay inside professional desk practice.
 
 **implementation:**  
-Starting from Board, Meetings, Live brief, Halt outreach, Engagement record, and Prepared Workspace license bits only — this seat’s V1 residual closes at inhabit minimums, live-brief practice contents, halt scopes, reputation framing of free value-add, and defer-with-single-licensee for KU #6. No Automations authorship under consultant; CASL proof, pack assertions, and connect/export stay off this desk.
+Starting from Board, Meetings, Live brief, Halt outreach, Engagement record, and Prepared Workspace license bits only, view this seat's V1 residual as inhabit minimum panels, Live brief practice rows, Halt outreach scope segmented control, free-value-add reputation checkboxes, and the single-licensee identity dropdown for KU #6. Automations authorship buttons, CASL proof panels, pack assertion editors, and connect/export controls stay off this desk.
 
 **implementationAdds:** ["desk-residual-closed"]
 
