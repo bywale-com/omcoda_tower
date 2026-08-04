@@ -21,7 +21,7 @@
 
 **Q:** How do I book a meeting when invited and arrive where the firm already knows my current facts?
 
-**Clarity:** I open a firm-branded Meeting invitation, pick a time to book, and arrive so the firm already holds my current facts for the consultant's live brief.
+**Clarity:** On Meeting invitation I open Booking, pick a slot, and confirm; outstanding self-reportables submit on Loop-closer / Booking confirm so Live brief already holds current facts.
 
 **DNA for children:**
 1. open a firm-branded Meeting invitation and pick a time to book
@@ -33,16 +33,17 @@
 
 **Q:** How do I open a firm-branded Meeting invitation and pick a time to book?
 
-**Clarity:** Starting from Meeting invitation, open Booking and choose a slot; confirm to book.
+**Clarity:** Starting from the firm-branded Meeting invitation (email/SMS link), click **Book a time** to open Booking. On Booking, choose a slot in the Slot picker (date/time list or calendar), then click **Confirm booking** (primary button). That commit writes the meeting (read by Consultant Meetings Meeting rows and Board ready-for-meeting Phase chip). Contact must not be silenced.
 
 **Criteria — when:** Invitation sent (bound campaign toward meeting).  
 **Conditions:** Eligible / invited; contact not silenced.
 
-| UI | Kind | Status |
-|---|---|---|
-| Meeting invitation | Module (channel) | **new** / **partial** |
-| Booking | Modal / page | **new** |
-| Slot picker | Block | **new** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Meeting invitation | Module (channel) | **new** / **partial** | Firm-branded link entry |
+| Booking | Modal / page | **new** | Slot selection surface |
+| Slot picker | Block | **new** | Date/time **list** / calendar choose |
+| Confirm booking | Block | **new** | **Primary button** — writes meeting (read by Consultant Meetings) |
 
 **Requirements:** Operator packs invite; Consultant Meetings receives the booking (closure onto Consultant).
 
@@ -52,15 +53,16 @@
 
 **Q:** How do I arrive so the firm already holds my current facts for the consultant's live brief?
 
-**Clarity:** On Booking confirm (or a pending Loop-closer form before the meeting), I can fill outstanding self-reportable fields; those write back so On Live brief the consultant already sees current facts — I don't re-explain from scratch.
+**Clarity:** On Booking confirm (or a pending **Loop-closer form** before the meeting), view outstanding self-reportable form fields only; type/select answers and click **Submit** (primary button). Write-back updates fact rows that Live brief reads — I don't re-explain from scratch. Document-dependent asks never appear on this form (those stay Manage on the consultant desk).
 
 **Criteria — when:** At book or pending meeting.  
 **Conditions:** Loop-closer consolidates outstanding self-reportable; write-back re-evaluates.
 
-| UI | Kind | Status |
-|---|---|---|
-| Loop-closer form | Modal / page | **new** |
-| Booking confirm | Block | **new** |
-| Live brief | Block | consultant-side **partial-existing** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Loop-closer form | Modal / page | **new** | Self-reportable **fields** only |
+| Booking confirm | Block | **new** | May embed Loop-closer |
+| Submit | Block | **new** | **Primary button** — writes facts (read by Live brief / re-evaluate) |
+| Live brief | Block | consultant-side **partial-existing** | Downstream **view** of submitted facts |
 
 **Requirements:** Write-back → re-evaluate is machinery under bound evaluation packs. Closes Consultant core so-that.

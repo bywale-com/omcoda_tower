@@ -21,14 +21,16 @@
 
 **Q:** How do I see a firm's forward-deploy and hard-input progress toward running?
 
-**Clarity:** Starting from Activation state, open Progress and read the forward-deployed, authorize-book, escrow-held, and running checklist rows for this firm; on a stalled row, click Jump to Activation & forward-deploy or Jump to Commercial to unblock the exact gate.
+**Clarity:** Starting from Activation state, click **Progress**. View checklist rows for forward-deployed, authorize-book, escrow-held, and running with status chips. On a stalled row, click **Jump to Activation & forward-deploy** or **Jump to Commercial** to unblock the exact gate. Checklist rows read consultant/operator commits — Progress itself does not fake-complete hard inputs.
 
 **Criteria — when:** Monitoring in-flight activation.  
 **Conditions:** Stalled steps actionable; Support can use same context.
 
-| UI | Kind | Status |
-|---|---|---|
-| Activation state | Module | **new** |
-| Progress | Block | **new** |
-| Activation & forward-deploy | Module | **new** (unblock) |
-| Commercial | Module | **new** (unblock) |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Activation state | Module | **new** | Per-tenancy activation progress |
+| Progress | Block | **new** | Checklist **rows** + status **chips** |
+| Jump to Activation & forward-deploy | Block | **new** | Link control (unblock) |
+| Jump to Commercial | Block | **new** | Link control (unblock) |
+| Activation & forward-deploy | Module | **new** (unblock) | Staging / forward-deploy |
+| Commercial | Module | **new** (unblock) | Escrow terms |

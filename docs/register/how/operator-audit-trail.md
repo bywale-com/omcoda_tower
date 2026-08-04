@@ -33,15 +33,17 @@
 
 **Q:** How do I filter by firm or actor?
 
-**Clarity:** Starting from Audit trail, use Firm filter and Actor filter dropdowns to scope the log; selected filter chips stay visible above the Change event list.
+**Clarity:** Starting from Audit trail, choose a firm from the **Firm filter** dropdown and/or an actor from the **Actor filter** dropdown to scope the log; selected filter chips stay visible above the Change event list. Filter chips are view chrome (session scope) unless a saved audit view is persisted — nothing downstream outside Audit trail reads them.
 
 **Criteria — when:** Investigating or reviewing house changes.  
 **Conditions:** Tenancy-scoped events visible; cross-firm when unfiltered.
 
-| UI | Kind | Status |
-|---|---|---|
-| Audit trail | Module | **new** |
-| Firm filter / Actor filter | Block | **new** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Audit trail | Module | **new** | House-global change log |
+| Firm filter | Block | **new** | **Dropdown** |
+| Actor filter | Block | **new** | **Dropdown** |
+| Filter chips | Block | **new** | **View** chips above list |
 
 ---
 
@@ -49,11 +51,12 @@
 
 **Q:** How do I open a Change event to see what operation changed?
 
-**Clarity:** On Audit trail, click a Change event row to open Change event and read operation, before/after or summary, timestamp, actor, firm, and affected surface.
+**Clarity:** On Audit trail, click a Change event row to open **Change event** and view operation, before/after or summary, timestamp, actor, firm, and affected surface. Open-box Publish version and Bind packs commits both appear as rows.
 
 **Criteria — when:** A row is selected.  
 **Conditions:** Open-box and bind changes both appear.
 
-| UI | Kind | Status |
-|---|---|---|
-| Change event | Modal | **new** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Change event list | Block | **new** | Clickable rows |
+| Change event | Modal | **new** | Detail **view** of one commit |

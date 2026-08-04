@@ -33,15 +33,17 @@
 
 **Q:** How do I set Escrow terms for the firm?
 
-**Clarity:** Starting from Commercial, select the firm row in the instrument list; on the scoped record, open Escrow terms, enter contingent cost, cap, release predicate, and measurement window fields, then save the terms version that the firm will Accept on Prepared Workspace.
+**Clarity:** Starting from Commercial, click the firm row in the instrument list. On the scoped record, open **Escrow terms**; type contingent cost, cap, release predicate, and measurement window fields; click **Save terms version** (primary button). That published terms version is what Prepared Workspace → Accept terms presents to the consultant — drafts do not appear there.
 
 **Criteria — when:** Before or during activation for that tenancy.  
 **Conditions:** Terms presentable on Accept terms.
 
-| UI | Kind | Status |
-|---|---|---|
-| Commercial | Module | **new** |
-| Escrow terms | Block / Modal | **new** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Commercial | Module | **new** | Per-tenancy commercial |
+| Instrument list / firm row | Block | **new** | Row select |
+| Escrow terms | Block / Modal | **new** | Cost / cap / predicate / window **fields** |
+| Save terms version | Block | **new** | **Primary button** — terms version (read by Accept terms) |
 
 ---
 
@@ -54,8 +56,8 @@
 **Criteria — when:** After terms offered.  
 **Conditions:** Consultant acceptance is the hard gate; operator oversees.
 
-| UI | Kind | Status |
-|---|---|---|
-| Escrow status | Block | **new** |
-| Release control | Block | **new** |
-| Accept terms | Modal | consultant-facing **new** (paired) |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Escrow status | Block | **new** | Status **chips** (held / pending / released / …) |
+| Release control | Block | **new** | Execute release / return / Open dispute **buttons** |
+| Accept terms | Modal | consultant-facing **new** (paired) | Consultant accept reads terms version |

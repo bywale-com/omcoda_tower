@@ -34,16 +34,17 @@
 
 **Q:** How do I log a Gap from running-firm friction?
 
-**Clarity:** Starting from Register & evolution, open Gaps; On Gap, document the friction (and optional Support ticket link) as a methodology gap — not a firm-desk ticket UI.
+**Clarity:** Starting from Register & evolution, click **Gaps**. Click **New gap** (or an existing Gap row). On Gap modal, type the friction summary, optionally link a Support ticket id, and click **Save gap** (primary button). Gap is house-only methodology friction — never a firm-desk ticket UI on Consultant Board.
 
 **Criteria — when:** Friction found via Support or Oversight.  
 **Conditions:** Gap is house-only; never exposed on Consultant Board.
 
-| UI | Kind | Status |
-|---|---|---|
-| Register & evolution | Module | **partial-existing** as `/register` — **house-only** |
-| Gaps | Block | **new** / **partial** |
-| Gap | Modal | **new** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Register & evolution | Module | **partial-existing** as `/register` — **house-only** | House tooling |
+| Gaps | Block | **new** / **partial** | Gap catalog + **New gap** |
+| Gap | Modal | **new** | Summary field + optional ticket link |
+| Save gap | Block | **new** | **Primary button** — writes Gap (read by Regenerate handoff path) |
 
 ---
 

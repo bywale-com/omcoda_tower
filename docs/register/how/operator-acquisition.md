@@ -34,16 +34,18 @@
 
 **Q:** How do I run Approach supply from feed through ad to capture inside the click budget?
 
-**Clarity:** Starting from Acquisition & ads, open Approach campaigns; on an Approach campaign row, edit feed creative, ad copy, and Capture strip fields so name, website, and channel seed inputs land in one tap — no database or payment inside the click budget.
+**Clarity:** Starting from Acquisition & ads, click **Approach campaigns**. On Approach campaigns list, click a campaign row (or **New campaign**). On Approach campaign editor, edit feed creative, ad copy, and Capture strip fields so name, website, and channel seed inputs land in one tap; click **Save** / **Publish campaign**. Captured seed writes hand to Activation & forward-deploy In-flight activations — no database or payment inside the click budget.
 
 **Criteria — when:** Operating ALG acquisition.  
 **Conditions:** Capture limited to name + website + phone/email; continue-scroll allowed.
 
-| UI | Kind | Status |
-|---|---|---|
-| Acquisition & ads | Module | **new** |
-| Approach campaigns | Modal / list | **new** |
-| Capture strip | Block | **new** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Acquisition & ads | Module | **new** | House-global acquisition |
+| Approach campaigns | Modal / list | **new** | Campaign catalog + **New campaign** |
+| Approach campaign editor | Modal | **new** | Feed / ad / Capture strip fields |
+| Capture strip | Block | **new** | Seed inputs (name · website · channel) |
+| Save / Publish campaign | Block | **new** | **Primary button** — campaign live (read by capture → Activation staging) |
 
 **Requirements:** Meta ads supply external; seed land hands to Activation staging. Agent presentation may sit beside Approach — presentation only.
 
@@ -53,12 +55,13 @@
 
 **Q:** How do I read Approach instrumentation for understood-but-didn't-tap versus didn't-understand?
 
-**Clarity:** On Acquisition & ads, open Approach instrumentation and read don't-understand, understand-don't-tap, and continue-scroll count cards for the selected Approach campaign.
+**Clarity:** On Acquisition & ads, click **Approach instrumentation**. Use the campaign filter dropdown to select an Approach campaign; view don't-understand, understand-don't-tap, and continue-scroll count cards. Cards are view/metrics (read stream aggregates) — no write unless drilling to a linked Oversight / Support action.
 
 **Criteria — when:** After impressions / taps accumulate.  
 **Conditions:** Instrumentation distinguishes the two disbelief modes.
 
-| UI | Kind | Status |
-|---|---|---|
-| Acquisition & ads | Module | **new** |
-| Approach instrumentation | Block | **new** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Acquisition & ads | Module | **new** | Parent module |
+| Approach instrumentation | Block | **new** | Metric **cards** + campaign **dropdown** filter |
+| Count cards | Block | **new** | **View** — don't-understand / understand-don't-tap / continue-scroll |

@@ -40,13 +40,15 @@
 **Criteria — when:** Seed inputs landed.  
 **Conditions:** Templates available; public facts readable; no-login artifact staged.
 
-| UI | Kind | Status |
-|---|---|---|
-| Activation & forward-deploy | Module | **new** |
-| In-flight activations | Block | **new** |
-| Forward-deploy control | Block | **new** |
-| Prepared Workspace | Module | **new** |
-| Configuration libraries | Module | **new** (template source) |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Activation & forward-deploy | Module | **new** | Capture → stage |
+| In-flight activations | Block | **new** | Captured firm **rows** |
+| Forward-deploy | Block | **new** | **Button** opens hydrate |
+| Template version | Block | **new** | Published Engagement template **dropdown** |
+| Hydrate | Block | **new** | **Primary button** — stages Prepared Workspace |
+| Prepared Workspace | Module | **new** | No-login artifact (downstream) |
+| Configuration libraries | Module | **new** (template source) | Published templates only |
 
 ---
 
@@ -54,15 +56,16 @@
 
 **Q:** How do I walk readiness with the firm?
 
-**Clarity:** On Prepared Workspace, open Readiness walkthrough, step through template preview, public facts, brand state, and next-step chips; the agent presentation presents and routes only, so fulfillment stays separate while the consultant sees the staged campaign under their identity before hard inputs.
+**Clarity:** On Prepared Workspace, click **Readiness walkthrough**. Step through template preview, public facts, brand state, and next-step chips (Next / Back); chips are view/progress chrome unless a step commits a staged fact. Agent presentation presents and routes only — fulfillment stays separate while the consultant sees the staged campaign under their identity before Authorize book / Accept terms.
 
 **Criteria — when:** Prepared Workspace is staged.  
 **Conditions:** Readiness proof, not value proof; no-login still.
 
-| UI | Kind | Status |
-|---|---|---|
-| Prepared Workspace | Module | **new** |
-| Readiness walkthrough | Block | **new** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Prepared Workspace | Module | **new** | No-login staged shell |
+| Readiness walkthrough | Block | **new** | Stepper + **Next / Back** |
+| Next-step chips | Block | **new** | **View** progress chips |
 
 **Requirements:** Agent presentation layer presents/asks/routes only.
 
@@ -72,14 +75,15 @@
 
 **Q:** How do I secure database authorization plus escrow acceptance?
 
-**Clarity:** On Prepared Workspace, confirm Authorize book completion and Accept terms completion chips for that firm; on Activation state → Progress, mark hard inputs landed only when book authorization and escrow acceptance rows are green so the desk can run.
+**Clarity:** On Prepared Workspace, view Authorize book and Accept terms completion chips (green only after consultant primary-button commits). Operator does not fake-complete those chips. On Activation state, open **Progress** and view authorize-book / escrow-held / running checklist rows; on a stalled row, click **Jump to** the blocking module. Running opens only when both hard-input rows are green — Commercial holds the escrow terms the consultant accepted.
 
 **Criteria — when:** After readiness is legible.  
 **Conditions:** Both hard inputs required; Commercial holds escrow terms.
 
-| UI | Kind | Status |
-|---|---|---|
-| Prepared Workspace | Module | **new** |
-| Authorize book / Accept terms | Modal | **new** (consultant acts; operator secures/observes) |
-| Activation state | Module (per-tenancy) | **new** |
-| Commercial | Module (per-tenancy) | **new** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Prepared Workspace | Module | **new** | Completion **chips** (view of consultant commits) |
+| Authorize book / Accept terms | Modal | **new** (consultant acts; operator secures/observes) | Consultant **primary buttons** write hard inputs |
+| Activation state | Module (per-tenancy) | **new** | Progress checklist |
+| Progress | Block | **new** | Checklist **rows** + Jump links |
+| Commercial | Module (per-tenancy) | **new** | Escrow terms source |

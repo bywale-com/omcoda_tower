@@ -33,16 +33,17 @@
 
 **Q:** How do I set Agency policy and Bounds?
 
-**Clarity:** Starting from Founder & agency controls, open Agency policy and edit Bounds rows for cross-firm limits, what may bind, and what may send; save writes an Audit trail event.
+**Clarity:** Starting from Founder & agency controls, click **Agency policy**. On Bounds, edit Bounds rows for cross-firm limits, what may bind, and what may send; click **Save policy** (primary button). Save writes policy state read by Firm operations bind / Send gates and a Change event on Audit trail. Controls never appear in Consultant nav.
 
 **Criteria — when:** Policy change.  
 **Conditions:** Changes audit-logged; not visible in Consultant nav.
 
-| UI | Kind | Status |
-|---|---|---|
-| Founder & agency controls | Module | **new** |
-| Agency policy | Block | **new** |
-| Bounds | Block | **new** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Founder & agency controls | Module | **new** | House-global controls |
+| Agency policy | Block | **new** | Policy surface |
+| Bounds | Block | **new** | Editable **rows** |
+| Save policy | Block | **new** | **Primary button** — writes bounds (read by bind/send + Audit trail) |
 
 ---
 
@@ -55,7 +56,7 @@
 **Criteria — when:** Emergency or policy enforcement.  
 **Conditions:** Honor by engagement runners; Audit trail records actor.
 
-| UI | Kind | Status |
-|---|---|---|
-| Kill-switch | Modal | **new** |
-| Audit trail | Module | **new** (records) |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Kill-switch | Modal | **new** | Scope choose + reason + **Halt motion** |
+| Audit trail | Module | **new** (records) | Downstream Change event |

@@ -21,7 +21,7 @@
 
 **Q:** How do I answer one consolidated form for outstanding self-reportable facts, and reply when my situation changes?
 
-**Clarity:** I open one Nudge form that lists every outstanding self-reportable need, submit answers, and I can reply later when my situation changes.
+**Clarity:** On Nudge form I answer consolidated self-reportable fields and Submit; later I can open Update facts / reply on a firm-branded thread when life changes.
 
 **DNA for children:**
 1. open one Nudge form that lists every outstanding self-reportable need and submit answers
@@ -33,16 +33,17 @@
 
 **Q:** How do I open one Nudge form that lists every outstanding self-reportable need and submit answers?
 
-**Clarity:** Starting from the firm-branded Nudge message, open Nudge form; On Nudge form, answer the consolidated self-reportable fields and submit. Document-dependent asks never appear here.
+**Clarity:** Starting from the firm-branded Nudge message, click the form link to open **Nudge form**. On Nudge form, answer each outstanding self-reportable field (text, dropdown, checkbox, or date as shown) and click **Submit** (primary button). Submit writes fact updates read by re-evaluate / Analysis and later Live brief. Document-dependent asks never appear as fields here.
 
 **Criteria — when:** When a nudge motion fires (nothing reactivation-worthy).  
 **Conditions:** One form consolidates outstanding needs; self-reportable only.
 
-| UI | Kind | Status |
-|---|---|---|
-| Nudge message | Module (channel) | **partial-existing** |
-| Nudge form | Modal / page | **partial-existing** (forms / touchpoints) |
-| Self-reportable fields | Block | **partial-existing** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Nudge message | Module (channel) | **partial-existing** | Firm-branded entry link |
+| Nudge form | Modal / page | **partial-existing** (forms / touchpoints) | Consolidated form surface |
+| Self-reportable fields | Block | **partial-existing** | Text / **dropdown** / **checkbox** / date inputs |
+| Submit | Block | **partial-existing** | **Primary button** — writes facts (read by re-evaluate / Live brief) |
 
 **Requirements:** Bound packs + evaluation decide outstanding needs. Re-evaluate after write-back is machinery (operator packs) — not contact configuring.
 
@@ -52,12 +53,14 @@
 
 **Q:** How do I reply later when my situation changes?
 
-**Clarity:** On a firm-branded channel thread (or a Change update link), reply or open Update facts and submit what changed.
+**Clarity:** On a firm-branded channel thread, reply in the message field and send; or click **Update facts** / Change update link to open Update facts, edit the changed self-reportable fields, and click **Submit**. That write is read by re-evaluate the same way as Nudge form. Silenced contacts do not get new automatic asks.
 
 **Criteria — when:** Life change after prior collection.  
 **Conditions:** Contact still not silenced; update path firm-branded.
 
-| UI | Kind | Status |
-|---|---|---|
-| Channel thread / Update facts | Modal / page | **new** / **partial** |
-| Update fields | Block | **new** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Channel thread | Module (channel) | **new** / **partial** | Reply **field** + send |
+| Update facts / Change update link | Block | **new** / **partial** | Opens Update facts |
+| Update fields | Block | **new** | Self-reportable inputs |
+| Submit | Block | **new** | **Primary button** — writes fact change (read by re-evaluate) |

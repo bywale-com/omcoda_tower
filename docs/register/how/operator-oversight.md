@@ -33,15 +33,16 @@
 
 **Q:** How do I read Fleet health across firms?
 
-**Clarity:** Starting from Oversight, open Fleet health and scan the firm table by deliverability, sequence, and engagement status chips plus last-run timestamp across tenancies.
+**Clarity:** Starting from Oversight, click **Fleet health**. View the firm table with deliverability, sequence, and engagement status chips plus last-run timestamp; use sort/filter dropdowns only as view chrome (unless a saved fleet filter is persisted for the operator session). Unhealthy chips are the drill cue into Firm health.
 
 **Criteria — when:** Ongoing agency ops.  
 **Conditions:** Silent sequence failure is visible at fleet level.
 
-| UI | Kind | Status |
-|---|---|---|
-| Oversight | Module | **new** |
-| Fleet health | Block | **new** |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Oversight | Module | **new** | House-global fleet |
+| Fleet health | Block | **new** | Firm **table** + status **chips** |
+| Firm row | Block | **new** | Click → Firm health (preserves firm scope) |
 
 ---
 
@@ -54,7 +55,7 @@
 **Criteria — when:** A firm shows unhealthy signals.  
 **Conditions:** Drill preserves firm scope; Support can pick up from same context.
 
-| UI | Kind | Status |
-|---|---|---|
-| Firm row | Block | **new** |
-| Firm health | Module | **new** (per-tenancy) |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Firm row | Block | **new** | Click unhealthy row |
+| Firm health | Module | **new** (per-tenancy) | Preserves firm filter |
