@@ -35,8 +35,8 @@ Turn a firm’s messy book (CSV / CRM export) into **evaluable, reachable, dedup
 Imports that jump straight to Contacts mutation without recording what columns arrived make Field→Q-ID mapping unverifiable and break re-import honesty.
 
 **implementation:**  
-On Imports, after Authorize book hand-over lands a file/export, you can now open Source header inventory (headers, sample cells, provenance timestamp) before Field map.  
-On Contacts, you can now refuse silent mutation until that inventory exists for the land batch.
+On Imports, after Authorize book hand-over lands a file/export, click the land batch row to open Source header inventory (headers, sample cells, provenance timestamp) before Field→Q-ID map is enabled.  
+On Book readiness, open Audits and start Audit run only from a batch with Source header inventory; Verdict list shows inventory-missing instead of mutating Contacts silently.
 
 **implementationAdds:** `["source-header-inventory", "provenance-stamp"]`
 
@@ -54,8 +54,8 @@ On Contacts, you can now refuse silent mutation until that inventory exists for 
 Product language jumps from CSV headers to Q-IDs; practice needs a stable contact layer so Book readiness and Evaluation packs do not share one brittle rename step.
 
 **implementation:**  
-On Imports, you can now map source columns into Canonical contact fields (identity, display name, channel candidates, opaque attributes, suppression flags) before any Q-ID attach.  
-On Book readiness, you can now audit against that canonical layer — not raw header strings.
+On Imports, open Field→Q-ID map and use the Canonical contact fields panel to map source columns into identity, display name, channel candidates, opaque attributes, and suppression flags before any Q-ID attach.  
+On Book readiness → Audit run, choose the canonical batch layer; Verdict list labels failures against canonical fields, not raw header strings.
 
 **implementationAdds:** `["canonical-contact", "opaque-attributes", "channel-candidates"]`
 
@@ -73,8 +73,8 @@ On Book readiness, you can now audit against that canonical layer — not raw he
 Without versioned Field→Q-ID maps, shallow import leaves eligibility packs starved or silently guessing from free-text columns.
 
 **implementation:**  
-On Imports, you can now edit and save a Field→Q-ID map version (column → Q-ID + transform + confidence) for the land batch.  
-On Book readiness / Audit run, you can now read which Q-IDs the batch attached — unmapped evaluable candidates stay Unmapped, not invented.
+On Imports, open Field→Q-ID map, edit column → Q-ID rows with transform and confidence dropdowns, then click Save map version for the land batch.  
+On Book readiness → Audit run, select that map version; Verdict list shows attached Q-IDs and keeps unmapped evaluable candidates as Unmapped, not invented.
 
 **implementationAdds:** `["field-q-id-map", "map-version", "unmapped", "transform", "confidence"]`
 
@@ -92,8 +92,8 @@ On Book readiness / Audit run, you can now read which Q-IDs the batch attached �
 Silent drop and over-eager Q-ID minting are both wrong; Imports must keep firm data without claiming evaluability.
 
 **implementation:**  
-On Imports, you can now leave columns Unmapped and still land them as opaque attributes on Contacts.  
-On Field→Q-ID map, you can now promote an opaque attribute to a Q-ID later without re-uploading the whole book.
+On Imports → Field→Q-ID map, set a column row to Unmapped using the mapping dropdown; commit still lands it as an opaque attribute on Contacts.  
+On Imports, reopen the saved map version and click Promote on an opaque attribute row to attach a Q-ID later, then rerun Book readiness → Audit run without re-uploading the whole book.
 
 **implementationAdds:** `["unmapped", "opaque-attributes", "promote-later"]`
 
@@ -111,8 +111,8 @@ On Field→Q-ID map, you can now promote an opaque attribute to a Q-ID later wit
 Matching and validators fight dirty strings if normalization is optional or per-surface.
 
 **implementation:**  
-On Imports, you can now preview Normalized values (trim, Unicode, email case policy, phone parse attempt, empty-sentinel→null) before land commits.  
-On Book readiness, you can now consume only the normalized layer for Audit run — raw source remains in provenance.
+On Imports, open Normalized preview before Commit land to inspect trim, Unicode, email case policy, phone parse attempt, and empty-sentinel→null transformations.  
+On Book readiness → Audit run, the batch picker exposes only the normalized layer; Verdict list links raw source through provenance without auditing raw strings.
 
 **implementationAdds:** `["normalized-preview", "empty-sentinel-null", "staging-transforms"]`
 
@@ -130,8 +130,8 @@ On Book readiness, you can now consume only the normalized layer for Audit run �
 Garbage email strings create Audit theater; over-blocking at Imports hides salvageable rows behind hard fails.
 
 **implementation:**  
-On Imports, you can now mark email Syntax-invalid vs Channel-candidate after hygiene.  
-On Book readiness / Verdict list, you can now escalate survivors into deliverability-class checks — Syntax-invalid never counts as reachable.
+On Imports → Field→Q-ID map, open the Email hygiene chip on mapped email columns to mark Syntax-invalid or Channel-candidate after hygiene.  
+On Book readiness → Audit run, run deliverability-class checks only for Channel-candidate emails; Verdict list shows Syntax-invalid as unreachable, never reachable.
 
 **implementationAdds:** `["syntax-invalid", "channel-candidate", "email-hygiene"]`
 
@@ -149,8 +149,8 @@ On Book readiness / Verdict list, you can now escalate survivors into deliverabi
 Phone match and SMS readiness diverge when one path uses raw strings and another assumes E.164.
 
 **implementation:**  
-On Imports, you can now set Default region for phone parse and see E.164 when parse succeeds (raw retained on fail).  
-On Book readiness, you can now run phone validation-class only from parse outcomes — not from unparsed free text as if it were E.164.
+On Imports, use the Default region dropdown in Normalized preview and inspect Phone parse outcome chips showing E.164 on success and raw-retained on fail.  
+On Book readiness → Audit run, phone validation-class reads those parse outcome chips; Verdict list refuses unparsed free text as if it were E.164.
 
 **implementationAdds:** `["e164", "default-region", "phone-parse-outcome"]`
 
@@ -168,8 +168,8 @@ On Book readiness, you can now run phone validation-class only from parse outcom
 Aggressive name parsing creates fake given/family fields that later look like Client Data facts.
 
 **implementation:**  
-On Imports, you can now require Display name (from Full Name or composed parts) and treat Given/Family as optional only when source columns exist.  
-On Book readiness / Audit run, you can now score name-present from Display name — not from invented splits.
+On Imports → Field→Q-ID map, mark Display name required and map it from Full Name or composed parts; Given and Family rows remain optional unless source columns exist.  
+On Book readiness → Audit run, name-present reads the Display name field; Verdict list does not pass rows by invented Given/Family splits.
 
 **implementationAdds:** `["display-name", "optional-name-parts"]`
 
@@ -187,8 +187,8 @@ On Book readiness / Audit run, you can now score name-present from Display name 
 Partial mapping exists as a shallow flow; confidence gating is the missing practice control.
 
 **implementation:**  
-On Imports, you can now see Map confidence per column (high / medium / low) and must Confirm map on any medium/low before save.  
-On Authorize book completion path into Imports, you can now block Field→Q-ID map version publish until confirms land — high-confidence autos may prefill only.
+On Imports → Field→Q-ID map, each column row shows a confidence chip (high / medium / low); medium/low rows enable the Confirm map checkbox before Save map version.  
+On Authorize book completion path into Imports, Save map version stays disabled until required confirms land — high-confidence auto-suggest rows may prefill only.
 
 **implementationAdds:** `["map-confidence", "confirm-map", "high", "medium", "low"]`
 
@@ -206,8 +206,8 @@ On Authorize book completion path into Imports, you can now block Field→Q-ID m
 Without an ingestion-owned key spine, Book readiness dedupe and Imports upsert invent competing identities.
 
 **implementation:**  
-On Imports, you can now upsert by match-key policy (normalized email → E.164 phone → source-row id) into a stable Contact id.  
-On Book readiness / Verdict list, you can now show Duplicate of {Contact} using that same spine — not a second key invent.
+On Imports, open Match keys before Commit land and review the ordered policy chips normalized email → E.164 phone → source-row id that upsert into a stable Contact id.  
+On Book readiness → Audit run, dedupe reads the same Contact id spine; Verdict list shows Duplicate of {Contact} without inventing a second key.
 
 **implementationAdds:** `["match-email", "match-phone", "match-source-row-id", "contact-id"]`
 
@@ -225,8 +225,8 @@ On Book readiness / Verdict list, you can now show Duplicate of {Contact} using 
 Auto fuzzy-merge looks smart and destroys reachability history; identity **new** surface must default fail-closed.
 
 **implementation:**  
-On Imports / Contacts, you can now open Possible same-person clusters (scored) for Confirm merge or Keep separate — never auto-merge on score alone.  
-On Book readiness, you can now list Unresolved identity clusters as data-validity outcomes without blocking unrelated reachable rows.
+On Imports or Contacts, open Possible same-person clusters and review scored cluster rows with Confirm merge and Keep separate buttons; score alone never auto-merges.  
+On Book readiness → Audit run, identity checks list unresolved clusters; Verdict list marks those rows partial/unreachable without blocking unrelated reachable rows.
 
 **implementationAdds:** `["possible-same-person", "confirm-merge", "keep-separate", "unresolved-identity"]`
 
@@ -244,8 +244,8 @@ On Book readiness, you can now list Unresolved identity clusters as data-validit
 Naive overwrite on dedupe silently drops phones/emails and suppressions that Book readiness needs.
 
 **implementation:**  
-On Contacts, when Confirm merge runs, you can now preview Survivorship (channels kept if non-empty, suppressions OR-merged, conflicting scalars by newest provenance, opaque attributes unioned).  
-On Imports re-land, you can now upsert under the same survivorship — last-write-wins is not the default for channels or suppressions.
+On Contacts → Possible same-person clusters, click Confirm merge to open Survivorship preview showing channels kept if non-empty, suppressions OR-merged, conflicting scalars by newest provenance, and opaque attributes unioned.  
+On Imports re-land, Match keys applies the same survivorship rules; Verdict list reflects the merged Contact id instead of last-write-wins channel loss.
 
 **implementationAdds:** `["survivorship", "suppression-or-merge", "merge-preview"]`
 
@@ -263,8 +263,8 @@ On Imports re-land, you can now upsert under the same survivorship — last-writ
 Book readiness discovers already-in-Tower too late if Imports never consulted the living directory.
 
 **implementation:**  
-On Imports, you can now see row class Insert / Upsert / Duplicate-review against the living Contacts book before commit.  
-On Book readiness / Verdict list, you can now confirm already-in-Tower only as a residual check — primary resolution happened at land.
+On Imports, open Match keys and scan row class chips Insert / Upsert / Duplicate-review against the living Contacts book before Commit land.  
+On Book readiness → Audit run, already-in-Tower is a residual check; Verdict list shows the row class from land instead of performing primary resolution late.
 
 **implementationAdds:** `["insert", "upsert", "duplicate-review", "already-in-tower"]`
 
@@ -282,8 +282,8 @@ On Book readiness / Verdict list, you can now confirm already-in-Tower only as a
 Identity resolution without conflict handling either forks people or hijacks the reachable channel.
 
 **implementation:**  
-On Imports, when upsert channel differs from living Contact, you can now open Channel conflict (accept new / keep existing / keep both as candidates).  
-On Book readiness, you can now hold sequence-ready until conflict is resolved if the armed channel is the disputed one.
+On Imports, click a Channel conflict chip when an upserted channel differs from the living Contact and choose Accept new, Keep existing, or Keep both as candidates.  
+On Book readiness → Audit run, channel-match checks that chip; Verdict list holds sequence-ready closed when the armed channel is still disputed.
 
 **implementationAdds:** `["channel-conflict", "accept-new", "keep-existing", "keep-both-candidates"]`
 
@@ -301,8 +301,8 @@ On Book readiness, you can now hold sequence-ready until conflict is resolved if
 Raw channel candidates cannot become sequence-ready; without named classes, Audit invents binary valid/invalid theater.
 
 **implementation:**  
-On Book readiness / Audit run, you can now execute Email validation-class ladder (syntax → domain/MX-class → mailbox/deliverability-class when wired).  
-On Verdict list, you can now map class outcomes to reachable / partial / unreachable — Imports only supplied candidates.
+On Book readiness, open Audits and start Audit run with the Email validation-class checklist (syntax → domain/MX-class → mailbox/deliverability-class when wired).  
+On Verdict list, class outcome chips map to reachable / partial / unreachable; Imports → Field→Q-ID map supplied only Channel-candidate inputs.
 
 **implementationAdds:** `["email-validation-class", "syntax", "domain-mx-class", "mailbox-deliverability-class", "reachable", "partial", "unreachable"]`
 
@@ -320,8 +320,8 @@ On Verdict list, you can now map class outcomes to reachable / partial / unreach
 Book readiness channel-match needs phone classes; ingestion currently stops at string presence.
 
 **implementation:**  
-On Book readiness / Audit run, you can now run Phone validation-class (parse-valid → line-type-class → reachability-class when wired).  
-On Verdict list, you can now mark SMS-intended rows Partial/Unreachable when line-type-class is incompatible — Contacts still retain the number as a channel candidate.
+On Book readiness, open Audits and start Audit run with the Phone validation-class checklist (parse-valid → line-type-class → reachability-class when wired).  
+On Verdict list, SMS-intended rows show Partial/Unreachable when line-type-class is incompatible; Contacts still retain the number as a channel candidate.
 
 **implementationAdds:** `["phone-validation-class", "parse-valid", "line-type-class", "reachability-class"]`
 
@@ -339,8 +339,8 @@ On Verdict list, you can now mark SMS-intended rows Partial/Unreachable when lin
 Authorize book land trigger without ingestion-complete lets Audits run on raw CSV.
 
 **implementation:**  
-On Imports, you can now mark Ingestion-complete only when normalized canonical rows, match keys, and saved Field→Q-ID map version all hold.  
-On Book readiness, you can now start Audit run only from Ingestion-complete batches — validation-class checks then run or stay explicitly pending.
+On Imports, the Ingestion-complete status chip turns on only after Normalized preview, Match keys, and saved Field→Q-ID map version are all complete.  
+On Book readiness → Audits, Start Audit run is enabled only for Ingestion-complete batches; Verdict list shows validation-class pending when checks are not wired.
 
 **implementationAdds:** `["ingestion-complete", "validation-class-pending"]`
 
@@ -358,8 +358,8 @@ On Book readiness, you can now start Audit run only from Ingestion-complete batc
 Messy firm CSVs always contain bad rows; product needs quarantine, not false activation failure or silent poison.
 
 **implementation:**  
-On Imports, you can now commit Valid rows and send failures to Quarantine with reason codes (syntax, missing channel, map reject).  
-On Book readiness, you can now exclude Quarantine from reachable counts; Contacts directory does not treat quarantine as enrolled.
+On Imports, click Commit land to commit Valid rows and send failed rows to Quarantine with reason-code chips (syntax, missing channel, map reject).  
+On Book readiness → Audit run, Quarantine is excluded from reachable counts; Verdict list shows quarantined rows separately and Contacts does not enroll them.
 
 **implementationAdds:** `["quarantine", "reason-codes", "valid-rows"]`
 
@@ -377,8 +377,8 @@ On Book readiness, you can now exclude Quarantine from reachable counts; Contact
 Staging transforms that drop unknown booleans erase do-not-contact; over-interpreting them invents CASL.
 
 **implementation:**  
-On Imports, you can now map suppression-shaped columns to Opaque suppression flags (pass-through) during Canonical contact normalize.  
-On Book readiness / Audit run, you can now consume those flags as data-validity inputs — Authorize book / Imports never show CASL-lawful claims.
+On Imports → Field→Q-ID map, set suppression-shaped columns to Opaque suppression flag in the Canonical contact fields panel during normalize.  
+On Book readiness → Audit run, data-validity checks consume those flags; Verdict list shows suppression halt without Authorize book or Imports claiming CASL-lawful status.
 
 **implementationAdds:** `["opaque-suppression-flags", "pass-through"]`
 
@@ -396,8 +396,8 @@ On Book readiness / Audit run, you can now consume those flags as data-validity 
 Mapped Q-IDs without lineage look like Client Data answers and poison eligibility confidence.
 
 **implementation:**  
-On Imports, you can now store Fact provenance (source, batch id, map version, raw → transform → value, landed-at) per Q-ID attach.  
-On Contacts / Client row, you can now read Imported fact vs Client-asserted fact — Book readiness does not upgrade provenance class.
+On Imports → Field→Q-ID map, each saved Q-ID attach stores Fact provenance fields source, batch id, map version, raw → transform → value, and landed-at.  
+On Contacts / Client row, a provenance chip distinguishes Imported fact from Client-asserted fact; Book readiness → Verdict list reads but never upgrades that provenance class.
 
 **implementationAdds:** `["fact-provenance", "imported-fact", "client-asserted", "batch-id", "map-version"]`
 
@@ -416,8 +416,8 @@ On Contacts / Client row, you can now read Imported fact vs Client-asserted fact
 If Incremental sync appears as a V1 Imports control, firms and operators will treat sync lag as activation failure.
 
 **implementation:**  
-On Imports / Authorize book, you can now read Sync posture: one-way land only; Incremental sync deferred (KU #7) — not offered as a V1 control.  
-On Activation state, you can now reach running without sync-complete; currency uses re-hand-over upsert (seat 7) until CDC ships.
+On Authorize book hand-over into Imports, the Sync posture chip reads One-way land only / Incremental sync deferred (KU #7); no V1 sync-complete button appears beside Field→Q-ID map.  
+On Activation state → Progress, running can open without sync-complete; currency uses re-hand-over upsert until CDC ships.
 
 **implementationAdds:** `["incremental-sync-deferred", "one-way-land", "sync-complete-not-required"]`
 
@@ -436,8 +436,8 @@ On Activation state, you can now reach running without sync-complete; currency u
 A privileged OAuth pull that skips Imports normalization would mint a second, dirtier book path.
 
 **implementation:**  
-On Authorize book / Imports, you can now treat any future live-crm pull as feeding the same Ingestion pipeline (header inventory → normalize → Field→Q-ID map → match → quarantine) — and in V1 you can now see Vertical continuous pull deferred (KU #7).  
-On Book readiness, you can now keep one Audit contract for file and future pull — no pull-specific bypass.
+On Authorize book / Imports, any future live-crm pull is labeled as feeding the same pipeline cards: Source header inventory → Normalized preview → Field→Q-ID map → Match keys → Quarantine; V1 shows Vertical continuous pull deferred (KU #7).  
+On Book readiness → Audit run, the batch picker uses the same Audit contract for file and future pull; Verdict list has no pull-specific bypass.
 
 **implementationAdds:** `["vertical-oauth-pull-deferred", "same-ingestion-pipeline"]`
 

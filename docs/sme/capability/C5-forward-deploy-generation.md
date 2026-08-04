@@ -36,9 +36,9 @@
 Forward-deploy can start from a capture name or email alone. Enrichment hits the wrong site; the prepared campaign shows another firm’s facts and destroys Approach credibility on first open.
 
 **implementation:**  
-On Activation & forward-deploy → Forward-deploy, you can now require a verified public firm URL before Enrichment run may start.  
-On In-flight activations, you can now see enrichment blocked when the URL fails resolve / firm-match checks.  
-On Activation state Progress, prepared-workspace-ready stays closed until the enrichment root URL is bound.
+Starting from Activation & forward-deploy, open In-flight activations, click the captured firm row, and in Forward-deploy require the Public firm URL field to pass Resolve and Firm-match before Enrichment run starts.  
+On In-flight activations, the row shows enrichment-blocked when resolve / firm-match checks fail.  
+On Activation state → Progress, prepared-workspace-ready stays closed until Forward-deploy binds the enrichment root URL.
 
 **implementationAdds:** `["enrichment-root-url", "url-verified", "firm-match", "enrichment-blocked"]`
 
@@ -58,9 +58,9 @@ On Activation state Progress, prepared-workspace-ready stays closed until the en
 Enrichment fetches every path that looks useful. Disallowed areas are scraped anyway; firms and counsel later treat Om Coda as a hostile crawler, and Approach deliverables become evidence of overreach.
 
 **implementation:**  
-On Activation & forward-deploy → Forward-deploy, you can now see Enrichment run robots status (allowed / disallowed paths) before content fetch.  
-On Audit trail, you can now examine robots-decision events per enrichment run.  
-Disallowed paths never contribute firm-facts used in Prepared Workspace hydration.
+Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Enrichment run shows robots status chips (allowed / disallowed paths) before content fetch.  
+On Audit trail, open Change event for the enrichment run to examine robots-decision events.  
+On Prepared Workspace, hydrated firm-facts omit any disallowed path output.
 
 **implementationAdds:** `["robots-honored", "robots-fail-closed", "disallowed-path", "enrichment-user-agent"]`
 
@@ -80,9 +80,9 @@ Disallowed paths never contribute firm-facts used in Prepared Workspace hydratio
 Scrapers pull staff bios with personal emails, portal URLs, or non-public PDFs into the workspace. The consultant opens a “prepared” pack that exposes data the firm never published for cold outreach.
 
 **implementation:**  
-On Activation & forward-deploy → Forward-deploy, you can now see Public-facts allowlist classes applied to Enrichment run output.  
-On Prepared Workspace, hydrated blocks only show allowlisted public facts — private/authenticated extractions never land.  
-On Audit trail, you can now examine dropped-by-allowlist events.
+Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Enrichment run output shows Public-facts allowlist class chips per extracted field.  
+On Prepared Workspace, hydrated blocks render only allowlisted public facts; private/authenticated extractions never land.  
+On Audit trail, open Change event to inspect dropped-by-allowlist events for the firm.
 
 **implementationAdds:** `["public-facts-allowlist", "pre-connect-only", "dropped-private", "person-sensitive-forbid"]`
 
@@ -102,9 +102,9 @@ On Audit trail, you can now examine dropped-by-allowlist events.
 Enrichment merges Google hours and a stale site phone into one undifferentiated blob. Consultant cannot tell which source is wrong; correcting the pack means guessing.
 
 **implementation:**  
-On Activation & forward-deploy → Forward-deploy, you can now see firm-facts fields with Source provenance (site / Google Business Profile / listing).  
-On Prepared Workspace, you can now examine conflicting values and which source won under Prefer firm-site rules.  
-On Readiness walkthrough, you can now confirm listing-native fields (maps pin) separately from site copy.
+Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Firm-facts fields show Source provenance chips (site / Google Business Profile / listing).  
+On Prepared Workspace, open the firm-facts inspector to compare conflicting values and see which source won under Prefer firm-site rules.  
+On Readiness walkthrough, the listing-native field checklist confirms maps pin separately from site copy.
 
 **implementationAdds:** `["gbp-secondary", "field-provenance", "prefer-firm-site", "listing-native"]`
 
@@ -124,9 +124,9 @@ On Readiness walkthrough, you can now confirm listing-native fields (maps pin) s
 Parallel Forward-deploy jobs refetch the same firm site aggressively. Origins block the house IP; enrichment fails loudly on the leads Approach just paid for.
 
 **implementation:**  
-On Activation & forward-deploy → Forward-deploy, you can now see Enrichment run rate-limit and cache-hit status per host.  
-On In-flight activations, retry storms stay capped; failed hosts show polite-backoff rather than tight loops.  
-On Oversight Fleet health (adjacency), enrichment blocklist/backoff for a host is visible when Approach volume spikes.
+Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Enrichment run shows per-host rate-limit and cache-hit chips.  
+On In-flight activations, failed hosts display polite-backoff status instead of retry-looping.  
+On Oversight → Fleet health, the firm row exposes enrichment blocklist/backoff when Approach volume spikes.
 
 **implementationAdds:** `["per-host-rate-limit", "enrichment-cache-ttl", "polite-user-agent", "backoff"]`
 
@@ -146,9 +146,9 @@ On Oversight Fleet health (adjacency), enrichment blocklist/backoff for a host i
 Enrichment stores raw HTML blobs. Template hydration breaks on every redesign; operators paste fixes by hand and Approach “prepared” packs look unfinished.
 
 **implementation:**  
-On Activation & forward-deploy → Forward-deploy, you can now see Firm-facts record fields (name, phone, address, services blurb, hours, logo URL, …) with confidence and extract method (json-ld / og / heuristic).  
-On Prepared Workspace, hydration binds to those keys — not raw HTML paste.  
-On Readiness walkthrough, low-confidence heuristic fields are flagged for confirm before consultant trust.
+Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Firm-facts record rows show field key, confidence, and extract method chips (json-ld / og / heuristic).  
+On Prepared Workspace, Hydrate binds template merge fields to those keys, not raw HTML paste.  
+On Readiness walkthrough, low-confidence heuristic fields appear as confirm-required checklist rows.
 
 **implementationAdds:** `["firm-facts-record", "json-ld-prefer", "og-fallback", "heuristic-low-confidence"]`
 
@@ -168,9 +168,9 @@ On Readiness walkthrough, low-confidence heuristic fields are flagged for confir
 A lead captured weeks ago opens a Prepared Workspace with a disconnected phone number scraped at capture time. Trust dies before Authorize book.
 
 **implementation:**  
-On Activation & forward-deploy → Forward-deploy, you can now see firm-facts Freshness (fetched-at, TTL, stale).  
-On Prepared Workspace, you can now refuse ship/open-as-ready when snapshot is stale until Refresh enrichment completes.  
-On Activation state Progress, you can now see freshness as a readiness gate beside token and branding gates.
+Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Firm-facts Freshness shows fetched-at, TTL, and stale chips plus Refresh enrichment.  
+On Prepared Workspace, Ready remains disabled when snapshot is stale until Refresh enrichment completes.  
+On Activation state → Progress, freshness appears as a readiness gate beside token and branding gates.
 
 **implementationAdds:** `["facts-fetched-at", "facts-ttl", "stale-block", "refresh-enrichment"]`
 
@@ -192,9 +192,9 @@ On Activation state Progress, you can now see freshness as a readiness gate besi
 Packs ship with Om Coda’s mark or a random OG photo of the office exterior labeled as logo. Consultants see someone else’s brand identity on “their” workspace.
 
 **implementation:**  
-On Activation & forward-deploy → Forward-deploy, you can now see Logo resolution (source in chain, or placeholder + logo-unconfirmed).  
-On Prepared Workspace, firm mark shows resolved logo or neutral placeholder — never Om Coda as firm face.  
-On Readiness walkthrough, you can now confirm or replace logo before consultant-facing ready.
+Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Logo resolution shows source-in-chain or placeholder + logo-unconfirmed chips.  
+On Prepared Workspace, the firm mark renders the resolved logo or neutral placeholder, never Om Coda as the firm face.  
+On Readiness walkthrough, the Logo row offers Confirm logo or Replace logo before consultant-facing ready.
 
 **implementationAdds:** `["logo-chain", "logo-unconfirmed", "neutral-placeholder", "og-image-guard"]`
 
@@ -214,9 +214,9 @@ On Readiness walkthrough, you can now confirm or replace logo before consultant-
 Palette picker samples a beach hero image. Buttons are unreadable; firm doesn’t recognize the colors as theirs.
 
 **implementation:**  
-On Activation & forward-deploy → Forward-deploy, you can now see Brand palette candidates (theme-color / nav / logo-dominant) with contrast pass/fail.  
-On Prepared Workspace, applied palette uses contrast-safe pairs; photo-biased samples stay rejected.  
-On Readiness walkthrough, you can now accept palette or fall back to neutral brand chrome.
+Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Brand palette candidates list theme-color / nav / logo-dominant sources with contrast pass/fail chips.  
+On Prepared Workspace, applied palette uses only contrast-safe pairs while photo-biased samples stay rejected.  
+On Readiness walkthrough, Palette row offers Accept palette or Neutral fallback.
 
 **implementationAdds:** `["brand-palette", "theme-color", "contrast-safe", "neutral-fallback"]`
 
@@ -236,9 +236,9 @@ On Readiness walkthrough, you can now accept palette or fall back to neutral bra
 Workspace hero reads a model-written slogan the firm never published. Consultant assumes Om Coda fabricated their brand; Approach claim collapses.
 
 **implementation:**  
-On Activation & forward-deploy → Forward-deploy, you can now see Voice snippets only as sourced excerpts (URL + hash) from public pages.  
-On Prepared Workspace, brand copy blocks show attributable excerpts — Invented voice is not offered.  
-On Audit trail, you can now examine excerpt provenance for each hydrated voice field.
+Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Voice snippets show sourced excerpt rows with URL and hash.  
+On Prepared Workspace, brand copy blocks render attributable excerpts and no Invented voice option appears.  
+On Audit trail, open Change event to examine excerpt provenance for each hydrated voice field.
 
 **implementationAdds:** `["voice-excerpt", "source-url", "excerpt-hash", "invented-voice-forbid"]`
 
@@ -257,9 +257,9 @@ On Audit trail, you can now examine excerpt provenance for each hydrated voice f
 Refresh enrichment replaces the logo overnight. Consultant who already walked Readiness sees a different brand on the same token link and loses confidence.
 
 **implementation:**  
-On Activation & forward-deploy → Forward-deploy, you can now see Brand package version separate from Firm-facts version.  
-On Refresh enrichment, you can now choose Update facts / Re-extract brand / Keep brand.  
-On Prepared Workspace, you can now examine which brand package version is bound to the instance.
+Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Brand package version and Firm-facts version are separate chips.  
+On Refresh enrichment, use the segmented control Update facts / Re-extract brand / Keep brand.  
+On Prepared Workspace, the instance inspector shows the bound brand package version.
 
 **implementationAdds:** `["brand-package-version", "facts-version", "keep-brand", "re-extract-brand"]`
 
@@ -279,9 +279,9 @@ On Prepared Workspace, you can now examine which brand package version is bound 
 Missing logo falls back to Om Coda wordmark. The no-login pack looks like an Om Coda product demo, not the firm’s prepared campaign.
 
 **implementation:**  
-On Prepared Workspace, incomplete brand package shows firm public name + neutral chrome + branding-unconfirmed — Om Coda marks stay platform-only.  
-On Readiness walkthrough, you can now see branding-unconfirmed as a confirm item before consultant-ready.  
-On Activation & forward-deploy, you can now track branding-unconfirmed vs branding-confirmed per activation.
+On Prepared Workspace, incomplete brand package renders firm public name, neutral chrome, and a branding-unconfirmed chip; Om Coda marks stay platform-only.  
+On Readiness walkthrough, branding-unconfirmed appears as a confirm item before consultant-ready.  
+On Activation & forward-deploy → In-flight activations, each firm row tracks branding-unconfirmed vs branding-confirmed.
 
 **implementationAdds:** `["branding-unconfirmed", "firm-faced", "platform-marks-only", "neutral-chrome"]`
 
@@ -306,6 +306,7 @@ Operators clone empty Prepared Workspace shells and paste facts by hand. Approac
 On Activation & forward-deploy → Forward-deploy, open Hydrate; choose Engagement template version from the published-only dropdown, choose Firm-facts snapshot from the snapshot dropdown, choose Brand package version from the package dropdown, and click Hydrate to create Prepared Workspace instance.
 On Prepared Workspace, you can now examine bound template version and snapshot IDs.  
 On Activation state Progress, hydrated becomes a distinct gate after enrichment — empty shells are not ready.
+Before Hydrate, start from Configuration libraries → Engagement templates catalog, open Agent / sequence editor, author the template, and click Publish version so only published versions appear in the Forward-deploy dropdown.
 
 **implementationAdds:** `["hydrate-job", "template-version-pin", "workspace-instance", "hydrated"]`
 
@@ -325,9 +326,9 @@ On Activation state Progress, hydrated becomes a distinct gate after enrichment 
 Hydration succeeds with holes. Consultant opens Prepared Workspace and sees empty phone/hours blocks; the Approach promise feels like a demo.
 
 **implementation:**  
-On Activation & forward-deploy → Forward-deploy, Hydrate reports Missing required fields by key and keeps status needs-facts.  
-On Prepared Workspace, you can now see which blocks are unbound — ready stays closed.  
-On Readiness walkthrough, missing keys are listed for refresh or manual public-fact supply (still allowlisted).
+Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Hydrate reports Missing required fields by key and keeps status needs-facts.  
+On Prepared Workspace, unbound blocks display missing-key chips and Ready stays disabled.  
+On Readiness walkthrough, missing keys are listed for Refresh enrichment or manual public-fact supply (still allowlisted).
 
 **implementationAdds:** `["merge-required", "needs-facts", "missing-keys", "hydrate-validate"]`
 
@@ -346,9 +347,9 @@ On Readiness walkthrough, missing keys are listed for refresh or manual public-f
 House edits Engagement templates and every in-flight pack mutates under active tokens. Consultants dispute what they were shown; support cannot replay the instance.
 
 **implementation:**  
-On Prepared Workspace, you can now see Instance version (immutable snapshot) and Regenerate as an explicit action.  
-On Activation & forward-deploy → In-flight activations, you can now examine which instance version was issued.  
-On Audit trail, hydrate and regenerate events are distinct — silent live-mutate is not available.
+On Prepared Workspace, the instance header shows Instance version (immutable snapshot) and a Regenerate button as the only mutation action.  
+On Activation & forward-deploy → In-flight activations, the firm row shows which instance version was issued.  
+On Audit trail, open Change event to see hydrate and regenerate as distinct events; silent live-mutate is not available.
 
 **implementationAdds:** `["instance-immutable", "regenerate", "instance-version", "issued-snapshot"]`
 
@@ -368,9 +369,9 @@ On Audit trail, hydrate and regenerate events are distinct — silent live-mutat
 Activation state shows ready because the modal exists. Agent walks a blank workspace on first text; Approach conversion dies at the deliverable.
 
 **implementation:**  
-On Activation state Progress, prepared-workspace-ready requires Hydrated + Fresh + branding state accepted.  
-On Readiness walkthrough, you can now open only when those gates pass — shell-only instances stay blocked.  
-On Activation & forward-deploy → In-flight activations, you can now see gate detail (hydrate / freshness / branding) per firm.
+On Activation state → Progress, prepared-workspace-ready requires Hydrated, Fresh, and branding state accepted chips.  
+On Readiness walkthrough, Open walkthrough stays disabled until those gates pass; shell-only instances remain blocked.  
+On Activation & forward-deploy → In-flight activations, each firm row exposes gate detail chips for hydrate / freshness / branding.
 
 **implementationAdds:** `["workspace-ready-gate", "hydrated-required", "branding-accepted", "shell-not-ready"]`
 
@@ -390,9 +391,9 @@ On Activation & forward-deploy → In-flight activations, you can now see gate d
 Hydrated packs show “your 400 clients are ready to message.” Book was never connected; Approach claim and desk trust both break.
 
 **implementation:**  
-On Prepared Workspace, hydrated blocks stay inside pre-connect scope — public facts, brand, template preview, Authorize book / Accept terms next steps.  
-On Configuration libraries → Engagement templates catalog, open Agent / sequence editor; set Pre-connect deliverable flag to strip enrolled-book / live-send assertions; click Publish version.
-On Approach campaigns (adjacency), Claim dictionary and hydrate scope stay aligned on public-facts pack only.
+On Prepared Workspace, hydrated blocks stay inside pre-connect scope: public facts, brand, template preview, and Authorize book / Accept terms next-step buttons.  
+On Configuration libraries → Engagement templates catalog, open Agent / sequence editor; set the Pre-connect deliverable checkbox to strip enrolled-book / live-send assertions, then click Publish version.  
+On Approach campaigns, Claim dictionary and hydrate scope stay aligned on public-facts pack only.
 
 **implementationAdds:** `["pre-connect-scope", "template-preview", "no-enrolled-claim", "authorize-book-next"]`
 
@@ -414,9 +415,9 @@ On Approach campaigns (adjacency), Claim dictionary and hydrate scope stay align
 Workspace links use `/prepared/123` or firm slug alone. Third parties enumerate packs; or product blocks all access behind Login and Approach cannot show the deliverable.
 
 **implementation:**  
-On Activation & forward-deploy → Forward-deploy, you can now issue Access token bound to Prepared Workspace instance (opaque capability).  
-On Prepared Workspace (no-login), you can now open only with a valid token — sequential ids alone never authorize.  
-On Audit trail, you can now examine token-issue events without storing the raw token in logs.
+Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; click Issue access token to bind an opaque capability token to the Prepared Workspace instance.  
+On Prepared Workspace (no-login), Open succeeds only with a valid token; sequential ids alone never authorize.  
+On Audit trail, open Change event to inspect token-issue metadata without raw token logs.
 
 **implementationAdds:** `["capability-token", "opaque-token", "instance-bound", "no-login-access"]`
 
@@ -436,9 +437,9 @@ On Audit trail, you can now examine token-issue events without storing the raw t
 First-text links never expire. Months later anyone with the SMS screenshot still opens Prepared Workspace and downstream Consent request surfaces.
 
 **implementation:**  
-On Activation & forward-deploy, you can now set Token TTL and purpose scope (prepared-workspace-open / touchpoint-continue).  
-On Prepared Workspace no-login, expired tokens show Expired — Regenerate link required.  
-On In-flight activations, you can now Revoke token; Audit trail records revoke and expiry.
+Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy token panel; set Token TTL and purpose scope dropdown (prepared-workspace-open / touchpoint-continue).  
+On Prepared Workspace no-login, expired tokens show Expired and the Regenerate link button is required.  
+On In-flight activations, click Revoke token; Audit trail records revoke and expiry.
 
 **implementationAdds:** `["token-ttl", "purpose-scope", "token-revoke", "rotate-after-redeem"]`
 
@@ -458,8 +459,8 @@ On In-flight activations, you can now Revoke token; Audit trail records revoke a
 Access tokens sit in plaintext in activation rows and logs. A read replica leak opens every in-flight Prepared Workspace.
 
 **implementation:**  
-On Activation & forward-deploy, raw token is shown once at Issue link — thereafter only status (active / redeemed / expired / revoked).  
-On Audit trail, token events never include the raw secret.  
+Starting from Activation & forward-deploy → In-flight activations, click Issue link; the raw token is shown once, then the token panel shows only active / redeemed / expired / revoked status chips.  
+On Audit trail, token Change events never include the raw secret.  
 CTO store: hash-only verifiers for capability tokens (no plaintext column).
 
 **implementationAdds:** `["token-hash-at-rest", "issue-once", "raw-secret-never-logged"]`
@@ -480,9 +481,9 @@ CTO store: hash-only verifiers for capability tokens (no plaintext column).
 Long-lived token URLs stay in the address bar; third-party scripts and outbound clicks send Referer with the secret. Packs leak beyond the consultant.
 
 **implementation:**  
-On Prepared Workspace no-login open, you can now redeem via one-time exchange into a short session — token disappears from the address bar after redeem.  
+On Prepared Workspace no-login open, the token redeems through a one-time exchange into a short session and disappears from the address bar after redeem.  
 On contact touchpoints reached from that session, subsequent navigations do not re-expose the capability secret.  
-On Activation & forward-deploy, issued links use redeem URLs designed for SMS/email delivery.
+On Activation & forward-deploy → In-flight activations, issued links use redeem URLs designed for SMS/email delivery.
 
 **implementationAdds:** `["one-time-redeem", "session-after-redeem", "no-referrer", "link-hygiene"]`
 
@@ -502,9 +503,9 @@ On Activation & forward-deploy, issued links use redeem URLs designed for SMS/em
 A single magic link opens Prepared Workspace, Consent request, and Authorize book. Leakage of the Approach deliverable link becomes full activation authority.
 
 **implementation:**  
-On Activation & forward-deploy, you can now see separate Token purposes: prepared-workspace vs touchpoint-continue (Consent request / Opt-in adjacency).  
-On Prepared Workspace token redeem, you do not gain Authorize book or Consent request authority without a new scoped issue.  
-On Audit trail, you can now filter token events by purpose scope.
+Starting from Activation & forward-deploy → In-flight activations, open the firm row and token panel; separate Token purpose rows show prepared-workspace vs touchpoint-continue (Consent request / Opt-in adjacency).  
+On Prepared Workspace token redeem, no Authorize book or Consent request authority is granted without a new scoped issue.  
+On Audit trail, use purpose-scope filter to review token events.
 
 **implementationAdds:** `["purpose-workspace", "purpose-touchpoint", "scope-separation", "least-privilege-token"]`
 
