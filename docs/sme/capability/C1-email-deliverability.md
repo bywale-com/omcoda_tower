@@ -31,7 +31,7 @@ Firm-branded Opt-in / Nudge can ship while the sending domain’s SPF omits the 
 
 **implementation:**  
 On Sending infrastructure, you can now open a sending domain and see SPF authorization status (ESP includes + return-path subdomain) before the domain may be bound for volume.  
-On Firm operations bind Send gates, you can now see domain SPF not ready block Armed / Active volume until SPF passes.
+On Firm operations bind firm detail → Send gates panel, you can now see domain SPF not ready as a deny chip blocking Armed / Active volume until SPF passes.
 
 **implementationAdds:** `["spf-authorized", "esp-include", "return-path-spf", "domain-not-ready"]`
 
@@ -53,7 +53,7 @@ All firms can share one platform DKIM domain while From shows the firm. Alignmen
 
 **implementation:**  
 On Sending infrastructure, you can now provision per-firm branded subdomain DKIM keys and see signing status (aligned d= to From).  
-On Opt-in message and Nudge message send path, you can now require DKIM-aligned identity before Send gates allow the CEM to leave.
+On Firm operations bind firm detail → Send gates panel, DKIM-aligned identity readiness row must pass before Opt-in message or Nudge message CEM can leave.
 
 **implementationAdds:** `["dkim-per-firm", "dkim-aligned", "from-d-align"]`
 
@@ -97,7 +97,7 @@ Multiple firms can share one From apex. One bad book or complaint spike poisons 
 
 **implementation:**  
 On Sending infrastructure, you can now allocate a per-firm branded subdomain from the sending-domain pool and see its auth + Warmup state separate from other firms.  
-On Firm operations bind, you can now bind that subdomain as the firm’s sending identity; optional custom-domain attach remains a later upgrade path on the same module.
+On Firm operations bind firm detail, choose Sending identity from the authenticated subdomain dropdown and click Save identity; optional custom-domain attach remains a later upgrade path on the same module.
 
 **implementationAdds:** `["sending-domain-pool", "per-firm-subdomain", "tenant-isolation", "custom-domain-attach"]`
 
@@ -118,7 +118,7 @@ Shared send path has no quarantine unit. A single firm’s hard-bounce storm or 
 
 **implementation:**  
 On Sending infrastructure, you can now see reputation units (per-firm subdomain + IP tier) and Quarantine when bounce/complaint thresholds trip.  
-On Oversight Fleet health and Firm health, you can now see quarantined sending identity; Send gates for that firm fail closed while peers on other units continue.
+On Oversight Fleet health and Firm health, you can now see quarantined sending identity. On Firm operations bind firm detail → Send gates panel, that firm shows a quarantined-identity deny chip while peers on other units continue.
 
 **implementationAdds:** `["reputation-unit", "quarantine", "blast-radius-isolation", "threshold-trip"]`
 
@@ -164,7 +164,7 @@ Activation state Progress can show ready from escrow/book/consent alone. Operato
 
 **implementation:**  
 On Activation state Progress, you can now see deliverability readiness beside commercial/consent readiness: auth green, Warmup stage ok for planned volume, reputation unit not quarantined.  
-On Firm operations bind Send gates, Armed / Active requires that conjunction — consent-ready alone does not open volume.
+On Firm operations bind firm detail → Send gates panel, Armed / Active readiness rows require that conjunction — consent-ready alone does not open volume.
 
 **implementationAdds:** `["ready-to-send-conjunction", "deliverability-readiness", "auth-green"]`
 
@@ -184,7 +184,7 @@ On Firm operations bind Send gates, Armed / Active requires that conjunction —
 Warmup advice lives only in ESP docs. Automations enroll the full eligible book; daily caps are overrun before an operator notices Firm health drop.
 
 **implementation:**  
-On Firm operations bind Send gates, you can now see Warmup / throttle remaining capacity for the bound sending identity; enrollment beyond the cap queues or blocks.  
+On Firm operations bind firm detail → Send gates panel, you can now see Warmup / throttle remaining capacity row for the bound sending identity; enrollment beyond the cap queues or blocks.
 On Sending infrastructure → Warmup, you can now see consumed vs allowed volume for the day — sequencer and ESP share one enforced budget.
 
 **implementationAdds:** `["warmup-enforced-in-path", "throttle-remaining", "enrollment-cap"]`
@@ -206,7 +206,7 @@ A firm changes subdomain or sits idle for months, then reactivation fires at old
 
 **implementation:**  
 On Sending infrastructure → Warmup, you can now see re-warmup triggered on domain change, IP tier change, ESP migration, or idle beyond policy window.  
-On Activation state and Send gates, you can now see tightened caps until re-warmup completes — prior volume rights do not auto-restore.
+On Activation state Progress and Firm operations bind firm detail → Send gates panel, you can now see tightened caps until re-warmup completes — prior volume rights do not auto-restore.
 
 **implementationAdds:** `["re-warmup", "idle-reset", "identity-change-trigger"]`
 
@@ -230,7 +230,7 @@ Bounces may be logged as metrics only. Sequences keep hitting dead addresses; ha
 
 **implementation:**  
 On Suppression list, hard bounces from provider webhooks now add the address (global and/or per-tenancy per policy).  
-On Firm operations bind Send gates, suppressed hard-bounce addresses never enqueue; soft bounces retry only within bounded attempts visible on Firm health Sequence detail.
+On Firm operations bind firm detail → Send gates panel, suppressed hard-bounce addresses show deny chips and never enqueue; soft bounces retry only within bounded attempts visible on Firm health Sequence detail.
 
 **implementationAdds:** `["bounce-hard", "bounce-soft", "hard-suppress", "soft-retry-bound"]`
 
@@ -252,7 +252,7 @@ Spam-button complaints can accumulate under “they Agreed.” No unit-level com
 
 **implementation:**  
 On Oversight and Firm health, you can now see complaint rate per reputation unit vs ceiling (~0.3%) and target (≤0.1%).  
-On Sending infrastructure, approaching/exceeding threshold auto-throttles or Quarantines the unit; Send gates surface the block to operators.
+On Sending infrastructure, approaching/exceeding threshold auto-throttles or Quarantines the unit. On Firm operations bind firm detail → Send gates panel, operators can see the complaint-rate block as a deny chip.
 
 **implementationAdds:** `["complaint-rate", "complaint-ceiling-0-3", "complaint-target-0-1", "auto-throttle"]`
 
@@ -297,7 +297,7 @@ Messages may show a body unsubscribe link (CASL) without List-Unsubscribe / List
 
 **implementation:**  
 On Opt-in message and Nudge message, you can now emit List-Unsubscribe and List-Unsubscribe-Post (one-click) on marketing CEMs.  
-On Silence / Opt out and Suppression list, one-click POST honors the same withdrawal as in-body unsubscribe; Send gates suppress further CEMs.
+On Silence / Opt out and Suppression list, one-click POST honors the same withdrawal as in-body unsubscribe. On Firm operations bind firm detail → Send gates panel, further CEMs show suppressed deny chips.
 
 **implementationAdds:** `["list-unsubscribe", "list-unsubscribe-post", "one-click", "rfc-8058"]`
 
@@ -319,7 +319,7 @@ Provider webhooks may feed a future metrics store only. Next-minute sends ignore
 
 **implementation:**  
 On Sending infrastructure, you can now see delivery-event ingest (accepted, deferred, hard/soft bounce, complaint, delivered, rejected) updating Warmup, Suppression list, and reputation-unit health.  
-On Audit trail, you can now open deliverability Change events that explain why Send gates blocked or capped a firm.
+On Audit trail, you can now open deliverability Change events that explain why Firm operations bind firm detail → Send gates panel blocked or capped a firm.
 
 **implementationAdds:** `["delivery-event-schema", "webhook-normalize", "sync-gate-update"]`
 
@@ -342,7 +342,7 @@ Firm A hard-bounces an address; Firm B imports the same person and sequences the
 
 **implementation:**  
 On Suppression list (house-global), hard bounces and spam complaints now apply to every tenancy.  
-On Firm operations bind Send gates, global suppressions block enqueue even if the firm’s book marks the contact reachable.
+On Firm operations bind firm detail → Send gates panel, global suppressions appear as deny chips that block enqueue even if the firm’s book marks the contact reachable.
 
 **implementationAdds:** `["suppression-global", "toxic-address", "cross-tenant-block"]`
 
@@ -362,7 +362,7 @@ On Firm operations bind Send gates, global suppressions block enqueue even if th
 Silence may live only on the consent ledger while Suppression list is empty (or the reverse). Sends slip through one gate; operators cannot see a single deny reason.
 
 **implementation:**  
-On Firm operations bind Send gates, you can now see ordered denies: CASL silence/consent basis, then Suppression list (per-tenancy + global).  
+On Firm operations bind firm detail → Send gates panel, you can now see ordered deny chips: CASL silence/consent basis, then Suppression list (per-tenancy + global).
 On Suppression list (per-tenancy), opt-out / silence, complaints, and hard bounces appear as technical denies alongside Book readiness permission-to-send.
 
 **implementationAdds:** `["suppression-per-tenancy", "silence-mirror", "ordered-deny"]`
@@ -383,8 +383,8 @@ On Suppression list (per-tenancy), opt-out / silence, complaints, and hard bounc
 Suppression exists as a report. Manual resend or a workflow canvas edge skips it; ESP still accepts and reputation still burns.
 
 **implementation:**  
-On Firm operations bind Send gates, every automated and manual firm-branded email/SMS path consults Suppression list before provider accept — no override to “force send” a suppressed address.  
-On Automation workflows / Workflow canvas and Agent / sequence editor paths, blocked-suppressed is visible when enrollment would target a denied address.
+On Firm operations bind firm detail → Send gates panel, every automated and manual firm-branded email/SMS path shows Suppression list clearance before provider accept — no override to “force send” a suppressed address.
+On Configuration libraries → Automation workflows catalog, open Workflow canvas; blocked-suppressed is visible on enrollment action nodes when enrollment would target a denied address; click Publish version. On Configuration libraries → Engagement templates catalog, open Agent / sequence editor; blocked-suppressed is visible on send steps; click Publish version.
 
 **implementationAdds:** `["pre-send-suppression", "no-force-send", "provider-before-block"]`
 
@@ -405,7 +405,7 @@ Reactivation Armed dumps years-old non-openers. Complaint and spam-folder rates 
 
 **implementation:**  
 On Book readiness Verdict list and Firm health Sequence health, you can now see sunsetting / chronic non-engagement flags that block or require re-permission before reactivation volume.  
-On Firm operations bind Send gates, reactivation bursts cannot enroll sunsetting-suppressed addresses without a new engagement path.
+On Firm operations bind firm detail → Send gates panel, reactivation bursts show sunsetting-suppressed deny chips and cannot enroll those addresses without a new engagement path.
 
 **implementationAdds:** `["sunsetting", "chronic-non-engage", "repermission-before-burst"]`
 
@@ -473,7 +473,7 @@ Replies go to an unmonitored From or a consultant’s personal inbox. Runtime ca
 
 **implementation:**  
 On Sending infrastructure, you can now set Reply-To strategy: platform-captured (default for hands-free) or firm-monitored per Firm operations bind policy.  
-On Firm operations bind, you can now confirm replies land on the monitored path that feeds engagement runtime / Conversations — From stays firm-branded.
+On Firm operations bind firm detail, set Reply-To policy with the selector (platform-captured | firm-monitored) and confirm replies land on the monitored path that feeds engagement runtime / Conversations — From stays firm-branded.
 
 **implementationAdds:** `["reply-to-platform", "reply-to-firm-monitored", "reply-capture-path"]`
 
@@ -519,7 +519,7 @@ Provider 4xx deferrals trigger naive immediate retries. Retry storms worsen bloc
 
 **implementation:**  
 On Sending infrastructure, you can now see per-provider throttle state driven by deferral/reject signals.  
-On Firm operations bind Send gates and Firm health Sequence detail, you can now see adaptive backoff pausing enrollment/send when ISPs defer — calendar due does not override throttle.
+On Firm operations bind firm detail → Send gates panel and Firm health Sequence detail, you can now see adaptive backoff pausing enrollment/send when ISPs defer — calendar due does not override throttle.
 
 **implementationAdds:** `["adaptive-throttle", "per-provider-backoff", "deferral-signal"]`
 
@@ -541,7 +541,7 @@ SMS escalations ride email consent and email warmup mental models. Unregistered 
 
 **implementation:**  
 On Sending infrastructure, you can now see SMS brand/campaign registration and throughput tier for the firm’s messaging identity.  
-On Firm operations bind Send gates, SMS sends require registration-ready + throughput remaining + Suppression list / STOP clear — email Warmup green does not authorize SMS volume.
+On Firm operations bind firm detail → Send gates panel, SMS sends require registration-ready row + throughput remaining row + Suppression list / STOP clear row — email Warmup green does not authorize SMS volume.
 
 **implementationAdds:** `["sms-a2p", "sms-throughput", "sms-reputation-separate", "stop-to-suppression"]`
 
