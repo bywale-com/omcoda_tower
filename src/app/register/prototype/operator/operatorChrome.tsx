@@ -3,6 +3,7 @@
  */
 import type { CSSProperties, ReactNode } from "react";
 import type { Tokens } from "../../../components/tokens";
+import { getModuleShape, recordShapeLabel } from "../../trace/moduleShapes";
 import { SURFACE_CATALOG, type RegisterSurfaceEntry } from "../../trace/surfaceCatalog";
 import { RegisterSurfaceMount } from "../registerSurfaceChrome";
 
@@ -74,6 +75,7 @@ export function statusChip(
 }
 
 export function panelShell(t: Tokens, title: string, badge: ReactNode, children: ReactNode) {
+  const shape = getModuleShape(title);
   return (
     <div
       style={{
@@ -89,13 +91,13 @@ export function panelShell(t: Tokens, title: string, badge: ReactNode, children:
     >
       <header
         style={{
-          height: 35,
+          minHeight: 35,
           flexShrink: 0,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           gap: 10,
-          padding: "0 14px",
+          padding: "6px 14px",
           borderBottom: `1px solid ${t.border}`,
           background: t.bgSecondary,
         }}
@@ -110,9 +112,53 @@ export function panelShell(t: Tokens, title: string, badge: ReactNode, children:
         >
           {title}
         </span>
-        {badge}
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 6, flexWrap: "wrap", justifyContent: "flex-end" }}>
+          {shape ? (
+            <>
+              {statusChip(t, recordShapeLabel(shape.recordShape), "amber")}
+              {statusChip(t, shape.scope, "muted")}
+            </>
+          ) : null}
+          {badge}
+        </span>
       </header>
+      {shape ? <ModuleShapeBanner t={t} module={title} /> : null}
       {children}
+    </div>
+  );
+}
+
+/** Visible cardinality contract under the module header. */
+export function ModuleShapeBanner({ t, module }: { t: Tokens; module: string }) {
+  const shape = getModuleShape(module);
+  if (!shape) return null;
+  return (
+    <div
+      data-module-shape={shape.recordShape}
+      style={{
+        flexShrink: 0,
+        padding: "8px 14px",
+        borderBottom: `1px solid ${t.border}`,
+        background: t.hoverBg,
+        display: "flex",
+        flexDirection: "column",
+        gap: 3,
+      }}
+    >
+      <div style={{ fontSize: 11, lineHeight: 1.45, color: t.textPrimary }}>
+        <span style={{ fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", color: t.textDim }}>
+          Shape
+        </span>
+        {" · "}
+        <strong>{recordShapeLabel(shape.recordShape)}</strong>
+        {" · "}
+        {shape.scope}
+        {" — "}
+        {shape.shapeNote}
+      </div>
+      <div style={{ fontSize: 11, lineHeight: 1.4, color: t.textDim }}>
+        Seed: {shape.seedExpectation}
+      </div>
     </div>
   );
 }

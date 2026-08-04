@@ -31,3 +31,17 @@ Use these **exact Title Case** labels in click-paths. Invent only when nothing f
 
 ## Taxonomy
 Module → Modal → Block → Submodal. Click-path: `Starting from {Module}` | `On {Surface}, you can now…`
+
+## Module shape (cardinality)
+
+Every operator module carries a **record shape** so builders (CTO / capability SME) do not guess from underseeded prototypes:
+
+| Shape | Meaning |
+|---|---|
+| **singleton** | One house-global control surface (not an index of many) |
+| **collection** | Index of many records (firms, packs, tickets, campaigns…) |
+| **scoped-record** | Detail for one selected record (after pick from a collection) |
+
+Also declare **scope:** `house` | `tenancy` | `record`.
+
+Executable registry: `src/app/register/trace/moduleShapes.ts`. Prototype modules must seed enough fake records that the shape is visible in the UI (shape banner + multi-record content).
