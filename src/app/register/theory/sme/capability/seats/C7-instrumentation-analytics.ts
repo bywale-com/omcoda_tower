@@ -83,7 +83,7 @@ export const seat: SmeSeat = {
         { title: "C1 `deliv-14` delivery-event schema adjacency", url: "" },
       ],
       implementationProblem: "Firm health Sequence health can show “sends” guessed from ESP exports hours later; Activation state Progress and Oversight disagree with live Send gates.",
-      implementation: "On Firm operations bind / send path adjacency, you can now require stream emit of send-accepted before the attempt is treated as sent for Firm health.  \nOn Oversight, you can now see producer coverage (which taxonomy names have live emitters vs missing) as a pipeline health signal — not a vanity chart.",
+      implementation: "On Firm operations bind firm detail → Send gates panel, you can now see send-accepted stream emit required before the attempt is treated as sent for Firm health.\nOn Oversight, you can now see producer coverage (which taxonomy names have live emitters vs missing) as a pipeline health signal — not a vanity chart.",
       implementationAdds: ["producer-contract", "emit-on-path", "producer-coverage\"]`  \n**implementationPlant:** not_done"],
       implementationPlant: "not_done",
       status: "verified",

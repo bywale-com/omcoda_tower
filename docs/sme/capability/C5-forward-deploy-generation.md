@@ -303,7 +303,7 @@ On Activation & forward-deploy, you can now track branding-unconfirmed vs brandi
 Operators clone empty Prepared Workspace shells and paste facts by hand. Approach cannot scale; In-flight activations stall at “workspace exists” without content.
 
 **implementation:**  
-On Activation & forward-deploy → Forward-deploy, you can now run Hydrate (template version + firm-facts + brand package) to create Prepared Workspace instance.  
+On Activation & forward-deploy → Forward-deploy, open Hydrate; choose Engagement template version from the published-only dropdown, choose Firm-facts snapshot from the snapshot dropdown, choose Brand package version from the package dropdown, and click Hydrate to create Prepared Workspace instance.
 On Prepared Workspace, you can now examine bound template version and snapshot IDs.  
 On Activation state Progress, hydrated becomes a distinct gate after enrichment — empty shells are not ready.
 
@@ -391,7 +391,7 @@ Hydrated packs show “your 400 clients are ready to message.” Book was never 
 
 **implementation:**  
 On Prepared Workspace, hydrated blocks stay inside pre-connect scope — public facts, brand, template preview, Authorize book / Accept terms next steps.  
-On Engagement templates used for Forward-deploy, you can now see Pre-connect deliverable flag that strips enrolled-book / live-send assertions.  
+On Configuration libraries → Engagement templates catalog, open Agent / sequence editor; set Pre-connect deliverable flag to strip enrolled-book / live-send assertions; click Publish version.
 On Approach campaigns (adjacency), Claim dictionary and hydrate scope stay aligned on public-facts pack only.
 
 **implementationAdds:** `["pre-connect-scope", "template-preview", "no-enrolled-claim", "authorize-book-next"]`

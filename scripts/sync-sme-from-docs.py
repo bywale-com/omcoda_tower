@@ -441,6 +441,35 @@ def emit_index(seat_files: list[str]) -> str:
     )
 
 
+def emit_root_export() -> str:
+    return "\n".join(
+        [
+            'import { SME_SEATS as PRACTICE_SME_SEATS, getSmeItem as getPracticeSmeItem, getSmeSeat as getPracticeSmeSeat } from "./sme/index";',
+            'import { CAPABILITY_SME_SEATS, getCapabilitySmeItem, getCapabilitySmeSeat } from "./sme/capability";',
+            "",
+            "export {",
+            "  CAPABILITY_SME_SEATS,",
+            "  getCapabilitySmeItem,",
+            "  getCapabilitySmeSeat,",
+            "  getPracticeSmeItem,",
+            "  getPracticeSmeSeat,",
+            "  PRACTICE_SME_SEATS,",
+            "};",
+            "",
+            "export const SME_SEATS = [...PRACTICE_SME_SEATS, ...CAPABILITY_SME_SEATS];",
+            "",
+            "export function getSmeSeat(seatId: string) {",
+            "  return getPracticeSmeSeat(seatId) ?? getCapabilitySmeSeat(seatId);",
+            "}",
+            "",
+            "export function getSmeItem(seatId: string, itemId: string) {",
+            "  return getPracticeSmeItem(seatId, itemId) ?? getCapabilitySmeItem(seatId, itemId);",
+            "}",
+            "",
+        ]
+    )
+
+
 def main() -> None:
     skip_list = parse_skip_list()
     SEATS_DIR.mkdir(parents=True, exist_ok=True)
@@ -509,7 +538,7 @@ def main() -> None:
 
     (OUT_DIR / "index.ts").write_text(emit_index(seat_files), encoding="utf-8")
     (ROOT / "src" / "app" / "register" / "theory" / "sme.ts").write_text(
-        'export { SME_SEATS, getSmeSeat, getSmeItem } from "./sme/index";\n',
+        emit_root_export(),
         encoding="utf-8",
     )
 

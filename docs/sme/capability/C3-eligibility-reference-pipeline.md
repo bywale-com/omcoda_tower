@@ -186,7 +186,7 @@ Independent per-table publishes can interleave mid-flight evaluations across inc
 
 **implementation:**
 On Reference tables, you can now declare a Publish group for co-dependent families.
-On Publish version, you can now publish the group atomically or keep all members Draft-hold; Evaluation packs never pin a partial group.
+On Publish version, you can now publish the group atomically or keep all members Draft-hold. On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; the reference pin dropdown omits partial Draft-hold groups, so packs never pin a partial group.
 
 **implementationAdds:** ["publish-group", "atomic-publish", "co-dependent-families"]
 **implementationPlant:** not_done
@@ -208,7 +208,7 @@ Publish bumps a version id with no field-level change set, so house cannot tell 
 
 **implementation:**
 On Publish version, you can now open Version diff for the supersedes pair and see added / removed / changed rows typed by change class.
-On Reference data, you can now attach that Version diff to the Change event for Oversight and Evaluation packs consumers.
+On Reference data, you can now attach that Version diff to the Change event for Oversight and Analysis → Evaluation provenance consumers.
 
 **implementationAdds:** ["version-diff", "change-class", "added", "removed", "changed"]
 **implementationPlant:** not_done
@@ -229,8 +229,7 @@ On Reference data, you can now attach that Version diff to the Change event for 
 Without impact scoping, every Publish version either hammers the whole fleet or skips firms that actually consume the changed table.
 
 **implementation:**
-On Publish version, you can now see Impact scope derived from Version diff change-class and bound Evaluation packs.
-On Evaluation packs, you can now enqueue re-score only for Firm operations bind tenants whose Bind packs reference the affected table keys / outcome families.
+On Publish version, you can now see Impact scope derived from Version diff change-class and bound Evaluation pack versions. On Firm operations bind, click firm row in firm-bind index. On firm detail, click Bind packs. On Bind packs modal, choose Evaluation pack version from the published-only dropdown; choose Automation pack version from the published-only dropdown; choose Engagement template version from the published-only dropdown; click Bind. Those bound version chips become the re-score cohort inputs when they reference the affected table keys / outcome families.
 
 **implementationAdds:** ["impact-scope", "change-class→cohort", "bound-pack-consumers"]
 **implementationPlant:** not_done
@@ -251,8 +250,7 @@ On Evaluation packs, you can now enqueue re-score only for Firm operations bind 
 One fan-out policy for all tenants either wakes armed-only noise or leaves pinned packs looking “current” when they are not.
 
 **implementation:**
-On Evaluation packs re-score jobs, you can now set cohort mode: Active-follow-current (apply), Armed-only (signal store only), Pinned-shadow (diff vs current, pin unchanged).
-On Oversight / Evaluation pack editor, you can now see pin age and shadow-diff pending adopt.
+On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set re-score cohort mode with the selector (Active-follow-current | Armed-only | Pinned-shadow); click Publish version. On Oversight and the same Evaluation pack editor, you can now see Pin age and shadow-diff pending adopt rows.
 
 **implementationAdds:** ["active-follow-current", "armed-signal-only", "pinned-shadow", "shadow-diff"]
 **implementationPlant:** not_done
@@ -273,7 +271,7 @@ Publish updates “current” while already-shown Analysis rewrites in place wit
 
 **implementation:**
 On Publish version, you can now enqueue Re-evaluation jobs keyed by publish id and impact-scope.
-On Evaluation packs, you can now emit deltas (was / now) with cause reference-publish or reference-correction; prior Analysis snapshots keep their reference-version ids for Audit trail.
+On Analysis → Evaluation provenance, you can now see deltas (was / now) with cause reference-publish or reference-correction; prior Analysis snapshots keep their reference-version ids for Audit trail.
 
 **implementationAdds:** ["re-evaluation-job", "cause:reference-publish", "cause:reference-correction", "was/now-delta"]
 **implementationPlant:** not_done
@@ -294,8 +292,8 @@ On Evaluation packs, you can now emit deltas (was / now) with cause reference-pu
 A naive “rescore then reactivate” hook on Publish version creates false reactivation storms on every draw.
 
 **implementation:**
-On Evaluation packs, reference-driven Re-evaluation jobs can now write signals and Board Phase signal only.
-On Firm operations bind, you can now refuse auto-enrollment from cause reference-publish; runners still apply Engine 2 precedence when a separate motion decision runs.
+On Analysis → Evaluation provenance, reference-driven Re-evaluation jobs can now write signals and Board Phase signal only.
+On Firm operations bind firm detail → Send gates panel, you can now see reference-publish auto-enrollment refused as a deny chip; runners still apply Engine 2 precedence when a separate motion decision runs.
 
 **implementationAdds:** ["signals-only-on-reference-publish", "no-auto-enrollment", "phase-signal-update"]
 **implementationPlant:** not_done
@@ -315,8 +313,7 @@ On Firm operations bind, you can now refuse auto-enrollment from cause reference
 Authors treat a cutoff diff as copy-paste fodder for pack conditions, re-breaking currency.
 
 **implementation:**
-On Evaluation pack editor, you can now open Reference changelog (Version diff) as read-only table-key impact.
-On Evaluation pack editor, publish review can now reject rule bodies that embed numeric public-criteria literals present in Reference tables.
+On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; open Reference changelog (Version diff) as read-only table-key impact. In publish review, reject rule bodies that embed numeric public-criteria literals present in Reference tables; click Publish version only after review passes.
 
 **implementationAdds:** ["reference-changelog", "table-key-link-only", "reject-numeric-literals"]
 **implementationPlant:** not_done
@@ -359,7 +356,7 @@ On Board, you can now see Phase signal update from cause fact-write-back; on Liv
 Two jobs rewriting Analysis for one contact produce duplicate Phase signals or a result that cites neither publish id nor write-back id.
 
 **implementation:**
-On Evaluation packs job runner, you can now coalesce Re-evaluation for the same contact within a short merge window and store trigger event ids for both fact-write-back and reference-publish when both apply.
+On Evaluation packs re-score job detail, you can now see coalesced Re-evaluation for the same contact within a short merge window and stored trigger event ids for both fact-write-back and reference-publish when both apply.
 On Audit trail, you can now see a single result Change event listing all trigger causes and the reference-version ids used.
 
 **implementationAdds:** ["job-idempotency-key", "merge-window", "multi-cause-result"]
@@ -403,7 +400,7 @@ On Board, you can now open the pin ids (pack + reference versions) for the signa
 A contact becomes draw-cleared on Publish version or write-back while email is invalid / silenced; naive hooks enroll anyway.
 
 **implementation:**
-On Firm operations bind runners, you can now require Book readiness reachable verdict before enrollment even when Phase signal is reactivation-worthy.
+On Firm operations bind firm detail → Send gates panel, enrollment readiness rows require Book readiness reachable verdict even when Phase signal is reactivation-worthy.
 On Book readiness Audits, you can now re-batch after import refresh without clearing eligibility signals — detection and reachability stay separate axes.
 
 **implementationAdds:** ["eligibility≠reachable", "audit-reachable-gate", "signal-retained"]
@@ -447,7 +444,7 @@ Packs pin a version id forever; without past-freshness, a week-old cutoff still 
 
 **implementation:**
 On Reference tables, you can now see last-verified-at, freshness-SLA, and Past-freshness flag per family.
-On Evaluation pack editor / runtime, draw-cutoff and category-occupation assertions can now require Published & not past freshness; otherwise Analysis shows Reference data unavailable and those reactivation paths suppress.
+On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set draw-cutoff and category-occupation assertions to require Published & not past freshness; click Publish version. Otherwise Analysis shows Reference data unavailable and those reactivation paths suppress.
 
 **implementationAdds:** ["last-verified-at", "freshness-SLA", "past-freshness", "reference-data-unavailable"]
 **implementationPlant:** not_done
