@@ -1,5 +1,6 @@
 /**
- * Activation state — collection of firms in activation; Progress is scoped-record.
+ * Activation state — Progress checklist (leaf 1.3): forward-deployed,
+ * authorize-book, escrow-held, running + Jump links.
  */
 import { useEffect, useState } from "react";
 import { RegisterSurfaceMount, navBtnStyle, sectionLabelStyle } from "../registerSurfaceChrome";
@@ -8,47 +9,49 @@ import {
   moduleFocus,
   panelShell,
   resolveHoveredEntry,
+  secondaryBtnStyle,
   statusChip,
   surfaceBlock,
   type OperatorModuleProps,
 } from "./operatorChrome";
 
+type GateId = "forward-deployed" | "authorize-book" | "escrow-held" | "running";
+
+type Gate = { id: GateId; title: string; done: boolean; jump?: string };
+
 const ACTIVATION_ROWS = [
   {
     firmId: DEMO_FIRMS[1].id,
-    pct: 40,
+    pct: 50,
     next: "Authorize book",
-    steps: [
-      { id: "s1", title: "Approach / Provision capture", done: true },
-      { id: "s2", title: "Forward-deploy Prepared Workspace", done: true },
-      { id: "s3", title: "Authorize book", done: false },
-      { id: "s4", title: "Accept terms · escrow", done: false },
-      { id: "s5", title: "Running under firm identity", done: false },
-    ],
+    gates: [
+      { id: "forward-deployed", title: "Forward-deployed", done: true, jump: "Jump to Activation & forward-deploy" },
+      { id: "authorize-book", title: "Authorize book", done: false, jump: "Jump to Activation & forward-deploy" },
+      { id: "escrow-held", title: "Escrow held", done: false, jump: "Jump to Commercial" },
+      { id: "running", title: "Running", done: false },
+    ] satisfies Gate[],
   },
   {
     firmId: DEMO_FIRMS[2].id,
-    pct: 80,
-    next: "Accept terms · escrow",
-    steps: [
-      { id: "s1", title: "Approach / Provision capture", done: true },
-      { id: "s2", title: "Forward-deploy Prepared Workspace", done: true },
-      { id: "s3", title: "Authorize book", done: true },
-      { id: "s4", title: "Accept terms · escrow", done: false },
-      { id: "s5", title: "Running under firm identity", done: false },
-    ],
+    pct: 75,
+    next: "Escrow held",
+    gates: [
+      { id: "forward-deployed", title: "Forward-deployed", done: true, jump: "Jump to Activation & forward-deploy" },
+      { id: "authorize-book", title: "Authorize book", done: true },
+      { id: "escrow-held", title: "Escrow held", done: false, jump: "Jump to Commercial" },
+      { id: "running", title: "Running", done: false },
+    ] satisfies Gate[],
   },
   {
     firmId: DEMO_FIRMS[3].id,
-    pct: 20,
-    next: "Forward-deploy Prepared Workspace",
-    steps: [
-      { id: "s1", title: "Approach / Provision capture", done: true },
-      { id: "s2", title: "Forward-deploy Prepared Workspace", done: false },
-      { id: "s3", title: "Authorize book", done: false },
-      { id: "s4", title: "Accept terms · escrow", done: false },
-      { id: "s5", title: "Running under firm identity", done: false },
-    ],
+    pct: 25,
+    next: "Forward-deployed",
+    gates: [
+      { id: "forward-deployed", title: "Forward-deployed", done: false, jump: "Jump to Activation & forward-deploy" },
+      { id: "authorize-book", title: "Authorize book", done: false },
+      { id: "escrow-held", title: "Escrow held", done: false, jump: "Jump to Commercial" },
+      { id: "running", title: "Running", done: false },
+    ] satisfies Gate[],
   },
 ] as const;
 
@@ -140,6 +143,10 @@ export function ActivationStateModule({ t, focusedEntry, hoveredId }: OperatorMo
                   <span style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary }}>Progress</span>
                   {statusChip(t, `${row.pct}%`, "amber")}
                 </div>
+                <p style={{ margin: "0 0 12px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
+                  View checklist rows for this firm. Running opens only when authorize-book and
+                  escrow-held are both green. Operator does not fake-complete consultant commits.
+                </p>
                 <div
                   style={{
                     height: 6,
@@ -161,9 +168,9 @@ export function ActivationStateModule({ t, focusedEntry, hoveredId }: OperatorMo
                     gap: 8,
                   }}
                 >
-                  {row.steps.map((step, i) => (
+                  {row.gates.map((gate, i) => (
                     <li
-                      key={step.id}
+                      key={gate.id}
                       style={{
                         display: "flex",
                         gap: 10,
@@ -179,8 +186,8 @@ export function ActivationStateModule({ t, focusedEntry, hoveredId }: OperatorMo
                           width: 22,
                           height: 22,
                           borderRadius: 4,
-                          background: step.done ? t.accentBg : t.hoverBg,
-                          color: step.done ? t.accent : t.textDim,
+                          background: gate.done ? t.accentBg : t.hoverBg,
+                          color: gate.done ? t.accent : t.textDim,
                           fontSize: 11,
                           fontWeight: 700,
                           display: "flex",
@@ -189,17 +196,29 @@ export function ActivationStateModule({ t, focusedEntry, hoveredId }: OperatorMo
                           flexShrink: 0,
                         }}
                       >
-                        {step.done ? "✓" : i + 1}
+                        {gate.done ? "✓" : i + 1}
                       </span>
-                      <span
-                        style={{
-                          fontSize: 12,
-                          fontWeight: 600,
-                          color: step.done ? t.textPrimary : t.textMuted,
-                        }}
-                      >
-                        {step.title}
-                      </span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div
+                          style={{
+                            fontSize: 12,
+                            fontWeight: 600,
+                            color: gate.done ? t.textPrimary : t.textMuted,
+                          }}
+                        >
+                          {gate.title}
+                        </div>
+                        {statusChip(
+                          t,
+                          gate.done ? "complete" : "pending",
+                          gate.done ? "success" : "amber",
+                        )}
+                      </div>
+                      {!gate.done && gate.jump ? (
+                        <button type="button" style={secondaryBtnStyle(t)}>
+                          {gate.jump}
+                        </button>
+                      ) : null}
                     </li>
                   ))}
                 </ol>
