@@ -37,9 +37,9 @@
 **Q:** How do I choose packs from Configuration libraries and bind them under this firm identity?
 
 **Clarity:** Starting from Firm operations bind, click a firm row in the **firm-bind index** (left list). On that firm’s detail, click **Bind packs** (opens Bind packs modal). On Bind packs modal:  
-1. **Evaluation pack** — dropdown listing only **published** Evaluation pack versions from Configuration libraries (drafts omitted); pick one version.  
-2. **Automation pack** — dropdown listing only **published** Automation workflow versions; pick one version.  
-3. **Engagement template** — dropdown listing only **published** Engagement template versions; pick one version.  
+1. **Evaluation pack** — select one **published** Evaluation pack version from the dropdown (drafts omitted).  
+2. **Automation pack** — select one **published** Automation workflow version from the dropdown.  
+3. **Engagement template** — select one **published** Engagement template version from the dropdown.  
 4. Click **Bind** (primary button). Modal closes; the firm detail shows three bound-version chips (label + version id) sourced from Configuration libraries.  
 Audit trail appends a Change event: firm id, three version ids, actor, timestamp.
 
@@ -64,7 +64,7 @@ Audit trail appends a Change event: firm id, three version ids, actor, timestamp
 
 **Q:** How do I arm so the book is worked without firm authorship?
 
-**Clarity:** On Firm operations bind firm detail (selected firm), use the **Armed / Active** segmented control: click **Armed** (bound packs ready; no contact-facing sends) or **Active** (execution on). Control is disabled until Bind packs has three bound versions. Consultant Board for that firm shows inhabited motion only — no pack editor on the firm desk.
+**Clarity:** On Firm operations bind firm detail (selected firm), click **Armed** or **Active** on the **Armed / Active** segmented control — **Armed** = bound packs ready (no contact-facing sends); **Active** = execution on. Control is disabled until Bind packs has three bound versions. Consultant Board for that firm shows inhabited motion only — no pack editor on the firm desk.
 
 **Criteria — when:** After bind, when campaign should run.  
 **Conditions:** Armed = ready; Active = executing; consultant does not author.

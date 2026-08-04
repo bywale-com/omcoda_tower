@@ -33,7 +33,7 @@
 
 **Q:** How do I set Escrow terms for the firm?
 
-**Clarity:** Starting from Commercial, click the firm row in the instrument list. On the scoped record, open **Escrow terms**; type contingent cost, cap, release predicate, and measurement window fields; click **Save terms version** (primary button). That published terms version is what Prepared Workspace → Accept terms presents to the consultant — drafts do not appear there.
+**Clarity:** Starting from Commercial, click a firm row in the instrument list. On the scoped record, click **Escrow terms**; type contingent cost, cap, release predicate, and measurement window fields; click **Save terms version** (primary button). That published terms version is what Prepared Workspace → Accept terms presents to the consultant — drafts do not appear there.
 
 **Criteria — when:** Before or during activation for that tenancy.  
 **Conditions:** Terms presentable on Accept terms.
@@ -51,7 +51,7 @@
 
 **Q:** How do I oversee Escrow status through acceptance and release?
 
-**Clarity:** On Commercial, select a firm/instrument row and open Escrow status to read held / release_pending_window / released / returned / disputed chips; on Release control, click Execute release, Execute return, or Open dispute only when the scoped instrument's terms and evidence enable the action.
+**Clarity:** On Commercial, click a firm/instrument row in the instrument list. Click **Escrow status** to view held / release_pending_window / released / returned / disputed status chips. On **Release control**, click **Execute release**, **Execute return**, or **Open dispute** only when the scoped instrument's terms and evidence enable the action.
 
 **Criteria — when:** After terms offered.  
 **Conditions:** Consultant acceptance is the hard gate; operator oversees.

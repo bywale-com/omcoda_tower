@@ -21,7 +21,7 @@
 
 **Q:** How do I book a meeting when invited and arrive where the firm already knows my current facts?
 
-**Clarity:** On Meeting invitation I open Booking, pick a slot, and confirm; outstanding self-reportables submit on Loop-closer / Booking confirm so Live brief already holds current facts.
+**Clarity:** Starting from the firm-branded Meeting invitation, click **Book a time** to open Booking, select a slot in the Slot picker, and click **Confirm booking**; on Booking confirm (or Loop-closer form), type/select outstanding self-reportable answers and click **Submit** so Live brief already holds current facts.
 
 **DNA for children:**
 1. open a firm-branded Meeting invitation and pick a time to book
@@ -33,7 +33,7 @@
 
 **Q:** How do I open a firm-branded Meeting invitation and pick a time to book?
 
-**Clarity:** Starting from the firm-branded Meeting invitation (email/SMS link), click **Book a time** to open Booking. On Booking, choose a slot in the Slot picker (date/time list or calendar), then click **Confirm booking** (primary button). That commit writes the meeting (read by Consultant Meetings Meeting rows and Board ready-for-meeting Phase chip). Contact must not be silenced.
+**Clarity:** Starting from the firm-branded Meeting invitation (email/SMS link), click **Book a time** to open Booking. On Booking, select a slot in the Slot picker (date/time list or calendar), then click **Confirm booking** (primary button). That commit writes the meeting (read by Consultant Meetings Meeting rows and Board ready-for-meeting Phase chip). Contact must not be silenced.
 
 **Criteria — when:** Invitation sent (bound campaign toward meeting).  
 **Conditions:** Eligible / invited; contact not silenced.

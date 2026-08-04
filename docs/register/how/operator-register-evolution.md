@@ -22,7 +22,7 @@
 
 **Q:** How do I document friction from running firms and regenerate the methodology into house build tooling?
 
-**Clarity:** Starting from Register & evolution, I log a Gap from running-firm friction, then regenerate methodology so Configuration libraries can take the next authored operations.
+**Clarity:** Starting from Register & evolution, click **Gaps**, click **New gap** (or an existing Gap row) and click **Save gap** on Gap modal, then on Gap toggle Affordance / backend facet to Written and click **Regenerate handoff** so Configuration libraries can take the next authored operations.
 
 **DNA for children:**
 1. log a Gap from running-firm friction
@@ -52,12 +52,12 @@
 
 **Q:** How do I regenerate methodology so Configuration libraries can take the next authored operations?
 
-**Clarity:** On Gap, toggle Affordance / backend facet to Written; on Register & evolution, click Regenerate handoff so the next authoring work lands in Configuration libraries — still never on the firm desk.
+**Clarity:** On Gap, toggle Affordance / backend facet to Written; on Register & evolution, click **Regenerate handoff** (primary button). Regenerate writes handoff state read by Configuration libraries authoring path — still never on the firm desk.
 
 **Criteria — when:** Gap resolved into written affordance.  
 **Conditions:** Output is house config evolution, not firm Register chrome.
 
-| UI | Kind | Status |
-|---|---|---|
-| Regenerate handoff | Block | **new** |
-| Configuration libraries | Module | **new** (downstream) |
+| UI | Kind | Status | Affordance |
+|---|---|---|---|
+| Regenerate handoff | Block | **new** | **Primary button** — writes handoff (read by Configuration libraries) |
+| Configuration libraries | Module | **new** (downstream) | Authoring target (read by Regenerate handoff) |

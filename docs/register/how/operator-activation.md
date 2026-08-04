@@ -22,7 +22,7 @@
 
 **Q:** How do I stage a no-login prepared workspace for a captured firm from house templates and public facts, walk the firm through readiness, and secure its database authorization and escrow?
 
-**Clarity:** Starting from Activation & forward-deploy, open In-flight activations, run Forward-deploy for a captured firm row to create Prepared Workspace from published house templates and public facts, walk Readiness walkthrough, then verify Authorize book and Accept terms before running opens.
+**Clarity:** Starting from Activation & forward-deploy, click **In-flight activations**; on a captured firm row, click **Forward-deploy**, select a published Engagement template version, type public firm-facts and brand package fields, click **Hydrate**, then click **Readiness walkthrough** on Prepared Workspace; view Authorize book and Accept terms completion chips on Activation state **Progress** before the firm is running.
 
 **DNA for children:**
 1. forward-deploy a Prepared Workspace from house templates and public facts
@@ -35,7 +35,7 @@
 
 **Q:** How do I forward-deploy a Prepared Workspace from house templates and public facts?
 
-**Clarity:** Starting from Activation & forward-deploy, open In-flight activations; on a captured firm row, click Forward-deploy, choose a published Engagement template version, bind public firm-facts and brand package fields, then click Hydrate to stage Prepared Workspace under the firm's identity — no client PII required yet.
+**Clarity:** Starting from Activation & forward-deploy, click **In-flight activations**. On a captured firm row, click **Forward-deploy**. On the forward-deploy form, select a published Engagement template version from the **Template version** dropdown, type public firm-facts and brand package fields, then click **Hydrate** (primary button). Hydrate writes staged Prepared Workspace state read by Prepared Workspace and Activation state Progress (forward-deployed row). Backend enriches/scrapes public facts autonomously after Hydrate — no Meta/ESP affordances in Tower; view staging status chips on In-flight activations if shown. No client PII required yet.
 
 **Criteria — when:** Seed inputs landed.  
 **Conditions:** Templates available; public facts readable; no-login artifact staged.
@@ -44,9 +44,11 @@
 |---|---|---|---|
 | Activation & forward-deploy | Module | **new** | Capture → stage |
 | In-flight activations | Block | **new** | Captured firm **rows** |
-| Forward-deploy | Block | **new** | **Button** opens hydrate |
+| Forward-deploy | Block | **new** | **Button** — opens forward-deploy form |
 | Template version | Block | **new** | Published Engagement template **dropdown** |
-| Hydrate | Block | **new** | **Primary button** — stages Prepared Workspace |
+| Public firm-facts / brand fields | Block | **new** | Text / package **fields** on forward-deploy form |
+| Hydrate | Block | **new** | **Primary button** — stages Prepared Workspace (read by Prepared Workspace + Activation state) |
+| Staging status chips | Block | **new** | **View** chips — backend enrich/scrape progress (if shown) |
 | Prepared Workspace | Module | **new** | No-login artifact (downstream) |
 | Configuration libraries | Module | **new** (template source) | Published templates only |
 
@@ -75,7 +77,7 @@
 
 **Q:** How do I secure database authorization plus escrow acceptance?
 
-**Clarity:** On Prepared Workspace, view Authorize book and Accept terms completion chips (green only after consultant primary-button commits). Operator does not fake-complete those chips. On Activation state, open **Progress** and view authorize-book / escrow-held / running checklist rows; on a stalled row, click **Jump to** the blocking module. Running opens only when both hard-input rows are green — Commercial holds the escrow terms the consultant accepted.
+**Clarity:** On Prepared Workspace, view Authorize book and Accept terms completion chips (green only after consultant primary-button commits). Operator does not fake-complete those chips. On Activation state, click **Progress** and view authorize-book / escrow-held / running checklist rows; on a stalled row, click **Jump to** the blocking module. Running opens only when both hard-input rows are green — Commercial holds the escrow terms the consultant accepted.
 
 **Criteria — when:** After readiness is legible.  
 **Conditions:** Both hard inputs required; Commercial holds escrow terms.

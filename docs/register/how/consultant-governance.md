@@ -33,7 +33,7 @@
 
 **Q:** How do I see what is armed or active under my name?
 
-**Clarity:** Starting from Board, view Client rows with Phase signal chips for what is in motion. Click a Client row to open Client workspace; open **Engagement record** (Activity) panel and view chronology rows of what already fired — record only, not authorship. Armed / Active pack state is authored on Firm operations bind (operator); Board only shows the inhabited result.
+**Clarity:** Starting from Board, view Client rows with Phase signal chips for what is in motion. Click a Client row to open Client workspace; click **Engagement record** (Activity) panel and view chronology rows of what already fired — record only, not authorship. Armed / Active pack state is authored on Firm operations bind (operator); Board only shows the inhabited result.
 
 **Criteria — when:** Anytime after running.  
 **Conditions:** Engagement record is a record, not a decision brain; packs remain operator-authored.
@@ -43,7 +43,7 @@
 | Board | Module | **existing** | Client row list |
 | Client row / Phase signal | Block | **existing** | **View** chip — reads runtime phase |
 | Client workspace | Modal / pane | **existing** | Open from Client row |
-| Engagement record (Activity) | Block | **existing** | Chronology **rows** (view) — reads stream / attempt history |
+| Engagement record (Activity) | Block | **existing** | **Panel** tab — chronology **rows** (view) — reads stream / attempt history |
 
 **Requirements:** Sequence health detail may also appear on operator Firm health — consultant sees firm-scoped inhabit only.
 
@@ -53,7 +53,7 @@
 
 **Q:** How do I halt any outreach I won't stand behind?
 
-**Clarity:** On Board or Client workspace, click **Halt outreach**. On Halt outreach modal, choose scope with the segmented control (**This contact** / **Firm book**), optionally type a reason, then click **Confirm halt** (primary button). That commit writes halt/silence state read by engagement runners and Firm operations bind Send gates — further automatic firm→client sends stop. Halt is refusal under my license — not editing a house template in Configuration libraries.
+**Clarity:** On Board or Client workspace, click **Halt outreach**. On Halt outreach modal, click **This contact** or **Firm book** on the scope segmented control, optionally type a reason, then click **Confirm halt** (primary button). That commit writes halt/silence state read by engagement runners and Firm operations bind Send gates — further automatic firm→client sends stop. Halt is refusal under my license — not editing a house template in Configuration libraries.
 
 **Criteria — when:** When the consultant refuses illegal or unethical outreach (hard human gate).  
 **Conditions:** Halt is available without opening Configuration libraries; bound packs respect silence/halt.

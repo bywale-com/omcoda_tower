@@ -49,7 +49,7 @@ machinery back under Consultant.
 
 **Q:** How do I connect my contact book?
 
-**Clarity:** Starting from Prepared Workspace, click **Authorize book**. On Authorize book modal, choose Connect CRM / grant database access (or Upload / confirm assisted import), then click **Authorize** (primary button). That commit writes book-handover state read by Book readiness Audits and Activation state Progress (authorize-book row). When the assisted path already holds the list: Starting from Contacts, open Imports, click the imported batch row, and click **Confirm book for Tower** so the same handover state is set — without authoring sequences.
+**Clarity:** Starting from Prepared Workspace, click **Authorize book**. On Authorize book modal, click Connect CRM / grant database access (or Upload / confirm assisted import), then click **Authorize** (primary button). That commit writes book-handover state read by Book readiness Audits and Activation state Progress (authorize-book row). When the assisted path already holds the list: Starting from Contacts, click **Imports**, click the imported batch row, and click **Confirm book for Tower** so the same handover state is set — without authoring sequences.
 
 **Criteria — when:** During activation (ALG) or after assisted provision when the book must be confirmed.  
 **Conditions:** Prepared Workspace is staged; Authorize book is available; or Contacts already holds the assisted import.
@@ -70,7 +70,7 @@ machinery back under Consultant.
 
 **Q:** How do I accept that outreach runs under my license and escrow?
 
-**Clarity:** On Prepared Workspace, click **Accept terms**. On Accept terms modal, open License acknowledgement, choose the authorizing licensee from the identity dropdown (or confirm the named licensee), read Escrow terms panel, check the acknowledgment checkbox, then click **Accept** (primary button). That commit writes license+escrow acceptance read by Commercial (instrument held) and Activation state Progress (escrow-held / running gates). Not a settings screen I maintain later.
+**Clarity:** On Prepared Workspace, click **Accept terms**. On Accept terms modal, click **License acknowledgement** to expand it, select the authorizing licensee from the identity dropdown (or confirm the named licensee), view Escrow terms panel rows, check the acknowledgment checkbox, then click **Accept** (primary button). That commit writes license+escrow acceptance read by Commercial (instrument held) and Activation state Progress (escrow-held / running gates). Not a settings screen I maintain later.
 
 **Criteria — when:** At the activation hard-input step, after readiness is legible.  
 **Conditions:** Escrow terms presented; license acknowledgement explicit; consultant completes Accept terms.
@@ -102,7 +102,7 @@ machinery back under Consultant.
 
 **Q:** How do house-authored packs bound to my firm keep the book worked?
 
-**Clarity:** They don't live in my workspace. On the operator desk, Firm operations bind already has packs picked from Bind packs dropdowns and set Armed / Active — engagement and eligibility run from those published versions without me authoring them. On Board I only click Client rows and view Phase signal chips (inhabit result). I never open Configuration libraries or Hub Automations / Agents to produce motion.
+**Clarity:** They don't live in my workspace. On the operator desk, Firm operations bind already has packs picked from Bind packs dropdowns and set Armed / Active — engagement and eligibility proceed from those published versions without me authoring them. On Board I only click Client rows and view Phase signal chips (inhabit result). I never open Configuration libraries or Hub Automations / Agents to produce motion.
 
 **Criteria — when:** Continuously after the firm is running.  
 **Conditions:** Firm operations bind has active packs; Configuration libraries authored upstream; consultant is not editing Hub Automations / Agents to produce motion.
@@ -123,7 +123,7 @@ opt-in → nudge → reactivation · touchpoint refresh · eligibility re-evalua
 
 **Q:** How do I receive booked meetings on Meetings and open each with a live brief?
 
-**Clarity:** Starting from Meetings, click a booked Meeting row to open Meeting. On Meeting, open the **Live brief** panel to view current fact rows and evaluative signal chips before I join. On Board, the same Client row shows a ready-for-meeting Phase signal chip without me having enrolled a sequence. Booking was written by contact Booking confirm (bound packs) — consultant only receives.
+**Clarity:** Starting from Meetings, click a booked Meeting row to open Meeting. On Meeting, click **Live brief** panel to view current fact rows and evaluative signal chips before I join. On Board, the same Client row shows a ready-for-meeting Phase signal chip without me having enrolled a sequence. Booking was written by contact Booking confirm (bound packs) — consultant only receives.
 
 **Criteria — when:** When an eligible contact books.  
 **Conditions:** Meeting invitation was sent by bound engagement packs; Live brief re-computes on write-back; consultant did not manually enroll the sequence.
@@ -144,7 +144,7 @@ opt-in → nudge → reactivation · touchpoint refresh · eligibility re-evalua
 
 **Q:** How do I never set up Automations, Agents, or engagement templates?
 
-**Clarity:** Firm primary nav exposes Board, Meetings, Contacts, Client workspace — not Configuration libraries, Bind packs, or pack editors. Starting from Board or Meetings I only click Client / Meeting rows and open Live brief / Halt outreach. Pack authorship stays on the operator desk (Configuration libraries → Publish version; Firm operations bind → Bind). Today's Hub Automations / Hub Agents inside the firm shell is **existing-wrong-seat** revision debt — not this outcome's path.
+**Clarity:** Firm primary nav exposes Board, Meetings, Contacts, Client workspace — not Configuration libraries, Bind packs, or pack editors. Starting from Board or Meetings I only click Client / Meeting rows and click **Live brief** / **Halt outreach**. Pack authorship stays on the operator desk (Configuration libraries → Publish version; Firm operations bind → Bind). Today's Hub Automations / Hub Agents inside the firm shell is **existing-wrong-seat** revision debt — not this outcome's path.
 
 **Criteria — when:** Always under ALG application.  
 **Conditions:** Consultant nav does not expose pack authorship as a required job; operator bind is what arms the firm.

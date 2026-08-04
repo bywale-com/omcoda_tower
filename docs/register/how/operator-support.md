@@ -34,7 +34,7 @@
 
 **Q:** How do I work the Ticket queue?
 
-**Clarity:** Starting from Customer support, open Ticket queue and click an open Ticket row for a running firm; row chips show firm, severity, source, and current owner.
+**Clarity:** Starting from Customer support, click **Ticket queue** and click an open Ticket row for a running firm; row chips show firm, severity, source, and current owner.
 
 **Criteria — when:** Tickets exist.  
 **Conditions:** House-global queue; firm identity on each row.
@@ -51,17 +51,17 @@
 
 **Q:** How do I open a Ticket with that firm's Support context (bind, health, commercial)?
 
-**Clarity:** On Ticket, open the **Support context** pane. Click tabs for Firm operations bind, Firm health, Commercial / escrow, Activation state, and recent Audit trail events for that tenancy — read/ops without leaving the ticket. Tab selection is view chrome; linked Jump controls open the scoped per-tenancy module when a fix is needed.
+**Clarity:** On Ticket, click **Support context** to open the pane. Click tabs for Firm operations bind, Firm health, Commercial / escrow, Activation state, and recent Audit trail events for that tenancy — view scoped context rows without leaving the ticket. Tab selection is view chrome; click **Jump to** on a linked control to open the scoped per-tenancy module when a fix is needed.
 
 **Criteria — when:** Ticket selected.  
-**Conditions:** Context is read/ops for this firm only; no cross-firm leak in the pane.
+**Conditions:** Context is view-only for this firm only; no cross-firm leak in the pane.
 
 | UI | Kind | Status | Affordance |
 |---|---|---|---|
 | Ticket | Modal | **new** | Ticket workspace |
 | Support context | Block | **new** | **Tabs** for bind / health / commercial / activation / audit |
 | Jump to scoped module | Block | **new** | Link control → per-tenancy fix surface |
-| Firm operations bind / Firm health / Commercial / Activation state / Audit trail | Modules (linked) | **new** | Downstream ops targets |
+| Firm operations bind / Firm health / Commercial / Activation state / Audit trail | Modules (linked) | **new** | Linked per-tenancy fix surfaces (Jump targets) |
 
 ---
 
@@ -69,7 +69,7 @@
 
 **Q:** How do I resolve so the Consultant's firm keeps running?
 
-**Clarity:** On Ticket, click the linked per-tenancy action (re-bind, restore health, commercial unblock), apply the fix on that scoped control, return to the Ticket, and click Resolve; Consultant Access / Board / Meetings keep working without the firm authoring packs.
+**Clarity:** On Ticket, click the linked per-tenancy **Jump to** control (re-bind, restore health, commercial unblock), apply the fix on that scoped control, return to the Ticket, and click **Resolve** (primary button); Consultant Access / Board / Meetings keep working without the firm authoring packs.
 
 **Criteria — when:** Root cause addressed.  
 **Conditions:** Resolution auditable; Consultant remains receive/govern only.

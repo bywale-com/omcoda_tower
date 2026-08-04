@@ -21,7 +21,7 @@
 
 **Q:** How do I see engagement health scoped to one firm?
 
-**Clarity:** Starting from Firm health, open **Sequence health** and **Engagement health** panels and view status rows for this tenancy. Click a failing Sequence row to open **Sequence detail** with stuck reason, last runner event, and channel gate chips. Click **Open support context** when Support needs the same firm scope on a Ticket.
+**Clarity:** Starting from Firm health, click **Sequence health** and **Engagement health** panels and view status rows for this tenancy. Click a failing Sequence row to open **Sequence detail** with stuck reason, last runner event, and channel gate chips. Click **Open support context** when Support needs the same firm scope on a Ticket.
 
 **Criteria — when:** Drill from Oversight or direct per-tenancy open.  
 **Conditions:** Scoped to one firm; actionable for Support restore.
@@ -35,4 +35,4 @@
 | Open support context | Block | **new** | **Button** → Customer support Ticket scope |
 | Customer support | Module | **new** (downstream) | Ticket queue |
 
-**Requirements:** Deliverability / runner signals at process leaf. Consultant Board is inhabit only — not this ops surface.
+**Requirements:** Deliverability / runner signals at process leaf. Consultant Board is inhabit only — not this operator health surface.
