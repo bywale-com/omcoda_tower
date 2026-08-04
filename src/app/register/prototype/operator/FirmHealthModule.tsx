@@ -40,10 +40,31 @@ const SEQUENCES = [
   },
 ] as const;
 
+const FIRM_HEALTH_ROWS = [
+  {
+    firmId: DEMO_FIRMS[0].id,
+    activeSequences: 3,
+    sendGateHolds: 4,
+    replyRate: "11%",
+  },
+  {
+    firmId: DEMO_FIRMS[1].id,
+    activeSequences: 3,
+    sendGateHolds: 9,
+    replyRate: "7%",
+  },
+  {
+    firmId: DEMO_FIRMS[2].id,
+    activeSequences: 2,
+    sendGateHolds: 1,
+    replyRate: "15%",
+  },
+] as const;
+
 export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleProps) {
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Firm health", focusedEntry, hoveredEntry);
-  const firm = DEMO_FIRMS[0];
+  const [selectedFirmId, setSelectedFirmId] = useState(FIRM_HEALTH_ROWS[0].firmId);
   const [selectedId, setSelectedId] = useState(SEQUENCES[0].id);
 
   useEffect(() => {
@@ -53,10 +74,13 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
       focusedEntry.label === "Sequence detail" ||
       focusedEntry.label === "Engagement health"
     ) {
+      setSelectedFirmId(FIRM_HEALTH_ROWS[0].firmId);
       setSelectedId(SEQUENCES[0].id);
     }
   }, [focusedEntry]);
 
+  const healthRow = FIRM_HEALTH_ROWS.find((r) => r.firmId === selectedFirmId) ?? FIRM_HEALTH_ROWS[0];
+  const firm = DEMO_FIRMS.find((f) => f.id === healthRow.firmId) ?? DEMO_FIRMS[0];
   const selected = SEQUENCES.find((s) => s.id === selectedId) ?? SEQUENCES[0];
 
   return (
@@ -80,7 +104,27 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
               overflowY: "auto",
             }}
           >
-            <div style={sectionLabelStyle(t)}>Sequence health</div>
+            <div style={sectionLabelStyle(t)}>Firm health tenancies</div>
+            {FIRM_HEALTH_ROWS.map((row) => {
+              const listFirm = DEMO_FIRMS.find((f) => f.id === row.firmId)!;
+              return (
+                <button
+                  key={row.firmId}
+                  type="button"
+                  onClick={() => {
+                    setSelectedFirmId(row.firmId);
+                    setSelectedId(SEQUENCES[0].id);
+                  }}
+                  style={navBtnStyle(t, row.firmId === selectedFirmId)}
+                >
+                  <div style={{ fontWeight: 600 }}>{listFirm.name}</div>
+                  <div style={{ fontSize: 10, color: t.textDim, marginTop: 2 }}>
+                    {listFirm.health} · {row.activeSequences} sequences
+                  </div>
+                </button>
+              );
+            })}
+            <div style={{ ...sectionLabelStyle(t), marginTop: 8 }}>Sequences under firm</div>
             <div data-register-surface="Sequence health">
               {SEQUENCES.map((seq) => (
                 <button
@@ -111,7 +155,7 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
             }}
           >
             <div style={{ fontSize: 12, color: t.textMuted }}>
-              Tenancy slice · <strong style={{ color: t.textPrimary }}>{firm.name}</strong>
+              Selected firm · <strong style={{ color: t.textPrimary }}>{firm.name}</strong> · {firm.stage}
             </div>
 
             {surfaceBlock(
@@ -125,9 +169,9 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
                   {[
-                    { k: "Active sequences", v: "3" },
-                    { k: "Send-gate holds", v: "4" },
-                    { k: "7d reply rate", v: "11%" },
+                    { k: "Active sequences", v: String(healthRow.activeSequences) },
+                    { k: "Send-gate holds", v: String(healthRow.sendGateHolds) },
+                    { k: "7d reply rate", v: healthRow.replyRate },
                   ].map((tile) => (
                     <div
                       key={tile.k}
