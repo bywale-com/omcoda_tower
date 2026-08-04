@@ -4,10 +4,13 @@
  */
 import { useEffect, useState } from "react";
 import { BoardPanel } from "../../components/BoardPanel";
+import { ClientView } from "../../components/ClientView";
+import { ContactView } from "../../components/ContactView";
 import type { Tokens } from "../../components/tokens";
 import { DEFAULT_SIDEBAR_WIDTH } from "../../constants/layout";
 import { AuditProvider } from "../../context/AuditContext";
 import { AutomationProvider } from "../../context/AutomationContext";
+import { PanelProvider } from "../../context/PanelContext";
 import { TaskProvider } from "../../context/TaskContext";
 import type { HubToolRef } from "../../data/hub";
 import type { ConsultantTask } from "../../data/tasks";
@@ -84,6 +87,7 @@ export function ConsultantPrototypeScene({
   const [activeContactId, setActiveContactId] = useState<string | null>(null);
   const [bookHalted, setBookHalted] = useState(false);
   const [haltedContactIds, setHaltedContactIds] = useState<Set<string>>(() => new Set());
+  const [isPanelOpen, setIsPanelOpen] = useState(true);
 
   useEffect(() => {
     if (!focusedEntry || focusedEntry.desk !== "consultant") return;
@@ -235,16 +239,35 @@ export function ConsultantPrototypeScene({
                       style={{
                         flex: 1,
                         minWidth: 0,
+                        minHeight: 0,
                         display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        background: t.hoverBg,
-                        color: t.textMuted,
-                        fontSize: 12,
-                        padding: 16,
+                        flexDirection: "column",
+                        overflow: "hidden",
+                        background: t.bgPrimary,
                       }}
                     >
-                      Workspace — select a client or contact
+                      <PanelProvider
+                        isPanelOpen={isPanelOpen}
+                        togglePanel={() => setIsPanelOpen((o) => !o)}
+                        openPanel={() => setIsPanelOpen(true)}
+                      >
+                        {module === "Contacts" ? (
+                          activeContactId ? (
+                            <ContactView contactId={activeContactId} t={t} />
+                          ) : (
+                            <WorkspacePrompt t={t} text="Select a contact from the list" />
+                          )
+                        ) : activeClientId ? (
+                          <ClientView
+                            clientId={activeClientId}
+                            t={t}
+                            isDark={isDark}
+                            onOpenClientDataFullPage={() => setIsPanelOpen(true)}
+                          />
+                        ) : (
+                          <WorkspacePrompt t={t} text="Select a client from the board" />
+                        )}
+                      </PanelProvider>
                     </div>
                   </div>
                 </AutomationProvider>
@@ -276,6 +299,25 @@ export function ConsultantPrototypeScene({
           </RegisterSurfaceMount>
         ) : null}
       </div>
+    </div>
+  );
+}
+
+function WorkspacePrompt({ t, text }: { t: Tokens; text: string }) {
+  return (
+    <div
+      style={{
+        flex: 1,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: t.hoverBg,
+        color: t.textMuted,
+        fontSize: 12,
+        padding: 16,
+      }}
+    >
+      {text}
     </div>
   );
 }
