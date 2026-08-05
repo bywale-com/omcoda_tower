@@ -34,7 +34,6 @@ export function PrototypeAntApp() {
   const [mode, setMode] = useState<AntThemeMode>(() => loadAntThemeMode());
   const [desk, setDesk] = useState<AntDesk>("consultant");
   const themeConfig = useMemo(() => buildTowerAntTheme(mode), [mode]);
-  const { token } = antTheme.useToken();
 
   return (
     <ConfigProvider theme={themeConfig}>
