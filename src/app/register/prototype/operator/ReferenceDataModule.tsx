@@ -1,5 +1,7 @@
 /**
  * Reference data — Reference tables → edit/import → Publish version modal.
+ * Furnish: dual-check / schema-contract / publish-group readiness glance (Confirm gated).
+ * Densify: light ingestion stage rail (pipe detect→…→dual-check).
  */
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -25,13 +27,51 @@ type TableMeta = {
   id: AutomationConstantIndustryId;
   version: string;
   status: "Published" | "Draft";
+  schemaOk: boolean;
+  dualCheckOk: boolean;
+  publishGroupOk: boolean;
+  stage: "detect" | "fetch" | "parse" | "validate" | "draft" | "dual-check" | "ready";
 };
 
 const TABLES: TableMeta[] = [
-  { id: "immigration", version: "v2.4", status: "Published" },
-  { id: "legal", version: "v0.1", status: "Draft" },
-  { id: "financial_services", version: "v0.0", status: "Draft" },
+  {
+    id: "immigration",
+    version: "v2.4",
+    status: "Published",
+    schemaOk: true,
+    dualCheckOk: true,
+    publishGroupOk: true,
+    stage: "ready",
+  },
+  {
+    id: "legal",
+    version: "v0.1",
+    status: "Draft",
+    schemaOk: true,
+    dualCheckOk: false,
+    publishGroupOk: true,
+    stage: "dual-check",
+  },
+  {
+    id: "financial_services",
+    version: "v0.0",
+    status: "Draft",
+    schemaOk: false,
+    dualCheckOk: false,
+    publishGroupOk: false,
+    stage: "validate",
+  },
 ];
+
+const PIPE_STAGES = [
+  "detect",
+  "fetch",
+  "parse",
+  "validate",
+  "draft",
+  "dual-check",
+  "ready",
+] as const;
 
 export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModuleProps) {
   const hoveredEntry = resolveHoveredEntry(hoveredId);
@@ -48,24 +88,42 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
     if (
       focusedEntry.label === "Reference tables" ||
       focusedEntry.label === "Import criteria" ||
-      focusedEntry.label === "Publish version"
+      focusedEntry.label === "Publish version" ||
+      focusedEntry.label === "Dual-check glance" ||
+      focusedEntry.label === "Ingestion stage rail"
     ) {
       setTableId("immigration");
     }
-    if (focusedEntry.label === "Import criteria") setImportOpen(true);
-    if (focusedEntry.label === "Publish version") setPublishOpen(true);
+    if (focusedEntry.label === "Import criteria" || focusedEntry.label === "Ingestion stage rail") {
+      setImportOpen(true);
+    }
+    if (focusedEntry.label === "Publish version" || focusedEntry.label === "Dual-check glance") {
+      setPublishOpen(true);
+    }
   }, [focusedEntry]);
 
   const meta = tables.find((row) => row.id === tableId) ?? tables[0];
   const industry = AUTOMATION_CONSTANT_INDUSTRIES.find((i) => i.id === tableId);
   const rows = useMemo(() => getConstantsForIndustry(tableId).slice(0, 8), [tableId]);
+  const publishReady = meta.schemaOk && meta.dualCheckOk && meta.publishGroupOk;
 
   function onConfirmPublish() {
+    if (!publishReady) return;
     const next = (parseFloat(meta.version.replace("v", "")) + 0.1).toFixed(1);
     const version = `v${next}`;
     setTables((prev) =>
       prev.map((row) =>
-        row.id === tableId ? { ...row, version, status: "Published" as const } : row,
+        row.id === tableId
+          ? {
+              ...row,
+              version,
+              status: "Published" as const,
+              schemaOk: true,
+              dualCheckOk: true,
+              publishGroupOk: true,
+              stage: "ready",
+            }
+          : row,
       ),
     );
     setPublishOpen(false);
@@ -75,11 +133,39 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
   function onImport() {
     setTables((prev) =>
       prev.map((row) =>
-        row.id === tableId ? { ...row, status: "Draft" as const } : row,
+        row.id === tableId
+          ? {
+              ...row,
+              status: "Draft" as const,
+              schemaOk: true,
+              dualCheckOk: false,
+              publishGroupOk: row.id !== "financial_services",
+              stage: "dual-check",
+            }
+          : row,
       ),
     );
     setImportOpen(false);
     setImportFile("");
+  }
+
+  function advanceStage() {
+    const idx = PIPE_STAGES.indexOf(meta.stage);
+    if (idx < 0 || idx >= PIPE_STAGES.length - 1) return;
+    const next = PIPE_STAGES[idx + 1];
+    setTables((prev) =>
+      prev.map((row) => {
+        if (row.id !== tableId) return row;
+        return {
+          ...row,
+          stage: next,
+          schemaOk: next === "validate" || next === "draft" || next === "dual-check" || next === "ready" ? true : row.schemaOk,
+          dualCheckOk: next === "ready",
+          publishGroupOk: next === "ready" || next === "dual-check" ? true : row.publishGroupOk,
+          status: next === "ready" ? row.status : ("Draft" as const),
+        };
+      }),
+    );
   }
 
   const modalBackdrop = {
@@ -174,6 +260,56 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
                 meta.status === "Published" ? "success" : "amber",
               )}
             </div>
+
+            {surfaceBlock(
+              t,
+              "Ingestion stage rail",
+              focus.labelFocused("Ingestion stage rail"),
+              focus.labelHovered("Ingestion stage rail"),
+              <>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 8,
+                    marginBottom: 8,
+                  }}
+                >
+                  <span style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary }}>
+                    Ingestion run
+                  </span>
+                  {statusChip(t, `stage · ${meta.stage}`, meta.stage === "ready" ? "success" : "amber")}
+                </div>
+                <p style={{ margin: "0 0 10px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
+                  Detect → Fetch → Parse → Validate → Draft → Dual-check → Publish. Failed stages stay
+                  Draft and never become published-current.
+                </p>
+                <div
+                  data-register-surface="Ingestion stage rail"
+                  style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 10 }}
+                >
+                  {PIPE_STAGES.map((stage) => {
+                    const idx = PIPE_STAGES.indexOf(meta.stage);
+                    const sIdx = PIPE_STAGES.indexOf(stage);
+                    const done = sIdx <= idx;
+                    return statusChip(
+                      t,
+                      stage,
+                      done ? (stage === meta.stage && stage !== "ready" ? "amber" : "success") : "muted",
+                    );
+                  })}
+                </div>
+                <button
+                  type="button"
+                  disabled={meta.stage === "ready"}
+                  onClick={advanceStage}
+                  style={secondaryBtnStyle(t)}
+                >
+                  {meta.stage === "ready" ? "Ready for Publish" : "Advance stage"}
+                </button>
+              </>,
+            )}
 
             <div
               style={{
@@ -276,16 +412,36 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
             {surfaceBlock(
               t,
               "Publish version",
-              focus.labelFocused("Publish version"),
-              focus.labelHovered("Publish version"),
+              focus.labelFocused("Publish version") || focus.labelFocused("Dual-check glance"),
+              focus.labelHovered("Publish version") || focus.labelHovered("Dual-check glance"),
               <>
                 <div style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary, marginBottom: 6 }}>
                   Publish version
                 </div>
                 <p style={{ margin: "0 0 10px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
                   Current {meta.version}. Evaluation packs in Configuration libraries score against the
-                  published reference snapshot.
+                  published reference snapshot. Confirm stays disabled until dual-check chips are green.
                 </p>
+                <div
+                  data-register-surface="Dual-check glance"
+                  style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 10 }}
+                >
+                  {statusChip(
+                    t,
+                    meta.schemaOk ? "schema-contract · ok" : "schema-contract · red",
+                    meta.schemaOk ? "success" : "danger",
+                  )}
+                  {statusChip(
+                    t,
+                    meta.dualCheckOk ? "dual-check · ok" : "dual-check · pending",
+                    meta.dualCheckOk ? "success" : "amber",
+                  )}
+                  {statusChip(
+                    t,
+                    meta.publishGroupOk ? "publish-group · ok" : "publish-group · blocked",
+                    meta.publishGroupOk ? "success" : "danger",
+                  )}
+                </div>
                 <button type="button" onClick={() => setPublishOpen(true)} style={secondaryBtnStyle(t)}>
                   Publish version…
                 </button>
@@ -347,7 +503,7 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
             onClick={(e) => e.stopPropagation()}
             style={{
               width: "100%",
-              maxWidth: 400,
+              maxWidth: 420,
               background: t.bgPrimary,
               border: `1px solid ${t.border}`,
               borderRadius: 8,
@@ -361,6 +517,31 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
               Publish {industry?.label ?? tableId} — Configuration libraries evaluation packs consume this
               version.
             </p>
+            <div
+              data-register-surface="Dual-check glance"
+              style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}
+            >
+              {statusChip(
+                t,
+                meta.schemaOk ? "schema-contract · ok" : "schema-contract · red",
+                meta.schemaOk ? "success" : "danger",
+              )}
+              {statusChip(
+                t,
+                meta.dualCheckOk ? "dual-check · ok" : "dual-check · pending",
+                meta.dualCheckOk ? "success" : "amber",
+              )}
+              {statusChip(
+                t,
+                meta.publishGroupOk ? "publish-group · ok" : "publish-group · blocked",
+                meta.publishGroupOk ? "success" : "danger",
+              )}
+            </div>
+            {!publishReady ? (
+              <p style={{ margin: "0 0 12px", fontSize: 11, color: t.amber }}>
+                Confirm disabled until schema contract, dual-check, and publish-group chips are green.
+              </p>
+            ) : null}
             <label style={{ display: "block", marginBottom: 14 }}>
               <span
                 style={{
@@ -391,8 +572,9 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
             <div style={{ display: "flex", gap: 8 }}>
               <button
                 type="button"
+                disabled={!publishReady}
                 onClick={onConfirmPublish}
-                style={primaryBtnStyle(t)}
+                style={primaryBtnStyle(t, !publishReady)}
               >
                 Confirm
               </button>
