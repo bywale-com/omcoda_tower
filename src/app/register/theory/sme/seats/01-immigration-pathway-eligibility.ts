@@ -128,7 +128,7 @@ export const seat: SmeSeat = {
         { title: "Do I need a language test to immigrate to Canada? — IRCC Help Centre", url: "https://ircc.canada.ca/english/helpcentre/answer.asp?qnum=638" },
       ],
       implementationProblem: "Forms may collect “scores” while IRCC only accepts named products and refuses expired results — claimed CLB can outlive verifiable currency.",
-      implementation: "On Nudge form, enter CLB-equivalent bands with score-band dropdowns, test product name with a dropdown, and test date with a date form field. On Client Brief, click the Manage panel to view result-verification number fields and certificate-file rows. On Analysis, view language-expired chips on language-dependent pathway and CRS rows when test date + 2 years is past the profile/application-relevant window.",
+      implementation: "On Nudge form, enter CLB-equivalent bands with score-band dropdowns, test product name with a dropdown, and test date with a date form field; view helper text under the test-date field clarifying exam day vs validity / still-valid window (no certificate upload). On Client Brief, click the Manage panel to view result-verification number fields and certificate-file rows. On Analysis, view language-expired chips on language-dependent pathway and CRS rows when test date + 2 years is past the profile/application-relevant window.",
       implementationAdds: ["clb-equivalent", "language-expired", "ircc-test-product"],
       implementationPlant: "not_done",
       status: "verified",

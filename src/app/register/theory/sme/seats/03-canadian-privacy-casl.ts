@@ -21,7 +21,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Firm-branded Opt-in / Nudge / reactivation can fire email or SMS without a visible hard gate that consent, identification, and unsubscribe are all present. Contacts absorb unlawful CEMs; Om Coda absorbs CRTC exposure on the send path.",
       implementation: "Starting from Firm operations bind, click a Firm row to open firm detail, then open the Send gates panel. View the CEM triad required readiness row with consent, identification, and unsubscribe chips; the Armed / Active segmented control cannot ship firm-branded email or SMS until the row passes.\nOn Opt-in message and Nudge message, view firm identification text and a working unsubscribe link/button on every CEM; phase never drops the triad.",
       implementationAdds: ["cem-triad", "consent", "identification", "unsubscribe"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -37,7 +37,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Channel pickers treat SMS as a lighter consent regime than email. Operators escalate to SMS as a shortcut; form duties get under-specified on short messages.",
       implementation: "Starting from Firm operations bind, click a Firm row to open firm detail, then open the Send gates panel. View email and SMS chips under one CEM class readiness row; channel choice does not relax consent.\nOn Opt-in message and Nudge message, view STOP / Unsubscribe reply text or a linked unsubscribe page when the channel dropdown is SMS; view a clear unsubscribe link when the channel dropdown is Email.",
       implementationAdds: ["cem-class", "channel-email", "channel-sms", "stop-reply", "unsubscribe-link"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -53,7 +53,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Consent request can be read as opt-out or pre-checked Agree. Silence-as-yes would mint unlawful express consent that later nudges ride on.",
       implementation: "On Consent request, click Agree only after selecting an unchecked-by-default affirmative checkbox that discloses purpose, firm sender identity, and withdrawal right. Pre-checked checkboxes and silence-as-yes controls are not offered.",
       implementationAdds: ["express", "affirmative-agree", "unchecked-default"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -101,7 +101,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Phase model (opt-in → nudge → reactivation) is misread as graduating into form-exempt messaging after Agree. Post-Agree CEMs still need ID + unsubscribe.",
       implementation: "On Nudge message and reactivation CEM channel surfaces, view firm identification text and a readily performed unsubscribe link/button; Agree does not strip form.  \nStarting from Firm operations bind, click a Firm row to open firm detail, then open the Send gates panel; view form-duty readiness rows required on every post-Agree CEM, not only Opt-in message.",
       implementationAdds: ["form-duties-persist", "post-agree-cem"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -117,7 +117,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Agree currently reads as one consent that both opens CEM follow-up and deeper immigration-fact forms. Immigration facts are sensitive PI; CEM open-rate alone is not meaningful PIPEDA collection consent.",
       implementation: "On Consent request, view split disclosure panels for CASL CEM consent and PIPEDA collection purposes for self-reportable immigration facts.  \nOn Consent request, the Agree checkbox must include those collection-purpose chips before Nudge form or Update facts buttons open; CEM engagement alone does not open deeper forms.",
       implementationAdds: ["casl-cem-consent", "pipeda-collection-consent", "immigration-facts-purpose"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -133,7 +133,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Automations escalate email→SMS (or reverse) on a single Agree. Channel-limited consent is ignored; SMS rides on email-only grant.",
       implementation: "On Consent request, set Channel scope at Agree with a segmented control for Email, SMS, or disclosed multi-channel.  \nStarting from Firm operations bind, click a Firm row to open firm detail, then open the Send gates panel; SMS escalation shows a channel-scope deny chip unless an explicit SMS grant or multi-channel Agree exists. Email-only consent does not authorize SMS CEMs.",
       implementationAdds: ["channel-scope-email", "channel-scope-sms", "channel-scope-multi"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -149,7 +149,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Firm-branded value-add can under-identify who sends and on whose behalf. Contacts need firm accountability plus mailing/contact coords valid ≥60 days; Om Coda must not displace the firm as brand face.",
       implementation: "On Opt-in message and Nudge message, view the firm name row as the person on whose behalf the CEM is sent, with mailing/contact coordinate fields.  \nStarting from Firm operations bind, click a Firm row to open firm detail; view the Firm ID block and coordinate fields as bound CEM-template fields. Om Coda appears only as a send-platform chip where needed.",
       implementationAdds: ["on-whose-behalf-firm", "mailing-coords", "send-platform-disclosure"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -166,7 +166,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Silence stops outreach in product language but does not bind CRTC bars: free, one-step, mechanism valid ≥60 days, effect within 10 business days. Delayed honor leaves continuing CEMs after withdrawal.",
       implementation: "On Silence / Opt out, and in the Opt-in message / Nudge message footer, click a one-step no-cost unsubscribe button; on SMS channel surfaces, view STOP/Unsubscribe reply instructions. The mechanism shows a valid-through date at least 60 days after send.  \nStarting from Firm operations bind, click a Firm row to open firm detail, then open the Send gates panel; silenced contacts show a silenced deny chip that suppresses further CEMs immediately and never later than <=10 business days.",
       implementationAdds: ["unsubscribe-immediate", "unsubscribe-leq-10bd", "mechanism-valid-60d"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -181,7 +181,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Silence How centers in-touchpoint controls. Carrier-style STOP/Unsubscribe replies can be ignored or treated as softer than Silence / Opt out — uneven ledger.",
       implementation: "On Silence / Opt out state, view inbound STOP/Unsubscribe and equivalent keywords reflected as an authoritative silence chip for that SMS address — same ledger outcome as the in-message Silence / Opt out button.\nOn Audit trail, click a Consent event row to view SMS stop-keyword silence alongside touchpoint Silence / Opt out.",
       implementationAdds: ["sms-stop", "sms-unsubscribe-keyword", "silence-authoritative"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -196,7 +196,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Consent request offers Agree or Ignore. Treating Ignore as consent is unlawful; treating every Ignore as permanent silence may over-block lawful implied-consent follow-ups. Policy is unspoken.",
       implementation: "On Consent request, clicking Ignore records no express consent chip and no deeper collection grant; Ignore never maps to Agree.  \nOn Consent request, view the Ignore policy row showing whether firm policy also sets silenced-for-automatic-CEMs on Ignore. Silence / Opt out remains the intentional withdrawal button when policy does not auto-silence Ignore.",
       implementationAdds: ["ignore-no-express", "ignore-policy-silence", "ignore-not-agree"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {

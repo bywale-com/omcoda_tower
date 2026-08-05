@@ -13,7 +13,7 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 - [x] `sme-handoff-ready` → Function ∥ Wiring Function (sync on CROSS-CUTTING) — [`../sme/HANDOFF.md`](../sme/HANDOFF.md) · [`../sme/CROSS-CUTTING.md`](../sme/CROSS-CUTTING.md)
 - [x] `function-complete` → Enrichment
 - [x] `enrichment-complete` → Furnish
-- [ ] `furnish-written` → CT plant of Furnish
+- [ ] `furnish-written` → CT plant of Furnish (Contact planted; Consultant / Operator open)
 - [ ] `wiring-synced` → deep CT on cross-cutting surfaces
 - [ ] `ct-verify-green` → Translation
 
@@ -32,7 +32,7 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 | Wiring | Flow maps exist (login flows) — CTO twin pending |
 | Components | Holon tree live |
 | SME | **Pass2 + handoff + densified PM implementations** — 177 practice + 158 capability · affordance-grain impls in Register twins ([`../sme/implementation/DENSIFY-LAW.md`](../sme/implementation/DENSIFY-LAW.md)); CT / CTO Wiring absorb not started |
-| Enrichment / Furnish | **Paper** — 20 Can'ts + 20 Furnish × Consultant · Operator · Contact ([`enrichment/`](./enrichment/) · [`furnish/`](./furnish/)); CT plant of Furnish not started |
+| Enrichment / Furnish | Contact Furnish **CT-planted** (20) + Can't UI Needs closed; Consultant / Operator still paper ([`enrichment/`](./enrichment/) · [`furnish/`](./furnish/)) |
 | CT Plant | Not started — lo-fi click-through placeholder |
 | Verify scripts | Not shipped |
 
