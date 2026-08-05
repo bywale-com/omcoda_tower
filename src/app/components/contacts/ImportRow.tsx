@@ -18,10 +18,14 @@ export function ImportRow({
   item,
   isActive = false,
   t,
+  registerMode = false,
+  badge,
 }: {
   item: ContactImport;
   isActive?: boolean;
   t: Tokens;
+  registerMode?: boolean;
+  badge?: "Pending confirm" | "Confirmed";
 }) {
   const [hovered, setHovered] = useState(false);
   const isDocsHighlighted = useIsDocsTarget(IMPORT_ROW_HOLON.id);
@@ -61,7 +65,24 @@ export function ImportRow({
         {item.label}
       </span>
 
-      <span style={directoryRowMetaStyle(t)}>{item.importedAt}</span>
+      {registerMode && badge ? (
+        <span
+          style={{
+            flexShrink: 0,
+            fontSize: 9,
+            fontWeight: 700,
+            letterSpacing: "0.02em",
+            padding: "2px 5px",
+            borderRadius: 3,
+            background: badge === "Confirmed" ? t.accentBg : t.amberBg,
+            color: badge === "Confirmed" ? t.accent : t.amber,
+          }}
+        >
+          {badge}
+        </span>
+      ) : (
+        <span style={directoryRowMetaStyle(t)}>{item.importedAt}</span>
+      )}
     </div>
   );
 }

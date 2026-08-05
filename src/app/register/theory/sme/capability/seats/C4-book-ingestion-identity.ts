@@ -21,7 +21,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Imports that jump straight to Contacts mutation without recording what columns arrived make Field→Q-ID mapping unverifiable and break re-import honesty.",
       implementation: "On Imports, after Authorize book hand-over lands a file/export, click the land batch row to open Source header inventory (headers, sample cells, provenance timestamp) before Field→Q-ID map is enabled.  \nOn Book readiness, open Audits and start Audit run only from a batch with Source header inventory; Verdict list shows inventory-missing instead of mutating Contacts silently.",
       implementationAdds: ["source-header-inventory", "provenance-stamp"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -37,7 +37,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Product language jumps from CSV headers to Q-IDs; practice needs a stable contact layer so Book readiness and Evaluation packs do not share one brittle rename step.",
       implementation: "On Imports, open Field→Q-ID map and use the Canonical contact fields panel to map source columns into identity, display name, channel candidates, opaque attributes, and suppression flags before any Q-ID attach.  \nOn Book readiness → Audit run, choose the canonical batch layer; Verdict list labels failures against canonical fields, not raw header strings.",
       implementationAdds: ["canonical-contact", "opaque-attributes", "channel-candidates"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -53,7 +53,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Without versioned Field→Q-ID maps, shallow import leaves eligibility packs starved or silently guessing from free-text columns.",
       implementation: "On Imports, open Field→Q-ID map, edit column → Q-ID rows with transform and confidence dropdowns, then click Save map version for the land batch.  \nOn Book readiness → Audit run, select that map version; Verdict list shows attached Q-IDs and keeps unmapped evaluable candidates as Unmapped, not invented.",
       implementationAdds: ["field-q-id-map", "map-version", "unmapped", "transform", "confidence"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -68,7 +68,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Silent drop and over-eager Q-ID minting are both wrong; Imports must keep firm data without claiming evaluability.",
       implementation: "On Imports → Field→Q-ID map, set a column row to Unmapped using the mapping dropdown; commit still lands it as an opaque attribute on Contacts.  \nOn Imports, reopen the saved map version and click Promote on an opaque attribute row to attach a Q-ID later, then rerun Book readiness → Audit run without re-uploading the whole book.",
       implementationAdds: ["unmapped", "opaque-attributes", "promote-later"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -84,7 +84,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Matching and validators fight dirty strings if normalization is optional or per-surface.",
       implementation: "On Imports, open Normalized preview before Commit land to inspect trim, Unicode, email case policy, phone parse attempt, and empty-sentinel→null transformations.  \nOn Book readiness → Audit run, the batch picker exposes only the normalized layer; Verdict list links raw source through provenance without auditing raw strings.",
       implementationAdds: ["normalized-preview", "empty-sentinel-null", "staging-transforms"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -100,7 +100,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Garbage email strings create Audit theater; over-blocking at Imports hides salvageable rows behind hard fails.",
       implementation: "On Imports → Field→Q-ID map, open the Email hygiene chip on mapped email columns to mark Syntax-invalid or Channel-candidate after hygiene.  \nOn Book readiness → Audit run, run deliverability-class checks only for Channel-candidate emails; Verdict list shows Syntax-invalid as unreachable, never reachable.",
       implementationAdds: ["syntax-invalid", "channel-candidate", "email-hygiene"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -115,7 +115,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Phone match and SMS readiness diverge when one path uses raw strings and another assumes E.164.",
       implementation: "On Imports, use the Default region dropdown in Normalized preview and inspect Phone parse outcome chips showing E.164 on success and raw-retained on fail.  \nOn Book readiness → Audit run, phone validation-class reads those parse outcome chips; Verdict list refuses unparsed free text as if it were E.164.",
       implementationAdds: ["e164", "default-region", "phone-parse-outcome"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -131,7 +131,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Aggressive name parsing creates fake given/family fields that later look like Client Data facts.",
       implementation: "On Imports → Field→Q-ID map, mark Display name required and map it from Full Name or composed parts; Given and Family rows remain optional unless source columns exist.  \nOn Book readiness → Audit run, name-present reads the Display name field; Verdict list does not pass rows by invented Given/Family splits.",
       implementationAdds: ["display-name", "optional-name-parts"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -146,7 +146,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Partial mapping exists as a shallow flow; confidence gating is the missing practice control.",
       implementation: "On Imports → Field→Q-ID map, each column row shows a confidence chip (high / medium / low); medium/low rows enable the Confirm map checkbox before Save map version.  \nOn Authorize book completion path into Imports, Save map version stays disabled until required confirms land — high-confidence auto-suggest rows may prefill only.",
       implementationAdds: ["map-confidence", "confirm-map", "high", "medium", "low"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -162,7 +162,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Without an ingestion-owned key spine, Book readiness dedupe and Imports upsert invent competing identities.",
       implementation: "On Imports, open Match keys before Commit land and review the ordered policy chips normalized email → E.164 phone → source-row id that upsert into a stable Contact id.  \nOn Book readiness → Audit run, dedupe reads the same Contact id spine; Verdict list shows Duplicate of {Contact} without inventing a second key.",
       implementationAdds: ["match-email", "match-phone", "match-source-row-id", "contact-id"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -178,7 +178,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Auto fuzzy-merge looks smart and destroys reachability history; identity **new** surface must default fail-closed.",
       implementation: "On Imports or Contacts, open Possible same-person clusters and review scored cluster rows with Confirm merge and Keep separate buttons; score alone never auto-merges.  \nOn Book readiness → Audit run, identity checks list unresolved clusters; Verdict list marks those rows partial/unreachable without blocking unrelated reachable rows.",
       implementationAdds: ["possible-same-person", "confirm-merge", "keep-separate", "unresolved-identity"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -194,7 +194,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Naive overwrite on dedupe silently drops phones/emails and suppressions that Book readiness needs.",
       implementation: "On Contacts → Possible same-person clusters, click Confirm merge to open Survivorship preview showing channels kept if non-empty, suppressions OR-merged, conflicting scalars by newest provenance, and opaque attributes unioned.  \nOn Imports re-land, Match keys applies the same survivorship rules; Verdict list reflects the merged Contact id instead of last-write-wins channel loss.",
       implementationAdds: ["survivorship", "suppression-or-merge", "merge-preview"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -210,7 +210,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Book readiness discovers already-in-Tower too late if Imports never consulted the living directory.",
       implementation: "On Imports, open Match keys and scan row class chips Insert / Upsert / Duplicate-review against the living Contacts book before Commit land.  \nOn Book readiness → Audit run, already-in-Tower is a residual check; Verdict list shows the row class from land instead of performing primary resolution late.",
       implementationAdds: ["insert", "upsert", "duplicate-review", "already-in-tower"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -225,7 +225,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Identity resolution without conflict handling either forks people or hijacks the reachable channel.",
       implementation: "On Imports, click a Channel conflict chip when an upserted channel differs from the living Contact and choose Accept new, Keep existing, or Keep both as candidates.  \nOn Book readiness → Audit run, channel-match checks that chip; Verdict list holds sequence-ready closed when the armed channel is still disputed.",
       implementationAdds: ["channel-conflict", "accept-new", "keep-existing", "keep-both-candidates"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -240,7 +240,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Raw channel candidates cannot become sequence-ready; without named classes, Audit invents binary valid/invalid theater.",
       implementation: "On Book readiness, open Audits and start Audit run with the Email validation-class checklist (syntax → domain/MX-class → mailbox/deliverability-class when wired).  \nOn Verdict list, class outcome chips map to reachable / partial / unreachable; Imports → Field→Q-ID map supplied only Channel-candidate inputs.",
       implementationAdds: ["email-validation-class", "syntax", "domain-mx-class", "mailbox-deliverability-class", "reachable", "partial", "unreachable"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -256,7 +256,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Book readiness channel-match needs phone classes; ingestion currently stops at string presence.",
       implementation: "On Book readiness, open Audits and start Audit run with the Phone validation-class checklist (parse-valid → line-type-class → reachability-class when wired).  \nOn Verdict list, SMS-intended rows show Partial/Unreachable when line-type-class is incompatible; Contacts still retain the number as a channel candidate.",
       implementationAdds: ["phone-validation-class", "parse-valid", "line-type-class", "reachability-class"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -272,7 +272,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Authorize book land trigger without ingestion-complete lets Audits run on raw CSV.",
       implementation: "On Imports, view the Ingestion-complete status chip turning on only after Normalized preview, Match keys, and saved Field→Q-ID map version are all complete.  \nOn Book readiness → Audits, click Start Audit run only for Ingestion-complete batches; on Verdict list, view validation-class pending when checks are not wired.",
       implementationAdds: ["ingestion-complete", "validation-class-pending"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -288,7 +288,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Messy firm CSVs always contain bad rows; product needs quarantine, not false activation failure or silent poison.",
       implementation: "On Imports, click Commit land to commit Valid rows and send failed rows to Quarantine with reason-code chips (syntax, missing channel, map reject).  \nOn Book readiness → Audit run, Quarantine is excluded from reachable counts; Verdict list shows quarantined rows separately — view quarantined status; Contacts does not enroll quarantined rows.",
       implementationAdds: ["quarantine", "reason-codes", "valid-rows"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -304,7 +304,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Staging transforms that drop unknown booleans erase do-not-contact; over-interpreting them invents CASL.",
       implementation: "On Imports → Field→Q-ID map, set suppression-shaped columns to Opaque suppression flag in the Canonical contact fields panel during normalize.  \nOn Book readiness → Audit run, data-validity checks consume those flags; Verdict list shows suppression halt without Authorize book or Imports claiming CASL-lawful status.",
       implementationAdds: ["opaque-suppression-flags", "pass-through"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -318,7 +318,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Mapped Q-IDs without lineage look like Client Data answers and poison eligibility confidence.",
       implementation: "On Imports → Field→Q-ID map, each saved Q-ID attach stores Fact provenance fields source, batch id, map version, raw → transform → value, and landed-at.  \nOn Contacts / Client row, a provenance chip distinguishes Imported fact from Client-asserted fact; Book readiness → Verdict list reads but never upgrades that provenance class.",
       implementationAdds: ["fact-provenance", "imported-fact", "client-asserted", "batch-id", "map-version"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -335,7 +335,7 @@ export const seat: SmeSeat = {
       implementationProblem: "If Incremental sync appears as a V1 Imports control, firms and operators will treat sync lag as activation failure.",
       implementation: "On Authorize book hand-over into Imports, view the Sync posture chip (One-way land only / Incremental sync deferred (KU #7)); no V1 sync-complete button beside Field→Q-ID map.  \nOn Activation state → Progress, view running can open without sync-complete; currency uses re-hand-over upsert until CDC ships.",
       implementationAdds: ["incremental-sync-deferred", "one-way-land", "sync-complete-not-required"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "partial",
     },
     {
@@ -351,7 +351,7 @@ export const seat: SmeSeat = {
       implementationProblem: "A privileged OAuth pull that skips Imports normalization would mint a second, dirtier book path.",
       implementation: "On Authorize book / Imports, view future live-crm pull labeled as feeding the same pipeline cards: Source header inventory → Normalized preview → Field→Q-ID map → Match keys → Quarantine; V1 shows Vertical continuous pull deferred (KU #7).  \nOn Book readiness → Audit run, the batch picker uses the same Audit contract for file and future pull; Verdict list has no pull-specific bypass.",
       implementationAdds: ["vertical-oauth-pull-deferred", "same-ingestion-pipeline"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "partial",
     },
   ],

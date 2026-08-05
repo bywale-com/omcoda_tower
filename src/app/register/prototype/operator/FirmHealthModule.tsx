@@ -53,6 +53,7 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Firm health", focusedEntry, hoveredEntry);
   const [selectedFirmId, setSelectedFirmId] = useState(DEMO_FIRMS[0].id);
+  const [stickyFirmId, setStickyFirmId] = useState<string | null>(DEMO_FIRMS[3].id);
   const [detailId, setDetailId] = useState<string | null>(null);
   const [supportCue, setSupportCue] = useState<string | null>(null);
 
@@ -61,18 +62,30 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
     if (
       focusedEntry.label === "Sequence health" ||
       focusedEntry.label === "Sequence detail" ||
-      focusedEntry.label === "Engagement health"
+      focusedEntry.label === "Engagement health" ||
+      focusedEntry.label === "Firm-filter chip"
     ) {
-      setSelectedFirmId(DEMO_FIRMS[0].id);
+      setSelectedFirmId(DEMO_FIRMS[3].id);
+      setStickyFirmId(DEMO_FIRMS[3].id);
       setDetailId(SEQUENCES.find((s) => s.health !== "Healthy")?.id ?? SEQUENCES[0].id);
     }
     if (focusedEntry.label === "Open support context") {
-      setSupportCue(`Support context · ${DEMO_FIRMS[0].name}`);
+      setSupportCue(`Support context · ${DEMO_FIRMS[3].name}`);
     }
   }, [focusedEntry]);
 
-  const firm = DEMO_FIRMS.find((f) => f.id === selectedFirmId) ?? DEMO_FIRMS[0];
+  const scopedId = stickyFirmId ?? selectedFirmId;
+  const firm = DEMO_FIRMS.find((f) => f.id === scopedId) ?? DEMO_FIRMS[0];
   const detail = detailId ? SEQUENCES.find((s) => s.id === detailId) : null;
+
+  const seedSupport = (seq?: (typeof SEQUENCES)[number]) => {
+    const reason = seq
+      ? `${seq.name} · ${seq.stuckReason} · gates ${seq.gates.join(", ")}`
+      : "Firm health drill";
+    setSupportCue(
+      `Customer support · Ticket seeded · ${firm.name} · ${reason}`,
+    );
+  };
 
   return (
     <RegisterSurfaceMount
@@ -102,23 +115,64 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
             <span style={{ fontSize: 12, color: t.textMuted }}>
               Firm scope · <strong style={{ color: t.textPrimary }}>{firm.name}</strong>
             </span>
-            <select
-              value={selectedFirmId}
-              onChange={(e) => setSelectedFirmId(e.target.value)}
-              style={{
-                fontSize: 11,
-                fontFamily: "inherit",
-                padding: "4px 8px",
-                border: `1px solid ${t.border}`,
-                borderRadius: 4,
-                background: t.bgPrimary,
-                color: t.textPrimary,
-              }}
-            >
-              {DEMO_FIRMS.map((f) => (
-                <option key={f.id} value={f.id}>{f.name}</option>
-              ))}
-            </select>
+            {stickyFirmId ? (
+              <span
+                data-register-surface="Firm-filter chip"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  fontSize: 11,
+                  padding: "3px 8px",
+                  borderRadius: 3,
+                  background: t.accentBg,
+                  border: `1px solid ${t.accent}`,
+                  color: t.textPrimary,
+                  outline:
+                    focus.labelFocused("Firm-filter chip") || focus.labelHovered("Firm-filter chip")
+                      ? `2px solid ${t.textPrimary}`
+                      : "none",
+                }}
+              >
+                Sticky · {firm.name}
+                <button
+                  type="button"
+                  onClick={() => setStickyFirmId(null)}
+                  style={{
+                    fontSize: 10,
+                    fontFamily: "inherit",
+                    border: "none",
+                    background: "transparent",
+                    color: t.textDim,
+                    cursor: "pointer",
+                    padding: 0,
+                  }}
+                >
+                  Dismiss
+                </button>
+              </span>
+            ) : (
+              <select
+                value={selectedFirmId}
+                onChange={(e) => {
+                  setSelectedFirmId(e.target.value);
+                  setStickyFirmId(e.target.value);
+                }}
+                style={{
+                  fontSize: 11,
+                  fontFamily: "inherit",
+                  padding: "4px 8px",
+                  border: `1px solid ${t.border}`,
+                  borderRadius: 4,
+                  background: t.bgPrimary,
+                  color: t.textPrimary,
+                }}
+              >
+                {DEMO_FIRMS.map((f) => (
+                  <option key={f.id} value={f.id}>{f.name}</option>
+                ))}
+              </select>
+            )}
           </div>
 
           {surfaceBlock(
@@ -210,9 +264,7 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
             <button
               type="button"
               style={primaryBtnStyle(t)}
-              onClick={() =>
-                setSupportCue(`Customer support · Ticket scope · ${firm.name} · SUP-queued`)
-              }
+              onClick={() => seedSupport()}
             >
               Open support context
             </button>
@@ -264,6 +316,19 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
                     </span>
                   ))}
                 </div>
+              </div>
+              <div style={{ marginTop: 14 }}>
+                <button
+                  type="button"
+                  data-register-surface="Open support context"
+                  style={primaryBtnStyle(t)}
+                  onClick={() => seedSupport(detail)}
+                >
+                  Open support context
+                </button>
+                {supportCue ? (
+                  <div style={{ marginTop: 8, fontSize: 11, color: t.accent }}>{supportCue}</div>
+                ) : null}
               </div>
             </>,
           )

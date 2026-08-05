@@ -1,11 +1,9 @@
 /**
  * Consultant desk scene — Board | Contacts | Meetings | Prepared Workspace | Login.
- * Focus drives module + nested modal/block surfaces.
+ * Plants Consultant Furnish (20) + Can't UI closes + SME densify inhabit chips.
  */
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { BoardPanel } from "../../components/BoardPanel";
-import { ClientView } from "../../components/ClientView";
-import { ContactView } from "../../components/ContactView";
 import type { Tokens } from "../../components/tokens";
 import { DEFAULT_SIDEBAR_WIDTH } from "../../constants/layout";
 import { AuditProvider } from "../../context/AuditContext";
@@ -14,12 +12,21 @@ import { PanelProvider } from "../../context/PanelContext";
 import { TaskProvider } from "../../context/TaskContext";
 import type { HubToolRef } from "../../data/hub";
 import type { ConsultantTask } from "../../data/tasks";
+import { getContact } from "../../data/contacts";
 import {
   CONSULTANT_NAV_MODULES,
   SURFACE_CATALOG,
   type RegisterSurfaceEntry,
 } from "../trace/surfaceCatalog";
-import { MeetingsModule } from "./MeetingsModule";
+import {
+  ConsultantClientWorkspace,
+  type HaltRetention,
+} from "./ConsultantClientWorkspace";
+import {
+  CONSULTANT_TODAY_MEETINGS,
+  MEETING_READY_CLIENT_IDS,
+  MeetingsModule,
+} from "./MeetingsModule";
 import { PreparedWorkspaceModule } from "./PreparedWorkspaceModule";
 import { RegisterLoginScene } from "./RegisterLoginScene";
 import {
@@ -47,6 +54,9 @@ type ConsultantModule =
   | "Login";
 
 type HaltScope = "contact" | "book";
+
+const FIRM_NAME = "Cedar Pathways";
+const DEFAULT_LICENSEE = "Sarah Chen · RCIC R123456";
 
 function moduleForFocus(entry: RegisterSurfaceEntry): ConsultantModule {
   const m = entry.module;
@@ -104,6 +114,10 @@ function isBoardInhabitFocus(label: string | undefined): boolean {
   );
 }
 
+function nowStamp(): string {
+  return "Today · just now";
+}
+
 function HaltOutreachModal({
   t,
   focusLabel,
@@ -123,6 +137,7 @@ function HaltOutreachModal({
   onConfirm: () => void;
   onClose: () => void;
 }) {
+  const scopeLabel = scope === "contact" ? "This contact" : "Firm book";
   return (
     <div
       role="dialog"
@@ -169,13 +184,7 @@ function HaltOutreachModal({
           <p style={{ margin: "0 0 14px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
             Refusal under your license — runners and Send gates honor halt. Not pack authorship.
           </p>
-          <div
-            style={{
-              display: "flex",
-              gap: 6,
-              marginBottom: 14,
-            }}
-          >
+          <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
             {[
               { id: "contact" as HaltScope, label: "This contact" },
               { id: "book" as HaltScope, label: "Firm book" },
@@ -200,6 +209,23 @@ function HaltOutreachModal({
                 {opt.label}
               </button>
             ))}
+          </div>
+          <div
+            style={{
+              marginBottom: 14,
+              padding: "8px 10px",
+              borderRadius: 4,
+              border: `1px solid ${t.borderLight}`,
+              background: t.bgSecondary,
+              fontSize: 11,
+              color: t.textMuted,
+              lineHeight: 1.45,
+            }}
+          >
+            Confirm scope: <strong style={{ color: t.textPrimary }}>{scopeLabel}</strong>
+            {scope === "book"
+              ? " — stops automatic firm→client sends across the book."
+              : " — stops automatic sends for this contact only."}
           </div>
           <label
             htmlFor="halt-reason"
@@ -266,11 +292,26 @@ export function ConsultantPrototypeScene({
   const [activeClientId, setActiveClientId] = useState("sarah");
   const [activeContactId, setActiveContactId] = useState<string | null>(null);
   const [bookHalted, setBookHalted] = useState(false);
-  const [haltedContactIds, setHaltedContactIds] = useState<Set<string>>(() => new Set());
+  const [bookHalt, setBookHalt] = useState<HaltRetention | null>(null);
+  const [haltByContact, setHaltByContact] = useState<Record<string, HaltRetention>>({});
   const [isPanelOpen, setIsPanelOpen] = useState(true);
   const [haltModalOpen, setHaltModalOpen] = useState(false);
   const [haltScope, setHaltScope] = useState<HaltScope>("contact");
   const [haltReason, setHaltReason] = useState("");
+  const [meetingsSelectId, setMeetingsSelectId] = useState<string | null>(null);
+  const [bookAuthorized, setBookAuthorized] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [licensee, setLicensee] = useState(DEFAULT_LICENSEE);
+  const [forceAcceptOpen, setForceAcceptOpen] = useState(false);
+
+  const onHardInputChange = useCallback(
+    (state: { bookAuthorized: boolean; termsAccepted: boolean; licensee: string }) => {
+      setBookAuthorized(state.bookAuthorized);
+      setTermsAccepted(state.termsAccepted);
+      setLicensee(state.licensee);
+    },
+    [],
+  );
 
   useEffect(() => {
     if (!focusedEntry || focusedEntry.desk !== "consultant") return;
@@ -361,33 +402,90 @@ export function ConsultantPrototypeScene({
     else if (id === "board") setModule("Board");
   }
 
-  function haltContact(clientId: string) {
-    setHaltedContactIds((prev) => {
-      const next = new Set(prev);
-      next.add(clientId);
-      return next;
-    });
-  }
+  const haltedContactIds = useMemo(() => new Set(Object.keys(haltByContact)), [haltByContact]);
 
-  function resumeContact(clientId: string) {
-    setHaltedContactIds((prev) => {
-      const next = new Set(prev);
-      next.delete(clientId);
-      return next;
-    });
-  }
+  const haltScopeByContactId = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const [id, rec] of Object.entries(haltByContact)) {
+      map.set(id, rec.scope === "book" ? "Firm book" : "This contact");
+    }
+    if (bookHalt) {
+      for (const id of ["sarah", "marcus", "mark", "aisha", "priya", "james"]) {
+        if (!map.has(id)) map.set(id, "Firm book");
+      }
+    }
+    return map;
+  }, [haltByContact, bookHalt]);
+
+  const silenceCauseByContactId = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const [id, rec] of Object.entries(haltByContact)) {
+      map.set(id, rec.scope === "book" ? "My Halt · firm book" : "My Halt · this contact");
+    }
+    if (bookHalt) {
+      map.set(activeClientId, "My Halt · firm book");
+    }
+    map.set("aisha", map.get("aisha") ?? "Contact opt-out");
+    return map;
+  }, [haltByContact, bookHalt, activeClientId]);
 
   function confirmHalt() {
+    const retention: HaltRetention = {
+      scope: haltScope,
+      reason: haltReason,
+      at: nowStamp(),
+    };
     if (haltScope === "book") {
       setBookHalted(true);
+      setBookHalt(retention);
     } else {
-      haltContact(activeClientId);
+      setHaltByContact((prev) => ({ ...prev, [activeClientId]: retention }));
     }
     setHaltModalOpen(false);
     setHaltReason("");
   }
 
+  function liftHaltForActive() {
+    if (bookHalted || bookHalt) {
+      setBookHalted(false);
+      setBookHalt(null);
+    }
+    setHaltByContact((prev) => {
+      const next = { ...prev };
+      delete next[activeClientId];
+      return next;
+    });
+  }
+
+  function openAcceptedTerms() {
+    setForceAcceptOpen(true);
+    setModule("Prepared Workspace");
+    window.setTimeout(() => setForceAcceptOpen(false), 100);
+  }
+
+  function handleContactClick(contactId: string) {
+    setActiveContactId(contactId);
+    const contact = getContact(contactId);
+    const clientId = contact?.clientId ?? (contactListHasClient(contactId) ? contactId : null);
+    if (clientId) {
+      setActiveClientId(clientId);
+    }
+  }
+
+  function contactListHasClient(id: string): boolean {
+    return Boolean(getContact(id)?.clientId) || ["sarah", "marcus", "mark", "aisha", "priya", "james", "daniel", "fatima", "lin"].includes(id);
+  }
+
+  const pendingHardInputs = [
+    !bookAuthorized ? "Authorize book" : null,
+    !termsAccepted ? "Accept terms" : null,
+  ].filter(Boolean) as string[];
+
   const focusLabel = focusedEntry?.label ?? null;
+  const workspaceClientId =
+    module === "Contacts" && activeContactId && contactListHasClient(activeContactId)
+      ? getContact(activeContactId)?.clientId ?? activeContactId
+      : activeClientId;
 
   return (
     <div style={{ flex: 1, minHeight: 0, display: "flex", overflow: "hidden" }}>
@@ -401,6 +499,17 @@ export function ConsultantPrototypeScene({
         }}
       >
         <div style={sectionLabelStyle(t)}>Firm desk</div>
+        <div
+          style={{
+            padding: "4px 12px 8px",
+            fontSize: 11,
+            fontWeight: 700,
+            color: t.textPrimary,
+          }}
+          title="Firm identity in shell"
+        >
+          {FIRM_NAME}
+        </div>
         {CONSULTANT_NAV_MODULES.map((id) => (
           <button
             key={id}
@@ -428,13 +537,16 @@ export function ConsultantPrototypeScene({
                     <BoardPanel
                       width={DEFAULT_SIDEBAR_WIDTH}
                       activeClientId={activeClientId}
-                      onClientClick={setActiveClientId}
+                      onClientClick={(id) => {
+                        setActiveClientId(id);
+                        setModule("Board");
+                      }}
                       activeTouchpointId={null}
                       onTaskClick={(_task: ConsultantTask) => {}}
                       activeIcon={boardIcon}
                       onIconClick={handleIconClick}
                       activeContactId={activeContactId}
-                      onContactClick={setActiveContactId}
+                      onContactClick={handleContactClick}
                       activeHubTool={null}
                       onHubToolClick={(_tool: HubToolRef) => {
                         /* Authorship re-homed to Operator */
@@ -450,45 +562,80 @@ export function ConsultantPrototypeScene({
                       bookHalted={bookHalted}
                       haltedContactIds={haltedContactIds}
                       onHaltBook={() => setHaltModalOpen(true)}
-                      onResumeBook={() => setBookHalted(false)}
-                      onHaltContact={() => setHaltModalOpen(true)}
-                      onResumeContact={resumeContact}
-                    />
-                    <div
-                      data-register-surface="Client workspace"
-                      style={{
-                        flex: 1,
-                        minWidth: 0,
-                        minHeight: 0,
-                        display: "flex",
-                        flexDirection: "column",
-                        overflow: "hidden",
-                        background: t.bgPrimary,
+                      onResumeBook={() => {
+                        setBookHalted(false);
+                        setBookHalt(null);
                       }}
+                      onHaltContact={() => setHaltModalOpen(true)}
+                      onResumeContact={(id) => {
+                        setHaltByContact((prev) => {
+                          const next = { ...prev };
+                          delete next[id];
+                          return next;
+                        });
+                      }}
+                      firmName={FIRM_NAME}
+                      licenseeLabel={licensee}
+                      lastUpdatedStamp="Last updated · session open"
+                      todayMeetings={CONSULTANT_TODAY_MEETINGS}
+                      onTodayMeetingClick={(id) => {
+                        setMeetingsSelectId(id);
+                        setModule("Meetings");
+                      }}
+                      onSeeAllMeetings={() => {
+                        setMeetingsSelectId(null);
+                        setModule("Meetings");
+                      }}
+                      meetingReadyClientIds={MEETING_READY_CLIENT_IDS}
+                      haltScopeByContactId={haltScopeByContactId}
+                      silenceCauseByContactId={silenceCauseByContactId}
+                      pendingHardInputs={pendingHardInputs}
+                      bookHandedOver={bookAuthorized}
+                      onOpenAcceptedTerms={termsAccepted ? openAcceptedTerms : undefined}
+                    />
+                    <PanelProvider
+                      isPanelOpen={isPanelOpen}
+                      togglePanel={() => setIsPanelOpen((o) => !o)}
+                      openPanel={() => setIsPanelOpen(true)}
                     >
-                      <PanelProvider
-                        isPanelOpen={isPanelOpen}
-                        togglePanel={() => setIsPanelOpen((o) => !o)}
-                        openPanel={() => setIsPanelOpen(true)}
-                      >
-                        {module === "Contacts" ? (
-                          activeContactId ? (
-                            <ContactView contactId={activeContactId} t={t} />
-                          ) : (
-                            <WorkspacePrompt t={t} text="Select a contact from the list" />
-                          )
-                        ) : activeClientId ? (
-                          <ClientView
-                            clientId={activeClientId}
-                            t={t}
-                            isDark={isDark}
-                            onOpenClientDataFullPage={() => setIsPanelOpen(true)}
-                          />
-                        ) : (
-                          <WorkspacePrompt t={t} text="Select a client from the board" />
-                        )}
-                      </PanelProvider>
-                    </div>
+                      {module === "Contacts" && activeContactId && !contactListHasClient(activeContactId) ? (
+                        <WorkspacePrompt
+                          t={t}
+                          text="Contact not yet on Board — select a sequenced contact to open Client workspace"
+                        />
+                      ) : workspaceClientId ? (
+                        <ConsultantClientWorkspace
+                          clientId={workspaceClientId}
+                          t={t}
+                          isDark={isDark}
+                          focusLabel={focusLabel}
+                          focusSeq={focusSeq}
+                          halt={
+                            bookHalt ??
+                            haltByContact[workspaceClientId] ??
+                            null
+                          }
+                          meetingReady={MEETING_READY_CLIENT_IDS.has(workspaceClientId)}
+                          licenseeLabel={licensee}
+                          onHaltOutreach={() => {
+                            setActiveClientId(workspaceClientId);
+                            setHaltModalOpen(true);
+                          }}
+                          onLiftHalt={liftHaltForActive}
+                          onOpenAcceptedTerms={termsAccepted ? openAcceptedTerms : undefined}
+                          onOpenPanel={() => setIsPanelOpen(true)}
+                        />
+                      ) : (
+                        <WorkspacePrompt
+                          t={t}
+                          text={
+                            module === "Contacts"
+                              ? "Select a contact from the list"
+                              : "Select a client from the board"
+                          }
+                        />
+                      )}
+                    </PanelProvider>
                   </div>
                 </AutomationProvider>
               </AuditProvider>
@@ -497,7 +644,14 @@ export function ConsultantPrototypeScene({
         ) : showMeetings ? (
           <RegisterSurfaceMount label="Meetings" focused={focusedOnMount} hovered={hoveredOnMount} t={t}>
             <div style={{ flex: 1, minHeight: 0, padding: 12, display: "flex" }}>
-              <MeetingsModule t={t} focusLabel={focusLabel} focusSeq={focusSeq} />
+              <MeetingsModule
+                t={t}
+                focusLabel={focusLabel}
+                focusSeq={focusSeq}
+                initialSelectedId={meetingsSelectId}
+                onBackToBoard={() => setModule("Board")}
+                firmName={FIRM_NAME}
+              />
             </div>
           </RegisterSurfaceMount>
         ) : showPrepared ? (
@@ -508,13 +662,25 @@ export function ConsultantPrototypeScene({
             t={t}
           >
             <div style={{ flex: 1, minHeight: 0, padding: 12, display: "flex" }}>
-              <PreparedWorkspaceModule t={t} focusLabel={focusLabel} focusSeq={focusSeq} />
+              <PreparedWorkspaceModule
+                t={t}
+                focusLabel={focusLabel}
+                focusSeq={focusSeq}
+                forceAcceptOpen={forceAcceptOpen}
+                onHardInputChange={onHardInputChange}
+              />
             </div>
           </RegisterSurfaceMount>
         ) : showLogin ? (
           <RegisterSurfaceMount label="Login" focused={focusedOnMount} hovered={hoveredOnMount} t={t}>
             <div style={{ flex: 1, minHeight: 0, padding: 12, display: "flex" }}>
-              <RegisterLoginScene t={t} focusLabel={focusLabel} focusSeq={focusSeq} />
+              <RegisterLoginScene
+                t={t}
+                focusLabel={focusLabel}
+                focusSeq={focusSeq}
+                firmName={FIRM_NAME}
+                onVerified={() => setModule("Board")}
+              />
             </div>
           </RegisterSurfaceMount>
         ) : null}

@@ -189,6 +189,45 @@ export function ProvisionModule({ t, focusedEntry, hoveredId }: OperatorModulePr
                       <span style={{ fontSize: 11, color: t.accent }}>{handoffNote}</span>
                     ) : null}
                   </div>
+
+                  <div
+                    data-register-surface="Activation Progress glance"
+                    style={{
+                      marginTop: 14,
+                      paddingTop: 14,
+                      borderTop: `1px solid ${t.border}`,
+                    }}
+                  >
+                    <div style={{ fontSize: 12, fontWeight: 600, color: t.textPrimary, marginBottom: 8 }}>
+                      Activation state Progress
+                    </div>
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 10 }}>
+                      {statusChip(t, "forward-deployed · pending", "amber")}
+                      {statusChip(t, "authorize-book · pending", "muted")}
+                      {statusChip(t, "escrow-held · pending", "muted")}
+                      {statusChip(t, "0% · staging required", "amber")}
+                    </div>
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                      <button
+                        type="button"
+                        style={secondaryBtnStyle(t)}
+                        onClick={() =>
+                          setHandoffNote(`Jump to Activation state · ${name.trim()}`)
+                        }
+                      >
+                        Jump to Activation state
+                      </button>
+                      <button
+                        type="button"
+                        style={secondaryBtnStyle(t)}
+                        onClick={() =>
+                          setHandoffNote(`Jump to Commercial · ${name.trim()}`)
+                        }
+                      >
+                        Jump to Commercial
+                      </button>
+                    </div>
+                  </div>
                 </>,
               )
             : null}

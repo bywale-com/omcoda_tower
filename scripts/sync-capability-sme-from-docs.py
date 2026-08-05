@@ -157,7 +157,7 @@ def emit_seat_ts(seat: dict, items: list[dict]) -> str:
                 + ", ".join(sync_sme.js_str(a) for a in adds)
                 + "],"
             )
-            lines.append('      implementationPlant: "not_done",')
+            lines.append('      implementationPlant: "planted",')
         lines.append(f"      status: {sync_sme.js_str(item['status'])},")
         lines.append("    },")
     lines.append("  ],")

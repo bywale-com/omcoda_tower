@@ -21,7 +21,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Sequences advance on timers and open/click criteria while inbound replies are invisible or buried in provider logs. The agent cannot override or stop motion because nothing durable enters Tower.",
       implementation: "On **Conversations**, view the thread timeline inbound reply event rows linked to the prior outbound on that channel.  \nOn **Engagement record**, view the chronology reply-received row with channel, prior outbound id, and timestamp — no provider-console navigation.  \nOn **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active); sequences consume the inbound event stream before scheduling the next attempt.",
       implementationAdds: ["inbound-event", "conversation-thread", "reply-linkage"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -37,7 +37,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Without a closed intent set, operators and automations invent per-template labels. Escalation and Send-gate reactions cannot be shared across firms or phases.",
       implementation: "On **Conversations**, view each inbound message row intent chip: booked / question / stop / hostile / unsure.  \nOn **Engagement record**, view the classified intent chip beside the reply body on the reply event row.  \nOn **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; in the step rail, bind next-step and escalation policy to those classes with intent selectors — not free-text tags; click **Publish version**.",
       implementationAdds: ["intent-booked", "intent-question", "intent-stop", "intent-hostile", "intent-unsure"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -53,7 +53,7 @@ export const seat: SmeSeat = {
       implementationProblem: "A stop reply can be misread as engagement or queued for a helpful follow-up. Automatic attempts keep firing after the contact withdrew.",
       implementation: "On **Conversations**, view intent `stop` on stop-class inbound; view the thread Frozen status chip (automatic attempts halted on that thread).  \nOn **Firm operations bind firm detail → Send gates panel**, view the contact enrollment-blocked deny chip for automatic CEMs after stop.  \nOn **Engagement record**, view the chronology row stop-class reply → suppression, not a soft badge.",
       implementationAdds: ["intent-stop-terminal", "cem-suppress-on-stop", "stop-keyword"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -69,7 +69,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Ambiguous replies are forced into a best-guess class. Wrong guesses drive wrong channel escalations or polite CEM replies after hostility.",
       implementation: "On **Conversations**, view the `unsure` intent chip on low-confidence replies; view the pending attempt row paused instead of auto-advancing the owner.  \nOn **Escalation queue**, click the thread row to open those replies for human classification before the runtime acts.  \nOn **Firm operations bind firm detail → Send gates panel**, view the unsure-pending-resolution deny chip blocking automatic next-attempt until resolved.",
       implementationAdds: ["confidence-floor", "intent-unsure", "fail-closed-classify"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -85,7 +85,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Reply-driven “helpful” follow-ups skip the gates that calendar sends respect. Silenced or consent-lapsed contacts still get the next attempt because the runtime treated inbound as a new license to speak.",
       implementation: "On **Firm operations bind firm detail → Send gates panel**, view post-reply re-check readiness rows before any next attempt is scheduled.  \nOn **Conversations**, the next-step action stays disabled when Send gates returns a deny chip.  \nOn **Engagement record**, view the chronology row gate-denied-after-reply as the reason no next attempt fired.",
       implementationAdds: ["send-gate-recheck", "post-reply-gate", "attempt-blocked-by-gate"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -101,7 +101,7 @@ export const seat: SmeSeat = {
       implementationProblem: "OOO messages finish the sequence as if the contact engaged, or trigger question-handling CEMs. Real human replies later have no owner state to resume.",
       implementation: "On **Conversations**, view the paused-OOTO status chip on OOO / auto-reply threads (not booked, not stop).  \nOn **Engagement record**, view the pause row and scheduled-resume row under the owning channel.  \nOn **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; set OOO pause/resume fields in the channel ruleset without treating auto-reply as Finished (Replied); click **Publish version**.",
       implementationAdds: ["ooo-pause", "auto-reply-nonterminal", "resume-window"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -117,7 +117,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Email and SMS attempts can fire in parallel “to improve reach.” Criteria windows conflict; Engagement record cannot show who owns the flow.",
       implementation: "On **Engagement record**, view exactly one owning-channel chip on the active sequence instance row.  \nOn **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active); view dual-owner schedule refusal on Send gates when runners would race channels.  \nOn **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; the step rail lets channel rulesets author forward handoff — not parallel owners; click **Publish version**.",
       implementationAdds: ["single-channel-owner", "owner-nested-attempts"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -133,7 +133,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Runtime “retries” bounce back to earlier channels outside attempt framing, creating loops that look alive but violate forward-only law.",
       implementation: "On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; use the channel-order fields in the step rail to author forward-only owner order for a sequence; click **Publish version**.  \nOn **Engagement record**, view handoffs only forward along that order (or a new local attempt under the failed owner).  \nOn **Firm health** / **Sequence detail**, view that backward re-entry without a new attempt frame is not offered as healthy motion.",
       implementationAdds: ["forward-only-handoff", "owner-order"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -149,7 +149,7 @@ export const seat: SmeSeat = {
       implementationProblem: "A global Attempt 2 spanning Text/Email/Form resets the wrong clocks and hides which owner failed. Operators cannot tell what will fire next.",
       implementation: "On **Engagement record**, view Attempt N as a nested row under the failed owning channel — not as a top-level peer to Text/Email/Form.  \nOn **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; author local retry fields under the channel ruleset in the step rail; click **Publish version**.  \nOn **Conversations**, view the same nested attempt owner in the thread context pane when a reply arrives mid-retry.",
       implementationAdds: ["local-attempt", "attempt-under-owner", "no-global-attempt"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -165,7 +165,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Sequences advance on fixed delays regardless of opens, clicks, or form starts. Contacts who are mid-action still get the next channel CEM.",
       implementation: "On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; author criteria window fields (delivered/opened/clicked/started/submitted + elapsed) inside each owner channel ruleset; click **Publish version**.  \nOn **Engagement record**, view the handoff row naming which criteria event caused the owner change.  \nOn **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active); Active runners escalate only when those criteria fire and Send gates still allows.",
       implementationAdds: ["criteria-window", "nonreply-escalation", "criteria-event"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -181,7 +181,7 @@ export const seat: SmeSeat = {
       implementationProblem: "A contact replies or opens the form while Attempt N is scheduled; the job still sends. Double messages look broken and ignore the human.",
       implementation: "On **Conversations**, view inbound (or live form visit signal) nullifying in-flight scheduled attempts before intent policy runs.  \nOn **Engagement record**, view the scheduled attempt row changing to attempt-nullified-by-inbound in chronology.  \nOn **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active); view hard-cancel override on Send gates when inbound wins the race.",
       implementationAdds: ["priority-override", "nullify-inflight", "inbound-wins-race"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -197,7 +197,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Sequences never cleanly finish; reactivation arms while the nudge is still “active,” or booked contacts keep receiving attempts.",
       implementation: "On **Engagement record**, view finishing predicate rows closing the sequence and optionally arming the next peer sequence.  \nOn **Firm operations bind firm detail**, the Armed / Active segmented control (Armed | Active) reflects those finishing events — not cosmetic toggles alone.  \nOn **Conversations**, view the `booked` intent chip with sequence closed for further automatic attempts.",
       implementationAdds: ["finishing-predicate", "arm-next-sequence", "sequence-closed"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -213,7 +213,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Operators edit day calendars expecting attempt retries, or edit attempt logic expecting day-N copy changes. Two brains fight; failures are undiagnosable.",
       implementation: "On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; the step rail keeps campaign calendar (day content) separate from channel-ownership / attempt rulesets; click **Publish version**.  \nOn **Configuration libraries → Automation workflows catalog**, open **Workflow canvas**; trigger → condition/rule → enroll-into-template action nodes select the sequence instance; click **Publish version**.  \nOn **Engagement record**, view chronology distinguishing calendar phase from owner/attempt events.",
       implementationAdds: ["calendar-layer", "attempt-layer", "two-sequencing-layers"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -229,7 +229,7 @@ export const seat: SmeSeat = {
       implementationProblem: "An LLM “helpfully” composes and sends replies outside channel ownership and Send gates. Audit cannot reconstruct which tool/law authorized the send.",
       implementation: "On **Configuration libraries → Engagement templates catalog**, open **Agent / sequence editor**; bind runtime actions in the action dropdown to the closed tool set (not free-form send); click **Publish version**.  \nOn **Audit trail**, open the Change event row showing tool name, intent, owner, and gate result for each act.  \nOn **Firm operations bind firm detail → Send gates panel**, view tool-initiated sends fail closed with the same deny chips as calendar-initiated sends.",
       implementationAdds: ["tool-bounded-runtime", "closed-tool-set", "no-freeform-send"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -245,7 +245,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Criteria windows escalate to SMS because Text failed, even when Agree was email-only or the number is suppressed. Capability runtime becomes the consent bug.",
       implementation: "On **Firm operations bind firm detail → Send gates panel**, view channel escalation requiring green channel-scoped consent row + suppression clearance row.  \nOn **Engagement record**, view blocked-escalation-for-channel-scope as a chronology row.  \nOn **Conversations**, view the thread context pane explaining why the runtime did not escalate to the next channel.",
       implementationAdds: ["escalation-needs-channel-consent", "suppression-clearance"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -261,7 +261,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Edge replies keep the sequence Active with guessed next steps. No human sees the thread until a complaint or desk halt.",
       implementation: "On **Escalation queue**, view list rows with unsure / policy-edge / failed-tool-precondition reason chips; click a row to open the thread for review.  \nOn **Conversations**, view the thread status chip automatic attempts paused pending resolution.  \nOn **Engagement record**, view escalation-opened and pause chronology rows.",
       implementationAdds: ["escalation-on-unsure", "pause-pending-human", "policy-edge"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -277,7 +277,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Hostile replies get a soothing auto-response or the next nudge. Firm reputation and license inhabit take the hit; no priority human path exists.",
       implementation: "On **Conversations**, view the hostile intent chip and thread halted-automatic-CEMs status; automatic CEMs halted on the thread.  \nOn **Escalation queue**, view the high-priority row with reply context attached; click to open.  \nOn **Engagement record** / **Halt outreach** adjacency, view hostile → halt chronology the consultant can trust.",
       implementationAdds: ["intent-hostile-halt", "priority-escalation", "suppress-on-hostile"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -293,7 +293,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Escalations sit in an unnamed agent inbox. Customer support never sees them; SLAs and Support context do not apply; duplicates spawn.",
       implementation: "On **Customer support** **Ticket queue**, view engagement-escalation Ticket rows opened from runtime escalation.  \nOn **Ticket**, open the Support context panel with thread, intent, channel owner, and last send.  \nOn **Escalation queue**, work the same rows as a view onto Ticket queue — not a second system of record.",
       implementationAdds: ["engagement-escalation-ticket", "support-context-thread", "escalation-is-ticket"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -309,7 +309,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Tickets say “needs review” with no reply text, confidence, or pending attempt. Operators burn time reconstructing state while the sequence stays paused.",
       implementation: "On **Ticket** / **Support context**, view the context panel with reason code, priority, verbatim reply, confidence, sequence id, owner, pending attempt, and consent/silence snapshot.  \nOn **Escalation queue**, view list rows with reason and priority chips for triage sort.  \nOn **Audit trail**, open the escalation-opened Change event row with the same bundle.",
       implementationAdds: ["escalation-reason-code", "escalation-priority", "context-bundle"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -325,7 +325,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Escalated threads stay paused indefinitely, or a timer silently resumes without disposition. Nobody can tell whether a human decided.",
       implementation: "On **Ticket** / **Escalation queue**, click disposition buttons to choose reclassify, resume owner, close sequence, or keep suppressed.  \nOn **Conversations**, view the disposition and resulting runtime state on the thread action bar.  \nOn **Engagement record**, view human-disposition → resume/close chronology.",
       implementationAdds: ["human-disposition", "resume-after-hitl", "explicit-unpause"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -341,7 +341,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Operators hunt replies inside Engagement record or firm email. No Conversations home exists; triage and chronology fight for the same UI job.",
       implementation: "On **Conversations**, the thread list and action bar support live inbound triage: intent, pause state, escalate, and disposition.  \nOn **Engagement record**, view the same events as read-only chronology rows — not as an inbox.  \nStarting from **Oversight** / firm context, click the Conversations link for reply work without editing attempt authorship.",
       implementationAdds: ["conversations-surface", "triage-vs-chronology", "engagement-record-readonly"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -357,7 +357,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Thread list shows raw messages only. Operators cannot see whether an attempt will still fire, whether gates block, or whether HITL already owns the case.",
       implementation: "On **Conversations**, view the open thread context pane with intent, owning channel, Send-gate posture, pending or nullified attempt, and escalation status.  \nOn **Firm operations bind firm detail → Send gates panel**, view the same posture as readiness rows and deny chips that Conversations mirrors — not a second opinion.  \nOn **Escalation queue**, click deep-link rows to open the same Conversations thread with that context.",
       implementationAdds: ["triage-context-pane", "owner-on-thread", "gate-posture-visible"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -373,7 +373,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Engagement record shows outbound sends only. Consultants cannot see why an attempt vanished after a reply or why escalation paused the sequence.",
       implementation: "On **Engagement record**, view chronology rows covering inbound, intent, nullify, handoff, gate-deny, escalation, and finished/armed events.  \nOn **Board** / **Client row**, view the Phase signal chip consistent with that chronology.  \nOn **Conversations**, thread actions add recordable runtime events — they do not rewrite authorship.",
       implementationAdds: ["chronicle-classify", "chronicle-nullify", "chronicle-escalation", "chronicle-handoff"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -389,7 +389,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Reply handlers and attempt jobs fire for firms that are not Active (or still unbound). Prepared demos and unbound tenancies accidentally CEM real contacts.",
       implementation: "On **Firm operations bind firm detail**, set Armed / Active with the segmented control (Armed | Active) — Armed means prepare/schedule only; Active means contact-facing sends allowed as the runtime posture the agent must obey.  \nOn **Conversations**, outbound tool buttons stay disabled while not Active (escalation Ticket may still open).  \nOn **Engagement record**, view posture-blocked attempts as chronology rows when bind denies.",
       implementationAdds: ["runtime-requires-bind", "armed-prepare-only", "active-contact-facing"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
   ],

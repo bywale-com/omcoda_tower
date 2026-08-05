@@ -1,5 +1,6 @@
 /**
  * Firm operations bind — firm-bind index → Bind packs modal → Armed / Active segmented control.
+ * Furnish: published-only helper + Jump to Config empty-state; bound-version chips; bind-completeness.
  */
 import { useMemo, useState } from "react";
 import type { Tokens } from "../../../components/tokens";
@@ -70,6 +71,8 @@ function isBound(row: FirmBindState): boolean {
   return Boolean(row.evalPackId && row.autoPackId && row.engPackId);
 }
 
+const HELPER = "Published versions only — drafts omitted";
+
 export function FirmOperationsBindPanel({
   t,
   focusedEntry,
@@ -88,6 +91,7 @@ export function FirmOperationsBindPanel({
   const [pickEval, setPickEval] = useState("");
   const [pickAuto, setPickAuto] = useState("");
   const [pickEng, setPickEng] = useState("");
+  const [jumpNote, setJumpNote] = useState<string | null>(null);
 
   const row = rows.find((r) => r.firmId === selectedId) ?? rows[0];
   const firm = DEMO_FIRMS.find((f) => f.id === row.firmId) ?? DEMO_FIRMS[0];
@@ -106,11 +110,18 @@ export function FirmOperationsBindPanel({
     };
   }, [packs, row]);
 
+  const completeness = [
+    { slot: "Evaluation", pack: boundPacks.eval, missing: !row.evalPackId },
+    { slot: "Automation", pack: boundPacks.auto, missing: !row.autoPackId },
+    { slot: "Engagement", pack: boundPacks.eng, missing: !row.engPackId },
+  ];
+
   function openBindModal() {
     setPickEval(row.evalPackId ?? evalOptions[0]?.id ?? "");
     setPickAuto(row.autoPackId ?? autoOptions[0]?.id ?? "");
     setPickEng(row.engPackId ?? engOptions[0]?.id ?? "");
     setBindOpen(true);
+    setJumpNote(null);
   }
 
   function onBind() {
@@ -134,6 +145,56 @@ export function FirmOperationsBindPanel({
 
   const canBind = Boolean(pickEval && pickAuto && pickEng);
   const selectStyle = { ...filterSelectStyle(t), width: "100%", minWidth: 0, boxSizing: "border-box" as const };
+
+  function packDropdown(
+    surface: string,
+    label: string,
+    value: string,
+    onChange: (v: string) => void,
+    options: ConfigPack[],
+  ) {
+    const empty = options.length === 0;
+    return (
+      <label data-register-surface={surface}>
+        <span style={{ fontSize: 11, fontWeight: 600, color: t.textMuted, display: "block", marginBottom: 4 }}>
+          {label}
+        </span>
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          style={selectStyle}
+          disabled={empty}
+        >
+          {empty ? (
+            <option value="">No published versions</option>
+          ) : (
+            <>
+              <option value="">Select published version…</option>
+              {options.map((p) => (
+                <option key={p.id} value={p.id}>{packLabel(p)}</option>
+              ))}
+            </>
+          )}
+        </select>
+        <span
+          data-register-surface="Published-only helper"
+          style={{ fontSize: 10, color: t.textDim, marginTop: 4, display: "block" }}
+        >
+          {HELPER}
+        </span>
+        {empty ? (
+          <button
+            type="button"
+            data-register-surface="Jump to Configuration libraries"
+            onClick={() => setJumpNote("Jump to Configuration libraries")}
+            style={{ ...secondaryBtnStyle(t), marginTop: 6 }}
+          >
+            Jump to Configuration libraries
+          </button>
+        ) : null}
+      </label>
+    );
+  }
 
   return (
     <RegisterSurfaceMount
@@ -164,7 +225,10 @@ export function FirmOperationsBindPanel({
                   <button
                     key={r.firmId}
                     type="button"
-                    onClick={() => setSelectedId(r.firmId)}
+                    onClick={() => {
+                      setSelectedId(r.firmId);
+                      setJumpNote(null);
+                    }}
                     style={navBtnStyle(t, r.firmId === selectedId)}
                   >
                     <div style={{ fontWeight: 600 }}>{f.name}</div>
@@ -192,12 +256,19 @@ export function FirmOperationsBindPanel({
             <div style={{ fontSize: 12, color: t.textMuted }}>
               Selected firm · <strong style={{ color: t.textPrimary }}>{firm.name}</strong>
             </div>
+            {jumpNote ? (
+              <div style={{ fontSize: 11, color: t.accent }}>Opened · {jumpNote}</div>
+            ) : null}
 
             {surfaceBlock(
               t,
               "Bind packs",
-              focus.labelFocused("Bind packs"),
-              focus.labelHovered("Bind packs"),
+              focus.labelFocused("Bind packs") ||
+                focus.labelFocused("Bound-version chips") ||
+                focus.labelFocused("Published-only helper"),
+              focus.labelHovered("Bind packs") ||
+                focus.labelHovered("Bound-version chips") ||
+                focus.labelHovered("Published-only helper"),
               <>
                 <div
                   style={{
@@ -223,12 +294,28 @@ export function FirmOperationsBindPanel({
                     data-register-surface="Bound-version chips"
                     style={{ display: "flex", flexWrap: "wrap", gap: 8 }}
                   >
-                    {boundPacks.eval ? statusChip(t, packLabel(boundPacks.eval), "muted") : null}
-                    {boundPacks.auto ? statusChip(t, packLabel(boundPacks.auto), "muted") : null}
-                    {boundPacks.eng ? statusChip(t, packLabel(boundPacks.eng), "muted") : null}
+                    {boundPacks.eval
+                      ? statusChip(t, `Evaluation · ${packLabel(boundPacks.eval)}`, "muted")
+                      : null}
+                    {boundPacks.auto
+                      ? statusChip(t, `Automation · ${packLabel(boundPacks.auto)}`, "muted")
+                      : null}
+                    {boundPacks.eng
+                      ? statusChip(t, `Engagement · ${packLabel(boundPacks.eng)}`, "muted")
+                      : null}
                   </div>
                 ) : (
-                  <span style={{ fontSize: 12, color: t.textDim }}>No packs bound — open Bind packs</span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    <span style={{ fontSize: 12, color: t.textDim }}>No packs bound — open Bind packs</span>
+                    <button
+                      type="button"
+                      data-register-surface="Jump to Configuration libraries"
+                      onClick={() => setJumpNote("Jump to Configuration libraries")}
+                      style={secondaryBtnStyle(t)}
+                    >
+                      Jump to Configuration libraries
+                    </button>
+                  </div>
                 )}
               </>,
             )}
@@ -236,8 +323,8 @@ export function FirmOperationsBindPanel({
             {surfaceBlock(
               t,
               "Armed / Active",
-              focus.labelFocused("Armed / Active"),
-              focus.labelHovered("Armed / Active"),
+              focus.labelFocused("Armed / Active") || focus.labelFocused("Bind-completeness"),
+              focus.labelHovered("Armed / Active") || focus.labelHovered("Bind-completeness"),
               <>
                 <div style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary, marginBottom: 6 }}>
                   Armed / Active
@@ -246,6 +333,18 @@ export function FirmOperationsBindPanel({
                   Armed = bound packs ready (no contact-facing sends). Active = execution on. Disabled
                   until three bound versions exist.
                 </p>
+                <div
+                  data-register-surface="Bind-completeness"
+                  style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}
+                >
+                  {completeness.map((c) =>
+                    statusChip(
+                      t,
+                      c.missing ? `${c.slot} · missing` : `${c.slot} · bound`,
+                      c.missing ? "amber" : "success",
+                    ),
+                  )}
+                </div>
                 <div style={{ display: "flex", gap: 0, borderRadius: 4, overflow: "hidden", border: `1px solid ${t.border}` }}>
                   {(["Armed", "Active"] as Posture[]).map((p) => {
                     const active = row.posture === p;
@@ -312,42 +411,33 @@ export function FirmOperationsBindPanel({
             <p style={{ margin: "0 0 14px", fontSize: 12, color: t.textMuted }}>
               {firm.name} — select three published versions from Configuration libraries.
             </p>
+            {jumpNote ? (
+              <div style={{ fontSize: 11, color: t.accent, marginBottom: 10 }}>Opened · {jumpNote}</div>
+            ) : null}
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <label data-register-surface="Evaluation pack version">
-                <span style={{ fontSize: 11, fontWeight: 600, color: t.textMuted, display: "block", marginBottom: 4 }}>
-                  Evaluation pack
-                </span>
-                <select value={pickEval} onChange={(e) => setPickEval(e.target.value)} style={selectStyle}>
-                  <option value="">Select published version…</option>
-                  {evalOptions.map((p) => (
-                    <option key={p.id} value={p.id}>{packLabel(p)}</option>
-                  ))}
-                </select>
-              </label>
-              <label data-register-surface="Automation pack version">
-                <span style={{ fontSize: 11, fontWeight: 600, color: t.textMuted, display: "block", marginBottom: 4 }}>
-                  Automation pack
-                </span>
-                <select value={pickAuto} onChange={(e) => setPickAuto(e.target.value)} style={selectStyle}>
-                  <option value="">Select published version…</option>
-                  {autoOptions.map((p) => (
-                    <option key={p.id} value={p.id}>{packLabel(p)}</option>
-                  ))}
-                </select>
-              </label>
-              <label data-register-surface="Engagement template version">
-                <span style={{ fontSize: 11, fontWeight: 600, color: t.textMuted, display: "block", marginBottom: 4 }}>
-                  Engagement template
-                </span>
-                <select value={pickEng} onChange={(e) => setPickEng(e.target.value)} style={selectStyle}>
-                  <option value="">Select published version…</option>
-                  {engOptions.map((p) => (
-                    <option key={p.id} value={p.id}>{packLabel(p)}</option>
-                  ))}
-                </select>
-              </label>
+              {packDropdown(
+                "Evaluation pack version",
+                "Evaluation pack",
+                pickEval,
+                setPickEval,
+                evalOptions,
+              )}
+              {packDropdown(
+                "Automation pack version",
+                "Automation pack",
+                pickAuto,
+                setPickAuto,
+                autoOptions,
+              )}
+              {packDropdown(
+                "Engagement template version",
+                "Engagement template",
+                pickEng,
+                setPickEng,
+                engOptions,
+              )}
             </div>
-            <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+            <div style={{ display: "flex", gap: 8, marginTop: 16, flexWrap: "wrap" }}>
               <button
                 type="button"
                 data-register-surface="Bind"
@@ -359,6 +449,14 @@ export function FirmOperationsBindPanel({
               </button>
               <button type="button" onClick={() => setBindOpen(false)} style={secondaryBtnStyle(t)}>
                 Cancel
+              </button>
+              <button
+                type="button"
+                data-register-surface="Jump to Configuration libraries"
+                onClick={() => setJumpNote("Jump to Configuration libraries")}
+                style={secondaryBtnStyle(t)}
+              >
+                Jump to Configuration libraries
               </button>
             </div>
           </div>

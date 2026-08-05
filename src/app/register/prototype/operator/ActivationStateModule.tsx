@@ -1,6 +1,6 @@
 /**
  * Activation state — Progress checklist (leaf 1.3): forward-deployed,
- * authorize-book, escrow-held, running + Jump links.
+ * authorize-book, escrow-held, running + Jump links (op-furnish-02).
  */
 import { useEffect, useState } from "react";
 import { RegisterSurfaceMount, navBtnStyle, sectionLabelStyle } from "../registerSurfaceChrome";
@@ -48,7 +48,7 @@ const ACTIVATION_ROWS = [
     next: "Forward-deployed",
     gates: [
       { id: "forward-deployed", title: "Forward-deployed", done: false, jump: "Jump to Activation & forward-deploy" },
-      { id: "authorize-book", title: "Authorize book", done: false },
+      { id: "authorize-book", title: "Authorize book", done: false, jump: "Jump to Activation & forward-deploy" },
       { id: "escrow-held", title: "Escrow held", done: false, jump: "Jump to Commercial" },
       { id: "running", title: "Running", done: false },
     ] satisfies Gate[],
@@ -59,16 +59,22 @@ export function ActivationStateModule({ t, focusedEntry, hoveredId }: OperatorMo
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Activation state", focusedEntry, hoveredEntry);
   const [selectedId, setSelectedId] = useState(ACTIVATION_ROWS[0].firmId);
+  const [jumpNote, setJumpNote] = useState<string | null>(null);
 
   useEffect(() => {
     if (!focusedEntry || focusedEntry.module !== "Activation state") return;
-    if (focusedEntry.label === "Progress" || focusedEntry.label === "Activation state") {
+    if (
+      focusedEntry.label === "Progress" ||
+      focusedEntry.label === "Activation state" ||
+      focusedEntry.label === "Progress Jump"
+    ) {
       setSelectedId(ACTIVATION_ROWS[0].firmId);
     }
   }, [focusedEntry]);
 
   const row = ACTIVATION_ROWS.find((r) => r.firmId === selectedId) ?? ACTIVATION_ROWS[0];
   const firm = DEMO_FIRMS.find((f) => f.id === row.firmId) ?? DEMO_FIRMS[1];
+  const stalledCount = row.gates.filter((g) => !g.done && g.jump).length;
 
   return (
     <RegisterSurfaceMount
@@ -98,7 +104,10 @@ export function ActivationStateModule({ t, focusedEntry, hoveredId }: OperatorMo
                 <button
                   key={r.firmId}
                   type="button"
-                  onClick={() => setSelectedId(r.firmId)}
+                  onClick={() => {
+                    setSelectedId(r.firmId);
+                    setJumpNote(null);
+                  }}
                   style={navBtnStyle(t, r.firmId === selectedId)}
                 >
                   <div style={{ fontWeight: 600 }}>{f.name}</div>
@@ -122,15 +131,25 @@ export function ActivationStateModule({ t, focusedEntry, hoveredId }: OperatorMo
               background: `linear-gradient(165deg, ${t.bgPrimary} 0%, ${t.hoverBg} 55%, ${t.bgSecondary} 100%)`,
             }}
           >
-            <div style={{ fontSize: 12, color: t.textMuted }}>
-              Selected firm · <strong style={{ color: t.textPrimary }}>{firm.name}</strong> · {firm.stage}
+            <div style={{ fontSize: 12, color: t.textMuted, display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+              <span>
+                Selected firm · <strong style={{ color: t.textPrimary }}>{firm.name}</strong> · {firm.stage}
+              </span>
+              {stalledCount > 0
+                ? statusChip(t, `${stalledCount} stalled · Jump available`, "amber")
+                : statusChip(t, "Gates clear", "success")}
             </div>
+            {jumpNote ? (
+              <div style={{ fontSize: 11, color: t.accent }}>Opened · {jumpNote}</div>
+            ) : null}
 
             {surfaceBlock(
               t,
               "Progress",
-              focus.labelFocused("Progress") || focusedEntry?.label === "Activation state",
-              focus.labelHovered("Progress"),
+              focus.labelFocused("Progress") ||
+                focus.labelFocused("Progress Jump") ||
+                focusedEntry?.label === "Activation state",
+              focus.labelHovered("Progress") || focus.labelHovered("Progress Jump"),
               <>
                 <div
                   style={{
@@ -144,8 +163,10 @@ export function ActivationStateModule({ t, focusedEntry, hoveredId }: OperatorMo
                   {statusChip(t, `${row.pct}%`, "amber")}
                 </div>
                 <p style={{ margin: "0 0 12px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
-                  View checklist rows for this firm. Running opens only when authorize-book and
-                  escrow-held are both green. Operator does not fake-complete consultant commits.
+                  View checklist rows for this firm. On stalled authorize-book or escrow-held rows,
+                  Jump to Activation &amp; forward-deploy or Jump to Commercial. Running opens only
+                  when authorize-book and escrow-held are both green. Operator does not fake-complete
+                  consultant commits.
                 </p>
                 <div
                   style={{
@@ -176,7 +197,7 @@ export function ActivationStateModule({ t, focusedEntry, hoveredId }: OperatorMo
                         gap: 10,
                         alignItems: "center",
                         background: t.bgPrimary,
-                        border: `1px solid ${t.border}`,
+                        border: `1px solid ${!gate.done && gate.jump ? t.amber : t.border}`,
                         borderRadius: 4,
                         padding: "9px 11px",
                       }}
@@ -215,7 +236,12 @@ export function ActivationStateModule({ t, focusedEntry, hoveredId }: OperatorMo
                         )}
                       </div>
                       {!gate.done && gate.jump ? (
-                        <button type="button" style={secondaryBtnStyle(t)}>
+                        <button
+                          type="button"
+                          data-register-surface="Progress Jump"
+                          onClick={() => setJumpNote(gate.jump!)}
+                          style={secondaryBtnStyle(t)}
+                        >
                           {gate.jump}
                         </button>
                       ) : null}

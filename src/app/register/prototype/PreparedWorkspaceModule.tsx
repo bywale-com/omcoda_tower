@@ -14,6 +14,8 @@ type PreparedWorkspaceModuleProps = {
   t: Tokens;
   focusLabel?: string | null;
   focusSeq?: number;
+  forceAcceptOpen?: boolean;
+  onHardInputChange?: (state: { bookAuthorized: boolean; termsAccepted: boolean; licensee: string }) => void;
 };
 
 type ModalKind = "authorize" | "accept" | null;
@@ -141,6 +143,8 @@ export function PreparedWorkspaceModule({
   t,
   focusLabel = null,
   focusSeq = 0,
+  forceAcceptOpen = false,
+  onHardInputChange,
 }: PreparedWorkspaceModuleProps) {
   const [modal, setModal] = useState<ModalKind>(null);
   const [bookAuthorized, setBookAuthorized] = useState(false);
@@ -149,6 +153,15 @@ export function PreparedWorkspaceModule({
   const [licenseExpanded, setLicenseExpanded] = useState(true);
   const [licensee, setLicensee] = useState(LICENSEES[0]);
   const [ackChecked, setAckChecked] = useState(false);
+  const [downloaded, setDownloaded] = useState(false);
+
+  useEffect(() => {
+    onHardInputChange?.({ bookAuthorized, termsAccepted, licensee });
+  }, [bookAuthorized, termsAccepted, licensee, onHardInputChange]);
+
+  useEffect(() => {
+    if (forceAcceptOpen) setModal("accept");
+  }, [forceAcceptOpen, focusSeq]);
 
   useEffect(() => {
     if (!focusLabel) return;
@@ -168,20 +181,33 @@ export function PreparedWorkspaceModule({
   }, [focusLabel, focusSeq]);
 
   const rows = [
-    { label: "Firm identity staged", state: "Ready", ready: true },
-    { label: "Campaign under firm brand", state: "Ready", ready: true },
-    { label: "Readiness walkthrough", state: "Presented", ready: true },
+    { label: "Firm identity staged", state: "Ready", ready: true, clickable: false as const },
+    { label: "Campaign under firm brand", state: "Ready", ready: true, clickable: false as const },
+    { label: "Readiness walkthrough", state: "Presented", ready: true, clickable: false as const },
     {
       label: "Authorize book",
-      state: bookAuthorized ? "Landed" : "Pending",
+      state: bookAuthorized ? "Landed ✓" : "Pending",
       ready: bookAuthorized,
+      clickable: "authorize" as const,
     },
     {
       label: "Accept terms",
-      state: termsAccepted ? "Landed" : "Pending",
+      state: termsAccepted ? "Landed ✓" : "Pending",
       ready: termsAccepted,
+      clickable: "accept" as const,
     },
   ];
+
+  function downloadTerms() {
+    const body = [
+      `Licensee: ${licensee}`,
+      "License acknowledgement — outreach under this licensee.",
+      "Escrow terms — meeting-booked contingent release.",
+    ].join("\n");
+    void navigator.clipboard?.writeText(body).catch(() => undefined);
+    setDownloaded(true);
+    window.setTimeout(() => setDownloaded(false), 1600);
+  }
 
   return (
     <div
@@ -259,31 +285,66 @@ export function PreparedWorkspaceModule({
             marginBottom: 16,
           }}
         >
-          {rows.map((row, i) => (
-            <div
-              key={row.label}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 12,
-                padding: "10px 14px",
-                borderTop: i === 0 ? "none" : `1px solid ${t.borderLight}`,
-                background: t.bgPrimary,
-              }}
-            >
-              <span style={{ fontSize: 12, fontWeight: 500, color: t.textPrimary }}>{row.label}</span>
-              <span
+          {rows.map((row, i) => {
+            const interactive = Boolean(row.clickable);
+            const Tag = interactive ? "button" : "div";
+            return (
+              <Tag
+                key={row.label}
+                {...(interactive
+                  ? {
+                      type: "button" as const,
+                      onClick: () => setModal(row.clickable),
+                    }
+                  : {})}
                 style={{
-                  fontSize: 11,
-                  fontWeight: 600,
-                  color: row.ready ? t.accent : t.textDim,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 12,
+                  width: "100%",
+                  padding: "10px 14px",
+                  border: "none",
+                  borderTop: i === 0 ? "none" : `1px solid ${t.borderLight}`,
+                  background: t.bgPrimary,
+                  cursor: interactive ? "pointer" : "default",
+                  fontFamily: "inherit",
+                  textAlign: "left",
                 }}
               >
-                {row.state}
-              </span>
-            </div>
-          ))}
+                <span style={{ fontSize: 12, fontWeight: 500, color: t.textPrimary, display: "inline-flex", alignItems: "center", gap: 8 }}>
+                  <span
+                    aria-hidden
+                    style={{
+                      width: 16,
+                      height: 16,
+                      borderRadius: 3,
+                      border: `1px solid ${row.ready ? t.accent : t.border}`,
+                      background: row.ready ? t.accentBg : t.bgSecondary,
+                      color: row.ready ? t.accent : t.textDim,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 11,
+                      fontWeight: 700,
+                    }}
+                  >
+                    {row.ready ? "✓" : ""}
+                  </span>
+                  {row.label}
+                </span>
+                <span
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: row.ready ? t.accent : t.textDim,
+                  }}
+                >
+                  {row.state}
+                </span>
+              </Tag>
+            );
+          })}
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -392,6 +453,9 @@ export function PreparedWorkspaceModule({
           onClose={() => setModal(null)}
           footer={
             <>
+              <button type="button" onClick={downloadTerms} style={secondaryControlStyle(t)}>
+                {downloaded ? "Copied" : "Download terms"}
+              </button>
               <button type="button" onClick={() => setModal(null)} style={secondaryControlStyle(t)}>
                 Cancel
               </button>

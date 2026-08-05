@@ -21,7 +21,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Forward-deploy can start from a capture name or email alone. Enrichment hits the wrong site; the prepared campaign shows another firm’s facts and destroys Approach credibility on first open.",
       implementation: "Starting from Activation & forward-deploy, open In-flight activations, click the captured firm row, and in Forward-deploy require the Public firm URL field to pass Resolve and Firm-match before Enrichment run starts.  \nOn In-flight activations, the row shows enrichment-blocked when resolve / firm-match checks fail.  \nOn Activation state → Progress, prepared-workspace-ready stays closed until Forward-deploy binds the enrichment root URL.",
       implementationAdds: ["enrichment-root-url", "url-verified", "firm-match", "enrichment-blocked"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -37,7 +37,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Enrichment fetches every path that looks useful. Disallowed areas are scraped anyway; firms and counsel later treat Om Coda as a hostile crawler, and Approach deliverables become evidence of overreach.",
       implementation: "Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Enrichment run shows robots status chips (allowed / disallowed paths) before content fetch.  \nOn Audit trail, open Change event for the enrichment run to examine robots-decision events.  \nOn Prepared Workspace, hydrated firm-facts omit any disallowed path output.",
       implementationAdds: ["robots-honored", "robots-fail-closed", "disallowed-path", "enrichment-user-agent"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -53,7 +53,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Scrapers pull staff bios with personal emails, portal URLs, or non-public PDFs into the workspace. The consultant opens a “prepared” pack that exposes data the firm never published for cold outreach.",
       implementation: "Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Enrichment run output shows Public-facts allowlist class chips per extracted field.  \nOn Prepared Workspace, hydrated blocks render only allowlisted public facts; private/authenticated extractions never land.  \nOn Audit trail, open Change event to inspect dropped-by-allowlist events for the firm.",
       implementationAdds: ["public-facts-allowlist", "pre-connect-only", "dropped-private", "person-sensitive-forbid"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -69,7 +69,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Enrichment merges Google hours and a stale site phone into one undifferentiated blob. Consultant cannot tell which source is wrong; correcting the pack means guessing.",
       implementation: "Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Firm-facts fields show Source provenance chips (site / Google Business Profile / listing).  \nOn Prepared Workspace, open the firm-facts inspector to compare conflicting values and see which source won under Prefer firm-site rules.  \nOn Readiness walkthrough, the listing-native field checklist confirms maps pin separately from site copy.",
       implementationAdds: ["gbp-secondary", "field-provenance", "prefer-firm-site", "listing-native"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -85,7 +85,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Parallel Forward-deploy jobs refetch the same firm site aggressively. Origins block the house IP; enrichment fails loudly on the leads Approach just paid for.",
       implementation: "Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Enrichment run shows per-host rate-limit and cache-hit chips.  \nOn In-flight activations, failed hosts display polite-backoff status instead of retry-looping.  \nOn Oversight → Fleet health, the firm row exposes enrichment blocklist/backoff when Approach volume spikes.",
       implementationAdds: ["per-host-rate-limit", "enrichment-cache-ttl", "polite-user-agent", "backoff"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -101,7 +101,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Enrichment stores raw HTML blobs. Template hydration breaks on every redesign; operators paste fixes by hand and Approach “prepared” packs look unfinished.",
       implementation: "Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Firm-facts record rows show field key, confidence, and extract method chips (json-ld / og / heuristic).  \nOn Prepared Workspace, Hydrate binds template merge fields to those keys, not raw HTML paste.  \nOn Readiness walkthrough, low-confidence heuristic fields appear as confirm-required checklist rows.",
       implementationAdds: ["firm-facts-record", "json-ld-prefer", "og-fallback", "heuristic-low-confidence"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -117,7 +117,7 @@ export const seat: SmeSeat = {
       implementationProblem: "A lead captured weeks ago opens a Prepared Workspace with a disconnected phone number scraped at capture time. Trust dies before Authorize book.",
       implementation: "Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Firm-facts Freshness shows fetched-at, TTL, and stale chips plus Refresh enrichment.  \nOn Prepared Workspace, Ready remains disabled when snapshot is stale until Refresh enrichment completes.  \nOn Activation state → Progress, freshness appears as a readiness gate beside token and branding gates.",
       implementationAdds: ["facts-fetched-at", "facts-ttl", "stale-block", "refresh-enrichment"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -133,7 +133,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Packs ship with Om Coda’s mark or a random OG photo of the office exterior labeled as logo. Consultants see someone else’s brand identity on “their” workspace.",
       implementation: "Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Logo resolution shows source-in-chain or placeholder + logo-unconfirmed chips.  \nOn Prepared Workspace, the firm mark renders the resolved logo or neutral placeholder, never Om Coda as the firm face.  \nOn Readiness walkthrough, the Logo row offers Confirm logo or Replace logo before consultant-facing ready.",
       implementationAdds: ["logo-chain", "logo-unconfirmed", "neutral-placeholder", "og-image-guard"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -149,7 +149,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Palette picker samples a beach hero image. Buttons are unreadable; firm doesn’t recognize the colors as theirs.",
       implementation: "Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Brand palette candidates list theme-color / nav / logo-dominant sources with contrast pass/fail chips.  \nOn Prepared Workspace, applied palette uses only contrast-safe pairs while photo-biased samples stay rejected.  \nOn Readiness walkthrough, Palette row offers Accept palette or Neutral fallback.",
       implementationAdds: ["brand-palette", "theme-color", "contrast-safe", "neutral-fallback"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -165,7 +165,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Workspace hero reads a model-written slogan the firm never published. Consultant assumes Om Coda fabricated their brand; Approach claim collapses.",
       implementation: "Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Voice snippets show sourced excerpt rows with URL and hash.  \nOn Prepared Workspace, brand copy blocks render attributable excerpts and no Invented voice option appears.  \nOn Audit trail, open Change event to examine excerpt provenance for each hydrated voice field.",
       implementationAdds: ["voice-excerpt", "source-url", "excerpt-hash", "invented-voice-forbid"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -180,7 +180,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Refresh enrichment replaces the logo overnight. Consultant who already walked Readiness sees a different brand on the same token link and loses confidence.",
       implementation: "Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Brand package version and Firm-facts version are separate chips.  \nOn Refresh enrichment, use the segmented control Update facts / Re-extract brand / Keep brand.  \nOn Prepared Workspace, the instance inspector shows the bound brand package version.",
       implementationAdds: ["brand-package-version", "facts-version", "keep-brand", "re-extract-brand"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -196,7 +196,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Missing logo falls back to Om Coda wordmark. The no-login pack looks like an Om Coda product demo, not the firm’s prepared campaign.",
       implementation: "On Prepared Workspace, incomplete brand package renders firm public name, neutral chrome, and a branding-unconfirmed chip; Om Coda marks stay platform-only.  \nOn Readiness walkthrough, branding-unconfirmed appears as a confirm item before consultant-ready.  \nOn Activation & forward-deploy → In-flight activations, each firm row tracks branding-unconfirmed vs branding-confirmed.",
       implementationAdds: ["branding-unconfirmed", "firm-faced", "platform-marks-only", "neutral-chrome"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -212,7 +212,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Operators clone empty Prepared Workspace shells and paste facts by hand. Approach cannot scale; In-flight activations stall at “workspace exists” without content.",
       implementation: "Starting from Activation & forward-deploy, click In-flight activations, click the firm row, click Forward-deploy; select Engagement template version from the published-only dropdown, select Firm-facts snapshot from the snapshot dropdown, select Brand package version from the package dropdown, and click **Hydrate** (primary button) to create the Prepared Workspace instance.\nOn Prepared Workspace, view bound template version and snapshot ID chips.\nOn Activation state, click Progress; view hydrated as a distinct gate chip after enrichment — empty shells are not ready.\nBefore Hydrate: Starting from Configuration libraries, click Engagement templates, click a template row (or New), edit in Agent / sequence editor, click Publish version so only published versions appear in the Forward-deploy dropdown.",
       implementationAdds: ["hydrate-job", "template-version-pin", "workspace-instance", "hydrated"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -228,7 +228,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Hydration succeeds with holes. Consultant opens Prepared Workspace and sees empty phone/hours blocks; the Approach promise feels like a demo.",
       implementation: "Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; Hydrate reports Missing required fields by key and keeps status needs-facts.  \nOn Prepared Workspace, unbound blocks display missing-key chips and Ready stays disabled.  \nOn Readiness walkthrough, missing keys are listed for Refresh enrichment or manual public-fact supply (still allowlisted).",
       implementationAdds: ["merge-required", "needs-facts", "missing-keys", "hydrate-validate"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -243,7 +243,7 @@ export const seat: SmeSeat = {
       implementationProblem: "House edits Engagement templates and every in-flight pack mutates under active tokens. Consultants dispute what they were shown; support cannot replay the instance.",
       implementation: "On Prepared Workspace, the instance header shows Instance version (immutable snapshot) and a Regenerate button as the only mutation action.  \nOn Activation & forward-deploy → In-flight activations, the firm row shows which instance version was issued.  \nOn Audit trail, open Change event to see hydrate and regenerate as distinct events; silent live-mutate is not available.",
       implementationAdds: ["instance-immutable", "regenerate", "instance-version", "issued-snapshot"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -259,7 +259,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Activation state shows ready because the modal exists. Agent walks a blank workspace on first text; Approach conversion dies at the deliverable.",
       implementation: "On Activation state → Progress, prepared-workspace-ready requires Hydrated, Fresh, and branding state accepted chips.  \nOn Readiness walkthrough, Open walkthrough stays disabled until those gates pass; shell-only instances remain blocked.  \nOn Activation & forward-deploy → In-flight activations, each firm row exposes gate detail chips for hydrate / freshness / branding.",
       implementationAdds: ["workspace-ready-gate", "hydrated-required", "branding-accepted", "shell-not-ready"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -275,7 +275,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Hydrated packs show “your 400 clients are ready to message.” Book was never connected; Approach claim and desk trust both break.",
       implementation: "On Prepared Workspace, hydrated blocks stay inside pre-connect scope: public facts, brand, template preview, and Authorize book / Accept terms next-step buttons.  \nOn Configuration libraries → Engagement templates catalog, open Agent / sequence editor; set the Pre-connect deliverable checkbox to strip enrolled-book / live-send assertions, then click Publish version.  \nOn Approach campaigns, Claim dictionary and hydrate scope stay aligned on public-facts pack only.",
       implementationAdds: ["pre-connect-scope", "template-preview", "no-enrolled-claim", "authorize-book-next"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -291,7 +291,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Workspace links use `/prepared/123` or firm slug alone. Third parties enumerate packs; or product blocks all access behind Login and Approach cannot show the deliverable.",
       implementation: "Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy panel; click Issue access token to bind an opaque capability token to the Prepared Workspace instance.  \nOn Prepared Workspace (no-login), Open succeeds only with a valid token; sequential ids alone never authorize.  \nOn Audit trail, open Change event to inspect token-issue metadata without raw token logs.",
       implementationAdds: ["capability-token", "opaque-token", "instance-bound", "no-login-access"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -307,7 +307,7 @@ export const seat: SmeSeat = {
       implementationProblem: "First-text links never expire. Months later anyone with the SMS screenshot still opens Prepared Workspace and downstream Consent request surfaces.",
       implementation: "Starting from Activation & forward-deploy → In-flight activations, open the firm row and Forward-deploy token panel; set Token TTL and purpose scope dropdown (prepared-workspace-open / touchpoint-continue).  \nOn Prepared Workspace no-login, expired tokens show Expired and the Regenerate link button is required.  \nOn In-flight activations, click Revoke token; Audit trail records revoke and expiry.",
       implementationAdds: ["token-ttl", "purpose-scope", "token-revoke", "rotate-after-redeem"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -323,7 +323,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Access tokens sit in plaintext in activation rows and logs. A read replica leak opens every in-flight Prepared Workspace.",
       implementation: "Starting from Activation & forward-deploy → In-flight activations, click Issue link; the raw token is shown once, then the token panel shows only active / redeemed / expired / revoked status chips.  \nOn Audit trail, token Change events never include the raw secret.  \nCTO store: hash-only verifiers for capability tokens (no plaintext column).",
       implementationAdds: ["token-hash-at-rest", "issue-once", "raw-secret-never-logged"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -339,7 +339,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Long-lived token URLs stay in the address bar; third-party scripts and outbound clicks send Referer with the secret. Packs leak beyond the consultant.",
       implementation: "On Prepared Workspace no-login open, the token redeems through a one-time exchange into a short session and disappears from the address bar after redeem.  \nOn contact touchpoints reached from that session, subsequent navigations do not re-expose the capability secret.  \nOn Activation & forward-deploy → In-flight activations, issued links use redeem URLs designed for SMS/email delivery.",
       implementationAdds: ["one-time-redeem", "session-after-redeem", "no-referrer", "link-hygiene"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -355,7 +355,7 @@ export const seat: SmeSeat = {
       implementationProblem: "A single magic link opens Prepared Workspace, Consent request, and Authorize book. Leakage of the Approach deliverable link becomes full activation authority.",
       implementation: "Starting from Activation & forward-deploy → In-flight activations, open the firm row and token panel; separate Token purpose rows show prepared-workspace vs touchpoint-continue (Consent request / Opt-in adjacency).  \nOn Prepared Workspace token redeem, no Authorize book or Consent request authority is granted without a new scoped issue.  \nOn Audit trail, use purpose-scope filter to review token events.",
       implementationAdds: ["purpose-workspace", "purpose-touchpoint", "scope-separation", "least-privilege-token"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
   ],

@@ -404,7 +404,10 @@ def emit_seat_ts(seat: dict, items: list[dict]) -> str:
                 + ", ".join(js_str(a) for a in adds)
                 + "],"
             )
-            lines.append('      implementationPlant: "not_done",')
+            plant = (item.get("implementationPlant") or "planted").strip().strip("`")
+            if plant not in ("not_done", "planted", "deferred"):
+                plant = "not_done"
+            lines.append(f'      implementationPlant: {js_str(plant)},')
         lines.append(f"      status: {js_str(item['status'])},")
         lines.append("    },")
     lines.append("  ],")
@@ -522,6 +525,10 @@ def main() -> None:
                 item["implementationProblem"] = ifields.get("implementationProblem", "").strip()
                 item["implementation"] = clean_implementation(ifields["implementation"])
                 item["implementationAdds"] = parse_adds(ifields.get("implementationAdds", ""))
+                plant_raw = ifields.get("implementationPlant", "planted").strip().strip("`")
+                item["implementationPlant"] = (
+                    plant_raw if plant_raw in ("not_done", "planted", "deferred") else "not_done"
+                )
                 with_impl += 1
                 item["status"] = "needs-verification" if nv else "verified"
             else:

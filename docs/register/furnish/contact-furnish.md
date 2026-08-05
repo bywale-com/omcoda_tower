@@ -2,7 +2,7 @@
 
 **Subject:** Engagement contact  
 **Count:** 20  
-**Status:** paper — Register Furnish
+**Status:** planted — CT affordances in `ContactPrototypeScene` (contact-furnish-01…20)
 
 Supporting affordances around the contact loop-closer (Consent → Refresh → Silence → Book). Non-invasive chrome — does not change Core Function leaves. Not Wiring.
 

@@ -2,7 +2,7 @@
 
 **Subject:** Engagement contact  
 **Count:** 20  
-**Status:** paper — Register Enrichment
+**Status:** closed (UI Needs) — CT plants in `ContactPrototypeScene` close contact-cant-01…20 where Needs name UI (paired Furnish 01…20)
 
 Spoken as the Engagement contact on firm-branded touchpoints (Consent request, refresh facts, Silence / Opt out, Book, prepared-workspace-adjacent, firm-branded pages). Design gaps for the contact loop-closer — not Wiring, not World-persona desk chrome.
 

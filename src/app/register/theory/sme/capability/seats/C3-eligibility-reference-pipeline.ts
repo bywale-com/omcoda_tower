@@ -21,7 +21,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Reference data module exists as a shell; operators have no staged path from Canada.ca change to published-current, so currency work becomes engineering tickets or unlogged edits.",
       implementation: "On Reference data, open an ingestion-run row; the run detail shows a stage rail Detect → Fetch → Parse → Validate → Draft → Dual-check → Publish version.\nOn Import criteria, the stage rail has Advance stage / Fail stage controls and an immutable stage-log panel; failed stages stay Draft and never become published-current.",
       implementationAdds: ["ingestion-run", "detect", "fetch", "parse", "validate", "draft", "dual-check", "stage-log"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -37,7 +37,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Without source-class enforcement in the pipeline, a same-day draw alert from a blog can be imported as if it were ministerial truth.",
       implementation: "On Import criteria, each Reference table row has canonical-source URL fields and Discovery-alert-only feed chips.\nOn Reference data Detect, a discovery alert row can open an ingestion run, but the Fetch stage still uses the canonical Canada.ca / MI URL before Dual-check / Publish version.",
       implementationAdds: ["canonical-source", "discovery-alert-only", "source-class"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -53,7 +53,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Scheduled polls without change-detect either spam Dual-check with identical drafts or miss same-business-day rounds between weekly reviews.",
       implementation: "On Reference data, view the Detect schedule table rows per table family (poll cadence, last-seen content-hash, ETag).\nOn Reference data, view diverged-hash rows that opened an ingestion run; click Open ingestion run on on-alert Detect rows; identical hashes do not create Draft versions.",
       implementationAdds: ["content-hash-detect", "ETag", "on-alert", "change-driven-run"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -69,7 +69,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Broken scrapes can ship empty category sets or swapped CRS columns if humans are the only gate after a green “import succeeded” toast.",
       implementation: "On Import criteria, each Reference table family row has a Schema contract version dropdown plus required-column, type, and sanity-band fields.\nOn Import criteria Validate, view the Validate status row Draft-hold chip and house-upkeep alert on contract failure; Dual-check / Publish version stay blocked until Validate passes.",
       implementationAdds: ["schema-contract", "draft-hold", "sanity-bands", "fail-closed-validate"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -84,7 +84,7 @@ export const seat: SmeSeat = {
       implementationProblem: "If operators can edit published rows in place, Analysis that cited a version no longer matches what the store returns under that id.",
       implementation: "On Publish version, the publish modal shows the content-hash snapshot and freezes it when the primary Publish version button is clicked; in-place edit of published-current is refused.\nOn Reference tables, click Open correction draft on a published row to create Draft → Dual-check → Publish version with supersedes-version-id; prior versions remain readable for pins and Audit trail.",
       implementationAdds: ["immutable-publish", "content-addressed", "supersedes-version-id", "no-in-place-edit"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -100,7 +100,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Without pipeline-emitted Audit trail events, disputes collapse into “the system said so” with no retrieveable import lineage.",
       implementation: "On Publish version, the provenance checklist requires source URL, retrieved-at, importer, dual-check attestation, effective-from, supersedes-version-id, content-hash, and ingestion-run id before the Publish version button unlocks.\nOn Audit trail, filter Change event rows by Reference table, ingestion-run id, and actor; each row links the source URL and content-hash used.",
       implementationAdds: ["ingestion-run-id", "dual-check-attestation", "change-event-provenance"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -115,7 +115,7 @@ export const seat: SmeSeat = {
       implementationProblem: "House SLA pressure on draw day encourages the same person to import and publish; policy without a hard gate fails.",
       implementation: "On Import criteria Dual-check, the Attest checkbox stays disabled when your actor id matches the importer unless a checksum job signature is present.\nOn Publish version, the Publish version button unlocks only after Dual-check passes; same-actor self-approve is refused except under a logged break-glass incident flag.",
       implementationAdds: ["dual-check-actor", "checksum-job", "break-glass-incident"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -130,7 +130,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Independent per-table publishes can interleave mid-flight evaluations across inconsistent category halves.",
       implementation: "On Reference tables, each co-dependent family row can be assigned to a Publish group with a group-id chip.\nOn Publish version, the group publish modal either publishes all members atomically or keeps every member Draft-hold. On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; the reference pin dropdown omits partial Draft-hold groups, so packs never pin a partial group.",
       implementationAdds: ["publish-group", "atomic-publish", "co-dependent-families"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -146,7 +146,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Publish bumps a version id with no field-level change set, so house cannot tell a new round row from a TEER remap that invalidates half the book.",
       implementation: "On Publish version, click Version diff for the supersedes pair; the diff panel shows added / removed / changed rows typed by change class.\nOn Reference data, attach that Version diff to the Change event row for Oversight and Analysis → Evaluation provenance consumers.",
       implementationAdds: ["version-diff", "change-class", "added", "removed", "changed"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -162,7 +162,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Without impact scoping, every Publish version either hammers the whole fleet or skips firms that actually consume the changed table.",
       implementation: "On Publish version, open the Impact scope panel; it derives cohort rows from Version diff change-class and bound Evaluation pack versions. On Firm operations bind, click firm row in firm-bind index. On firm detail, click Bind packs. On Bind packs modal, choose Evaluation pack version from the published-only dropdown; choose Automation pack version from the published-only dropdown; choose Engagement template version from the published-only dropdown; click Bind. Those bound version chips become the re-score cohort inputs when they reference the affected table keys / outcome families.",
       implementationAdds: ["impact-scope", "change-class→cohort", "bound-pack-consumers"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -178,7 +178,7 @@ export const seat: SmeSeat = {
       implementationProblem: "One fan-out policy for all tenants either wakes armed-only noise or leaves pinned packs looking “current” when they are not.",
       implementation: "On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set re-score cohort mode with the selector (Active-follow-current | Armed-only | Pinned-shadow); click Publish version. On Oversight and the same Evaluation pack editor, view Pin age and shadow-diff pending-adopt rows showing which firms are active, armed-only, or pinned-shadow.",
       implementationAdds: ["active-follow-current", "armed-signal-only", "pinned-shadow", "shadow-diff"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -193,7 +193,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Publish updates “current” while already-shown Analysis rewrites in place with no cause, destroying consultant trust.",
       implementation: "On Publish version, click Enqueue Re-evaluation; view job table rows keyed by publish id and impact-scope.\nOn Analysis → Evaluation provenance, view delta rows with was / now and cause reference-publish or reference-correction; prior Analysis snapshots keep their reference-version ids for Audit trail.",
       implementationAdds: ["re-evaluation-job", "cause:reference-publish", "cause:reference-correction", "was/now-delta"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -209,7 +209,7 @@ export const seat: SmeSeat = {
       implementationProblem: "A naive “rescore then reactivate” hook on Publish version creates false reactivation storms on every draw.",
       implementation: "On Analysis → Evaluation provenance, view reference-driven Re-evaluation job rows writing signals and Board Phase signal only.\nOn Firm operations bind firm detail → Send gates panel, view the enrollment readiness row reference-publish auto-enrollment refused deny chip; runners still apply Engine 2 precedence when a separate motion decision runs.",
       implementationAdds: ["signals-only-on-reference-publish", "no-auto-enrollment", "phase-signal-update"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -224,7 +224,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Authors treat a cutoff diff as copy-paste fodder for pack conditions, re-breaking currency.",
       implementation: "On Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; open Reference changelog (Version diff) as a read-only table-key impact panel. In publish review, the checklist rejects rule bodies that embed numeric public-criteria literals present in Reference tables; click Publish version only after review passes.",
       implementationAdds: ["reference-changelog", "table-key-link-only", "reject-numeric-literals"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -240,7 +240,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Forms and consultant edits save facts while Analysis and Board stay stale until a batch job or page reload folklore.",
       implementation: "On Client Data, click Commit write-back; view fact-change event enqueue to Re-evaluation for that contact.\nOn Board, view the Client row Phase signal chip updated from cause fact-write-back; on Live brief, view the same re-score in meeting-grade views.",
       implementationAdds: ["fact-change-event", "cause:fact-write-back", "immediate-re-eval", "phase-signal-refresh"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -256,7 +256,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Two jobs rewriting Analysis for one contact produce duplicate Phase signals or a result that cites neither publish id nor write-back id.",
       implementation: "On Evaluation packs re-score job detail, view the job row coalescing Re-evaluation for the same contact within a short merge window with stored trigger event ids for both fact-write-back and reference-publish when both apply.\nOn Audit trail, view a single result Change event row listing all trigger causes and the reference-version ids used.",
       implementationAdds: ["job-idempotency-key", "merge-window", "multi-cause-result"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -272,7 +272,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Signals die in Client Data detail; Board still shows pre-write-back posture and consultants miss meeting-grade changes.",
       implementation: "On Board Client row Phase signal, view the chip with motion class and service-eligible posture refreshed after write-back re-score.\nOn Board, open the Phase signal detail drawer to view pack + reference version pin ids for the signal without claiming an IRCC determination.",
       implementationAdds: ["motion-class-on-board", "pack-version-pin", "reference-version-pin", "not-IRCC-determination"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -288,7 +288,7 @@ export const seat: SmeSeat = {
       implementationProblem: "A contact becomes draw-cleared on Publish version or write-back while email is invalid / silenced; naive hooks enroll anyway.",
       implementation: "On Firm operations bind firm detail → Send gates panel, view enrollment readiness rows requiring Book readiness reachable verdict even when Phase signal is reactivation-worthy.\nOn Book readiness Audit run → Verdict list, click Re-batch after import refresh without clearing eligibility signals — detection and reachability stay separate axes.",
       implementationAdds: ["eligibility≠reachable", "audit-reachable-gate", "signal-retained"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -303,7 +303,7 @@ export const seat: SmeSeat = {
       implementationProblem: "One daily job either misses multi-draw days or burns Dual-check capacity re-verifying static grids every night.",
       implementation: "On Reference tables, each family row has a Volatility class selector (high / medium / low) with default SLA from the house matrix.\nOn Reference data Detect, schedule rows and on-alert rows follow Volatility class; funds tables (when asserted) show low + mandatory source-URL re-resolve each verify cycle.",
       implementationAdds: ["volatility-class", "high", "medium", "low", "source-URL-re-resolve"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -319,7 +319,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Packs pin a version id forever; without past-freshness, a week-old cutoff still clears reactivation-worthy.",
       implementation: "On Reference tables, each family row shows last-verified-at, freshness-SLA, and Past-freshness flag columns.\nOn Configuration libraries → Evaluation packs catalog, open Evaluation pack editor; set draw-cutoff and category-occupation assertions to require Published & not past freshness; click Publish version. On Analysis, view Reference data unavailable and suppressed reactivation paths when freshness fails.",
       implementationAdds: ["last-verified-at", "freshness-SLA", "past-freshness", "reference-data-unavailable"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -335,7 +335,7 @@ export const seat: SmeSeat = {
       implementationProblem: "SLAs live in Pass2 prose; nothing pages house when a high-volatility table skips verify through a multi-draw week.",
       implementation: "On Reference data, open Recheck cadence; view the cadence table next-due / last-verified rows per table family by Volatility class.\nOn Oversight, view SLA breach alert rows when Detect/verify misses the class deadline; click the alert row to jump to Import criteria for draw-day on-call.",
       implementationAdds: ["recheck-cadence", "next-due", "SLA-breach-alert", "same-business-day"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -351,7 +351,7 @@ export const seat: SmeSeat = {
       implementationProblem: "After a clean publish, IRCC HTML or operator error can drift while packs keep scoring; no house alarm fires.",
       implementation: "On Reference data, view the Reconciliation job row drift-alert status vs live Canada.ca snapshot on the fixed cadence schedule.\nOn Reference data, open the flip-sample drawer to spot-check evaluations that flipped on the last Publish version.\nOn Audit trail, filter Change event rows by ingestion, publish, re-evaluation, and reconciliation to trace the pipeline end-to-end.",
       implementationAdds: ["reconciliation-job", "drift-alert", "flip-sample", "pipeline-audit-end-to-end"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
   ],

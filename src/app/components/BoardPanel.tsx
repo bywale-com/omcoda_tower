@@ -190,6 +190,12 @@ function ClientRow({
   contactHalted,
   onHaltContact,
   onResumeContact,
+  phaseTag,
+  silenceCause,
+  runtimeLabel,
+  reachability,
+  lastTouch,
+  haltScopeLabel,
 }: {
   client: ClientMeta;
   isActive: boolean;
@@ -203,6 +209,12 @@ function ClientRow({
   contactHalted?: boolean;
   onHaltContact?: (clientId: string) => void;
   onResumeContact?: (clientId: string) => void;
+  phaseTag?: string;
+  silenceCause?: string;
+  runtimeLabel?: string;
+  reachability?: string;
+  lastTouch?: string;
+  haltScopeLabel?: string;
 }) {
   const [hovered, setHovered] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -211,6 +223,7 @@ function ClientRow({
   const isDocsHighlighted = useIsDocsTarget(CLIENT_ROW_HOLON.id);
   const isNameHighlighted = useIsDocsTarget(CLIENT_NAME_HOLON.id);
   const isRowActionsHighlighted = useIsDocsTarget(ROW_ACTIONS_HOLON.id);
+  const rowHeight = registerMode ? CLIENT_ROW_H + 14 : CLIENT_ROW_H;
 
   return (
     <div
@@ -223,7 +236,7 @@ function ClientRow({
         display: "flex",
         alignItems: "center",
         gap: DOCS_TREE_ROW_GAP,
-        height: CLIENT_ROW_H,
+        height: rowHeight,
         padding: `0 ${DOCS_TREE_ROW_PAD_X}px`,
         paddingLeft: docsTreeChildPadLeft(isActive),
         cursor: "pointer",
@@ -254,12 +267,35 @@ function ClientRow({
         ...docsChildLabelStyle(CLIENT_LABEL_SIZE, t.textPrimary, t),
         flex: 1,
         borderRadius: 4,
+        minWidth: 0,
         ...docsTargetHighlight(isNameHighlighted, t.accent),
       }}>
-        {client.name}
-        {contactHalted ? (
-          <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 600, color: t.red }}>
-            Halted
+        <span style={{ display: "block", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          {client.name}
+          {contactHalted ? (
+            <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 600, color: t.red }}>
+              Halted{haltScopeLabel ? ` · ${haltScopeLabel}` : ""}
+            </span>
+          ) : null}
+        </span>
+        {registerMode ? (
+          <span
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 4,
+              marginTop: 2,
+              fontSize: 9,
+              fontWeight: 600,
+              color: t.textDim,
+              lineHeight: 1.2,
+            }}
+          >
+            {phaseTag ? <span title="Phase signal">{phaseTag}</span> : null}
+            {runtimeLabel ? <span title="Armed vs Active">{runtimeLabel}</span> : null}
+            {silenceCause ? <span title="Silence cause">{silenceCause}</span> : null}
+            {reachability ? <span title="Reachability">{reachability}</span> : null}
+            {lastTouch ? <span title="Last touch">{lastTouch}</span> : null}
           </span>
         ) : null}
       </span>
@@ -330,6 +366,15 @@ function ClientRow({
   );
 }
 
+type BoardPhaseFilter = "all" | "silent" | "in-motion" | "meeting-ready" | "halted";
+
+type TodayMeetingStripRow = {
+  id: string;
+  contactName: string;
+  time: string;
+  clientId?: string;
+};
+
 type BoardPanelProps = {
   width: number;
   activeClientId: string;
@@ -362,6 +407,19 @@ type BoardPanelProps = {
   onResumeContact?: (clientId: string) => void;
   primaryNav?: PrimaryNavItem[];
   allNav?: PrimaryNavItem[];
+  /** Register furnish — firm identity in session chrome. */
+  firmName?: string;
+  licenseeLabel?: string;
+  lastUpdatedStamp?: string;
+  todayMeetings?: TodayMeetingStripRow[];
+  onTodayMeetingClick?: (meetingId: string) => void;
+  onSeeAllMeetings?: () => void;
+  meetingReadyClientIds?: ReadonlySet<string>;
+  haltScopeByContactId?: ReadonlyMap<string, string>;
+  silenceCauseByContactId?: ReadonlyMap<string, string>;
+  pendingHardInputs?: string[];
+  bookHandedOver?: boolean;
+  onOpenAcceptedTerms?: () => void;
 };
 
 function ClientsSectionHeader({
@@ -369,11 +427,17 @@ function ClientsSectionHeader({
   open,
   onToggle,
   t,
+  registerMode,
+  onLegend,
+  legendOpen,
 }: {
   count: number;
   open: boolean;
   onToggle: () => void;
   t: Tokens;
+  registerMode?: boolean;
+  onLegend?: () => void;
+  legendOpen?: boolean;
 }) {
   const [hovered, setHovered] = useState(false);
   const labelColor = t.textDim;
@@ -422,6 +486,34 @@ function ClientsSectionHeader({
       <span style={docsBranchLabelStyle(DOCS_TREE_LABEL_SIZE, labelColor, hovered || open)}>
         Clients
       </span>
+      {registerMode && onLegend ? (
+        <button
+          type="button"
+          title="Phase signal legend"
+          aria-label="Phase signal legend"
+          aria-expanded={legendOpen}
+          onClick={(e) => {
+            e.stopPropagation();
+            onLegend();
+          }}
+          style={{
+            width: 18,
+            height: 18,
+            borderRadius: 9,
+            border: `1px solid ${legendOpen ? t.accent : t.border}`,
+            background: legendOpen ? t.accentBg : t.bgPrimary,
+            color: legendOpen ? t.accent : t.textMuted,
+            fontSize: 10,
+            fontWeight: 700,
+            fontFamily: "inherit",
+            cursor: "pointer",
+            lineHeight: 1,
+            padding: 0,
+          }}
+        >
+          i
+        </button>
+      ) : null}
       <span style={{ flex: 1, minWidth: 0 }} />
       <span
         style={{
@@ -486,13 +578,27 @@ export function BoardPanel({
   onResumeContact,
   primaryNav,
   allNav,
+  firmName,
+  licenseeLabel,
+  lastUpdatedStamp = "Last updated · just now",
+  todayMeetings = [],
+  onTodayMeetingClick,
+  onSeeAllMeetings,
+  meetingReadyClientIds,
+  haltScopeByContactId,
+  silenceCauseByContactId,
+  pendingHardInputs = [],
+  bookHandedOver = false,
+  onOpenAcceptedTerms,
 }: BoardPanelProps) {
   const [clientsOpen, setClientsOpen] = useState(true);
   const [tasksOpen, setTasksOpen] = useState(true);
+  const [boardSearch, setBoardSearch] = useState("");
+  const [phaseFilter, setPhaseFilter] = useState<BoardPhaseFilter>("all");
+  const [legendOpen, setLegendOpen] = useState(false);
   const { tasks, openTaskCount, toggleTaskStatus } = useTasks();
   const { audits, createAndRunAudit } = useAudits();
   const { automations, createAutomation } = useAutomations();
-  const clientsInView = clientsOpen && clientList.length > 0;
   const hubHidden = hideHub || registerMode;
   const resolvedPrimaryNav =
     primaryNav ?? (hubHidden ? REGISTER_PRIMARY_NAV : PRIMARY_NAV);
@@ -500,6 +606,37 @@ export function BoardPanel({
   const showHubBody = activeIcon === "hub" && !hubHidden;
   const showContactsBody = activeIcon === "contacts";
   const showBoardBody = !showContactsBody && !showHubBody;
+
+  function boardPhaseFor(client: ClientMeta): BoardPhaseFilter {
+    if (bookHalted || haltedContactIds?.has(client.id)) return "halted";
+    if (meetingReadyClientIds?.has(client.id) || client.badge?.type === "booked") return "meeting-ready";
+    if (!client.optedIn || (client.status === "grey" && !client.nudge.active && !client.reactivationPhase)) {
+      return "silent";
+    }
+    return "in-motion";
+  }
+
+  function runtimeFor(client: ClientMeta): string {
+    if (client.reactivationPhase === "active") return "Active";
+    if (client.reactivationPhase === "armed") return "Armed";
+    return "Idle";
+  }
+
+  function reachabilityFor(client: ClientMeta): string {
+    if (!client.optedIn) return "Blocked";
+    if (client.status === "grey") return "Unknown";
+    return "Reachable";
+  }
+
+  const filteredClients = clientList.filter((client) => {
+    if (!registerMode) return true;
+    const q = boardSearch.trim().toLowerCase();
+    if (q && !client.name.toLowerCase().includes(q)) return false;
+    if (phaseFilter !== "all" && boardPhaseFor(client) !== phaseFilter) return false;
+    return true;
+  });
+
+  const clientsInView = clientsOpen && filteredClients.length > 0;
 
   function handleAuditImportsContinue(importIds: string[]) {
     createAndRunAudit(importIds);
@@ -515,6 +652,14 @@ export function BoardPanel({
     if (hubHidden && id === "hub") return;
     onIconClick(id);
   }
+
+  const phaseFilters: { id: BoardPhaseFilter; label: string }[] = [
+    { id: "all", label: "All" },
+    { id: "silent", label: "Silent" },
+    { id: "in-motion", label: "In motion" },
+    { id: "meeting-ready", label: "Meeting-ready" },
+    { id: "halted", label: "Halted" },
+  ];
 
   return (
     <div
@@ -541,6 +686,62 @@ export function BoardPanel({
         allNav={resolvedAllNav}
       />
 
+      {registerMode && (firmName || licenseeLabel) ? (
+        <div
+          style={{
+            flexShrink: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 8,
+            padding: "6px 10px",
+            borderBottom: `1px solid ${t.border}`,
+            background: t.bgSecondary,
+          }}
+        >
+          <div style={{ minWidth: 0 }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: t.textPrimary,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+              title="Firm identity in shell"
+            >
+              {firmName ?? "Firm"}
+            </div>
+            {licenseeLabel ? (
+              <div style={{ fontSize: 10, color: t.textMuted, marginTop: 1 }} title="Under-my-license cue">
+                Under · {licenseeLabel}
+              </div>
+            ) : null}
+          </div>
+          {onOpenAcceptedTerms ? (
+            <button
+              type="button"
+              onClick={onOpenAcceptedTerms}
+              style={{
+                flexShrink: 0,
+                fontSize: 10,
+                fontWeight: 600,
+                fontFamily: "inherit",
+                padding: "4px 7px",
+                borderRadius: 4,
+                border: `1px solid ${t.border}`,
+                background: t.bgPrimary,
+                color: t.textPrimary,
+                cursor: "pointer",
+              }}
+            >
+              Accepted terms
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+
       {showContactsBody ? (
         <>
           <ContactsSectionHeader count={contactList.length} t={t} />
@@ -551,6 +752,7 @@ export function BoardPanel({
             onContactClick={onContactClick}
             t={t}
             registerMode={registerMode}
+            bookHandedOver={bookHandedOver}
           />
         </>
       ) : showHubBody ? (
@@ -576,11 +778,192 @@ export function BoardPanel({
           onResumeBook={() => onResumeBook?.()}
         />
       )}
+
+      {registerMode ? (
+        <div
+          style={{
+            flexShrink: 0,
+            padding: "8px 10px",
+            borderBottom: `1px solid ${t.border}`,
+            background: t.bgPrimary,
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+            <span style={{ fontSize: 10, color: t.textDim }} title="Book last-updated stamp">
+              {lastUpdatedStamp}
+            </span>
+            {bookHandedOver ? (
+              <span
+                style={{
+                  fontSize: 10,
+                  fontWeight: 600,
+                  color: t.accent,
+                  background: t.accentBg,
+                  padding: "2px 6px",
+                  borderRadius: 3,
+                }}
+              >
+                Book handed over
+              </span>
+            ) : null}
+          </div>
+          {pendingHardInputs.length > 0 ? (
+            <div style={{ fontSize: 10, color: t.amber }}>
+              Pending hard inputs · {pendingHardInputs.join(" · ")}
+            </div>
+          ) : null}
+          <label style={{ display: "block" }}>
+            <span style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)" }}>
+              Search clients
+            </span>
+            <input
+              type="search"
+              value={boardSearch}
+              onChange={(e) => setBoardSearch(e.target.value)}
+              placeholder="Search client name"
+              aria-label="Search client name"
+              style={{
+                width: "100%",
+                boxSizing: "border-box",
+                fontSize: 12,
+                fontFamily: "inherit",
+                padding: "7px 9px",
+                borderRadius: 4,
+                border: `1px solid ${t.border}`,
+                background: t.bgSecondary,
+                color: t.textPrimary,
+              }}
+            />
+          </label>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+            {phaseFilters.map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => setPhaseFilter(f.id)}
+                style={{
+                  padding: "3px 7px",
+                  borderRadius: 3,
+                  border: `1px solid ${phaseFilter === f.id ? t.accent : t.border}`,
+                  background: phaseFilter === f.id ? t.accentBg : t.bgSecondary,
+                  color: phaseFilter === f.id ? t.accent : t.textMuted,
+                  fontSize: 10,
+                  fontWeight: 600,
+                  fontFamily: "inherit",
+                  cursor: "pointer",
+                }}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+          {todayMeetings.length > 0 ? (
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: 4,
+                }}
+              >
+                <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", color: t.textDim }}>
+                  Today&apos;s meetings
+                </span>
+                <button
+                  type="button"
+                  onClick={() => onSeeAllMeetings?.()}
+                  style={{
+                    border: "none",
+                    background: "transparent",
+                    color: t.accent,
+                    fontSize: 10,
+                    fontWeight: 600,
+                    fontFamily: "inherit",
+                    cursor: "pointer",
+                    padding: 0,
+                  }}
+                >
+                  See all
+                </button>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                {todayMeetings.slice(0, 3).map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => onTodayMeetingClick?.(m.id)}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      gap: 8,
+                      width: "100%",
+                      textAlign: "left",
+                      padding: "6px 8px",
+                      borderRadius: 4,
+                      border: `1px solid ${t.borderLight}`,
+                      background: t.bgSecondary,
+                      cursor: "pointer",
+                      fontFamily: "inherit",
+                    }}
+                  >
+                    <span style={{ fontSize: 11, fontWeight: 600, color: t.textPrimary }}>{m.contactName}</span>
+                    <span style={{ fontSize: 10, color: t.textMuted }}>{m.time}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+          {legendOpen ? (
+            <div
+              style={{
+                padding: "8px 9px",
+                borderRadius: 4,
+                border: `1px solid ${t.border}`,
+                background: t.bgSecondary,
+                fontSize: 11,
+                color: t.textMuted,
+                lineHeight: 1.45,
+              }}
+            >
+              <div style={{ fontWeight: 600, color: t.textPrimary, marginBottom: 4 }}>Phase signal legend</div>
+              <div>Silent — no contact-facing motion / opt-out / sequence end</div>
+              <div>In motion — Armed or Active under bound packs</div>
+              <div>Meeting-ready — booked receive path</div>
+              <div>Halted — consultant Halt (contact or firm book)</div>
+              <button
+                type="button"
+                onClick={() => setLegendOpen(false)}
+                style={{
+                  marginTop: 6,
+                  border: "none",
+                  background: "transparent",
+                  color: t.accent,
+                  fontSize: 11,
+                  fontWeight: 600,
+                  fontFamily: "inherit",
+                  cursor: "pointer",
+                  padding: 0,
+                }}
+              >
+                Close
+              </button>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
       <ClientsSectionHeader
-        count={clientList.length}
+        count={registerMode ? filteredClients.length : clientList.length}
         open={clientsOpen}
         onToggle={() => setClientsOpen((o) => !o)}
         t={t}
+        registerMode={registerMode}
+        legendOpen={legendOpen}
+        onLegend={() => setLegendOpen((o) => !o)}
       />
 
       <HolonBoundary
@@ -638,7 +1021,17 @@ export function BoardPanel({
             {null}
           </HolonBoundary>
         </HolonBoundary>
-        {clientsOpen && clientList.map((client) => (
+        {clientsOpen && filteredClients.map((client) => {
+            const phase = boardPhaseFor(client);
+            const phaseTag =
+              phase === "silent"
+                ? "Silent"
+                : phase === "in-motion"
+                  ? "In motion"
+                  : phase === "meeting-ready"
+                    ? "Meeting-ready"
+                    : "Halted";
+            return (
             <ClientRow
               key={client.id}
               client={client}
@@ -653,8 +1046,20 @@ export function BoardPanel({
               contactHalted={haltedContactIds?.has(client.id) ?? false}
               onHaltContact={onHaltContact}
               onResumeContact={onResumeContact}
+              phaseTag={registerMode ? phaseTag : undefined}
+              silenceCause={
+                registerMode
+                  ? silenceCauseByContactId?.get(client.id) ??
+                    (!client.optedIn ? "Contact opt-out" : undefined)
+                  : undefined
+              }
+              runtimeLabel={registerMode ? runtimeFor(client) : undefined}
+              reachability={registerMode ? reachabilityFor(client) : undefined}
+              lastTouch={registerMode ? (client.id === "sarah" ? "Yesterday" : "Mon") : undefined}
+              haltScopeLabel={haltScopeByContactId?.get(client.id)}
             />
-          ))}
+          );
+          })}
 
       </HolonBoundary>
 

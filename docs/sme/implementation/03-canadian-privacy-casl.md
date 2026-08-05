@@ -22,6 +22,8 @@ On Opt-in message and Nudge message, view firm identification text and a working
 
 **implementationAdds:** `["cem-triad", "consent", "identification", "unsubscribe"]`
 
+**implementationPlant:** planted
+
 ---
 
 ### casl-02 — Email and SMS are the same CEM class, different form constraints
@@ -35,6 +37,8 @@ On Opt-in message and Nudge message, view STOP / Unsubscribe reply text or a lin
 
 **implementationAdds:** `["cem-class", "channel-email", "channel-sms", "stop-reply", "unsubscribe-link"]`
 
+**implementationPlant:** planted
+
 ---
 
 ### casl-03 — Express consent must be affirmative opt-in, not pre-checked
@@ -46,6 +50,8 @@ Consent request can be read as opt-out or pre-checked Agree. Silence-as-yes woul
 On Consent request, click Agree only after selecting an unchecked-by-default affirmative checkbox that discloses purpose, firm sender identity, and withdrawal right. Pre-checked checkboxes and silence-as-yes controls are not offered.
 
 **implementationAdds:** `["express", "affirmative-agree", "unchecked-default"]`
+
+**implementationPlant:** planted
 
 ---
 
@@ -87,6 +93,8 @@ Starting from Firm operations bind, click a Firm row to open firm detail, then o
 
 **implementationAdds:** `["form-duties-persist", "post-agree-cem"]`
 
+**implementationPlant:** planted
+
 ---
 
 ### casl-07 — PIPEDA meaningful consent gates deeper Client Data collection
@@ -99,6 +107,8 @@ On Consent request, view split disclosure panels for CASL CEM consent and PIPEDA
 On Consent request, the Agree checkbox must include those collection-purpose chips before Nudge form or Update facts buttons open; CEM engagement alone does not open deeper forms.
 
 **implementationAdds:** `["casl-cem-consent", "pipeda-collection-consent", "immigration-facts-purpose"]`
+
+**implementationPlant:** planted
 
 ---
 
@@ -113,6 +123,8 @@ Starting from Firm operations bind, click a Firm row to open firm detail, then o
 
 **implementationAdds:** `["channel-scope-email", "channel-scope-sms", "channel-scope-multi"]`
 
+**implementationPlant:** planted
+
 ---
 
 ### casl-09 — Sender identity: firm is “on whose behalf”; Om Coda is infrastructure
@@ -125,6 +137,8 @@ On Opt-in message and Nudge message, view the firm name row as the person on who
 Starting from Firm operations bind, click a Firm row to open firm detail; view the Firm ID block and coordinate fields as bound CEM-template fields. Om Coda appears only as a send-platform chip where needed.
 
 **implementationAdds:** `["on-whose-behalf-firm", "mailing-coords", "send-platform-disclosure"]`
+
+**implementationPlant:** planted
 
 ---
 
@@ -141,6 +155,8 @@ Starting from Firm operations bind, click a Firm row to open firm detail, then o
 
 **implementationAdds:** `["unsubscribe-immediate", "unsubscribe-leq-10bd", "mechanism-valid-60d"]`
 
+**implementationPlant:** planted
+
 ---
 
 ### casl-11 — SMS STOP / Unsubscribe is a first-class silence event
@@ -154,6 +170,8 @@ On Audit trail, click a Consent event row to view SMS stop-keyword silence along
 
 **implementationAdds:** `["sms-stop", "sms-unsubscribe-keyword", "silence-authoritative"]`
 
+**implementationPlant:** planted
+
 ---
 
 ### casl-12 — Ignore ≠ Agree; Ignore ≠ Silence unless policy maps it
@@ -166,6 +184,8 @@ On Consent request, clicking Ignore records no express consent chip and no deepe
 On Consent request, view the Ignore policy row showing whether firm policy also sets silenced-for-automatic-CEMs on Ignore. Silence / Opt out remains the intentional withdrawal button when policy does not auto-silence Ignore.
 
 **implementationAdds:** `["ignore-no-express", "ignore-policy-silence", "ignore-not-agree"]`
+
+**implementationPlant:** planted
 
 ---
 

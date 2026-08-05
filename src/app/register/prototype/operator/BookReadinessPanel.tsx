@@ -1,9 +1,10 @@
 /**
- * Book readiness — Audits → Audit run (batch, checks, Start Audit run) → Verdict list chips.
+ * Book readiness — Audits → Audit run → Verdict list.
+ * Furnish: verdict legend, sequence-ready % glance, Re-audit remainder filter.
  */
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { Tokens } from "../../../components/tokens";
-import { SURFACE_CATALOG, type RegisterSurfaceEntry } from "../../trace/surfaceCatalog";
+import type { RegisterSurfaceEntry } from "../../trace/surfaceCatalog";
 import { RegisterSurfaceMount, navBtnStyle, sectionLabelStyle } from "../registerSurfaceChrome";
 import {
   DEMO_FIRMS,
@@ -12,11 +13,13 @@ import {
   panelShell,
   primaryBtnStyle,
   resolveHoveredEntry,
+  secondaryBtnStyle,
   statusChip,
   surfaceBlock,
 } from "./operatorChrome";
 
 type Verdict = "reachable" | "partial" | "unreachable";
+type VerdictFilter = "all" | "sequence-ready" | "remainder";
 
 type AuditBatch = {
   id: string;
@@ -29,6 +32,7 @@ type VerdictRow = {
   id: string;
   name: string;
   verdict: Verdict;
+  sequenceReady: boolean;
   detail: string;
 };
 
@@ -39,12 +43,12 @@ const BATCHES: AuditBatch[] = [
 ];
 
 const DEMO_VERDICTS: VerdictRow[] = [
-  { id: "c1", name: "Amina K.", verdict: "reachable", detail: "email valid · consent clear" },
-  { id: "c2", name: "Jonas P.", verdict: "partial", detail: "phone format · channel mismatch" },
-  { id: "c3", name: "Mei L.", verdict: "reachable", detail: "dedupe pass · name present" },
-  { id: "c4", name: "Carlos R.", verdict: "unreachable", detail: "silenced · consent blocked" },
-  { id: "c5", name: "Priya S.", verdict: "partial", detail: "email bounce risk" },
-  { id: "c6", name: "Elena V.", verdict: "reachable", detail: "sequence-ready" },
+  { id: "c1", name: "Amina K.", verdict: "reachable", sequenceReady: true, detail: "email valid · consent clear" },
+  { id: "c2", name: "Jonas P.", verdict: "partial", sequenceReady: false, detail: "phone format · channel mismatch" },
+  { id: "c3", name: "Mei L.", verdict: "reachable", sequenceReady: true, detail: "dedupe pass · name present" },
+  { id: "c4", name: "Carlos R.", verdict: "unreachable", sequenceReady: false, detail: "silenced · consent blocked" },
+  { id: "c5", name: "Priya S.", verdict: "partial", sequenceReady: false, detail: "email bounce risk" },
+  { id: "c6", name: "Elena V.", verdict: "reachable", sequenceReady: true, detail: "sequence-ready" },
 ];
 
 const CHECKS = [
@@ -55,6 +59,13 @@ const CHECKS = [
   { id: "consent", label: "Consent / silenced" },
   { id: "name", label: "Name present" },
 ] as const;
+
+const LEGEND: { label: string; tone: "success" | "amber" | "danger" | "accent"; note: string }[] = [
+  { label: "reachable", tone: "success", note: "channel valid" },
+  { label: "partial", tone: "amber", note: "fix / channel gap" },
+  { label: "unreachable", tone: "danger", note: "blocked / silenced" },
+  { label: "sequence-ready", tone: "accent", note: "enrollment-eligible only" },
+];
 
 function verdictTone(v: Verdict): "success" | "amber" | "danger" {
   if (v === "reachable") return "success";
@@ -85,18 +96,67 @@ export function BookReadinessPanel({
   const [running, setRunning] = useState(false);
   const [verdicts, setVerdicts] = useState<VerdictRow[] | null>(null);
   const [showVerdicts, setShowVerdicts] = useState(false);
+  const [filter, setFilter] = useState<VerdictFilter>("all");
+  const [reauditNote, setReauditNote] = useState<string | null>(null);
 
   const batch = BATCHES.find((b) => b.id === selectedBatch) ?? BATCHES[0];
   const firm = DEMO_FIRMS.find((f) => f.id === batch.firmId);
 
+  const readyCount = useMemo(
+    () => (verdicts ? verdicts.filter((v) => v.sequenceReady).length : 0),
+    [verdicts],
+  );
+  const totalCount = verdicts?.length ?? 0;
+  const readyPct = totalCount === 0 ? 0 : Math.round((readyCount / totalCount) * 100);
+
+  const filtered = useMemo(() => {
+    if (!verdicts) return [];
+    if (filter === "sequence-ready") return verdicts.filter((v) => v.sequenceReady);
+    if (filter === "remainder") return verdicts.filter((v) => !v.sequenceReady);
+    return verdicts;
+  }, [verdicts, filter]);
+
+  const remainderCount = useMemo(
+    () => (verdicts ? verdicts.filter((v) => !v.sequenceReady).length : 0),
+    [verdicts],
+  );
+
   function onStartAudit() {
     setRunning(true);
     setShowVerdicts(false);
+    setReauditNote(null);
     window.setTimeout(() => {
       setRunning(false);
       setVerdicts(DEMO_VERDICTS);
       setShowVerdicts(true);
+      setFilter("all");
     }, 800);
+  }
+
+  function onReauditRemainder() {
+    if (!verdicts || remainderCount === 0) return;
+    setRunning(true);
+    setReauditNote(`Re-audit remainder · ${remainderCount} contacts · ${firm?.name ?? "firm"}`);
+    setFilter("remainder");
+    window.setTimeout(() => {
+      // Demo: one partial becomes sequence-ready after re-audit
+      setVerdicts((prev) =>
+        prev
+          ? prev.map((row) =>
+              row.id === "c2"
+                ? {
+                    ...row,
+                    verdict: "reachable",
+                    sequenceReady: true,
+                    detail: "re-audited · channel match fixed",
+                  }
+                : row,
+            )
+          : prev,
+      );
+      setRunning(false);
+      setShowVerdicts(true);
+    }, 700);
   }
 
   return (
@@ -130,6 +190,8 @@ export function BookReadinessPanel({
                     setSelectedBatch(b.id);
                     setShowVerdicts(false);
                     setVerdicts(null);
+                    setFilter("all");
+                    setReauditNote(null);
                   }}
                   style={navBtnStyle(t, b.id === selectedBatch)}
                 >
@@ -155,9 +217,32 @@ export function BookReadinessPanel({
               background: `linear-gradient(165deg, ${t.bgPrimary} 0%, ${t.hoverBg} 55%, ${t.bgSecondary} 100%)`,
             }}
           >
-            <div style={{ fontSize: 12, color: t.textMuted }}>
-              Firm · <strong style={{ color: t.textPrimary }}>{firm?.name ?? "—"}</strong>
+            <div
+              style={{
+                fontSize: 12,
+                color: t.textMuted,
+                display: "flex",
+                gap: 8,
+                flexWrap: "wrap",
+                alignItems: "center",
+              }}
+            >
+              <span>
+                Firm · <strong style={{ color: t.textPrimary }}>{firm?.name ?? "—"}</strong>
+              </span>
+              {showVerdicts && verdicts ? (
+                <span data-register-surface="Sequence-ready glance">
+                  {statusChip(
+                    t,
+                    `Sequence-ready ${readyPct}% · ${readyCount}/${totalCount}`,
+                    readyPct >= 50 ? "success" : "amber",
+                  )}
+                </span>
+              ) : null}
             </div>
+            {reauditNote ? (
+              <div style={{ fontSize: 11, color: t.accent }}>{reauditNote}</div>
+            ) : null}
 
             {surfaceBlock(
               t,
@@ -189,6 +274,7 @@ export function BookReadinessPanel({
                       setSelectedBatch(e.target.value);
                       setShowVerdicts(false);
                       setVerdicts(null);
+                      setFilter("all");
                     }}
                     style={{ ...filterSelectStyle(t), width: "100%", minWidth: 0, boxSizing: "border-box" }}
                   >
@@ -228,62 +314,161 @@ export function BookReadinessPanel({
                     </label>
                   ))}
                 </div>
-                <button
-                  type="button"
-                  disabled={running}
-                  onClick={onStartAudit}
-                  style={primaryBtnStyle(t, running)}
-                >
-                  {running ? "Running audit…" : "Start Audit run"}
-                </button>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  <button
+                    type="button"
+                    disabled={running}
+                    onClick={onStartAudit}
+                    style={primaryBtnStyle(t, running)}
+                  >
+                    {running ? "Running audit…" : "Start Audit run"}
+                  </button>
+                  {showVerdicts && remainderCount > 0 ? (
+                    <button
+                      type="button"
+                      data-register-surface="Re-audit remainder"
+                      disabled={running}
+                      onClick={onReauditRemainder}
+                      style={secondaryBtnStyle(t)}
+                    >
+                      Re-audit remainder ({remainderCount})
+                    </button>
+                  ) : null}
+                </div>
               </>,
             )}
 
             {surfaceBlock(
               t,
               "Verdict list",
-              focus.labelFocused("Verdict list"),
-              focus.labelHovered("Verdict list"),
+              focus.labelFocused("Verdict list") ||
+                focus.labelFocused("Verdict legend") ||
+                focus.labelFocused("Sequence-ready glance") ||
+                focus.labelFocused("Re-audit remainder"),
+              focus.labelHovered("Verdict list") ||
+                focus.labelHovered("Verdict legend") ||
+                focus.labelHovered("Sequence-ready glance"),
               <>
-                <div style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary, marginBottom: 6 }}>
-                  Verdict list
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 8,
+                    marginBottom: 6,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <span style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary }}>
+                    Verdict list
+                  </span>
+                  {showVerdicts && verdicts ? (
+                    <span data-register-surface="Sequence-ready glance">
+                      {statusChip(t, `${readyPct}% sequence-ready`, readyPct >= 50 ? "success" : "amber")}
+                    </span>
+                  ) : null}
                 </div>
                 <p style={{ margin: "0 0 10px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
-                  View reachable / partial / unreachable per contact — only reachable + sequence-ready
-                  enter bound engagement (enrollment is backend).
+                  View reachable / partial / unreachable per contact — only sequence-ready rows may
+                  enter bound engagement (enrollment is backend; no Operator enroll control).
                 </p>
+
+                <div
+                  data-register-surface="Verdict legend"
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 8,
+                    marginBottom: 12,
+                    padding: "8px 10px",
+                    background: t.bgPrimary,
+                    border: `1px solid ${t.border}`,
+                    borderRadius: 4,
+                  }}
+                >
+                  {LEGEND.map((item) => (
+                    <span key={item.label} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                      {statusChip(t, item.label, item.tone)}
+                      <span style={{ fontSize: 10, color: t.textDim }}>{item.note}</span>
+                    </span>
+                  ))}
+                </div>
+
                 {!showVerdicts || !verdicts ? (
                   <span style={{ fontSize: 12, color: t.textDim }}>
                     Run an audit batch to populate verdict chips.
                   </span>
                 ) : (
-                  <div data-register-surface="Verdict list" style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    {verdicts.map((row) => (
-                      <div
-                        key={row.id}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          gap: 10,
-                          padding: "8px 10px",
-                          background: t.bgPrimary,
-                          border: `1px solid ${t.border}`,
-                          borderRadius: 4,
-                        }}
-                      >
-                        <div>
-                          <div style={{ fontSize: 12, fontWeight: 600, color: t.textPrimary }}>
-                            {row.name}
+                  <>
+                    <div
+                      data-register-surface="Verdict filter"
+                      style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 10 }}
+                    >
+                      {(
+                        [
+                          { id: "all" as const, label: `All · ${totalCount}` },
+                          { id: "sequence-ready" as const, label: `Sequence-ready · ${readyCount}` },
+                          { id: "remainder" as const, label: `Remainder · ${remainderCount}` },
+                        ] as const
+                      ).map((f) => (
+                        <button
+                          key={f.id}
+                          type="button"
+                          onClick={() => setFilter(f.id)}
+                          style={{
+                            ...secondaryBtnStyle(t),
+                            padding: "4px 8px",
+                            fontSize: 11,
+                            background: filter === f.id ? t.accentBg : t.bgPrimary,
+                            color: filter === f.id ? t.accent : t.textPrimary,
+                            borderColor: filter === f.id ? t.accent : t.border,
+                          }}
+                        >
+                          {f.label}
+                        </button>
+                      ))}
+                    </div>
+                    <div
+                      data-register-surface="Verdict list"
+                      style={{ display: "flex", flexDirection: "column", gap: 6 }}
+                    >
+                      {filtered.map((row) => (
+                        <div
+                          key={row.id}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            gap: 10,
+                            padding: "8px 10px",
+                            background: t.bgPrimary,
+                            border: `1px solid ${t.border}`,
+                            borderRadius: 4,
+                          }}
+                        >
+                          <div>
+                            <div style={{ fontSize: 12, fontWeight: 600, color: t.textPrimary }}>
+                              {row.name}
+                            </div>
+                            <div style={{ fontSize: 11, color: t.textMuted, marginTop: 2 }}>
+                              {row.detail}
+                            </div>
                           </div>
-                          <div style={{ fontSize: 11, color: t.textMuted, marginTop: 2 }}>
-                            {row.detail}
-                          </div>
+                          <span style={{ display: "inline-flex", gap: 4, flexWrap: "wrap", justifyContent: "flex-end" }}>
+                            {statusChip(t, row.verdict, verdictTone(row.verdict))}
+                            {row.sequenceReady
+                              ? statusChip(t, "sequence-ready", "accent")
+                              : statusChip(t, "not ready", "muted")}
+                          </span>
                         </div>
-                        {statusChip(t, row.verdict, verdictTone(row.verdict))}
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                      {filtered.length === 0 ? (
+                        <span style={{ fontSize: 12, color: t.textDim }}>
+                          No rows match this filter.
+                        </span>
+                      ) : null}
+                    </div>
+                  </>
                 )}
               </>,
             )}

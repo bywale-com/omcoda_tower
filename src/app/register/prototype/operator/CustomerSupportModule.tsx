@@ -30,11 +30,48 @@ type Ticket = {
 };
 
 const CONTEXT_TABS = [
-  { id: "bind", label: "Firm operations bind", jump: "Jump to Firm operations bind" },
-  { id: "health", label: "Firm health", jump: "Jump to Firm health" },
-  { id: "commercial", label: "Commercial / escrow", jump: "Jump to Commercial" },
-  { id: "activation", label: "Activation state", jump: "Jump to Activation state" },
-  { id: "audit", label: "Audit trail", jump: "Jump to Audit trail" },
+  {
+    id: "bind",
+    label: "Firm operations bind",
+    jump: "Jump to Firm operations bind",
+    badgeFor: (firm: string) =>
+      firm === DEMO_FIRMS[1].name ? { label: "stalled", tone: "amber" as const } : null,
+  },
+  {
+    id: "health",
+    label: "Firm health",
+    jump: "Jump to Firm health",
+    badgeFor: (firm: string) =>
+      firm === DEMO_FIRMS[1].name || firm === DEMO_FIRMS[3].name
+        ? { label: "unhealthy", tone: "danger" as const }
+        : null,
+  },
+  {
+    id: "commercial",
+    label: "Commercial / escrow",
+    jump: "Jump to Commercial",
+    badgeFor: (firm: string) =>
+      firm === DEMO_FIRMS[2].name
+        ? { label: "disputed", tone: "danger" as const }
+        : firm === DEMO_FIRMS[1].name
+          ? { label: "stalled", tone: "amber" as const }
+          : null,
+  },
+  {
+    id: "activation",
+    label: "Activation state",
+    jump: "Jump to Activation state",
+    badgeFor: (firm: string) =>
+      firm === DEMO_FIRMS[1].name || firm === DEMO_FIRMS[2].name
+        ? { label: "stalled", tone: "amber" as const }
+        : null,
+  },
+  {
+    id: "audit",
+    label: "Audit trail",
+    jump: "Jump to Audit trail",
+    badgeFor: (_firm: string) => null,
+  },
 ] as const;
 
 const CONTEXT_SNAPSHOTS: Record<string, Record<string, { k: string; v: string }[]>> = {
@@ -338,26 +375,37 @@ export function CustomerSupportModule({ t, focusedEntry, hoveredId }: OperatorMo
                     marginBottom: 12,
                   }}
                 >
-                  {CONTEXT_TABS.map((tab) => (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      onClick={() => setActiveTab(tab.id)}
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 600,
-                        fontFamily: "inherit",
-                        padding: "5px 10px",
-                        borderRadius: 4,
-                        border: `1px solid ${activeTab === tab.id ? t.accent : t.border}`,
-                        background: activeTab === tab.id ? t.accentBg : t.bgPrimary,
-                        color: activeTab === tab.id ? t.accent : t.textMuted,
-                        cursor: "pointer",
-                      }}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
+                  {CONTEXT_TABS.map((tab) => {
+                    const badge = tab.badgeFor(selected.firm);
+                    return (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => setActiveTab(tab.id)}
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 600,
+                          fontFamily: "inherit",
+                          padding: "5px 10px",
+                          borderRadius: 4,
+                          border: `1px solid ${activeTab === tab.id ? t.accent : t.border}`,
+                          background: activeTab === tab.id ? t.accentBg : t.bgPrimary,
+                          color: activeTab === tab.id ? t.accent : t.textMuted,
+                          cursor: "pointer",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 6,
+                        }}
+                      >
+                        {tab.label}
+                        {badge ? (
+                          <span data-register-surface="Context tab badge">
+                            {statusChip(t, badge.label, badge.tone)}
+                          </span>
+                        ) : null}
+                      </button>
+                    );
+                  })}
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                   {contextRows.map((row) => (
