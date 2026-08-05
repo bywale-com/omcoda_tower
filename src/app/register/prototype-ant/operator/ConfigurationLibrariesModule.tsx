@@ -1,29 +1,33 @@
 /**
- * Configuration libraries — Evaluation packs editor; Automations + Agents Table + Drawer.
+ * Configuration libraries — Ant composition of Evaluation packs, Automation workflows, and Agents.
+ * Automations / Agents use full workbench regions, not table-only Drawer substitutes.
  */
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   Button,
   Card,
-  Drawer,
   Form,
   Input,
+  List,
+  Menu,
   Modal,
   Select,
   Space,
-  Table,
-  Tabs,
   Tag,
   Typography,
+  theme,
 } from "antd";
-import type { ColumnsType } from "antd/es/table";
-import { getAllAgentDefinitions } from "../../../data/agentDefinitions";
-import { getAllWorkflowDefinitions } from "../../../data/automationWorkflows";
+import { AutomationProvider, useAutomations } from "../../../context/AutomationContext";
+import { getAllAgentDefinitions, type AgentDefinition } from "../../../data/agentDefinitions";
+import type { WorkflowDefinition } from "../../../data/automationWorkflows";
 import { Hint, ModulePage, Surface } from "../chrome";
+import { AntAgentWorkbench } from "./AntAgentWorkbench";
+import { AntAutomationWorkbench } from "./AntAutomationWorkbench";
 import {
   CONFIG_LIB_SUBS,
   type ConfigLibSub,
   type ConfigPack,
+  type PackKind,
   nextVersionId,
   packLabel,
   publishedPacks,
@@ -37,6 +41,287 @@ const EDITOR_SURFACE: Record<ConfigLibSub, string> = {
   "Engagement templates": "Agent / sequence editor",
 };
 
+const INITIAL_WORKFLOW_ID = "auto-welcome";
+const INITIAL_AGENT_ID = getAllAgentDefinitions().find((agent) => agent.stepCount > 0)?.id ?? "agent-nudge";
+
+function publishStatus(pack: ConfigPack | null) {
+  if (pack?.status === "Published" && pack.versionId) {
+    return <StatusTag label={`Published · ${pack.versionId}`} color="success" />;
+  }
+  return <StatusTag label="Draft" color="warning" />;
+}
+
+function LibraryCatalogItem({
+  title,
+  description,
+  active,
+  status,
+  onClick,
+}: {
+  title: string;
+  description: string;
+  active: boolean;
+  status?: ReactNode;
+  onClick: () => void;
+}) {
+  return (
+    <List.Item
+      onClick={onClick}
+      style={{
+        cursor: "pointer",
+        padding: 10,
+        borderRadius: 8,
+        border: active ? "1px solid #1677ff" : "1px solid transparent",
+      }}
+    >
+      <List.Item.Meta
+        title={
+          <Space style={{ justifyContent: "space-between", width: "100%" }}>
+            <Typography.Text strong>{title}</Typography.Text>
+            {status ? <span data-register-surface="Published / Draft status">{status}</span> : null}
+          </Space>
+        }
+        description={<Typography.Text type="secondary">{description}</Typography.Text>}
+      />
+    </List.Item>
+  );
+}
+
+function CatalogShell({
+  label,
+  title,
+  actions,
+  children,
+}: {
+  label: ConfigLibSub;
+  title: string;
+  actions: ReactNode;
+  children: ReactNode;
+}) {
+  const { token } = theme.useToken();
+  return (
+    <Surface
+      label={label}
+      style={{
+        width: 300,
+        flexShrink: 0,
+        borderRight: `1px solid ${token.colorSplit}`,
+        background: token.colorBgLayout,
+        display: "flex",
+        flexDirection: "column",
+        minHeight: 0,
+      }}
+    >
+      <div style={{ padding: 12, borderBottom: `1px solid ${token.colorSplit}`, flexShrink: 0 }}>
+        <Space style={{ justifyContent: "space-between", width: "100%" }} align="start">
+          <Space direction="vertical" size={0}>
+            <Typography.Text strong>{title}</Typography.Text>
+            <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+              Catalog
+            </Typography.Text>
+          </Space>
+          {actions}
+        </Space>
+      </div>
+      <div style={{ flex: 1, minHeight: 0, overflow: "auto", padding: 8 }}>{children}</div>
+    </Surface>
+  );
+}
+
+function EvaluationPacksEditor({
+  packs,
+  selected,
+  editorNote,
+  onSelect,
+  onRename,
+  onNote,
+}: {
+  packs: ConfigPack[];
+  selected: ConfigPack | null;
+  editorNote: string;
+  onSelect: (id: string) => void;
+  onRename: (id: string, name: string) => void;
+  onNote: (note: string) => void;
+}) {
+  const { token } = theme.useToken();
+  return (
+    <div style={{ flex: 1, minHeight: 0, display: "flex" }}>
+      <CatalogShell label="Evaluation packs" title="Evaluation packs" actions={null}>
+        <List
+          dataSource={packs}
+          renderItem={(pack) => (
+            <LibraryCatalogItem
+              key={pack.id}
+              title={pack.name}
+              description={pack.summary}
+              active={pack.id === selected?.id}
+              status={publishStatus(pack)}
+              onClick={() => onSelect(pack.id)}
+            />
+          )}
+        />
+      </CatalogShell>
+      <Surface
+        label="Evaluation pack editor"
+        style={{ flex: 1, minWidth: 0, minHeight: 0, overflow: "auto", padding: 18 }}
+      >
+        <Card
+          title="Evaluation pack editor"
+          extra={<span data-register-surface="Published / Draft status">{publishStatus(selected)}</span>}
+          style={{ minHeight: "100%", background: token.colorBgContainer }}
+        >
+          {selected ? (
+            <>
+              <Form layout="vertical">
+                <Form.Item label="Pack name">
+                  <Input value={selected.name} onChange={(event) => onRename(selected.id, event.target.value)} />
+                </Form.Item>
+                <Form.Item label="Open-box rules / analysis">
+                  <Input.TextArea
+                    rows={5}
+                    value={editorNote || selected.summary}
+                    onChange={(event) => onNote(event.target.value)}
+                  />
+                </Form.Item>
+              </Form>
+              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                Scores against published Reference data tables — no firm picker on this module.
+              </Typography.Text>
+            </>
+          ) : (
+            <Typography.Text type="secondary">Select a pack or create a new one.</Typography.Text>
+          )}
+        </Card>
+      </Surface>
+    </div>
+  );
+}
+
+function AutomationLibrary({
+  packs,
+  selectedId,
+  onSelect,
+  onCreatePack,
+}: {
+  packs: ConfigPack[];
+  selectedId: string;
+  onSelect: (workflow: WorkflowDefinition) => void;
+  onCreatePack: (id: string, name: string, summary: string) => void;
+}) {
+  const { workflows, createAutomation } = useAutomations();
+  const selectedWorkflow = workflows.find((workflow) => workflow.id === selectedId) ?? workflows[0];
+
+  useEffect(() => {
+    if (selectedWorkflow) {
+      onCreatePack(
+        selectedWorkflow.id,
+        selectedWorkflow.name,
+        `${selectedWorkflow.nodes.length} nodes · ${selectedWorkflow.target}`,
+      );
+    }
+  }, [onCreatePack, selectedWorkflow]);
+
+  if (!selectedWorkflow) {
+    return <Typography.Text type="secondary">No workflows available.</Typography.Text>;
+  }
+
+  return (
+    <div style={{ flex: 1, minHeight: 0, display: "flex" }}>
+      <CatalogShell
+        label="Automation workflows"
+        title="Automations"
+        actions={
+          <Button
+            size="small"
+            onClick={() => {
+              const workflow = createAutomation();
+              onCreatePack(workflow.id, workflow.name, "Draft workflow — publish to appear in Bind dropdowns");
+              onSelect(workflow);
+            }}
+          >
+            New
+          </Button>
+        }
+      >
+        <List
+          dataSource={workflows}
+          renderItem={(workflow) => {
+            const pack = packs.find((item) => item.id === workflow.id) ?? null;
+            return (
+              <LibraryCatalogItem
+                key={workflow.id}
+                title={workflow.name}
+                description={`${workflow.nodes.length} nodes · target ${workflow.target}`}
+                active={workflow.id === selectedWorkflow.id}
+                status={publishStatus(pack)}
+                onClick={() => onSelect(workflow)}
+              />
+            );
+          }}
+        />
+      </CatalogShell>
+      <Surface label="Workflow canvas" style={{ flex: 1, minWidth: 0, minHeight: 0 }}>
+        <AntAutomationWorkbench workflowId={selectedWorkflow.id} />
+      </Surface>
+    </div>
+  );
+}
+
+function AgentLibrary({
+  packs,
+  selectedId,
+  onSelect,
+  onCreatePack,
+}: {
+  packs: ConfigPack[];
+  selectedId: string;
+  onSelect: (agent: AgentDefinition) => void;
+  onCreatePack: (id: string, name: string, summary: string) => void;
+}) {
+  const agents = getAllAgentDefinitions();
+  const selectedAgent = agents.find((agent) => agent.id === selectedId) ?? agents[0];
+
+  useEffect(() => {
+    if (selectedAgent) {
+      onCreatePack(selectedAgent.id, selectedAgent.name, `${selectedAgent.stepCount} configured steps`);
+    }
+  }, [onCreatePack, selectedAgent]);
+
+  if (!selectedAgent) {
+    return <Typography.Text type="secondary">No agents available.</Typography.Text>;
+  }
+
+  return (
+    <div style={{ flex: 1, minHeight: 0, display: "flex" }}>
+      <CatalogShell
+        label="Engagement templates"
+        title="Agents"
+        actions={<Tag style={{ marginInlineEnd: 0 }}>Templates</Tag>}
+      >
+        <List
+          dataSource={agents}
+          renderItem={(agent) => {
+            const pack = packs.find((item) => item.id === agent.id) ?? null;
+            return (
+              <LibraryCatalogItem
+                key={agent.id}
+                title={agent.name}
+                description={`${agent.stepCount} steps · ${agent.status}`}
+                active={agent.id === selectedAgent.id}
+                status={publishStatus(pack)}
+                onClick={() => onSelect(agent)}
+              />
+            );
+          }}
+        />
+      </CatalogShell>
+      <Surface label="Agent / sequence editor" style={{ flex: 1, minWidth: 0, minHeight: 0 }}>
+        <AntAgentWorkbench agentId={selectedAgent.id} />
+      </Surface>
+    </div>
+  );
+}
+
 export function ConfigurationLibrariesModule({
   sub,
   onSubChange,
@@ -44,50 +329,68 @@ export function ConfigurationLibrariesModule({
   sub: ConfigLibSub;
   onSubChange: (sub: ConfigLibSub) => void;
 }) {
-  const subMeta = CONFIG_LIB_SUBS.find((s) => s.id === sub)!;
+  const { token } = theme.useToken();
+  const subMeta = CONFIG_LIB_SUBS.find((item) => item.id === sub)!;
   const [packs, setPacks] = useState<ConfigPack[]>(seedConfigPacks);
-  const [selectedId, setSelectedId] = useState<string | null>("eval-alg-v2");
+  const [selectedEvalId, setSelectedEvalId] = useState("eval-alg-v2");
+  const [selectedWorkflowId, setSelectedWorkflowId] = useState(INITIAL_WORKFLOW_ID);
+  const [selectedAgentId, setSelectedAgentId] = useState(INITIAL_AGENT_ID);
   const [editorNote, setEditorNote] = useState("");
   const [compareOpen, setCompareOpen] = useState(false);
   const [compareA, setCompareA] = useState("");
   const [compareB, setCompareB] = useState("");
-  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const catalog = useMemo(() => packs.filter((p) => p.kind === subMeta.kind), [packs, subMeta.kind]);
+  const catalog = useMemo(() => packs.filter((pack) => pack.kind === subMeta.kind), [packs, subMeta.kind]);
   const publishedCatalog = useMemo(() => publishedPacks(subMeta.kind, packs), [packs, subMeta.kind]);
-  const selected = catalog.find((p) => p.id === selectedId) ?? null;
+  const activeAssetId =
+    sub === "Evaluation packs" ? selectedEvalId : sub === "Automation workflows" ? selectedWorkflowId : selectedAgentId;
+  const selectedPack = packs.find((pack) => pack.id === activeAssetId && pack.kind === subMeta.kind) ?? null;
 
   useEffect(() => {
+    if (sub !== "Evaluation packs") return;
     const first = catalog[0];
-    if (!selectedId || !catalog.some((p) => p.id === selectedId)) {
-      setSelectedId(first?.id ?? null);
+    if (!catalog.some((pack) => pack.id === selectedEvalId)) {
+      setSelectedEvalId(first?.id ?? "");
     }
-  }, [sub, catalog, selectedId]);
+  }, [catalog, selectedEvalId, sub]);
 
-  const workflows = getAllWorkflowDefinitions();
-  const agents = getAllAgentDefinitions();
+  const ensurePack = useCallback((kind: PackKind, id: string, name: string, summary: string) => {
+    setPacks((prev) => {
+      if (prev.some((pack) => pack.id === id && pack.kind === kind)) {
+        const existing = prev.find((pack) => pack.id === id && pack.kind === kind);
+        if (existing?.name === name && existing.summary === summary) return prev;
+        return prev.map((pack) =>
+          pack.id === id && pack.kind === kind ? { ...pack, name, summary } : pack,
+        );
+      }
+      return [...prev, { id, kind, name, versionId: null, status: "Draft", summary }];
+    });
+  }, []);
 
-  const onNew = () => {
+  const onNewEvaluationPack = () => {
     const id = `${subMeta.kind}-new-${Date.now()}`;
     const pack: ConfigPack = {
       id,
-      kind: subMeta.kind,
-      name: `Untitled ${subMeta.kind}`,
+      kind: "evaluation",
+      name: "Untitled evaluation",
       versionId: null,
       status: "Draft",
       summary: "Draft — publish to appear in Firm operations bind dropdowns",
     };
     setPacks((prev) => [...prev, pack]);
-    setSelectedId(id);
+    setSelectedEvalId(id);
     setEditorNote("");
-    setDrawerOpen(true);
   };
 
   const onPublish = () => {
-    if (!selected) return;
-    const versionId = nextVersionId(selected.kind, packs);
+    if (!selectedPack) return;
+    const versionId = nextVersionId(selectedPack.kind, packs);
     setPacks((prev) =>
-      prev.map((p) => (p.id === selected.id ? { ...p, status: "Published", versionId } : p)),
+      prev.map((pack) =>
+        pack.id === selectedPack.id && pack.kind === selectedPack.kind
+          ? { ...pack, status: "Published", versionId }
+          : pack,
+      ),
     );
   };
 
@@ -99,217 +402,128 @@ export function ConfigurationLibrariesModule({
     setCompareOpen(true);
   };
 
-  const packColumns: ColumnsType<ConfigPack> = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      render: (name, row) => (
-        <Button
-          type="link"
-          size="small"
-          onClick={() => {
-            setSelectedId(row.id);
-            setDrawerOpen(true);
-          }}
-        >
-          {name}
-        </Button>
-      ),
-    },
-    {
-      title: "Status",
-      key: "status",
-      width: 140,
-      render: (_, row) => (
-        <span data-register-surface="Published / Draft status">
-          {row.status === "Published" && row.versionId
-            ? <StatusTag label={`Published · ${row.versionId}`} color="success" />
-            : <StatusTag label="Draft" color="warning" />}
-        </span>
-      ),
-    },
-  ];
-
-  const workflowColumns: ColumnsType<typeof workflows[0]> = [
-    { title: "Workflow", dataIndex: "name", key: "name" },
-    { title: "Status", dataIndex: "status", key: "status", width: 90 },
-    { title: "Target", dataIndex: "target", key: "target", width: 90 },
-    {
-      title: "Nodes",
-      key: "nodes",
-      width: 70,
-      render: (_, r) => r.nodes.length,
-    },
-  ];
-
-  const agentColumns: ColumnsType<typeof agents[0]> = [
-    { title: "Agent", dataIndex: "name", key: "name" },
-    { title: "Status", dataIndex: "status", key: "status", width: 90 },
-    { title: "Steps", dataIndex: "stepCount", key: "stepCount", width: 70 },
-    {
-      title: "Active",
-      dataIndex: "active",
-      key: "active",
-      width: 70,
-      render: (v) => (v ? <Tag color="success">yes</Tag> : <Tag>no</Tag>),
-    },
-  ];
-
-  const editorBody = () => {
-    if (!selected) {
-      return <Typography.Text type="secondary">Select a row or create new.</Typography.Text>;
-    }
-    if (sub === "Evaluation packs") {
-      return (
-        <Surface label="Evaluation pack editor">
-          <Form layout="vertical">
-            <Form.Item label="Pack name">
-              <Input
-                value={selected.name}
-                onChange={(e) =>
-                  setPacks((prev) =>
-                    prev.map((p) => (p.id === selected.id ? { ...p, name: e.target.value } : p)),
-                  )
-                }
-              />
-            </Form.Item>
-            <Form.Item label="Open-box rules / analysis">
-              <Input.TextArea
-                rows={4}
-                value={editorNote || selected.summary}
-                onChange={(e) => setEditorNote(e.target.value)}
-              />
-            </Form.Item>
-          </Form>
-          <Typography.Text type="secondary" style={{ fontSize: 11 }}>
-            Scores against published Reference data tables — no firm picker on this module.
-          </Typography.Text>
-        </Surface>
-      );
-    }
-    if (sub === "Automation workflows") {
-      const wf = workflows.find((w) => w.id === selected.id) ?? workflows[0];
-      return (
-        <Surface label="Workflow canvas">
-          <Typography.Paragraph>
-            <strong>{wf?.name}</strong> · {wf?.nodes.length} nodes · target {wf?.target}
-          </Typography.Paragraph>
-          <Table
-            size="small"
-            pagination={false}
-            rowKey="id"
-            dataSource={wf?.nodes.map((n) => ({ id: n.id, type: n.type, label: (n.data as { label?: string }).label ?? n.type }))}
-            columns={[
-              { title: "Node", dataIndex: "label", key: "label" },
-              { title: "Type", dataIndex: "type", key: "type" },
-            ]}
-          />
-        </Surface>
-      );
-    }
-    const agent = agents.find((a) => a.id === selected.id) ?? agents[0];
-    return (
-      <Surface label="Agent / sequence editor">
-        <Typography.Paragraph>
-          <strong>{agent?.name}</strong> · {agent?.stepCount} steps · {agent?.status}
-        </Typography.Paragraph>
-        <Typography.Text type="secondary">
-          Linked automations: {agent?.linkedAutomationIds.join(", ") || "none"}
-        </Typography.Text>
-      </Surface>
-    );
-  };
-
-  const packA = packs.find((p) => p.id === compareA);
-  const packB = packs.find((p) => p.id === compareB);
+  const packA = packs.find((pack) => pack.id === compareA && pack.kind === subMeta.kind);
+  const packB = packs.find((pack) => pack.id === compareB && pack.kind === subMeta.kind);
 
   return (
     <ModulePage title="Configuration libraries" surface="Configuration libraries">
-      <Surface label="Libraries nav">
-        <Tabs
-          activeKey={sub}
-          onChange={(k) => onSubChange(k as ConfigLibSub)}
-          items={CONFIG_LIB_SUBS.map((item) => ({
-            key: item.id,
-            label: item.navLabel,
-          }))}
-        />
-      </Surface>
-
-      <Surface label={sub}>
-        <Space style={{ marginBottom: 12 }} wrap>
-          <Button data-register-surface="Compare versions" disabled={publishedCatalog.length < 1} onClick={openCompare}>
-            Compare versions
-          </Button>
-          <Button onClick={onNew}>{subMeta.newLabel}</Button>
-        </Space>
-
-        {sub === "Evaluation packs" ? (
-          <Table size="small" rowKey="id" columns={packColumns} dataSource={catalog} pagination={false} />
-        ) : sub === "Automation workflows" ? (
-          <Table
-            size="small"
-            rowKey="id"
-            columns={workflowColumns}
-            dataSource={workflows}
-            pagination={false}
-            onRow={(row) => ({
-              onClick: () => {
-                setSelectedId(row.id);
-                setDrawerOpen(true);
-              },
-            })}
-          />
-        ) : (
-          <Table
-            size="small"
-            rowKey="id"
-            columns={agentColumns}
-            dataSource={agents}
-            pagination={false}
-            onRow={(row) => ({
-              onClick: () => {
-                setSelectedId(row.id);
-                setDrawerOpen(true);
-              },
-            })}
-          />
-        )}
-      </Surface>
-
-      <Drawer
-        title={EDITOR_SURFACE[sub]}
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        width={480}
-        extra={
-          <Space>
-            <Button type="primary" data-register-surface="Publish version" disabled={!selected} onClick={onPublish}>
-              Publish version
-            </Button>
-            {selected?.status === "Published" ? (
-              <Button data-register-surface="Compare versions" onClick={openCompare}>Compare versions</Button>
-            ) : null}
-          </Space>
-        }
+      <div
+        style={{
+          height: "100%",
+          minHeight: 0,
+          display: "flex",
+          border: `1px solid ${token.colorSplit}`,
+          borderRadius: 8,
+          overflow: "hidden",
+          background: token.colorBgContainer,
+        }}
       >
-        {editorBody()}
-        {selected?.versionId ? (
-          <Typography.Text type="secondary" style={{ display: "block", marginTop: 12 }}>
-            Current · {packLabel(selected)}
+        <Surface
+          label="Libraries nav"
+          style={{
+            width: 220,
+            flexShrink: 0,
+            borderRight: `1px solid ${token.colorSplit}`,
+            background: token.colorBgLayout,
+            padding: 8,
+          }}
+        >
+          <Typography.Text strong style={{ display: "block", padding: "8px 12px" }}>
+            Libraries
           </Typography.Text>
-        ) : (
-          <Hint>Primary · draft rows omitted from Bind dropdowns</Hint>
-        )}
-      </Drawer>
+          <Menu
+            mode="inline"
+            selectedKeys={[sub]}
+            onClick={({ key }) => onSubChange(key as ConfigLibSub)}
+            style={{ borderInlineEnd: 0, background: "transparent" }}
+            items={CONFIG_LIB_SUBS.map((item) => ({ key: item.id, label: item.navLabel }))}
+          />
+        </Surface>
+
+        <div style={{ flex: 1, minWidth: 0, minHeight: 0, display: "flex", flexDirection: "column" }}>
+          <div
+            style={{
+              flexShrink: 0,
+              padding: "10px 14px",
+              borderBottom: `1px solid ${token.colorSplit}`,
+              display: "flex",
+              justifyContent: "space-between",
+              gap: 12,
+              alignItems: "center",
+            }}
+          >
+            <Space direction="vertical" size={0}>
+              <Typography.Text strong>{sub}</Typography.Text>
+              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                {EDITOR_SURFACE[sub]}
+              </Typography.Text>
+            </Space>
+            <Space wrap>
+              <Button data-register-surface="Compare versions" disabled={publishedCatalog.length < 1} onClick={openCompare}>
+                Compare versions
+              </Button>
+              {sub === "Evaluation packs" ? <Button onClick={onNewEvaluationPack}>New pack</Button> : null}
+              <Button data-register-surface="Publish version" type="primary" disabled={!selectedPack} onClick={onPublish}>
+                Publish version
+              </Button>
+              {selectedPack?.versionId ? (
+                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                  Current · {packLabel(selectedPack)}
+                </Typography.Text>
+              ) : (
+                <Hint>Primary · draft rows omitted from Bind dropdowns</Hint>
+              )}
+            </Space>
+          </div>
+
+          <div style={{ flex: 1, minHeight: 0, minWidth: 0, display: "flex" }}>
+            {sub === "Evaluation packs" ? (
+              <EvaluationPacksEditor
+                packs={catalog}
+                selected={selectedPack}
+                editorNote={editorNote}
+                onSelect={(id) => {
+                  setSelectedEvalId(id);
+                  setEditorNote("");
+                }}
+                onRename={(id, name) =>
+                  setPacks((prev) => prev.map((pack) => (pack.id === id ? { ...pack, name } : pack)))
+                }
+                onNote={setEditorNote}
+              />
+            ) : sub === "Automation workflows" ? (
+              <AutomationProvider>
+                <AutomationLibrary
+                  packs={catalog}
+                  selectedId={selectedWorkflowId}
+                  onSelect={(workflow) => {
+                    ensurePack("automation", workflow.id, workflow.name, `${workflow.nodes.length} nodes · ${workflow.target}`);
+                    setSelectedWorkflowId(workflow.id);
+                  }}
+                  onCreatePack={(id, name, summary) => ensurePack("automation", id, name, summary)}
+                />
+              </AutomationProvider>
+            ) : (
+              <AgentLibrary
+                packs={catalog}
+                selectedId={selectedAgentId}
+                onSelect={(agent) => {
+                  ensurePack("engagement", agent.id, agent.name, `${agent.stepCount} configured steps`);
+                  setSelectedAgentId(agent.id);
+                }}
+                onCreatePack={(id, name, summary) => ensurePack("engagement", id, name, summary)}
+              />
+            )}
+          </div>
+        </div>
+      </div>
 
       <Modal
         title="Compare versions"
         open={compareOpen}
         onCancel={() => setCompareOpen(false)}
         footer={<Button onClick={() => setCompareOpen(false)}>Close</Button>}
-        width={560}
+        width={620}
       >
         <Surface label="Compare versions">
           <Typography.Paragraph type="secondary">
@@ -319,20 +533,20 @@ export function ConfigurationLibrariesModule({
             <Select
               value={compareA}
               onChange={setCompareA}
-              style={{ width: 220 }}
-              options={publishedCatalog.map((p) => ({ value: p.id, label: packLabel(p) }))}
+              style={{ width: 250 }}
+              options={publishedCatalog.map((pack) => ({ value: pack.id, label: packLabel(pack) }))}
             />
             <Select
               value={compareB}
               onChange={setCompareB}
-              style={{ width: 220 }}
-              options={publishedCatalog.map((p) => ({ value: p.id, label: packLabel(p) }))}
+              style={{ width: 250 }}
+              options={publishedCatalog.map((pack) => ({ value: pack.id, label: packLabel(pack) }))}
             />
           </Space>
           <Space wrap>
-            {[packA, packB].map((pack, i) => (
-              <Card key={pack?.id ?? i} size="small" title={pack ? packLabel(pack) : "—"} style={{ width: 240 }}>
-                <Typography.Paragraph type="secondary" style={{ fontSize: 11 }}>
+            {[packA, packB].map((pack, index) => (
+              <Card key={pack?.id ?? index} size="small" title={pack ? packLabel(pack) : "-"} style={{ width: 280 }}>
+                <Typography.Paragraph type="secondary" style={{ fontSize: 12 }}>
                   {pack?.summary ?? "Select a published version"}
                 </Typography.Paragraph>
               </Card>

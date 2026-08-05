@@ -14,6 +14,29 @@ import {
 
 export type CtDeskId = "consultant" | "operator" | "contact";
 
+/** Click-through design-system mode — DS-I plant vs Ant Design translate. */
+export type CtDesignSystem = "dsi" | "ant";
+
+const CT_DS_STORAGE_KEY = "tower-register-ct-ds";
+
+function loadCtDesignSystem(): CtDesignSystem {
+  try {
+    const v = localStorage.getItem(CT_DS_STORAGE_KEY);
+    if (v === "ant" || v === "dsi") return v;
+  } catch {
+    /* ignore */
+  }
+  return "dsi";
+}
+
+function saveCtDesignSystem(ds: CtDesignSystem) {
+  try {
+    localStorage.setItem(CT_DS_STORAGE_KEY, ds);
+  } catch {
+    /* ignore */
+  }
+}
+
 export type RegisterShellContextValue = {
   railVisible: boolean;
   setRailVisible: (v: boolean) => void;
@@ -23,6 +46,9 @@ export type RegisterShellContextValue = {
   setCtVisible: (v: boolean) => void;
   ctDesk: CtDeskId;
   setCtDesk: (desk: CtDeskId) => void;
+  /** CT canvas design system — DS-I (source plant) or Ant Design translate. */
+  ctDesignSystem: CtDesignSystem;
+  setCtDesignSystem: (ds: CtDesignSystem) => void;
   /** Reveal CT and optionally switch desk — used by leaf inhabit / chips. */
   revealCt: (desk?: CtDeskId) => void;
   /** Reveal theory strip (e.g. when a rail pass is selected while theory is hidden). */
@@ -38,6 +64,12 @@ export function RegisterShellProvider({ children }: { children: ReactNode }) {
   const [theoryVisible, setTheoryVisible] = useState(true);
   const [ctVisible, setCtVisible] = useState(true);
   const [ctDesk, setCtDesk] = useState<CtDeskId>("consultant");
+  const [ctDesignSystem, setCtDesignSystemState] = useState<CtDesignSystem>(() => loadCtDesignSystem());
+
+  const setCtDesignSystem = useCallback((ds: CtDesignSystem) => {
+    setCtDesignSystemState(ds);
+    saveCtDesignSystem(ds);
+  }, []);
 
   const revealCt = useCallback((desk?: CtDeskId) => {
     if (desk) setCtDesk(desk);
@@ -62,11 +94,23 @@ export function RegisterShellProvider({ children }: { children: ReactNode }) {
       setCtVisible,
       ctDesk,
       setCtDesk,
+      ctDesignSystem,
+      setCtDesignSystem,
       revealCt,
       revealTheory,
       revealRail,
     }),
-    [railVisible, theoryVisible, ctVisible, ctDesk, revealCt, revealTheory, revealRail],
+    [
+      railVisible,
+      theoryVisible,
+      ctVisible,
+      ctDesk,
+      ctDesignSystem,
+      setCtDesignSystem,
+      revealCt,
+      revealTheory,
+      revealRail,
+    ],
   );
 
   return <RegisterShellContext.Provider value={value}>{children}</RegisterShellContext.Provider>;

@@ -1,19 +1,23 @@
 /**
  * Click-through panel — HQ hierarchy: flex:1 beside fixed theory strip.
- * Body: hi-fi RegisterPrototypeCanvas. Wiring flow steps may temporarily
- * inhabit this panel when a wiring step is selected.
+ * Body: DS-I RegisterPrototypeCanvas or Ant Design translate (ctDesignSystem toggle).
+ * Wiring flow steps may temporarily inhabit this panel when a wiring step is selected.
  * Flows pass: Prev/Next steps the persona journey on the same prototype.
- * Tower tokens + Inter.
  */
 import type { Tokens } from "../../components/tokens";
 import { RegisterFlowStepCanvas } from "../flowCanvas/RegisterFlowStepCanvas";
 import { useRegisterSelection } from "../context/RegisterSelectionContext";
-import { useRegisterShell, type CtDeskId } from "../context/RegisterShellContext";
+import {
+  useRegisterShell,
+  type CtDeskId,
+  type CtDesignSystem,
+} from "../context/RegisterShellContext";
 import {
   CORE_CLOSE_FLOW,
   getJourneyFlow,
   getJourneyStep,
 } from "../journeyFlows";
+import { AntCtHost } from "../prototype-ant/AntCtHost";
 import { RegisterPrototypeCanvas } from "../prototype/RegisterPrototypeCanvas";
 import { useOptionalRegisterTrace } from "../trace/RegisterTraceContext";
 import { ShellHideButton, ShellShowButton, shellChromeBtnStyle } from "./RegisterShellChrome";
@@ -48,6 +52,8 @@ export function RegisterClickThroughPanel({ t, isDark }: RegisterClickThroughPan
     setCtVisible,
     ctDesk,
     setCtDesk,
+    ctDesignSystem,
+    setCtDesignSystem,
     railVisible,
     theoryVisible,
     setRailVisible,
@@ -110,7 +116,7 @@ export function RegisterClickThroughPanel({ t, isDark }: RegisterClickThroughPan
             {showWiringStepCanvas ? "Flow step" : journeyMode ? "Journey" : "Click-through"}
           </span>
           {!showWiringStepCanvas ? (
-            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
               {DESK_TABS.map(({ id, label }) => (
                 <button
                   key={id}
@@ -119,6 +125,21 @@ export function RegisterClickThroughPanel({ t, isDark }: RegisterClickThroughPan
                   style={deskTabStyle(t, ctDesk === id)}
                 >
                   {label}
+                </button>
+              ))}
+              <span
+                aria-hidden
+                style={{ width: 1, alignSelf: "stretch", background: t.border, margin: "0 2px" }}
+              />
+              {(["dsi", "ant"] as CtDesignSystem[]).map((ds) => (
+                <button
+                  key={ds}
+                  type="button"
+                  title={ds === "dsi" ? "DS-I plant chrome" : "Ant Design translate"}
+                  onClick={() => setCtDesignSystem(ds)}
+                  style={deskTabStyle(t, ctDesignSystem === ds)}
+                >
+                  {ds === "dsi" ? "DS-I" : "Ant"}
                 </button>
               ))}
             </div>
@@ -170,6 +191,10 @@ export function RegisterClickThroughPanel({ t, isDark }: RegisterClickThroughPan
 
       {showWiringStepCanvas && activeFlowStepId ? (
         <RegisterFlowStepCanvas stepId={activeFlowStepId} t={t} isDark={isDark} />
+      ) : ctDesignSystem === "ant" ? (
+        <div style={{ flex: 1, minHeight: 0, display: "flex", overflow: "hidden" }}>
+          <AntCtHost desk={ctDesk} isDark={isDark} />
+        </div>
       ) : (
         <RegisterPrototypeCanvas t={t} isDark={isDark} />
       )}

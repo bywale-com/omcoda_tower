@@ -6,7 +6,8 @@
 **Why-source:** `docs/register/how/*`, `OUTCOMES.md`, enrichment/furnish, `docs/sme/implementation/*`  
 **Composition:** [ant-design-composition-patterns.md](./ant-design-composition-patterns.md)  
 **Tokens:** omcoda-hq `ant-design-semantic-tokens`  
-**Isolation:** separate HTML entry (`prototype-ant.html` / `main-prototype-ant.tsx`); main SPA Router has **zero** imports of this tree.
+**Isolation (standalone):** `/prototype-ant` HTML entry remains for hard-isolated preview.  
+**Click-through plant:** Register CT embeds the same Ant scenes via `AntCtHost` + **DS-I | Ant** toggle (`ctDesignSystem`). Ant `ConfigProvider` mounts only while Ant mode is active.
 
 ---
 

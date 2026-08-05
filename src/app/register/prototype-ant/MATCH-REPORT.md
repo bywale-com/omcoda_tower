@@ -47,8 +47,11 @@ Legend: **matched** · **matched-partial** · **synthesize** · **blocked-pendin
 | Status chips | matched | `Tag` / `Badge` |
 | Armed / Active | matched | `Segmented` |
 | Evaluation packs editor | matched-partial | Form + Drawer | |
-| Automations / Agents Hub canvas | matched-partial | Table + Drawer canvas region | Full React Flow not ported — door kept |
-| Book readiness Hub audit table | matched | Ant `Table` + Drawer | Replaces Hub AuditDetailView chrome |
+| Automations Hub canvas | synthesize | Ant header + Build palette + `@xyflow/react` canvas + node Drawer | Re-pass: full workbench (not Table stub) |
+| Agents Hub sequence editor | synthesize | Ant header + Editor tabs + step toolbar + sequence Cards | Re-pass: full workbench |
+| Book readiness / Audits | matched-partial | Split Audits list + Audit run (checks + records Table + reachability) | Re-pass: matches plant composition |
+| Client Activity / Journey | synthesize | Dual-pane Tree + day-axis timeline | Re-pass: not flat activation-log Table |
+| CT DS toggle | matched | DS-I \| Ant on Register CT header | Plants Ant inside connected click-through |
 
 ---
 
@@ -87,5 +90,6 @@ Legend: **matched** · **matched-partial** · **synthesize** · **blocked-pendin
 - [x] Contact: all 10 surfaces + consent→booking→silence walk
 - [x] Theme toggle isolated storage key
 - [x] Hard isolation verified (separate HTML; main Router has no translate imports; antd only in prototype-ant chunk)
+- [x] Automations / Agents / Audits / Activity re-pass (workbench resemblance)
+- [x] Ant planted in Register CT with DS-I \| Ant toggle
 - [ ] Human: pick Tower `colorPrimary` brand
-- [ ] Human: confirm Automations canvas depth acceptable as Drawer region until CTO wiring
