@@ -22,7 +22,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Firm-branded Opt-in / Nudge can ship while the sending domain’s SPF omits the ESP (or return-path subdomain). Providers treat the hop as unauthenticated; reputation never forms cleanly.",
       implementation: "On Sending infrastructure, open a sending-domain row; view the Authentication panel SPF status row with ESP-include and return-path chips. External intent: publish SPF at the firm's DNS zone (ESP + return-path includes) — no in-app DNS editor.  \nOn Firm operations bind firm detail → Send gates panel, view the Domain authentication readiness deny chip (SPF-not-ready) blocking Armed / Active volume until Sending infrastructure reads SPF pass.",
       implementationAdds: ["spf-authorized", "esp-include", "return-path-spf", "domain-not-ready"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -39,7 +39,7 @@ export const seat: SmeSeat = {
       implementationProblem: "All firms can share one platform DKIM domain while From shows the firm. Alignment fails DMARC; contacts and Postmasters see Om Coda’s crypto identity, not the firm’s.",
       implementation: "On Sending infrastructure, open the firm's sending identity row and click Generate DKIM keys; view signing status chips for aligned d= and From domain in the Authentication panel. External intent: publish DKIM TXT at the firm's DNS zone.  \nOn Firm operations bind firm detail → Send gates panel, view the DKIM-aligned identity readiness row — must pass before Opt-in message or Nudge message CEM can leave.",
       implementationAdds: ["dkim-per-firm", "dkim-aligned", "from-d-align"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -56,7 +56,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Firm From domains can be bound without a DMARC record. At volume, Gmail/Yahoo treat the sender as non-compliant bulk; placement collapses even when consent is clean.",
       implementation: "On Sending infrastructure, open the From-domain row; view the Authentication panel DMARC status chips (record present, policy ≥ p=none, rua configured, alignment pass). External intent: publish DMARC (≥ p=none, rua) at the firm's DNS zone.  \nOn Activation state Progress, view the ready-to-send checklist row — stays closed until DMARC readiness is green for the bound sending identity.",
       implementationAdds: ["dmarc-present", "dmarc-p-none-min", "dmarc-alignment", "rua"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -73,7 +73,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Multiple firms can share one From apex. One bad book or complaint spike poisons placement for every tenancy on that identity.",
       implementation: "On Sending infrastructure, click Allocate subdomain in the sending-domain pool; view the new per-firm branded subdomain row auth and Warmup status chips.  \nOn Firm operations bind firm detail, choose Sending identity from the authenticated subdomain dropdown and click Save identity; optional custom-domain attach remains a later upgrade path on the same module.",
       implementationAdds: ["sending-domain-pool", "per-firm-subdomain", "tenant-isolation", "custom-domain-attach"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -89,7 +89,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Shared send path has no quarantine unit. A single firm’s hard-bounce storm or complaint spike degrades Oversight fleet metrics and every peer firm’s inbox placement.",
       implementation: "On Sending infrastructure, view the Reputation units table rows (per-firm subdomain + IP tier) with bounce, complaint, and Quarantine status chips when thresholds trip.  \nOn Oversight Fleet health and Firm health, view quarantined sending identities as status chips on the affected Firm row / Sequence health row. On Firm operations bind firm detail → Send gates panel, view the quarantined-identity deny chip while peers on other units continue.",
       implementationAdds: ["reputation-unit", "quarantine", "blast-radius-isolation", "threshold-trip"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -106,7 +106,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Activation state can read ready while the sending identity is cold. First Armed day dumps the book; providers throttle or junk the domain permanently.",
       implementation: "On Sending infrastructure → Warmup, view the Warmup plan panel ramp row per new domain/IP (daily unique-recipient cap, absolute-volume cap, current stage status).  \nOn Activation state Progress, view the ready-to-send checklist — Warmup stage complete or in-band capped required; cold full-book blast stays blocked on Send gates.",
       implementationAdds: ["warmup-ramp", "daily-unique-cap", "cold-domain-block"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -123,7 +123,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Activation state Progress can show ready from escrow/book/consent alone. Operators arm sequences on unauthenticated or cold identities; failures look like “product bugs,” not placement gates.",
       implementation: "On Activation state Progress, view the readiness checklist deliverability rows beside commercial/consent rows (auth green, Warmup stage ok for planned volume, reputation unit not quarantined).  \nOn Firm operations bind firm detail → Send gates panel, view Armed / Active readiness rows requiring those green status chips — consent-ready alone does not open volume.",
       implementationAdds: ["ready-to-send-conjunction", "deliverability-readiness", "auth-green"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -139,7 +139,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Warmup advice lives only in ESP docs. Automations enroll the full eligible book; daily caps are overrun before an operator notices Firm health drop.",
       implementation: "On Firm operations bind firm detail → Send gates panel, view the Warmup / throttle remaining row capacity chips for the bound sending identity; enrollment beyond the cap queues or blocks.  \nOn Sending infrastructure → Warmup, view the consumed-vs-allowed volume row for today's enforced budget — sequencer and ESP share one counter.",
       implementationAdds: ["warmup-enforced-in-path", "throttle-remaining", "enrollment-cap"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -155,7 +155,7 @@ export const seat: SmeSeat = {
       implementationProblem: "A firm changes subdomain or sits idle for months, then reactivation fires at old volume. Providers see a cold or new identity bursting; placement collapses.",
       implementation: "On Sending infrastructure → Warmup, view re-warmup trigger rows naming domain change, IP tier change, ESP migration, or idle-beyond-policy with active ramp status.  \nOn Activation state Progress and Firm operations bind firm detail → Send gates panel, view tightened-cap rows active until re-warmup completes — prior volume rights do not auto-restore.",
       implementationAdds: ["re-warmup", "idle-reset", "identity-change-trigger"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -172,7 +172,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Bounces may be logged as metrics only. Sequences keep hitting dead addresses; hard-bounce rate climbs; mailbox providers degrade the sending identity.",
       implementation: "On Suppression list, view address rows with scope chips (global and/or per-tenancy per policy) and reason hard-bounce from provider-webhook ingest.  \nOn Firm operations bind firm detail → Send gates panel, view suppressed hard-bounce deny chips; on Firm health Sequence detail, view soft-bounce retry rows with bounded attempts.",
       implementationAdds: ["bounce-hard", "bounce-soft", "hard-suppress", "soft-retry-bound"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -189,7 +189,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Spam-button complaints can accumulate under “they Agreed.” No unit-level complaint ceiling means Gmail/Yahoo punish the domain while Send gates still show consent-ok.",
       implementation: "On Oversight Fleet health and Firm health, view complaint-rate rows with each reputation unit against ceiling (~0.3%) and target (≤0.1%) chips.  \nOn Sending infrastructure, view Quarantine status chips on the reputation-unit row when thresholds approach/exceed. On Firm operations bind firm detail → Send gates panel, view the complaint-rate block deny chip.",
       implementationAdds: ["complaint-rate", "complaint-ceiling-0-3", "complaint-target-0-1", "auto-throttle"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -206,7 +206,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Oversight Fleet health lacks provider-grade spam/reputation signals. Operators learn of filtering from consultants complaining — too late for the domain.",
       implementation: "On Sending infrastructure, view each sending-domain row Postmaster / FBL registration status chips and last-sync timestamp. External intent: register domains in Google Postmaster Tools and equivalent Yahoo/Microsoft sender programs — no in-app Postmaster UI.  \nOn Oversight Fleet health and Firm health, view provider spam-rate and reputation signal rows with feed names alongside ESP webhook status chips.",
       implementationAdds: ["postmaster-registered", "fbl-ingest", "provider-spam-rate", "snds-adjacent"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -224,7 +224,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Messages may show a body unsubscribe link (CASL) without List-Unsubscribe / List-Unsubscribe-Post headers. Bulk Gmail/Yahoo still punish the sender; Gmail’s spam button stays the easy path.",
       implementation: "On Configuration libraries → Engagement templates catalog, open Agent / sequence editor; on Opt-in message and Nudge message step header fields, configure List-Unsubscribe and List-Unsubscribe-Post (one-click) for marketing CEMs; click Publish version.  \nOn Silence / Opt out and Suppression list, view one-click POST withdrawal rows matching in-body unsubscribe. On Firm operations bind firm detail → Send gates panel, view suppressed deny chips blocking further CEMs.",
       implementationAdds: ["list-unsubscribe", "list-unsubscribe-post", "one-click", "rfc-8058"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -241,7 +241,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Provider webhooks may feed a future metrics store only. Next-minute sends ignore hard bounces and complaints; Warmup advances on schedule instead of acceptance reality.",
       implementation: "On Sending infrastructure, view the Delivery event ingest panel rows (accepted, deferred, hard/soft bounce, complaint, delivered, rejected) with linked Warmup, Suppression list, and reputation-unit health updates from webhook ingest.  \nOn Audit trail, open deliverability Change event rows to view why Firm operations bind firm detail → Send gates panel blocked or capped a firm.",
       implementationAdds: ["delivery-event-schema", "webhook-normalize", "sync-gate-update"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -257,7 +257,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Firm A hard-bounces an address; Firm B imports the same person and sequences them. Shared IP/domain neighborhood pays twice; providers see persistent bad targeting.",
       implementation: "On Suppression list (house-global), view hard-bounce and spam-complaint rows with Global scope chip applying to every tenancy.  \nOn Firm operations bind firm detail → Send gates panel, view global suppression deny chips blocking enqueue even if the firm’s book marks the contact reachable.",
       implementationAdds: ["suppression-global", "toxic-address", "cross-tenant-block"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -273,7 +273,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Silence may live only on the consent ledger while Suppression list is empty (or the reverse). Sends slip through one gate; operators cannot see a single deny reason.",
       implementation: "On Firm operations bind firm detail → Send gates panel, view ordered deny chips in row order: CASL silence/consent basis, then Suppression list (per-tenancy + global).  \nOn Suppression list (per-tenancy), view opt-out / silence, complaint, and hard-bounce rows as technical denies alongside Book readiness permission-to-send.",
       implementationAdds: ["suppression-per-tenancy", "silence-mirror", "ordered-deny"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -289,7 +289,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Suppression exists as a report. Manual resend or a workflow canvas edge skips it; ESP still accepts and reputation still burns.",
       implementation: "On Firm operations bind firm detail → Send gates panel, view Suppression list clearance row on every automated and manual firm-branded email/SMS path before provider accept — no Force send override for suppressed addresses.  \nOn Configuration libraries → Automation workflows catalog, open Workflow canvas; trigger → condition/rule → enroll-into-template action nodes show blocked-suppressed on the enrollment action when it would target a denied address; click Publish version. On Configuration libraries → Engagement templates catalog, open Agent / sequence editor; the step rail marks blocked-suppressed on send steps; click Publish version.",
       implementationAdds: ["pre-send-suppression", "no-force-send", "provider-before-block"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -305,7 +305,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Reactivation Armed dumps years-old non-openers. Complaint and spam-folder rates climb; Warmup gains are erased by stale-list volume.",
       implementation: "On Book readiness Verdict list and Firm health Sequence health, view contact rows with sunsetting / chronic non-engagement flags blocking or requiring re-permission before reactivation volume.  \nOn Firm operations bind firm detail → Send gates panel, view sunsetting-suppressed deny chips on reactivation bursts — those addresses cannot enroll without a new engagement path.",
       implementationAdds: ["sunsetting", "chronic-non-engage", "repermission-before-burst"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -322,7 +322,7 @@ export const seat: SmeSeat = {
       implementationProblem: "CEMs can show a platform shared From while body claims the firm. Alignment and brand diverge; mailbox providers and contacts both distrust the message.",
       implementation: "On Sending infrastructure, select From identity from the dropdown on the sending-identity row (authenticated branded subdomains only; display name = firm).  \nOn Configuration libraries → Engagement templates catalog, open Agent / sequence editor; on Opt-in message and Nudge message steps, view the From header row bound to that identity — platform shared From is not offered for firm-branded CEMs.",
       implementationAdds: ["from-firm-subdomain", "display-name-firm", "no-shared-from-cem"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -339,7 +339,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Bounce traffic either hits firm MX (unmanaged) or breaks SPF alignment because MAIL FROM and From are conflated without a designed split.",
       implementation: "On Sending infrastructure, view the Envelope panel Return-Path / custom MAIL FROM row (platform bounce-subdomain with SPF-authenticated status separate from firm header From).  \nOn Audit trail deliverability event rows, view bounce correlation citing that Return-Path so Suppression list updates stay reliable.",
       implementationAdds: ["return-path-platform", "custom-mail-from", "from-vs-envelope-split"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -356,7 +356,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Replies go to an unmonitored From or a consultant’s personal inbox. Runtime cannot classify STOP/booked/question; silence and meeting signals leak.",
       implementation: "On Sending infrastructure, select Reply-To strategy (platform-captured | firm-monitored) from the selector on the sending-identity row.  \nOn Firm operations bind firm detail, set Reply-To policy with the same selector and click Save; view that replies feed engagement runtime / Conversations on the monitored path — From stays firm-branded.",
       implementationAdds: ["reply-to-platform", "reply-to-firm-monitored", "reply-capture-path"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -373,7 +373,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Every firm demands dedicated IP on day one (under-warmed) or all share one pool forever (noisy neighbor). Neither path is governed by volume/quality criteria.",
       implementation: "On Sending infrastructure, view the IP tier row (shared pool vs dedicated) with promotion-criteria chips for sustained volume and clean complaint/bounce.  \nOn Warmup, view dedicated IP ramp row; PTR/rDNS hygiene status chip must be green before dedicated volume is allowed. External intent: PTR/rDNS at the IP provider — no in-app DNS editor.",
       implementationAdds: ["ip-shared-pool", "ip-dedicated", "promotion-criteria", "ptr-rdns"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -390,7 +390,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Provider 4xx deferrals trigger naive immediate retries. Retry storms worsen blocks; Firm health shows failures without Send gates slowing the queue.",
       implementation: "On Sending infrastructure, view the Provider throttles panel per-provider rows driven by deferral/reject signals.  \nOn Firm operations bind firm detail → Send gates panel and Firm health Sequence detail, view adaptive-backoff status chips pausing enrollment/send when ISPs defer — calendar due does not override throttle.",
       implementationAdds: ["adaptive-throttle", "per-provider-backoff", "deferral-signal"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -407,7 +407,7 @@ export const seat: SmeSeat = {
       implementationProblem: "SMS escalations ride email consent and email warmup mental models. Unregistered or over-throughput SMS fails carrier filters; STOP handling may not feed Suppression list.",
       implementation: "On Sending infrastructure, view the SMS identity row brand/campaign registration status and throughput tier chips. External intent: complete A2P/brand/campaign registration with carriers (TCR) — no in-app TCR filing UI.  \nOn Firm operations bind firm detail → Send gates panel, view registration-ready row + throughput remaining row + Suppression list / STOP clear row deny chips — email Warmup green does not authorize SMS volume.",
       implementationAdds: ["sms-a2p", "sms-throughput", "sms-reputation-separate", "stop-to-suppression"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
   ],

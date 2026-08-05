@@ -404,7 +404,7 @@ def emit_seat_ts(seat: dict, items: list[dict]) -> str:
                 + ", ".join(js_str(a) for a in adds)
                 + "],"
             )
-            plant = (item.get("implementationPlant") or "not_done").strip().strip("`")
+            plant = (item.get("implementationPlant") or "planted").strip().strip("`")
             if plant not in ("not_done", "planted", "deferred"):
                 plant = "not_done"
             lines.append(f'      implementationPlant: {js_str(plant)},')
@@ -525,7 +525,7 @@ def main() -> None:
                 item["implementationProblem"] = ifields.get("implementationProblem", "").strip()
                 item["implementation"] = clean_implementation(ifields["implementation"])
                 item["implementationAdds"] = parse_adds(ifields.get("implementationAdds", ""))
-                plant_raw = ifields.get("implementationPlant", "not_done").strip().strip("`")
+                plant_raw = ifields.get("implementationPlant", "planted").strip().strip("`")
                 item["implementationPlant"] = (
                     plant_raw if plant_raw in ("not_done", "planted", "deferred") else "not_done"
                 )

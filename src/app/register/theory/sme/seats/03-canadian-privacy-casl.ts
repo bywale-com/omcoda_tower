@@ -69,7 +69,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Opt-in phase risks cold-emailing the whole book to “get consent.” That first CEM itself needs a lawful basis; without one the launch is the violation.",
       implementation: "Starting from Firm operations bind, click a Firm row to open firm detail, then open the Send gates panel. View the Consent basis required readiness row with allowed chips for Express already on file or Typed implied; view the Opt-in message send button disabled until that row passes.\nStarting from Book readiness, click Audits, open an Audit run, then view the Verdict list. Contacts without a documented Consent basis show a not-ready-for-opt-in-CEM verdict row, so cold book-wide consent asks stay blocked.",
       implementationAdds: ["consent-basis-required", "express-on-file", "implied-qualified"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -85,7 +85,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Immigration books mix retainers, closed files, and cold leads. Implied consent is asserted without type, event date, or expiry — clocks lapse silently and sends continue.",
       implementation: "Starting from Book readiness, click Audits, open an Audit run, then view the Verdict list row for a contact; the contact ledger panel shows implied-consent type, triggering event date, and expiry fields.  \nStarting from Firm operations bind, click a Firm row to open firm detail, then open the Send gates panel; opt-in and nudge rows under implied consent show an implied-expired deny chip when the clock has lapsed.\nOn Imports, fill the implied type dropdown and event date form field; on Book readiness Audit verdict list, view computed implied-expiry chips from those import fields.",
       implementationAdds: ["implied-ebr-purchase", "implied-ebr-inquiry", "implied-expiry", "event-date"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -213,7 +213,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Consent/silenced flags exist without CRTC-grade proof: how consent was obtained, scope, evidence pointer, unsubscribe request and action. Onus sits on the sender; flags alone fail an enforcement ask.",
       implementation: "Starting from Audit trail, use the Firm filter and Actor filter as needed, then click the Consent events filter chip and open a Change event row showing basis type, capture method/time, scope, evidence pointer, implied expiry, and unsubscribe request/action fields.  \nStarting from Firm operations bind, click a Firm row to open firm detail, then open the Send gates panel; each consent/silence deny row links back to that per-contact ledger so firm and Om Coda can prove lawful send and honor withdrawal.",
       implementationAdds: ["consent-ledger", "evidence-pointer", "unsubscribe-action-log"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -229,7 +229,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Om Coda operates send paths at scale without operator-visible CEM policy, consent/unsubscribe procedure, or firm/platform role split. Section 9 aiding risk and due-diligence posture are unnamed on the desk that arms sends.",
       implementation: "Starting from Firm operations bind, click a Firm row to open firm detail, then open the Send gates panel. View policy summary rows for CEM consent/unsubscribe procedures and firm-vs-platform role split before the Armed / Active segmented control can be armed.\nOn Audit trail, view Consent event rows and bind/arm Change event rows that demonstrate accountability for firm-branded CEMs Om Coda enables.",
       implementationAdds: ["cem-policy", "role-split-firm-platform", "due-diligence"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -245,7 +245,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Reactivation Armed / Active or a new campaign calendar can re-touch silenced contacts if silence is only a Board badge. Withdrawn consent reanimates without new Agree.",
       implementation: "Starting from Firm operations bind, click a Firm row to open firm detail, then open the Send gates panel. Silenced appears as a hard enrollment-inhibitor deny chip across opt-in, nudge, and reactivation until a new affirmative express Agree checkbox is recorded on Consent request. On firm detail, set Armed / Active with the segmented control only after that deny clears.\nStarting from Book readiness, click Audits, open an Audit run, then view the Verdict list; silenced contacts stay not sequence-ready for automatic CEMs until that re-consent.",
       implementationAdds: ["silenced-sticky", "reconsent-required", "enrollment-inhibitor"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -262,7 +262,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Agent follow-up after Approach capture can ship as cold commercial SMS/email under Om Coda’s name without consent basis, ID, or unsubscribe. Activation assist is presumptively a CEM.",
       implementation: "On Capture strip, view the first outbound row classified with a CEM-by-default chip.  \nStarting from Activation & forward-deploy, click Forward-deploy, then click First-text; the send button enables only when the send path shows a Send gates panel with documented consent-basis chip plus Om Coda identification and unsubscribe fields. Cold first-text stays blocked.",
       implementationAdds: ["first-text-cem", "consent-basis-gated"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -290,7 +290,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Forward-deploy scrapes public firm facts for workspace credibility. Using harvested emails as First-text address without capture stretches conspicuous-publication beyond a lawful CEM basis.",
       implementation: "On Capture strip, view First-text channel preselected from the channel the consultant submitted on Approach.  \nStarting from Activation & forward-deploy, click Forward-deploy; website-harvested addresses show non-sendable chips for CEMs without an independent Consent basis. Scrape aids Prepared Workspace credibility, not outreach.",
       implementationAdds: ["approach-submitted-channel", "scrape-non-sendable", "independent-basis-required"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -306,7 +306,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Ads seat owns pre-frame trust; CASL still requires Om Coda ID, contact coords valid ≥60 days, unsubscribe, and relevance to the consultant’s business role. Thin pitch templates fail form and role-relevance.",
       implementation: "Starting from Agent / sequence editor, click the Approach first-text adjacent template row. Fill First-text copy fields to identify Om Coda, include prescribed contact info plus unsubscribe, and speak only to the captured consultant's professional interest in Prepared Workspace.\nOn Capture strip, click First-text; view the send button disabled when required form fields are incomplete or off-role copy is flagged.",
       implementationAdds: ["om-coda-id", "role-relevant-b2b", "prescribed-contact-info"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -322,7 +322,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Connected book after Authorize book is treated as send-ready. Firm→Om Coda processing permission launders missing per-contact CEM consent.",
       implementation: "On Authorize book, clicking Complete grants a processing/permission chip only; it does not mint client CEM consent.  \nStarting from Firm operations bind, click a Firm row to open firm detail and view the Send gates panel; starting from Book readiness, click Audits, open an Audit run, then view the Verdict list. Every client CEM still requires a separate per-contact Consent basis row; activation hard inputs never skip Consent request / opt-in path.",
       implementationAdds: ["db-auth-orthogonal", "client-cem-consent-separate"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -338,7 +338,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Firm holds the list; Om Coda runs send/evaluate. Accountability vs service-provider duty is unnamed — unclear who owns consent claims when a bad send fires.",
       implementation: "Starting from Firm operations bind, click a Firm row to open firm detail, then open the Send gates panel. View the firm-accountable readiness row for client PI and CEM consent claims; send buttons stay disabled when ledgered consent is missing.\nOn Audit trail, click Consent event rows to view firm custody plus platform fail-closed enforcement fields so coexistence is visible to operators.",
       implementationAdds: ["firm-accountable", "platform-fail-closed", "processing-intermediary"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -354,7 +354,7 @@ export const seat: SmeSeat = {
       implementationProblem: "CSV/CRM “consented” flags authorize nudge/reactivation without Tower opt-in. Legacy marketing flags are not CRTC-proofable without basis, date, scope, and evidence.",
       implementation: "On Imports, map prior consent only after filling basis type dropdown, date field, scope dropdown, and evidence reference field, or mapping to time-valid implied EBR with event date fields.  \nStarting from Book readiness, click Audits, open an Audit run, then view the Verdict list; imported flags without proof show a force-Tower-Opt-in-message verdict row. Legacy \"yes\" cannot skip Consent request proof.",
       implementationAdds: ["imported-consent-proof", "force-tower-opt-in", "evidence-reference"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -370,7 +370,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Hands-free Automations could cause or permit CEMs on an unconsented book. CRTC s.9 reaches those who aid s.6 violations; configurable override would put Om Coda in the aiding path.",
       implementation: "Starting from Firm operations bind, click a Firm row to open firm detail, then open the Send gates panel. Send and enrollment buttons stay fail-closed when consent/silenced ledger rows deny the CEM; no operator override button appears for unconsented books.\nOn firm detail, set Armed / Active with the segmented control; when the ledger denies, firm detail shows a blocked enrollment chip and Om Coda cannot be configured into aiding non-consensual firm-branded outreach.",
       implementationAdds: ["section-9-fail-closed", "no-unconsented-override"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -386,7 +386,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Book readiness correctly excludes pathway scoring, but consent/silenced is an underspecified boolean — ignores basis type, expiry, channel scope, and unsubscribe currency.",
       implementation: "Starting from Book readiness, click Audits, open an Audit run, then view the Verdict list. Consent/silenced verdict rows encode: silenced/unsubscribed -> not sequence-ready for automatic CEMs; missing/expired Consent basis -> not ready for nudge/reactivation, with opt-in CEM only if implied/express basis exists; valid express or in-window implied + channel match -> eligible for the bound phase.  \nVerdict rows read CASL state, not immigration score.",
       implementationAdds: ["sequence-ready-casl", "basis-expired", "channel-match", "not-pathway"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -402,7 +402,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Reachability (syntax/channel validity) is conflated with legal permission to send. Partial/reachable contacts enroll despite silence or failed Consent basis.",
       implementation: "Starting from Book readiness, click Audits, open an Audit run, then view the Verdict list. View channel-validity chips separate from permission-to-send chips; a contact may show reachable or partial yet enrollment-blocked when silenced or without a lawful Consent basis.  \nStarting from Firm operations bind, click a Firm row to open firm detail, then open the Send gates panel; deliverability readiness and consent readiness appear as separate rows so deliverability never equates consent.",
       implementationAdds: ["channel-validity", "permission-to-send", "enrollment-blocked"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
   ],

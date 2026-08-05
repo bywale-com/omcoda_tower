@@ -13,7 +13,7 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 - [x] `sme-handoff-ready` → Function ∥ Wiring Function (sync on CROSS-CUTTING) — [`../sme/HANDOFF.md`](../sme/HANDOFF.md) · [`../sme/CROSS-CUTTING.md`](../sme/CROSS-CUTTING.md)
 - [x] `function-complete` → Enrichment
 - [x] `enrichment-complete` → Furnish
-- [ ] `furnish-written` → CT plant of Furnish (Contact planted; Consultant / Operator open)
+- [x] `furnish-written` → CT plant of Furnish
 - [ ] `wiring-synced` → deep CT on cross-cutting surfaces
 - [ ] `ct-verify-green` → Translation
 
@@ -31,9 +31,9 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 | Personas & Function | How graphs exist (`consultantOnTower`, `towerCoreOutcome`) — surface join pending |
 | Wiring | Flow maps exist (login flows) — CTO twin pending |
 | Components | Holon tree live |
-| SME | **Pass2 + handoff + densified PM implementations** — 177 practice + 158 capability · affordance-grain impls in Register twins ([`../sme/implementation/DENSIFY-LAW.md`](../sme/implementation/DENSIFY-LAW.md)); CT / CTO Wiring absorb not started |
-| Enrichment / Furnish | Contact Furnish **CT-planted** (20) + Can't UI Needs closed; Consultant / Operator still paper ([`enrichment/`](./enrichment/) · [`furnish/`](./furnish/)) |
-| CT Plant | Not started — lo-fi click-through placeholder |
+| SME | **Pass2 + handoff + densified PM implementations CT-planted** — 325 written twins `implementationPlant: planted` (10 NV practice items remain without impl blocks) · ([`../sme/implementation/DENSIFY-LAW.md`](../sme/implementation/DENSIFY-LAW.md)) |
+| Enrichment / Furnish | **CT-planted** — 60 Can't Needs closed + 60 Furnish affordances on Register prototypes ([`enrichment/`](./enrichment/) · [`furnish/`](./furnish/)) |
+| CT Plant | **Board plant pass landed** — How + SME densify + Furnish on consultant / contact / operator prototypes; Wiring deep CT still open |
 | Verify scripts | Not shipped |
 
 ---

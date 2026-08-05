@@ -22,7 +22,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Product language assumes a uniform firm database; practice is fragmented across spreadsheets, generic CRMs, and immigration practice platforms — so one OAuth meaning fails KU #2. Activation must not depend on a single vendor connector. PM owns Authorize-book stack taxonomy; CTO owns connector vs assisted-import paths.",
       implementation: "On Authorize book, select Connection stack dropdown to file export, assisted confirm, or live CRM for the firm's actual system of record; each option writes to the same Book authorized outcome row.\nOn Activation state, view Progress panel book-auth landed only when that shared outcome chip is complete, never when a stack-specific partial chip is present.",
       implementationAdds: ["file-export", "assisted-confirm", "live-crm"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -38,7 +38,7 @@ export const seat: SmeSeat = {
       implementationProblem: "“Database authorization” read as live API access excludes the largest realistic V1 cohort when the living book is a spreadsheet. Firm-authorized file export/upload must count as a first-class authorization stack. PM: file-stack = Authorize book equivalent; CTO: import mutation honesty.",
       implementation: "On Authorize book, select file-export in Connection stack dropdown; the option appears as a first-class row, not a fallback label.\nOn Imports, click Land import to write the firm-authorized contact list into Contacts as the mutable book for that tenancy.",
       implementationAdds: ["file-export"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -55,7 +55,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Connecting “the CRM” may pull matter-heavy or active-file populations wrong for dormant re-engagement. Authorization must name cohort purpose so connect yields a reactivation book, not an open-matter dump. PM: cohort semantics; CTO: filter/export scope when connectors exist.",
       implementation: "On Authorize book, select Cohort purpose dropdown before release, choosing dormant, past leads, closed files, or open matters.\nOn Contacts, view Book header Authorized cohort boundary chip on the landed book, so the list is not an unlabeled full dump.",
       implementationAdds: ["dormant", "past-leads", "closed-files", "open-matters"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -96,7 +96,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Product may equate auth with a technical credential grant; practice needs one intentional firm act that releases a workable book into Tower’s tenancy. OAuth token, export file, and assisted confirm are three mechanisms of one hard input — never three finish lines. PM + CTO share outcome + provenance.",
       implementation: "On Authorize book, view Book authorized outcome row completing only after the selected Connection stack lands provenance fields and channel candidate fields.\nOn Activation state, view Progress panel flipping book-auth only from that shared outcome chip, not from token received, file received, or staff seed chips alone.",
       implementationAdds: ["book-authorized"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -113,7 +113,7 @@ export const seat: SmeSeat = {
       implementationProblem: "“Equivalent” risks collapsing into CSV inside the Meta click or into demo contacts that never become a runnable book. Equivalent = post-readiness, firm-initiated hand-over that lands mutable, Audit-able contacts. Acquisition stays seed-only.",
       implementation: "Starting from Prepared Workspace, click Authorize book only after the readiness chip is complete; no Approach capture control links into Authorize book.\nOn Authorize book, view Private book hand-over panel landing the book Contacts will mutate, while Acquisition surfaces remain seed-only.",
       implementationAdds: ["post-readiness-hand-over"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -129,7 +129,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Assisted import can look already connected without the consultant’s intentional authorization act. Campaign-real must not be inferred from staff-side seeding. Confirm-this-book is Authorize book’s sibling; Activation state flips only after confirm.",
       implementation: "On Contacts, when Imports holds an assisted list, click Confirm imported book in the Book header to perform the authorization act.\nOn Activation state, view Progress panel marking book-auth landed only after Confirm imported book event chip, not when staff seeded Imports.",
       implementationAdds: ["confirm-imported-book"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -146,7 +146,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Prepared Workspace under firm branding can be misread as “we already have your clients.” Scrape/templates are readiness theater only; only post-authorization private book makes engagement real. No scrape→Contacts mutation.",
       implementation: "On Prepared Workspace, view Firm identity preview panel labeling the staged campaign as readiness theater; no Contacts populated chip appears.\nOn Contacts, view Empty book row until Authorize book or Confirm imported book lands; website scrape rows never write into the directory.",
       implementationAdds: ["readiness-theater"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -163,7 +163,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Connect that lands names without usable channels creates Audit theater and blocks enrollment. Connect must produce stable identity + display name + ≥1 channel candidate per contact so Book readiness has something to validate — without inventing eligibility fields.",
       implementation: "On Authorize book and Imports, view Row acceptance checklist requiring identity field, display name field, and at least one channel candidate field (email and/or phone as present in source).\nStarting from Book readiness, click New Audit run in Audits only after rows pass that checklist; view Verdict list marking empty-channel-only rows as not-landed, not Audit-eligible.",
       implementationAdds: ["channel-candidate", "not-landed"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -180,7 +180,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Treating a one-shot export as a living CRM misleads firms about freshness for always-on engagement. File-stack books are authorized snapshots with optional re-export refresh — not silent live truth. PM: snapshot vs live language; CTO: re-import + provenance timestamps.",
       implementation: "On Authorize book, when Connection stack dropdown is file-export, view Book currency panel authorized-snapshot chip, not live.\nOn Contacts and Imports, view Provenance timestamp field and click Re-export refresh to make refresh a re-hand-over action rather than silent sync.",
       implementationAdds: ["authorized-snapshot", "live"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -195,7 +195,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Upload of a partial, empty, or demo file can satisfy a checkbox without yielding a runnable book. Hard-input success must tie to landed mutable row count + cohort acknowledgement — not file-received events. Mutation honesty must close Seed §5.1 gap.",
       implementation: "On Authorize book, click Complete authorization only when Landed mutable row count field is greater than zero and Cohort purpose acknowledgement checkbox is checked.\nOn Activation state, view Progress panel keeping book-auth pending when Imports shows file-received-only, empty import, or demo import chips.",
       implementationAdds: ["landed-mutable-rows", "cohort-acknowledgement"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -211,7 +211,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Without a declared match key, connect and Audit fight duplicates and split engagement history. V1 match: normalized email when present, else phone E.164-ish candidate, else source-row id. CTO owns upsert; PM surfaces firm-visible duplicate outcomes after Audit — not pathway scores.",
       implementation: "On Imports, view Match key policy panel ordering upsert keys as normalized email, then phone, then source-row id.\nStarting from Book readiness, run Audit run from Audits; view Verdict list firm-visible duplicate outcome rows using that same match-key policy.",
       implementationAdds: ["match-email", "match-phone", "match-source-row-id"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -228,7 +228,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Firms expect “imported = ready to message”; practice says import only supplies candidates for reachability. Connect = candidate book land; sequence-ready only after Audit verdicts. Enrollment never treats raw CSV as sendable.",
       implementation: "On Authorize book, click Complete authorization; it lands candidate-book chip and routes to Book readiness, not enrollment.\nStarting from Book readiness, run Audit run from Audits; view Verdict list marking only reachable rows as sequence-ready, while raw Imports remain candidate rows until Audit completes.",
       implementationAdds: ["candidate-book", "sequence-ready", "reachable"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -243,7 +243,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Broad CRM OAuth can pull matters, billing, or documents the firm did not intend to hand to an engagement product. When OAuth is used, scope to contacts/leads + minimal reachability fields, with firm-visible scope summary. Authorization stays book-connection — not practice-platform takeover.",
       implementation: "On Authorize book, when Connection stack dropdown is live-crm, check Scope summary panel acknowledgement of contacts/leads plus reachability fields only before click Grant enables.\nConsultant would like to grant OAuth in the firm's CRM with contacts/leads and reachability scope only when click Grant proceeds.\nOn Contacts, view Landed objects list accepting only scoped contacts/leads rows; matters, billing, and documents appear as blocked chips outside the book.",
       implementationAdds: ["scope-contacts-leads", "reachability-fields"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -258,7 +258,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Product may push OAuth as “more real” and CSV as temporary, biasing activation away from reachable firms. Mechanism = what the firm can intentionally authorize today, both after readiness — practice fit, not acquisition friction. Parallel landers to the same book schema.",
       implementation: "On Authorize book, view Connection stack dropdown labeled \"what the firm can authorize today\" offering file-export for export-owned SoR and live-crm for admin-capable SoR, with no temporary vs real badge.\nOn Imports and Contacts, either stack lands through the same Mutable book schema panel after Prepared Workspace readiness chip.",
       implementationAdds: ["file-export", "live-crm"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -274,7 +274,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Leaving KU #7 open invites building sync before a workable one-way book exists — or blocking “running” on sync completeness. Defer bidirectional sync for V1; one-way land (CRM/file → Tower book) is enough for campaign-real. Activation finish line stays auth + escrow, not sync perfection.",
       implementation: "On Authorize book, view Sync posture panel displaying one-way-land (CRM/file to Tower) and bidirectional deferred as read-only chips, with no V1 bidirectional sync toggle.\nOn Activation state, view Progress panel reaching running when book-auth and escrow chips are complete, without a sync-complete row.",
       implementationAdds: ["one-way-land", "bidirectional-deferred"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -291,7 +291,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Naive two-way sync can corrupt the firm’s practice file with engagement-tool edits. If revisited later: selective write-back of engagement events only; CRM remains source of truth for identity/channels. Board ≠ CRM admin. Explicit V1 posture: write-back not shipped.",
       implementation: "On Authorize book and Contacts, view Sync posture panel write-back not in V1 and firm-SoR owned identity/channels as read-only chips.\nOn Board, view Engagement record timeline chronology rows only; no CRM field admin button and no silent master toggle for practice-record fields.",
       implementationAdds: ["write-back-deferred", "engagement-events-only"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -307,7 +307,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Ambiguous “connected” leaves Audit with empty, demo, or non-mutable data and enrollment blocked or unsafe. Connect must guarantee a tenancy-bound mutable contact set with provenance, match keys, channel candidates, and firm-authorized cohort boundary before Audit runs.",
       implementation: "On Authorize book, view Connect-complete checklist requiring mutable cohort, provenance, match keys, channel candidates, and cohort boundary rows before click Complete authorization enables.\nOn Activation state, view Progress panel mirroring connect-complete chip. Starting from Book readiness, click New Audit run in Audits only from connect-complete, not from file-received or readiness-theater chips.",
       implementationAdds: ["connect-complete"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -322,7 +322,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Connect may dump raw strings; Audit cannot reach “reachable” without named validation species. Practice need: email syntax/deliverability-class and phone format/reachability-class checks as Audit consumers of connect output — vendor selection is CTO, not this seat.",
       implementation: "Starting from Book readiness, run Audit run from Audits; view Verdict list mapping check-class columns to reachable, partial, or unreachable chips after the run completes.\nOn Authorize book, view Channel candidate fields landing raw candidates only; validator result columns stay absent until Book readiness consumes them in the Audit run.",
       implementationAdds: ["reachable", "partial", "unreachable"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -337,7 +337,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Importing a “subscribed” CRM flag can be mistaken for Tower having solved consent. Connect must pass through do-not-contact / silenced / marketing-status as opaque flags for Audit — neither inventing consent nor stripping firm suppressions. CASL lawfulness stays seat 3.",
       implementation: "On Imports, view Field mapping table preserving do-not-contact, silenced, and marketing-status columns as opaque suppression flags on Contacts.\nStarting from Book readiness, click New Audit run in Audits; view Audit run input panel including those flags as data-validity inputs, while Authorize book shows no CASL lawfulness verdict control.",
       implementationAdds: ["opaque-suppression-flags"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -363,7 +363,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Undefined order creates activation deadlocks or PII-before-terms discomfort. Allow either order but require both before running; book-connect is never satisfied by escrow alone. Campaign-real still depends on an authorized book while commercial door stays peer.",
       implementation: "On Prepared Workspace, view Activation checklist Authorize book and Accept terms rows as either-order buttons.\nOn Activation state, view Progress panel marking running only when both book-auth and escrow chips are complete; escrow alone leaves book-auth row pending.",
       implementationAdds: ["either-order", "both-before-running"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -379,7 +379,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Snapshot stacks go stale; forcing full reactivation destroys retention. Provide in-desk re-hand-over (re-export / re-OAuth pull) that upserts by match key — currency without new acquisition or new escrow event.",
       implementation: "On Authorize book, opened from Prepared Workspace or Contacts after running, click Re-hand over book and choose re-export or re-pull; Imports upserts by Match key policy panel.\nConsultant would like to re-pull the book from the firm's CRM via OAuth when re-pull is chosen.\nOn Activation state, view Progress panel keeping ALG and escrow chips intact across refresh. Starting from Book readiness, click New Audit run in Audits to re-batch Verdict list after the upsert.",
       implementationAdds: ["re-hand-over"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -396,7 +396,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Checkbox auth, empty import, sample lists, or website scrape cosplay will show “activated” while no sequence-ready book exists. Fail closed unless mutable authorized cohort + Audit-eligible channel candidates + non-acquisition timing all hold. Proof artifacts for auth landed — not UI completion events.",
       implementation: "On Activation state, view Progress panel refusing book-auth landed when Evidence chips show checkbox-only, empty Imports, sample list, or scrape-as-connect.\nOn Authorize book, Complete authorization enables only when mutable authorized cohort, Audit-eligible channel candidates, and post-readiness timing checklist rows all hold.",
       implementationAdds: ["fail-closed-auth"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
   ],

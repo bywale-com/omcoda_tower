@@ -21,7 +21,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Operators open Stripe to guess whether a firm is held or released. Activation state and Support cannot agree on money posture.",
       implementation: "Starting from Commercial (collection), open the firm instrument list and click a firm/instrument row to land on the scoped Escrow status record; view status chips held / release_pending_window / released / returned / forfeited / disputed plus principal, currency, and terms_version_id.  \nOn Release control, action buttons enable only for the selected ledger instrument, never for an orphan provider charge.",
       implementationAdds: ["escrow-ledger", "instrument-id", "held-principal", "terms-version-id"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -37,7 +37,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Ad-hoc status strings let house mark “released” from a support ticket without window or evidence.",
       implementation: "Starting from Commercial → firm instrument list, click the instrument row; on Escrow status, view only the closed status set and legal next-transition chips for that scoped record.  \nOn Release control, click a transition button; illegal edges fail closed and write a rejected transition receipt.",
       implementationAdds: ["status-machine", "held", "release-pending-window", "disputed", "released", "returned", "forfeited"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -53,7 +53,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Ledger says held while money is still a PaymentIntent that can be canceled quietly — Accept trust collapses.",
       implementation: "Starting from Commercial → firm instrument list, click the instrument row; on Escrow status, view Held only when provider_ref confirms immobilized funds, otherwise pending_accept / failed_hold chips.  \nOn Activation state → Progress, view escrow hard-input chip satisfied only after that scoped ledger record reaches `held`.",
       implementationAdds: ["immobilized-hold", "provider-ref", "failed-hold", "pending-accept"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -70,7 +70,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Checkout-only wiring marks paid at Accept and never supports outcome-verified release — collapses contingent posture into prepaid.",
       implementation: "Starting from Commercial → firm instrument list, click the instrument row; on Escrow status, view Rail posture chips: Connect marketplace hold–release (firm payer) with provider account / charge / transfer refs (Stripe rail past app edge — view refs only).  \nOn Release control, click Execute release enabled only from `release_pending_window` after evidence passes — not from Accept.",
       implementationAdds: ["connect-rail", "separate-charge-transfer", "firm-as-payer", "transfer-ref"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "partial",
     },
     {
@@ -86,7 +86,7 @@ export const seat: SmeSeat = {
       implementationProblem: "A single “charge Om Coda” call at Accept makes Escrow status unable to show held-unpaid-to-vendor vs released.",
       implementation: "Starting from Commercial → firm instrument list, click the instrument row; on Escrow status, view Hold operation (Accept) and Release transfer (outcome) as distinct rows.  \nOn Release control, click Execute release; view new provider transfer/payout ref linked to the same instrument while Accept charge ref stays immutable (Connect transfer intent past app edge).",
       implementationAdds: ["hold-operation", "release-transfer", "distinct-ops"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -102,7 +102,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Release jobs can fire twice or stack outcomes past Accept disclosure; buyer financeability dies.",
       implementation: "Starting from Commercial → firm instrument list, click the instrument row; on Escrow status, view Held principal, Release amount / schedule, Hard cap, and Remaining releasable.  \nOn Release control, click Execute release; when amount exceeds Remaining releasable, view cap_block on the receipt and transfer fails closed.",
       implementationAdds: ["held-principal", "release-amount", "hard-cap", "remaining-releasable", "cap-block"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -118,7 +118,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Operators edit Commercial defaults after pilots; open holds suddenly use new predicates without a new Accept.",
       implementation: "Starting from Commercial → firm instrument list, click the instrument row; on Escrow status, view Accepted terms_version_id and predicate hash frozen on the instrument.  \nOn Release control, Evaluate release reads only that version’s predicates; material changes require a new Accept / amendment recorded on a new or amended instrument.",
       implementationAdds: ["terms-version-id", "predicate-hash", "frozen-terms"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -134,7 +134,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Duplicate `payment_intent.succeeded` events double-book instruments, or missed events leave Activation waiting forever.",
       implementation: "Starting from Commercial → firm instrument list, click the instrument row; on Escrow status, view Hold confirmation chip sourced from provider webhook with stored event id (Stripe webhook ingest past app edge).  \nStarting from Commercial, click Replay webhook for the scoped instrument; view duplicate event ids as idempotent no-op chips.",
       implementationAdds: ["webhook-hold-confirm", "event-id-dedupe", "signature-verify", "idempotent-accept"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -150,7 +150,7 @@ export const seat: SmeSeat = {
       implementationProblem: "A retried release job pays Om Coda twice against one meeting_booked — dispute and trust failure.",
       implementation: "Starting from Commercial → firm instrument list, click the instrument row; on Release control, view Release attempt rows keyed by instrument + evidence + action; retries reuse the same idempotency key.  \nOn Escrow status, view one terminal money motion per evidence unit or schedule slot; duplicate attempts display idempotent replay chips.",
       implementationAdds: ["release-idempotency-key", "outcome-evidence-id", "at-most-once-transfer"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -166,7 +166,7 @@ export const seat: SmeSeat = {
       implementationProblem: "House manually marks release when “things look good,” or automations release on sequence start — consumption cosplay.",
       implementation: "Starting from Commercial → firm instrument list, click the matching instrument row; on Release control, view verification-event row when Engagement runtime records meeting_booked under the activated campaign; that row opens release_pending_window.  \nOn Escrow status, Trigger chip reads meeting_booked evidence id — not campaign-running.  \nOn Engagement record, view the meeting event linked from Trigger deep-link.",
       implementationAdds: ["meeting-booked-verification-event", "release-pending-window", "outcome-ingress"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -182,7 +182,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Any calendar create on the firm releases escrow — buyers dispute immediately.",
       implementation: "Starting from Commercial → firm instrument list, click the instrument row; on Release control, view verification event rows; any lacking enrollment↔meeting linkage shows attribution_failed reason chip.  \nOn Escrow status, view Attribution path (campaign / enrollment / contact / meeting) or Attribution failed chip.",
       implementationAdds: ["attribution-path", "path-membership", "attribution-failed"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -198,7 +198,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Release fires the minute Booking succeeds; no-show disputes become the default Support load.",
       implementation: "Starting from Commercial → firm instrument list, click the instrument row; on Escrow status, view Window opened_at, Window ends_at, and Window status chips open / canceled / elapsed.  \nOn Release control, view Auto-queue release enabled only after Window elapsed without cancel; cancel/reopen shows window_abort chip.",
       implementationAdds: ["measurement-window-job", "window-ends-at", "window-abort", "releasable"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -214,7 +214,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Transfers go out with a meeting id in a Slack thread — disputes cannot be itemized.",
       implementation: "Starting from Commercial → firm instrument list, click the instrument row; on Release control, click Open evidence package before transfer; view required-field validation chips.  \nOn Escrow status, when status is release_pending_window or released, view the same evidence package from the scoped record.",
       implementationAdds: ["release-evidence-package", "evidence-validate", "source-meeting-link"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -230,7 +230,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Operators flip status to released for reporting while funds remain immobilized — finance and product diverge.",
       implementation: "Starting from Commercial → firm instrument list, click the releasable instrument row; on Release control, click Execute release (Connect transfer intent past app edge).  \nOn success, Escrow status shows transfer_ref and status `released` chips; Mark released without transfer_ref is not offered and fails closed.",
       implementationAdds: ["execute-release", "transfer-ref", "status-coupled-to-money"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -246,7 +246,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Window elapses during Dispute notice and auto-releases — Accept dispute clocks become decorative.",
       implementation: "Starting from Commercial → firm instrument list, click the instrument row; on Escrow status, view Open dispute setting `disputed` and Freeze: release jobs canceled chips.  \nOn Release control, view Execute release disabled until dispute_clearance; provider chargebacks similarly force freeze chips.",
       implementationAdds: ["disputed", "freeze", "cancel-release-jobs", "dispute-clearance"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -262,7 +262,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Abandoned or never-running campaigns leave money stuck; house refunds off-books.",
       implementation: "Starting from Commercial → firm instrument list, click an instrument row meeting return predicates; on Release control, click Execute return for abandoned / never-running / window_abort per frozen terms (Connect refund intent past app edge).  \nOn Escrow status, view terminal `returned` with refund_ref and return_reason chips — not a silent dashboard refund.",
       implementationAdds: ["execute-return", "refund-ref", "return-reason", "returned"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -278,7 +278,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Forfeit and meeting_booked both show as released — analytics and disputes cannot tell contingent success from penalty.",
       implementation: "Starting from Commercial → firm instrument list, click the instrument row; on Escrow status, view terminal `forfeited` distinct from `released`, with forfeit_reason chip.  \nOn Release control, click Execute forfeit enabled only from forfeit predicates; uses evidence package type forfeit, not meeting_booked.",
       implementationAdds: ["forfeited", "forfeit-reason", "forfeit-disposition"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -294,7 +294,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Status flips with no history — house cannot defend release/return/forfeit decisions.",
       implementation: "Starting from Commercial → firm instrument list, click the instrument row; on Escrow status, view Transition receipts panel with append-only receipt rows for the scoped instrument.  \nOn Customer support → Ticket → Support context, view last receipt and open dispute flag as Commercial facts only.",
       implementationAdds: ["commercial-receipt", "append-only", "transition-receipt"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -310,7 +310,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Custom card capture for “escrow UX” pulls Tower into PCI SAQ D territory and stalls the rail.",
       implementation: "On Accept terms / Escrow terms, consultant payment method entry uses provider-hosted tokenized fields only (Stripe Elements intent past app edge — no Tower PAN capture).  \nStarting from Commercial → firm instrument list, click the instrument row; on Escrow status, view provider customer and payment_method refs — never PAN / CVV.",
       implementationAdds: ["tokenized-payment-method", "provider-customer-id", "no-pan-store"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -326,7 +326,7 @@ export const seat: SmeSeat = {
       implementationProblem: "ALG spend pressure asks engineering to green-light the rail; a false “not an MT” comment ships risk.",
       implementation: "Starting from Commercial → firm instrument list, view Counsel gate: MT / rail clearance pending | cleared (human counsel) on the firm row; engineering cannot flip cleared.  \nOn Escrow status, view Instrument scope firm↔Om Coda commercial consideration only; no client-fund intake controls exist.  \nOn Release control, view firm-payer rail actions available while Counsel gate is pending only in non-production / non-spend environments per room policy; production ALG spend stays blocked on uncleared gate (seat 6 esc-26 adjacency).",
       implementationAdds: ["counsel-gate", "mt-blocked", "firm-payer-only", "no-client-fund-intake"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "partial",
     },
     {
@@ -342,7 +342,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Runtime and payments teams invent parallel booking flags; one side releases, the other still shows open sequence.",
       implementation: "Starting from Commercial → firm instrument list, click the instrument row; on Release control, view OutcomeVerification events consumed idempotently by event id to open/abort windows (Engagement runtime ingress past app edge).  \nOn Escrow status, Trigger deep-links to the Engagement record meeting event that moved the instrument.",
       implementationAdds: ["outcome-verification-contract", "meeting-canceled", "meeting-reopened", "event-schema-version"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
     {
@@ -358,7 +358,7 @@ export const seat: SmeSeat = {
       implementationProblem: "Commercial shows “escrow accepted” boolean while Release control and Support each invent their own truth.",
       implementation: "Starting from Commercial (collection), open the firm instrument list and click a firm row; view all scoped instruments with status, principal, remaining releasable, window, evidence summary, last commercial receipt, dispute flag, and counsel_gate chips.  \nOn Escrow status, click an instrument row; Release control acts from that same read model.  \nOn Customer support → Ticket → Support context, view the same Commercial facts — never Meta billing objects.",
       implementationAdds: ["escrow-status-read-model", "evidence-summary", "counsel-gate-visible", "commercial-facts-only"],
-      implementationPlant: "not_done",
+      implementationPlant: "planted",
       status: "verified",
     },
   ],
