@@ -1,5 +1,6 @@
 import type { Tokens } from "../../components/tokens";
 import { useRegisterSelection } from "../context/RegisterSelectionContext";
+import { EnrichmentPane, FurnishPane } from "../panes/EnrichmentFurnishPane";
 import { FlowsPane } from "../panes/FlowsPane";
 import { PersonasFunctionPane } from "../panes/PersonasFunctionPane";
 import { SmePane } from "../panes/SmePane";
@@ -7,7 +8,6 @@ import { WiringPaperPane } from "../panes/WiringPaperPane";
 import {
   ComponentsPaneHint,
   CtPlantPlaceholderPane,
-  RegisterPlaceholderPane,
   SeedPane,
   WorldPane,
 } from "../panes/WorldPane";
@@ -29,21 +29,9 @@ export function RegisterTheoryCanvas({ t }: RegisterTheoryCanvasProps) {
     case "sme":
       return <SmePane t={t} />;
     case "enrichment":
-      return (
-        <RegisterPlaceholderPane
-          t={t}
-          title="Enrichment — Can'ts"
-          body="Design gaps discovered by asking the right question of the right persona. Populate after Function completes — each Can't joins surfaceIds."
-        />
-      );
+      return <EnrichmentPane t={t} />;
     case "furnish":
-      return (
-        <RegisterPlaceholderPane
-          t={t}
-          title="Furnish"
-          body="Supporting affordances that don't change Core Function — written with implementationProblem + relative click-path before CT plant."
-        />
-      );
+      return <FurnishPane t={t} />;
     case "flows":
       return <FlowsPane t={t} />;
     case "wiring":

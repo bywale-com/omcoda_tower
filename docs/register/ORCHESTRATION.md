@@ -11,8 +11,8 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 - [x] `sme-graph-ready` → Pass1 spawn — [`../sme/SME-GRAPH.md`](../sme/SME-GRAPH.md) · law [`../sme/METHODOLOGY.md`](../sme/METHODOLOGY.md)
 - [x] `sme-pass1-locked` → SME Pass2 — combined Pass1+Pass2 per human instruction 2026-07-30 ([`../sme/ROSTER.md`](../sme/ROSTER.md))
 - [x] `sme-handoff-ready` → Function ∥ Wiring Function (sync on CROSS-CUTTING) — [`../sme/HANDOFF.md`](../sme/HANDOFF.md) · [`../sme/CROSS-CUTTING.md`](../sme/CROSS-CUTTING.md)
-- [ ] `function-complete` → Enrichment
-- [ ] `enrichment-complete` → Furnish
+- [x] `function-complete` → Enrichment
+- [x] `enrichment-complete` → Furnish
 - [ ] `furnish-written` → CT plant of Furnish
 - [ ] `wiring-synced` → deep CT on cross-cutting surfaces
 - [ ] `ct-verify-green` → Translation
@@ -32,7 +32,7 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 | Wiring | Flow maps exist (login flows) — CTO twin pending |
 | Components | Holon tree live |
 | SME | **Pass2 + handoff + densified PM implementations** — 177 practice + 158 capability · affordance-grain impls in Register twins ([`../sme/implementation/DENSIFY-LAW.md`](../sme/implementation/DENSIFY-LAW.md)); CT / CTO Wiring absorb not started |
-| Enrichment / Furnish | Stubs — after Function absorb of SME handoff |
+| Enrichment / Furnish | **Paper** — 20 Can'ts + 20 Furnish × Consultant · Operator · Contact ([`enrichment/`](./enrichment/) · [`furnish/`](./furnish/)); CT plant of Furnish not started |
 | CT Plant | Not started — lo-fi click-through placeholder |
 | Verify scripts | Not shipped |
 
