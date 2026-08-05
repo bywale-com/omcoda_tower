@@ -96,9 +96,20 @@ type ClientViewProps = {
   t: Tokens;
   isDark: boolean;
   onOpenClientDataFullPage?: () => void;
+  /** Client Data panel tab — `"logs"` is the hand-built Activity (JourneyTab). */
+  dataDefaultTab?: "read" | "data" | "logs";
+  /** Remount Client Data when this changes (e.g. Register focus Engagement record → Activity). */
+  dataFocusKey?: string | number;
 };
 
-export function ClientView({ clientId, t, isDark, onOpenClientDataFullPage }: ClientViewProps) {
+export function ClientView({
+  clientId,
+  t,
+  isDark,
+  onOpenClientDataFullPage,
+  dataDefaultTab = "read",
+  dataFocusKey,
+}: ClientViewProps) {
   const client = getClientDetail(clientId);
 
   return (
@@ -117,7 +128,14 @@ export function ClientView({ clientId, t, isDark, onOpenClientDataFullPage }: Cl
           <ClientNarrative clientId={clientId} t={t} />
         </HolonBoundary>
 
-        <DataPanel clientId={clientId} t={t} isDark={isDark} onOpenFullPage={onOpenClientDataFullPage} />
+        <DataPanel
+          key={dataFocusKey != null ? `${clientId}-${dataFocusKey}-${dataDefaultTab}` : clientId}
+          clientId={clientId}
+          t={t}
+          isDark={isDark}
+          onOpenFullPage={onOpenClientDataFullPage}
+          defaultTab={dataDefaultTab}
+        />
       </div>
     </div>
   );
