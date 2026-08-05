@@ -52,14 +52,14 @@ export const REGISTER_PASSES: RegisterPassMeta[] = [
   {
     id: "enrichment",
     label: "Enrichment",
-    hint: "Can'ts — design gaps",
-    hasTree: false,
+    hint: "Can'ts — 20 × 3 subjects",
+    hasTree: true,
   },
   {
     id: "furnish",
     label: "Furnish",
-    hint: "Supporting affordances",
-    hasTree: false,
+    hint: "Supporting affordances — 20 × 3",
+    hasTree: true,
   },
   {
     id: "flows",

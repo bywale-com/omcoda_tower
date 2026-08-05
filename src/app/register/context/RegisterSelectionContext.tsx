@@ -9,6 +9,7 @@ import {
 } from "../theory/outcomes";
 
 export type WiringPaperSection = "overview" | "function" | "nodes" | "cants" | "furnish" | "human";
+export type EnrichmentKind = "cants" | "furnish";
 
 type RegisterSelectionContextValue = {
   registerPassId: RegisterPassId;
@@ -31,6 +32,9 @@ type RegisterSelectionContextValue = {
   selectedWiringSeatId: string | null;
   selectedWiringTraceId: string | null;
   selectedWiringEntityId: string | null;
+  selectedEnrichmentKind: EnrichmentKind | null;
+  selectedEnrichmentSubjectId: string | null;
+  selectedEnrichmentItemId: string | null;
   /** Pinned or hovered composite step (Send OTP, Verify OTP) — Wiring only */
   activeFlowStepId: string | null;
   /** Pinned or hovered parent flow (Login) — only when no step is active */
@@ -55,6 +59,8 @@ type RegisterSelectionContextValue = {
   selectWiringSeat: (seatId: string | null) => void;
   selectWiringTrace: (seatId: string, traceId: string) => void;
   selectWiringEntity: (section: Exclude<WiringPaperSection, "overview" | "function">, entityId: string) => void;
+  selectEnrichmentSubject: (kind: EnrichmentKind, subjectId: string | null) => void;
+  selectEnrichmentItem: (kind: EnrichmentKind, subjectId: string, itemId: string) => void;
 };
 
 const RegisterSelectionContext = createContext<RegisterSelectionContextValue | null>(null);
@@ -79,6 +85,9 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
   const [selectedWiringSeatId, setSelectedWiringSeatId] = useState<string | null>(null);
   const [selectedWiringTraceId, setSelectedWiringTraceId] = useState<string | null>(null);
   const [selectedWiringEntityId, setSelectedWiringEntityId] = useState<string | null>(null);
+  const [selectedEnrichmentKind, setSelectedEnrichmentKind] = useState<EnrichmentKind | null>(null);
+  const [selectedEnrichmentSubjectId, setSelectedEnrichmentSubjectId] = useState<string | null>(null);
+  const [selectedEnrichmentItemId, setSelectedEnrichmentItemId] = useState<string | null>(null);
 
   const clearHowSelection = useCallback(() => {
     setSelectedHowGraphId(null);
@@ -114,6 +123,12 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
     setSelectedWiringEntityId(null);
   }, []);
 
+  const clearEnrichmentSelection = useCallback(() => {
+    setSelectedEnrichmentKind(null);
+    setSelectedEnrichmentSubjectId(null);
+    setSelectedEnrichmentItemId(null);
+  }, []);
+
   const selectRegisterPass = useCallback(
     (id: RegisterPassId) => {
       setRegisterPassId(id);
@@ -134,8 +149,24 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       if (id !== "sme") {
         clearSmeSelection();
       }
+      if (id !== "enrichment" && id !== "furnish") {
+        clearEnrichmentSelection();
+      } else {
+        const kind: EnrichmentKind = id === "furnish" ? "furnish" : "cants";
+        setSelectedEnrichmentKind(kind);
+        setSelectedEnrichmentSubjectId(null);
+        setSelectedEnrichmentItemId(null);
+      }
     },
-    [clearFlowHover, clearFlowSelection, clearHowSelection, clearJourneySelection, clearSmeSelection, clearWiringPaperSelection],
+    [
+      clearEnrichmentSelection,
+      clearFlowHover,
+      clearFlowSelection,
+      clearHowSelection,
+      clearJourneySelection,
+      clearSmeSelection,
+      clearWiringPaperSelection,
+    ],
   );
 
   const selectHolon = useCallback(
@@ -148,8 +179,17 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       clearJourneySelection();
       clearSmeSelection();
       clearWiringPaperSelection();
+      clearEnrichmentSelection();
     },
-    [clearFlowHover, clearFlowSelection, clearHowSelection, clearJourneySelection, clearSmeSelection, clearWiringPaperSelection],
+    [
+      clearEnrichmentSelection,
+      clearFlowHover,
+      clearFlowSelection,
+      clearHowSelection,
+      clearJourneySelection,
+      clearSmeSelection,
+      clearWiringPaperSelection,
+    ],
   );
 
   const selectFlowStep = useCallback(
@@ -382,6 +422,51 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
     [enterWiringPaper],
   );
 
+  const selectEnrichmentSubject = useCallback((kind: EnrichmentKind, subjectId: string | null) => {
+    setRegisterPassId(kind === "furnish" ? "furnish" : "enrichment");
+    setSelectedEnrichmentKind(kind);
+    setSelectedEnrichmentSubjectId(subjectId);
+    setSelectedEnrichmentItemId(null);
+    clearHowSelection();
+    clearFlowSelection();
+    clearFlowHover();
+    clearJourneySelection();
+    clearSmeSelection();
+    clearWiringPaperSelection();
+    setSelectedHolonId(null);
+  }, [
+    clearFlowHover,
+    clearFlowSelection,
+    clearHowSelection,
+    clearJourneySelection,
+    clearSmeSelection,
+    clearWiringPaperSelection,
+  ]);
+
+  const selectEnrichmentItem = useCallback(
+    (kind: EnrichmentKind, subjectId: string, itemId: string) => {
+      setRegisterPassId(kind === "furnish" ? "furnish" : "enrichment");
+      setSelectedEnrichmentKind(kind);
+      setSelectedEnrichmentSubjectId(subjectId);
+      setSelectedEnrichmentItemId(itemId);
+      clearHowSelection();
+      clearFlowSelection();
+      clearFlowHover();
+      clearJourneySelection();
+      clearSmeSelection();
+      clearWiringPaperSelection();
+      setSelectedHolonId(null);
+    },
+    [
+      clearFlowHover,
+      clearFlowSelection,
+      clearHowSelection,
+      clearJourneySelection,
+      clearSmeSelection,
+      clearWiringPaperSelection,
+    ],
+  );
+
   const activeFlowStepId = selectedFlowStepId ?? hoveredFlowStepId;
   const activeFlowId = activeFlowStepId == null ? selectedFlowId ?? hoveredFlowId : null;
 
@@ -406,6 +491,9 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       selectedWiringSeatId,
       selectedWiringTraceId,
       selectedWiringEntityId,
+      selectedEnrichmentKind,
+      selectedEnrichmentSubjectId,
+      selectedEnrichmentItemId,
       activeFlowStepId,
       activeFlowId,
       selectRegisterPass,
@@ -428,6 +516,8 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       selectWiringSeat,
       selectWiringTrace,
       selectWiringEntity,
+      selectEnrichmentSubject,
+      selectEnrichmentItem,
     }),
     [
       registerPassId,
@@ -449,6 +539,9 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       selectedWiringSeatId,
       selectedWiringTraceId,
       selectedWiringEntityId,
+      selectedEnrichmentKind,
+      selectedEnrichmentSubjectId,
+      selectedEnrichmentItemId,
       activeFlowStepId,
       activeFlowId,
       selectRegisterPass,
@@ -469,6 +562,8 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       selectWiringSeat,
       selectWiringTrace,
       selectWiringEntity,
+      selectEnrichmentSubject,
+      selectEnrichmentItem,
     ],
   );
 

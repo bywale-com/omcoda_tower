@@ -4,6 +4,7 @@ import type { Tokens } from "../../components/tokens";
 import { useRegisterShell } from "../context/RegisterShellContext";
 import { REGISTER_PASSES, type RegisterPassId } from "../passes/registerPasses";
 import { RegisterComponentsTree } from "./RegisterComponentsTree";
+import { RegisterEnrichmentTree, RegisterFurnishTree } from "./RegisterEnrichmentTree";
 import { RegisterHowTree } from "./RegisterHowTree";
 import { RegisterJourneyFlowsTree } from "./RegisterJourneyFlowsTree";
 import { RegisterPassSection } from "./RegisterPassSection";
@@ -22,6 +23,10 @@ function passTreeContent(passId: RegisterPassId, t: Tokens) {
       return <RegisterHowTree t={t} />;
     case "sme":
       return <RegisterSmeTree t={t} />;
+    case "enrichment":
+      return <RegisterEnrichmentTree t={t} />;
+    case "furnish":
+      return <RegisterFurnishTree t={t} />;
     case "flows":
       return <RegisterJourneyFlowsTree t={t} />;
     case "wiring":
