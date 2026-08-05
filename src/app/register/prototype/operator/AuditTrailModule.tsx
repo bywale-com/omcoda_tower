@@ -1,5 +1,5 @@
 /**
- * Audit trail — Change events with Firm / Actor filters.
+ * Audit trail — Firm / Actor filters, filter chips, Change event list + modal.
  */
 import { useEffect, useMemo, useState } from "react";
 import { RegisterSurfaceMount } from "../registerSurfaceChrome";
@@ -7,10 +7,11 @@ import {
   DEMO_FIRMS,
   filterSelectStyle,
   moduleFocus,
+  operatorModal,
   panelShell,
   resolveHoveredEntry,
+  secondaryBtnStyle,
   statusChip,
-  surfaceBlock,
   type OperatorModuleProps,
 } from "./operatorChrome";
 
@@ -22,6 +23,9 @@ const EVENTS = [
     actor: "ops.lena",
     action: "Bound Evaluation pack v2",
     kind: "Bind",
+    before: "Evaluation pack v1 · armed",
+    after: "Evaluation pack v2 · armed",
+    surface: "Firm operations bind",
   },
   {
     id: "ev-2",
@@ -30,22 +34,31 @@ const EVENTS = [
     actor: "ops.marco",
     action: "Forward-deploy staged Prepared Workspace",
     kind: "Activation",
+    before: "Capture complete",
+    after: "Prepared Workspace staged",
+    surface: "Activation & forward-deploy",
   },
   {
     id: "ev-3",
     at: "Yesterday · 16:40",
-    firm: DEMO_FIRMS[2].name,
+    firm: "House-global",
     actor: "founder",
     action: "Agency policy · outbound quiet hours updated",
     kind: "Policy",
+    before: "Quiet hours off",
+    after: "Quiet hours 09:00–20:00",
+    surface: "Founder & agency controls",
   },
   {
     id: "ev-4",
     at: "Yesterday · 09:12",
     firm: DEMO_FIRMS[0].name,
     actor: "ops.lena",
-    action: "Send gates · consent ledger review",
-    kind: "Gate",
+    action: "Open-box Publish version · Immigration constants",
+    kind: "Open-box",
+    before: "v2026.03.1",
+    after: "v2026.03.2 published",
+    surface: "Reference data",
   },
   {
     id: "ev-5",
@@ -54,6 +67,9 @@ const EVENTS = [
     actor: "support.kai",
     action: "Support context attached to ticket SUP-184",
     kind: "Support",
+    before: "Ticket unscoped",
+    after: "Firm scope · Atlas Mobility",
+    surface: "Customer support",
   },
 ] as const;
 
@@ -64,11 +80,13 @@ export function AuditTrailModule({ t, focusedEntry, hoveredId }: OperatorModuleP
   const focus = moduleFocus("Audit trail", focusedEntry, hoveredEntry);
   const [firmFilter, setFirmFilter] = useState("All firms");
   const [actorFilter, setActorFilter] = useState<(typeof ACTORS)[number]>("All actors");
-  const [selectedId, setSelectedId] = useState(EVENTS[0].id);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!focusedEntry || focusedEntry.module !== "Audit trail") return;
-    if (focusedEntry.label === "Change event") setSelectedId(EVENTS[0].id);
+    if (focusedEntry.label === "Change event" || focusedEntry.label === "Change event list") {
+      setSelectedId(EVENTS[0].id);
+    }
   }, [focusedEntry]);
 
   const filtered = useMemo(
@@ -81,7 +99,11 @@ export function AuditTrailModule({ t, focusedEntry, hoveredId }: OperatorModuleP
     [firmFilter, actorFilter],
   );
 
-  const selected = filtered.find((e) => e.id === selectedId) ?? filtered[0] ?? null;
+  const selected = filtered.find((e) => e.id === selectedId) ?? null;
+  const filterChips = [
+    firmFilter !== "All firms" ? { label: "Firm", value: firmFilter } : null,
+    actorFilter !== "All actors" ? { label: "Actor", value: actorFilter } : null,
+  ].filter(Boolean) as { label: string; value: string }[];
 
   return (
     <RegisterSurfaceMount
@@ -89,6 +111,7 @@ export function AuditTrailModule({ t, focusedEntry, hoveredId }: OperatorModuleP
       focused={focus.focused && focusedEntry?.label === "Audit trail"}
       hovered={hoveredEntry?.label === "Audit trail"}
       t={t}
+      style={{ position: "relative" }}
     >
       {panelShell(
         t,
@@ -121,15 +144,17 @@ export function AuditTrailModule({ t, focusedEntry, hoveredId }: OperatorModuleP
                 onChange={(e) => setFirmFilter(e.target.value)}
                 style={{
                   ...filterSelectStyle(t),
-                  outline: focus.labelFocused("Firm filter") || focus.labelHovered("Firm filter")
-                    ? `2px solid ${t.accent}`
-                    : "none",
+                  outline:
+                    focus.labelFocused("Firm filter") || focus.labelHovered("Firm filter")
+                      ? `2px solid ${t.accent}`
+                      : "none",
                 }}
               >
                 <option>All firms</option>
                 {DEMO_FIRMS.map((f) => (
                   <option key={f.id}>{f.name}</option>
                 ))}
+                <option>House-global</option>
               </select>
             </div>
             <div data-register-surface="Actor filter">
@@ -139,9 +164,10 @@ export function AuditTrailModule({ t, focusedEntry, hoveredId }: OperatorModuleP
                 onChange={(e) => setActorFilter(e.target.value as (typeof ACTORS)[number])}
                 style={{
                   ...filterSelectStyle(t),
-                  outline: focus.labelFocused("Actor filter") || focus.labelHovered("Actor filter")
-                    ? `2px solid ${t.accent}`
-                    : "none",
+                  outline:
+                    focus.labelFocused("Actor filter") || focus.labelHovered("Actor filter")
+                      ? `2px solid ${t.accent}`
+                      : "none",
                 }}
               >
                 {ACTORS.map((a) => (
@@ -151,94 +177,135 @@ export function AuditTrailModule({ t, focusedEntry, hoveredId }: OperatorModuleP
             </div>
           </div>
 
-          <div style={{ flex: 1, minHeight: 0, display: "flex", overflow: "hidden" }}>
-            <div style={{ flex: 1.2, minWidth: 0, overflowY: "auto", padding: 12 }}>
-              {filtered.length === 0 ? (
-                <div style={{ padding: 16, fontSize: 12, color: t.textMuted }}>
-                  No change events for this filter.
-                </div>
-              ) : (
-                filtered.map((ev) => {
-                  const active = selected?.id === ev.id;
-                  return (
-                    <button
-                      key={ev.id}
-                      type="button"
-                      data-register-surface="Change event"
-                      onClick={() => setSelectedId(ev.id)}
-                      style={{
-                        display: "block",
-                        width: "100%",
-                        textAlign: "left",
-                        marginBottom: 8,
-                        padding: 12,
-                        border: `1px solid ${t.border}`,
-                        borderRadius: 6,
-                        background: active ? t.accentBg : t.bgSecondary,
-                        color: t.textPrimary,
-                        fontFamily: "inherit",
-                        cursor: "pointer",
-                        outline:
-                          (focus.labelFocused("Change event") || focus.labelHovered("Change event")) &&
-                          active
-                            ? `2px solid ${t.accent}`
-                            : "none",
-                      }}
-                    >
-                      <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-                        <span style={{ fontSize: 12, fontWeight: 600 }}>{ev.action}</span>
-                        {statusChip(t, ev.kind, "muted")}
-                      </div>
-                      <div style={{ fontSize: 11, color: t.textMuted, marginTop: 4 }}>
-                        {ev.at} · {ev.firm} · {ev.actor}
-                      </div>
-                    </button>
-                  );
-                })
-              )}
+          {filterChips.length > 0 ? (
+            <div
+              data-register-surface="Filter chips"
+              style={{
+                display: "flex",
+                gap: 6,
+                flexWrap: "wrap",
+                padding: "8px 16px",
+                borderBottom: `1px solid ${t.border}`,
+                background: t.hoverBg,
+                outline:
+                  focus.labelFocused("Filter chips") || focus.labelHovered("Filter chips")
+                    ? `2px solid ${t.accent}`
+                    : "none",
+                outlineOffset: -2,
+              }}
+            >
+              {filterChips.map((chip) => (
+                <span
+                  key={chip.label}
+                  style={{
+                    fontSize: 11,
+                    padding: "3px 8px",
+                    borderRadius: 3,
+                    background: t.bgPrimary,
+                    border: `1px solid ${t.border}`,
+                    color: t.textPrimary,
+                  }}
+                >
+                  {chip.label}: {chip.value}
+                </span>
+              ))}
             </div>
+          ) : null}
 
-            <div style={{ flex: 1, minWidth: 220, borderLeft: `1px solid ${t.border}`, padding: 16 }}>
-              {selected ? (
-                surfaceBlock(
-                  t,
-                  "Change event",
-                  focus.labelFocused("Change event"),
-                  focus.labelHovered("Change event"),
-                  <>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary, marginBottom: 8 }}>
-                      Change event
+          <div
+            data-register-surface="Change event list"
+            style={{
+              flex: 1,
+              minHeight: 0,
+              overflowY: "auto",
+              padding: 12,
+              outline:
+                focus.labelFocused("Change event list") || focus.labelHovered("Change event list")
+                  ? `2px solid ${t.accent}`
+                  : "none",
+              outlineOffset: -2,
+            }}
+          >
+            {filtered.length === 0 ? (
+              <div style={{ padding: 16, fontSize: 12, color: t.textMuted }}>
+                No change events for this filter.
+              </div>
+            ) : (
+              filtered.map((ev) => {
+                const active = selected?.id === ev.id;
+                return (
+                  <button
+                    key={ev.id}
+                    type="button"
+                    onClick={() => setSelectedId(ev.id)}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      textAlign: "left",
+                      marginBottom: 8,
+                      padding: 12,
+                      border: `1px solid ${t.border}`,
+                      borderRadius: 6,
+                      background: active ? t.accentBg : t.bgSecondary,
+                      color: t.textPrimary,
+                      fontFamily: "inherit",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                      <span style={{ fontSize: 12, fontWeight: 600 }}>{ev.action}</span>
+                      {statusChip(t, ev.kind, "muted")}
                     </div>
-                    <dl
-                      style={{
-                        margin: 0,
-                        display: "grid",
-                        gridTemplateColumns: "90px 1fr",
-                        gap: "8px 10px",
-                        fontSize: 12,
-                      }}
-                    >
-                      <dt style={{ color: t.textDim }}>When</dt>
-                      <dd style={{ margin: 0, color: t.textPrimary }}>{selected.at}</dd>
-                      <dt style={{ color: t.textDim }}>Firm</dt>
-                      <dd style={{ margin: 0, color: t.textPrimary }}>{selected.firm}</dd>
-                      <dt style={{ color: t.textDim }}>Actor</dt>
-                      <dd style={{ margin: 0, color: t.textPrimary }}>{selected.actor}</dd>
-                      <dt style={{ color: t.textDim }}>Kind</dt>
-                      <dd style={{ margin: 0, color: t.textPrimary }}>{selected.kind}</dd>
-                      <dt style={{ color: t.textDim }}>Action</dt>
-                      <dd style={{ margin: 0, color: t.textPrimary }}>{selected.action}</dd>
-                    </dl>
-                  </>,
-                  { height: "100%" },
-                )
-              ) : (
-                <div style={{ fontSize: 12, color: t.textMuted }}>Select a change event.</div>
-              )}
-            </div>
+                    <div style={{ fontSize: 11, color: t.textMuted, marginTop: 4 }}>
+                      {ev.at} · {ev.firm} · {ev.actor}
+                    </div>
+                  </button>
+                );
+              })
+            )}
           </div>
         </div>,
       )}
+
+      {selected
+        ? operatorModal(
+            t,
+            "Change event",
+            "Change event",
+            focus.labelFocused("Change event"),
+            focus.labelHovered("Change event"),
+            () => setSelectedId(null),
+            <>
+              <dl
+                style={{
+                  margin: 0,
+                  display: "grid",
+                  gridTemplateColumns: "100px 1fr",
+                  gap: "8px 10px",
+                  fontSize: 12,
+                }}
+              >
+                <dt style={{ color: t.textDim }}>When</dt>
+                <dd style={{ margin: 0, color: t.textPrimary }}>{selected.at}</dd>
+                <dt style={{ color: t.textDim }}>Firm</dt>
+                <dd style={{ margin: 0, color: t.textPrimary }}>{selected.firm}</dd>
+                <dt style={{ color: t.textDim }}>Actor</dt>
+                <dd style={{ margin: 0, color: t.textPrimary }}>{selected.actor}</dd>
+                <dt style={{ color: t.textDim }}>Surface</dt>
+                <dd style={{ margin: 0, color: t.textPrimary }}>{selected.surface}</dd>
+                <dt style={{ color: t.textDim }}>Before</dt>
+                <dd style={{ margin: 0, color: t.textMuted }}>{selected.before}</dd>
+                <dt style={{ color: t.textDim }}>After</dt>
+                <dd style={{ margin: 0, color: t.textPrimary }}>{selected.after}</dd>
+                <dt style={{ color: t.textDim }}>Operation</dt>
+                <dd style={{ margin: 0, color: t.textPrimary }}>{selected.action}</dd>
+              </dl>
+            </>,
+            <button type="button" style={secondaryBtnStyle(t)} onClick={() => setSelectedId(null)}>
+              Close
+            </button>,
+          )
+        : null}
     </RegisterSurfaceMount>
   );
 }

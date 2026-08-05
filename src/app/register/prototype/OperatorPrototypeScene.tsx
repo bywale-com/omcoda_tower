@@ -80,7 +80,6 @@ export function OperatorPrototypeScene({
       main = (
         <ConfigurationLibrariesPanel
           t={t}
-          isDark={isDark}
           focusedEntry={focusedEntry}
           hoveredId={hoveredId}
           sub={configSub}
@@ -113,14 +112,7 @@ export function OperatorPrototypeScene({
       main = <FirmOperationsBindPanel {...shared} />;
       break;
     case "Book readiness":
-      main = (
-        <BookReadinessPanel
-          t={t}
-          isDark={isDark}
-          focusedEntry={focusedEntry}
-          hoveredId={hoveredId}
-        />
-      );
+      main = <BookReadinessPanel {...shared} />;
       break;
     case "Firm health":
       main = <FirmHealthModule {...shared} />;

@@ -10,8 +10,11 @@ import {
   type RegisterSurfaceEntry,
 } from "../trace/surfaceCatalog";
 import {
+  LeafSurface,
   RegisterSurfaceMount,
   navBtnStyle,
+  primaryControlStyle,
+  secondaryControlStyle,
   sectionLabelStyle,
 } from "./registerSurfaceChrome";
 
@@ -66,15 +69,10 @@ function surfaceForFocus(entry: RegisterSurfaceEntry | null): ContactSurface {
 
 function primaryBtn(t: Tokens, extra?: CSSProperties): CSSProperties {
   return {
+    ...primaryControlStyle(t),
     padding: "10px 16px",
-    border: "none",
     borderRadius: 6,
     background: FIRM.brand,
-    color: "#fff",
-    fontSize: 13,
-    fontWeight: 600,
-    fontFamily: "inherit",
-    cursor: "pointer",
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
@@ -85,22 +83,17 @@ function primaryBtn(t: Tokens, extra?: CSSProperties): CSSProperties {
 
 function secondaryBtn(t: Tokens, extra?: CSSProperties): CSSProperties {
   return {
+    ...secondaryControlStyle(t),
     padding: "10px 16px",
-    border: `1px solid ${t.border}`,
     borderRadius: 6,
-    background: t.bgPrimary,
-    color: t.textPrimary,
-    fontSize: 13,
-    fontWeight: 500,
-    fontFamily: "inherit",
-    cursor: "pointer",
     ...extra,
   };
 }
 
-function cemFooter(t: Tokens) {
+function cemFooter(t: Tokens, focusLabel: string | null) {
   return (
     <div
+      data-register-surface="Touchpoint footer"
       style={{
         marginTop: 18,
         paddingTop: 14,
@@ -119,9 +112,24 @@ function cemFooter(t: Tokens) {
       </div>
       <div style={{ marginTop: 8 }}>
         You can unsubscribe at any time — reply STOP or use{" "}
-        <span style={{ color: FIRM.brand, fontWeight: 600, textDecoration: "underline" }}>
-          Silence / Opt out
-        </span>
+        <LeafSurface label="Silence / Opt out" focused={focusLabel === "Silence / Opt out"} t={t}>
+          <button
+            type="button"
+            style={{
+              border: "none",
+              background: "transparent",
+              color: FIRM.brand,
+              fontWeight: 600,
+              textDecoration: "underline",
+              cursor: "pointer",
+              fontFamily: "inherit",
+              fontSize: 10,
+              padding: 0,
+            }}
+          >
+            Silence / Opt out
+          </button>
+        </LeafSurface>
         . Mechanism remains valid for 60+ days.
       </div>
       <div style={{ marginTop: 6, color: "#9ca3af" }}>
@@ -139,6 +147,8 @@ function cemShell({
   headline,
   body,
   cta,
+  ctaSurface,
+  focusLabel,
   children,
 }: {
   t: Tokens;
@@ -147,6 +157,8 @@ function cemShell({
   headline: string;
   body: string;
   cta: string;
+  ctaSurface?: string;
+  focusLabel: string | null;
   children?: ReactNode;
 }) {
   return (
@@ -261,11 +273,18 @@ function cemShell({
             <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>{headline}</div>
             <div style={{ fontSize: 13, color: "#374151", lineHeight: 1.55, marginBottom: 16 }}>{body}</div>
             {children}
-            <button type="button" style={primaryBtn(t, { width: "100%", background: FIRM.brand })}>
-              {cta}
-              <ArrowRight size={14} strokeWidth={2.25} />
-            </button>
-            {cemFooter(t)}
+            <LeafSurface
+              label={ctaSurface ?? surface}
+              focused={focusLabel === ctaSurface}
+              t={t}
+              style={{ display: "block", marginBottom: 0 }}
+            >
+              <button type="button" style={primaryBtn(t, { width: "100%", background: FIRM.brand })}>
+                {cta}
+                <ArrowRight size={14} strokeWidth={2.25} />
+              </button>
+            </LeafSurface>
+            {cemFooter(t, focusLabel)}
           </div>
         </div>
       </div>
@@ -410,18 +429,20 @@ function fieldBlock(
   );
 }
 
-function OptInMessage({ t }: { t: Tokens }) {
+function OptInMessage({ t, focusLabel }: { t: Tokens; focusLabel: string | null }) {
   return cemShell({
     t,
     surface: "Opt-in message",
     subject: `${CONTACT.first}, stay current on your Canadian pathway`,
     headline: "A quick yes before we collect anything deeper",
     body: `Hi ${CONTACT.first} — ${FIRM.name} would like to keep you informed about Express Entry / CEC timing relevant to your file, and invite you to share self-reportable updates when useful. This is not cold outreach: you are already in our private book.`,
-    cta: "Open Consent request",
+    cta: "Review request",
+    ctaSurface: "Consent link / Review request",
+    focusLabel,
   });
 }
 
-function ConsentRequest({ t }: { t: Tokens }) {
+function ConsentRequest({ t, focusLabel }: { t: Tokens; focusLabel: string | null }) {
   const [agreed, setAgreed] = useState(false);
   const [channels, setChannels] = useState({ email: true, sms: false });
   const [outcome, setOutcome] = useState<"idle" | "agreed" | "ignored">("idle");
@@ -560,28 +581,32 @@ function ConsentRequest({ t }: { t: Tokens }) {
         </label>
 
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 10 }}>
-          <button
-            type="button"
-            disabled={!agreed || (!channels.email && !channels.sms)}
-            onClick={() => setOutcome("agreed")}
-            style={primaryBtn(t, {
-              opacity: agreed && (channels.email || channels.sms) ? 1 : 0.45,
-              cursor: agreed && (channels.email || channels.sms) ? "pointer" : "not-allowed",
-            })}
-          >
-            <Check size={14} strokeWidth={2.5} />
-            Agree
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setAgreed(false);
-              setOutcome("ignored");
-            }}
-            style={secondaryBtn(t)}
-          >
-            Ignore
-          </button>
+          <LeafSurface label="Agree" focused={focusLabel === "Agree"} t={t}>
+            <button
+              type="button"
+              disabled={!agreed || (!channels.email && !channels.sms)}
+              onClick={() => setOutcome("agreed")}
+              style={primaryBtn(t, {
+                opacity: agreed && (channels.email || channels.sms) ? 1 : 0.45,
+                cursor: agreed && (channels.email || channels.sms) ? "pointer" : "not-allowed",
+              })}
+            >
+              <Check size={14} strokeWidth={2.5} />
+              Agree
+            </button>
+          </LeafSurface>
+          <LeafSurface label="Ignore / dismiss" focused={focusLabel === "Ignore / dismiss"} t={t}>
+            <button
+              type="button"
+              onClick={() => {
+                setAgreed(false);
+                setOutcome("ignored");
+              }}
+              style={secondaryBtn(t)}
+            >
+              Ignore
+            </button>
+          </LeafSurface>
         </div>
 
         <div style={{ fontSize: 11, color: t.textMuted, lineHeight: 1.5 }}>
@@ -612,7 +637,7 @@ function ConsentRequest({ t }: { t: Tokens }) {
   });
 }
 
-function NudgeMessage({ t }: { t: Tokens }) {
+function NudgeMessage({ t, focusLabel }: { t: Tokens; focusLabel: string | null }) {
   return cemShell({
     t,
     surface: "Nudge message",
@@ -620,10 +645,11 @@ function NudgeMessage({ t }: { t: Tokens }) {
     headline: "Nothing reactivation-worthy — one consolidated ask",
     body: `Hi ${CONTACT.first} — ${FIRM.name} needs a few self-reportable updates (language test window and EE pool status) before your next eligibility refresh. One form. No document uploads.`,
     cta: "Open Nudge form",
+    focusLabel,
   });
 }
 
-function NudgeForm({ t }: { t: Tokens }) {
+function NudgeForm({ t, focusLabel }: { t: Tokens; focusLabel: string | null }) {
   return portalShell({
     t,
     surface: "Nudge form",
@@ -636,20 +662,24 @@ function NudgeForm({ t }: { t: Tokens }) {
         <p style={{ margin: "0 0 16px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
           Consolidated outstanding self-reportable needs. Document-dependent asks never appear here.
         </p>
-        {fieldBlock(t, "EE profile exists", "Yes", { hint: "Self-reportable" })}
-        {fieldBlock(t, "Still in pool", "Yes")}
-        {fieldBlock(t, "Approximate last EE update", "Jan 2026")}
-        {fieldBlock(t, "Language test product", "IELTS General")}
-        {fieldBlock(t, "CLB-equivalent band (lowest)", "CLB 9")}
-        {fieldBlock(t, "Test date", "Mar 12, 2025")}
-        {fieldBlock(t, "Settlement funds available (approx CAD)", "Yes · ~$15,000")}
-        {fieldBlock(t, "Job offer / certificate exists", "No", {
-          hint: "Employer particulars stay on the firm desk — not here",
-        })}
-        <button type="button" style={primaryBtn(t, { width: "100%", marginTop: 4 })}>
-          Submit answers
-          <ArrowRight size={14} strokeWidth={2.25} />
-        </button>
+        <div data-register-surface="Self-reportable fields">
+          {fieldBlock(t, "EE profile exists", "Yes", { hint: "Self-reportable" })}
+          {fieldBlock(t, "Still in pool", "Yes")}
+          {fieldBlock(t, "Approximate last EE update", "Jan 2026")}
+          {fieldBlock(t, "Language test product", "IELTS General")}
+          {fieldBlock(t, "CLB-equivalent band (lowest)", "CLB 9")}
+          {fieldBlock(t, "Test date", "Mar 12, 2025")}
+          {fieldBlock(t, "Settlement funds available (approx CAD)", "Yes · ~$15,000")}
+          {fieldBlock(t, "Job offer / certificate exists", "No", {
+            hint: "Employer particulars stay on the firm desk — not here",
+          })}
+        </div>
+        <LeafSurface label="Submit" focused={focusLabel === "Submit"} t={t} style={{ marginTop: 4 }}>
+          <button type="button" style={primaryBtn(t, { width: "100%" })}>
+            Submit
+            <ArrowRight size={14} strokeWidth={2.25} />
+          </button>
+        </LeafSurface>
         <div style={{ marginTop: 12, fontSize: 11, color: t.textDim, textAlign: "center" }}>
           Prefer to stop hearing from us?{" "}
           <span style={{ color: FIRM.brand, fontWeight: 600 }}>Silence / Opt out</span>
@@ -659,7 +689,7 @@ function NudgeForm({ t }: { t: Tokens }) {
   });
 }
 
-function SilenceOptOut({ t }: { t: Tokens }) {
+function SilenceOptOut({ t, focusLabel }: { t: Tokens; focusLabel: string | null }) {
   const [silenced, setSilenced] = useState(false);
   return portalShell({
     t,
@@ -690,17 +720,19 @@ function SilenceOptOut({ t }: { t: Tokens }) {
           Opt-in, nudge, and reactivation sequences under {FIRM.name}. You can re-consent later with a
           new affirmative Agree on Consent request.
         </div>
-        <button
-          type="button"
-          onClick={() => setSilenced(true)}
-          style={primaryBtn(t, {
-            width: "100%",
-            background: silenced ? t.success : t.red,
-            marginBottom: 10,
-          })}
-        >
-          {silenced ? "Silenced — outreach stopped" : "Confirm Silence / Opt out"}
-        </button>
+        <LeafSurface label="Silence / Opt out" focused={focusLabel === "Silence / Opt out"} t={t}>
+          <button
+            type="button"
+            onClick={() => setSilenced(true)}
+            style={primaryBtn(t, {
+              width: "100%",
+              background: silenced ? t.success : t.red,
+              marginBottom: 10,
+            })}
+          >
+            {silenced ? "Silenced — outreach stopped" : "Confirm Silence / Opt out"}
+          </button>
+        </LeafSurface>
         <div style={{ fontSize: 11, color: t.textDim, textAlign: "center" }}>
           Or reply STOP to any SMS from {FIRM.name}
         </div>
@@ -709,14 +741,16 @@ function SilenceOptOut({ t }: { t: Tokens }) {
   });
 }
 
-function MeetingInvitation({ t }: { t: Tokens }) {
+function MeetingInvitation({ t, focusLabel }: { t: Tokens; focusLabel: string | null }) {
   return cemShell({
     t,
     surface: "Meeting invitation",
     subject: "You're invited — discovery with Tower Immigration",
     headline: "Eligibility warrants a conversation",
     body: `Hi ${CONTACT.first} — based on your current self-reportable facts, ${FIRM.name} would like to meet for a short discovery on Express Entry / CEC timing. Pick a slot that works; we'll already hold your current facts for the consultant.`,
-    cta: "Open Booking",
+    cta: "Book a time",
+    ctaSurface: "Book a time",
+    focusLabel,
     children: (
       <div
         style={{
@@ -739,7 +773,7 @@ function MeetingInvitation({ t }: { t: Tokens }) {
   });
 }
 
-function Booking({ t }: { t: Tokens }) {
+function Booking({ t, focusLabel }: { t: Tokens; focusLabel: string | null }) {
   const [slot, setSlot] = useState<string | null>("Thu 2:00 PM");
   const slots = ["Thu 2:00 PM", "Fri 10:30 AM", "Mon 3:00 PM"];
   return portalShell({
@@ -752,38 +786,43 @@ function Booking({ t }: { t: Tokens }) {
         <p style={{ margin: "0 0 14px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
           Choose a slot with {FIRM.name}. Confirm writes the meeting to the consultant Meetings module.
         </p>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
-          {slots.map((s) => {
-            const active = slot === s;
-            return (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setSlot(s)}
-                style={{
-                  textAlign: "left",
-                  padding: "12px 14px",
-                  borderRadius: 6,
-                  border: `1px solid ${active ? FIRM.brand : t.border}`,
-                  background: active ? FIRM.brandSoft : t.bgSecondary,
-                  color: t.textPrimary,
-                  fontSize: 13,
-                  fontWeight: active ? 600 : 500,
-                  fontFamily: "inherit",
-                  cursor: "pointer",
-                }}
-              >
-                {s}
-              </button>
-            );
-          })}
-        </div>
+        <LeafSurface label="Slot picker" focused={focusLabel === "Slot picker"} t={t}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
+            {slots.map((s) => {
+              const active = slot === s;
+              return (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setSlot(s)}
+                  style={{
+                    textAlign: "left",
+                    padding: "12px 14px",
+                    borderRadius: 6,
+                    border: `1px solid ${active ? FIRM.brand : t.border}`,
+                    background: active ? FIRM.brandSoft : t.bgSecondary,
+                    color: t.textPrimary,
+                    fontSize: 13,
+                    fontWeight: active ? 600 : 500,
+                    fontFamily: "inherit",
+                    cursor: "pointer",
+                    width: "100%",
+                  }}
+                >
+                  {s}
+                </button>
+              );
+            })}
+          </div>
+        </LeafSurface>
         {fieldBlock(t, "Consultant", "Sarah Chen · Tower Immigration")}
         {fieldBlock(t, "Purpose", "Discovery · Express Entry / CEC")}
-        <button type="button" style={primaryBtn(t, { width: "100%" })}>
-          Confirm booking
-          <ArrowRight size={14} strokeWidth={2.25} />
-        </button>
+        <LeafSurface label="Confirm booking" focused={focusLabel === "Confirm booking"} t={t}>
+          <button type="button" style={primaryBtn(t, { width: "100%" })}>
+            Confirm booking
+            <ArrowRight size={14} strokeWidth={2.25} />
+          </button>
+        </LeafSurface>
         <div style={{ marginTop: 10, fontSize: 11, color: t.textDim, textAlign: "center" }}>
           After confirm, outstanding self-reportables open on Loop-closer form.
         </div>
@@ -792,7 +831,7 @@ function Booking({ t }: { t: Tokens }) {
   });
 }
 
-function LoopCloserForm({ t }: { t: Tokens }) {
+function LoopCloserForm({ t, focusLabel }: { t: Tokens; focusLabel: string | null }) {
   return portalShell({
     t,
     surface: "Loop-closer form",
@@ -806,23 +845,29 @@ function LoopCloserForm({ t }: { t: Tokens }) {
           Outstanding self-reportables before you join — write-back so Live brief is current. No
           document-dependent fields.
         </p>
-        {fieldBlock(t, "Work permit end date (approx)", "Sep 15, 2026")}
-        {fieldBlock(t, "Hours/week (current role)", "40")}
-        {fieldBlock(t, "TEER guess", "TEER 1")}
-        {fieldBlock(t, "Student / self-employed flags", "Neither")}
-        {fieldBlock(t, "Anything changed since last nudge?", "Permit renewal in progress", {
-          placeholder: false,
-        })}
-        <button type="button" style={primaryBtn(t, { width: "100%" })}>
-          Save for Live brief
-          <ArrowRight size={14} strokeWidth={2.25} />
-        </button>
+        <div data-register-surface="Booking confirm">
+          <div data-register-surface="Self-reportable fields">
+            {fieldBlock(t, "Work permit end date (approx)", "Sep 15, 2026")}
+            {fieldBlock(t, "Hours/week (current role)", "40")}
+            {fieldBlock(t, "TEER guess", "TEER 1")}
+            {fieldBlock(t, "Student / self-employed flags", "Neither")}
+            {fieldBlock(t, "Anything changed since last nudge?", "Permit renewal in progress", {
+              placeholder: false,
+            })}
+          </div>
+          <LeafSurface label="Submit" focused={focusLabel === "Submit"} t={t}>
+            <button type="button" style={primaryBtn(t, { width: "100%" })}>
+              Submit
+              <ArrowRight size={14} strokeWidth={2.25} />
+            </button>
+          </LeafSurface>
+        </div>
       </div>
     ),
   });
 }
 
-function UpdateFacts({ t }: { t: Tokens }) {
+function UpdateFacts({ t, focusLabel }: { t: Tokens; focusLabel: string | null }) {
   return portalShell({
     t,
     surface: "Update facts",
@@ -836,39 +881,59 @@ function UpdateFacts({ t }: { t: Tokens }) {
           Reply when your situation changes. Same self-reportable boundary as Nudge form — firm-branded
           path under {FIRM.name}.
         </p>
-        {fieldBlock(t, "What changed", "New language test booked", { placeholder: false })}
-        {fieldBlock(t, "Effective date", "Aug 2026")}
-        {fieldBlock(t, "Updated CLB target", "CLB 10")}
-        {fieldBlock(t, "Still want meeting invitations", "Yes")}
-        <button type="button" style={primaryBtn(t, { width: "100%" })}>
-          Submit update
-          <ArrowRight size={14} strokeWidth={2.25} />
-        </button>
+        <LeafSurface
+          label="Update facts / Change update link"
+          focused={focusLabel === "Update facts / Change update link"}
+          t={t}
+          style={{ marginBottom: 12 }}
+        >
+          <span style={{ fontSize: 11, color: FIRM.brand, fontWeight: 600 }}>Update facts link</span>
+        </LeafSurface>
+        <div data-register-surface="Update fields">
+          {fieldBlock(t, "What changed", "New language test booked", { placeholder: false })}
+          {fieldBlock(t, "Effective date", "Aug 2026")}
+          {fieldBlock(t, "Updated CLB target", "CLB 10")}
+          {fieldBlock(t, "Still want meeting invitations", "Yes")}
+        </div>
+        <LeafSurface label="Submit" focused={focusLabel === "Submit"} t={t}>
+          <button type="button" style={primaryBtn(t, { width: "100%" })}>
+            Submit
+            <ArrowRight size={14} strokeWidth={2.25} />
+          </button>
+        </LeafSurface>
       </div>
     ),
   });
 }
 
-function ActiveSurface({ t, surface }: { t: Tokens; surface: ContactSurface }) {
+function ActiveSurface({
+  t,
+  surface,
+  focusLabel,
+}: {
+  t: Tokens;
+  surface: ContactSurface;
+  focusLabel: string | null;
+}) {
   switch (surface) {
     case "Opt-in message":
-      return <OptInMessage t={t} />;
+      return <OptInMessage t={t} focusLabel={focusLabel} />;
     case "Consent request":
-      return <ConsentRequest t={t} />;
+      return <ConsentRequest t={t} focusLabel={focusLabel} />;
     case "Nudge message":
-      return <NudgeMessage t={t} />;
+      return <NudgeMessage t={t} focusLabel={focusLabel} />;
     case "Nudge form":
-      return <NudgeForm t={t} />;
+      return <NudgeForm t={t} focusLabel={focusLabel} />;
     case "Silence / Opt out":
-      return <SilenceOptOut t={t} />;
+      return <SilenceOptOut t={t} focusLabel={focusLabel} />;
     case "Meeting invitation":
-      return <MeetingInvitation t={t} />;
+      return <MeetingInvitation t={t} focusLabel={focusLabel} />;
     case "Booking":
-      return <Booking t={t} />;
+      return <Booking t={t} focusLabel={focusLabel} />;
     case "Loop-closer form":
-      return <LoopCloserForm t={t} />;
+      return <LoopCloserForm t={t} focusLabel={focusLabel} />;
     case "Update facts":
-      return <UpdateFacts t={t} />;
+      return <UpdateFacts t={t} focusLabel={focusLabel} />;
     default:
       return null;
   }
@@ -886,6 +951,14 @@ export function ContactPrototypeScene({
   useEffect(() => {
     if (!focusedEntry || focusedEntry.desk !== "contact") return;
     setSurface(surfaceForFocus(focusedEntry));
+    if (
+      focusedEntry.label === "Consent link / Review request" ||
+      focusedEntry.label === "Book a time"
+    ) {
+      setSurface(
+        focusedEntry.label === "Book a time" ? "Meeting invitation" : "Opt-in message",
+      );
+    }
   }, [focusedEntry, focusSeq]);
 
   const hoveredEntry = hoveredId
@@ -931,7 +1004,7 @@ export function ContactPrototypeScene({
           t={t}
         >
           <div style={{ flex: 1, minHeight: 0, padding: 12, display: "flex" }}>
-            <ActiveSurface t={t} surface={surface} />
+            <ActiveSurface t={t} surface={surface} focusLabel={focusedEntry?.label ?? null} />
           </div>
         </RegisterSurfaceMount>
       </div>

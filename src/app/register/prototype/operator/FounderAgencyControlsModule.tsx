@@ -1,11 +1,12 @@
 /**
- * Founder & agency controls — Agency policy, Bounds, Kill-switch.
+ * Founder & agency controls — Agency policy Bounds + Kill-switch modal.
  */
 import { useState } from "react";
 import { RegisterSurfaceMount } from "../registerSurfaceChrome";
 import {
   DEMO_FIRMS,
   moduleFocus,
+  operatorModal,
   panelShell,
   primaryBtnStyle,
   resolveHoveredEntry,
@@ -15,7 +16,14 @@ import {
   type OperatorModuleProps,
 } from "./operatorChrome";
 
-const KILL_SCOPE_TARGETS = [DEMO_FIRMS[0], DEMO_FIRMS[2], DEMO_FIRMS[3]] as const;
+type BoundRow = { key: string; value: string };
+
+const DEFAULT_BOUNDS: BoundRow[] = [
+  { key: "Approach click budget", value: "≤ 3 clicks to capture" },
+  { key: "CASL triad", value: "Consent · identity · unsubscribe always on" },
+  { key: "Escrow rail", value: "Firm↔Om Coda only — no client funds" },
+  { key: "Authorship seat", value: "Configuration libraries · never firm Hub" },
+];
 
 export function FounderAgencyControlsModule({
   t,
@@ -24,13 +32,16 @@ export function FounderAgencyControlsModule({
 }: OperatorModuleProps) {
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Founder & agency controls", focusedEntry, hoveredEntry);
-  const [quietHours, setQuietHours] = useState(true);
-  const [maxDaily, setMaxDaily] = useState("40");
-  const [armed, setArmed] = useState(false);
+  const [bounds, setBounds] = useState<BoundRow[]>(DEFAULT_BOUNDS);
+  const [policySaved, setPolicySaved] = useState<string | null>(null);
+  const [killOpen, setKillOpen] = useState(false);
+  const [killScopeMode, setKillScopeMode] = useState<"fleet" | "selected">("fleet");
+  const [killReason, setKillReason] = useState("");
   const [killed, setKilled] = useState(false);
-  const [killScope, setKillScope] = useState<string>("fleet");
-  const selectedScopeFirm = KILL_SCOPE_TARGETS.find((firm) => firm.id === killScope);
-  const killScopeLabel = selectedScopeFirm?.name ?? "Fleet";
+
+  const updateBound = (index: number, value: string) => {
+    setBounds((prev) => prev.map((row, i) => (i === index ? { ...row, value } : row)));
+  };
 
   return (
     <RegisterSurfaceMount
@@ -38,15 +49,12 @@ export function FounderAgencyControlsModule({
       focused={focus.focused && focusedEntry?.label === "Founder & agency controls"}
       hovered={hoveredEntry?.label === "Founder & agency controls"}
       t={t}
+      style={{ position: "relative" }}
     >
       {panelShell(
         t,
         "Founder & agency controls",
-        statusChip(
-          t,
-          killed ? (selectedScopeFirm ? "tenancy halted" : "fleet halted") : "armed-ready",
-          killed ? "danger" : "accent",
-        ),
+        statusChip(t, killed ? "halted" : "house-global", killed ? "danger" : "accent"),
         <div
           style={{
             flex: 1,
@@ -69,199 +77,213 @@ export function FounderAgencyControlsModule({
                 Agency policy
               </div>
               <p style={{ margin: "0 0 12px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
-                House defaults that every tenancy inherits unless Firm operations bind overrides a
-                gate.
+                Cross-firm limits, what may bind, and what may send — never on Consultant nav.
               </p>
-              <label
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  fontSize: 12,
-                  color: t.textPrimary,
-                  marginBottom: 10,
-                  cursor: "pointer",
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={quietHours}
-                  onChange={(e) => setQuietHours(e.target.checked)}
-                />
-                Enforce quiet hours (09:00–20:00 local)
-              </label>
-              <label style={{ display: "block", fontSize: 12, color: t.textPrimary }}>
-                <div style={{ fontSize: 10, color: t.textDim, marginBottom: 4 }}>
-                  Max outbound / firm / day
-                </div>
-                <input
-                  value={maxDaily}
-                  onChange={(e) => setMaxDaily(e.target.value)}
-                  style={{
-                    width: 100,
-                    fontSize: 12,
-                    fontFamily: "inherit",
-                    padding: "6px 8px",
-                    border: `1px solid ${t.border}`,
-                    borderRadius: 4,
-                    background: t.bgPrimary,
-                    color: t.textPrimary,
-                  }}
-                />
-              </label>
-            </>,
-          )}
 
-          {surfaceBlock(
-            t,
-            "Bounds",
-            focus.labelFocused("Bounds"),
-            focus.labelHovered("Bounds"),
-            <>
-              <div style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary, marginBottom: 8 }}>
-                Bounds
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {[
-                  { k: "Approach click budget", v: "≤ 3 clicks to capture" },
-                  { k: "CASL triad", v: "Consent · identity · unsubscribe always on" },
-                  { k: "Escrow rail", v: "Firm↔Om Coda only — no client funds" },
-                  { k: "Authorship seat", v: "Configuration libraries · never firm Hub" },
-                ].map((row) => (
-                  <div
-                    key={row.k}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      gap: 12,
-                      background: t.bgPrimary,
-                      border: `1px solid ${t.border}`,
-                      borderRadius: 4,
-                      padding: "8px 10px",
-                      fontSize: 12,
-                    }}
-                  >
-                    <span style={{ color: t.textMuted }}>{row.k}</span>
-                    <span style={{ color: t.textPrimary, fontWeight: 600, textAlign: "right" }}>
-                      {row.v}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </>,
-          )}
-
-          {surfaceBlock(
-            t,
-            "Kill-switch",
-            focus.labelFocused("Kill-switch"),
-            focus.labelHovered("Kill-switch"),
-            <>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  marginBottom: 8,
-                }}
-              >
-                <span style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary }}>
-                  Kill-switch
-                </span>
-                {statusChip(
-                  t,
-                  killed ? `${killScopeLabel} halted` : "standby",
-                  killed ? "danger" : "muted",
-                )}
-              </div>
-              <p style={{ margin: "0 0 12px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
-                Halts outbound and Approach spend at fleet scope or for a named tenancy. Requires dual
-                confirmation — Founder arm, then execute.
-              </p>
-              <div
-                style={{
-                  background: t.bgPrimary,
-                  border: `1px solid ${t.border}`,
-                  borderRadius: 4,
-                  padding: 10,
-                  marginBottom: 12,
-                }}
-              >
-                <div style={{ fontSize: 10, color: t.textDim, marginBottom: 8 }}>
-                  Kill scope · house control choosing fleet or named tenancy targets
+              <div data-register-surface="Bounds">
+                <div style={{ fontSize: 12, fontWeight: 600, color: t.textPrimary, marginBottom: 8 }}>
+                  Bounds
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 8 }}>
-                  {[
-                    { id: "fleet", label: "Fleet-wide", meta: "all firm outbound + Approach spend" },
-                    ...KILL_SCOPE_TARGETS.map((firm) => ({
-                      id: firm.id,
-                      label: firm.name,
-                      meta: `${firm.stage} · ${firm.health}`,
-                    })),
-                  ].map((scope) => {
-                    const selected = scope.id === killScope;
-                    return (
-                      <button
-                        key={scope.id}
-                        type="button"
-                        onClick={() => {
-                          setKillScope(scope.id);
-                          setKilled(false);
-                        }}
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {bounds.map((row, index) => (
+                    <div
+                      key={row.key}
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1.2fr",
+                        gap: 10,
+                        alignItems: "center",
+                        background: t.bgPrimary,
+                        border: `1px solid ${t.border}`,
+                        borderRadius: 4,
+                        padding: "8px 10px",
+                        outline:
+                          (focus.labelFocused("Bounds") || focus.labelHovered("Bounds")) &&
+                          index === 0
+                            ? `2px solid ${t.accent}`
+                            : "none",
+                        outlineOffset: -2,
+                      }}
+                    >
+                      <span style={{ fontSize: 12, color: t.textMuted }}>{row.key}</span>
+                      <input
+                        value={row.value}
+                        onChange={(e) => updateBound(index, e.target.value)}
                         style={{
-                          textAlign: "left",
+                          fontSize: 12,
                           fontFamily: "inherit",
-                          background: selected ? t.accentBg : t.bgSecondary,
-                          color: t.textPrimary,
-                          border: `1px solid ${selected ? t.accent : t.border}`,
+                          padding: "6px 8px",
+                          border: `1px solid ${t.border}`,
                           borderRadius: 4,
-                          padding: "8px 10px",
-                          cursor: "pointer",
+                          background: t.bgSecondary,
+                          color: t.textPrimary,
                         }}
-                      >
-                        <div style={{ fontSize: 12, fontWeight: 700 }}>{scope.label}</div>
-                        <div style={{ fontSize: 10, color: t.textDim, marginTop: 3 }}>{scope.meta}</div>
-                      </button>
-                    );
-                  })}
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+
+              <div style={{ marginTop: 12, display: "flex", gap: 8, alignItems: "center" }}>
                 <button
                   type="button"
-                  style={secondaryBtnStyle(t)}
-                  onClick={() => {
-                    setArmed((v) => !v);
-                    if (armed) setKilled(false);
+                  data-register-surface="Save policy"
+                  style={{
+                    ...primaryBtnStyle(t),
+                    outline:
+                      focus.labelFocused("Save policy") || focus.labelHovered("Save policy")
+                        ? `2px solid ${t.textPrimary}`
+                        : "none",
                   }}
+                  onClick={() => setPolicySaved(`Policy saved · ${new Date().toLocaleTimeString()}`)}
                 >
-                  {armed ? "Disarm" : "Arm kill-switch"}
+                  Save policy
                 </button>
-                <button
-                  type="button"
-                  disabled={!armed || killed}
-                  style={primaryBtnStyle(t, !armed || killed)}
-                  onClick={() => setKilled(true)}
-                >
-                  Execute {selectedScopeFirm ? "tenancy" : "fleet"} halt
-                </button>
-                {killed ? (
-                  <button
-                    type="button"
-                    style={secondaryBtnStyle(t)}
-                    onClick={() => {
-                      setKilled(false);
-                      setArmed(false);
-                    }}
-                  >
-                    Restore {selectedScopeFirm ? "tenancy" : "fleet"}
-                  </button>
+                {policySaved ? (
+                  <span style={{ fontSize: 11, color: t.accent }}>{policySaved}</span>
                 ) : null}
               </div>
             </>,
           )}
+
+          <div
+            style={{
+              border: `1px solid ${t.border}`,
+              borderRadius: 6,
+              background: t.bgSecondary,
+              padding: 14,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: 8,
+              }}
+            >
+              <span style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary }}>
+                Kill-switch
+              </span>
+              {statusChip(t, killed ? "halted" : "standby", killed ? "danger" : "muted")}
+            </div>
+            <p style={{ margin: "0 0 12px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
+              Halts outbound and Approach spend — fleet-wide or selected tenancies.
+            </p>
+            <button
+              type="button"
+              style={secondaryBtnStyle(t)}
+              onClick={() => setKillOpen(true)}
+            >
+              Open Kill-switch
+            </button>
+          </div>
         </div>,
       )}
+
+      {killOpen || focus.labelFocused("Kill-switch")
+        ? operatorModal(
+            t,
+            "Kill-switch",
+            "Kill-switch",
+            focus.labelFocused("Kill-switch"),
+            focus.labelHovered("Kill-switch"),
+            () => setKillOpen(false),
+            <>
+              <div style={{ fontSize: 10, color: t.textDim, marginBottom: 8 }}>Scope</div>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: 8,
+                  marginBottom: 14,
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setKillScopeMode("fleet")}
+                  style={{
+                    textAlign: "left",
+                    fontFamily: "inherit",
+                    background: killScopeMode === "fleet" ? t.accentBg : t.bgSecondary,
+                    color: t.textPrimary,
+                    border: `1px solid ${killScopeMode === "fleet" ? t.accent : t.border}`,
+                    borderRadius: 4,
+                    padding: "8px 10px",
+                    cursor: "pointer",
+                  }}
+                >
+                  <div style={{ fontSize: 12, fontWeight: 700 }}>Fleet-wide</div>
+                  <div style={{ fontSize: 10, color: t.textDim, marginTop: 3 }}>
+                    All firm outbound + Approach spend
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setKillScopeMode("selected")}
+                  style={{
+                    textAlign: "left",
+                    fontFamily: "inherit",
+                    background: killScopeMode === "selected" ? t.accentBg : t.bgSecondary,
+                    color: t.textPrimary,
+                    border: `1px solid ${killScopeMode === "selected" ? t.accent : t.border}`,
+                    borderRadius: 4,
+                    padding: "8px 10px",
+                    cursor: "pointer",
+                  }}
+                >
+                  <div style={{ fontSize: 12, fontWeight: 700 }}>Selected tenancies</div>
+                  <div style={{ fontSize: 10, color: t.textDim, marginTop: 3 }}>
+                    Named firm targets only
+                  </div>
+                </button>
+              </div>
+
+              {killScopeMode === "selected" ? (
+                <div style={{ marginBottom: 14, fontSize: 11, color: t.textMuted }}>
+                  Targets · {DEMO_FIRMS.slice(0, 3).map((f) => f.name).join(" · ")}
+                </div>
+              ) : null}
+
+              <label style={{ display: "block", fontSize: 12, color: t.textPrimary }}>
+                <div style={{ fontSize: 10, color: t.textDim, marginBottom: 4 }}>Reason</div>
+                <textarea
+                  value={killReason}
+                  onChange={(e) => setKillReason(e.target.value)}
+                  rows={3}
+                  placeholder="Policy enforcement or emergency reason…"
+                  style={{
+                    width: "100%",
+                    fontSize: 12,
+                    fontFamily: "inherit",
+                    padding: "8px 10px",
+                    border: `1px solid ${t.border}`,
+                    borderRadius: 4,
+                    background: t.bgPrimary,
+                    color: t.textPrimary,
+                    resize: "vertical",
+                  }}
+                />
+              </label>
+            </>,
+            <>
+              <button type="button" style={secondaryBtnStyle(t)} onClick={() => setKillOpen(false)}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={!killReason.trim()}
+                style={primaryBtnStyle(t, !killReason.trim())}
+                onClick={() => {
+                  setKilled(true);
+                  setKillOpen(false);
+                }}
+              >
+                Halt motion
+              </button>
+            </>,
+          )
+        : null}
     </RegisterSurfaceMount>
   );
 }

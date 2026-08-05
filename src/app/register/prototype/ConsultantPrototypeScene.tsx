@@ -1,6 +1,6 @@
 /**
  * Consultant desk scene — Board | Contacts | Meetings | Prepared Workspace | Login.
- * Focus drives module + nested modal/block surfaces (Step 3).
+ * Focus drives module + nested modal/block surfaces.
  */
 import { useEffect, useState } from "react";
 import { BoardPanel } from "../../components/BoardPanel";
@@ -23,8 +23,11 @@ import { MeetingsModule } from "./MeetingsModule";
 import { PreparedWorkspaceModule } from "./PreparedWorkspaceModule";
 import { RegisterLoginScene } from "./RegisterLoginScene";
 import {
+  LeafSurface,
   RegisterSurfaceMount,
   navBtnStyle,
+  primaryControlStyle,
+  secondaryControlStyle,
   sectionLabelStyle,
 } from "./registerSurfaceChrome";
 
@@ -42,6 +45,8 @@ type ConsultantModule =
   | "Meetings"
   | "Prepared Workspace"
   | "Login";
+
+type HaltScope = "contact" | "book";
 
 function moduleForFocus(entry: RegisterSurfaceEntry): ConsultantModule {
   const m = entry.module;
@@ -62,7 +67,9 @@ function isPreparedFocus(label: string | undefined): boolean {
   return (
     label === "Prepared Workspace" ||
     label === "Authorize book" ||
+    label === "Authorize" ||
     label === "Accept terms" ||
+    label === "Accept" ||
     label === "License acknowledgement" ||
     label === "Escrow terms"
   );
@@ -70,9 +77,182 @@ function isPreparedFocus(label: string | undefined): boolean {
 
 function isLoginFocus(label: string | undefined, module: string | undefined): boolean {
   if (module === "Login" || label === "Login") return true;
-  // Access OTP leaf chips that are not vocab but should land on Login
-  if (label === "Email field / Send code" || label === "Verify code") return true;
+  if (
+    label === "Email field" ||
+    label === "Send code" ||
+    label === "Code field" ||
+    label === "Verify" ||
+    label === "Email field / Send code" ||
+    label === "Verify code" ||
+    label === "Access OTP"
+  ) {
+    return true;
+  }
   return false;
+}
+
+function isBoardInhabitFocus(label: string | undefined): boolean {
+  return (
+    label === "Board" ||
+    label === "Client row" ||
+    label === "Phase signal" ||
+    label === "Client workspace" ||
+    label === "Engagement record" ||
+    label === "Halt outreach" ||
+    label === "Confirm halt" ||
+    label === "Primary navigation"
+  );
+}
+
+function HaltOutreachModal({
+  t,
+  focusLabel,
+  scope,
+  onScope,
+  reason,
+  onReason,
+  onConfirm,
+  onClose,
+}: {
+  t: Tokens;
+  focusLabel: string | null;
+  scope: HaltScope;
+  onScope: (s: HaltScope) => void;
+  reason: string;
+  onReason: (v: string) => void;
+  onConfirm: () => void;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Halt outreach"
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 40,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "rgba(15, 18, 28, 0.45)",
+        padding: 16,
+      }}
+      onClick={onClose}
+    >
+      <div
+        data-register-surface="Halt outreach"
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: "100%",
+          maxWidth: 420,
+          background: t.bgPrimary,
+          border: `1px solid ${t.border}`,
+          borderRadius: 8,
+          overflow: "hidden",
+          boxShadow: "0 12px 40px rgba(0,0,0,0.18)",
+        }}
+      >
+        <header
+          style={{
+            padding: "12px 16px",
+            borderBottom: `1px solid ${t.border}`,
+            background: t.bgSecondary,
+            fontSize: 14,
+            fontWeight: 600,
+            color: t.textPrimary,
+          }}
+        >
+          Halt outreach
+        </header>
+        <div style={{ padding: 16 }}>
+          <p style={{ margin: "0 0 14px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
+            Refusal under your license — runners and Send gates honor halt. Not pack authorship.
+          </p>
+          <div
+            style={{
+              display: "flex",
+              gap: 6,
+              marginBottom: 14,
+            }}
+          >
+            {[
+              { id: "contact" as HaltScope, label: "This contact" },
+              { id: "book" as HaltScope, label: "Firm book" },
+            ].map((opt) => (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => onScope(opt.id)}
+                style={{
+                  flex: 1,
+                  padding: "8px 10px",
+                  borderRadius: 4,
+                  border: `1px solid ${scope === opt.id ? t.accent : t.border}`,
+                  background: scope === opt.id ? t.accentBg : t.bgSecondary,
+                  color: scope === opt.id ? t.accent : t.textPrimary,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  fontFamily: "inherit",
+                  cursor: "pointer",
+                }}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          <label
+            htmlFor="halt-reason"
+            style={{
+              display: "block",
+              fontSize: 10,
+              fontWeight: 600,
+              color: t.textDim,
+              marginBottom: 5,
+              textTransform: "uppercase",
+              letterSpacing: "0.04em",
+            }}
+          >
+            Reason (optional)
+          </label>
+          <input
+            id="halt-reason"
+            type="text"
+            value={reason}
+            onChange={(e) => onReason(e.target.value)}
+            placeholder="Illegal / unethical motion · wrong person…"
+            style={{
+              width: "100%",
+              boxSizing: "border-box",
+              fontSize: 12,
+              fontFamily: "inherit",
+              padding: "8px 10px",
+              borderRadius: 4,
+              border: `1px solid ${t.border}`,
+              background: t.bgPrimary,
+              color: t.textPrimary,
+              marginBottom: 14,
+            }}
+          />
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+            <button type="button" onClick={onClose} style={secondaryControlStyle(t)}>
+              Cancel
+            </button>
+            <LeafSurface
+              label="Confirm halt"
+              focused={focusLabel === "Confirm halt"}
+              hovered={false}
+              t={t}
+            >
+              <button type="button" onClick={onConfirm} style={primaryControlStyle(t)}>
+                Confirm halt
+              </button>
+            </LeafSurface>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function ConsultantPrototypeScene({
@@ -88,6 +268,9 @@ export function ConsultantPrototypeScene({
   const [bookHalted, setBookHalted] = useState(false);
   const [haltedContactIds, setHaltedContactIds] = useState<Set<string>>(() => new Set());
   const [isPanelOpen, setIsPanelOpen] = useState(true);
+  const [haltModalOpen, setHaltModalOpen] = useState(false);
+  const [haltScope, setHaltScope] = useState<HaltScope>("contact");
+  const [haltReason, setHaltReason] = useState("");
 
   useEffect(() => {
     if (!focusedEntry || focusedEntry.desk !== "consultant") return;
@@ -97,6 +280,28 @@ export function ConsultantPrototypeScene({
     }
     if (isPreparedFocus(focusedEntry.label) || focusedEntry.module === "Prepared Workspace") {
       setModule("Prepared Workspace");
+      return;
+    }
+    if (isBoardInhabitFocus(focusedEntry.label)) {
+      setModule(
+        focusedEntry.module === "Contacts" || focusedEntry.label === "Imports"
+          ? "Contacts"
+          : "Board",
+      );
+      if (
+        focusedEntry.label === "Client row" ||
+        focusedEntry.label === "Phase signal" ||
+        focusedEntry.label === "Client workspace" ||
+        focusedEntry.label === "Engagement record"
+      ) {
+        setActiveClientId("sarah");
+      }
+      if (
+        focusedEntry.label === "Halt outreach" ||
+        focusedEntry.label === "Confirm halt"
+      ) {
+        setHaltModalOpen(true);
+      }
       return;
     }
     setModule(moduleForFocus(focusedEntry));
@@ -129,7 +334,9 @@ export function ConsultantPrototypeScene({
     (focusedEntry!.label === mountLabel ||
       focusedEntry!.module === module ||
       (showBoardPanel &&
-        (focusedEntry!.module === "Board" || focusedEntry!.module === "Contacts")) ||
+        (focusedEntry!.module === "Board" ||
+          focusedEntry!.module === "Contacts" ||
+          isBoardInhabitFocus(focusedEntry!.label))) ||
       (showMeetings && focusedEntry!.module === "Meetings") ||
       (showPrepared &&
         (focusedEntry!.module === "Prepared Workspace" || isPreparedFocus(focusedEntry!.label))) ||
@@ -140,7 +347,9 @@ export function ConsultantPrototypeScene({
     (hoveredEntry!.label === mountLabel ||
       hoveredEntry!.module === module ||
       (showBoardPanel &&
-        (hoveredEntry!.module === "Board" || hoveredEntry!.module === "Contacts")) ||
+        (hoveredEntry!.module === "Board" ||
+          hoveredEntry!.module === "Contacts" ||
+          isBoardInhabitFocus(hoveredEntry!.label))) ||
       (showMeetings && hoveredEntry!.module === "Meetings") ||
       (showPrepared &&
         (hoveredEntry!.module === "Prepared Workspace" || isPreparedFocus(hoveredEntry!.label))) ||
@@ -166,6 +375,16 @@ export function ConsultantPrototypeScene({
       next.delete(clientId);
       return next;
     });
+  }
+
+  function confirmHalt() {
+    if (haltScope === "book") {
+      setBookHalted(true);
+    } else {
+      haltContact(activeClientId);
+    }
+    setHaltModalOpen(false);
+    setHaltReason("");
   }
 
   const focusLabel = focusedEntry?.label ?? null;
@@ -218,7 +437,7 @@ export function ConsultantPrototypeScene({
                       onContactClick={setActiveContactId}
                       activeHubTool={null}
                       onHubToolClick={(_tool: HubToolRef) => {
-                        /* Authorship re-homed to Operator → Configuration libraries / Book readiness */
+                        /* Authorship re-homed to Operator */
                       }}
                       isConsoleOpen={false}
                       onToggleConsole={() => {}}
@@ -230,12 +449,13 @@ export function ConsultantPrototypeScene({
                       showHalt={module === "Board"}
                       bookHalted={bookHalted}
                       haltedContactIds={haltedContactIds}
-                      onHaltBook={() => setBookHalted(true)}
+                      onHaltBook={() => setHaltModalOpen(true)}
                       onResumeBook={() => setBookHalted(false)}
-                      onHaltContact={haltContact}
+                      onHaltContact={() => setHaltModalOpen(true)}
                       onResumeContact={resumeContact}
                     />
                     <div
+                      data-register-surface="Client workspace"
                       style={{
                         flex: 1,
                         minWidth: 0,
@@ -294,11 +514,24 @@ export function ConsultantPrototypeScene({
         ) : showLogin ? (
           <RegisterSurfaceMount label="Login" focused={focusedOnMount} hovered={hoveredOnMount} t={t}>
             <div style={{ flex: 1, minHeight: 0, padding: 12, display: "flex" }}>
-              <RegisterLoginScene t={t} />
+              <RegisterLoginScene t={t} focusLabel={focusLabel} focusSeq={focusSeq} />
             </div>
           </RegisterSurfaceMount>
         ) : null}
       </div>
+
+      {haltModalOpen ? (
+        <HaltOutreachModal
+          t={t}
+          focusLabel={focusLabel}
+          scope={haltScope}
+          onScope={setHaltScope}
+          reason={haltReason}
+          onReason={setHaltReason}
+          onConfirm={confirmHalt}
+          onClose={() => setHaltModalOpen(false)}
+        />
+      ) : null}
     </div>
   );
 }

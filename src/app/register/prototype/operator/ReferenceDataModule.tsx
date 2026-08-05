@@ -1,5 +1,5 @@
 /**
- * Reference data — versioned tables, Import criteria, Publish version.
+ * Reference data — Reference tables → edit/import → Publish version modal.
  */
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -10,6 +10,7 @@ import {
 } from "../../../data/automationConstants";
 import { RegisterSurfaceMount, navBtnStyle, sectionLabelStyle } from "../registerSurfaceChrome";
 import {
+  filterSelectStyle,
   moduleFocus,
   panelShell,
   primaryBtnStyle,
@@ -20,11 +21,13 @@ import {
   type OperatorModuleProps,
 } from "./operatorChrome";
 
-const TABLES: {
+type TableMeta = {
   id: AutomationConstantIndustryId;
   version: string;
   status: "Published" | "Draft";
-}[] = [
+};
+
+const TABLES: TableMeta[] = [
   { id: "immigration", version: "v2.4", status: "Published" },
   { id: "legal", version: "v0.1", status: "Draft" },
   { id: "financial_services", version: "v0.0", status: "Draft" },
@@ -33,8 +36,12 @@ const TABLES: {
 export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModuleProps) {
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Reference data", focusedEntry, hoveredEntry);
+  const [tables, setTables] = useState<TableMeta[]>(TABLES);
   const [tableId, setTableId] = useState<AutomationConstantIndustryId>("immigration");
-  const [publishNote, setPublishNote] = useState<string | null>(null);
+  const [importOpen, setImportOpen] = useState(false);
+  const [publishOpen, setPublishOpen] = useState(false);
+  const [publishNotes, setPublishNotes] = useState("");
+  const [importFile, setImportFile] = useState("");
 
   useEffect(() => {
     if (!focusedEntry || focusedEntry.module !== "Reference data") return;
@@ -45,11 +52,46 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
     ) {
       setTableId("immigration");
     }
+    if (focusedEntry.label === "Import criteria") setImportOpen(true);
+    if (focusedEntry.label === "Publish version") setPublishOpen(true);
   }, [focusedEntry]);
 
-  const meta = TABLES.find((row) => row.id === tableId) ?? TABLES[0];
+  const meta = tables.find((row) => row.id === tableId) ?? tables[0];
   const industry = AUTOMATION_CONSTANT_INDUSTRIES.find((i) => i.id === tableId);
   const rows = useMemo(() => getConstantsForIndustry(tableId).slice(0, 8), [tableId]);
+
+  function onConfirmPublish() {
+    const next = (parseFloat(meta.version.replace("v", "")) + 0.1).toFixed(1);
+    const version = `v${next}`;
+    setTables((prev) =>
+      prev.map((row) =>
+        row.id === tableId ? { ...row, version, status: "Published" as const } : row,
+      ),
+    );
+    setPublishOpen(false);
+    setPublishNotes("");
+  }
+
+  function onImport() {
+    setTables((prev) =>
+      prev.map((row) =>
+        row.id === tableId ? { ...row, status: "Draft" as const } : row,
+      ),
+    );
+    setImportOpen(false);
+    setImportFile("");
+  }
+
+  const modalBackdrop = {
+    position: "fixed" as const,
+    inset: 0,
+    background: "rgba(0,0,0,0.45)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 50,
+    padding: 16,
+  };
 
   return (
     <RegisterSurfaceMount
@@ -61,7 +103,7 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
       {panelShell(
         t,
         "Reference data",
-        statusChip(t, "versioned"),
+        statusChip(t, "house-global"),
         <div style={{ flex: 1, minHeight: 0, display: "flex", overflow: "hidden" }}>
           <aside
             style={{
@@ -74,7 +116,7 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
           >
             <div style={sectionLabelStyle(t)}>Reference tables</div>
             <div data-register-surface="Reference tables">
-              {TABLES.map((row) => {
+              {tables.map((row) => {
                 const label =
                   AUTOMATION_CONSTANT_INDUSTRIES.find((i) => i.id === row.id)?.label ?? row.id;
                 return (
@@ -83,7 +125,8 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
                     type="button"
                     onClick={() => {
                       setTableId(row.id);
-                      setPublishNote(null);
+                      setPublishOpen(false);
+                      setImportOpen(false);
                     }}
                     style={navBtnStyle(t, row.id === tableId)}
                   >
@@ -125,7 +168,11 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
                   {industry?.description}
                 </div>
               </div>
-              {statusChip(t, meta.status === "Published" ? "published" : "draft", meta.status === "Published" ? "success" : "amber")}
+              {statusChip(
+                t,
+                `${meta.status} · ${meta.version}`,
+                meta.status === "Published" ? "success" : "amber",
+              )}
             </div>
 
             <div
@@ -164,16 +211,41 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
                   ) : (
                     rows.map((row) => (
                       <tr key={row.key}>
-                        <td style={{ padding: "7px 10px", color: t.textDim, borderBottom: `1px solid ${t.borderLight}` }}>
+                        <td
+                          style={{
+                            padding: "7px 10px",
+                            color: t.textDim,
+                            borderBottom: `1px solid ${t.borderLight}`,
+                          }}
+                        >
                           {row.key}
                         </td>
-                        <td style={{ padding: "7px 10px", color: t.textPrimary, borderBottom: `1px solid ${t.borderLight}` }}>
+                        <td
+                          style={{
+                            padding: "7px 10px",
+                            color: t.textPrimary,
+                            borderBottom: `1px solid ${t.borderLight}`,
+                          }}
+                        >
                           {row.label}
                         </td>
-                        <td style={{ padding: "7px 10px", color: t.textPrimary, fontWeight: 600, borderBottom: `1px solid ${t.borderLight}` }}>
+                        <td
+                          style={{
+                            padding: "7px 10px",
+                            color: t.textPrimary,
+                            fontWeight: 600,
+                            borderBottom: `1px solid ${t.borderLight}`,
+                          }}
+                        >
                           {formatConstantValue(row)}
                         </td>
-                        <td style={{ padding: "7px 10px", color: t.textMuted, borderBottom: `1px solid ${t.borderLight}` }}>
+                        <td
+                          style={{
+                            padding: "7px 10px",
+                            color: t.textMuted,
+                            borderBottom: `1px solid ${t.borderLight}`,
+                          }}
+                        >
                           {row.type}
                         </td>
                       </tr>
@@ -193,11 +265,10 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
                   Import criteria
                 </div>
                 <p style={{ margin: "0 0 10px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
-                  Pull IRCC-shaped criteria from the eligibility matrix into a draft table version.
-                  House authorship only — never under firm Hub.
+                  Edit grid rows directly or load a criteria file — tables are data, not hard-coded deploys.
                 </p>
-                <button type="button" style={secondaryBtnStyle(t)}>
-                  Import from matrix…
+                <button type="button" onClick={() => setImportOpen(true)} style={secondaryBtnStyle(t)}>
+                  Import criteria
                 </button>
               </>,
             )}
@@ -212,27 +283,126 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
                   Publish version
                 </div>
                 <p style={{ margin: "0 0 10px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
-                  Current {meta.version}. Publishing binds Evaluation packs to this criteria snapshot.
+                  Current {meta.version}. Evaluation packs in Configuration libraries score against the
+                  published reference snapshot.
                 </p>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <button
-                    type="button"
-                    style={primaryBtnStyle(t)}
-                    onClick={() =>
-                      setPublishNote(`Queued publish · ${industry?.label ?? tableId} → next patch`)
-                    }
-                  >
-                    Publish version
-                  </button>
-                  {publishNote ? (
-                    <span style={{ fontSize: 11, color: t.accent }}>{publishNote}</span>
-                  ) : null}
-                </div>
+                <button type="button" onClick={() => setPublishOpen(true)} style={secondaryBtnStyle(t)}>
+                  Publish version…
+                </button>
               </>,
             )}
           </div>
         </div>,
       )}
+
+      {importOpen ? (
+        <div style={modalBackdrop} onClick={() => setImportOpen(false)}>
+          <div
+            data-register-surface="Import criteria"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: 400,
+              background: t.bgPrimary,
+              border: `1px solid ${t.border}`,
+              borderRadius: 8,
+              padding: 18,
+            }}
+          >
+            <div style={{ fontSize: 15, fontWeight: 600, color: t.textPrimary, marginBottom: 8 }}>
+              Import criteria
+            </div>
+            <p style={{ margin: "0 0 12px", fontSize: 12, color: t.textMuted }}>
+              Load IRCC-shaped criteria into a draft table version for {industry?.label ?? tableId}.
+            </p>
+            <input
+              type="file"
+              onChange={(e) => setImportFile(e.target.files?.[0]?.name ?? "")}
+              style={{ fontSize: 12, marginBottom: 14 }}
+            />
+            {importFile ? (
+              <div style={{ fontSize: 11, color: t.accent, marginBottom: 10 }}>Selected · {importFile}</div>
+            ) : null}
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                type="button"
+                disabled={!importFile}
+                onClick={onImport}
+                style={primaryBtnStyle(t, !importFile)}
+              >
+                Import
+              </button>
+              <button type="button" onClick={() => setImportOpen(false)} style={secondaryBtnStyle(t)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {publishOpen ? (
+        <div style={modalBackdrop} onClick={() => setPublishOpen(false)}>
+          <div
+            data-register-surface="Publish version"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: 400,
+              background: t.bgPrimary,
+              border: `1px solid ${t.border}`,
+              borderRadius: 8,
+              padding: 18,
+            }}
+          >
+            <div style={{ fontSize: 15, fontWeight: 600, color: t.textPrimary, marginBottom: 8 }}>
+              Publish version
+            </div>
+            <p style={{ margin: "0 0 12px", fontSize: 12, color: t.textMuted }}>
+              Publish {industry?.label ?? tableId} — Configuration libraries evaluation packs consume this
+              version.
+            </p>
+            <label style={{ display: "block", marginBottom: 14 }}>
+              <span
+                style={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: t.textMuted,
+                  display: "block",
+                  marginBottom: 4,
+                }}
+              >
+                Version notes
+              </span>
+              <textarea
+                value={publishNotes}
+                onChange={(e) => setPublishNotes(e.target.value)}
+                rows={3}
+                placeholder="e.g. Updated provincial nominee cutoffs"
+                style={{
+                  ...filterSelectStyle(t),
+                  width: "100%",
+                  minWidth: 0,
+                  boxSizing: "border-box",
+                  resize: "vertical",
+                  lineHeight: 1.45,
+                }}
+              />
+            </label>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                type="button"
+                onClick={onConfirmPublish}
+                style={primaryBtnStyle(t)}
+              >
+                Confirm
+              </button>
+              <button type="button" onClick={() => setPublishOpen(false)} style={secondaryBtnStyle(t)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </RegisterSurfaceMount>
   );
 }
