@@ -483,9 +483,10 @@ type DataPanelProps = {
   t: Tokens;
   isDark: boolean;
   onOpenFullPage?: () => void;
+  defaultTab?: PanelTab;
 };
 
-export function DataPanel({ clientId, t, isDark, onOpenFullPage }: DataPanelProps) {
+export function DataPanel({ clientId, t, isDark, onOpenFullPage, defaultTab }: DataPanelProps) {
   const { isPanelOpen: isOpen } = usePanel();
   const [panelH, setPanelH] = useState(DEFAULT_H);
   const [isResizing, setIsResizing] = useState(false);
@@ -542,7 +543,13 @@ export function DataPanel({ clientId, t, isDark, onOpenFullPage }: DataPanelProp
       )}
 
       {isOpen && (
-        <ClientDataContent clientId={clientId} t={t} isDark={isDark} onOpenFullPage={onOpenFullPage} />
+        <ClientDataContent
+          clientId={clientId}
+          t={t}
+          isDark={isDark}
+          onOpenFullPage={onOpenFullPage}
+          defaultTab={defaultTab}
+        />
       )}
     </div>
   );

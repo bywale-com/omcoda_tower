@@ -64,6 +64,7 @@ export function OperatorPrototypeScene({
     : null;
 
   const shared = { t, focusedEntry, hoveredId };
+  const sharedDark = { t, isDark, focusedEntry, hoveredId };
 
   let main: ReactNode;
   switch (module) {
@@ -80,6 +81,7 @@ export function OperatorPrototypeScene({
       main = (
         <ConfigurationLibrariesPanel
           t={t}
+          isDark={isDark}
           focusedEntry={focusedEntry}
           hoveredId={hoveredId}
           sub={configSub}
@@ -112,7 +114,7 @@ export function OperatorPrototypeScene({
       main = <FirmOperationsBindPanel {...shared} />;
       break;
     case "Book readiness":
-      main = <BookReadinessPanel {...shared} />;
+      main = <BookReadinessPanel {...sharedDark} />;
       break;
     case "Firm health":
       main = <FirmHealthModule {...shared} />;
