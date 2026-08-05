@@ -85,6 +85,12 @@ export function AcquisitionAdsModule({ t, focusedEntry, hoveredId }: OperatorMod
   const [selectedId, setSelectedId] = useState(INITIAL_CAMPAIGNS[0].id);
   const [instrFilterId, setInstrFilterId] = useState(INITIAL_CAMPAIGNS[0].id);
   const [actionNote, setActionNote] = useState<string | null>(null);
+  const [waitingHydrateJump, setWaitingHydrateJump] = useState<string | null>(null);
+  const [killThreshold, setKillThreshold] = useState("400");
+  const [killAction, setKillAction] = useState<"hold" | "kill">("hold");
+  const [killApplied, setKillApplied] = useState<string | null>(null);
+
+  const waitingForHydrate = 7;
 
   useEffect(() => {
     if (!focusedEntry || focusedEntry.module !== "Acquisition & ads") return;
@@ -108,6 +114,10 @@ export function AcquisitionAdsModule({ t, focusedEntry, hoveredId }: OperatorMod
     setCampaigns((prev) =>
       prev.map((c) => (c.id === selectedId ? { ...c, ...patch } : c)),
     );
+  };
+
+  const patchSelectedStatus = (id: string, status: CampaignStatus) => {
+    setCampaigns((prev) => prev.map((c) => (c.id === id ? { ...c, status } : c)));
   };
 
   const newCampaign = () => {
@@ -364,6 +374,68 @@ export function AcquisitionAdsModule({ t, focusedEntry, hoveredId }: OperatorMod
 
             {surfaceBlock(
               t,
+              "Waiting-for-hydrate",
+              focus.labelFocused("Waiting-for-hydrate"),
+              focus.labelHovered("Waiting-for-hydrate"),
+              <>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 10,
+                    marginBottom: 8,
+                  }}
+                >
+                  <span style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary }}>
+                    Staging queue
+                  </span>
+                  {statusChip(t, "capture → hydrate", "muted")}
+                </div>
+                <button
+                  type="button"
+                  data-register-surface="Waiting-for-hydrate"
+                  onClick={() =>
+                    setWaitingHydrateJump(
+                      `Jump to In-flight activations · filter not-yet-hydrated · ${waitingForHydrate} rows`,
+                    )
+                  }
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    textAlign: "left",
+                    fontFamily: "inherit",
+                    background: t.bgPrimary,
+                    border: `1px solid ${t.border}`,
+                    borderRadius: 4,
+                    padding: "12px 14px",
+                    cursor: "pointer",
+                    color: t.textPrimary,
+                  }}
+                >
+                  <div style={{ fontSize: 10, color: t.textDim }}>Waiting-for-hydrate</div>
+                  <div
+                    style={{
+                      fontSize: 22,
+                      fontWeight: 650,
+                      letterSpacing: "-0.02em",
+                      marginTop: 4,
+                    }}
+                  >
+                    {waitingForHydrate}
+                  </div>
+                  <div style={{ fontSize: 11, color: t.textMuted, marginTop: 4 }}>
+                    Captures not yet hydrated — open In-flight activations
+                  </div>
+                </button>
+                {waitingHydrateJump ? (
+                  <div style={{ marginTop: 8, fontSize: 11, color: t.accent }}>{waitingHydrateJump}</div>
+                ) : null}
+              </>,
+            )}
+
+            {surfaceBlock(
+              t,
               "Approach instrumentation",
               focus.labelFocused("Approach instrumentation"),
               focus.labelHovered("Approach instrumentation"),
@@ -395,7 +467,7 @@ export function AcquisitionAdsModule({ t, focusedEntry, hoveredId }: OperatorMod
                 </div>
                 <p style={{ margin: "0 0 12px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
                   View-only stream aggregates — distinguishes understood-but-didn&apos;t-tap vs
-                  didn&apos;t-understand. No write unless linked Oversight / Support action.
+                  didn&apos;t-understand. Kill / hold marks unscoreable without leaving Ads.
                 </p>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
                   {[
@@ -439,6 +511,66 @@ export function AcquisitionAdsModule({ t, focusedEntry, hoveredId }: OperatorMod
                       <div style={{ fontSize: 10, color: t.textMuted, marginTop: 2 }}>{card.note}</div>
                     </div>
                   ))}
+                </div>
+
+                <div
+                  data-register-surface="Kill / hold criteria"
+                  style={{
+                    marginTop: 14,
+                    paddingTop: 14,
+                    borderTop: `1px solid ${t.border}`,
+                  }}
+                >
+                  <div style={{ fontSize: 12, fontWeight: 600, color: t.textPrimary, marginBottom: 8 }}>
+                    Kill / hold criteria
+                  </div>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr auto",
+                      gap: 8,
+                      alignItems: "end",
+                    }}
+                  >
+                    <label>
+                      <div style={fieldLabel}>understand-don&apos;t-tap threshold</div>
+                      <input
+                        value={killThreshold}
+                        onChange={(e) => setKillThreshold(e.target.value)}
+                        style={textInput}
+                      />
+                    </label>
+                    <label>
+                      <div style={fieldLabel}>Action</div>
+                      <select
+                        value={killAction}
+                        onChange={(e) => setKillAction(e.target.value as "hold" | "kill")}
+                        style={textInput}
+                      >
+                        <option value="hold">Hold spend</option>
+                        <option value="kill">Kill variant</option>
+                      </select>
+                    </label>
+                    <button
+                      type="button"
+                      style={secondaryBtnStyle(t)}
+                      onClick={() => {
+                        const camp =
+                          campaigns.find((c) => c.id === instrFilterId)?.name ?? "campaign";
+                        if (killAction === "kill") {
+                          patchSelectedStatus(instrFilterId, "Paused");
+                        }
+                        setKillApplied(
+                          `${killAction === "kill" ? "Killed" : "Held"} · ${camp} · threshold ${killThreshold}`,
+                        );
+                      }}
+                    >
+                      Apply
+                    </button>
+                  </div>
+                  {killApplied ? (
+                    <div style={{ marginTop: 8, fontSize: 11, color: t.accent }}>{killApplied}</div>
+                  ) : null}
                 </div>
               </>,
             )}

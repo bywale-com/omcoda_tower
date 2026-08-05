@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { RegisterSurfaceMount, navBtnStyle, sectionLabelStyle } from "../registerSurfaceChrome";
 import {
+  DEMO_FIRMS,
   moduleFocus,
   operatorModal,
   panelShell,
@@ -19,6 +20,8 @@ type GapRow = {
   id: string;
   summary: string;
   ticket?: string;
+  firm?: string;
+  source?: string;
   written: boolean;
 };
 
@@ -27,19 +30,34 @@ const SEED_GAPS: GapRow[] = [
     id: "gap-seq-silence",
     summary: "Sequence silence clock not visible on Fleet health — Atlas stuck 9 contacts unnoticed.",
     ticket: "SUP-184",
+    firm: "Atlas Mobility",
+    source: "Firm health",
     written: false,
   },
   {
     id: "gap-bind-gate",
     summary: "Bind pack commit lacks before/after on Audit trail for Send gate reviewers.",
+    firm: "Cedar Pathways",
+    source: "Firm operations bind",
     written: true,
   },
   {
     id: "gap-approach-cap",
     summary: "Approach click budget bound not enforced when firm re-binds mid-campaign.",
+    source: "Acquisition & ads",
     written: false,
   },
 ];
+
+const SOURCE_SURFACES = [
+  "Oversight",
+  "Firm health",
+  "Customer support",
+  "Firm operations bind",
+  "Acquisition & ads",
+  "Commercial",
+  "Activation & forward-deploy",
+] as const;
 
 export function RegisterEvolutionModule({ t, focusedEntry, hoveredId }: OperatorModuleProps) {
   const hoveredEntry = resolveHoveredEntry(hoveredId);
@@ -50,6 +68,8 @@ export function RegisterEvolutionModule({ t, focusedEntry, hoveredId }: Operator
   const [editingNew, setEditingNew] = useState(false);
   const [formSummary, setFormSummary] = useState("");
   const [formTicket, setFormTicket] = useState("");
+  const [formFirm, setFormFirm] = useState("");
+  const [formSource, setFormSource] = useState("");
   const [handoffNote, setHandoffNote] = useState<string | null>(null);
 
   const selected = gaps.find((g) => g.id === selectedId) ?? gaps[0] ?? null;
@@ -66,6 +86,8 @@ export function RegisterEvolutionModule({ t, focusedEntry, hoveredId }: Operator
     setEditingNew(true);
     setFormSummary("");
     setFormTicket("");
+    setFormFirm("");
+    setFormSource("");
     setGapModalOpen(true);
   };
 
@@ -73,6 +95,8 @@ export function RegisterEvolutionModule({ t, focusedEntry, hoveredId }: Operator
     setEditingNew(false);
     setFormSummary(gap.summary);
     setFormTicket(gap.ticket ?? "");
+    setFormFirm(gap.firm ?? "");
+    setFormSource(gap.source ?? "");
     setSelectedId(gap.id);
     setGapModalOpen(true);
   };
@@ -85,6 +109,8 @@ export function RegisterEvolutionModule({ t, focusedEntry, hoveredId }: Operator
         id,
         summary: formSummary.trim(),
         ticket: formTicket.trim() || undefined,
+        firm: formFirm.trim() || undefined,
+        source: formSource.trim() || undefined,
         written: false,
       };
       setGaps((prev) => [row, ...prev]);
@@ -97,6 +123,8 @@ export function RegisterEvolutionModule({ t, focusedEntry, hoveredId }: Operator
                 ...g,
                 summary: formSummary.trim(),
                 ticket: formTicket.trim() || undefined,
+                firm: formFirm.trim() || undefined,
+                source: formSource.trim() || undefined,
               }
             : g,
         ),
@@ -243,6 +271,21 @@ export function RegisterEvolutionModule({ t, focusedEntry, hoveredId }: Operator
                       Support ticket · {selected.ticket}
                     </div>
                   ) : null}
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: 4,
+                      flexWrap: "wrap",
+                      marginTop: 8,
+                    }}
+                  >
+                    {selected.firm
+                      ? statusChip(t, selected.firm, "muted")
+                      : null}
+                    {selected.source
+                      ? statusChip(t, selected.source, "accent")
+                      : null}
+                  </div>
                   <button
                     type="button"
                     style={{ ...secondaryBtnStyle(t), marginTop: 12 }}
@@ -318,7 +361,7 @@ export function RegisterEvolutionModule({ t, focusedEntry, hoveredId }: Operator
                   }}
                 />
               </label>
-              <label style={{ display: "block", fontSize: 12, color: t.textPrimary }}>
+              <label style={{ display: "block", fontSize: 12, color: t.textPrimary, marginBottom: 12 }}>
                 <div style={{ fontSize: 10, color: t.textDim, marginBottom: 4 }}>
                   Support ticket id (optional)
                 </div>
@@ -338,6 +381,59 @@ export function RegisterEvolutionModule({ t, focusedEntry, hoveredId }: Operator
                   }}
                 />
               </label>
+              <div
+                data-register-surface="Gap firm / source"
+                style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}
+              >
+                <label style={{ display: "block", fontSize: 12, color: t.textPrimary }}>
+                  <div style={{ fontSize: 10, color: t.textDim, marginBottom: 4 }}>
+                    Firm tenancy
+                  </div>
+                  <select
+                    value={formFirm}
+                    onChange={(e) => setFormFirm(e.target.value)}
+                    style={{
+                      width: "100%",
+                      fontSize: 12,
+                      fontFamily: "inherit",
+                      padding: "6px 8px",
+                      border: `1px solid ${t.border}`,
+                      borderRadius: 4,
+                      background: t.bgPrimary,
+                      color: t.textPrimary,
+                    }}
+                  >
+                    <option value="">—</option>
+                    {DEMO_FIRMS.map((f) => (
+                      <option key={f.id} value={f.name}>{f.name}</option>
+                    ))}
+                  </select>
+                </label>
+                <label style={{ display: "block", fontSize: 12, color: t.textPrimary }}>
+                  <div style={{ fontSize: 10, color: t.textDim, marginBottom: 4 }}>
+                    Source surface
+                  </div>
+                  <select
+                    value={formSource}
+                    onChange={(e) => setFormSource(e.target.value)}
+                    style={{
+                      width: "100%",
+                      fontSize: 12,
+                      fontFamily: "inherit",
+                      padding: "6px 8px",
+                      border: `1px solid ${t.border}`,
+                      borderRadius: 4,
+                      background: t.bgPrimary,
+                      color: t.textPrimary,
+                    }}
+                  >
+                    <option value="">—</option>
+                    {SOURCE_SURFACES.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                </label>
+              </div>
             </>,
             <>
               <button type="button" style={secondaryBtnStyle(t)} onClick={() => setGapModalOpen(false)}>

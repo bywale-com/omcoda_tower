@@ -141,9 +141,21 @@ export function CommercialModule({ t, focusedEntry, hoveredId }: OperatorModuleP
     return "amber" as const;
   };
 
-  const canRelease =
-    status === "release_pending_window" ||
-    (status === "held" && termsVersion);
+  const evidence = {
+    window: terms.measurementWindow,
+    frozenTerms: termsVersion ?? "none",
+    verification:
+      status === "release_pending_window"
+        ? "verified"
+        : status === "held" && termsVersion
+          ? "pending window"
+          : "blocked",
+  };
+  const evidenceGreen =
+    Boolean(termsVersion) &&
+    (status === "release_pending_window" || status === "held") &&
+    evidence.verification === "verified";
+  const canRelease = evidenceGreen;
   const canReturn = status === "held" || status === "release_pending_window";
   const canDispute = status !== "disputed" && status !== "returned" && status !== "released";
 
@@ -185,6 +197,8 @@ export function CommercialModule({ t, focusedEntry, hoveredId }: OperatorModuleP
               {COMMERCIAL_ROWS.map((commercialRow) => {
                 const listFirm = DEMO_FIRMS.find((f) => f.id === commercialRow.firmId)!;
                 const listStatus = statuses[commercialRow.firmId] ?? commercialRow.status;
+                const listTerms =
+                  termsVersions[commercialRow.firmId] ?? commercialRow.termsVersion;
                 return (
                   <button
                     key={commercialRow.firmId}
@@ -194,7 +208,19 @@ export function CommercialModule({ t, focusedEntry, hoveredId }: OperatorModuleP
                   >
                     <div style={{ fontWeight: 600 }}>{listFirm.name}</div>
                     <div style={{ fontSize: 10, color: t.textDim, marginTop: 2 }}>
-                      {STATUS_LABELS[listStatus]} · {commercialRow.held}
+                      {commercialRow.held}
+                    </div>
+                    <div
+                      data-register-surface="Terms / escrow glance"
+                      style={{
+                        display: "flex",
+                        gap: 4,
+                        flexWrap: "wrap",
+                        marginTop: 6,
+                      }}
+                    >
+                      {statusChip(t, listTerms ?? "no terms", listTerms ? "accent" : "muted")}
+                      {statusChip(t, STATUS_LABELS[listStatus], statusTone(listStatus))}
                     </div>
                   </button>
                 );
@@ -364,6 +390,28 @@ export function CommercialModule({ t, focusedEntry, hoveredId }: OperatorModuleP
                   Execute only when terms and evidence enable the action. Consultant acceptance is
                   the hard gate; operator oversees release, return, or dispute.
                 </p>
+                <div
+                  data-register-surface="Evidence glance"
+                  style={{
+                    display: "flex",
+                    gap: 6,
+                    flexWrap: "wrap",
+                    marginBottom: 12,
+                    alignItems: "center",
+                  }}
+                >
+                  {statusChip(t, `window · ${evidence.window}`, "muted")}
+                  {statusChip(
+                    t,
+                    `frozen · ${evidence.frozenTerms}`,
+                    termsVersion ? "accent" : "danger",
+                  )}
+                  {statusChip(
+                    t,
+                    evidence.verification,
+                    evidence.verification === "verified" ? "success" : "amber",
+                  )}
+                </div>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
                   <button
                     type="button"

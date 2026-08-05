@@ -87,6 +87,7 @@ export function OversightModule({ t, focusedEntry, hoveredId }: OperatorModulePr
   const selectedRow = selectedId
     ? FLEET_ROWS.find((r) => r.firmId === selectedId)
     : null;
+  const unhealthyCount = FLEET_ROWS.filter(isUnhealthy).length;
 
   return (
     <RegisterSurfaceMount
@@ -130,7 +131,14 @@ export function OversightModule({ t, focusedEntry, hoveredId }: OperatorModulePr
                 <span style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary }}>
                   Fleet health
                 </span>
-                <div style={{ display: "flex", gap: 8 }}>
+                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  <span data-register-surface="Unhealthy firm count">
+                    {statusChip(
+                      t,
+                      `${unhealthyCount} unhealthy`,
+                      unhealthyCount > 0 ? "danger" : "success",
+                    )}
+                  </span>
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
@@ -183,7 +191,6 @@ export function OversightModule({ t, focusedEntry, hoveredId }: OperatorModulePr
                 {rows.map((row) => {
                   const firm = DEMO_FIRMS.find((f) => f.id === row.firmId)!;
                   const active = row.firmId === selectedId;
-                  const unhealthy = isUnhealthy(row);
                   return (
                     <div
                       key={row.firmId}
