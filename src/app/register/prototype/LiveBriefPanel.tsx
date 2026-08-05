@@ -1,13 +1,16 @@
 /**
  * Live brief — meeting-grade brief panel with fact rows + evaluative signal chips.
+ * Furnish: Copy brief, Starts-in cue, chip tooltips, as-of freshness.
  */
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { Tokens } from "../../components/tokens";
+import { secondaryControlStyle } from "./registerSurfaceChrome";
 
 export type LiveBriefFact = {
   label: string;
   value: string;
   signal: string;
+  signalHint?: string;
 };
 
 export type LiveBriefMeeting = {
@@ -21,6 +24,8 @@ export type LiveBriefMeeting = {
   observation: string;
   highlight?: string;
   facts?: LiveBriefFact[];
+  startsIn?: string;
+  asOf?: string;
 };
 
 type LiveBriefPanelProps = {
@@ -58,9 +63,19 @@ function Para({ children, t }: { children: ReactNode; t: Tokens }) {
   );
 }
 
-function SignalChip({ children, t }: { children: ReactNode; t: Tokens }) {
+function SignalChip({
+  children,
+  t,
+  title,
+}: {
+  children: ReactNode;
+  t: Tokens;
+  title?: string;
+}) {
   return (
     <span
+      tabIndex={0}
+      title={title}
       style={{
         fontSize: 10,
         fontWeight: 600,
@@ -70,6 +85,7 @@ function SignalChip({ children, t }: { children: ReactNode; t: Tokens }) {
         padding: "2px 6px",
         borderRadius: 3,
         whiteSpace: "nowrap",
+        cursor: title ? "help" : "default",
       }}
     >
       {children}
@@ -79,6 +95,22 @@ function SignalChip({ children, t }: { children: ReactNode; t: Tokens }) {
 
 export function LiveBriefPanel({ meeting, t, embedded = false }: LiveBriefPanelProps) {
   const facts = meeting.facts ?? [];
+  const [copied, setCopied] = useState(false);
+
+  function copyBrief() {
+    const lines = [
+      `${meeting.contactName} · ${meeting.purpose}`,
+      meeting.startsIn ? `Starts: ${meeting.startsIn}` : `Time: ${meeting.time}`,
+      meeting.asOf ?? "",
+      "",
+      ...facts.map((f) => `${f.label}: ${f.value} (${f.signal})`),
+      "",
+      meeting.overview,
+    ].filter(Boolean);
+    void navigator.clipboard?.writeText(lines.join("\n")).catch(() => undefined);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1600);
+  }
 
   return (
     <div
@@ -95,20 +127,20 @@ export function LiveBriefPanel({ meeting, t, embedded = false }: LiveBriefPanelP
         overflow: "hidden",
       }}
     >
-      {!embedded ? (
-        <header
-          style={{
-            height: 35,
-            flexShrink: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 10,
-            padding: "0 14px",
-            borderBottom: `1px solid ${t.border}`,
-            background: t.bgSecondary,
-          }}
-        >
+      <header
+        style={{
+          height: embedded ? 40 : 35,
+          flexShrink: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 10,
+          padding: "0 14px",
+          borderBottom: `1px solid ${t.border}`,
+          background: t.bgSecondary,
+        }}
+      >
+        <div style={{ minWidth: 0, display: "flex", alignItems: "center", gap: 8 }}>
           <span
             style={{
               fontSize: 13,
@@ -119,9 +151,40 @@ export function LiveBriefPanel({ meeting, t, embedded = false }: LiveBriefPanelP
           >
             Live brief
           </span>
-          <span style={{ fontSize: 11, color: t.textMuted }}>{meeting.time}</span>
-        </header>
-      ) : null}
+          {meeting.startsIn ? (
+            <span
+              style={{
+                fontSize: 10,
+                fontWeight: 700,
+                color: t.accent,
+                background: t.accentBg,
+                padding: "2px 6px",
+                borderRadius: 3,
+              }}
+              title="Starts-in cue"
+            >
+              Starts {meeting.startsIn}
+            </span>
+          ) : (
+            <span style={{ fontSize: 11, color: t.textMuted }}>{meeting.time}</span>
+          )}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {meeting.asOf ? (
+            <span style={{ fontSize: 10, color: t.textDim }} title="Freshness / last-updated">
+              {meeting.asOf}
+            </span>
+          ) : null}
+          <button
+            type="button"
+            onClick={copyBrief}
+            style={{ ...secondaryControlStyle(t), padding: "4px 8px", fontSize: 11 }}
+            title="Copy brief facts"
+          >
+            {copied ? "Copied" : "Copy brief"}
+          </button>
+        </div>
+      </header>
 
       <div style={{ flex: 1, minHeight: 0, overflowY: "auto", padding: "14px 16px 18px" }}>
         <div style={{ marginBottom: 16 }}>
@@ -131,7 +194,9 @@ export function LiveBriefPanel({ meeting, t, embedded = false }: LiveBriefPanelP
           <div style={{ fontSize: 12, color: t.textMuted }}>{meeting.purpose}</div>
           {meeting.highlight ? (
             <div style={{ marginTop: 8 }}>
-              <SignalChip t={t}>{meeting.highlight}</SignalChip>
+              <SignalChip t={t} title="Evaluative highlight from write-back">
+                {meeting.highlight}
+              </SignalChip>
             </div>
           ) : null}
         </div>
@@ -163,12 +228,15 @@ export function LiveBriefPanel({ meeting, t, embedded = false }: LiveBriefPanelP
                     <div style={{ fontWeight: 600, color: t.textPrimary }}>{fact.label}</div>
                     <div style={{ fontSize: 11, color: t.textMuted, marginTop: 2 }}>{fact.value}</div>
                   </div>
-                  <SignalChip t={t}>{fact.signal}</SignalChip>
+                  <SignalChip t={t} title={fact.signalHint ?? fact.signal}>
+                    {fact.signal}
+                  </SignalChip>
                 </div>
               ))}
             </div>
             <p style={{ margin: "8px 0 0", fontSize: 10, color: t.textDim, lineHeight: 1.45 }}>
               Write-back from contact Loop-closer / Nudge / Update facts — view only on consultant desk.
+              Hover signal chips for plain-language meaning.
             </p>
           </BriefSection>
         ) : null}
