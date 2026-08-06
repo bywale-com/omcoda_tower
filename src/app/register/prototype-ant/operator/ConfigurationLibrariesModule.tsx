@@ -135,6 +135,7 @@ function EvaluationPacksEditor({
   onSelect,
   onRename,
   onNote,
+  onNew,
 }: {
   packs: ConfigPack[];
   selected: ConfigPack | null;
@@ -142,11 +143,20 @@ function EvaluationPacksEditor({
   onSelect: (id: string) => void;
   onRename: (id: string, name: string) => void;
   onNote: (note: string) => void;
+  onNew: () => void;
 }) {
   const { token } = theme.useToken();
   return (
     <div style={{ flex: 1, minHeight: 0, display: "flex" }}>
-      <CatalogShell label="Evaluation packs" title="Evaluation packs" actions={null}>
+      <CatalogShell
+        label="Evaluation packs"
+        title="Evaluation packs"
+        actions={
+          <Button size="small" data-register-surface="Evaluation packs" onClick={onNew}>
+            New pack
+          </Button>
+        }
+      >
         <List
           dataSource={packs}
           renderItem={(pack) => (
@@ -239,7 +249,7 @@ function AutomationLibrary({
               onSelect(workflow);
             }}
           >
-            New
+            New workflow
           </Button>
         }
       >
@@ -278,7 +288,7 @@ function AgentLibrary({
   onSelect: (agent: AgentDefinition) => void;
   onCreatePack: (id: string, name: string, summary: string) => void;
 }) {
-  const agents = getAllAgentDefinitions();
+  const [agents, setAgents] = useState<AgentDefinition[]>(() => getAllAgentDefinitions());
   const selectedAgent = agents.find((agent) => agent.id === selectedId) ?? agents[0];
 
   useEffect(() => {
@@ -296,7 +306,29 @@ function AgentLibrary({
       <CatalogShell
         label="Engagement templates"
         title="Agents"
-        actions={<Tag style={{ marginInlineEnd: 0 }}>Templates</Tag>}
+        actions={
+          <Button
+            size="small"
+            onClick={() => {
+              const id = `agent-new-${Date.now()}`;
+              const agent: AgentDefinition = {
+                id,
+                name: "Untitled template",
+                status: "draft",
+                active: false,
+                starred: false,
+                stepCount: 0,
+                linkedAutomationIds: [],
+                updatedAt: new Date().toISOString(),
+              };
+              setAgents((prev) => [...prev, agent]);
+              onCreatePack(id, agent.name, "Draft template — publish to appear in Bind dropdowns");
+              onSelect(agent);
+            }}
+          >
+            New template
+          </Button>
+        }
       >
         <List
           dataSource={agents}
@@ -316,7 +348,7 @@ function AgentLibrary({
         />
       </CatalogShell>
       <Surface label="Agent / sequence editor" style={{ flex: 1, minWidth: 0, minHeight: 0 }}>
-        <AntAgentWorkbench agentId={selectedAgent.id} />
+        <AntAgentWorkbench agent={selectedAgent} />
       </Surface>
     </div>
   );
@@ -462,7 +494,6 @@ export function ConfigurationLibrariesModule({
               <Button data-register-surface="Compare versions" disabled={publishedCatalog.length < 1} onClick={openCompare}>
                 Compare versions
               </Button>
-              {sub === "Evaluation packs" ? <Button onClick={onNewEvaluationPack}>New pack</Button> : null}
               <Button data-register-surface="Publish version" type="primary" disabled={!selectedPack} onClick={onPublish}>
                 Publish version
               </Button>
@@ -490,6 +521,7 @@ export function ConfigurationLibrariesModule({
                   setPacks((prev) => prev.map((pack) => (pack.id === id ? { ...pack, name } : pack)))
                 }
                 onNote={setEditorNote}
+                onNew={onNewEvaluationPack}
               />
             ) : sub === "Automation workflows" ? (
               <AutomationProvider>
