@@ -33,7 +33,7 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 | Components | Holon tree live |
 | SME | **Pass2 + handoff + densified PM implementations CT-planted** — 325 written twins `implementationPlant: planted` (10 NV practice items remain without impl blocks) · ([`../sme/implementation/DENSIFY-LAW.md`](../sme/implementation/DENSIFY-LAW.md)) |
 | Enrichment / Furnish | **CT-planted** — 60 Can't Needs closed + 60 Furnish affordances on Register prototypes ([`enrichment/`](./enrichment/) · [`furnish/`](./furnish/)) |
-| **Priors** | **Identification census filed** — desk→lattice marks (`latticed` \| `weak` \| `prior`); purposes empty; twin + Register pass ([`priors/`](./priors/)) |
+| **Priors** | **Full-app priors inventory** — 111 priors (interactive controls with no lattice click-path); purposes empty; twin ([`priors/`](./priors/)) |
 | CT Plant | **Board plant pass landed** — How + SME densify + Furnish on consultant / contact / operator prototypes; Wiring deep CT still open |
 | Verify scripts | Not shipped |
 

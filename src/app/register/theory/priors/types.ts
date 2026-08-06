@@ -1,9 +1,7 @@
 /**
- * Register Priors — desk→lattice census entries.
- * Entry = interactive control; purposes later (empty).
+ * Register Priors — full-app priors-only inventory.
+ * Entry = interactive control with no lattice click-path; purposes later (empty).
  */
-
-export type PriorMark = "latticed" | "weak" | "prior";
 
 export type PriorKind =
   | "nav"
@@ -19,38 +17,31 @@ export type PriorKind =
   | "inspect"
   | "download"
   | "zoom"
-  | "scroll";
+  | "scroll"
+  | "shell";
 
-export type PriorModule =
+export type PriorZone =
+  | "Consultant"
+  | "Contact"
+  | "Global CT chrome"
   | "Automations"
   | "Agents"
   | "Audits"
-  | "Activity"
-  | "Board"
-  | "Contacts"
-  | "Meetings"
-  | "Prepared"
-  | "Login"
-  | "Contact desk"
-  | "Operator"
-  | "Global CT chrome";
+  | "Operator house";
 
 export type PriorZoneMeta = {
-  id: PriorModule;
+  id: PriorZone;
   label: string;
   count: number;
 };
 
 export type PriorEntry = {
   id: string;
-  module: PriorModule;
+  zone: PriorZone;
   title: string;
   /** Desk seat(s) — plant and/or Ant, deduped. */
   where: string;
   kind: PriorKind;
-  mark: PriorMark;
-  /** Lattice pointer when latticed/weak; empty when prior. */
-  latticeHint: string;
   notes: string;
   /** Reserved — purposes later. */
   purposes: [];
