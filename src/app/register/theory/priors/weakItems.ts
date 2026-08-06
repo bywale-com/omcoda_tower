@@ -12,6 +12,26 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     latticeFoothold:
       "Accept terms / License acknowledgement / Escrow terms — How consultant-core 2a.2; cons-cant-08",
     notes: "Re-open door; no Title Case click-path for this control",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/BoardPanel.tsx",
+        symbol: "BoardPanel",
+        locator: "Accepted terms",
+      },
+      {
+        era: "plant",
+        file: "src/app/register/prototype/ConsultantClientWorkspace.tsx",
+        symbol: "ConsultantClientWorkspace",
+        locator: "Accepted terms",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/consultant/ClientWorkspace.tsx",
+        symbol: "ClientWorkspace",
+        locator: "Accepted terms",
+      },
+    ],
     purposes: [],
   },
   {
@@ -22,6 +42,14 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "toggle",
     latticeFoothold: "Board / Phase signal — How; cons-cant-20 Need",
     notes: "Plant only",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/BoardPanel.tsx",
+        symbol: "BoardPanel",
+        locator: "Meeting-ready",
+      },
+    ],
     purposes: [],
   },
   {
@@ -32,6 +60,14 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "toggle",
     latticeFoothold: "Furnish cons-furnish-06 Newest first on Engagement record",
     notes: "Ant only; mis-seated Board list sort",
+    codeRefs: [
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/consultant/BoardModule.tsx",
+        symbol: "BoardModule",
+        locator: "Newest first",
+      },
+    ],
     purposes: [],
   },
   {
@@ -42,6 +78,14 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "nav",
     latticeFoothold: "Furnish cons-furnish-01 Phase signal legend",
     notes: "Open latticed; Close only prose",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/BoardPanel.tsx",
+        symbol: "BoardPanel",
+        locator: "setLegendOpen(false)",
+      },
+    ],
     purposes: [],
   },
   {
@@ -52,6 +96,14 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "open",
     latticeFoothold: "Imports — How consultant-core 2a.1; SME crm-02 Land import",
     notes: "Child under Add import Prior host",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/imports/CsvImportFlow.tsx",
+        symbol: "CsvImportFlow",
+        locator: "Import file…",
+      },
+    ],
     purposes: [],
   },
   {
@@ -62,6 +114,14 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "commit",
     latticeFoothold: "Imports / SME crm-02 Land import",
     notes: "Title Case ≠ Land import",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/imports/CsvImportColumnMappingDialog.tsx",
+        symbol: "CsvImportColumnMappingDialog",
+        locator: "Confirm import",
+      },
+    ],
     purposes: [],
   },
   {
@@ -72,6 +132,14 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "toggle",
     latticeFoothold: "Engagement record — How governance 1.1; cons-furnish-06",
     notes: "Distinct from Show reasoning (Prior)",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/JourneyTab.tsx",
+        symbol: "ThoughtStrip",
+        locator: "Why this schedule",
+      },
+    ],
     purposes: [],
   },
   {
@@ -82,6 +150,20 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "toggle",
     latticeFoothold: "How Engagement record chronology rows",
     notes: "Tree chrome unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/JourneyTab.tsx",
+        symbol: "NudgeChannelHeader",
+        locator: "aria-label={hasChildren ? (open ? \"Collapse\" : \"Expand\") : undefined}",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/consultant/ClientWorkspace.tsx",
+        symbol: "ClientWorkspace",
+        locator: "onExpand",
+      },
+    ],
     purposes: [],
   },
   {
@@ -92,6 +174,20 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "open",
     latticeFoothold: "How / C2 Engagement record chronology",
     notes: "Selection → inspector",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/JourneyTab.tsx",
+        symbol: "NudgeChannelHeader",
+        locator: "onInspect",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/consultant/ClientWorkspace.tsx",
+        symbol: "ClientWorkspace",
+        locator: "onSelect",
+      },
+    ],
     purposes: [],
   },
 
@@ -104,6 +200,20 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "open",
     latticeFoothold: "How contact-refresh: Nudge message → Nudge form",
     notes: "Path named; CTA unlabeled as surface",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/ContactPrototypeScene.tsx",
+        symbol: "NudgeMessage",
+        locator: "Open Nudge form",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/contact/ContactAntScene.tsx",
+        symbol: "NudgeMessage",
+        locator: "Open Nudge form",
+      },
+    ],
     purposes: [],
   },
   {
@@ -114,6 +224,20 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "open",
     latticeFoothold: "Furnish-10 Link state Valid continues",
     notes: "Parent named; Continue button unlabeled",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/ContactPrototypeScene.tsx",
+        symbol: "LinkStatePage",
+        locator: "Continue",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/contact/ContactAntScene.tsx",
+        symbol: "LinkStatePage",
+        locator: "Continue",
+      },
+    ],
     purposes: [],
   },
 
@@ -126,6 +250,20 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "tab",
     latticeFoothold: "How Workflow canvas",
     notes: "canvas latticed; tab unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/AutomationWorkflowEditor.tsx",
+        symbol: "AutomationWorkflowEditor",
+        locator: "label: \"Workflow\"",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAutomationWorkbench.tsx",
+        symbol: "AntAutomationWorkbench",
+        locator: "label: \"Workflow\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -136,6 +274,20 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "menu",
     latticeFoothold: "How Trigger nodes · Workflow canvas",
     notes: "add control unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/AutomationAddTriggerMenu.tsx",
+        symbol: "AutomationAddTriggerMenu",
+        locator: "Add trigger",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAutomationWorkbench.tsx",
+        symbol: "AntAutomationWorkbench",
+        locator: "createTriggerNode",
+      },
+    ],
     purposes: [],
   },
   {
@@ -146,6 +298,20 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "menu",
     latticeFoothold: "How Trigger/Rule/Action nodes",
     notes: "palette add unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/AutomationBuildPalette.tsx",
+        symbol: "AutomationBuildPalette",
+        locator: "onAddBlock",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAutomationWorkbench.tsx",
+        symbol: "AntAutomationWorkbench",
+        locator: "createNodeFromBlock",
+      },
+    ],
     purposes: [],
   },
   {
@@ -156,6 +322,20 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "open",
     latticeFoothold: "How Workflow canvas · nodes",
     notes: "open/configure unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/nodes/TriggerNode.tsx",
+        symbol: "TriggerNode",
+        locator: "onOpenNodeConfig",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAutomationWorkbench.tsx",
+        symbol: "AntAutomationWorkbench",
+        locator: "onNodeClick",
+      },
+    ],
     purposes: [],
   },
   {
@@ -166,6 +346,14 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "open",
     latticeFoothold: "How enroll-into-template; SME C1/C2",
     notes: "plant open control unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/nodes/TriggerNode.tsx",
+        symbol: "TriggerNode",
+        locator: "Enrollment criteria",
+      },
+    ],
     purposes: [],
   },
   {
@@ -176,6 +364,20 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "select",
     latticeFoothold: "Enrichment op-cant-18 Compare versions",
     notes: "A/B pickers unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/operator/ConfigurationLibrariesPanel.tsx",
+        symbol: "ConfigurationLibrariesPanel",
+        locator: "Version A",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/ConfigurationLibrariesModule.tsx",
+        symbol: "ConfigurationLibrariesModule",
+        locator: "compareA",
+      },
+    ],
     purposes: [],
   },
   {
@@ -186,6 +388,20 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "commit",
     latticeFoothold: "How Evaluation pack editor",
     notes: "rename field unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/operator/ConfigurationLibrariesPanel.tsx",
+        symbol: "ConfigurationLibrariesPanel",
+        locator: "Pack name",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/ConfigurationLibrariesModule.tsx",
+        symbol: "ConfigurationLibrariesModule",
+        locator: "Pack name",
+      },
+    ],
     purposes: [],
   },
 
@@ -198,6 +414,20 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "tab",
     latticeFoothold: "How Agent / sequence editor · Step rail",
     notes: "tab unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/AgentEditor.tsx",
+        symbol: "AgentEditor",
+        locator: "useState<AgentEditorTab>(\"editor\")",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+        symbol: "AntAgentWorkbench",
+        locator: "useState<AgentEditorTab>(\"editor\")",
+      },
+    ],
     purposes: [],
   },
   {
@@ -208,6 +438,20 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "tab",
     latticeFoothold: "Step rail / C2 channel-ruleset authorship",
     notes: "Settings unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/AgentEditor.tsx",
+        symbol: "AgentEditor",
+        locator: "case \"settings\":",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+        symbol: "AntAgentWorkbench",
+        locator: "settings:",
+      },
+    ],
     purposes: [],
   },
   {
@@ -218,6 +462,14 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "menu",
     latticeFoothold: "How Step rail / Sequence canvas",
     notes: "menu label unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/AgentAddStepMenu.tsx",
+        symbol: "AgentAddStepMenu",
+        locator: "Add a step",
+      },
+    ],
     purposes: [],
   },
   {
@@ -228,6 +480,20 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "commit",
     latticeFoothold: "How Step rail",
     notes: "add-email unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/data/agentDefinitions.ts",
+        symbol: "AGENT_STEP_TYPES",
+        locator: "label: \"Email\"",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+        symbol: "AntAgentWorkbench",
+        locator: "Add email",
+      },
+    ],
     purposes: [],
   },
   {
@@ -238,6 +504,20 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "commit",
     latticeFoothold: "How Step rail",
     notes: "add-task unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/data/agentDefinitions.ts",
+        symbol: "AGENT_STEP_TYPES",
+        locator: "label: \"Task\"",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+        symbol: "AntAgentWorkbench",
+        locator: "Add consultant task",
+      },
+    ],
     purposes: [],
   },
   {
@@ -248,6 +528,14 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "toggle",
     latticeFoothold: "How Step rail",
     notes: "show/hide chrome unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/AgentEditor.tsx",
+        symbol: "AgentEditor",
+        locator: "Collapse step rail",
+      },
+    ],
     purposes: [],
   },
   {
@@ -258,6 +546,14 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "open",
     latticeFoothold: "How Step rail / Sequence canvas",
     notes: "selection chrome unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/AgentStepRail.tsx",
+        symbol: "AgentStepRail",
+        locator: "onSelectStep",
+      },
+    ],
     purposes: [],
   },
 
@@ -270,6 +566,14 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "checkbox",
     latticeFoothold: "How Audit run checkboxes",
     notes: "select-all unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/AuditServicesPanel.tsx",
+        symbol: "AuditServicesPanel",
+        locator: "audit-check-all",
+      },
+    ],
     purposes: [],
   },
 
@@ -282,6 +586,20 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "nav",
     latticeFoothold: "How Starting-from each Module",
     notes: "sider chrome unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/OperatorPrototypeScene.tsx",
+        symbol: "OperatorPrototypeScene",
+        locator: "House-global",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/OperatorAntScene.tsx",
+        symbol: "OperatorAntScene",
+        locator: "House-global",
+      },
+    ],
     purposes: [],
   },
   {
@@ -292,6 +610,20 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "commit",
     latticeFoothold: "How Save / Publish campaign",
     notes: "secondary draft save",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/operator/AcquisitionAdsModule.tsx",
+        symbol: "AcquisitionAdsModule",
+        locator: "Saved draft",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AcquisitionAdsModule.tsx",
+        symbol: "AcquisitionAdsModule",
+        locator: "Saved draft",
+      },
+    ],
     purposes: [],
   },
   {
@@ -302,6 +634,20 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "nav",
     latticeFoothold: "Furnish Waiting-for-hydrate → In-flight",
     notes: "card title not lattice Title Case",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/operator/AcquisitionAdsModule.tsx",
+        symbol: "AcquisitionAdsModule",
+        locator: "Staging queue",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AcquisitionAdsModule.tsx",
+        symbol: "AcquisitionAdsModule",
+        locator: "Staging queue",
+      },
+    ],
     purposes: [],
   },
   {
@@ -312,6 +658,14 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "open",
     latticeFoothold: "How In-flight firm row · Forward-deploy",
     notes: "unnamed firm link",
+    codeRefs: [
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/ActivationForwardDeployModule.tsx",
+        symbol: "ActivationForwardDeployModule",
+        locator: "type=\"link\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -322,6 +676,14 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "select",
     latticeFoothold: "How In-flight activations · firm row",
     notes: "selection chrome",
+    codeRefs: [
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/ActivationForwardDeployModule.tsx",
+        symbol: "ActivationForwardDeployModule",
+        locator: "type: \"radio\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -332,6 +694,14 @@ export const ALL_WEAK_ENTRIES: WeakEntry[] = [
     kind: "select",
     latticeFoothold: "How Instrument list / firm row",
     notes: "selection chrome",
+    codeRefs: [
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/CommercialModule.tsx",
+        symbol: "CommercialModule",
+        locator: "Instrument list / firm row",
+      },
+    ],
     purposes: [],
   },
 ];

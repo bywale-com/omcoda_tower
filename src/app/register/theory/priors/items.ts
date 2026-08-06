@@ -9,6 +9,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant BoardPanel row ⋯ menu (sarah)",
     kind: "open",
     notes: "Unwired no-op in CT scene; Ant has no row menu",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/BoardPanel.tsx",
+        symbol: "ClientRow",
+        locator: "View as Client",
+      },
+    ],
     purposes: [],
   },
   {
@@ -18,6 +26,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant BoardPanel row menu",
     kind: "menu",
     notes: "Hosts Halt / Resume / View as Client; plant only",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/BoardPanel.tsx",
+        symbol: "ClientRow",
+        locator: "aria-label=\"Client actions\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -27,6 +43,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant+Ant Board when firm book halted",
     kind: "commit",
     notes: "Inverse of Halt firm book; not named in How/Furnish",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/HaltOutreachBar.tsx",
+        symbol: "HaltOutreachBar",
+        locator: "Resume book",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/consultant/BoardModule.tsx",
+        symbol: "BoardModule",
+        locator: "Resume book",
+      },
+    ],
     purposes: [],
   },
   {
@@ -36,6 +66,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant BoardPanel row menu when contact halted",
     kind: "commit",
     notes: "Inverse of Halt outreach; plant only",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/BoardPanel.tsx",
+        symbol: "ClientRow",
+        locator: "Resume outreach",
+      },
+    ],
     purposes: [],
   },
   {
@@ -45,6 +83,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant+Ant Client workspace (also Engagement record seat)",
     kind: "commit",
     notes: "Inverse of Halt; Enrichment cons-cant-04 Need + surfaceCatalog label only — no How/SME/Furnish click-path",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/ConsultantClientWorkspace.tsx",
+        symbol: "ConsultantClientWorkspace",
+        locator: "Lift halt",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/consultant/ClientWorkspace.tsx",
+        symbol: "ClientWorkspace",
+        locator: "Lift halt",
+      },
+    ],
     purposes: [],
   },
   {
@@ -54,6 +106,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant+Ant Halt modal",
     kind: "nav",
     notes: "Modal dismiss unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/ConsultantPrototypeScene.tsx",
+        symbol: "HaltOutreachModal",
+        locator: "Cancel",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/consultant/HaltOutreachModal.tsx",
+        symbol: "HaltOutreachModal",
+        locator: "Cancel",
+      },
+    ],
     purposes: [],
   },
   {
@@ -63,6 +129,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant PhaseTooltip on Client row",
     kind: "open",
     notes: "Opens Engagement record; title absent from How/Furnish/Enrichment/SME",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/PhaseTooltip.tsx",
+        symbol: "PhaseTooltip",
+        locator: "View in Activity",
+      },
+    ],
     purposes: [],
   },
   {
@@ -72,6 +146,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant BoardPanel ClientsSectionHeader",
     kind: "toggle",
     notes: "Section chrome; plant only",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/BoardPanel.tsx",
+        symbol: "ClientsSectionHeader",
+        locator: "label=\"Clients Section\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -81,6 +163,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant BoardPanel TasksBody",
     kind: "toggle",
     notes: "Tasks absent from consultant How/Furnish",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/tasks/TasksSectionHeader.tsx",
+        symbol: "TasksSectionHeader",
+        locator: "Tasks",
+      },
+    ],
     purposes: [],
   },
   {
@@ -90,6 +180,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant BoardPanel TaskRow",
     kind: "open",
     notes: "onTaskClick noop in CT scene",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/tasks/TaskRow.tsx",
+        symbol: "TaskRow",
+        locator: "opens in Activity",
+      },
+    ],
     purposes: [],
   },
   {
@@ -99,6 +197,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant BoardPanel TaskStatusToggle",
     kind: "commit",
     notes: "Completes/reopens task; not latticed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/tasks/TaskStatusToggle.tsx",
+        symbol: "TaskStatusToggle",
+        locator: "Mark complete",
+      },
+    ],
     purposes: [],
   },
   {
@@ -108,6 +214,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant ActivityBarHeader",
     kind: "toggle",
     notes: "CT/docs tooling on consultant Board",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/ActivityBarHeader.tsx",
+        symbol: "ActivityBarHeader",
+        locator: "Inspect holons",
+      },
+    ],
     purposes: [],
   },
   {
@@ -117,6 +231,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant ActivityBarHeader",
     kind: "toggle",
     notes: "Wired to noop onToggleConsole in CT scene",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/ActivityBarHeader.tsx",
+        symbol: "ActivityBarHeader",
+        locator: "title=\"Console\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -126,6 +248,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant ActivityBarHeader",
     kind: "menu",
     notes: "Opens overflow nav",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/ActivityBarHeader.tsx",
+        symbol: "ActivityBarHeader",
+        locator: "More views",
+      },
+    ],
     purposes: [],
   },
   {
@@ -135,6 +265,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant ActivityBarHeader more menu",
     kind: "nav",
     notes: "Unwired stub id",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/ActivityBarHeader.tsx",
+        symbol: "ActivityBarHeader",
+        locator: "onIconClick(id)",
+      },
+      {
+        era: "plant",
+        file: "src/app/components/docs/primaryNavigationIcons.ts",
+        symbol: "REGISTER_ALL_NAV",
+        locator: "label: \"Clients\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -144,6 +288,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant ActivityBarHeader more menu",
     kind: "nav",
     notes: "Unwired stub id",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/ActivityBarHeader.tsx",
+        symbol: "ActivityBarHeader",
+        locator: "onIconClick(id)",
+      },
+      {
+        era: "plant",
+        file: "src/app/components/docs/primaryNavigationIcons.ts",
+        symbol: "REGISTER_ALL_NAV",
+        locator: "label: \"Account\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -153,6 +311,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant ActivityBarHeader more menu",
     kind: "nav",
     notes: "Unwired stub id",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/ActivityBarHeader.tsx",
+        symbol: "ActivityBarHeader",
+        locator: "onIconClick(id)",
+      },
+      {
+        era: "plant",
+        file: "src/app/components/docs/primaryNavigationIcons.ts",
+        symbol: "REGISTER_ALL_NAV",
+        locator: "label: \"Settings\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -162,6 +334,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Ant BoardModule + ContactsModule Splitter",
     kind: "resize",
     notes: "Ant only; layout chrome unnamed",
+    codeRefs: [
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/consultant/BoardModule.tsx",
+        symbol: "BoardModule",
+        locator: "<Splitter",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/consultant/ContactsModule.tsx",
+        symbol: "ContactsModule",
+        locator: "<Splitter",
+      },
+    ],
     purposes: [],
   },
   {
@@ -171,6 +357,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Ant ContactsModule Input.Search",
     kind: "open",
     notes: "Plant contacts list has no search; Ant mislabels Surface as Board search",
+    codeRefs: [
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/consultant/ContactsModule.tsx",
+        symbol: "ContactsModule",
+        locator: "Search contacts",
+      },
+    ],
     purposes: [],
   },
   {
@@ -180,6 +374,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant ContactsSectionHeader +",
     kind: "commit",
     notes: "Stub button (no handler)",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/contacts/ContactsSectionHeader.tsx",
+        symbol: "ContactsSectionHeader",
+        locator: "plusTitle=\"Add contact\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -189,6 +391,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant ContactsSectionHeader sort",
     kind: "toggle",
     notes: "Stub button (no handler)",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/contacts/ContactsSectionHeader.tsx",
+        symbol: "ContactsSectionHeader",
+        locator: "sortTitle=\"Sort contacts\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -198,6 +408,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant ImportsSectionHeader +",
     kind: "commit",
     notes: "Stub button (no handler)",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/imports/CsvImportFlow.tsx",
+        symbol: "CsvImportFlow",
+        locator: "aria-label=\"Add import\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -207,6 +425,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant ImportsSectionHeader sort",
     kind: "toggle",
     notes: "Stub button (no handler)",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/contacts/ImportsSectionHeader.tsx",
+        symbol: "ImportsSectionHeader",
+        locator: "sortTitle=\"Sort imports\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -216,6 +442,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant+Ant Meetings header",
     kind: "toggle",
     notes: "CT demo flipper; lattice names empty-state copy, not this control",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/MeetingsModule.tsx",
+        symbol: "MeetingsModule",
+        locator: "Empty state",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/consultant/MeetingsModule.tsx",
+        symbol: "MeetingsModule",
+        locator: "Empty state",
+      },
+    ],
     purposes: [],
   },
   {
@@ -225,6 +465,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant MeetingsModule Live brief button",
     kind: "nav",
     notes: "Open path latticed; dismiss/toggle-off unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/MeetingsModule.tsx",
+        symbol: "MeetingsModule",
+        locator: "Live brief",
+      },
+    ],
     purposes: [],
   },
   {
@@ -234,6 +482,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Ant MeetingsModule Splitter",
     kind: "resize",
     notes: "Ant only",
+    codeRefs: [
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/consultant/MeetingsModule.tsx",
+        symbol: "MeetingsModule",
+        locator: "<Splitter",
+      },
+    ],
     purposes: [],
   },
   {
@@ -243,6 +499,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant+Ant Prepared modals (× / Cancel / backdrop)",
     kind: "nav",
     notes: "Dismiss chrome unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/PreparedWorkspaceModule.tsx",
+        symbol: "ModalShell",
+        locator: "aria-label=\"Close\"",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/consultant/PreparedModule.tsx",
+        symbol: "PreparedModule",
+        locator: "Cancel",
+      },
+    ],
     purposes: [],
   },
   {
@@ -252,6 +522,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant+Ant Login verify step",
     kind: "nav",
     notes: "Returns to email step; not in How/Furnish",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/RegisterLoginScene.tsx",
+        symbol: "RegisterLoginScene",
+        locator: "Change email",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/consultant/LoginModule.tsx",
+        symbol: "LoginModule",
+        locator: "Change email",
+      },
+    ],
     purposes: [],
   },
   {
@@ -261,6 +545,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant ClientView DataPanel (Client Brief)",
     kind: "open",
     notes: "External-link control; not in lattice",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/DataPanel.tsx",
+        symbol: "ClientDataContent",
+        locator: "Open Client Data in new tab",
+      },
+    ],
     purposes: [],
   },
   {
@@ -270,6 +562,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant ClientDataContent (Brief + Engagement record mounts)",
     kind: "tab",
     notes: "Product holon tab; not consultant How/Furnish",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/DataPanel.tsx",
+        symbol: "ClientDataContent",
+        locator: "onClick={() => setActiveTab(chip.id)}",
+      },
+      {
+        era: "plant",
+        file: "src/app/components/docs/clientDataHolons.ts",
+        symbol: "PANEL_CHIPS",
+        locator: "label: \"Information\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -279,6 +585,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant ClientDataContent (Brief + Engagement record mounts)",
     kind: "tab",
     notes: "Product holon tab; not consultant How/Furnish",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/DataPanel.tsx",
+        symbol: "ClientDataContent",
+        locator: "onClick={() => setActiveTab(chip.id)}",
+      },
+      {
+        era: "plant",
+        file: "src/app/components/docs/clientDataHolons.ts",
+        symbol: "PANEL_CHIPS",
+        locator: "label: \"History\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -288,6 +608,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant ClientDataContent History tab",
     kind: "toggle",
     notes: "Scrub index on CRS chart; plant only",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/DataPanel.tsx",
+        symbol: "CrsHistoryTab",
+        locator: "type=\"range\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -297,6 +625,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant JourneyTab ReasoningToggle",
     kind: "toggle",
     notes: "Plant only",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/JourneyTab.tsx",
+        symbol: "ReasoningToggle",
+        locator: "Show reasoning",
+      },
+    ],
     purposes: [],
   },
   {
@@ -306,6 +642,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant EngagementNodePanel",
     kind: "tab",
     notes: "Plant only",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/inspector/EngagementNodePanel.tsx",
+        symbol: "EngagementNodePanel",
+        locator: "label: \"Overview\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -315,6 +659,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant EngagementNodePanel",
     kind: "nav",
     notes: "Plant only",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/inspector/EngagementNodePanel.tsx",
+        symbol: "EngagementNodePanel",
+        locator: "Close (Esc)",
+      },
+    ],
     purposes: [],
   },
   {
@@ -324,6 +676,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant EngagementNodePanel",
     kind: "nav",
     notes: "Plant only",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/inspector/EngagementNodePanel.tsx",
+        symbol: "EngagementNodePanel",
+        locator: "data.navigation?.prev",
+      },
+    ],
     purposes: [],
   },
   {
@@ -333,6 +693,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant JourneyTab + Ant ActivityTimeline",
     kind: "zoom",
     notes: "Product gantt chrome",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/JourneyTab.tsx",
+        symbol: "JourneyTab",
+        locator: "Zoom in",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/consultant/ClientWorkspace.tsx",
+        symbol: "ActivityTimeline",
+        locator: "ZoomInOutlined",
+      },
+    ],
     purposes: [],
   },
   {
@@ -342,6 +716,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant JourneyTab + Ant ActivityTimeline",
     kind: "zoom",
     notes: "Product gantt chrome",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/JourneyTab.tsx",
+        symbol: "JourneyTab",
+        locator: "Zoom out",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/consultant/ClientWorkspace.tsx",
+        symbol: "ActivityTimeline",
+        locator: "ZoomOutOutlined",
+      },
+    ],
     purposes: [],
   },
   {
@@ -351,6 +739,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant JourneyTab Today button",
     kind: "scroll",
     notes: "Plant only",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/JourneyTab.tsx",
+        symbol: "JourneyTab",
+        locator: "scrollToToday",
+      },
+    ],
     purposes: [],
   },
   {
@@ -360,6 +756,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant JourneyTab drag handle + Ant Splitter",
     kind: "resize",
     notes: "Engagement record dual-pane",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/JourneyTab.tsx",
+        symbol: "JourneyTab",
+        locator: "onResizeMouseDown",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/consultant/ClientWorkspace.tsx",
+        symbol: "ClientWorkspace",
+        locator: "<Splitter",
+      },
+    ],
     purposes: [],
   },
   {
@@ -369,6 +779,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant JourneyTab NudgeGantt segments",
     kind: "open",
     notes: "Ant bars are tooltips only (non-click)",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/JourneyTab.tsx",
+        symbol: "JourneyTab",
+        locator: "onSegmentClick",
+      },
+    ],
     purposes: [],
   },
   {
@@ -378,6 +796,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant JourneyTab nudge escalation row",
     kind: "toggle",
     notes: "Plant only",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/JourneyTab.tsx",
+        symbol: "ThoughtStepLine",
+        locator: "Thought for",
+      },
+    ],
     purposes: [],
   },
   {
@@ -387,6 +813,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant+Ant Contact aside Menu/buttons",
     kind: "nav",
     notes: "CT scene flipper among Opt-in…Link state; not contact-facing",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/ContactPrototypeScene.tsx",
+        symbol: "ContactPrototypeScene",
+        locator: "Client portal",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/contact/ContactAntScene.tsx",
+        symbol: "ContactAntScene",
+        locator: "CLIENT PORTAL",
+      },
+    ],
     purposes: [],
   },
   {
@@ -396,6 +836,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant+Ant Link state Segmented/buttons",
     kind: "toggle",
     notes: "CT demo flipper; Furnish names redeem outcomes, not desk toggles",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/ContactPrototypeScene.tsx",
+        symbol: "LinkStatePage",
+        locator: "Wrong purpose",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/contact/ContactAntScene.tsx",
+        symbol: "LinkStatePage",
+        locator: "Wrong purpose",
+      },
+    ],
     purposes: [],
   },
   {
@@ -405,6 +859,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant+Ant Opt-in message + Nudge message",
     kind: "toggle",
     notes: "CT channel preview; lattice names SMS STOP strip, not Demo toggle",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/ContactPrototypeScene.tsx",
+        symbol: "OptInMessage",
+        locator: "Demo · ",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/contact/ContactAntScene.tsx",
+        symbol: "OptInMessage",
+        locator: "Demo · EMAIL",
+      },
+    ],
     purposes: [],
   },
   {
@@ -414,6 +882,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant+Ant Booking (facts-not-on-file branch)",
     kind: "toggle",
     notes: "CT demo to flip Facts already on file",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/ContactPrototypeScene.tsx",
+        symbol: "Booking",
+        locator: "Demo · clear outstanding",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/contact/ContactAntScene.tsx",
+        symbol: "BookingSurface",
+        locator: "Demo · clear outstanding",
+      },
+    ],
     purposes: [],
   },
   {
@@ -423,6 +905,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Ant ContactAntScene ModulePage",
     kind: "nav",
     notes: "Ant-only CT walk chrome",
+    codeRefs: [
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/contact/ContactAntScene.tsx",
+        symbol: "ContactAntScene",
+        locator: "Walk: consent → booking → silence",
+      },
+    ],
     purposes: [],
   },
   {
@@ -432,6 +922,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Ant Silence / Opt out Modal",
     kind: "nav",
     notes: "Dismiss unnamed; Confirm Silence latticed by How",
+    codeRefs: [
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/contact/ContactAntScene.tsx",
+        symbol: "SilenceOptOut",
+        locator: "onCancel",
+      },
+    ],
     purposes: [],
   },
   {
@@ -441,6 +939,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "RegisterClickThroughPanel header",
     kind: "toggle",
     notes: "Switches plant vs Ant translate host",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/components/RegisterClickThroughPanel.tsx",
+        symbol: "RegisterClickThroughPanel",
+        locator: "DS-I",
+      },
+    ],
     purposes: [],
   },
   {
@@ -450,6 +956,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "RegisterClickThroughPanel; Ant PrototypeAntApp Segmented",
     kind: "nav",
     notes: "CT desk switcher",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/components/RegisterClickThroughPanel.tsx",
+        symbol: "RegisterClickThroughPanel",
+        locator: "Consultant",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/PrototypeAntApp.tsx",
+        symbol: "PrototypeAntApp",
+        locator: "Operator",
+      },
+    ],
     purposes: [],
   },
   {
@@ -459,6 +979,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Ant PrototypeAntApp Switch; Workspace theme toggle",
     kind: "toggle",
     notes: "RegisterPage hardcodes isDark=false for plant CT",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/Workspace.tsx",
+        symbol: "Workspace",
+        locator: "Dark mode",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/PrototypeAntApp.tsx",
+        symbol: "PrototypeAntApp",
+        locator: "checkedChildren=\"Dark\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -468,6 +1002,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "RegisterClickThroughPanel flows mode",
     kind: "nav",
     notes: "Flows pass chrome",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/components/RegisterClickThroughPanel.tsx",
+        symbol: "RegisterClickThroughPanel",
+        locator: "Prev",
+      },
+    ],
     purposes: [],
   },
   {
@@ -477,6 +1019,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Register shell chrome",
     kind: "toggle",
     notes: "Column restore/hide tooling",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/components/RegisterClickThroughPanel.tsx",
+        symbol: "RegisterClickThroughPanel",
+        locator: "Show register",
+      },
+      {
+        era: "plant",
+        file: "src/app/register/components/RegisterShellChrome.tsx",
+        symbol: "RegisterRestoreDock",
+        locator: "Restore Register columns",
+      },
+    ],
     purposes: [],
   },
   {
@@ -486,6 +1042,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Ant PrototypeAntApp header",
     kind: "nav",
     notes: "Full-document nav back to /register",
+    codeRefs: [
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/PrototypeAntApp.tsx",
+        symbol: "PrototypeAntApp",
+        locator: "Source plant",
+      },
+    ],
     purposes: [],
   },
   {
@@ -495,6 +1059,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Config libraries · Compare versions modal",
     kind: "nav",
     notes: "plant+Ant dismiss",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/operator/ConfigurationLibrariesPanel.tsx",
+        symbol: "ConfigurationLibrariesPanel",
+        locator: "setCompareOpen(false)",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/ConfigurationLibrariesModule.tsx",
+        symbol: "ConfigurationLibrariesModule",
+        locator: "setCompareOpen(false)",
+      },
+    ],
     purposes: [],
   },
   {
@@ -504,6 +1082,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Workflow detail / header",
     kind: "commit",
     notes: "plant+Ant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/AutomationWorkflowHeader.tsx",
+        symbol: "AutomationWorkflowHeader",
+        locator: "Rename automation",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAutomationWorkbench.tsx",
+        symbol: "AntAutomationWorkbench",
+        locator: "Automation name",
+      },
+    ],
     purposes: [],
   },
   {
@@ -513,6 +1105,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Workflow detail / header",
     kind: "commit",
     notes: "plant only; unwired",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/AutomationWorkflowHeader.tsx",
+        symbol: "AutomationWorkflowHeader",
+        locator: "Share workflow",
+      },
+    ],
     purposes: [],
   },
   {
@@ -522,6 +1122,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Workflow detail / header",
     kind: "commit",
     notes: "plant+Ant; not Publish",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/AutomationWorkflowHeader.tsx",
+        symbol: "AutomationWorkflowHeader",
+        locator: "onSave",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAutomationWorkbench.tsx",
+        symbol: "AntAutomationWorkbench",
+        locator: "handleSave",
+      },
+    ],
     purposes: [],
   },
   {
@@ -531,6 +1145,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Workflow detail / header",
     kind: "commit",
     notes: "Ant Stop; plant Launch stubbed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/AutomationWorkflowHeader.tsx",
+        symbol: "AutomationWorkflowHeader",
+        locator: "Launch workflow",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAutomationWorkbench.tsx",
+        symbol: "AntAutomationWorkbench",
+        locator: "Stop run",
+      },
+    ],
     purposes: [],
   },
   {
@@ -540,6 +1168,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Editor tabs",
     kind: "tab",
     notes: "plant+Ant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/AutomationWorkflowEditor.tsx",
+        symbol: "AutomationWorkflowEditor",
+        locator: "label: \"Runs\"",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAutomationWorkbench.tsx",
+        symbol: "AntAutomationWorkbench",
+        locator: "label: \"Runs\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -549,6 +1191,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Editor tabs",
     kind: "tab",
     notes: "plant+Ant empty",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/AutomationWorkflowEditor.tsx",
+        symbol: "AutomationWorkflowEditor",
+        locator: "label: \"Settings\"",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAutomationWorkbench.tsx",
+        symbol: "AntAutomationWorkbench",
+        locator: "label: \"Settings\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -558,6 +1214,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Editor tabs",
     kind: "tab",
     notes: "plant only",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/AutomationWorkflowEditor.tsx",
+        symbol: "AutomationWorkflowEditor",
+        locator: "label: \"Enrollment\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -567,6 +1231,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Editor tabs chrome",
     kind: "toggle",
     notes: "plant only",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/AutomationWorkflowEditor.tsx",
+        symbol: "AutomationWorkflowEditor",
+        locator: "Hide build panel",
+      },
+    ],
     purposes: [],
   },
   {
@@ -576,6 +1248,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Trigger node",
     kind: "commit",
     notes: "plant only",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/nodes/TriggerNode.tsx",
+        symbol: "TriggerNode",
+        locator: "Run manually",
+      },
+    ],
     purposes: [],
   },
   {
@@ -585,6 +1265,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Enrollment criteria · class row",
     kind: "open",
     notes: "plant pencil",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/ManualEnrollmentCriteriaSummary.tsx",
+        symbol: "ManualEnrollmentCriteriaSummary",
+        locator: "aria-label={`Filter ${row.label}`}",
+      },
+    ],
     purposes: [],
   },
   {
@@ -594,6 +1282,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Filter configuration panel",
     kind: "commit",
     notes: "plant only",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/AutomationManualClassFilterPanel.tsx",
+        symbol: "AutomationManualClassFilterPanel",
+        locator: "Done",
+      },
+    ],
     purposes: [],
   },
   {
@@ -603,6 +1299,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Node toolbar",
     kind: "menu",
     notes: "plant only",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/WorkflowNodeToolbar.tsx",
+        symbol: "WorkflowNodeToolbar",
+        locator: "Add connected step",
+      },
+    ],
     purposes: [],
   },
   {
@@ -612,6 +1316,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Node toolbar",
     kind: "commit",
     notes: "plant only",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/WorkflowNodeToolbar.tsx",
+        symbol: "WorkflowNodeToolbar",
+        locator: "Duplicate node",
+      },
+    ],
     purposes: [],
   },
   {
@@ -621,6 +1333,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Node toolbar",
     kind: "commit",
     notes: "plant only",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/WorkflowNodeToolbar.tsx",
+        symbol: "WorkflowNodeToolbar",
+        locator: "Delete node",
+      },
+    ],
     purposes: [],
   },
   {
@@ -630,6 +1350,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Canvas edge",
     kind: "commit",
     notes: "plant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/edges/AutomationInsertEdge.tsx",
+        symbol: "AutomationInsertEdge",
+        locator: "Insert step",
+      },
+    ],
     purposes: [],
   },
   {
@@ -639,6 +1367,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Attach / Edge insert menu",
     kind: "menu",
     notes: "plant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/AttachStepMenu.tsx",
+        symbol: "AttachStepMenu",
+        locator: "Add step",
+      },
+    ],
     purposes: [],
   },
   {
@@ -648,6 +1384,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Attach step menu",
     kind: "toggle",
     notes: "plant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/AttachStepMenu.tsx",
+        symbol: "AttachStepMenu",
+        locator: "([\"true\", \"false\"] as const)",
+      },
+    ],
     purposes: [],
   },
   {
@@ -657,6 +1401,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Attach / Edge insert menu",
     kind: "nav",
     notes: "plant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/AttachStepMenu.tsx",
+        symbol: "AttachStepMenu",
+        locator: "Cancel",
+      },
+    ],
     purposes: [],
   },
   {
@@ -666,6 +1418,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Node config modal",
     kind: "commit",
     notes: "plant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/AutomationNodeConfigModal.tsx",
+        symbol: "AutomationNodeConfigModal",
+        locator: "onRunNode",
+      },
+    ],
     purposes: [],
   },
   {
@@ -675,6 +1435,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Config modal / Ant Drawer",
     kind: "nav",
     notes: "plant+Ant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/AutomationNodeConfigModal.tsx",
+        symbol: "AutomationNodeConfigModal",
+        locator: "aria-label=\"Close\"",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAutomationWorkbench.tsx",
+        symbol: "AntAutomationWorkbench",
+        locator: "Node details",
+      },
+    ],
     purposes: [],
   },
   {
@@ -684,6 +1458,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Config · Rule outcomes",
     kind: "toggle",
     notes: "plant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/RuleOutcomesConfigForm.tsx",
+        symbol: "RuleOutcomesConfigForm",
+        locator: "View code",
+      },
+    ],
     purposes: [],
   },
   {
@@ -693,6 +1475,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Workflow canvas",
     kind: "zoom",
     notes: "plant+Ant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/automation/AutomationWorkflowCanvas.tsx",
+        symbol: "AutomationWorkflowCanvas",
+        locator: "<Controls showInteractive={false} />",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAutomationWorkbench.tsx",
+        symbol: "AntAutomationWorkbench",
+        locator: "<Controls />",
+      },
+    ],
     purposes: [],
   },
   {
@@ -702,6 +1498,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Ant Build aside",
     kind: "toggle",
     notes: "Ant only",
+    codeRefs: [
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAutomationWorkbench.tsx",
+        symbol: "AntAutomationWorkbench",
+        locator: "<Collapse size=\"small\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -711,6 +1515,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Agent editor tabs",
     kind: "tab",
     notes: "plant+Ant empty",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/AgentEditor.tsx",
+        symbol: "AgentEditor",
+        locator: "case \"contacts\":",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+        symbol: "AntAgentWorkbench",
+        locator: "contacts:",
+      },
+    ],
     purposes: [],
   },
   {
@@ -720,6 +1538,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Agent editor tabs",
     kind: "tab",
     notes: "plant+Ant empty",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/AgentEditor.tsx",
+        symbol: "AgentEditor",
+        locator: "case \"activity\":",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+        symbol: "AntAgentWorkbench",
+        locator: "activity:",
+      },
+    ],
     purposes: [],
   },
   {
@@ -729,6 +1561,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Agent editor tabs",
     kind: "tab",
     notes: "plant+Ant empty",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/AgentEditor.tsx",
+        symbol: "AgentEditor",
+        locator: "case \"report\":",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+        symbol: "AntAgentWorkbench",
+        locator: "report:",
+      },
+    ],
     purposes: [],
   },
   {
@@ -738,6 +1584,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Agent header",
     kind: "commit",
     notes: "plant+Ant stub",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/AgentHeader.tsx",
+        symbol: "AgentHeader",
+        locator: "Launch agent",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+        symbol: "AntAgentWorkbench",
+        locator: "Launch agent",
+      },
+    ],
     purposes: [],
   },
   {
@@ -747,6 +1607,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant AgentHeader ⋯",
     kind: "menu",
     notes: "plant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/AgentHeader.tsx",
+        symbol: "AgentHeader",
+        locator: "More actions",
+      },
+    ],
     purposes: [],
   },
   {
@@ -756,6 +1624,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant More actions item",
     kind: "commit",
     notes: "plant stub",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/AgentHeader.tsx",
+        symbol: "AgentHeader",
+        locator: "Add contacts",
+      },
+    ],
     purposes: [],
   },
   {
@@ -765,6 +1641,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant AgentHeader Zap",
     kind: "open",
     notes: "plant HoverCard",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/AgentHeader.tsx",
+        symbol: "AutomationsControl",
+        locator: "Linked automations",
+      },
+    ],
     purposes: [],
   },
   {
@@ -774,6 +1658,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant step toolbar",
     kind: "commit",
     notes: "plant stub",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/AgentEditor.tsx",
+        symbol: "AgentEditor",
+        locator: "Save changes",
+      },
+    ],
     purposes: [],
   },
   {
@@ -783,6 +1675,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant AgentEditorEmptyState",
     kind: "open",
     notes: "plant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/AgentEditorEmptyState.tsx",
+        symbol: "AgentEditorEmptyState",
+        locator: "Select a template",
+      },
+    ],
     purposes: [],
   },
   {
@@ -792,6 +1692,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant AgentEditorEmptyState",
     kind: "open",
     notes: "plant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/AgentEditorEmptyState.tsx",
+        symbol: "AgentEditorEmptyState",
+        locator: "AI-assisted agent",
+      },
+    ],
     purposes: [],
   },
   {
@@ -801,6 +1709,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant step frame + rail",
     kind: "toggle",
     notes: "plant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/nodes/AgentStepFrame.tsx",
+        symbol: "AgentStepFrame",
+        locator: "Collapse step",
+      },
+    ],
     purposes: [],
   },
   {
@@ -810,6 +1726,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant step frame ⋯",
     kind: "menu",
     notes: "plant unwired",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/nodes/AgentStepFrame.tsx",
+        symbol: "AgentStepFrame",
+        locator: "More step actions",
+      },
+    ],
     purposes: [],
   },
   {
@@ -819,6 +1743,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Ant StepCard arrows",
     kind: "reorder",
     notes: "Ant only",
+    codeRefs: [
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+        symbol: "StepCard",
+        locator: "Move step up",
+      },
+    ],
     purposes: [],
   },
   {
@@ -828,6 +1760,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant EmailStepNode",
     kind: "tab",
     notes: "plant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/nodes/EmailStepNode.tsx",
+        symbol: "EmailStepNode",
+        locator: "Assisted",
+      },
+    ],
     purposes: [],
   },
   {
@@ -837,6 +1777,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant EmailStepNode select",
     kind: "select",
     notes: "plant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/nodes/EmailStepNode.tsx",
+        symbol: "EmailStepNode",
+        locator: "New thread",
+      },
+    ],
     purposes: [],
   },
   {
@@ -846,6 +1794,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant EmailStepNode",
     kind: "open",
     notes: "plant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/nodes/EmailStepNode.tsx",
+        symbol: "EmailStepNode",
+        locator: "Refresh preview",
+      },
+    ],
     purposes: [],
   },
   {
@@ -855,6 +1811,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant EmailStepNode",
     kind: "toggle",
     notes: "plant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/nodes/EmailStepNode.tsx",
+        symbol: "EmailStepNode",
+        locator: "Desktop preview",
+      },
+    ],
     purposes: [],
   },
   {
@@ -864,6 +1828,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant EmailStepNode",
     kind: "toggle",
     notes: "plant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/nodes/EmailStepNode.tsx",
+        symbol: "EmailStepNode",
+        locator: "Mobile preview",
+      },
+    ],
     purposes: [],
   },
   {
@@ -873,6 +1845,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant EmailStepNode",
     kind: "menu",
     notes: "plant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/nodes/EmailStepNode.tsx",
+        symbol: "EmailStepNode",
+        locator: "Preview options",
+      },
+    ],
     purposes: [],
   },
   {
@@ -882,6 +1862,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant TaskStepNode",
     kind: "select",
     notes: "plant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/nodes/TaskStepNode.tsx",
+        symbol: "TaskStepNode",
+        locator: "Task priority*",
+      },
+    ],
     purposes: [],
   },
   {
@@ -891,6 +1879,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant TaskStepNode",
     kind: "checkbox",
     notes: "plant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/agent/nodes/TaskStepNode.tsx",
+        symbol: "TaskStepNode",
+        locator: "Skip tasks",
+      },
+    ],
     purposes: [],
   },
   {
@@ -900,6 +1896,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Audit run · Records toolbar",
     kind: "toggle",
     notes: "plant+Ant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/AuditRecordsTable.tsx",
+        symbol: "AuditRecordsTable",
+        locator: "Sort records",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/BookReadinessModule.tsx",
+        symbol: "BookReadinessModule",
+        locator: "SortAscendingOutlined",
+      },
+    ],
     purposes: [],
   },
   {
@@ -909,6 +1919,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Audit run · Records toolbar (+ Ant eye)",
     kind: "inspect",
     notes: "plant+Ant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/AuditRecordsTable.tsx",
+        symbol: "AuditRecordsTable",
+        locator: "Inspect record",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/BookReadinessModule.tsx",
+        symbol: "BookReadinessModule",
+        locator: "Inspect first record",
+      },
+    ],
     purposes: [],
   },
   {
@@ -918,6 +1942,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Audit run · Records toolbar",
     kind: "download",
     notes: "plant+Ant",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/components/hub/AuditRecordsTable.tsx",
+        symbol: "AuditRecordsTable",
+        locator: "Export records",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/BookReadinessModule.tsx",
+        symbol: "BookReadinessModule",
+        locator: "Download records CSV",
+      },
+    ],
     purposes: [],
   },
   {
@@ -927,6 +1965,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "Ant Records table onRow",
     kind: "open",
     notes: "Ant only",
+    codeRefs: [
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/BookReadinessModule.tsx",
+        symbol: "BookReadinessModule",
+        locator: "onRow",
+      },
+    ],
     purposes: [],
   },
   {
@@ -936,6 +1982,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant+Ant Operator sider",
     kind: "nav",
     notes: "Grouping chrome",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/OperatorPrototypeScene.tsx",
+        symbol: "OperatorPrototypeScene",
+        locator: "House-global",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/OperatorAntScene.tsx",
+        symbol: "OperatorAntScene",
+        locator: "Per-tenancy",
+      },
+    ],
     purposes: [],
   },
   {
@@ -945,6 +2005,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant+Ant operator modals & drawers",
     kind: "nav",
     notes: "Shared dismiss class",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/operator/operatorChrome.tsx",
+        symbol: "operatorModal",
+        locator: "Close",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/ActivationForwardDeployModule.tsx",
+        symbol: "ActivationForwardDeployModule",
+        locator: "Back",
+      },
+    ],
     purposes: [],
   },
   {
@@ -954,6 +2028,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant+Ant RegisterEvolutionModule",
     kind: "open",
     notes: "How names New/Save gap — not Edit",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/operator/RegisterEvolutionModule.tsx",
+        symbol: "RegisterEvolutionModule",
+        locator: "Edit gap",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/RegisterEvolutionModule.tsx",
+        symbol: "RegisterEvolutionModule",
+        locator: "Edit",
+      },
+    ],
     purposes: [],
   },
   {
@@ -963,6 +2051,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant+Ant FounderAgencyControls Kill-switch",
     kind: "nav",
     notes: "Steps into confirmation; Halt motion latticed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/operator/FounderAgencyControlsModule.tsx",
+        symbol: "FounderAgencyControlsModule",
+        locator: "Review confirmation",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/FounderAgencyControlsModule.tsx",
+        symbol: "FounderAgencyControlsModule",
+        locator: "Review confirmation",
+      },
+    ],
     purposes: [],
   },
   {
@@ -972,6 +2074,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant+Ant AcquisitionAds Kill / hold criteria",
     kind: "commit",
     notes: "Apply commit unlabeled",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/operator/AcquisitionAdsModule.tsx",
+        symbol: "AcquisitionAdsModule",
+        locator: "Apply",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/AcquisitionAdsModule.tsx",
+        symbol: "AcquisitionAdsModule",
+        locator: "okText=\"Apply\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -981,6 +2097,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant+Ant ActivationStateModule",
     kind: "open",
     notes: "Firm list select unnamed",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/operator/ActivationStateModule.tsx",
+        symbol: "ActivationStateModule",
+        locator: "Firms in activation",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/ActivationStateModule.tsx",
+        symbol: "ActivationStateModule",
+        locator: "type: \"radio\"",
+      },
+    ],
     purposes: [],
   },
   {
@@ -990,6 +2120,20 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant+Ant FirmHealthModule",
     kind: "select",
     notes: "Scope when sticky filter absent",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/operator/FirmHealthModule.tsx",
+        symbol: "FirmHealthModule",
+        locator: "Firm scope",
+      },
+      {
+        era: "ant",
+        file: "src/app/register/prototype-ant/operator/FirmHealthModule.tsx",
+        symbol: "FirmHealthModule",
+        locator: "Firm scope",
+      },
+    ],
     purposes: [],
   },
   {
@@ -999,6 +2143,14 @@ export const ALL_PRIOR_ENTRIES: PriorEntry[] = [
     where: "plant OperatorPrototypeScene → HiFiEmptyModule",
     kind: "shell",
     notes: "Empty fallback",
+    codeRefs: [
+      {
+        era: "plant",
+        file: "src/app/register/prototype/HiFiEmptyModule.tsx",
+        symbol: "HiFiEmptyModule",
+        locator: "Constructing — addressable from click-path",
+      },
+    ],
     purposes: [],
   },
 ];
