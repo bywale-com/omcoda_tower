@@ -6,6 +6,6 @@
 | Implementation | Status | Stand-ins | CT entry |
 |---|---|---|---|
 | Login OTP (Send code / Verify) | wired | mailer · otpStore | plant + Ant Login — [LOGIN-OTP.md](./LOGIN-OTP.md) |
-| Halt outreach (Confirm halt / Lift / Resume) | wired | haltStore · auditTrail | plant `ConsultantPrototypeScene` · Ant `ConsultantAntScene` |
+| Halt outreach (Confirm halt / Lift / Resume) | wired | haltStore · auditTrail | plant + Ant Halt — [HALT-OUTREACH.md](./HALT-OUTREACH.md) |
 
 Add a row per wired implementation. Do not graph here — this is the as-built list.
