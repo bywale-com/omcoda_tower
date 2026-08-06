@@ -7,7 +7,7 @@ import {
   getOutcomeById,
   getPersonaForHowGraphId,
 } from "../theory/outcomes";
-import type { PriorModule } from "../theory/priors";
+import type { PriorZone } from "../theory/priors";
 
 export type WiringPaperSection = "overview" | "function" | "nodes" | "cants" | "furnish" | "human";
 export type EnrichmentKind = "cants" | "furnish";
@@ -36,7 +36,7 @@ type RegisterSelectionContextValue = {
   selectedEnrichmentKind: EnrichmentKind | null;
   selectedEnrichmentSubjectId: string | null;
   selectedEnrichmentItemId: string | null;
-  selectedPriorModuleId: PriorModule | null;
+  selectedPriorZoneId: PriorZone | null;
   selectedPriorItemId: string | null;
   /** Pinned or hovered composite step (Send OTP, Verify OTP) — Wiring only */
   activeFlowStepId: string | null;
@@ -64,8 +64,8 @@ type RegisterSelectionContextValue = {
   selectWiringEntity: (section: Exclude<WiringPaperSection, "overview" | "function">, entityId: string) => void;
   selectEnrichmentSubject: (kind: EnrichmentKind, subjectId: string | null) => void;
   selectEnrichmentItem: (kind: EnrichmentKind, subjectId: string, itemId: string) => void;
-  selectPriorModule: (moduleId: PriorModule | null) => void;
-  selectPriorItem: (moduleId: PriorModule, itemId: string) => void;
+  selectPriorZone: (zoneId: PriorZone | null) => void;
+  selectPriorItem: (zoneId: PriorZone, itemId: string) => void;
 };
 
 const RegisterSelectionContext = createContext<RegisterSelectionContextValue | null>(null);
@@ -93,7 +93,7 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
   const [selectedEnrichmentKind, setSelectedEnrichmentKind] = useState<EnrichmentKind | null>(null);
   const [selectedEnrichmentSubjectId, setSelectedEnrichmentSubjectId] = useState<string | null>(null);
   const [selectedEnrichmentItemId, setSelectedEnrichmentItemId] = useState<string | null>(null);
-  const [selectedPriorModuleId, setSelectedPriorModuleId] = useState<PriorModule | null>(null);
+  const [selectedPriorZoneId, setSelectedPriorZoneId] = useState<PriorZone | null>(null);
   const [selectedPriorItemId, setSelectedPriorItemId] = useState<string | null>(null);
 
   const clearHowSelection = useCallback(() => {
@@ -137,7 +137,7 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
   }, []);
 
   const clearPriorsSelection = useCallback(() => {
-    setSelectedPriorModuleId(null);
+    setSelectedPriorZoneId(null);
     setSelectedPriorItemId(null);
   }, []);
 
@@ -172,7 +172,7 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       if (id !== "priors") {
         clearPriorsSelection();
       } else {
-        setSelectedPriorModuleId(null);
+        setSelectedPriorZoneId(null);
         setSelectedPriorItemId(null);
       }
     },
@@ -492,10 +492,10 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
     ],
   );
 
-  const selectPriorModule = useCallback(
-    (moduleId: PriorModule | null) => {
+  const selectPriorZone = useCallback(
+    (zoneId: PriorZone | null) => {
       setRegisterPassId("priors");
-      setSelectedPriorModuleId(moduleId);
+      setSelectedPriorZoneId(zoneId);
       setSelectedPriorItemId(null);
       clearHowSelection();
       clearFlowSelection();
@@ -518,9 +518,9 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
   );
 
   const selectPriorItem = useCallback(
-    (moduleId: PriorModule, itemId: string) => {
+    (zoneId: PriorZone, itemId: string) => {
       setRegisterPassId("priors");
-      setSelectedPriorModuleId(moduleId);
+      setSelectedPriorZoneId(zoneId);
       setSelectedPriorItemId(itemId);
       clearHowSelection();
       clearFlowSelection();
@@ -569,7 +569,7 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       selectedEnrichmentKind,
       selectedEnrichmentSubjectId,
       selectedEnrichmentItemId,
-      selectedPriorModuleId,
+      selectedPriorZoneId,
       selectedPriorItemId,
       activeFlowStepId,
       activeFlowId,
@@ -595,7 +595,7 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       selectWiringEntity,
       selectEnrichmentSubject,
       selectEnrichmentItem,
-      selectPriorModule,
+      selectPriorZone,
       selectPriorItem,
     }),
     [
@@ -621,7 +621,7 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       selectedEnrichmentKind,
       selectedEnrichmentSubjectId,
       selectedEnrichmentItemId,
-      selectedPriorModuleId,
+      selectedPriorZoneId,
       selectedPriorItemId,
       activeFlowStepId,
       activeFlowId,
@@ -645,7 +645,7 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       selectWiringEntity,
       selectEnrichmentSubject,
       selectEnrichmentItem,
-      selectPriorModule,
+      selectPriorZone,
       selectPriorItem,
     ],
   );

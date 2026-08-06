@@ -17,50 +17,33 @@ import {
 import type { NotionIconName } from "../../icons/notion-icon-urls";
 import type { Tokens } from "../../components/tokens";
 import { useRegisterSelection } from "../context/RegisterSelectionContext";
-import {
-  PRIOR_ZONES,
-  getPriorsForModule,
-  type PriorMark,
-  type PriorModule,
-} from "../theory/priors";
+import { PRIOR_ZONES, getPriorsForZone, type PriorZone } from "../theory/priors";
 import { collectExpandableIds } from "./treeCollapse";
 
 type PriorsTreeNode = {
   id: string;
   label: string;
   icon: NotionIconName;
-  moduleId?: PriorModule;
+  zoneId?: PriorZone;
   itemId?: string;
-  mark?: PriorMark;
   children: PriorsTreeNode[];
 };
 
-function markIcon(mark: PriorMark): NotionIconName {
-  if (mark === "prior") return "lightning-bolt";
-  if (mark === "weak") return "information-circle";
-  return "dot-circle";
-}
-
 function buildPriorsTree(): PriorsTreeNode[] {
-  return PRIOR_ZONES.map((zone) => {
-    const items = getPriorsForModule(zone.id);
-    const priorCount = items.filter((i) => i.mark === "prior").length;
-    return {
-      id: `prior-zone-${zone.id}`,
-      label: `${zone.label} (${priorCount} prior / ${zone.count})`,
-      icon: "list",
-      moduleId: zone.id,
-      children: items.map((item) => ({
-        id: `prior-item-${item.id}`,
-        label: item.title,
-        icon: markIcon(item.mark),
-        moduleId: zone.id,
-        itemId: item.id,
-        mark: item.mark,
-        children: [],
-      })),
-    };
-  });
+  return PRIOR_ZONES.map((zone) => ({
+    id: `prior-zone-${zone.id}`,
+    label: `${zone.label} (${zone.count})`,
+    icon: "list",
+    zoneId: zone.id,
+    children: getPriorsForZone(zone.id).map((item) => ({
+      id: `prior-item-${item.id}`,
+      label: item.title,
+      icon: "lightning-bolt" as NotionIconName,
+      zoneId: zone.id,
+      itemId: item.id,
+      children: [],
+    })),
+  }));
 }
 
 function TreeRow({
@@ -158,31 +141,27 @@ function TreeRow({
 }
 
 export function RegisterPriorsTree({ t }: { t: Tokens }) {
-  const {
-    selectedPriorModuleId,
-    selectedPriorItemId,
-    selectPriorModule,
-    selectPriorItem,
-  } = useRegisterSelection();
+  const { selectedPriorZoneId, selectedPriorItemId, selectPriorZone, selectPriorItem } =
+    useRegisterSelection();
   const tree = useMemo(() => buildPriorsTree(), []);
   const expandable = useMemo(() => collectExpandableIds(tree), [tree]);
   const [openIds, setOpenIds] = useState<Set<string>>(() => new Set(expandable.slice(0, 3)));
 
   useEffect(() => {
-    if (!selectedPriorModuleId) return;
+    if (!selectedPriorZoneId) return;
     setOpenIds((prev) => {
       const next = new Set(prev);
-      next.add(`prior-zone-${selectedPriorModuleId}`);
+      next.add(`prior-zone-${selectedPriorZoneId}`);
       return next;
     });
-  }, [selectedPriorModuleId]);
+  }, [selectedPriorZoneId]);
 
   const renderNode = (node: PriorsTreeNode, depth: number) => {
     const hasChildren = node.children.length > 0;
     const open = openIds.has(node.id);
     const isSelected = node.itemId
       ? selectedPriorItemId === node.itemId
-      : !selectedPriorItemId && selectedPriorModuleId === node.moduleId;
+      : !selectedPriorItemId && selectedPriorZoneId === node.zoneId;
     return (
       <div key={node.id}>
         <TreeRow
@@ -203,8 +182,8 @@ export function RegisterPriorsTree({ t }: { t: Tokens }) {
               : undefined
           }
           onSelect={() => {
-            if (node.itemId && node.moduleId) selectPriorItem(node.moduleId, node.itemId);
-            else if (node.moduleId) selectPriorModule(node.moduleId);
+            if (node.itemId && node.zoneId) selectPriorItem(node.zoneId, node.itemId);
+            else if (node.zoneId) selectPriorZone(node.zoneId);
           }}
           t={t}
         />
