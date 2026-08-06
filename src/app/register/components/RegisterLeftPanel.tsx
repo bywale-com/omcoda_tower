@@ -8,6 +8,7 @@ import { RegisterEnrichmentTree, RegisterFurnishTree } from "./RegisterEnrichmen
 import { RegisterHowTree } from "./RegisterHowTree";
 import { RegisterJourneyFlowsTree } from "./RegisterJourneyFlowsTree";
 import { RegisterPassSection } from "./RegisterPassSection";
+import { RegisterPriorsTree } from "./RegisterPriorsTree";
 import { RegisterSmeTree } from "./RegisterSmeTree";
 import { ShellHideButton, ShellShowButton } from "./RegisterShellChrome";
 import { RegisterWiringPaperTree } from "./RegisterWiringPaperTree";
@@ -27,6 +28,8 @@ function passTreeContent(passId: RegisterPassId, t: Tokens) {
       return <RegisterEnrichmentTree t={t} />;
     case "furnish":
       return <RegisterFurnishTree t={t} />;
+    case "priors":
+      return <RegisterPriorsTree t={t} />;
     case "flows":
       return <RegisterJourneyFlowsTree t={t} />;
     case "wiring":

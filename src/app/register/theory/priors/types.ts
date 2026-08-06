@@ -22,6 +22,7 @@ export type PriorKind =
   | "scroll";
 
 export type PriorModule =
+  | "Automations"
   | "Agents"
   | "Audits"
   | "Activity"
@@ -33,6 +34,12 @@ export type PriorModule =
   | "Contact desk"
   | "Operator"
   | "Global CT chrome";
+
+export type PriorZoneMeta = {
+  id: PriorModule;
+  label: string;
+  count: number;
+};
 
 export type PriorEntry = {
   id: string;
