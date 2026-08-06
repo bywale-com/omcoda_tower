@@ -1,4 +1,5 @@
 export type {
+  DeskLatticeKind,
   PriorEntry,
   PriorKind,
   PriorZone,

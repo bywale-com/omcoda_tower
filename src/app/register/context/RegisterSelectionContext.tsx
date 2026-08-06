@@ -7,7 +7,7 @@ import {
   getOutcomeById,
   getPersonaForHowGraphId,
 } from "../theory/outcomes";
-import type { PriorZone } from "../theory/priors";
+import type { DeskLatticeKind, PriorZone } from "../theory/priors";
 
 export type WiringPaperSection = "overview" | "function" | "nodes" | "cants" | "furnish" | "human";
 export type EnrichmentKind = "cants" | "furnish";
@@ -36,6 +36,7 @@ type RegisterSelectionContextValue = {
   selectedEnrichmentKind: EnrichmentKind | null;
   selectedEnrichmentSubjectId: string | null;
   selectedEnrichmentItemId: string | null;
+  selectedDeskLatticeKind: DeskLatticeKind | null;
   selectedPriorZoneId: PriorZone | null;
   selectedPriorItemId: string | null;
   /** Pinned or hovered composite step (Send OTP, Verify OTP) — Wiring only */
@@ -64,8 +65,9 @@ type RegisterSelectionContextValue = {
   selectWiringEntity: (section: Exclude<WiringPaperSection, "overview" | "function">, entityId: string) => void;
   selectEnrichmentSubject: (kind: EnrichmentKind, subjectId: string | null) => void;
   selectEnrichmentItem: (kind: EnrichmentKind, subjectId: string, itemId: string) => void;
-  selectPriorZone: (zoneId: PriorZone | null) => void;
-  selectPriorItem: (zoneId: PriorZone, itemId: string) => void;
+  selectDeskLatticeKind: (kind: DeskLatticeKind | null) => void;
+  selectPriorZone: (kind: DeskLatticeKind, zoneId: PriorZone | null) => void;
+  selectPriorItem: (kind: DeskLatticeKind, zoneId: PriorZone, itemId: string) => void;
 };
 
 const RegisterSelectionContext = createContext<RegisterSelectionContextValue | null>(null);
@@ -93,6 +95,7 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
   const [selectedEnrichmentKind, setSelectedEnrichmentKind] = useState<EnrichmentKind | null>(null);
   const [selectedEnrichmentSubjectId, setSelectedEnrichmentSubjectId] = useState<string | null>(null);
   const [selectedEnrichmentItemId, setSelectedEnrichmentItemId] = useState<string | null>(null);
+  const [selectedDeskLatticeKind, setSelectedDeskLatticeKind] = useState<DeskLatticeKind | null>(null);
   const [selectedPriorZoneId, setSelectedPriorZoneId] = useState<PriorZone | null>(null);
   const [selectedPriorItemId, setSelectedPriorItemId] = useState<string | null>(null);
 
@@ -137,6 +140,7 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
   }, []);
 
   const clearPriorsSelection = useCallback(() => {
+    setSelectedDeskLatticeKind(null);
     setSelectedPriorZoneId(null);
     setSelectedPriorItemId(null);
   }, []);
@@ -172,6 +176,7 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       if (id !== "priors") {
         clearPriorsSelection();
       } else {
+        setSelectedDeskLatticeKind(null);
         setSelectedPriorZoneId(null);
         setSelectedPriorItemId(null);
       }
@@ -492,9 +497,36 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
     ],
   );
 
-  const selectPriorZone = useCallback(
-    (zoneId: PriorZone | null) => {
+  const selectDeskLatticeKind = useCallback(
+    (kind: DeskLatticeKind | null) => {
       setRegisterPassId("priors");
+      setSelectedDeskLatticeKind(kind);
+      setSelectedPriorZoneId(null);
+      setSelectedPriorItemId(null);
+      clearHowSelection();
+      clearFlowSelection();
+      clearFlowHover();
+      clearJourneySelection();
+      clearSmeSelection();
+      clearWiringPaperSelection();
+      clearEnrichmentSelection();
+      setSelectedHolonId(null);
+    },
+    [
+      clearEnrichmentSelection,
+      clearFlowHover,
+      clearFlowSelection,
+      clearHowSelection,
+      clearJourneySelection,
+      clearSmeSelection,
+      clearWiringPaperSelection,
+    ],
+  );
+
+  const selectPriorZone = useCallback(
+    (kind: DeskLatticeKind, zoneId: PriorZone | null) => {
+      setRegisterPassId("priors");
+      setSelectedDeskLatticeKind(kind);
       setSelectedPriorZoneId(zoneId);
       setSelectedPriorItemId(null);
       clearHowSelection();
@@ -518,8 +550,9 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
   );
 
   const selectPriorItem = useCallback(
-    (zoneId: PriorZone, itemId: string) => {
+    (kind: DeskLatticeKind, zoneId: PriorZone, itemId: string) => {
       setRegisterPassId("priors");
+      setSelectedDeskLatticeKind(kind);
       setSelectedPriorZoneId(zoneId);
       setSelectedPriorItemId(itemId);
       clearHowSelection();
@@ -569,6 +602,7 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       selectedEnrichmentKind,
       selectedEnrichmentSubjectId,
       selectedEnrichmentItemId,
+      selectedDeskLatticeKind,
       selectedPriorZoneId,
       selectedPriorItemId,
       activeFlowStepId,
@@ -595,6 +629,7 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       selectWiringEntity,
       selectEnrichmentSubject,
       selectEnrichmentItem,
+      selectDeskLatticeKind,
       selectPriorZone,
       selectPriorItem,
     }),
@@ -621,6 +656,7 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       selectedEnrichmentKind,
       selectedEnrichmentSubjectId,
       selectedEnrichmentItemId,
+      selectedDeskLatticeKind,
       selectedPriorZoneId,
       selectedPriorItemId,
       activeFlowStepId,
@@ -645,6 +681,7 @@ export function RegisterSelectionProvider({ children }: { children: ReactNode })
       selectWiringEntity,
       selectEnrichmentSubject,
       selectEnrichmentItem,
+      selectDeskLatticeKind,
       selectPriorZone,
       selectPriorItem,
     ],

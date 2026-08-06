@@ -4,6 +4,9 @@
  * Weak = interactive control with lattice foothold but control itself unnamed.
  */
 
+/** Which inventory branch is selected in the Priors pass. */
+export type DeskLatticeKind = "prior" | "weak";
+
 export type PriorKind =
   | "nav"
   | "open"

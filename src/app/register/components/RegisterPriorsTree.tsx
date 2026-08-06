@@ -17,33 +17,75 @@ import {
 import type { NotionIconName } from "../../icons/notion-icon-urls";
 import type { Tokens } from "../../components/tokens";
 import { useRegisterSelection } from "../context/RegisterSelectionContext";
-import { PRIOR_ZONES, getPriorsForZone, type PriorZone } from "../theory/priors";
+import {
+  ALL_PRIOR_ENTRIES,
+  ALL_WEAK_ENTRIES,
+  PRIOR_ZONES,
+  WEAK_ZONES,
+  getPriorsForZone,
+  getWeaksForZone,
+  type DeskLatticeKind,
+  type PriorZone,
+} from "../theory/priors";
 import { collectExpandableIds } from "./treeCollapse";
 
 type PriorsTreeNode = {
   id: string;
   label: string;
   icon: NotionIconName;
+  kind?: DeskLatticeKind;
   zoneId?: PriorZone;
   itemId?: string;
   children: PriorsTreeNode[];
 };
 
 function buildPriorsTree(): PriorsTreeNode[] {
-  return PRIOR_ZONES.map((zone) => ({
-    id: `prior-zone-${zone.id}`,
-    label: `${zone.label} (${zone.count})`,
-    icon: "list",
-    zoneId: zone.id,
-    children: getPriorsForZone(zone.id).map((item) => ({
-      id: `prior-item-${item.id}`,
-      label: item.title,
-      icon: "lightning-bolt" as NotionIconName,
-      zoneId: zone.id,
-      itemId: item.id,
-      children: [],
-    })),
-  }));
+  return [
+    {
+      id: "desk-kind-prior",
+      label: `Priors (${ALL_PRIOR_ENTRIES.length})`,
+      icon: "lightning-bolt",
+      kind: "prior",
+      children: PRIOR_ZONES.map((zone) => ({
+        id: `prior-zone-${zone.id}`,
+        label: `${zone.label} (${zone.count})`,
+        icon: "list" as NotionIconName,
+        kind: "prior" as DeskLatticeKind,
+        zoneId: zone.id,
+        children: getPriorsForZone(zone.id).map((item) => ({
+          id: `prior-item-${item.id}`,
+          label: item.title,
+          icon: "lightning-bolt" as NotionIconName,
+          kind: "prior" as DeskLatticeKind,
+          zoneId: zone.id,
+          itemId: item.id,
+          children: [],
+        })),
+      })),
+    },
+    {
+      id: "desk-kind-weak",
+      label: `Weak (${ALL_WEAK_ENTRIES.length})`,
+      icon: "information-circle",
+      kind: "weak",
+      children: WEAK_ZONES.map((zone) => ({
+        id: `weak-zone-${zone.id}`,
+        label: `${zone.label} (${zone.count})`,
+        icon: "list" as NotionIconName,
+        kind: "weak" as DeskLatticeKind,
+        zoneId: zone.id,
+        children: getWeaksForZone(zone.id).map((item) => ({
+          id: `weak-item-${item.id}`,
+          label: item.title,
+          icon: "information-circle" as NotionIconName,
+          kind: "weak" as DeskLatticeKind,
+          zoneId: zone.id,
+          itemId: item.id,
+          children: [],
+        })),
+      })),
+    },
+  ];
 }
 
 function TreeRow({
@@ -141,27 +183,40 @@ function TreeRow({
 }
 
 export function RegisterPriorsTree({ t }: { t: Tokens }) {
-  const { selectedPriorZoneId, selectedPriorItemId, selectPriorZone, selectPriorItem } =
-    useRegisterSelection();
+  const {
+    selectedDeskLatticeKind,
+    selectedPriorZoneId,
+    selectedPriorItemId,
+    selectDeskLatticeKind,
+    selectPriorZone,
+    selectPriorItem,
+  } = useRegisterSelection();
   const tree = useMemo(() => buildPriorsTree(), []);
   const expandable = useMemo(() => collectExpandableIds(tree), [tree]);
-  const [openIds, setOpenIds] = useState<Set<string>>(() => new Set(expandable.slice(0, 3)));
+  const [openIds, setOpenIds] = useState<Set<string>>(() => new Set(expandable.slice(0, 2)));
 
   useEffect(() => {
-    if (!selectedPriorZoneId) return;
+    if (!selectedDeskLatticeKind) return;
     setOpenIds((prev) => {
       const next = new Set(prev);
-      next.add(`prior-zone-${selectedPriorZoneId}`);
+      next.add(`desk-kind-${selectedDeskLatticeKind}`);
+      if (selectedPriorZoneId) {
+        next.add(`${selectedDeskLatticeKind}-zone-${selectedPriorZoneId}`);
+      }
       return next;
     });
-  }, [selectedPriorZoneId]);
+  }, [selectedDeskLatticeKind, selectedPriorZoneId]);
 
   const renderNode = (node: PriorsTreeNode, depth: number) => {
     const hasChildren = node.children.length > 0;
     const open = openIds.has(node.id);
     const isSelected = node.itemId
-      ? selectedPriorItemId === node.itemId
-      : !selectedPriorItemId && selectedPriorZoneId === node.zoneId;
+      ? selectedDeskLatticeKind === node.kind && selectedPriorItemId === node.itemId
+      : node.zoneId
+        ? selectedDeskLatticeKind === node.kind &&
+          !selectedPriorItemId &&
+          selectedPriorZoneId === node.zoneId
+        : selectedDeskLatticeKind === node.kind && !selectedPriorZoneId && !selectedPriorItemId;
     return (
       <div key={node.id}>
         <TreeRow
@@ -182,8 +237,10 @@ export function RegisterPriorsTree({ t }: { t: Tokens }) {
               : undefined
           }
           onSelect={() => {
-            if (node.itemId && node.zoneId) selectPriorItem(node.zoneId, node.itemId);
-            else if (node.zoneId) selectPriorZone(node.zoneId);
+            if (!node.kind) return;
+            if (node.itemId && node.zoneId) selectPriorItem(node.kind, node.zoneId, node.itemId);
+            else if (node.zoneId) selectPriorZone(node.kind, node.zoneId);
+            else selectDeskLatticeKind(node.kind);
           }}
           t={t}
         />
