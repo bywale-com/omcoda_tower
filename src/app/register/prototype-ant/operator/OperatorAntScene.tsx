@@ -126,7 +126,8 @@ export function OperatorAntScene() {
             style={{ borderInlineEnd: "none", height: "100%" }}
           />
         </Sider>
-        <Content style={{ minWidth: 0, minHeight: 0, padding: 16, overflow: "hidden" }}>
+        {/* Inset lives on ModulePage (SPACING.md) — do not double-pad here. */}
+        <Content style={{ minWidth: 0, minHeight: 0, padding: 0, overflow: "hidden" }}>
           {main}
         </Content>
       </Layout>

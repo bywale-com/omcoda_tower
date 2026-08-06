@@ -19,6 +19,7 @@
 5. **Workflows stay object-centric.** Index → object / focused flow → return. Multi-step short flows → `Steps` inside `Modal` or page; do not invent parallel board chrome unless Register requires it. Confidence: **medium**.
 6. **Empty / Result are first-class.** Honest empties → `Empty`; terminal outcomes → `Result`. Confidence: **high**.
 7. **Navigation levels.** Product nav in `Sider` `Menu` (grouped); peer tabs inside a module → `Tabs`; persona switch is shell-level (`Segmented` in Header), not buried in content. Confidence: **high** for Menu/Tabs; **medium** for Segmented as persona switch (product choice).
+8. **Content inset is mandatory.** ModulePage owns ≥16px inset; primary table identity columns (Contact/Client) stay flexible + ellipsis; status Tags get their own column; index|detail uses `Splitter`. See [SPACING.md](./SPACING.md). Confidence: **high** — product law from CT review.
 
 ## Decision table (Tower jobs → Ant)
 

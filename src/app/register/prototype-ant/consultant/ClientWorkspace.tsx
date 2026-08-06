@@ -4,6 +4,7 @@ import {
   Button,
   Descriptions,
   Space,
+  Splitter,
   Tabs,
   Tag,
   Tree,
@@ -439,7 +440,7 @@ export function ClientWorkspace({
     >
       <div
         style={{
-          padding: "8px 12px",
+          padding: "10px 16px",
           borderBottom: "1px solid var(--ant-color-split)",
           background: "var(--ant-color-bg-container)",
           display: "flex",
@@ -508,6 +509,7 @@ export function ClientWorkspace({
         activeKey={tab}
         onChange={(k) => setTab(k as "brief" | "engagement")}
         style={{ flexShrink: 0 }}
+        tabBarStyle={{ paddingInline: 16, marginBottom: 0 }}
         items={[
           {
             key: "brief",
@@ -522,7 +524,7 @@ export function ClientWorkspace({
         ]}
       />
 
-      <div style={{ flex: 1, minHeight: 0, overflow: "auto", padding: 12 }}>
+      <div style={{ flex: 1, minHeight: 0, overflow: "auto", padding: 16 }}>
         {tab === "brief" ? (
           <Space direction="vertical" size="middle" style={{ width: "100%" }}>
             <Title level={5} style={{ margin: 0 }}>
@@ -580,33 +582,32 @@ export function ClientWorkspace({
                 background: "var(--ant-color-bg-container)",
               }}
             >
-              <div
-                style={{
-                  width: 330,
-                  flexShrink: 0,
-                  borderRight: "1px solid var(--ant-color-split)",
-                  overflow: "auto",
-                }}
-              >
-                <div style={{ padding: "8px 12px", borderBottom: "1px solid var(--ant-color-split)" }}>
-                  <Text strong>Engagement tree</Text>
-                  <div>
-                    <Text type="secondary" style={{ fontSize: 12 }}>
-                      Sequences, attempts, channels
-                    </Text>
+              <Splitter style={{ height: "100%", width: "100%" }}>
+                <Splitter.Panel defaultSize={320} min={240} max="50%">
+                  <div style={{ height: "100%", overflow: "auto" }}>
+                    <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--ant-color-split)" }}>
+                      <Text strong>Engagement tree</Text>
+                      <div>
+                        <Text type="secondary" style={{ fontSize: 12 }}>
+                          Sequences, attempts, channels
+                        </Text>
+                      </div>
+                    </div>
+                    <Tree
+                      blockNode
+                      treeData={treeData}
+                      expandedKeys={expandedKeys}
+                      selectedKeys={selectedJourneyKey}
+                      onExpand={(keys) => setExpandedKeys([...keys])}
+                      onSelect={(keys) => setSelectedJourneyKey([...keys])}
+                      style={{ padding: 12 }}
+                    />
                   </div>
-                </div>
-                <Tree
-                  blockNode
-                  treeData={treeData}
-                  expandedKeys={expandedKeys}
-                  selectedKeys={selectedJourneyKey}
-                  onExpand={(keys) => setExpandedKeys([...keys])}
-                  onSelect={(keys) => setSelectedJourneyKey([...keys])}
-                  style={{ padding: 8 }}
-                />
-              </div>
-              <ActivityTimeline sequences={journey.sequences} ganttByGroup={journey.ganttByGroup} />
+                </Splitter.Panel>
+                <Splitter.Panel min={280}>
+                  <ActivityTimeline sequences={journey.sequences} ganttByGroup={journey.ganttByGroup} />
+                </Splitter.Panel>
+              </Splitter>
             </div>
           </Surface>
         )}
