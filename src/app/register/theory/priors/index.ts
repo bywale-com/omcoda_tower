@@ -1,5 +1,6 @@
 export type {
   DeskLatticeKind,
+  PriorCodeRef,
   PriorEntry,
   PriorKind,
   PriorZone,

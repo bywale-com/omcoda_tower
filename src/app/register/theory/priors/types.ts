@@ -40,6 +40,23 @@ export type PriorZoneMeta = {
   count: number;
 };
 
+/**
+ * Machine join from Prior/Weak entry → concrete CT control in source.
+ * CTO agents resolve the button via file + symbol + locator (grep-stable).
+ */
+export type PriorCodeRef = {
+  era: "plant" | "ant";
+  /** Repo-relative path, e.g. src/app/register/prototype/... */
+  file: string;
+  /** Component / export / enclosing symbol */
+  symbol: string;
+  /**
+   * Grep-stable locator for the exact control:
+   * visible label, handler name, aria-label, or distinctive JSX string.
+   */
+  locator: string;
+};
+
 export type PriorEntry = {
   id: string;
   zone: PriorZone;
@@ -48,6 +65,8 @@ export type PriorEntry = {
   where: string;
   kind: PriorKind;
   notes: string;
+  /** Code joins — at least one; plant and/or Ant when both mount the control. */
+  codeRefs: PriorCodeRef[];
   /** Reserved — purposes later. */
   purposes: [];
 };
@@ -62,5 +81,7 @@ export type WeakEntry = {
   kind: PriorKind | "input";
   latticeFoothold: string;
   notes: string;
+  /** Code joins — at least one; plant and/or Ant when both mount the control. */
+  codeRefs: PriorCodeRef[];
   purposes: [];
 };
