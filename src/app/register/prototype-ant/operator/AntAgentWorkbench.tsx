@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Button,
   Card,
-  Empty,
   Input,
   List,
   Space,
@@ -24,7 +23,6 @@ import {
   AGENT_EDITOR_TABS,
   AGENT_STEP_TYPES,
   agentStatusLabel,
-  getAgentDefinition,
   getLinkedAutomationSummaries,
   type AgentDefinition,
   type AgentEditorTab,
@@ -144,25 +142,21 @@ function StepCard({
   );
 }
 
-export function AntAgentWorkbench({ agentId }: { agentId: string }) {
+export function AntAgentWorkbench({
+  agent,
+}: {
+  agent: AgentDefinition;
+}) {
   const { token } = theme.useToken();
-  const agent = getAgentDefinition(agentId);
+  const agentId = agent.id;
   const [activeTab, setActiveTab] = useState<AgentEditorTab>("editor");
   const [steps, setSteps] = useState<AgentStep[]>(() => getInitialAgentSteps(agentId));
-  const linkedAutomations = useMemo(() => (agent ? getLinkedAutomationSummaries(agent) : []), [agent]);
+  const linkedAutomations = useMemo(() => getLinkedAutomationSummaries(agent), [agent]);
 
   useEffect(() => {
     setSteps(getInitialAgentSteps(agentId));
     setActiveTab("editor");
   }, [agentId]);
-
-  if (!agent) {
-    return (
-      <div style={{ padding: 24 }}>
-        <Empty description="Agent not found" />
-      </div>
-    );
-  }
 
   const addStep = (kind: "email" | "consultant_task") => {
     setSteps((current) => insertAgentStep(current, kind, current.length - 1));

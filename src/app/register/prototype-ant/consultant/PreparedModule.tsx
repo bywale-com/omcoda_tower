@@ -144,26 +144,58 @@ export function PreparedModule({
 
           <Space direction="vertical" size="middle" style={{ width: "100%" }}>
             <Surface label="Authorize book">
-              <Button block onClick={() => setModal("authorize")}>
-                <div style={{ textAlign: "left" }}>
-                  <Text strong>Authorize book</Text>
-                  <br />
-                  <Text type="secondary" style={{ fontSize: 12 }}>
-                    Grant CRM, upload, or confirm assisted import — then Authorize.
-                  </Text>
-                </div>
-              </Button>
+              <button
+                type="button"
+                onClick={() => setModal("authorize")}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  gap: 6,
+                  width: "100%",
+                  textAlign: "left",
+                  padding: "14px 16px",
+                  border: `1px solid ${bookAuthorized ? "var(--ant-color-border)" : "var(--ant-color-primary)"}`,
+                  borderRadius: 8,
+                  background: bookAuthorized
+                    ? "var(--ant-color-fill-quaternary)"
+                    : "var(--ant-color-primary-bg)",
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                }}
+              >
+                <Text strong>Authorize book</Text>
+                <Text type="secondary" style={{ fontSize: 12, lineHeight: 1.5 }}>
+                  Grant CRM, upload, or confirm assisted import — then Authorize.
+                </Text>
+              </button>
             </Surface>
             <Surface label="Accept terms">
-              <Button block onClick={() => setModal("accept")}>
-                <div style={{ textAlign: "left" }}>
-                  <Text strong>Accept terms</Text>
-                  <br />
-                  <Text type="secondary" style={{ fontSize: 12 }}>
-                    License acknowledgement + escrow view — Accept commits instrument held.
-                  </Text>
-                </div>
-              </Button>
+              <button
+                type="button"
+                onClick={() => setModal("accept")}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  gap: 6,
+                  width: "100%",
+                  textAlign: "left",
+                  padding: "14px 16px",
+                  border: `1px solid ${termsAccepted ? "var(--ant-color-border)" : "var(--ant-color-primary)"}`,
+                  borderRadius: 8,
+                  background: termsAccepted
+                    ? "var(--ant-color-fill-quaternary)"
+                    : "var(--ant-color-primary-bg)",
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                }}
+              >
+                <Text strong>Accept terms</Text>
+                <Text type="secondary" style={{ fontSize: 12, lineHeight: 1.5 }}>
+                  License acknowledgement + escrow view — Accept commits instrument held.
+                </Text>
+              </button>
             </Surface>
           </Space>
         </ModulePage>
