@@ -1,6 +1,7 @@
 /**
- * Register Priors — full-app priors-only inventory.
- * Entry = interactive control with no lattice click-path; purposes later (empty).
+ * Register Priors / Weak — full-app inventory types.
+ * Prior = interactive control with no lattice click-path; purposes later (empty).
+ * Weak = interactive control with lattice foothold but control itself unnamed.
  */
 
 export type PriorKind =
@@ -18,7 +19,8 @@ export type PriorKind =
   | "download"
   | "zoom"
   | "scroll"
-  | "shell";
+  | "shell"
+  | "input";
 
 export type PriorZone =
   | "Consultant"
@@ -44,5 +46,18 @@ export type PriorEntry = {
   kind: PriorKind;
   notes: string;
   /** Reserved — purposes later. */
+  purposes: [];
+};
+
+/** Weak = lattice foothold present; control itself not named. */
+export type WeakEntry = {
+  id: string;
+  /** Reuse PriorZone; Contact for contact weaks; no Global CT chrome in this inventory. */
+  zone: PriorZone;
+  title: string;
+  where: string;
+  kind: PriorKind | "input";
+  latticeFoothold: string;
+  notes: string;
   purposes: [];
 };

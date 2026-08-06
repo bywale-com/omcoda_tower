@@ -1,7 +1,8 @@
 # Register Priors — full-app inventory
 
 **Class:** Priors (own Register class)  
-**This inventory is priors only.** Latticed and weak taxonomy are out of scope here.
+**This inventory is priors only.** Latticed taxonomy remains out of scope here.  
+**Weak companion:** [`../weak/`](../weak/) — controls with a lattice foothold whose control itself is unnamed (32).
 
 **Definition:** An interactive control on the CT desk (plant and/or Ant) with **no** lattice / click-path statement in How, SME implementation, Enrichment, Furnish, or theory.
 

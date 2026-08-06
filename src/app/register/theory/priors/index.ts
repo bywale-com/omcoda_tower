@@ -1,4 +1,10 @@
-export type { PriorEntry, PriorKind, PriorZone, PriorZoneMeta } from "./types";
+export type {
+  PriorEntry,
+  PriorKind,
+  PriorZone,
+  PriorZoneMeta,
+  WeakEntry,
+} from "./types";
 export {
   ALL_PRIOR_ENTRIES,
   PRIOR_ZONE_ORDER,
@@ -6,3 +12,10 @@ export {
   getPriorEntry,
   getPriorsForZone,
 } from "./items";
+export {
+  ALL_WEAK_ENTRIES,
+  WEAK_ZONE_ORDER,
+  WEAK_ZONES,
+  getWeakEntry,
+  getWeaksForZone,
+} from "./weakItems";
