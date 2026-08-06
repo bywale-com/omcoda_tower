@@ -21,7 +21,18 @@ export type PriorKind =
   | "zoom"
   | "scroll";
 
-export type PriorModule = "Agents" | "Audits" | "Activity";
+export type PriorModule =
+  | "Agents"
+  | "Audits"
+  | "Activity"
+  | "Board"
+  | "Contacts"
+  | "Meetings"
+  | "Prepared"
+  | "Login"
+  | "Contact desk"
+  | "Operator"
+  | "Global CT chrome";
 
 export type PriorEntry = {
   id: string;
