@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Input, Space, Table, Tag, Typography } from "antd";
+import { Input, Space, Splitter, Table, Tag, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { contactList, getContact, type Contact } from "../../../data/contacts";
 import { Hint, ModulePage, Surface } from "../chrome";
@@ -71,18 +71,21 @@ export function ContactsModule({
       title: "Contact",
       dataIndex: "name",
       key: "name",
+      ellipsis: true,
       render: (name, row) => (
         <Surface label="Client row">
-          <Text strong={row.id === activeContactId}>{name}</Text>
+          <Text strong={row.id === activeContactId} ellipsis style={{ maxWidth: "100%" }}>
+            {name}
+          </Text>
         </Surface>
       ),
     },
-    { title: "Phone", dataIndex: "phone", key: "phone", width: 140 },
+    { title: "Phone", dataIndex: "phone", key: "phone", width: 128, ellipsis: true },
     {
       title: "Indicator",
       dataIndex: "indicator",
       key: "indicator",
-      width: 110,
+      width: 104,
       render: (ind) => (
         <Tag color={ind === "sequenced" ? "processing" : ind === "silenced" ? "default" : "warning"}>
           {ind}
@@ -92,7 +95,7 @@ export function ContactsModule({
     {
       title: "Phase",
       key: "phase",
-      width: 120,
+      width: 118,
       render: (_, row) => {
         if (!row.clientId) return "—";
         const halt = haltForClient(row.clientId);
@@ -109,69 +112,68 @@ export function ContactsModule({
   const showWorkspace =
     workspaceClientId &&
     activeContactId &&
-  contactListHasClient(activeContactId);
+    contactListHasClient(activeContactId);
+
+  const indexPane = (
+    <div style={{ height: "100%", minHeight: 0, display: "flex", flexDirection: "column" }}>
+      <ModulePage title="Contacts" surface="Contacts">
+        <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+          <Surface label="Board search">
+            <Input.Search
+              placeholder="Search contacts"
+              allowClear
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </Surface>
+          <Surface label="Imports">
+            <Hint>Imports and unsequenced contacts — Confirm book for Tower from assisted path.</Hint>
+          </Surface>
+          <Table
+            size="small"
+            columns={columns}
+            dataSource={rows}
+            pagination={false}
+            tableLayout="fixed"
+            onRow={(row) => ({
+              onClick: () => onContactSelect(row.id),
+              style: {
+                cursor: "pointer",
+                background: row.id === activeContactId ? "var(--ant-color-primary-bg)" : undefined,
+              },
+            })}
+          />
+        </Space>
+      </ModulePage>
+    </div>
+  );
 
   return (
-    <div style={{ display: "flex", height: "100%", minHeight: 0 }}>
-      <div
-        style={{
-          width: 420,
-          flexShrink: 0,
-          display: "flex",
-          flexDirection: "column",
-          minHeight: 0,
-          borderRight: "1px solid var(--ant-color-split)",
-        }}
-      >
-        <ModulePage title="Contacts" surface="Contacts">
-          <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-            <Surface label="Board search">
-              <Input.Search
-                placeholder="Search contacts"
-                allowClear
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </Surface>
-            <Surface label="Imports">
-              <Hint>Imports and unsequenced contacts — Confirm book for Tower from assisted path.</Hint>
-            </Surface>
-            <Table
-              size="small"
-              columns={columns}
-              dataSource={rows}
-              pagination={false}
-              onRow={(row) => ({
-                onClick: () => onContactSelect(row.id),
-                style: {
-                  cursor: "pointer",
-                  background: row.id === activeContactId ? "var(--ant-color-primary-bg)" : undefined,
-                },
-              })}
-            />
-          </Space>
-        </ModulePage>
-      </div>
-
-      {activeContactId && !contactListHasClient(activeContactId) ? (
-        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <Hint>Contact not yet on Board — select a sequenced contact to open Client workspace</Hint>
-        </div>
-      ) : showWorkspace ? (
-        <ClientWorkspace
-          clientId={workspaceClientId!}
-          halt={haltForClient(workspaceClientId!)}
-          licenseeLabel={licenseeLabel}
-          activityKick={activityKick}
-          onHaltOutreach={onHaltOutreach}
-          onLiftHalt={onLiftHalt}
-          onOpenAcceptedTerms={termsAccepted ? onOpenAcceptedTerms : undefined}
-        />
-      ) : (
-        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <Hint>Select a contact from the list</Hint>
-        </div>
-      )}
-    </div>
+    <Splitter style={{ height: "100%" }}>
+      <Splitter.Panel defaultSize="46%" min={320} max="60%">
+        {indexPane}
+      </Splitter.Panel>
+      <Splitter.Panel min={280}>
+        {activeContactId && !contactListHasClient(activeContactId) ? (
+          <div style={{ flex: 1, height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Hint>Contact not yet on Board — select a sequenced contact to open Client workspace</Hint>
+          </div>
+        ) : showWorkspace ? (
+          <ClientWorkspace
+            clientId={workspaceClientId!}
+            halt={haltForClient(workspaceClientId!)}
+            licenseeLabel={licenseeLabel}
+            activityKick={activityKick}
+            onHaltOutreach={onHaltOutreach}
+            onLiftHalt={onLiftHalt}
+            onOpenAcceptedTerms={termsAccepted ? onOpenAcceptedTerms : undefined}
+          />
+        ) : (
+          <div style={{ flex: 1, height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Hint>Select a contact from the list</Hint>
+          </div>
+        )}
+      </Splitter.Panel>
+    </Splitter>
   );
 }
