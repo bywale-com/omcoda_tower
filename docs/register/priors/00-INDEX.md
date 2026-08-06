@@ -31,7 +31,8 @@
 | [`operator-house.md`](./operator-house.md) | Operator house | 8 |
 | **Total** | | **111** |
 
-**Register twin:** `src/app/register/theory/priors/` (`ALL_PRIOR_ENTRIES`)
+**Register twin:** `src/app/register/theory/priors/` (`ALL_PRIOR_ENTRIES`)  
+**CTO join:** every entry has `codeRefs[]` → `{ era, file, symbol, locator }` pointing at the concrete plant/Ant control in source.
 
 ## Next (not this pass)
 

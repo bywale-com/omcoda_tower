@@ -11,6 +11,7 @@ import {
   getPriorsForZone,
   getWeakEntry,
   getWeaksForZone,
+  type PriorCodeRef,
 } from "../theory/priors";
 
 function Field({ label, children, t }: { label: string; children: ReactNode; t: Tokens }) {
@@ -19,6 +20,24 @@ function Field({ label, children, t }: { label: string; children: ReactNode; t: 
       <p style={registerFieldLabelStyle(t)}>{label}</p>
       <div style={{ fontSize: 13, color: t.textMuted, lineHeight: 1.5 }}>{children}</div>
     </div>
+  );
+}
+
+function CodeRefsField({ refs, t }: { refs: PriorCodeRef[]; t: Tokens }) {
+  return (
+    <Field label="Code refs (CTO join)" t={t}>
+      <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, lineHeight: 1.55 }}>
+        {refs.map((ref) => (
+          <li key={`${ref.era}-${ref.file}-${ref.locator}`} style={{ marginBottom: 6 }}>
+            <code style={{ fontSize: 11 }}>{ref.era}</code> ·{" "}
+            <code style={{ fontSize: 11 }}>{ref.file}</code>
+            <br />
+            symbol <code style={{ fontSize: 11 }}>{ref.symbol}</code> · locator{" "}
+            <code style={{ fontSize: 11 }}>{ref.locator}</code>
+          </li>
+        ))}
+      </ul>
+    </Field>
   );
 }
 
@@ -48,6 +67,7 @@ export function PriorsPane({ t }: { t: Tokens }) {
             <Field label="Lattice foothold" t={t}>
               {item.latticeFoothold}
             </Field>
+            <CodeRefsField refs={item.codeRefs} t={t} />
             <Field label="Notes" t={t}>
               {item.notes || "—"}
             </Field>
@@ -117,6 +137,7 @@ export function PriorsPane({ t }: { t: Tokens }) {
           <Field label="Kind" t={t}>
             {item.kind}
           </Field>
+          <CodeRefsField refs={item.codeRefs} t={t} />
           <Field label="Notes" t={t}>
             {item.notes || "—"}
           </Field>

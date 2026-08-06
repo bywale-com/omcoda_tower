@@ -31,7 +31,8 @@
 | [`operator-house.md`](./operator-house.md) | Operator house | 6 |
 | **Total** | | **32** |
 
-**Register twin:** `src/app/register/theory/priors/` (`ALL_WEAK_ENTRIES` in `weakItems.ts`)
+**Register twin:** `src/app/register/theory/priors/` (`ALL_WEAK_ENTRIES` in `weakItems.ts`)  
+**CTO join:** every entry has `codeRefs[]` → `{ era, file, symbol, locator }` pointing at the concrete plant/Ant control in source.
 
 ## Next (not this pass)
 
