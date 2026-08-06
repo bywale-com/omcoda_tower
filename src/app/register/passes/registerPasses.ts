@@ -65,7 +65,7 @@ export const REGISTER_PASSES: RegisterPassMeta[] = [
   {
     id: "priors",
     label: "Priors",
-    hint: "Desk controls prior to / without lattice",
+    hint: "Full-app — 111 prior · 32 weak",
     hasTree: true,
   },
   {

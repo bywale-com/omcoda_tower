@@ -3,11 +3,14 @@ import type { Tokens } from "../../components/tokens";
 import { RegisterTheoryPanel, registerFieldLabelStyle } from "../components/theory/RegisterTheoryPanel";
 import { useRegisterSelection } from "../context/RegisterSelectionContext";
 import {
+  ALL_PRIOR_ENTRIES,
+  ALL_WEAK_ENTRIES,
   PRIOR_ZONES,
-  countPriorsByMark,
+  WEAK_ZONES,
   getPriorEntry,
-  getPriorsForModule,
-  type PriorMark,
+  getPriorsForZone,
+  getWeakEntry,
+  getWeaksForZone,
 } from "../theory/priors";
 
 function Field({ label, children, t }: { label: string; children: ReactNode; t: Tokens }) {
@@ -19,49 +22,100 @@ function Field({ label, children, t }: { label: string; children: ReactNode; t: 
   );
 }
 
-function MarkPill({ mark, t }: { mark: PriorMark; t: Tokens }) {
-  const tone =
-    mark === "prior"
-      ? { bg: "rgba(180, 83, 9, 0.12)", fg: "#b45309", border: "rgba(180, 83, 9, 0.35)" }
-      : mark === "weak"
-        ? { bg: "rgba(37, 99, 235, 0.1)", fg: "#2563eb", border: "rgba(37, 99, 235, 0.3)" }
-        : { bg: "rgba(22, 163, 74, 0.1)", fg: "#16a34a", border: "rgba(22, 163, 74, 0.3)" };
-  return (
-    <code
-      style={{
-        fontSize: 11,
-        color: tone.fg,
-        background: tone.bg,
-        border: `1px solid ${tone.border}`,
-        borderRadius: 999,
-        padding: "2px 8px",
-      }}
-    >
-      {mark}
-    </code>
-  );
-}
-
 export function PriorsPane({ t }: { t: Tokens }) {
-  const { selectedPriorModuleId, selectedPriorItemId } = useRegisterSelection();
+  const { selectedDeskLatticeKind, selectedPriorZoneId, selectedPriorItemId } = useRegisterSelection();
+
+  if (selectedDeskLatticeKind === "weak") {
+    const item = selectedPriorItemId ? getWeakEntry(selectedPriorItemId) : null;
+    const zone = WEAK_ZONES.find((z) => z.id === selectedPriorZoneId);
+
+    if (item) {
+      return (
+        <RegisterTheoryPanel title={`${item.id} — ${item.title}`} t={t}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <Field label="Class" t={t}>
+              Weak — lattice foothold present; control itself unnamed
+            </Field>
+            <Field label="Zone" t={t}>
+              {item.zone}
+            </Field>
+            <Field label="Where" t={t}>
+              {item.where}
+            </Field>
+            <Field label="Kind" t={t}>
+              {item.kind}
+            </Field>
+            <Field label="Lattice foothold" t={t}>
+              {item.latticeFoothold}
+            </Field>
+            <Field label="Notes" t={t}>
+              {item.notes || "—"}
+            </Field>
+            <Field label="Purposes" t={t}>
+              Empty — purpose pass later (entry = control).
+            </Field>
+          </div>
+        </RegisterTheoryPanel>
+      );
+    }
+
+    if (zone) {
+      const items = getWeaksForZone(zone.id);
+      return (
+        <RegisterTheoryPanel title={`Weak — ${zone.label}`} t={t}>
+          <p style={{ margin: "0 0 10px", fontSize: 13, color: t.textMuted, lineHeight: 1.5 }}>
+            {items.length} weak controls — nearby lattice foothold, control unnamed. Select an item in the
+            left tree.
+          </p>
+          <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: t.textMuted, lineHeight: 1.55 }}>
+            {items.map((entry) => (
+              <li key={entry.id}>
+                <code style={{ fontSize: 12 }}>{entry.id}</code> — {entry.title}
+              </li>
+            ))}
+          </ul>
+        </RegisterTheoryPanel>
+      );
+    }
+
+    return (
+      <RegisterTheoryPanel title="Weak — lattice foothold, control unnamed" t={t}>
+        <p style={{ margin: "0 0 10px", fontSize: 13, color: t.textMuted, lineHeight: 1.5 }}>
+          Interactive CT controls where How / SME / Enrichment / Furnish names a parent surface or nearby
+          path, but not this control. Not invisible — incomplete.
+        </p>
+        <p style={{ margin: "0 0 12px", fontSize: 13, color: t.textMuted, lineHeight: 1.5 }}>
+          Total: {ALL_WEAK_ENTRIES.length} weak.
+        </p>
+        <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: t.textMuted, lineHeight: 1.55 }}>
+          {WEAK_ZONES.map((z) => (
+            <li key={z.id}>
+              {z.label}: {z.count}
+            </li>
+          ))}
+        </ul>
+      </RegisterTheoryPanel>
+    );
+  }
+
   const item = selectedPriorItemId ? getPriorEntry(selectedPriorItemId) : null;
-  const zone = PRIOR_ZONES.find((z) => z.id === selectedPriorModuleId);
+  const zone = PRIOR_ZONES.find((z) => z.id === selectedPriorZoneId);
 
   if (item) {
     return (
       <RegisterTheoryPanel title={`${item.id} — ${item.title}`} t={t}>
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          <Field label="Mark" t={t}>
-            <MarkPill mark={item.mark} t={t} />
+          <Field label="Class" t={t}>
+            Prior — no lattice / click-path statement
+          </Field>
+          <Field label="Zone" t={t}>
+            {item.zone}
           </Field>
           <Field label="Where" t={t}>
             {item.where}
           </Field>
           <Field label="Kind" t={t}>
             {item.kind}
-          </Field>
-          <Field label="Lattice hint" t={t}>
-            {item.latticeHint || "—"}
           </Field>
           <Field label="Notes" t={t}>
             {item.notes || "—"}
@@ -75,20 +129,16 @@ export function PriorsPane({ t }: { t: Tokens }) {
   }
 
   if (zone) {
-    const items = getPriorsForModule(zone.id);
-    const priorCount = items.filter((i) => i.mark === "prior").length;
-    const weakCount = items.filter((i) => i.mark === "weak").length;
-    const latticedCount = items.filter((i) => i.mark === "latticed").length;
+    const items = getPriorsForZone(zone.id);
     return (
       <RegisterTheoryPanel title={`Priors — ${zone.label}`} t={t}>
         <p style={{ margin: "0 0 10px", fontSize: 13, color: t.textMuted, lineHeight: 1.5 }}>
-          {items.length} controls censused · {priorCount} prior · {weakCount} weak · {latticedCount}{" "}
-          latticed. Select an item in the left tree.
+          {items.length} priors in this zone (no lattice / click-path statement). Select an item in the left
+          tree.
         </p>
         <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: t.textMuted, lineHeight: 1.55 }}>
           {items.map((entry) => (
             <li key={entry.id}>
-              <MarkPill mark={entry.mark} t={t} />{" "}
               <code style={{ fontSize: 12 }}>{entry.id}</code> — {entry.title}
             </li>
           ))}
@@ -97,31 +147,22 @@ export function PriorsPane({ t }: { t: Tokens }) {
     );
   }
 
-  const priorTotal = countPriorsByMark("prior");
-  const weakTotal = countPriorsByMark("weak");
-  const latticedTotal = countPriorsByMark("latticed");
-
   return (
-    <RegisterTheoryPanel title="Priors — desk→lattice census" t={t}>
+    <RegisterTheoryPanel title="Priors & Weak — desk→lattice" t={t}>
       <p style={{ margin: "0 0 10px", fontSize: 13, color: t.textMuted, lineHeight: 1.5 }}>
-        Interactive CT controls classified against the lattice (How / SME / Enrichment / Furnish). Entry =
-        control; purposes empty until the purpose pass. Own Register class — not a How/SME/Can't/Furnish
-        retrofit.
+        Full CT inventory of controls that are not fully latticed. <strong>Prior</strong> = no foothold.{" "}
+        <strong>Weak</strong> = foothold nearby, control itself unnamed.
       </p>
       <p style={{ margin: "0 0 12px", fontSize: 13, color: t.textMuted, lineHeight: 1.5 }}>
-        Totals: {priorTotal} prior · {weakTotal} weak · {latticedTotal} latticed (deep slices include
-        latticed for completeness; desk-zones list prior + weak only).
+        {ALL_PRIOR_ENTRIES.length} priors · {ALL_WEAK_ENTRIES.length} weak. Select a branch in the left tree.
       </p>
       <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: t.textMuted, lineHeight: 1.55 }}>
-        {PRIOR_ZONES.map((z) => {
-          const items = getPriorsForModule(z.id);
-          const p = items.filter((i) => i.mark === "prior").length;
-          return (
-            <li key={z.id}>
-              {z.label}: {p} prior / {z.count} listed
-            </li>
-          );
-        })}
+        <li>
+          Priors: {PRIOR_ZONES.map((z) => `${z.label} ${z.count}`).join(" · ")}
+        </li>
+        <li>
+          Weak: {WEAK_ZONES.map((z) => `${z.label} ${z.count}`).join(" · ")}
+        </li>
       </ul>
     </RegisterTheoryPanel>
   );

@@ -1,9 +1,11 @@
 /**
- * Register Priors — desk→lattice census entries.
- * Entry = interactive control; purposes later (empty).
+ * Register Priors / Weak — full-app inventory types.
+ * Prior = interactive control with no lattice click-path; purposes later (empty).
+ * Weak = interactive control with lattice foothold but control itself unnamed.
  */
 
-export type PriorMark = "latticed" | "weak" | "prior";
+/** Which inventory branch is selected in the Priors pass. */
+export type DeskLatticeKind = "prior" | "weak";
 
 export type PriorKind =
   | "nav"
@@ -19,39 +21,46 @@ export type PriorKind =
   | "inspect"
   | "download"
   | "zoom"
-  | "scroll";
+  | "scroll"
+  | "shell"
+  | "input";
 
-export type PriorModule =
+export type PriorZone =
+  | "Consultant"
+  | "Contact"
+  | "Global CT chrome"
   | "Automations"
   | "Agents"
   | "Audits"
-  | "Activity"
-  | "Board"
-  | "Contacts"
-  | "Meetings"
-  | "Prepared"
-  | "Login"
-  | "Contact desk"
-  | "Operator"
-  | "Global CT chrome";
+  | "Operator house";
 
 export type PriorZoneMeta = {
-  id: PriorModule;
+  id: PriorZone;
   label: string;
   count: number;
 };
 
 export type PriorEntry = {
   id: string;
-  module: PriorModule;
+  zone: PriorZone;
   title: string;
   /** Desk seat(s) — plant and/or Ant, deduped. */
   where: string;
   kind: PriorKind;
-  mark: PriorMark;
-  /** Lattice pointer when latticed/weak; empty when prior. */
-  latticeHint: string;
   notes: string;
   /** Reserved — purposes later. */
+  purposes: [];
+};
+
+/** Weak = lattice foothold present; control itself not named. */
+export type WeakEntry = {
+  id: string;
+  /** Reuse PriorZone; Contact for contact weaks; no Global CT chrome in this inventory. */
+  zone: PriorZone;
+  title: string;
+  where: string;
+  kind: PriorKind | "input";
+  latticeFoothold: string;
+  notes: string;
   purposes: [];
 };
