@@ -3,6 +3,7 @@ import { useRegisterSelection } from "../context/RegisterSelectionContext";
 import { EnrichmentPane, FurnishPane } from "../panes/EnrichmentFurnishPane";
 import { FlowsPane } from "../panes/FlowsPane";
 import { PersonasFunctionPane } from "../panes/PersonasFunctionPane";
+import { PriorsPane } from "../panes/PriorsPane";
 import { SmePane } from "../panes/SmePane";
 import { WiringPaperPane } from "../panes/WiringPaperPane";
 import {
@@ -32,6 +33,8 @@ export function RegisterTheoryCanvas({ t }: RegisterTheoryCanvasProps) {
       return <EnrichmentPane t={t} />;
     case "furnish":
       return <FurnishPane t={t} />;
+    case "priors":
+      return <PriorsPane t={t} />;
     case "flows":
       return <FlowsPane t={t} />;
     case "wiring":
