@@ -46,10 +46,23 @@ export default defineConfig({
     'import.meta.env.VITE_REGISTER_ENABLED': JSON.stringify(
       process.env.VITE_REGISTER_ENABLED ?? 'true',
     ),
+    // Default ON so production/CT uses real /api/wire when secrets exist.
+    // Set VITE_WIRE_REAL=false to force stand-ins locally.
+    'import.meta.env.VITE_WIRE_REAL': JSON.stringify(
+      process.env.VITE_WIRE_REAL ?? 'true',
+    ),
   },
   server: {
     proxy: {
       '/auth': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+      '/wire': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+      '/api/wire': {
         target: 'http://localhost:3001',
         changeOrigin: true,
       },

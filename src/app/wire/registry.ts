@@ -1,6 +1,7 @@
 /**
  * Active ports for Register CT wire pass.
- * All tagged stand-in until cutover swap.
+ * Real ports hit /wire API (Resend/Twilio/Postgres). Stand-ins used when VITE_WIRE_REAL=false
+ * or for deferred externals (Meta, escrow, enrich, warmup counters).
  */
 import type {
   AuditTrailPort,
@@ -18,6 +19,7 @@ import type {
   SendingPoolPort,
   WarmupPort,
 } from "./ports";
+import { wireRealEnabled } from "./http";
 import {
   standInAuditTrail,
   standInConsentSilence,
@@ -40,6 +42,19 @@ import {
   type ListUnsubscribePort,
   type SmsApiPort,
 } from "./standins";
+import {
+  realAuditTrail,
+  realConsentSilence,
+  realCrmOAuth,
+  realEspMailer,
+  realHaltStore,
+  realPrimaryStore,
+  realSendingPool,
+  realSmsApi,
+} from "./reals";
+import { realOtpStore } from "./reals/otpStore";
+
+const useReal = wireRealEnabled();
 
 export type WirePorts = {
   mailer: MailerPort;
@@ -62,41 +77,79 @@ export type WirePorts = {
 };
 
 export const wirePorts: WirePorts = {
-  mailer: standInMailer,
-  otpStore: standInOtpStore,
-  haltStore: standInHaltStore,
-  auditTrail: standInAuditTrail,
-  sendingPool: standInSendingPool,
+  mailer: standInMailer, // OTP uses otpStore → /auth; CEM uses espMailer
+  otpStore: useReal ? realOtpStore : standInOtpStore,
+  haltStore: useReal ? realHaltStore : standInHaltStore,
+  auditTrail: useReal ? realAuditTrail : standInAuditTrail,
+  sendingPool: useReal ? realSendingPool : standInSendingPool,
   warmup: standInWarmup,
   ipPool: standInIpPool,
   sendGate: standInSendGate,
-  espMailer: standInEspMailer,
-  consentSilence: standInConsentSilence,
-  crmOAuth: standInCrmOAuth,
+  espMailer: useReal ? realEspMailer : standInEspMailer,
+  consentSilence: useReal ? realConsentSilence : standInConsentSilence,
+  crmOAuth: useReal ? realCrmOAuth : standInCrmOAuth,
   metaAds: standInMetaAds,
   escrow: standInEscrow,
-  primaryStore: standInPrimaryStore,
+  primaryStore: useReal ? realPrimaryStore : standInPrimaryStore,
   listUnsubscribe: standInListUnsubscribe,
   enrichCrawl: standInEnrichCrawl,
-  smsApi: standInSmsApi,
+  smsApi: useReal ? realSmsApi : standInSmsApi,
 };
 
 export const STANDIN_REGISTRY = [
   { id: "mailer", tag: "stand-in" as const, module: "src/app/wire/standins/mailer.ts" },
-  { id: "otpStore", tag: "stand-in" as const, module: "src/app/wire/standins/otpStore.ts" },
-  { id: "haltStore", tag: "stand-in" as const, module: "src/app/wire/standins/haltStore.ts" },
-  { id: "auditTrail", tag: "stand-in" as const, module: "src/app/wire/standins/auditTrail.ts" },
-  { id: "sendingPool", tag: "stand-in" as const, module: "src/app/wire/standins/sendingPool.ts" },
+  {
+    id: "otpStore",
+    tag: useReal ? ("real" as const) : ("stand-in" as const),
+    module: useReal ? "src/app/wire/reals/otpStore.ts" : "src/app/wire/standins/otpStore.ts",
+  },
+  {
+    id: "haltStore",
+    tag: useReal ? ("real" as const) : ("stand-in" as const),
+    module: useReal ? "src/app/wire/reals/haltStore.ts" : "src/app/wire/standins/haltStore.ts",
+  },
+  {
+    id: "auditTrail",
+    tag: useReal ? ("real" as const) : ("stand-in" as const),
+    module: useReal ? "src/app/wire/reals/auditTrail.ts" : "src/app/wire/standins/auditTrail.ts",
+  },
+  {
+    id: "sendingPool",
+    tag: useReal ? ("real" as const) : ("stand-in" as const),
+    module: useReal ? "src/app/wire/reals/sendingPool.ts" : "src/app/wire/standins/sendingPool.ts",
+  },
   { id: "warmup", tag: "stand-in" as const, module: "src/app/wire/standins/warmup.ts" },
   { id: "ipPool", tag: "stand-in" as const, module: "src/app/wire/standins/ipPool.ts" },
   { id: "sendGate", tag: "stand-in" as const, module: "src/app/wire/standins/sendGate.ts" },
-  { id: "espMailer", tag: "stand-in" as const, module: "src/app/wire/standins/espMailer.ts" },
-  { id: "consentSilence", tag: "stand-in" as const, module: "src/app/wire/standins/consentSilence.ts" },
-  { id: "crmOAuth", tag: "stand-in" as const, module: "src/app/wire/standins/crmOAuth.ts" },
+  {
+    id: "espMailer",
+    tag: useReal ? ("real" as const) : ("stand-in" as const),
+    module: useReal ? "src/app/wire/reals/espMailer.ts" : "src/app/wire/standins/espMailer.ts",
+  },
+  {
+    id: "consentSilence",
+    tag: useReal ? ("real" as const) : ("stand-in" as const),
+    module: useReal
+      ? "src/app/wire/reals/consentSilence.ts"
+      : "src/app/wire/standins/consentSilence.ts",
+  },
+  {
+    id: "crmOAuth",
+    tag: useReal ? ("real" as const) : ("stand-in" as const),
+    module: useReal ? "src/app/wire/reals/crmOAuth.ts" : "src/app/wire/standins/crmOAuth.ts",
+  },
   { id: "metaAds", tag: "stand-in" as const, module: "src/app/wire/standins/metaAds.ts" },
   { id: "escrow", tag: "stand-in" as const, module: "src/app/wire/standins/escrow.ts" },
-  { id: "primaryStore", tag: "stand-in" as const, module: "src/app/wire/standins/primaryStore.ts" },
+  {
+    id: "primaryStore",
+    tag: useReal ? ("real" as const) : ("stand-in" as const),
+    module: useReal ? "src/app/wire/reals/primaryStore.ts" : "src/app/wire/standins/primaryStore.ts",
+  },
   { id: "listUnsubscribe", tag: "stand-in" as const, module: "src/app/wire/standins/listUnsubscribe.ts" },
   { id: "enrichCrawl", tag: "stand-in" as const, module: "src/app/wire/standins/enrichCrawl.ts" },
-  { id: "smsApi", tag: "stand-in" as const, module: "src/app/wire/standins/smsApi.ts" },
+  {
+    id: "smsApi",
+    tag: useReal ? ("real" as const) : ("stand-in" as const),
+    module: useReal ? "src/app/wire/reals/smsApi.ts" : "src/app/wire/standins/smsApi.ts",
+  },
 ];

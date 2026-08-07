@@ -71,3 +71,5 @@ export {
   type MarkFixtureInput,
 } from "./fixtures/store";
 export { useWireTick } from "./useWireTick";
+export { wireRealEnabled } from "./http";
+export { bootstrapRealAccountFixtures } from "./reals/bootstrapFixtures";

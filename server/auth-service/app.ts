@@ -13,6 +13,7 @@ import {
   handleRegisterStatus,
   handleRegisterUnlock,
 } from "./registerRoutes.ts";
+import { createWireRoutes } from "../wire-service/routes.ts";
 
 function mountAuthRoutes(base: Hono): void {
   base.get("/health", (c) => c.json({ ok: true, service: "tower-auth" }));
@@ -40,6 +41,11 @@ export function createAuthApp(): Hono {
   app.route("/auth", authRoutes);
   // Vercel rewrite target: /api/auth/*
   app.route("/api/auth", authRoutes);
+
+  // Wire cutover routes on same local process (Vercel also has api/wire)
+  const wireRoutes = createWireRoutes();
+  app.route("/wire", wireRoutes);
+  app.route("/api/wire", wireRoutes);
 
   // Local dev health without /auth prefix
   app.get("/health", (c) => c.json({ ok: true, service: "tower-auth" }));
