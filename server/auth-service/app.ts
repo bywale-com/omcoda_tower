@@ -13,7 +13,6 @@ import {
   handleRegisterStatus,
   handleRegisterUnlock,
 } from "./registerRoutes.ts";
-import { createWireRoutes } from "../wire-service/routes.ts";
 
 function mountAuthRoutes(base: Hono): void {
   base.get("/health", (c) => c.json({ ok: true, service: "tower-auth" }));
@@ -42,10 +41,8 @@ export function createAuthApp(): Hono {
   // Vercel rewrite target: /api/auth/*
   app.route("/api/auth", authRoutes);
 
-  // Wire cutover routes on same local process (Vercel also has api/wire)
-  const wireRoutes = createWireRoutes();
-  app.route("/wire", wireRoutes);
-  app.route("/api/wire", wireRoutes);
+  // Wire stays on api/wire only — do not mount here (Twilio bundle crashed
+  // the auth serverless function on Vercel cold start).
 
   // Local dev health without /auth prefix
   app.get("/health", (c) => c.json({ ok: true, service: "tower-auth" }));
