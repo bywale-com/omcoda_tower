@@ -34,10 +34,19 @@ A **fixture** is a named marker that a human performed the real act. The in-app 
 
 Per-firm **sending-identity onboarding** is **one** sequenced runbook (not eight independent chores). CT and Activation readiness treat the cluster as a single onboarding job.
 
+**Dual path (PM wall reconciliation — [`05-SENDING-IDENTITY-WALL.md`](./05-SENDING-IDENTITY-WALL.md)):**
+
+| Path | Who publishes DNS auth | Firm external act | Doctrine |
+|---|---|---|---|
+| **Pool (default)** | Om Coda / platform ops on house-managed zone (per-firm branded subdomain) | **Zero firm DNS** | C1 `deliv-04` / `deliv-19` |
+| **Custom-domain (upgrade)** | Firm (or DNS delegate) on firm zone | Paste / delegate / click-fallback | C1 `custom-domain-attach` |
+
+Fixtures are required on **both** paths — someone must really publish. Pool path does not invent green chips; it changes *who* supplies the fixture (platform vs firm).
+
 ### Sequence
 
-1. **DNS auth** — SPF → DKIM → DMARC  
-2. **Return-path / PTR** — bounce MAIL FROM + dedicated-IP rDNS  
+1. **DNS auth** — SPF → DKIM → DMARC (pool zone *or* firm zone, depending on path)  
+2. **Return-path / PTR** — bounce MAIL FROM + dedicated-IP rDNS (Return-Path is platform-controlled on both paths — C1 `deliv-20`)  
 3. **Reputation enrollment** — Postmaster / FBL (and SNDS-class peers)  
 4. **Registration / verification** — TCR (A2P) · Meta Business / Page verification  
 
@@ -45,10 +54,10 @@ Per-firm **sending-identity onboarding** is **one** sequenced runbook (not eight
 
 | Step | id | fixture | Notes |
 |---|---|---|---|
-| 1a | `ext-dns-spf` | `dns_spf_published` | Firm-zone SPF TXT |
+| 1a | `ext-dns-spf` | `dns_spf_published` | SPF TXT on active From domain (pool or firm zone) |
 | 1b | `ext-dns-dkim` | `dns_dkim_published` | Aligned DKIM selectors |
 | 1c | `ext-dns-dmarc` | `dns_dmarc_published` | `_dmarc` policy + rua |
-| 2a | `ext-dns-return-path` | `dns_return_path_published` | Bounce subdomain / MAIL FROM |
+| 2a | `ext-dns-return-path` | `dns_return_path_published` | Bounce subdomain / MAIL FROM (platform zone) |
 | 2b | `ext-dns-ptr-rdns` | `dns_ptr_published` | Dedicated-IP PTR at host |
 | 3 | `ext-postmaster-fbl` | `postmaster_enrolled` | Human enrolls; feed samples modelable after fixture |
 | 4a | `ext-tcr-a2p` | `tcr_filed` | Brand/campaign/carrier filing |
@@ -56,7 +65,7 @@ Per-firm **sending-identity onboarding** is **one** sequenced runbook (not eight
 
 **Adjacent rollup (01):** `sending-identity-dns` — in-app readiness flag `sending_identity_ready` consumed by `send-gate-plane`. That flag is a **composite** of the DNS fixtures (`dns_spf_published` ∧ `dns_dkim_published` ∧ `dns_dmarc_published` ∧ `dns_return_path_published`; `dns_ptr_published` when dedicated IP). Warmup calendar-time remains human residue on the modelable warmup plane — not a separate human-only row here.
 
-**Rule:** Tower never writes firm-zone DNS. CT may fixture green/red chips only via the named fixtures above.
+**Rule:** Tower never invents DNS publishes. On the custom-domain path it never writes firm-zone DNS without a delegated grant. CT may fixture green/red chips only via the named fixtures above (platform-supplied on pool path; firm-supplied on custom-domain path).
 
 ---
 

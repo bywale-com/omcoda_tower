@@ -18,6 +18,8 @@ Using the **Think Stack**, determine how every densified implementation / How le
 
 **Hand-back framing (does not contradict Pass A):** [`HUMAN-ONLY.md`](./HUMAN-ONLY.md) — full human-only table, fixture catalog, and the per-firm **sending-identity onboarding runbook** (DNS auth → return-path/PTR → Postmaster/FBL → TCR / Meta Business).
 
+**Sending-identity wall:** [`05-SENDING-IDENTITY-WALL.md`](./05-SENDING-IDENTITY-WALL.md) — where the fake app breaks; PM reconcile of house-managed pool (our-domain default) vs firm-zone custom-domain upgrade (C1 `deliv-04` / `deliv-19`).
+
 ## Inputs
 
 - Think Stack facets: [`../CTO-THINK-STACK.md`](../CTO-THINK-STACK.md)
