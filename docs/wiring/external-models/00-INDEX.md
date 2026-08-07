@@ -5,6 +5,7 @@
 **Human-only framing (hand-back §1–§3):** [`HUMAN-ONLY.md`](./HUMAN-ONLY.md) — `humanKind` · `fixture` · sending-identity runbook  
 **Control reconciliation (hand-back §4):** [`04-CONTROL-RECONCILIATION.md`](./04-CONTROL-RECONCILIATION.md) — promised chips/denies vs lattice · priors · weak · CT  
 **Sending-identity wall (status + PM):** [`05-SENDING-IDENTITY-WALL.md`](./05-SENDING-IDENTITY-WALL.md) — where the fake app breaks; our-domain / pool default vs firm-zone upgrade  
+**SMS Canada gate:** [`06-SMS-CANADA-GATE.md`](./06-SMS-CANADA-GATE.md) — `tcr_filed` N/A; gate on CA number + CASL consent  
 **Method:** CTO Think Stack against densified implementations / How / CT / paper traces. Densify stops at the app; this pass derives externals from **accomplishment**.
 
 **Downstream (Pass B):** build modelable stand-ins → wire CT ([`../STANDIN-WIRING.md`](../STANDIN-WIRING.md) — includes **fixture honesty**).
@@ -37,6 +38,7 @@
 | [`HUMAN-ONLY.md`](./HUMAN-ONLY.md) | All human-only rows: fixture · humanKind · sending-identity runbook | 15 |
 | [`04-CONTROL-RECONCILIATION.md`](./04-CONTROL-RECONCILIATION.md) | In-app contract states vs How/SME/Furnish · priors · weak · CT | 63 rows · 3 gaps |
 | [`05-SENDING-IDENTITY-WALL.md`](./05-SENDING-IDENTITY-WALL.md) | Fake-app break point; wall collapse; our-domain PM reconcile vs C1 | status + doctrine |
+| [`06-SMS-CANADA-GATE.md`](./06-SMS-CANADA-GATE.md) | SMS gate: CA number + CASL; `tcr_filed` N/A (US-only) | PM correction |
 
 Each row: `id` · system · facet · why · sources · `modelTag` · `modelContract`. Human-only rows also carry `humanKind` + `fixture` (annotations in zone files; canonical table in `HUMAN-ONLY.md`).
 

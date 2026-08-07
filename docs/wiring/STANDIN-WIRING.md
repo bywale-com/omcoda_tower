@@ -34,7 +34,7 @@ Control reconciliation: [`external-models/04-CONTROL-RECONCILIATION.md`](./exter
 |---|---|
 | Fixture required | Every `human-only` external has a named `fixture` (see `HUMAN-ONLY.md`) |
 | Fail closed | Readiness / Armed / Active / CEM leave stay denied until the fixture is marked human-provided |
-| No inventing the act | Stand-ins must not invent real TCR approval, Meta verification, firm-zone DNS publish, OAuth grant, or counsel clearance |
+| No inventing the act | Stand-ins must not invent real Meta verification, firm-zone DNS publish, OAuth grant, counsel clearance, or Canadian SMS number provision — and must not invent US TCR for a CA path (`tcr_filed` is N/A; see [`external-models/06-SMS-CANADA-GATE.md`](./external-models/06-SMS-CANADA-GATE.md)) |
 | Downstream OK | After fixture is set, stand-ins may emit feed samples, gate chips, webhook-shaped events, etc. |
 
 `humanKind`:
@@ -64,7 +64,7 @@ One densified implementation at a time (event/state; critical interactions only)
 |---|---|
 | **Port** | Interface the app calls (mailer, otpStore, haltStore, …) |
 | **Stand-in** | Fake implementation of a port that runs in-app |
-| **Fixture** | Named marker that a human performed a real act (`dns_spf_published`, `tcr_filed`, …) |
+| **Fixture** | Named marker that a human performed a real act (`dns_spf_published`, `ca_sms_number_provisioned`, …) |
 | **Real** | Later swap target (Resend, Postgres, …) — out of scope until cutover |
 
 Tag stand-ins `stand-in` in the registry. Never pretend a stand-in is the production provider.

@@ -14,6 +14,8 @@ export type FixtureId =
   | "sending_identity_ready"
   | "postmaster_enrolled"
   | "tcr_filed"
+  /** Canadian SMS path — provisioned CA sending number (replaces US TCR gate). */
+  | "ca_sms_number_provisioned"
   | "meta_business_verified"
   | "oauth_granted"
   | "halt_confirmed"
@@ -85,7 +87,16 @@ export const FIXTURE_CATALOG: Record<FixtureId, FixtureMeta> = {
     id: "tcr_filed",
     kind: "by-provisioning",
     provider: "founder",
-    label: "TCR / A2P filed",
+    label: "TCR / A2P filed (N/A — Canadian path)",
+    notes:
+      "US-only A2P 10DLC. Tower SMS is Canadian firms → Canadian numbers — do not gate CA send on this fixture.",
+  },
+  ca_sms_number_provisioned: {
+    id: "ca_sms_number_provisioned",
+    kind: "by-provisioning",
+    provider: "founder",
+    label: "Canadian SMS sending number provisioned",
+    notes: "Replaces tcr_filed for the Canadian SMS path. CASL consent is a separate send-gate check.",
   },
   meta_business_verified: {
     id: "meta_business_verified",
@@ -163,10 +174,11 @@ export const POOL_DNS_FIXTURES: FixtureId[] = [
 export const FOUNDER_INPUT_FIXTURES: FixtureId[] = [
   "esp_account_provisioned",
   "sms_account_provisioned",
+  "ca_sms_number_provisioned",
   "meta_ad_account_linked",
   "dns_ptr_published",
   "postmaster_enrolled",
-  "tcr_filed",
+  // tcr_filed intentionally omitted — N/A for Canadian path
   "meta_business_verified",
   "payment_identity_provisioned",
   "ad_export_authorized",

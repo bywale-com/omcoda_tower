@@ -22,7 +22,7 @@ Of 67 external touchpoints in Pass A: **47 modelable · 15 human-only · 5 defer
 only things a stand-in cannot fake. They split three ways:
 
 - **Human-by-provisioning (8 in the sending/ads cluster; 10 total incl. money)** — real-world setup acts, one-time per firm:
-  SPF · DKIM · DMARC · return-path DNS · PTR/rDNS · Postmaster/FBL enrollment · TCR (SMS) · Meta Business verification
+  SPF · DKIM · DMARC · return-path DNS · PTR/rDNS · Postmaster/FBL enrollment · Canadian SMS number (not US TCR) · Meta Business verification
   *(plus payment identity outside this wall).*
 - **Human-by-design (3 named in the wall framing; 5 total in Pass A)** — meant to stay human, not a gap:
   consultant halt/refusal (licensed decision) · counsel authoring CASL/silence policy · firm admin CRM OAuth grant
@@ -143,7 +143,7 @@ Relative to §5’s firm-zone framing:
 |---|---|
 | **Pool (default)** | **Zero firm DNS.** Auth fixtures are satisfied by **platform ops** on the house zone (still real publishes — not inventable by a stand-in without a fixture — but not a firm paste). Composite `sending_identity_ready` still fail-closed until those publishes + warmup posture exist. |
 | **Custom-domain (upgrade)** | One firm input: DNS records on the firm’s domain (as in §5). |
-| **Still human / later (either path)** | SMS **TCR** (if SMS armed); Postmaster/FBL enrollment as reputation depth; Meta Business (**deferred**). Halt/counsel/OAuth remain by-design elsewhere. |
+| **Still human / later (either path)** | SMS **Canadian number** (if SMS armed — not US TCR; see [`06-SMS-CANADA-GATE.md`](./06-SMS-CANADA-GATE.md)); Postmaster/FBL; Meta Business (**deferred**). Halt/counsel/OAuth remain by-design elsewhere. |
 
 **Automated-activation ideal:** default-then-upgrade → last email-DNS wall for the firm goes from "one input" to **"zero"** on the pool path. That is the intended landing of the earlier our-domain idea — and it holds.
 
@@ -158,4 +158,4 @@ Pass A rows `ext-dns-spf` / `dkim` / `dmarc` / `return-path` remain `human-only`
 1. **Sending infrastructure** allocates pool subdomain per firm; Activation ready-to-send reads pool-path fixtures first.  
 2. **Custom-domain attach** is an optional later control on the same module — not a V1 activation blocker.  
 3. Stand-ins: pool-path fixtures may be marked by **operator/platform** provisioning in test; never by silent auto-pass.  
-4. Meta remain deferred; SMS TCR remains a separate arming wall when SMS is in scope.
+4. Meta remain deferred; Canadian SMS number (+ CASL consent) remains a separate arming wall when SMS is in scope — not TCR.
