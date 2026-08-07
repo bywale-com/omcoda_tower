@@ -230,9 +230,10 @@ Bounces may be logged as metrics only. Sequences keep hitting dead addresses; ha
 
 **implementation:**  
 On Suppression list, view address rows with scope chips (global and/or per-tenancy per policy) and reason hard-bounce from provider-webhook ingest.  
-On Firm operations bind firm detail → Send gates panel, view suppressed hard-bounce deny chips; on Firm health Sequence detail, view soft-bounce retry rows with bounded attempts.
+On Firm operations bind firm detail → Send gates panel, view suppressed hard-bounce deny chips; on Firm health Sequence detail, view soft-bounce retry rows with bounded attempts.  
+ESP `policy` reject (provider-side content/compliance deny, distinct from bounce/throttle) surfaces on the same Send gates panel as the `policy` reason chip — "ESP policy reject" — blocking send until the firm clears the provider policy hold.
 
-**implementationAdds:** `["bounce-hard", "bounce-soft", "hard-suppress", "soft-retry-bound"]`
+**implementationAdds:** `["bounce-hard", "bounce-soft", "hard-suppress", "soft-retry-bound", "esp-policy-deny"]`
 
 ---
 
@@ -519,9 +520,10 @@ Provider 4xx deferrals trigger naive immediate retries. Retry storms worsen bloc
 
 **implementation:**  
 On Sending infrastructure, view the Provider throttles panel per-provider rows driven by deferral/reject signals.  
-On Firm operations bind firm detail → Send gates panel and Firm health Sequence detail, view adaptive-backoff status chips pausing enrollment/send when ISPs defer — calendar due does not override throttle.
+On Firm operations bind firm detail → Send gates panel and Firm health Sequence detail, view adaptive-backoff status chips pausing enrollment/send when ISPs defer — calendar due does not override throttle.  
+Provider `policy` rejects (as opposed to rate/reputation throttle) route to the same Send gates `policy` deny chip — "ESP policy reject" — so throttle backoff and policy hold are visibly distinct reasons, not conflated into one generic failure.
 
-**implementationAdds:** `["adaptive-throttle", "per-provider-backoff", "deferral-signal"]`
+**implementationAdds:** `["adaptive-throttle", "per-provider-backoff", "deferral-signal", "esp-policy-deny"]`
 
 ---
 
