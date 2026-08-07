@@ -71,9 +71,13 @@ Tag stand-ins `stand-in` in the registry. Never pretend a stand-in is the produc
 
 ---
 
-## First wire slice (done)
+## Wire slices (done)
 
 1. **Login OTP** — stand-in mailer + OTP store  
 2. **Halt outreach** — stand-in halt/silence store + audit append (Confirm halt is `by-design`; fixture `halt_confirmed` after human Confirm)
+3. **Pool-send path** — `sendingPool` · `warmup` · `ipPool` · `sendGate` · `espMailer` · fixture plane (platform DNS explicit; founder ESP advisory) — see [`wire-log/POOL-SEND-GATES.md`](./wire-log/POOL-SEND-GATES.md) · wall doctrine [`external-models/05-SENDING-IDENTITY-WALL.md`](./external-models/05-SENDING-IDENTITY-WALL.md)
+4. **CRM OAuth + Meta chips + Activation** — grant/revoke · review/delivery chips · fail-closed Progress — [`wire-log/CRM-OAUTH-META-CHIPS.md`](./wire-log/CRM-OAUTH-META-CHIPS.md)
 
-Further builds follow Pass A `modelable` contracts + fixture honesty.
+**Founder real-account edge:** [`FOUNDER-INPUT-CHECKLIST.md`](./FOUNDER-INPUT-CHECKLIST.md)
+
+Further builds follow Pass A `modelable` contracts + fixture honesty. Deferred: custom-domain, Meta ads go-live, CRM continuous sync.

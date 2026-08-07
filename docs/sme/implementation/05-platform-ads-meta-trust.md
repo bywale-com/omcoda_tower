@@ -276,8 +276,9 @@ Mild review destination + hard-sell live destination is cloaking — instant pol
 **implementation:**
 On Approach campaigns, turn on Destination freeze toggle for the Campaign row; it pins the Capture strip selector and Claim dictionary version field across Meta review and delivery phases.
 After approval, Capture strip selector and Claim dictionary version field become read-only in-app, blocking post-approval bait swaps before Operator would like to resume delivery in Meta.
+Name the phases themselves as status chips — Campaign review state (draft/in_review/approved/rejected) and Campaign delivery state (not_started/scheduled/active/paused/ended) — so Destination freeze has explicit states to pin across, not just an implicit before/after.
 
-**implementationAdds:** ["destination-freeze", "bait-swap"]
+**implementationAdds:** ["destination-freeze", "bait-swap", "review-state-chip", "delivery-state-chip"]
 
 ---
 

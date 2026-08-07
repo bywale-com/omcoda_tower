@@ -24,6 +24,7 @@ import { OversightModule } from "./OversightModule";
 import { ProvisionModule } from "./ProvisionModule";
 import { ReferenceDataModule } from "./ReferenceDataModule";
 import { RegisterEvolutionModule } from "./RegisterEvolutionModule";
+import { SendingInfrastructureModule } from "./SendingInfrastructureModule";
 import { type ConfigLibSub } from "./operatorConfigLibraries";
 
 const { Sider, Content } = Layout;
@@ -69,6 +70,9 @@ export function OperatorAntScene() {
       break;
     case "Configuration libraries":
       main = <ConfigurationLibrariesModule sub={configSub} onSubChange={setConfigSub} />;
+      break;
+    case "Sending infrastructure":
+      main = <SendingInfrastructureModule />;
       break;
     case "Oversight":
       main = <OversightModule />;

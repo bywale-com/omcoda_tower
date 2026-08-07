@@ -48,9 +48,12 @@ Each row: `id` · system · facet · why · sources · `modelTag` · `modelContr
 | `haltStore` | Halt/suppression in-app side |
 | `auditTrail` | Audit log store |
 
-## Next (Pass B — not this pass)
+## Pass B (in progress — pool-send slice)
 
-1. Prioritize modelable systems needed by CT-critical paths (runtime, ESP events, durable store, escrow rail, enrich crawl, …).  
-2. Hand-build stand-ins with the filed `modelContract`.  
-3. Wire CT against those models.  
-4. Leave human-only as readiness chips / gates until real world is ready — green only when the named **fixture** is human-provided (`HUMAN-ONLY.md`).
+Stand-ins + CT wiring live under `src/app/wire/` · [`../wire-log/00-INDEX.md`](../wire-log/00-INDEX.md) · founder edge [`../FOUNDER-INPUT-CHECKLIST.md`](../FOUNDER-INPUT-CHECKLIST.md).
+
+1. ~~Prioritize modelable systems for CT-critical paths~~ — pool-send, gates, ESP sink, OAuth, Meta chips, escrow, enrich/SMS stubs.  
+2. ~~Hand-build stand-ins with filed `modelContract`~~ — registry in `src/app/wire/registry.ts`.  
+3. ~~Wire CT against those models~~ — Sending infrastructure · Send gates · Prepared · Acquisition · Activation.  
+4. Human-only / founder-input stay fixture-gated — never auto-green (`HUMAN-ONLY.md`).  
+5. **Still deferred:** custom-domain attach · Meta ads go-live · CRM continuous sync (KU #7).

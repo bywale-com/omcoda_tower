@@ -31,6 +31,7 @@ import {
   ReferenceDataModule,
   RegisterEvolutionModule,
   resolveConfigLibSub,
+  SendingInfrastructureModule,
   type ConfigLibSub,
 } from "./operator";
 
@@ -88,6 +89,9 @@ export function OperatorPrototypeScene({
           onSubChange={setConfigSub}
         />
       );
+      break;
+    case "Sending infrastructure":
+      main = <SendingInfrastructureModule {...shared} />;
       break;
     case "Oversight":
       main = <OversightModule {...shared} />;

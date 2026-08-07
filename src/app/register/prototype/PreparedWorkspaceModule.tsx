@@ -4,6 +4,7 @@
  */
 import { useEffect, useState, type ReactNode } from "react";
 import type { Tokens } from "../../components/tokens";
+import { CT_DEMO, useWireTick, wirePorts, type CrmGrantState } from "../../wire";
 import {
   LeafSurface,
   primaryControlStyle,
@@ -147,17 +148,53 @@ export function PreparedWorkspaceModule({
   onHardInputChange,
 }: PreparedWorkspaceModuleProps) {
   const [modal, setModal] = useState<ModalKind>(null);
-  const [bookAuthorized, setBookAuthorized] = useState(false);
+  const [grant, setGrant] = useState<CrmGrantState | null>(null);
+  const [grantPending, setGrantPending] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [connectPath, setConnectPath] = useState<ConnectPath>("file");
   const [licenseExpanded, setLicenseExpanded] = useState(true);
   const [licensee, setLicensee] = useState(LICENSEES[0]);
   const [ackChecked, setAckChecked] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
+  const wireTick = useWireTick();
+
+  // Fail closed — book is authorized only while the CRM grant is live and not revoked.
+  const bookAuthorized = Boolean(grant?.granted && !grant?.revoked);
+
+  useEffect(() => {
+    let cancelled = false;
+    void wirePorts.crmOAuth.get(CT_DEMO.firmId).then((g) => {
+      if (!cancelled) setGrant(g);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [wireTick]);
 
   useEffect(() => {
     onHardInputChange?.({ bookAuthorized, termsAccepted, licensee });
   }, [bookAuthorized, termsAccepted, licensee, onHardInputChange]);
+
+  async function authorizeBook() {
+    setGrantPending(true);
+    try {
+      const next = await wirePorts.crmOAuth.grant(CT_DEMO.firmId);
+      setGrant(next);
+      setModal(null);
+    } finally {
+      setGrantPending(false);
+    }
+  }
+
+  async function revokeGrant() {
+    setGrantPending(true);
+    try {
+      const next = await wirePorts.crmOAuth.revoke(CT_DEMO.firmId);
+      setGrant(next);
+    } finally {
+      setGrantPending(false);
+    }
+  }
 
   useEffect(() => {
     if (forceAcceptOpen) setModal("accept");
@@ -186,7 +223,7 @@ export function PreparedWorkspaceModule({
     { label: "Readiness walkthrough", state: "Presented", ready: true, clickable: false as const },
     {
       label: "Authorize book",
-      state: bookAuthorized ? "Landed ✓" : "Pending",
+      state: grant?.revoked ? "Revoked" : bookAuthorized ? "Landed ✓" : "Pending",
       ready: bookAuthorized,
       clickable: "authorize" as const,
     },
@@ -358,7 +395,45 @@ export function PreparedWorkspaceModule({
             <span style={{ fontSize: 11, color: t.textMuted }}>
               Grant CRM, upload, or confirm assisted import — then Authorize.
             </span>
+            {grant ? (
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  marginTop: 2,
+                  fontSize: 10,
+                  fontWeight: 700,
+                  letterSpacing: "0.04em",
+                  textTransform: "uppercase",
+                  color: bookAuthorized ? t.accent : t.red,
+                  background: bookAuthorized ? t.accentBg : "rgba(239, 68, 68, 0.14)",
+                  padding: "2px 6px",
+                  borderRadius: 3,
+                }}
+              >
+                {bookAuthorized ? "granted" : "revoked"}
+              </span>
+            ) : null}
           </button>
+
+          {grant?.granted && !grant?.revoked ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                void revokeGrant();
+              }}
+              disabled={grantPending}
+              style={{
+                ...secondaryControlStyle(t),
+                alignSelf: "flex-start",
+                opacity: grantPending ? 0.6 : 1,
+              }}
+            >
+              Revoke grant
+            </button>
+          ) : null}
 
           <button
             type="button"
@@ -393,13 +468,11 @@ export function PreparedWorkspaceModule({
               >
                 <button
                   type="button"
-                  onClick={() => {
-                    setBookAuthorized(true);
-                    setModal(null);
-                  }}
-                  style={primaryControlStyle(t)}
+                  disabled={grantPending}
+                  onClick={() => void authorizeBook()}
+                  style={primaryControlStyle(t, grantPending)}
                 >
-                  Authorize
+                  {grantPending ? "Authorizing…" : "Authorize"}
                 </button>
               </LeafSurface>
             </>
@@ -407,7 +480,8 @@ export function PreparedWorkspaceModule({
         >
           <p style={{ margin: "0 0 12px", fontSize: 13, lineHeight: 1.55, color: t.textPrimary }}>
             Connect the private book Tower will mutate. Pick a path, then Authorize writes handover
-            state for Book readiness and Activation state.
+            state for Book readiness and Activation state — grants{" "}
+            <code>wirePorts.crmOAuth.grant(firmId)</code>.
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {[

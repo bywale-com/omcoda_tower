@@ -14,6 +14,7 @@ import {
   message,
 } from "antd";
 import { Hint, ModulePage, Surface } from "../chrome";
+import { CT_DEMO, useWireTick, wirePorts, type CrmGrantState } from "../../../wire";
 import { LICENSEES } from "./shared";
 
 const { Text, Paragraph } = Typography;
@@ -35,11 +36,26 @@ export function PreparedModule({
   onHardInputChange,
 }: PreparedModuleProps) {
   const [modal, setModal] = useState<ModalKind>(null);
-  const [bookAuthorized, setBookAuthorized] = useState(false);
+  const [grant, setGrant] = useState<CrmGrantState | null>(null);
+  const [grantPending, setGrantPending] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [connectPath, setConnectPath] = useState<ConnectPath>("file");
   const [licensee, setLicensee] = useState(LICENSEES[0]);
   const [ackChecked, setAckChecked] = useState(false);
+  const wireTick = useWireTick();
+
+  // Fail closed — book is authorized only while the CRM grant is live and not revoked.
+  const bookAuthorized = Boolean(grant?.granted && !grant?.revoked);
+
+  useEffect(() => {
+    let cancelled = false;
+    void wirePorts.crmOAuth.get(CT_DEMO.firmId).then((g) => {
+      if (!cancelled) setGrant(g);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [wireTick]);
 
   useEffect(() => {
     onHardInputChange?.({ bookAuthorized, termsAccepted, licensee });
@@ -49,6 +65,27 @@ export function PreparedModule({
     if (forceAcceptOpen) setModal("accept");
   }, [forceAcceptOpen]);
 
+  async function authorizeBook() {
+    setGrantPending(true);
+    try {
+      const next = await wirePorts.crmOAuth.grant(CT_DEMO.firmId);
+      setGrant(next);
+      setModal(null);
+    } finally {
+      setGrantPending(false);
+    }
+  }
+
+  async function revokeGrant() {
+    setGrantPending(true);
+    try {
+      const next = await wirePorts.crmOAuth.revoke(CT_DEMO.firmId);
+      setGrant(next);
+    } finally {
+      setGrantPending(false);
+    }
+  }
+
   const readinessRows = [
     { key: "1", label: "Firm identity staged", state: "Ready", ready: true },
     { key: "2", label: "Campaign under firm brand", state: "Ready", ready: true },
@@ -56,7 +93,7 @@ export function PreparedModule({
     {
       key: "4",
       label: "Authorize book",
-      state: bookAuthorized ? "Landed ✓" : "Pending",
+      state: grant?.revoked ? "Revoked" : bookAuthorized ? "Landed ✓" : "Pending",
       ready: bookAuthorized,
       action: "authorize" as const,
     },
@@ -168,7 +205,26 @@ export function PreparedModule({
                 <Text type="secondary" style={{ fontSize: 12, lineHeight: 1.5 }}>
                   Grant CRM, upload, or confirm assisted import — then Authorize.
                 </Text>
+                {grant ? (
+                  <Tag color={bookAuthorized ? "success" : "error"} style={{ marginTop: 2 }}>
+                    {bookAuthorized ? "granted" : "revoked"}
+                  </Tag>
+                ) : null}
               </button>
+              {grant?.granted && !grant?.revoked ? (
+                <Button
+                  size="small"
+                  danger
+                  style={{ marginTop: 8 }}
+                  loading={grantPending}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    void revokeGrant();
+                  }}
+                >
+                  Revoke grant
+                </Button>
+              ) : null}
             </Surface>
             <Surface label="Accept terms">
               <button
@@ -210,13 +266,7 @@ export function PreparedModule({
           <Space>
             <Button onClick={() => setModal(null)}>Cancel</Button>
             <Surface label="Authorize">
-              <Button
-                type="primary"
-                onClick={() => {
-                  setBookAuthorized(true);
-                  setModal(null);
-                }}
-              >
+              <Button type="primary" loading={grantPending} onClick={() => void authorizeBook()}>
                 Authorize
               </Button>
             </Surface>
@@ -225,7 +275,8 @@ export function PreparedModule({
       >
         <Paragraph>
           Connect the private book Tower will mutate. Pick a path, then Authorize writes handover
-          state for Book readiness and Activation state.
+          state for Book readiness and Activation state — grants{" "}
+          <Text code>wirePorts.crmOAuth.grant(firmId)</Text>.
         </Paragraph>
         <Radio.Group
           value={connectPath}

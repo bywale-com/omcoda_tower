@@ -1,9 +1,12 @@
 /**
  * Activation state — per-firm activation progress checklist with Jump links.
+ * authorize-book / ready-to-send / escrow-held read live wire ports — fail closed
+ * until the CRM grant, sending-identity DNS fixtures, and escrow hold are real.
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Progress, Space, Table, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import { isSendingIdentityReady, useWireTick, wirePorts } from "../../../wire";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { DEMO_FIRMS } from "./operatorAntData";
 import { StatusTag } from "./operatorAntTags";
@@ -11,48 +14,72 @@ import { StatusTag } from "./operatorAntTags";
 type Gate = { id: string; title: string; done: boolean; jump?: string };
 
 const ACTIVATION_ROWS = [
-  {
-    firmId: DEMO_FIRMS[1].id,
-    pct: 50,
-    next: "Authorize book",
-    gates: [
-      { id: "forward-deployed", title: "Forward-deployed", done: true, jump: "Jump to Activation & forward-deploy" },
-      { id: "authorize-book", title: "Authorize book", done: false, jump: "Jump to Activation & forward-deploy" },
-      { id: "escrow-held", title: "Escrow held", done: false, jump: "Jump to Commercial" },
-      { id: "running", title: "Running", done: false },
-    ] satisfies Gate[],
-  },
-  {
-    firmId: DEMO_FIRMS[2].id,
-    pct: 75,
-    next: "Escrow held",
-    gates: [
-      { id: "forward-deployed", title: "Forward-deployed", done: true, jump: "Jump to Activation & forward-deploy" },
-      { id: "authorize-book", title: "Authorize book", done: true },
-      { id: "escrow-held", title: "Escrow held", done: false, jump: "Jump to Commercial" },
-      { id: "running", title: "Running", done: false },
-    ] satisfies Gate[],
-  },
-  {
-    firmId: DEMO_FIRMS[3].id,
-    pct: 25,
-    next: "Forward-deployed",
-    gates: [
-      { id: "forward-deployed", title: "Forward-deployed", done: false, jump: "Jump to Activation & forward-deploy" },
-      { id: "authorize-book", title: "Authorize book", done: false, jump: "Jump to Activation & forward-deploy" },
-      { id: "escrow-held", title: "Escrow held", done: false, jump: "Jump to Commercial" },
-      { id: "running", title: "Running", done: false },
-    ] satisfies Gate[],
-  },
+  { firmId: DEMO_FIRMS[1].id, pct: 50, next: "Authorize book", forwardDeployed: true },
+  { firmId: DEMO_FIRMS[2].id, pct: 75, next: "Escrow held", forwardDeployed: true },
+  { firmId: DEMO_FIRMS[3].id, pct: 25, next: "Forward-deployed", forwardDeployed: false },
 ];
+
+type LiveGates = { authorizeBook: boolean; readyToSend: boolean; escrowHeld: boolean };
+
+const EMPTY_LIVE: LiveGates = { authorizeBook: false, readyToSend: false, escrowHeld: false };
 
 export function ActivationStateModule() {
   const [selectedId, setSelectedId] = useState(ACTIVATION_ROWS[0].firmId);
   const [jumpNote, setJumpNote] = useState<string | null>(null);
+  const [live, setLive] = useState<LiveGates>(EMPTY_LIVE);
+  const wireTick = useWireTick();
+
+  useEffect(() => {
+    let cancelled = false;
+    void Promise.all([wirePorts.crmOAuth.get(selectedId), wirePorts.escrow.get(selectedId)]).then(
+      ([grant, escrow]) => {
+        if (cancelled) return;
+        setLive({
+          authorizeBook: grant.granted && !grant.revoked,
+          readyToSend: isSendingIdentityReady(selectedId),
+          escrowHeld: escrow.status === "held",
+        });
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedId, wireTick]);
 
   const row = ACTIVATION_ROWS.find((r) => r.firmId === selectedId) ?? ACTIVATION_ROWS[0];
   const firm = DEMO_FIRMS.find((f) => f.id === row.firmId) ?? DEMO_FIRMS[1];
-  const stalledCount = row.gates.filter((g) => !g.done && g.jump).length;
+  const gates: Gate[] = [
+    {
+      id: "forward-deployed",
+      title: "Forward-deployed",
+      done: row.forwardDeployed,
+      jump: row.forwardDeployed ? undefined : "Jump to Activation & forward-deploy",
+    },
+    {
+      id: "authorize-book",
+      title: "Authorize book",
+      done: live.authorizeBook,
+      jump: live.authorizeBook ? undefined : "Jump to Activation & forward-deploy",
+    },
+    {
+      id: "ready-to-send",
+      title: "Ready to send",
+      done: live.readyToSend,
+      jump: live.readyToSend ? undefined : "Jump to Sending infrastructure",
+    },
+    {
+      id: "escrow-held",
+      title: "Escrow held",
+      done: live.escrowHeld,
+      jump: live.escrowHeld ? undefined : "Jump to Commercial",
+    },
+    {
+      id: "running",
+      title: "Running",
+      done: row.forwardDeployed && live.authorizeBook && live.readyToSend && live.escrowHeld,
+    },
+  ];
+  const stalledCount = gates.filter((g) => !g.done && g.jump).length;
 
   const firmColumns: ColumnsType<typeof ACTIVATION_ROWS[0]> = [
     {
@@ -115,9 +142,11 @@ export function ActivationStateModule() {
         {jumpNote ? <Typography.Text type="success">Opened · {jumpNote}</Typography.Text> : null}
         <Progress percent={row.pct} size="small" style={{ marginBottom: 16 }} />
         <Hint>
-          Operator does not fake-complete consultant commits on authorize-book or escrow-held.
+          Authorize book, Ready to send, and Escrow held read live from crmOAuth /
+          sending-identity DNS fixtures / escrow — never hard-coded green. Operator does not
+          fake-complete consultant commits.
         </Hint>
-        <Table size="small" rowKey="id" columns={gateColumns} dataSource={row.gates} pagination={false} />
+        <Table size="small" rowKey="id" columns={gateColumns} dataSource={gates} pagination={false} />
       </Surface>
     </ModulePage>
   );
