@@ -17,6 +17,8 @@ export type HaltRetention = {
   scope: HaltScope;
   reason: string;
   at: string;
+  /** Stand-in haltStore record id — used by Lift/Resume. */
+  haltId?: string;
 };
 
 export type WorkspacePhase = "silent" | "in-motion" | "meeting-ready" | "halted";

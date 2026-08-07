@@ -6,10 +6,12 @@
 | Doc | Job |
 |---|---|
 | [`WIRING-METHOD.md`](./WIRING-METHOD.md) | How we build Wiring — trace implementations one at a time |
+| [`STANDIN-WIRING.md`](./STANDIN-WIRING.md) | **Active build pass** — wire app; external hops → in-app stand-ins |
 | [`NODE-DEFINITION.md`](./NODE-DEFINITION.md) | What counts as a node (altitude / named unit of state) |
 | [`WIRING-CRITICAL-INTERACTION.md`](./WIRING-CRITICAL-INTERACTION.md) | What counts as a critical interaction (user-originated counterpart to a node) |
 | [`CTO-THINK-STACK.md`](./CTO-THINK-STACK.md) | Ops: facets → Function → Can’ts → Furnish |
 | [`paper-trace/00-INDEX.md`](./paper-trace/00-INDEX.md) | Tower instance steps 1–4 (paper graph + human-provisioning set) |
+| [`wire-log/00-INDEX.md`](./wire-log/00-INDEX.md) | Wired implementations + stand-ins used (as built) |
 
 **Upstream doctrine:** [`../sme/DOCTRINE-sme-cto-implementation.md`](../sme/DOCTRINE-sme-cto-implementation.md)  
 **Nearby splits:** [`../sme/SURFACE-INTENT.md`](../sme/SURFACE-INTENT.md) · [`../sme/HANDOFF-ROUTING.md`](../sme/HANDOFF-ROUTING.md) · [`../sme/AGENT-VS-HUMAN-PROVISIONING.md`](../sme/AGENT-VS-HUMAN-PROVISIONING.md)  

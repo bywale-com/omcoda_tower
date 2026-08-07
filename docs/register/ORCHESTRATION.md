@@ -33,8 +33,9 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 | Components | Holon tree live |
 | SME | **Pass2 + handoff + densified PM implementations CT-planted** — 325 written twins `implementationPlant: planted` (10 NV practice items remain without impl blocks) · ([`../sme/implementation/DENSIFY-LAW.md`](../sme/implementation/DENSIFY-LAW.md)) |
 | Enrichment / Furnish | **CT-planted** — 60 Can't Needs closed + 60 Furnish affordances on Register prototypes ([`enrichment/`](./enrichment/) · [`furnish/`](./furnish/)) |
-| **Priors** | **Full-app priors inventory** — 111 priors (interactive controls with no lattice click-path); **Weak companion** — 32 weaks (lattice foothold, control unnamed); purposes empty; twin ([`priors/`](./priors/) · [`weak/`](./weak/)) |
-| CT Plant | **Board plant pass landed** — How + SME densify + Furnish on consultant / contact / operator prototypes; Wiring deep CT still open |
+| **Priors** | **Full-app priors inventory** — 111 priors; **Weak** — 32; `codeRefs` CTO joins ([`priors/`](./priors/) · [`weak/`](./weak/)) |
+| **Wiring (stand-ins)** | **Build pass started** — wire CT via in-app stand-ins (fake externals). Login OTP + Halt outreach wired ([`../wiring/STANDIN-WIRING.md`](../wiring/STANDIN-WIRING.md) · [`../wiring/wire-log/`](../wiring/wire-log/)) |
+| CT Plant | **Board plant pass landed** — How + SME densify + Furnish on consultant / contact / operator prototypes; stand-in wiring in progress |
 | Verify scripts | Not shipped |
 
 ---

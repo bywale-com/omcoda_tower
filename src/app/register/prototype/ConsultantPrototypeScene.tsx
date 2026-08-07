@@ -13,6 +13,7 @@ import { TaskProvider } from "../../context/TaskContext";
 import type { HubToolRef } from "../../data/hub";
 import type { ConsultantTask } from "../../data/tasks";
 import { getContact } from "../../data/contacts";
+import { CT_DEMO, wirePorts } from "../../wire";
 import {
   CONSULTANT_NAV_MODULES,
   SURFACE_CATALOG,
@@ -349,6 +350,39 @@ export function ConsultantPrototypeScene({
     setModule(moduleForFocus(focusedEntry));
   }, [focusedEntry]);
 
+  /** Hydrate UI halt state from stand-in store (dual-write). */
+  useEffect(() => {
+    let cancelled = false;
+    void wirePorts.haltStore.listActive(CT_DEMO.firmId).then((active) => {
+      if (cancelled) return;
+      const book = active.find((h) => h.scope === "firm-book");
+      if (book) {
+        setBookHalted(true);
+        setBookHalt({
+          scope: "book",
+          reason: book.reason ?? "",
+          at: "Active · restored",
+          haltId: book.id,
+        });
+      }
+      const byContact: Record<string, HaltRetention> = {};
+      for (const h of active) {
+        if (h.scope === "contact" && h.contactId) {
+          byContact[h.contactId] = {
+            scope: "contact",
+            reason: h.reason ?? "",
+            at: "Active · restored",
+            haltId: h.id,
+          };
+        }
+      }
+      if (Object.keys(byContact).length) setHaltByContact(byContact);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const boardIcon = boardIconForModule(module);
   const hoveredEntry = hoveredId
     ? SURFACE_CATALOG.find((e) => e.id === hoveredId) ?? null
@@ -430,11 +464,20 @@ export function ConsultantPrototypeScene({
     return map;
   }, [haltByContact, bookHalt, activeClientId]);
 
-  function confirmHalt() {
+  async function confirmHalt() {
+    const portScope = haltScope === "book" ? "firm-book" : "contact";
+    const record = await wirePorts.haltStore.commit({
+      consultantId: CT_DEMO.consultantId,
+      firmId: CT_DEMO.firmId,
+      contactId: portScope === "contact" ? activeClientId : undefined,
+      scope: portScope,
+      reason: haltReason.trim() || undefined,
+    });
     const retention: HaltRetention = {
       scope: haltScope,
       reason: haltReason,
       at: nowStamp(),
+      haltId: record.id,
     };
     if (haltScope === "book") {
       setBookHalted(true);
@@ -446,7 +489,17 @@ export function ConsultantPrototypeScene({
     setHaltReason("");
   }
 
-  function liftHaltForActive() {
+  async function liftHaltForActive() {
+    if (bookHalt?.haltId) {
+      await wirePorts.haltStore.lift(bookHalt.haltId);
+      setBookHalted(false);
+      setBookHalt(null);
+    } else {
+      const contactHalt = haltByContact[activeClientId];
+      if (contactHalt?.haltId) {
+        await wirePorts.haltStore.lift(contactHalt.haltId);
+      }
+    }
     if (bookHalted || bookHalt) {
       setBookHalted(false);
       setBookHalt(null);
@@ -564,16 +617,27 @@ export function ConsultantPrototypeScene({
                       haltedContactIds={haltedContactIds}
                       onHaltBook={() => setHaltModalOpen(true)}
                       onResumeBook={() => {
-                        setBookHalted(false);
-                        setBookHalt(null);
+                        void (async () => {
+                          if (bookHalt?.haltId) {
+                            await wirePorts.haltStore.lift(bookHalt.haltId);
+                          }
+                          setBookHalted(false);
+                          setBookHalt(null);
+                        })();
                       }}
                       onHaltContact={() => setHaltModalOpen(true)}
                       onResumeContact={(id) => {
-                        setHaltByContact((prev) => {
-                          const next = { ...prev };
-                          delete next[id];
-                          return next;
-                        });
+                        void (async () => {
+                          const contactHalt = haltByContact[id];
+                          if (contactHalt?.haltId) {
+                            await wirePorts.haltStore.lift(contactHalt.haltId);
+                          }
+                          setHaltByContact((prev) => {
+                            const next = { ...prev };
+                            delete next[id];
+                            return next;
+                          });
+                        })();
                       }}
                       firmName={FIRM_NAME}
                       licenseeLabel={licensee}
@@ -622,7 +686,7 @@ export function ConsultantPrototypeScene({
                             setActiveClientId(workspaceClientId);
                             setHaltModalOpen(true);
                           }}
-                          onLiftHalt={liftHaltForActive}
+                          onLiftHalt={() => void liftHaltForActive()}
                           onOpenAcceptedTerms={termsAccepted ? openAcceptedTerms : undefined}
                           onOpenPanel={() => setIsPanelOpen(true)}
                           activityKick={activityKick}
@@ -696,7 +760,7 @@ export function ConsultantPrototypeScene({
           onScope={setHaltScope}
           reason={haltReason}
           onReason={setHaltReason}
-          onConfirm={confirmHalt}
+          onConfirm={() => void confirmHalt()}
           onClose={() => setHaltModalOpen(false)}
         />
       ) : null}

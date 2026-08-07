@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Alert, Button, Form, Input, Space, Steps, Typography } from "antd";
 import { Hint, ModulePage, Surface } from "../chrome";
+import { wirePorts } from "../../../wire";
 import { FIRM_NAME } from "./shared";
 
 const { Text, Paragraph } = Typography;
@@ -10,13 +11,15 @@ type LoginModuleProps = {
 };
 
 type Step = "email" | "verify";
-type VerifyFailure = "expired" | "wrong" | "unknown-email" | null;
+type VerifyFailure = "expired" | "mismatch" | "locked" | "unknown-challenge" | "unknown-email" | null;
 
 const RESEND_SECONDS = 30;
 
 const FAILURE_COPY: Record<Exclude<VerifyFailure, null>, string> = {
   expired: "That code expired — Resend code for a fresh OTP.",
-  wrong: "That code doesn't match — check digits and try again.",
+  mismatch: "That code doesn't match — check digits and try again.",
+  locked: "Too many attempts — this challenge is locked. Resend for a new code.",
+  "unknown-challenge": "No active challenge — send a new code.",
   "unknown-email": "This email isn't provisioned for the firm desk.",
 };
 
@@ -24,9 +27,12 @@ export function LoginModule({ onVerified }: LoginModuleProps) {
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("lena@cedarpathways.ca");
   const [code, setCode] = useState("");
+  const [challengeId, setChallengeId] = useState<string | null>(null);
+  const [debugCode, setDebugCode] = useState<string | undefined>(undefined);
   const [sent, setSent] = useState(false);
   const [cooldown, setCooldown] = useState(0);
   const [failure, setFailure] = useState<VerifyFailure>(null);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -40,43 +46,76 @@ export function LoginModule({ onVerified }: LoginModuleProps) {
     setCooldown(RESEND_SECONDS);
   }
 
-  function onSendCode(e: FormEvent) {
+  async function issueChallenge(forEmail: string) {
+    const issued = await wirePorts.otpStore.issue({ email: forEmail });
+    setChallengeId(issued.challengeId);
+    setDebugCode(issued.debugCode);
+    setSent(true);
+    setCode("");
+    startCooldown();
+  }
+
+  async function onSendCode(e: FormEvent) {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (!email.trim() || busy) return;
     const normalized = email.trim().toLowerCase();
     if (!normalized.includes("@") || normalized.endsWith("@unknown.test")) {
       setFailure("unknown-email");
       return;
     }
+    setBusy(true);
     setFailure(null);
-    setSent(true);
-    setStep("verify");
-    setCode("");
-    startCooldown();
+    try {
+      await issueChallenge(normalized);
+      setStep("verify");
+    } finally {
+      setBusy(false);
+    }
   }
 
-  function onResend() {
-    if (cooldown > 0) return;
+  async function onResend() {
+    if (cooldown > 0 || busy) return;
+    setBusy(true);
     setFailure(null);
-    setSent(true);
-    setCode("");
-    startCooldown();
+    try {
+      await issueChallenge(email.trim().toLowerCase());
+    } finally {
+      setBusy(false);
+    }
   }
 
-  function onVerify(e: FormEvent) {
+  async function onVerify(e: FormEvent) {
     e.preventDefault();
-    if (!code.trim()) return;
-    const trimmed = code.trim();
-    if (trimmed === "000000") {
-      setFailure("expired");
+    if (!code.trim() || busy) return;
+    if (!challengeId) {
+      setFailure("unknown-challenge");
       return;
     }
-    if (trimmed.length < 6 || trimmed === "111111") {
-      setFailure("wrong");
-      return;
-    }
+    setBusy(true);
     setFailure(null);
-    onVerified?.();
+    try {
+      const result = await wirePorts.otpStore.verify({
+        challengeId,
+        code: code.trim(),
+      });
+      if (!result.ok) {
+        setFailure(result.reason);
+        return;
+      }
+      setFailure(null);
+      onVerified?.();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function onChangeEmail() {
+    setStep("email");
+    setCode("");
+    setChallengeId(null);
+    setDebugCode(undefined);
+    setFailure(null);
+    setSent(false);
   }
 
   return (
@@ -130,7 +169,7 @@ export function LoginModule({ onVerified }: LoginModuleProps) {
                   </Form>
                 </Surface>
                 <Surface label="Send code">
-                  <Button type="primary" htmlType="submit" disabled={!email.trim()}>
+                  <Button type="primary" htmlType="submit" disabled={!email.trim() || busy}>
                     Send code
                   </Button>
                 </Surface>
@@ -158,27 +197,21 @@ export function LoginModule({ onVerified }: LoginModuleProps) {
                     </Form.Item>
                   </Form>
                 </Surface>
-                <Hint>
-                  Demo failures: 000000 expired · 111111 wrong · try any other 6 digits to land Board.
-                </Hint>
+                {debugCode ? (
+                  <Hint>Stand-in code (no mailbox): {debugCode}</Hint>
+                ) : null}
                 <Space wrap style={{ marginTop: 12 }}>
                   <Surface label="Verify">
-                    <Button type="primary" htmlType="submit" disabled={!code.trim()}>
+                    <Button type="primary" htmlType="submit" disabled={!code.trim() || busy}>
                       Verify
                     </Button>
                   </Surface>
                   <Surface label="Resend code">
-                    <Button onClick={onResend} disabled={cooldown > 0}>
+                    <Button onClick={onResend} disabled={cooldown > 0 || busy}>
                       {cooldown > 0 ? `Resend code · ${cooldown}s` : "Resend code"}
                     </Button>
                   </Surface>
-                  <Button
-                    onClick={() => {
-                      setStep("email");
-                      setCode("");
-                      setFailure(null);
-                    }}
-                  >
+                  <Button onClick={onChangeEmail}>
                     Change email
                   </Button>
                 </Space>
