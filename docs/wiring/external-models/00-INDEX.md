@@ -6,7 +6,7 @@
 **Control reconciliation (hand-back §4):** [`04-CONTROL-RECONCILIATION.md`](./04-CONTROL-RECONCILIATION.md) — promised chips/denies vs lattice · priors · weak · CT  
 **Method:** CTO Think Stack against densified implementations / How / CT / paper traces. Densify stops at the app; this pass derives externals from **accomplishment**.
 
-**Downstream (Pass B):** build modelable stand-ins → wire CT against those contracts (see stand-in wiring method when active).
+**Downstream (Pass B):** build modelable stand-ins → wire CT ([`../STANDIN-WIRING.md`](../STANDIN-WIRING.md) — includes **fixture honesty**).
 
 ## Totals (deduped)
 
