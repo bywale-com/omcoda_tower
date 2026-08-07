@@ -17,3 +17,4 @@ export { OversightModule } from "./OversightModule";
 export { ProvisionModule } from "./ProvisionModule";
 export { ReferenceDataModule } from "./ReferenceDataModule";
 export { RegisterEvolutionModule } from "./RegisterEvolutionModule";
+export { SendingInfrastructureModule } from "./SendingInfrastructureModule";
