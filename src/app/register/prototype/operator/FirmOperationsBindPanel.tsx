@@ -2,8 +2,14 @@
  * Firm operations bind — firm-bind index → Bind packs modal → Armed / Active segmented control.
  * Furnish: published-only helper + Jump to Config empty-state; bound-version chips; bind-completeness.
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Tokens } from "../../../components/tokens";
+import {
+  setPolicyDenyForced as forceEspPolicyDeny,
+  useWireTick,
+  wirePorts,
+  type SendDenyReason,
+} from "../../../wire";
 import type { RegisterSurfaceEntry } from "../../trace/surfaceCatalog";
 import { RegisterSurfaceMount, navBtnStyle, sectionLabelStyle } from "../registerSurfaceChrome";
 import {
@@ -92,6 +98,13 @@ export function FirmOperationsBindPanel({
   const [pickAuto, setPickAuto] = useState("");
   const [pickEng, setPickEng] = useState("");
   const [jumpNote, setJumpNote] = useState<string | null>(null);
+  const tick = useWireTick();
+  const [gateChips, setGateChips] = useState<
+    Array<{ reason: SendDenyReason; label: string; blocking: boolean; advisory?: boolean }>
+  >([]);
+  const [gateNote, setGateNote] = useState<string | null>(null);
+  const [probeResult, setProbeResult] = useState<{ ok: boolean; detail: string } | null>(null);
+  const [policyDenyForced, setPolicyDenyForced] = useState(false);
 
   const row = rows.find((r) => r.firmId === selectedId) ?? rows[0];
   const firm = DEMO_FIRMS.find((f) => f.id === row.firmId) ?? DEMO_FIRMS[0];
@@ -136,11 +149,80 @@ export function FirmOperationsBindPanel({
     setBindOpen(false);
   }
 
-  function setPosture(posture: Posture) {
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      const chips = await wirePorts.sendGate.chips(row.firmId);
+      if (alive) setGateChips(chips);
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [row.firmId, tick]);
+
+  async function setPosture(posture: Posture) {
     if (!bound) return;
     setRows((prev) =>
       prev.map((r) => (r.firmId === row.firmId ? { ...r, posture } : r)),
     );
+    if (posture !== "Active") {
+      setGateNote(null);
+      return;
+    }
+    const decision = await wirePorts.sendGate.decide({
+      firmId: row.firmId,
+      channel: "email",
+      purpose: "cem",
+      posture: "Active",
+    });
+    setGateNote(
+      decision.allow
+        ? "Send gate allows — posture Active, no denies outstanding."
+        : `Fail-closed · posture set to Active, but Send gate still denies (${decision.reasons.join(", ")}) — sends stay blocked until resolved.`,
+    );
+  }
+
+  async function probeCemLeave() {
+    setProbeResult(null);
+    const decision = await wirePorts.sendGate.decide({
+      firmId: row.firmId,
+      channel: "email",
+      purpose: "cem",
+      posture: row.posture,
+    });
+    if (!decision.allow) {
+      setProbeResult({ ok: false, detail: `Send gate denied · ${decision.reasons.join(", ")}` });
+      return;
+    }
+    const pooled = await wirePorts.sendingPool.get(row.firmId);
+    if (!pooled) {
+      setProbeResult({
+        ok: false,
+        detail: "No pool allocated — open Sending infrastructure to allocate a subdomain first.",
+      });
+      return;
+    }
+    const result = await wirePorts.espMailer.send({
+      to: "contact@example.test",
+      from: `${firm.name} <hello@${pooled.fullDomain}>`,
+      subject: "CEM probe",
+      bodyText: "Probe send issued from Firm operations bind · Send gates.",
+      firmId: row.firmId,
+      sendingIdentityId: pooled.identityId,
+      purpose: "cem",
+    });
+    setProbeResult(
+      result.ok
+        ? { ok: true, detail: `Sent (sink) · ${result.messageId}` }
+        : { ok: false, detail: `ESP denied · ${result.deny}${result.detail ? ` — ${result.detail}` : ""}` },
+    );
+  }
+
+  async function togglePolicyDenyForced() {
+    const next = !policyDenyForced;
+    forceEspPolicyDeny(next);
+    setPolicyDenyForced(next);
+    setGateChips(await wirePorts.sendGate.chips(row.firmId));
   }
 
   const canBind = Boolean(pickEval && pickAuto && pickEng);
@@ -372,6 +454,101 @@ export function FirmOperationsBindPanel({
                     );
                   })}
                 </div>
+                {gateNote ? (
+                  <div style={{ marginTop: 10, fontSize: 11, color: t.accent }}>{gateNote}</div>
+                ) : null}
+              </>,
+            )}
+
+            {surfaceBlock(
+              t,
+              "Send gates",
+              focus.labelFocused("Send gates") ||
+                focus.labelFocused("ESP policy reject") ||
+                focus.labelFocused("Domain authentication readiness"),
+              focus.labelHovered("Send gates") ||
+                focus.labelHovered("ESP policy reject") ||
+                focus.labelHovered("Domain authentication readiness"),
+              <>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginBottom: 8,
+                  }}
+                >
+                  <span style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary }}>
+                    Send gates
+                  </span>
+                  {statusChip(
+                    t,
+                    gateChips.some((c) => c.blocking) ? "blocking" : "clear",
+                    gateChips.some((c) => c.blocking) ? "danger" : "success",
+                  )}
+                </div>
+                <p style={{ margin: "0 0 10px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
+                  Fail-closed snapshot from sendGate.chips — setting Active does not silence a deny;
+                  it stays blocking until resolved.
+                </p>
+
+                <div data-register-surface="Domain authentication readiness" style={{ marginBottom: 10 }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: t.textDim, marginBottom: 4 }}>
+                    Domain authentication readiness
+                  </div>
+                  {(() => {
+                    const authChip = gateChips.find((c) => c.reason === "auth");
+                    return statusChip(
+                      t,
+                      authChip ? (authChip.blocking ? "auth not ready" : "auth ready") : "auth unknown",
+                      authChip?.blocking ? "danger" : "success",
+                    );
+                  })()}
+                </div>
+
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 10 }}>
+                  {gateChips.map((c) => (
+                    <span
+                      key={c.reason}
+                      data-register-surface={c.reason === "policy" ? "ESP policy reject" : undefined}
+                    >
+                      {statusChip(
+                        t,
+                        c.label,
+                        c.advisory ? "amber" : c.blocking ? "danger" : "success",
+                      )}
+                    </span>
+                  ))}
+                </div>
+
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+                  <button type="button" style={secondaryBtnStyle(t)} onClick={probeCemLeave}>
+                    Probe CEM leave
+                  </button>
+                  <button
+                    type="button"
+                    onClick={togglePolicyDenyForced}
+                    style={{
+                      ...secondaryBtnStyle(t),
+                      background: policyDenyForced ? t.amberBg : t.bgPrimary,
+                      borderColor: policyDenyForced ? t.amber : t.border,
+                      color: policyDenyForced ? t.amber : t.textPrimary,
+                    }}
+                  >
+                    {policyDenyForced ? "Force ESP policy deny · ON" : "Force ESP policy deny"}
+                  </button>
+                </div>
+                {probeResult ? (
+                  <div
+                    style={{
+                      marginTop: 8,
+                      fontSize: 11,
+                      color: probeResult.ok ? t.success : t.red,
+                    }}
+                  >
+                    {probeResult.detail}
+                  </div>
+                ) : null}
               </>,
             )}
           </div>
