@@ -4,7 +4,7 @@
 **Brief:** [`00-PASS-BRIEF.md`](./00-PASS-BRIEF.md)  
 **Method:** CTO Think Stack against densified implementations / How / CT / paper traces. Densify stops at the app; this pass derives externals from **accomplishment**.
 
-**Downstream:** build modelable stand-ins → wire CT ([`../STANDIN-WIRING.md`](../STANDIN-WIRING.md)).
+**Downstream (Pass B):** build modelable stand-ins → wire CT against those contracts (see stand-in wiring method when active).
 
 ## Totals (deduped)
 

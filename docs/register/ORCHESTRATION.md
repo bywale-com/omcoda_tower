@@ -29,12 +29,12 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 | Operator revisions | Living shape bets (open box, domain packs, Audit vs compliance, channel DNA) — [`OPERATOR-REVISIONS.md`](./OPERATOR-REVISIONS.md) — not a World pass |
 | Console purposes | Holon purpose popovers; validate branch-by-branch (Audit + Activity refined) |
 | Personas & Function | How graphs exist (`consultantOnTower`, `towerCoreOutcome`) — surface join pending |
-| Wiring | Flow maps exist (login flows) — CTO twin pending |
+| Wiring | Paper Function traces + **Pass A externals** — 67 systems (47 modelable · 15 human-only · 5 defer) ([`../wiring/external-models/`](../wiring/external-models/)) |
 | Components | Holon tree live |
 | SME | **Pass2 + handoff + densified PM implementations CT-planted** — 325 written twins `implementationPlant: planted` (10 NV practice items remain without impl blocks) · ([`../sme/implementation/DENSIFY-LAW.md`](../sme/implementation/DENSIFY-LAW.md)) |
 | Enrichment / Furnish | **CT-planted** — 60 Can't Needs closed + 60 Furnish affordances on Register prototypes ([`enrichment/`](./enrichment/) · [`furnish/`](./furnish/)) |
-| **Priors** | **Full-app priors inventory** — 111 priors (interactive controls with no lattice click-path); **Weak companion** — 32 weaks (lattice foothold, control unnamed); purposes empty; twin ([`priors/`](./priors/) · [`weak/`](./weak/)) |
-| CT Plant | **Board plant pass landed** — How + SME densify + Furnish on consultant / contact / operator prototypes; Wiring deep CT still open |
+| **Priors** | **Full-app priors inventory** — 111 priors; **Weak** — 32; `codeRefs` ([`priors/`](./priors/) · [`weak/`](./weak/)) |
+| CT Plant | **Board plant pass landed** — How + SME densify + Furnish; stand-in wire / Pass B build next |
 | Verify scripts | Not shipped |
 
 ---
