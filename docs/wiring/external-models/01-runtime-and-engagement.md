@@ -43,9 +43,9 @@ Dense C2 + CT paths that leave pure UI / React state:
 | `consent-silence-ledger` | Consent + channel-scope + silence legal state | Data Storage · Identity/Compliance | Channel escalation and CEM leave require channel-scoped consent; silence stops automatic motion | C2 agent-05/15; How contact-consent · contact-silence; paper `consent_record` | **modelable** | **In:** Agree/Ignore/Silence commits; channel scope. **Out:** consent/silence snapshot. **Readers:** send-gate-plane, support context bundle, Book readiness adjacency |
 | `otp-auth-challenge-store` | Login OTP challenge store (auth boundary) | Identity · External | Login Send code / Verify leaves browser; not engagement core but shares mailer | Wire log LOGIN-OTP; stand-in `otpStore` · `mailer` | **modelable** | **In:** issue(email) / verify(challengeId, code). **Out:** challenge + sessionToken or deny. **Readers:** Login CT. *Listed because already stand-in-wired; not a C2 densify driver.* |
 | `sms-send-provider` | SMS / A2P outbound + STOP ingress | External Systems | Channel-ownership tree includes SMS escalation when authored | C2 agent-07/15; HUMAN-PROVISIONING `sms_sender_registration` | **defer** | Not densified as V1 CT send path; contract mirrors email send+ingress when named. TCR/brand registration remains human-only residue. |
-| `sending-identity-dns` | Firm sending domain / DKIM / DMARC / warmup posture | External · Infra · Identity | Real branded CEM leave needs DNS + warmup — irreducible human provisioning | HUMAN-PROVISIONING-SET sending identity nodes; C1 adjacency honored by C2 gates | **human-only** | **In-app side only:** readiness flags consumed by send-gate-plane (`sending_identity_ready`). **Human:** DNS publish, domain approval, warmup calendar-time. Do not fake real DNS. |
-| `consultant-halt-refusal` | Human license refusal (consultant Confirm halt) | Identity · Compliance | Hard human gate — product cannot invent the refuse | How consultant-governance 1.2; World hard gate | **human-only** | **Model in-app side:** haltStore commit I/O after Confirm. **Human residue:** the decision to refuse. Runner honor is `suppression-halt-plane` (modelable). |
-| `counsel-silence-law` | CASL / stop / silence legal interpretation | Identity · Compliance | Seat 3 owns silence law content; runtime only honors ledger effects | C2 boundaries (not CASL counsel); agent-03 handoff | **human-only** | **In-app:** honor `consent-silence-ledger` + suppression entries. **Human:** counsel policy text / jurisdiction rules authorship — not a fake ESP. |
+| `sending-identity-dns` | Firm sending domain / DKIM / DMARC / warmup posture | External · Infra · Identity | Real branded CEM leave needs DNS + warmup — irreducible human provisioning | HUMAN-PROVISIONING-SET sending identity nodes; C1 adjacency honored by C2 gates | **human-only** | **In-app side only:** readiness flags consumed by send-gate-plane (`sending_identity_ready`). **Human:** DNS publish, domain approval, warmup calendar-time. Do not fake real DNS. **humanKind:** `by-provisioning` · **fixture:** `sending_identity_ready` *(composite of DNS fixtures — see [`HUMAN-ONLY.md`](./HUMAN-ONLY.md) sending-identity runbook)* |
+| `consultant-halt-refusal` | Human license refusal (consultant Confirm halt) | Identity · Compliance | Hard human gate — product cannot invent the refuse | How consultant-governance 1.2; World hard gate | **human-only** | **Model in-app side:** haltStore commit I/O after Confirm. **Human residue:** the decision to refuse. Runner honor is `suppression-halt-plane` (modelable). **humanKind:** `by-design` · **fixture:** `halt_confirmed` |
+| `counsel-silence-law` | CASL / stop / silence legal interpretation | Identity · Compliance | Seat 3 owns silence law content; runtime only honors ledger effects | C2 boundaries (not CASL counsel); agent-03 handoff | **human-only** | **In-app:** honor `consent-silence-ledger` + suppression entries. **Human:** counsel policy text / jurisdiction rules authorship — not a fake ESP. **humanKind:** `by-design` · **fixture:** `counsel_policy_authored` |
 
 ---
 
@@ -99,3 +99,15 @@ A CT-worthy fake engagement runtime is **not** a table of static Activity rows. 
 5. **Durable truth** — enrollments, jobs, suppressions, tickets, and chronology survive refresh and are the same objects Automations/Agents/Activity/Halt read.
 
 Stand-ins should expose those contracts (schedule/cancel, accept send, inject inbound, commit halt, append audit) even when the “provider” is in-process memory — so densified CT click-paths exercise real app code against fake systems.
+
+---
+
+## Human-only annotations
+
+Framing only — Pass A tags unchanged. Canonical table: [`HUMAN-ONLY.md`](./HUMAN-ONLY.md).
+
+| id | humanKind | fixture | runbook |
+|---|---|---|---|
+| `sending-identity-dns` | `by-provisioning` | `sending_identity_ready` *(composite of DNS fixtures)* | `sending-identity` |
+| `consultant-halt-refusal` | `by-design` | `halt_confirmed` | — |
+| `counsel-silence-law` | `by-design` | `counsel_policy_authored` | — |

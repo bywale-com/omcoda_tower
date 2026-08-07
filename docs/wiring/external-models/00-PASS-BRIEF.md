@@ -11,10 +11,12 @@ Using the **Think Stack**, determine how every densified implementation / How le
 | Tag | Meaning |
 |---|---|
 | `modelable` | Can build an in-app stand-in (fake system) with the right I/O before the real external exists |
-| `human-only` | Irreducible human / real-world residue (firm DNS, TCR filing, real money, counsel) — model only the in-app side of the contract |
+| `human-only` | Irreducible human / real-world residue (firm DNS, TCR filing, real money, counsel) — model only the in-app side of the contract. Each row gets a named **fixture** (marker that a human performed the real act) and a **`humanKind`**: `by-design` (governance; never automate) or `by-provisioning` (one-time logistics backlog). See [`HUMAN-ONLY.md`](./HUMAN-ONLY.md). |
 | `defer` | Not in V1 CT / not named enough yet (e.g. SMS send if undensified) |
 
 **Do not wire the app in this pass.** Inventory + model contracts only. Build comes after.
+
+**Hand-back framing (does not contradict Pass A):** [`HUMAN-ONLY.md`](./HUMAN-ONLY.md) — full human-only table, fixture catalog, and the per-firm **sending-identity onboarding runbook** (DNS auth → return-path/PTR → Postmaster/FBL → TCR / Meta Business).
 
 ## Inputs
 
@@ -38,4 +40,6 @@ Using the **Think Stack**, determine how every densified implementation / How le
 
 - [`00-INDEX.md`](./00-INDEX.md) — canonical external systems + counts by tag  
 - Zone/facet files as needed  
+- [`HUMAN-ONLY.md`](./HUMAN-ONLY.md) — human-only duality: `humanKind` · `fixture` · sending-identity runbook  
+- [`04-CONTROL-RECONCILIATION.md`](./04-CONTROL-RECONCILIATION.md) — hand-back §4: promised contract states vs lattice / priors / weak / CT  
 - Optional: proposed stand-in module names for Pass B
