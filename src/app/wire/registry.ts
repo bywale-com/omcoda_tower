@@ -22,17 +22,23 @@ import {
   standInAuditTrail,
   standInConsentSilence,
   standInCrmOAuth,
+  standInEnrichCrawl,
   standInEscrow,
   standInEspMailer,
   standInHaltStore,
   standInIpPool,
+  standInListUnsubscribe,
   standInMailer,
   standInMetaAds,
   standInOtpStore,
   standInPrimaryStore,
   standInSendGate,
   standInSendingPool,
+  standInSmsApi,
   standInWarmup,
+  type EnrichCrawlPort,
+  type ListUnsubscribePort,
+  type SmsApiPort,
 } from "./standins";
 
 export type WirePorts = {
@@ -50,6 +56,9 @@ export type WirePorts = {
   metaAds: MetaAdsPort;
   escrow: EscrowPort;
   primaryStore: PrimaryStorePort;
+  listUnsubscribe: ListUnsubscribePort;
+  enrichCrawl: EnrichCrawlPort;
+  smsApi: SmsApiPort;
 };
 
 export const wirePorts: WirePorts = {
@@ -67,6 +76,9 @@ export const wirePorts: WirePorts = {
   metaAds: standInMetaAds,
   escrow: standInEscrow,
   primaryStore: standInPrimaryStore,
+  listUnsubscribe: standInListUnsubscribe,
+  enrichCrawl: standInEnrichCrawl,
+  smsApi: standInSmsApi,
 };
 
 export const STANDIN_REGISTRY = [
@@ -84,4 +96,7 @@ export const STANDIN_REGISTRY = [
   { id: "metaAds", tag: "stand-in" as const, module: "src/app/wire/standins/metaAds.ts" },
   { id: "escrow", tag: "stand-in" as const, module: "src/app/wire/standins/escrow.ts" },
   { id: "primaryStore", tag: "stand-in" as const, module: "src/app/wire/standins/primaryStore.ts" },
+  { id: "listUnsubscribe", tag: "stand-in" as const, module: "src/app/wire/standins/listUnsubscribe.ts" },
+  { id: "enrichCrawl", tag: "stand-in" as const, module: "src/app/wire/standins/enrichCrawl.ts" },
+  { id: "smsApi", tag: "stand-in" as const, module: "src/app/wire/standins/smsApi.ts" },
 ];
