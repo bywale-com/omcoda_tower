@@ -2,6 +2,14 @@
  * Acquisition & ads — Approach campaigns editor + instrumentation (How leaves 1.1–1.2).
  */
 import { useEffect, useState } from "react";
+import {
+  CT_DEMO,
+  useWireTick,
+  wirePorts,
+  type MetaCampaignState,
+  type MetaDeliveryState,
+  type MetaReviewState,
+} from "../../../wire";
 import { RegisterSurfaceMount, sectionLabelStyle } from "../registerSurfaceChrome";
 import {
   filterSelectStyle,
@@ -14,6 +22,23 @@ import {
   surfaceBlock,
   type OperatorModuleProps,
 } from "./operatorChrome";
+
+const REVIEW_STATES: MetaReviewState[] = ["draft", "in_review", "approved", "rejected"];
+const DELIVERY_STATES: MetaDeliveryState[] = ["not_started", "scheduled", "active", "paused", "ended"];
+
+function reviewTone(review: MetaReviewState): "success" | "amber" | "muted" | "danger" {
+  if (review === "approved") return "success";
+  if (review === "rejected") return "danger";
+  if (review === "in_review") return "amber";
+  return "muted";
+}
+
+function deliveryTone(delivery: MetaDeliveryState): "success" | "amber" | "muted" | "danger" {
+  if (delivery === "active") return "success";
+  if (delivery === "paused") return "danger";
+  if (delivery === "scheduled") return "amber";
+  return "muted";
+}
 
 type CampaignStatus = "Live" | "Paused" | "Draft";
 
@@ -89,8 +114,30 @@ export function AcquisitionAdsModule({ t, focusedEntry, hoveredId }: OperatorMod
   const [killThreshold, setKillThreshold] = useState("400");
   const [killAction, setKillAction] = useState<"hold" | "kill">("hold");
   const [killApplied, setKillApplied] = useState<string | null>(null);
+  const [metaState, setMetaState] = useState<MetaCampaignState | null>(null);
+  const wireTick = useWireTick();
 
   const waitingForHydrate = 7;
+
+  useEffect(() => {
+    let cancelled = false;
+    void wirePorts.metaAds.getCampaign(CT_DEMO.firmId).then((s) => {
+      if (!cancelled) setMetaState(s);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [wireTick]);
+
+  async function setReview(review: MetaReviewState) {
+    const next = await wirePorts.metaAds.setReview(CT_DEMO.firmId, review);
+    setMetaState(next);
+  }
+
+  async function setDelivery(delivery: MetaDeliveryState) {
+    const next = await wirePorts.metaAds.setDelivery(CT_DEMO.firmId, delivery);
+    setMetaState(next);
+  }
 
   useEffect(() => {
     if (!focusedEntry || focusedEntry.module !== "Acquisition & ads") return;
@@ -368,6 +415,87 @@ export function AcquisitionAdsModule({ t, focusedEntry, hoveredId }: OperatorMod
                   {actionNote ? (
                     <span style={{ fontSize: 11, color: t.accent }}>{actionNote}</span>
                   ) : null}
+                </div>
+              </>,
+            )}
+
+            {surfaceBlock(
+              t,
+              "Meta campaign review & delivery",
+              focus.labelFocused("Campaign review state") || focus.labelFocused("Campaign delivery state"),
+              focus.labelHovered("Campaign review state") || focus.labelHovered("Campaign delivery state"),
+              <>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginBottom: 10,
+                  }}
+                >
+                  <span style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary }}>
+                    Meta campaign review &amp; delivery
+                  </span>
+                  {statusChip(t, "outbound: deferred", "muted")}
+                </div>
+                <p style={{ margin: "0 0 12px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
+                  Chip contract only — bound to wirePorts.metaAds. Ads go-live stays deferred;
+                  outbound-ready reads dark/false regardless of review/delivery state below.
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <div data-register-surface="Campaign review state">
+                    <div style={fieldLabel}>Review state</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      {statusChip(
+                        t,
+                        metaState?.review ?? "draft",
+                        reviewTone(metaState?.review ?? "draft"),
+                      )}
+                      <select
+                        value={metaState?.review ?? "draft"}
+                        onChange={(e) => void setReview(e.target.value as MetaReviewState)}
+                        style={{ ...textInput, width: "auto" }}
+                      >
+                        {REVIEW_STATES.map((r) => (
+                          <option key={r} value={r}>{r}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div data-register-surface="Campaign delivery state">
+                    <div style={fieldLabel}>Delivery state</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      {statusChip(
+                        t,
+                        metaState?.delivery ?? "not_started",
+                        deliveryTone(metaState?.delivery ?? "not_started"),
+                      )}
+                      <select
+                        value={metaState?.delivery ?? "not_started"}
+                        onChange={(e) => void setDelivery(e.target.value as MetaDeliveryState)}
+                        style={{ ...textInput, width: "auto" }}
+                      >
+                        {DELIVERY_STATES.map((d) => (
+                          <option key={d} value={d}>{d}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    marginTop: 12,
+                    paddingTop: 10,
+                    borderTop: `1px solid ${t.border}`,
+                    fontSize: 11,
+                    color: t.textDim,
+                  }}
+                >
+                  Outbound-ready:{" "}
+                  <strong style={{ color: t.textMuted }}>
+                    {metaState?.outboundReady ? "live" : "dark (deferred)"}
+                  </strong>{" "}
+                  — Arm ads stays disabled until near-real-time lead pull → first agent text ships.
                 </div>
               </>,
             )}

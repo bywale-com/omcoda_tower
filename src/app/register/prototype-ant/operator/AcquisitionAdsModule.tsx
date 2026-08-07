@@ -1,7 +1,7 @@
 /**
  * Acquisition & ads — campaign Table, editor Drawer, instrumentation, kill criteria Modal.
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -18,8 +18,33 @@ import {
   message,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import {
+  CT_DEMO,
+  useWireTick,
+  wirePorts,
+  type MetaCampaignState,
+  type MetaDeliveryState,
+  type MetaReviewState,
+} from "../../../wire";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { StatusTag } from "./operatorAntTags";
+
+const REVIEW_STATES: MetaReviewState[] = ["draft", "in_review", "approved", "rejected"];
+const DELIVERY_STATES: MetaDeliveryState[] = ["not_started", "scheduled", "active", "paused", "ended"];
+
+function reviewColor(review: MetaReviewState): "success" | "warning" | "error" | "default" {
+  if (review === "approved") return "success";
+  if (review === "rejected") return "error";
+  if (review === "in_review") return "warning";
+  return "default";
+}
+
+function deliveryColor(delivery: MetaDeliveryState): "success" | "warning" | "error" | "default" {
+  if (delivery === "active") return "success";
+  if (delivery === "paused") return "error";
+  if (delivery === "scheduled") return "warning";
+  return "default";
+}
 
 type CampaignStatus = "Live" | "Paused" | "Draft";
 
@@ -90,7 +115,29 @@ export function AcquisitionAdsModule() {
   const [killThreshold, setKillThreshold] = useState("400");
   const [killAction, setKillAction] = useState<"hold" | "kill">("hold");
   const [waitingJump, setWaitingJump] = useState<string | null>(null);
+  const [metaState, setMetaState] = useState<MetaCampaignState | null>(null);
+  const wireTick = useWireTick();
   const waitingForHydrate = 7;
+
+  useEffect(() => {
+    let cancelled = false;
+    void wirePorts.metaAds.getCampaign(CT_DEMO.firmId).then((s) => {
+      if (!cancelled) setMetaState(s);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [wireTick]);
+
+  async function setReview(review: MetaReviewState) {
+    const next = await wirePorts.metaAds.setReview(CT_DEMO.firmId, review);
+    setMetaState(next);
+  }
+
+  async function setDelivery(delivery: MetaDeliveryState) {
+    const next = await wirePorts.metaAds.setDelivery(CT_DEMO.firmId, delivery);
+    setMetaState(next);
+  }
 
   const selected = campaigns.find((c) => c.id === selectedId) ?? campaigns[0];
   const instr = INSTRUMENTATION[instrId] ?? INSTRUMENTATION["camp-q3"];
@@ -170,6 +217,61 @@ export function AcquisitionAdsModule() {
             onChange: (keys) => setSelectedId(keys[0] as string),
           }}
         />
+      </Surface>
+
+      <Surface label="Meta campaign review & delivery" style={{ marginTop: 16 }}>
+        <Card
+          size="small"
+          title="Meta campaign review & delivery"
+          extra={<StatusTag label="outbound: deferred" />}
+        >
+          <Typography.Paragraph type="secondary" style={{ fontSize: 12 }}>
+            Chip contract only — bound to wirePorts.metaAds. Ads go-live stays deferred;
+            outbound-ready reads dark/false regardless of review/delivery state below.
+          </Typography.Paragraph>
+          <Row gutter={16}>
+            <Col span={12}>
+              <div data-register-surface="Campaign review state">
+                <Typography.Text type="secondary" style={{ fontSize: 11 }}>Review state</Typography.Text>
+                <Space style={{ display: "flex", marginTop: 4 }}>
+                  <StatusTag
+                    label={metaState?.review ?? "draft"}
+                    color={reviewColor(metaState?.review ?? "draft")}
+                  />
+                  <Select
+                    size="small"
+                    value={metaState?.review ?? "draft"}
+                    onChange={(v) => void setReview(v)}
+                    options={REVIEW_STATES.map((r) => ({ value: r, label: r }))}
+                    style={{ width: 140 }}
+                  />
+                </Space>
+              </div>
+            </Col>
+            <Col span={12}>
+              <div data-register-surface="Campaign delivery state">
+                <Typography.Text type="secondary" style={{ fontSize: 11 }}>Delivery state</Typography.Text>
+                <Space style={{ display: "flex", marginTop: 4 }}>
+                  <StatusTag
+                    label={metaState?.delivery ?? "not_started"}
+                    color={deliveryColor(metaState?.delivery ?? "not_started")}
+                  />
+                  <Select
+                    size="small"
+                    value={metaState?.delivery ?? "not_started"}
+                    onChange={(v) => void setDelivery(v)}
+                    options={DELIVERY_STATES.map((d) => ({ value: d, label: d }))}
+                    style={{ width: 140 }}
+                  />
+                </Space>
+              </div>
+            </Col>
+          </Row>
+          <Typography.Text type="secondary" style={{ display: "block", marginTop: 12, fontSize: 11 }}>
+            Outbound-ready: <strong>{metaState?.outboundReady ? "live" : "dark (deferred)"}</strong> —
+            Arm ads stays disabled until near-real-time lead pull → first agent text ships.
+          </Typography.Text>
+        </Card>
       </Surface>
 
       <Row gutter={[12, 12]} style={{ marginTop: 16 }}>
