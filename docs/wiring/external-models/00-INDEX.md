@@ -4,6 +4,7 @@
 **Brief:** [`00-PASS-BRIEF.md`](./00-PASS-BRIEF.md)  
 **Human-only framing (hand-back §1–§3):** [`HUMAN-ONLY.md`](./HUMAN-ONLY.md) — `humanKind` · `fixture` · sending-identity runbook  
 **Control reconciliation (hand-back §4):** [`04-CONTROL-RECONCILIATION.md`](./04-CONTROL-RECONCILIATION.md) — promised chips/denies vs lattice · priors · weak · CT  
+**Sending-identity wall (status + PM):** [`05-SENDING-IDENTITY-WALL.md`](./05-SENDING-IDENTITY-WALL.md) — where the fake app breaks; our-domain / pool default vs firm-zone upgrade  
 **Method:** CTO Think Stack against densified implementations / How / CT / paper traces. Densify stops at the app; this pass derives externals from **accomplishment**.
 
 **Downstream (Pass B):** build modelable stand-ins → wire CT ([`../STANDIN-WIRING.md`](../STANDIN-WIRING.md) — includes **fixture honesty**).
@@ -24,7 +25,7 @@
 | `by-design` | **5** | Governance; never automate (halt, counsel, OAuth grant, …) |
 | `by-provisioning` | **10** | One-time logistics backlog (DNS cluster, TCR, Postmaster, Meta Business, payment identity, …) |
 
-**Sending-identity onboarding runbook** (one per-firm sequence): DNS auth (SPF→DKIM→DMARC) → return-path/PTR → reputation enrollment (Postmaster/FBL) → registration/verification (TCR, Meta Business). Members + fixtures in [`HUMAN-ONLY.md`](./HUMAN-ONLY.md).
+**Sending-identity onboarding runbook** (one per-firm sequence): DNS auth (SPF→DKIM→DMARC) → return-path/PTR → reputation enrollment (Postmaster/FBL) → registration/verification (TCR, Meta Business). Members + fixtures in [`HUMAN-ONLY.md`](./HUMAN-ONLY.md). Dual path: **pool default** (zero firm DNS) vs **custom-domain upgrade** — see [`05-SENDING-IDENTITY-WALL.md`](./05-SENDING-IDENTITY-WALL.md).
 
 ## Files
 
@@ -35,6 +36,7 @@
 | [`03-data-identity-money.md`](./03-data-identity-money.md) | Durable store, imports, validators, escrow, auth, reference, metrics | 24 |
 | [`HUMAN-ONLY.md`](./HUMAN-ONLY.md) | All human-only rows: fixture · humanKind · sending-identity runbook | 15 |
 | [`04-CONTROL-RECONCILIATION.md`](./04-CONTROL-RECONCILIATION.md) | In-app contract states vs How/SME/Furnish · priors · weak · CT | 63 rows · 3 gaps |
+| [`05-SENDING-IDENTITY-WALL.md`](./05-SENDING-IDENTITY-WALL.md) | Fake-app break point; wall collapse; our-domain PM reconcile vs C1 | status + doctrine |
 
 Each row: `id` · system · facet · why · sources · `modelTag` · `modelContract`. Human-only rows also carry `humanKind` + `fixture` (annotations in zone files; canonical table in `HUMAN-ONLY.md`).
 
