@@ -80,4 +80,6 @@ Tag stand-ins `stand-in` in the registry. Never pretend a stand-in is the produc
 
 **Founder real-account edge:** [`FOUNDER-INPUT-CHECKLIST.md`](./FOUNDER-INPUT-CHECKLIST.md)
 
-Further builds follow Pass A `modelable` contracts + fixture honesty. Deferred: custom-domain, Meta ads go-live, CRM continuous sync.
+**GO cutover (live):** [`wire-log/GO-CUTOVER.md`](./wire-log/GO-CUTOVER.md) — Resend CEM · Twilio CA SMS · Postgres CT stores · Resend webhooks. Registry selects real ports when `VITE_WIRE_REAL` ≠ false.
+
+Further builds follow Pass A `modelable` contracts + fixture honesty. Deferred: custom-domain, Meta ads go-live, CRM continuous sync, escrow rail.

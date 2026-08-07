@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { Button, Col, Input, Row, Select, Space, Typography } from "antd";
 import {
   FOUNDER_INPUT_FIXTURES,
+  bootstrapRealAccountFixtures,
   fixtureMeta,
   isFixturePresent,
   markFixture,
@@ -49,6 +50,10 @@ export function SendingInfrastructureModule() {
   const [dnsMarkedNote, setDnsMarkedNote] = useState<string | null>(null);
 
   useEffect(() => {
+    void bootstrapRealAccountFixtures();
+  }, []);
+
+  useEffect(() => {
     let alive = true;
     (async () => {
       const [p, chips, w, tier] = await Promise.all([
@@ -79,9 +84,13 @@ export function SendingInfrastructureModule() {
   }
 
   async function onMarkDns() {
-    await wirePorts.sendingPool.markPlatformDnsPublished(firmId);
-    setAuthChips(await wirePorts.sendingPool.authChips(firmId));
-    setDnsMarkedNote(`Marked by platform-ops · ${new Date().toLocaleTimeString()}`);
+    try {
+      await wirePorts.sendingPool.markPlatformDnsPublished(firmId);
+      setAuthChips(await wirePorts.sendingPool.authChips(firmId));
+      setDnsMarkedNote(`Resend verify polled · ${new Date().toLocaleTimeString()}`);
+    } catch (err) {
+      setDnsMarkedNote(err instanceof Error ? err.message : "Verify failed");
+    }
   }
 
   async function onSetStage(stage: WarmupStage) {
@@ -193,7 +202,7 @@ export function SendingInfrastructureModule() {
           ))}
         </Space>
         <Button data-register-surface="Mark platform DNS published" onClick={onMarkDns} disabled={!pool}>
-          Mark platform DNS published
+          Verify domain in Resend
         </Button>
         <Typography.Text type="secondary" style={{ display: "block", marginTop: 6, fontSize: 11 }}>
           Explicit platform-ops fixture action — not automatic on allocate.

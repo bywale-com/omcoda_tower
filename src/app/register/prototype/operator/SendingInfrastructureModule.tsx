@@ -11,6 +11,7 @@ import { useEffect, useState, type CSSProperties } from "react";
 import type { Tokens } from "../../../components/tokens";
 import {
   FOUNDER_INPUT_FIXTURES,
+  bootstrapRealAccountFixtures,
   fixtureMeta,
   isFixturePresent,
   markFixture,
@@ -103,6 +104,10 @@ export function SendingInfrastructureModule({ t, focusedEntry, hoveredId }: Oper
   }, [focusedEntry]);
 
   useEffect(() => {
+    void bootstrapRealAccountFixtures();
+  }, []);
+
+  useEffect(() => {
     let alive = true;
     (async () => {
       const [p, chips, w, tier] = await Promise.all([
@@ -132,9 +137,13 @@ export function SendingInfrastructureModule({ t, focusedEntry, hoveredId }: Oper
   }
 
   async function onMarkDns() {
-    await wirePorts.sendingPool.markPlatformDnsPublished(firmId);
-    setAuthChips(await wirePorts.sendingPool.authChips(firmId));
-    setDnsMarkedNote(`Marked by platform-ops · ${new Date().toLocaleTimeString()}`);
+    try {
+      await wirePorts.sendingPool.markPlatformDnsPublished(firmId);
+      setAuthChips(await wirePorts.sendingPool.authChips(firmId));
+      setDnsMarkedNote(`Resend verify polled · ${new Date().toLocaleTimeString()}`);
+    } catch (err) {
+      setDnsMarkedNote(err instanceof Error ? err.message : "Verify failed");
+    }
   }
 
   async function onSetStage(stage: WarmupStage) {
@@ -292,8 +301,8 @@ export function SendingInfrastructureModule({ t, focusedEntry, hoveredId }: Oper
                   {statusChip(t, authReady ? "ready" : "not ready", authReady ? "success" : "amber")}
                 </div>
                 <p style={{ margin: "0 0 10px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
-                  SPF / DKIM / DMARC / Return-Path on the house zone. Fixture-honest — never
-                  auto-green; platform ops must explicitly publish.
+                  SPF / DKIM / DMARC / Return-Path — chips read real Resend domain status for
+                  mail.try-tower.com (never invent green).
                 </p>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
                   {authChips.map((c) => (
@@ -307,10 +316,10 @@ export function SendingInfrastructureModule({ t, focusedEntry, hoveredId }: Oper
                   disabled={!pool}
                   style={secondaryBtnStyle(t)}
                 >
-                  Mark platform DNS published
+                  Verify domain in Resend
                 </button>
                 <div style={{ fontSize: 10, color: t.textDim, marginTop: 6 }}>
-                  Explicit platform-ops fixture action — not automatic on allocate.
+                  Polls Resend verification — greens only when Resend reports verified.
                 </div>
                 {dnsMarkedNote ? (
                   <div style={{ fontSize: 11, color: t.accent, marginTop: 6 }}>{dnsMarkedNote}</div>
