@@ -41,4 +41,5 @@ Using the **Think Stack**, determine how every densified implementation / How le
 - [`00-INDEX.md`](./00-INDEX.md) — canonical external systems + counts by tag  
 - Zone/facet files as needed  
 - [`HUMAN-ONLY.md`](./HUMAN-ONLY.md) — human-only duality: `humanKind` · `fixture` · sending-identity runbook  
+- [`04-CONTROL-RECONCILIATION.md`](./04-CONTROL-RECONCILIATION.md) — hand-back §4: promised contract states vs lattice / priors / weak / CT  
 - Optional: proposed stand-in module names for Pass B
