@@ -46,7 +46,7 @@ Defer-tagged externals are out of scope (no V1 in-app contract).
 | `ip-shared-pool` / `ip-dedicated` / promotion | `ext-esp-ip-pool` | SME C1 `deliv-22` IP pool tier chips | `latticed` | Dedicated + PTR gated |
 | ESP accept deny `auth` | `ext-esp-mailer` · `engagement-send-runtime` | SME C1 Send gates auth-green / domain-not-ready / DKIM-aligned deny rows | `latticed` | Maps provider auth reject → densified auth readiness denies |
 | ESP accept deny `throttle` | `ext-esp-mailer` | SME C1 `deliv-08/23` Warmup/throttle remaining + adaptive-throttle chips | `latticed` | |
-| ESP accept deny `policy` | `ext-esp-mailer` | NONE | `gap` | Named in `modelContract` Out; no densified chip / How / CT for ESP `policy` reject as a gate reason |
+| ESP accept deny `policy` | `ext-esp-mailer` | SME C1 `deliv-10`/`deliv-23` `esp-policy-deny` → Send gates `policy` reason chip "ESP policy reject" | `latticed` | CT `standInSendGate` chips() names `policy` / "ESP policy reject" as a blocking reason distinct from `auth`/`throttle` |
 | Delivery lifecycle event classes (accepted/deferred/delivered/bounce/complaint/rejected) | `ext-esp-mailer` · `messaging-provider-ingress` · `ext-webhook-ingress-messaging` | SME C1 `deliv-10/14` delivery-event-schema + webhook-normalize; C7 stream adjacency | `latticed` | Status readers on Firm health / Send gates; not all planted in CT |
 | Hard-bounce → global suppress | `ext-esp-mailer` · `suppression-halt-plane` | SME C1 `deliv-10/15` hard-suppress + Send gates global suppression deny | `latticed` | |
 | List-Unsubscribe → silence/suppression | `ext-list-unsubscribe-ingress` | How `contact-silence` List-Unsubscribe; SME C1 `deliv-13` one-click + Send gates suppressed deny | `latticed` | |
@@ -56,7 +56,7 @@ Defer-tagged externals are out of scope (no V1 in-app contract).
 | `outbound-ready` / `outbound-dark` (Arm ads gate) | `ext-meta-lead-webhook` · `ext-meta-marketing-api` | SME ads-14 → Approach campaigns Outbound readiness; Arm ads enable | `latticed` | **CT:** Acquisition & ads planted without Arm ads / outbound-ready chips |
 | Meta Business / Page verification chips | `ext-meta-business-verification` | SME ads-21 → Account hygiene `verified-business` / `verified-page`; Arm ads fail closed | `latticed` | Fixture `meta_business_verified`. **CT:** Account hygiene not planted |
 | Creative / Domain identity match | `ext-meta-business-verification` | SME ads-21 Account hygiene identity rows | `latticed` | Arm ads blocks mismatch |
-| Meta campaign review/delivery state chips | `ext-meta-marketing-api` | NONE | `gap` | `modelContract` Out names review/delivery state; densify has destination-freeze across review/delivery phases but no named review/delivery status chips |
+| Meta campaign review/delivery state chips | `ext-meta-marketing-api` | SME ads-22 `review-state-chip`/`delivery-state-chip` (destination-freeze phases named) → CT Acquisition & ads Campaign review state / Campaign delivery state | `latticed` | **CT:** planted — Review (draft\|in_review\|approved\|rejected) and Delivery (not_started\|scheduled\|active\|paused\|ended) chips + Select controls bound to `wirePorts.metaAds`; outbound-ready stays dark/deferred regardless (ads go-live out of scope) |
 | Approach instrumentation proxy aggregates / don’t-understand vs don’t-commit | `ext-meta-insights-export` · `ext-ad-platform-export` | How Approach instrumentation; SME ads-15 + C7 `obs-15` proxy-pair-join | `latticed` | How leaf count cards; densify expands proxies |
 | Ad-export coverage failure (keys missing) | `ext-ad-platform-export` | SME C7 `obs-06/15` producer-coverage Missing / proxy-pair key coverage | `latticed` | Fixture `ad_export_authorized`; human auth residue |
 | `enrichment-blocked` | `ext-public-web-crawl` · `ext-robots-txt` | SME C5 `fwd-01` In-flight activations enrichment-blocked; How Staging status chips | `latticed` | How `operator-activation` Staging status chips; surfaceCatalog same |
@@ -79,7 +79,7 @@ Defer-tagged externals are out of scope (no V1 in-app contract).
 | OTP deny expired / invalid_code / rate_limited | `ext-identity-otp-provider` · `ext-session-credential-store` | How Login conditions; Enrichment cons-cant-14; Furnish Resend code; CT VerifyFailure expired/mismatch/locked; auth-service contract | `latticed` | Exact API errors in auth-service contract; CT maps distinct reasons |
 | Book authorized / book-auth Progress | `ext-crm-oauth-grant` · `ext-crm-connector-api` | How Authorize book / Confirm book for Tower; Activation Progress authorize-book; SME crm-06 `book-authorized`; CT Prepared + ActivationState | `latticed` | Fixture `oauth_granted` for live grant path |
 | Grant / Connection stack / Scope summary | `ext-crm-oauth-grant` | SME crm-01/15 Connection stack + Scope summary; How Authorize book Connect CRM | `latticed` | |
-| OAuth / grant `revoked` flag | `ext-crm-oauth-grant` | NONE | `gap` | `modelContract` Out names revoked flag; no How/SME/Furnish/CT chip for revoked grant |
+| OAuth / grant `revoked` flag | `ext-crm-oauth-grant` | How Authorize book; SME crm-06 `book-authorized`; CT Prepared (plant + Ant) granted/revoked chips + Revoke grant control; stand-in `crmOAuth` | `latticed` | **CT:** planted — Authorize calls `wirePorts.crmOAuth.grant(firmId)`; Revoke grant calls `revoke(firmId)`; Activation state Progress authorize-book row reads `crmOAuth.get(firmId)` (`granted && !revoked`), fail closed |
 | Reachable / partial / unreachable verdict chips | `ext-email-validator` · `ext-phone-validator` · `ext-dns-mx-lookup` | How Book readiness Verdict list; Furnish verdict legend; SME C4 validation-class; CT BookReadiness | `latticed` | |
 | Sequence-ready (post-audit) | `ext-email-validator` · `consent-silence-ledger` | How Verdict list sequence-ready; Furnish Sequence-ready glance | `latticed` | |
 | Escrow `pending_accept` / `failed_hold` / `held` | `ext-payment-kyb-funding` · `ext-escrow-payment-rail` | SME C6 `escmech-03` Escrow status pending_accept / failed_hold / Held; Activation escrow hard-input | `latticed` | Fixture `payment_identity_provisioned`. **CT:** Commercial shows held/release_pending/disputed; pending_accept/failed_hold **not** planted |
@@ -100,39 +100,40 @@ Defer-tagged externals are out of scope (no V1 in-app contract).
 
 | status | Count |
 |---|---|
-| `latticed` | **58** |
+| `latticed` | **61** |
 | `prior` | **2** |
 | `weak` | **0** |
 | `ct-only` | **0** |
-| `gap` | **3** |
+| `gap` | **0** |
 | **Total rows** | **63** |
 
 ### Focus cluster (requested)
 
 | Cluster | Verdict |
 |---|---|
-| Sending-identity readiness | `latticed` (C1 ready-to-send / auth-green; composite fixture in HUMAN-ONLY) — CT incomplete (no Send gates / Sending infrastructure) |
+| Sending-identity readiness | `latticed` (C1 ready-to-send / auth-green; composite fixture in HUMAN-ONLY) — **CT:** Activation state Progress ready-to-send row now reads `isSendingIdentityReady(firmId)` fail-closed; Send gates / Sending infrastructure panels still not planted |
 | SPF / DKIM / DMARC chips | `latticed` (C1 densify) — not CT-planted |
 | TCR / SMS registration + throughput | `latticed` (C1 `deliv-24`) — not CT-planted |
 | Meta verification | `latticed` (ads-21 Account hygiene) — not CT-planted |
+| Meta review/delivery state | `latticed` (ads-22) + CT Acquisition & ads Campaign review state / Campaign delivery state chips; outbound-ready stays dark |
 | Halt | Confirm halt `latticed` + CT wired; lift/resume **`prior`** |
 | Escrow held | `latticed` + CT Progress/Commercial; pending_accept/failed_hold densified only |
-| Book authorized | `latticed` + CT Prepared/Progress |
+| Book authorized | `latticed` + CT Prepared/Progress; granted/revoked chips + Revoke grant control planted |
 | OTP | `latticed` + CT Login + stand-in |
 
 ---
 
 ## Gaps
 
-Promised contract states with **no** control in lattice, priors, weak, or CT:
+None open — the three §4 gaps below closed this pass (densify + CT wiring):
 
-| contractState | promisedBy | notes |
+| contractState | promisedBy | resolution |
 |---|---|---|
-| ESP accept deny `policy` | `ext-esp-mailer` | Out enum `auth\|throttle\|policy`; auth/throttle map to densified denies; **policy** has no named chip/path |
-| Meta campaign review/delivery state | `ext-meta-marketing-api` | Out promises review/delivery state; densify mentions review/delivery phases under destination-freeze only — no status chips |
-| OAuth / grant `revoked` flag | `ext-crm-oauth-grant` | Out names revoked flag beside grant status / scope chips; scope + Book authorized latticed — **revoked** unnamed |
+| ESP accept deny `policy` | `ext-esp-mailer` | C1 `deliv-10`/`deliv-23` name `esp-policy-deny`; CT `standInSendGate` chips() names `policy` reason "ESP policy reject" |
+| Meta campaign review/delivery state | `ext-meta-marketing-api` | ads-22 names `review-state-chip`/`delivery-state-chip`; CT Acquisition & ads plants Campaign review state / Campaign delivery state chips + Select controls bound to `wirePorts.metaAds` |
+| OAuth / grant `revoked` flag | `ext-crm-oauth-grant` | CT Prepared (plant + Ant) plants granted/revoked chips + Revoke grant control on `wirePorts.crmOAuth`; Activation state Progress reads `granted && !revoked` |
 
-**Gap count: 3**
+**Gap count: 0**
 
 ### Plant debt (not gaps — latticed but absent from CT)
 
