@@ -1,4 +1,4 @@
-import { useCallback, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { Layout, Menu, Typography } from "antd";
 import {
   CalendarOutlined,
@@ -8,10 +8,11 @@ import {
   LoginOutlined,
 } from "@ant-design/icons";
 import { getContact } from "../../../data/contacts";
+import { CT_DEMO, wirePorts } from "../../../wire";
 import { Surface } from "../chrome";
 import { BoardModule } from "./BoardModule";
 import { ContactsModule } from "./ContactsModule";
-import { buildHaltRetention, HaltOutreachModal } from "./HaltOutreachModal";
+import { HaltOutreachModal } from "./HaltOutreachModal";
 import { LoginModule } from "./LoginModule";
 import { MeetingsModule } from "./MeetingsModule";
 import { PreparedModule } from "./PreparedModule";
@@ -66,9 +67,54 @@ export function ConsultantAntScene() {
     [],
   );
 
-  function confirmHalt() {
-    const retention = buildHaltRetention(haltScope, haltReason);
-    retention.at = nowStamp();
+  /** Hydrate UI halt state from stand-in store (dual-write). */
+  useEffect(() => {
+    let cancelled = false;
+    void wirePorts.haltStore.listActive(CT_DEMO.firmId).then((active) => {
+      if (cancelled) return;
+      const book = active.find((h) => h.scope === "firm-book");
+      if (book) {
+        setBookHalted(true);
+        setBookHalt({
+          scope: "book",
+          reason: book.reason ?? "",
+          at: "Active · restored",
+          haltId: book.id,
+        });
+      }
+      const byContact: Record<string, HaltRetention> = {};
+      for (const h of active) {
+        if (h.scope === "contact" && h.contactId) {
+          byContact[h.contactId] = {
+            scope: "contact",
+            reason: h.reason ?? "",
+            at: "Active · restored",
+            haltId: h.id,
+          };
+        }
+      }
+      if (Object.keys(byContact).length) setHaltByContact(byContact);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  async function confirmHalt() {
+    const portScope = haltScope === "book" ? "firm-book" : "contact";
+    const record = await wirePorts.haltStore.commit({
+      consultantId: CT_DEMO.consultantId,
+      firmId: CT_DEMO.firmId,
+      contactId: portScope === "contact" ? activeClientId : undefined,
+      scope: portScope,
+      reason: haltReason.trim() || undefined,
+    });
+    const retention: HaltRetention = {
+      scope: haltScope,
+      reason: haltReason,
+      at: nowStamp(),
+      haltId: record.id,
+    };
     if (haltScope === "book") {
       setBookHalted(true);
       setBookHalt(retention);
@@ -79,7 +125,17 @@ export function ConsultantAntScene() {
     setHaltReason("");
   }
 
-  function liftHaltForActive() {
+  async function liftHaltForActive() {
+    if (bookHalt?.haltId) {
+      await wirePorts.haltStore.lift(bookHalt.haltId);
+      setBookHalted(false);
+      setBookHalt(null);
+    } else {
+      const contactHalt = haltByContact[activeClientId];
+      if (contactHalt?.haltId) {
+        await wirePorts.haltStore.lift(contactHalt.haltId);
+      }
+    }
     if (bookHalted || bookHalt) {
       setBookHalted(false);
       setBookHalt(null);
@@ -155,11 +211,16 @@ export function ConsultantAntScene() {
             termsAccepted={termsAccepted}
             activityKick={activityKick}
             onHaltOutreach={() => openHaltModal(workspaceClientId)}
-            onLiftHalt={liftHaltForActive}
+            onLiftHalt={() => void liftHaltForActive()}
             onHaltBook={() => openHaltModal()}
             onResumeBook={() => {
-              setBookHalted(false);
-              setBookHalt(null);
+              void (async () => {
+                if (bookHalt?.haltId) {
+                  await wirePorts.haltStore.lift(bookHalt.haltId);
+                }
+                setBookHalted(false);
+                setBookHalt(null);
+              })();
             }}
             onMeetingClick={(id) => {
               setMeetingsSelectId(id);
@@ -184,7 +245,7 @@ export function ConsultantAntScene() {
             activityKick={activityKick}
             workspaceClientId={workspaceClientId}
             onHaltOutreach={() => openHaltModal(workspaceClientId)}
-            onLiftHalt={liftHaltForActive}
+            onLiftHalt={() => void liftHaltForActive()}
             onOpenAcceptedTerms={termsAccepted ? openAcceptedTerms : undefined}
           />
         ) : null}
@@ -214,7 +275,7 @@ export function ConsultantAntScene() {
         reason={haltReason}
         onScope={setHaltScope}
         onReason={setHaltReason}
-        onConfirm={confirmHalt}
+        onConfirm={() => void confirmHalt()}
         onClose={() => setHaltModalOpen(false)}
       />
     </Layout>

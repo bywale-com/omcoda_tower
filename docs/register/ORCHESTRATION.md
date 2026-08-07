@@ -33,8 +33,9 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 | Components | Holon tree live |
 | SME | **Pass2 + handoff + densified PM implementations CT-planted** — 325 written twins `implementationPlant: planted` (10 NV practice items remain without impl blocks) · ([`../sme/implementation/DENSIFY-LAW.md`](../sme/implementation/DENSIFY-LAW.md)) |
 | Enrichment / Furnish | **CT-planted** — 60 Can't Needs closed + 60 Furnish affordances on Register prototypes ([`enrichment/`](./enrichment/) · [`furnish/`](./furnish/)) |
-| **Priors** | **Full-app priors inventory** — 111 priors; **Weak** — 32; `codeRefs` ([`priors/`](./priors/) · [`weak/`](./weak/)) |
-| CT Plant | **Board plant pass landed** — How + SME densify + Furnish; stand-in wire / Pass B build next |
+| **Priors** | **Full-app priors inventory** — 111 priors; **Weak** — 32; `codeRefs` CTO joins ([`priors/`](./priors/) · [`weak/`](./weak/)) |
+| **Wiring (stand-ins)** | **Build slice started** — Login OTP + Halt wired ([`../wiring/STANDIN-WIRING.md`](../wiring/STANDIN-WIRING.md) · [`../wiring/wire-log/`](../wiring/wire-log/)). Pass A externals inventory guides Pass B models ([`../wiring/external-models/`](../wiring/external-models/)) |
+| CT Plant | **Board plant pass landed** — How + SME densify + Furnish; stand-in wiring + Pass B model build in progress |
 | Verify scripts | Not shipped |
 
 ---
