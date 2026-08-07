@@ -5,7 +5,8 @@ import {
 } from "../fixtures/store";
 import type { PoolSubdomain, SendingPoolPort } from "../ports";
 
-const HOUSE_ROOT = "mail.omcoda.test";
+/** Live house sending root (pool path). */
+const HOUSE_ROOT = "mail.try-tower.com";
 const pool = new Map<string, PoolSubdomain>();
 
 function slugify(slug: string): string {

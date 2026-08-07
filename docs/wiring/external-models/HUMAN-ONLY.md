@@ -48,7 +48,9 @@ Fixtures are required on **both** paths — someone must really publish. Pool pa
 1. **DNS auth** — SPF → DKIM → DMARC (pool zone *or* firm zone, depending on path)  
 2. **Return-path / PTR** — bounce MAIL FROM + dedicated-IP rDNS (Return-Path is platform-controlled on both paths — C1 `deliv-20`)  
 3. **Reputation enrollment** — Postmaster / FBL (and SNDS-class peers)  
-4. **Registration / verification** — TCR (A2P) · Meta Business / Page verification  
+4. **Registration / verification** — Canadian SMS number (not US TCR) · Meta Business / Page verification  
+
+**SMS Canada correction:** [`06-SMS-CANADA-GATE.md`](./06-SMS-CANADA-GATE.md) — `tcr_filed` is **N/A** for Canadian firms → Canadian numbers; gate on `ca_sms_number_provisioned` + CASL consent.
 
 ### Members (ext ids + fixtures)
 
@@ -60,7 +62,8 @@ Fixtures are required on **both** paths — someone must really publish. Pool pa
 | 2a | `ext-dns-return-path` | `dns_return_path_published` | Bounce subdomain / MAIL FROM (platform zone) |
 | 2b | `ext-dns-ptr-rdns` | `dns_ptr_published` | Dedicated-IP PTR at host |
 | 3 | `ext-postmaster-fbl` | `postmaster_enrolled` | Human enrolls; feed samples modelable after fixture |
-| 4a | `ext-tcr-a2p` | `tcr_filed` | Brand/campaign/carrier filing |
+| 4a | `ext-tcr-a2p` | `tcr_filed` | **N/A for Canadian path** (US 10DLC only). CA SMS uses `ca_sms_number_provisioned` |
+| 4a′ | *(CA SMS number)* | `ca_sms_number_provisioned` | Canadian sending number provisioned — fail-closed for CA SMS |
 | 4b | `ext-meta-business-verification` | `meta_business_verified` | Business/Page verification in Meta |
 
 **Adjacent rollup (01):** `sending-identity-dns` — in-app readiness flag `sending_identity_ready` consumed by `send-gate-plane`. That flag is a **composite** of the DNS fixtures (`dns_spf_published` ∧ `dns_dkim_published` ∧ `dns_dmarc_published` ∧ `dns_return_path_published`; `dns_ptr_published` when dedicated IP). Warmup calendar-time remains human residue on the modelable warmup plane — not a separate human-only row here.
@@ -82,7 +85,7 @@ Fixtures are required on **both** paths — someone must really publish. Pool pa
 | `ext-dns-return-path` | Platform bounce / custom MAIL FROM DNS | `by-provisioning` | `dns_return_path_published` | Bind Return-Path token; bounce correlate | `sending-identity` | `02-send-enrich-ads.md` |
 | `ext-dns-ptr-rdns` | Dedicated-IP PTR / rDNS | `by-provisioning` | `dns_ptr_published` | `ptr-rdns` chip on `ip_pool_tier`; deny dedicated volume until green | `sending-identity` | `02-send-enrich-ads.md` |
 | `ext-postmaster-fbl` | Google Postmaster / FBL / SNDS-class feeds | `by-provisioning` | `postmaster_enrolled` | Ingest reputation samples after enroll; throttle/quarantine readers | `sending-identity` | `02-send-enrich-ads.md` |
-| `ext-tcr-a2p` | TCR / brand / campaign / carrier registration | `by-provisioning` | `tcr_filed` | Registration status + throughput chips; SMS gates fail closed until approved | `sending-identity` | `02-send-enrich-ads.md` |
+| `ext-tcr-a2p` | TCR / brand / campaign / carrier registration | `by-provisioning` | `tcr_filed` | **N/A Canadian V1** — US 10DLC only; do not fail-close CA SMS on this fixture | `sending-identity` | `02-send-enrich-ads.md` · [`06-SMS-CANADA-GATE.md`](./06-SMS-CANADA-GATE.md) |
 | `ext-meta-business-verification` | Meta Business / Page verification & hygiene | `by-provisioning` | `meta_business_verified` | Sync verification chips; Arm ads fail closed on mismatch | `sending-identity` | `02-send-enrich-ads.md` |
 | `ext-crm-oauth-grant` | Firm CRM OAuth / export authorization | `by-design` | `oauth_granted` | Grant status, scope chips, revoked; Book authorized only after intentional act | — | `03-data-identity-money.md` |
 | `ext-payment-kyb-funding` | Processor KYB + firm funding / payment mandate | `by-provisioning` | `payment_identity_provisioned` | pending_accept / failed_hold / held chips; Activation escrow hard-input | — | `03-data-identity-money.md` |
@@ -115,7 +118,8 @@ Fixtures are required on **both** paths — someone must really publish. Pool pa
 | `dns_ptr_published` | by-provisioning | `ext-dns-ptr-rdns` |
 | `sending_identity_ready` | by-provisioning | `sending-identity-dns` — **composite** of DNS fixtures (see runbook) |
 | `postmaster_enrolled` | by-provisioning | `ext-postmaster-fbl` |
-| `tcr_filed` | by-provisioning | `ext-tcr-a2p` |
+| `tcr_filed` | by-provisioning | `ext-tcr-a2p` — **N/A Canadian path** |
+| `ca_sms_number_provisioned` | by-provisioning | Canadian SMS sending number (replaces TCR gate for CA) |
 | `meta_business_verified` | by-provisioning | `ext-meta-business-verification` |
 | `oauth_granted` | by-design | `ext-crm-oauth-grant` |
 | `halt_confirmed` | by-design | `consultant-halt-refusal` |

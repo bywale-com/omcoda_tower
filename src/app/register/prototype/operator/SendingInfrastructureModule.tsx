@@ -36,7 +36,11 @@ import {
 
 const WARMUP_STAGES: WarmupStage[] = ["cold", "ramp", "steady", "hold", "re-warmup"];
 const FOUNDER_ROW_IDS = FOUNDER_INPUT_FIXTURES.filter(
-  (id) => id === "esp_account_provisioned" || id === "postmaster_enrolled",
+  (id) =>
+    id === "esp_account_provisioned" ||
+    id === "postmaster_enrolled" ||
+    id === "ca_sms_number_provisioned" ||
+    id === "sms_account_provisioned",
 );
 
 function textInputStyle(t: Tokens): CSSProperties {

@@ -8,7 +8,7 @@
 
 ## Behavior
 
-1. **Allocate subdomain** → `sendingPool.allocate(firmId, slug)` → per-firm `*.mail.omcoda.test` identity (auth chips stay red).
+1. **Allocate subdomain** → `sendingPool.allocate(firmId, slug)` → per-firm `*.mail.try-tower.com` identity (auth chips stay red).
 2. **Mark platform DNS published** → explicit `markPlatformDnsPublished` → SPF/DKIM/DMARC/return-path fixtures → `sending_identity_ready`.
 3. **Send gates chips** → `sendGate.chips(firmId)` including **ESP policy reject** (`policy`).
 4. **Probe CEM leave** → `sendGate.decide` → on allow `espMailer.send` into stand-in sink (+ accepted event).
