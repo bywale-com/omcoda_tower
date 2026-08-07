@@ -2,7 +2,8 @@
 
 **Status:** Pass A filed (inventory + model tags — no app build)  
 **Brief:** [`00-PASS-BRIEF.md`](./00-PASS-BRIEF.md)  
-**Human-only framing (hand-back):** [`HUMAN-ONLY.md`](./HUMAN-ONLY.md) — `humanKind` · `fixture` · sending-identity runbook  
+**Human-only framing (hand-back §1–§3):** [`HUMAN-ONLY.md`](./HUMAN-ONLY.md) — `humanKind` · `fixture` · sending-identity runbook  
+**Control reconciliation (hand-back §4):** [`04-CONTROL-RECONCILIATION.md`](./04-CONTROL-RECONCILIATION.md) — promised chips/denies vs lattice · priors · weak · CT  
 **Method:** CTO Think Stack against densified implementations / How / CT / paper traces. Densify stops at the app; this pass derives externals from **accomplishment**.
 
 **Downstream (Pass B):** build modelable stand-ins → wire CT against those contracts (see stand-in wiring method when active).
@@ -33,6 +34,7 @@
 | [`02-send-enrich-ads.md`](./02-send-enrich-ads.md) | ESP/DNS/warmup, crawl/enrich, Meta ads | 23 |
 | [`03-data-identity-money.md`](./03-data-identity-money.md) | Durable store, imports, validators, escrow, auth, reference, metrics | 24 |
 | [`HUMAN-ONLY.md`](./HUMAN-ONLY.md) | All human-only rows: fixture · humanKind · sending-identity runbook | 15 |
+| [`04-CONTROL-RECONCILIATION.md`](./04-CONTROL-RECONCILIATION.md) | In-app contract states vs How/SME/Furnish · priors · weak · CT | 63 rows · 3 gaps |
 
 Each row: `id` · system · facet · why · sources · `modelTag` · `modelContract`. Human-only rows also carry `humanKind` + `fixture` (annotations in zone files; canonical table in `HUMAN-ONLY.md`).
 
