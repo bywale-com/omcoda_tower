@@ -18,9 +18,11 @@ were split so this file stays readable:
 | §8 Decision constitution (catch-all bottlenecks) | [`../method/DECISION-CONSTITUTION.md`](../method/DECISION-CONSTITUTION.md) |
 | §9 Two-column synthesis | [`../method/TWO-COLUMN-SYNTHESIS.md`](../method/TWO-COLUMN-SYNTHESIS.md) |
 
-**Vocabulary anchors:** Register passes = Seed → World → Personas & Function → SME → Enrichment →
-Furnish → Wiring → CT Plant → Translation. "Face" = has a UI surface; "no face" = backend/Wiring.
-Trim = the failure where a pass performs the ceremony and ships thin.
+**Vocabulary anchors:** Register passes = Seed → World → Systems Story → Personas & Function →
+Outcome↔System map → SME → Enrichment → Furnish → Wiring → CT Plant → Translation. "Face" = has a
+UI surface; "no face" = backend/Wiring. Trim = the failure where a pass performs the ceremony and
+ships thin. Systems-analyst seat owns Systems Story + Outcome↔System map (see
+[`../register/PASS-FORK-MAP.md`](../register/PASS-FORK-MAP.md)).
 
 **Related:** [`METHODOLOGY.md`](./METHODOLOGY.md) (practice SME Engagement Manager) ·
 [`capability/`](./capability/) (capability axis paper) · [`../wiring/`](../wiring/) (Wiring method + nodes).

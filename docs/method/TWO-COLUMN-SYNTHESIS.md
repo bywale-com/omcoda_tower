@@ -9,7 +9,7 @@
 ## The flow
 
 ```
-Seed → World → Personas & Function
+Seed → World → Systems Story → Personas & Function → Outcome↔System map
         │
         ▼
    SME handoff  ──────────────┬───────────────────────────┐
@@ -29,6 +29,8 @@ Seed → World → Personas & Function
                               ▼
                      CT Plant → build
 ```
+
+Systems Story + Outcome↔System map are the **systems-analyst** seat (architect the system before SME/CTO deepen) — [`../register/SYSTEMS-STORY.md`](../register/SYSTEMS-STORY.md) · [`../register/OUTCOME-SYSTEM-MAP.md`](../register/OUTCOME-SYSTEM-MAP.md).
 
 ---
 

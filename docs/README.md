@@ -9,7 +9,7 @@ This is the whole-repo map for `docs/`. Everything Tower is written down under h
 1. **`method/00-INDEX.md`** — the method map. Read the two portable docs it names: `method/DECISION-CONSTITUTION.md` and `method/TWO-COLUMN-SYNTHESIS.md`. This is *how we think*.
 2. **`sme/DOCTRINE-sme-cto-implementation.md`** — the doctrine spine. The single most important conceptual doc; `method/` and `wiring/` both point back to it.
 3. **`build-foundation/`** — *how we build*. Start at `build-foundation/README.md` and `build-foundation/00-rudiments.md`, then the enforced rules in `build-foundation/cursor-rules/*.mdc` (the rules an agent actually obeys).
-4. **`register/`** — *what the app is*. Walk its subfolders via their `00-INDEX.md`: `how/`, `enrichment/`, `furnish/`, `priors/`, `weak/`.
+4. **`register/`** — *what the app is*. Start with `SEED.md` → `WORLD.md` → systems-analyst pair [`register/SYSTEMS-STORY.md`](./register/SYSTEMS-STORY.md) + [`register/OUTCOME-SYSTEM-MAP.md`](./register/OUTCOME-SYSTEM-MAP.md), then `OUTCOMES.md` / `how/`, and walk `enrichment/`, `furnish/`, `priors/`, `weak/` via their `00-INDEX.md`. Pass forks: [`register/PASS-FORK-MAP.md`](./register/PASS-FORK-MAP.md).
 5. **`sme/`** — *what expertise shaped it*. The SME passes: `capability/`, `implementation/` (`00-INDEX.md`), `pass2/`.
 6. **`wiring/00-INDEX.md`** — *how it's connected and what's live*. Nodes in `paper-trace/`, the 67 externals in `external-models/`, and the as-built record in `wire-log/` — including **`wire-log/GO-CUTOVER.md`**, the record of the real Resend/Twilio/Postgres cutover that shipped.
 7. **`product/product-state-index.md`** — current-state snapshot.
@@ -22,7 +22,7 @@ This is the whole-repo map for `docs/`. Everything Tower is written down under h
 |---|---|---|
 | [`method/`](./method/) | Portable operating doctrine (decision constitution, two-column synthesis) — *how we think* | [`method/00-INDEX.md`](./method/00-INDEX.md) |
 | [`build-foundation/`](./build-foundation/) | The build method + enforced `cursor-rules/*.mdc` — *how we build* | [`build-foundation/README.md`](./build-foundation/README.md), [`build-foundation/00-rudiments.md`](./build-foundation/00-rudiments.md) |
-| [`register/`](./register/) | The Tower app definition (`how/`, `enrichment/`, `furnish/`, `priors/`, `weak/`) — *what the app is* | `register/WORLD.md`, then each subfolder's `00-INDEX.md` |
+| [`register/`](./register/) | The Tower app definition (Seed/World, systems-analyst story+map, `how/`, `enrichment/`, `furnish/`, `priors/`, `weak/`) — *what the app is* | [`register/PASS-FORK-MAP.md`](./register/PASS-FORK-MAP.md), then `WORLD.md` / each subfolder's `00-INDEX.md` |
 | [`sme/`](./sme/) | SME passes and the doctrine spine — *what expertise shaped it* | [`sme/DOCTRINE-sme-cto-implementation.md`](./sme/DOCTRINE-sme-cto-implementation.md) |
 | [`wiring/`](./wiring/) | Wiring + cutover: nodes, externals, and the as-built `wire-log/` — *how it's connected and what's live* | [`wiring/00-INDEX.md`](./wiring/00-INDEX.md) |
 | [`product/`](./product/) | Current-state snapshots, product decisions, contracts, PSD/screenshots | [`product/product-state-index.md`](./product/product-state-index.md) |
