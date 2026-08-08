@@ -11,11 +11,12 @@ Tower is a single-product Vite + React 18 + TypeScript SPA (the "board → clien
 - Client build flags (`VITE_AUTH_DISABLED`, `VITE_REGISTER_ENABLED`, `VITE_WIRE_REAL`) are also hard-coded with defaults in `vite.config.ts` via `define`, so they apply even without a `.env`.
 - There is a second isolated document served at `/prototype-ant` (an Ant Design translation MPA) — see the `prototype-ant-mpa` middleware in `vite.config.ts`.
 
-### Backend / real-data path (optional — requires external secrets)
+### Backend / real-data path (requires secrets in gitignored `.env`)
 
-- Start with `npm run dev:auth` (Hono via `tsx`, port `3001`). Locally this single process mounts BOTH the auth routes and the wire routes (`/wire`, `/api/wire`); on Vercel they split into two serverless functions under `api/`.
-- The backend needs a `.env` (it's launched with `tsx --env-file=.env`). DB-backed routes throw `"DATABASE_URL is required"` if `DATABASE_URL` (Supabase Postgres) is unset. Real email/SMS need `RESEND_*` / `TWILIO_*`; otherwise stand-in mailer/SMS are used. See `.env.example` and `.env.sandbox.example`.
-- DB setup (only for the real path): `npm run db:migrate` then `npm run db:seed` (both use `--env-file=.env`, apply SQL under `supabase/migrations/` and `supabase/seeds/`).
+- Prefer Session-pooler `DATABASE_URL` (port 5432). **URL-encode `$` in the password as `%24`** or `tsx --env-file=.env` / Postgres auth will fail. Template: `.env.sandbox.example`.
+- With real secrets present, run **both** `npm run dev:auth` (Hono on `3001`, mounts `/wire` + `/api/wire` locally) **and** `npm run dev` (Vite on `5173`). Vite proxies `/auth`, `/wire`, `/api/wire` → `:3001`. Restart Vite after changing `VITE_*` in `.env` (those flags are baked via `vite.config.ts` `define` at startup).
+- One-time DB: `npm run db:migrate` then `npm run db:seed`. Seeded platform firm id is `a1000000-0000-4000-8000-000000000001` (see `supabase/seeds/manifest.json`).
+- Probe real send (no contactId → skips consent/halt): `POST /wire/send/cem` and `POST /wire/send/sms` with that `firmId` plus `TEST_EMAIL_TO` / `TEST_SMS_TO`. Health: `GET /wire/health`, `GET /auth/health` (or `/health` on the auth process).
 
 ### Lint / test / typecheck
 
