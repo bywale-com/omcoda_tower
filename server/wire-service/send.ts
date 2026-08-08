@@ -137,7 +137,8 @@ export async function handleSmsSend(c: Context) {
   }
 
   try {
-    const msg = await getTwilio().messages.create({
+    const twilio = await getTwilio();
+    const msg = await twilio.messages.create({
       to: body.to,
       from: twilioFromNumber(),
       body: body.body,

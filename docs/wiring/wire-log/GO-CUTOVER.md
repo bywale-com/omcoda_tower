@@ -1,9 +1,18 @@
 # Wire log — GO cutover (real ports)
 
-**Status:** cut over  
+**Status:** code cut over — **not** “prod E2E green”  
 **Branch intent:** Resend CEM + Twilio SMS + Postgres CT stores + Resend webhooks
 
-## Went real
+## Honesty
+
+“Cut over” means client ports call `/wire` + `/auth` and server adapters exist. It does **not** mean:
+
+- Vercel `/auth` + `/wire` are healthy (check `/auth/health`, `/wire/health`)
+- CT **Provision** inserts a real firm/user (still local UI state)
+- Login OTP works without a provisioned `users` row + working `DATABASE_URL` + migration `001`/`003`
+- Direct Resend/Twilio SDK smokes equal in-app send path
+
+## Went real (when prod secrets + DB are good)
 
 | Port / path | Implementation |
 |---|---|
