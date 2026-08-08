@@ -31,10 +31,10 @@ Tower keeps its **Register visual design** (Inter, tree typography, panel chrome
 ## Pass sequence (authoritative)
 
 ```text
-Seed → World → Systems Story → Personas & Function → Outcome↔System map → SME → Enrichment → Furnish → Wiring → CT Plant → Translation
+Seed → World → Systems Story → Personas & Function → Outcome↔System map → System↔Component map → SME → Enrichment → Furnish → Wiring → CT Plant → Translation
 ```
 
-**Systems-analyst seat** (between World and SME): [`SYSTEMS-STORY.md`](./SYSTEMS-STORY.md) (Seed+World only, initiations) → then after Outcomes lock, [`OUTCOME-SYSTEM-MAP.md`](./OUTCOME-SYSTEM-MAP.md) (module-grain forward+reverse). Fork map: [`PASS-FORK-MAP.md`](./PASS-FORK-MAP.md).
+**Systems-analyst seat** (between World and SME/Wiring): [`SYSTEMS-STORY.md`](./SYSTEMS-STORY.md) → [`OUTCOME-SYSTEM-MAP.md`](./OUTCOME-SYSTEM-MAP.md) → [`SYSTEM-COMPONENT-MAP.md`](./SYSTEM-COMPONENT-MAP.md) (component binding + priors triage; parks halt Gap / unhealthy threshold / KUs). Fork map: [`PASS-FORK-MAP.md`](./PASS-FORK-MAP.md).
 
 **Text-first law:** Left-panel writing (consideration → solution → click-path Implementation) verifies congruence without building click-through at each pass. Batch theory, then one CT plant pass.
 

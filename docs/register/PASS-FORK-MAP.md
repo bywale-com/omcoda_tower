@@ -9,10 +9,10 @@
 ## Canonical spine
 
 ```text
-Seed → World → Systems Story → Personas & Function → Outcome↔System map → SME → Enrichment → Furnish → (Priors / Weak / Flows) → Wiring → CT Plant → Translation
+Seed → World → Systems Story → Personas & Function → Outcome↔System map → System↔Component map → SME → Enrichment → Furnish → (Priors / Weak / Flows) → Wiring → CT Plant → Translation
 ```
 
-**Systems-analyst seat** owns the two new steps: *architects the system* (trigger-first, technology-free); the CTO later builds/wires it. Authoritative pass string also lives in [`THREE-SURFACE-MODEL.md`](./THREE-SURFACE-MODEL.md).
+**Systems-analyst seat** owns Systems Story → Outcome↔System map → System↔Component map: *architects the system* (trigger-first, technology-free, then component-referencing); the CTO later builds/wires it. Authoritative pass string also lives in [`THREE-SURFACE-MODEL.md`](./THREE-SURFACE-MODEL.md).
 
 Wiring here is the **paper** trace (design-invariant, can run ∥ Function once capability handoff exists); the **build** side of wiring (Pass B stand-ins → GO cutover) lands after the CT plant.
 
@@ -35,37 +35,42 @@ Wiring here is the **paper** trace (design-invariant, can run ∥ Function once 
 - **Fork:** Outcomes and systems were written on separate rails — unclear which outcomes are Constrained vs Free vs Gap, and which systems are Owned vs Faceless at module grain.
 - **Solved:** Two-way module-grain scan (outcome → system, system → outcome). Orphan **controls** stay out of scope (Priors/Weak). Confirms coarse skeleton integrity before SME/Wiring spend.
 
-### 4. Capability SME pass — [`../sme/capability/`](../sme/capability/) ([`CAPABILITY-CONSIDERATIONS.md`](../sme/capability/CAPABILITY-CONSIDERATIONS.md))
+### 4. System ↔ Component map — [`SYSTEM-COMPONENT-MAP.md`](./SYSTEM-COMPONENT-MAP.md)
+- **Step:** After Outcome↔System map, before CTO component wiring. Seat: **systems-analyst**.
+- **Fork:** The story was still reverse-inferred from screens — systems didn't point at Register modules/surfaces, and the 111 Priors had no owning system (correct-bias missing).
+- **Solved:** Two-way system ↔ surfaceCatalog Module binding + full Priors triage (Extension / Authorship / Chrome / Parked). Parks halt Gap, unhealthy-threshold watch-item, and inside-system KUs without fake-filling. CTO wiring becomes lookup.
+
+### 5. Capability SME pass — [`../sme/capability/`](../sme/capability/) ([`CAPABILITY-CONSIDERATIONS.md`](../sme/capability/CAPABILITY-CONSIDERATIONS.md))
 - **Step:** After practice SME (World → SME), before/alongside deep Function hardening.
 - **Fork:** The single SME question ("whose knowledge?") returned only **regimes** (CASL, Meta, escrow…). Deliverability and the like vanished into "CTO handles it."
 - **Solved:** A second axis — who knows how to *accomplish* it — surfaced ~six capability modules (Sending infra, agent runtime, …) to fold into personas/How before build.
 
-### 5. SME/CTO implementation doctrine — [`../sme/DOCTRINE-sme-cto-implementation.md`](../sme/DOCTRINE-sme-cto-implementation.md)
+### 6. SME/CTO implementation doctrine — [`../sme/DOCTRINE-sme-cto-implementation.md`](../sme/DOCTRINE-sme-cto-implementation.md)
 - **Step:** After Capability + the first Wiring confusion; generalizes Tower failures into standing method.
 - **Fork:** The same bottlenecks kept recurring — compliance-skewed SME, CTO as a sink, face vs no-face, catch-all buckets.
 - **Solved:** Named the org rules (two SME axes, no "CTO handles it," capability *adds* / compliance *modifies*, the handoff fork, Think Stack, decision constitution) so every later product inherits the fork instead of rediscovering it.
 
-### 6. Wiring method (paper) — [`../wiring/WIRING-METHOD.md`](../wiring/WIRING-METHOD.md)
+### 7. Wiring method (paper) — [`../wiring/WIRING-METHOD.md`](../wiring/WIRING-METHOD.md)
 - **Step:** Wiring (can run ∥ Function once capability handoff exists — doctrine §3/§9).
 - **Fork:** Instinct was organize-first (declare flows/triggers/categories), which breaks because **trigger-ness is path-relative**.
 - **Solved:** Trace one densified implementation at a time in **event language**; structure accretes; labels are read off later. Also justifies paper Wiring before Design.
 
-### 7. Node definition — [`../wiring/NODE-DEFINITION.md`](../wiring/NODE-DEFINITION.md)
+### 8. Node definition — [`../wiring/NODE-DEFINITION.md`](../wiring/NODE-DEFINITION.md)
 - **Step:** Same Wiring fork — the altitude prerequisite before tracing.
 - **Fork:** The graph drifted into code/infra nouns ("Supabase paused") instead of product-state events.
 - **Solved:** Node = **named unit of state at event altitude** — keeps paper Wiring design-invariant.
 
-### 8. Click-path densification — [`../sme/implementation/CLICKPATH-DENSIFICATION.md`](../sme/implementation/CLICKPATH-DENSIFICATION.md)
+### 9. Click-path densification — [`../sme/implementation/CLICKPATH-DENSIFICATION.md`](../sme/implementation/CLICKPATH-DENSIFICATION.md)
 - **Step:** Inside Personas & Function / SME implementation writing — *before* Wiring can eat the leaf.
 - **Fork:** Clarity said "use module X"; Wiring was starved for per-control requirements; relationships (who reads what) were invisible.
 - **Solved:** Affordance grain + downstream readers → densify is **requirement-gathering for Wiring**, not polish. (Criticality is labeled after.)
 
-### 9. Critical interaction — [`../wiring/WIRING-CRITICAL-INTERACTION.md`](../wiring/WIRING-CRITICAL-INTERACTION.md)
+### 10. Critical interaction — [`../wiring/WIRING-CRITICAL-INTERACTION.md`](../wiring/WIRING-CRITICAL-INTERACTION.md)
 - **Step:** After Densify, when Wiring selects what to connect.
 - **Fork:** Fear of enumerating every click; unclear which interactions are load-bearing origins on the graph.
 - **Solved:** Critical = a **user-originated interaction whose target is read elsewhere** (dependency test). Connect those; ignore cosmetics. Pairs to Node Definition (state ↔ interaction).
 
-### 10. GO cutover / real ports — [`../wiring/wire-log/GO-CUTOVER.md`](../wiring/wire-log/GO-CUTOVER.md)
+### 11. GO cutover / real ports — [`../wiring/wire-log/GO-CUTOVER.md`](../wiring/wire-log/GO-CUTOVER.md)
 - **Step:** After CT plant + Pass B stand-ins; founder accounts live; past paper Wiring / Pass A.
 - **Fork:** Stand-ins + fixtures were still the path while Resend/Twilio/DB were actually provisioned — false "wired" vs live.
 - **Solved:** Explicit cutover checklist — real ports, Canada SMS gate fix, durable Postgres for CT stores — swap contracts without reopening method.
@@ -92,6 +97,7 @@ Wiring here is the **paper** trace (design-invariant, can run ∥ Function once 
 Seed + World → SYSTEMS-STORY
 OUTCOMES (clean) → clean Function
 SYSTEMS-STORY + OUTCOMES → OUTCOME-SYSTEM-MAP
+OUTCOME-SYSTEM-MAP + surfaceCatalog + priors → SYSTEM-COMPONENT-MAP
   → practice SME + CAPABILITY pass → DOCTRINE
   → DENSIFY → CRITICAL-INTERACTION + NODE-DEFINITION → WIRING-METHOD (paper)
   → Pass A / hand-back → Pass B
