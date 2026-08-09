@@ -1,143 +1,409 @@
-# Tower — Systems Story (systems-analyst, first pass)
+# Tower — Systems Story (machine substance)
 
-**Seat:** Systems analyst — *architects the system* (the CTO later builds/wires it).
-**Method:** the system told from its own point of view, technology-free, as a web of **initiations**. The atomic unit is a **trigger** (an entity or event that initiates); **inputs** and **outputs** hang off it. A trigger exists whether or not any person clicks or any screen shows. Controls/views are not designed here — only noted, at most, in passing. Silences are marked, never filled.
-**Source (hard constraint):** derived from [`SEED.md`](./SEED.md) + [`WORLD.md`](./WORLD.md) **alone** — no How leaves, SME, enrichment/furnish, wiring, implementation, or code; no existing controls/views. The point of this pass is to show what Seed + World *already* seed.
-**Status:** First pass. Under-claim; where Seed/World are silent, the gap is named, not filled.
-
----
-
-## The systems latent in Seed + World
-
-Twelve distinct systems are derivable. They fall in the four-facet order (`Seed §6.1`, `World §1.4`) but each is its own initiation-engine:
-
-1. **Acquisition (seed-capture)** — a stranger's one-tap yields the three cheap inputs.
-2. **Provision / forward-deploy** — seed inputs landing initiates a prepared campaign.
-3. **Commercial / hard-input** — earning database authorization + escrow flips a campaign to *running*.
-4. **Tenancy & access** — provision, prove email control, hold a session.
-5. **Reachability / audit** — decide whether a contact can be reached and sequenced.
-6. **Consent / suppression** — opt-in, silence, opt-out govern who may be touched.
-7. **Engagement / sequencing** — two non-conflatable engines: the campaign calendar and the attempt/channel-ownership engine.
-8. **Fact-refresh / data-collection** — touchpoints carry data asks; answers write back.
-9. **Reference-currency** — versioned immigration reference facts move as data.
-10. **Eligibility re-evaluation** — recompute service eligibility when facts or reference move.
-11. **Signal / motion orchestration (Engine 2)** — record every detection; decide the single motion by precedence.
-12. **Meeting / loop-closer** — a booked meeting initiates capture, agenda, and a live brief.
+**Seat:** Systems analyst — locks **what the machine must be able to do** (the CTO later **extracts** Systems Requirements and wires).
+**Method:** Immutable, technology-free statements derived from [`SEED.md`](./SEED.md) + [`WORLD.md`](./WORLD.md) **alone**. Each statement is a **must** (capability), a **must-not** (hard stop), a **chain** (one system's done initiates another), or a **silence** (named, never filled). Controls and panes are out of scope — they only extrude later onto states this Story already requires.
+**Job of this doc:** Say, directly and inflexibly, what Tower must do so that any competent technical professional can write Systems Requirements from it without inventing substance. Requirements rearrange Story into states / transitions / ramifications — they do **not** invent what Story never claimed.
+**Status:** Substance pass (replaces the thinner first-pass initiation sketch). Under-claim where Seed/World are silent. Founder clarifiers denser than Seed/World (e.g. attempt windows) are labeled **OPERATOR-REVISIONS** and are **not** Seed/World law until promoted.
 
 ---
 
-## Each system, as initiations
+## Spine — what the whole machine must continuously do
 
-### 1. Acquisition (seed-capture) system
-- **Triggers:** a scrolling consultant taps the one-tap Meta Approach (`Seed §6.2`, `World §1.2`); a consultant *continues the scroll without tapping* — a first-class non-action trigger that self-selects a non-tapper and is itself data (`Seed §6.2`, `World §1.1 / §0.4`).
-- **Inputs consumed:** firm/consultant name, website, and one channel — phone **or** email; the feed/ad context that made the one-tap output legible (`Seed §6.2`).
-- **Outputs / state changes:** seed inputs land (acquisition finish line reached) (`World §0.3.2`); an attributed capture of the session; a distinction recorded between *did not understand* and *understood and did not tap* (`Seed §6.2`); the stranger is returned to their scroll — no thank-you surface (`Seed §6.2`).
-- **Chains to:** *seed inputs land* is the trigger of the Provision system.
+The system must be able to, while a firm has contacts and hands-free operation is armed:
 
-### 2. Provision / forward-deploy system
-- **Triggers:** seed inputs land for a stranger firm (`Seed §6.3`, `World §1.2`).
-- **Inputs consumed:** the three seed inputs; public firm facts read from the open world; Om Coda's own launch → re-engagement → reactivation methodology templates (not the firm's client list) (`Seed §6.3`).
-- **Outputs / state changes:** a no-login prepared workspace staged under the firm's identity; a campaign in a not-yet-running state that proves **readiness, not value** (`Seed §6.3`, `World §0.4 / §1.3`).
-- **Chains to:** the prepared workspace becomes the object the Commercial system's agent walks; readiness legibility is the precondition of asking for hard inputs.
+1. Keep engaging dormant and active contacts.
+2. Keep immigration-relevant facts fresh via firm→client touchpoints.
+3. Re-evaluate **service eligibility** as IRCC-shaped reference and client facts move.
+4. Surface campaign-worthy people so consultants book meetings without manually rechecking every file.
 
-### 3. Commercial / hard-input system
-- **Triggers:** the firm operator authorizes access to the firm's book (or the equivalent that makes the campaign real); the firm operator accepts escrow terms (`Seed §6.3, §7`, `World §1.2`); *escrow release terms are met* (a trigger the docs assert exists but leave undefined — see Silences).
-- **Inputs consumed:** the readiness demonstration (prepared workspace); the presented escrow door (the only peer door at this moment — not credits, not a sales call) (`Seed §6.3, §7`).
-- **Outputs / state changes:** the two hard inputs land (activation finish line); the campaign flips to **running** (`Seed §6.1`, `World §0.3.2`); held commercial terms between firm and Om Coda are established (Tower holds no immigrant funds) (`Seed §7`).
-- **Chains to:** *running* is the trigger that opens the entire Application desk (Audit, Engagement, Eligibility loops) to that firm.
+(`Seed §0.1, §4, §16.1`; `World §2.2`)
 
-### 4. Tenancy & access system
-- **Triggers:** an operator provisions a firm and its users via versioned seed manifests (assisted/OLG door) (`Seed §5.10, §6.5`); a known user requests entry (one-time-code send); a user submits the code (verify); a session is presented for a guarded action; a logout (`Seed §5.10`); an *unprovisioned* email requests entry (`Seed §5.10`).
-- **Inputs consumed:** the manifest; the user's email; the submitted code; the presented session (`Seed §5.10`).
-- **Outputs / state changes:** a provisioned firm tenancy and users; a verified session held after send→verify; on an unprovisioned email, a generic success with **no code issued** (anti-enumeration) — a deliberately *silent* output (`Seed §5.10`); session cleared on logout.
-- **Chains to:** either provision door (assisted here, or running from the Commercial system) lands the firm in **one** application desk (`World §0.3.8`).
+**Core outcome the machine must pursue:** detect service-eligible candidates and initiate the right campaign motion (launch / nudge / reactivation) whose success event is **meeting booked** (`Seed §4`).
 
-### 5. Reachability / audit system
-- **Triggers:** a set of contacts (import / the book) is presented for a reachability check (`Seed §5.2`, `World §3.1`); a contact's channel data changes such that its reachability could change (implied by "open reachability issues" as ongoing meta).
-- **Inputs consumed:** each contact's email, phone, name-present, consent/silenced state, and the channel required by the **intended** sequence; external validation where a check needs it (`Seed §5.2`, `World §1.3`).
-- **Outputs / state changes:** a verdict — reachable / partial / unreachable (`Seed §5.2`); a contact marked **sequence-ready** or not; open reachability issues surfaced as workspace meta; a byproduct signal that the firm's list is stale (`Seed §5.2`). Explicitly **not** produced: pathway scoring, ROI forecasts, minimum-count gates (`Seed §5.2`, `World §3.1`).
-- **Chains to:** *sequence-ready* is a precondition trigger for the Engagement system enrolling a contact.
+**Facet order (immutable walls):** Acquisition → Activation → Application → Evolution. Evolution is Register-driven product change, **not** a client lifecycle system (`Seed §6.1`; `World §0.3, §1.4`).
 
-### 6. Consent / suppression system
-- **Triggers:** a contact opts in (consent + first channel open) (`Seed §5.3`); a contact opts out or is otherwise excluded (silenced) (`Seed §5.3`, `World §0.4`); a contact who *never opted in* (silenced-by-default state) (`Seed §5.3`).
-- **Inputs consumed:** the contact's consent state; the applicable consent regime for the channel (asserted as necessary but not specified — see Silences) (`Seed §8.2`).
-- **Outputs / state changes:** a contact becomes eligible for automatic outreach, or is suppressed from it; the opt-in state that gates *deep* data collection (`Seed §8.2`).
-- **Chains to:** consent state gates the Engagement and Fact-refresh systems; firm database authorization (Commercial system) does **not** substitute for end-client consent (`Seed §8.2`).
+**Cross-cutting constraint — presentation ≠ fulfillment:** Agent presentation may ask, explain, and route. It must **not** scrape, instantiate templates, persist captures, fire sequences, evaluate rules, issue OTP, or move money. Those belong to Automations / Wiring (`Seed §0.4, §16.12`; `World §1.1`).
 
-### 7. Engagement / sequencing system
-Two engines that must never be conflated (`Seed §5.5`, `World §3.3`):
+**House / open-box constraint:** Because Om Coda is agency, evaluation rules, analysis, operational logic, and reference upkeep live in an **operator/house layer** that must stay inspectable and changeable **without a code deploy** (`World §2.1, §3.4`; `Seed §5.7`).
 
-**7a. Campaign calendar (content order across days)**
-- **Triggers:** a contact becomes eligible to enter a phase (opt-in / re-engagement / reactivation) (`Seed §5.3`); a reactivation template is *armed* (ghost ready) vs *activated* (executing) (`Seed §5.3`, `World §0.4`).
-- **Inputs consumed:** the phase content order; Engine 2 precedence (`World §3.3`).
-- **Outputs / state changes:** the day-ordered content to run; an armed or active sequence state.
+---
 
-**7b. Attempt / channel-ownership engine (single sequence at runtime)**
-- **Triggers:** a sequence step's channel owns the flow; an attempt's criteria window elapses; a live inbound arrives mid-attempt; a finishing event fires (`Seed §5.5`, `World §0.4 / §3.3`).
-- **Inputs consumed:** the authored channel + copy steps; attempt/owner state; criteria windows (`Seed §5.5`).
-- **Outputs / state changes:** forward-only motion under the owning channel (Text → Email → Form, Attempt 1/2/3); an in-flight attempt overridden by a live inbound; the sequence closed and the **next armed** by a finishing event (`World §3.3`); an engagement **record** of events that already fired (record only — it authors nothing) (`Seed §5.5`, `World §3.2`).
-- **Chains to:** a finishing event *arms the next* sequence; each touchpoint is also the carrier for the Fact-refresh system.
+## The twelve systems
 
-### 8. Fact-refresh / data-collection system
-- **Triggers:** a touchpoint (nudge) fires carrying a data ask (`Seed §5.4`); a client answers a self-reportable field; a consultant enters a fact by hand; a document-dependent or employer-directed need is detected (`Seed §5.4`).
-- **Inputs consumed:** the field classification — self-reportable, document-dependent, employer-directed (`Seed §5.4`, `World §0.4`); the answer or write-back.
-- **Outputs / state changes:** self-reportable answers eligible for a **form / pre-meeting capture**; document-dependent needs routed to tracked work items (**never** a form); employer-directed asks routed to the firm, not the client (`Seed §5.4`); on any write-back, an **immediate re-evaluation** is initiated (`Seed §5.8`).
-- **Chains to:** every write-back is a trigger of the Eligibility re-evaluation system; a *missing* fact is itself recorded as a signal (Engine 2).
+Twelve distinct systems are latent in Seed + World. Each is an initiation-engine. Numbering follows facet order; engines stay non-conflatable.
 
-### 9. Reference-currency system
-- **Triggers:** an IRCC-shaped fact moves — a draw threshold/cutoff shifts, a category is added, a trade/provincial identifier changes (`Seed §5.7`, `World §2.2.1`). This trigger has **no screen and no human click** and is a first-class initiator.
-- **Inputs consumed:** the current versioned reference tables (categories, trades, cutoffs, provincial identifiers) (`Seed §5.7`, `World §1.3 / §2.2`).
-- **Outputs / state changes:** a new version of the reference facts, updated **as data** with no code deploy (`Seed §5.7 Directive 3`, `World §2.2.1`).
-- **Chains to:** a reference change is a trigger of the Eligibility re-evaluation system for every affected contact — the **law / public-reference side** of eligibility change (`World §2.2`).
+1. Acquisition (seed-capture)
+2. Provision / forward-deploy
+3. Commercial / hard-input
+4. Tenancy & access
+5. Reachability / audit
+6. Consent / suppression
+7. Engagement / sequencing — **7a** campaign calendar · **7b** attempt / channel-ownership
+8. Fact-refresh / data-collection
+9. Reference-currency
+10. Eligibility re-evaluation
+11. Signal / motion orchestration (Engine 2)
+12. Meeting / loop-closer
 
-### 10. Eligibility re-evaluation system
-- **Triggers:** a client fact changes (from Fact-refresh); a reference fact moves (from Reference-currency); a scoped pull runs (manual pull rich, event pull thinner) (`Seed §5.6, §5.8`, `World §2.2`).
-- **Inputs consumed:** firm-held + engagement-collected client facts; industry criteria packs (Constants); condition gates; pre-packaged evaluators (Rules) over constants + conditions (`Seed §5.6, §5.7`).
-- **Outputs / state changes:** a structured evaluation resolved by downstream nodes (branch-aware); an **Analysis** read-out — headlines, deltas, service candidates (R-* / B-*), nudge/reactivation hints — with machine output retained underneath (`Seed §5.7`, `World §0.4`); a **service-eligibility** determination where *any* pathway assertion passes (not one favoured pathway) (`Seed §5.7`, `World §0.4`). Every determination — **including a missing-data finding** — is emitted as a signal (`Seed §5.8`).
-- **Chains to:** every emitted signal is the trigger of Engine 2's motion decision; these operations live in the house/operator layer and must stay inspectable/changeable without a code deploy (open-box) (`World §2.1 / §3.4`).
+---
+
+### 1. Acquisition (seed-capture)
+
+**Must fulfill:** Obtain the three cheap seed inputs from a stranger consultant inside the click budget, then return them to their scroll.
+
+**The system must be able to:**
+
+- Capture **firm/consultant name**, **website**, and **one channel** — phone **or** email — as the acquisition finish line (`Seed §6.2`; `World §0.3.2`).
+- Do that from a Meta (FB/IG) Approach in V1; LinkedIn is deferred (`Seed §6.2`).
+- Force **one click** as the design constraint; relax only as a finding (`Seed §6.2`; `World §0.3.3`).
+- Make the one-tap **output legible** in the ad (never persuade); pre-frame that an agent will follow/prepare so the first text is not read as spam (`Seed §6.2, §16.8`).
+- After capture, continue the stranger's scroll — no thank-you dashboard (`Seed §6.2`).
+- Treat **continue-scroll without tapping** as a first-class non-action trigger and instrument *did not understand* vs *understood and did not tap* (`Seed §6.2`; `World §1.1`).
+- Persist the capture and attribute the session (fulfillment, not agent presentation) (`Seed §0.4`).
+- Scope Approach to **one acquired non-house party** (V1: Consultant). Engagement contacts are **never** acquired via Approach; the house is never acquired via Approach (`World §0.3.6`).
+
+**Must not:**
+
+- Pull database authorization or escrow into the click budget (`Seed §6.4, §14`; `World §0.3.3`).
+- Treat forward-deploy as acquisition (`Seed §14`; `World §0.3.4`).
+- Use cold email as a V1 Approach (`Seed §0.2, §14`).
+
+**Chains to:** *seed inputs land* initiates Provision / forward-deploy (`Seed §6.2→§6.3`; `World §1.2`).
+
+**Silences:** When/whether email earns Meta entry (`Seed §13.8`); Meta targeting / CAC (`Seed §13.3`); consent regime for the first agent→consultant text (`Seed §8.2, §13.14`).
+
+---
+
+### 2. Provision / forward-deploy
+
+**Must fulfill:** After seed inputs land, stage a no-login prepared workspace that proves **readiness** (not value) under the firm's identity.
+
+**The system must be able to:**
+
+- On *seed inputs land*, scrape **public firm facts** and instantiate from **Om Coda's** launch → re-engagement → reactivation methodology templates — **not** from the firm's client list (`Seed §6.3`; `World §0.3.4`).
+- Serve a **no-login prepared workspace** (agent may walk it; automation executes the provision) (`Seed §6.3`).
+- Keep firm identity as authentication/branding detail — not a claim that Tower already holds their clients (`Seed §6.3`).
+- Belong to **Activation**, even when it looks like marketing (`World §0.3.4`).
+
+**Must not:**
+
+- Derive the campaign from the firm's private book before database authorization (`Seed §6.3`).
+- Redesign the Application desk to need fewer inputs so ALG is cheaper (`Seed §6.3`; `World §0.3.7`).
+
+**Chains to:** Prepared workspace is the object Commercial walks; readiness is the precondition of asking for hard inputs (`Seed §6.3`).
+
+**Silences:** ALG Approach / forward-deploy / escrow door remain bets not fully built in prototype honesty (`Seed §11`) — capability target still stands.
+
+---
+
+### 3. Commercial / hard-input
+
+**Must fulfill:** Land the two hard inputs and flip the campaign to **running**.
+
+**The system must be able to:**
+
+- Accept **database authorization** (or the equivalent that makes the campaign real) and **escrow acceptance** as the activation finish line (`Seed §6.1, §6.3`; `World §0.3.2`).
+- Hold escrow terms and flip the campaign to **running** — after which the campaign performs without further *required* activation inputs (`Seed §0.4, §6.1`; `World §0.4`).
+- Present **escrow only** as the peer door at the activation payment moment (`Seed §0.3, §7`; `World §0.4`).
+- Keep commercial terms **firm↔Om Coda**; Tower holds **no** immigrant settlement funds; end-clients pay Tower nothing (`Seed §7, §8.2`; `World §0.4`).
+- Keep charging the firm (not the contact) for detection cost to the contact = free (`Seed §7, §8.2`).
+
+**Must not:**
+
+- Present credits or a sales-call as a peer door equal to escrow at activation (`Seed §6.3, §7, §14`).
+- Silently migrate database authorization into the acquisition click budget (`Seed §13.2`).
+
+**Chains to:** *running* opens the Application desk (Audit, Engagement, Eligibility loops) to that firm (`World §0.3.2`); house continues holding the operator layer for that firm after running (`World §1.2`).
+
+**Silences:** Escrow **release** trigger / outcome definition (`Seed §7, §13.1`); concrete shape of “database authorization” per practice stack (`Seed §13.2`); ongoing SaaS packaging later must not replace escrow as peer door at activation (`Seed §7`).
+
+---
+
+### 4. Tenancy & access
+
+**Must fulfill:** Provision firms/users and hold verified sessions so either door lands in **one** Application desk.
+
+**The system must be able to:**
+
+- Provision firms and users only via **versioned seed manifests** (assisted / OLG bootstrap — no ad hoc SQL) (`Seed §5.10`).
+- Run passwordless OTP: send → verify → hold a session; validate session for guarded actions; clear session on logout (`Seed §5.10`).
+- On an **unprovisioned** email request: return generic success and **issue no code** (anti-enumeration) (`Seed §5.10`).
+- Land assisted/OLG and self-serve/ALG into the **same** application / session matrix (`Seed §6.5`; `World §0.3.8`).
+- Treat Firm as tenancy owning users and book; Consultant as firm operator / acquired persona V1 (`Seed §10`; `World §1.1`).
+
+**Must not:**
+
+- Treat Operator as a firm Board login persona (`Seed §14`).
+- Mint an Agent seat / Agent column in admission (`Seed §14`).
+
+**Chains to:** Either provision door lands the firm in one Application desk (`World §0.3.8`).
+
+**Silences:** Multi-consultant roles/permissions (`Seed §13.6`; `World §1.1`); production onboarding beyond manifests (`Seed §13.10`).
+
+---
+
+### 5. Reachability / audit
+
+**Must fulfill:** Answer only — can we reach this contact, and can we start a sequence on them?
+
+**The system must be able to:**
+
+- Run data-validity checks over imports / the book: email valid, phone valid, ≥1 channel matching the **intended** sequence, typo/garbage, dedupe, already-in-Tower, consent/silenced, name present (`Seed §5.2`; `World §3.1`).
+- Connect to **external validation** where a check needs it (`Seed §5.2`).
+- Emit verdicts **reachable / partial / unreachable** and mark contacts **sequence-ready** or not (`Seed §5.2`; `World §0.4`).
+- Surface open reachability issues as workspace meta; treat “list is stale” as a byproduct signal, not the engine (`Seed §5.2`).
+
+**Must not:**
+
+- Produce pathway/CRS scoring, ROI/activation-probability forecasts, minimum contact-count gates, or sales PASS/FAIL ceremony (`Seed §5.2`; `World §3.1`).
+- Confuse marketing “Database Opportunity Assessment” HTML with in-app Audit (`Seed §5.2, §14`).
+
+**Chains to:** *sequence-ready* is a precondition for Engagement enrollment (`Seed §5.2`).
+
+**Silences:** Contact-entry via import does not fully mutate the living list (`Seed §5.1, §11`); CRM bidirectional sync (`Seed §13.7`).
+
+---
+
+### 6. Consent / suppression
+
+**Must fulfill:** Govern who may be touched automatically; keep firm DB auth from substituting for end-client consent.
+
+**The system must be able to:**
+
+- Run an **opt-in** phase: firm→client consent and first channel open (`Seed §5.3`; `World §0.4`).
+- Treat contacts as sequenced / silenced / unsequenced, with **silenced when not opted in** (and when opted out) (`Seed §5.3`; `World §0.4`).
+- Gate deep data collection on opt-in; respect silence (`Seed §8.2`).
+- Feed consent/silenced state into Audit reachability (`Seed §5.2`).
+
+**Must not:**
+
+- Invent “skip all opt-in because ALG / firm DB auth” (`Seed §8.2, §14`).
+- Charge end-clients for Tower (`Seed §7, §8.2`).
+
+**Chains to:** Consent state gates Engagement and Fact-refresh (`Seed §8.2`).
+
+**Silences:** CASL/SMS consent regimes by geography for firm→client and for first agent→consultant text — asserted necessary, not closed (`Seed §8.2, §13.14`; `World §1.2`).
+
+---
+
+### 7. Engagement / sequencing
+
+Two engines that must **never** be conflated (`Seed §5.5`; `World §3.3`). The engagement **record** (Activity / chart) is a chronology of events that already fired — it authors nothing (`Seed §5.5`; `World §3.2`).
+
+#### Shared phase law
+
+**The system must be able to:**
+
+- Run phases: **Opt-in** → **Re-engagement (nudges)** → **Reactivation** (`Seed §5.3`; `World §0.4`).
+- Hold reactivation as **armed** (ghost template ready, nothing sending) vs **active** (executing) (`Seed §5.3`; `World §0.4`).
+- Author sequences as ordered steps of channel + copy; treat reactivation/launch agents as composites of those steps; enroll when criteria match (`Seed §5.5`).
+- Keep composing = configuration; sending = automation/Wiring (`Seed §5.5`; `World §1.3`).
+
+#### 7a. Campaign calendar (content order across days)
+
+**Must fulfill:** Decide day-ordered engagement content for a phase, under Engine 2 precedence.
+
+**The system must be able to:**
+
+- Hold opt-in / nudge / reactivation **content order** across days (`Seed §5.5`; `World §0.4, §3.3`).
+- Obey Engine 2 precedence when choosing which motion's content runs (`World §3.3`).
+
+**Must not:** Decide runtime channel ownership, waits, or attempt retries (that is 7b) (`World §3.3`).
+
+#### 7b. Attempt / channel-ownership engine (one sequence at runtime)
+
+**Must fulfill:** Run a single in-flight sequence under one owning channel, forward-only, with faceless criteria and inbound override.
+
+**The system must be able to:**
+
+- Own the flow under one channel at a time along **Text → Email → Form** (forward-only handoff) (`Seed §5.5`; `World §3.3`).
+- Nest waits / attempts under the owning channel that failed; escalate forward when **criteria are met** (`Seed §5.5`; `World §0.4, §3.3`).
+- Accept a **live inbound** mid-attempt as an override that can nullify the in-flight attempt (`World §0.4, §3.3`).
+- On a **finishing event**, close the sequence and **arm the next** (`World §3.3`).
+- Record every fired event on the engagement record without letting the record author motion (`Seed §5.5`; `World §3.2`).
+
+**OPERATOR-REVISIONS clarifiers (not Seed/World law until promoted)** — denser prototype criteria in [`OPERATOR-REVISIONS.md`](./OPERATOR-REVISIONS.md) §5b:
+
+- Text delivered not opened in **30 min** → Email.
+- Email opened, link not clicked in **24 h** → next attempt.
+- Form started not submitted in **24 h** → Text; re-entries do not reset the clock.
+- Attempts are **local retries** under the failed owner (fresh Text→Email→Form), not a top-level Attempt spanning all channels.
+- Live **form visit** is a named inbound override that can open the next step.
+- Form submitted closes the nudge and can arm the next (e.g. reactivation scheduled).
+
+**Must not:**
+
+- Let Engine 2 replace the attempt engine inside a sequence (`World §0.4`).
+- Let the engagement record author channel order or attempts (`World §3.2`).
+
+**Chains to:** Each touchpoint carries Fact-refresh data asks; finishing events arm the next sequence; chosen motions arrive from Engine 2 (`Seed §5.4, §5.8`; `World §3.3`).
+
+**Silences:** Exact product-locked criteria windows (beyond World’s “when criteria are met”); SMS reply-failure escalation (`Seed §13.15`); event-based enrollment trigger set beyond manual pull (`Seed §5.6, §11`).
+
+---
+
+### 8. Fact-refresh / data-collection
+
+**Must fulfill:** Use touchpoints as the data-collection mechanism; route answers by field class; write back into eligibility.
+
+**The system must be able to:**
+
+- Fire nudges that ask for or infer facts affecting eligibility (`Seed §5.4`; `World §0.4`).
+- Classify fields and route:
+  - **Self-reportable** → forms / pre-meeting capture.
+  - **Document-dependent** → **never** a form; tracked work items.
+  - **Employer-directed** → ask the **firm**, not the client (`Seed §5.4`; `World §0.4`).
+- Accept answers from the client or consultant hand-entry; on any write-back, initiate **immediate re-evaluation** (`Seed §5.8`).
+- Record a *missing* fact as a signal (Engine 2 input) (`Seed §5.8`).
+
+**Must not:** Put document-dependent needs into forms (`Seed §5.4`).
+
+**Chains to:** Every write-back triggers Eligibility; missing facts feed Engine 2 (`Seed §5.8`).
+
+**Silences:** Client desk depth (touchpoint-only vs authenticated portal) (`Seed §13.4`); D-02 in-meeting fallback surface (`Seed §5.8, §13.5`).
+
+---
+
+### 9. Reference-currency
+
+**Must fulfill:** Keep IRCC-shaped reference facts current as versioned data, with no code deploy.
+
+**The system must be able to:**
+
+- Maintain versioned reference tables (categories, trades, cutoffs, provincial identifiers, etc.) as **data** (`Seed §5.7`; `World §1.3, §2.2.1`).
+- Treat a reference move (draw threshold/cutoff shift, category added, trade/provincial identifier change) as a **faceless** first-class trigger — no screen, no human click (`Seed §5.7`; `World §2.2.1`).
+- Hold industry criteria packs (Constants) as versioned packs; V1 truth is Canada-shaped (`Seed §5.6, §2.6`).
+
+**Must not:** Require a code deploy to update reference facts (`Seed §5.7` Directive 3).
+
+**Chains to:** A reference change triggers Eligibility re-evaluation for every affected contact — the **law / public-reference** side of detection (`World §2.2`).
+
+**Silences:** Ownership / IP / liability of rule packs (`Seed §13.9`; `World §1.2`); Constants packs beyond Immigration (`Seed §13.16`).
+
+---
+
+### 10. Eligibility re-evaluation
+
+**Must fulfill:** Recompute private service eligibility when client facts or reference move; emit every determination as a signal.
+
+**The system must be able to:**
+
+- Evaluate from firm-held + engagement-collected client facts against house-held / firm-configured rules — **private** to the firm book (`Seed §2.4`; `World §0.4`).
+- Accept two detection sides: (1) law/public-reference moves, (2) life-change facts only the person/firm-file knows (`World §2.2`).
+- Run the automation shape: Trigger (scoped pull — manual rich; event thinner) → Constants → Conditions → Rules → structured output → downstream resolution (`Seed §5.6`; `World §0.4, §2.3`).
+- Treat pathway pass as **any** pathway assertion (CEC **or** FSW **or** FST **or** PNP-*), not one favoured pathway (`Seed §5.7` Directive 2; `World §0.4`).
+- Produce an **Analysis** readout (headlines, deltas, service candidates, nudge/reactivation hints) with machine output retained underneath (`Seed §5.7`; `World §0.4`).
+- Emit **every** determination — including missing-data — as a signal (`Seed §5.8`).
+- Keep evaluation inspectable/changeable without deploy (open-box / house layer) (`World §3.4, §2.1`).
+
+**Must not:**
+
+- Cold-detect strangers’ immigration eligibility from public databases as Core Function (`Seed §2.4, §14`; `World §0.4`).
+- Treat a static book dump as sufficient for the life-change side (`World §2.2`).
+
+**Chains to:** Every emitted signal triggers Engine 2 (`Seed §5.8`).
+
+**Silences:** Operations & Actions initiation law (stubs) (`Seed §5.6, §11`); event-trigger set (`Seed §5.6, §11`); Rules UI toggles vs condition trees (`Seed §13.13`); workflow persistence target (`Seed §13.12`).
+
+---
 
 ### 11. Signal / motion orchestration (Engine 2)
-- **Triggers:** a signal is recorded (any detection, including missing data) (`Seed §5.8`, `World §0.4 / §3.3`).
-- **Inputs consumed:** the set of outstanding signals for one client; the fixed precedence law (`Seed §5.8`).
-- **Outputs / state changes, by precedence:** reactivation is chosen first whenever anything is reactivation-worthy; a nudge fires only when nothing is; a firing nudge consolidates **every** outstanding self-reportable need into **one** form (never one nudge per field); when reactivation fires, secondary signals attach as **agenda** to the consultant's pre-meeting brief rather than as parallel outreach; **one client, one motion, ever** (`Seed §5.8`, `World §3.3`).
-- **Chains to:** the chosen motion is the trigger that hands work to the Engagement system (a reactivation or nudge sequence).
 
-### 12. Meeting / loop-closer system
-- **Triggers:** a meeting is booked (`meeting_booked`) (`Seed §5.8`); a write-back arrives against a pending capture (`Seed §5.8`).
-- **Inputs consumed:** the client's outstanding self-reportable fields; the current evaluation (`Seed §5.8`).
-- **Outputs / state changes:** on `meeting_booked` with outstanding self-reportable fields, a data-capture form pending the meeting; on any write-back, an **immediate re-evaluation**; a **live** (not snapshot) pre-meeting brief (`Seed §5.8`).
-- **Chains to:** `meeting_booked` is the loop-closer / core success event; its write-backs re-trigger the Eligibility system, keeping the brief live.
+**Must fulfill:** Record every detection; choose the single outbound motion by fixed precedence.
+
+**The system must be able to:**
+
+- Record every detection — including missing data — as a **signal** when found (`Seed §5.8`; `World §0.4`).
+- Decide outreach separately from recording, under fixed precedence (`Seed §5.8`):
+  1. **Reactivation first**, whenever anything is reactivation-worthy.
+  2. **Nudge only** when nothing is reactivation-worthy.
+  3. When a nudge fires, consolidate **every** outstanding self-reportable need into **one** form — never one nudge per field.
+  4. When reactivation fires, attach secondary signals as **agenda** on the consultant’s pre-meeting brief — never parallel outreach.
+  5. **One client, one motion, ever** (`Seed §5.8, §16.11`; `World §3.3`).
+
+**Must not:** Replace the attempt engine inside a sequence (`World §0.4`); fire parallel motions for one client (`Seed §5.8`).
+
+**Chains to:** Chosen motion hands work to Engagement (reactivation or nudge sequence) (`Seed §5.8`; `World §3.3`).
+
+**Silences:** What makes a signal **reactivation-worthy** (`Seed §5.8`); D-01 / D-02 builder placement (`Seed §5.8, §13.5`).
+
+---
+
+### 12. Meeting / loop-closer
+
+**Must fulfill:** On meeting booked, close the loop with pending capture and a live brief.
+
+**The system must be able to:**
+
+- Treat **meeting booked** as the core success / loop-closer event (`Seed §4, §5.8`).
+- On `meeting_booked` with outstanding self-reportable fields, open a data-capture form pending the meeting (`Seed §5.8`; `World §0.4`).
+- On any write-back against that capture (or consultant entry), run **immediate re-evaluation** (`Seed §5.8`).
+- Keep the pre-meeting brief **live** (recomputed), not a snapshot (`Seed §5.8`; `World §0.4`).
+
+**Chains to:** Write-backs re-trigger Eligibility, keeping the brief current (`Seed §5.8`).
+
+**Silences:** D-01 — pre-meeting capture as tail of reactivation vs standalone `meeting_booked` sequence; D-02 — in-meeting fallback module (`Seed §5.8, §13.5`).
 
 ---
 
 ## Cross-system trigger web
 
-The handful of initiations where one system's output is another's trigger:
+Initiations where one system's output is another's trigger:
 
-- **seed inputs land** (Acquisition) → initiates **forward-deploy** (Provision) (`Seed §6.2→§6.3`).
-- **hard inputs land / campaign runs** (Commercial) → opens the **Application desk** to that firm (`World §0.3.2`).
-- **sequence-ready verdict** (Audit) → gates **enrollment** (Engagement) (`Seed §5.2`).
-- **finishing event** (Attempt engine) → **arms the next** sequence (Engagement) (`World §3.3`).
-- **each nudge touchpoint** (Engagement) → carries a **data ask** (Fact-refresh) (`Seed §5.4`).
-- **write-back** (Fact-refresh) and **reference move** (Reference-currency) → both trigger **re-evaluation** (Eligibility) (`Seed §5.7, §5.8`).
-- **every determination, incl. missing data** (Eligibility) → emits a **signal** (Engine 2) (`Seed §5.8`).
-- **Engine 2's chosen motion** → hands a **reactivation/nudge** back to Engagement — closing detection → engagement → enriched data → re-detection into one loop (`World §2.2`).
-- **meeting_booked** (Meeting) → pending **capture form** whose write-back re-triggers Eligibility, keeping the **live brief** current (`Seed §5.8`).
+| From | Trigger event | To |
+|---|---|---|
+| 1 Acquisition | seed inputs land | 2 Provision |
+| 3 Commercial | hard inputs land / campaign **running** | Application desk open (5–12) |
+| 5 Audit | sequence-ready verdict | 7 Engagement enrollment |
+| 7b Attempt | finishing event | 7 arms next sequence |
+| 7 Engagement | nudge touchpoint fires | 8 Fact-refresh (data ask) |
+| 8 Fact-refresh | write-back | 10 Eligibility |
+| 9 Reference-currency | reference move | 10 Eligibility |
+| 10 Eligibility | every determination (incl. missing) | 11 Engine 2 (signal) |
+| 11 Engine 2 | chosen motion | 7 Engagement (reactivation / nudge) |
+| 12 Meeting | meeting_booked → capture write-back | 10 Eligibility (live brief) |
 
-The spine: *seed → forward-deploy → run*, then a self-feeding *detect → engage → collect → re-detect* ring, with Reference-currency injecting external triggers into the ring from outside any human action.
+**Spine shape:** *seed → forward-deploy → run*, then a self-feeding *detect → engage → collect → re-detect* ring, with Reference-currency injecting faceless external triggers into the ring (`World §2.2`).
 
 ---
 
-## Silences (implied systems whose triggers are unspecified — not filled)
+## Hard human gates (machine must not automate these away)
 
-- **Escrow release.** The Commercial system asserts a *release* exists but its trigger — what event meets release terms — is a Known Unknown (`Seed §7, §13.1`).
-- **What "database authorization" is.** The hard-input trigger's actual shape (connect vs export vs equivalent) is undefined, and must not silently migrate into the acquisition click budget (`Seed §13.2`).
-- **Event-based automation triggers.** Seed states event pulls are "thinner than manual" (`Seed §11`); the event trigger set beyond the manual pull is under-specified (`Seed §5.6`).
-- **Operations & Actions initiations.** Named as slots but **stubs** — triggers and outputs unspecified (`Seed §5.6, §11`).
-- **Loop-closer placement (D-01) and in-meeting fallback surface (D-02).** Open (`Seed §5.8`).
-- **"Reactivation-worthy" criteria.** Engine 2 names *reactivation first if reactivation-worthy* but the condition that makes a signal reactivation-worthy is not specified (`Seed §5.8`).
-- **Consent-regime triggers.** CASL/SMS legal conditions per geography, for firm→client and for the first agent→consultant text, asserted as necessary and explicitly **not closed** (`Seed §8.2, §13.14`, `World §1.2`).
-- **Escalation on failed reply.** Channel-order escalation when an SMS reply fails is open (`Seed §13.15`).
-- **Contact-entry mutation.** The "contact enters the book" trigger via import is only partial — import does not fully mutate the living list (`Seed §5.1, §11`).
-- **Email-channel entry from Meta.** When/whether email earns entry from Meta evidence is open (`Seed §13.8`).
-- **Additional firm-side initiators.** Multi-consultant roles/permissions open; World declines to mint extra firm-side parties (`Seed §13.6`, `World §1.1`).
+From `Seed §9` / `World §4`:
+
+- Seed capture (stranger action)
+- Firm/user provision (OLG) and OTP verify
+- Database authorization
+- Escrow accept
+- Client opt-in / not silenced
+- Meeting booking (human commitment)
+- Firm responsibility to refuse illegal/unethical outreach
+
+---
+
+## Silences master list (not filled)
+
+| Silence | System |
+|---|---|
+| Escrow release definition | 3 |
+| Shape of database authorization | 3 |
+| Ongoing SaaS packaging vs escrow peer door | 3 |
+| Email earns Meta entry; Meta CAC | 1 |
+| CASL/SMS consent regimes | 6, 1 |
+| Reactivation-worthy criteria | 11 |
+| Attempt criteria windows (product lock) | 7b |
+| SMS reply-failure escalation | 7b |
+| Event-trigger set; Operations & Actions stubs | 10 / stubs |
+| Import fully mutates living list | book → 5 |
+| D-01 / D-02 loop-closer builder | 12, 11 |
+| Client desk depth | 8, 12 |
+| Multi-consultant roles | 4 |
+| Rule-pack IP/liability; Constants beyond Immigration | 9, 10 |
+
+---
+
+## What this Story is for next
+
+1. **Founder challenge** this substance — missing musts, false musts, silences wrongly filled.
+2. **Systems Requirements** = **spec extraction** from these statements (states, transitions, ramifications, extrusion index late) — not a second invention pass. See [`SYSTEMS-REQUIREMENTS.md`](./SYSTEMS-REQUIREMENTS.md).
+3. Faces (controls / panes) bind only after Requirements name the states these musts imply.

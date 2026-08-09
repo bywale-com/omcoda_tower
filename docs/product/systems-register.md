@@ -15,7 +15,7 @@ The **Systems Register** is a password-gated route (`/register`) for **pass-orde
 - **Left panel** — Seed → World → Systems Story → Systems Requirements → (∥ Personas & Function) → bind extrusions → SME → Enrichment → Furnish → Wiring → Components → CT Plant
 - **Right canvas** — Theory detail for the active pass; How canvas when a graph is selected; flow step canvas under Wiring
 
-Systems-analyst **machine** law: [`../register/SYSTEMS-REQUIREMENTS.md`](../register/SYSTEMS-REQUIREMENTS.md) (after [`../register/SYSTEMS-STORY.md`](../register/SYSTEMS-STORY.md)). Faces/controls are extrusions only. Pass forks: [`../register/PASS-FORK-MAP.md`](../register/PASS-FORK-MAP.md).
+Systems-analyst **machine** law: [`../register/SYSTEMS-STORY.md`](../register/SYSTEMS-STORY.md) locks substance; [`../register/SYSTEMS-REQUIREMENTS.md`](../register/SYSTEMS-REQUIREMENTS.md) extracts the wiring spec. Faces/controls are extrusions only. Pass forks: [`../register/PASS-FORK-MAP.md`](../register/PASS-FORK-MAP.md).
 
 It is **not** the live app. The live product (`/`) is the translation destination. **Console** documents what is mounted in the running app.
 

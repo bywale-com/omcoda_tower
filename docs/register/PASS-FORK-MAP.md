@@ -12,9 +12,9 @@
 Seed → World → Systems Story → Systems Requirements → (∥ Personas & Function) → bind extrusions (controls + panes) → SME → Enrichment → Furnish → (Priors / Weak / Flows) → Wiring → CT Plant → Translation
 ```
 
-**Systems-analyst seat** owns **Systems Story → Systems Requirements** (machine track). Outcome↔System and System↔Component maps are **congruence tools after Requirements**, not discovery of the machine. Faces (Personas & Function, controls, panes) run **in parallel** and only **extrude** onto states the machine already requires. Authoritative law: [`SYSTEMS-REQUIREMENTS.md`](./SYSTEMS-REQUIREMENTS.md). Pass string also in [`THREE-SURFACE-MODEL.md`](./THREE-SURFACE-MODEL.md).
+**Systems-analyst seat** owns **Systems Story → Systems Requirements** (machine track). **Story locks substance** (immutable musts); **Requirements are spec extraction** from Story — not a second invention pass. Outcome↔System and System↔Component maps are **congruence tools after Requirements**, not discovery of the machine. Faces (Personas & Function, controls, panes) run **in parallel** and only **extrude** onto states the machine already requires. Authoritative law: [`SYSTEMS-REQUIREMENTS.md`](./SYSTEMS-REQUIREMENTS.md) · substance: [`SYSTEMS-STORY.md`](./SYSTEMS-STORY.md). Pass string also in [`THREE-SURFACE-MODEL.md`](./THREE-SURFACE-MODEL.md).
 
-Wiring here is the **paper** trace (design-invariant, can run ∥ Function once capability handoff exists); the **build** side of wiring (Pass B stand-ins → GO cutover) lands after the CT plant. **CTO primary handoff = Systems Requirements**, not the component map.
+Wiring here is the **paper** trace (design-invariant, can run ∥ Function once capability handoff exists); the **build** side of wiring (Pass B stand-ins → GO cutover) lands after the CT plant. **CTO primary wiring handoff = Systems Requirements** (extracted from Story); component map is not the handoff.
 
 ---
 
@@ -27,13 +27,13 @@ Wiring here is the **paper** trace (design-invariant, can run ∥ Function once 
 
 ### 2. Systems Story — [`SYSTEMS-STORY.md`](./SYSTEMS-STORY.md)
 - **Step:** After World, on the **machine track** (before Requirements). Seat: **systems-analyst**.
-- **Fork:** Click-path / How framing buries faceless initiators ("an IRCC fact moves," "a criteria window elapses," "a live inbound arrives"); the engagement *record* gets mistaken for the system.
-- **Solved:** Derive the latent systems from Seed + World **alone** as a web of initiations (trigger → inputs → outputs), technology-free — silences named, never filled. **Not** the machine spec — see §2b.
+- **Fork:** Click-path / How framing buries faceless initiators; the engagement *record* gets mistaken for the system; a thin initiation sketch left “what must the system be able to do?” unmet — so Requirements risked inventing substance.
+- **Solved:** Derive twelve systems from Seed + World **alone** as immutable **must / must-not / chain / silence** statements — technology-free; OPERATOR densifiers labeled, not smuggled. **Story locks substance.** Requirements only extract — see §2b.
 
 ### 2b. Systems Requirements — [`SYSTEMS-REQUIREMENTS.md`](./SYSTEMS-REQUIREMENTS.md)
-- **Step:** Immediately after Systems Story; **hard-gate before** any system↔component bind. Seat: **systems-analyst**.
-- **Fork:** Story + outcome/component maps were treated as if they *were* the system. UI (controls/panes) was used — or about to be used — to justify internals. Faceless machine triggers (e.g. email opened) vanished because outskirts maps cannot see them.
-- **Solved (doctrine):** Tower = machine; UI = controls (change existing state) + panes (show existing state) only — **never adds** system substance. From Seed+World build **machine ∥ faces**. Requirements specify states, transitions, ramifications, faceless initiations — **nobody present**. Components bind late as extrusions. Filled machine specs = next writing pass under this law.
+- **Step:** Immediately after Systems Story; **hard-gate before** any system↔component bind. Seat: **systems-analyst** (any competent technical professional could extract if Story is finished).
+- **Fork:** Story + outcome/component maps were treated as if they *were* the wiring spec. UI (controls/panes) was used — or about to be used — to justify internals. Faceless machine triggers vanished because outskirts maps cannot see them. Requirements were invented as compensation for underbuilt Story.
+- **Solved (doctrine):** Tower = machine; UI = controls + panes only — **never adds** system substance. Machine ∥ faces from Seed+World. **Shift name = spec extraction:** Requirements rearrange Story into states, transitions, ramifications — invent nothing Story did not claim. Components bind late as extrusions. Filled specs = next writing pass after Story substance holds.
 
 ### 3. Outcome ↔ System map — [`OUTCOME-SYSTEM-MAP.md`](./OUTCOME-SYSTEM-MAP.md)
 - **Step:** **Congruence audit after Requirements** (not discovery). Seat: **systems-analyst**.

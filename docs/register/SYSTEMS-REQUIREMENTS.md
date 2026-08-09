@@ -2,7 +2,7 @@
 
 **Seat:** Systems analyst.  
 **Status:** Doctrine / placement of a critical refinement. This file defines **what Systems Requirements is**, **why it exists**, and **how it fits** the Register spine. It is **not yet** the filled machine-spec for all twelve systems — that writing is the next systems-analyst pass under this law.  
-**Provenance:** Founder discovery (2026-08-09): the recent systems-analyst maps were working the **outskirts**; the missing center is the **systems requirements** of the machine itself.
+**Provenance:** Founder discovery (2026-08-09): the recent systems-analyst maps were working the **outskirts**; the missing center is the **machine** itself. Refined same day: **Systems Story** locks that machine as immutable musts; **Systems Requirements** is **spec extraction** from Story — not where substance is invented.
 
 ---
 
@@ -66,7 +66,7 @@ Read each existing artifact as **kept**, **re-ranked**, or **gated**. Nothing be
 | Artifact | Role under this law | Fit |
 |---|---|---|
 | [`SEED.md`](./SEED.md) · [`WORLD.md`](./WORLD.md) | Foundation. Both tracks derive from here. | Unchanged |
-| [`SYSTEMS-STORY.md`](./SYSTEMS-STORY.md) | **Purpose / initiations narrative** — what latent systems exist as trigger→inputs→outputs webs; technology-free; Seed+World only. | **Kept.** Story is **not** Requirements. Story says *what must be fulfilled*; Requirements specify *the machine that fulfills it* (states, transitions, ramifications, including faceless triggers like email-open). Story → Requirements is the next edge. |
+| [`SYSTEMS-STORY.md`](./SYSTEMS-STORY.md) | **Machine substance** — immutable must / must-not / chain / silence statements of what Tower must be able to do; technology-free; Seed+World only. | **Kept and elevated.** Story **locks substance**. Requirements do **not** invent new musts — they **extract** Story into states, transitions, and ramifications. If Story is thin, Requirements will fake discovery; fix Story first. |
 
 ### 2.2 Face track (parallel — not the machine)
 
@@ -87,7 +87,7 @@ Read each existing artifact as **kept**, **re-ranked**, or **gated**. Nothing be
 
 | Artifact | Role under this law | Fit |
 |---|---|---|
-| Wiring / CTO Think Stack | Build/wire the machine. | **Primary handoff becomes Systems Requirements** (not the component map). Story remains context; Requirements are the spec. |
+| Wiring / CTO Think Stack | Build/wire the machine. | **Primary wiring handoff = Systems Requirements** (extracted from Story). Story is the substance any competent technical professional should be able to formalize; Requirements are that formalization — not a second invention surface. Component map is not the handoff. |
 | SME / Enrichment / Furnish | Practice + capability densify on faces; Can’ts on mechanism. | Faces continue; mechanism Can’ts must reconcile to Requirements states, not invent them from UI. |
 | CT Plant / Translation | Plant and ship faces. | Still late; must not redefine the machine. |
 
@@ -140,21 +140,25 @@ Grain: **machine**, technology-light enough to stay design-invariant, hard enoug
 
 | | Systems Story | Systems Requirements |
 |---|---|---|
-| Question | What latent systems / initiations does Seed+World already seed? | What machine must exist for that story to be real? |
-| Unit | Trigger → inputs → outputs (narrative web) | State → transition → ramification (spec) |
+| Question | What must the system be able to do? (substance) | How is that substance formalized for wiring? (spec) |
+| Unit | Must / must-not / chain / silence | State → transition → ramification |
+| Shift name | — | **Spec extraction** — rearrange Story; invent nothing Story did not claim |
 | UI | Explicitly out of scope | Extrusions listed only late, never generative |
-| Faceless events | Named when Story sees them; easy to under-name | **Native** — email-open belongs here |
-| Status today | First pass exists | Doctrine placed; **machine specs not yet written** |
+| Faceless events | Named as musts when Seed/World seed them (criteria elapsed, reference moved, inbound, …) | Same events as transitions — still native here, not invented here |
+| Who can write it | Systems-analyst locks substance | Any competent technical professional *could* extract; systems-analyst usually authors so nothing is smuggled in |
+| Status today | **Substance pass landed** | Doctrine placed; **machine specs not yet written** |
+
+**Law:** If a CTO (or any technical professional) cannot write Requirements from Story alone, Story is unfinished — do not “enrich” Requirements to compensate.
 
 ---
 
 ## 5. Immediate obligations (ordered)
 
-1. **Accept this placement** — stop treating System↔Component / control→system join as the systems-analyst endgame.  
-2. **Write Systems Requirements** for the twelve Story systems (start with engagement runtime: systems 7, 11, 8, 12 — where faceless opens/clicks/windows live).  
+1. **Challenge Systems Story substance** — missing musts, false musts, silences wrongly filled (`SYSTEMS-STORY.md`).  
+2. **Extract Systems Requirements** from Story (start with engagement runtime: systems 7, 11, 8, 12 — faceless opens/clicks/windows). Invent nothing.  
 3. **Extend the face inventory** with a **Panes** ledger (view-only displays of machine state), sibling to controls — still face track.  
 4. **Only then** bind control/pane → required state (replace premature system↔component discovery).  
-5. Hand CTO **Requirements** as the primary build surface.
+5. Hand CTO **Requirements** as the primary build surface (Story remains the substance proof).
 
 ---
 
