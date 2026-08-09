@@ -46,7 +46,16 @@ Declared as required component-pass output: [`CONTROLS-TABLES-RECONCILIATION.md`
 
 ## Counts (re-run after v3)
 
-See live `/system-map` Tables / audit and `modularityReport()` — expect higher table count than v2 (new calendars, binding, cohort, metrics, walls).
+| Metric | Value |
+|---|---|
+| Tables | **62** (42 state · 13 rule · 7 sequence) |
+| Relations | **50** |
+| Map nodes | **45** |
+| Templates | **4** |
+| Firm bindings (demo) | **4** |
+| `frozen-should-be-table` | **0** |
+| Coverage ★ bugs | **0** |
+| Corpus sources | **8** (includes guidelines/) |
 
 ## How to verify
 
