@@ -42,6 +42,8 @@ npm run verify:worker
 
 Expect: stale text attempt (31 min) → `acr-text` fire → `owner_channel=email`; re-tick no double-fire; inbound nullify.
 
+**Proved (Session-pooler):** `acr-text` 30 minutes from table → text→email; idempotent re-tick; inbound nullify; Resend live message recorded in `messaging_events` for cohort contact only.
+
 ---
 
 ## Part B — Live-send cutover (gated)
