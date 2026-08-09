@@ -10,22 +10,30 @@ import {
   type Node,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { SYSTEM_MAP_MODEL, cloneEditableRules, getNode, resolutionReport } from "./data/model";
+import { SYSTEM_MAP_MODEL, getNode, resolutionReport } from "./data/model";
 import { runCoverageChecks, coverageSummary } from "./data/coverage";
-import type { MapRule } from "./data/types";
-import { layoutPositions, layoutSubMap } from "./canvas/layout";
+import { cloneTables, TABLE_RELATIONS } from "./data/tables";
+import { modularityReport } from "./data/modularity";
+import type { MachineTable } from "./data/tableTypes";
+import { layoutPositions } from "./canvas/layout";
 import { SYSTEM_MAP_NODE_TYPE, SystemMapNodeView, type SystemMapNodeData } from "./canvas/SystemMapNode";
-import { FACLESS_FIRE_PRESETS, simulateCascade } from "./sim/engine";
+import {
+  FACLESS_FIRE_PRESETS,
+  buildAttemptLadderFromTables,
+  litNodesFromSteps,
+  simulateCascadeFromTables,
+} from "./sim/engine";
 
 const nodeTypes = { [SYSTEM_MAP_NODE_TYPE]: SystemMapNodeView };
 
 export function SystemMapPage() {
   const report = useMemo(() => resolutionReport(), []);
   const coverage = useMemo(() => coverageSummary(runCoverageChecks(SYSTEM_MAP_MODEL)), []);
-  const [rules, setRules] = useState<Record<string, MapRule>>(() => cloneEditableRules());
+  const modBase = useMemo(() => modularityReport(), []);
+  const [tables, setTables] = useState<MachineTable[]>(() => cloneTables());
   const [lit, setLit] = useState<Set<string>>(new Set());
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [subMapId, setSubMapId] = useState<string | null>(null);
+  const [view, setView] = useState<"top" | "attempt-interior" | "tables">("top");
   const [cascadeLog, setCascadeLog] = useState<string[]>([]);
 
   const positions = useMemo(() => layoutPositions(SYSTEM_MAP_MODEL.nodes), []);
@@ -53,11 +61,12 @@ export function SystemMapPage() {
     () =>
       SYSTEM_MAP_MODEL.edges.map((e) => {
         const active = lit.has(e.source) && lit.has(e.target);
+        const rel = TABLE_RELATIONS.find((r) => r.edgeId === e.id);
         return {
           id: e.id,
           source: e.source,
           target: e.target,
-          label: e.label,
+          label: rel ? `${rel.kind}: ${e.label}` : e.label,
           animated: active && Boolean(e.faceless),
           style: {
             stroke: active ? "#e8a35a" : e.faceless ? "#c45c26" : "#5c6370",
@@ -76,77 +85,122 @@ export function SystemMapPage() {
     [lit],
   );
 
-  const activeSub = SYSTEM_MAP_MODEL.subMaps.find((s) => s.id === subMapId);
-  const subLayout = useMemo(
-    () => (activeSub ? layoutSubMap(activeSub.nodes.length) : []),
-    [activeSub],
+  const ladder = useMemo(() => buildAttemptLadderFromTables(tables), [tables]);
+  const attemptNodes: Node[] = useMemo(
+    () =>
+      ladder.nodes.map((n, i) => ({
+        id: n.id,
+        type: SYSTEM_MAP_NODE_TYPE,
+        position: { x: 40 + i * 220, y: 80 },
+        data: {
+          label: n.label,
+          holds: `token=${n.token} · from seq.channel_ownership_order`,
+          faceless: false,
+          lit: false,
+          hasSubMap: false,
+          resolution: "corpus-full" as const,
+        } satisfies SystemMapNodeData,
+      })),
+    [ladder],
   );
-  const subNodes: Node[] = useMemo(() => {
-    if (!activeSub) return [];
-    return activeSub.nodes.map((n, i) => ({
-      id: n.id,
-      type: SYSTEM_MAP_NODE_TYPE,
-      position: subLayout[i] ?? { x: 0, y: 0 },
-      data: {
-        label: n.label,
-        holds: n.kind + (n.ruleIds?.length ? ` · rules: ${n.ruleIds.join(", ")}` : ""),
-        faceless: Boolean(n.faceless),
-        lit: false,
-        hasSubMap: false,
-        resolution: "corpus-full" as const,
-      } satisfies SystemMapNodeData,
-    }));
-  }, [activeSub, subLayout]);
-
-  const subEdges: Edge[] = useMemo(() => {
-    if (!activeSub) return [];
-    return activeSub.edges.map((e) => {
-      const rule = e.ruleId ? rules[e.ruleId] : undefined;
-      const ruleHint =
-        rule?.kind === "threshold"
-          ? ` (${rule.value}${rule.notes ? " " + rule.notes : ""})`
-          : rule?.kind === "precedence" && rule.value === false
-            ? " [OFF]"
-            : "";
-      return {
+  const attemptEdges: Edge[] = useMemo(
+    () =>
+      ladder.edges.map((e) => ({
         id: e.id,
         source: e.source,
         target: e.target,
-        label: `${e.label ?? ""}${ruleHint}`,
-        style: {
-          stroke: rule?.kind === "precedence" && rule.value === false ? "#555" : "#c45c26",
-          strokeDasharray: "4 3",
-        },
+        label: e.label,
+        style: { stroke: "#c45c26", strokeDasharray: "4 3" },
         markerEnd: { type: MarkerType.ArrowClosed, color: "#c45c26", width: 12, height: 12 },
         labelStyle: { fill: "#9aa0a6", fontSize: 9 },
-      };
-    });
-  }, [activeSub, rules]);
-
-  const selected = selectedId ? getNode(selectedId) : undefined;
-
-  const fire = useCallback(
-    (originNodeId: string, label: string) => {
-      const steps = simulateCascade(originNodeId, rules);
-      setLit(new Set(steps.map((s) => s.nodeId)));
-      setCascadeLog(
-        steps.map((s, i) => `${i}. ${s.nodeId}${s.viaEdgeId ? ` ← ${s.viaEdgeId}` : " (origin)"}`),
-      );
-      setSelectedId(originNodeId);
-      setSubMapId(null);
-      void label;
-    },
-    [rules],
+      })),
+    [ladder],
   );
 
-  const updateRule = (ruleId: string, value: string | number | boolean) => {
-    setRules((prev) => ({
-      ...prev,
-      [ruleId]: { ...prev[ruleId], value },
-    }));
+  const selected = selectedId ? getNode(selectedId) : undefined;
+  const selectedTables = tables.filter((t) => t.nodeId === selectedId);
+
+  const fire = useCallback(
+    (originNodeId: string) => {
+      const steps = simulateCascadeFromTables(originNodeId, tables);
+      setLit(litNodesFromSteps(steps));
+      setCascadeLog(
+        steps.map(
+          (s, i) =>
+            `${i}. ${s.tableId} (node ${s.nodeId})${s.note ? ` — ${s.note}` : ""}${
+              s.appliedRuleRowIds?.length ? ` · rows[${s.appliedRuleRowIds.join(",")}]` : ""
+            }`,
+        ),
+      );
+      setSelectedId(originNodeId);
+      setView("top");
+    },
+    [tables],
+  );
+
+  const updateThreshold = (tableId: string, rowId: string, threshold: number) => {
+    setTables((prev) =>
+      prev.map((t) =>
+        t.id !== tableId
+          ? t
+          : {
+              ...t,
+              ruleRows: t.ruleRows?.map((r) => (r.id === rowId ? { ...r, threshold } : r)),
+            },
+      ),
+    );
   };
 
-  const showingSub = Boolean(activeSub);
+  const toggleRuleRow = (tableId: string, rowId: string) => {
+    setTables((prev) =>
+      prev.map((t) =>
+        t.id !== tableId
+          ? t
+          : {
+              ...t,
+              ruleRows: t.ruleRows?.map((r) => (r.id === rowId ? { ...r, enabled: !r.enabled } : r)),
+            },
+      ),
+    );
+  };
+
+  const moveSequenceItem = (tableId: string, index: number, dir: -1 | 1) => {
+    setTables((prev) =>
+      prev.map((t) => {
+        if (t.id !== tableId || !t.sequence) return t;
+        const next = [...t.sequence];
+        const j = index + dir;
+        if (j < 0 || j >= next.length) return t;
+        const tmp = next[index];
+        next[index] = next[j];
+        next[j] = tmp;
+        return { ...t, sequence: next };
+      }),
+    );
+  };
+
+  const moveRuleOrd = (tableId: string, rowId: string, dir: -1 | 1) => {
+    setTables((prev) =>
+      prev.map((t) => {
+        if (t.id !== tableId || !t.ruleRows) return t;
+        const sorted = [...t.ruleRows].sort((a, b) => a.ord - b.ord);
+        const i = sorted.findIndex((r) => r.id === rowId);
+        const j = i + dir;
+        if (i < 0 || j < 0 || j >= sorted.length) return t;
+        const a = sorted[i];
+        const b = sorted[j];
+        const swapped = t.ruleRows.map((r) => {
+          if (r.id === a.id) return { ...r, ord: b.ord };
+          if (r.id === b.id) return { ...r, ord: a.ord };
+          return r;
+        });
+        return { ...t, ruleRows: swapped };
+      }),
+    );
+  };
+
+  const channelSeq = tables.find((t) => t.id === "seq.channel_ownership_order");
+  const showingCanvas = view === "top" || view === "attempt-interior";
 
   return (
     <div
@@ -171,114 +225,166 @@ export function SystemMapPage() {
         }}
       >
         <div>
-          <div style={{ fontSize: 15, fontWeight: 700 }}>Interactive System Map</div>
+          <div style={{ fontSize: 15, fontWeight: 700 }}>System Map v2 — table inventory</div>
           <div style={{ fontSize: 11, color: "#9aa0a6", marginTop: 2 }}>
-            Machine only — no faces · {report.nodeCount} nodes · {report.facelessCount} faceless ★ ·{" "}
-            {report.fractalParents.length} fractal interiors · coverage bugs: {coverage.bugs.length}
+            Machine = tables + dumb runtime · {modBase.tableCount} tables (
+            {modBase.byKind.state} state / {modBase.byKind.rule} rule / {modBase.byKind.sequence}{" "}
+            sequence) · bugs: {modBase.bugs.length} · channel order: [
+            {ladder.channelOrder.join(" → ")}]
           </div>
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          <button type="button" style={view === "top" ? btnOn : btnStyle} onClick={() => setView("top")}>
+            Top map
+          </button>
+          <button
+            type="button"
+            style={view === "attempt-interior" ? btnOn : btnStyle}
+            onClick={() => setView("attempt-interior")}
+          >
+            Attempt interior (from seq)
+          </button>
+          <button
+            type="button"
+            style={view === "tables" ? btnOn : btnStyle}
+            onClick={() => setView("tables")}
+          >
+            Tables / audit
+          </button>
           {FACLESS_FIRE_PRESETS.map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => fire(p.originNodeId, p.label)}
-              style={btnStyle}
-            >
+            <button key={p.id} type="button" onClick={() => fire(p.originNodeId)} style={btnStyle}>
               {p.label}
             </button>
           ))}
-          <button type="button" onClick={() => { setLit(new Set()); setCascadeLog([]); }} style={btnStyle}>
+          <button
+            type="button"
+            onClick={() => {
+              setLit(new Set());
+              setCascadeLog([]);
+            }}
+            style={btnStyle}
+          >
             Clear cascade
           </button>
-          {showingSub ? (
-            <button type="button" onClick={() => setSubMapId(null)} style={{ ...btnStyle, borderColor: "#e8a35a" }}>
-              ↑ Top map
-            </button>
-          ) : null}
         </div>
       </header>
 
       <div style={{ flex: 1, display: "flex", minHeight: 0 }}>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <ReactFlow
-            nodes={showingSub ? subNodes : topNodes}
-            edges={showingSub ? subEdges : topEdges}
-            nodeTypes={nodeTypes}
-            fitView
-            minZoom={0.2}
-            onNodeClick={(_, node) => {
-              if (showingSub) return;
-              setSelectedId(node.id);
-              const mapNode = getNode(node.id);
-              if (mapNode?.subMapId) setSubMapId(mapNode.subMapId);
-            }}
-            proOptions={{ hideAttribution: true }}
-          >
-            <Background variant={BackgroundVariant.Dots} gap={18} size={1} color="#2a2e36" />
-            <Controls />
-            <MiniMap
-              nodeColor={(n) => {
-                const d = n.data as SystemMapNodeData;
-                if (d?.lit) return "#e8a35a";
-                if (d?.facelessArchetype) return "#c45c26";
-                if (d?.faceless) return "#8a4b28";
-                return "#3a3f4b";
+        {view === "tables" ? (
+          <div style={{ flex: 1, overflow: "auto", padding: 16 }}>
+            <h2 style={h2}>Modularity audit</h2>
+            <p style={p}>
+              Coverage faceless bugs: {coverage.bugs.length} · frozen-should-be-table:{" "}
+              {modBase.bugs.length} · corpus-full nodes: {report.corpusFull.length}/
+              {report.nodeCount}
+            </p>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
+              <thead>
+                <tr style={{ textAlign: "left", color: "#9aa0a6" }}>
+                  <th style={th}>table</th>
+                  <th style={th}>kind</th>
+                  <th style={th}>node</th>
+                  <th style={th}>modular</th>
+                  <th style={th}>reason / bug</th>
+                </tr>
+              </thead>
+              <tbody>
+                {modBase.audit.map((r) => (
+                  <tr key={r.tableId} style={{ borderTop: "1px solid #2a2e36" }}>
+                    <td style={td}>
+                      <code>{r.tableId}</code>
+                    </td>
+                    <td style={td}>{r.kind}</td>
+                    <td style={td}>
+                      <code>{r.nodeId}</code>
+                    </td>
+                    <td style={td}>{r.modular ? "y" : "n"}</td>
+                    <td style={td}>
+                      {r.bug ? (
+                        <span style={{ color: "#e07070" }}>{r.bug}: {r.bugDetail}</span>
+                      ) : r.modular ? (
+                        "—"
+                      ) : (
+                        <span style={{ color: "#9aa0a6" }}>
+                          {r.structuralReason}: {r.structuralReasonDetail}
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <h2 style={{ ...h2, marginTop: 24 }}>Structural edit — channel order</h2>
+            <p style={p}>Reorder `seq.channel_ownership_order`. Attempt interior + cascade read this list.</p>
+            <SequenceEditor table={channelSeq} onMove={moveSequenceItem} />
+
+            <h2 style={{ ...h2, marginTop: 24 }}>Relations (reads / writes / triggers)</h2>
+            <ul style={ul}>
+              {TABLE_RELATIONS.map((r) => (
+                <li key={r.id}>
+                  <code>{r.fromTableId}</code> —{r.kind}→ <code>{r.toTableId}</code> · {r.label}
+                  {r.faceless ? " ★" : ""}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <ReactFlow
+              nodes={view === "attempt-interior" ? attemptNodes : topNodes}
+              edges={view === "attempt-interior" ? attemptEdges : topEdges}
+              nodeTypes={nodeTypes}
+              fitView
+              minZoom={0.2}
+              onNodeClick={(_, node) => {
+                if (view !== "top") return;
+                setSelectedId(node.id);
+                if (node.id === "active_attempt") setView("attempt-interior");
               }}
-              maskColor="rgba(0,0,0,0.6)"
-            />
-          </ReactFlow>
-        </div>
+              proOptions={{ hideAttribution: true }}
+            >
+              <Background variant={BackgroundVariant.Dots} gap={18} size={1} color="#2a2e36" />
+              <Controls />
+              <MiniMap
+                nodeColor={(n) => {
+                  const d = n.data as SystemMapNodeData;
+                  if (d?.lit) return "#e8a35a";
+                  if (d?.facelessArchetype) return "#c45c26";
+                  if (d?.faceless) return "#8a4b28";
+                  return "#3a3f4b";
+                }}
+                maskColor="rgba(0,0,0,0.6)"
+              />
+            </ReactFlow>
+          </div>
+        )}
 
         <aside
           style={{
-            width: 360,
+            width: 380,
             borderLeft: "1px solid #2a2e36",
             overflow: "auto",
             padding: 14,
             background: "#111318",
           }}
         >
-          <section style={{ marginBottom: 16 }}>
-            <h2 style={h2}>Resolution</h2>
+          <section style={{ marginBottom: 14 }}>
+            <h2 style={h2}>v2 law</h2>
             <p style={p}>
-              Corpus-full: {report.corpusFull.length} · Named-silent: {report.namedSilent.length}
+              Modifiable → table. Runtime is dumb. Parameter edit + structural edit both re-drive sim.
+              Showing canvas: {showingCanvas ? "yes" : "audit"}.
             </p>
-            <details>
-              <summary style={{ cursor: "pointer", fontSize: 12, color: "#9aa0a6" }}>
-                Named-silent nodes
-              </summary>
-              <ul style={{ fontSize: 11, color: "#9aa0a6", paddingLeft: 16 }}>
-                {report.namedSilent.map((n) => (
-                  <li key={n.id} style={{ marginBottom: 6 }}>
-                    <code>{n.id}</code>
-                    {n.silences.length ? ` — ${n.silences.join("; ")}` : ""}
-                  </li>
-                ))}
-              </ul>
-            </details>
-            {coverage.bugs.length ? (
-              <div style={{ marginTop: 8, color: "#e07070", fontSize: 11 }}>
-                Coverage bugs:
-                <ul>
-                  {coverage.bugs.map((b) => (
-                    <li key={b.nodeId + b.code}>
-                      {b.nodeId}: {b.detail}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : (
-              <p style={{ ...p, color: "#6fbf73" }}>Coverage checks: no bugs</p>
-            )}
           </section>
 
           {cascadeLog.length ? (
-            <section style={{ marginBottom: 16 }}>
-              <h2 style={h2}>Cascade</h2>
-              <ol style={{ fontSize: 11, color: "#e8a35a", paddingLeft: 18, margin: 0 }}>
+            <section style={{ marginBottom: 14 }}>
+              <h2 style={h2}>Cascade (table walk)</h2>
+              <ol style={{ fontSize: 10, color: "#e8a35a", paddingLeft: 18, margin: 0 }}>
                 {cascadeLog.map((line) => (
-                  <li key={line}>{line}</li>
+                  <li key={line} style={{ marginBottom: 4 }}>
+                    {line}
+                  </li>
                 ))}
               </ol>
             </section>
@@ -293,121 +399,101 @@ export function SystemMapPage() {
                 ) : null}
               </h2>
               <p style={p}>{selected.holds}</p>
-              <p style={{ ...p, color: "#6b7280" }}>
-                systems: {selected.systems.join(", ")} · resolution: {selected.resolution}
-              </p>
-              {selected.subMapId ? (
-                <button
-                  type="button"
-                  style={{ ...btnStyle, marginBottom: 10 }}
-                  onClick={() => setSubMapId(selected.subMapId!)}
-                >
-                  Open interior (fractal)
-                </button>
-              ) : null}
 
-              <h3 style={h3}>Transitions (Δ)</h3>
-              <ul style={ul}>
-                {selected.transitions.map((t) => (
-                  <li key={t.id}>
-                    [{t.origin}] {t.label}
-                  </li>
-                ))}
-              </ul>
-
-              <h3 style={h3}>Ramifications (⇒)</h3>
-              <ul style={ul}>
-                {selected.ramifications.map((r) => (
-                  <li key={r.id}>
-                    {r.label}
-                    {r.toNodeId ? ` → ${r.toNodeId}` : ""}
-                  </li>
-                ))}
-              </ul>
-
-              <h3 style={h3}>Rules (editable thresholds / precedence)</h3>
-              {selected.rules.length === 0 ? (
-                <p style={p}>No contained rules.</p>
-              ) : (
-                <ul style={{ ...ul, listStyle: "none", paddingLeft: 0 }}>
-                  {selected.rules.map((r) => {
-                    const live = rules[r.id] ?? r;
-                    return (
-                      <li
-                        key={r.id}
-                        style={{
-                          marginBottom: 10,
-                          padding: 8,
-                          border: "1px solid #2a2e36",
-                          borderRadius: 4,
-                        }}
-                      >
-                        <div style={{ fontSize: 11, fontWeight: 600 }}>{live.label}</div>
-                        <div style={{ fontSize: 10, color: "#6b7280", marginTop: 2 }}>
-                          {live.kind} · {live.source} · {live.resolution}
-                        </div>
-                        {live.editable && live.kind === "threshold" ? (
-                          <label style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 6, fontSize: 11 }}>
-                            value
-                            <input
-                              type="number"
-                              value={Number(live.value)}
-                              onChange={(e) => updateRule(r.id, Number(e.target.value))}
-                              style={{
-                                width: 72,
-                                background: "#0d0f12",
-                                border: "1px solid #3a3f4b",
-                                color: "#e8eaed",
-                                borderRadius: 3,
-                                padding: "2px 6px",
-                              }}
-                            />
-                            <span style={{ color: "#9aa0a6" }}>{live.notes}</span>
-                          </label>
-                        ) : null}
-                        {live.editable && live.kind === "precedence" ? (
-                          <label style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 6, fontSize: 11 }}>
-                            <input
-                              type="checkbox"
-                              checked={Boolean(live.value)}
-                              onChange={(e) => updateRule(r.id, e.target.checked)}
-                            />
-                            enabled in sim
-                          </label>
-                        ) : null}
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-
-              {selected.silences?.length ? (
-                <>
-                  <h3 style={h3}>Silences</h3>
-                  <ul style={ul}>
-                    {selected.silences.map((s) => (
-                      <li key={s}>{s}</li>
-                    ))}
-                  </ul>
-                </>
-              ) : null}
+              {selectedTables.map((t) => (
+                <div key={t.id} style={{ marginBottom: 14 }}>
+                  <h3 style={h3}>
+                    {t.kind} table <code>{t.id}</code> {t.modular ? "" : `(wall: ${t.structuralReason})`}
+                  </h3>
+                  {t.kind === "sequence" && t.sequence ? (
+                    <SequenceEditor table={t} onMove={moveSequenceItem} />
+                  ) : null}
+                  {t.kind === "rule" && t.ruleRows ? (
+                    <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                      {[...t.ruleRows]
+                        .sort((a, b) => a.ord - b.ord)
+                        .map((r) => (
+                          <li key={r.id} style={card}>
+                            <div style={{ fontSize: 11, fontWeight: 600 }}>{r.label}</div>
+                            <div style={{ fontSize: 10, color: "#6b7280", marginTop: 2 }}>
+                              when: {r.when} · if: {r.condition}
+                            </div>
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 6 }}>
+                              <label style={{ fontSize: 11 }}>
+                                <input
+                                  type="checkbox"
+                                  checked={r.enabled}
+                                  onChange={() => toggleRuleRow(t.id, r.id)}
+                                />{" "}
+                                enabled
+                              </label>
+                              {typeof r.threshold === "number" ? (
+                                <label style={{ fontSize: 11 }}>
+                                  {r.thresholdUnit}{" "}
+                                  <input
+                                    type="number"
+                                    value={r.threshold}
+                                    onChange={(e) =>
+                                      updateThreshold(t.id, r.id, Number(e.target.value))
+                                    }
+                                    style={inputStyle}
+                                  />
+                                </label>
+                              ) : null}
+                              <button type="button" style={btnTiny} onClick={() => moveRuleOrd(t.id, r.id, -1)}>
+                                ↑
+                              </button>
+                              <button type="button" style={btnTiny} onClick={() => moveRuleOrd(t.id, r.id, 1)}>
+                                ↓
+                              </button>
+                            </div>
+                          </li>
+                        ))}
+                    </ul>
+                  ) : null}
+                  {t.kind === "state" ? (
+                    <p style={p}>
+                      fields:{" "}
+                      {t.stateFields?.map((f) => `${f.label}∈${f.valueDomain}`).join("; ")}
+                    </p>
+                  ) : null}
+                </div>
+              ))}
             </section>
           ) : (
-            <p style={p}>Select a node. ★ = faceless origin. Double-purpose click opens fractal interior when present.</p>
+            <p style={p}>
+              Select a node to edit its tables. Use Tables / audit for the full inventory. Reorder
+              channel ladder, then open Attempt interior.
+            </p>
           )}
-
-          {showingSub && activeSub ? (
-            <section style={{ marginTop: 16, borderTop: "1px solid #2a2e36", paddingTop: 12 }}>
-              <h2 style={h2}>Interior: {activeSub.title}</h2>
-              <p style={p}>
-                Threshold edges show live rule values from the parent node. Toggle rules on the parent
-                (select parent on top map) then re-open interior.
-              </p>
-            </section>
-          ) : null}
         </aside>
       </div>
     </div>
+  );
+}
+
+function SequenceEditor({
+  table,
+  onMove,
+}: {
+  table?: MachineTable;
+  onMove: (tableId: string, index: number, dir: -1 | 1) => void;
+}) {
+  if (!table?.sequence) return <p style={p}>No sequence table.</p>;
+  return (
+    <ol style={{ ...ul, listStyle: "decimal", paddingLeft: 20 }}>
+      {table.sequence.map((item, i) => (
+        <li key={item.id} style={{ marginBottom: 6 }}>
+          <code>{item.token}</code> — {item.label}{" "}
+          <button type="button" style={btnTiny} onClick={() => onMove(table.id, i, -1)}>
+            ↑
+          </button>{" "}
+          <button type="button" style={btnTiny} onClick={() => onMove(table.id, i, 1)}>
+            ↓
+          </button>
+        </li>
+      ))}
+    </ol>
   );
 }
 
@@ -420,8 +506,26 @@ const btnStyle: CSSProperties = {
   fontSize: 11,
   cursor: "pointer",
 };
-
+const btnOn: CSSProperties = { ...btnStyle, borderColor: "#e8a35a", color: "#e8a35a" };
+const btnTiny: CSSProperties = { ...btnStyle, padding: "2px 6px", fontSize: 10 };
+const inputStyle: CSSProperties = {
+  width: 64,
+  background: "#0d0f12",
+  border: "1px solid #3a3f4b",
+  color: "#e8eaed",
+  borderRadius: 3,
+  padding: "2px 6px",
+  marginLeft: 4,
+};
 const h2: CSSProperties = { fontSize: 13, margin: "0 0 6px", fontWeight: 700 };
-const h3: CSSProperties = { fontSize: 11, margin: "12px 0 4px", fontWeight: 700, color: "#9aa0a6" };
+const h3: CSSProperties = { fontSize: 11, margin: "10px 0 4px", fontWeight: 700, color: "#9aa0a6" };
 const p: CSSProperties = { fontSize: 11, color: "#9aa0a6", margin: "0 0 8px", lineHeight: 1.4 };
 const ul: CSSProperties = { fontSize: 11, color: "#c4c7cc", margin: 0, paddingLeft: 16, lineHeight: 1.45 };
+const th: CSSProperties = { padding: "6px 8px", fontWeight: 600 };
+const td: CSSProperties = { padding: "6px 8px", verticalAlign: "top" };
+const card: CSSProperties = {
+  marginBottom: 8,
+  padding: 8,
+  border: "1px solid #2a2e36",
+  borderRadius: 4,
+};

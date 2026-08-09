@@ -5,7 +5,7 @@ import type { MapNode, MapRule, SystemMapModel } from "./types";
 import { runCoverageChecks, coverageSummary } from "./coverage";
 
 export const SYSTEM_MAP_MODEL: SystemMapModel = {
-  version: "1.0.0-corpus",
+  version: "2.0.0-tables",
   nodes: SYSTEM_MAP_NODES,
   edges: SYSTEM_MAP_EDGES,
   subMaps: SYSTEM_MAP_SUBMAPS,
