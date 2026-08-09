@@ -32,6 +32,7 @@ import {
   handleBoardDetections,
   handleEnrollmentCreate,
   handleMachineHealth,
+  handleMachineTick,
   handleOnboardingFire,
   handlePauseWorkflow,
   handleReferenceUpsert,
@@ -85,6 +86,7 @@ export function createWireRoutes(): Hono {
 
   // Machine tables (frozen System Map + automations objects)
   wire.get("/machine/health", handleMachineHealth);
+  wire.post("/machine/tick", handleMachineTick);
   wire.get("/machine/workflows", handleWorkflowList);
   wire.post("/machine/workflows", handleWorkflowCreate);
   wire.post("/machine/workflows/:id/activate", handleWorkflowActivate);

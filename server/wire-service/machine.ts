@@ -1,6 +1,8 @@
 import type { Context } from "hono";
 import { randomUUID } from "node:crypto";
 import { getPool } from "./db.ts";
+import { enrollAndActuate, tickOnce } from "./cascade.ts";
+import { sendGateSnapshot } from "./sendMode.ts";
 
 function json(c: Context, body: unknown, status = 200) {
   return c.json(body, status);
@@ -121,24 +123,28 @@ export async function handleEnrollmentCreate(c: Context) {
     agentRef: string;
     sequenceId?: string;
     workflowRunId?: string;
-    payload?: unknown;
+    payload?: Record<string, unknown>;
+    purpose?: string;
+    fireFirstStep?: boolean;
   }>();
-  const id = `enr-${randomUUID()}`;
-  const pool = getPool();
-  await pool.query(
-    `INSERT INTO enrollment (id, firm_id, contact_id, agent_ref, sequence_id, workflow_run_id, payload)
-     VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb)`,
-    [
-      id,
-      firm,
-      body.contactId,
-      body.agentRef,
-      body.sequenceId ?? null,
-      body.workflowRunId ?? null,
-      JSON.stringify(body.payload ?? {}),
-    ],
-  );
-  return json(c, { id, enrolledAt: new Date().toISOString() });
+  const result = await enrollAndActuate({
+    firmId: firm,
+    contactId: body.contactId,
+    agentRef: body.agentRef,
+    sequenceId: body.sequenceId,
+    workflowRunId: body.workflowRunId,
+    payload: body.payload,
+    purpose: body.purpose ?? "opt-in",
+    fireFirstStep: body.fireFirstStep,
+  });
+  return json(c, {
+    id: result.enrollmentId,
+    attemptId: result.attemptId,
+    dryRun: result.dryRun,
+    send: result.send,
+    enrolledAt: new Date().toISOString(),
+    gate: sendGateSnapshot(),
+  });
 }
 
 /**
@@ -210,26 +216,21 @@ export async function handleReferenceUpsert(c: Context) {
       [motionId, firm, contactId, motion, JSON.stringify({ signalId, precedence: "mp-1" })],
     );
 
-    // Resolve binding + enroll
+    // Resolve binding + enroll (send gated by SEND_MODE + cohort)
     const bind = await pool.query<{ template_id: string }>(
       `SELECT template_id FROM firm_sequence_binding
        WHERE firm_id=$1 AND sequence_class=$2`,
       [firm, motion === "reactivation" ? "reactivation" : "reengagement"],
     );
     const agentRef = bind.rows[0]?.template_id ?? "tpl.reactivation.v1";
-    const enrId = `enr-${randomUUID()}`;
-    await pool.query(
-      `INSERT INTO enrollment (id, firm_id, contact_id, agent_ref, sequence_id, payload)
-       VALUES ($1,$2,$3,$4,$5,$6::jsonb)`,
-      [
-        enrId,
-        firm,
-        contactId,
-        agentRef,
-        agentRef,
-        JSON.stringify({ motionId, dryRun: true }),
-      ],
-    );
+    const enrolled = await enrollAndActuate({
+      firmId: firm,
+      contactId,
+      agentRef,
+      sequenceId: agentRef,
+      payload: { motionId, faceless: true },
+      purpose: motion === "reactivation" ? "reactivation" : "cem",
+    });
 
     cascade.push({
       contactId,
@@ -237,15 +238,19 @@ export async function handleReferenceUpsert(c: Context) {
       resultId,
       signalId,
       motionId,
-      enrollmentId: enrId,
+      enrollmentId: enrolled.enrollmentId,
+      attemptId: enrolled.attemptId,
       agentRef,
+      dryRun: enrolled.dryRun,
+      send: enrolled.send,
     });
   }
 
   return json(c, {
     referenceId: id,
     cascade,
-    note: "Faceless cascade wrote eligibility→signal→motion→enrollment; sequence send may be dry-run",
+    gate: sendGateSnapshot(),
+    note: "Faceless cascade wrote eligibility→signal→motion→enrollment; send follows SEND_MODE/cohort",
   });
 }
 
@@ -388,30 +393,38 @@ export async function handleOnboardingFire(c: Context) {
     [firm],
   );
 
-  const enrolled: string[] = [];
+  const enrolled: Array<{ id: string; dryRun: boolean }> = [];
   for (const row of ready.rows) {
-    const enrId = `enr-${randomUUID()}`;
-    await pool.query(
-      `INSERT INTO enrollment (id, firm_id, contact_id, agent_ref, sequence_id, payload)
-       VALUES ($1,$2,$3,$4,$5,$6::jsonb)`,
-      [
-        enrId,
-        firm,
-        row.contact_id,
-        agentRef,
-        agentRef,
-        JSON.stringify({ trigger: "campaign_state=running", dryRun: true }),
-      ],
-    );
-    enrolled.push(enrId);
+    const result = await enrollAndActuate({
+      firmId: firm,
+      contactId: row.contact_id,
+      agentRef,
+      sequenceId: agentRef,
+      payload: { trigger: "campaign_state=running" },
+      purpose: "opt-in",
+    });
+    enrolled.push({ id: result.enrollmentId, dryRun: result.dryRun });
   }
 
   return json(c, {
     firmId: firm,
     agentRef,
     enrollments: enrolled.length,
-    ids: enrolled,
-    note: "Opt-in enrollments written; send steps dry-run unless /wire/send used",
+    ids: enrolled.map((e) => e.id),
+    dryRuns: enrolled.filter((e) => e.dryRun).length,
+    liveSends: enrolled.filter((e) => !e.dryRun).length,
+    gate: sendGateSnapshot(),
+    note: "Opt-in enrollments; send follows SEND_MODE + SEND_TEST_COHORT (fail closed)",
+  });
+}
+
+/** Manual tick (same as worker once) — for ops/verify. */
+export async function handleMachineTick(c: Context) {
+  const result = await tickOnce(new Date());
+  return json(c, {
+    ...result,
+    fired: result.fired,
+    gate: sendGateSnapshot(),
   });
 }
 
