@@ -12,7 +12,7 @@
 | `workflow_state` | state | *(via workflow FK)* | draft \| active \| paused |
 | `workflow_target` | state | *(via workflow FK)* | audit \| contact \| import \| client |
 | `workflow_run` | state | firm_isolation | Run log + node_status/counts jsonb |
-| `action` | state | firm_isolation | v1 `call_agent` only |
+| `action` | state | via_workflow | v1 `call_agent` only (no firm_id; RLS via workflow join) |
 | `enrollment` | state | firm_isolation | Sequence entry record |
 | `sequence_template` | template | none (platform) | Cells jsonb |
 | `firm_sequence_binding` | binding | firm_isolation | firm → template |

@@ -419,12 +419,13 @@ CREATE TABLE IF NOT EXISTS escrow_acceptances (
 );
 
 -- ── RLS (firm-scoped). Service role bypasses; app must set request.firm_id when using JWT path.
+-- `action` has no firm_id — isolated via workflow join (separate policy below).
 DO $$
 DECLARE
   t TEXT;
 BEGIN
   FOREACH t IN ARRAY ARRAY[
-    'workflow', 'workflow_run', 'action', 'enrollment',
+    'workflow', 'workflow_run', 'enrollment',
     'firm_sequence_binding', 'contact_records', 'reachability_verdicts',
     'sequence_ready', 'campaign_states', 'cohort_tiers', 'metrics_flags',
     'eligibility_evaluations', 'eligibility_results', 'signals', 'motion_decisions',
@@ -440,3 +441,18 @@ BEGIN
     );
   END LOOP;
 END $$;
+
+ALTER TABLE action ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS action_via_workflow ON action;
+CREATE POLICY action_via_workflow ON action FOR ALL
+  USING (
+    EXISTS (
+      SELECT 1 FROM workflow w
+      WHERE w.id = action.workflow_id
+        AND w.firm_id = COALESCE(
+          current_setting('request.jwt.claims', true)::jsonb->>'firm_id',
+          w.firm_id
+        )
+    )
+  )
+  WITH CHECK (true);

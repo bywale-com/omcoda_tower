@@ -7,53 +7,56 @@
 
 | Path | Default | Notes |
 |---|---|---|
-| `VITE_WIRE_REAL` | **true** (`vite.config.ts` define) | `.env` may set `false` for frontend-only Cloud Agents |
-| Client port | `wirePorts.machineApi` | real → `/wire/machine/*`; stand-in → in-memory |
+| `VITE_WIRE_REAL` | **true** (`vite.config.ts` define) | Real machine ports hit `/wire/machine/*` |
+| Client port | `wirePorts.machineApi` | real → Postgres via wire service |
 | Backend | `server/wire-service/machine.ts` | Mounted on `/wire` + `/api/wire` |
 
-## Phase 4 checklist
+## Phase 4 checklist — PROVED on Session-pooler Postgres
 
-| # | Step | Status | Evidence / blocker |
+| # | Step | Status | Evidence |
 |---|---|---|---|
-| 1 | Provision firm + user + session | ✅ already real | `001` auth tables + seed `001_tower_platform` |
-| 2 | Import → Audit → `reachability_verdict` + `sequence_ready` | 🟡 wired | `AuditContext` → `POST /machine/audit-runs` writes contacts, verdicts, sequence_ready. **Needs `DATABASE_URL` + migrate/seed + `dev:auth` to prove on Postgres.** |
-| 3 | Onboarding automation on `campaign_state=running` → opt-in enrollments | 🟡 wired | Seed sets `campaign_states=running`; `POST /machine/onboarding/fire` enrolls ready contacts via `firm_sequence_binding` → `tpl.optin_launch.v1`. **Send is dry-run** (`payload.dryRun=true`); live send uses existing `/wire/send/*`. |
-| 4 | `reference_version` row edit → faceless cascade → enrollment | 🟡 wired | `POST /machine/reference` writes reference → eligibility_eval → result → signal → motion_decision → enrollment (reactivation binding). **No code deploy for cutoff change.** Blocked from live proof without Postgres. |
-| 5 | Board shows eligibility; Activate draft→active; Runs from `workflow_run` | 🟡 wired | Board legend shows machine pass count; Launch → `activateWorkflow` (`draft→active`) + `workflow_run`; Runs tab merges remote runs. |
+| 1 | Provision firm + user + session | ✅ | Auth tables + `campaign_states=running` for `firm-cedar` (seed 002) |
+| 2 | Import → Audit → `reachability_verdict` + `sequence_ready` | ✅ | `POST /wire/machine/audit-runs` + `verify:machine` wrote verdicts/ready |
+| 3 | Onboarding on `campaign_state=running` → opt-in enrollments | ✅ | `POST /wire/machine/onboarding/fire` → `tpl.optin_launch.v1` enrollments (**send dry-run**) |
+| 4 | `reference_version` row edit → faceless cascade → enrollment | ✅ | `POST /wire/machine/reference` cutoff change → eligibility → signal → motion → `tpl.reactivation.v1` enrollment — **no code deploy** |
+| 5 | Board reads eligibility; Activate draft→active; Runs from `workflow_run` | ✅ | `GET /wire/machine/board` returns results; Activate returned `transition: draft→active`; run id written |
 
-## What runs fully on real tables (when `DATABASE_URL` present)
+### Commands that passed
 
-Run: `npm run db:migrate && npm run db:seed && npm run verify:machine`
+```bash
+npm run db:migrate   # 001–004
+npm run db:seed      # 002_machine_tables applied
+npm run verify:machine
+# + live HTTP against npm run dev:auth (:3001)
+```
 
-| Capability | Tables touched |
-|---|---|
-| Workflow create / activate / pause | `workflow`, `workflow_state`, `workflow_target` |
-| Manual / Launch run | `workflow_run` |
-| Audit run | `audit_runs`, `contact_records`, `reachability_verdicts`, `sequence_ready` |
-| Onboarding fire | `campaign_states`, `firm_sequence_binding`, `enrollment` |
-| Reference cascade | `reference_versions`, `eligibility_*`, `signals`, `motion_decisions`, `enrollment` |
-| Board read | `eligibility_results`, `signals`, `motion_decisions`, `enrollment` |
-| Templates | `sequence_template`, `firm_sequence_binding` |
+### Live HTTP proof (sample)
+
+- `GET /wire/machine/health` → `machineTables: true`
+- Create workflow → status `draft`
+- Activate → `{"status":"active","transition":"draft→active"}`
+- Start run → `workflow_run` `running`
+- Reference upsert → cascade enrollment `tpl.reactivation.v1`
+- Onboarding fire → opt-in enrollments
+- Board → eligibility_results + signals + motion_decisions
 
 ## Dry-run / stubbed (with reason)
 
 | Item | Reason |
 |---|---|
-| Sequence send from enrollment cascade | Keeps live Resend/Twilio on explicit `/wire/send/*` gate; cascade logs intent via `enrollment.payload.dryRun` |
-| Background cron for criteria windows | No worker process; faceless path is reference/writeback API |
-| Full clientList swap | Board chrome still mock; detections overlaid from machine tables |
-| Auth UUID ↔ CT TEXT firm unify | Conservative dual tenancy; machine uses `firm-cedar` |
+| Sequence send from enrollment cascade | Cascade sets `payload.dryRun=true`; live Resend/Twilio stay on `/wire/send/*` |
+| Background cron for criteria windows | Faceless path is reference/writeback API (no poller) |
+| Full clientList swap from `contact_records` | Board overlays detections; mock chrome remains |
+| Auth UUID ↔ CT TEXT firm unify | Machine uses TEXT `firm-cedar` |
 
-## Exact blockers in this Cloud Agent environment
+## Schema fix during apply
 
-1. **`DATABASE_URL` absent** from `.env` — cannot apply `004_machine_tables.sql` or seed `002_machine_tables`.  
-   - Wire point: `scripts/run-migration.ts` / `scripts/run-seed.ts` / `server/wire-service/db.ts`  
-2. Without DB: `npm run verify:machine` exits with blocker code; SPA still runs with stand-ins when `VITE_WIRE_REAL=false`.
+RLS loop initially included `action`, which has no `firm_id`. Fixed to `action_via_workflow` join policy in `004_machine_tables.sql`.
 
 ## Artifacts
 
-- [`FROZEN-TABLES-v1.md`](./FROZEN-TABLES-v1.md) — Phase 0 (+ Phase 1 append)
-- [`RECONCILIATION-v1.md`](./RECONCILIATION-v1.md) — Phase 1 (4 modules)
-- [`SCHEMA-REPORT.md`](./SCHEMA-REPORT.md) — Phase 2
-- [`V2-BACKLOG.md`](./V2-BACKLOG.md) — deferred only
-- Verify: `scripts/verify-machine-e2e.ts` (`npm run verify:machine`)
+- [`FROZEN-TABLES-v1.md`](./FROZEN-TABLES-v1.md)
+- [`RECONCILIATION-v1.md`](./RECONCILIATION-v1.md)
+- [`SCHEMA-REPORT.md`](./SCHEMA-REPORT.md)
+- [`V2-BACKLOG.md`](./V2-BACKLOG.md)
+- Verify: `npm run verify:machine`
