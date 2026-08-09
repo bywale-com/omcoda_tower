@@ -9,10 +9,11 @@
 
 | Metric | Value |
 |---|---|
-| Tables | see live `/system-map` sidebar (generated from `MACHINE_TABLES`) |
-| Kinds | **state** · **rule** · **sequence** |
+| Tables | **53** (`MACHINE_TABLES`) |
+| Kinds | **40** state · **9** rule · **4** sequence |
+| Relations | **39** (reads / writes / triggers) |
 | Worked example | `seq.channel_ownership_order` = `["text","email","form"]` — reorderable; sim reads the list, not prose |
-| `frozen-should-be-table` bugs | **0** (at ship) — non-modular entries all carry hard-gate / must-not / immutable-wall |
+| `frozen-should-be-table` bugs | **0** — non-modular entries all carry hard-gate / must-not / immutable-wall |
 
 ## Sequence tables (reorderable)
 
