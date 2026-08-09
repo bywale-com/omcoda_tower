@@ -9,20 +9,24 @@
 ## The flow
 
 ```
-Seed → World → Personas & Function
+Seed → World
+        │
+        ├──── machine: Systems Story → Systems Requirements ──→ CTO wires the machine
+        │
+        └──── faces: Personas & Function (controls + panes) ──→ bind extrusions to required states
         │
         ▼
    SME handoff  ──────────────┬───────────────────────────┐
         │                     │                           │
    (practice axis)      (capability axis)                 │
-   Engagement Manager     CTO (tech EM)                   │
+   Engagement Manager     Systems Analyst → CTO (tech EM) │
         │                     │                           │
    practice SMEs         capability SMEs                  │
         │                     │                           │
         ▼                     ▼                           │
    PM Functional Design   CTO Think Stack (facets)        │
-   (surface intent)       Function → Can'ts → Furnish     │
-   — things with a face   — things without a face         │
+   (surface intent)       Requirements → Can'ts → Furnish │
+   — things with a face   — the machine (no face required)│
         │                     │                           │
         └────── reconcile cross-cuts (Handoff) ───────────┘
                               │
@@ -30,6 +34,7 @@ Seed → World → Personas & Function
                      CT Plant → build
 ```
 
+**Systems Analyst** owns the **machine track**: [`../register/SYSTEMS-STORY.md`](../register/SYSTEMS-STORY.md) → [`../register/SYSTEMS-REQUIREMENTS.md`](../register/SYSTEMS-REQUIREMENTS.md). Faces are parallel; they do not invent the machine.
 ---
 
 ## Two columns, one handoff

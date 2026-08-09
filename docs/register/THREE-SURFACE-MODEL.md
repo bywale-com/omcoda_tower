@@ -31,8 +31,10 @@ Tower keeps its **Register visual design** (Inter, tree typography, panel chrome
 ## Pass sequence (authoritative)
 
 ```text
-Seed → World → Personas & Function → SME → Enrichment → Furnish → Wiring → CT Plant → Translation
+Seed → World → Systems Story → Systems Requirements → (∥ Personas & Function) → bind extrusions → SME → Enrichment → Furnish → Wiring → CT Plant → Translation
 ```
+
+**Systems-analyst seat (machine track):** [`SYSTEMS-STORY.md`](./SYSTEMS-STORY.md) (substance — immutable musts) → [`SYSTEMS-REQUIREMENTS.md`](./SYSTEMS-REQUIREMENTS.md) (spec extraction). Faces run parallel; controls/panes only extrude onto required states. Outcome↔System / System↔Component are post-Requirements congruence — not machine discovery. Fork map: [`PASS-FORK-MAP.md`](./PASS-FORK-MAP.md).
 
 **Text-first law:** Left-panel writing (consideration → solution → click-path Implementation) verifies congruence without building click-through at each pass. Batch theory, then one CT plant pass.
 
