@@ -11,6 +11,7 @@ import type {
   EspMailerPort,
   HaltStorePort,
   IpPoolPort,
+  MachineApiPort,
   MailerPort,
   MetaAdsPort,
   OtpStorePort,
@@ -30,6 +31,7 @@ import {
   standInHaltStore,
   standInIpPool,
   standInListUnsubscribe,
+  standInMachineApi,
   standInMailer,
   standInMetaAds,
   standInOtpStore,
@@ -48,6 +50,7 @@ import {
   realCrmOAuth,
   realEspMailer,
   realHaltStore,
+  realMachineApi,
   realPrimaryStore,
   realSendingPool,
   realSmsApi,
@@ -74,6 +77,7 @@ export type WirePorts = {
   listUnsubscribe: ListUnsubscribePort;
   enrichCrawl: EnrichCrawlPort;
   smsApi: SmsApiPort;
+  machineApi: MachineApiPort;
 };
 
 export const wirePorts: WirePorts = {
@@ -94,6 +98,7 @@ export const wirePorts: WirePorts = {
   listUnsubscribe: standInListUnsubscribe,
   enrichCrawl: standInEnrichCrawl,
   smsApi: useReal ? realSmsApi : standInSmsApi,
+  machineApi: useReal ? realMachineApi : standInMachineApi,
 };
 
 export const STANDIN_REGISTRY = [
@@ -151,5 +156,10 @@ export const STANDIN_REGISTRY = [
     id: "smsApi",
     tag: useReal ? ("real" as const) : ("stand-in" as const),
     module: useReal ? "src/app/wire/reals/smsApi.ts" : "src/app/wire/standins/smsApi.ts",
+  },
+  {
+    id: "machineApi",
+    tag: useReal ? ("real" as const) : ("stand-in" as const),
+    module: useReal ? "src/app/wire/reals/machineApi.ts" : "src/app/wire/standins/machineApi.ts",
   },
 ];

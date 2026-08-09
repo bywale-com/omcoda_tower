@@ -27,6 +27,22 @@ import {
   handlePoolVerify,
 } from "./pool.ts";
 import { handleListEvents, handleResendWebhook } from "./webhooks.ts";
+import {
+  handleAuditRunCreate,
+  handleBoardDetections,
+  handleEnrollmentCreate,
+  handleMachineHealth,
+  handleOnboardingFire,
+  handlePauseWorkflow,
+  handleReferenceUpsert,
+  handleTemplatesList,
+  handleWorkflowActivate,
+  handleWorkflowCreate,
+  handleWorkflowList,
+  handleWorkflowRunComplete,
+  handleWorkflowRunStart,
+  handleWorkflowRunsList,
+} from "./machine.ts";
 
 export function createWireRoutes(): Hono {
   const wire = new Hono();
@@ -66,6 +82,22 @@ export function createWireRoutes(): Hono {
   wire.get("/store/:collection", handlePrimaryList);
   wire.get("/store/:collection/:id", handlePrimaryGet);
   wire.put("/store/:collection/:id", handlePrimaryPut);
+
+  // Machine tables (frozen System Map + automations objects)
+  wire.get("/machine/health", handleMachineHealth);
+  wire.get("/machine/workflows", handleWorkflowList);
+  wire.post("/machine/workflows", handleWorkflowCreate);
+  wire.post("/machine/workflows/:id/activate", handleWorkflowActivate);
+  wire.post("/machine/workflows/:id/pause", handlePauseWorkflow);
+  wire.post("/machine/workflows/:id/runs", handleWorkflowRunStart);
+  wire.get("/machine/workflows/:id/runs", handleWorkflowRunsList);
+  wire.post("/machine/runs/:runId/complete", handleWorkflowRunComplete);
+  wire.post("/machine/enrollments", handleEnrollmentCreate);
+  wire.post("/machine/reference", handleReferenceUpsert);
+  wire.post("/machine/audit-runs", handleAuditRunCreate);
+  wire.post("/machine/onboarding/fire", handleOnboardingFire);
+  wire.get("/machine/board", handleBoardDetections);
+  wire.get("/machine/templates", handleTemplatesList);
 
   return wire;
 }

@@ -1,4 +1,6 @@
-import { useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
+import { wirePorts } from "../wire/registry";
+import { wireRealEnabled } from "../wire/http";
 import {
   ChevronDown,
   Eye,
@@ -596,6 +598,29 @@ export function BoardPanel({
   const [boardSearch, setBoardSearch] = useState("");
   const [phaseFilter, setPhaseFilter] = useState<BoardPhaseFilter>("all");
   const [legendOpen, setLegendOpen] = useState(false);
+  const [machineDetectionCount, setMachineDetectionCount] = useState<number | null>(null);
+  const [motionByContact, setMotionByContact] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    let cancelled = false;
+    void wirePorts.machineApi
+      .boardDetections()
+      .then((data) => {
+        if (cancelled) return;
+        setMachineDetectionCount(data.eligibilityResults.filter((r) => r.any_pathway_pass).length);
+        const map: Record<string, string> = {};
+        for (const m of data.motionDecisions) {
+          map[m.contact_id] = m.motion;
+        }
+        setMotionByContact(map);
+      })
+      .catch(() => {
+        if (!cancelled) setMachineDetectionCount(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   const { tasks, openTaskCount, toggleTaskStatus } = useTasks();
   const { audits, createAndRunAudit } = useAudits();
   const { automations, createAutomation } = useAutomations();
@@ -610,6 +635,8 @@ export function BoardPanel({
   function boardPhaseFor(client: ClientMeta): BoardPhaseFilter {
     if (bookHalted || haltedContactIds?.has(client.id)) return "halted";
     if (meetingReadyClientIds?.has(client.id) || client.badge?.type === "booked") return "meeting-ready";
+    const machineMotion = motionByContact[client.id];
+    if (machineMotion && machineMotion !== "none") return "in-motion";
     if (!client.optedIn || (client.status === "grey" && !client.nudge.active && !client.reactivationPhase)) {
       return "silent";
     }
@@ -934,6 +961,12 @@ export function BoardPanel({
               <div>In motion — Armed or Active under bound packs</div>
               <div>Meeting-ready — booked receive path</div>
               <div>Halted — consultant Halt (contact or firm book)</div>
+              {machineDetectionCount != null ? (
+                <div style={{ marginTop: 6 }}>
+                  Machine eligibility_result passes: {machineDetectionCount}
+                  {wireRealEnabled() ? " (Postgres)" : " (stand-in)"}
+                </div>
+              ) : null}
               <button
                 type="button"
                 onClick={() => setLegendOpen(false)}

@@ -27,7 +27,8 @@ export function AutomationDetailView({
   isDark,
   onOpenConstantsIndustry,
 }: AutomationDetailViewProps) {
-  const { getWorkflowById, renameAutomation, updateWorkflow } = useAutomations();
+  const { getWorkflowById, renameAutomation, updateWorkflow, activateWorkflow, startManualRun } =
+    useAutomations();
   const workflow = getWorkflowById(automationId);
   const [savedFlash, setSavedFlash] = useState(false);
   const editorRef = useRef<AutomationWorkflowEditorHandle>(null);
@@ -63,8 +64,11 @@ export function AutomationDetailView({
   }, [persistGraph]);
 
   const handleLaunch = useCallback(() => {
-    // Launch wiring will connect to workflow runtime later.
-  }, []);
+    // Launch = Activate: workflow_state draft → active (proof transition)
+    void activateWorkflow(automationId).then(() => {
+      startManualRun(automationId);
+    });
+  }, [activateWorkflow, automationId, startManualRun]);
 
   useEffect(() => {
     latestGraphRef.current = workflow

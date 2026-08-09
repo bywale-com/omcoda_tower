@@ -293,3 +293,63 @@ export type PrimaryStorePort = {
   put<T extends { id: string }>(collection: string, row: T): Promise<T>;
   list<T>(collection: string): Promise<T[]>;
 };
+
+/* ─── Machine tables (System Map frozen set) ─── */
+
+export type MachineApiPort = {
+  tag: StandInTag | "real";
+  health(): Promise<{ ok: boolean; machineTables: boolean }>;
+  listWorkflows(): Promise<import("./machineTypes").WorkflowRow[]>;
+  createWorkflow(input: {
+    id?: string;
+    name: string;
+    target?: string;
+    graph?: unknown;
+  }): Promise<{ id: string; status: string; name: string; target: string }>;
+  activateWorkflow(
+    workflowId: string,
+  ): Promise<{ workflowId: string; status: string; transition?: string }>;
+  pauseWorkflow(workflowId: string): Promise<{ workflowId: string; status: string }>;
+  startRun(
+    workflowId: string,
+    triggerLabel?: string,
+  ): Promise<{ id: string; workflowId: string; status: string }>;
+  completeRun(
+    runId: string,
+    body?: { status?: string; nodeStatus?: unknown; counts?: unknown },
+  ): Promise<{ id: string; status: string }>;
+  listRuns(workflowId: string): Promise<import("./machineTypes").WorkflowRunRow[]>;
+  createEnrollment(input: {
+    contactId: string;
+    agentRef: string;
+    sequenceId?: string;
+    workflowRunId?: string;
+    payload?: unknown;
+  }): Promise<{ id: string; enrolledAt: string }>;
+  upsertReference(input: {
+    id?: string;
+    key: string;
+    payload: unknown;
+    version?: number;
+    contactIds?: string[];
+  }): Promise<{ referenceId: string; cascade: unknown[] }>;
+  createAuditRun(input: {
+    importIds?: string[];
+    contactIds?: Array<{ id: string; email?: string; phone?: string; name?: string }>;
+  }): Promise<import("./machineTypes").AuditRunRow & { contacts: number }>;
+  fireOnboarding(): Promise<{
+    skipped?: boolean;
+    enrollments?: number;
+    agentRef?: string;
+  }>;
+  boardDetections(): Promise<{
+    eligibilityResults: import("./machineTypes").EligibilityResultRow[];
+    signals: import("./machineTypes").SignalRow[];
+    motionDecisions: import("./machineTypes").MotionDecisionRow[];
+    enrollments: import("./machineTypes").EnrollmentRow[];
+  }>;
+  listTemplates(): Promise<{
+    templates: import("./machineTypes").SequenceTemplateRow[];
+    bindings: import("./machineTypes").FirmSequenceBindingRow[];
+  }>;
+};

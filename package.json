@@ -8,7 +8,8 @@
     "dev": "vite",
     "dev:auth": "tsx --env-file=.env server/auth-service/index.ts",
     "db:migrate": "tsx --env-file=.env scripts/run-migration.ts",
-    "db:seed": "tsx --env-file=.env scripts/run-seed.ts"
+    "db:seed": "tsx --env-file=.env scripts/run-seed.ts",
+    "verify:machine": "tsx --env-file=.env scripts/verify-machine-e2e.ts"
   },
   "dependencies": {
     "@ant-design/icons": "^6.3.2",

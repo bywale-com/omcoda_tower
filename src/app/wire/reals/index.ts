@@ -7,4 +7,5 @@ export { realCrmOAuth } from "./crmOAuth";
 export { realAuditTrail } from "./auditTrail";
 export { realPrimaryStore } from "./primaryStore";
 export { realOtpStore } from "./otpStore";
+export { realMachineApi } from "./machineApi";
 export { bootstrapRealAccountFixtures } from "./bootstrapFixtures";
