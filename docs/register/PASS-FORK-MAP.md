@@ -30,10 +30,10 @@ Wiring here is the **paper** trace (design-invariant, can run ∥ Function once 
 - **Fork:** Click-path / How framing buries faceless initiators; the engagement *record* gets mistaken for the system; a thin initiation sketch left “what must the system be able to do?” unmet — so Requirements risked inventing substance.
 - **Solved:** Derive twelve systems from Seed + World **alone** as immutable **must / must-not / chain / silence** statements — technology-free; OPERATOR densifiers labeled, not smuggled. **Story locks substance.** Requirements only extract — see §2b.
 
-### 2b. Systems Requirements — [`SYSTEMS-REQUIREMENTS.md`](./SYSTEMS-REQUIREMENTS.md)
+### 2b. Systems Requirements — [`SYSTEMS-REQUIREMENTS.md`](./SYSTEMS-REQUIREMENTS.md) · filled [`SYSTEMS-REQUIREMENTS-FILLED.md`](./SYSTEMS-REQUIREMENTS-FILLED.md)
 - **Step:** Immediately after Systems Story; **hard-gate before** any system↔component bind. Seat: **systems-analyst** (any competent technical professional could extract if Story is finished).
 - **Fork:** Story + outcome/component maps were treated as if they *were* the wiring spec. UI (controls/panes) was used — or about to be used — to justify internals. Faceless machine triggers vanished because outskirts maps cannot see them. Requirements were invented as compensation for underbuilt Story.
-- **Solved (doctrine):** Tower = machine; UI = controls + panes only — **never adds** system substance. Machine ∥ faces from Seed+World. **Shift name = spec extraction:** Requirements rearrange Story into states, transitions, ramifications — invent nothing Story did not claim. Components bind late as extrusions. Filled specs = next writing pass after Story substance holds.
+- **Solved (doctrine + filled + map):** Tower = machine; UI = controls + panes only. **Spec extraction** into filled states/transitions; Interactive System Map `/system-map` ([`system-map/`](./system-map/)) is corpus-resolved, fractal, simulable — faceless ★ first-class. Components bind late as extrusions onto these nodes.
 
 ### 3. Outcome ↔ System map — [`OUTCOME-SYSTEM-MAP.md`](./OUTCOME-SYSTEM-MAP.md)
 - **Step:** **Congruence audit after Requirements** (not discovery). Seat: **systems-analyst**.

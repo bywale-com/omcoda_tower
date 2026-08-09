@@ -146,7 +146,7 @@ Grain: **machine**, technology-light enough to stay design-invariant, hard enoug
 | UI | Explicitly out of scope | Extrusions listed only late, never generative |
 | Faceless events | Named as musts when Seed/World seed them (criteria elapsed, reference moved, inbound, …) | Same events as transitions — still native here, not invented here |
 | Who can write it | Systems-analyst locks substance | Any competent technical professional *could* extract; systems-analyst usually authors so nothing is smuggled in |
-| Status today | **Substance pass landed** | Doctrine placed; **machine specs not yet written** |
+| Status today | **Substance pass landed** | Filled spec + Interactive System Map `/system-map` landed |
 
 **Law:** If a CTO (or any technical professional) cannot write Requirements from Story alone, Story is unfinished — do not “enrich” Requirements to compensate.
 
