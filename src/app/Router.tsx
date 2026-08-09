@@ -6,6 +6,7 @@ import { AuthProvider } from "./auth/AuthContext";
 import { DocsRegistryProvider } from "./context/DocsRegistryContext";
 import { LoginPage } from "./marketing/pages/LoginPage";
 import { RegisterPage } from "./register/pages/RegisterPage";
+import { SystemMapPage } from "./system-map/SystemMapPage";
 
 export function AppRouter() {
   const authOff = isAuthDisabled();
@@ -24,6 +25,8 @@ export function AppRouter() {
                 when the route is intentionally disabled. */}
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/Register" element={<Navigate to="/register" replace />} />
+            {/* Machine System Map — isolated from Tower faces / prototype */}
+            <Route path="/system-map" element={<SystemMapPage />} />
             <Route
               path="/"
               element={

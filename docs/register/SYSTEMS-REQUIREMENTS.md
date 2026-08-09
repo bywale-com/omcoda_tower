@@ -1,7 +1,7 @@
 # Tower — Systems Requirements (doctrine + placement)
 
 **Seat:** Systems analyst.  
-**Status:** Doctrine / placement of a critical refinement. This file defines **what Systems Requirements is**, **why it exists**, and **how it fits** the Register spine. It is **not yet** the filled machine-spec for all twelve systems — that writing is the next systems-analyst pass under this law.  
+**Status:** Doctrine / placement. Filled machine-spec extraction lives in [`SYSTEMS-REQUIREMENTS-FILLED.md`](./SYSTEMS-REQUIREMENTS-FILLED.md). Interactive, corpus-resolved System Map (data-driven + simulable) at `/system-map` — see [`system-map/`](./system-map/).  
 **Provenance:** Founder discovery (2026-08-09): the recent systems-analyst maps were working the **outskirts**; the missing center is the **machine** itself. Refined same day: **Systems Story** locks that machine as immutable musts; **Systems Requirements** is **spec extraction** from Story — not where substance is invented.
 
 ---

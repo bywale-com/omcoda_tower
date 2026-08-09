@@ -9,7 +9,7 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 - [x] `seed-complete` → World — [`SEED.md`](./SEED.md)
 - [x] `world-complete` → Systems Story — [`WORLD.md`](./WORLD.md) + `admits()` twin
 - [x] `systems-story-complete` → Systems Requirements — [`SYSTEMS-STORY.md`](./SYSTEMS-STORY.md) (**substance pass** — immutable musts from Seed+World; founder challenge open)
-- [ ] `systems-requirements-complete` → bind extrusions / CTO machine handoff — [`SYSTEMS-REQUIREMENTS.md`](./SYSTEMS-REQUIREMENTS.md) (**doctrine placed; specs = extraction from Story — not yet written**)
+- [x] `systems-requirements-complete` → bind extrusions / CTO machine handoff — [`SYSTEMS-REQUIREMENTS-FILLED.md`](./SYSTEMS-REQUIREMENTS-FILLED.md) + Interactive System Map `/system-map` ([`system-map/`](./system-map/)) — **filled + simulable; founder challenge open**
 - [x] `outcomes-locked` → face track — [`OUTCOMES.md`](./OUTCOMES.md)
 - [x] `outcome-system-map-complete` → congruence only (after Requirements) — [`OUTCOME-SYSTEM-MAP.md`](./OUTCOME-SYSTEM-MAP.md)
 - [x] `system-component-map-complete` → gated outskirts bind — [`SYSTEM-COMPONENT-MAP.md`](./SYSTEM-COMPONENT-MAP.md) (not machine discovery)
@@ -32,7 +32,7 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 | **Seed** | **Validated 2026-07-27** — `SEED.md` §0–§17 (product + ALG + Engine 2 + honesty); Audit/Agents/Automations refinements + channel DNA pointers 2026-07-27 |
 | **World** | **Dense, derived from validated Seed** — `WORLD.md` + `world.ts` (seats, facets, admission) |
 | **Systems Story** | **Substance pass landed** — 12 systems as immutable must / must-not / chain / silence from Seed+World; Story locks substance — [`SYSTEMS-STORY.md`](./SYSTEMS-STORY.md) |
-| **Systems Requirements** | **Doctrine + placement landed** — machine ∥ faces; Requirements = **spec extraction** from Story (not invention); **filled specs not yet written** — [`SYSTEMS-REQUIREMENTS.md`](./SYSTEMS-REQUIREMENTS.md) |
+| **Systems Requirements** | **Filled + Interactive System Map** — [`SYSTEMS-REQUIREMENTS-FILLED.md`](./SYSTEMS-REQUIREMENTS-FILLED.md) · `/system-map` ([`system-map/`](./system-map/)) — corpus-resolved, fractal, simulable |
 | Operator revisions | Living shape bets (open box, domain packs, Audit vs compliance, channel DNA) — [`OPERATOR-REVISIONS.md`](./OPERATOR-REVISIONS.md) — not a World pass |
 | Console purposes | Holon purpose popovers; validate branch-by-branch (Audit + Activity refined) |
 | Personas & Function | How graphs exist (`consultantOnTower`, `towerCoreOutcome`) — surface join pending |
