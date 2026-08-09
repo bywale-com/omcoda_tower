@@ -9,12 +9,12 @@
 ## Canonical spine
 
 ```text
-Seed → World → Systems Story → Personas & Function → Outcome↔System map → System↔Component map → SME → Enrichment → Furnish → (Priors / Weak / Flows) → Wiring → CT Plant → Translation
+Seed → World → Systems Story → Systems Requirements → (∥ Personas & Function) → bind extrusions (controls + panes) → SME → Enrichment → Furnish → (Priors / Weak / Flows) → Wiring → CT Plant → Translation
 ```
 
-**Systems-analyst seat** owns Systems Story → Outcome↔System map → System↔Component map: *architects the system* (trigger-first, technology-free, then component-referencing); the CTO later builds/wires it. Authoritative pass string also lives in [`THREE-SURFACE-MODEL.md`](./THREE-SURFACE-MODEL.md).
+**Systems-analyst seat** owns **Systems Story → Systems Requirements** (machine track). Outcome↔System and System↔Component maps are **congruence tools after Requirements**, not discovery of the machine. Faces (Personas & Function, controls, panes) run **in parallel** and only **extrude** onto states the machine already requires. Authoritative law: [`SYSTEMS-REQUIREMENTS.md`](./SYSTEMS-REQUIREMENTS.md). Pass string also in [`THREE-SURFACE-MODEL.md`](./THREE-SURFACE-MODEL.md).
 
-Wiring here is the **paper** trace (design-invariant, can run ∥ Function once capability handoff exists); the **build** side of wiring (Pass B stand-ins → GO cutover) lands after the CT plant.
+Wiring here is the **paper** trace (design-invariant, can run ∥ Function once capability handoff exists); the **build** side of wiring (Pass B stand-ins → GO cutover) lands after the CT plant. **CTO primary handoff = Systems Requirements**, not the component map.
 
 ---
 
@@ -26,24 +26,29 @@ Wiring here is the **paper** trace (design-invariant, can run ∥ Function once 
 - **Solved:** Lock human subjects only; machinery becomes **leaf requirements**, not fake outcomes — so Function decomposes cleanly.
 
 ### 2. Systems Story — [`SYSTEMS-STORY.md`](./SYSTEMS-STORY.md)
-- **Step:** After World, before Personas & Function. Seat: **systems-analyst**.
+- **Step:** After World, on the **machine track** (before Requirements). Seat: **systems-analyst**.
 - **Fork:** Click-path / How framing buries faceless initiators ("an IRCC fact moves," "a criteria window elapses," "a live inbound arrives"); the engagement *record* gets mistaken for the system.
-- **Solved:** Derive the latent systems from Seed + World **alone** as a web of initiations (trigger → inputs → outputs), technology-free — silences named, never filled. CTO builds/wires later.
+- **Solved:** Derive the latent systems from Seed + World **alone** as a web of initiations (trigger → inputs → outputs), technology-free — silences named, never filled. **Not** the machine spec — see §2b.
+
+### 2b. Systems Requirements — [`SYSTEMS-REQUIREMENTS.md`](./SYSTEMS-REQUIREMENTS.md)
+- **Step:** Immediately after Systems Story; **hard-gate before** any system↔component bind. Seat: **systems-analyst**.
+- **Fork:** Story + outcome/component maps were treated as if they *were* the system. UI (controls/panes) was used — or about to be used — to justify internals. Faceless machine triggers (e.g. email opened) vanished because outskirts maps cannot see them.
+- **Solved (doctrine):** Tower = machine; UI = controls (change existing state) + panes (show existing state) only — **never adds** system substance. From Seed+World build **machine ∥ faces**. Requirements specify states, transitions, ramifications, faceless initiations — **nobody present**. Components bind late as extrusions. Filled machine specs = next writing pass under this law.
 
 ### 3. Outcome ↔ System map — [`OUTCOME-SYSTEM-MAP.md`](./OUTCOME-SYSTEM-MAP.md)
-- **Step:** After Personas & Function (locked `OUTCOMES.md`), before SME deepens. Seat: **systems-analyst**.
-- **Fork:** Outcomes and systems were written on separate rails — unclear which outcomes are Constrained vs Free vs Gap, and which systems are Owned vs Faceless at module grain.
-- **Solved:** Two-way module-grain scan (outcome → system, system → outcome). Orphan **controls** stay out of scope (Priors/Weak). Confirms coarse skeleton integrity before SME/Wiring spend.
+- **Step:** **Congruence audit after Requirements** (not discovery). Seat: **systems-analyst**.
+- **Fork:** Outcomes and systems were written on separate rails — unclear Constrained / Free / Gap and Owned / Faceless at module grain.
+- **Solved:** Two-way module-grain scan. **Re-ranked by §2b:** does not invent the machine; checks faces against Requirements once they exist.
 
 ### 4. System ↔ Component map — [`SYSTEM-COMPONENT-MAP.md`](./SYSTEM-COMPONENT-MAP.md)
-- **Step:** After Outcome↔System map, before CTO component wiring. Seat: **systems-analyst**.
-- **Fork:** The story was still reverse-inferred from screens — systems didn't point at Register modules/surfaces, and the 111 Priors had no owning system (correct-bias missing).
-- **Solved:** Two-way system ↔ surfaceCatalog Module binding + full Priors triage (Extension / Authorship / Chrome / Parked). Parks halt Gap, unhealthy-threshold watch-item, and inside-system KUs without fake-filling. CTO wiring becomes lookup.
+- **Step:** **Gated** until Requirements name states. Seat: **systems-analyst**.
+- **Fork:** Story reverse-inferred from screens; priors had no owning system.
+- **Solved as outskirts bind:** module ↔ system + priors triage. **Re-ranked by §2b:** premature as discovery; valid only as extrusion bind after Requirements.
 
 ### 4b. Controls ledger — [`CONTROLS-LEDGER.md`](./CONTROLS-LEDGER.md)
-- **Step:** After (and correcting) System↔Component map. Seat: **systems-analyst**.
-- **Fork:** Module-grain binding failed its own test — there was no single enumerable set of every interactive control (Latticed was never filed as a ledger; only Prior + Weak were).
-- **Solved:** One union ledger = Latticed ∪ Weak ∪ Prior. **Does not assign systems** — that join is the next pass. This is the left column the composite map needs.
+- **Step:** Face-track inventory (∥ machine track). Seat: **systems-analyst**.
+- **Fork:** No single enumerable set of interactive controls (Latticed never filed as a ledger).
+- **Solved:** Union Latticed ∪ Weak ∪ Prior. **Re-ranked by §2b:** still outskirts; needs sibling **Panes** ledger; bind to Requirements states only after those states exist — not a path to discover the machine.
 
 ### 5. Capability SME pass — [`../sme/capability/`](../sme/capability/) ([`CAPABILITY-CONSIDERATIONS.md`](../sme/capability/CAPABILITY-CONSIDERATIONS.md))
 - **Step:** After practice SME (World → SME), before/alongside deep Function hardening.
@@ -99,10 +104,10 @@ Wiring here is the **paper** trace (design-invariant, can run ∥ Function once 
 ## Dependency chain (short)
 
 ```text
-Seed + World → SYSTEMS-STORY
-OUTCOMES (clean) → clean Function
-SYSTEMS-STORY + OUTCOMES → OUTCOME-SYSTEM-MAP
-OUTCOME-SYSTEM-MAP + surfaceCatalog + priors → SYSTEM-COMPONENT-MAP
+Seed + World → SYSTEMS-STORY → SYSTEMS-REQUIREMENTS (machine)
+Seed + World → OUTCOMES / Personas & Function (faces, parallel)
+SYSTEMS-REQUIREMENTS → bind controls + panes as extrusions
+  → (optional congruence) OUTCOME-SYSTEM-MAP / SYSTEM-COMPONENT-MAP
   → practice SME + CAPABILITY pass → DOCTRINE
   → DENSIFY → CRITICAL-INTERACTION + NODE-DEFINITION → WIRING-METHOD (paper)
   → Pass A / hand-back → Pass B

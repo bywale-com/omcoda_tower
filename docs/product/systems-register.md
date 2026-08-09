@@ -12,10 +12,10 @@
 
 The **Systems Register** is a password-gated route (`/register`) for **pass-ordered product theory** on the left and **detail / How / flow canvases** on the right:
 
-- **Left panel** — Seed → World → Systems Story → Personas & Function → Outcome↔System map → System↔Component map → SME → Enrichment → Furnish → Wiring → Components → CT Plant
+- **Left panel** — Seed → World → Systems Story → Systems Requirements → (∥ Personas & Function) → bind extrusions → SME → Enrichment → Furnish → Wiring → Components → CT Plant
 - **Right canvas** — Theory detail for the active pass; How canvas when a graph is selected; flow step canvas under Wiring
 
-Systems-analyst artifacts (theory, not CT): [`../register/SYSTEMS-STORY.md`](../register/SYSTEMS-STORY.md) · [`../register/OUTCOME-SYSTEM-MAP.md`](../register/OUTCOME-SYSTEM-MAP.md) · [`../register/SYSTEM-COMPONENT-MAP.md`](../register/SYSTEM-COMPONENT-MAP.md). Pass forks: [`../register/PASS-FORK-MAP.md`](../register/PASS-FORK-MAP.md).
+Systems-analyst **machine** law: [`../register/SYSTEMS-REQUIREMENTS.md`](../register/SYSTEMS-REQUIREMENTS.md) (after [`../register/SYSTEMS-STORY.md`](../register/SYSTEMS-STORY.md)). Faces/controls are extrusions only. Pass forks: [`../register/PASS-FORK-MAP.md`](../register/PASS-FORK-MAP.md).
 
 It is **not** the live app. The live product (`/`) is the translation destination. **Console** documents what is mounted in the running app.
 

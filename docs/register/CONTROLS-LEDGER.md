@@ -1,7 +1,7 @@
 # Tower — Controls ledger (Latticed ∪ Weak ∪ Prior)
 
 **Seat:** Systems analyst (controls completeness pass).
-**Why this exists:** The systems map (`SYSTEMS-STORY` + `OUTCOME-SYSTEM-MAP`) is already the product as initiations. A system↔control join is only honest if **every interactive control** is enumerable in **one place**. This ledger is that place. It does **not** assign systems yet — that join is the next pass. Without this ledger, any "system→component" map fails its own test.
+**Why this exists:** Face-track inventory of **controls** (interactive extrusions). Under [`SYSTEMS-REQUIREMENTS.md`](./SYSTEMS-REQUIREMENTS.md), controls only **change** machine states that Requirements already named — they do not invent the system. This ledger enumerates those extrusions in one place. It is **not** Systems Requirements.
 
 **What this is:** the union of the three Register control classes over the CT desk (plant + Ant):
 1. **Latticed** — control named in How / howAnalysis / Furnish click-path language
@@ -33,9 +33,11 @@
 
 ---
 
-## Next pass (not this document)
+## Next (gated by Systems Requirements)
 
-Join **each row** → its **immediate system** (the 12 constrained systems, or an analyst-named unconstrained path for Free modules). That join is what the CTO actually looks up. This ledger is the left column of that join.
+1. Write **Systems Requirements** machine specs ([`SYSTEMS-REQUIREMENTS.md`](./SYSTEMS-REQUIREMENTS.md)) — states / transitions / faceless triggers.  
+2. Ledger **Panes** (view-only displays of machine state), sibling to this controls file.  
+3. **Only then** bind each control/pane → the required state it changes or shows — not “control → system” as discovery.
 
 ---
 

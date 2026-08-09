@@ -8,10 +8,11 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 
 - [x] `seed-complete` → World — [`SEED.md`](./SEED.md)
 - [x] `world-complete` → Systems Story — [`WORLD.md`](./WORLD.md) + `admits()` twin
-- [x] `systems-story-complete` → Personas & Function — [`SYSTEMS-STORY.md`](./SYSTEMS-STORY.md) (Seed+World only)
-- [x] `outcomes-locked` → Outcome↔System map — [`OUTCOMES.md`](./OUTCOMES.md)
-- [x] `outcome-system-map-complete` → System↔Component map — [`OUTCOME-SYSTEM-MAP.md`](./OUTCOME-SYSTEM-MAP.md) (module-grain)
-- [x] `system-component-map-complete` → CTO component wiring / SME deepen — [`SYSTEM-COMPONENT-MAP.md`](./SYSTEM-COMPONENT-MAP.md) (binding + priors triage; P1–P3 parked)
+- [x] `systems-story-complete` → Systems Requirements — [`SYSTEMS-STORY.md`](./SYSTEMS-STORY.md) (Seed+World only)
+- [ ] `systems-requirements-complete` → bind extrusions / CTO machine handoff — [`SYSTEMS-REQUIREMENTS.md`](./SYSTEMS-REQUIREMENTS.md) (**doctrine placed; machine specs not yet written**)
+- [x] `outcomes-locked` → face track — [`OUTCOMES.md`](./OUTCOMES.md)
+- [x] `outcome-system-map-complete` → congruence only (after Requirements) — [`OUTCOME-SYSTEM-MAP.md`](./OUTCOME-SYSTEM-MAP.md)
+- [x] `system-component-map-complete` → gated outskirts bind — [`SYSTEM-COMPONENT-MAP.md`](./SYSTEM-COMPONENT-MAP.md) (not machine discovery)
 - [x] `sme-graph-ready` → Pass1 spawn — [`../sme/SME-GRAPH.md`](../sme/SME-GRAPH.md) · law [`../sme/METHODOLOGY.md`](../sme/METHODOLOGY.md)
 - [x] `sme-pass1-locked` → SME Pass2 — combined Pass1+Pass2 per human instruction 2026-07-30 ([`../sme/ROSTER.md`](../sme/ROSTER.md))
 - [x] `sme-handoff-ready` → Function ∥ Wiring Function (sync on CROSS-CUTTING) — [`../sme/HANDOFF.md`](../sme/HANDOFF.md) · [`../sme/CROSS-CUTTING.md`](../sme/CROSS-CUTTING.md)
@@ -31,6 +32,7 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 | **Seed** | **Validated 2026-07-27** — `SEED.md` §0–§17 (product + ALG + Engine 2 + honesty); Audit/Agents/Automations refinements + channel DNA pointers 2026-07-27 |
 | **World** | **Dense, derived from validated Seed** — `WORLD.md` + `world.ts` (seats, facets, admission) |
 | **Systems Story** | **First pass landed** — 12 latent systems as initiations from Seed+World only — [`SYSTEMS-STORY.md`](./SYSTEMS-STORY.md) |
+| **Systems Requirements** | **Doctrine + placement landed** — machine track law (controls/panes = extrusions only; faceless triggers native); **filled specs not yet written** — [`SYSTEMS-REQUIREMENTS.md`](./SYSTEMS-REQUIREMENTS.md) |
 | Operator revisions | Living shape bets (open box, domain packs, Audit vs compliance, channel DNA) — [`OPERATOR-REVISIONS.md`](./OPERATOR-REVISIONS.md) — not a World pass |
 | Console purposes | Holon purpose popovers; validate branch-by-branch (Audit + Activity refined) |
 | Personas & Function | How graphs exist (`consultantOnTower`, `towerCoreOutcome`) — surface join pending |
