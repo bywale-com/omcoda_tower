@@ -40,6 +40,11 @@ Wiring here is the **paper** trace (design-invariant, can run ∥ Function once 
 - **Fork:** The story was still reverse-inferred from screens — systems didn't point at Register modules/surfaces, and the 111 Priors had no owning system (correct-bias missing).
 - **Solved:** Two-way system ↔ surfaceCatalog Module binding + full Priors triage (Extension / Authorship / Chrome / Parked). Parks halt Gap, unhealthy-threshold watch-item, and inside-system KUs without fake-filling. CTO wiring becomes lookup.
 
+### 4b. Controls ledger — [`CONTROLS-LEDGER.md`](./CONTROLS-LEDGER.md)
+- **Step:** After (and correcting) System↔Component map. Seat: **systems-analyst**.
+- **Fork:** Module-grain binding failed its own test — there was no single enumerable set of every interactive control (Latticed was never filed as a ledger; only Prior + Weak were).
+- **Solved:** One union ledger = Latticed ∪ Weak ∪ Prior. **Does not assign systems** — that join is the next pass. This is the left column the composite map needs.
+
 ### 5. Capability SME pass — [`../sme/capability/`](../sme/capability/) ([`CAPABILITY-CONSIDERATIONS.md`](../sme/capability/CAPABILITY-CONSIDERATIONS.md))
 - **Step:** After practice SME (World → SME), before/alongside deep Function hardening.
 - **Fork:** The single SME question ("whose knowledge?") returned only **regimes** (CASL, Meta, escrow…). Deliverability and the like vanished into "CTO handles it."
