@@ -19,10 +19,15 @@ import { layoutPositions } from "./canvas/layout";
 import { SYSTEM_MAP_NODE_TYPE, SystemMapNodeView, type SystemMapNodeData } from "./canvas/SystemMapNode";
 import {
   FACLESS_FIRE_PRESETS,
+  FIRM_SEQUENCE_BINDINGS,
+  SEQUENCE_TEMPLATES,
   buildAttemptLadderFromTables,
   litNodesFromSteps,
+  resolveSequenceForFirm,
   simulateCascadeFromTables,
 } from "./sim/engine";
+import { CORPUS_SOURCES, NO_LOGIN_CLIENT_VIEW_CHECK } from "./data/corpusSources";
+import type { SequenceTemplate } from "./data/tableTypes";
 
 const nodeTypes = { [SYSTEM_MAP_NODE_TYPE]: SystemMapNodeView };
 
@@ -33,8 +38,13 @@ export function SystemMapPage() {
   const [tables, setTables] = useState<MachineTable[]>(() => cloneTables());
   const [lit, setLit] = useState<Set<string>>(new Set());
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [view, setView] = useState<"top" | "attempt-interior" | "tables">("top");
+  const [view, setView] = useState<"top" | "attempt-interior" | "tables" | "templates">("top");
   const [cascadeLog, setCascadeLog] = useState<string[]>([]);
+  const [templates, setTemplates] = useState<SequenceTemplate[]>(() =>
+    structuredClone(SEQUENCE_TEMPLATES),
+  );
+  const [resolveClass, setResolveClass] =
+    useState<SequenceTemplate["class"]>("reactivation");
 
   const positions = useMemo(() => layoutPositions(SYSTEM_MAP_MODEL.nodes), []);
 
@@ -225,12 +235,11 @@ export function SystemMapPage() {
         }}
       >
         <div>
-          <div style={{ fontSize: 15, fontWeight: 700 }}>System Map v2 — table inventory</div>
+          <div style={{ fontSize: 15, fontWeight: 700 }}>System Map v3 — templates + binding</div>
           <div style={{ fontSize: 11, color: "#9aa0a6", marginTop: 2 }}>
-            Machine = tables + dumb runtime · {modBase.tableCount} tables (
-            {modBase.byKind.state} state / {modBase.byKind.rule} rule / {modBase.byKind.sequence}{" "}
-            sequence) · bugs: {modBase.bugs.length} · channel order: [
-            {ladder.channelOrder.join(" → ")}]
+            Tables + dumb runtime · {modBase.tableCount} tables · {SEQUENCE_TEMPLATES.length}{" "}
+            templates · {FIRM_SEQUENCE_BINDINGS.length} firm bindings · bugs: {modBase.bugs.length} ·
+            corpus includes guidelines/
           </div>
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -251,6 +260,13 @@ export function SystemMapPage() {
           >
             Tables / audit
           </button>
+          <button
+            type="button"
+            style={view === "templates" ? btnOn : btnStyle}
+            onClick={() => setView("templates")}
+          >
+            Templates / binding
+          </button>
           {FACLESS_FIRE_PRESETS.map((p) => (
             <button key={p.id} type="button" onClick={() => fire(p.originNodeId)} style={btnStyle}>
               {p.label}
@@ -270,7 +286,135 @@ export function SystemMapPage() {
       </header>
 
       <div style={{ flex: 1, display: "flex", minHeight: 0 }}>
-        {view === "tables" ? (
+        {view === "templates" ? (
+          <div style={{ flex: 1, overflow: "auto", padding: 16 }}>
+            <h2 style={h2}>sequence_template (reorder cells = level-1)</h2>
+            {templates.map((t) => (
+              <div key={t.id} style={{ ...card, marginBottom: 12 }}>
+                <div style={{ fontWeight: 700, fontSize: 12 }}>
+                  {t.id} · {t.class} · {t.variant}
+                </div>
+                <div style={{ fontSize: 10, color: "#6b7280" }}>{t.source}</div>
+                {t.silences?.length ? (
+                  <div style={{ fontSize: 10, color: "#e8a35a", marginTop: 4 }}>
+                    silence: {t.silences.join(" · ")}
+                  </div>
+                ) : null}
+                <ol style={{ fontSize: 11, margin: "8px 0 0", paddingLeft: 18 }}>
+                  {t.cells.map((c, i) => (
+                    <li key={c.id} style={{ marginBottom: 4 }}>
+                      <code>{c.token}</code> [{c.mode}] {c.label}
+                      {c.deferredSlots?.length ? (
+                        <span style={{ color: "#e8a35a" }}>
+                          {" "}
+                          · deferred slots: {c.deferredSlots.join(",")}
+                        </span>
+                      ) : null}{" "}
+                      <button
+                        type="button"
+                        style={btnTiny}
+                        onClick={() => {
+                          setTemplates((prev) =>
+                            prev.map((x) => {
+                              if (x.id !== t.id) return x;
+                              const cells = [...x.cells];
+                              if (i <= 0) return x;
+                              const tmp = cells[i - 1];
+                              cells[i - 1] = cells[i];
+                              cells[i] = tmp;
+                              return { ...x, cells };
+                            }),
+                          );
+                        }}
+                      >
+                        ↑
+                      </button>{" "}
+                      <button
+                        type="button"
+                        style={btnTiny}
+                        onClick={() => {
+                          setTemplates((prev) =>
+                            prev.map((x) => {
+                              if (x.id !== t.id) return x;
+                              const cells = [...x.cells];
+                              if (i >= cells.length - 1) return x;
+                              const tmp = cells[i + 1];
+                              cells[i + 1] = cells[i];
+                              cells[i] = tmp;
+                              return { ...x, cells };
+                            }),
+                          );
+                        }}
+                      >
+                        ↓
+                      </button>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            ))}
+
+            <h2 style={{ ...h2, marginTop: 20 }}>firm_sequence_binding (level-2)</h2>
+            <ul style={ul}>
+              {FIRM_SEQUENCE_BINDINGS.map((b) => (
+                <li key={b.id}>
+                  <code>{b.firmId}</code> · {b.sequenceClass} → <code>{b.templateId}</code>
+                </li>
+              ))}
+            </ul>
+
+            <h2 style={{ ...h2, marginTop: 20 }}>Resolve instance (dumb runtime)</h2>
+            <label style={{ fontSize: 11, display: "flex", gap: 8, alignItems: "center" }}>
+              class
+              <select
+                value={resolveClass}
+                onChange={(e) => setResolveClass(e.target.value as SequenceTemplate["class"])}
+                style={{ ...inputStyle, width: "auto" }}
+              >
+                <option value="optin_launch">optin_launch</option>
+                <option value="launch_day">launch_day</option>
+                <option value="reengagement">reengagement</option>
+                <option value="reactivation">reactivation</option>
+              </select>
+            </label>
+            {(() => {
+              const inst = resolveSequenceForFirm("firm.demo", resolveClass, templates);
+              if (!inst) return <p style={p}>No binding.</p>;
+              return (
+                <div style={{ ...card, marginTop: 8 }}>
+                  <div style={{ fontSize: 11 }}>
+                    {inst.firmId} · {inst.templateId} · variant {inst.variant}
+                  </div>
+                  <ol style={{ fontSize: 11, paddingLeft: 18 }}>
+                    {inst.cells.map((c) => (
+                      <li key={c.id}>
+                        {c.resolvedLabel} · vars: {JSON.stringify(c.boundVariables)}
+                      </li>
+                    ))}
+                  </ol>
+                  {inst.silences?.length ? (
+                    <div style={{ fontSize: 10, color: "#e8a35a" }}>{inst.silences.join(" · ")}</div>
+                  ) : null}
+                </div>
+              );
+            })()}
+
+            <h2 style={{ ...h2, marginTop: 20 }}>No-login client view check</h2>
+            <p style={p}>
+              Disposition: <code>{NO_LOGIN_CLIENT_VIEW_CHECK.disposition}</code> — foundInCode:{" "}
+              {String(NO_LOGIN_CLIENT_VIEW_CHECK.foundInCode)}. {NO_LOGIN_CLIENT_VIEW_CHECK.note}
+            </p>
+
+            <h2 style={{ ...h2, marginTop: 20 }}>Corpus sources</h2>
+            <ul style={ul}>
+              {CORPUS_SOURCES.map((s) => (
+                <li key={s.id}>
+                  <code>{s.path}</code> — {s.role}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : view === "tables" ? (
           <div style={{ flex: 1, overflow: "auto", padding: 16 }}>
             <h2 style={h2}>Modularity audit</h2>
             <p style={p}>

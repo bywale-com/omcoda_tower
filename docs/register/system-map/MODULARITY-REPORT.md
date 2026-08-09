@@ -2,8 +2,9 @@
 
 **Law:** Anything that should be modifiable must be a table (state | rule | sequence). Frozen without a structural reason = `frozen-should-be-table` bug.
 
-**Code source of truth:** `src/app/system-map/data/tables.ts`  
-**Build instruction:** [`BUILD-system-map-v2-table-inventory.md`](./BUILD-system-map-v2-table-inventory.md) (archived from founder upload)
+**Code source of truth:** `src/app/system-map/data/tables.ts` (+ v3 `templates.ts`, `corpusSources.ts`)  
+**Build instruction:** v2 [`BUILD-system-map-v2-table-inventory.md`](./BUILD-system-map-v2-table-inventory.md) → v3 [`BUILD-system-map-v3-templates-and-binding.md`](./BUILD-system-map-v3-templates-and-binding.md)  
+**v3 report:** [`V3-REPORT.md`](./V3-REPORT.md) · reconciliation: [`CONTROLS-TABLES-RECONCILIATION.md`](./CONTROLS-TABLES-RECONCILIATION.md)
 
 ## Summary
 

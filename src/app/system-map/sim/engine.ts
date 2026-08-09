@@ -1,5 +1,11 @@
 import type { MachineTable, TableRelation } from "../data/tableTypes";
 import { MACHINE_TABLES, TABLE_RELATIONS } from "../data/tables";
+import {
+  FIRM_SEQUENCE_BINDINGS,
+  SEQUENCE_TEMPLATES,
+  resolveFirmSequence,
+  type ResolvedSequenceInstance,
+} from "../data/templates";
 
 export type SimStep = {
   /** State-table id (or node-linked state). */
@@ -196,4 +202,17 @@ export const FACLESS_FIRE_PRESETS: { id: string; label: string; originNodeId: st
   { id: "fire-missing", label: "Fire missing_fact_signal", originNodeId: "missing_fact_signal" },
 ];
 
-export { MACHINE_TABLES, TABLE_RELATIONS };
+/**
+ * Resolve a firm's sequence instance from binding + template (v3).
+ * Runtime stays dumb — no content of its own.
+ */
+export function resolveSequenceForFirm(
+  firmId: string,
+  sequenceClass: Parameters<typeof resolveFirmSequence>[1],
+  templates = SEQUENCE_TEMPLATES,
+  bindings = FIRM_SEQUENCE_BINDINGS,
+): ResolvedSequenceInstance | null {
+  return resolveFirmSequence(firmId, sequenceClass, templates, bindings);
+}
+
+export { MACHINE_TABLES, TABLE_RELATIONS, SEQUENCE_TEMPLATES, FIRM_SEQUENCE_BINDINGS };

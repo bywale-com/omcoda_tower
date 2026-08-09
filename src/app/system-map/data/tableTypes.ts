@@ -46,6 +46,51 @@ export type StateField = {
   valueDomain: string;
 };
 
+/** Concrete = fixed cell; templated = variables bound at firm instantiation. */
+export type CellMode = "concrete" | "templated";
+
+export type SequenceClass =
+  | "optin_launch"
+  | "launch_day"
+  | "reengagement"
+  | "reactivation";
+
+export type TemplateCell = {
+  id: string;
+  label: string;
+  /** Day / step token for ordering. */
+  token: string;
+  channel?: string;
+  mode: CellMode;
+  /** Variable slots when templated, e.g. firm_name, firm_logo, tower_logo, copy. */
+  variables?: string[];
+  concreteValue?: string;
+  /** Slot references without asserting a backing table (e.g. no_login_view_link). */
+  deferredSlots?: string[];
+};
+
+export type SequenceTemplate = {
+  id: string;
+  class: SequenceClass;
+  variant: string;
+  label: string;
+  /** Reorderable content cells (level-1 variation). */
+  cells: TemplateCell[];
+  source: string;
+  silences?: string[];
+};
+
+export type FirmSequenceBinding = {
+  id: string;
+  firmId: string;
+  sequenceClass: SequenceClass;
+  templateId: string;
+  /** Per-firm overrides of template cells. */
+  overrides?: { cellId: string; concreteValue?: string; variables?: Record<string, string> }[];
+  /** Firm-scoped variable bindings for templated cells. */
+  variableBindings: Record<string, string>;
+};
+
 export type MachineTable = {
   id: string;
   kind: TableKind;
@@ -62,6 +107,10 @@ export type MachineTable = {
   sequence?: SequenceItem[];
   /** State fields (kind=state). */
   stateFields?: StateField[];
+  /** First-class: table cells are concrete or templated (v3). */
+  cellMode?: CellMode | "mixed";
+  /** When this MachineTable mirrors a sequence_template id. */
+  templateId?: string;
   source: string;
 };
 
