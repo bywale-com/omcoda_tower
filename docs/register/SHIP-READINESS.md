@@ -54,11 +54,11 @@ Auth/wire on `:3001` with `VITE_WIRE_REAL=true` + Session-pooler `DATABASE_URL`.
 | Off-cohort stays dry-run under live | PASS |
 | `WORKER_ONCE=1 npm run worker` against real DB | PASS — tick scanned attempts |
 
-### Send posture (SHIP)
+### Send posture (SHIP → DEPLOY)
 
-- `SEND_MODE=live` default  
-- **`SEND_TEST_COHORT` required** — empty = nobody live (fail closed)  
-- HTTP `/wire/send/*` now uses the **same gated** `dispatchEmail` / `dispatchSms` (requires `contactId`, cohort-checked) — no ungated live probe path  
+- Missing/empty `SEND_MODE` → **`dry_run`** (fail-closed); live is explicit  
+- **`SEND_TEST_COHORT` required** under live — empty = nobody live (fail closed)  
+- HTTP `/wire/send/*` uses the **same gated** `dispatchEmail` / `dispatchSms` (requires `contactId`, cohort-checked) — no ungated live probe path  
 
 ---
 
@@ -78,12 +78,8 @@ Auth/wire on `:3001` with `VITE_WIRE_REAL=true` + Session-pooler `DATABASE_URL`.
 
 | Gap | Tag |
 |-----|-----|
-| Ship branch not yet on `origin/main` | **open** — merge this PR |
-| Worker as deployed cron/container (no Dockerfile) | **open** — proven via `WORKER_ONCE` / `verify:worker` against real DB; continuous deploy packaging remains |
-| `firmId` silent fallback `firm-cedar` on machine handlers | **open** — clients send firm; session-bound firm next |
-| Real `machineApi` hardcodes `FIRM="firm-cedar"` | **open** — same |
 | Plant vs Ant cosmetic parity | not required for spine |
-| CI hosting for `verify:ship` | **open** — script exists; wire into your CI runner |
+| Deploy packaging (worker / session firm / CI / env) | see **`DEPLOY-READINESS.md`** (PR #67) |
 
 ---
 
@@ -120,10 +116,8 @@ npm run build
 
 ## Remaining gaps (plain)
 
-1. **open** — Deploy continuous worker (cron/container); local/`WORKER_ONCE` + `verify:worker` proven on real DB  
-2. **open** — Session firm (drop demo `firm-cedar` defaults in client/server)  
-3. **open** — Wire `npm run verify:ship` / `verify:all-ship` into hosted CI  
-4. **deferred** — Escrow  
-5. **deferred** — Meta go-live  
+1. **see DEPLOY-READINESS.md** — continuous worker, session firm, hosted CI, fail-closed env  
+2. **deferred** — Escrow  
+3. **deferred** — Meta go-live  
 
 **No “done” claimed without the spec-vs-app round-trip behind it.**

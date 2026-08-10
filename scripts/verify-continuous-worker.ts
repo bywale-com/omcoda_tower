@@ -150,12 +150,14 @@ try {
     ok("worker-mode-log", "worker announced continuous mode");
   }
 } finally {
-  if (child?.pid) {
+  if (child) {
     try {
-      process.kill(child.pid, "SIGTERM");
+      child.kill("SIGKILL");
     } catch {
       /* already gone */
     }
+    // Ensure the continuous process cannot keep this script alive
+    child.unref?.();
   }
   await pool.end();
 }
