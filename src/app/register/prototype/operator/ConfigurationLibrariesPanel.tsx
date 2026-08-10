@@ -9,11 +9,10 @@ import { RegisterSurfaceMount, navBtnStyle, sectionLabelStyle } from "../registe
 import {
   type ConfigPack,
   type PackKind,
-  nextVersionId,
   packLabel,
   publishedPacks,
-  seedConfigPacks,
 } from "./operatorConfigLibraries";
+import { publishPackInCatalog, usePackCatalog } from "./packCatalogStore";
 import {
   filterSelectStyle,
   moduleFocus,
@@ -94,7 +93,7 @@ export function ConfigurationLibrariesPanel({
   const focus = moduleFocus("Configuration libraries", focusedEntry, hoveredEntry);
   const subMeta = CONFIG_LIB_SUBS.find((s) => s.id === sub)!;
 
-  const [packs, setPacks] = useState<ConfigPack[]>(seedConfigPacks);
+  const [packs, setPacks] = usePackCatalog();
   const [selectedId, setSelectedId] = useState<string | null>("eval-alg-v2");
   const [editorNote, setEditorNote] = useState("");
   const [compareOpen, setCompareOpen] = useState(false);
@@ -145,12 +144,9 @@ export function ConfigurationLibrariesPanel({
 
   function onPublish() {
     if (!selected) return;
-    const versionId = nextVersionId(selected.kind, packs);
-    setPacks((prev) =>
-      prev.map((p) =>
-        p.id === selected.id ? { ...p, status: "Published", versionId } : p,
-      ),
-    );
+    publishPackInCatalog(selected.id, selected.kind, {
+      summary: editorNote || selected.summary,
+    });
   }
 
   function openCompare() {

@@ -1,6 +1,7 @@
 /**
  * Firm operations bind — firm-bind index → Bind packs modal → Armed / Active segmented control.
- * Furnish: published-only helper + Jump to Config empty-state; bound-version chips; bind-completeness.
+ * Shares published packs with Configuration libraries via packCatalogStore.
+ * Active → activateWorkflow + upsertBinding + evaluation pin + campaign_states running.
  */
 import { useEffect, useMemo, useState } from "react";
 import type { Tokens } from "../../../components/tokens";
@@ -16,8 +17,9 @@ import {
   type ConfigPack,
   packLabel,
   publishedPacks,
-  seedConfigPacks,
+  resolveEngagementBinding,
 } from "./operatorConfigLibraries";
+import { usePackCatalog } from "./packCatalogStore";
 import {
   DEMO_FIRMS,
   filterSelectStyle,
@@ -46,22 +48,22 @@ function seedBindRows(): FirmBindState[] {
     {
       firmId: DEMO_FIRMS[0].id,
       evalPackId: "eval-alg-v2",
-      autoPackId: "auto-welcome",
-      engPackId: "eng-optin",
+      autoPackId: "wf-optin-launch",
+      engPackId: "agent-intake",
       posture: "Active",
     },
     {
       firmId: DEMO_FIRMS[1].id,
       evalPackId: "eval-soft-v1",
-      autoPackId: "auto-book",
-      engPackId: "eng-nudge",
+      autoPackId: "wf-eligibility-reactivation",
+      engPackId: "agent-nudge",
       posture: "Armed",
     },
     {
       firmId: DEMO_FIRMS[2].id,
       evalPackId: "eval-alg-v2",
-      autoPackId: "auto-welcome",
-      engPackId: "eng-optin",
+      autoPackId: "wf-optin-launch",
+      engPackId: "agent-intake",
       posture: "Armed",
     },
     {
@@ -92,7 +94,7 @@ export function FirmOperationsBindPanel({
   const { jumpTo } = useOperatorNav();
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Firm operations bind", focusedEntry, hoveredEntry);
-  const [packs] = useState<ConfigPack[]>(seedConfigPacks);
+  const [packs] = usePackCatalog();
   const [rows, setRows] = useState<FirmBindState[]>(seedBindRows);
   const [selectedId, setSelectedId] = useState(rows[0].firmId);
   const [bindOpen, setBindOpen] = useState(false);
@@ -107,6 +109,7 @@ export function FirmOperationsBindPanel({
   const [gateNote, setGateNote] = useState<string | null>(null);
   const [probeResult, setProbeResult] = useState<{ ok: boolean; detail: string } | null>(null);
   const [policyDenyForced, setPolicyDenyForced] = useState(false);
+  const [activating, setActivating] = useState(false);
 
   const row = rows.find((r) => r.firmId === selectedId) ?? rows[0];
   const firm = DEMO_FIRMS.find((f) => f.id === row.firmId) ?? DEMO_FIRMS[0];
@@ -162,26 +165,67 @@ export function FirmOperationsBindPanel({
     };
   }, [row.firmId, tick]);
 
+  async function activateBoundPacks(firmId: string, bind: FirmBindState) {
+    const evalPack = packs.find((p) => p.id === bind.evalPackId) ?? null;
+    const engPack = packs.find((p) => p.id === bind.engPackId) ?? null;
+    const engBind = resolveEngagementBinding(engPack);
+    const notes: string[] = [];
+
+    if (bind.autoPackId) {
+      const activated = await wirePorts.machineApi.activateWorkflow(bind.autoPackId);
+      notes.push(`workflow ${activated.workflowId}→${activated.status}`);
+    }
+    if (engBind) {
+      const binding = await wirePorts.machineApi.upsertBinding({
+        sequenceClass: engBind.sequenceClass,
+        templateId: engBind.templateId,
+        variableBindings: { firmId, engPackId: bind.engPackId },
+      });
+      notes.push(`binding ${binding.id ?? engBind.templateId}`);
+    }
+    if (evalPack?.pin) {
+      await wirePorts.machineApi.putEvaluationPin(evalPack.id, evalPack.pin);
+      await wirePorts.machineApi.putEvaluationPin(`firm.${firmId}`, evalPack.pin);
+      notes.push(`eval pin ${evalPack.pin.referenceVersionId}`);
+    }
+    const camp = await wirePorts.machineApi.setCampaignState("running");
+    notes.push(`campaign ${camp.state}`);
+    return notes.join(" · ");
+  }
+
   async function setPosture(posture: Posture) {
-    if (!bound) return;
     setRows((prev) =>
       prev.map((r) => (r.firmId === row.firmId ? { ...r, posture } : r)),
     );
     if (posture !== "Active") {
       setGateNote(null);
+      try {
+        await wirePorts.machineApi.setCampaignState("armed-for-activation");
+      } catch {
+        /* stand-in / offline ok */
+      }
       return;
     }
-    const decision = await wirePorts.sendGate.decide({
-      firmId: row.firmId,
-      channel: "email",
-      purpose: "cem",
-      posture: "Active",
-    });
-    setGateNote(
-      decision.allow
-        ? "Send gate allows — posture Active, no denies outstanding."
-        : `Fail-closed · posture set to Active, but Send gate still denies (${decision.reasons.join(", ")}) — sends stay blocked until resolved.`,
-    );
+    if (!isBound(row)) return;
+    setActivating(true);
+    try {
+      const detail = await activateBoundPacks(row.firmId, { ...row, posture: "Active" });
+      const decision = await wirePorts.sendGate.decide({
+        firmId: row.firmId,
+        channel: "email",
+        purpose: "cem",
+        posture: "Active",
+      });
+      setGateNote(
+        decision.allow
+          ? `Active · ${detail}`
+          : `Active wired (${detail}) but Send gate still denies (${decision.reasons.join(", ")}) — sends stay blocked until resolved.`,
+      );
+    } catch (err) {
+      setGateNote(`Active wire failed: ${String(err)}`);
+    } finally {
+      setActivating(false);
+    }
   }
 
   async function probeCemLeave() {
@@ -371,7 +415,8 @@ export function FirmOperationsBindPanel({
                   </button>
                 </div>
                 <p style={{ margin: "0 0 10px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
-                  House-authored published versions only — drafts from Configuration libraries omitted.
+                  House-authored published versions only — drafts omitted. Catalog shared with
+                  Configuration libraries.
                 </p>
                 {bound ? (
                   <div
@@ -432,12 +477,13 @@ export function FirmOperationsBindPanel({
                 <div style={{ display: "flex", gap: 0, borderRadius: 4, overflow: "hidden", border: `1px solid ${t.border}` }}>
                   {(["Armed", "Active"] as Posture[]).map((p) => {
                     const active = row.posture === p;
+                    const label = p === "Active" && activating ? "Activating…" : p;
                     return (
                       <button
                         key={p}
                         type="button"
-                        disabled={!bound}
-                        onClick={() => setPosture(p)}
+                        disabled={!bound || activating}
+                        onClick={() => void setPosture(p)}
                         style={{
                           flex: 1,
                           fontSize: 12,
@@ -445,13 +491,13 @@ export function FirmOperationsBindPanel({
                           fontFamily: "inherit",
                           padding: "8px 12px",
                           border: "none",
-                          cursor: bound ? "pointer" : "not-allowed",
+                          cursor: bound && !activating ? "pointer" : "not-allowed",
                           background: active ? t.accent : t.bgPrimary,
                           color: active ? "#fff" : bound ? t.textPrimary : t.textDim,
-                          opacity: bound ? 1 : 0.55,
+                          opacity: bound && !activating ? 1 : 0.55,
                         }}
                       >
-                        {p}
+                        {label}
                       </button>
                     );
                   })}

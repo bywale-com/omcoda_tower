@@ -1,8 +1,12 @@
-/**
- * Shared demo Configuration libraries catalog — published versions feed Firm operations bind dropdowns.
- */
+/** Configuration libraries catalog — published versions feed Firm operations bind dropdowns. */
+
 export type PackKind = "evaluation" | "automation" | "engagement";
 export type PackStatus = "Published" | "Draft";
+
+export type EvalPackPin = {
+  referenceVersionId: string;
+  rulesetId: string;
+};
 
 export type ConfigPack = {
   id: string;
@@ -11,6 +15,11 @@ export type ConfigPack = {
   versionId: string | null;
   status: PackStatus;
   summary: string;
+  /** Evaluation: pin reference_version + ruleset (also persisted to constants_packs). */
+  pin?: EvalPackPin | null;
+  /** Engagement: machine sequence_template binding targets. */
+  templateId?: string;
+  sequenceClass?: string;
 };
 
 const SEED: ConfigPack[] = [
@@ -21,6 +30,7 @@ const SEED: ConfigPack[] = [
     versionId: "eval-v2.1",
     status: "Published",
     summary: "CRS + trade-category gates against immigration reference v2.4",
+    pin: { referenceVersionId: "ref.crs.cutoff.v1", rulesetId: "ruleset.eval-alg-v2" },
   },
   {
     id: "eval-soft-v1",
@@ -29,6 +39,7 @@ const SEED: ConfigPack[] = [
     versionId: "eval-v1.3",
     status: "Published",
     summary: "Light pathway scoring for Prepared Workspace firms",
+    pin: { referenceVersionId: "ref.crs.cutoff.v1", rulesetId: "ruleset.eval-soft-v1" },
   },
   {
     id: "eval-draft",
@@ -37,9 +48,10 @@ const SEED: ConfigPack[] = [
     versionId: null,
     status: "Draft",
     summary: "WIP PNP cutoffs — not selectable in Bind",
+    pin: { referenceVersionId: "ref.crs.cutoff.v1", rulesetId: "ruleset.eval-draft" },
   },
   {
-    id: "auto-welcome",
+    id: "wf-optin-launch",
     kind: "automation",
     name: "Welcome armer",
     versionId: "auto-v3.0",
@@ -47,7 +59,7 @@ const SEED: ConfigPack[] = [
     summary: "Trigger on import → evaluate → enroll opt-in template",
   },
   {
-    id: "auto-book",
+    id: "wf-eligibility-reactivation",
     kind: "automation",
     name: "Book armer",
     versionId: "auto-v2.2",
@@ -63,20 +75,24 @@ const SEED: ConfigPack[] = [
     summary: "Experimental reactivation branch — draft only",
   },
   {
-    id: "eng-optin",
+    id: "agent-intake",
     kind: "engagement",
     name: "Opt-in Standard",
     versionId: "eng-v4.1",
     status: "Published",
     summary: "Opt-in → nudge → meeting invite sequence",
+    templateId: "tpl.optin_launch.v1",
+    sequenceClass: "optin_launch",
   },
   {
-    id: "eng-nudge",
+    id: "agent-nudge",
     kind: "engagement",
     name: "Nudge Standard",
     versionId: "eng-v2.0",
     status: "Published",
     summary: "Nudge-heavy composite for armed firms",
+    templateId: "tpl.reengagement.v1",
+    sequenceClass: "reengagement",
   },
   {
     id: "eng-draft",
@@ -107,4 +123,23 @@ export function nextVersionId(kind: PackKind, packs: ConfigPack[]): string {
     .map((p) => parseFloat(p.versionId!.replace(`${prefix}-v`, "")) || 0);
   const next = (Math.max(0, ...nums) + 0.1).toFixed(1);
   return `${prefix}-v${next}`;
+}
+
+/** Resolve engagement pack → sequence_template binding for Bind Active. */
+export function resolveEngagementBinding(pack: ConfigPack | null | undefined): {
+  templateId: string;
+  sequenceClass: string;
+} | null {
+  if (!pack) return null;
+  if (pack.templateId && pack.sequenceClass) {
+    return { templateId: pack.templateId, sequenceClass: pack.sequenceClass };
+  }
+  const fallback: Record<string, { templateId: string; sequenceClass: string }> = {
+    "agent-intake": { templateId: "tpl.optin_launch.v1", sequenceClass: "optin_launch" },
+    "agent-nudge": { templateId: "tpl.reengagement.v1", sequenceClass: "reengagement" },
+    "agent-reactivation": { templateId: "tpl.reactivation.v1", sequenceClass: "reactivation" },
+    "eng-optin": { templateId: "tpl.optin_launch.v1", sequenceClass: "optin_launch" },
+    "eng-nudge": { templateId: "tpl.reengagement.v1", sequenceClass: "reengagement" },
+  };
+  return fallback[pack.id] ?? null;
 }
