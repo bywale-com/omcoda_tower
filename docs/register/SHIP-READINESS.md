@@ -15,9 +15,9 @@
 | #65 prototype cohesion | Merged into ship branch (`Merge #65…`) |
 | #66 modular-control map | Merged into ship branch on top of #65 |
 | #62 / #63 Hub-seat | **Not merged** (superseded) |
-| `origin/main` | Still at #61 until this ship branch is merged to main |
+| `origin/main` | **Updated 2026-08-10** — tip `36e9a3f` includes #65+#66 + ship hardening |
 
-**Ship branch contains the full CT product stack.** Merge this branch to main (or open PR → merge) to put #65+#66 on main in one step.
+**Main now carries the CT product stack** (merged #65 → #66 → ship hardening).
 
 ### Real-wire spine (Postgres, not stand-ins)
 
@@ -120,9 +120,9 @@ npm run build
 
 ## Remaining gaps (plain)
 
-1. **open** — Merge `cursor/ship-production-hardening-6565` → `main`  
-2. **open** — Deploy continuous worker (cron/container); local/once proven  
-3. **open** — Session firm (drop demo `firm-cedar` defaults in client/server)  
+1. **open** — Deploy continuous worker (cron/container); local/`WORKER_ONCE` + `verify:worker` proven on real DB  
+2. **open** — Session firm (drop demo `firm-cedar` defaults in client/server)  
+3. **open** — Wire `npm run verify:ship` / `verify:all-ship` into hosted CI  
 4. **deferred** — Escrow  
 5. **deferred** — Meta go-live  
 
