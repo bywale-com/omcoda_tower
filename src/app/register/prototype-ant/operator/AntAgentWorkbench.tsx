@@ -41,7 +41,13 @@ import {
   insertAgentStep,
   type AgentStep,
 } from "../../../data/agentSteps";
-import type { AttemptCriteriaRow, ChannelOwnershipOrderRow } from "../../../wire/machineTypes";
+import type {
+  AttemptCriteriaRow,
+  ChannelOwnershipOrderRow,
+  CohortScoringRow,
+  MetricsThresholdRow,
+  PhaseOrderRow,
+} from "../../../wire/machineTypes";
 import { wirePorts } from "../../../wire/registry";
 
 function statusColor(status: AgentDefinition["status"]) {
@@ -120,11 +126,11 @@ function reorderSteps(steps: AgentStep[], fromIndex: number, toIndex: number) {
   return next.map((step, index) => ({ ...step, order: index }));
 }
 
-function reorderChannel(
-  rows: ChannelOwnershipOrderRow[],
+function reorderOrdRows<T extends { ord: number }>(
+  rows: T[],
   fromIndex: number,
   toIndex: number,
-): ChannelOwnershipOrderRow[] {
+): T[] {
   const next = [...rows];
   const [moved] = next.splice(fromIndex, 1);
   if (!moved) return rows;
@@ -224,18 +230,27 @@ function AgentSettingsPanel() {
   const { token } = theme.useToken();
   const [criteria, setCriteria] = useState<AttemptCriteriaRow[]>([]);
   const [channelRows, setChannelRows] = useState<ChannelOwnershipOrderRow[]>([]);
+  const [cohortRows, setCohortRows] = useState<CohortScoringRow[]>([]);
+  const [metricsRows, setMetricsRows] = useState<MetricsThresholdRow[]>([]);
+  const [phaseRows, setPhaseRows] = useState<PhaseOrderRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [acr, order] = await Promise.all([
+      const [acr, order, cohort, metrics, phases] = await Promise.all([
         wirePorts.machineApi.listAttemptCriteria(),
         wirePorts.machineApi.listChannelOrder(),
+        wirePorts.machineApi.listCohortScoring(),
+        wirePorts.machineApi.listMetricsThresholds(),
+        wirePorts.machineApi.listPhaseOrder(),
       ]);
       setCriteria(acr);
       setChannelRows(order);
+      setCohortRows(cohort);
+      setMetricsRows(metrics);
+      setPhaseRows(phases);
     } catch (err) {
       message.error(`Settings load failed: ${String(err)}`);
     } finally {
@@ -267,8 +282,38 @@ function AgentSettingsPanel() {
     }
   };
 
+  const patchCohort = async (
+    id: string,
+    patch: { enabled?: boolean; setValue?: string | null },
+  ) => {
+    setSavingId(id);
+    try {
+      const updated = await wirePorts.machineApi.upsertCohortScoring(id, patch);
+      setCohortRows((current) => current.map((row) => (row.id === id ? updated : row)));
+    } catch (err) {
+      message.error(`Cohort scoring save failed: ${String(err)}`);
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const patchMetrics = async (
+    id: string,
+    patch: { enabled?: boolean; threshold?: number | null },
+  ) => {
+    setSavingId(id);
+    try {
+      const updated = await wirePorts.machineApi.upsertMetricsThreshold(id, patch);
+      setMetricsRows((current) => current.map((row) => (row.id === id ? updated : row)));
+    } catch (err) {
+      message.error(`Metrics threshold save failed: ${String(err)}`);
+    } finally {
+      setSavingId(null);
+    }
+  };
+
   const moveChannel = async (fromIndex: number, toIndex: number) => {
-    const next = reorderChannel(channelRows, fromIndex, toIndex);
+    const next = reorderOrdRows(channelRows, fromIndex, toIndex);
     setChannelRows(next);
     try {
       const saved = await wirePorts.machineApi.upsertChannelOrder(
@@ -277,6 +322,20 @@ function AgentSettingsPanel() {
       setChannelRows(saved);
     } catch (err) {
       message.error(`Channel order save failed: ${String(err)}`);
+      void load();
+    }
+  };
+
+  const movePhase = async (fromIndex: number, toIndex: number) => {
+    const next = reorderOrdRows(phaseRows, fromIndex, toIndex);
+    setPhaseRows(next);
+    try {
+      const saved = await wirePorts.machineApi.upsertPhaseOrder(
+        next.map((row) => ({ id: row.id, token: row.token, label: row.label, ord: row.ord })),
+      );
+      setPhaseRows(saved);
+    } catch (err) {
+      message.error(`Phase order save failed: ${String(err)}`);
       void load();
     }
   };
@@ -404,6 +463,163 @@ function AgentSettingsPanel() {
                     disabled={index === channelRows.length - 1}
                     onClick={() => void moveChannel(index, index + 1)}
                     aria-label="Move channel down"
+                  />,
+                ]}
+              >
+                <Space>
+                  <Tag>{index + 1}</Tag>
+                  <Typography.Text strong>{row.label}</Typography.Text>
+                  <Typography.Text type="secondary">{row.token}</Typography.Text>
+                </Space>
+              </List.Item>
+            )}
+          />
+        </div>
+
+        <div>
+          <Typography.Title level={5}>Cohort scoring</Typography.Title>
+          <Typography.Paragraph type="secondary" style={{ marginBottom: 12 }}>
+            Tier signals in <code>rule_cohort_scoring</code> — enable rows and edit set_value.
+          </Typography.Paragraph>
+          <List
+            dataSource={cohortRows}
+            locale={{ emptyText: "No cohort scoring rows." }}
+            renderItem={(row) => (
+              <List.Item
+                key={row.id}
+                style={{
+                  border: `1px solid ${token.colorSplit}`,
+                  borderRadius: 8,
+                  marginBottom: 8,
+                  padding: 12,
+                  background: token.colorBgContainer,
+                }}
+              >
+                <Space direction="vertical" size={8} style={{ width: "100%" }}>
+                  <Space style={{ justifyContent: "space-between", width: "100%" }} wrap>
+                    <Typography.Text strong>{row.label}</Typography.Text>
+                    <Switch
+                      checked={row.enabled}
+                      loading={savingId === row.id}
+                      checkedChildren="On"
+                      unCheckedChildren="Off"
+                      onChange={(enabled) => void patchCohort(row.id, { enabled })}
+                    />
+                  </Space>
+                  <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                    {row.when_clause ?? "—"} · {row.condition_clause ?? "—"}
+                  </Typography.Text>
+                  <Space wrap>
+                    <Input
+                      size="small"
+                      style={{ width: 240 }}
+                      value={row.set_value ?? ""}
+                      placeholder="set_value"
+                      disabled={savingId === row.id}
+                      onChange={(event) => {
+                        const set_value = event.target.value || null;
+                        setCohortRows((current) =>
+                          current.map((item) => (item.id === row.id ? { ...item, set_value } : item)),
+                        );
+                      }}
+                      onBlur={() => {
+                        const current = cohortRows.find((item) => item.id === row.id);
+                        void patchCohort(row.id, { setValue: current?.set_value ?? null });
+                      }}
+                    />
+                    <Tag>{row.id}</Tag>
+                  </Space>
+                </Space>
+              </List.Item>
+            )}
+          />
+        </div>
+
+        <div>
+          <Typography.Title level={5}>Metrics thresholds</Typography.Title>
+          <Typography.Paragraph type="secondary" style={{ marginBottom: 12 }}>
+            Firm-health flags in <code>rule_metrics_threshold</code> — enable rows and set threshold %.
+          </Typography.Paragraph>
+          <List
+            dataSource={metricsRows}
+            locale={{ emptyText: "No metrics threshold rows." }}
+            renderItem={(row) => (
+              <List.Item
+                key={row.id}
+                style={{
+                  border: `1px solid ${token.colorSplit}`,
+                  borderRadius: 8,
+                  marginBottom: 8,
+                  padding: 12,
+                  background: token.colorBgContainer,
+                }}
+              >
+                <Space direction="vertical" size={8} style={{ width: "100%" }}>
+                  <Space style={{ justifyContent: "space-between", width: "100%" }} wrap>
+                    <Typography.Text strong>{row.label}</Typography.Text>
+                    <Switch
+                      checked={row.enabled}
+                      loading={savingId === row.id}
+                      checkedChildren="On"
+                      unCheckedChildren="Off"
+                      onChange={(enabled) => void patchMetrics(row.id, { enabled })}
+                    />
+                  </Space>
+                  <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                    → {row.set_value ?? "—"}
+                  </Typography.Text>
+                  <Space wrap>
+                    <InputNumber
+                      size="small"
+                      value={row.threshold ?? undefined}
+                      placeholder="Threshold %"
+                      disabled={savingId === row.id}
+                      onChange={(value) => {
+                        const threshold = typeof value === "number" ? value : null;
+                        setMetricsRows((current) =>
+                          current.map((item) => (item.id === row.id ? { ...item, threshold } : item)),
+                        );
+                      }}
+                      onBlur={() => {
+                        const current = metricsRows.find((item) => item.id === row.id);
+                        void patchMetrics(row.id, { threshold: current?.threshold ?? null });
+                      }}
+                    />
+                    <Tag>{row.id}</Tag>
+                  </Space>
+                </Space>
+              </List.Item>
+            )}
+          />
+        </div>
+
+        <div>
+          <Typography.Title level={5}>Phase order</Typography.Title>
+          <Typography.Paragraph type="secondary" style={{ marginBottom: 12 }}>
+            Sequence phases in <code>seq_phase_order</code> — opt-in → nudge → reactivation.
+          </Typography.Paragraph>
+          <List
+            dataSource={phaseRows}
+            locale={{ emptyText: "No phase order rows." }}
+            renderItem={(row, index) => (
+              <List.Item
+                key={row.id}
+                actions={[
+                  <Button
+                    key="up"
+                    size="small"
+                    icon={<ArrowUpOutlined />}
+                    disabled={index === 0}
+                    onClick={() => void movePhase(index, index - 1)}
+                    aria-label="Move phase up"
+                  />,
+                  <Button
+                    key="down"
+                    size="small"
+                    icon={<ArrowDownOutlined />}
+                    disabled={index === phaseRows.length - 1}
+                    onClick={() => void movePhase(index, index + 1)}
+                    aria-label="Move phase down"
                   />,
                 ]}
               >

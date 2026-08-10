@@ -30,6 +30,7 @@ import type {
   EligibilityPathwayRow,
   FieldClassRoutingRow,
   MotionPrecedenceRow,
+  ReachabilityCheckRow,
   ReferenceVersionRow,
 } from "../../../wire/machineTypes";
 import { wirePorts } from "../../../wire/registry";
@@ -141,6 +142,71 @@ function CatalogShell({
   );
 }
 
+function RuleSetValueList<T extends { id: string; label: string; enabled: boolean; set_value: string | null }>({
+  title,
+  hint,
+  rows,
+  savingId,
+  onToggle,
+  onSetValueChange,
+  onSetValueSave,
+  setValuePlaceholder = "set_value / params",
+}: {
+  title: string;
+  hint: string;
+  rows: T[];
+  savingId: string | null;
+  onToggle: (id: string, enabled: boolean) => void;
+  onSetValueChange: (id: string, setValue: string | null) => void;
+  onSetValueSave: (id: string, setValue: string | null) => void;
+  setValuePlaceholder?: string;
+}) {
+  const { token } = theme.useToken();
+  return (
+    <div style={{ marginTop: 16 }}>
+      <Typography.Text strong>{title}</Typography.Text>
+      <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginBottom: 8 }}>
+        {hint}
+      </Typography.Paragraph>
+      <List
+        size="small"
+        dataSource={rows}
+        locale={{ emptyText: "No rows loaded." }}
+        renderItem={(row) => (
+          <List.Item
+            key={row.id}
+            style={{
+              border: `1px solid ${token.colorSplit}`,
+              borderRadius: 8,
+              marginBottom: 6,
+              padding: "8px 12px",
+            }}
+          >
+            <Space direction="vertical" size={6} style={{ width: "100%" }}>
+              <Space style={{ justifyContent: "space-between", width: "100%" }} wrap>
+                <Typography.Text>{row.label}</Typography.Text>
+                <Switch
+                  checked={row.enabled}
+                  loading={savingId === row.id}
+                  onChange={(enabled) => onToggle(row.id, enabled)}
+                />
+              </Space>
+              <Input
+                size="small"
+                value={row.set_value ?? ""}
+                placeholder={setValuePlaceholder}
+                disabled={savingId === row.id}
+                onChange={(event) => onSetValueChange(row.id, event.target.value || null)}
+                onBlur={(event) => onSetValueSave(row.id, event.target.value || null)}
+              />
+            </Space>
+          </List.Item>
+        )}
+      />
+    </div>
+  );
+}
+
 function RuleEnableList<T extends { id: string; label: string; enabled: boolean }>({
   title,
   hint,
@@ -216,6 +282,7 @@ function EvaluationPacksEditor({
   const [pathways, setPathways] = useState<EligibilityPathwayRow[]>([]);
   const [motion, setMotion] = useState<MotionPrecedenceRow[]>([]);
   const [fieldClass, setFieldClass] = useState<FieldClassRoutingRow[]>([]);
+  const [reachability, setReachability] = useState<ReachabilityCheckRow[]>([]);
   const [refs, setRefs] = useState<ReferenceVersionRow[]>([]);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -225,17 +292,19 @@ function EvaluationPacksEditor({
     (async () => {
       setLoading(true);
       try {
-        const [p, m, f, r] = await Promise.all([
+        const [p, m, f, r, rv] = await Promise.all([
           wirePorts.machineApi.listEligibilityPathways(),
           wirePorts.machineApi.listMotionPrecedence(),
           wirePorts.machineApi.listFieldClassRouting(),
+          wirePorts.machineApi.listReachabilityChecks(),
           wirePorts.machineApi.listReferenceVersions(),
         ]);
         if (!alive) return;
         setPathways(p);
         setMotion(m);
         setFieldClass(f);
-        setRefs(r);
+        setReachability(r);
+        setRefs(rv);
       } catch (err) {
         message.error(`Evaluation rules load failed: ${String(err)}`);
       } finally {
@@ -292,6 +361,42 @@ function EvaluationPacksEditor({
       setFieldClass((prev) => prev.map((row) => (row.id === id ? updated : row)));
     } catch (err) {
       message.error(`Field-class enable failed: ${String(err)}`);
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const patchFieldSetValue = async (id: string, setValue: string | null) => {
+    setSavingId(id);
+    try {
+      const updated = await wirePorts.machineApi.upsertFieldClassRouting(id, { setValue });
+      setFieldClass((prev) => prev.map((row) => (row.id === id ? updated : row)));
+    } catch (err) {
+      message.error(`Field-class set_value save failed: ${String(err)}`);
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const toggleReachability = async (id: string, enabled: boolean) => {
+    setSavingId(id);
+    try {
+      const updated = await wirePorts.machineApi.upsertReachabilityCheck(id, { enabled });
+      setReachability((prev) => prev.map((row) => (row.id === id ? updated : row)));
+    } catch (err) {
+      message.error(`Reachability enable failed: ${String(err)}`);
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const patchReachabilitySetValue = async (id: string, setValue: string | null) => {
+    setSavingId(id);
+    try {
+      const updated = await wirePorts.machineApi.upsertReachabilityCheck(id, { setValue });
+      setReachability((prev) => prev.map((row) => (row.id === id ? updated : row)));
+    } catch (err) {
+      message.error(`Reachability set_value save failed: ${String(err)}`);
     } finally {
       setSavingId(null);
     }
@@ -386,12 +491,32 @@ function EvaluationPacksEditor({
                 savingId={savingId}
                 onToggle={(id, enabled) => void toggleMotion(id, enabled)}
               />
-              <RuleEnableList
+              <RuleSetValueList
                 title="Field-class routing"
-                hint="rule_field_class_routing — where self-reported facts land."
+                hint="rule_field_class_routing — where self-reported facts land; edit set_value per row."
                 rows={fieldClass}
                 savingId={savingId}
                 onToggle={(id, enabled) => void toggleField(id, enabled)}
+                onSetValueChange={(id, setValue) =>
+                  setFieldClass((prev) =>
+                    prev.map((row) => (row.id === id ? { ...row, set_value: setValue } : row)),
+                  )
+                }
+                onSetValueSave={(id, setValue) => void patchFieldSetValue(id, setValue)}
+              />
+              <RuleSetValueList
+                title="Reachability checks"
+                hint="rule_reachability_check — pre-flight channel/consent gates; optional set_value / params."
+                rows={reachability}
+                savingId={savingId}
+                setValuePlaceholder="set_value / check params"
+                onToggle={(id, enabled) => void toggleReachability(id, enabled)}
+                onSetValueChange={(id, setValue) =>
+                  setReachability((prev) =>
+                    prev.map((row) => (row.id === id ? { ...row, set_value: setValue } : row)),
+                  )
+                }
+                onSetValueSave={(id, setValue) => void patchReachabilitySetValue(id, setValue)}
               />
             </>
           ) : (
