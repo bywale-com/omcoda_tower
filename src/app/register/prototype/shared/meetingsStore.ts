@@ -380,15 +380,29 @@ export async function writeBackContactFacts(input: {
   });
 }
 
-/** Contact portal booking confirm — append a meeting-ready row for the demo contact. */
-export function confirmContactBooking(input: {
+/** Contact portal booking confirm — writes durable meeting_booked via machineApi, then mirrors UI store. */
+export async function confirmContactBooking(input: {
   contactName: string;
   clientId: string;
   slot: string;
   consultantName: string;
-}): StoredMeeting {
+}): Promise<StoredMeeting> {
+  let machineId = `m-contact-${Date.now()}`;
+  try {
+    const row = await wirePorts.machineApi.bookMeeting({
+      contactId: input.clientId,
+      slot: input.slot,
+      consultantName: input.consultantName,
+      contactName: input.contactName,
+      source: "contact_portal",
+    });
+    machineId = row.id;
+  } catch (err) {
+    console.error("meeting_booked.write_failed", err);
+    throw err;
+  }
   const meeting: StoredMeeting = {
-    id: `m-contact-${Date.now()}`,
+    id: machineId,
     clientId: input.clientId,
     contactName: input.contactName,
     time: input.slot,
@@ -400,7 +414,7 @@ export function confirmContactBooking(input: {
     asOf: "As of · contact portal confirm",
     overview: `${input.contactName} confirmed a discovery slot with ${input.consultantName}. Live brief loads from held self-reportable facts.`,
     pathway: "Meeting-ready phase — consultant desk receives row on Meetings and Board today strip.",
-    observation: "Contact-side Confirm booking wrote this row into the shared meetings store.",
+    observation: "Contact-side Confirm booking wrote meeting_booked (machine row) and stopped open attempts.",
     facts: [
       { label: "Booked slot", value: input.slot, signal: "Confirmed", signalHint: "Contact portal booking" },
       { label: "Host", value: input.consultantName, signal: "Consultant", signalHint: "Discovery host" },

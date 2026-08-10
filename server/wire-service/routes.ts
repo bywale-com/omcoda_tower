@@ -58,6 +58,8 @@ import {
   handleMachineHealth,
   handleMachineProvision,
   handleMachineTick,
+  handleMeetingBook,
+  handleMeetingsList,
   handleMetricsThresholdsList,
   handleMetricsThresholdsUpsert,
   handleMissingFactSignalCreate,
@@ -187,6 +189,8 @@ export function createWireRoutes(): Hono {
   wire.get("/machine/campaign-state", handleCampaignStateGet);
   wire.post("/machine/campaign-state", handleCampaignStatePost);
   wire.get("/machine/contact-records", handleContactRecordsList);
+  wire.post("/machine/meetings", handleMeetingBook);
+  wire.get("/machine/meetings", handleMeetingsList);
   wire.post("/machine/provision", handleMachineProvision);
   wire.post("/machine/events", handleMachineEvent);
   wire.post("/hook/:webhookId", handleWebhookTrigger);

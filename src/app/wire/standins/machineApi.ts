@@ -327,6 +327,16 @@ const activeAttempts: import("../machineTypes").ActiveAttemptRow[] = [
     updated_at: now(),
   },
 ];
+const standInMeetings: Array<{
+  id: string;
+  firmId: string;
+  contactId: string;
+  bookedAt: string;
+  source: string;
+  slot: string | null;
+  consultantName: string | null;
+}> = [];
+
 const engagementRecordsLocal: import("../machineTypes").EngagementRecordRow[] = [
   {
     id: "eng-local-1",
@@ -997,5 +1007,41 @@ export const standInMachineApi: MachineApiPort = {
     provisionedFirms.set(firmId, result);
     campaignStates.set(firmId, "armed-for-activation");
     return result;
+  },
+
+  async bookMeeting(input) {
+    const f = standInFirm();
+    const id = `mtg-standin-${Date.now()}`;
+    standInMeetings.push({
+      id,
+      firmId: f,
+      contactId: input.contactId,
+      bookedAt: new Date().toISOString(),
+      source: input.source ?? "contact_portal",
+      slot: input.slot ?? null,
+      consultantName: input.consultantName ?? null,
+    });
+    let stopped = 0;
+    for (let i = 0; i < activeAttempts.length; i++) {
+      const a = activeAttempts[i];
+      if (a.firm_id === f && a.contact_id === input.contactId && a.status === "open") {
+        activeAttempts[i] = { ...a, status: "nullified" };
+        stopped += 1;
+      }
+    }
+    return {
+      id,
+      firmId: f,
+      contactId: input.contactId,
+      slot: input.slot ?? null,
+      attemptsStopped: stopped,
+      table: "meeting_booked",
+    };
+  },
+
+  async listMeetings() {
+    const f = standInFirm();
+    const meetings = standInMeetings.filter((m) => m.firmId === f);
+    return { firmId: f, count: meetings.length, meetings };
   },
 };
