@@ -2,13 +2,15 @@
   "buildCommand": "npm run build:vercel",
   "outputDirectory": "dist",
   "functions": {
-    "api/auth/[[...path]].ts": {
+    "api/auth.ts": {
       "memory": 1024,
-      "maxDuration": 10
+      "maxDuration": 10,
+      "includeFiles": "dist-api/**"
     },
-    "api/wire/[[...path]].ts": {
+    "api/wire.ts": {
       "memory": 1024,
-      "maxDuration": 60
+      "maxDuration": 60,
+      "includeFiles": "dist-api/**"
     },
     "api/ping.ts": {
       "memory": 128,
@@ -23,12 +25,28 @@
   ],
   "rewrites": [
     {
+      "source": "/auth",
+      "destination": "/api/auth"
+    },
+    {
       "source": "/auth/:path*",
-      "destination": "/api/auth/:path*"
+      "destination": "/api/auth"
+    },
+    {
+      "source": "/wire",
+      "destination": "/api/wire"
     },
     {
       "source": "/wire/:path*",
-      "destination": "/api/wire/:path*"
+      "destination": "/api/wire"
+    },
+    {
+      "source": "/api/auth/:path*",
+      "destination": "/api/auth"
+    },
+    {
+      "source": "/api/wire/:path*",
+      "destination": "/api/wire"
     },
     {
       "source": "/((?!api/|assets/|fonts/|.*\\..*).*)",

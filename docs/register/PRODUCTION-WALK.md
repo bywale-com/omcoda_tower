@@ -26,15 +26,13 @@
 
 Same Postgres as the API. No second vendor. Vercel Hobby only allows **daily** crons, so minute/5-minute cadence cannot live in `vercel.json` (daily cron kept as a backup at 12:00 UTC).
 
-Alternative: persistent `npm run worker` on Fly/Railway/Docker (`docker-compose.worker.yml`), or upgrade Vercel to Pro for `* * * * *`.
+**Repo secret required:** GitHub → Settings → Secrets → Actions → `CRON_SECRET` — **must match** Vercel Production (rotated 2026-08-10 during Gap 0; re-copy from Vercel if the workflow 401s).
 
-**Repo secret required:** GitHub → Settings → Secrets → Actions → `CRON_SECRET` (same value as Vercel Production).
-
-**Proof status:** tick endpoint + GHA host wired; **unattended prod escalation pending** green `/wire/health` + first successful `prod-tick` run.
+**Proof:** Live `GET /api/wire/machine/tick` with Bearer → `ok:true`, `host: vercel-cron-or-manual`, `scanned≥0`, gate `dry_run`. Workflow file is on this branch; schedule runs after merge to `main`.
 
 ---
 
-## Gap 0 — API 500 (blocker)
+## Gap 0 — API 500 (blocker) — CLOSED
 
 ### Reality before this PR
 
@@ -50,19 +48,18 @@ Alternative: persistent `npm run worker` on Fly/Railway/Docker (`docker-compose.
 2. Disable Vercel body parser (`bodyParser: false`).
 3. Health returns env snapshot JSON (no throw); `/api/ping` diagnostic with no Hono.
 4. CORS allows production SPA + preview hosts.
-5. **esbuild pre-bundle** (`npm run build:api` via `build:vercel`): Vercel’s tracer did not ship `server/**`, so cold start threw `Cannot find module '/var/task/server/…/app'`. Thin `api/*/[[...path]].ts` re-exports `api/*/_handler.js` with `server/**` inlined.
+5. **esbuild pre-bundle** (`npm run build:api` via `build:vercel`): Vercel’s tracer did not ship `server/**`, so cold start threw `Cannot find module '/var/task/server/…/app'`. Handlers are `dist-api/{wire,auth}.js` with `server/**` inlined; thin `api/wire.ts` / `api/auth.ts` re-export them.
+6. **Nested path routing:** non-Next catch-all `api/wire/[[...path]]` only matched **one** segment (multi-segment → edge `NOT_FOUND`). Rewrites send `/api/wire/:path*` → `/api/wire` (and auth likewise); entry restores `?path=` into the pathname for Hono.
+7. Production auth bypass off: `AUTH_DISABLED=false`, `VITE_AUTH_DISABLED=false`; removed `DEV_SESSION_FIRM` / `VITE_DEV_FIRM_ID` from Production so unauthenticated calls cannot land on Cedar.
 
-### Human step required (Vercel dashboard)
-
-Set Production env (see portal action): especially **`NODEJS_HELPERS=0`**, `DATABASE_URL`, ESP keys, `SEND_MODE=dry_run`, `CRON_SECRET`. Redeploy.
-
-**After redeploy, prove:**
+### Proved on Production (2026-08-10)
 
 ```bash
 curl -sS https://omcoda-tower.vercel.app/api/ping
 curl -sS https://omcoda-tower.vercel.app/wire/health
 curl -sS https://omcoda-tower.vercel.app/auth/health
-# expect JSON ok:true — not FUNCTION_INVOCATION_FAILED
+curl -sS https://omcoda-tower.vercel.app/api/wire/machine/health
+# all JSON ok:true
 ```
 
 ---
@@ -73,7 +70,7 @@ Merged into this branch from #68. Session path grep-clean of hardcoded `firm-ced
 
 **Local Postgres proof:** `npm run verify:firm-binding` — six-step × two firms PASS (see `FIRM-BINDING.md`).
 
-**Live URL 11-step:** blocked until Gap 0 health is green on Production.
+**Live URL proof:** `npx tsx --env-file=.env scripts/verify-production-walk.ts` — PASS (below).
 
 ---
 
@@ -81,18 +78,27 @@ Merged into this branch from #68. Session path grep-clean of hardcoded `firm-ced
 
 | Host | Required |
 |------|----------|
-| Vercel Production | `DATABASE_URL`, Resend/Twilio, `SEND_MODE` (empty→dry_run), `SEND_TEST_COHORT`, `NODEJS_HELPERS=0`, `CRON_SECRET` |
-| Worker | Same DB — via Vercel Cron (no separate host) |
+| Vercel Production | `DATABASE_URL`, Resend/Twilio, `SEND_MODE=dry_run`, `SEND_TEST_COHORT`, `NODEJS_HELPERS=0`, `CRON_SECRET`, `AUTH_DISABLED=false`, `VITE_AUTH_DISABLED=false` |
+| Worker | Same DB — via GHA `prod-tick` + daily Vercel cron backup |
 
 Fail-closed: empty cohort → no live sends; missing `SEND_MODE` → dry_run.
 
 ---
 
-## 11-step acceptance ledger
+## 11-step acceptance ledger (live URL)
+
+Script: `scripts/verify-production-walk.ts` against `https://omcoda-tower.vercel.app` (OTP code minted in shared Postgres — Resend rejects `@example.test`; session verify still hits live `/api/auth/otp/verify`).
 
 | # | Step | Status |
 |---|------|--------|
-| 1–11 | Live provision → login → empty book → upload → bind → outreach → two firms | **open** — waiting Gap 0 green on Production |
-| + | Worker unattended escalate on prod | **open** — cron wired; prove after health green |
+| 1 | Provision firm A on live API | **PASS** `887b167a-6526-4eb1-be2d-66baf76d9233` |
+| 2 | Login → session firm = provisioned | **PASS** |
+| 3 | Empty book (not Cedar) | **PASS** |
+| 4 | Upload list → `contact_records` for that firm | **PASS** `c-prod-6833f391` |
+| 5 | Bind sequence + campaign `running` | **PASS** |
+| 6 | Outreach / enrollment (dry_run gate) | **PASS** `enr-412c339d-…` |
+| 7–11 | Firm B same walk + isolation | **PASS** `2b5ce756-…` / `enr-3088e6cb-…`; A cannot see B; not Cedar |
+| + | Health + machine tick on prod | **PASS** |
+| + | GHA unattended schedule | **wired** — runs after `prod-tick.yml` is on `main`; secret must match Vercel |
 
-**Nothing marked done without the live-URL walk.**
+**Escrow · Meta remain deferred.**
