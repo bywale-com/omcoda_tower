@@ -45,6 +45,7 @@ Update checkboxes as gates clear. Method reference: omcoda-hq `register-manual/`
 | **Priors** | **Full-app priors inventory** — 111 priors; **Weak** — 32; `codeRefs` CTO joins ([`priors/`](./priors/) · [`weak/`](./weak/)) |
 | **Wiring (stand-ins)** | **Build slice started** — Login OTP + Halt wired ([`../wiring/STANDIN-WIRING.md`](../wiring/STANDIN-WIRING.md) · [`../wiring/wire-log/`](../wiring/wire-log/)). Pass A externals inventory guides Pass B models ([`../wiring/external-models/`](../wiring/external-models/)) |
 | CT Plant | **Board plant pass landed** — How + SME densify + Furnish; stand-in wiring + Pass B model build in progress |
+| **Prototype cohesion initiative** | **Plan + analysis locked 2026-08-10 — not executing yet** — [`PROTOTYPE-COHESION-PLAN.md`](./PROTOTYPE-COHESION-PLAN.md) · [`PROTOTYPE-COHESION-ANALYSIS.md`](./PROTOTYPE-COHESION-ANALYSIS.md). Product face = CT prototype; live send; Settings/Evaluation modulate modular tables; deferred only Meta / Register & evolution / Escrow |
 | Verify scripts | Not shipped |
 
 ---
