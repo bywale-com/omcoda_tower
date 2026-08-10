@@ -12,7 +12,10 @@ import {
 } from "../trace/surfaceCatalog";
 import { FIRM_BRAND } from "../../wire/firmBrand";
 import { wirePorts } from "../../wire";
-import { confirmContactBooking } from "../prototype/shared/meetingsStore";
+import {
+  confirmContactBooking,
+  writeBackContactFacts,
+} from "../prototype/shared/meetingsStore";
 import {
   LeafSurface,
   RegisterSurfaceMount,
@@ -1243,7 +1246,18 @@ function NudgeForm({
         <LeafSurface label="Submit" focused={focusLabel === "Submit"} t={t} style={{ marginTop: 4 }}>
           <button
             type="button"
-            onClick={() => setFilled(outstandingTotal)}
+            onClick={() => {
+              setFilled(outstandingTotal);
+              writeBackContactFacts({
+                clientId: DEMO_CONTACT_ID,
+                source: "Nudge form",
+                facts: [
+                  { label: "Still in pool", value: "Yes", signal: "Current", signalHint: "Nudge write-back" },
+                  { label: "CLB lowest", value: "CLB 9", signal: "Language met", signalHint: "Nudge write-back" },
+                  { label: "Test date", value: "Mar 12, 2025", signal: "Dated fact", signalHint: "Nudge write-back" },
+                ],
+              });
+            }}
             style={primaryBtn(t, { width: "100%" })}
           >
             Submit
@@ -1729,7 +1743,23 @@ function LoopCloserForm({
             <LeafSurface label="Submit" focused={focusLabel === "Submit"} t={t}>
               <button
                 type="button"
-                onClick={() => setFilled(outstandingTotal)}
+                onClick={() => {
+                  setFilled(outstandingTotal);
+                  writeBackContactFacts({
+                    clientId: DEMO_CONTACT_ID,
+                    source: "Loop-closer form",
+                    facts: [
+                      {
+                        label: "Work permit end",
+                        value: "Sep 15, 2026",
+                        signal: "Timing risk",
+                        signalHint: "Loop-closer write-back",
+                      },
+                      { label: "Hours/week", value: "40", signal: "Current", signalHint: "Loop-closer write-back" },
+                      { label: "TEER guess", value: "TEER 1", signal: "Skilled", signalHint: "Loop-closer write-back" },
+                    ],
+                  });
+                }}
                 style={primaryBtn(t, { width: "100%" })}
               >
                 Submit
@@ -1816,7 +1846,28 @@ function UpdateFacts({
         <LeafSurface label="Submit" focused={focusLabel === "Submit"} t={t}>
           <button
             type="button"
-            onClick={() => setFilled(outstandingTotal)}
+            onClick={() => {
+              setFilled(outstandingTotal);
+              writeBackContactFacts({
+                clientId: DEMO_CONTACT_ID,
+                source: "Update facts",
+                facts: [
+                  {
+                    label: "What changed",
+                    value: "New language test booked",
+                    signal: "Life change",
+                    signalHint: "Update facts write-back",
+                  },
+                  {
+                    label: "Updated CLB target",
+                    value: "CLB 10",
+                    signal: "Language target",
+                    signalHint: "Update facts write-back",
+                  },
+                  { label: "Effective date", value: "Aug 2026", signal: "Current", signalHint: "Update facts write-back" },
+                ],
+              });
+            }}
             style={primaryBtn(t, { width: "100%" })}
           >
             Submit

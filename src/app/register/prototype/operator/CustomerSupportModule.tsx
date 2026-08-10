@@ -1,5 +1,6 @@
 /**
  * Customer support — Ticket queue, Support context tabs, Resolve (How leaves 1.1–1.3).
+ * Tickets persist via primaryStore; Resolve appends auditTrail.
  */
 import { useEffect, useState } from "react";
 import { RegisterSurfaceMount, navBtnStyle, sectionLabelStyle } from "../registerSurfaceChrome";
@@ -14,7 +15,14 @@ import {
   surfaceBlock,
   type OperatorModuleProps,
 } from "./operatorChrome";
+import {
+  appendOperatorAudit,
+  hydratePrimaryStoreRows,
+  persistPrimaryStoreRow,
+} from "./operatorWireHelpers";
 import { useOperatorNav } from "../operatorNav";
+
+const SUPPORT_TICKETS_COLLECTION = "support_tickets";
 
 type TicketStatus = "Open" | "Waiting" | "Resolved";
 
@@ -188,13 +196,24 @@ export function CustomerSupportModule({ t, focusedEntry, hoveredId }: OperatorMo
   const { jumpTo } = useOperatorNav();
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Customer support", focusedEntry, hoveredEntry);
+  const [tickets, setTickets] = useState<Ticket[]>(TICKETS);
   const [selectedId, setSelectedId] = useState(TICKETS[0].id);
-  const [statuses, setStatuses] = useState<Record<string, TicketStatus>>(
-    Object.fromEntries(TICKETS.map((tk) => [tk.id, tk.status])),
-  );
   const [activeTab, setActiveTab] = useState<typeof CONTEXT_TABS[number]["id"]>("bind");
   const [jumpNote, setJumpNote] = useState<string | null>(null);
   const [resolveNote, setResolveNote] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void hydratePrimaryStoreRows(SUPPORT_TICKETS_COLLECTION, TICKETS).then((stored) => {
+      if (!cancelled) {
+        setTickets(stored);
+        setSelectedId(stored[0]?.id ?? TICKETS[0].id);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (!focusedEntry || focusedEntry.module !== "Customer support") return;
@@ -205,12 +224,12 @@ export function CustomerSupportModule({ t, focusedEntry, hoveredId }: OperatorMo
       focusedEntry.label === "Resolve" ||
       focusedEntry.label === "Jump to scoped module"
     ) {
-      setSelectedId(TICKETS[0].id);
+      setSelectedId(tickets[0]?.id ?? TICKETS[0].id);
     }
-  }, [focusedEntry]);
+  }, [focusedEntry, tickets]);
 
-  const selected = TICKETS.find((x) => x.id === selectedId) ?? TICKETS[0];
-  const ticketStatus = statuses[selected.id] ?? selected.status;
+  const selected = tickets.find((x) => x.id === selectedId) ?? tickets[0] ?? TICKETS[0];
+  const ticketStatus = selected.status;
   const tabMeta = CONTEXT_TABS.find((tab) => tab.id === activeTab)!;
   const contextRows =
     CONTEXT_SNAPSHOTS[activeTab]?.[selected.firm] ?? [
@@ -246,8 +265,8 @@ export function CustomerSupportModule({ t, focusedEntry, hoveredId }: OperatorMo
           >
             <div style={sectionLabelStyle(t)}>Ticket queue</div>
             <div data-register-surface="Ticket queue">
-              {TICKETS.map((ticket) => {
-                const st = statuses[ticket.id] ?? ticket.status;
+              {tickets.map((ticket) => {
+                const st = ticket.status;
                 return (
                   <button
                     key={ticket.id}
@@ -342,7 +361,21 @@ export function CustomerSupportModule({ t, focusedEntry, hoveredId }: OperatorMo
                     style={primaryBtnStyle(t, ticketStatus === "Resolved")}
                     disabled={ticketStatus === "Resolved"}
                     onClick={() => {
-                      setStatuses((prev) => ({ ...prev, [selected.id]: "Resolved" }));
+                      const next: Ticket = { ...selected, status: "Resolved" };
+                      setTickets((prev) => prev.map((tk) => (tk.id === next.id ? next : tk)));
+                      void persistPrimaryStoreRow(SUPPORT_TICKETS_COLLECTION, next);
+                      void appendOperatorAudit({
+                        actorId: "ops.support",
+                        kind: "support.resolve",
+                        subjectType: "support_ticket",
+                        subjectId: next.id,
+                        action: `Resolve · ${next.id} · ${next.subject}`,
+                        kindLabel: "Support",
+                        before: selected.status,
+                        after: "Resolved",
+                        surface: "Customer support",
+                        firmName: next.firm,
+                      });
                       setResolveNote("Resolved · Audit trail records closure");
                     }}
                   >

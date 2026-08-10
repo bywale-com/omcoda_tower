@@ -1,8 +1,8 @@
 # INITIATIVE — Prototype cohesion (table-first product wire)
 
-**Status:** EXECUTE PR **#65** — founder greenlit 2026-08-10. Branch `cursor/prototype-cohesion-wire-6565`.  
+**Status:** DONE (capability contract) — PR **#65** branch `cursor/prototype-cohesion-wire-6565`.  
 **Face:** Register prototype / CT (Plant + Ant) **is the product**. Hub authorship is wrong-seat debt.  
-**Date locked:** 2026-08-10  
+**Date locked:** 2026-08-10 · **Contract met:** 2026-08-10  
 **Companion analysis:** [`PROTOTYPE-COHESION-ANALYSIS.md`](./PROTOTYPE-COHESION-ANALYSIS.md)
 
 ### Status notes (execute landings)
@@ -13,15 +13,20 @@
 | Automations CT face (Activate, node config, Runs, Settings) | ✓ |
 | Agents Save/Launch + Settings (attempt criteria, channel order) | ✓ |
 | Evaluation pack editor + pins | ✓ |
-| Shared pack catalog Config ↔ Bind Active | ✓ |
+| Shared pack catalog Config ↔ Bind Active | ✓ Ant + Plant |
+| Plant Bind Active machine chain | ✓ |
 | Provision + OTP invite path | ✓ |
-| Book readiness audit | ✓ |
+| Book readiness audit + upload | ✓ |
+| H2 Confirm book = Authorize alias | ✓ |
 | H1 Kill-switch → `haltStore.commit` firm-book | ✓ Ant + Plant |
 | H1 block **new** enrollments & sends | ✓; in-flight not aborted |
 | Reference Publish → `upsertReference` | ✓ |
 | Jump-to → `setModule` | ✓ |
 | H3 firm brand Cedar Pathways | ✓ |
-| Deferred: Meta / Register & evolution / Escrow | still deferred |
+| Consent / Silence / Booking→Meetings / form write-backs | ✓ |
+| Board / Oversight / Firm health / Audit / Support | ✓ |
+| Acquisition persist + Activation forward-deploy + checklist | ✓ |
+| Deferred: Meta / Register & evolution / Escrow | still deferred (by plan) |
 
 ---
 
@@ -76,7 +81,7 @@ Without these, Bind Active only runs **seeded** law. With them, house modulates 
 
 ## Done = capability contract
 
-Every prototype module capability listed in [`PROTOTYPE-COHESION-ANALYSIS.md`](./PROTOTYPE-COHESION-ANALYSIS.md) §Capabilities works on one wire — except the three deferred items.
+**Met.** Every prototype module capability listed in [`PROTOTYPE-COHESION-ANALYSIS.md`](./PROTOTYPE-COHESION-ANALYSIS.md) §Capabilities works on one wire — except the three deferred items (Meta go-live · Register & evolution · Escrow). See [`MODULES-ALIVE.md`](../../MODULES-ALIVE.md).
 
 Proof spine:
 

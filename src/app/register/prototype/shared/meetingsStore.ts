@@ -191,6 +191,47 @@ export function selectMeetingReadyClientIds(rows: readonly StoredMeeting[]): Set
   return new Set(rows.filter((m) => m.phase === "Meeting-ready").map((m) => m.clientId));
 }
 
+/** Contact portal self-reportable submit — refresh Live brief facts for the client. */
+export function writeBackContactFacts(input: {
+  clientId: string;
+  source: string;
+  facts: LiveBriefFact[];
+}): void {
+  const now = new Date();
+  const asOf = `As of · write-back ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+  let touched = false;
+  meetings = meetings.map((m) => {
+    if (m.clientId !== input.clientId) return m;
+    touched = true;
+    const kept = (m.facts ?? []).filter((f) => !input.facts.some((nf) => nf.label === f.label));
+    return {
+      ...m,
+      asOf,
+      facts: [...kept, ...input.facts],
+      observation: `${m.observation} · ${input.source} write-back refreshed Live brief facts.`,
+    };
+  });
+  if (!touched && input.facts.length > 0) {
+    // No meeting yet — still hold facts on a tentative stub so Live brief can read them after booking.
+    addMeeting({
+      id: `m-facts-${input.clientId}`,
+      clientId: input.clientId,
+      contactName: input.clientId,
+      time: "TBD",
+      status: "Tentative",
+      phase: "In motion",
+      purpose: "Facts write-back",
+      asOf,
+      overview: `${input.source} wrote self-reportable facts before booking.`,
+      pathway: "Facts held for Live brief once meeting is confirmed.",
+      observation: `${input.source} write-back.`,
+      facts: input.facts,
+    });
+    return;
+  }
+  if (touched) emit();
+}
+
 /** Contact portal booking confirm — append a meeting-ready row for the demo contact. */
 export function confirmContactBooking(input: {
   contactName: string;

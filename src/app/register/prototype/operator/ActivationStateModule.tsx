@@ -17,36 +17,58 @@ import {
   surfaceBlock,
   type OperatorModuleProps,
 } from "./operatorChrome";
+import { hydratePrimaryStoreRows } from "./operatorWireHelpers";
 import { useOperatorNav } from "../operatorNav";
 
 type GateId = "forward-deployed" | "authorize-book" | "ready-to-send" | "escrow-held" | "running";
 
 type Gate = { id: GateId; title: string; done: boolean; jump?: string };
 
+type ForwardDeployRow = {
+  id: string;
+  firmId: string;
+  staging: "idle" | "enriching" | "hydrated" | "stale";
+};
+
 const ACTIVATION_ROWS = [
   {
     firmId: DEMO_FIRMS[1].id,
     pct: 50,
     next: "Authorize book",
-    forwardDeployed: true,
   },
   {
     firmId: DEMO_FIRMS[2].id,
     pct: 75,
     next: "Escrow held",
-    forwardDeployed: true,
   },
   {
     firmId: DEMO_FIRMS[3].id,
     pct: 25,
     next: "Forward-deployed",
-    forwardDeployed: false,
   },
 ] as const;
 
-type LiveGates = { authorizeBook: boolean; readyToSend: boolean; escrowHeld: boolean };
+const FORWARD_DEPLOY_SEED: ForwardDeployRow[] = [
+  { id: "act-cedar", firmId: DEMO_FIRMS[1].id, staging: "hydrated" },
+  { id: "act-harbor", firmId: DEMO_FIRMS[2].id, staging: "hydrated" },
+  { id: "act-atlas", firmId: DEMO_FIRMS[3].id, staging: "idle" },
+];
 
-const EMPTY_LIVE: LiveGates = { authorizeBook: false, readyToSend: false, escrowHeld: false };
+type LiveGates = {
+  authorizeBook: boolean;
+  readyToSend: boolean;
+  escrowHeld: boolean;
+  forwardDeployed: boolean;
+  campaignRunning: boolean;
+};
+
+const EMPTY_LIVE: LiveGates = {
+  authorizeBook: false,
+  readyToSend: false,
+  escrowHeld: false,
+  forwardDeployed: false,
+  campaignRunning: false,
+};
 
 export function ActivationStateModule({ t, focusedEntry, hoveredId }: OperatorModuleProps) {
   const { jumpTo } = useOperatorNav();
@@ -68,19 +90,25 @@ export function ActivationStateModule({ t, focusedEntry, hoveredId }: OperatorMo
     }
   }, [focusedEntry]);
 
-  // Fail closed — never hard-code these green; re-read on every fixture change.
+  // Fail closed — re-read wire ports + forward_deploy store + campaign state.
   useEffect(() => {
     let cancelled = false;
-    void Promise.all([wirePorts.crmOAuth.get(selectedId), wirePorts.escrow.get(selectedId)]).then(
-      ([grant, escrow]) => {
-        if (cancelled) return;
-        setLive({
-          authorizeBook: grant.granted && !grant.revoked,
-          readyToSend: isSendingIdentityReady(selectedId),
-          escrowHeld: escrow.status === "held",
-        });
-      },
-    );
+    void Promise.all([
+      wirePorts.crmOAuth.get(selectedId),
+      wirePorts.escrow.get(selectedId),
+      wirePorts.machineApi.getCampaignState().catch(() => null),
+      hydratePrimaryStoreRows("forward_deploy", FORWARD_DEPLOY_SEED),
+    ]).then(([grant, escrow, campaign, deployRows]) => {
+      if (cancelled) return;
+      const deploy = deployRows.find((r) => r.firmId === selectedId);
+      setLive({
+        authorizeBook: grant.granted && !grant.revoked,
+        readyToSend: isSendingIdentityReady(selectedId),
+        escrowHeld: escrow.status === "held",
+        forwardDeployed: deploy?.staging === "hydrated" || deploy?.staging === "enriching",
+        campaignRunning: campaign?.state === "running",
+      });
+    });
     return () => {
       cancelled = true;
     };
@@ -92,8 +120,8 @@ export function ActivationStateModule({ t, focusedEntry, hoveredId }: OperatorMo
     {
       id: "forward-deployed",
       title: "Forward-deployed",
-      done: row.forwardDeployed,
-      jump: row.forwardDeployed ? undefined : "Jump to Activation & forward-deploy",
+      done: live.forwardDeployed,
+      jump: live.forwardDeployed ? undefined : "Jump to Activation & forward-deploy",
     },
     {
       id: "authorize-book",
@@ -116,7 +144,9 @@ export function ActivationStateModule({ t, focusedEntry, hoveredId }: OperatorMo
     {
       id: "running",
       title: "Running",
-      done: row.forwardDeployed && live.authorizeBook && live.readyToSend && live.escrowHeld,
+      done:
+        live.campaignRunning ||
+        (live.forwardDeployed && live.authorizeBook && live.readyToSend && live.escrowHeld),
     },
   ];
   const stalledCount = gates.filter((g) => !g.done && g.jump).length;

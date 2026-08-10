@@ -28,6 +28,7 @@ import { AutomationDetailView } from "../../../components/hub/automation/Automat
 import { AutomationProvider } from "../../../context/AutomationContext";
 import { getAllAgentDefinitions } from "../../../data/agentDefinitions";
 import { getAllWorkflowDefinitions } from "../../../data/automationWorkflows";
+import { wirePorts } from "../../../wire";
 
 
 export type ConfigLibSub =
@@ -147,6 +148,9 @@ export function ConfigurationLibrariesPanel({
     publishPackInCatalog(selected.id, selected.kind, {
       summary: editorNote || selected.summary,
     });
+    if (selected.kind === "evaluation" && selected.pin) {
+      void wirePorts.machineApi.putEvaluationPin(selected.id, selected.pin);
+    }
   }
 
   function openCompare() {
