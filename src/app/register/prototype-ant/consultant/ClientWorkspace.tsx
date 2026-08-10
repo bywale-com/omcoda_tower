@@ -429,6 +429,19 @@ export function ClientWorkspace({
   }, [activityKick]);
 
   useEffect(() => {
+    // #region agent log
+    void fetch("http://127.0.0.1:7399/ingest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        location: "ClientWorkspace.tsx:loadNoteEffect",
+        message: "loadClientMachineNote effect",
+        data: { clientId },
+        timestamp: Date.now(),
+        hypothesisId: "H2",
+      }),
+    }).catch(() => undefined);
+    // #endregion
     let cancelled = false;
     void loadClientMachineNote(clientId).then((note) => {
       if (!cancelled) setMachineNote(note);
@@ -439,6 +452,19 @@ export function ClientWorkspace({
   }, [clientId]);
 
   useEffect(() => {
+    // #region agent log
+    void fetch("http://127.0.0.1:7399/ingest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        location: "ClientWorkspace.tsx:journeyEffect",
+        message: "journey effect setState",
+        data: { clientId, seqLen: journey.sequences.length },
+        timestamp: Date.now(),
+        hypothesisId: "H2",
+      }),
+    }).catch(() => undefined);
+    // #endregion
     setExpandedKeys(defaultExpandedKeys(journey.sequences));
     setSelectedJourneyKey([journey.reactivationSequenceId]);
   }, [journey]);

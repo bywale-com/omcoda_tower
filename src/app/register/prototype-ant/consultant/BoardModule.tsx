@@ -84,11 +84,41 @@ export function BoardModule({
   const [enrollments, setEnrollments] = useState<EnrollmentRow[]>([]);
 
   useEffect(() => {
+    // #region agent log
+    void fetch("http://127.0.0.1:7399/ingest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        location: "BoardModule.tsx:boardDetectionsEffect",
+        message: "boardDetections effect run",
+        data: { wireTick },
+        timestamp: Date.now(),
+        hypothesisId: "H1",
+      }),
+    }).catch(() => undefined);
+    // #endregion
     let cancelled = false;
     void wirePorts.machineApi
       .boardDetections()
       .then((data) => {
         if (cancelled) return;
+        // #region agent log
+        void fetch("http://127.0.0.1:7399/ingest", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            location: "BoardModule.tsx:boardDetectionsThen",
+            message: "boardDetections resolved",
+            data: {
+              wireTick,
+              elig: data.eligibilityResults?.length,
+              signals: data.signals?.length,
+            },
+            timestamp: Date.now(),
+            hypothesisId: "H1",
+          }),
+        }).catch(() => undefined);
+        // #endregion
         setEligibilityResults(data.eligibilityResults);
         setSignals(data.signals);
         setMotionDecisions(data.motionDecisions);
