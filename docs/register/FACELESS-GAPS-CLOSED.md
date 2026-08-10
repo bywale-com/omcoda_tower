@@ -5,6 +5,19 @@
 **Rule:** connect-before-build — no new modules; extend named surfaces  
 **Deferred (unchanged):** Escrow · Meta go-live  
 
+### Click-verified (2026-08-10)
+
+Browser walk on `/prototype-ant` with `VITE_WIRE_REAL=true` after fixing `useMeetings` infinite re-render:
+
+| Priority | Result |
+|----------|--------|
+| P1 fact writeback → Live brief cascade notes | **PASS** |
+| P2 Cohort / Metrics / Phase / Reachability headings + toggles | **PASS** |
+| P3 Forward-deploy Cedar hydrated | **PASS** |
+| P4 Firm Health in-flight + engagement sections | **PASS** |
+
+Render-loop fix: `useMeetings` must return stable `getMeetings` snapshot (not a new array copy each call).
+
 ---
 
 ## Per-table outcome
