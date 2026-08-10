@@ -168,40 +168,7 @@ export function addMeeting(meeting: StoredMeeting): void {
 }
 
 export function useMeetings(): readonly StoredMeeting[] {
-  return useSyncExternalStore(
-    subscribeMeetings,
-    () => {
-      // #region agent log
-      try {
-        const g = globalThis as typeof globalThis & { __meetingsSnapCount?: number };
-        g.__meetingsSnapCount = (g.__meetingsSnapCount ?? 0) + 1;
-        const payload = {
-          location: "meetingsStore.ts:useMeetings:getSnapshot",
-          message: "getSnapshot called",
-          data: {
-            count: g.__meetingsSnapCount,
-            len: meetings.length,
-            sameAsStore: true,
-            runId: "post-fix",
-          },
-          timestamp: Date.now(),
-          hypothesisId: "H3",
-        };
-        if (typeof fetch === "function") {
-          void fetch("http://127.0.0.1:7399/ingest", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          }).catch(() => undefined);
-        }
-      } catch {
-        /* ignore */
-      }
-      // #endregion
-      return getMeetings();
-    },
-    getMeetings,
-  );
+  return useSyncExternalStore(subscribeMeetings, getMeetings, getMeetings);
 }
 
 export type TodayMeetingChip = {
