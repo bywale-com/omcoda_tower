@@ -181,6 +181,14 @@ export async function handleEnrollmentCreate(c: Context) {
     purpose: body.purpose ?? "opt-in",
     fireFirstStep: body.fireFirstStep,
   });
+  if (result.blocked === "halt") {
+    return json(c, {
+      deny: "policy",
+      detail: "halt active",
+      blocked: "halt",
+      gate: sendGateSnapshot(),
+    }, 403);
+  }
   return json(c, {
     id: result.enrollmentId,
     attemptId: result.attemptId,
@@ -289,6 +297,10 @@ export async function handleReferenceUpsert(c: Context) {
         payload: { faceless: true, fallback: true },
         purpose: "reactivation",
       });
+      if (enrolled.blocked === "halt") {
+        cascade.push({ contactId, blocked: "halt", fallback: true });
+        continue;
+      }
       cascade.push({
         contactId,
         enrollmentId: enrolled.enrollmentId,
@@ -492,7 +504,7 @@ export async function handleOnboardingFire(c: Context) {
     });
   }
 
-  const enrolled: Array<{ id: string; dryRun: boolean }> = [];
+  const enrolled: Array<{ id: string; dryRun: boolean; blocked?: string }> = [];
   for (const row of ready.rows) {
     const result = await enrollAndActuate({
       firmId: firm,
@@ -502,6 +514,10 @@ export async function handleOnboardingFire(c: Context) {
       payload: { trigger: "campaign_state=running" },
       purpose: "opt-in",
     });
+    if (result.blocked === "halt") {
+      enrolled.push({ id: "", dryRun: true, blocked: "halt" });
+      continue;
+    }
     enrolled.push({ id: result.enrollmentId, dryRun: result.dryRun });
   }
 

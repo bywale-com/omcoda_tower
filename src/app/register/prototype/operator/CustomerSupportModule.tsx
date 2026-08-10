@@ -14,6 +14,7 @@ import {
   surfaceBlock,
   type OperatorModuleProps,
 } from "./operatorChrome";
+import { useOperatorNav } from "../operatorNav";
 
 type TicketStatus = "Open" | "Waiting" | "Resolved";
 
@@ -184,6 +185,7 @@ const TICKETS: Ticket[] = [
 ];
 
 export function CustomerSupportModule({ t, focusedEntry, hoveredId }: OperatorModuleProps) {
+  const { jumpTo } = useOperatorNav();
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Customer support", focusedEntry, hoveredEntry);
   const [selectedId, setSelectedId] = useState(TICKETS[0].id);
@@ -330,7 +332,7 @@ export function CustomerSupportModule({ t, focusedEntry, hoveredId }: OperatorMo
                     type="button"
                     data-register-surface="Linked per-tenancy actions"
                     style={secondaryBtnStyle(t)}
-                    onClick={() => setJumpNote(`${selected.jumpTarget} · ${selected.firm}`)}
+                    onClick={() => { const n = `${selected.jumpTarget} · ${selected.firm}`; jumpTo(n); setJumpNote(n); }}
                   >
                     {selected.jumpTarget}
                   </button>
@@ -437,7 +439,7 @@ export function CustomerSupportModule({ t, focusedEntry, hoveredId }: OperatorMo
                     type="button"
                     data-register-surface="Jump to scoped module"
                     style={secondaryBtnStyle(t)}
-                    onClick={() => setJumpNote(`${tabMeta.jump} · ${selected.firm}`)}
+                    onClick={() => { const n = `${tabMeta.jump} · ${selected.firm}`; jumpTo(n); setJumpNote(n); }}
                   >
                     {tabMeta.jump}
                   </button>

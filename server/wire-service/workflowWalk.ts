@@ -332,6 +332,10 @@ export async function walkValidatedWorkflow(
             },
             fireFirstStep: true,
           });
+          if (result.blocked === "halt") {
+            // H1: skip new enrollment; do not abort other contacts / in-flight attempts
+            continue;
+          }
           enrollments.push(result.enrollmentId);
           enrolled += 1;
 

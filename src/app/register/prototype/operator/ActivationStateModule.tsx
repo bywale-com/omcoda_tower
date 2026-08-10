@@ -17,6 +17,7 @@ import {
   surfaceBlock,
   type OperatorModuleProps,
 } from "./operatorChrome";
+import { useOperatorNav } from "../operatorNav";
 
 type GateId = "forward-deployed" | "authorize-book" | "ready-to-send" | "escrow-held" | "running";
 
@@ -48,6 +49,7 @@ type LiveGates = { authorizeBook: boolean; readyToSend: boolean; escrowHeld: boo
 const EMPTY_LIVE: LiveGates = { authorizeBook: false, readyToSend: false, escrowHeld: false };
 
 export function ActivationStateModule({ t, focusedEntry, hoveredId }: OperatorModuleProps) {
+  const { jumpTo } = useOperatorNav();
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Activation state", focusedEntry, hoveredEntry);
   const [selectedId, setSelectedId] = useState(ACTIVATION_ROWS[0].firmId);
@@ -283,7 +285,7 @@ export function ActivationStateModule({ t, focusedEntry, hoveredId }: OperatorMo
                         <button
                           type="button"
                           data-register-surface="Progress Jump"
-                          onClick={() => setJumpNote(gate.jump!)}
+                          onClick={() => { jumpTo(gate.jump!); setJumpNote(gate.jump!); }}
                           style={secondaryBtnStyle(t)}
                         >
                           {gate.jump}

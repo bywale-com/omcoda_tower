@@ -2,10 +2,12 @@
 
 Proof that Automations and Agents bind to real machine tables and that the runtime **walks the saved graph** (validated shape), not a fixed cascade path.
 
-**Branch:** `cursor/automations-agents-alive-6565`  
+**Product face:** CT **Configuration libraries** / Register prototype modules (Plant + Ant) — **not Hub**. Hub Agents/Automations remain wrong-seat authorship debt.
+
+**Branch:** `cursor/prototype-cohesion-wire-6565` (alive engine from `cursor/automations-agents-alive-6565`)  
 **Shape (v1):** `Trigger → Constants → Conditions/Branch → Rules → Action → Exit`  
 **Engine:** `server/wire-service/workflowWalk.ts` reusing `enrollAndActuate` from `cascade.ts`  
-**Send gate:** `SEND_MODE=dry_run` default
+**Send gate:** live when `SEND_MODE` / cohort allow; halt_records suppress **new** enrollments and **new** sends (H1)
 
 ---
 
@@ -36,7 +38,7 @@ Activate materializes `workflow_trigger` rows from the Trigger node(s) in the sa
 | Webhook fire | `POST /wire/hook/:webhookId` | ✓ |
 | Schedule fire | Worker `tickOnce` → `dispatchScheduleTriggers` | ✓ |
 | Manual fire | Run button → `POST …/runs` → `walkValidatedWorkflow` (no client fake timer) | ✓ |
-| Action | Resolves `agent_ref` via `firm_sequence_binding`, creates `enrollment` (dry-run send) | ✓ |
+| Action | Resolves `agent_ref` via `firm_sequence_binding`, creates `enrollment` | ✓ |
 | Record | `workflow_run` + `node_status` per node | ✓ |
 
 ---
@@ -60,21 +62,22 @@ Verify: `npx tsx --env-file=.env scripts/verify-automations-alive.ts`
 |---------|-------|--------|
 | Edit sequence steps + Save | `sequence_template.cells` (ordered) | ✓ |
 | Assign template to firm (on Save) | `firm_sequence_binding` | ✓ |
-| Hub Agents open (non-prototype) | `AgentDetailView` → `AgentEditor` | ✓ |
+| CT Config libraries → Agents (prototype) | Ant/Plant Agent workbench → machineApi | ✓ |
+| Hub Agents open (non-prototype) | `AgentDetailView` → `AgentEditor` | wrong-seat · do not treat as product face |
 | Action calling agent | Walk uses edited template via binding | ✓ |
 
 Agent map: `agent-intake`→`tpl.optin_launch.v1`, `agent-nudge`→`tpl.reengagement.v1`, `agent-reactivation`→`tpl.reactivation.v1`.
 
 ---
 
-## Human proof (workflow #2)
+## Human proof (workflow #2) — CT face
 
 1. `npm run db:migrate` (includes `006_workflow_trigger.sql`) + `npm run db:seed`
 2. `npm run dev:auth` + `npm run dev` (`VITE_WIRE_REAL=true`)
-3. Hub → Automations → **Eligibility changed → reactivation**
+3. Operator desk → **Configuration libraries** → Automations → **Eligibility changed → reactivation**
 4. Edit Trigger / Branch / Action (`agentRef=tpl.reactivation.v1`) → graph persists to `workflow`
 5. **Activate** → `workflow_trigger` row for `eligibility.changed`
-6. Fire via reference edit (`POST /wire/machine/reference`) or Runs → Manual run
+6. Fire via Reference data **Publish version** (`machineApi.upsertReference`) or Runs → Manual run
 7. Runs tab shows `workflow_run` with per-node status; `enrollment` rows for the walked Action
 
 Free-form arbitrary graph walk → see `V2-BACKLOG.md`.

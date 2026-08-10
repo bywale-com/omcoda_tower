@@ -5,9 +5,11 @@
 import { useState } from "react";
 import { Button, Card, Form, Input, Select, Space, Tag, Typography, message } from "antd";
 import { wirePorts } from "../../../wire";
+import { useOperatorNav } from "../../prototype/operatorNav";
 import { Hint, ModulePage, Surface } from "../chrome";
 
 export function ProvisionModule() {
+  const { jumpTo } = useOperatorNav();
   const [name, setName] = useState("");
   const [website, setWebsite] = useState("");
   const [email, setEmail] = useState("");
@@ -155,10 +157,10 @@ export function ProvisionModule() {
                 <Tag color="warning">0% · staging required</Tag>
               </Space>
               <Space wrap>
-                <Button onClick={() => setHandoffNote(`Jump to Activation state · ${provisioned.firmName}`)}>
+                <Button onClick={() => { const n = `Jump to Activation state · ${provisioned.firmName}`; jumpTo(n); setHandoffNote(n); }}>
                   Jump to Activation state
                 </Button>
-                <Button onClick={() => setHandoffNote(`Jump to Commercial · ${provisioned.firmName}`)}>
+                <Button onClick={() => { const n = `Jump to Commercial · ${provisioned.firmName}`; jumpTo(n); setHandoffNote(n); }}>
                   Jump to Commercial
                 </Button>
               </Space>

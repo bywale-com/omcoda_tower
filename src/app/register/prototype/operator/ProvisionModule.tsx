@@ -15,8 +15,10 @@ import {
   surfaceBlock,
   type OperatorModuleProps,
 } from "./operatorChrome";
+import { useOperatorNav } from "../operatorNav";
 
 export function ProvisionModule({ t, focusedEntry, hoveredId }: OperatorModuleProps) {
+  const { jumpTo } = useOperatorNav();
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Provision", focusedEntry, hoveredEntry);
   const [name, setName] = useState("");
@@ -261,7 +263,7 @@ export function ProvisionModule({ t, focusedEntry, hoveredId }: OperatorModulePr
                         type="button"
                         style={secondaryBtnStyle(t)}
                         onClick={() =>
-                          setHandoffNote(`Jump to Activation state · ${provisioned.firmName}`)
+                          { const n = `Jump to Activation state · ${provisioned.firmName}`; jumpTo(n); setHandoffNote(n); }
                         }
                       >
                         Jump to Activation state
@@ -269,7 +271,7 @@ export function ProvisionModule({ t, focusedEntry, hoveredId }: OperatorModulePr
                       <button
                         type="button"
                         style={secondaryBtnStyle(t)}
-                        onClick={() => setHandoffNote(`Jump to Commercial · ${provisioned.firmName}`)}
+                        onClick={() => { const n = `Jump to Commercial · ${provisioned.firmName}`; jumpTo(n); setHandoffNote(n); }}
                       >
                         Jump to Commercial
                       </button>

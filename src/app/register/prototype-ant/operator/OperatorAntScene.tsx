@@ -8,6 +8,7 @@ import {
   OPERATOR_SUPPORT_MODULES,
   OPERATOR_TENANCY_MODULES,
 } from "../../trace/surfaceCatalog";
+import { OperatorNavProvider } from "../../prototype/operatorNav";
 import { Surface } from "../chrome";
 import { AcquisitionAdsModule } from "./AcquisitionAdsModule";
 import { ActivationForwardDeployModule } from "./ActivationForwardDeployModule";
@@ -112,6 +113,7 @@ export function OperatorAntScene() {
   }
 
   return (
+    <OperatorNavProvider setModule={(id) => setModule(id as ModuleId)}>
     <Surface label="Operator desk">
       <Layout style={{ height: "100%", minHeight: 0, background: token.colorBgLayout }}>
         <Sider
@@ -136,5 +138,6 @@ export function OperatorAntScene() {
         </Content>
       </Layout>
     </Surface>
+    </OperatorNavProvider>
   );
 }

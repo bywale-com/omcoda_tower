@@ -18,6 +18,7 @@ import {
   Typography,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import { useOperatorNav } from "../../prototype/operatorNav";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { DEMO_FIRMS } from "./operatorAntData";
 import { StatusTag } from "./operatorAntTags";
@@ -128,6 +129,7 @@ function stagingTags(row: ActivationRow) {
 }
 
 export function ActivationForwardDeployModule() {
+  const { jumpTo } = useOperatorNav();
   const [rows, setRows] = useState(INITIAL);
   const [selectedId, setSelectedId] = useState(INITIAL[0].id);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -282,10 +284,10 @@ export function ActivationForwardDeployModule() {
             />
           </Space>
           <Space style={{ marginTop: 12 }} wrap>
-            <Button data-register-surface="Progress Jump" onClick={() => setJumpNote("Jump to Activation state")}>
+            <Button data-register-surface="Progress Jump" onClick={() => { const n = "Jump to Activation state"; jumpTo(n); setJumpNote(n); }}>
               Jump to Activation state
             </Button>
-            <Button data-register-surface="Progress Jump" onClick={() => setJumpNote("Jump to Commercial")}>
+            <Button data-register-surface="Progress Jump" onClick={() => { const n = "Jump to Commercial"; jumpTo(n); setJumpNote(n); }}>
               Jump to Commercial
             </Button>
           </Space>

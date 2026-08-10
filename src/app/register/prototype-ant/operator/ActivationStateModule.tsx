@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Button, Progress, Space, Table, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { isSendingIdentityReady, useWireTick, wirePorts } from "../../../wire";
+import { useOperatorNav } from "../../prototype/operatorNav";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { DEMO_FIRMS } from "./operatorAntData";
 import { StatusTag } from "./operatorAntTags";
@@ -24,6 +25,7 @@ type LiveGates = { authorizeBook: boolean; readyToSend: boolean; escrowHeld: boo
 const EMPTY_LIVE: LiveGates = { authorizeBook: false, readyToSend: false, escrowHeld: false };
 
 export function ActivationStateModule() {
+  const { jumpTo } = useOperatorNav();
   const [selectedId, setSelectedId] = useState(ACTIVATION_ROWS[0].firmId);
   const [jumpNote, setJumpNote] = useState<string | null>(null);
   const [live, setLive] = useState<LiveGates>(EMPTY_LIVE);
@@ -105,7 +107,7 @@ export function ActivationStateModule() {
       width: 200,
       render: (_, g) =>
         !g.done && g.jump ? (
-          <Button size="small" data-register-surface="Progress Jump" onClick={() => setJumpNote(g.jump!)}>
+          <Button size="small" data-register-surface="Progress Jump" onClick={() => { jumpTo(g.jump!); setJumpNote(g.jump!); }}>
             {g.jump}
           </Button>
         ) : null,

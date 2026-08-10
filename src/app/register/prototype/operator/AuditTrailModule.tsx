@@ -14,6 +14,7 @@ import {
   statusChip,
   type OperatorModuleProps,
 } from "./operatorChrome";
+import { useOperatorNav } from "../operatorNav";
 
 const EVENTS = [
   {
@@ -108,6 +109,7 @@ const OPERATIONS = [
 ] as const;
 
 export function AuditTrailModule({ t, focusedEntry, hoveredId }: OperatorModuleProps) {
+  const { jumpTo } = useOperatorNav();
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Audit trail", focusedEntry, hoveredEntry);
   const [firmFilter, setFirmFilter] = useState("All firms");
@@ -379,11 +381,13 @@ export function AuditTrailModule({ t, focusedEntry, hoveredId }: OperatorModuleP
                 data-register-surface="Jump to affected surface"
                 style={secondaryBtnStyle(t)}
                 onClick={() =>
-                  setJumpNote(
-                    `Jump to ${selected.surface}${
+                  (() => {
+                    const n = `Jump to ${selected.surface}${
                       selected.firm !== "House-global" ? ` · firm ${selected.firm}` : ""
-                    }`,
-                  )
+                    }`;
+                    jumpTo(n);
+                    setJumpNote(n);
+                  })()
                 }
               >
                 Jump to {selected.surface}

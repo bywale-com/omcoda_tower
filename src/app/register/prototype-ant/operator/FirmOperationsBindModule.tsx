@@ -22,6 +22,7 @@ import {
   wirePorts,
   type SendDenyReason,
 } from "../../../wire";
+import { useOperatorNav } from "../../prototype/operatorNav";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { DEMO_FIRMS } from "./operatorAntData";
 import { StatusTag } from "./operatorAntTags";
@@ -77,6 +78,7 @@ function isBound(row: FirmBindState) {
 const HELPER = "Published versions only — drafts omitted";
 
 export function FirmOperationsBindModule() {
+  const { jumpTo } = useOperatorNav();
   const [packs] = usePackCatalog();
   const [rows, setRows] = useState(seedBindRows);
   const [selectedId, setSelectedId] = useState(rows[0].firmId);
@@ -281,7 +283,7 @@ export function FirmOperationsBindModule() {
         <Button
           size="small"
           data-register-surface="Jump to Configuration libraries"
-          onClick={() => setJumpNote("Jump to Configuration libraries")}
+          onClick={() => { const n = "Jump to Configuration libraries"; jumpTo(n); setJumpNote(n); }}
           style={{ marginTop: 6 }}
         >
           Jump to Configuration libraries
@@ -338,7 +340,7 @@ export function FirmOperationsBindModule() {
               <Button
                 size="small"
                 data-register-surface="Jump to Configuration libraries"
-                onClick={() => setJumpNote("Jump to Configuration libraries")}
+                onClick={() => { const n = "Jump to Configuration libraries"; jumpTo(n); setJumpNote(n); }}
               >
                 Jump to Configuration libraries
               </Button>

@@ -18,6 +18,7 @@ import {
   surfaceBlock,
   type OperatorModuleProps,
 } from "./operatorChrome";
+import { useOperatorNav } from "../operatorNav";
 
 type StagingChip = "idle" | "enriching" | "hydrated" | "stale";
 type FactsFresh = "fresh" | "stale" | "pending";
@@ -165,6 +166,7 @@ export function ActivationForwardDeployModule({
   focusedEntry,
   hoveredId,
 }: OperatorModuleProps) {
+  const { jumpTo } = useOperatorNav();
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Activation & forward-deploy", focusedEntry, hoveredEntry);
   const [rows, setRows] = useState(INITIAL);
@@ -479,7 +481,7 @@ export function ActivationForwardDeployModule({
                           <button
                             type="button"
                             data-register-surface="Progress Jump"
-                            onClick={() => setJumpNote(step.jump)}
+                            onClick={() => { jumpTo(step.jump); setJumpNote(step.jump); }}
                             style={secondaryBtnStyle(t)}
                           >
                             {step.jump}
@@ -544,7 +546,7 @@ export function ActivationForwardDeployModule({
                   <button
                     type="button"
                     data-register-surface="Progress Jump"
-                    onClick={() => setJumpNote("Jump to Activation state")}
+                    onClick={() => { const n = "Jump to Activation state"; jumpTo(n); setJumpNote(n); }}
                     style={secondaryBtnStyle(t)}
                   >
                     Jump to Activation state
@@ -552,7 +554,7 @@ export function ActivationForwardDeployModule({
                   <button
                     type="button"
                     data-register-surface="Progress Jump"
-                    onClick={() => setJumpNote("Jump to Commercial")}
+                    onClick={() => { const n = "Jump to Commercial"; jumpTo(n); setJumpNote(n); }}
                     style={secondaryBtnStyle(t)}
                   >
                     Jump to Commercial

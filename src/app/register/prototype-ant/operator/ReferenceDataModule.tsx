@@ -1,5 +1,6 @@
 /**
  * Reference data — tables, import Modal, publish Modal with dual-check, ingestion Steps.
+ * Publish version → machineApi.upsertReference so eligibility.changed can fire.
  */
 import { useMemo, useState } from "react";
 import {
@@ -8,6 +9,7 @@ import {
   getConstantsForIndustry,
   type AutomationConstantIndustryId,
 } from "../../../data/automationConstants";
+import { wirePorts } from "../../../wire";
 import {
   Button,
   Card,
@@ -15,7 +17,6 @@ import {
   Input,
   Modal,
   Row,
-  Select,
   Space,
   Steps,
   Table,
@@ -76,6 +77,7 @@ export function ReferenceDataModule() {
   const [publishOpen, setPublishOpen] = useState(false);
   const [publishNotes, setPublishNotes] = useState("");
   const [importFile, setImportFile] = useState("");
+  const [publishing, setPublishing] = useState(false);
 
   const meta = tables.find((r) => r.id === tableId) ?? tables[0];
   const industry = AUTOMATION_CONSTANT_INDUSTRIES.find((i) => i.id === tableId);
@@ -83,27 +85,57 @@ export function ReferenceDataModule() {
   const publishReady = meta.schemaOk && meta.dualCheckOk && meta.publishGroupOk;
   const stageIdx = PIPE_STAGES.indexOf(meta.stage);
 
-  const onConfirmPublish = () => {
+  const onConfirmPublish = async () => {
     if (!publishReady) return;
-    const next = (parseFloat(meta.version.replace("v", "")) + 0.1).toFixed(1);
-    setTables((prev) =>
-      prev.map((row) =>
-        row.id === tableId
-          ? {
-              ...row,
-              version: `v${next}`,
-              status: "Published",
-              schemaOk: true,
-              dualCheckOk: true,
-              publishGroupOk: true,
-              stage: "ready",
-            }
-          : row,
-      ),
-    );
-    setPublishOpen(false);
-    setPublishNotes("");
-    message.success(`Published ${industry?.label ?? tableId} · ${`v${next}`}`);
+    const nextNum = (parseFloat(meta.version.replace("v", "")) + 0.1).toFixed(1);
+    const version = `v${nextNum}`;
+    const versionInt = Math.round(parseFloat(nextNum) * 10);
+    setPublishing(true);
+    try {
+      const payload = {
+        industry: tableId,
+        label: industry?.label ?? tableId,
+        version,
+        notes: publishNotes.trim() || undefined,
+        rows: rows.map((r) => ({
+          key: r.key,
+          label: r.label,
+          value: r.value,
+          type: r.type,
+        })),
+      };
+      const result = await wirePorts.machineApi.upsertReference({
+        key: `reference.${tableId}`,
+        payload,
+        version: versionInt,
+      });
+      setTables((prev) =>
+        prev.map((row) =>
+          row.id === tableId
+            ? {
+                ...row,
+                version,
+                status: "Published" as const,
+                schemaOk: true,
+                dualCheckOk: true,
+                publishGroupOk: true,
+                stage: "ready" as const,
+              }
+            : row,
+        ),
+      );
+      setPublishOpen(false);
+      setPublishNotes("");
+      const fired = Array.isArray(result.workflowsFired) ? result.workflowsFired.length : 0;
+      message.success(
+        `Published ${industry?.label ?? tableId} · ${version}` +
+          (fired > 0 ? ` · eligibility.changed → ${fired} workflow(s)` : " · reference upserted"),
+      );
+    } catch (err) {
+      message.error(err instanceof Error ? err.message : "Publish failed");
+    } finally {
+      setPublishing(false);
+    }
   };
 
   const onImport = () => {
@@ -112,11 +144,11 @@ export function ReferenceDataModule() {
         row.id === tableId
           ? {
               ...row,
-              status: "Draft",
+              status: "Draft" as const,
               schemaOk: true,
               dualCheckOk: false,
               publishGroupOk: row.id !== "financial_services",
-              stage: "dual-check",
+              stage: "dual-check" as const,
             }
           : row,
       ),
@@ -139,7 +171,7 @@ export function ReferenceDataModule() {
           schemaOk: next === "validate" || next === "draft" || next === "dual-check" || next === "ready",
           dualCheckOk: next === "ready",
           publishGroupOk: next === "ready" || next === "dual-check",
-          status: next === "ready" ? row.status : "Draft",
+          status: next === "ready" ? row.status : ("Draft" as const),
         };
       }),
     );
@@ -195,12 +227,15 @@ export function ReferenceDataModule() {
       <Card
         size="small"
         title={industry?.label ?? tableId}
-        extra={<StatusTag label={`${meta.status} · ${meta.version}`} color={meta.status === "Published" ? "success" : "warning"} />}
+        extra={
+          <StatusTag
+            label={`${meta.status} · ${meta.version}`}
+            color={meta.status === "Published" ? "success" : "warning"}
+          />
+        }
         style={{ marginTop: 16 }}
       >
-        {industry?.description ? (
-          <Hint>{industry.description}</Hint>
-        ) : null}
+        {industry?.description ? <Hint>{industry.description}</Hint> : null}
 
         <Surface label="Ingestion stage rail">
           <Steps
@@ -259,10 +294,7 @@ export function ReferenceDataModule() {
           <Typography.Paragraph type="secondary">
             Load IRCC-shaped criteria into a draft table version for {industry?.label ?? tableId}.
           </Typography.Paragraph>
-          <Input
-            type="file"
-            onChange={(e) => setImportFile(e.target.files?.[0]?.name ?? "")}
-          />
+          <Input type="file" onChange={(e) => setImportFile(e.target.files?.[0]?.name ?? "")} />
           {importFile ? <Typography.Text type="success">Selected · {importFile}</Typography.Text> : null}
         </Surface>
       </Modal>
@@ -271,13 +303,14 @@ export function ReferenceDataModule() {
         title="Publish version"
         open={publishOpen}
         onCancel={() => setPublishOpen(false)}
-        onOk={onConfirmPublish}
-        okButtonProps={{ disabled: !publishReady }}
+        onOk={() => void onConfirmPublish()}
+        okButtonProps={{ disabled: !publishReady, loading: publishing }}
         okText="Confirm"
       >
         <Surface label="Publish version">
           <Typography.Paragraph type="secondary">
-            Publish {industry?.label ?? tableId} — Configuration libraries evaluation packs consume this version.
+            Publish {industry?.label ?? tableId} — upserts reference via machineApi so eligibility.changed
+            can fire for Configuration libraries evaluation packs.
           </Typography.Paragraph>
           <Surface label="Dual-check glance">
             <Space wrap style={{ marginBottom: 12 }}>

@@ -10,6 +10,7 @@ import {
   getConstantsForIndustry,
   type AutomationConstantIndustryId,
 } from "../../../data/automationConstants";
+import { wirePorts } from "../../../wire";
 import { RegisterSurfaceMount, navBtnStyle, sectionLabelStyle } from "../registerSurfaceChrome";
 import {
   filterSelectStyle,
@@ -82,6 +83,8 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
   const [publishOpen, setPublishOpen] = useState(false);
   const [publishNotes, setPublishNotes] = useState("");
   const [importFile, setImportFile] = useState("");
+  const [publishing, setPublishing] = useState(false);
+  const [publishNote, setPublishNote] = useState<string | null>(null);
 
   useEffect(() => {
     if (!focusedEntry || focusedEntry.module !== "Reference data") return;
@@ -107,27 +110,57 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
   const rows = useMemo(() => getConstantsForIndustry(tableId).slice(0, 8), [tableId]);
   const publishReady = meta.schemaOk && meta.dualCheckOk && meta.publishGroupOk;
 
-  function onConfirmPublish() {
+  async function onConfirmPublish() {
     if (!publishReady) return;
-    const next = (parseFloat(meta.version.replace("v", "")) + 0.1).toFixed(1);
-    const version = `v${next}`;
-    setTables((prev) =>
-      prev.map((row) =>
-        row.id === tableId
-          ? {
-              ...row,
-              version,
-              status: "Published" as const,
-              schemaOk: true,
-              dualCheckOk: true,
-              publishGroupOk: true,
-              stage: "ready",
-            }
-          : row,
-      ),
-    );
-    setPublishOpen(false);
-    setPublishNotes("");
+    const nextNum = (parseFloat(meta.version.replace("v", "")) + 0.1).toFixed(1);
+    const version = `v${nextNum}`;
+    const versionInt = Math.round(parseFloat(nextNum) * 10);
+    setPublishing(true);
+    try {
+      const payload = {
+        industry: tableId,
+        label: industry?.label ?? tableId,
+        version,
+        notes: publishNotes.trim() || undefined,
+        rows: rows.map((r) => ({
+          key: r.key,
+          label: r.label,
+          value: r.value,
+          type: r.type,
+        })),
+      };
+      const result = await wirePorts.machineApi.upsertReference({
+        key: `reference.${tableId}`,
+        payload,
+        version: versionInt,
+      });
+      setTables((prev) =>
+        prev.map((row) =>
+          row.id === tableId
+            ? {
+                ...row,
+                version,
+                status: "Published" as const,
+                schemaOk: true,
+                dualCheckOk: true,
+                publishGroupOk: true,
+                stage: "ready",
+              }
+            : row,
+        ),
+      );
+      setPublishOpen(false);
+      setPublishNotes("");
+      const fired = Array.isArray(result.workflowsFired) ? result.workflowsFired.length : 0;
+      setPublishNote(
+        `Published ${version}` +
+          (fired > 0 ? ` · eligibility.changed → ${fired} workflow(s)` : " · reference upserted"),
+      );
+    } catch (err) {
+      setPublishNote(err instanceof Error ? err.message : "Publish failed");
+    } finally {
+      setPublishing(false);
+    }
   }
 
   function onImport() {
@@ -572,16 +605,19 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
             <div style={{ display: "flex", gap: 8 }}>
               <button
                 type="button"
-                disabled={!publishReady}
-                onClick={onConfirmPublish}
-                style={primaryBtnStyle(t, !publishReady)}
+                disabled={!publishReady || publishing}
+                onClick={() => void onConfirmPublish()}
+                style={primaryBtnStyle(t, !publishReady || publishing)}
               >
-                Confirm
+                {publishing ? "Publishing…" : "Confirm"}
               </button>
               <button type="button" onClick={() => setPublishOpen(false)} style={secondaryBtnStyle(t)}>
                 Cancel
               </button>
             </div>
+            {publishNote ? (
+              <div style={{ marginTop: 10, fontSize: 11, color: t.accent }}>{publishNote}</div>
+            ) : null}
           </div>
         </div>
       ) : null}

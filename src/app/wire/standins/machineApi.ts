@@ -22,6 +22,7 @@ import type {
   WorkflowRow,
   WorkflowRunRow,
 } from "../machineTypes";
+import { standInHaltStore } from "./haltStore";
 
 /** Mirrors supabase/seeds/002_machine_tables.sql seq_eligibility_pipeline. */
 const ELIGIBILITY_PIPELINE: EligibilityPipelineRow[] = [
@@ -362,6 +363,12 @@ export const standInMachineApi: MachineApiPort = {
   },
 
   async createEnrollment(input) {
+    if (
+      (await standInHaltStore.isFirmBookHalted(FIRM)) ||
+      (await standInHaltStore.isContactHalted(input.contactId))
+    ) {
+      throw new Error("halt active — new enrollments suppressed (H1)");
+    }
     const id = `enr-local-${Date.now()}`;
     const row: EnrollmentRow = {
       id,

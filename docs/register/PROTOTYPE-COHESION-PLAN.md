@@ -5,6 +5,16 @@
 **Date locked:** 2026-08-10  
 **Companion analysis:** [`PROTOTYPE-COHESION-ANALYSIS.md`](./PROTOTYPE-COHESION-ANALYSIS.md)
 
+### Status notes (remaining cohesion pieces)
+
+| Piece | Status |
+|-------|--------|
+| H1 Kill-switch → `haltStore.commit` firm-book (DEMO_FIRMS / CT_DEMO ids) | ✓ Ant + Plant FounderAgencyControls |
+| H1 `enrollAndActuate` / `dispatchSend` block **new** enrollments & sends | ✓; in-flight attempts not aborted |
+| Reference Publish → `machineApi.upsertReference` (`eligibility.changed`) | ✓ Ant + Plant Reference data |
+| Jump-to → real `setModule` navigation (not notes-only) | ✓ OperatorAnt + Plant via `operatorNav` |
+| Product face | CT Config libraries / prototype modules — **not Hub** |
+
 ---
 
 ## Purpose

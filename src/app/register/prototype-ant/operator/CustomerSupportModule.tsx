@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { Button, Card, Col, Row, Space, Table, Tabs, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import { useOperatorNav } from "../../prototype/operatorNav";
 import { ModulePage, Surface } from "../chrome";
 import { DEMO_FIRMS } from "./operatorAntData";
 import { StatusTag } from "./operatorAntTags";
@@ -59,6 +60,7 @@ const TICKETS: Ticket[] = [
 ];
 
 export function CustomerSupportModule() {
+  const { jumpTo } = useOperatorNav();
   const [selectedId, setSelectedId] = useState(TICKETS[0].id);
   const [statuses, setStatuses] = useState<Record<string, TicketStatus>>(
     Object.fromEntries(TICKETS.map((tk) => [tk.id, tk.status])),
@@ -113,7 +115,7 @@ export function CustomerSupportModule() {
             <Card size="small" title={`${selected.id} · ${selected.subject}`} extra={<StatusTag label={ticketStatus} color={ticketStatus === "Resolved" ? "success" : "warning"} />}>
               <Typography.Paragraph type="secondary">{selected.body}</Typography.Paragraph>
               <Space wrap>
-                <Button data-register-surface="Linked per-tenancy actions" onClick={() => setJumpNote(`${selected.jumpTarget} · ${selected.firm}`)}>
+                <Button data-register-surface="Linked per-tenancy actions" onClick={() => { const n = `${selected.jumpTarget} · ${selected.firm}`; jumpTo(n); setJumpNote(n); }}>
                   {selected.jumpTarget}
                 </Button>
                 <Button
@@ -165,7 +167,7 @@ export function CustomerSupportModule() {
             <Button
               style={{ marginTop: 12 }}
               data-register-surface="Jump to scoped module"
-              onClick={() => setJumpNote(`${tabMeta.jump} · ${selected.firm}`)}
+              onClick={() => { const n = `${tabMeta.jump} · ${selected.firm}`; jumpTo(n); setJumpNote(n); }}
             >
               {tabMeta.jump}
             </Button>

@@ -5,7 +5,7 @@
 import { randomUUID } from "node:crypto";
 import type { Pool } from "pg";
 import { getPool } from "./db.ts";
-import { dispatchEmail, dispatchSms, type DispatchResult } from "./dispatchSend.ts";
+import { dispatchEmail, dispatchSms, isHaltBlockingNew, type DispatchResult } from "./dispatchSend.ts";
 import { shouldLiveSend } from "./sendMode.ts";
 
 export type AttemptState = {
@@ -412,6 +412,22 @@ export type EnrollActuateInput = {
 
 export async function enrollAndActuate(input: EnrollActuateInput) {
   const pool = getPool();
+
+  // H1: firm-book or contact halt blocks NEW enrollments (does not abort in-flight attempts).
+  if (await isHaltBlockingNew(input.firmId, input.contactId)) {
+    return {
+      enrollmentId: "",
+      attemptId: "",
+      dryRun: true,
+      send: {
+        ok: false as const,
+        deny: "policy",
+        detail: "halt active",
+      },
+      blocked: "halt" as const,
+    };
+  }
+
   const live = shouldLiveSend(input.contactId);
   const id = `enr-${randomUUID()}`;
   const payload = {

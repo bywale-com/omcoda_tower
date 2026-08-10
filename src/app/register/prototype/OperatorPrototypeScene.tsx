@@ -34,6 +34,7 @@ import {
   SendingInfrastructureModule,
   type ConfigLibSub,
 } from "./operator";
+import { OperatorNavProvider } from "./operatorNav";
 
 type OperatorPrototypeSceneProps = {
   t: Tokens;
@@ -149,6 +150,7 @@ export function OperatorPrototypeScene({
   }
 
   return (
+    <OperatorNavProvider setModule={setModule}>
     <div style={{ flex: 1, minHeight: 0, display: "flex", overflow: "hidden" }}>
       <aside
         style={{
@@ -198,5 +200,6 @@ export function OperatorPrototypeScene({
         {main}
       </div>
     </div>
+    </OperatorNavProvider>
   );
 }

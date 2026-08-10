@@ -4,6 +4,7 @@
 import { useMemo, useState } from "react";
 import { Button, Modal, Select, Space, Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import { useOperatorNav } from "../../prototype/operatorNav";
 import { ModulePage, Surface } from "../chrome";
 import { DEMO_FIRMS } from "./operatorAntData";
 import { StatusTag } from "./operatorAntTags";
@@ -22,6 +23,7 @@ const ACTORS = ["All actors", "ops.lena", "ops.marco", "founder", "support.kai"]
 const OPERATIONS = ["All operations", "Publish version", "Bind packs", "Kill-switch", "Escrow terms", "Provision", "Activation", "Support"];
 
 export function AuditTrailModule() {
+  const { jumpTo } = useOperatorNav();
   const [firmFilter, setFirmFilter] = useState("All firms");
   const [actorFilter, setActorFilter] = useState("All actors");
   const [opFilter, setOpFilter] = useState("All operations");
@@ -116,12 +118,12 @@ export function AuditTrailModule() {
           <Space>
             <Button
               data-register-surface="Jump to affected surface"
-              onClick={() =>
-                selected &&
-                setJumpNote(
-                  `Jump to ${selected.surface}${selected.firm !== "House-global" ? ` · firm ${selected.firm}` : ""}`,
-                )
-              }
+              onClick={() => {
+                if (!selected) return;
+                const n = `Jump to ${selected.surface}${selected.firm !== "House-global" ? ` · firm ${selected.firm}` : ""}`;
+                jumpTo(n);
+                setJumpNote(n);
+              }}
             >
               Jump to {selected?.surface}
             </Button>

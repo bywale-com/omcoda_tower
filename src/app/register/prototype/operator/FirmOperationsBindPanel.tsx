@@ -29,6 +29,7 @@ import {
   statusChip,
   surfaceBlock,
 } from "./operatorChrome";
+import { useOperatorNav } from "../operatorNav";
 
 type Posture = "Armed" | "Active";
 
@@ -88,6 +89,7 @@ export function FirmOperationsBindPanel({
   focusedEntry: RegisterSurfaceEntry | null;
   hoveredId: string | null;
 }) {
+  const { jumpTo } = useOperatorNav();
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Firm operations bind", focusedEntry, hoveredEntry);
   const [packs] = useState<ConfigPack[]>(seedConfigPacks);
@@ -268,7 +270,7 @@ export function FirmOperationsBindPanel({
           <button
             type="button"
             data-register-surface="Jump to Configuration libraries"
-            onClick={() => setJumpNote("Jump to Configuration libraries")}
+            onClick={() => { const n = "Jump to Configuration libraries"; jumpTo(n); setJumpNote(n); }}
             style={{ ...secondaryBtnStyle(t), marginTop: 6 }}
           >
             Jump to Configuration libraries
@@ -392,7 +394,7 @@ export function FirmOperationsBindPanel({
                     <button
                       type="button"
                       data-register-surface="Jump to Configuration libraries"
-                      onClick={() => setJumpNote("Jump to Configuration libraries")}
+                      onClick={() => { const n = "Jump to Configuration libraries"; jumpTo(n); setJumpNote(n); }}
                       style={secondaryBtnStyle(t)}
                     >
                       Jump to Configuration libraries
@@ -630,7 +632,7 @@ export function FirmOperationsBindPanel({
               <button
                 type="button"
                 data-register-surface="Jump to Configuration libraries"
-                onClick={() => setJumpNote("Jump to Configuration libraries")}
+                onClick={() => { const n = "Jump to Configuration libraries"; jumpTo(n); setJumpNote(n); }}
                 style={secondaryBtnStyle(t)}
               >
                 Jump to Configuration libraries
