@@ -6,13 +6,13 @@
 
 **Source of modular set:** [`system-map/FROZEN-TABLES-v1.md`](./system-map/FROZEN-TABLES-v1.md) + [`system-map/MODULARITY-REPORT.md`](./system-map/MODULARITY-REPORT.md).
 
-**Status key:** `mapped` · `false-map` · `missing-control` · `faceless-by-design` · `deferred` · `trial-pass` · `trial-fail`
+**Trial script:** `npx tsx scripts/verify-modular-surfaces.ts` — same APIs the CT surfaces call; read-back must hold the mutated value.
 
-**Trial script:** `npx tsx scripts/verify-modular-surfaces.ts` (stand-in API = same writes the surfaces call).
+**Status key:** `trial-pass` · `faceless-by-design` · `deferred`
 
 ---
 
-## Non-modular (not left-side work)
+## Non-modular (walls — not left-side work)
 
 | Wall | Reason |
 |------|--------|
@@ -24,58 +24,55 @@
 
 ---
 
-## Opening gap (closed)
-
-| Modular (left) | Control (right) | Was → Now |
-|----------------|-----------------|-----------|
-| `reference_versions.payload.rows[*].value` | Reference data → **Reference row value** + **Publish version** | false-map (seed re-send) → **`trial-pass`** |
-
----
-
-## Map (operator / CT product face — Ant primary)
+## Map (closed left→right — Ant primary)
 
 | Modular (left) | Control (right) | Status |
 |----------------|-----------------|--------|
-| `reference_versions` row / payload / version | Reference data → grid Value + **Publish version** | `trial-pass` |
-| `seq_eligibility_pipeline` order | Automations → Settings → **Eligibility pipeline** ↑↓ | `trial-pass` (was missing-control) |
-| `rule_motion_precedence` enable + ord | Evaluation → Motion precedence Switch + ↑↓ | `trial-pass` |
-| `rule_eligibility_pathway` enable | Evaluation → Eligibility pathways Switch | `mapped` (same enable API family) |
-| `rule_field_class_routing` enable + `set_value` | Evaluation → Field-class inputs | `mapped` |
-| `rule_reachability_checks` enable + params | Evaluation → Reachability inputs | `mapped` |
-| `rule_attempt_criteria` thresholds / enable | Agents → Settings | `mapped` |
-| `seq_channel_ownership_order` order | Agents → Settings reorder | `trial-pass` |
-| `seq_phase_order` order | Agents → Settings reorder | `trial-pass` |
+| `reference_versions.payload.rows[*].value` | Reference data → Value + **Publish version** | `trial-pass` |
+| `seq_eligibility_pipeline` order | Automations → Settings ↑↓ | `trial-pass` |
+| `rule_motion_precedence` enable + ord | Evaluation → Motion Switch + ↑↓ | `trial-pass` |
+| `rule_eligibility_pathway` enable | Evaluation → Pathways Switch | `trial-pass` |
+| `rule_field_class_routing` enable + `set_value` | Evaluation → Field-class | `trial-pass` |
+| `rule_reachability_checks` enable + `set_value` | Evaluation → Reachability | `trial-pass` |
+| `rule_attempt_criteria` enable + threshold | Agents → Settings | `trial-pass` |
+| `seq_channel_ownership_order` order | Agents → Settings ↑↓ | `trial-pass` |
+| `seq_phase_order` order | Agents → Settings ↑↓ | `trial-pass` |
 | `rule_cohort_scoring` enable / `set_value` | Agents → Settings | `trial-pass` |
 | `rule_metrics_thresholds` enable / threshold | Agents → Settings | `trial-pass` |
-| Evaluation pin → `constants_packs` | Config libraries → Evaluation **Publish version** | `trial-pass` |
+| Evaluation pin → `constants_packs` | Config → Evaluation **Publish** | `trial-pass` |
 | `campaign_states` | Firm ops Bind posture | `trial-pass` |
-| `workflow` / `workflow_state` draft→active | Automations **Launch** / Bind Active | `mapped` |
-| `workflow_run` / action walk | Automations Launch + Runs tab | `mapped` |
-| `sequence_template` + `firm_sequence_binding` | **Agents Save** + Firm ops **Bind** (not Config Publish catalog) | `mapped` |
-| `enrollment` | Agents Launch / workflow walk / onboarding fire | `mapped` + faceless |
-| `contact_records` / `reachability_verdicts` / `sequence_ready` / `audit_runs` | Book → Start Audit / Upload CSV | `mapped` |
-| `prepared_workspaces` | Activation & forward-deploy | `mapped` |
-| `halt_records` | Board / Founder haltStore | `mapped` |
-| `consent_records` | Contact consentSilence | `mapped` |
-| `fact_writebacks` / `missing_fact_signals` | Contact forms submit | `mapped` |
+| `workflow` / `workflow_state` draft→active | Automations **Launch** / Bind Active | `trial-pass` |
+| `workflow_run` | Automations Launch → `startRun` | `trial-pass` |
+| `sequence_template` cells | Agents **Save** | `trial-pass` |
+| `firm_sequence_binding` | Agents Save / Bind **Active** | `trial-pass` |
+| `enrollment` | Agents **Launch agent** | `trial-pass` |
+| `audit_runs` + `contact_records` + `reachability_verdicts` + `sequence_ready` | Book → Start Audit / Upload | `trial-pass` |
+| `prepared_workspaces` | Activation & forward-deploy | `trial-pass` |
+| `halt_records` | Board / Founder haltStore | `trial-pass` |
+| `consent_records` | Contact consentSilence | `trial-pass` |
+| `fact_writebacks` / `missing_fact_signals` | Contact form fields + Submit (editable values) | `trial-pass` |
 | `eligibility_*` / `signals` / `motion_decisions` | Faceless from reference/fact; Board read | `faceless-by-design` |
-| `active_attempts` / `engagement_records` | Firm Health read | `mapped` (read) |
+| `active_attempts` / `engagement_records` | Firm Health read | `trial-pass` (read) |
 | `escrow_acceptances` | Commercial | `deferred` |
 | Meta campaign go-live | Acquisition | `deferred` |
 
 ---
 
-## Surface gaps closed this pass
+## False maps closed this pass
 
-1. **`seq_eligibility_pipeline`** — created PUT `/machine/eligibility-pipeline` + Automations Settings ↑↓ (was read-only / missing-control).
-2. **`rule_motion_precedence.ord`** — Evaluation Motion list now reorders (enable alone was incomplete modulation).
-3. **Reference value** — already closed; kept in trial script.
+1. Reference Publish re-sent seeds → grid edits persist.
+2. `seq_eligibility_pipeline` read-only → reorder API + Settings ↑↓.
+3. Motion enable-only → ord reorder.
+4. Contact form write-backs used hard-coded readOnly values → fields editable; Submit writes edited values.
+5. Book audit stand-in now persists the four tables for read-back trial.
 
-## Explicit non-gaps
+## Explicit non-gaps (do not false-map)
 
-- Config libraries **Publish** for Automations/Agents packs updates the **local bind catalog**; template cells land via **Agents Save**, firm binding via **Bind Active**. Claiming Publish writes `sequence_template` would be a false map.
-- Automations Settings “Enrollment summary” is local trigger chrome — not the `enrollment` table (Launch / cascade are the writers).
+- Config **Publish** Automations/Agents packs → local bind catalog only; templates via **Agents Save**.
+- Bind packs modal OK → local pack ids; wire bind via **Active** / Agents Save.
+- Automations Settings “Enrollment summary” → local trigger chrome, not `enrollment` rows.
+- Firm Health “Engagement health” metrics table → synthetic; real `engagement_records` is the records strip.
 
-## Trial rule
+## Closed when
 
-Operate the named control; assert **that** modular field. Cascade/UI copy alone never counts.
+No modular (non-wall, non-deferred, non-faceless) left item remains `mapped` / `false-map` / `missing-control`. **Current: closed.** `verify-modular-surfaces.ts` green.

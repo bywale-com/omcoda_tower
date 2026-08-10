@@ -202,6 +202,42 @@ const evaluationPins = new Map<string, EvaluationPin>();
 const campaignStates = new Map<string, CampaignState>([["firm-cedar", "running"]]);
 const provisionedFirms = new Map<string, ProvisionResult>();
 
+/** Book audit stand-in tables — createAuditRun persists so trials can read back. */
+const bookAuditRuns = new Map<
+  string,
+  {
+    id: string;
+    firm_id: string;
+    status: "running" | "complete" | "failed";
+    import_ids: unknown[];
+    summary: Record<string, unknown>;
+    started_at: string;
+    finished_at: string | null;
+  }
+>();
+const bookContacts = new Map<
+  string,
+  { id: string; email: string | null; phone: string | null; name: string | null }
+>();
+const bookVerdicts = new Map<string, string>();
+const bookSequenceReady = new Map<string, boolean>();
+
+/** Trial read-back for Book audit tables (stand-in only). */
+export function getStandInBookSnapshot() {
+  return {
+    audit_runs: [...bookAuditRuns.values()],
+    contact_records: [...bookContacts.values()],
+    reachability_verdicts: [...bookVerdicts.entries()].map(([contactId, verdict]) => ({
+      contactId,
+      verdict,
+    })),
+    sequence_ready: [...bookSequenceReady.entries()].map(([contactId, ready]) => ({
+      contactId,
+      ready,
+    })),
+  };
+}
+
 function now() {
   return new Date().toISOString();
 }
@@ -539,14 +575,37 @@ export const standInMachineApi: MachineApiPort = {
         name: contact.name ?? null,
       };
     });
+    const id = `arun-local-${Date.now()}`;
+    const started = now();
+    bookAuditRuns.set(id, {
+      id,
+      firm_id: FIRM,
+      status: "complete",
+      import_ids: input.importIds ?? [],
+      summary: { contacts: contacts.length, ready: verdicts.filter((v) => v.ready).length },
+      started_at: started,
+      finished_at: started,
+    });
+    for (const contact of contacts) {
+      bookContacts.set(contact.id, {
+        id: contact.id,
+        email: contact.email ?? null,
+        phone: contact.phone ?? null,
+        name: contact.name ?? null,
+      });
+    }
+    for (const v of verdicts) {
+      bookVerdicts.set(v.contactId, v.verdict);
+      bookSequenceReady.set(v.contactId, v.ready);
+    }
     return {
-      id: `arun-local-${Date.now()}`,
+      id,
       firm_id: FIRM,
       status: "complete" as const,
       import_ids: input.importIds ?? [],
       summary: { contacts: contacts.length, ready: verdicts.filter((v) => v.ready).length },
-      started_at: now(),
-      finished_at: now(),
+      started_at: started,
+      finished_at: started,
       contacts: contacts.length,
       verdicts,
     };

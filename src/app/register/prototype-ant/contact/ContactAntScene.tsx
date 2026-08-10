@@ -735,6 +735,12 @@ function NudgeForm({ onSilence }: { onSilence: () => void }) {
   const outstandingTotal = 4;
   const [filled, setFilled] = useState(1);
   const remaining = Math.max(0, outstandingTotal - filled);
+  const [stillInPool, setStillInPool] = useState("Yes");
+  const [lastEeUpdate, setLastEeUpdate] = useState("Jan 2026");
+  const [languageProduct, setLanguageProduct] = useState("IELTS General");
+  const [testDate, setTestDate] = useState("Mar 12, 2025");
+  const [validThrough, setValidThrough] = useState("Mar 12, 2027");
+  const [clbLowest, setClbLowest] = useState("CLB 9");
 
   return (
     <PortalShell surface="Nudge form" badge="Self-reportable only">
@@ -756,22 +762,26 @@ function NudgeForm({ onSilence }: { onSilence: () => void }) {
           <Surface label="Self-reportable fields">
             <Form layout="vertical" size="small">
               <Form.Item label="Still in pool">
-                <Input placeholder={draftRestored ? undefined : "—"} value={draftRestored ? "Yes" : undefined} readOnly={draftRestored} />
+                <Input
+                  data-register-surface="Nudge fact value"
+                  value={stillInPool}
+                  onChange={(e) => setStillInPool(e.target.value)}
+                />
               </Form.Item>
               <Form.Item label="Approximate last EE update">
-                <Input placeholder={draftRestored ? undefined : "—"} value={draftRestored ? "Jan 2026" : undefined} readOnly={draftRestored} />
+                <Input value={lastEeUpdate} onChange={(e) => setLastEeUpdate(e.target.value)} />
               </Form.Item>
               <Form.Item label="Language test product">
-                <Input value="IELTS General" readOnly />
+                <Input value={languageProduct} onChange={(e) => setLanguageProduct(e.target.value)} />
               </Form.Item>
               <Form.Item label="Test date" extra="Enter the day you took the test — not the expiry. Validity is usually test date + 2 years for EE profiles.">
-                <Input value="Mar 12, 2025" readOnly />
+                <Input value={testDate} onChange={(e) => setTestDate(e.target.value)} />
               </Form.Item>
               <Form.Item label="Validity / still valid through" extra="Optional: if you know the window is still open, enter the end of validity. Do not upload the certificate.">
-                <Input value="Mar 12, 2027" readOnly />
+                <Input value={validThrough} onChange={(e) => setValidThrough(e.target.value)} />
               </Form.Item>
               <Form.Item label="CLB-equivalent band (lowest)">
-                <Input value="CLB 9" readOnly />
+                <Input value={clbLowest} onChange={(e) => setClbLowest(e.target.value)} />
               </Form.Item>
             </Form>
           </Surface>
@@ -789,9 +799,27 @@ function NudgeForm({ onSilence }: { onSilence: () => void }) {
                 clientId: DEMO_CONTACT_ID,
                 source: "Nudge form",
                 facts: [
-                  { label: "Still in pool", value: "Yes", signal: "Current", signalHint: "Nudge write-back" },
-                  { label: "CLB lowest", value: "CLB 9", signal: "Language met", signalHint: "Nudge write-back" },
-                  { label: "Test date", value: "Mar 12, 2025", signal: "Dated fact", signalHint: "Nudge write-back" },
+                  { label: "Still in pool", value: stillInPool, signal: "Current", signalHint: "Nudge write-back" },
+                  { label: "CLB lowest", value: clbLowest, signal: "Language met", signalHint: "Nudge write-back" },
+                  { label: "Test date", value: testDate, signal: "Dated fact", signalHint: "Nudge write-back" },
+                  {
+                    label: "Approximate last EE update",
+                    value: lastEeUpdate,
+                    signal: "Current",
+                    signalHint: "Nudge write-back",
+                  },
+                  {
+                    label: "Language test product",
+                    value: languageProduct,
+                    signal: "Language",
+                    signalHint: "Nudge write-back",
+                  },
+                  {
+                    label: "Validity still valid through",
+                    value: validThrough,
+                    signal: "Dated fact",
+                    signalHint: "Nudge write-back",
+                  },
                 ],
               });
             }}
@@ -1071,6 +1099,10 @@ function LoopCloserForm({ onSilence }: { onSilence: () => void }) {
   const [filled, setFilled] = useState(0);
   const remaining = Math.max(0, outstandingTotal - filled);
   const clear = remaining === 0;
+  const [permitEnd, setPermitEnd] = useState("Sep 15, 2026");
+  const [hoursWeek, setHoursWeek] = useState("40");
+  const [teerGuess, setTeerGuess] = useState("TEER 1");
+  const [testDate, setTestDate] = useState("Mar 12, 2025");
 
   return (
     <PortalShell surface="Loop-closer form" badge="Pre-meeting">
@@ -1095,16 +1127,20 @@ function LoopCloserForm({ onSilence }: { onSilence: () => void }) {
               <Surface label="Self-reportable fields">
                 <Form layout="vertical" size="small">
                   <Form.Item label="Work permit end date (approx)">
-                    <Input value="Sep 15, 2026" readOnly />
+                    <Input
+                      data-register-surface="Loop-closer fact value"
+                      value={permitEnd}
+                      onChange={(e) => setPermitEnd(e.target.value)}
+                    />
                   </Form.Item>
                   <Form.Item label="Hours/week (current role)">
-                    <Input value="40" readOnly />
+                    <Input value={hoursWeek} onChange={(e) => setHoursWeek(e.target.value)} />
                   </Form.Item>
                   <Form.Item label="TEER guess">
-                    <Input value="TEER 1" readOnly />
+                    <Input value={teerGuess} onChange={(e) => setTeerGuess(e.target.value)} />
                   </Form.Item>
                   <Form.Item label="Test date" extra="Test date (day of exam), not document upload. Validity window is separate.">
-                    <Input value="Mar 12, 2025" readOnly />
+                    <Input value={testDate} onChange={(e) => setTestDate(e.target.value)} />
                   </Form.Item>
                 </Form>
               </Surface>
@@ -1124,12 +1160,13 @@ function LoopCloserForm({ onSilence }: { onSilence: () => void }) {
                     facts: [
                       {
                         label: "Work permit end",
-                        value: "Sep 15, 2026",
+                        value: permitEnd,
                         signal: "Timing risk",
                         signalHint: "Loop-closer write-back",
                       },
-                      { label: "Hours/week", value: "40", signal: "Current", signalHint: "Loop-closer write-back" },
-                      { label: "TEER guess", value: "TEER 1", signal: "Skilled", signalHint: "Loop-closer write-back" },
+                      { label: "Hours/week", value: hoursWeek, signal: "Current", signalHint: "Loop-closer write-back" },
+                      { label: "TEER guess", value: teerGuess, signal: "Skilled", signalHint: "Loop-closer write-back" },
+                      { label: "Test date", value: testDate, signal: "Dated fact", signalHint: "Loop-closer write-back" },
                     ],
                     signalMissingFieldKey: "validity_still_valid",
                   });
@@ -1150,6 +1187,10 @@ function UpdateFactsSurface({ onSilence }: { onSilence: () => void }) {
   const [draftRestored, setDraftRestored] = useState(false);
   const outstandingTotal = 3;
   const [filled, setFilled] = useState(0);
+  const [whatChanged, setWhatChanged] = useState("New language test booked");
+  const [effectiveDate, setEffectiveDate] = useState("Aug 2026");
+  const [testDate, setTestDate] = useState("");
+  const [clbTarget, setClbTarget] = useState("CLB 10");
 
   return (
     <PortalShell surface="Update facts" badge="Life change">
@@ -1175,16 +1216,24 @@ function UpdateFactsSurface({ onSilence }: { onSilence: () => void }) {
           <Surface label="Update fields">
             <Form layout="vertical" size="small">
               <Form.Item label="What changed">
-                <Input placeholder={draftRestored ? undefined : "—"} value={draftRestored ? "New language test booked" : undefined} readOnly={draftRestored} />
+                <Input
+                  data-register-surface="Update facts value"
+                  value={whatChanged}
+                  onChange={(e) => setWhatChanged(e.target.value)}
+                />
               </Form.Item>
               <Form.Item label="Effective date">
-                <Input value="Aug 2026" readOnly />
+                <Input value={effectiveDate} onChange={(e) => setEffectiveDate(e.target.value)} />
               </Form.Item>
               <Form.Item label="Test date" extra="Enter the exam day. Validity / still-valid window is separate — no certificate upload.">
-                <Input placeholder="—" readOnly />
+                <Input
+                  placeholder="—"
+                  value={testDate}
+                  onChange={(e) => setTestDate(e.target.value)}
+                />
               </Form.Item>
               <Form.Item label="Updated CLB target">
-                <Input value="CLB 10" readOnly />
+                <Input value={clbTarget} onChange={(e) => setClbTarget(e.target.value)} />
               </Form.Item>
             </Form>
           </Surface>
@@ -1204,17 +1253,32 @@ function UpdateFactsSurface({ onSilence }: { onSilence: () => void }) {
                 facts: [
                   {
                     label: "What changed",
-                    value: "New language test booked",
+                    value: whatChanged,
                     signal: "Life change",
                     signalHint: "Update facts write-back",
                   },
                   {
                     label: "Updated CLB target",
-                    value: "CLB 10",
+                    value: clbTarget,
                     signal: "Language target",
                     signalHint: "Update facts write-back",
                   },
-                  { label: "Effective date", value: "Aug 2026", signal: "Current", signalHint: "Update facts write-back" },
+                  {
+                    label: "Effective date",
+                    value: effectiveDate,
+                    signal: "Current",
+                    signalHint: "Update facts write-back",
+                  },
+                  ...(testDate.trim()
+                    ? [
+                        {
+                          label: "Test date",
+                          value: testDate,
+                          signal: "Dated fact",
+                          signalHint: "Update facts write-back",
+                        },
+                      ]
+                    : []),
                 ],
               });
             }}
