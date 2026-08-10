@@ -5,6 +5,9 @@ node_modules/
 dist/
 dist-ssr/
 *.local
+dist-api/
+api/wire/_handler.js
+api/auth/_handler.js
 
 # Environment & secrets
 .env
@@ -53,3 +56,5 @@ coverage/
 
 # Optional package manager stores
 .pnpm-store/
+.vercel
+.env*

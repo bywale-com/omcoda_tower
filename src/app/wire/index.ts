@@ -48,6 +48,8 @@ export { wirePorts, STANDIN_REGISTRY } from "./registry";
 export type { WirePorts } from "./registry";
 export { CT_DEMO } from "./demoIds";
 export { FIRM_BRAND, FIRM_NAME } from "./firmBrand";
+export { setActiveFirmId, getActiveFirmId, peekActiveFirmId } from "./sessionFirm";
+export { wireFirmId, displayFirmId } from "./activeFirm";
 export * from "./standins";
 export {
   FIXTURE_CATALOG,

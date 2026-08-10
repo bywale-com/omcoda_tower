@@ -3,6 +3,7 @@
  * Mirrors the Postgres transitions so UI can be exercised without the wire service.
  */
 import type { MachineApiPort } from "../ports";
+import { getActiveFirmId } from "../sessionFirm";
 import type {
   AttemptCriteriaRow,
   CampaignState,
@@ -35,7 +36,6 @@ const eligibilityPipeline = new Map<string, EligibilityPipelineRow>(
   ].map((row) => [row.id, row]),
 );
 
-const FIRM = "firm-cedar";
 
 const workflows = new Map<string, WorkflowRow & { status: "draft" | "active" | "paused" }>();
 const runs = new Map<string, WorkflowRunRow>();
@@ -199,7 +199,7 @@ const referenceVersions = new Map<string, ReferenceVersionRow>([
 ]);
 
 const evaluationPins = new Map<string, EvaluationPin>();
-const campaignStates = new Map<string, CampaignState>([["firm-cedar", "running"]]);
+const campaignStates = new Map<string, CampaignState>();
 const provisionedFirms = new Map<string, ProvisionResult>();
 
 /** Book audit stand-in tables — createAuditRun persists so trials can read back. */
@@ -217,7 +217,7 @@ const bookAuditRuns = new Map<
 >();
 const bookContacts = new Map<
   string,
-  { id: string; email: string | null; phone: string | null; name: string | null }
+  { id: string; firmId: string; email: string | null; phone: string | null; name: string | null }
 >();
 const bookVerdicts = new Map<string, string>();
 const bookSequenceReady = new Map<string, boolean>();
@@ -267,7 +267,7 @@ function patchRuleRow<T extends ModularRuleRow>(
       patch.conditionClause !== undefined ? patch.conditionClause : prev.condition_clause,
     set_value: patch.setValue !== undefined ? patch.setValue : prev.set_value,
     version: prev.version + 1,
-    firm_id: prev.firm_id ?? FIRM,
+    firm_id: prev.firm_id ?? standInFirm(),
   } as T & { threshold?: number | null };
   if (patch.threshold !== undefined && "threshold" in (prev as object)) {
     (next as { threshold: number | null }).threshold = patch.threshold;
@@ -317,7 +317,7 @@ const preparedWorkspaces = new Map<string, import("../machineTypes").PreparedWor
 const activeAttempts: import("../machineTypes").ActiveAttemptRow[] = [
   {
     id: "aa-local-1",
-    firm_id: FIRM,
+    firm_id: standInFirm(),
     contact_id: "sarah",
     enrollment_id: null,
     owner_channel: "email",
@@ -330,7 +330,7 @@ const activeAttempts: import("../machineTypes").ActiveAttemptRow[] = [
 const engagementRecordsLocal: import("../machineTypes").EngagementRecordRow[] = [
   {
     id: "eng-local-1",
-    firm_id: FIRM,
+    firm_id: standInFirm(),
     contact_id: "sarah",
     event_kind: "email_opened",
     payload: { step: 2 },
@@ -377,7 +377,7 @@ function walkStandInGraph(
       const id = `enr-local-${Date.now()}-${enrIds.length}`;
       enrollments.push({
         id,
-        firm_id: FIRM,
+        firm_id: standInFirm(),
         contact_id: "contact-local-1",
         agent_ref: agentRef,
         sequence_id: agentRef,
@@ -392,6 +392,16 @@ function walkStandInGraph(
   }
   void triggerLabel;
   return { nodeStatus, enrollments: enrIds, ok: order.length > 0 };
+}
+
+
+function standInFirm(): string {
+  try {
+    return getActiveFirmId();
+  } catch {
+    // Seed/demo only — never a real-session default.
+    return "firm-cedar";
+  }
 }
 
 export const standInMachineApi: MachineApiPort = {
@@ -409,7 +419,7 @@ export const standInMachineApi: MachineApiPort = {
     const id = input.id ?? `wf-local-${Date.now()}`;
     const row = {
       id,
-      firm_id: FIRM,
+      firm_id: standInFirm(),
       name: input.name,
       target: (input.target ?? "contact") as WorkflowRow["target"],
       graph: (input.graph as WorkflowRow["graph"]) ?? { nodes: [], edges: [] },
@@ -442,7 +452,7 @@ export const standInMachineApi: MachineApiPort = {
     const row: WorkflowRunRow = {
       id,
       workflow_id: workflowId,
-      firm_id: FIRM,
+      firm_id: standInFirm(),
       status: walked.ok ? "success" : "failed",
       trigger_label: triggerLabel ?? "Manual run",
       node_status: walked.nodeStatus,
@@ -479,7 +489,7 @@ export const standInMachineApi: MachineApiPort = {
 
   async createEnrollment(input) {
     if (
-      (await standInHaltStore.isFirmBookHalted(FIRM)) ||
+      (await standInHaltStore.isFirmBookHalted(standInFirm())) ||
       (await standInHaltStore.isContactHalted(input.contactId))
     ) {
       throw new Error("halt active — new enrollments suppressed (H1)");
@@ -487,7 +497,7 @@ export const standInMachineApi: MachineApiPort = {
     const id = `enr-local-${Date.now()}`;
     const row: EnrollmentRow = {
       id,
-      firm_id: FIRM,
+      firm_id: standInFirm(),
       contact_id: input.contactId,
       agent_ref: input.agentRef,
       sequence_id: input.sequenceId ?? null,
@@ -522,7 +532,7 @@ export const standInMachineApi: MachineApiPort = {
       eligibilityResults.push({
         id: resultId,
         evaluation_id: null,
-        firm_id: FIRM,
+        firm_id: standInFirm(),
         contact_id: contactId,
         result: { trigger: "reference_version", refId: referenceId },
         any_pathway_pass: true,
@@ -530,7 +540,7 @@ export const standInMachineApi: MachineApiPort = {
       });
       signals.push({
         id: signalId,
-        firm_id: FIRM,
+        firm_id: standInFirm(),
         contact_id: contactId,
         kind: "eligibility_determination",
         payload: { resultId, anyPass: true },
@@ -538,7 +548,7 @@ export const standInMachineApi: MachineApiPort = {
       });
       motionDecisions.push({
         id: motionId,
-        firm_id: FIRM,
+        firm_id: standInFirm(),
         contact_id: contactId,
         motion: "reactivation",
         reason: { signalId, precedence: "mp-1" },
@@ -546,7 +556,7 @@ export const standInMachineApi: MachineApiPort = {
       });
       enrollments.push({
         id: enrId,
-        firm_id: FIRM,
+        firm_id: standInFirm(),
         contact_id: contactId,
         agent_ref: "tpl.reactivation.v1",
         sequence_id: "tpl.reactivation.v1",
@@ -579,7 +589,7 @@ export const standInMachineApi: MachineApiPort = {
     const started = now();
     bookAuditRuns.set(id, {
       id,
-      firm_id: FIRM,
+      firm_id: standInFirm(),
       status: "complete",
       import_ids: input.importIds ?? [],
       summary: { contacts: contacts.length, ready: verdicts.filter((v) => v.ready).length },
@@ -589,6 +599,7 @@ export const standInMachineApi: MachineApiPort = {
     for (const contact of contacts) {
       bookContacts.set(contact.id, {
         id: contact.id,
+        firmId: standInFirm(),
         email: contact.email ?? null,
         phone: contact.phone ?? null,
         name: contact.name ?? null,
@@ -600,7 +611,7 @@ export const standInMachineApi: MachineApiPort = {
     }
     return {
       id,
-      firm_id: FIRM,
+      firm_id: standInFirm(),
       status: "complete" as const,
       import_ids: input.importIds ?? [],
       summary: { contacts: contacts.length, ready: verdicts.filter((v) => v.ready).length },
@@ -642,10 +653,10 @@ export const standInMachineApi: MachineApiPort = {
   },
 
   async upsertBinding(input) {
-    const id = `bind.${FIRM}.${input.sequenceClass}`;
+    const id = `bind.${standInFirm()}.${input.sequenceClass}`;
     bindings.set(id, {
       id,
-      firm_id: FIRM,
+      firm_id: standInFirm(),
       sequence_class: input.sequenceClass,
       template_id: input.templateId,
       overrides: [],
@@ -674,7 +685,7 @@ export const standInMachineApi: MachineApiPort = {
       set_value: patch.setValue !== undefined ? patch.setValue : prev.set_value,
       ord: patch.ord ?? prev.ord,
       version: prev.version + 1,
-      firm_id: prev.firm_id ?? FIRM,
+      firm_id: prev.firm_id ?? standInFirm(),
     };
     attemptCriteria.set(id, next);
     return next;
@@ -694,7 +705,7 @@ export const standInMachineApi: MachineApiPort = {
         label: item.label ?? prev.label,
         ord: item.ord,
         version: prev.version + 1,
-        firm_id: prev.firm_id ?? FIRM,
+        firm_id: prev.firm_id ?? standInFirm(),
       });
     }
     return [...channelOrder.values()].sort((a, b) => a.ord - b.ord);
@@ -735,7 +746,7 @@ export const standInMachineApi: MachineApiPort = {
         label: item.label ?? prev.label,
         ord: item.ord,
         version: (prev.version ?? 0) + 1,
-        firm_id: prev.firm_id ?? FIRM,
+        firm_id: prev.firm_id ?? standInFirm(),
       });
     }
     return [...eligibilityPipeline.values()].sort((a, b) => a.ord - b.ord);
@@ -803,7 +814,7 @@ export const standInMachineApi: MachineApiPort = {
         label: item.label ?? prev.label,
         ord: item.ord,
         version: prev.version + 1,
-        firm_id: prev.firm_id ?? FIRM,
+        firm_id: prev.firm_id ?? standInFirm(),
       });
     }
     return [...phaseOrder.values()].sort((a, b) => a.ord - b.ord);
@@ -813,7 +824,7 @@ export const standInMachineApi: MachineApiPort = {
     const writebackId = `fwb-local-${Date.now()}`;
     factWritebacks.unshift({
       id: writebackId,
-      firm_id: FIRM,
+      firm_id: standInFirm(),
       contact_id: input.contactId,
       field_key: input.fieldKey,
       value: input.value,
@@ -832,7 +843,7 @@ export const standInMachineApi: MachineApiPort = {
       const id = `mfs-local-${Date.now()}-${key}`;
       missingFactSignals.push({
         id,
-        firm_id: FIRM,
+        firm_id: standInFirm(),
         contact_id: input.contactId,
         field_key: key,
         created_at: now(),
@@ -845,7 +856,7 @@ export const standInMachineApi: MachineApiPort = {
     eligibilityResults.push({
       id: resultId,
       evaluation_id: null,
-      firm_id: FIRM,
+      firm_id: standInFirm(),
       contact_id: input.contactId,
       result: { trigger: "fact_writeback", writebackId, fieldKey: input.fieldKey },
       any_pathway_pass: true,
@@ -853,7 +864,7 @@ export const standInMachineApi: MachineApiPort = {
     });
     signals.push({
       id: signalId,
-      firm_id: FIRM,
+      firm_id: standInFirm(),
       contact_id: input.contactId,
       kind: "eligibility_determination",
       payload: { resultId, anyPass: true, writebackId },
@@ -861,7 +872,7 @@ export const standInMachineApi: MachineApiPort = {
     });
     motionDecisions.push({
       id: motionId,
-      firm_id: FIRM,
+      firm_id: standInFirm(),
       contact_id: input.contactId,
       motion: "reactivation",
       reason: { signalId, precedence: "mp-1", writebackId },
@@ -897,7 +908,7 @@ export const standInMachineApi: MachineApiPort = {
     const id = `mfs-local-${Date.now()}`;
     missingFactSignals.push({
       id,
-      firm_id: FIRM,
+      firm_id: standInFirm(),
       contact_id: input.contactId,
       field_key: input.fieldKey,
       created_at: now(),
@@ -910,10 +921,10 @@ export const standInMachineApi: MachineApiPort = {
   },
 
   async upsertPreparedWorkspace(input) {
-    const id = input.id ?? `pw-${FIRM}`;
+    const id = input.id ?? `pw-${standInFirm()}`;
     const row: import("../machineTypes").PreparedWorkspaceRow = {
       id,
-      firm_id: FIRM,
+      firm_id: standInFirm(),
       status: input.status ?? "staged",
       body: input.body ?? {},
       created_at: preparedWorkspaces.get(id)?.created_at ?? now(),
@@ -949,22 +960,30 @@ export const standInMachineApi: MachineApiPort = {
   },
 
   async getCampaignState() {
-    const state = campaignStates.get(FIRM) ?? "armed-for-activation";
-    return { firmId: FIRM, state, missing: !campaignStates.has(FIRM) };
+    const state = campaignStates.get(standInFirm()) ?? "armed-for-activation";
+    return { firmId: standInFirm(), state, missing: !campaignStates.has(standInFirm()) };
   },
 
   async setCampaignState(state) {
-    campaignStates.set(FIRM, state);
-    return { firmId: FIRM, state };
+    campaignStates.set(standInFirm(), state);
+    return { firmId: standInFirm(), state };
+  },
+
+  async listContactRecords() {
+    const f = standInFirm();
+    return [...bookContacts.values()].filter((c) => c.firmId === f).map((c) => ({
+      id: c.id,
+      firmId: c.firmId,
+      email: c.email ?? null,
+      phone: c.phone ?? null,
+      name: c.name ?? null,
+    }));
   },
 
   async provisionFirm(input) {
-    const slug = input.firmName
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "")
-      .slice(0, 40);
-    const firmId = input.firmId?.trim() || `firm-${slug || Date.now()}`;
+    const firmId =
+      input.firmId?.trim() ||
+      (globalThis.crypto?.randomUUID?.() ?? `firm-standin-${Date.now()}`);
     const email = input.email.trim().toLowerCase();
     const result: ProvisionResult = {
       firmId,

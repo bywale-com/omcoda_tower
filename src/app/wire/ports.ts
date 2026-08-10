@@ -38,7 +38,7 @@ export type OtpVerifyInput = {
 };
 
 export type OtpVerifyResult =
-  | { ok: true; sessionToken: string }
+  | { ok: true; sessionToken: string; firmId?: string; userId?: string; email?: string }
   | { ok: false; reason: "expired" | "mismatch" | "unknown-challenge" | "locked" };
 
 export type OtpStorePort = {
@@ -518,4 +518,13 @@ export type MachineApiPort = {
     website?: string;
     role?: string;
   }): Promise<import("./machineTypes").ProvisionResult>;
+  listContactRecords(): Promise<
+    Array<{
+      id: string;
+      firmId: string;
+      email: string | null;
+      phone: string | null;
+      name: string | null;
+    }>
+  >;
 };

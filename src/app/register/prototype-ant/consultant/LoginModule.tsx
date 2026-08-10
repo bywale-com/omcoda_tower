@@ -1,7 +1,8 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Alert, Button, Form, Input, Space, Steps, Typography } from "antd";
 import { Hint, ModulePage, Surface } from "../chrome";
-import { wirePorts } from "../../../wire";
+import { useAuth } from "../../../auth/AuthContext";
+import { setActiveFirmId, wirePorts } from "../../../wire";
 import { FIRM_NAME } from "./shared";
 
 const { Text, Paragraph } = Typography;
@@ -24,8 +25,9 @@ const FAILURE_COPY: Record<Exclude<VerifyFailure, null>, string> = {
 };
 
 export function LoginModule({ onVerified }: LoginModuleProps) {
+  const { refresh } = useAuth();
   const [step, setStep] = useState<Step>("email");
-  const [email, setEmail] = useState("lena@cedarpathways.ca");
+  const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [challengeId, setChallengeId] = useState<string | null>(null);
   const [debugCode, setDebugCode] = useState<string | undefined>(undefined);
@@ -102,6 +104,9 @@ export function LoginModule({ onVerified }: LoginModuleProps) {
         setFailure(result.reason);
         return;
       }
+      // Bind: enter the provisioned firm from OTP session — not demo Cedar.
+      if (result.firmId) setActiveFirmId(result.firmId);
+      await refresh();
       setFailure(null);
       onVerified?.();
     } finally {

@@ -8,7 +8,7 @@ import {
   LoginOutlined,
 } from "@ant-design/icons";
 import { getContact } from "../../../data/contacts";
-import { CT_DEMO, wirePorts } from "../../../wire";
+import { peekActiveFirmId, wireFirmId, wirePorts } from "../../../wire";
 import { Surface } from "../chrome";
 import { BoardModule } from "./BoardModule";
 import { ContactsModule } from "./ContactsModule";
@@ -67,10 +67,12 @@ export function ConsultantAntScene() {
     [],
   );
 
-  /** Hydrate UI halt state from stand-in store (dual-write). */
+  /** Hydrate UI halt state for the session firm (not demo Cedar). */
   useEffect(() => {
     let cancelled = false;
-    void wirePorts.haltStore.listActive(CT_DEMO.firmId).then((active) => {
+    const firmId = peekActiveFirmId();
+    if (!firmId) return;
+    void wirePorts.haltStore.listActive(firmId).then((active) => {
       if (cancelled) return;
       const book = active.find((h) => h.scope === "firm-book");
       if (book) {
@@ -102,9 +104,10 @@ export function ConsultantAntScene() {
 
   async function confirmHalt() {
     const portScope = haltScope === "book" ? "firm-book" : "contact";
+    const firmId = wireFirmId();
     const record = await wirePorts.haltStore.commit({
-      consultantId: CT_DEMO.consultantId,
-      firmId: CT_DEMO.firmId,
+      consultantId: `consultant-${firmId}`,
+      firmId,
       contactId: portScope === "contact" ? activeClientId : undefined,
       scope: portScope,
       reason: haltReason.trim() || undefined,

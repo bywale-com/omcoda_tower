@@ -67,6 +67,8 @@ export function ProvisionModule({ t, focusedEntry, hoveredId }: OperatorModulePr
         loginPath: result.loginPath,
         authUser: result.authUser,
       });
+      const { setActiveFirmId } = await import("../../../wire/sessionFirm");
+      setActiveFirmId(result.firmId);
       void appendOperatorAudit({
         actorId: "ops.system",
         kind: "provision",

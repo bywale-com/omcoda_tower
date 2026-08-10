@@ -247,7 +247,11 @@ export async function handleOtpVerify(c: Context): Promise<Response> {
 
     setSessionCookie(c, sessionToken);
     log("auth.otp.verify", { outcome: "ok", firm_id: user.firm_id });
-    return c.json({ ok: true });
+    // Binding: return firm_id so the client enters the provisioned firm, not a demo default.
+    return c.json({
+      ok: true,
+      user: { id: user.id, firmId: user.firm_id, email: user.email },
+    });
   } catch (error) {
     logError("auth.otp.verify", error, { outcome: "server_error", firm_id: user.firm_id });
     return c.json({ ok: false, error: "server_error", message: "Something went wrong. Try again." }, 500);

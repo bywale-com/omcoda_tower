@@ -14,8 +14,17 @@ import {
   handleRegisterUnlock,
 } from "./registerRoutes.ts";
 
+function envSnapshot() {
+  return {
+    hasDatabaseUrl: Boolean(process.env.DATABASE_URL?.trim()),
+    nodeEnv: process.env.NODE_ENV ?? null,
+  };
+}
+
 function mountAuthRoutes(base: Hono): void {
-  base.get("/health", (c) => c.json({ ok: true, service: "tower-auth" }));
+  base.get("/health", (c) =>
+    c.json({ ok: true, service: "tower-auth", ...envSnapshot() }),
+  );
 
   base.post("/otp/send", handleOtpSend);
   base.post("/otp/verify", handleOtpVerify);
@@ -44,8 +53,18 @@ export function createAuthApp(): Hono {
   // Wire stays on api/wire only — do not mount here (Twilio bundle crashed
   // the auth serverless function on Vercel cold start).
 
-  // Local dev health without /auth prefix
-  app.get("/health", (c) => c.json({ ok: true, service: "tower-auth" }));
+  // Local / root health without /auth prefix
+  app.get("/health", (c) =>
+    c.json({ ok: true, service: "tower-auth", ...envSnapshot() }),
+  );
+  app.get("/api/auth/health", (c) =>
+    c.json({ ok: true, service: "tower-auth", ...envSnapshot() }),
+  );
+
+  app.onError((err, c) => {
+    console.error("auth.app.error", err);
+    return c.json({ ok: false, error: String(err), ...envSnapshot() }, 500);
+  });
 
   return app;
 }

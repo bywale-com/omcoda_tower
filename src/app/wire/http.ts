@@ -8,6 +8,8 @@ export async function wireFetch<T>(
 ): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
     ...init,
+    // Session cookie carries firm_id — required for binding (not demo default).
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       ...(init?.headers ?? {}),

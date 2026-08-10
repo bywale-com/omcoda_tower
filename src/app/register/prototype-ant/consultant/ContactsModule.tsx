@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Alert, Button, Input, Space, Splitter, Table, Tag, Typography } from "antd";
-import { CT_DEMO, wirePorts } from "../../../wire";
+import { wireFirmId, wirePorts } from "../../../wire";
 import type { ColumnsType } from "antd/es/table";
-import { contactList, getContact, type Contact } from "../../../data/contacts";
+import { getContact } from "../../../data/contacts";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { ClientWorkspace } from "./ClientWorkspace";
 import { selectMeetingReadyClientIds, useMeetings } from "./meetingsData";
@@ -15,7 +15,15 @@ import {
 
 const { Text } = Typography;
 
-type ContactRow = Contact & { key: string; clientName?: string };
+type ContactRow = {
+  key: string;
+  id: string;
+  name: string;
+  phone: string;
+  email?: string;
+  clientId?: string;
+  clientName?: string;
+};
 
 function contactListHasClient(id: string): boolean {
   return Boolean(getContact(id)?.clientId) ||
@@ -52,81 +60,114 @@ export function ContactsModule({
   const [search, setSearch] = useState("");
   const [grantNote, setGrantNote] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [grantPending, setGrantPending] = useState(false);
+  const [bookRows, setBookRows] = useState<ContactRow[]>([]);
+  const [bookError, setBookError] = useState<string | null>(null);
+  const [bookFirmId, setBookFirmId] = useState<string | null>(null);
   const meetings = useMeetings();
   const meetingReadyClientIds = useMemo(
     () => selectMeetingReadyClientIds(meetings),
     [meetings],
   );
 
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const firmId = wireFirmId();
+        const contacts = await wirePorts.machineApi.listContactRecords();
+        if (cancelled) return;
+        setBookFirmId(firmId);
+        setBookError(null);
+        setBookRows(
+          contacts.map((c) => ({
+            key: c.id,
+            id: c.id,
+            name: c.name?.trim() || c.email || c.phone || c.id,
+            phone: c.phone ?? "",
+            email: c.email ?? undefined,
+            clientId: c.id,
+          })),
+        );
+      } catch (err) {
+        if (cancelled) return;
+        setBookFirmId(null);
+        setBookRows([]);
+        setBookError(err instanceof Error ? err.message : String(err));
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [activityKick]);
+
   const haltForClient = (clientId: string): HaltRetention | null =>
     bookHalt ?? haltByContact[clientId] ?? null;
 
   const rows: ContactRow[] = useMemo(() => {
-    const list = contactList.map((c) => ({
-      ...c,
-      key: c.id,
-      clientName: c.clientId ? getContact(c.id)?.name : undefined,
-    }));
-    if (!search.trim()) return list;
+    if (!search.trim()) return bookRows;
     const q = search.trim().toLowerCase();
-    return list.filter(
-      (c) => c.name.toLowerCase().includes(q) || c.phone.includes(q),
+    return bookRows.filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) ||
+        c.phone.includes(q) ||
+        (c.email?.toLowerCase().includes(q) ?? false),
     );
-  }, [search]);
+  }, [search, bookRows]);
 
   const columns: ColumnsType<ContactRow> = [
     {
       title: "Contact",
       dataIndex: "name",
-      key: "name",
-      ellipsis: true,
-      render: (name, row) => (
-        <Surface label="Client row">
-          <Text strong={row.id === activeContactId} ellipsis style={{ maxWidth: "100%" }}>
-            {name}
-          </Text>
-        </Surface>
+      render: (name: string, row) => (
+        <Space direction="vertical" size={0}>
+          <Text>{name}</Text>
+          {row.email ? <Text type="secondary" style={{ fontSize: 12 }}>{row.email}</Text> : null}
+        </Space>
       ),
     },
-    { title: "Phone", dataIndex: "phone", key: "phone", width: 128, ellipsis: true },
     {
-      title: "Indicator",
-      dataIndex: "indicator",
-      key: "indicator",
-      width: 104,
-      render: (ind) => (
-        <Tag color={ind === "sequenced" ? "processing" : ind === "silenced" ? "default" : "warning"}>
-          {ind}
-        </Tag>
-      ),
+      title: "Phone",
+      dataIndex: "phone",
+      width: 140,
+      render: (phone: string) => phone || "—",
     },
     {
       title: "Phase",
       key: "phase",
-      width: 118,
-      render: (_, row) => {
-        if (!row.clientId) return "—";
-        const halt = haltForClient(row.clientId);
-        const phase = resolveWorkspacePhase(row.clientId, Boolean(halt), meetingReadyClientIds);
-        return (
-          <Surface label="Phase signal">
-            <Tag color={phaseTagColor(phase)}>{PHASE_LABEL[phase]}</Tag>
-          </Surface>
-        );
+      width: 120,
+      render: (_: unknown, row) => {
+        const phase = resolveWorkspacePhase(row.id);
+        return <Tag color={phaseTagColor(phase)}>{PHASE_LABEL[phase]}</Tag>;
       },
     },
   ];
 
-  const showWorkspace =
+  const showWorkspace = Boolean(
     workspaceClientId &&
-    activeContactId &&
-    contactListHasClient(activeContactId);
+      (activeContactId === workspaceClientId || contactListHasClient(workspaceClientId)),
+  );
 
   const indexPane = (
-    <div style={{ height: "100%", minHeight: 0, display: "flex", flexDirection: "column" }}>
+    <div style={{ height: "100%", overflow: "auto" }}>
       <ModulePage title="Contacts" surface="Contacts">
         <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-          <Surface label="Board search">
+          <Surface label="Firm book">
+            {bookError ? (
+              <Alert
+                type="warning"
+                showIcon
+                message="Session firm required — log in as the provisioned consultant to see this firm's book."
+                description={bookError}
+              />
+            ) : (
+              <Hint>
+                {bookFirmId
+                  ? `Firm ${bookFirmId.slice(0, 8)}… · ${bookRows.length} contact${bookRows.length === 1 ? "" : "s"} (empty until you upload a list)`
+                  : "No session firm bound yet."}
+              </Hint>
+            )}
+          </Surface>
+          <Surface label="Search">
             <Input.Search
               placeholder="Search contacts"
               allowClear
@@ -144,21 +185,23 @@ export function ContactsModule({
                 onClick={() => {
                   setGrantPending(true);
                   setGrantNote(null);
-                  void wirePorts.crmOAuth
-                    .grant(CT_DEMO.firmId)
-                    .then(() => {
+                  void (async () => {
+                    try {
+                      const firmId = wireFirmId();
+                      await wirePorts.crmOAuth.grant(firmId);
                       setGrantNote({
                         type: "success",
                         text: "Book handover confirmed — same grant as Prepared Authorize book.",
                       });
-                    })
-                    .catch((err: unknown) => {
+                    } catch (err: unknown) {
                       setGrantNote({
                         type: "error",
                         text: err instanceof Error ? err.message : "Confirm book failed",
                       });
-                    })
-                    .finally(() => setGrantPending(false));
+                    } finally {
+                      setGrantPending(false);
+                    }
+                  })();
                 }}
               >
                 Confirm book for Tower
@@ -168,20 +211,34 @@ export function ContactsModule({
               ) : null}
             </Space>
           </Surface>
-          <Table
-            size="small"
-            columns={columns}
-            dataSource={rows}
-            pagination={false}
-            tableLayout="fixed"
-            onRow={(row) => ({
-              onClick: () => onContactSelect(row.id),
-              style: {
-                cursor: "pointer",
-                background: row.id === activeContactId ? "var(--ant-color-primary-bg)" : undefined,
-              },
-            })}
-          />
+          {rows.length === 0 && !bookError ? (
+            <Alert
+              type="info"
+              showIcon
+              message="This firm's book is empty"
+              description="Upload a contact list as operator (Book readiness) for this firm — you will not see Cedar's contacts here."
+            />
+          ) : (
+            <Table
+              size="small"
+              columns={columns}
+              dataSource={rows}
+              pagination={false}
+              tableLayout="fixed"
+              onRow={(row) => ({
+                onClick: () => onContactSelect(row.id),
+                style: {
+                  cursor: "pointer",
+                  background: row.id === activeContactId ? "var(--ant-color-primary-bg)" : undefined,
+                },
+              })}
+            />
+          )}
+          {meetingReadyClientIds.length ? (
+            <Text type="secondary" style={{ fontSize: 12 }}>
+              Meeting-ready in local meetings store: {meetingReadyClientIds.length}
+            </Text>
+          ) : null}
         </Space>
       </ModulePage>
     </div>
@@ -193,7 +250,7 @@ export function ContactsModule({
         {indexPane}
       </Splitter.Panel>
       <Splitter.Panel min={280}>
-        {activeContactId && !contactListHasClient(activeContactId) ? (
+        {activeContactId && !contactListHasClient(activeContactId) && !bookRows.some((r) => r.id === activeContactId) ? (
           <div style={{ flex: 1, height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Hint>Contact not yet on Board — select a sequenced contact to open Client workspace</Hint>
           </div>

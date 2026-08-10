@@ -37,6 +37,7 @@ import {
   handleBindingUpsert,
   handleCampaignStateGet,
   handleCampaignStatePost,
+  handleContactRecordsList,
   handleChannelOrderList,
   handleChannelOrderUpsert,
   handleCohortScoringList,
@@ -133,6 +134,8 @@ export function createWireRoutes(): Hono {
 
   // Machine tables (frozen System Map + automations objects)
   wire.get("/machine/health", handleMachineHealth);
+  // GET for Vercel Cron; POST for manual/ops
+  wire.get("/machine/tick", handleMachineTick);
   wire.post("/machine/tick", handleMachineTick);
   wire.get("/machine/workflows", handleWorkflowList);
   wire.post("/machine/workflows", handleWorkflowCreate);
@@ -183,6 +186,7 @@ export function createWireRoutes(): Hono {
   wire.put("/machine/evaluation-pins/:packId", handleEvaluationPinPut);
   wire.get("/machine/campaign-state", handleCampaignStateGet);
   wire.post("/machine/campaign-state", handleCampaignStatePost);
+  wire.get("/machine/contact-records", handleContactRecordsList);
   wire.post("/machine/provision", handleMachineProvision);
   wire.post("/machine/events", handleMachineEvent);
   wire.post("/hook/:webhookId", handleWebhookTrigger);
