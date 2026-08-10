@@ -1,5 +1,6 @@
 /**
  * Book readiness — Ant-translated Audits / Audit run workbench.
+ * Start Audit → machineApi.createAuditRun; verdicts + sequence_ready from response.
  */
 import { useMemo, useState } from "react";
 import {
@@ -13,10 +14,12 @@ import {
   Tag,
   Tooltip,
   Typography,
+  message,
 } from "antd";
 import {
   DownloadOutlined,
   EyeOutlined,
+  PlayCircleOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
 } from "@ant-design/icons";
@@ -33,10 +36,17 @@ import {
   type AuditRecord,
 } from "../../../data/audits";
 import { recordReachability, type RecordReachability } from "../../../data/auditRecordReachability";
+import type { AuditContactVerdict, ReachabilityVerdict } from "../../../wire/machineTypes";
+import { wirePorts } from "../../../wire/registry";
 import { Hint, ModulePage, Surface } from "../chrome";
 
 type VerdictFilter = "All" | "pass" | "fail" | "pending";
 type SortDir = "asc" | "desc";
+
+type MachineVerdictByContact = Record<
+  string,
+  { verdict: ReachabilityVerdict; ready: boolean }
+>;
 
 function auditVerdict(audit: Audit): "pass" | "fail" | "pending" {
   const steps = audit.gateSteps;
@@ -71,6 +81,16 @@ function reachabilityTag(reachability: RecordReachability) {
   return <Tag color="error">unreachable</Tag>;
 }
 
+function machineVerdictTag(verdict: ReachabilityVerdict, ready: boolean) {
+  const color = verdict === "reachable" ? "success" : verdict === "partial" ? "warning" : "error";
+  return (
+    <Space size={4} wrap>
+      <Tag color={color}>{verdict}</Tag>
+      <Tag color={ready ? "success" : "default"}>sequence_ready · {ready ? "yes" : "no"}</Tag>
+    </Space>
+  );
+}
+
 function recordsForAudit(audit: Audit): AuditRecord[] {
   return audit.records.length > 0 ? audit.records : buildConsolidatedRecords(audit.importIds);
 }
@@ -100,6 +120,9 @@ export function BookReadinessModule() {
   const [verdictFilter, setVerdictFilter] = useState<VerdictFilter>("All");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [inspectedRecordId, setInspectedRecordId] = useState<string | null>(null);
+  const [machineVerdicts, setMachineVerdicts] = useState<MachineVerdictByContact>({});
+  const [lastAuditRunId, setLastAuditRunId] = useState<string | null>(null);
+  const [starting, setStarting] = useState(false);
 
   const filtered = useMemo(() => {
     if (verdictFilter === "All") return audits;
@@ -114,17 +137,29 @@ export function BookReadinessModule() {
     );
   }, [selected, sortDir]);
 
+  const readyCount = useMemo(
+    () => Object.values(machineVerdicts).filter((v) => v.ready).length,
+    [machineVerdicts],
+  );
+
   const recordColumns: ColumnsType<AuditRecord> = [
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (name, record) => (
-        <Space size={6} wrap>
-          <Typography.Text strong={record.id === inspectedRecordId}>{name}</Typography.Text>
-          {selected.status === "complete" ? reachabilityTag(recordReachability(record)) : null}
-        </Space>
-      ),
+      render: (name, record) => {
+        const machine = machineVerdicts[record.id];
+        return (
+          <Space size={6} wrap>
+            <Typography.Text strong={record.id === inspectedRecordId}>{name}</Typography.Text>
+            {machine
+              ? machineVerdictTag(machine.verdict, machine.ready)
+              : selected.status === "complete"
+                ? reachabilityTag(recordReachability(record))
+                : null}
+          </Space>
+        );
+      },
     },
     { title: "Phone", dataIndex: "phone", key: "phone", width: 160 },
     { title: "Email", dataIndex: "email", key: "email", width: 240 },
@@ -143,15 +178,25 @@ export function BookReadinessModule() {
     );
   };
 
-  const reAudit = () => {
+  const applyMachineVerdicts = (verdicts: AuditContactVerdict[]) => {
+    const next: MachineVerdictByContact = {};
+    for (const row of verdicts) {
+      next[row.contactId] = { verdict: row.verdict, ready: row.ready };
+    }
+    setMachineVerdicts(next);
+  };
+
+  const startAuditRun = async () => {
     const auditId = selected.id;
+    const records = recordsForAudit(selected);
+    setStarting(true);
     setAudits((prev) =>
       prev.map((audit) =>
         audit.id === auditId
           ? {
               ...audit,
               status: "running",
-              meta: "Running",
+              meta: "Running · machine audit",
               gateSteps: audit.gateSteps.map((step) =>
                 audit.enabledChecks.includes(step.checkId)
                   ? { ...step, status: "pending", durationMs: undefined }
@@ -161,25 +206,72 @@ export function BookReadinessModule() {
           : audit,
       ),
     );
-
-    window.setTimeout(() => {
+    try {
+      const result = await wirePorts.machineApi.createAuditRun({
+        importIds: selected.importIds,
+        contactIds: records.map((record) => ({
+          id: record.id,
+          email: record.email || undefined,
+          phone: record.phone || undefined,
+          name: record.name || undefined,
+        })),
+      });
+      setLastAuditRunId(result.id);
+      if (result.verdicts?.length) {
+        applyMachineVerdicts(result.verdicts);
+      } else {
+        // Fallback: board detections do not carry reachability; derive from local channels.
+        applyMachineVerdicts(
+          records.map((record) => {
+            const reach = recordReachability(record);
+            const verdict: ReachabilityVerdict =
+              reach === "both" ? "reachable" : reach === "partial" ? "partial" : "unreachable";
+            return {
+              contactId: record.id,
+              verdict,
+              ready: verdict !== "unreachable",
+              email: record.email,
+              phone: record.phone,
+              name: record.name,
+            };
+          }),
+        );
+      }
       setAudits((prev) =>
         prev.map((audit) => {
           if (audit.id !== auditId) return audit;
-          const records = recordsForAudit(audit);
           const gateSteps = audit.gateSteps.map((step, index) =>
             audit.enabledChecks.includes(step.checkId)
               ? {
                   ...step,
                   status: resolveGateOutcome(step.checkId, records),
-                  durationMs: 80 + index * 22,
+                  durationMs: 40 + index * 12,
                 }
               : { ...step, status: "pending" as const, durationMs: undefined },
           );
-          return finalizeAudit({ ...audit, records, gateSteps });
+          return finalizeAudit({
+            ...audit,
+            records,
+            gateSteps,
+            meta: `Machine · ${result.id} · ${result.contacts} contacts`,
+          });
         }),
       );
-    }, 600);
+      message.success(`Audit run ${result.id} · ${result.contacts} contacts`);
+    } catch (err) {
+      setAudits((prev) =>
+        prev.map((audit) =>
+          audit.id === auditId ? { ...audit, status: "complete", meta: `Failed · ${String(err)}` } : audit,
+        ),
+      );
+      message.error(`Start Audit failed: ${String(err)}`);
+    } finally {
+      setStarting(false);
+    }
+  };
+
+  const reAudit = () => {
+    void startAuditRun();
   };
 
   const selectedVerdict = auditVerdict(selected);
@@ -209,10 +301,28 @@ export function BookReadinessModule() {
               </Space>
             </Surface>
             <Surface label="Sequence-ready glance">
-              <Tag color={verdictColor(selectedVerdict)}>{sequenceReadyGlance(selected)}</Tag>
+              <Space size={6} wrap>
+                <Tag color={verdictColor(selectedVerdict)}>{sequenceReadyGlance(selected)}</Tag>
+                {Object.keys(machineVerdicts).length > 0 ? (
+                  <Tag color={readyCount > 0 ? "success" : "warning"}>
+                    sequence_ready · {readyCount}/{Object.keys(machineVerdicts).length}
+                  </Tag>
+                ) : null}
+                {lastAuditRunId ? <Tag>run · {lastAuditRunId}</Tag> : null}
+              </Space>
             </Surface>
             <Surface label="Re-audit remainder">
-              <Button size="small" onClick={reAudit}>
+              <Button
+                size="small"
+                type="primary"
+                icon={<PlayCircleOutlined />}
+                loading={starting}
+                onClick={() => void startAuditRun()}
+                data-register-surface="Start Audit run"
+              >
+                Start Audit run
+              </Button>
+              <Button size="small" onClick={reAudit} style={{ marginLeft: 8 }} disabled={starting}>
                 Re-audit remainder
               </Button>
             </Surface>
