@@ -1,0 +1,146 @@
+import type { MachineApiPort } from "../ports";
+import { wireFetch } from "../http";
+import type {
+  AuditRunRow,
+  EligibilityResultRow,
+  EnrollmentRow,
+  FirmSequenceBindingRow,
+  MotionDecisionRow,
+  SequenceTemplateRow,
+  SignalRow,
+  WorkflowRow,
+  WorkflowRunRow,
+} from "../machineTypes";
+
+const FIRM = "firm-cedar";
+
+function firmHeader(): HeadersInit {
+  return { "x-firm-id": FIRM };
+}
+
+export const realMachineApi: MachineApiPort = {
+  tag: "real",
+
+  async health() {
+    return wireFetch<{ ok: boolean; machineTables: boolean }>("/machine/health");
+  },
+
+  async listWorkflows() {
+    const res = await wireFetch<{ workflows: WorkflowRow[] }>(
+      `/machine/workflows?firmId=${encodeURIComponent(FIRM)}`,
+      { headers: firmHeader() },
+    );
+    return res.workflows;
+  },
+
+  async createWorkflow(input) {
+    return wireFetch<{ id: string; status: string; name: string; target: string }>(
+      `/machine/workflows?firmId=${encodeURIComponent(FIRM)}`,
+      {
+        method: "POST",
+        headers: firmHeader(),
+        body: JSON.stringify(input),
+      },
+    );
+  },
+
+  async activateWorkflow(workflowId) {
+    return wireFetch<{ workflowId: string; status: string; transition?: string }>(
+      `/machine/workflows/${encodeURIComponent(workflowId)}/activate`,
+      { method: "POST", headers: firmHeader(), body: "{}" },
+    );
+  },
+
+  async pauseWorkflow(workflowId) {
+    return wireFetch<{ workflowId: string; status: string }>(
+      `/machine/workflows/${encodeURIComponent(workflowId)}/pause`,
+      { method: "POST", headers: firmHeader(), body: "{}" },
+    );
+  },
+
+  async startRun(workflowId, triggerLabel) {
+    return wireFetch<{ id: string; workflowId: string; status: string }>(
+      `/machine/workflows/${encodeURIComponent(workflowId)}/runs?firmId=${encodeURIComponent(FIRM)}`,
+      {
+        method: "POST",
+        headers: firmHeader(),
+        body: JSON.stringify({ triggerLabel: triggerLabel ?? "Manual run" }),
+      },
+    );
+  },
+
+  async completeRun(runId, body) {
+    return wireFetch<{ id: string; status: string }>(
+      `/machine/runs/${encodeURIComponent(runId)}/complete`,
+      {
+        method: "POST",
+        headers: firmHeader(),
+        body: JSON.stringify(body ?? { status: "success" }),
+      },
+    );
+  },
+
+  async listRuns(workflowId) {
+    const res = await wireFetch<{ runs: WorkflowRunRow[] }>(
+      `/machine/workflows/${encodeURIComponent(workflowId)}/runs`,
+      { headers: firmHeader() },
+    );
+    return res.runs;
+  },
+
+  async createEnrollment(input) {
+    return wireFetch<{ id: string; enrolledAt: string }>(
+      `/machine/enrollments?firmId=${encodeURIComponent(FIRM)}`,
+      {
+        method: "POST",
+        headers: firmHeader(),
+        body: JSON.stringify(input),
+      },
+    );
+  },
+
+  async upsertReference(input) {
+    return wireFetch<{ referenceId: string; cascade: unknown[] }>(
+      `/machine/reference?firmId=${encodeURIComponent(FIRM)}`,
+      {
+        method: "POST",
+        headers: firmHeader(),
+        body: JSON.stringify(input),
+      },
+    );
+  },
+
+  async createAuditRun(input) {
+    return wireFetch<AuditRunRow & { contacts: number }>(
+      `/machine/audit-runs?firmId=${encodeURIComponent(FIRM)}`,
+      {
+        method: "POST",
+        headers: firmHeader(),
+        body: JSON.stringify(input),
+      },
+    );
+  },
+
+  async fireOnboarding() {
+    return wireFetch<{ skipped?: boolean; enrollments?: number; agentRef?: string }>(
+      `/machine/onboarding/fire?firmId=${encodeURIComponent(FIRM)}`,
+      { method: "POST", headers: firmHeader(), body: "{}" },
+    );
+  },
+
+  async boardDetections() {
+    return wireFetch<{
+      eligibilityResults: EligibilityResultRow[];
+      signals: SignalRow[];
+      motionDecisions: MotionDecisionRow[];
+      enrollments: EnrollmentRow[];
+    }>(`/machine/board?firmId=${encodeURIComponent(FIRM)}`, { headers: firmHeader() });
+  },
+
+  async listTemplates() {
+    return wireFetch<{
+      templates: SequenceTemplateRow[];
+      bindings: FirmSequenceBindingRow[];
+    }>(`/machine/templates?firmId=${encodeURIComponent(FIRM)}`, { headers: firmHeader() });
+  },
+};

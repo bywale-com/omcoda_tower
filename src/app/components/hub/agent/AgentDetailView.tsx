@@ -1,7 +1,9 @@
+import { useCallback, useState } from "react";
 import { getAgentDefinition } from "../../../data/agentDefinitions";
 import { HolonBoundary } from "../../docs/HolonBoundary";
 import { SHELL_HOLON_ORDER } from "../../docs/shellHolonOrder";
 import type { Tokens } from "../../tokens";
+import { wirePorts } from "../../../wire/registry";
 import { AgentEditor } from "./AgentEditor";
 import { AgentHeader } from "./AgentHeader";
 
@@ -11,8 +13,38 @@ type AgentDetailViewProps = {
   isDark: boolean;
 };
 
+/** Map hub agent ids → sequence_template / binding class. */
+const AGENT_SEQUENCE_CLASS: Record<string, string> = {
+  "agent-intake": "optin_launch",
+  "agent-reactivation": "reactivation",
+  "agent-nudge": "reengagement",
+};
+
 export function AgentDetailView({ agentId, t, isDark: _isDark }: AgentDetailViewProps) {
   const agent = getAgentDefinition(agentId);
+  const [launchNote, setLaunchNote] = useState<string | null>(null);
+
+  const handleLaunch = useCallback(async () => {
+    if (!agent) return;
+    try {
+      const { templates, bindings } = await wirePorts.machineApi.listTemplates();
+      const seqClass = AGENT_SEQUENCE_CLASS[agent.id] ?? "optin_launch";
+      const binding = bindings.find((b) => b.sequence_class === seqClass);
+      const template =
+        templates.find((tpl) => tpl.id === binding?.template_id) ??
+        templates.find((tpl) => tpl.sequence_class === seqClass);
+      const agentRef = template?.id ?? binding?.template_id ?? `tpl.${seqClass}.v1`;
+      const enr = await wirePorts.machineApi.createEnrollment({
+        contactId: "board-selected-or-book",
+        agentRef,
+        sequenceId: agentRef,
+        payload: { source: "agent_launch", agentId: agent.id, dryRun: true },
+      });
+      setLaunchNote(`Enrolled → ${agentRef} (${enr.id})`);
+    } catch (e) {
+      setLaunchNote(`Launch blocked: ${String(e)}`);
+    }
+  }, [agent]);
 
   if (!agent) {
     return (
@@ -45,7 +77,10 @@ export function AgentDetailView({ agentId, t, isDark: _isDark }: AgentDetailView
           borderBottom: `1px solid ${t.border}`,
         }}
       >
-        <AgentHeader agent={agent} t={t} onLaunch={() => {}} />
+        <AgentHeader agent={agent} t={t} onLaunch={() => void handleLaunch()} />
+        {launchNote ? (
+          <div style={{ marginTop: 6, fontSize: 11, color: t.textDim }}>{launchNote}</div>
+        ) : null}
       </HolonBoundary>
 
       <HolonBoundary

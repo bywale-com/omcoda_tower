@@ -1,9 +1,10 @@
 # System Map — resolution report
 
-**Artifact:** Interactive System Map at `/system-map`  
-**Data:** `src/app/system-map/data/*`  
+**Artifact:** Interactive System Map at `/system-map` (v2 = **table inventory**)  
+**Data:** `src/app/system-map/data/*` · tables: `data/tables.ts`  
 **Skeleton:** [`../SYSTEMS-REQUIREMENTS-FILLED.md`](../SYSTEMS-REQUIREMENTS-FILLED.md)  
-**Build law:** [`BUILD-interactive-system-map.md`](./BUILD-interactive-system-map.md)
+**Build law:** [`BUILD-interactive-system-map.md`](./BUILD-interactive-system-map.md) → superseded/deepened by [`BUILD-system-map-v2-table-inventory.md`](./BUILD-system-map-v2-table-inventory.md)  
+**Modularity audit:** [`MODULARITY-REPORT.md`](./MODULARITY-REPORT.md)
 
 ## Counts
 

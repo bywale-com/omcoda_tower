@@ -19,6 +19,34 @@
           "firm_id": "a1000000-0000-4000-8000-000000000001"
         }
       ]
+    },
+    {
+      "id": "002_machine_tables",
+      "file": "002_machine_tables.sql",
+      "environments": ["development", "staging"],
+      "description": "Machine rule/sequence/template rows + firm-cedar bindings + campaign running",
+      "records": [
+        {
+          "table": "sequence_template",
+          "id": "tpl.optin_launch.v1",
+          "name": "Opt-in launch calendar v1"
+        },
+        {
+          "table": "firm_sequence_binding",
+          "id": "bind.demo-firm.optin_launch",
+          "name": "firm-cedar optin_launch"
+        },
+        {
+          "table": "campaign_states",
+          "id": "firm-cedar",
+          "name": "running"
+        },
+        {
+          "table": "reference_versions",
+          "id": "ref.crs.cutoff.v1",
+          "name": "crs_cutoff"
+        }
+      ]
     }
   ]
 }

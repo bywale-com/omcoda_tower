@@ -15,3 +15,4 @@ export { standInPrimaryStore, clearStandInPrimaryStore } from "./primaryStore";
 export { standInListUnsubscribe, type ListUnsubscribePort } from "./listUnsubscribe";
 export { standInEnrichCrawl, type EnrichCrawlPort } from "./enrichCrawl";
 export { standInSmsApi, type SmsApiPort } from "./smsApi";
+export { standInMachineApi } from "./machineApi";

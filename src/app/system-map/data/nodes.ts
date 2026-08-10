@@ -446,13 +446,14 @@ export const SYSTEM_MAP_NODES: MapNode[] = [
   {
     id: "consent_state",
     label: "consent_state",
-    holds: "Per contact {sequenced | silenced | unsequenced}; silenced when not opted-in and when opted-out.",
+    holds: "Per contact {unsequenced | waitlisted | sequenced | silenced}; waitlisted = launch waitlist rung (v3).",
     systems: [5, 6, 7, 8],
     faceless: true,
     layoutGroup: "ring",
     resolution: "named-silent",
     transitions: [
       { id: "t-optin", label: "Opt-in phase (firm→client + first channel open)", origin: "control" },
+      { id: "t-waitlist", label: "Waitlist join (opt-in launch Day3)", origin: "control" },
       { id: "t-optout", label: "Opt-out / inbound silence", origin: "faceless" },
     ],
     ramifications: [
@@ -463,8 +464,8 @@ export const SYSTEM_MAP_NODES: MapNode[] = [
       {
         id: "r-consent-silenced",
         kind: "condition",
-        label: "Silenced when not opted in and when opted out",
-        source: "Seed §5.3; World §0.4",
+        label: "Silenced when not opted in and when opted out; waitlisted is machine-tracked mid-rung",
+        source: "Seed §5.3; World §0.4; guidelines/Reactivation.md",
         resolution: "corpus-full",
       },
       {
@@ -735,6 +736,43 @@ export const SYSTEM_MAP_NODES: MapNode[] = [
         resolution: "corpus-full",
       },
     ],
+  },
+  {
+    id: "cohort_tier",
+    label: "cohort_tier",
+    holds: "Per-contact cohort tier derived from engagement events (distinct from engagement_record chronology).",
+    systems: [7],
+    faceless: true,
+    layoutGroup: "ring",
+    resolution: "corpus-full",
+    transitions: [
+      {
+        id: "t-cohort",
+        label: "rule.cohort_scoring applies over engagement_record events",
+        origin: "faceless",
+        fromNodeId: "engagement_record",
+      },
+    ],
+    ramifications: [{ id: "r-cohort", label: "Segments cohort for later motions" }],
+    rules: [],
+  },
+  {
+    id: "metrics_flag",
+    label: "metrics_flag",
+    holds: "Observability flags when metric thresholds cross (not a dashboard).",
+    systems: [7],
+    faceless: true,
+    layoutGroup: "support",
+    resolution: "corpus-full",
+    transitions: [
+      {
+        id: "t-metrics",
+        label: "rule.metrics_thresholds crosses threshold",
+        origin: "faceless",
+      },
+    ],
+    ramifications: [{ id: "r-metrics", label: "Flags deliverability / cooled / tone / booking observe" }],
+    rules: [],
   },
 
   // ── Fact / reference / eligibility ───────────────────────────────────

@@ -18,6 +18,8 @@ import {
   type AuditCheckId,
   type AuditGateStep,
 } from "../data/audits";
+import { wirePorts } from "../wire/registry";
+import { wireRealEnabled } from "../wire/http";
 
 type AuditContextValue = {
   audits: Audit[];
@@ -89,14 +91,34 @@ export function AuditProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const persistAuditRun = useCallback((audit: Audit) => {
+    void wirePorts.machineApi
+      .createAuditRun({
+        importIds: audit.importIds,
+        contactIds: audit.records.map((r) => ({
+          id: r.id,
+          email: r.email || undefined,
+          phone: r.phone || undefined,
+          name: r.name || undefined,
+        })),
+      })
+      .then((result) => {
+        if (wireRealEnabled() && result.contacts > 0) {
+          void wirePorts.machineApi.fireOnboarding().catch(() => undefined);
+        }
+      })
+      .catch(() => undefined);
+  }, []);
+
   const createAndRunAudit = useCallback(
     (importIds: string[]) => {
       const audit = createAuditFromImports(importIds, audits.length);
       setAudits((prev) => [audit, ...prev]);
       scheduleGateRun(audit);
+      persistAuditRun(audit);
       return audit;
     },
-    [audits.length, scheduleGateRun],
+    [audits.length, scheduleGateRun, persistAuditRun],
   );
 
   const updateAuditChecks = useCallback((auditId: string, enabledChecks: AuditCheckId[]) => {
@@ -127,10 +149,11 @@ export function AuditProvider({ children }: { children: ReactNode }) {
         };
 
         scheduleGateRun(nextAudit);
+        persistAuditRun(nextAudit);
         return prev.map((item) => (item.id === auditId ? nextAudit : item));
       });
     },
-    [scheduleGateRun],
+    [scheduleGateRun, persistAuditRun],
   );
 
   const getAuditById = useCallback(
