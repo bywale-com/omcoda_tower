@@ -41,7 +41,7 @@ const EDITOR_SURFACE: Record<ConfigLibSub, string> = {
   "Engagement templates": "Agent / sequence editor",
 };
 
-const INITIAL_WORKFLOW_ID = "auto-welcome";
+const INITIAL_WORKFLOW_ID = "wf-eligibility-reactivation";
 const INITIAL_AGENT_ID = getAllAgentDefinitions().find((agent) => agent.stepCount > 0)?.id ?? "agent-nudge";
 
 function publishStatus(pack: ConfigPack | null) {

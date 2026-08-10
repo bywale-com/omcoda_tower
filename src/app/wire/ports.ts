@@ -377,9 +377,29 @@ export type MachineApiPort = {
     templateId: string;
     variableBindings?: Record<string, unknown>;
   }): Promise<{ id: string; firmId?: string; table?: string; sequenceClass?: string; templateId?: string }>;
+  listAttemptCriteria(): Promise<import("./machineTypes").AttemptCriteriaRow[]>;
+  upsertAttemptCriteria(
+    id: string,
+    patch: {
+      label?: string;
+      enabled?: boolean;
+      threshold?: number | null;
+      thresholdUnit?: string | null;
+      whenClause?: string | null;
+      conditionClause?: string | null;
+      setValue?: string | null;
+      ord?: number;
+    },
+  ): Promise<import("./machineTypes").AttemptCriteriaRow>;
+  listChannelOrder(): Promise<import("./machineTypes").ChannelOwnershipOrderRow[]>;
+  upsertChannelOrder(
+    order: Array<{ id: string; token?: string; label?: string; ord: number }>,
+  ): Promise<import("./machineTypes").ChannelOwnershipOrderRow[]>;
   fireEvent(input: {
     eventName: string;
     payload?: Record<string, unknown>;
     contactIds?: string[];
   }): Promise<{ eventName: string; workflowsFired: unknown[] }>;
+  /** Read-only ordered stages from seq_eligibility_pipeline. */
+  listEligibilityPipeline(): Promise<import("./machineTypes").EligibilityPipelineRow[]>;
 };

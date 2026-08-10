@@ -24,6 +24,7 @@ import {
   Form,
   Input,
   List,
+  Select,
   Space,
   Tabs,
   Tag,
@@ -33,6 +34,9 @@ import {
 import { PlayCircleOutlined, SaveOutlined } from "@ant-design/icons";
 import { useAutomations } from "../../../context/AutomationContext";
 import {
+  WORKFLOW_AGENT_OPTIONS,
+  WORKFLOW_CONSTANT_PACK_OPTIONS,
+  WORKFLOW_EVENT_CATALOG,
   WORKFLOW_PALETTE_BLOCKS,
   WORKFLOW_TRIGGER_OPTIONS,
   createNodeFromBlock,
@@ -42,7 +46,10 @@ import {
   type WorkflowDefinition,
   type WorkflowNodeData,
   type WorkflowNodeType,
+  type WorkflowTriggerEvent,
 } from "../../../data/automationWorkflows";
+import { wirePorts } from "../../../wire/registry";
+import type { EligibilityPipelineRow } from "../../../wire/machineTypes";
 
 type WorkflowFlowNode = Node<WorkflowNodeData, WorkflowNodeType>;
 
@@ -74,6 +81,10 @@ function nodeSummary(data: WorkflowNodeData) {
   return (
     data.triggerEvent ??
     data.scheduleSummary ??
+    data.scheduleCron ??
+    data.webhookId ??
+    data.agentRef ??
+    data.constantsPackId ??
     data.constantSummary ??
     data.filterSummary ??
     data.ruleSummary ??
@@ -136,21 +147,168 @@ function cloneEdges(edges: Edge[]): Edge[] {
   return structuredClone(edges);
 }
 
+function patchNodeData(
+  setNodes: (updater: (current: WorkflowFlowNode[]) => WorkflowFlowNode[]) => void,
+  nodeId: string,
+  patch: Partial<WorkflowNodeData>,
+) {
+  setNodes((current) =>
+    current.map((node) =>
+      node.id === nodeId ? { ...node, data: { ...node.data, ...patch } } : node,
+    ),
+  );
+}
+
+function NodeConfigFields({
+  node,
+  onPatch,
+}: {
+  node: WorkflowFlowNode;
+  onPatch: (patch: Partial<WorkflowNodeData>) => void;
+}) {
+  const kind = node.type ?? "action";
+  const data = node.data;
+
+  if (kind === "trigger") {
+    if (data.triggerKind === "event") {
+      return (
+        <Form.Item label="Machine event (workflow_trigger.event_name)">
+          <Select
+            value={data.triggerEvent ?? "eligibility.changed"}
+            options={WORKFLOW_EVENT_CATALOG.map((event) => ({
+              value: event.id,
+              label: `${event.label} · ${event.id}`,
+            }))}
+            onChange={(value: WorkflowTriggerEvent) =>
+              onPatch({
+                triggerEvent: value,
+                configured: true,
+                enrollmentHint: `Fires on ${value}`,
+              })
+            }
+          />
+        </Form.Item>
+      );
+    }
+    if (data.triggerKind === "webhook") {
+      return (
+        <Form.Item
+          label="Webhook id (workflow_trigger.webhook_id)"
+          extra={
+            <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+              Inbound URL: /wire/hook/{data.webhookId || "…"}
+            </Typography.Text>
+          }
+        >
+          <Input
+            value={data.webhookId ?? ""}
+            placeholder="wh_external"
+            onChange={(event) => {
+              const webhookId = event.target.value.trim();
+              onPatch({
+                webhookId,
+                configured: Boolean(webhookId),
+                enrollmentHint: webhookId ? `POST /wire/hook/${webhookId}` : data.enrollmentHint,
+              });
+            }}
+          />
+        </Form.Item>
+      );
+    }
+    if (data.triggerKind === "schedule") {
+      return (
+        <Form.Item label="Cron (workflow_trigger.schedule)">
+          <Input
+            value={data.scheduleCron ?? data.scheduleSummary ?? ""}
+            placeholder="0 * * * *"
+            onChange={(event) => {
+              const scheduleCron = event.target.value;
+              onPatch({
+                scheduleCron,
+                scheduleSummary: scheduleCron,
+                configured: Boolean(scheduleCron.trim()),
+              });
+            }}
+          />
+        </Form.Item>
+      );
+    }
+    return (
+      <Typography.Text type="secondary">
+        {data.triggerKind === "manual"
+          ? "Manual trigger — launch from the header."
+          : "Configure this trigger kind on the canvas fields above."}
+      </Typography.Text>
+    );
+  }
+
+  if (kind === "action") {
+    return (
+      <Form.Item label="Agent / sequence (action.agent_ref)">
+        <Select
+          value={data.agentRef ?? "tpl.optin_launch.v1"}
+          options={WORKFLOW_AGENT_OPTIONS.map((opt) => ({
+            value: opt.id,
+            label: `${opt.label} · ${opt.id}`,
+          }))}
+          onChange={(value) =>
+            onPatch({
+              agentRef: value,
+              actionType: "enroll_sequence",
+              actionSummary: `Call agent · ${value}`,
+              configured: true,
+            })
+          }
+        />
+      </Form.Item>
+    );
+  }
+
+  if (kind === "constant") {
+    return (
+      <Form.Item label="Constants pack (constants_packs)">
+        <Select
+          value={data.constantsPackId ?? undefined}
+          placeholder="Select pack"
+          options={WORKFLOW_CONSTANT_PACK_OPTIONS.map((opt) => ({
+            value: opt.id,
+            label: opt.label,
+          }))}
+          onChange={(value) =>
+            onPatch({
+              constantsPackId: value,
+              constantSummary: value,
+              constantKind: data.constantKind ?? "data_reference",
+              configured: true,
+            })
+          }
+        />
+      </Form.Item>
+    );
+  }
+
+  return null;
+}
+
 export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
   const { token } = theme.useToken();
   const {
     getWorkflowById,
     renameAutomation,
     updateWorkflow,
+    activateWorkflow,
     startManualRun,
     stopManualRun,
     getActiveManualRunId,
     getRunsForWorkflow,
+    refreshRuns,
   } = useAutomations();
   const workflow = getWorkflowById(workflowId);
   const [savedFlash, setSavedFlash] = useState(false);
   const [activeTab, setActiveTab] = useState("workflow");
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [pipeline, setPipeline] = useState<EligibilityPipelineRow[]>([]);
+  const [pipelineError, setPipelineError] = useState<string | null>(null);
   const skipPersistRef = useRef(true);
   const [nodes, setNodes, onNodesChange] = useNodesState<WorkflowFlowNode>(
     workflow ? cloneNodes(workflow.nodes) : [],
@@ -159,6 +317,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
   const activeManualRunId = workflow ? getActiveManualRunId(workflow.id) : null;
   const runs = workflow ? getRunsForWorkflow(workflow.id) : [];
   const selectedNode = selectedNodeId ? nodes.find((node) => node.id === selectedNodeId) : undefined;
+  const triggerNode = useMemo(() => nodes.find((node) => node.type === "trigger"), [nodes]);
 
   useEffect(() => {
     skipPersistRef.current = true;
@@ -176,6 +335,31 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
     }
     updateWorkflow(workflow.id, { nodes, edges });
   }, [edges, nodes, updateWorkflow, workflow?.id]);
+
+  useEffect(() => {
+    if (activeTab !== "runs" || !workflow) return;
+    void refreshRuns(workflow.id);
+  }, [activeTab, refreshRuns, workflow?.id]);
+
+  useEffect(() => {
+    if (activeTab !== "settings") return;
+    let cancelled = false;
+    setPipelineError(null);
+    void wirePorts.machineApi
+      .listEligibilityPipeline()
+      .then((stages) => {
+        if (!cancelled) setPipeline(stages);
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) {
+          setPipeline([]);
+          setPipelineError(err instanceof Error ? err.message : "Failed to load pipeline");
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeTab]);
 
   if (!workflow) {
     return (
@@ -259,9 +443,17 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
   const handleLaunch = () => {
     if (activeManualRunId) {
       stopManualRun(activeManualRunId);
-    } else {
-      startManualRun(workflow.id);
+      return;
     }
+    // Launch = Activate (draft → active) then start a workflow_run
+    void activateWorkflow(workflow.id).then(() => {
+      startManualRun(workflow.id);
+    });
+  };
+
+  const patchTriggerSettings = (patch: Partial<WorkflowNodeData>) => {
+    if (!triggerNode) return;
+    patchNodeData(setNodes, triggerNode.id, patch);
   };
 
   return (
@@ -357,7 +549,15 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
                         title={
                           <Space>
                             <span>{run.triggerLabel}</span>
-                            <Tag color={run.status === "success" ? "success" : run.status === "running" ? "processing" : "error"}>
+                            <Tag
+                              color={
+                                run.status === "success"
+                                  ? "success"
+                                  : run.status === "running"
+                                    ? "processing"
+                                    : "error"
+                              }
+                            >
                               {run.status}
                             </Tag>
                           </Space>
@@ -375,10 +575,85 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
             key: "settings",
             label: "Settings",
             children: (
-              <Empty
-                style={{ marginTop: 48 }}
-                description="Workflow settings, schedule windows, and enrollment controls will live here."
-              />
+              <div style={{ padding: 16, maxWidth: 640 }}>
+                <Space direction="vertical" size={20} style={{ width: "100%" }}>
+                  <div>
+                    <Typography.Title level={5} style={{ marginTop: 0 }}>
+                      Schedule / enrollment
+                    </Typography.Title>
+                    <Typography.Paragraph type="secondary" style={{ marginBottom: 12 }}>
+                      Edits the trigger node summaries used for workflow_trigger schedule and enrollment copy.
+                    </Typography.Paragraph>
+                    {triggerNode ? (
+                      <Form layout="vertical">
+                        <Form.Item label="Schedule summary">
+                          <Input
+                            value={
+                              triggerNode.data.scheduleSummary ??
+                              triggerNode.data.scheduleCron ??
+                              ""
+                            }
+                            placeholder="Every hour · 0 * * * *"
+                            onChange={(event) => {
+                              const scheduleSummary = event.target.value;
+                              patchTriggerSettings({
+                                scheduleSummary,
+                                scheduleCron:
+                                  triggerNode.data.triggerKind === "schedule"
+                                    ? scheduleSummary
+                                    : triggerNode.data.scheduleCron,
+                                configured:
+                                  triggerNode.data.triggerKind === "schedule"
+                                    ? Boolean(scheduleSummary.trim())
+                                    : triggerNode.data.configured,
+                              });
+                            }}
+                          />
+                        </Form.Item>
+                        <Form.Item label="Enrollment summary">
+                          <Input.TextArea
+                            rows={3}
+                            value={triggerNode.data.enrollmentHint ?? ""}
+                            placeholder="Who enrolls when this workflow fires…"
+                            onChange={(event) =>
+                              patchTriggerSettings({ enrollmentHint: event.target.value })
+                            }
+                          />
+                        </Form.Item>
+                      </Form>
+                    ) : (
+                      <Empty description="Add a trigger node to edit schedule and enrollment." />
+                    )}
+                  </div>
+
+                  <div>
+                    <Typography.Title level={5}>Eligibility pipeline</Typography.Title>
+                    <Typography.Paragraph type="secondary" style={{ marginBottom: 12 }}>
+                      Read-only stages from seq_eligibility_pipeline (reorder API not shipped).
+                    </Typography.Paragraph>
+                    {pipelineError ? (
+                      <Typography.Text type="danger">{pipelineError}</Typography.Text>
+                    ) : pipeline.length > 0 ? (
+                      <List
+                        size="small"
+                        bordered
+                        dataSource={pipeline}
+                        renderItem={(stage, index) => (
+                          <List.Item>
+                            <Space>
+                              <Tag>{index + 1}</Tag>
+                              <Typography.Text strong>{stage.label}</Typography.Text>
+                              <Typography.Text type="secondary">{stage.token}</Typography.Text>
+                            </Space>
+                          </List.Item>
+                        )}
+                      />
+                    ) : (
+                      <Empty description="No pipeline stages loaded." />
+                    )}
+                  </div>
+                </Space>
+              </div>
             ),
           },
         ]}
@@ -399,15 +674,14 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
                 <Input
                   value={selectedNode.data.label}
                   onChange={(event) => {
-                    const label = event.target.value;
-                    setNodes((current) =>
-                      current.map((node) =>
-                        node.id === selectedNode.id ? { ...node, data: { ...node.data, label } } : node,
-                      ),
-                    );
+                    patchNodeData(setNodes, selectedNode.id, { label: event.target.value });
                   }}
                 />
               </Form.Item>
+              <NodeConfigFields
+                node={selectedNode}
+                onPatch={(patch) => patchNodeData(setNodes, selectedNode.id, patch)}
+              />
             </Form>
             <Descriptions column={1} size="small" bordered>
               <Descriptions.Item label="Type">

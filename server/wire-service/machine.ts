@@ -610,6 +610,132 @@ export async function handleBindingUpsert(c: Context) {
   return json(c, { id, firmId: firm, table: "firm_sequence_binding" });
 }
 
+/** List rule_attempt_criteria (platform defaults + firm rows). */
+export async function handleAttemptCriteriaList(c: Context) {
+  const firm = firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(
+    `SELECT * FROM rule_attempt_criteria
+     WHERE firm_id IS NULL OR firm_id = $1
+     ORDER BY CASE WHEN firm_id = $1 THEN 0 ELSE 1 END, ord ASC`,
+    [firm],
+  );
+  return json(c, { criteria: rows.rows });
+}
+
+/** Upsert a single rule_attempt_criteria row by id. */
+export async function handleAttemptCriteriaUpsert(c: Context) {
+  const firm = firmId(c);
+  const id = c.req.param("id");
+  const body = await c.req.json<{
+    label?: string;
+    enabled?: boolean;
+    threshold?: number | null;
+    thresholdUnit?: string | null;
+    whenClause?: string | null;
+    conditionClause?: string | null;
+    setValue?: string | null;
+    ord?: number;
+  }>();
+  const pool = getPool();
+  const existing = await pool.query(`SELECT * FROM rule_attempt_criteria WHERE id=$1`, [id]);
+  if (!existing.rowCount) {
+    return json(c, { error: "attempt criteria not found", id }, 404);
+  }
+  const prev = existing.rows[0] as Record<string, unknown>;
+  const next = {
+    label: body.label ?? prev.label,
+    enabled: body.enabled ?? prev.enabled,
+    threshold: body.threshold !== undefined ? body.threshold : prev.threshold,
+    threshold_unit:
+      body.thresholdUnit !== undefined ? body.thresholdUnit : prev.threshold_unit,
+    when_clause: body.whenClause !== undefined ? body.whenClause : prev.when_clause,
+    condition_clause:
+      body.conditionClause !== undefined ? body.conditionClause : prev.condition_clause,
+    set_value: body.setValue !== undefined ? body.setValue : prev.set_value,
+    ord: body.ord ?? prev.ord,
+    firm_id: (prev.firm_id as string | null) ?? firm,
+  };
+  await pool.query(
+    `UPDATE rule_attempt_criteria SET
+       label=$2, enabled=$3, threshold=$4, threshold_unit=$5,
+       when_clause=$6, condition_clause=$7, set_value=$8, ord=$9,
+       firm_id=$10, version=version+1
+     WHERE id=$1`,
+    [
+      id,
+      next.label,
+      next.enabled,
+      next.threshold,
+      next.threshold_unit,
+      next.when_clause,
+      next.condition_clause,
+      next.set_value,
+      next.ord,
+      next.firm_id,
+    ],
+  );
+  const updated = await pool.query(`SELECT * FROM rule_attempt_criteria WHERE id=$1`, [id]);
+  return json(c, updated.rows[0]);
+}
+
+/** List seq_channel_ownership_order ladder. */
+export async function handleChannelOrderList(c: Context) {
+  const firm = firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(
+    `SELECT * FROM seq_channel_ownership_order
+     WHERE firm_id IS NULL OR firm_id = $1
+     ORDER BY CASE WHEN firm_id = $1 THEN 0 ELSE 1 END, ord ASC`,
+    [firm],
+  );
+  return json(c, { order: rows.rows });
+}
+
+/** Replace ord for the full channel ladder (Agents Settings reorder). */
+export async function handleChannelOrderUpsert(c: Context) {
+  const firm = firmId(c);
+  const body = await c.req.json<{
+    order: Array<{ id: string; token?: string; label?: string; ord: number }>;
+  }>();
+  const items = body.order ?? [];
+  if (!items.length) return json(c, { error: "order required" }, 400);
+  const pool = getPool();
+  for (const item of items) {
+    await pool.query(
+      `UPDATE seq_channel_ownership_order SET
+         ord=$2,
+         token=COALESCE($3, token),
+         label=COALESCE($4, label),
+         firm_id=COALESCE(firm_id, $5),
+         version=version+1
+       WHERE id=$1`,
+      [item.id, item.ord, item.token ?? null, item.label ?? null, firm],
+    );
+  }
+  const rows = await pool.query(
+    `SELECT * FROM seq_channel_ownership_order
+     WHERE firm_id IS NULL OR firm_id = $1
+     ORDER BY CASE WHEN firm_id = $1 THEN 0 ELSE 1 END, ord ASC`,
+    [firm],
+  );
+  return json(c, { order: rows.rows });
+}
+
+/** Read-only seq_eligibility_pipeline stages (Automations Settings). */
+export async function handleEligibilityPipelineList(c: Context) {
+  const firm = firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(
+    `SELECT id, firm_id, token, label, ord, version
+     FROM seq_eligibility_pipeline
+     WHERE firm_id IS NULL OR firm_id = $1
+     ORDER BY CASE WHEN firm_id = $1 THEN 0 ELSE 1 END, ord ASC`,
+    [firm],
+  );
+  return json(c, { stages: rows.rows });
+}
+
 /** Manual tick (same as worker once) — for ops/verify. */
 export async function handleMachineTick(c: Context) {
   const result = await tickOnce(new Date());

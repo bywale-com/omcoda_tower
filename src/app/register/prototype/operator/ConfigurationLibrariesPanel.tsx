@@ -42,7 +42,10 @@ const CONFIG_LIB_SUBS: { id: ConfigLibSub; kind: PackKind; newLabel: string; nav
   { id: "Engagement templates", kind: "engagement", newLabel: "New template", navLabel: "Agents" },
 ];
 
-const DEMO_AUTOMATION_ID = getAllWorkflowDefinitions()[0]?.id ?? "auto-welcome";
+const DEMO_AUTOMATION_ID =
+  getAllWorkflowDefinitions().find((w) => w.id === "wf-eligibility-reactivation")?.id ??
+  getAllWorkflowDefinitions()[0]?.id ??
+  "wf-eligibility-reactivation";
 const DEMO_AGENT_ID =
   getAllAgentDefinitions().find((a) => a.stepCount > 0)?.id ??
   getAllAgentDefinitions()[0]?.id ??

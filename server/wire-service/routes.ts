@@ -29,24 +29,29 @@ import {
 import { handleListEvents, handleResendWebhook } from "./webhooks.ts";
 import {
   handleAuditRunCreate,
+  handleAttemptCriteriaList,
+  handleAttemptCriteriaUpsert,
   handleBoardDetections,
+  handleBindingUpsert,
+  handleChannelOrderList,
+  handleChannelOrderUpsert,
+  handleEligibilityPipelineList,
   handleEnrollmentCreate,
+  handleMachineEvent,
   handleMachineHealth,
   handleMachineTick,
   handleOnboardingFire,
   handlePauseWorkflow,
   handleReferenceUpsert,
+  handleTemplateUpsert,
   handleTemplatesList,
+  handleWebhookTrigger,
   handleWorkflowActivate,
   handleWorkflowCreate,
   handleWorkflowList,
   handleWorkflowRunComplete,
   handleWorkflowRunStart,
   handleWorkflowRunsList,
-  handleMachineEvent,
-  handleWebhookTrigger,
-  handleTemplateUpsert,
-  handleBindingUpsert,
 } from "./machine.ts";
 
 export function createWireRoutes(): Hono {
@@ -106,6 +111,11 @@ export function createWireRoutes(): Hono {
   wire.get("/machine/templates", handleTemplatesList);
   wire.put("/machine/templates/:id", handleTemplateUpsert);
   wire.post("/machine/bindings", handleBindingUpsert);
+  wire.get("/machine/rules/attempt-criteria", handleAttemptCriteriaList);
+  wire.put("/machine/rules/attempt-criteria/:id", handleAttemptCriteriaUpsert);
+  wire.get("/machine/seq/channel-order", handleChannelOrderList);
+  wire.put("/machine/seq/channel-order", handleChannelOrderUpsert);
+  wire.get("/machine/eligibility-pipeline", handleEligibilityPipelineList);
   wire.post("/machine/events", handleMachineEvent);
   wire.post("/hook/:webhookId", handleWebhookTrigger);
 

@@ -4,6 +4,9 @@
  */
 import type { MachineApiPort } from "../ports";
 import type {
+  AttemptCriteriaRow,
+  ChannelOwnershipOrderRow,
+  EligibilityPipelineRow,
   EligibilityResultRow,
   EnrollmentRow,
   MotionDecisionRow,
@@ -11,6 +14,15 @@ import type {
   WorkflowRow,
   WorkflowRunRow,
 } from "../machineTypes";
+
+/** Mirrors supabase/seeds/002_machine_tables.sql seq_eligibility_pipeline. */
+const ELIGIBILITY_PIPELINE: EligibilityPipelineRow[] = [
+  { id: "ep-trig", firm_id: null, token: "trigger", label: "Trigger (scoped pull)", ord: 0 },
+  { id: "ep-const", firm_id: null, token: "constants", label: "Constants", ord: 1 },
+  { id: "ep-cond", firm_id: null, token: "conditions", label: "Conditions (If)", ord: 2 },
+  { id: "ep-rules", firm_id: null, token: "rules", label: "Rules", ord: 3 },
+  { id: "ep-out", firm_id: null, token: "output", label: "Structured output", ord: 4 },
+];
 
 const FIRM = "firm-cedar";
 
@@ -44,6 +56,83 @@ const bindings = new Map<
     variable_bindings: Record<string, unknown>;
   }
 >();
+
+const attemptCriteria = new Map<string, AttemptCriteriaRow>([
+  [
+    "acr-text",
+    {
+      id: "acr-text",
+      firm_id: null,
+      label: "Text delivered, not opened → escalate next channel",
+      enabled: true,
+      when_clause: "channel=text AND delivered",
+      condition_clause: "not opened within threshold",
+      set_value: "escalate_forward",
+      threshold: 30,
+      threshold_unit: "minutes",
+      ord: 0,
+      source: "OPERATOR-REVISIONS §5b",
+      version: 1,
+    },
+  ],
+  [
+    "acr-email",
+    {
+      id: "acr-email",
+      firm_id: null,
+      label: "Email opened, link not clicked → next attempt",
+      enabled: true,
+      when_clause: "channel=email AND opened",
+      condition_clause: "link not clicked within threshold",
+      set_value: "next_attempt_or_forward",
+      threshold: 24,
+      threshold_unit: "hours",
+      ord: 1,
+      source: "OPERATOR-REVISIONS §5b",
+      version: 1,
+    },
+  ],
+  [
+    "acr-form",
+    {
+      id: "acr-form",
+      firm_id: null,
+      label: "Form started, not submitted → back to first channel",
+      enabled: true,
+      when_clause: "channel=form AND started",
+      condition_clause: "not submitted; re-entries do not reset clock",
+      set_value: "return_to_sequence_head",
+      threshold: 24,
+      threshold_unit: "hours",
+      ord: 2,
+      source: "OPERATOR-REVISIONS §5b",
+      version: 1,
+    },
+  ],
+  [
+    "acr-sms-nonreply",
+    {
+      id: "acr-sms-nonreply",
+      firm_id: null,
+      label: "SMS-primer non-reply → proceed to email; low tier-signal",
+      enabled: true,
+      when_clause: "channel=sms AND primer_sent AND non_reply",
+      condition_clause: "Y-reply is priming not gate",
+      set_value: "tier_signal_low_nonreply",
+      threshold: null,
+      threshold_unit: null,
+      ord: 6,
+      source: "guidelines/Reactivation.md",
+      version: 1,
+    },
+  ],
+]);
+
+const channelOrder = new Map<string, ChannelOwnershipOrderRow>([
+  ["ch-text", { id: "ch-text", firm_id: null, token: "text", label: "Text", ord: 0, version: 1 }],
+  ["ch-email", { id: "ch-email", firm_id: null, token: "email", label: "Email", ord: 1, version: 1 }],
+  ["ch-form", { id: "ch-form", firm_id: null, token: "form", label: "Form", ord: 2, version: 1 }],
+]);
 
 function now() {
   return new Date().toISOString();
@@ -310,6 +399,52 @@ export const standInMachineApi: MachineApiPort = {
     return { id, sequenceClass: input.sequenceClass, templateId: input.templateId };
   },
 
+  async listAttemptCriteria() {
+    return [...attemptCriteria.values()].sort((a, b) => a.ord - b.ord);
+  },
+
+  async upsertAttemptCriteria(id, patch) {
+    const prev = attemptCriteria.get(id);
+    if (!prev) throw new Error(`attempt criteria missing: ${id}`);
+    const next: AttemptCriteriaRow = {
+      ...prev,
+      label: patch.label ?? prev.label,
+      enabled: patch.enabled ?? prev.enabled,
+      threshold: patch.threshold !== undefined ? patch.threshold : prev.threshold,
+      threshold_unit:
+        patch.thresholdUnit !== undefined ? patch.thresholdUnit : prev.threshold_unit,
+      when_clause: patch.whenClause !== undefined ? patch.whenClause : prev.when_clause,
+      condition_clause:
+        patch.conditionClause !== undefined ? patch.conditionClause : prev.condition_clause,
+      set_value: patch.setValue !== undefined ? patch.setValue : prev.set_value,
+      ord: patch.ord ?? prev.ord,
+      version: prev.version + 1,
+      firm_id: prev.firm_id ?? FIRM,
+    };
+    attemptCriteria.set(id, next);
+    return next;
+  },
+
+  async listChannelOrder() {
+    return [...channelOrder.values()].sort((a, b) => a.ord - b.ord);
+  },
+
+  async upsertChannelOrder(order) {
+    for (const item of order) {
+      const prev = channelOrder.get(item.id);
+      if (!prev) continue;
+      channelOrder.set(item.id, {
+        ...prev,
+        token: item.token ?? prev.token,
+        label: item.label ?? prev.label,
+        ord: item.ord,
+        version: prev.version + 1,
+        firm_id: prev.firm_id ?? FIRM,
+      });
+    }
+    return [...channelOrder.values()].sort((a, b) => a.ord - b.ord);
+  },
+
   async fireEvent(input) {
     const fired: unknown[] = [];
     for (const w of workflows.values()) {
@@ -329,5 +464,9 @@ export const standInMachineApi: MachineApiPort = {
       fired.push({ workflowId: w.id, runId: started.id, enrollments: started.enrollments?.length ?? 0 });
     }
     return { eventName: input.eventName, workflowsFired: fired };
+  },
+
+  async listEligibilityPipeline() {
+    return [...ELIGIBILITY_PIPELINE].sort((a, b) => a.ord - b.ord);
   },
 };

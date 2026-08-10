@@ -43,6 +43,8 @@ type AutomationContextValue = {
   startManualRun: (workflowId: string) => AutomationRun;
   stopManualRun: (runId: string) => void;
   getActiveManualRunId: (workflowId: string) => string | null;
+  /** Refresh Runs tab from workflow_run (real wire) / stand-in. */
+  refreshRuns: (workflowId: string) => Promise<void>;
 };
 
 const AutomationContext = createContext<AutomationContextValue | null>(null);
@@ -354,6 +356,7 @@ export function AutomationProvider({ children }: { children: ReactNode }) {
       startManualRun,
       stopManualRun,
       getActiveManualRunId,
+      refreshRuns: refreshRemoteRuns,
     }),
     [
       automations,
@@ -367,6 +370,7 @@ export function AutomationProvider({ children }: { children: ReactNode }) {
       startManualRun,
       stopManualRun,
       getActiveManualRunId,
+      refreshRemoteRuns,
     ],
   );
 

@@ -94,6 +94,16 @@ export type MotionDecisionRow = {
   created_at: string;
 };
 
+/** Ordered stages for eligibility evaluation (seq_eligibility_pipeline). */
+export type EligibilityPipelineRow = {
+  id: string;
+  firm_id: string | null;
+  token: string;
+  label: string;
+  ord: number;
+  version?: number;
+};
+
 export type AuditRunRow = {
   id: string;
   firm_id: string;
@@ -102,4 +112,28 @@ export type AuditRunRow = {
   summary: Record<string, unknown>;
   started_at: string;
   finished_at: string | null;
+};
+
+export type AttemptCriteriaRow = {
+  id: string;
+  firm_id: string | null;
+  label: string;
+  enabled: boolean;
+  when_clause: string | null;
+  condition_clause: string | null;
+  set_value: string | null;
+  threshold: number | null;
+  threshold_unit: string | null;
+  ord: number;
+  source: string | null;
+  version: number;
+};
+
+export type ChannelOwnershipOrderRow = {
+  id: string;
+  firm_id: string | null;
+  token: string;
+  label: string;
+  ord: number;
+  version: number;
 };

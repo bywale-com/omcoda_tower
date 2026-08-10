@@ -1,7 +1,10 @@
 import type { MachineApiPort } from "../ports";
 import { wireFetch } from "../http";
 import type {
+  AttemptCriteriaRow,
   AuditRunRow,
+  ChannelOwnershipOrderRow,
+  EligibilityPipelineRow,
   EligibilityResultRow,
   EnrollmentRow,
   FirmSequenceBindingRow,
@@ -188,6 +191,45 @@ export const realMachineApi: MachineApiPort = {
     );
   },
 
+  async listAttemptCriteria() {
+    const res = await wireFetch<{ criteria: AttemptCriteriaRow[] }>(
+      `/machine/rules/attempt-criteria?firmId=${encodeURIComponent(FIRM)}`,
+      { headers: firmHeader() },
+    );
+    return res.criteria;
+  },
+
+  async upsertAttemptCriteria(id, patch) {
+    return wireFetch<AttemptCriteriaRow>(
+      `/machine/rules/attempt-criteria/${encodeURIComponent(id)}?firmId=${encodeURIComponent(FIRM)}`,
+      {
+        method: "PUT",
+        headers: firmHeader(),
+        body: JSON.stringify(patch),
+      },
+    );
+  },
+
+  async listChannelOrder() {
+    const res = await wireFetch<{ order: ChannelOwnershipOrderRow[] }>(
+      `/machine/seq/channel-order?firmId=${encodeURIComponent(FIRM)}`,
+      { headers: firmHeader() },
+    );
+    return res.order;
+  },
+
+  async upsertChannelOrder(order) {
+    const res = await wireFetch<{ order: ChannelOwnershipOrderRow[] }>(
+      `/machine/seq/channel-order?firmId=${encodeURIComponent(FIRM)}`,
+      {
+        method: "PUT",
+        headers: firmHeader(),
+        body: JSON.stringify({ order }),
+      },
+    );
+    return res.order;
+  },
+
   async fireEvent(input) {
     return wireFetch<{ eventName: string; workflowsFired: unknown[] }>(
       `/machine/events?firmId=${encodeURIComponent(FIRM)}`,
@@ -197,5 +239,13 @@ export const realMachineApi: MachineApiPort = {
         body: JSON.stringify(input),
       },
     );
+  },
+
+  async listEligibilityPipeline() {
+    const res = await wireFetch<{ stages: EligibilityPipelineRow[] }>(
+      `/machine/eligibility-pipeline?firmId=${encodeURIComponent(FIRM)}`,
+      { headers: firmHeader() },
+    );
+    return res.stages;
   },
 };
