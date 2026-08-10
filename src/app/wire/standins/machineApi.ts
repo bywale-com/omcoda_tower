@@ -200,10 +200,22 @@ const evaluationPins = new Map<string, EvaluationPin>();
 const campaignStates = new Map<string, CampaignState>([["firm-cedar", "running"]]);
 const provisionedFirms = new Map<string, ProvisionResult>();
 
+function now() {
+  return new Date().toISOString();
+}
+
 function patchRuleRow<T extends ModularRuleRow>(
   map: Map<string, T>,
   id: string,
-  patch: { enabled?: boolean; label?: string; ord?: number },
+  patch: {
+    enabled?: boolean;
+    label?: string;
+    ord?: number;
+    whenClause?: string | null;
+    conditionClause?: string | null;
+    setValue?: string | null;
+    threshold?: number | null;
+  },
 ): T {
   const prev = map.get(id);
   if (!prev) throw new Error(`rule missing: ${id}`);
@@ -212,16 +224,81 @@ function patchRuleRow<T extends ModularRuleRow>(
     enabled: patch.enabled ?? prev.enabled,
     label: patch.label ?? prev.label,
     ord: patch.ord ?? prev.ord,
+    when_clause: patch.whenClause !== undefined ? patch.whenClause : prev.when_clause,
+    condition_clause:
+      patch.conditionClause !== undefined ? patch.conditionClause : prev.condition_clause,
+    set_value: patch.setValue !== undefined ? patch.setValue : prev.set_value,
     version: prev.version + 1,
     firm_id: prev.firm_id ?? FIRM,
-  } as T;
-  map.set(id, next);
-  return next;
+  } as T & { threshold?: number | null };
+  if (patch.threshold !== undefined && "threshold" in (prev as object)) {
+    (next as { threshold: number | null }).threshold = patch.threshold;
+  }
+  map.set(id, next as T);
+  return next as T;
 }
 
-function now() {
-  return new Date().toISOString();
-}
+const cohortScoring = new Map<string, ModularRuleRow>([
+  ["cs-open-click", seedRule("cs-open-click", "open+click > open only > no open", true, 0, "tier_from_open_click")],
+  ["cs-top-tier", seedRule("cs-top-tier", "Y-reply + view-click + nurture-open + booking = top tier", true, 1, "top_tier")],
+]);
+
+const metricsThresholds = new Map<string, ModularRuleRow & { threshold: number | null }>([
+  [
+    "mt-ann-open",
+    {
+      ...seedRule("mt-ann-open", "Announcement open <30% → deliverability/relationship flag", true, 0, "flag_deliverability_or_relationship"),
+      threshold: 30,
+    },
+  ],
+  [
+    "mt-email-open",
+    {
+      ...seedRule("mt-email-open", "Email open <35% → cooled relationship flag", true, 1, "flag_cooled"),
+      threshold: 35,
+    },
+  ],
+]);
+
+const reachabilityChecks = new Map<string, ModularRuleRow>([
+  ["rc-email", seedRule("rc-email", "email valid", true, 0, "check_email")],
+  ["rc-phone", seedRule("rc-phone", "phone valid", true, 1, "check_phone")],
+  ["rc-channel", seedRule("rc-channel", "≥1 channel matching intended sequence", true, 2, "check_channel")],
+  ["rc-consent", seedRule("rc-consent", "consent/silenced", true, 5, "check_consent")],
+]);
+
+const phaseOrder = new Map<string, ChannelOwnershipOrderRow>([
+  ["ph-optin", { id: "ph-optin", firm_id: null, token: "optin", label: "Opt-in", ord: 0, version: 1 }],
+  ["ph-nudge", { id: "ph-nudge", firm_id: null, token: "reengagement", label: "Re-engagement (nudges)", ord: 1, version: 1 }],
+  ["ph-react", { id: "ph-react", firm_id: null, token: "reactivation", label: "Reactivation", ord: 2, version: 1 }],
+]);
+
+const factWritebacks: import("../machineTypes").FactWritebackRow[] = [];
+const missingFactSignals: import("../machineTypes").MissingFactSignalRow[] = [];
+const preparedWorkspaces = new Map<string, import("../machineTypes").PreparedWorkspaceRow>();
+const activeAttempts: import("../machineTypes").ActiveAttemptRow[] = [
+  {
+    id: "aa-local-1",
+    firm_id: FIRM,
+    contact_id: "sarah",
+    enrollment_id: null,
+    owner_channel: "email",
+    status: "open",
+    state: { step: 2, waitingOn: "24h_open_window" },
+    created_at: now(),
+    updated_at: now(),
+  },
+];
+const engagementRecordsLocal: import("../machineTypes").EngagementRecordRow[] = [
+  {
+    id: "eng-local-1",
+    firm_id: FIRM,
+    contact_id: "sarah",
+    event_kind: "email_opened",
+    payload: { step: 2 },
+    created_at: now(),
+  },
+];
 
 function walkStandInGraph(
   workflowId: string,
@@ -598,6 +675,171 @@ export const standInMachineApi: MachineApiPort = {
 
   async upsertFieldClassRouting(id, patch) {
     return patchRuleRow(fieldClassRouting, id, patch);
+  },
+
+  async listCohortScoring() {
+    return [...cohortScoring.values()].sort((a, b) => a.ord - b.ord);
+  },
+
+  async upsertCohortScoring(id, patch) {
+    return patchRuleRow(cohortScoring, id, patch);
+  },
+
+  async listMetricsThresholds() {
+    return [...metricsThresholds.values()].sort((a, b) => a.ord - b.ord);
+  },
+
+  async upsertMetricsThreshold(id, patch) {
+    return patchRuleRow(metricsThresholds, id, patch) as import("../machineTypes").MetricsThresholdRow;
+  },
+
+  async listReachabilityChecks() {
+    return [...reachabilityChecks.values()].sort((a, b) => a.ord - b.ord);
+  },
+
+  async upsertReachabilityCheck(id, patch) {
+    return patchRuleRow(reachabilityChecks, id, patch);
+  },
+
+  async listPhaseOrder() {
+    return [...phaseOrder.values()].sort((a, b) => a.ord - b.ord);
+  },
+
+  async upsertPhaseOrder(order) {
+    for (const item of order) {
+      const prev = phaseOrder.get(item.id);
+      if (!prev) continue;
+      phaseOrder.set(item.id, {
+        ...prev,
+        token: item.token ?? prev.token,
+        label: item.label ?? prev.label,
+        ord: item.ord,
+        version: prev.version + 1,
+        firm_id: prev.firm_id ?? FIRM,
+      });
+    }
+    return [...phaseOrder.values()].sort((a, b) => a.ord - b.ord);
+  },
+
+  async writeFact(input) {
+    const writebackId = `fwb-local-${Date.now()}`;
+    factWritebacks.unshift({
+      id: writebackId,
+      firm_id: FIRM,
+      contact_id: input.contactId,
+      field_key: input.fieldKey,
+      value: input.value,
+      created_at: now(),
+    });
+    for (let i = missingFactSignals.length - 1; i >= 0; i--) {
+      if (
+        missingFactSignals[i].contact_id === input.contactId &&
+        missingFactSignals[i].field_key === input.fieldKey
+      ) {
+        missingFactSignals.splice(i, 1);
+      }
+    }
+    const missingSignalIds: string[] = [];
+    for (const key of input.missingFieldKeys ?? []) {
+      const id = `mfs-local-${Date.now()}-${key}`;
+      missingFactSignals.push({
+        id,
+        firm_id: FIRM,
+        contact_id: input.contactId,
+        field_key: key,
+        created_at: now(),
+      });
+      missingSignalIds.push(id);
+    }
+    const resultId = `eres-fwb-${Date.now()}`;
+    const signalId = `sig-fwb-${Date.now()}`;
+    const motionId = `mot-fwb-${Date.now()}`;
+    eligibilityResults.push({
+      id: resultId,
+      evaluation_id: null,
+      firm_id: FIRM,
+      contact_id: input.contactId,
+      result: { trigger: "fact_writeback", writebackId, fieldKey: input.fieldKey },
+      any_pathway_pass: true,
+      created_at: now(),
+    });
+    signals.push({
+      id: signalId,
+      firm_id: FIRM,
+      contact_id: input.contactId,
+      kind: "eligibility_determination",
+      payload: { resultId, anyPass: true, writebackId },
+      created_at: now(),
+    });
+    motionDecisions.push({
+      id: motionId,
+      firm_id: FIRM,
+      contact_id: input.contactId,
+      motion: "reactivation",
+      reason: { signalId, precedence: "mp-1", writebackId },
+      created_at: now(),
+    });
+    return {
+      writebackId,
+      contactId: input.contactId,
+      fieldKey: input.fieldKey,
+      missingSignalIds,
+      cascade: [
+        { table: "fact_writebacks", id: writebackId },
+        { contactId: input.contactId, resultId, signalId, motionId, motion: "reactivation" },
+      ],
+      workflowsFired: [],
+      note: "fact_writeback → re-eval (stand-in)",
+    };
+  },
+
+  async listFactWritebacks(contactId) {
+    return contactId
+      ? factWritebacks.filter((w) => w.contact_id === contactId)
+      : [...factWritebacks];
+  },
+
+  async listMissingFactSignals(contactId) {
+    return contactId
+      ? missingFactSignals.filter((s) => s.contact_id === contactId)
+      : [...missingFactSignals];
+  },
+
+  async signalMissingFact(input) {
+    const id = `mfs-local-${Date.now()}`;
+    missingFactSignals.push({
+      id,
+      firm_id: FIRM,
+      contact_id: input.contactId,
+      field_key: input.fieldKey,
+      created_at: now(),
+    });
+    return { id, contactId: input.contactId, fieldKey: input.fieldKey };
+  },
+
+  async listPreparedWorkspaces() {
+    return [...preparedWorkspaces.values()];
+  },
+
+  async upsertPreparedWorkspace(input) {
+    const id = input.id ?? `pw-${FIRM}`;
+    const row: import("../machineTypes").PreparedWorkspaceRow = {
+      id,
+      firm_id: FIRM,
+      status: input.status ?? "staged",
+      body: input.body ?? {},
+      created_at: preparedWorkspaces.get(id)?.created_at ?? now(),
+    };
+    preparedWorkspaces.set(id, row);
+    return row;
+  },
+
+  async listActiveAttempts() {
+    return [...activeAttempts];
+  },
+
+  async listEngagementRecords() {
+    return [...engagementRecordsLocal];
   },
 
   async listReferenceVersions() {

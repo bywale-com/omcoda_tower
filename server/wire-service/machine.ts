@@ -200,6 +200,95 @@ export async function handleEnrollmentCreate(c: Context) {
 }
 
 /**
+ * Shared re-eval ring: eligibility_evaluation → result → signal → motion_decision
+ * → eligibility.changed (workflows) / fallback enroll.
+ */
+async function runContactEligibilityCascade(opts: {
+  firm: string;
+  contactIds: string[];
+  triggerKind: string;
+  resultPayload: Record<string, unknown>;
+  eventPayload: Record<string, unknown>;
+}): Promise<{ cascade: unknown[]; workflowsFired: unknown[] }> {
+  const pool = getPool();
+  const cascade: unknown[] = [];
+  for (const contactId of opts.contactIds) {
+    const evalId = `eval-${randomUUID()}`;
+    await pool.query(
+      `INSERT INTO eligibility_evaluations (id, firm_id, contact_id, trigger_kind, status)
+       VALUES ($1,$2,$3,$4,'done')`,
+      [evalId, opts.firm, contactId, opts.triggerKind],
+    );
+    const resultId = `eres-${randomUUID()}`;
+    const anyPass = true;
+    await pool.query(
+      `INSERT INTO eligibility_results (id, evaluation_id, firm_id, contact_id, result, any_pathway_pass)
+       VALUES ($1,$2,$3,$4,$5::jsonb,$6)`,
+      [
+        resultId,
+        evalId,
+        opts.firm,
+        contactId,
+        JSON.stringify({ trigger: opts.triggerKind, ...opts.resultPayload }),
+        anyPass,
+      ],
+    );
+    const signalId = `sig-${randomUUID()}`;
+    await pool.query(
+      `INSERT INTO signals (id, firm_id, contact_id, kind, payload)
+       VALUES ($1,$2,$3,'eligibility_determination',$4::jsonb)`,
+      [signalId, opts.firm, contactId, JSON.stringify({ resultId, anyPass })],
+    );
+    const motion = anyPass ? "reactivation" : "nudge";
+    const motionId = `mot-${randomUUID()}`;
+    await pool.query(
+      `INSERT INTO motion_decisions (id, firm_id, contact_id, motion, reason)
+       VALUES ($1,$2,$3,$4,$5::jsonb)`,
+      [motionId, opts.firm, contactId, motion, JSON.stringify({ signalId, precedence: "mp-1" })],
+    );
+    cascade.push({
+      contactId,
+      evaluationId: evalId,
+      resultId,
+      signalId,
+      motionId,
+      motion,
+    });
+  }
+
+  const dispatched = await dispatchEventToWorkflows(pool, {
+    firmId: opts.firm,
+    eventName: "eligibility.changed",
+    payload: { ...opts.eventPayload, anyPass: true, motion: "reactivation" },
+    contactIds: opts.contactIds,
+  });
+
+  if (dispatched.length === 0) {
+    for (const contactId of opts.contactIds) {
+      const enrolled = await enrollAndActuate({
+        firmId: opts.firm,
+        contactId,
+        agentRef: "tpl.reactivation.v1",
+        sequenceId: "tpl.reactivation.v1",
+        payload: { faceless: true, fallback: true, trigger: opts.triggerKind },
+        purpose: "reactivation",
+      });
+      if (enrolled.blocked === "halt") {
+        cascade.push({ contactId, blocked: "halt", fallback: true });
+        continue;
+      }
+      cascade.push({
+        contactId,
+        enrollmentId: enrolled.enrollmentId,
+        fallback: true,
+      });
+    }
+  }
+
+  return { cascade, workflowsFired: dispatched };
+}
+
+/**
  * Faceless cascade: edit reference_version → eligibility_evaluation → result → signal → motion_decision.
  * No code deploy — row edit only.
  */
@@ -230,92 +319,137 @@ export async function handleReferenceUpsert(c: Context) {
       )
     ).rows.map((r) => r.id);
 
-  const cascade: unknown[] = [{ table: "reference_versions", id }];
-
-  for (const contactId of contacts) {
-    const evalId = `eval-${randomUUID()}`;
-    await pool.query(
-      `INSERT INTO eligibility_evaluations (id, firm_id, contact_id, trigger_kind, status)
-       VALUES ($1,$2,$3,'reference_version','done')`,
-      [evalId, firm, contactId],
-    );
-    const resultId = `eres-${randomUUID()}`;
-    const anyPass = true;
-    await pool.query(
-      `INSERT INTO eligibility_results (id, evaluation_id, firm_id, contact_id, result, any_pathway_pass)
-       VALUES ($1,$2,$3,$4,$5::jsonb,$6)`,
-      [
-        resultId,
-        evalId,
-        firm,
-        contactId,
-        JSON.stringify({ trigger: "reference_version", refId: id }),
-        anyPass,
-      ],
-    );
-    const signalId = `sig-${randomUUID()}`;
-    await pool.query(
-      `INSERT INTO signals (id, firm_id, contact_id, kind, payload)
-       VALUES ($1,$2,$3,'eligibility_determination',$4::jsonb)`,
-      [signalId, firm, contactId, JSON.stringify({ resultId, anyPass })],
-    );
-    // Engine 2: reactivation-first when pass (simplification of mp-1)
-    const motion = anyPass ? "reactivation" : "nudge";
-    const motionId = `mot-${randomUUID()}`;
-    await pool.query(
-      `INSERT INTO motion_decisions (id, firm_id, contact_id, motion, reason)
-       VALUES ($1,$2,$3,$4,$5::jsonb)`,
-      [motionId, firm, contactId, motion, JSON.stringify({ signalId, precedence: "mp-1" })],
-    );
-
-    cascade.push({
-      contactId,
-      evaluationId: evalId,
-      resultId,
-      signalId,
-      motionId,
-      motion,
-    });
-  }
-
-  // Emit eligibility.changed → active workflows walk their saved graphs
-  const dispatched = await dispatchEventToWorkflows(pool, {
-    firmId: firm,
-    eventName: "eligibility.changed",
-    payload: { referenceId: id, anyPass: true, motion: "reactivation" },
+  const { cascade, workflowsFired } = await runContactEligibilityCascade({
+    firm,
     contactIds: contacts,
+    triggerKind: "reference_version",
+    resultPayload: { refId: id },
+    eventPayload: { referenceId: id },
   });
-
-  // Fallback enroll only when no active workflow subscribed
-  if (dispatched.length === 0) {
-    for (const contactId of contacts) {
-      const enrolled = await enrollAndActuate({
-        firmId: firm,
-        contactId,
-        agentRef: "tpl.reactivation.v1",
-        sequenceId: "tpl.reactivation.v1",
-        payload: { faceless: true, fallback: true },
-        purpose: "reactivation",
-      });
-      if (enrolled.blocked === "halt") {
-        cascade.push({ contactId, blocked: "halt", fallback: true });
-        continue;
-      }
-      cascade.push({
-        contactId,
-        enrollmentId: enrolled.enrollmentId,
-        fallback: true,
-      });
-    }
-  }
 
   return json(c, {
     referenceId: id,
-    cascade,
-    workflowsFired: dispatched,
+    cascade: [{ table: "reference_versions", id }, ...cascade],
+    workflowsFired,
     gate: sendGateSnapshot(),
     note: "eligibility.changed emitted; active workflows walked when subscribed",
   });
+}
+
+/**
+ * Contact fact answer → fact_writebacks (+ clear missing_fact_signals) → immediate re-eval cascade.
+ */
+export async function handleFactWriteback(c: Context) {
+  const firm = firmId(c);
+  const body = await c.req.json<{
+    contactId: string;
+    fieldKey: string;
+    value: unknown;
+    source?: string;
+    missingFieldKeys?: string[];
+  }>();
+  if (!body.contactId?.trim() || !body.fieldKey?.trim()) {
+    return json(c, { error: "contactId and fieldKey required" }, 400);
+  }
+  const pool = getPool();
+  const contactId = body.contactId.trim();
+  const fieldKey = body.fieldKey.trim();
+  const writeId = `fwb-${randomUUID()}`;
+  await pool.query(
+    `INSERT INTO fact_writebacks (id, firm_id, contact_id, field_key, value)
+     VALUES ($1,$2,$3,$4,$5::jsonb)`,
+    [writeId, firm, contactId, fieldKey, JSON.stringify(body.value ?? null)],
+  );
+  // Answered fact clears its missing signal
+  await pool.query(
+    `DELETE FROM missing_fact_signals WHERE firm_id=$1 AND contact_id=$2 AND field_key=$3`,
+    [firm, contactId, fieldKey],
+  );
+  const missingIds: string[] = [];
+  for (const missingKey of body.missingFieldKeys ?? []) {
+    const existing = await pool.query(
+      `SELECT id FROM missing_fact_signals WHERE firm_id=$1 AND contact_id=$2 AND field_key=$3 LIMIT 1`,
+      [firm, contactId, missingKey],
+    );
+    if (existing.rowCount) {
+      missingIds.push(existing.rows[0].id as string);
+      continue;
+    }
+    const mid = `mfs-${randomUUID()}`;
+    await pool.query(
+      `INSERT INTO missing_fact_signals (id, firm_id, contact_id, field_key)
+       VALUES ($1,$2,$3,$4)`,
+      [mid, firm, contactId, missingKey],
+    );
+    missingIds.push(mid);
+  }
+
+  const { cascade, workflowsFired } = await runContactEligibilityCascade({
+    firm,
+    contactIds: [contactId],
+    triggerKind: "fact_writeback",
+    resultPayload: { writebackId: writeId, fieldKey, source: body.source ?? "contact" },
+    eventPayload: { writebackId: writeId, fieldKey, contactId },
+  });
+
+  return json(c, {
+    writebackId: writeId,
+    contactId,
+    fieldKey,
+    missingSignalIds: missingIds,
+    cascade: [{ table: "fact_writebacks", id: writeId }, ...cascade],
+    workflowsFired,
+    gate: sendGateSnapshot(),
+    note: "fact_writeback → re-eval → eligibility.changed",
+  });
+}
+
+export async function handleFactWritebacksList(c: Context) {
+  const firm = firmId(c);
+  const contactId = c.req.query("contactId");
+  const pool = getPool();
+  const rows = contactId
+    ? await pool.query(
+        `SELECT * FROM fact_writebacks WHERE firm_id=$1 AND contact_id=$2 ORDER BY created_at DESC LIMIT 100`,
+        [firm, contactId],
+      )
+    : await pool.query(
+        `SELECT * FROM fact_writebacks WHERE firm_id=$1 ORDER BY created_at DESC LIMIT 200`,
+        [firm],
+      );
+  return json(c, { writebacks: rows.rows });
+}
+
+export async function handleMissingFactSignalsList(c: Context) {
+  const firm = firmId(c);
+  const contactId = c.req.query("contactId");
+  const pool = getPool();
+  const rows = contactId
+    ? await pool.query(
+        `SELECT * FROM missing_fact_signals WHERE firm_id=$1 AND contact_id=$2 ORDER BY created_at DESC`,
+        [firm, contactId],
+      )
+    : await pool.query(
+        `SELECT * FROM missing_fact_signals WHERE firm_id=$1 ORDER BY created_at DESC LIMIT 200`,
+        [firm],
+      );
+  return json(c, { signals: rows.rows });
+}
+
+export async function handleMissingFactSignalCreate(c: Context) {
+  const firm = firmId(c);
+  const body = await c.req.json<{ contactId: string; fieldKey: string }>();
+  if (!body.contactId || !body.fieldKey) {
+    return json(c, { error: "contactId and fieldKey required" }, 400);
+  }
+  const pool = getPool();
+  const id = `mfs-${randomUUID()}`;
+  await pool.query(
+    `INSERT INTO missing_fact_signals (id, firm_id, contact_id, field_key)
+     VALUES ($1,$2,$3,$4)`,
+    [id, firm, body.contactId, body.fieldKey],
+  );
+  return json(c, { id, firmId: firm, contactId: body.contactId, fieldKey: body.fieldKey });
 }
 
 export async function handleAuditRunCreate(c: Context) {
@@ -785,9 +919,22 @@ const MODULAR_RULE_TABLES = {
   rule_eligibility_pathway: "rule_eligibility_pathway",
   rule_motion_precedence: "rule_motion_precedence",
   rule_field_class_routing: "rule_field_class_routing",
+  rule_cohort_scoring: "rule_cohort_scoring",
+  rule_reachability_checks: "rule_reachability_checks",
+  rule_metrics_thresholds: "rule_metrics_thresholds",
 } as const;
 
 type ModularRuleTable = keyof typeof MODULAR_RULE_TABLES;
+
+type ModularRulePatch = {
+  enabled?: boolean;
+  label?: string;
+  ord?: number;
+  whenClause?: string | null;
+  conditionClause?: string | null;
+  setValue?: string | null;
+  threshold?: number | null;
+};
 
 async function listModularRules(table: ModularRuleTable, firm: string) {
   const pool = getPool();
@@ -805,7 +952,7 @@ async function upsertModularRuleEnabled(
   table: ModularRuleTable,
   id: string,
   firm: string,
-  body: { enabled?: boolean; label?: string; ord?: number },
+  body: ModularRulePatch,
 ) {
   const pool = getPool();
   const safe = MODULAR_RULE_TABLES[table];
@@ -815,11 +962,33 @@ async function upsertModularRuleEnabled(
   const enabled = body.enabled ?? prev.enabled;
   const label = body.label ?? prev.label;
   const ord = body.ord ?? prev.ord;
+  const whenClause =
+    body.whenClause !== undefined ? body.whenClause : (prev.when_clause as string | null);
+  const conditionClause =
+    body.conditionClause !== undefined
+      ? body.conditionClause
+      : (prev.condition_clause as string | null);
+  const setValue =
+    body.setValue !== undefined ? body.setValue : (prev.set_value as string | null);
   const firmIdNext = (prev.firm_id as string | null) ?? firm;
-  await pool.query(
-    `UPDATE ${safe} SET enabled=$2, label=$3, ord=$4, firm_id=$5, version=version+1 WHERE id=$1`,
-    [id, enabled, label, ord, firmIdNext],
-  );
+  const hasThreshold = "threshold" in prev;
+  if (hasThreshold) {
+    const threshold =
+      body.threshold !== undefined ? body.threshold : (prev.threshold as number | null);
+    await pool.query(
+      `UPDATE ${safe} SET enabled=$2, label=$3, ord=$4, firm_id=$5,
+         when_clause=$6, condition_clause=$7, set_value=$8, threshold=$9, version=version+1
+       WHERE id=$1`,
+      [id, enabled, label, ord, firmIdNext, whenClause, conditionClause, setValue, threshold],
+    );
+  } else {
+    await pool.query(
+      `UPDATE ${safe} SET enabled=$2, label=$3, ord=$4, firm_id=$5,
+         when_clause=$6, condition_clause=$7, set_value=$8, version=version+1
+       WHERE id=$1`,
+      [id, enabled, label, ord, firmIdNext, whenClause, conditionClause, setValue],
+    );
+  }
   const updated = await pool.query(`SELECT * FROM ${safe} WHERE id=$1`, [id]);
   return updated.rows[0];
 }
@@ -833,7 +1002,7 @@ export async function handleEligibilityPathwaysList(c: Context) {
 export async function handleEligibilityPathwayUpsert(c: Context) {
   const firm = firmId(c);
   const id = c.req.param("id");
-  const body = await c.req.json<{ enabled?: boolean; label?: string; ord?: number }>();
+  const body = await c.req.json<ModularRulePatch>();
   const row = await upsertModularRuleEnabled("rule_eligibility_pathway", id, firm, body);
   if (!row) return json(c, { error: "eligibility pathway not found", id }, 404);
   return json(c, row);
@@ -848,7 +1017,7 @@ export async function handleMotionPrecedenceList(c: Context) {
 export async function handleMotionPrecedenceUpsert(c: Context) {
   const firm = firmId(c);
   const id = c.req.param("id");
-  const body = await c.req.json<{ enabled?: boolean; label?: string; ord?: number }>();
+  const body = await c.req.json<ModularRulePatch>();
   const row = await upsertModularRuleEnabled("rule_motion_precedence", id, firm, body);
   if (!row) return json(c, { error: "motion precedence not found", id }, 404);
   return json(c, row);
@@ -863,10 +1032,140 @@ export async function handleFieldClassRoutingList(c: Context) {
 export async function handleFieldClassRoutingUpsert(c: Context) {
   const firm = firmId(c);
   const id = c.req.param("id");
-  const body = await c.req.json<{ enabled?: boolean; label?: string; ord?: number }>();
+  const body = await c.req.json<ModularRulePatch>();
   const row = await upsertModularRuleEnabled("rule_field_class_routing", id, firm, body);
   if (!row) return json(c, { error: "field class routing not found", id }, 404);
   return json(c, row);
+}
+
+export async function handleCohortScoringList(c: Context) {
+  const firm = firmId(c);
+  return json(c, { rules: await listModularRules("rule_cohort_scoring", firm) });
+}
+
+export async function handleCohortScoringUpsert(c: Context) {
+  const firm = firmId(c);
+  const id = c.req.param("id");
+  const body = await c.req.json<ModularRulePatch>();
+  const row = await upsertModularRuleEnabled("rule_cohort_scoring", id, firm, body);
+  if (!row) return json(c, { error: "cohort scoring not found", id }, 404);
+  return json(c, row);
+}
+
+export async function handleMetricsThresholdsList(c: Context) {
+  const firm = firmId(c);
+  return json(c, { rules: await listModularRules("rule_metrics_thresholds", firm) });
+}
+
+export async function handleMetricsThresholdsUpsert(c: Context) {
+  const firm = firmId(c);
+  const id = c.req.param("id");
+  const body = await c.req.json<ModularRulePatch>();
+  const row = await upsertModularRuleEnabled("rule_metrics_thresholds", id, firm, body);
+  if (!row) return json(c, { error: "metrics threshold not found", id }, 404);
+  return json(c, row);
+}
+
+export async function handleReachabilityChecksList(c: Context) {
+  const firm = firmId(c);
+  return json(c, { rules: await listModularRules("rule_reachability_checks", firm) });
+}
+
+export async function handleReachabilityChecksUpsert(c: Context) {
+  const firm = firmId(c);
+  const id = c.req.param("id");
+  const body = await c.req.json<ModularRulePatch>();
+  const row = await upsertModularRuleEnabled("rule_reachability_checks", id, firm, body);
+  if (!row) return json(c, { error: "reachability check not found", id }, 404);
+  return json(c, row);
+}
+
+/** List seq_phase_order ladder. */
+export async function handlePhaseOrderList(c: Context) {
+  const firm = firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(
+    `SELECT * FROM seq_phase_order
+     WHERE firm_id IS NULL OR firm_id = $1
+     ORDER BY CASE WHEN firm_id = $1 THEN 0 ELSE 1 END, ord ASC`,
+    [firm],
+  );
+  return json(c, { order: rows.rows });
+}
+
+/** Replace ord for the full phase ladder (Agents Settings reorder). */
+export async function handlePhaseOrderUpsert(c: Context) {
+  const firm = firmId(c);
+  const body = await c.req.json<{
+    order: Array<{ id: string; token?: string; label?: string; ord: number }>;
+  }>();
+  const items = body.order ?? [];
+  if (!items.length) return json(c, { error: "order required" }, 400);
+  const pool = getPool();
+  for (const item of items) {
+    await pool.query(
+      `UPDATE seq_phase_order SET ord=$2, token=COALESCE($3,token), label=COALESCE($4,label),
+         firm_id=COALESCE(firm_id,$5), version=version+1
+       WHERE id=$1`,
+      [item.id, item.ord, item.token ?? null, item.label ?? null, firm],
+    );
+  }
+  const rows = await pool.query(
+    `SELECT * FROM seq_phase_order
+     WHERE firm_id IS NULL OR firm_id = $1
+     ORDER BY CASE WHEN firm_id = $1 THEN 0 ELSE 1 END, ord ASC`,
+    [firm],
+  );
+  return json(c, { order: rows.rows });
+}
+
+export async function handlePreparedWorkspacesList(c: Context) {
+  const firm = firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(
+    `SELECT * FROM prepared_workspaces WHERE firm_id=$1 ORDER BY created_at DESC`,
+    [firm],
+  );
+  return json(c, { workspaces: rows.rows });
+}
+
+export async function handlePreparedWorkspaceUpsert(c: Context) {
+  const firm = firmId(c);
+  const body = await c.req.json<{
+    id?: string;
+    status?: string;
+    body?: Record<string, unknown>;
+  }>();
+  const pool = getPool();
+  const id = c.req.param("id") || body.id || `pw-${firm}`;
+  await pool.query(
+    `INSERT INTO prepared_workspaces (id, firm_id, status, body)
+     VALUES ($1,$2,$3,$4::jsonb)
+     ON CONFLICT (id) DO UPDATE SET status=EXCLUDED.status, body=EXCLUDED.body`,
+    [id, firm, body.status ?? "staged", JSON.stringify(body.body ?? {})],
+  );
+  const row = await pool.query(`SELECT * FROM prepared_workspaces WHERE id=$1`, [id]);
+  return json(c, row.rows[0]);
+}
+
+export async function handleActiveAttemptsList(c: Context) {
+  const firm = firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(
+    `SELECT * FROM active_attempts WHERE firm_id=$1 ORDER BY updated_at DESC LIMIT 100`,
+    [firm],
+  );
+  return json(c, { attempts: rows.rows });
+}
+
+export async function handleEngagementRecordsList(c: Context) {
+  const firm = firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(
+    `SELECT * FROM engagement_records WHERE firm_id=$1 ORDER BY created_at DESC LIMIT 100`,
+    [firm],
+  );
+  return json(c, { records: rows.rows });
 }
 
 /** List reference_versions for Evaluation pack pin picker. */

@@ -155,6 +155,77 @@ export type ModularRuleRow = {
 export type EligibilityPathwayRow = ModularRuleRow;
 export type MotionPrecedenceRow = ModularRuleRow;
 export type FieldClassRoutingRow = ModularRuleRow;
+export type CohortScoringRow = ModularRuleRow;
+export type ReachabilityCheckRow = ModularRuleRow;
+
+export type MetricsThresholdRow = ModularRuleRow & {
+  threshold: number | null;
+};
+
+export type PhaseOrderRow = {
+  id: string;
+  firm_id: string | null;
+  token: string;
+  label: string;
+  ord: number;
+  version: number;
+};
+
+export type FactWritebackRow = {
+  id: string;
+  firm_id: string;
+  contact_id: string;
+  field_key: string | null;
+  value: unknown;
+  created_at: string;
+};
+
+export type MissingFactSignalRow = {
+  id: string;
+  firm_id: string;
+  contact_id: string;
+  field_key: string;
+  created_at: string;
+};
+
+export type PreparedWorkspaceRow = {
+  id: string;
+  firm_id: string;
+  status: string;
+  body: Record<string, unknown>;
+  created_at: string;
+};
+
+export type ActiveAttemptRow = {
+  id: string;
+  firm_id: string;
+  contact_id: string;
+  enrollment_id: string | null;
+  owner_channel: string | null;
+  status: string;
+  state: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+
+export type EngagementRecordRow = {
+  id: string;
+  firm_id: string;
+  contact_id: string;
+  event_kind: string;
+  payload: Record<string, unknown>;
+  created_at: string;
+};
+
+export type FactWritebackResult = {
+  writebackId: string;
+  contactId: string;
+  fieldKey: string;
+  missingSignalIds: string[];
+  cascade: unknown[];
+  workflowsFired: unknown[];
+  note?: string;
+};
 
 /** Evaluation pack pin — reference_version + ruleset id (no dedicated Evaluation table). */
 export type EvaluationPin = {

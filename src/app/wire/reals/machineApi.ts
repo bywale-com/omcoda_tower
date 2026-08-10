@@ -301,6 +301,135 @@ export const realMachineApi: MachineApiPort = {
     );
   },
 
+  async listCohortScoring() {
+    const res = await wireFetch<{ rules: import("../machineTypes").CohortScoringRow[] }>(
+      `/machine/rules/cohort-scoring?firmId=${encodeURIComponent(FIRM)}`,
+      { headers: firmHeader() },
+    );
+    return res.rules;
+  },
+
+  async upsertCohortScoring(id, patch) {
+    return wireFetch<import("../machineTypes").CohortScoringRow>(
+      `/machine/rules/cohort-scoring/${encodeURIComponent(id)}?firmId=${encodeURIComponent(FIRM)}`,
+      { method: "PUT", headers: firmHeader(), body: JSON.stringify(patch) },
+    );
+  },
+
+  async listMetricsThresholds() {
+    const res = await wireFetch<{ rules: import("../machineTypes").MetricsThresholdRow[] }>(
+      `/machine/rules/metrics-thresholds?firmId=${encodeURIComponent(FIRM)}`,
+      { headers: firmHeader() },
+    );
+    return res.rules;
+  },
+
+  async upsertMetricsThreshold(id, patch) {
+    return wireFetch<import("../machineTypes").MetricsThresholdRow>(
+      `/machine/rules/metrics-thresholds/${encodeURIComponent(id)}?firmId=${encodeURIComponent(FIRM)}`,
+      { method: "PUT", headers: firmHeader(), body: JSON.stringify(patch) },
+    );
+  },
+
+  async listReachabilityChecks() {
+    const res = await wireFetch<{ rules: import("../machineTypes").ReachabilityCheckRow[] }>(
+      `/machine/rules/reachability-checks?firmId=${encodeURIComponent(FIRM)}`,
+      { headers: firmHeader() },
+    );
+    return res.rules;
+  },
+
+  async upsertReachabilityCheck(id, patch) {
+    return wireFetch<import("../machineTypes").ReachabilityCheckRow>(
+      `/machine/rules/reachability-checks/${encodeURIComponent(id)}?firmId=${encodeURIComponent(FIRM)}`,
+      { method: "PUT", headers: firmHeader(), body: JSON.stringify(patch) },
+    );
+  },
+
+  async listPhaseOrder() {
+    const res = await wireFetch<{ order: import("../machineTypes").PhaseOrderRow[] }>(
+      `/machine/seq/phase-order?firmId=${encodeURIComponent(FIRM)}`,
+      { headers: firmHeader() },
+    );
+    return res.order;
+  },
+
+  async upsertPhaseOrder(order) {
+    const res = await wireFetch<{ order: import("../machineTypes").PhaseOrderRow[] }>(
+      `/machine/seq/phase-order?firmId=${encodeURIComponent(FIRM)}`,
+      { method: "PUT", headers: firmHeader(), body: JSON.stringify({ order }) },
+    );
+    return res.order;
+  },
+
+  async writeFact(input) {
+    return wireFetch<import("../machineTypes").FactWritebackResult>(
+      `/machine/fact-writebacks?firmId=${encodeURIComponent(FIRM)}`,
+      { method: "POST", headers: firmHeader(), body: JSON.stringify(input) },
+    );
+  },
+
+  async listFactWritebacks(contactId) {
+    const q = contactId
+      ? `?firmId=${encodeURIComponent(FIRM)}&contactId=${encodeURIComponent(contactId)}`
+      : `?firmId=${encodeURIComponent(FIRM)}`;
+    const res = await wireFetch<{ writebacks: import("../machineTypes").FactWritebackRow[] }>(
+      `/machine/fact-writebacks${q}`,
+      { headers: firmHeader() },
+    );
+    return res.writebacks;
+  },
+
+  async listMissingFactSignals(contactId) {
+    const q = contactId
+      ? `?firmId=${encodeURIComponent(FIRM)}&contactId=${encodeURIComponent(contactId)}`
+      : `?firmId=${encodeURIComponent(FIRM)}`;
+    const res = await wireFetch<{ signals: import("../machineTypes").MissingFactSignalRow[] }>(
+      `/machine/missing-fact-signals${q}`,
+      { headers: firmHeader() },
+    );
+    return res.signals;
+  },
+
+  async signalMissingFact(input) {
+    return wireFetch<{ id: string; contactId: string; fieldKey: string }>(
+      `/machine/missing-fact-signals?firmId=${encodeURIComponent(FIRM)}`,
+      { method: "POST", headers: firmHeader(), body: JSON.stringify(input) },
+    );
+  },
+
+  async listPreparedWorkspaces() {
+    const res = await wireFetch<{ workspaces: import("../machineTypes").PreparedWorkspaceRow[] }>(
+      `/machine/prepared-workspaces?firmId=${encodeURIComponent(FIRM)}`,
+      { headers: firmHeader() },
+    );
+    return res.workspaces;
+  },
+
+  async upsertPreparedWorkspace(input) {
+    const id = input.id ?? `pw-${FIRM}`;
+    return wireFetch<import("../machineTypes").PreparedWorkspaceRow>(
+      `/machine/prepared-workspaces/${encodeURIComponent(id)}?firmId=${encodeURIComponent(FIRM)}`,
+      { method: "PUT", headers: firmHeader(), body: JSON.stringify({ ...input, id }) },
+    );
+  },
+
+  async listActiveAttempts() {
+    const res = await wireFetch<{ attempts: import("../machineTypes").ActiveAttemptRow[] }>(
+      `/machine/active-attempts?firmId=${encodeURIComponent(FIRM)}`,
+      { headers: firmHeader() },
+    );
+    return res.attempts;
+  },
+
+  async listEngagementRecords() {
+    const res = await wireFetch<{ records: import("../machineTypes").EngagementRecordRow[] }>(
+      `/machine/engagement-records?firmId=${encodeURIComponent(FIRM)}`,
+      { headers: firmHeader() },
+    );
+    return res.records;
+  },
+
   async listReferenceVersions() {
     const res = await wireFetch<{ versions: ReferenceVersionRow[] }>(
       `/machine/reference-versions?firmId=${encodeURIComponent(FIRM)}`,

@@ -420,8 +420,75 @@ export type MachineApiPort = {
   listFieldClassRouting(): Promise<import("./machineTypes").FieldClassRoutingRow[]>;
   upsertFieldClassRouting(
     id: string,
-    patch: { enabled?: boolean; label?: string; ord?: number },
+    patch: {
+      enabled?: boolean;
+      label?: string;
+      ord?: number;
+      whenClause?: string | null;
+      conditionClause?: string | null;
+      setValue?: string | null;
+    },
   ): Promise<import("./machineTypes").FieldClassRoutingRow>;
+  listCohortScoring(): Promise<import("./machineTypes").CohortScoringRow[]>;
+  upsertCohortScoring(
+    id: string,
+    patch: {
+      enabled?: boolean;
+      label?: string;
+      ord?: number;
+      setValue?: string | null;
+      whenClause?: string | null;
+      conditionClause?: string | null;
+    },
+  ): Promise<import("./machineTypes").CohortScoringRow>;
+  listMetricsThresholds(): Promise<import("./machineTypes").MetricsThresholdRow[]>;
+  upsertMetricsThreshold(
+    id: string,
+    patch: {
+      enabled?: boolean;
+      label?: string;
+      ord?: number;
+      threshold?: number | null;
+      setValue?: string | null;
+    },
+  ): Promise<import("./machineTypes").MetricsThresholdRow>;
+  listReachabilityChecks(): Promise<import("./machineTypes").ReachabilityCheckRow[]>;
+  upsertReachabilityCheck(
+    id: string,
+    patch: {
+      enabled?: boolean;
+      label?: string;
+      ord?: number;
+      whenClause?: string | null;
+      conditionClause?: string | null;
+      setValue?: string | null;
+    },
+  ): Promise<import("./machineTypes").ReachabilityCheckRow>;
+  listPhaseOrder(): Promise<import("./machineTypes").PhaseOrderRow[]>;
+  upsertPhaseOrder(
+    order: Array<{ id: string; token?: string; label?: string; ord: number }>,
+  ): Promise<import("./machineTypes").PhaseOrderRow[]>;
+  writeFact(input: {
+    contactId: string;
+    fieldKey: string;
+    value: unknown;
+    source?: string;
+    missingFieldKeys?: string[];
+  }): Promise<import("./machineTypes").FactWritebackResult>;
+  listFactWritebacks(contactId?: string): Promise<import("./machineTypes").FactWritebackRow[]>;
+  listMissingFactSignals(contactId?: string): Promise<import("./machineTypes").MissingFactSignalRow[]>;
+  signalMissingFact(input: {
+    contactId: string;
+    fieldKey: string;
+  }): Promise<{ id: string; contactId: string; fieldKey: string }>;
+  listPreparedWorkspaces(): Promise<import("./machineTypes").PreparedWorkspaceRow[]>;
+  upsertPreparedWorkspace(input: {
+    id?: string;
+    status?: string;
+    body?: Record<string, unknown>;
+  }): Promise<import("./machineTypes").PreparedWorkspaceRow>;
+  listActiveAttempts(): Promise<import("./machineTypes").ActiveAttemptRow[]>;
+  listEngagementRecords(): Promise<import("./machineTypes").EngagementRecordRow[]>;
   listReferenceVersions(): Promise<import("./machineTypes").ReferenceVersionRow[]>;
   getEvaluationPin(packId: string): Promise<{
     packId: string;
