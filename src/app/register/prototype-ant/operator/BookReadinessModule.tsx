@@ -261,6 +261,10 @@ export function BookReadinessModule() {
         }),
       );
       message.success(`Audit run ${result.id} · ${result.contacts} contacts`);
+      // Match plant AuditContext: after contacts land + sequence_ready, fire onboarding enroll.
+      if (result.contacts > 0) {
+        void wirePorts.machineApi.fireOnboarding().catch(() => undefined);
+      }
     } catch (err) {
       setAudits((prev) =>
         prev.map((audit) =>
@@ -341,6 +345,10 @@ export function BookReadinessModule() {
         }),
       );
       message.success(`Uploaded ${contacts.length} contacts · audit run ${result.id}`);
+      // Match plant AuditContext: upload → sequence_ready → onboarding enroll when campaign running.
+      if (result.contacts > 0) {
+        void wirePorts.machineApi.fireOnboarding().catch(() => undefined);
+      }
     } catch (err) {
       message.error(`Upload failed: ${String(err)}`);
     } finally {

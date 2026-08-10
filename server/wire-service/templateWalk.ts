@@ -20,20 +20,27 @@ type RawCell = {
   token?: string;
   label?: string;
   channel?: string;
+  kind?: string;
   day?: number;
   dayOffset?: number;
   offsetMinutes?: number;
+  waitMinutes?: number;
   subject?: string;
   bodyText?: string;
   body?: string;
   mode?: string;
 };
 
-function channelFromToken(token: string, explicit?: string): "text" | "email" | "form" {
-  const e = (explicit ?? "").toLowerCase();
+function channelFromToken(
+  token: string,
+  explicit?: string,
+  kind?: string,
+): "text" | "email" | "form" {
+  const e = (explicit ?? kind ?? "").toLowerCase();
   if (e === "text" || e === "sms" || e === "email" || e === "form") {
     return e === "sms" ? "text" : (e as "text" | "email" | "form");
   }
+  if (e === "task" || e === "consultant_task") return "form";
   const t = token.toLowerCase();
   if (t.includes("email") || t.includes("announce")) return "email";
   if (t.includes("form") || t.includes("social") || t.includes("landing") || t.includes("waitlist")) {
@@ -60,10 +67,16 @@ export function normalizeTemplateCells(raw: unknown[]): NormalizedCell[] {
     const token = c.token ?? c.id ?? `cell-${i}`;
     const id = c.id ?? token;
     const label = c.label ?? token;
-    const channel = channelFromToken(token, c.channel);
+    const channel = channelFromToken(token, c.channel, c.kind);
     let offsetMs: number;
-    if (typeof c.offsetMinutes === "number" && Number.isFinite(c.offsetMinutes)) {
-      offsetMs = Math.max(0, c.offsetMinutes) * 60 * 1000;
+    const mins =
+      typeof c.offsetMinutes === "number" && Number.isFinite(c.offsetMinutes)
+        ? c.offsetMinutes
+        : typeof c.waitMinutes === "number" && Number.isFinite(c.waitMinutes)
+          ? c.waitMinutes
+          : null;
+    if (mins !== null) {
+      offsetMs = Math.max(0, mins) * 60 * 1000;
     } else {
       const day = dayFromToken(token, c);
       offsetMs = Math.max(0, day) * 24 * 60 * 60 * 1000;
