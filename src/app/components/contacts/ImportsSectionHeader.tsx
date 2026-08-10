@@ -1,5 +1,6 @@
 import { IMPORTS_SECTION_HOLON } from "../docs/contactsBodyHolons";
 import { CsvImportFlow } from "../imports/CsvImportFlow";
+import type { ConfirmedCsvImport } from "../imports/csvImportTypes";
 import { SHELL_HOLON_ORDER } from "../docs/shellHolonOrder";
 import { s } from "../docs/treeLayout";
 import type { Tokens } from "../tokens";
@@ -8,9 +9,11 @@ import { DirectorySectionHeader } from "./DirectorySectionHeader";
 export function ImportsSectionHeader({
   count,
   t,
+  onImportConfirmed,
 }: {
   count: number;
   t: Tokens;
+  onImportConfirmed?: (result: ConfirmedCsvImport) => void;
 }) {
   return (
     <DirectorySectionHeader
@@ -24,7 +27,7 @@ export function ImportsSectionHeader({
       plusTitle="Add import"
       sortTitle="Sort imports"
       marginTop={s(4)}
-      plusButton={<CsvImportFlow t={t} />}
+      plusButton={<CsvImportFlow t={t} onImportConfirmed={onImportConfirmed} />}
       t={t}
     />
   );

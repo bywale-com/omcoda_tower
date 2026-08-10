@@ -13,7 +13,10 @@ function delimiterForFile(file: File): string {
   return file.name.toLowerCase().endsWith(".tsv") ? "\t" : ",";
 }
 
-export function parseCsvPreview(file: File): Promise<ParsedCsvPreview> {
+function parseCsvFile(
+  file: File,
+  options: { previewLimit?: number },
+): Promise<{ headers: string[]; rows: Record<string, string>[]; delimiter: string }> {
   return new Promise((resolve, reject) => {
     if (!isAcceptedImportFile(file)) {
       reject(new Error("Only .csv and .tsv files are supported."));
@@ -26,7 +29,7 @@ export function parseCsvPreview(file: File): Promise<ParsedCsvPreview> {
       header: true,
       delimiter,
       skipEmptyLines: true,
-      preview: PREVIEW_ROW_LIMIT,
+      ...(options.previewLimit != null ? { preview: options.previewLimit } : {}),
       transformHeader: (header) => header.trim(),
       complete: (results) => {
         if (results.errors.length > 0) {
@@ -40,7 +43,7 @@ export function parseCsvPreview(file: File): Promise<ParsedCsvPreview> {
           return;
         }
 
-        const previewRows = results.data.map((row) => {
+        const rows = results.data.map((row) => {
           const normalized: Record<string, string> = {};
           for (const header of headers) {
             normalized[header] = row[header]?.trim() ?? "";
@@ -48,18 +51,37 @@ export function parseCsvPreview(file: File): Promise<ParsedCsvPreview> {
           return normalized;
         });
 
-        resolve({
-          fileName: file.name,
-          headers,
-          previewRows,
-          delimiter,
-        });
+        resolve({ headers, rows, delimiter });
       },
       error: (error) => {
         reject(error);
       },
     });
   });
+}
+
+export function parseCsvPreview(file: File): Promise<ParsedCsvPreview> {
+  return parseCsvFile(file, { previewLimit: PREVIEW_ROW_LIMIT }).then((parsed) => ({
+    fileName: file.name,
+    headers: parsed.headers,
+    previewRows: parsed.rows,
+    delimiter: parsed.delimiter,
+  }));
+}
+
+/** Full-file parse for persistence (no preview limit). */
+export function parseCsvAll(file: File): Promise<{
+  fileName: string;
+  headers: string[];
+  rows: Record<string, string>[];
+  delimiter: string;
+}> {
+  return parseCsvFile(file, {}).then((parsed) => ({
+    fileName: file.name,
+    headers: parsed.headers,
+    rows: parsed.rows,
+    delimiter: parsed.delimiter,
+  }));
 }
 
 export function guessTargetForHeader(header: string): ImportTargetField | null {

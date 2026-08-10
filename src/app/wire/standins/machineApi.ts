@@ -2,7 +2,8 @@
  * In-browser stand-in for machine tables when VITE_WIRE_REAL=false.
  * Mirrors the Postgres transitions so UI can be exercised without the wire service.
  */
-import type { MachineApiPort } from "../ports";
+import type { MachineApiPort, MachineContactRow } from "../ports";
+import { getActiveFirmId } from "../firmContext";
 import type {
   EligibilityResultRow,
   EnrollmentRow,
@@ -12,7 +13,9 @@ import type {
   WorkflowRunRow,
 } from "../machineTypes";
 
-const FIRM = "firm-cedar";
+function firm() {
+  return getActiveFirmId();
+}
 
 const workflows = new Map<string, WorkflowRow & { status: "draft" | "active" | "paused" }>();
 const runs = new Map<string, WorkflowRunRow>();
@@ -20,6 +23,8 @@ const enrollments: EnrollmentRow[] = [];
 const eligibilityResults: EligibilityResultRow[] = [];
 const signals: SignalRow[] = [];
 const motionDecisions: MotionDecisionRow[] = [];
+const contacts = new Map<string, MachineContactRow>();
+let authorized = false;
 
 function now() {
   return new Date().toISOString();
@@ -40,7 +45,7 @@ export const standInMachineApi: MachineApiPort = {
     const id = input.id ?? `wf-local-${Date.now()}`;
     const row = {
       id,
-      firm_id: FIRM,
+      firm_id: firm(),
       name: input.name,
       target: (input.target ?? "contact") as WorkflowRow["target"],
       graph: (input.graph as WorkflowRow["graph"]) ?? { nodes: [], edges: [] },
@@ -72,7 +77,7 @@ export const standInMachineApi: MachineApiPort = {
     const row: WorkflowRunRow = {
       id,
       workflow_id: workflowId,
-      firm_id: FIRM,
+      firm_id: firm(),
       status: "running",
       trigger_label: triggerLabel ?? "Manual run",
       node_status: {},
@@ -105,7 +110,7 @@ export const standInMachineApi: MachineApiPort = {
     const id = `enr-local-${Date.now()}`;
     const row: EnrollmentRow = {
       id,
-      firm_id: FIRM,
+      firm_id: firm(),
       contact_id: input.contactId,
       agent_ref: input.agentRef,
       sequence_id: input.sequenceId ?? null,
@@ -129,7 +134,7 @@ export const standInMachineApi: MachineApiPort = {
       eligibilityResults.push({
         id: resultId,
         evaluation_id: null,
-        firm_id: FIRM,
+        firm_id: firm(),
         contact_id: contactId,
         result: { trigger: "reference_version", refId: referenceId },
         any_pathway_pass: true,
@@ -137,7 +142,7 @@ export const standInMachineApi: MachineApiPort = {
       });
       signals.push({
         id: signalId,
-        firm_id: FIRM,
+        firm_id: firm(),
         contact_id: contactId,
         kind: "eligibility_determination",
         payload: { resultId, anyPass: true },
@@ -145,7 +150,7 @@ export const standInMachineApi: MachineApiPort = {
       });
       motionDecisions.push({
         id: motionId,
-        firm_id: FIRM,
+        firm_id: firm(),
         contact_id: contactId,
         motion: "reactivation",
         reason: { signalId, precedence: "mp-1" },
@@ -153,7 +158,7 @@ export const standInMachineApi: MachineApiPort = {
       });
       enrollments.push({
         id: enrId,
-        firm_id: FIRM,
+        firm_id: firm(),
         contact_id: contactId,
         agent_ref: "tpl.reactivation.v1",
         sequence_id: "tpl.reactivation.v1",
@@ -170,7 +175,7 @@ export const standInMachineApi: MachineApiPort = {
     const contacts = input.contactIds ?? [];
     return {
       id: `arun-local-${Date.now()}`,
-      firm_id: FIRM,
+      firm_id: firm(),
       status: "complete" as const,
       import_ids: input.importIds ?? [],
       summary: { contacts: contacts.length },
@@ -190,5 +195,123 @@ export const standInMachineApi: MachineApiPort = {
 
   async listTemplates() {
     return { templates: [], bindings: [] };
+  },
+
+  async journeyStatus() {
+    return {
+      firmId: firm(),
+      authorized,
+      contactCount: [...contacts.values()].filter((c) => c.firm_id === firm()).length,
+      reachableCount: [...contacts.values()].filter(
+        (c) => c.firm_id === firm() && c.verdict === "reachable",
+      ).length,
+      signalCount: signals.filter((s) => s.firm_id === firm()).length,
+      enrollmentCount: enrollments.filter((e) => e.firm_id === firm()).length,
+    };
+  },
+
+  async authorizeBook() {
+    authorized = true;
+    return { firmId: firm(), authorized: true, table: "crm_oauth_grants" };
+  },
+
+  async listContacts() {
+    return [...contacts.values()].filter((c) => c.firm_id === firm());
+  },
+
+  async importContacts(input) {
+    const ids: string[] = [];
+    for (const row of input.contacts) {
+      const id = row.id ?? `c-local-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+      contacts.set(id, {
+        id,
+        firm_id: firm(),
+        email: row.email ?? null,
+        phone: row.phone ?? null,
+        name: row.name ?? null,
+        created_at: now(),
+      });
+      ids.push(id);
+    }
+    return {
+      importId: `imp-local-${Date.now()}`,
+      firmId: firm(),
+      written: ids.length,
+      contactIds: ids,
+      table: "contact_records",
+    };
+  },
+
+  async journeyDetect() {
+    let signalsN = 0;
+    for (const c of contacts.values()) {
+      if (c.firm_id !== firm()) continue;
+      const reachable = Boolean(c.email || c.phone);
+      c.verdict = reachable ? "reachable" : "unreachable";
+      c.ready = reachable;
+      if (!reachable) continue;
+      const resultId = `eres-local-${c.id}`;
+      eligibilityResults.push({
+        id: resultId,
+        evaluation_id: null,
+        firm_id: firm(),
+        contact_id: c.id,
+        result: { source: "journey_detect" },
+        any_pathway_pass: true,
+        created_at: now(),
+      });
+      signals.push({
+        id: `sig-local-${c.id}`,
+        firm_id: firm(),
+        contact_id: c.id,
+        kind: "eligibility_determination",
+        payload: { resultId },
+        created_at: now(),
+      });
+      motionDecisions.push({
+        id: `mot-local-${c.id}`,
+        firm_id: firm(),
+        contact_id: c.id,
+        motion: "reactivation",
+        reason: {},
+        created_at: now(),
+      });
+      c.latest_signal = "eligibility_determination";
+      c.latest_motion = "reactivation";
+      signalsN += 1;
+    }
+    return {
+      auditRunId: `arun-local-${Date.now()}`,
+      contacts: [...contacts.values()].filter((c) => c.firm_id === firm()).length,
+      signals: signalsN,
+      table: "eligibility_results",
+    };
+  },
+
+  async journeyOutreach() {
+    const results: Array<{ contactId: string; enrollmentId: string; dryRun: boolean }> = [];
+    for (const c of contacts.values()) {
+      if (c.firm_id !== firm() || !c.ready) continue;
+      const id = `enr-local-${c.id}`;
+      enrollments.push({
+        id,
+        firm_id: firm(),
+        contact_id: c.id,
+        agent_ref: "tpl.optin_launch.v1",
+        sequence_id: "tpl.optin_launch.v1",
+        workflow_run_id: null,
+        payload: { dryRun: true },
+        enrolled_at: now(),
+      });
+      c.latest_enrollment = "tpl.optin_launch.v1";
+      results.push({ contactId: c.id, enrollmentId: id, dryRun: true });
+    }
+    return {
+      firmId: firm(),
+      agentRef: "tpl.optin_launch.v1",
+      enrollments: results.length,
+      results,
+      table: "enrollment",
+    };
   },
 };

@@ -16,6 +16,10 @@ This build does **not** implement these. Frozen list is closed.
 | Worker host packaging (systemd / Vercel cron) | `npm run worker` is the process; deploy wiring deferred |
 | Cohort allowlist as DB row + UI | Env list today; widening = edit env (no code) |
 | Full sequence-cell calendar pacing | Worker advances channel windows; per-cell day calendar is adjacent |
+| Automations canvas DAG event-bus → graph walk | Journey uses machine APIs; canvas nodes not the proven path |
+| Agents module editor ↔ sequence_template cells | Launch enrolls; full editor persist deferred |
+| Provision UI → create firm + email invite | Seed remains entry; ProvisionModule still prototype |
+| Real vendor CRM OAuth | Intentional `crm_oauth_grants` grant is the authorize step |
 | `rule_field_class_routing` seed rows | Table created; corpus rows thin — fill when Wiring paper lands values |
 | OpenAPI / generated DB types from Supabase CLI | Hand types in `machineTypes.ts` (no tsc in repo) |
 | Activate button label rename (UI still says "Launch") | Mapped; cosmetic |

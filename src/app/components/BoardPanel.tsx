@@ -1,6 +1,4 @@
-import { useEffect, useState, type CSSProperties } from "react";
-import { wirePorts } from "../wire/registry";
-import { wireRealEnabled } from "../wire/http";
+import { useMemo, useState, type CSSProperties } from "react";
 import {
   ChevronDown,
   Eye,
@@ -53,18 +51,24 @@ import {
   TOWER_POPOVER_CONTENT_CLASS,
   TOWER_POPOVER_MENU_ITEM_CLASS,
 } from "./ui/towerChrome";
-import { clientList, getClientPhaseSnapshot } from "../data/clients";
-import { contactList } from "../data/contacts";
+import {
+  clientList as mockClientList,
+  getClientPhaseSnapshot,
+  type ClientMeta,
+  type ClientPhaseSnapshot,
+} from "../data/clients";
+import { contactList as mockContactList } from "../data/contacts";
+import { importList as mockImportList } from "../data/imports";
+import { useOptionalBook } from "../context/BookContext";
 import { useAudits } from "../context/AuditContext";
 import { useAutomations } from "../context/AutomationContext";
 import { hubAgentList } from "../data/hub";
 import type { HubToolRef } from "../data/hub";
-import { importList } from "../data/imports";
-import type { ClientMeta, ClientPhaseSnapshot } from "../data/clients";
 import type { ConsultantTask } from "../data/tasks";
 import { useTasks } from "../context/TaskContext";
 import { TasksBody } from "./tasks/TasksBody";
 import type { Tokens } from "./tokens";
+import { wireRealEnabled } from "../wire/http";
 
 const CLIENT_ROW_H = DOCS_TREE_ROW_H;
 const CLIENT_ICON_SLOT = DOCS_TREE_ICON_SLOT;
@@ -598,33 +602,27 @@ export function BoardPanel({
   const [boardSearch, setBoardSearch] = useState("");
   const [phaseFilter, setPhaseFilter] = useState<BoardPhaseFilter>("all");
   const [legendOpen, setLegendOpen] = useState(false);
-  const [machineDetectionCount, setMachineDetectionCount] = useState<number | null>(null);
-  const [motionByContact, setMotionByContact] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    let cancelled = false;
-    void wirePorts.machineApi
-      .boardDetections()
-      .then((data) => {
-        if (cancelled) return;
-        setMachineDetectionCount(data.eligibilityResults.filter((r) => r.any_pathway_pass).length);
-        const map: Record<string, string> = {};
-        for (const m of data.motionDecisions) {
-          map[m.contact_id] = m.motion;
-        }
-        setMotionByContact(map);
-      })
-      .catch(() => {
-        if (!cancelled) setMachineDetectionCount(null);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const [busy, setBusy] = useState(false);
+  const book = useOptionalBook();
+  const useLivingBook = !registerMode && book != null;
   const { tasks, openTaskCount, toggleTaskStatus } = useTasks();
   const { audits, createAndRunAudit } = useAudits();
   const { automations, createAutomation } = useAutomations();
   const hubHidden = hideHub || registerMode;
+
+  // MAIN product (`/`) uses living book; Register prototype keeps mock fixtures.
+  const boardClients = useLivingBook ? book.clients : mockClientList;
+  const boardContacts = useLivingBook ? book.contactDirectory : mockContactList;
+  const boardImports = useLivingBook ? book.imports : mockImportList;
+  const machineDetectionCount = useLivingBook ? book.status.signalCount : null;
+  const motionByContact = useMemo(() => {
+    const map: Record<string, string> = {};
+    if (!useLivingBook || !book) return map;
+    for (const c of book.contacts) {
+      if (c.latest_motion) map[c.id] = c.latest_motion;
+    }
+    return map;
+  }, [book, useLivingBook]);
   const resolvedPrimaryNav =
     primaryNav ?? (hubHidden ? REGISTER_PRIMARY_NAV : PRIMARY_NAV);
   const resolvedAllNav = allNav ?? (hubHidden ? REGISTER_ALL_NAV : ALL_NAV);
@@ -655,11 +653,12 @@ export function BoardPanel({
     return "Reachable";
   }
 
-  const filteredClients = clientList.filter((client) => {
-    if (!registerMode) return true;
+  const filteredClients = boardClients.filter((client) => {
     const q = boardSearch.trim().toLowerCase();
     if (q && !client.name.toLowerCase().includes(q)) return false;
-    if (phaseFilter !== "all" && boardPhaseFor(client) !== phaseFilter) return false;
+    if (registerMode && phaseFilter !== "all" && boardPhaseFor(client) !== phaseFilter) {
+      return false;
+    }
     return true;
   });
 
@@ -771,15 +770,22 @@ export function BoardPanel({
 
       {showContactsBody ? (
         <>
-          <ContactsSectionHeader count={contactList.length} t={t} />
+          <ContactsSectionHeader count={boardContacts.length} t={t} />
           <ContactsBody
-            contacts={contactList}
-            imports={importList}
+            contacts={boardContacts}
+            imports={boardImports}
             activeContactId={activeContactId}
             onContactClick={onContactClick}
             t={t}
             registerMode={registerMode}
-            bookHandedOver={bookHandedOver}
+            bookHandedOver={bookHandedOver || Boolean(book?.status.authorized)}
+            onImportConfirmed={
+              useLivingBook && book
+                ? (confirmed) => {
+                    void book.importCsv(confirmed);
+                  }
+                : undefined
+            }
           />
         </>
       ) : showHubBody ? (
@@ -787,7 +793,7 @@ export function BoardPanel({
           audits={audits}
           agents={hubAgentList}
           automations={automations}
-          imports={importList}
+          imports={boardImports}
           activeTool={activeHubTool}
           onToolClick={onHubToolClick}
           onAuditImportsContinue={handleAuditImportsContinue}
@@ -796,6 +802,109 @@ export function BoardPanel({
         />
       ) : (
         <>
+      {useLivingBook && book ? (
+        <div
+          style={{
+            flexShrink: 0,
+            padding: "8px 10px",
+            borderBottom: `1px solid ${t.borderLight}`,
+            display: "flex",
+            flexDirection: "column",
+            gap: 6,
+            background: t.bgSecondary,
+          }}
+        >
+          <div style={{ fontSize: 11, color: t.textMuted, lineHeight: 1.4 }}>
+            Firm <strong style={{ color: t.textPrimary }}>{book.firmId}</strong>
+            {" · "}
+            {book.status.authorized ? "Book authorized" : "Book not authorized"}
+            {" · "}
+            {book.status.contactCount} contacts
+            {" · "}
+            {book.status.signalCount} signals
+            {" · "}
+            {book.status.enrollmentCount} enrollments
+            {wireRealEnabled() ? " · Postgres" : " · stand-in"}
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            {!book.status.authorized ? (
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => {
+                  setBusy(true);
+                  void book.authorizeBook().finally(() => setBusy(false));
+                }}
+                style={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  padding: "4px 10px",
+                  borderRadius: 4,
+                  border: `1px solid ${t.border}`,
+                  background: t.accent,
+                  color: "#fff",
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                }}
+              >
+                Authorize book
+              </button>
+            ) : null}
+            <button
+              type="button"
+              disabled={busy || book.status.contactCount === 0}
+              onClick={() => {
+                setBusy(true);
+                void book.runDetection().finally(() => setBusy(false));
+              }}
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                padding: "4px 10px",
+                borderRadius: 4,
+                border: `1px solid ${t.border}`,
+                background: t.bgPrimary,
+                color: t.textPrimary,
+                cursor: book.status.contactCount === 0 ? "not-allowed" : "pointer",
+                fontFamily: "inherit",
+              }}
+            >
+              Run detection
+            </button>
+            <button
+              type="button"
+              disabled={busy || book.status.signalCount === 0}
+              onClick={() => {
+                setBusy(true);
+                void book.runOutreach().finally(() => setBusy(false));
+              }}
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                padding: "4px 10px",
+                borderRadius: 4,
+                border: `1px solid ${t.border}`,
+                background: t.bgPrimary,
+                color: t.textPrimary,
+                cursor: book.status.signalCount === 0 ? "not-allowed" : "pointer",
+                fontFamily: "inherit",
+              }}
+            >
+              Start outreach
+            </button>
+          </div>
+          {book.lastMessage ? (
+            <div style={{ fontSize: 10, color: t.textDim }}>{book.lastMessage}</div>
+          ) : (
+            <div style={{ fontSize: 10, color: t.textDim }}>
+              {book.status.authorized
+                ? "Open Contacts → Import CSV. Detection runs after import; then Start outreach."
+                : "Authorize book first (writes crm_oauth_grants), then import contacts."}
+            </div>
+          )}
+        </div>
+      ) : null}
+
       {showHalt && (
         <HaltOutreachBar
           t={t}
@@ -990,7 +1099,7 @@ export function BoardPanel({
       ) : null}
 
       <ClientsSectionHeader
-        count={registerMode ? filteredClients.length : clientList.length}
+        count={filteredClients.length}
         open={clientsOpen}
         onToggle={() => setClientsOpen((o) => !o)}
         t={t}

@@ -33,7 +33,21 @@ export function buildConfirmedImport(
     fileName: parsed.fileName,
     mapping,
     previewRows: parsed.previewRows,
+    contacts: [],
   };
+}
+
+export function mapRowsToContacts(
+  rows: Record<string, string>[],
+  mapping: Record<ImportTargetField, string>,
+): Array<{ name: string; email: string; phone: string }> {
+  return rows
+    .map((row) => ({
+      name: (row[mapping.name] ?? "").trim(),
+      email: (row[mapping.email] ?? "").trim(),
+      phone: (row[mapping.phone] ?? "").trim(),
+    }))
+    .filter((row) => row.name || row.email || row.phone);
 }
 
 export function targetTakenBy(

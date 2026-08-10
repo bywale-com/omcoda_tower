@@ -1,5 +1,6 @@
 import type { Contact } from "../../data/contacts";
 import type { ContactImport } from "../../data/imports";
+import type { ConfirmedCsvImport } from "../imports/csvImportTypes";
 import {
   CONTACT_ROW_HOLON,
   CONTACTS_BODY_HOLON,
@@ -20,6 +21,7 @@ export function ContactsBody({
   t,
   registerMode = false,
   bookHandedOver = false,
+  onImportConfirmed,
 }: {
   contacts: Contact[];
   imports: ContactImport[];
@@ -28,6 +30,7 @@ export function ContactsBody({
   t: Tokens;
   registerMode?: boolean;
   bookHandedOver?: boolean;
+  onImportConfirmed?: (result: ConfirmedCsvImport) => void;
 }) {
   const contactsInView = contacts.length > 0;
   const importsInView = imports.length > 0;
@@ -89,7 +92,11 @@ export function ContactsBody({
         ))}
 
         <div data-register-surface={registerMode ? "Imports" : undefined}>
-          <ImportsSectionHeader count={imports.length} t={t} />
+          <ImportsSectionHeader
+            count={imports.length}
+            t={t}
+            onImportConfirmed={onImportConfirmed}
+          />
 
           <HolonBoundary
             id={IMPORT_ROW_HOLON.id}

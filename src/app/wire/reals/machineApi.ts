@@ -1,5 +1,6 @@
 import type { MachineApiPort } from "../ports";
 import { wireFetch } from "../http";
+import { getActiveFirmId } from "../firmContext";
 import type {
   AuditRunRow,
   EligibilityResultRow,
@@ -12,10 +13,17 @@ import type {
   WorkflowRunRow,
 } from "../machineTypes";
 
-const FIRM = "firm-cedar";
+function firm(): string {
+  return getActiveFirmId();
+}
 
 function firmHeader(): HeadersInit {
-  return { "x-firm-id": FIRM };
+  return { "x-firm-id": firm() };
+}
+
+function withFirm(path: string): string {
+  const sep = path.includes("?") ? "&" : "?";
+  return `${path}${sep}firmId=${encodeURIComponent(firm())}`;
 }
 
 export const realMachineApi: MachineApiPort = {
@@ -26,16 +34,15 @@ export const realMachineApi: MachineApiPort = {
   },
 
   async listWorkflows() {
-    const res = await wireFetch<{ workflows: WorkflowRow[] }>(
-      `/machine/workflows?firmId=${encodeURIComponent(FIRM)}`,
-      { headers: firmHeader() },
-    );
+    const res = await wireFetch<{ workflows: WorkflowRow[] }>(withFirm("/machine/workflows"), {
+      headers: firmHeader(),
+    });
     return res.workflows;
   },
 
   async createWorkflow(input) {
     return wireFetch<{ id: string; status: string; name: string; target: string }>(
-      `/machine/workflows?firmId=${encodeURIComponent(FIRM)}`,
+      withFirm("/machine/workflows"),
       {
         method: "POST",
         headers: firmHeader(),
@@ -60,7 +67,7 @@ export const realMachineApi: MachineApiPort = {
 
   async startRun(workflowId, triggerLabel) {
     return wireFetch<{ id: string; workflowId: string; status: string }>(
-      `/machine/workflows/${encodeURIComponent(workflowId)}/runs?firmId=${encodeURIComponent(FIRM)}`,
+      withFirm(`/machine/workflows/${encodeURIComponent(workflowId)}/runs`),
       {
         method: "POST",
         headers: firmHeader(),
@@ -89,41 +96,32 @@ export const realMachineApi: MachineApiPort = {
   },
 
   async createEnrollment(input) {
-    return wireFetch<{ id: string; enrolledAt: string }>(
-      `/machine/enrollments?firmId=${encodeURIComponent(FIRM)}`,
-      {
-        method: "POST",
-        headers: firmHeader(),
-        body: JSON.stringify(input),
-      },
-    );
+    return wireFetch<{ id: string; enrolledAt: string }>(withFirm("/machine/enrollments"), {
+      method: "POST",
+      headers: firmHeader(),
+      body: JSON.stringify(input),
+    });
   },
 
   async upsertReference(input) {
-    return wireFetch<{ referenceId: string; cascade: unknown[] }>(
-      `/machine/reference?firmId=${encodeURIComponent(FIRM)}`,
-      {
-        method: "POST",
-        headers: firmHeader(),
-        body: JSON.stringify(input),
-      },
-    );
+    return wireFetch<{ referenceId: string; cascade: unknown[] }>(withFirm("/machine/reference"), {
+      method: "POST",
+      headers: firmHeader(),
+      body: JSON.stringify(input),
+    });
   },
 
   async createAuditRun(input) {
-    return wireFetch<AuditRunRow & { contacts: number }>(
-      `/machine/audit-runs?firmId=${encodeURIComponent(FIRM)}`,
-      {
-        method: "POST",
-        headers: firmHeader(),
-        body: JSON.stringify(input),
-      },
-    );
+    return wireFetch<AuditRunRow & { contacts: number }>(withFirm("/machine/audit-runs"), {
+      method: "POST",
+      headers: firmHeader(),
+      body: JSON.stringify(input),
+    });
   },
 
   async fireOnboarding() {
     return wireFetch<{ skipped?: boolean; enrollments?: number; agentRef?: string }>(
-      `/machine/onboarding/fire?firmId=${encodeURIComponent(FIRM)}`,
+      withFirm("/machine/onboarding/fire"),
       { method: "POST", headers: firmHeader(), body: "{}" },
     );
   },
@@ -134,13 +132,80 @@ export const realMachineApi: MachineApiPort = {
       signals: SignalRow[];
       motionDecisions: MotionDecisionRow[];
       enrollments: EnrollmentRow[];
-    }>(`/machine/board?firmId=${encodeURIComponent(FIRM)}`, { headers: firmHeader() });
+    }>(withFirm("/machine/board"), { headers: firmHeader() });
   },
 
   async listTemplates() {
     return wireFetch<{
       templates: SequenceTemplateRow[];
       bindings: FirmSequenceBindingRow[];
-    }>(`/machine/templates?firmId=${encodeURIComponent(FIRM)}`, { headers: firmHeader() });
+    }>(withFirm("/machine/templates"), { headers: firmHeader() });
+  },
+
+  async journeyStatus() {
+    return wireFetch<{
+      firmId: string;
+      authorized: boolean;
+      contactCount: number;
+      reachableCount: number;
+      signalCount: number;
+      enrollmentCount: number;
+    }>(withFirm("/machine/journey/status"), { headers: firmHeader() });
+  },
+
+  async authorizeBook() {
+    return wireFetch<{ firmId: string; authorized: boolean; table: string }>(
+      withFirm("/machine/journey/authorize"),
+      { method: "POST", headers: firmHeader(), body: "{}" },
+    );
+  },
+
+  async listContacts() {
+    const res = await wireFetch<{ contacts: import("../ports").MachineContactRow[] }>(
+      withFirm("/machine/contacts"),
+      { headers: firmHeader() },
+    );
+    return res.contacts;
+  },
+
+  async importContacts(input) {
+    return wireFetch<{
+      importId: string;
+      firmId: string;
+      written: number;
+      contactIds: string[];
+      table: string;
+    }>(withFirm("/machine/contacts/import"), {
+      method: "POST",
+      headers: firmHeader(),
+      body: JSON.stringify(input),
+    });
+  },
+
+  async journeyDetect() {
+    return wireFetch<{
+      auditRunId: string;
+      contacts: number;
+      signals: number;
+      table: string;
+    }>(withFirm("/machine/journey/detect"), {
+      method: "POST",
+      headers: firmHeader(),
+      body: "{}" ,
+    });
+  },
+
+  async journeyOutreach() {
+    return wireFetch<{
+      firmId: string;
+      agentRef: string;
+      enrollments: number;
+      results: Array<{ contactId: string; enrollmentId: string; dryRun: boolean }>;
+      table: string;
+    }>(withFirm("/machine/journey/outreach"), {
+      method: "POST",
+      headers: firmHeader(),
+      body: "{}",
+    });
   },
 };
