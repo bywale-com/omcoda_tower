@@ -1,6 +1,7 @@
 /**
  * Configuration libraries — Ant composition of Evaluation packs, Automation workflows, and Agents.
  * Automations / Agents use full workbench regions, not table-only Drawer substitutes.
+ * Evaluation editor pins reference_version + ruleset and toggles modular rule enables.
  */
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
@@ -13,13 +14,25 @@ import {
   Modal,
   Select,
   Space,
-  Tag,
+  Switch,
   Typography,
+  message,
   theme,
 } from "antd";
 import { AutomationProvider, useAutomations } from "../../../context/AutomationContext";
-import { getAllAgentDefinitions, type AgentDefinition } from "../../../data/agentDefinitions";
+import {
+  AGENT_TEMPLATE_BINDING,
+  getAllAgentDefinitions,
+  type AgentDefinition,
+} from "../../../data/agentDefinitions";
 import type { WorkflowDefinition } from "../../../data/automationWorkflows";
+import type {
+  EligibilityPathwayRow,
+  FieldClassRoutingRow,
+  MotionPrecedenceRow,
+  ReferenceVersionRow,
+} from "../../../wire/machineTypes";
+import { wirePorts } from "../../../wire/registry";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { AntAgentWorkbench } from "./AntAgentWorkbench";
 import { AntAutomationWorkbench } from "./AntAutomationWorkbench";
@@ -27,12 +40,12 @@ import {
   CONFIG_LIB_SUBS,
   type ConfigLibSub,
   type ConfigPack,
+  type EvalPackPin,
   type PackKind,
-  nextVersionId,
   packLabel,
   publishedPacks,
-  seedConfigPacks,
 } from "./operatorConfigLibraries";
+import { ensurePackInCatalog, publishPackInCatalog, usePackCatalog } from "./packCatalogStore";
 import { StatusTag } from "./operatorAntTags";
 
 const EDITOR_SURFACE: Record<ConfigLibSub, string> = {
@@ -128,24 +141,162 @@ function CatalogShell({
   );
 }
 
+function RuleEnableList<T extends { id: string; label: string; enabled: boolean }>({
+  title,
+  hint,
+  rows,
+  savingId,
+  onToggle,
+}: {
+  title: string;
+  hint: string;
+  rows: T[];
+  savingId: string | null;
+  onToggle: (id: string, enabled: boolean) => void;
+}) {
+  const { token } = theme.useToken();
+  return (
+    <div style={{ marginTop: 16 }}>
+      <Typography.Text strong>{title}</Typography.Text>
+      <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginBottom: 8 }}>
+        {hint}
+      </Typography.Paragraph>
+      <List
+        size="small"
+        dataSource={rows}
+        locale={{ emptyText: "No rows loaded." }}
+        renderItem={(row) => (
+          <List.Item
+            key={row.id}
+            style={{
+              border: `1px solid ${token.colorSplit}`,
+              borderRadius: 8,
+              marginBottom: 6,
+              padding: "8px 12px",
+            }}
+            actions={[
+              <Switch
+                key="en"
+                checked={row.enabled}
+                loading={savingId === row.id}
+                onChange={(enabled) => onToggle(row.id, enabled)}
+              />,
+            ]}
+          >
+            <Typography.Text>{row.label}</Typography.Text>
+          </List.Item>
+        )}
+      />
+    </div>
+  );
+}
+
 function EvaluationPacksEditor({
   packs,
   selected,
   editorNote,
+  pin,
   onSelect,
   onRename,
   onNote,
+  onPinChange,
   onNew,
 }: {
   packs: ConfigPack[];
   selected: ConfigPack | null;
   editorNote: string;
+  pin: EvalPackPin;
   onSelect: (id: string) => void;
   onRename: (id: string, name: string) => void;
   onNote: (note: string) => void;
+  onPinChange: (pin: EvalPackPin) => void;
   onNew: () => void;
 }) {
   const { token } = theme.useToken();
+  const [pathways, setPathways] = useState<EligibilityPathwayRow[]>([]);
+  const [motion, setMotion] = useState<MotionPrecedenceRow[]>([]);
+  const [fieldClass, setFieldClass] = useState<FieldClassRoutingRow[]>([]);
+  const [refs, setRefs] = useState<ReferenceVersionRow[]>([]);
+  const [savingId, setSavingId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      setLoading(true);
+      try {
+        const [p, m, f, r] = await Promise.all([
+          wirePorts.machineApi.listEligibilityPathways(),
+          wirePorts.machineApi.listMotionPrecedence(),
+          wirePorts.machineApi.listFieldClassRouting(),
+          wirePorts.machineApi.listReferenceVersions(),
+        ]);
+        if (!alive) return;
+        setPathways(p);
+        setMotion(m);
+        setFieldClass(f);
+        setRefs(r);
+      } catch (err) {
+        message.error(`Evaluation rules load failed: ${String(err)}`);
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!selected) return;
+    void wirePorts.machineApi.getEvaluationPin(selected.id).then((stored) => {
+      if (stored.referenceVersionId && stored.rulesetId) {
+        onPinChange({
+          referenceVersionId: stored.referenceVersionId,
+          rulesetId: stored.rulesetId,
+        });
+      } else if (selected.pin) {
+        onPinChange(selected.pin);
+      }
+    });
+  }, [selected?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const togglePathway = async (id: string, enabled: boolean) => {
+    setSavingId(id);
+    try {
+      const updated = await wirePorts.machineApi.upsertEligibilityPathway(id, { enabled });
+      setPathways((prev) => prev.map((row) => (row.id === id ? updated : row)));
+    } catch (err) {
+      message.error(`Pathway enable failed: ${String(err)}`);
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const toggleMotion = async (id: string, enabled: boolean) => {
+    setSavingId(id);
+    try {
+      const updated = await wirePorts.machineApi.upsertMotionPrecedence(id, { enabled });
+      setMotion((prev) => prev.map((row) => (row.id === id ? updated : row)));
+    } catch (err) {
+      message.error(`Motion enable failed: ${String(err)}`);
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const toggleField = async (id: string, enabled: boolean) => {
+    setSavingId(id);
+    try {
+      const updated = await wirePorts.machineApi.upsertFieldClassRouting(id, { enabled });
+      setFieldClass((prev) => prev.map((row) => (row.id === id ? updated : row)));
+    } catch (err) {
+      message.error(`Field-class enable failed: ${String(err)}`);
+    } finally {
+      setSavingId(null);
+    }
+  };
+
   return (
     <div style={{ flex: 1, minHeight: 0, display: "flex" }}>
       <CatalogShell
@@ -188,15 +339,60 @@ function EvaluationPacksEditor({
                 </Form.Item>
                 <Form.Item label="Open-box rules / analysis">
                   <Input.TextArea
-                    rows={5}
+                    rows={3}
                     value={editorNote || selected.summary}
                     onChange={(event) => onNote(event.target.value)}
                   />
                 </Form.Item>
+                <Form.Item label="Pin · reference_version">
+                  <Select
+                    style={{ width: "100%" }}
+                    value={pin.referenceVersionId || undefined}
+                    placeholder={loading ? "Loading…" : "Select reference version"}
+                    options={refs.map((row) => ({
+                      value: row.id,
+                      label: `${row.id} · ${row.key} v${row.version}`,
+                    }))}
+                    onChange={(value) =>
+                      onPinChange({ ...pin, referenceVersionId: value })
+                    }
+                  />
+                </Form.Item>
+                <Form.Item label="Pin · ruleset id">
+                  <Input
+                    value={pin.rulesetId}
+                    placeholder={`ruleset.${selected.id}`}
+                    onChange={(event) =>
+                      onPinChange({ ...pin, rulesetId: event.target.value })
+                    }
+                  />
+                </Form.Item>
               </Form>
               <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                Scores against published Reference data tables — no firm picker on this module.
+                Publish stores pin in pack catalog + <code>constants_packs</code> id{" "}
+                <code>eval.pin.{"{packId}"}</code>. Enable toggles write modular rule tables the worker already reads.
               </Typography.Text>
+              <RuleEnableList
+                title="Eligibility pathways"
+                hint="rule_eligibility_pathway — enable rows for this pack’s open-box pathway law."
+                rows={pathways}
+                savingId={savingId}
+                onToggle={(id, enabled) => void togglePathway(id, enabled)}
+              />
+              <RuleEnableList
+                title="Motion precedence"
+                hint="rule_motion_precedence — which motion wins when signals compete."
+                rows={motion}
+                savingId={savingId}
+                onToggle={(id, enabled) => void toggleMotion(id, enabled)}
+              />
+              <RuleEnableList
+                title="Field-class routing"
+                hint="rule_field_class_routing — where self-reported facts land."
+                rows={fieldClass}
+                savingId={savingId}
+                onToggle={(id, enabled) => void toggleField(id, enabled)}
+              />
             </>
           ) : (
             <Typography.Text type="secondary">Select a pack or create a new one.</Typography.Text>
@@ -363,14 +559,19 @@ export function ConfigurationLibrariesModule({
 }) {
   const { token } = theme.useToken();
   const subMeta = CONFIG_LIB_SUBS.find((item) => item.id === sub)!;
-  const [packs, setPacks] = useState<ConfigPack[]>(seedConfigPacks);
+  const [packs, setPacks] = usePackCatalog();
   const [selectedEvalId, setSelectedEvalId] = useState("eval-alg-v2");
   const [selectedWorkflowId, setSelectedWorkflowId] = useState(INITIAL_WORKFLOW_ID);
   const [selectedAgentId, setSelectedAgentId] = useState(INITIAL_AGENT_ID);
   const [editorNote, setEditorNote] = useState("");
+  const [evalPin, setEvalPin] = useState<EvalPackPin>({
+    referenceVersionId: "ref.crs.cutoff.v1",
+    rulesetId: "ruleset.eval-alg-v2",
+  });
   const [compareOpen, setCompareOpen] = useState(false);
   const [compareA, setCompareA] = useState("");
   const [compareB, setCompareB] = useState("");
+  const [publishing, setPublishing] = useState(false);
 
   const catalog = useMemo(() => packs.filter((pack) => pack.kind === subMeta.kind), [packs, subMeta.kind]);
   const publishedCatalog = useMemo(() => publishedPacks(subMeta.kind, packs), [packs, subMeta.kind]);
@@ -386,17 +587,18 @@ export function ConfigurationLibrariesModule({
     }
   }, [catalog, selectedEvalId, sub]);
 
-  const ensurePack = useCallback((kind: PackKind, id: string, name: string, summary: string) => {
-    setPacks((prev) => {
-      if (prev.some((pack) => pack.id === id && pack.kind === kind)) {
-        const existing = prev.find((pack) => pack.id === id && pack.kind === kind);
-        if (existing?.name === name && existing.summary === summary) return prev;
-        return prev.map((pack) =>
-          pack.id === id && pack.kind === kind ? { ...pack, name, summary } : pack,
-        );
-      }
-      return [...prev, { id, kind, name, versionId: null, status: "Draft", summary }];
-    });
+  useEffect(() => {
+    if (!selectedPack || selectedPack.kind !== "evaluation") return;
+    setEvalPin(
+      selectedPack.pin ?? {
+        referenceVersionId: "ref.crs.cutoff.v1",
+        rulesetId: `ruleset.${selectedPack.id}`,
+      },
+    );
+  }, [selectedPack?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const ensurePack = useCallback((kind: PackKind, id: string, name: string, summary: string, extra?: Partial<ConfigPack>) => {
+    ensurePackInCatalog(kind, id, name, summary, extra);
   }, []);
 
   const onNewEvaluationPack = () => {
@@ -408,22 +610,38 @@ export function ConfigurationLibrariesModule({
       versionId: null,
       status: "Draft",
       summary: "Draft — publish to appear in Firm operations bind dropdowns",
+      pin: { referenceVersionId: "ref.crs.cutoff.v1", rulesetId: `ruleset.${id}` },
     };
     setPacks((prev) => [...prev, pack]);
     setSelectedEvalId(id);
     setEditorNote("");
+    setEvalPin(pack.pin!);
   };
 
-  const onPublish = () => {
+  const onPublish = async () => {
     if (!selectedPack) return;
-    const versionId = nextVersionId(selectedPack.kind, packs);
-    setPacks((prev) =>
-      prev.map((pack) =>
-        pack.id === selectedPack.id && pack.kind === selectedPack.kind
-          ? { ...pack, status: "Published", versionId }
-          : pack,
-      ),
-    );
+    setPublishing(true);
+    try {
+      if (selectedPack.kind === "evaluation") {
+        if (!evalPin.referenceVersionId || !evalPin.rulesetId) {
+          message.warning("Pin both reference_version and ruleset id before publish.");
+          return;
+        }
+        await wirePorts.machineApi.putEvaluationPin(selectedPack.id, evalPin);
+        publishPackInCatalog(selectedPack.id, "evaluation", {
+          summary: editorNote || selectedPack.summary,
+          pin: evalPin,
+        });
+        message.success(`Published evaluation pin → eval.pin.${selectedPack.id}`);
+      } else {
+        publishPackInCatalog(selectedPack.id, selectedPack.kind);
+        message.success(`Published ${selectedPack.kind} · Bind dropdowns updated`);
+      }
+    } catch (err) {
+      message.error(`Publish failed: ${String(err)}`);
+    } finally {
+      setPublishing(false);
+    }
   };
 
   const openCompare = () => {
@@ -494,7 +712,13 @@ export function ConfigurationLibrariesModule({
               <Button data-register-surface="Compare versions" disabled={publishedCatalog.length < 1} onClick={openCompare}>
                 Compare versions
               </Button>
-              <Button data-register-surface="Publish version" type="primary" disabled={!selectedPack} onClick={onPublish}>
+              <Button
+                data-register-surface="Publish version"
+                type="primary"
+                disabled={!selectedPack}
+                loading={publishing}
+                onClick={() => void onPublish()}
+              >
                 Publish version
               </Button>
               {selectedPack?.versionId ? (
@@ -513,6 +737,7 @@ export function ConfigurationLibrariesModule({
                 packs={catalog}
                 selected={selectedPack}
                 editorNote={editorNote}
+                pin={evalPin}
                 onSelect={(id) => {
                   setSelectedEvalId(id);
                   setEditorNote("");
@@ -521,6 +746,7 @@ export function ConfigurationLibrariesModule({
                   setPacks((prev) => prev.map((pack) => (pack.id === id ? { ...pack, name } : pack)))
                 }
                 onNote={setEditorNote}
+                onPinChange={setEvalPin}
                 onNew={onNewEvaluationPack}
               />
             ) : sub === "Automation workflows" ? (
@@ -540,10 +766,20 @@ export function ConfigurationLibrariesModule({
                 packs={catalog}
                 selectedId={selectedAgentId}
                 onSelect={(agent) => {
-                  ensurePack("engagement", agent.id, agent.name, `${agent.stepCount} configured steps`);
+                  const binding = AGENT_TEMPLATE_BINDING[agent.id];
+                  ensurePack("engagement", agent.id, agent.name, `${agent.stepCount} configured steps`, {
+                    templateId: binding?.templateId,
+                    sequenceClass: binding?.sequenceClass,
+                  });
                   setSelectedAgentId(agent.id);
                 }}
-                onCreatePack={(id, name, summary) => ensurePack("engagement", id, name, summary)}
+                onCreatePack={(id, name, summary) => {
+                  const binding = AGENT_TEMPLATE_BINDING[id];
+                  ensurePack("engagement", id, name, summary, {
+                    templateId: binding?.templateId,
+                    sequenceClass: binding?.sequenceClass,
+                  });
+                }}
               />
             )}
           </div>
