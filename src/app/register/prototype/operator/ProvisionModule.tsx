@@ -1,7 +1,9 @@
 /**
  * Provision — New firm mint + same Login desk handoff (How leaves 1.1–1.2).
+ * Plant face — wires POST /machine/provision + otpStore.issue like Ant.
  */
 import { useState } from "react";
+import { wirePorts } from "../../../wire";
 import { RegisterSurfaceMount } from "../registerSurfaceChrome";
 import {
   moduleFocus,
@@ -14,8 +16,6 @@ import {
   type OperatorModuleProps,
 } from "./operatorChrome";
 
-const LOGIN_PATH = "https://tower.omcoda.com/login?tenancy=assisted";
-
 export function ProvisionModule({ t, focusedEntry, hoveredId }: OperatorModuleProps) {
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Provision", focusedEntry, hoveredEntry);
@@ -23,7 +23,14 @@ export function ProvisionModule({ t, focusedEntry, hoveredId }: OperatorModulePr
   const [website, setWebsite] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("consultant-owner");
-  const [provisioned, setProvisioned] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [provisioned, setProvisioned] = useState<{
+    firmId: string;
+    firmName: string;
+    email: string;
+    loginPath: string;
+    authUser: boolean;
+  } | null>(null);
   const [handoffNote, setHandoffNote] = useState<string | null>(null);
 
   const fieldStyle = {
@@ -38,11 +45,56 @@ export function ProvisionModule({ t, focusedEntry, hoveredId }: OperatorModulePr
     boxSizing: "border-box" as const,
   };
 
-  const canProvision = name.trim() && website.trim() && email.trim();
+  const canProvision = Boolean(name.trim() && website.trim() && email.trim() && !busy);
 
-  const onProvision = () => {
-    setProvisioned(`${name.trim()} · ${email.trim()} · ${role}`);
+  const onProvision = async () => {
+    setBusy(true);
     setHandoffNote(null);
+    try {
+      const result = await wirePorts.machineApi.provisionFirm({
+        firmName: name.trim(),
+        email: email.trim(),
+        website: website.trim(),
+        role,
+      });
+      setProvisioned({
+        firmId: result.firmId,
+        firmName: result.firmName,
+        email: result.email,
+        loginPath: result.loginPath,
+        authUser: result.authUser,
+      });
+    } catch (err) {
+      setHandoffNote(`Provision failed: ${String(err)}`);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const copyLoginPath = async () => {
+    if (!provisioned) return;
+    const path = `${typeof window !== "undefined" ? window.location.origin : ""}${provisioned.loginPath}`;
+    try {
+      await navigator.clipboard.writeText(path);
+      setHandoffNote(`Copied · ${path}`);
+    } catch {
+      setHandoffNote(`Login path · ${path}`);
+    }
+  };
+
+  const sendInvite = async () => {
+    if (!provisioned) return;
+    try {
+      const issued = await wirePorts.otpStore.issue({ email: provisioned.email });
+      const path = `${typeof window !== "undefined" ? window.location.origin : ""}${provisioned.loginPath}`;
+      setHandoffNote(
+        `Invite simulated · OTP for ${provisioned.email}` +
+          (issued.debugCode ? ` · code ${issued.debugCode}` : "") +
+          ` · ${path}`,
+      );
+    } catch (err) {
+      setHandoffNote(`Invite · ${provisioned.loginPath} · ${String(err)}`);
+    }
   };
 
   return (
@@ -131,10 +183,13 @@ export function ProvisionModule({ t, focusedEntry, hoveredId }: OperatorModulePr
                   data-register-surface="Provision"
                   style={primaryBtnStyle(t, !canProvision)}
                   disabled={!canProvision}
-                  onClick={onProvision}
+                  onClick={() => void onProvision()}
                 >
-                  Provision
+                  {busy ? "Provisioning…" : "Provision"}
                 </button>
+                {handoffNote && !provisioned ? (
+                  <span style={{ fontSize: 11, color: t.accent }}>{handoffNote}</span>
+                ) : null}
               </div>
             </>,
           )}
@@ -162,27 +217,21 @@ export function ProvisionModule({ t, focusedEntry, hoveredId }: OperatorModulePr
                     {statusChip(t, "minted", "success")}
                   </div>
                   <p style={{ margin: "0 0 12px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
-                    {provisioned}. Hand the consultant the same Login OTP path — no separate assisted
-                    app. Lands on Board after verify.
+                    {provisioned.firmName} · {provisioned.email} · {role} ·{" "}
+                    <code>{provisioned.firmId}</code>
+                    {provisioned.authUser ? " · auth ready" : " · ct_firms"}. Hand the consultant the same
+                    Login OTP path — no separate assisted app. Lands on Board after verify.
                   </p>
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
                     <button
                       type="button"
                       data-register-surface="Copy Login path / Send invite"
                       style={secondaryBtnStyle(t)}
-                      onClick={() =>
-                        setHandoffNote(`Copied · ${LOGIN_PATH}`)
-                      }
+                      onClick={() => void copyLoginPath()}
                     >
                       Copy Login path
                     </button>
-                    <button
-                      type="button"
-                      style={secondaryBtnStyle(t)}
-                      onClick={() =>
-                        setHandoffNote(`Invite sent to ${email.trim()} · OTP path attached`)
-                      }
-                    >
+                    <button type="button" style={secondaryBtnStyle(t)} onClick={() => void sendInvite()}>
                       Send invite
                     </button>
                     {handoffNote ? (
@@ -212,7 +261,7 @@ export function ProvisionModule({ t, focusedEntry, hoveredId }: OperatorModulePr
                         type="button"
                         style={secondaryBtnStyle(t)}
                         onClick={() =>
-                          setHandoffNote(`Jump to Activation state · ${name.trim()}`)
+                          setHandoffNote(`Jump to Activation state · ${provisioned.firmName}`)
                         }
                       >
                         Jump to Activation state
@@ -220,9 +269,7 @@ export function ProvisionModule({ t, focusedEntry, hoveredId }: OperatorModulePr
                       <button
                         type="button"
                         style={secondaryBtnStyle(t)}
-                        onClick={() =>
-                          setHandoffNote(`Jump to Commercial · ${name.trim()}`)
-                        }
+                        onClick={() => setHandoffNote(`Jump to Commercial · ${provisioned.firmName}`)}
                       >
                         Jump to Commercial
                       </button>
