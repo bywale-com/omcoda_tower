@@ -13,6 +13,7 @@ import {
 import type { ColumnsType } from "antd/es/table";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { selectMeetingReadyClientIds, useMeetings, type LiveBriefMeeting } from "./meetingsData";
+import { hydrateFactsFromMachine, mergeFactsPreferMachine } from "../../prototype/shared/meetingsStore";
 import { FIRM_NAME } from "./shared";
 
 const { Text, Title, Paragraph } = Typography;
@@ -30,6 +31,9 @@ export function MeetingsModule({
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
   const [demoEmpty, setDemoEmpty] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [hydratedFacts, setHydratedFacts] = useState<LiveBriefMeeting["facts"]>(null);
+  const [cascadeNote, setCascadeNote] = useState<string | null>(null);
+  const [hydratedAsOf, setHydratedAsOf] = useState<string | null>(null);
   const meetings = useMeetings();
 
   useEffect(() => {
@@ -41,6 +45,39 @@ export function MeetingsModule({
 
   const rows = demoEmpty ? [] : meetings;
   const selected = rows.find((m) => m.id === selectedId) ?? null;
+
+  useEffect(() => {
+    if (!selected?.clientId) {
+      setHydratedFacts(null);
+      setCascadeNote(null);
+      setHydratedAsOf(null);
+      return;
+    }
+    let cancelled = false;
+    void hydrateFactsFromMachine(selected.clientId)
+      .then(({ facts, cascadeNote: note, asOf }) => {
+        if (cancelled) return;
+        setHydratedFacts(facts.length > 0 ? facts : null);
+        setCascadeNote(note ?? null);
+        setHydratedAsOf(asOf ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setHydratedFacts(null);
+          setCascadeNote(null);
+          setHydratedAsOf(null);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [selected?.clientId, selected?.id]);
+
+  const briefFacts =
+    selected && hydratedFacts && hydratedFacts.length > 0
+      ? mergeFactsPreferMachine(hydratedFacts, selected.facts ?? [])
+      : (selected?.facts ?? []);
+  const briefAsOf = hydratedAsOf ?? selected?.asOf;
 
   // Status is its own column — never jam Tag beside Contact in a narrow cell (SPACING.md).
   const listColumns: ColumnsType<LiveBriefMeeting> = [
@@ -76,12 +113,12 @@ export function MeetingsModule({
     },
   ];
 
-  function copyBrief(meeting: LiveBriefMeeting) {
-    const facts = meeting.facts ?? [];
+  function copyBrief(meeting: LiveBriefMeeting, factsOverride?: LiveBriefMeeting["facts"]) {
+    const facts = factsOverride ?? meeting.facts ?? [];
     const lines = [
       `${meeting.contactName} · ${meeting.purpose}`,
       meeting.startsIn ? `Starts: ${meeting.startsIn}` : `Time: ${meeting.time}`,
-      meeting.asOf ?? "",
+      briefAsOf ?? meeting.asOf ?? "",
       "",
       ...facts.map((f) => `${f.label}: ${f.value} (${f.signal})`),
       "",
@@ -259,13 +296,13 @@ export function MeetingsModule({
               )}
             </Space>
             <Space>
-              {selected.asOf ? (
+              {briefAsOf ? (
                 <Text type="secondary" style={{ fontSize: 11 }}>
-                  {selected.asOf}
+                  {briefAsOf}
                 </Text>
               ) : null}
               <Surface label="Copy brief">
-                <Button size="small" onClick={() => copyBrief(selected)}>
+                <Button size="small" onClick={() => copyBrief(selected, briefFacts)}>
                   {copied ? "Copied" : "Copy brief"}
                 </Button>
               </Surface>
@@ -284,14 +321,14 @@ export function MeetingsModule({
             ) : null}
           </div>
 
-          {(selected.facts ?? []).length > 0 ? (
+          {briefFacts.length > 0 ? (
             <div>
               <Text strong>Current facts</Text>
               <Table
                 size="small"
                 style={{ marginTop: 8 }}
                 pagination={false}
-                dataSource={(selected.facts ?? []).map((f) => ({ ...f, key: f.label }))}
+                dataSource={briefFacts.map((f) => ({ ...f, key: f.label }))}
                 columns={[
                   { title: "Fact", dataIndex: "label", key: "label" },
                   { title: "Value", dataIndex: "value", key: "value" },
@@ -303,6 +340,11 @@ export function MeetingsModule({
                   },
                 ]}
               />
+              {cascadeNote ? (
+                <Text type="secondary" style={{ display: "block", marginTop: 8, fontSize: 11 }}>
+                  {cascadeNote}
+                </Text>
+              ) : null}
             </div>
           ) : null}
 

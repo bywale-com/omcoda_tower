@@ -785,7 +785,7 @@ function NudgeForm({ onSilence }: { onSilence: () => void }) {
             style={{ background: FIRM.brand }}
             onClick={() => {
               setFilled(outstandingTotal);
-              writeBackContactFacts({
+              void writeBackContactFacts({
                 clientId: DEMO_CONTACT_ID,
                 source: "Nudge form",
                 facts: [
@@ -1118,7 +1118,7 @@ function LoopCloserForm({ onSilence }: { onSilence: () => void }) {
                 style={{ background: FIRM.brand, marginTop: 8 }}
                 onClick={() => {
                   setFilled(outstandingTotal);
-                  writeBackContactFacts({
+                  void writeBackContactFacts({
                     clientId: DEMO_CONTACT_ID,
                     source: "Loop-closer form",
                     facts: [
@@ -1131,6 +1131,7 @@ function LoopCloserForm({ onSilence }: { onSilence: () => void }) {
                       { label: "Hours/week", value: "40", signal: "Current", signalHint: "Loop-closer write-back" },
                       { label: "TEER guess", value: "TEER 1", signal: "Skilled", signalHint: "Loop-closer write-back" },
                     ],
+                    signalMissingFieldKey: "validity_still_valid",
                   });
                 }}
               >
@@ -1197,7 +1198,7 @@ function UpdateFactsSurface({ onSilence }: { onSilence: () => void }) {
             style={{ background: FIRM.brand }}
             onClick={() => {
               setFilled(outstandingTotal);
-              writeBackContactFacts({
+              void writeBackContactFacts({
                 clientId: DEMO_CONTACT_ID,
                 source: "Update facts",
                 facts: [

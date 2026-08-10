@@ -11,6 +11,8 @@ export {
   subscribeMeetings,
   addMeeting,
   confirmContactBooking,
+  hydrateFactsFromMachine,
+  mergeFactsPreferMachine,
 } from "../../prototype/shared/meetingsStore";
 
 import {

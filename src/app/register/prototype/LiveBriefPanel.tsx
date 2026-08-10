@@ -2,9 +2,10 @@
  * Live brief — meeting-grade brief panel with fact rows + evaluative signal chips.
  * Furnish: Copy brief, Starts-in cue, chip tooltips, as-of freshness.
  */
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import type { Tokens } from "../../components/tokens";
 import { secondaryControlStyle } from "./registerSurfaceChrome";
+import { hydrateFactsFromMachine, mergeFactsPreferMachine } from "./shared/meetingsStore";
 
 export type LiveBriefFact = {
   label: string;
@@ -15,6 +16,7 @@ export type LiveBriefFact = {
 
 export type LiveBriefMeeting = {
   id: string;
+  clientId?: string;
   contactName: string;
   time: string;
   status: "Upcoming" | "Tentative" | "In progress";
@@ -94,14 +96,51 @@ function SignalChip({
 }
 
 export function LiveBriefPanel({ meeting, t, embedded = false }: LiveBriefPanelProps) {
-  const facts = meeting.facts ?? [];
+  const [hydratedFacts, setHydratedFacts] = useState<LiveBriefFact[] | null>(null);
+  const [cascadeNote, setCascadeNote] = useState<string | null>(null);
+  const [hydratedAsOf, setHydratedAsOf] = useState<string | null>(null);
+
+  useEffect(() => {
+    const clientId = meeting.clientId;
+    if (!clientId) {
+      setHydratedFacts(null);
+      setCascadeNote(null);
+      setHydratedAsOf(null);
+      return;
+    }
+    let cancelled = false;
+    void hydrateFactsFromMachine(clientId)
+      .then(({ facts, cascadeNote: note, asOf }) => {
+        if (cancelled) return;
+        setHydratedFacts(facts.length > 0 ? facts : null);
+        setCascadeNote(note ?? null);
+        setHydratedAsOf(asOf ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setHydratedFacts(null);
+          setCascadeNote(null);
+          setHydratedAsOf(null);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [meeting.clientId, meeting.id]);
+
+  const snapshotFacts = meeting.facts ?? [];
+  const facts =
+    hydratedFacts && hydratedFacts.length > 0
+      ? mergeFactsPreferMachine(hydratedFacts, snapshotFacts)
+      : snapshotFacts;
+  const asOf = hydratedAsOf ?? meeting.asOf;
   const [copied, setCopied] = useState(false);
 
   function copyBrief() {
     const lines = [
       `${meeting.contactName} · ${meeting.purpose}`,
       meeting.startsIn ? `Starts: ${meeting.startsIn}` : `Time: ${meeting.time}`,
-      meeting.asOf ?? "",
+      asOf ?? "",
       "",
       ...facts.map((f) => `${f.label}: ${f.value} (${f.signal})`),
       "",
@@ -170,9 +209,9 @@ export function LiveBriefPanel({ meeting, t, embedded = false }: LiveBriefPanelP
           )}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {meeting.asOf ? (
+          {asOf ? (
             <span style={{ fontSize: 10, color: t.textDim }} title="Freshness / last-updated">
-              {meeting.asOf}
+              {asOf}
             </span>
           ) : null}
           <button
@@ -237,6 +276,7 @@ export function LiveBriefPanel({ meeting, t, embedded = false }: LiveBriefPanelP
             <p style={{ margin: "8px 0 0", fontSize: 10, color: t.textDim, lineHeight: 1.45 }}>
               Write-back from contact Loop-closer / Nudge / Update facts — view only on consultant desk.
               Hover signal chips for plain-language meaning.
+              {cascadeNote ? ` ${cascadeNote}` : ""}
             </p>
           </BriefSection>
         ) : null}

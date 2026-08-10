@@ -1248,7 +1248,7 @@ function NudgeForm({
             type="button"
             onClick={() => {
               setFilled(outstandingTotal);
-              writeBackContactFacts({
+              void writeBackContactFacts({
                 clientId: DEMO_CONTACT_ID,
                 source: "Nudge form",
                 facts: [
@@ -1745,7 +1745,7 @@ function LoopCloserForm({
                 type="button"
                 onClick={() => {
                   setFilled(outstandingTotal);
-                  writeBackContactFacts({
+                  void writeBackContactFacts({
                     clientId: DEMO_CONTACT_ID,
                     source: "Loop-closer form",
                     facts: [
@@ -1758,6 +1758,7 @@ function LoopCloserForm({
                       { label: "Hours/week", value: "40", signal: "Current", signalHint: "Loop-closer write-back" },
                       { label: "TEER guess", value: "TEER 1", signal: "Skilled", signalHint: "Loop-closer write-back" },
                     ],
+                    signalMissingFieldKey: "validity_still_valid",
                   });
                 }}
                 style={primaryBtn(t, { width: "100%" })}
@@ -1848,7 +1849,7 @@ function UpdateFacts({
             type="button"
             onClick={() => {
               setFilled(outstandingTotal);
-              writeBackContactFacts({
+              void writeBackContactFacts({
                 clientId: DEMO_CONTACT_ID,
                 source: "Update facts",
                 facts: [
