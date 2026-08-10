@@ -1,11 +1,16 @@
 /**
- * Scheduled tick worker — advances attempt windows from seeded rule_attempt_criteria.
+ * Continuous tick worker — long-lived process for the deploy target.
  *
- *   npm run worker
+ *   npm run worker                 # continuous (default; ≤1 min interval)
+ *   WORKER_ONCE=1 npm run worker   # single tick (CI / smoke only)
  *
- * Interval: WORKER_INTERVAL_MS (default 60000). Single tick: WORKER_ONCE=1.
+ * Prod packaging: docker compose `worker` service, or systemd unit under deploy/.
+ * Do not set WORKER_ONCE in production.
  */
+import { assertBootEnv } from "./bootEnv.ts";
 import { tickOnce } from "./cascade.ts";
+
+assertBootEnv("worker");
 
 const intervalMs = Number(process.env.WORKER_INTERVAL_MS ?? 60_000);
 const once = process.env.WORKER_ONCE === "1" || process.argv.includes("--once");
@@ -35,11 +40,6 @@ async function runTick() {
   }
 }
 
-if (!process.env.DATABASE_URL) {
-  console.error("DATABASE_URL is required for the tick worker");
-  process.exit(1);
-}
-
 if (once) {
   await runTick();
   process.exit(0);
@@ -48,8 +48,9 @@ if (once) {
 console.log(
   JSON.stringify({
     service: "tower-tick-worker",
+    mode: "continuous",
     intervalMs,
-    note: "Reads thresholds from rule_attempt_criteria; SEND_MODE defaults dry_run",
+    note: "Unattended escalation; SEND_MODE missing → dry_run",
   }),
 );
 await runTick();

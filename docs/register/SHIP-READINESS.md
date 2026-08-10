@@ -4,7 +4,7 @@
 **Date:** 2026-08-10  
 **Deferred (do not touch):** Escrow · Meta go-live  
 
-**Done bar:** #65/#66 content on the ship branch (main merge pending push permissions); real-wire Postgres proofs; live send + worker escalation + deny-path gates; residue cleared with repeatable smoke; affordance round-trips with no in-loop FAKE-WRITE.
+**Done bar:** #65/#66 + ship hardening **on `origin/main`**; real-wire Postgres proofs; live send + worker escalation + deny-path gates; residue cleared with repeatable smoke; affordance round-trips with no in-loop FAKE-WRITE.
 
 ---
 

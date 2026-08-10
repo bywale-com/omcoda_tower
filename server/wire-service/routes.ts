@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { getWireCapabilities } from "./capabilities.ts";
+import { FirmScopeError } from "./sessionFirm.ts";
 import {
   handleAuditAppend,
   handleAuditList,
@@ -85,6 +86,14 @@ import {
 
 export function createWireRoutes(): Hono {
   const wire = new Hono();
+
+  wire.onError((err, c) => {
+    if (err instanceof FirmScopeError) {
+      return c.json({ ok: false, error: err.message }, err.status as 401 | 403);
+    }
+    console.error("wire.error", err);
+    return c.json({ ok: false, error: String(err) }, 500);
+  });
 
   wire.get("/health", (c) => c.json({ ok: true, service: "tower-wire" }));
   wire.get("/capabilities", (c) => c.json(getWireCapabilities()));

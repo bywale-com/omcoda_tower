@@ -1,17 +1,18 @@
 /**
- * Product send posture (SHIP): live only for allowlisted contacts.
+ * Product send posture (DEPLOY):
  *
- * SEND_MODE=live|dry_run  (product default live)
- * SEND_TEST_COHORT= required allowlist under live — fail closed when empty.
- * Off-cohort contacts stay dry-run. Explicit SEND_MODE=dry_run forces pretend-send.
+ * SEND_MODE=live|dry_run — missing/empty → dry_run (fail-closed default)
+ * SEND_TEST_COHORT= required allowlist under live — empty → nobody live-sends
+ * Live posture is explicit: SEND_MODE=live + non-empty allowlist, set deliberately.
  */
 
 export type SendMode = "dry_run" | "live";
 
 export function getSendMode(): SendMode {
-  const raw = (process.env.SEND_MODE ?? "live").trim().toLowerCase();
-  if (raw === "dry_run") return "dry_run";
-  return "live";
+  const raw = (process.env.SEND_MODE ?? "").trim().toLowerCase();
+  if (raw === "live") return "live";
+  // missing, empty, or any other value → dry_run (fail closed)
+  return "dry_run";
 }
 
 /** Allowlist — under live, empty means nobody is live-eligible (fail closed). */
@@ -43,7 +44,7 @@ export function sendGateSnapshot() {
     mode: getSendMode(),
     cohortSize: cohort.size,
     failClosed: getSendMode() !== "live" || cohort.size === 0,
-    productDefault: "live",
+    productDefault: "dry_run",
     requireCohort: true,
   };
 }
