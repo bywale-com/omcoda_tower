@@ -25,13 +25,15 @@ import type {
 import { standInHaltStore } from "./haltStore";
 
 /** Mirrors supabase/seeds/002_machine_tables.sql seq_eligibility_pipeline. */
-const ELIGIBILITY_PIPELINE: EligibilityPipelineRow[] = [
-  { id: "ep-trig", firm_id: null, token: "trigger", label: "Trigger (scoped pull)", ord: 0 },
-  { id: "ep-const", firm_id: null, token: "constants", label: "Constants", ord: 1 },
-  { id: "ep-cond", firm_id: null, token: "conditions", label: "Conditions (If)", ord: 2 },
-  { id: "ep-rules", firm_id: null, token: "rules", label: "Rules", ord: 3 },
-  { id: "ep-out", firm_id: null, token: "output", label: "Structured output", ord: 4 },
-];
+const eligibilityPipeline = new Map<string, EligibilityPipelineRow>(
+  [
+    { id: "ep-trig", firm_id: null, token: "trigger", label: "Trigger (scoped pull)", ord: 0 },
+    { id: "ep-const", firm_id: null, token: "constants", label: "Constants", ord: 1 },
+    { id: "ep-cond", firm_id: null, token: "conditions", label: "Conditions (If)", ord: 2 },
+    { id: "ep-rules", firm_id: null, token: "rules", label: "Rules", ord: 3 },
+    { id: "ep-out", firm_id: null, token: "output", label: "Structured output", ord: 4 },
+  ].map((row) => [row.id, row]),
+);
 
 const FIRM = "firm-cedar";
 
@@ -661,7 +663,23 @@ export const standInMachineApi: MachineApiPort = {
   },
 
   async listEligibilityPipeline() {
-    return [...ELIGIBILITY_PIPELINE].sort((a, b) => a.ord - b.ord);
+    return [...eligibilityPipeline.values()].sort((a, b) => a.ord - b.ord);
+  },
+
+  async upsertEligibilityPipeline(stages) {
+    for (const item of stages) {
+      const prev = eligibilityPipeline.get(item.id);
+      if (!prev) continue;
+      eligibilityPipeline.set(item.id, {
+        ...prev,
+        token: item.token ?? prev.token,
+        label: item.label ?? prev.label,
+        ord: item.ord,
+        version: (prev.version ?? 0) + 1,
+        firm_id: prev.firm_id ?? FIRM,
+      });
+    }
+    return [...eligibilityPipeline.values()].sort((a, b) => a.ord - b.ord);
   },
 
   async listEligibilityPathways() {

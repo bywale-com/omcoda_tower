@@ -405,8 +405,11 @@ export type MachineApiPort = {
     payload?: Record<string, unknown>;
     contactIds?: string[];
   }): Promise<{ eventName: string; workflowsFired: unknown[] }>;
-  /** Read-only ordered stages from seq_eligibility_pipeline. */
+  /** Ordered stages from seq_eligibility_pipeline (Automations Settings). */
   listEligibilityPipeline(): Promise<import("./machineTypes").EligibilityPipelineRow[]>;
+  upsertEligibilityPipeline(
+    stages: Array<{ id: string; token?: string; label?: string; ord: number }>,
+  ): Promise<import("./machineTypes").EligibilityPipelineRow[]>;
   listEligibilityPathways(): Promise<import("./machineTypes").EligibilityPathwayRow[]>;
   upsertEligibilityPathway(
     id: string,

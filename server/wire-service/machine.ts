@@ -901,10 +901,41 @@ export async function handleChannelOrderUpsert(c: Context) {
   return json(c, { order: rows.rows });
 }
 
-/** Read-only seq_eligibility_pipeline stages (Automations Settings). */
+/** List seq_eligibility_pipeline stages (Automations Settings). */
 export async function handleEligibilityPipelineList(c: Context) {
   const firm = firmId(c);
   const pool = getPool();
+  const rows = await pool.query(
+    `SELECT id, firm_id, token, label, ord, version
+     FROM seq_eligibility_pipeline
+     WHERE firm_id IS NULL OR firm_id = $1
+     ORDER BY CASE WHEN firm_id = $1 THEN 0 ELSE 1 END, ord ASC`,
+    [firm],
+  );
+  return json(c, { stages: rows.rows });
+}
+
+/** Replace ord for the eligibility pipeline ladder (Automations Settings reorder). */
+export async function handleEligibilityPipelineUpsert(c: Context) {
+  const firm = firmId(c);
+  const body = await c.req.json<{
+    stages: Array<{ id: string; token?: string; label?: string; ord: number }>;
+  }>();
+  const items = body.stages ?? [];
+  if (!items.length) return json(c, { error: "stages required" }, 400);
+  const pool = getPool();
+  for (const item of items) {
+    await pool.query(
+      `UPDATE seq_eligibility_pipeline SET
+         ord=$2,
+         token=COALESCE($3, token),
+         label=COALESCE($4, label),
+         firm_id=COALESCE(firm_id, $5),
+         version=COALESCE(version, 0)+1
+       WHERE id=$1`,
+      [item.id, item.ord, item.token ?? null, item.label ?? null, firm],
+    );
+  }
   const rows = await pool.query(
     `SELECT id, firm_id, token, label, ord, version
      FROM seq_eligibility_pipeline
