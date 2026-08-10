@@ -26,4 +26,6 @@ export type ConfirmedCsvImport = {
   fileName: string;
   mapping: Record<ImportTargetField, string>;
   previewRows: Record<string, string>[];
+  /** All mapped contact rows (full file) — used for Postgres write. */
+  contacts: Array<{ name: string; email: string; phone: string }>;
 };

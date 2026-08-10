@@ -44,6 +44,14 @@ import {
   handleWorkflowRunStart,
   handleWorkflowRunsList,
 } from "./machine.ts";
+import {
+  handleAuthorizeBook,
+  handleImportContacts,
+  handleJourneyDetect,
+  handleJourneyOutreach,
+  handleJourneyStatus,
+  handleListContacts,
+} from "./journey.ts";
 
 export function createWireRoutes(): Hono {
   const wire = new Hono();
@@ -87,6 +95,13 @@ export function createWireRoutes(): Hono {
   // Machine tables (frozen System Map + automations objects)
   wire.get("/machine/health", handleMachineHealth);
   wire.post("/machine/tick", handleMachineTick);
+  // Product journey (authorize → import → detect → outreach)
+  wire.get("/machine/journey/status", handleJourneyStatus);
+  wire.post("/machine/journey/authorize", handleAuthorizeBook);
+  wire.get("/machine/contacts", handleListContacts);
+  wire.post("/machine/contacts/import", handleImportContacts);
+  wire.post("/machine/journey/detect", handleJourneyDetect);
+  wire.post("/machine/journey/outreach", handleJourneyOutreach);
   wire.get("/machine/workflows", handleWorkflowList);
   wire.post("/machine/workflows", handleWorkflowCreate);
   wire.post("/machine/workflows/:id/activate", handleWorkflowActivate);

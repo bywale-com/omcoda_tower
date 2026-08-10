@@ -352,4 +352,52 @@ export type MachineApiPort = {
     templates: import("./machineTypes").SequenceTemplateRow[];
     bindings: import("./machineTypes").FirmSequenceBindingRow[];
   }>;
+  journeyStatus(): Promise<{
+    firmId: string;
+    authorized: boolean;
+    contactCount: number;
+    reachableCount: number;
+    signalCount: number;
+    enrollmentCount: number;
+  }>;
+  authorizeBook(): Promise<{ firmId: string; authorized: boolean; table: string }>;
+  listContacts(): Promise<MachineContactRow[]>;
+  importContacts(input: {
+    fileName?: string;
+    contacts: Array<{ id?: string; name?: string; email?: string; phone?: string }>;
+  }): Promise<{
+    importId: string;
+    firmId: string;
+    written: number;
+    contactIds: string[];
+    table: string;
+  }>;
+  journeyDetect(): Promise<{
+    auditRunId: string;
+    contacts: number;
+    signals: number;
+    table: string;
+  }>;
+  journeyOutreach(): Promise<{
+    firmId: string;
+    agentRef: string;
+    enrollments: number;
+    results: Array<{ contactId: string; enrollmentId: string; dryRun: boolean }>;
+    table: string;
+  }>;
+};
+
+export type MachineContactRow = {
+  id: string;
+  firm_id: string;
+  email: string | null;
+  phone: string | null;
+  name: string | null;
+  body?: Record<string, unknown>;
+  created_at?: string;
+  verdict?: string | null;
+  ready?: boolean | null;
+  latest_enrollment?: string | null;
+  latest_signal?: string | null;
+  latest_motion?: string | null;
 };

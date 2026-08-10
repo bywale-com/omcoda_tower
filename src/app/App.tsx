@@ -8,6 +8,7 @@ import { Workspace } from "./components/Workspace";
 import { StatusBar } from "./components/StatusBar";
 import { AuditProvider, useAudits } from "./context/AuditContext";
 import { AutomationProvider, useAutomations } from "./context/AutomationContext";
+import { BookProvider } from "./context/BookContext";
 import { PanelProvider } from "./context/PanelContext";
 import { DocsHighlightProvider, useDocsHighlight } from "./context/DocsHighlightContext";
 import { HolonDetailProvider, useHolonDetail } from "./context/HolonDetailContext";
@@ -75,7 +76,9 @@ export default function App() {
           <HolonDetailProvider>
               <AuditProvider>
                 <AutomationProvider>
-                  <AppShell />
+                  <BookProvider>
+                    <AppShell />
+                  </BookProvider>
                 </AutomationProvider>
               </AuditProvider>
             </HolonDetailProvider>

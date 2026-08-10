@@ -13,10 +13,12 @@ import {
   isAuthDisabled,
   logout as logoutRequest,
 } from "./authClient";
+import { setActiveFirmId } from "../wire/firmContext";
 
+/** Journey firm — matches machine seed bindings (`firm-cedar`). */
 const DEV_BYPASS_USER: AuthUser = {
   id: "auth-disabled",
-  firmId: "dev-firm",
+  firmId: "firm-cedar",
   email: "dev@localhost",
 };
 
@@ -38,6 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refresh = useCallback(async () => {
     if (isAuthDisabled()) {
       setUser(DEV_BYPASS_USER);
+      setActiveFirmId(DEV_BYPASS_USER.firmId);
       setIsLoading(false);
       return;
     }
@@ -45,6 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const session = await fetchSession();
       setUser(session?.user ?? null);
+      setActiveFirmId(session?.user?.firmId ?? "firm-cedar");
     } catch {
       setUser(null);
     } finally {

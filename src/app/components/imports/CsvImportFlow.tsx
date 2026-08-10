@@ -14,7 +14,13 @@ import {
 import { cn } from "../ui/utils";
 import { CsvImportColumnMappingDialog } from "./CsvImportColumnMappingDialog";
 import type { ColumnMappingRow, ConfirmedCsvImport, ParsedCsvPreview } from "./csvImportTypes";
-import { buildInitialColumnMappings, isAcceptedImportFile, parseCsvPreview } from "./parseCsvPreview";
+import {
+  buildInitialColumnMappings,
+  isAcceptedImportFile,
+  parseCsvAll,
+  parseCsvPreview,
+} from "./parseCsvPreview";
+import { mapRowsToContacts } from "./csvImportValidation";
 
 const ACCEPT_ATTR = ".csv,.tsv,text/csv,text/tab-separated-values";
 const HOVER_CLOSE_DELAY_MS = 120;
@@ -35,6 +41,7 @@ export function CsvImportFlow({ t, onImportConfirmed }: CsvImportFlowProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [parsed, setParsed] = useState<ParsedCsvPreview | null>(null);
   const [columnRows, setColumnRows] = useState<ColumnMappingRow[]>([]);
+  const [sourceFile, setSourceFile] = useState<File | null>(null);
 
   const clearCloseTimer = useCallback(() => {
     if (closeTimerRef.current != null) {
@@ -58,6 +65,7 @@ export function CsvImportFlow({ t, onImportConfirmed }: CsvImportFlowProps) {
   const resetFlow = useCallback(() => {
     setParsed(null);
     setColumnRows([]);
+    setSourceFile(null);
     setParseError(null);
     setIsParsing(false);
     setIsDragOver(false);
@@ -75,6 +83,7 @@ export function CsvImportFlow({ t, onImportConfirmed }: CsvImportFlowProps) {
 
     try {
       const preview = await parseCsvPreview(file);
+      setSourceFile(file);
       setParsed(preview);
       setColumnRows(buildInitialColumnMappings(preview.headers));
       setDropOpen(false);
@@ -103,9 +112,16 @@ export function CsvImportFlow({ t, onImportConfirmed }: CsvImportFlowProps) {
     if (!open) resetFlow();
   }
 
-  function onConfirm(confirmed: ConfirmedCsvImport | null) {
-    if (!confirmed) return;
-    onImportConfirmed?.(confirmed);
+  async function onConfirm(confirmed: ConfirmedCsvImport | null) {
+    if (!confirmed || !sourceFile) return;
+    try {
+      const full = await parseCsvAll(sourceFile);
+      const contacts = mapRowsToContacts(full.rows, confirmed.mapping);
+      onImportConfirmed?.({ ...confirmed, contacts });
+    } catch (error) {
+      setParseError(error instanceof Error ? error.message : "Could not import file.");
+      return;
+    }
     setMappingOpen(false);
     resetFlow();
   }
