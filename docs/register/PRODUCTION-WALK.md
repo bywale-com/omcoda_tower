@@ -99,6 +99,9 @@ Script: `scripts/verify-production-walk.ts` against `https://omcoda-tower.vercel
 | 6 | Outreach / enrollment (dry_run gate) | **PASS** `enr-412c339d-…` |
 | 7–11 | Firm B same walk + isolation | **PASS** `2b5ce756-…` / `enr-3088e6cb-…`; A cannot see B; not Cedar |
 | + | Health + machine tick on prod | **PASS** |
-| + | GHA unattended schedule | **wired** — runs after `prod-tick.yml` is on `main`; secret must match Vercel |
+| + | GHA unattended schedule | **PASS** — `prod-tick` on `main` HTTP 200 |
+| + | Human OTP email (Resend → verify) | **PASS** — see `LIVE-PROOF.md` |
+| + | Live CEM + SMS | **PASS** — `dryRun:false` to `truthist00@gmail.com` / `+14374557204` |
+| + | Unattended escalation (tick advances text→email) | **PASS** — see `LIVE-PROOF.md` |
 
 **Escrow · Meta remain deferred.**
