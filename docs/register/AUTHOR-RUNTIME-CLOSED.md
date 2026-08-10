@@ -65,20 +65,24 @@ openAttempts for that contact=0
 **OTP inbox:** Resend API for `truthist00+…@gmail.com` (`scripts/read-latest-otp.ts`).  
 **DB checks:** `scripts/walk-verify-firm.ts`.
 
+### Walk blocker found → fixed (mid-walk)
+
+First computer-use pass completed steps 0–1, then hit a **white screen** after login:
+
+1. Prod rewrite sent `/prototype-ant` → main `index.html` (redirect loop). **Fixed** in `vercel.json` → `/prototype-ant.html`.
+2. Ant MPA Login called `useAuth` without `AuthProvider` (React crash). **Fixed** in `main-prototype-ant.tsx`.
+
+Redeployed; walk resumed on the fixed alias.
+
+### Ledger (live)
+
 | # | Step | Status | Evidence |
 |---|------|--------|----------|
-| 0 | Land on Register CT (Ant), not Hub | *in progress* | computer-use ledger |
-| 1 | Operator provision Firm A | *in progress* | |
-| 2 | OTP from inbox → consultant login | *in progress* | |
-| 3 | Empty book (not Cedar) | *in progress* | |
-| 4 | Author CELLWALK sequence + Save | *in progress* | Fix 1 UI |
-| 5 | Firm operations bind → Active | *in progress* | |
-| 6 | Upload CSV → contact_records scoped | *in progress* | |
-| 7 | Outreach ran (dry-run vs live noted) | *in progress* | |
-| 8 | meeting_booked via UI + chase stop | *in progress* | Fix 2 UI |
-| 9 | Firm B second world / isolation | *in progress* | |
+| 0 | Land on Register CT (Ant), not Hub | **PASS** | `step0-landing.webp` |
+| 1 | Operator provision Firm A `Walk-Arca-A-50f14d` | **PASS** | firm `782bab7f-43fc-4161-861f-774a26cc2ab0`; OTP via Resend |
+| 2–9 | Login → empty book → author/bind → upload → outreach → meeting → Firm B | **resumed** | after white-screen fix |
 
-Ledger artifact (when complete): `/opt/cursor/artifacts/prod-walk-ledger.json`  
+Ledger: `/opt/cursor/artifacts/prod-walk-ledger.json`  
 Summary: `/opt/cursor/artifacts/prod-walk-summary.md`
 
 ---
@@ -89,11 +93,11 @@ Summary: `/opt/cursor/artifacts/prod-walk-summary.md`
 |------|--------|
 | Escrow | **deferred** |
 | Meta | **deferred** |
-| Computer-use live walk ledger | **in progress** (this doc updates when walk finishes) |
+| Computer-use walk steps 2–9 | **resumed** after prod Ant routing/AuthProvider fix |
 | Prod SEND_MODE | `live` with cohort allowlist — walk reports dry vs live per enrollment |
 
 ---
 
 ## Deploy
 
-Production alias `https://omcoda-tower.vercel.app` ← `dpl_D2VRkNPjFcMRQ8f2uaigMiaYgsjz` (branch tip with Ant onboarding fire + honest Agents cells).
+Production alias `https://omcoda-tower.vercel.app` ← latest `dpl_3jQZ94WiT6WfkiBUZFaBKKhAgXrM` (rewrite + AuthProvider + author-runtime fixes).
