@@ -13,6 +13,7 @@ import {
   primaryControlStyle,
   secondaryControlStyle,
 } from "./registerSurfaceChrome";
+import { loadClientMachineNote } from "./operator/operatorWireHelpers";
 
 export type HaltRetention = {
   scope: "contact" | "book";
@@ -111,6 +112,7 @@ export function ConsultantClientWorkspace({
   activityKick = 0,
 }: ConsultantClientWorkspaceProps) {
   const [tab, setTab] = useState<"brief" | "engagement">("brief");
+  const [machineNote, setMachineNote] = useState<string | null>(null);
   const phase = resolveWorkspacePhase(
     clientId,
     Boolean(halt),
@@ -137,6 +139,16 @@ export function ConsultantClientWorkspace({
   useEffect(() => {
     if (activityKick > 0) setTab("engagement");
   }, [activityKick]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void loadClientMachineNote(clientId).then((note) => {
+      if (!cancelled) setMachineNote(note);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [clientId]);
 
   return (
     <div
@@ -188,6 +200,11 @@ export function ConsultantClientWorkspace({
         <span style={viewChip(t, "muted")} title="Bound pack (read-only)">
           Pack · {boundPackLabel}
         </span>
+        {machineNote ? (
+          <span style={viewChip(t, "accent")} title="Machine board detection / enrollment">
+            {machineNote}
+          </span>
+        ) : null}
         <span
           style={viewChip(t, silenceCauseLabel(clientId, halt) !== "—" ? "warn" : "muted")}
           title="Why this client is silent"

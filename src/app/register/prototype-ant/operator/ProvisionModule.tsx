@@ -5,6 +5,7 @@
 import { useState } from "react";
 import { Button, Card, Form, Input, Select, Space, Tag, Typography, message } from "antd";
 import { wirePorts } from "../../../wire";
+import { appendOperatorAudit } from "../../prototype/operator/operatorWireHelpers";
 import { useOperatorNav } from "../../prototype/operatorNav";
 import { Hint, ModulePage, Surface } from "../chrome";
 
@@ -42,6 +43,18 @@ export function ProvisionModule() {
         email: result.email,
         loginPath: result.loginPath,
         authUser: result.authUser,
+      });
+      void appendOperatorAudit({
+        actorId: "ops.system",
+        kind: "provision",
+        subjectType: "firm",
+        subjectId: result.firmId,
+        action: `Provision · ${result.firmName} minted`,
+        kindLabel: "Provision",
+        before: "—",
+        after: "Tenancy + consultant-owner seed",
+        surface: "Provision",
+        firmName: result.firmName,
       });
       message.success(
         result.authUser

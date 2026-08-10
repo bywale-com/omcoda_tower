@@ -15,47 +15,37 @@ import {
   surfaceBlock,
   type OperatorModuleProps,
 } from "./operatorChrome";
-
-const SEQUENCES = [
-  {
-    id: "seq-optin",
-    name: "Opt-in Standard",
-    health: "Healthy",
-    stuckReason: "3 contacts on WhatsApp confirm step",
-    lastRunner: "Runner tick · Today 14:01 · step advance",
-    gates: ["Consent OK", "Send gate open", "Channel WhatsApp"],
-  },
-  {
-    id: "seq-nudge",
-    name: "Nudge · dormant 90d",
-    health: "Watch",
-    stuckReason: "11 contacts past silence clock on step 2",
-    lastRunner: "Runner tick · Today 13:52 · silence hold",
-    gates: ["Consent OK", "Send gate open", "Unsubscribe armed"],
-  },
-  {
-    id: "seq-react",
-    name: "Reactivation · CEC window",
-    health: "At risk",
-    stuckReason: "9 contacts — consent ledger incomplete after import",
-    lastRunner: "Runner tick · Today 11:48 · send gate blocked",
-    gates: ["Consent partial", "Send gate hold", "Channel Email"],
-  },
-] as const;
-
-const ENGAGEMENT_ROWS = [
-  { label: "7d reply rate", value: "11%", health: "Watch" },
-  { label: "Send-gate holds", value: "4", health: "At risk" },
-  { label: "Active enrollments", value: "214", health: "Healthy" },
-] as const;
+import {
+  loadFirmHealthData,
+  type EngagementHealthRow,
+  type SequenceHealthRow,
+} from "./operatorWireHelpers";
 
 export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleProps) {
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Firm health", focusedEntry, hoveredEntry);
   const [selectedFirmId, setSelectedFirmId] = useState(DEMO_FIRMS[0].id);
   const [stickyFirmId, setStickyFirmId] = useState<string | null>(DEMO_FIRMS[3].id);
+  const [sequences, setSequences] = useState<SequenceHealthRow[]>([]);
+  const [engagementRows, setEngagementRows] = useState<EngagementHealthRow[]>([]);
   const [detailId, setDetailId] = useState<string | null>(null);
   const [supportCue, setSupportCue] = useState<string | null>(null);
+
+  const scopedId = stickyFirmId ?? selectedFirmId;
+  const firm = DEMO_FIRMS.find((f) => f.id === scopedId) ?? DEMO_FIRMS[0];
+
+  useEffect(() => {
+    let cancelled = false;
+    void loadFirmHealthData(scopedId).then((data) => {
+      if (!cancelled) {
+        setSequences(data.sequences);
+        setEngagementRows(data.engagement);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [scopedId]);
 
   useEffect(() => {
     if (!focusedEntry || focusedEntry.module !== "Firm health") return;
@@ -67,24 +57,20 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
     ) {
       setSelectedFirmId(DEMO_FIRMS[3].id);
       setStickyFirmId(DEMO_FIRMS[3].id);
-      setDetailId(SEQUENCES.find((s) => s.health !== "Healthy")?.id ?? SEQUENCES[0].id);
+      setDetailId(sequences.find((s) => s.health !== "Healthy")?.id ?? sequences[0]?.id ?? null);
     }
     if (focusedEntry.label === "Open support context") {
       setSupportCue(`Support context · ${DEMO_FIRMS[3].name}`);
     }
-  }, [focusedEntry]);
+  }, [focusedEntry, sequences]);
 
-  const scopedId = stickyFirmId ?? selectedFirmId;
-  const firm = DEMO_FIRMS.find((f) => f.id === scopedId) ?? DEMO_FIRMS[0];
-  const detail = detailId ? SEQUENCES.find((s) => s.id === detailId) : null;
+  const detail = detailId ? sequences.find((s) => s.id === detailId) : null;
 
-  const seedSupport = (seq?: (typeof SEQUENCES)[number]) => {
+  const seedSupport = (seq?: SequenceHealthRow) => {
     const reason = seq
       ? `${seq.name} · ${seq.stuckReason} · gates ${seq.gates.join(", ")}`
       : "Firm health drill";
-    setSupportCue(
-      `Customer support · Ticket seeded · ${firm.name} · ${reason}`,
-    );
+    setSupportCue(`Customer support · Ticket seeded · ${firm.name} · ${reason}`);
   };
 
   return (
@@ -185,7 +171,7 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
                 Sequence health
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                {SEQUENCES.map((seq) => (
+                {sequences.map((seq) => (
                   <button
                     key={seq.id}
                     type="button"
@@ -224,7 +210,7 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
                 Engagement health
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                {ENGAGEMENT_ROWS.map((row) => (
+                {engagementRows.map((row) => (
                   <div
                     key={row.label}
                     style={{
@@ -261,11 +247,7 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
               borderRadius: 4,
             }}
           >
-            <button
-              type="button"
-              style={primaryBtnStyle(t)}
-              onClick={() => seedSupport()}
-            >
+            <button type="button" style={primaryBtnStyle(t)} onClick={() => seedSupport()}>
               Open support context
             </button>
             {supportCue ? (

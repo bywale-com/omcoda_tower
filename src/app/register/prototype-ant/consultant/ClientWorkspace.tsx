@@ -22,6 +22,7 @@ import type {
   JourneyTreeNode,
 } from "../../../data/journeyTree";
 import { Hint, Surface } from "../chrome";
+import { loadClientMachineNote } from "../../prototype/operator/operatorWireHelpers";
 import { selectMeetingReadyClientIds, useMeetings } from "./meetingsData";
 import {
   PHASE_LABEL,
@@ -399,6 +400,7 @@ export function ClientWorkspace({
   onOpenAcceptedTerms,
 }: ClientWorkspaceProps) {
   const [tab, setTab] = useState<"brief" | "engagement">("brief");
+  const [machineNote, setMachineNote] = useState<string | null>(null);
   const meta = getClientMeta(clientId);
   const snapshot = getClientPhaseSnapshot(meta);
   const journey = useMemo(() => getClientJourney(clientId), [clientId]);
@@ -425,6 +427,16 @@ export function ClientWorkspace({
   useEffect(() => {
     if (activityKick > 0) setTab("engagement");
   }, [activityKick]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void loadClientMachineNote(clientId).then((note) => {
+      if (!cancelled) setMachineNote(note);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [clientId]);
 
   useEffect(() => {
     setExpandedKeys(defaultExpandedKeys(journey.sequences));
@@ -463,6 +475,9 @@ export function ClientWorkspace({
           {runtime}
         </Tag>
         <Tag title="Bound pack (read-only)">Pack · Re-engagement · CEC refresh v3</Tag>
+        {machineNote ? (
+          <Tag color="processing" title="Machine board detection / enrollment">{machineNote}</Tag>
+        ) : null}
         <Tag
           color={silenceCauseLabel(clientId, halt) !== "—" ? "warning" : "default"}
           title="Why this client is silent"

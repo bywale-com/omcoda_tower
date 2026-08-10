@@ -1,44 +1,56 @@
 /**
  * Audit trail — filters, change event Table, detail Modal, jump chips.
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button, Modal, Select, Space, Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useOperatorNav } from "../../prototype/operatorNav";
+import {
+  loadAuditTrailEvents,
+  type AuditTrailUiEvent,
+} from "../../prototype/operator/operatorWireHelpers";
 import { ModulePage, Surface } from "../chrome";
 import { DEMO_FIRMS } from "./operatorAntData";
 import { StatusTag } from "./operatorAntTags";
 
-const EVENTS = [
-  { id: "ev-1", at: "Today · 14:22", firm: DEMO_FIRMS[0].name, actor: "ops.lena", action: "Bound Evaluation pack v2", kind: "Bind packs", before: "Evaluation pack v1 · armed", after: "Evaluation pack v2 · armed", surface: "Firm operations bind" },
-  { id: "ev-2", at: "Today · 11:05", firm: DEMO_FIRMS[1].name, actor: "ops.marco", action: "Forward-deploy staged Prepared Workspace", kind: "Activation", before: "Capture complete", after: "Prepared Workspace staged", surface: "Activation & forward-deploy" },
-  { id: "ev-3", at: "Yesterday · 16:40", firm: "House-global", actor: "founder", action: "Agency policy · outbound quiet hours updated", kind: "Kill-switch", before: "Quiet hours off", after: "Quiet hours 09:00–20:00", surface: "Founder & agency controls" },
-  { id: "ev-4", at: "Yesterday · 09:12", firm: DEMO_FIRMS[0].name, actor: "ops.lena", action: "Open-box Publish version · Immigration constants", kind: "Publish version", before: "v2026.03.1", after: "v2026.03.2 published", surface: "Reference data" },
-  { id: "ev-5", at: "Mon · 18:03", firm: DEMO_FIRMS[3].name, actor: "support.kai", action: "Support context attached to ticket SUP-184", kind: "Support", before: "Ticket unscoped", after: "Firm scope · Atlas Mobility", surface: "Customer support" },
-  { id: "ev-6", at: "Mon · 10:44", firm: DEMO_FIRMS[2].name, actor: "ops.lena", action: "Escrow terms · published terms-v1", kind: "Escrow terms", before: "Draft terms", after: "terms-v1 published", surface: "Commercial" },
-  { id: "ev-7", at: "Sun · 15:20", firm: DEMO_FIRMS[1].name, actor: "ops.marco", action: "Provision · Harbor RCIC Desk minted", kind: "Provision", before: "—", after: "Tenancy + consultant-owner seed", surface: "Provision" },
-];
-
-const ACTORS = ["All actors", "ops.lena", "ops.marco", "founder", "support.kai"];
-const OPERATIONS = ["All operations", "Publish version", "Bind packs", "Kill-switch", "Escrow terms", "Provision", "Activation", "Support"];
-
 export function AuditTrailModule() {
   const { jumpTo } = useOperatorNav();
+  const [events, setEvents] = useState<AuditTrailUiEvent[]>([]);
   const [firmFilter, setFirmFilter] = useState("All firms");
   const [actorFilter, setActorFilter] = useState("All actors");
   const [opFilter, setOpFilter] = useState("All operations");
-  const [selected, setSelected] = useState<typeof EVENTS[0] | null>(null);
+  const [selected, setSelected] = useState<AuditTrailUiEvent | null>(null);
   const [jumpNote, setJumpNote] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void loadAuditTrailEvents(DEMO_FIRMS).then((rows) => {
+      if (!cancelled) setEvents(rows);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const actors = useMemo(() => {
+    const set = new Set(events.map((e) => e.actor));
+    return ["All actors", ...Array.from(set).sort()];
+  }, [events]);
+
+  const operations = useMemo(() => {
+    const set = new Set(events.map((e) => e.kind));
+    return ["All operations", ...Array.from(set).sort()];
+  }, [events]);
 
   const filtered = useMemo(
     () =>
-      EVENTS.filter((ev) => {
+      events.filter((ev) => {
         if (firmFilter !== "All firms" && ev.firm !== firmFilter) return false;
         if (actorFilter !== "All actors" && ev.actor !== actorFilter) return false;
         if (opFilter !== "All operations" && ev.kind !== opFilter) return false;
         return true;
       }),
-    [firmFilter, actorFilter, opFilter],
+    [events, firmFilter, actorFilter, opFilter],
   );
 
   const filterChips = [
@@ -47,7 +59,7 @@ export function AuditTrailModule() {
     opFilter !== "All operations" ? { label: "Operation", value: opFilter } : null,
   ].filter(Boolean) as { label: string; value: string }[];
 
-  const columns: ColumnsType<typeof EVENTS[0]> = [
+  const columns: ColumnsType<AuditTrailUiEvent> = [
     { title: "Action", dataIndex: "action", key: "action", ellipsis: true },
     { title: "Kind", dataIndex: "kind", key: "kind", width: 110, render: (k) => <StatusTag label={k} /> },
     {
@@ -77,10 +89,22 @@ export function AuditTrailModule() {
           />
         </Surface>
         <Surface label="Actor filter">
-          <Select size="small" value={actorFilter} onChange={setActorFilter} style={{ width: 140 }} options={ACTORS.map((a) => ({ value: a, label: a }))} />
+          <Select
+            size="small"
+            value={actorFilter}
+            onChange={setActorFilter}
+            style={{ width: 140 }}
+            options={actors.map((a) => ({ value: a, label: a }))}
+          />
         </Surface>
         <Surface label="Operation filter">
-          <Select size="small" value={opFilter} onChange={setOpFilter} style={{ width: 160 }} options={OPERATIONS.map((o) => ({ value: o, label: o }))} />
+          <Select
+            size="small"
+            value={opFilter}
+            onChange={setOpFilter}
+            style={{ width: 160 }}
+            options={operations.map((o) => ({ value: o, label: o }))}
+          />
         </Surface>
       </Space>
 

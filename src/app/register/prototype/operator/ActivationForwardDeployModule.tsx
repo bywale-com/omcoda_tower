@@ -19,6 +19,13 @@ import {
   type OperatorModuleProps,
 } from "./operatorChrome";
 import { useOperatorNav } from "../operatorNav";
+import {
+  appendOperatorAudit,
+  hydratePrimaryStoreRows,
+  persistPrimaryStoreRow,
+} from "./operatorWireHelpers";
+
+const FORWARD_DEPLOY_COLLECTION = "forward_deploy";
 
 type StagingChip = "idle" | "enriching" | "hydrated" | "stale";
 type FactsFresh = "fresh" | "stale" | "pending";
@@ -175,6 +182,19 @@ export function ActivationForwardDeployModule({
   const [jumpNote, setJumpNote] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
+    void hydratePrimaryStoreRows(FORWARD_DEPLOY_COLLECTION, INITIAL).then((stored) => {
+      if (!cancelled) {
+        setRows(stored);
+        setSelectedId(stored[0]?.id ?? INITIAL[0].id);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
     if (!focusedEntry || focusedEntry.module !== "Activation & forward-deploy") return;
     if (
       focusedEntry.label === "In-flight activations" ||
@@ -191,23 +211,43 @@ export function ActivationForwardDeployModule({
   const selected = rows.find((a) => a.id === selectedId) ?? rows[0];
 
   function patchSelected(patch: Partial<ActivationRow>) {
-    setRows((prev) => prev.map((r) => (r.id === selected.id ? { ...r, ...patch } : r)));
+    setRows((prev) =>
+      prev.map((r) => {
+        if (r.id !== selected.id) return r;
+        const next = { ...r, ...patch };
+        void persistPrimaryStoreRow(FORWARD_DEPLOY_COLLECTION, next);
+        return next;
+      }),
+    );
   }
 
   function onHydrate() {
     patchSelected({ staging: "enriching", factsFresh: "pending" });
     window.setTimeout(() => {
       setRows((prev) =>
-        prev.map((r) =>
-          r.id === selected.id
-            ? {
-                ...r,
-                staging: "hydrated",
-                factsFresh: "fresh",
-                brandPinned: r.brandPinned === "missing" ? "placeholder" : r.brandPinned,
-              }
-            : r,
-        ),
+        prev.map((r) => {
+          if (r.id !== selected.id) return r;
+          const next = {
+            ...r,
+            staging: "hydrated" as StagingChip,
+            factsFresh: "fresh" as FactsFresh,
+            brandPinned: r.brandPinned === "missing" ? "placeholder" as BrandPinned : r.brandPinned,
+          };
+          void persistPrimaryStoreRow(FORWARD_DEPLOY_COLLECTION, next);
+          void appendOperatorAudit({
+            actorId: "ops.marco",
+            kind: "activation.hydrate",
+            subjectType: "firm",
+            subjectId: r.firmId,
+            action: `Forward-deploy staged Prepared Workspace · ${r.firm}`,
+            kindLabel: "Activation",
+            before: stagingLabel(r.staging),
+            after: "Prepared Workspace staged",
+            surface: "Activation & forward-deploy",
+            firmName: r.firm,
+          });
+          return next;
+        }),
       );
       setWalkStep(0);
     }, 700);

@@ -22,6 +22,7 @@ import {
   PlayCircleOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import {
@@ -38,6 +39,7 @@ import {
 import { recordReachability, type RecordReachability } from "../../../data/auditRecordReachability";
 import type { AuditContactVerdict, ReachabilityVerdict } from "../../../wire/machineTypes";
 import { wirePorts } from "../../../wire/registry";
+import { parseCsvFileToContacts } from "../../prototype/operator/operatorWireHelpers";
 import { Hint, ModulePage, Surface } from "../chrome";
 
 type VerdictFilter = "All" | "pass" | "fail" | "pending";
@@ -123,6 +125,7 @@ export function BookReadinessModule() {
   const [machineVerdicts, setMachineVerdicts] = useState<MachineVerdictByContact>({});
   const [lastAuditRunId, setLastAuditRunId] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const filtered = useMemo(() => {
     if (verdictFilter === "All") return audits;
@@ -274,6 +277,77 @@ export function BookReadinessModule() {
     void startAuditRun();
   };
 
+  const handleBookUpload = async (file: File) => {
+    setUploading(true);
+    try {
+      const contacts = await parseCsvFileToContacts(file);
+      if (contacts.length === 0) {
+        message.warning("No mutable contacts parsed from upload");
+        return;
+      }
+      const importId = `imp-upload-${Date.now()}`;
+      const auditId = `audit-upload-${Date.now()}`;
+      const records = contacts.map((c) => ({
+        id: c.id,
+        name: c.name,
+        phone: c.phone,
+        email: c.email,
+      }));
+      setAudits((prev) => [
+        {
+          id: auditId,
+          label: `Upload · ${file.name}`,
+          meta: "Running · mutable contacts",
+          status: "running",
+          importIds: [importId],
+          records,
+          enabledChecks: AUDIT_CHECKS.map((c) => c.id),
+          gateSteps: AUDIT_CHECKS.map((c) => ({
+            checkId: c.id,
+            label: c.label,
+            status: "pending" as const,
+          })),
+        },
+        ...prev,
+      ]);
+      setSelectedId(auditId);
+      const result = await wirePorts.machineApi.createAuditRun({
+        importIds: [importId],
+        contactIds: contacts.map((c) => ({
+          id: c.id,
+          email: c.email || undefined,
+          phone: c.phone || undefined,
+          name: c.name || undefined,
+        })),
+      });
+      setLastAuditRunId(result.id);
+      if (result.verdicts?.length) {
+        applyMachineVerdicts(result.verdicts);
+      }
+      setAudits((prev) =>
+        prev.map((audit) => {
+          if (audit.id !== auditId) return audit;
+          const gateSteps = audit.gateSteps.map((step, index) => ({
+            ...step,
+            status: resolveGateOutcome(step.checkId, records),
+            durationMs: 40 + index * 12,
+          }));
+          return finalizeAudit({
+            ...audit,
+            records,
+            gateSteps,
+            meta: `Upload · ${result.id} · ${result.contacts} contacts`,
+          });
+        }),
+      );
+      message.success(`Uploaded ${contacts.length} contacts · audit run ${result.id}`);
+    } catch (err) {
+      message.error(`Upload failed: ${String(err)}`);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const selectedVerdict = auditVerdict(selected);
 
   return (
@@ -324,6 +398,25 @@ export function BookReadinessModule() {
               </Button>
               <Button size="small" onClick={reAudit} style={{ marginLeft: 8 }} disabled={starting}>
                 Re-audit remainder
+              </Button>
+              <Button
+                size="small"
+                icon={<UploadOutlined />}
+                loading={uploading}
+                style={{ marginLeft: 8 }}
+                data-register-surface="Upload book"
+                onClick={() => {
+                  const input = document.createElement("input");
+                  input.type = "file";
+                  input.accept = ".csv,.tsv,text/csv,text/tab-separated-values";
+                  input.onchange = () => {
+                    const file = input.files?.[0];
+                    if (file) void handleBookUpload(file);
+                  };
+                  input.click();
+                }}
+              >
+                Upload book CSV
               </Button>
             </Surface>
           </Space>

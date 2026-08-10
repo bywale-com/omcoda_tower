@@ -15,125 +15,55 @@ import {
   type OperatorModuleProps,
 } from "./operatorChrome";
 import { useOperatorNav } from "../operatorNav";
-
-const EVENTS = [
-  {
-    id: "ev-1",
-    at: "Today · 14:22",
-    firm: DEMO_FIRMS[0].name,
-    actor: "ops.lena",
-    action: "Bound Evaluation pack v2",
-    kind: "Bind packs",
-    before: "Evaluation pack v1 · armed",
-    after: "Evaluation pack v2 · armed",
-    surface: "Firm operations bind",
-  },
-  {
-    id: "ev-2",
-    at: "Today · 11:05",
-    firm: DEMO_FIRMS[1].name,
-    actor: "ops.marco",
-    action: "Forward-deploy staged Prepared Workspace",
-    kind: "Activation",
-    before: "Capture complete",
-    after: "Prepared Workspace staged",
-    surface: "Activation & forward-deploy",
-  },
-  {
-    id: "ev-3",
-    at: "Yesterday · 16:40",
-    firm: "House-global",
-    actor: "founder",
-    action: "Agency policy · outbound quiet hours updated",
-    kind: "Kill-switch",
-    before: "Quiet hours off",
-    after: "Quiet hours 09:00–20:00",
-    surface: "Founder & agency controls",
-  },
-  {
-    id: "ev-4",
-    at: "Yesterday · 09:12",
-    firm: DEMO_FIRMS[0].name,
-    actor: "ops.lena",
-    action: "Open-box Publish version · Immigration constants",
-    kind: "Publish version",
-    before: "v2026.03.1",
-    after: "v2026.03.2 published",
-    surface: "Reference data",
-  },
-  {
-    id: "ev-5",
-    at: "Mon · 18:03",
-    firm: DEMO_FIRMS[3].name,
-    actor: "support.kai",
-    action: "Support context attached to ticket SUP-184",
-    kind: "Support",
-    before: "Ticket unscoped",
-    after: "Firm scope · Atlas Mobility",
-    surface: "Customer support",
-  },
-  {
-    id: "ev-6",
-    at: "Mon · 10:44",
-    firm: DEMO_FIRMS[2].name,
-    actor: "ops.lena",
-    action: "Escrow terms · published terms-v1",
-    kind: "Escrow terms",
-    before: "Draft terms",
-    after: "terms-v1 published",
-    surface: "Commercial",
-  },
-  {
-    id: "ev-7",
-    at: "Sun · 15:20",
-    firm: DEMO_FIRMS[1].name,
-    actor: "ops.marco",
-    action: "Provision · Harbor RCIC Desk minted",
-    kind: "Provision",
-    before: "—",
-    after: "Tenancy + consultant-owner seed",
-    surface: "Provision",
-  },
-] as const;
-
-const ACTORS = ["All actors", "ops.lena", "ops.marco", "founder", "support.kai"] as const;
-const OPERATIONS = [
-  "All operations",
-  "Publish version",
-  "Bind packs",
-  "Kill-switch",
-  "Escrow terms",
-  "Provision",
-  "Activation",
-  "Support",
-] as const;
+import { loadAuditTrailEvents, type AuditTrailUiEvent } from "./operatorWireHelpers";
 
 export function AuditTrailModule({ t, focusedEntry, hoveredId }: OperatorModuleProps) {
   const { jumpTo } = useOperatorNav();
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Audit trail", focusedEntry, hoveredEntry);
+  const [events, setEvents] = useState<AuditTrailUiEvent[]>([]);
   const [firmFilter, setFirmFilter] = useState("All firms");
-  const [actorFilter, setActorFilter] = useState<(typeof ACTORS)[number]>("All actors");
-  const [opFilter, setOpFilter] = useState<(typeof OPERATIONS)[number]>("All operations");
+  const [actorFilter, setActorFilter] = useState("All actors");
+  const [opFilter, setOpFilter] = useState("All operations");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [jumpNote, setJumpNote] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
+    void loadAuditTrailEvents(DEMO_FIRMS).then((rows) => {
+      if (!cancelled) setEvents(rows);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const actors = useMemo(() => {
+    const set = new Set(events.map((e) => e.actor));
+    return ["All actors", ...Array.from(set).sort()];
+  }, [events]);
+
+  const operations = useMemo(() => {
+    const set = new Set(events.map((e) => e.kind));
+    return ["All operations", ...Array.from(set).sort()];
+  }, [events]);
+
+  useEffect(() => {
     if (!focusedEntry || focusedEntry.module !== "Audit trail") return;
     if (focusedEntry.label === "Change event" || focusedEntry.label === "Change event list") {
-      setSelectedId(EVENTS[0].id);
+      setSelectedId(events[0]?.id ?? null);
     }
-  }, [focusedEntry]);
+  }, [focusedEntry, events]);
 
   const filtered = useMemo(
     () =>
-      EVENTS.filter((ev) => {
+      events.filter((ev) => {
         if (firmFilter !== "All firms" && ev.firm !== firmFilter) return false;
         if (actorFilter !== "All actors" && ev.actor !== actorFilter) return false;
         if (opFilter !== "All operations" && ev.kind !== opFilter) return false;
         return true;
       }),
-    [firmFilter, actorFilter, opFilter],
+    [events, firmFilter, actorFilter, opFilter],
   );
 
   const selected = filtered.find((e) => e.id === selectedId) ?? null;
@@ -200,7 +130,7 @@ export function AuditTrailModule({ t, focusedEntry, hoveredId }: OperatorModuleP
               <div style={{ fontSize: 10, color: t.textDim, marginBottom: 4 }}>Actor filter</div>
               <select
                 value={actorFilter}
-                onChange={(e) => setActorFilter(e.target.value as (typeof ACTORS)[number])}
+                onChange={(e) => setActorFilter(e.target.value)}
                 style={{
                   ...filterSelectStyle(t),
                   outline:
@@ -209,7 +139,7 @@ export function AuditTrailModule({ t, focusedEntry, hoveredId }: OperatorModuleP
                       : "none",
                 }}
               >
-                {ACTORS.map((a) => (
+                {actors.map((a) => (
                   <option key={a}>{a}</option>
                 ))}
               </select>
@@ -218,7 +148,7 @@ export function AuditTrailModule({ t, focusedEntry, hoveredId }: OperatorModuleP
               <div style={{ fontSize: 10, color: t.textDim, marginBottom: 4 }}>Operation filter</div>
               <select
                 value={opFilter}
-                onChange={(e) => setOpFilter(e.target.value as (typeof OPERATIONS)[number])}
+                onChange={(e) => setOpFilter(e.target.value)}
                 style={{
                   ...filterSelectStyle(t),
                   outline:
@@ -227,7 +157,7 @@ export function AuditTrailModule({ t, focusedEntry, hoveredId }: OperatorModuleP
                       : "none",
                 }}
               >
-                {OPERATIONS.map((op) => (
+                {operations.map((op) => (
                   <option key={op}>{op}</option>
                 ))}
               </select>
@@ -380,15 +310,13 @@ export function AuditTrailModule({ t, focusedEntry, hoveredId }: OperatorModuleP
                 type="button"
                 data-register-surface="Jump to affected surface"
                 style={secondaryBtnStyle(t)}
-                onClick={() =>
-                  (() => {
-                    const n = `Jump to ${selected.surface}${
-                      selected.firm !== "House-global" ? ` · firm ${selected.firm}` : ""
-                    }`;
-                    jumpTo(n);
-                    setJumpNote(n);
-                  })()
-                }
+                onClick={() => {
+                  const n = `Jump to ${selected.surface}${
+                    selected.firm !== "House-global" ? ` · firm ${selected.firm}` : ""
+                  }`;
+                  jumpTo(n);
+                  setJumpNote(n);
+                }}
               >
                 Jump to {selected.surface}
               </button>

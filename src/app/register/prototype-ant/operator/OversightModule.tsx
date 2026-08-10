@@ -1,31 +1,39 @@
 /**
  * Oversight — fleet health Table, unhealthy count, firm row selection.
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Alert, Select, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import {
+  loadFleetHealthRows,
+  type FleetHealthRow,
+} from "../../prototype/operator/operatorWireHelpers";
 import { ModulePage, Surface } from "../chrome";
 import { DEMO_FIRMS } from "./operatorAntData";
 import { chipTone, StatusTag } from "./operatorAntTags";
 
-const FLEET_ROWS = [
-  { firmId: DEMO_FIRMS[0].id, deliverability: "Healthy", sequence: "Healthy", engagement: "Watch", lastRun: "Today · 14:02" },
-  { firmId: DEMO_FIRMS[1].id, deliverability: "Healthy", sequence: "Watch", engagement: "Watch", lastRun: "Today · 13:48" },
-  { firmId: DEMO_FIRMS[2].id, deliverability: "Healthy", sequence: "Healthy", engagement: "Healthy", lastRun: "Today · 12:15" },
-  { firmId: DEMO_FIRMS[3].id, deliverability: "Watch", sequence: "At risk", engagement: "At risk", lastRun: "Today · 11:52" },
-];
-
-function isUnhealthy(row: typeof FLEET_ROWS[0]) {
+function isUnhealthy(row: FleetHealthRow) {
   return row.deliverability !== "Healthy" || row.sequence !== "Healthy" || row.engagement !== "Healthy";
 }
 
 export function OversightModule() {
+  const [fleetRows, setFleetRows] = useState<FleetHealthRow[]>([]);
   const [sortBy, setSortBy] = useState("Last run");
   const [healthFilter, setHealthFilter] = useState("All signals");
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  useEffect(() => {
+    let cancelled = false;
+    void loadFleetHealthRows(DEMO_FIRMS).then((rows) => {
+      if (!cancelled) setFleetRows(rows);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const rows = useMemo(() => {
-    let list = [...FLEET_ROWS];
+    let list = [...fleetRows];
     if (healthFilter === "Unhealthy only") list = list.filter(isUnhealthy);
     if (sortBy === "Firm name") {
       list.sort((a, b) => {
@@ -35,13 +43,13 @@ export function OversightModule() {
       });
     }
     return list;
-  }, [sortBy, healthFilter]);
+  }, [sortBy, healthFilter, fleetRows]);
 
-  const unhealthyCount = FLEET_ROWS.filter(isUnhealthy).length;
+  const unhealthyCount = fleetRows.filter(isUnhealthy).length;
   const selected = selectedId ? DEMO_FIRMS.find((f) => f.id === selectedId) : null;
-  const selectedRow = selectedId ? FLEET_ROWS.find((r) => r.firmId === selectedId) : null;
+  const selectedRow = selectedId ? fleetRows.find((r) => r.firmId === selectedId) : null;
 
-  const columns: ColumnsType<typeof FLEET_ROWS[0]> = [
+  const columns: ColumnsType<FleetHealthRow> = [
     {
       title: "Firm",
       key: "firm",

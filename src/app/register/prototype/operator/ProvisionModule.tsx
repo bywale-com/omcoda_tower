@@ -4,6 +4,7 @@
  */
 import { useState } from "react";
 import { wirePorts } from "../../../wire";
+import { appendOperatorAudit } from "./operatorWireHelpers";
 import { RegisterSurfaceMount } from "../registerSurfaceChrome";
 import {
   moduleFocus,
@@ -65,6 +66,18 @@ export function ProvisionModule({ t, focusedEntry, hoveredId }: OperatorModulePr
         email: result.email,
         loginPath: result.loginPath,
         authUser: result.authUser,
+      });
+      void appendOperatorAudit({
+        actorId: "ops.system",
+        kind: "provision",
+        subjectType: "firm",
+        subjectId: result.firmId,
+        action: `Provision · ${result.firmName} minted`,
+        kindLabel: "Provision",
+        before: "—",
+        after: "Tenancy + consultant-owner seed",
+        surface: "Provision",
+        firmName: result.firmName,
       });
     } catch (err) {
       setHandoffNote(`Provision failed: ${String(err)}`);
