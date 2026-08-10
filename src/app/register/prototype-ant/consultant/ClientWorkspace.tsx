@@ -22,7 +22,7 @@ import type {
   JourneyTreeNode,
 } from "../../../data/journeyTree";
 import { Hint, Surface } from "../chrome";
-import { MEETING_READY_CLIENT_IDS } from "./meetingsData";
+import { selectMeetingReadyClientIds, useMeetings } from "./meetingsData";
 import {
   PHASE_LABEL,
   phaseTagColor,
@@ -405,7 +405,12 @@ export function ClientWorkspace({
   const treeData = useMemo(() => engagementTreeData(journey.sequences), [journey.sequences]);
   const [expandedKeys, setExpandedKeys] = useState<Key[]>(() => defaultExpandedKeys(journey.sequences));
   const [selectedJourneyKey, setSelectedJourneyKey] = useState<Key[]>([journey.reactivationSequenceId]);
-  const phase = resolveWorkspacePhase(clientId, Boolean(halt), MEETING_READY_CLIENT_IDS);
+  const meetings = useMeetings();
+  const meetingReadyClientIds = useMemo(
+    () => selectMeetingReadyClientIds(meetings),
+    [meetings],
+  );
+  const phase = resolveWorkspacePhase(clientId, Boolean(halt), meetingReadyClientIds);
   const runtime =
     meta.reactivationPhase === "active"
       ? "Active"

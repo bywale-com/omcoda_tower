@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
-import { Input, Space, Splitter, Table, Tag, Typography } from "antd";
+import { Alert, Button, Input, Space, Splitter, Table, Tag, Typography } from "antd";
+import { CT_DEMO, wirePorts } from "../../../wire";
 import type { ColumnsType } from "antd/es/table";
 import { contactList, getContact, type Contact } from "../../../data/contacts";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { ClientWorkspace } from "./ClientWorkspace";
-import { MEETING_READY_CLIENT_IDS } from "./meetingsData";
+import { selectMeetingReadyClientIds, useMeetings } from "./meetingsData";
 import {
   PHASE_LABEL,
   phaseTagColor,
@@ -49,6 +50,13 @@ export function ContactsModule({
   onOpenAcceptedTerms,
 }: ContactsModuleProps) {
   const [search, setSearch] = useState("");
+  const [grantNote, setGrantNote] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [grantPending, setGrantPending] = useState(false);
+  const meetings = useMeetings();
+  const meetingReadyClientIds = useMemo(
+    () => selectMeetingReadyClientIds(meetings),
+    [meetings],
+  );
 
   const haltForClient = (clientId: string): HaltRetention | null =>
     bookHalt ?? haltByContact[clientId] ?? null;
@@ -99,7 +107,7 @@ export function ContactsModule({
       render: (_, row) => {
         if (!row.clientId) return "—";
         const halt = haltForClient(row.clientId);
-        const phase = resolveWorkspacePhase(row.clientId, Boolean(halt), MEETING_READY_CLIENT_IDS);
+        const phase = resolveWorkspacePhase(row.clientId, Boolean(halt), meetingReadyClientIds);
         return (
           <Surface label="Phase signal">
             <Tag color={phaseTagColor(phase)}>{PHASE_LABEL[phase]}</Tag>
@@ -127,7 +135,38 @@ export function ContactsModule({
             />
           </Surface>
           <Surface label="Imports">
-            <Hint>Imports and unsequenced contacts — Confirm book for Tower from assisted path.</Hint>
+            <Space direction="vertical" size="small" style={{ width: "100%" }}>
+              <Hint>Imports and unsequenced contacts — Confirm book for Tower from assisted path.</Hint>
+              <Button
+                type="primary"
+                size="small"
+                loading={grantPending}
+                onClick={() => {
+                  setGrantPending(true);
+                  setGrantNote(null);
+                  void wirePorts.crmOAuth
+                    .grant(CT_DEMO.firmId)
+                    .then(() => {
+                      setGrantNote({
+                        type: "success",
+                        text: "Book handover confirmed — same grant as Prepared Authorize book.",
+                      });
+                    })
+                    .catch((err: unknown) => {
+                      setGrantNote({
+                        type: "error",
+                        text: err instanceof Error ? err.message : "Confirm book failed",
+                      });
+                    })
+                    .finally(() => setGrantPending(false));
+                }}
+              >
+                Confirm book for Tower
+              </Button>
+              {grantNote ? (
+                <Alert type={grantNote.type} showIcon message={grantNote.text} />
+              ) : null}
+            </Space>
           </Surface>
           <Table
             size="small"

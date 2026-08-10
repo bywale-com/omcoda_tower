@@ -11,6 +11,8 @@ import {
   type RegisterSurfaceEntry,
 } from "../trace/surfaceCatalog";
 import { FIRM_BRAND } from "../../wire/firmBrand";
+import { wirePorts } from "../../wire";
+import { confirmContactBooking } from "../prototype/shared/meetingsStore";
 import {
   LeafSurface,
   RegisterSurfaceMount,
@@ -45,6 +47,9 @@ const CONTACT_SURFACES = [
 type ContactSurface = (typeof CONTACT_SURFACES)[number];
 
 const FIRM = FIRM_BRAND;
+
+/** Demo contact id — matches `src/app/data` sarah client row. */
+const DEMO_CONTACT_ID = "sarah";
 
 const CONSULTANT = {
   name: "Sarah Chen",
@@ -809,10 +814,12 @@ function ConsentRequest({
   t,
   focusLabel,
   onSilence,
+  onAgree,
 }: {
   t: Tokens;
   focusLabel: string | null;
   onSilence: () => void;
+  onAgree: () => void;
 }) {
   const [agreed, setAgreed] = useState(false);
   const [scope, setScope] = useState<ChannelScope>("email");
@@ -1056,7 +1063,10 @@ function ConsentRequest({
             <button
               type="button"
               disabled={!agreed}
-              onClick={() => setOutcome("agreed")}
+              onClick={() => {
+                setOutcome("agreed");
+                onAgree();
+              }}
               style={primaryBtn(t, {
                 opacity: agreed ? 1 : 0.45,
                 cursor: agreed ? "pointer" : "not-allowed",
@@ -1256,12 +1266,12 @@ function SilenceOptOut({
   t,
   focusLabel,
   silenced,
-  setSilenced,
+  onConfirmSilence,
 }: {
   t: Tokens;
   focusLabel: string | null;
   silenced: boolean;
-  setSilenced: (v: boolean) => void;
+  onConfirmSilence: () => void;
 }) {
   return portalShell({
     t,
@@ -1298,7 +1308,7 @@ function SilenceOptOut({
         <LeafSurface label="Silence / Opt out" focused={focusLabel === "Silence / Opt out"} t={t}>
           <button
             type="button"
-            onClick={() => setSilenced(true)}
+            onClick={onConfirmSilence}
             style={primaryBtn(t, {
               width: "100%",
               background: silenced ? t.success : t.red,
@@ -1435,7 +1445,15 @@ function MeetingInvitation({
   });
 }
 
-function Booking({ t, focusLabel }: { t: Tokens; focusLabel: string | null }) {
+function Booking({
+  t,
+  focusLabel,
+  onConfirmBooking,
+}: {
+  t: Tokens;
+  focusLabel: string | null;
+  onConfirmBooking: (slot: string) => void;
+}) {
   const [slot, setSlot] = useState<string | null>("Thu 2:00 PM");
   const [confirmed, setConfirmed] = useState(false);
   const [factsOnFile, setFactsOnFile] = useState(true);
@@ -1585,7 +1603,10 @@ function Booking({ t, focusLabel }: { t: Tokens; focusLabel: string | null }) {
             <LeafSurface label="Confirm booking" focused={focusLabel === "Confirm booking"} t={t}>
               <button
                 type="button"
-                onClick={() => setConfirmed(true)}
+                onClick={() => {
+                  if (slot) onConfirmBooking(slot);
+                  setConfirmed(true);
+                }}
                 style={primaryBtn(t, { width: "100%" })}
               >
                 Confirm booking
@@ -1910,33 +1931,42 @@ function ActiveSurface({
   surface,
   focusLabel,
   silenced,
-  setSilenced,
+  onConfirmSilence,
+  onAgree,
+  onConfirmBooking,
   goSilence,
 }: {
   t: Tokens;
   surface: ContactSurface;
   focusLabel: string | null;
   silenced: boolean;
-  setSilenced: (v: boolean) => void;
+  onConfirmSilence: () => void;
+  onAgree: () => void;
+  onConfirmBooking: (slot: string) => void;
   goSilence: () => void;
 }) {
   switch (surface) {
     case "Opt-in message":
       return <OptInMessage t={t} focusLabel={focusLabel} onSilence={goSilence} />;
     case "Consent request":
-      return <ConsentRequest t={t} focusLabel={focusLabel} onSilence={goSilence} />;
+      return <ConsentRequest t={t} focusLabel={focusLabel} onSilence={goSilence} onAgree={onAgree} />;
     case "Nudge message":
       return <NudgeMessage t={t} focusLabel={focusLabel} onSilence={goSilence} />;
     case "Nudge form":
       return <NudgeForm t={t} focusLabel={focusLabel} onSilence={goSilence} />;
     case "Silence / Opt out":
       return (
-        <SilenceOptOut t={t} focusLabel={focusLabel} silenced={silenced} setSilenced={setSilenced} />
+        <SilenceOptOut
+          t={t}
+          focusLabel={focusLabel}
+          silenced={silenced}
+          onConfirmSilence={onConfirmSilence}
+        />
       );
     case "Meeting invitation":
       return <MeetingInvitation t={t} focusLabel={focusLabel} onSilence={goSilence} />;
     case "Booking":
-      return <Booking t={t} focusLabel={focusLabel} />;
+      return <Booking t={t} focusLabel={focusLabel} onConfirmBooking={onConfirmBooking} />;
     case "Loop-closer form":
       return <LoopCloserForm t={t} focusLabel={focusLabel} onSilence={goSilence} />;
     case "Update facts":
@@ -1959,13 +1989,46 @@ export function ContactPrototypeScene({
   const [silenced, setSilenced] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+    void wirePorts.consentSilence.get(DEMO_CONTACT_ID).then((state) => {
+      if (!cancelled) setSilenced(state.silenced);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const applyConsent = () => {
+    void wirePorts.consentSilence.setConsent(DEMO_CONTACT_ID, FIRM.firmId, "express");
+  };
+
+  const applySilence = () => {
+    void wirePorts.consentSilence
+      .silence(DEMO_CONTACT_ID, FIRM.firmId, "contact-portal")
+      .then(() => setSilenced(true));
+  };
+
+  const confirmBooking = (slot: string) => {
+    confirmContactBooking({
+      contactName: CONTACT.name,
+      clientId: DEMO_CONTACT_ID,
+      slot,
+      consultantName: CONSULTANT.name,
+    });
+  };
+
+  useEffect(() => {
     if (!focusedEntry || focusedEntry.desk !== "contact") return;
     setSurface(surfaceForFocus(focusedEntry));
   }, [focusedEntry, focusSeq]);
 
   const goSilence = () => {
-    setSilenced(true);
-    setSurface("Silence / Opt out");
+    void wirePorts.consentSilence
+      .silence(DEMO_CONTACT_ID, FIRM.firmId, "contact-portal")
+      .then(() => {
+        setSilenced(true);
+        setSurface("Silence / Opt out");
+      });
   };
 
   const hoveredEntry = hoveredId
@@ -2016,7 +2079,9 @@ export function ContactPrototypeScene({
               surface={surface}
               focusLabel={focusedEntry?.label ?? null}
               silenced={silenced}
-              setSilenced={setSilenced}
+              onConfirmSilence={applySilence}
+              onAgree={applyConsent}
+              onConfirmBooking={confirmBooking}
               goSilence={goSilence}
             />
           </div>

@@ -12,7 +12,7 @@ import {
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { Hint, ModulePage, Surface } from "../chrome";
-import { DEMO_MEETINGS, type LiveBriefMeeting } from "./meetingsData";
+import { selectMeetingReadyClientIds, useMeetings, type LiveBriefMeeting } from "./meetingsData";
 import { FIRM_NAME } from "./shared";
 
 const { Text, Title, Paragraph } = Typography;
@@ -30,6 +30,7 @@ export function MeetingsModule({
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
   const [demoEmpty, setDemoEmpty] = useState(false);
   const [copied, setCopied] = useState(false);
+  const meetings = useMeetings();
 
   useEffect(() => {
     if (initialSelectedId) {
@@ -38,7 +39,7 @@ export function MeetingsModule({
     }
   }, [initialSelectedId]);
 
-  const rows = demoEmpty ? [] : DEMO_MEETINGS;
+  const rows = demoEmpty ? [] : meetings;
   const selected = rows.find((m) => m.id === selectedId) ?? null;
 
   // Status is its own column — never jam Tag beside Contact in a narrow cell (SPACING.md).

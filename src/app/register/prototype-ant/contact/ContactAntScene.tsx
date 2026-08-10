@@ -3,7 +3,7 @@
  * Source parity: ContactPrototypeScene (read-only reference). No plant imports.
  * Brand accent: synthesize #1B4F72 from source FIRM constant for portal identity chips.
  */
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   Alert,
   Button,
@@ -31,6 +31,8 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { FIRM_BRAND } from "../../../wire/firmBrand";
+import { wirePorts } from "../../../wire";
+import { confirmContactBooking } from "../../prototype/shared/meetingsStore";
 import { Hint, ModulePage, Surface } from "../chrome";
 
 const { Sider, Content } = Layout;
@@ -53,6 +55,9 @@ const CONTACT_SURFACES = [
 type ContactSurface = (typeof CONTACT_SURFACES)[number];
 
 const FIRM = FIRM_BRAND;
+
+/** Demo contact id — matches `src/app/data` sarah client row. */
+const DEMO_CONTACT_ID = "sarah";
 
 const CONSULTANT = {
   name: "Sarah Chen",
@@ -788,15 +793,15 @@ function NudgeForm({ onSilence }: { onSilence: () => void }) {
 
 function SilenceOptOut({
   silenced,
-  setSilenced,
+  onConfirmSilence,
 }: {
   silenced: boolean;
-  setSilenced: (v: boolean) => void;
+  onConfirmSilence: () => void;
 }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   const confirmSilence = () => {
-    setSilenced(true);
+    onConfirmSilence();
     setModalOpen(false);
   };
 
@@ -910,7 +915,7 @@ function MeetingInvitation({
   );
 }
 
-function BookingSurface() {
+function BookingSurface({ onConfirmBooking }: { onConfirmBooking: (slot: string) => void }) {
   const [slot, setSlot] = useState<string | null>("Thu 2:00 PM");
   const [confirmed, setConfirmed] = useState(false);
   const [factsOnFile, setFactsOnFile] = useState(true);
@@ -1003,7 +1008,10 @@ function BookingSurface() {
                 icon={<ArrowRightOutlined />}
                 iconPosition="end"
                 style={{ background: FIRM.brand }}
-                onClick={() => setConfirmed(true)}
+                onClick={() => {
+                  if (slot) onConfirmBooking(slot);
+                  setConfirmed(true);
+                }}
               >
                 Confirm booking
               </Button>
@@ -1244,13 +1252,17 @@ function LinkStatePage() {
 function ActiveSurface({
   surface,
   silenced,
-  setSilenced,
+  onConfirmSilence,
+  onAgree,
+  onConfirmBooking,
   goSilence,
   navigate,
 }: {
   surface: ContactSurface;
   silenced: boolean;
-  setSilenced: (v: boolean) => void;
+  onConfirmSilence: () => void;
+  onAgree: () => void;
+  onConfirmBooking: (slot: string) => void;
   goSilence: () => void;
   navigate: (s: ContactSurface) => void;
 }) {
@@ -1266,7 +1278,10 @@ function ActiveSurface({
       return (
         <ConsentRequest
           onSilence={goSilence}
-          onAgreed={() => navigate("Meeting invitation")}
+          onAgreed={() => {
+            onAgree();
+            navigate("Meeting invitation");
+          }}
         />
       );
     case "Nudge message":
@@ -1274,7 +1289,7 @@ function ActiveSurface({
     case "Nudge form":
       return <NudgeForm onSilence={goSilence} />;
     case "Silence / Opt out":
-      return <SilenceOptOut silenced={silenced} setSilenced={setSilenced} />;
+      return <SilenceOptOut silenced={silenced} onConfirmSilence={onConfirmSilence} />;
     case "Meeting invitation":
       return (
         <MeetingInvitation
@@ -1283,7 +1298,7 @@ function ActiveSurface({
         />
       );
     case "Booking":
-      return <BookingSurface />;
+      return <BookingSurface onConfirmBooking={onConfirmBooking} />;
     case "Loop-closer form":
       return <LoopCloserForm onSilence={goSilence} />;
     case "Update facts":
@@ -1301,10 +1316,43 @@ export function ContactAntScene() {
   const [silenced, setSilenced] = useState(false);
   const [walkStep, setWalkStep] = useState(0);
 
+  useEffect(() => {
+    let cancelled = false;
+    void wirePorts.consentSilence.get(DEMO_CONTACT_ID).then((state) => {
+      if (!cancelled) setSilenced(state.silenced);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const applyConsent = () => {
+    void wirePorts.consentSilence.setConsent(DEMO_CONTACT_ID, FIRM.firmId, "express");
+  };
+
+  const applySilence = () => {
+    void wirePorts.consentSilence
+      .silence(DEMO_CONTACT_ID, FIRM.firmId, "contact-portal")
+      .then(() => setSilenced(true));
+  };
+
+  const confirmBooking = (slot: string) => {
+    confirmContactBooking({
+      contactName: CONTACT.name,
+      clientId: DEMO_CONTACT_ID,
+      slot,
+      consultantName: CONSULTANT.name,
+    });
+  };
+
   const goSilence = () => {
-    setSilenced(true);
-    setSurface("Silence / Opt out");
-    setWalkStep(WALK_SURFACES.length - 1);
+    void wirePorts.consentSilence
+      .silence(DEMO_CONTACT_ID, FIRM.firmId, "contact-portal")
+      .then(() => {
+        setSilenced(true);
+        setSurface("Silence / Opt out");
+        setWalkStep(WALK_SURFACES.length - 1);
+      });
   };
 
   const startWalk = () => {
@@ -1386,7 +1434,9 @@ export function ContactAntScene() {
               <ActiveSurface
                 surface={surface}
                 silenced={silenced}
-                setSilenced={setSilenced}
+                onConfirmSilence={applySilence}
+                onAgree={applyConsent}
+                onConfirmBooking={confirmBooking}
                 goSilence={goSilence}
                 navigate={setSurface}
               />
