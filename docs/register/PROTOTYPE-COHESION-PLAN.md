@@ -1,19 +1,27 @@
 # INITIATIVE — Prototype cohesion (table-first product wire)
 
-**Status:** EXECUTING — founder greenlit 2026-08-10. Branch `cursor/prototype-cohesion-wire-6565`.  
+**Status:** EXECUTE PR **#65** — founder greenlit 2026-08-10. Branch `cursor/prototype-cohesion-wire-6565`.  
 **Face:** Register prototype / CT (Plant + Ant) **is the product**. Hub authorship is wrong-seat debt.  
 **Date locked:** 2026-08-10  
 **Companion analysis:** [`PROTOTYPE-COHESION-ANALYSIS.md`](./PROTOTYPE-COHESION-ANALYSIS.md)
 
-### Status notes (remaining cohesion pieces)
+### Status notes (execute landings)
 
 | Piece | Status |
 |-------|--------|
-| H1 Kill-switch → `haltStore.commit` firm-book (DEMO_FIRMS / CT_DEMO ids) | ✓ Ant + Plant FounderAgencyControls |
-| H1 `enrollAndActuate` / `dispatchSend` block **new** enrollments & sends | ✓; in-flight attempts not aborted |
-| Reference Publish → `machineApi.upsertReference` (`eligibility.changed`) | ✓ Ant + Plant Reference data |
-| Jump-to → real `setModule` navigation (not notes-only) | ✓ OperatorAnt + Plant via `operatorNav` |
-| Product face | CT Config libraries / prototype modules — **not Hub** |
+| Live send default (`SEND_MODE=live`) | ✓ |
+| Automations CT face (Activate, node config, Runs, Settings) | ✓ |
+| Agents Save/Launch + Settings (attempt criteria, channel order) | ✓ |
+| Evaluation pack editor + pins | ✓ |
+| Shared pack catalog Config ↔ Bind Active | ✓ |
+| Provision + OTP invite path | ✓ |
+| Book readiness audit | ✓ |
+| H1 Kill-switch → `haltStore.commit` firm-book | ✓ Ant + Plant |
+| H1 block **new** enrollments & sends | ✓; in-flight not aborted |
+| Reference Publish → `upsertReference` | ✓ |
+| Jump-to → `setModule` | ✓ |
+| H3 firm brand Cedar Pathways | ✓ |
+| Deferred: Meta / Register & evolution / Escrow | still deferred |
 
 ---
 
