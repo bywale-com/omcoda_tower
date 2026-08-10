@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { getAgentDefinition } from "../../../data/agentDefinitions";
+import { AGENT_TEMPLATE_BINDING, getAgentDefinition } from "../../../data/agentDefinitions";
 import { HolonBoundary } from "../../docs/HolonBoundary";
 import { SHELL_HOLON_ORDER } from "../../docs/shellHolonOrder";
 import type { Tokens } from "../../tokens";
@@ -13,13 +13,6 @@ type AgentDetailViewProps = {
   isDark: boolean;
 };
 
-/** Map hub agent ids → sequence_template / binding class. */
-const AGENT_SEQUENCE_CLASS: Record<string, string> = {
-  "agent-intake": "optin_launch",
-  "agent-reactivation": "reactivation",
-  "agent-nudge": "reengagement",
-};
-
 export function AgentDetailView({ agentId, t, isDark: _isDark }: AgentDetailViewProps) {
   const agent = getAgentDefinition(agentId);
   const [launchNote, setLaunchNote] = useState<string | null>(null);
@@ -27,13 +20,15 @@ export function AgentDetailView({ agentId, t, isDark: _isDark }: AgentDetailView
   const handleLaunch = useCallback(async () => {
     if (!agent) return;
     try {
+      const mapped = AGENT_TEMPLATE_BINDING[agent.id];
       const { templates, bindings } = await wirePorts.machineApi.listTemplates();
-      const seqClass = AGENT_SEQUENCE_CLASS[agent.id] ?? "optin_launch";
+      const seqClass = mapped?.sequenceClass ?? "optin_launch";
       const binding = bindings.find((b) => b.sequence_class === seqClass);
       const template =
-        templates.find((tpl) => tpl.id === binding?.template_id) ??
+        templates.find((tpl) => tpl.id === (binding?.template_id ?? mapped?.templateId)) ??
         templates.find((tpl) => tpl.sequence_class === seqClass);
-      const agentRef = template?.id ?? binding?.template_id ?? `tpl.${seqClass}.v1`;
+      const agentRef =
+        template?.id ?? binding?.template_id ?? mapped?.templateId ?? `tpl.${seqClass}.v1`;
       const enr = await wirePorts.machineApi.createEnrollment({
         contactId: "board-selected-or-book",
         agentRef,

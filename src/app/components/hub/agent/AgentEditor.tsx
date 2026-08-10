@@ -2,6 +2,7 @@ import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   AGENT_EDITOR_TABS,
+  AGENT_TEMPLATE_BINDING,
   type AgentDefinition,
   type AgentEditorTab,
   type AgentStepType,
@@ -11,6 +12,7 @@ import {
   insertAgentStep,
   type AgentStep,
 } from "../../../data/agentSteps";
+import { wirePorts } from "../../../wire/registry";
 import {
   AGENT_ACTIVITY_TAB_HOLON,
   AGENT_CONTACTS_TAB_HOLON,
@@ -35,16 +37,83 @@ type AgentEditorProps = {
   t: Tokens;
 };
 
+function stepsToTemplateCells(steps: AgentStep[]): unknown[] {
+  return steps
+    .slice()
+    .sort((a, b) => a.order - b.order)
+    .map((step, index) => ({
+      id: step.id,
+      ord: index,
+      kind: step.kind,
+      channel: step.kind === "email" ? "email" : "task",
+      day:
+        step.kind === "email"
+          ? Math.max(0, Math.round((step.timing.delayMinutes ?? 0) / (60 * 24)))
+          : (step.timing.dueDays ?? 0),
+      waitMinutes: step.timing.delayMinutes ?? 0,
+      subject: step.email?.subject ?? "",
+      body: step.email?.body ?? "",
+      taskNote: step.task?.note ?? "",
+      mode: "authored",
+    }));
+}
+
 export function AgentEditor({ agent, t }: AgentEditorProps) {
   const [tab, setTab] = useState<AgentEditorTab>("editor");
   const [railOpen, setRailOpen] = useState(true);
   const initialSteps = useMemo(() => getInitialAgentSteps(agent.id), [agent.id]);
   const [steps, setSteps] = useState<AgentStep[]>(initialSteps);
+  const [saveNote, setSaveNote] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     setSteps(getInitialAgentSteps(agent.id));
     setTab("editor");
     setRailOpen(true);
+    setSaveNote(null);
+    // Hydrate steps from sequence_template when wire has cells
+    void wirePorts.machineApi
+      .listTemplates()
+      .then(({ templates }) => {
+        const binding = AGENT_TEMPLATE_BINDING[agent.id];
+        if (!binding) return;
+        const tpl = templates.find((row) => row.id === binding.templateId);
+        const cells = Array.isArray(tpl?.cells) ? tpl!.cells : [];
+        if (!cells.length) return;
+        const hydrated: AgentStep[] = cells.map((cell, index) => {
+          const row = cell as Record<string, unknown>;
+          const kind =
+            row.kind === "consultant_task" || row.channel === "task"
+              ? ("consultant_task" as const)
+              : ("email" as const);
+          if (kind === "email") {
+            return {
+              id: String(row.id ?? `agent-step-email-${index}`),
+              kind,
+              order: typeof row.ord === "number" ? row.ord : index,
+              timing: { delayMinutes: Number(row.waitMinutes ?? 0) || 0 },
+              email: {
+                subject: String(row.subject ?? row.label ?? ""),
+                body: String(row.body ?? ""),
+                threadType: "new" as const,
+              },
+            };
+          }
+          return {
+            id: String(row.id ?? `agent-step-task-${index}`),
+            kind,
+            order: typeof row.ord === "number" ? row.ord : index,
+            timing: { dueDays: Number(row.day ?? 0) || 0 },
+            task: {
+              priority: "medium" as const,
+              note: String(row.taskNote ?? row.label ?? ""),
+              skipAfterDays: 0,
+            },
+          };
+        });
+        if (hydrated.length) setSteps(hydrated);
+      })
+      .catch(() => undefined);
   }, [agent.id]);
 
   const handleAddStep = useCallback((stepType: AgentStepType) => {
@@ -53,6 +122,37 @@ export function AgentEditor({ agent, t }: AgentEditorProps) {
     }
     setSteps((current) => insertAgentStep(current, stepType.id, current.length - 1));
   }, []);
+
+  const handleSave = useCallback(async () => {
+    const binding = AGENT_TEMPLATE_BINDING[agent.id];
+    if (!binding) {
+      setSaveNote("No sequence_template binding for this agent.");
+      return;
+    }
+    setSaving(true);
+    setSaveNote(null);
+    try {
+      const cells = stepsToTemplateCells(steps);
+      const tpl = await wirePorts.machineApi.upsertTemplate({
+        id: binding.templateId,
+        sequenceClass: binding.sequenceClass,
+        label: agent.name,
+        cells,
+      });
+      const bind = await wirePorts.machineApi.upsertBinding({
+        sequenceClass: binding.sequenceClass,
+        templateId: binding.templateId,
+        variableBindings: { agentId: agent.id, firm_name: "Cedar Immigration" },
+      });
+      setSaveNote(
+        `Saved ${tpl.cells} cells → sequence_template.${tpl.id}; binding ${bind.id ?? binding.sequenceClass}`,
+      );
+    } catch (err) {
+      setSaveNote(`Save failed: ${String(err)}`);
+    } finally {
+      setSaving(false);
+    }
+  }, [agent.id, agent.name, steps]);
 
   const placeholderCopy = useMemo(() => {
     switch (tab) {
@@ -235,15 +335,24 @@ export function AgentEditor({ agent, t }: AgentEditorProps) {
                   <ChevronsRight size={14} strokeWidth={2} color={t.textMuted} />
                 )}
               </button>
-              <button
-                type="button"
-                className={cn(
-                  TOWER_CHROME_SOFT_BUTTON_CLASS,
-                  "inline-flex h-8 items-center px-3 py-1",
-                )}
-              >
-                Save changes
-              </button>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                {saveNote ? (
+                  <span style={{ fontSize: 11, color: t.textMuted, maxWidth: 360 }}>
+                    {saveNote}
+                  </span>
+                ) : null}
+                <button
+                  type="button"
+                  disabled={saving}
+                  onClick={() => void handleSave()}
+                  className={cn(
+                    TOWER_CHROME_SOFT_BUTTON_CLASS,
+                    "inline-flex h-8 items-center px-3 py-1",
+                  )}
+                >
+                  {saving ? "Saving…" : "Save changes"}
+                </button>
+              </div>
             </HolonBoundary>
           ) : null}
 

@@ -308,12 +308,25 @@ export type MachineApiPort = {
   }): Promise<{ id: string; status: string; name: string; target: string }>;
   activateWorkflow(
     workflowId: string,
-  ): Promise<{ workflowId: string; status: string; transition?: string }>;
+  ): Promise<{
+    workflowId: string;
+    status: string;
+    transition?: string;
+    triggersMaterialized?: number;
+  }>;
   pauseWorkflow(workflowId: string): Promise<{ workflowId: string; status: string }>;
   startRun(
     workflowId: string,
     triggerLabel?: string,
-  ): Promise<{ id: string; workflowId: string; status: string }>;
+    opts?: { contactIds?: string[]; payload?: Record<string, unknown> },
+  ): Promise<{
+    id: string;
+    workflowId: string;
+    status: string;
+    nodeStatus?: Record<string, unknown>;
+    enrollments?: string[];
+    error?: string;
+  }>;
   completeRun(
     runId: string,
     body?: { status?: string; nodeStatus?: unknown; counts?: unknown },
@@ -332,7 +345,7 @@ export type MachineApiPort = {
     payload: unknown;
     version?: number;
     contactIds?: string[];
-  }): Promise<{ referenceId: string; cascade: unknown[] }>;
+  }): Promise<{ referenceId: string; cascade: unknown[]; workflowsFired?: unknown[] }>;
   createAuditRun(input: {
     importIds?: string[];
     contactIds?: Array<{ id: string; email?: string; phone?: string; name?: string }>;
@@ -352,4 +365,21 @@ export type MachineApiPort = {
     templates: import("./machineTypes").SequenceTemplateRow[];
     bindings: import("./machineTypes").FirmSequenceBindingRow[];
   }>;
+  upsertTemplate(input: {
+    id: string;
+    sequenceClass: string;
+    label?: string;
+    cells: unknown[];
+    variant?: string;
+  }): Promise<{ id: string; cells: number; table: string }>;
+  upsertBinding(input: {
+    sequenceClass: string;
+    templateId: string;
+    variableBindings?: Record<string, unknown>;
+  }): Promise<{ id: string; firmId?: string; table?: string; sequenceClass?: string; templateId?: string }>;
+  fireEvent(input: {
+    eventName: string;
+    payload?: Record<string, unknown>;
+    contactIds?: string[];
+  }): Promise<{ eventName: string; workflowsFired: unknown[] }>;
 };

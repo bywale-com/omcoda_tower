@@ -1,15 +1,16 @@
 import type { Node } from "@xyflow/react";
 import {
   AUTOMATION_DATA_CLASSES,
-  DATA_MUTATION_EVENTS,
   formatEventTriggerSummary,
-  isEventTriggerConfigured,
   type AutomationDataClassId,
   type DataClassScopeSelection,
-  type DataMutationEvent,
   type EventTriggerConfig,
 } from "../../../data/automationEvents";
-import type { WorkflowNodeData } from "../../../data/automationWorkflows";
+import {
+  WORKFLOW_EVENT_CATALOG,
+  type WorkflowNodeData,
+  type WorkflowTriggerEvent,
+} from "../../../data/automationWorkflows";
 import { DOCS_TREE_LABEL_SIZE } from "../../docs/treeLayout";
 import { Checkbox } from "../../ui/checkbox";
 import { TOWER_DIALOG_HINT_CLASS } from "../../ui/towerChrome";
@@ -54,6 +55,7 @@ export function AutomationEventTriggerConfigPanel({
     mutationEvents: [],
     scopes: {},
   };
+  const selectedEvent = node.data.triggerEvent ?? "eligibility.changed";
 
   function patchConfig(patch: Partial<EventTriggerConfig>) {
     const nextConfig: EventTriggerConfig = {
@@ -62,15 +64,9 @@ export function AutomationEventTriggerConfigPanel({
     };
     onUpdate({
       eventTriggerConfig: nextConfig,
-      configured: isEventTriggerConfigured(nextConfig),
+      triggerEvent: selectedEvent,
+      configured: Boolean(selectedEvent),
     });
-  }
-
-  function toggleMutationEvent(event: DataMutationEvent, checked: boolean) {
-    const next = checked
-      ? [...config.mutationEvents, event]
-      : config.mutationEvents.filter((item) => item !== event);
-    patchConfig({ mutationEvents: next });
   }
 
   function updateClassScope(
@@ -78,74 +74,23 @@ export function AutomationEventTriggerConfigPanel({
     selection: DataClassScopeSelection | undefined,
   ) {
     const nextScopes = { ...config.scopes };
-    if (!selection) {
-      delete nextScopes[classId];
-    } else {
-      nextScopes[classId] = selection;
-    }
+    if (!selection) delete nextScopes[classId];
+    else nextScopes[classId] = selection;
     patchConfig({ scopes: nextScopes });
   }
 
-  const preview = formatEventTriggerSummary(config);
-
   return (
-    <aside
-      style={{
-        width: 320,
-        flexShrink: 0,
-        borderLeft: `1px solid ${t.border}`,
-        background: t.boardPanel,
-        display: "flex",
-        flexDirection: "column",
-        minHeight: 0,
-      }}
-    >
-      <div
-        style={{
-          padding: "14px 14px 10px",
-          borderBottom: `1px solid ${t.border}`,
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          gap: 12,
-        }}
-      >
-        <div style={{ minWidth: 0 }}>
-          <div
-            style={{
-              fontSize: DOCS_TREE_LABEL_SIZE,
-              fontWeight: 600,
-              color: t.textPrimary,
-              letterSpacing: "-0.01em",
-            }}
-          >
-            Event trigger
-          </div>
-          <p className={TOWER_DIALOG_HINT_CLASS} style={{ margin: "4px 0 0", color: t.textMuted }}>
-            Define when Tower data changes, then choose which data classes it applies to.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={onClose}
-          className="tower-chrome-menu-item shrink-0 cursor-pointer rounded-sm px-2 py-1 outline-none hover:bg-accent hover:text-accent-foreground"
-          style={{ color: t.textMuted, fontSize: 11, fontWeight: 500 }}
-        >
-          Done
-        </button>
-      </div>
-
-      <div style={{ flex: 1, overflowY: "auto", padding: "14px 14px 20px" }}>
-        <SectionLabel t={t}>Event types</SectionLabel>
-        <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 18 }}>
-          {DATA_MUTATION_EVENTS.map((event) => {
-            const checked = config.mutationEvents.includes(event.id);
+    <div style={{ display: "flex", flexDirection: "column", gap: 16, minWidth: 280 }}>
+      <div>
+        <SectionLabel t={t}>Machine event</SectionLabel>
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          {WORKFLOW_EVENT_CATALOG.map((event) => {
+            const checked = selectedEvent === event.id;
             return (
               <label
                 key={event.id}
                 style={{
                   display: "flex",
-                  alignItems: "flex-start",
                   gap: 10,
                   padding: "8px 10px",
                   borderRadius: 8,
@@ -156,38 +101,40 @@ export function AutomationEventTriggerConfigPanel({
               >
                 <Checkbox
                   checked={checked}
-                  onCheckedChange={(value) => toggleMutationEvent(event.id, value === true)}
+                  onCheckedChange={(value) => {
+                    if (value !== true) return;
+                    onUpdate({
+                      triggerEvent: event.id as WorkflowTriggerEvent,
+                      eventTriggerConfig: config,
+                      configured: true,
+                      enrollmentHint: `Fires on ${event.id}`,
+                    });
+                  }}
                   className={SCOPE_CHECKBOX_CLASS}
                 />
-                <span style={{ minWidth: 0 }}>
+                <span>
                   <span
                     style={{
                       display: "block",
                       fontSize: DOCS_TREE_LABEL_SIZE,
                       fontWeight: 500,
-                      letterSpacing: "-0.01em",
                       color: t.textPrimary,
                     }}
                   >
                     {event.label}
                   </span>
                   <span className={TOWER_DIALOG_HINT_CLASS} style={{ color: t.textMuted }}>
-                    {event.description}
+                    {event.id}
                   </span>
                 </span>
               </label>
             );
           })}
         </div>
+      </div>
 
+      <div>
         <SectionLabel t={t}>Applies to</SectionLabel>
-        <p
-          className={TOWER_DIALOG_HINT_CLASS}
-          style={{ margin: "0 0 10px", color: t.textMuted, lineHeight: 1.45 }}
-        >
-          Select all data in a class, or expand and choose specific scopes — like repository
-          permissions in GitHub.
-        </p>
         <DataClassScopeSelectorList
           scopes={config.scopes}
           onChange={updateClassScope}
@@ -196,30 +143,29 @@ export function AutomationEventTriggerConfigPanel({
         />
       </div>
 
-      <div
+      <p className={TOWER_DIALOG_HINT_CLASS} style={{ margin: 0, color: t.textMuted }}>
+        workflow_trigger.event_name = {selectedEvent}
+        {Object.keys(config.scopes).length ? ` · ${formatEventTriggerSummary(config)}` : ""}
+      </p>
+
+      <button
+        type="button"
+        onClick={onClose}
         style={{
-          padding: "12px 14px",
-          borderTop: `1px solid ${t.border}`,
+          alignSelf: "flex-start",
+          height: 32,
+          padding: "0 12px",
+          borderRadius: 8,
+          border: `1px solid ${t.border}`,
           background: t.bgPrimary,
+          color: t.textPrimary,
+          fontSize: 12,
+          fontWeight: 500,
+          cursor: "pointer",
         }}
       >
-        <div
-          className={TOWER_DIALOG_HINT_CLASS}
-          style={{ marginBottom: 4, color: t.textMuted, textTransform: "uppercase", fontSize: 10 }}
-        >
-          Summary
-        </div>
-        <div
-          style={{
-            fontSize: DOCS_TREE_LABEL_SIZE,
-            fontWeight: 500,
-            lineHeight: 1.4,
-            color: isEventTriggerConfigured(config) ? t.textPrimary : t.textMuted,
-          }}
-        >
-          {preview}
-        </div>
-      </div>
-    </aside>
+        Done
+      </button>
+    </div>
   );
 }

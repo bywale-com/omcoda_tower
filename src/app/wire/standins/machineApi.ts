@@ -20,9 +20,89 @@ const enrollments: EnrollmentRow[] = [];
 const eligibilityResults: EligibilityResultRow[] = [];
 const signals: SignalRow[] = [];
 const motionDecisions: MotionDecisionRow[] = [];
+const templates = new Map<
+  string,
+  {
+    id: string;
+    sequence_class: string;
+    variant: string;
+    label: string;
+    cells: unknown[];
+    source: string | null;
+    silences: unknown[];
+    version: number;
+  }
+>();
+const bindings = new Map<
+  string,
+  {
+    id: string;
+    firm_id: string;
+    sequence_class: string;
+    template_id: string;
+    overrides: unknown[];
+    variable_bindings: Record<string, unknown>;
+  }
+>();
 
 function now() {
   return new Date().toISOString();
+}
+
+function walkStandInGraph(
+  workflowId: string,
+  runId: string,
+  triggerLabel: string,
+): { nodeStatus: Record<string, unknown>; enrollments: string[]; ok: boolean } {
+  const w = workflows.get(workflowId);
+  const nodes = (w?.graph?.nodes ?? []) as Array<{
+    id: string;
+    type?: string;
+    data?: Record<string, unknown>;
+  }>;
+  const edges = (w?.graph?.edges ?? []) as Array<{ source: string; target: string }>;
+  const nodeStatus: Record<string, unknown> = {};
+  const enrIds: string[] = [];
+  const order: string[] = [];
+  const start = nodes.find((n) => n.type === "trigger");
+  if (!start) return { nodeStatus, enrollments: enrIds, ok: false };
+
+  const bySource = new Map<string, string[]>();
+  for (const e of edges) {
+    const list = bySource.get(e.source) ?? [];
+    list.push(e.target);
+    bySource.set(e.source, list);
+  }
+
+  let cur: string | undefined = start.id;
+  const seen = new Set<string>();
+  while (cur && !seen.has(cur)) {
+    seen.add(cur);
+    order.push(cur);
+    const node = nodes.find((n) => n.id === cur);
+    if (!node) break;
+    if (node.type === "action") {
+      const agentRef =
+        (typeof node.data?.agentRef === "string" && node.data.agentRef) ||
+        "tpl.optin_launch.v1";
+      const id = `enr-local-${Date.now()}-${enrIds.length}`;
+      enrollments.push({
+        id,
+        firm_id: FIRM,
+        contact_id: "contact-local-1",
+        agent_ref: agentRef,
+        sequence_id: agentRef,
+        workflow_run_id: runId,
+        payload: { triggerLabel, dryRun: true },
+        enrolled_at: now(),
+      });
+      enrIds.push(id);
+    }
+    nodeStatus[cur] = { status: "success", detail: node.type, at: now() };
+    cur = bySource.get(cur)?.[0];
+  }
+  void triggerLabel;
+  return { nodeStatus, enrollments: enrIds, ok: order.length > 0 };
 }
 
 export const standInMachineApi: MachineApiPort = {
@@ -69,19 +149,26 @@ export const standInMachineApi: MachineApiPort = {
 
   async startRun(workflowId, triggerLabel) {
     const id = `run-local-${Date.now()}`;
+    const walked = walkStandInGraph(workflowId, id, triggerLabel ?? "Manual run");
     const row: WorkflowRunRow = {
       id,
       workflow_id: workflowId,
       firm_id: FIRM,
-      status: "running",
+      status: walked.ok ? "success" : "failed",
       trigger_label: triggerLabel ?? "Manual run",
-      node_status: {},
-      counts: {},
+      node_status: walked.nodeStatus,
+      counts: { enrollments: walked.enrollments.length },
       started_at: now(),
-      finished_at: null,
+      finished_at: now(),
     };
     runs.set(id, row);
-    return { id, workflowId, status: "running" };
+    return {
+      id,
+      workflowId,
+      status: row.status,
+      nodeStatus: walked.nodeStatus,
+      enrollments: walked.enrollments,
+    };
   },
 
   async completeRun(runId, body) {
@@ -189,6 +276,58 @@ export const standInMachineApi: MachineApiPort = {
   },
 
   async listTemplates() {
-    return { templates: [], bindings: [] };
+    return {
+      templates: [...templates.values()] as never,
+      bindings: [...bindings.values()] as never,
+    };
+  },
+
+  async upsertTemplate(input) {
+    const prev = templates.get(input.id);
+    templates.set(input.id, {
+      id: input.id,
+      sequence_class: input.sequenceClass,
+      variant: input.variant ?? "v1",
+      label: input.label ?? input.id,
+      cells: input.cells,
+      source: prev?.source ?? "agent-editor",
+      silences: prev?.silences ?? [],
+      version: (prev?.version ?? 0) + 1,
+    });
+    return { id: input.id, cells: input.cells.length, table: "sequence_template" };
+  },
+
+  async upsertBinding(input) {
+    const id = `bind.${FIRM}.${input.sequenceClass}`;
+    bindings.set(id, {
+      id,
+      firm_id: FIRM,
+      sequence_class: input.sequenceClass,
+      template_id: input.templateId,
+      overrides: [],
+      variable_bindings: input.variableBindings ?? {},
+    });
+    return { id, sequenceClass: input.sequenceClass, templateId: input.templateId };
+  },
+
+  async fireEvent(input) {
+    const fired: unknown[] = [];
+    for (const w of workflows.values()) {
+      if (w.status !== "active") continue;
+      const nodes = (w.graph?.nodes ?? []) as Array<{
+        type?: string;
+        data?: Record<string, unknown>;
+      }>;
+      const trig = nodes.find(
+        (n) =>
+          n.type === "trigger" &&
+          n.data?.triggerKind === "event" &&
+          n.data?.triggerEvent === input.eventName,
+      );
+      if (!trig) continue;
+      const started = await standInMachineApi.startRun(w.id, `event:${input.eventName}`);
+      fired.push({ workflowId: w.id, runId: started.id, enrollments: started.enrollments?.length ?? 0 });
+    }
+    return { eventName: input.eventName, workflowsFired: fired };
   },
 };
