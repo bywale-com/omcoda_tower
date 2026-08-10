@@ -51,6 +51,10 @@ export default defineConfig({
     'import.meta.env.VITE_WIRE_REAL': JSON.stringify(
       process.env.VITE_WIRE_REAL ?? 'true',
     ),
+    // Explicit only — no demo-tenant default. Pair with server DEV_SESSION_FIRM.
+    'import.meta.env.VITE_DEV_FIRM_ID': JSON.stringify(
+      process.env.VITE_DEV_FIRM_ID ?? '',
+    ),
   },
   server: {
     proxy: {

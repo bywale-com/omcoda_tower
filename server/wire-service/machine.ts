@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { getPool } from "./db.ts";
 import { enrollAndActuate, tickOnce } from "./cascade.ts";
 import { sendGateSnapshot } from "./sendMode.ts";
+import { requireSessionFirm } from "./sessionFirm.ts";
 import {
   dispatchEventToWorkflows,
   materializeTriggersFromGraph,
@@ -14,14 +15,9 @@ function json(c: Context, body: unknown, status = 200) {
   return c.json(body, status);
 }
 
-function firmId(c: Context): string {
-  // Prefer explicit firm. Fallback remains platform seed firm for CT cutover;
-  // session-bound firm (no demo default) is tracked in SHIP-READINESS residue.
-  return (
-    c.req.query("firmId") ||
-    c.req.header("x-firm-id") ||
-    "firm-cedar"
-  );
+/** Firm scope from authenticated session only — never a demo-tenant constant. */
+async function firmId(c: Context): Promise<string> {
+  return requireSessionFirm(c);
 }
 
 /** Create workflow (draft). */
@@ -33,7 +29,7 @@ export async function handleWorkflowCreate(c: Context) {
     graph?: unknown;
   }>();
   const id = body.id ?? `wf-${randomUUID()}`;
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const target = body.target ?? "contact";
   const pool = getPool();
   await pool.query(
@@ -58,7 +54,7 @@ export async function handleWorkflowCreate(c: Context) {
 /** Activate: draft → active + materialize workflow_trigger rows from graph. */
 export async function handleWorkflowActivate(c: Context) {
   const workflowId = c.req.param("id");
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const pool = getPool();
   const cur = await pool.query<{ status: string }>(
     `SELECT status FROM workflow_state WHERE workflow_id=$1`,
@@ -91,7 +87,7 @@ export async function handleWorkflowActivate(c: Context) {
 }
 
 export async function handleWorkflowList(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const pool = getPool();
   const rows = await pool.query(
     `SELECT w.*, s.status
@@ -106,7 +102,7 @@ export async function handleWorkflowList(c: Context) {
 
 export async function handleWorkflowRunStart(c: Context) {
   const workflowId = c.req.param("id");
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const body = await c.req
     .json<{
       triggerLabel?: string;
@@ -163,7 +159,7 @@ export async function handleWorkflowRunComplete(c: Context) {
 }
 
 export async function handleEnrollmentCreate(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const body = await c.req.json<{
     contactId: string;
     agentRef: string;
@@ -295,7 +291,7 @@ async function runContactEligibilityCascade(opts: {
  * No code deploy — row edit only.
  */
 export async function handleReferenceUpsert(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const body = await c.req.json<{
     id?: string;
     key: string;
@@ -342,7 +338,7 @@ export async function handleReferenceUpsert(c: Context) {
  * Contact fact answer → fact_writebacks (+ clear missing_fact_signals) → immediate re-eval cascade.
  */
 export async function handleFactWriteback(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const body = await c.req.json<{
     contactId: string;
     fieldKey: string;
@@ -407,7 +403,7 @@ export async function handleFactWriteback(c: Context) {
 }
 
 export async function handleFactWritebacksList(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const contactId = c.req.query("contactId");
   const pool = getPool();
   const rows = contactId
@@ -423,7 +419,7 @@ export async function handleFactWritebacksList(c: Context) {
 }
 
 export async function handleMissingFactSignalsList(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const contactId = c.req.query("contactId");
   const pool = getPool();
   const rows = contactId
@@ -439,7 +435,7 @@ export async function handleMissingFactSignalsList(c: Context) {
 }
 
 export async function handleMissingFactSignalCreate(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const body = await c.req.json<{ contactId: string; fieldKey: string }>();
   if (!body.contactId || !body.fieldKey) {
     return json(c, { error: "contactId and fieldKey required" }, 400);
@@ -455,7 +451,7 @@ export async function handleMissingFactSignalCreate(c: Context) {
 }
 
 export async function handleAuditRunCreate(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const body = await c.req.json<{
     importIds?: string[];
     contactIds?: Array<{ id: string; email?: string; phone?: string; name?: string }>;
@@ -551,7 +547,7 @@ export async function handlePauseWorkflow(c: Context) {
 }
 
 export async function handleBoardDetections(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const pool = getPool();
   const [results, signals, motions, enrollments] = await Promise.all([
     pool.query(
@@ -588,7 +584,7 @@ export async function handleBoardDetections(c: Context) {
 export async function handleTemplatesList(c: Context) {
   const pool = getPool();
   const templates = await pool.query(`SELECT * FROM sequence_template ORDER BY sequence_class`);
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const bindings = await pool.query(
     `SELECT * FROM firm_sequence_binding WHERE firm_id=$1`,
     [firm],
@@ -600,7 +596,7 @@ export async function handleTemplatesList(c: Context) {
  * Onboarding automation: when campaign_state=running, Action calls opt-in agent → enrollments.
  */
 export async function handleOnboardingFire(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const pool = getPool();
   const camp = await pool.query<{ state: string }>(
     `SELECT state FROM campaign_states WHERE firm_id=$1`,
@@ -671,7 +667,7 @@ export async function handleOnboardingFire(c: Context) {
 
 /** Fire a named machine event into subscribed workflows. */
 export async function handleMachineEvent(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const body = await c.req.json<{
     eventName: string;
     payload?: Record<string, unknown>;
@@ -765,7 +761,7 @@ export async function handleTemplateUpsert(c: Context) {
 
 /** Upsert firm_sequence_binding (Agents assign template to firm). */
 export async function handleBindingUpsert(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const body = await c.req.json<{
     sequenceClass: string;
     templateId: string;
@@ -793,7 +789,7 @@ export async function handleBindingUpsert(c: Context) {
 
 /** List rule_attempt_criteria (platform defaults + firm rows). */
 export async function handleAttemptCriteriaList(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const pool = getPool();
   const rows = await pool.query(
     `SELECT * FROM rule_attempt_criteria
@@ -806,7 +802,7 @@ export async function handleAttemptCriteriaList(c: Context) {
 
 /** Upsert a single rule_attempt_criteria row by id. */
 export async function handleAttemptCriteriaUpsert(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const id = c.req.param("id");
   const body = await c.req.json<{
     label?: string;
@@ -862,7 +858,7 @@ export async function handleAttemptCriteriaUpsert(c: Context) {
 
 /** List seq_channel_ownership_order ladder. */
 export async function handleChannelOrderList(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const pool = getPool();
   const rows = await pool.query(
     `SELECT * FROM seq_channel_ownership_order
@@ -875,7 +871,7 @@ export async function handleChannelOrderList(c: Context) {
 
 /** Replace ord for the full channel ladder (Agents Settings reorder). */
 export async function handleChannelOrderUpsert(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const body = await c.req.json<{
     order: Array<{ id: string; token?: string; label?: string; ord: number }>;
   }>();
@@ -905,7 +901,7 @@ export async function handleChannelOrderUpsert(c: Context) {
 
 /** List seq_eligibility_pipeline stages (Automations Settings). */
 export async function handleEligibilityPipelineList(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const pool = getPool();
   const rows = await pool.query(
     `SELECT id, firm_id, token, label, ord, version
@@ -919,7 +915,7 @@ export async function handleEligibilityPipelineList(c: Context) {
 
 /** Replace ord for the eligibility pipeline ladder (Automations Settings reorder). */
 export async function handleEligibilityPipelineUpsert(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const body = await c.req.json<{
     stages: Array<{ id: string; token?: string; label?: string; ord: number }>;
   }>();
@@ -1028,12 +1024,12 @@ async function upsertModularRuleEnabled(
 
 /** List rule_eligibility_pathway rows. */
 export async function handleEligibilityPathwaysList(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   return json(c, { pathways: await listModularRules("rule_eligibility_pathway", firm) });
 }
 
 export async function handleEligibilityPathwayUpsert(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const id = c.req.param("id");
   const body = await c.req.json<ModularRulePatch>();
   const row = await upsertModularRuleEnabled("rule_eligibility_pathway", id, firm, body);
@@ -1043,12 +1039,12 @@ export async function handleEligibilityPathwayUpsert(c: Context) {
 
 /** List rule_motion_precedence rows. */
 export async function handleMotionPrecedenceList(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   return json(c, { rules: await listModularRules("rule_motion_precedence", firm) });
 }
 
 export async function handleMotionPrecedenceUpsert(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const id = c.req.param("id");
   const body = await c.req.json<ModularRulePatch>();
   const row = await upsertModularRuleEnabled("rule_motion_precedence", id, firm, body);
@@ -1058,12 +1054,12 @@ export async function handleMotionPrecedenceUpsert(c: Context) {
 
 /** List rule_field_class_routing rows. */
 export async function handleFieldClassRoutingList(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   return json(c, { rules: await listModularRules("rule_field_class_routing", firm) });
 }
 
 export async function handleFieldClassRoutingUpsert(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const id = c.req.param("id");
   const body = await c.req.json<ModularRulePatch>();
   const row = await upsertModularRuleEnabled("rule_field_class_routing", id, firm, body);
@@ -1072,12 +1068,12 @@ export async function handleFieldClassRoutingUpsert(c: Context) {
 }
 
 export async function handleCohortScoringList(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   return json(c, { rules: await listModularRules("rule_cohort_scoring", firm) });
 }
 
 export async function handleCohortScoringUpsert(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const id = c.req.param("id");
   const body = await c.req.json<ModularRulePatch>();
   const row = await upsertModularRuleEnabled("rule_cohort_scoring", id, firm, body);
@@ -1086,12 +1082,12 @@ export async function handleCohortScoringUpsert(c: Context) {
 }
 
 export async function handleMetricsThresholdsList(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   return json(c, { rules: await listModularRules("rule_metrics_thresholds", firm) });
 }
 
 export async function handleMetricsThresholdsUpsert(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const id = c.req.param("id");
   const body = await c.req.json<ModularRulePatch>();
   const row = await upsertModularRuleEnabled("rule_metrics_thresholds", id, firm, body);
@@ -1100,12 +1096,12 @@ export async function handleMetricsThresholdsUpsert(c: Context) {
 }
 
 export async function handleReachabilityChecksList(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   return json(c, { rules: await listModularRules("rule_reachability_checks", firm) });
 }
 
 export async function handleReachabilityChecksUpsert(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const id = c.req.param("id");
   const body = await c.req.json<ModularRulePatch>();
   const row = await upsertModularRuleEnabled("rule_reachability_checks", id, firm, body);
@@ -1115,7 +1111,7 @@ export async function handleReachabilityChecksUpsert(c: Context) {
 
 /** List seq_phase_order ladder. */
 export async function handlePhaseOrderList(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const pool = getPool();
   const rows = await pool.query(
     `SELECT * FROM seq_phase_order
@@ -1128,7 +1124,7 @@ export async function handlePhaseOrderList(c: Context) {
 
 /** Replace ord for the full phase ladder (Agents Settings reorder). */
 export async function handlePhaseOrderUpsert(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const body = await c.req.json<{
     order: Array<{ id: string; token?: string; label?: string; ord: number }>;
   }>();
@@ -1153,7 +1149,7 @@ export async function handlePhaseOrderUpsert(c: Context) {
 }
 
 export async function handlePreparedWorkspacesList(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const pool = getPool();
   const rows = await pool.query(
     `SELECT * FROM prepared_workspaces WHERE firm_id=$1 ORDER BY created_at DESC`,
@@ -1163,7 +1159,7 @@ export async function handlePreparedWorkspacesList(c: Context) {
 }
 
 export async function handlePreparedWorkspaceUpsert(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const body = await c.req.json<{
     id?: string;
     status?: string;
@@ -1182,7 +1178,7 @@ export async function handlePreparedWorkspaceUpsert(c: Context) {
 }
 
 export async function handleActiveAttemptsList(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const pool = getPool();
   const rows = await pool.query(
     `SELECT * FROM active_attempts WHERE firm_id=$1 ORDER BY updated_at DESC LIMIT 100`,
@@ -1192,7 +1188,7 @@ export async function handleActiveAttemptsList(c: Context) {
 }
 
 export async function handleEngagementRecordsList(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const pool = getPool();
   const rows = await pool.query(
     `SELECT * FROM engagement_records WHERE firm_id=$1 ORDER BY created_at DESC LIMIT 100`,
@@ -1203,7 +1199,7 @@ export async function handleEngagementRecordsList(c: Context) {
 
 /** List reference_versions for Evaluation pack pin picker. */
 export async function handleReferenceVersionsList(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const pool = getPool();
   const rows = await pool.query(
     `SELECT id, firm_id, key, payload, version
@@ -1270,7 +1266,7 @@ export async function handleEvaluationPinPut(c: Context) {
 
 /** GET/POST campaign_states for Bind Armed/Active. */
 export async function handleCampaignStateGet(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const pool = getPool();
   const rows = await pool.query(`SELECT firm_id, state, updated_at FROM campaign_states WHERE firm_id=$1`, [
     firm,
@@ -1287,7 +1283,7 @@ export async function handleCampaignStateGet(c: Context) {
 }
 
 export async function handleCampaignStatePost(c: Context) {
-  const firm = firmId(c);
+  const firm = await firmId(c);
   const body = await c.req.json<{ state: "running" | "armed-for-activation" }>();
   if (body.state !== "running" && body.state !== "armed-for-activation") {
     return json(c, { error: "state must be running | armed-for-activation" }, 400);

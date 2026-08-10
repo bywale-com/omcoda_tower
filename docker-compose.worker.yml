@@ -1,0 +1,24 @@
+# Continuous unattended tick worker for the deploy target.
+# Usage:
+#   docker compose -f docker-compose.worker.yml up -d --build
+# Requires DATABASE_URL (+ send secrets when SEND_MODE=live) in the environment
+# or a gitignored .env next to this file.
+#
+# Prove: seed a stale attempt, walk away; worker escalates on its own.
+# Re-tick must not double-fire (idempotent fired_criteria).
+
+services:
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      WORKER_INTERVAL_MS: ${WORKER_INTERVAL_MS:-60000}
+      NODE_ENV: production
+      DEPLOY_STRICT: ${DEPLOY_STRICT:-1}
+      # Explicitly unset one-shot mode for the long-lived process
+      WORKER_ONCE: ""
+    command: ["npx", "tsx", "--env-file=.env", "server/wire-service/worker.ts"]

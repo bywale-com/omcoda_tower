@@ -29,9 +29,17 @@ function fail(step: string, detail: string) {
 }
 
 try {
-  // Spec: live + empty cohort → nobody live (fail closed)
+  // Spec: missing/empty SEND_MODE → dry_run (deploy fail-closed default)
   const prevMode = process.env.SEND_MODE;
   const prevCohort = process.env.SEND_TEST_COHORT;
+  delete process.env.SEND_MODE;
+  if (getSendMode() !== "dry_run" || shouldLiveSend("anyone")) {
+    fail("send-mode-default", `expected dry_run on unset, got ${getSendMode()}`);
+  } else {
+    ok("send-mode-default", "unset SEND_MODE → dry_run");
+  }
+
+  // Spec: live + empty cohort → nobody live (fail closed)
   process.env.SEND_MODE = "live";
   process.env.SEND_TEST_COHORT = "";
   if (shouldLiveSend("anyone")) {

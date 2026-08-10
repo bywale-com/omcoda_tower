@@ -21,11 +21,14 @@ import type {
   WorkflowRow,
   WorkflowRunRow,
 } from "../machineTypes";
+import { getActiveFirmId } from "../sessionFirm";
 
-const FIRM = "firm-cedar";
+function firm(): string {
+  return getActiveFirmId();
+}
 
 function firmHeader(): HeadersInit {
-  return { "x-firm-id": FIRM };
+  return { "x-firm-id": firm() };
 }
 
 export const realMachineApi: MachineApiPort = {
@@ -37,7 +40,7 @@ export const realMachineApi: MachineApiPort = {
 
   async listWorkflows() {
     const res = await wireFetch<{ workflows: WorkflowRow[] }>(
-      `/machine/workflows?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/workflows?firmId=${encodeURIComponent(firm())}`,
       { headers: firmHeader() },
     );
     return res.workflows;
@@ -45,7 +48,7 @@ export const realMachineApi: MachineApiPort = {
 
   async createWorkflow(input) {
     return wireFetch<{ id: string; status: string; name: string; target: string }>(
-      `/machine/workflows?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/workflows?firmId=${encodeURIComponent(firm())}`,
       {
         method: "POST",
         headers: firmHeader(),
@@ -83,7 +86,7 @@ export const realMachineApi: MachineApiPort = {
       enrollments?: string[];
       error?: string;
     }>(
-      `/machine/workflows/${encodeURIComponent(workflowId)}/runs?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/workflows/${encodeURIComponent(workflowId)}/runs?firmId=${encodeURIComponent(firm())}`,
       {
         method: "POST",
         headers: firmHeader(),
@@ -117,7 +120,7 @@ export const realMachineApi: MachineApiPort = {
 
   async createEnrollment(input) {
     return wireFetch<{ id: string; enrolledAt: string }>(
-      `/machine/enrollments?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/enrollments?firmId=${encodeURIComponent(firm())}`,
       {
         method: "POST",
         headers: firmHeader(),
@@ -128,7 +131,7 @@ export const realMachineApi: MachineApiPort = {
 
   async upsertReference(input) {
     return wireFetch<{ referenceId: string; cascade: unknown[] }>(
-      `/machine/reference?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/reference?firmId=${encodeURIComponent(firm())}`,
       {
         method: "POST",
         headers: firmHeader(),
@@ -139,7 +142,7 @@ export const realMachineApi: MachineApiPort = {
 
   async createAuditRun(input) {
     return wireFetch<AuditRunRow & { contacts: number }>(
-      `/machine/audit-runs?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/audit-runs?firmId=${encodeURIComponent(firm())}`,
       {
         method: "POST",
         headers: firmHeader(),
@@ -150,7 +153,7 @@ export const realMachineApi: MachineApiPort = {
 
   async fireOnboarding() {
     return wireFetch<{ skipped?: boolean; enrollments?: number; agentRef?: string }>(
-      `/machine/onboarding/fire?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/onboarding/fire?firmId=${encodeURIComponent(firm())}`,
       { method: "POST", headers: firmHeader(), body: "{}" },
     );
   },
@@ -161,14 +164,14 @@ export const realMachineApi: MachineApiPort = {
       signals: SignalRow[];
       motionDecisions: MotionDecisionRow[];
       enrollments: EnrollmentRow[];
-    }>(`/machine/board?firmId=${encodeURIComponent(FIRM)}`, { headers: firmHeader() });
+    }>(`/machine/board?firmId=${encodeURIComponent(firm())}`, { headers: firmHeader() });
   },
 
   async listTemplates() {
     return wireFetch<{
       templates: SequenceTemplateRow[];
       bindings: FirmSequenceBindingRow[];
-    }>(`/machine/templates?firmId=${encodeURIComponent(FIRM)}`, { headers: firmHeader() });
+    }>(`/machine/templates?firmId=${encodeURIComponent(firm())}`, { headers: firmHeader() });
   },
 
   async upsertTemplate(input) {
@@ -189,7 +192,7 @@ export const realMachineApi: MachineApiPort = {
 
   async upsertBinding(input) {
     return wireFetch<{ id: string; sequenceClass: string; templateId: string }>(
-      `/machine/bindings?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/bindings?firmId=${encodeURIComponent(firm())}`,
       {
         method: "POST",
         headers: firmHeader(),
@@ -200,7 +203,7 @@ export const realMachineApi: MachineApiPort = {
 
   async listAttemptCriteria() {
     const res = await wireFetch<{ criteria: AttemptCriteriaRow[] }>(
-      `/machine/rules/attempt-criteria?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/rules/attempt-criteria?firmId=${encodeURIComponent(firm())}`,
       { headers: firmHeader() },
     );
     return res.criteria;
@@ -208,7 +211,7 @@ export const realMachineApi: MachineApiPort = {
 
   async upsertAttemptCriteria(id, patch) {
     return wireFetch<AttemptCriteriaRow>(
-      `/machine/rules/attempt-criteria/${encodeURIComponent(id)}?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/rules/attempt-criteria/${encodeURIComponent(id)}?firmId=${encodeURIComponent(firm())}`,
       {
         method: "PUT",
         headers: firmHeader(),
@@ -219,7 +222,7 @@ export const realMachineApi: MachineApiPort = {
 
   async listChannelOrder() {
     const res = await wireFetch<{ order: ChannelOwnershipOrderRow[] }>(
-      `/machine/seq/channel-order?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/seq/channel-order?firmId=${encodeURIComponent(firm())}`,
       { headers: firmHeader() },
     );
     return res.order;
@@ -227,7 +230,7 @@ export const realMachineApi: MachineApiPort = {
 
   async upsertChannelOrder(order) {
     const res = await wireFetch<{ order: ChannelOwnershipOrderRow[] }>(
-      `/machine/seq/channel-order?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/seq/channel-order?firmId=${encodeURIComponent(firm())}`,
       {
         method: "PUT",
         headers: firmHeader(),
@@ -239,7 +242,7 @@ export const realMachineApi: MachineApiPort = {
 
   async fireEvent(input) {
     return wireFetch<{ eventName: string; workflowsFired: unknown[] }>(
-      `/machine/events?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/events?firmId=${encodeURIComponent(firm())}`,
       {
         method: "POST",
         headers: firmHeader(),
@@ -250,7 +253,7 @@ export const realMachineApi: MachineApiPort = {
 
   async listEligibilityPipeline() {
     const res = await wireFetch<{ stages: EligibilityPipelineRow[] }>(
-      `/machine/eligibility-pipeline?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/eligibility-pipeline?firmId=${encodeURIComponent(firm())}`,
       { headers: firmHeader() },
     );
     return res.stages;
@@ -258,7 +261,7 @@ export const realMachineApi: MachineApiPort = {
 
   async upsertEligibilityPipeline(stages) {
     const res = await wireFetch<{ stages: EligibilityPipelineRow[] }>(
-      `/machine/eligibility-pipeline?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/eligibility-pipeline?firmId=${encodeURIComponent(firm())}`,
       {
         method: "PUT",
         headers: firmHeader(),
@@ -270,7 +273,7 @@ export const realMachineApi: MachineApiPort = {
 
   async listEligibilityPathways() {
     const res = await wireFetch<{ pathways: EligibilityPathwayRow[] }>(
-      `/machine/rules/eligibility-pathways?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/rules/eligibility-pathways?firmId=${encodeURIComponent(firm())}`,
       { headers: firmHeader() },
     );
     return res.pathways;
@@ -278,14 +281,14 @@ export const realMachineApi: MachineApiPort = {
 
   async upsertEligibilityPathway(id, patch) {
     return wireFetch<EligibilityPathwayRow>(
-      `/machine/rules/eligibility-pathways/${encodeURIComponent(id)}?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/rules/eligibility-pathways/${encodeURIComponent(id)}?firmId=${encodeURIComponent(firm())}`,
       { method: "PUT", headers: firmHeader(), body: JSON.stringify(patch) },
     );
   },
 
   async listMotionPrecedence() {
     const res = await wireFetch<{ rules: MotionPrecedenceRow[] }>(
-      `/machine/rules/motion-precedence?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/rules/motion-precedence?firmId=${encodeURIComponent(firm())}`,
       { headers: firmHeader() },
     );
     return res.rules;
@@ -293,14 +296,14 @@ export const realMachineApi: MachineApiPort = {
 
   async upsertMotionPrecedence(id, patch) {
     return wireFetch<MotionPrecedenceRow>(
-      `/machine/rules/motion-precedence/${encodeURIComponent(id)}?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/rules/motion-precedence/${encodeURIComponent(id)}?firmId=${encodeURIComponent(firm())}`,
       { method: "PUT", headers: firmHeader(), body: JSON.stringify(patch) },
     );
   },
 
   async listFieldClassRouting() {
     const res = await wireFetch<{ rules: FieldClassRoutingRow[] }>(
-      `/machine/rules/field-class-routing?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/rules/field-class-routing?firmId=${encodeURIComponent(firm())}`,
       { headers: firmHeader() },
     );
     return res.rules;
@@ -308,14 +311,14 @@ export const realMachineApi: MachineApiPort = {
 
   async upsertFieldClassRouting(id, patch) {
     return wireFetch<FieldClassRoutingRow>(
-      `/machine/rules/field-class-routing/${encodeURIComponent(id)}?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/rules/field-class-routing/${encodeURIComponent(id)}?firmId=${encodeURIComponent(firm())}`,
       { method: "PUT", headers: firmHeader(), body: JSON.stringify(patch) },
     );
   },
 
   async listCohortScoring() {
     const res = await wireFetch<{ rules: import("../machineTypes").CohortScoringRow[] }>(
-      `/machine/rules/cohort-scoring?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/rules/cohort-scoring?firmId=${encodeURIComponent(firm())}`,
       { headers: firmHeader() },
     );
     return res.rules;
@@ -323,14 +326,14 @@ export const realMachineApi: MachineApiPort = {
 
   async upsertCohortScoring(id, patch) {
     return wireFetch<import("../machineTypes").CohortScoringRow>(
-      `/machine/rules/cohort-scoring/${encodeURIComponent(id)}?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/rules/cohort-scoring/${encodeURIComponent(id)}?firmId=${encodeURIComponent(firm())}`,
       { method: "PUT", headers: firmHeader(), body: JSON.stringify(patch) },
     );
   },
 
   async listMetricsThresholds() {
     const res = await wireFetch<{ rules: import("../machineTypes").MetricsThresholdRow[] }>(
-      `/machine/rules/metrics-thresholds?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/rules/metrics-thresholds?firmId=${encodeURIComponent(firm())}`,
       { headers: firmHeader() },
     );
     return res.rules;
@@ -338,14 +341,14 @@ export const realMachineApi: MachineApiPort = {
 
   async upsertMetricsThreshold(id, patch) {
     return wireFetch<import("../machineTypes").MetricsThresholdRow>(
-      `/machine/rules/metrics-thresholds/${encodeURIComponent(id)}?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/rules/metrics-thresholds/${encodeURIComponent(id)}?firmId=${encodeURIComponent(firm())}`,
       { method: "PUT", headers: firmHeader(), body: JSON.stringify(patch) },
     );
   },
 
   async listReachabilityChecks() {
     const res = await wireFetch<{ rules: import("../machineTypes").ReachabilityCheckRow[] }>(
-      `/machine/rules/reachability-checks?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/rules/reachability-checks?firmId=${encodeURIComponent(firm())}`,
       { headers: firmHeader() },
     );
     return res.rules;
@@ -353,14 +356,14 @@ export const realMachineApi: MachineApiPort = {
 
   async upsertReachabilityCheck(id, patch) {
     return wireFetch<import("../machineTypes").ReachabilityCheckRow>(
-      `/machine/rules/reachability-checks/${encodeURIComponent(id)}?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/rules/reachability-checks/${encodeURIComponent(id)}?firmId=${encodeURIComponent(firm())}`,
       { method: "PUT", headers: firmHeader(), body: JSON.stringify(patch) },
     );
   },
 
   async listPhaseOrder() {
     const res = await wireFetch<{ order: import("../machineTypes").PhaseOrderRow[] }>(
-      `/machine/seq/phase-order?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/seq/phase-order?firmId=${encodeURIComponent(firm())}`,
       { headers: firmHeader() },
     );
     return res.order;
@@ -368,7 +371,7 @@ export const realMachineApi: MachineApiPort = {
 
   async upsertPhaseOrder(order) {
     const res = await wireFetch<{ order: import("../machineTypes").PhaseOrderRow[] }>(
-      `/machine/seq/phase-order?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/seq/phase-order?firmId=${encodeURIComponent(firm())}`,
       { method: "PUT", headers: firmHeader(), body: JSON.stringify({ order }) },
     );
     return res.order;
@@ -376,15 +379,15 @@ export const realMachineApi: MachineApiPort = {
 
   async writeFact(input) {
     return wireFetch<import("../machineTypes").FactWritebackResult>(
-      `/machine/fact-writebacks?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/fact-writebacks?firmId=${encodeURIComponent(firm())}`,
       { method: "POST", headers: firmHeader(), body: JSON.stringify(input) },
     );
   },
 
   async listFactWritebacks(contactId) {
     const q = contactId
-      ? `?firmId=${encodeURIComponent(FIRM)}&contactId=${encodeURIComponent(contactId)}`
-      : `?firmId=${encodeURIComponent(FIRM)}`;
+      ? `?firmId=${encodeURIComponent(firm())}&contactId=${encodeURIComponent(contactId)}`
+      : `?firmId=${encodeURIComponent(firm())}`;
     const res = await wireFetch<{ writebacks: import("../machineTypes").FactWritebackRow[] }>(
       `/machine/fact-writebacks${q}`,
       { headers: firmHeader() },
@@ -394,8 +397,8 @@ export const realMachineApi: MachineApiPort = {
 
   async listMissingFactSignals(contactId) {
     const q = contactId
-      ? `?firmId=${encodeURIComponent(FIRM)}&contactId=${encodeURIComponent(contactId)}`
-      : `?firmId=${encodeURIComponent(FIRM)}`;
+      ? `?firmId=${encodeURIComponent(firm())}&contactId=${encodeURIComponent(contactId)}`
+      : `?firmId=${encodeURIComponent(firm())}`;
     const res = await wireFetch<{ signals: import("../machineTypes").MissingFactSignalRow[] }>(
       `/machine/missing-fact-signals${q}`,
       { headers: firmHeader() },
@@ -405,30 +408,30 @@ export const realMachineApi: MachineApiPort = {
 
   async signalMissingFact(input) {
     return wireFetch<{ id: string; contactId: string; fieldKey: string }>(
-      `/machine/missing-fact-signals?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/missing-fact-signals?firmId=${encodeURIComponent(firm())}`,
       { method: "POST", headers: firmHeader(), body: JSON.stringify(input) },
     );
   },
 
   async listPreparedWorkspaces() {
     const res = await wireFetch<{ workspaces: import("../machineTypes").PreparedWorkspaceRow[] }>(
-      `/machine/prepared-workspaces?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/prepared-workspaces?firmId=${encodeURIComponent(firm())}`,
       { headers: firmHeader() },
     );
     return res.workspaces;
   },
 
   async upsertPreparedWorkspace(input) {
-    const id = input.id ?? `pw-${FIRM}`;
+    const id = input.id ?? `pw-${firm()}`;
     return wireFetch<import("../machineTypes").PreparedWorkspaceRow>(
-      `/machine/prepared-workspaces/${encodeURIComponent(id)}?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/prepared-workspaces/${encodeURIComponent(id)}?firmId=${encodeURIComponent(firm())}`,
       { method: "PUT", headers: firmHeader(), body: JSON.stringify({ ...input, id }) },
     );
   },
 
   async listActiveAttempts() {
     const res = await wireFetch<{ attempts: import("../machineTypes").ActiveAttemptRow[] }>(
-      `/machine/active-attempts?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/active-attempts?firmId=${encodeURIComponent(firm())}`,
       { headers: firmHeader() },
     );
     return res.attempts;
@@ -436,7 +439,7 @@ export const realMachineApi: MachineApiPort = {
 
   async listEngagementRecords() {
     const res = await wireFetch<{ records: import("../machineTypes").EngagementRecordRow[] }>(
-      `/machine/engagement-records?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/engagement-records?firmId=${encodeURIComponent(firm())}`,
       { headers: firmHeader() },
     );
     return res.records;
@@ -444,7 +447,7 @@ export const realMachineApi: MachineApiPort = {
 
   async listReferenceVersions() {
     const res = await wireFetch<{ versions: ReferenceVersionRow[] }>(
-      `/machine/reference-versions?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/reference-versions?firmId=${encodeURIComponent(firm())}`,
       { headers: firmHeader() },
     );
     return res.versions;
@@ -468,14 +471,14 @@ export const realMachineApi: MachineApiPort = {
 
   async getCampaignState() {
     return wireFetch<{ firmId: string; state: CampaignState; missing?: boolean }>(
-      `/machine/campaign-state?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/campaign-state?firmId=${encodeURIComponent(firm())}`,
       { headers: firmHeader() },
     );
   },
 
   async setCampaignState(state) {
     return wireFetch<{ firmId: string; state: CampaignState }>(
-      `/machine/campaign-state?firmId=${encodeURIComponent(FIRM)}`,
+      `/machine/campaign-state?firmId=${encodeURIComponent(firm())}`,
       { method: "POST", headers: firmHeader(), body: JSON.stringify({ state }) },
     );
   },

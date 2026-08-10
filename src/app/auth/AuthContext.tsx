@@ -13,12 +13,18 @@ import {
   isAuthDisabled,
   logout as logoutRequest,
 } from "./authClient";
+import { setActiveFirmId } from "../wire/sessionFirm";
 
-const DEV_BYPASS_USER: AuthUser = {
-  id: "auth-disabled",
-  firmId: "dev-firm",
-  email: "dev@localhost",
-};
+/** AUTH_DISABLED only — firm from explicit VITE_DEV_FIRM_ID, never a code default. */
+function devBypassUser(): AuthUser | null {
+  const firmId = String(import.meta.env.VITE_DEV_FIRM_ID ?? "").trim();
+  if (!firmId) return null;
+  return {
+    id: "auth-disabled",
+    firmId,
+    email: "dev@localhost",
+  };
+}
 
 type AuthState = {
   user: AuthUser | null;
@@ -32,12 +38,14 @@ const AuthContext = createContext<AuthState | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const authDisabled = isAuthDisabled();
-  const [user, setUser] = useState<AuthUser | null>(authDisabled ? DEV_BYPASS_USER : null);
+  const [user, setUser] = useState<AuthUser | null>(() =>
+    authDisabled ? devBypassUser() : null,
+  );
   const [isLoading, setIsLoading] = useState(!authDisabled);
 
   const refresh = useCallback(async () => {
     if (isAuthDisabled()) {
-      setUser(DEV_BYPASS_USER);
+      setUser(devBypassUser());
       setIsLoading(false);
       return;
     }
@@ -54,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     if (isAuthDisabled()) {
-      setUser(DEV_BYPASS_USER);
+      setUser(devBypassUser());
       return;
     }
     await logoutRequest();
@@ -65,11 +73,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     void refresh();
   }, [refresh]);
 
+  useEffect(() => {
+    setActiveFirmId(user?.firmId ?? null);
+  }, [user]);
+
   const value = useMemo(
     () => ({
       user,
       isLoading,
-      isAuthenticated: authDisabled || user !== null,
+      // AUTH_DISABLED still requires VITE_DEV_FIRM_ID (user non-null) — fail closed.
+      isAuthenticated: user !== null,
       refresh,
       logout,
     }),

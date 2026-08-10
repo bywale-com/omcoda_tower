@@ -2,12 +2,24 @@ import type { Context } from "hono";
 import { dispatchEmail, dispatchSms } from "./dispatchSend.ts";
 import { getWireCapabilities } from "./capabilities.ts";
 import { sendGateSnapshot, shouldLiveSend } from "./sendMode.ts";
+import { FirmScopeError, requireSessionFirm } from "./sessionFirm.ts";
 
 /**
  * HTTP /wire/send/* — same cohort/halt/consent gates as cascade/worker.
+ * Firm scope from session only (body.firmId ignored for tenancy).
  * Live only when contactId ∈ SEND_TEST_COHORT under SEND_MODE=live.
  */
 export async function handleCemSend(c: Context) {
+  let firmId: string;
+  try {
+    firmId = await requireSessionFirm(c);
+  } catch (e) {
+    if (e instanceof FirmScopeError) {
+      return c.json({ ok: false, deny: "auth", detail: e.message }, e.status as 401 | 403);
+    }
+    throw e;
+  }
+
   const caps = getWireCapabilities();
   if (!caps.resend) {
     return c.json({ ok: false, deny: "policy", detail: "RESEND_API_KEY missing" }, 503);
@@ -19,7 +31,7 @@ export async function handleCemSend(c: Context) {
     subject: string;
     bodyText: string;
     html?: string;
-    firmId: string;
+    firmId?: string;
     sendingIdentityId?: string;
     contactId?: string;
     purpose: string;
@@ -48,7 +60,7 @@ export async function handleCemSend(c: Context) {
     subject: body.subject,
     bodyText: body.bodyText,
     html: body.html,
-    firmId: body.firmId,
+    firmId,
     contactId: body.contactId,
     purpose: body.purpose,
   });
@@ -67,6 +79,16 @@ export async function handleCemSend(c: Context) {
 }
 
 export async function handleSmsSend(c: Context) {
+  let firmId: string;
+  try {
+    firmId = await requireSessionFirm(c);
+  } catch (e) {
+    if (e instanceof FirmScopeError) {
+      return c.json({ ok: false, deny: "auth", detail: e.message }, e.status as 401 | 403);
+    }
+    throw e;
+  }
+
   const caps = getWireCapabilities();
   if (!caps.twilio) {
     return c.json({ ok: false, deny: "ca-number", detail: "Twilio secrets / FROM missing" }, 503);
@@ -75,7 +97,7 @@ export async function handleSmsSend(c: Context) {
   const body = await c.req.json<{
     to: string;
     body: string;
-    firmId: string;
+    firmId?: string;
     contactId?: string;
   }>();
 
@@ -94,7 +116,7 @@ export async function handleSmsSend(c: Context) {
   const result = await dispatchSms({
     to: body.to,
     body: body.body,
-    firmId: body.firmId,
+    firmId,
     contactId: body.contactId,
     purpose: "cem",
   });
