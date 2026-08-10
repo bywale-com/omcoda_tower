@@ -15,6 +15,8 @@ function json(c: Context, body: unknown, status = 200) {
 }
 
 function firmId(c: Context): string {
+  // Prefer explicit firm. Fallback remains platform seed firm for CT cutover;
+  // session-bound firm (no demo default) is tracked in SHIP-READINESS residue.
   return (
     c.req.query("firmId") ||
     c.req.header("x-firm-id") ||

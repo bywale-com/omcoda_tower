@@ -1,7 +1,12 @@
 import type { Context } from "hono";
-import { dispatchEmailLive, dispatchSmsLive } from "./dispatchSend.ts";
+import { dispatchEmail, dispatchSms } from "./dispatchSend.ts";
 import { getWireCapabilities } from "./capabilities.ts";
+import { sendGateSnapshot, shouldLiveSend } from "./sendMode.ts";
 
+/**
+ * HTTP /wire/send/* — same cohort/halt/consent gates as cascade/worker.
+ * Live only when contactId ∈ SEND_TEST_COHORT under SEND_MODE=live.
+ */
 export async function handleCemSend(c: Context) {
   const caps = getWireCapabilities();
   if (!caps.resend) {
@@ -25,7 +30,19 @@ export async function handleCemSend(c: Context) {
     return c.json({ ok: false, deny: body.forceDeny, detail: `forced ${body.forceDeny}` });
   }
 
-  const result = await dispatchEmailLive({
+  if (!body.contactId?.trim()) {
+    return c.json(
+      {
+        ok: false,
+        deny: "policy",
+        detail: "contactId required — live send is cohort-gated",
+        gate: sendGateSnapshot(),
+      },
+      400,
+    );
+  }
+
+  const result = await dispatchEmail({
     to: body.to,
     from: body.from,
     subject: body.subject,
@@ -37,12 +54,15 @@ export async function handleCemSend(c: Context) {
   });
 
   if (!result.ok) {
-    return c.json({ ok: false, deny: result.deny, detail: result.detail });
+    return c.json({ ok: false, deny: result.deny, detail: result.detail, gate: sendGateSnapshot() });
   }
   return c.json({
     ok: true,
     messageId: result.messageId,
     acceptedAt: result.acceptedAt,
+    dryRun: result.dryRun ?? false,
+    liveEligible: shouldLiveSend(body.contactId),
+    gate: sendGateSnapshot(),
   });
 }
 
@@ -59,7 +79,19 @@ export async function handleSmsSend(c: Context) {
     contactId?: string;
   }>();
 
-  const result = await dispatchSmsLive({
+  if (!body.contactId?.trim()) {
+    return c.json(
+      {
+        ok: false,
+        deny: "policy",
+        detail: "contactId required — live send is cohort-gated",
+        gate: sendGateSnapshot(),
+      },
+      400,
+    );
+  }
+
+  const result = await dispatchSms({
     to: body.to,
     body: body.body,
     firmId: body.firmId,
@@ -68,7 +100,13 @@ export async function handleSmsSend(c: Context) {
   });
 
   if (!result.ok) {
-    return c.json({ ok: false, deny: result.deny, detail: result.detail });
+    return c.json({ ok: false, deny: result.deny, detail: result.detail, gate: sendGateSnapshot() });
   }
-  return c.json({ ok: true, messageSid: result.messageId });
+  return c.json({
+    ok: true,
+    messageSid: result.messageId,
+    dryRun: result.dryRun ?? false,
+    liveEligible: shouldLiveSend(body.contactId),
+    gate: sendGateSnapshot(),
+  });
 }

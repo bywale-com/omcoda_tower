@@ -27,8 +27,10 @@ export function AppRouter() {
             <Route path="/Register" element={<Navigate to="/register" replace />} />
             {/* Machine System Map — isolated from Tower faces / prototype */}
             <Route path="/system-map" element={<SystemMapPage />} />
+            {/* Product face = CT prototype (Ant). Hub quarantined at /hub — not the default entry. */}
+            <Route path="/" element={<Navigate to="/prototype-ant" replace />} />
             <Route
-              path="/"
+              path="/hub"
               element={
                 authOff ? (
                   <App />
@@ -39,7 +41,7 @@ export function AppRouter() {
                 )
               }
             />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/prototype-ant" replace />} />
           </Routes>
         </DocsRegistryProvider>
       </AuthProvider>

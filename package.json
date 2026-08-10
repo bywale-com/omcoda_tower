@@ -12,7 +12,10 @@
     "worker": "tsx --env-file=.env server/wire-service/worker.ts",
     "verify:machine": "tsx --env-file=.env scripts/verify-machine-e2e.ts",
     "verify:worker": "tsx --env-file=.env scripts/verify-worker-actuation.ts",
-    "verify:automations": "tsx --env-file=.env scripts/verify-automations-alive.ts"
+    "verify:automations": "tsx --env-file=.env scripts/verify-automations-alive.ts",
+    "verify:modular": "tsx --env-file=.env scripts/verify-modular-surfaces.ts",
+    "verify:ship": "tsx --env-file=.env scripts/verify-ship-spine.ts && tsx --env-file=.env scripts/verify-deny-gates.ts",
+    "verify:affordances": "tsx --env-file=.env scripts/verify-affordance-roundtrip.ts"
   },
   "dependencies": {
     "@ant-design/icons": "^6.3.2",
