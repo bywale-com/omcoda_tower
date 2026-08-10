@@ -1,6 +1,6 @@
 # INITIATIVE — Prototype cohesion (table-first product wire)
 
-**Status:** PLAN LOCKED — do not execute until founder greenlights after this doc PR.  
+**Status:** EXECUTING — founder greenlit 2026-08-10. Branch `cursor/prototype-cohesion-wire-6565`.  
 **Face:** Register prototype / CT (Plant + Ant) **is the product**. Hub authorship is wrong-seat debt.  
 **Date locked:** 2026-08-10  
 **Companion analysis:** [`PROTOTYPE-COHESION-ANALYSIS.md`](./PROTOTYPE-COHESION-ANALYSIS.md)

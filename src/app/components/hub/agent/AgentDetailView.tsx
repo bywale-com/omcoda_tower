@@ -28,14 +28,17 @@ export function AgentDetailView({ agentId, t, isDark: _isDark }: AgentDetailView
         templates.find((tpl) => tpl.id === (binding?.template_id ?? mapped?.templateId)) ??
         templates.find((tpl) => tpl.sequence_class === seqClass);
       const agentRef =
-        template?.id ?? binding?.template_id ?? mapped?.templateId ?? `tpl.${seqClass}.v1`;
+        binding?.template_id ??
+        template?.id ??
+        mapped?.templateId ??
+        `tpl.${seqClass}.v1`;
       const enr = await wirePorts.machineApi.createEnrollment({
         contactId: "board-selected-or-book",
         agentRef,
         sequenceId: agentRef,
-        payload: { source: "agent_launch", agentId: agent.id, dryRun: true },
+        payload: { source: "agent_launch", agentId: agent.id, dryRun: false },
       });
-      setLaunchNote(`Enrolled → ${agentRef} (${enr.id})`);
+      setLaunchNote(`Launched live → ${agentRef} (${enr.id})`);
     } catch (e) {
       setLaunchNote(`Launch blocked: ${String(e)}`);
     }
