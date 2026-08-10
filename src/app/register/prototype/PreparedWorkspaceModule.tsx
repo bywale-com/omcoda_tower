@@ -4,7 +4,7 @@
  */
 import { useEffect, useState, type ReactNode } from "react";
 import type { Tokens } from "../../components/tokens";
-import { CT_DEMO, useWireTick, wirePorts, type CrmGrantState } from "../../wire";
+import { peekActiveFirmId, useWireTick, wireFirmId, wirePorts, type CrmGrantState } from "../../wire";
 import {
   LeafSurface,
   primaryControlStyle,

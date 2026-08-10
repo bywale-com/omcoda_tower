@@ -14,7 +14,7 @@ import {
   message,
 } from "antd";
 import { Hint, ModulePage, Surface } from "../chrome";
-import { CT_DEMO, useWireTick, wirePorts, type CrmGrantState } from "../../../wire";
+import { peekActiveFirmId, useWireTick, wireFirmId, wirePorts, type CrmGrantState } from "../../../wire";
 import { LICENSEES } from "./shared";
 
 const { Text, Paragraph } = Typography;
@@ -49,7 +49,12 @@ export function PreparedModule({
 
   useEffect(() => {
     let cancelled = false;
-    void wirePorts.crmOAuth.get(CT_DEMO.firmId).then((g) => {
+    const firmId = peekActiveFirmId();
+    if (!firmId) {
+      setGrant(null);
+      return;
+    }
+    void wirePorts.crmOAuth.get(firmId).then((g) => {
       if (!cancelled) setGrant(g);
     });
     return () => {
@@ -68,7 +73,7 @@ export function PreparedModule({
   async function authorizeBook() {
     setGrantPending(true);
     try {
-      const next = await wirePorts.crmOAuth.grant(CT_DEMO.firmId);
+      const next = await wirePorts.crmOAuth.grant(wireFirmId());
       setGrant(next);
       setModal(null);
     } finally {
@@ -79,7 +84,7 @@ export function PreparedModule({
   async function revokeGrant() {
     setGrantPending(true);
     try {
-      const next = await wirePorts.crmOAuth.revoke(CT_DEMO.firmId);
+      const next = await wirePorts.crmOAuth.revoke(wireFirmId());
       setGrant(next);
     } finally {
       setGrantPending(false);

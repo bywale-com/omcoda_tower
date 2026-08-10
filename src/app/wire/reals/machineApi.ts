@@ -484,10 +484,25 @@ export const realMachineApi: MachineApiPort = {
   },
 
   async provisionFirm(input) {
+    // Bootstrap — no session firm required to mint a tenancy.
     return wireFetch<ProvisionResult>(`/machine/provision`, {
       method: "POST",
-      headers: firmHeader(),
       body: JSON.stringify(input),
     });
+  },
+
+  async listContactRecords() {
+    const res = await wireFetch<{
+      contacts: Array<{
+        id: string;
+        firmId: string;
+        email: string | null;
+        phone: string | null;
+        name: string | null;
+      }>;
+    }>(`/machine/contact-records?firmId=${encodeURIComponent(firm())}`, {
+      headers: firmHeader(),
+    });
+    return res.contacts;
   },
 };

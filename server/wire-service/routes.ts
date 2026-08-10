@@ -37,6 +37,7 @@ import {
   handleBindingUpsert,
   handleCampaignStateGet,
   handleCampaignStatePost,
+  handleContactRecordsList,
   handleChannelOrderList,
   handleChannelOrderUpsert,
   handleCohortScoringList,
@@ -183,6 +184,7 @@ export function createWireRoutes(): Hono {
   wire.put("/machine/evaluation-pins/:packId", handleEvaluationPinPut);
   wire.get("/machine/campaign-state", handleCampaignStateGet);
   wire.post("/machine/campaign-state", handleCampaignStatePost);
+  wire.get("/machine/contact-records", handleContactRecordsList);
   wire.post("/machine/provision", handleMachineProvision);
   wire.post("/machine/events", handleMachineEvent);
   wire.post("/hook/:webhookId", handleWebhookTrigger);

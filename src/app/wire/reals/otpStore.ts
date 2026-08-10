@@ -41,9 +41,16 @@ export const realOtpStore: OtpStorePort = {
       ok?: boolean;
       error?: string;
       message?: string;
+      user?: { id: string; firmId: string; email: string };
     };
     if (res.ok && data.ok) {
-      return { ok: true, sessionToken: "cookie" };
+      return {
+        ok: true,
+        sessionToken: "cookie",
+        firmId: data.user?.firmId,
+        userId: data.user?.id,
+        email: data.user?.email,
+      };
     }
     if (data.error === "rate_limited" || res.status === 429) {
       return { ok: false, reason: "locked" };

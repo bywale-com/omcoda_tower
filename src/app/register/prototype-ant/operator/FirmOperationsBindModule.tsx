@@ -17,6 +17,8 @@ import {
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import {
+  peekActiveFirmId,
+  setActiveFirmId,
   setPolicyDenyForced as forceEspPolicyDeny,
   useWireTick,
   wirePorts,
@@ -45,7 +47,8 @@ type FirmBindState = {
 };
 
 function seedBindRows(): FirmBindState[] {
-  return [
+  const sessionFirm = peekActiveFirmId();
+  const demoRows: FirmBindState[] = [
     {
       firmId: DEMO_FIRMS[0].id,
       evalPackId: "eval-alg-v2",
@@ -69,6 +72,20 @@ function seedBindRows(): FirmBindState[] {
     },
     { firmId: DEMO_FIRMS[3].id, evalPackId: null, autoPackId: null, engPackId: null, posture: "Armed" },
   ];
+  // Binding: session firm is first — Bind Active writes that firm's campaign_states.
+  if (sessionFirm && !demoRows.some((r) => r.firmId === sessionFirm)) {
+    return [
+      {
+        firmId: sessionFirm,
+        evalPackId: "eval-alg-v2",
+        autoPackId: "wf-optin-launch",
+        engPackId: "agent-intake",
+        posture: "Armed",
+      },
+      ...demoRows,
+    ];
+  }
+  return demoRows;
 }
 
 function isBound(row: FirmBindState) {
@@ -97,8 +114,32 @@ export function FirmOperationsBindModule() {
   const [activating, setActivating] = useState(false);
 
   const row = rows.find((r) => r.firmId === selectedId) ?? rows[0];
-  const firm = DEMO_FIRMS.find((f) => f.id === row.firmId) ?? DEMO_FIRMS[0];
+  const firm =
+    DEMO_FIRMS.find((f) => f.id === row.firmId) ??
+    (row.firmId === peekActiveFirmId()
+      ? { id: row.firmId, name: `Session firm · ${row.firmId.slice(0, 8)}…`, stage: "Prepared Workspace", health: "Watch" as const }
+      : DEMO_FIRMS[0]);
   const bound = isBound(row);
+
+  // Keep session firm on the bind index when Auth/provision binds a new tenancy.
+  useEffect(() => {
+    const sessionFirm = peekActiveFirmId();
+    if (!sessionFirm) return;
+    setRows((prev) => {
+      if (prev.some((r) => r.firmId === sessionFirm)) return prev;
+      return [
+        {
+          firmId: sessionFirm,
+          evalPackId: "eval-alg-v2",
+          autoPackId: "wf-optin-launch",
+          engPackId: "agent-intake",
+          posture: "Armed",
+        },
+        ...prev,
+      ];
+    });
+    setSelectedId(sessionFirm);
+  }, [tick]);
 
   const evalOptions = useMemo(() => publishedPacks("evaluation", packs), [packs]);
   const autoOptions = useMemo(() => publishedPacks("automation", packs), [packs]);
@@ -135,6 +176,8 @@ export function FirmOperationsBindModule() {
   }, [row.firmId, tick]);
 
   const activateBoundPacks = async (firmId: string, bind: FirmBindState) => {
+    // Machine calls follow session firm — bind Active to the selected tenancy.
+    setActiveFirmId(firmId);
     const evalPack = packs.find((p) => p.id === bind.evalPackId) ?? null;
     const engPack = packs.find((p) => p.id === bind.engPackId) ?? null;
     const engBind = resolveEngagementBinding(engPack);

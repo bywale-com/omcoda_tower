@@ -13,7 +13,7 @@ import { TaskProvider } from "../../context/TaskContext";
 import type { HubToolRef } from "../../data/hub";
 import type { ConsultantTask } from "../../data/tasks";
 import { getContact } from "../../data/contacts";
-import { CT_DEMO, FIRM_NAME, wirePorts } from "../../wire";
+import { FIRM_NAME, peekActiveFirmId, wireFirmId, wirePorts } from "../../wire";
 import {
   CONSULTANT_NAV_MODULES,
   SURFACE_CATALOG,
@@ -356,10 +356,12 @@ export function ConsultantPrototypeScene({
     setModule(moduleForFocus(focusedEntry));
   }, [focusedEntry]);
 
-  /** Hydrate UI halt state from stand-in store (dual-write). */
+  /** Hydrate UI halt state for the session firm (not demo Cedar). */
   useEffect(() => {
     let cancelled = false;
-    void wirePorts.haltStore.listActive(CT_DEMO.firmId).then((active) => {
+    const firmId = peekActiveFirmId();
+    if (!firmId) return;
+    void wirePorts.haltStore.listActive(firmId).then((active) => {
       if (cancelled) return;
       const book = active.find((h) => h.scope === "firm-book");
       if (book) {
@@ -472,9 +474,10 @@ export function ConsultantPrototypeScene({
 
   async function confirmHalt() {
     const portScope = haltScope === "book" ? "firm-book" : "contact";
+    const firmId = wireFirmId();
     const record = await wirePorts.haltStore.commit({
-      consultantId: CT_DEMO.consultantId,
-      firmId: CT_DEMO.firmId,
+      consultantId: `consultant-${firmId}`,
+      firmId,
       contactId: portScope === "contact" ? activeClientId : undefined,
       scope: portScope,
       reason: haltReason.trim() || undefined,

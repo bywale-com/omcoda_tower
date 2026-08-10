@@ -4,7 +4,7 @@
  */
 import { useState } from "react";
 import { Button, Card, Form, Input, Select, Space, Tag, Typography, message } from "antd";
-import { wirePorts } from "../../../wire";
+import { setActiveFirmId, wirePorts } from "../../../wire";
 import { appendOperatorAudit } from "../../prototype/operator/operatorWireHelpers";
 import { useOperatorNav } from "../../prototype/operatorNav";
 import { Hint, ModulePage, Surface } from "../chrome";
@@ -44,6 +44,8 @@ export function ProvisionModule() {
         loginPath: result.loginPath,
         authUser: result.authUser,
       });
+      // Bind operator wire calls to the firm just minted (Book / Bind Active follow this firm).
+      setActiveFirmId(result.firmId);
       void appendOperatorAudit({
         actorId: "ops.system",
         kind: "provision",

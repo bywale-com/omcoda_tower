@@ -1315,14 +1315,16 @@ export async function handleMachineProvision(c: Context) {
   if (!firmName || !email) {
     return json(c, { error: "firmName and email required" }, 400);
   }
-  const slug = firmName
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 40);
-  const firm = body.firmId?.trim() || `firm-${slug || randomUUID().slice(0, 8)}`;
+  // One id binds auth + CT + machine: session.firm_id === ct_firms.id === machine firm_id.
+  // Never mint a separate auth UUID and a TEXT firm-* slug.
+  const firm = body.firmId?.trim() || randomUUID();
   const pool = getPool();
 
+  await pool.query(
+    `INSERT INTO firms (id, name) VALUES ($1::uuid, $2)
+     ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name`,
+    [firm, firmName],
+  );
   await pool.query(
     `INSERT INTO ct_firms (id, name, posture, updated_at)
      VALUES ($1,$2,'Idle',now())
@@ -1338,21 +1340,23 @@ export async function handleMachineProvision(c: Context) {
 
   let authUser = false;
   try {
-    const existing = await pool.query(`SELECT id FROM users WHERE lower(email)=lower($1) LIMIT 1`, [
-      email,
-    ]);
+    const existing = await pool.query<{ id: string }>(
+      `SELECT id FROM users WHERE lower(email)=lower($1) LIMIT 1`,
+      [email],
+    );
     if (existing.rowCount) {
+      // Rebind consultant to the firm just provisioned (binding, not orphan CT row).
+      await pool.query(`UPDATE users SET firm_id=$1::uuid WHERE id=$2`, [
+        firm,
+        existing.rows[0].id,
+      ]);
       authUser = true;
     } else {
-      const firmRow = await pool.query(
-        `INSERT INTO firms (name) VALUES ($1) RETURNING id`,
-        [firmName],
-      );
-      const authFirmId = firmRow.rows[0]?.id as string;
-      await pool.query(`INSERT INTO users (firm_id, email) VALUES ($1,$2)`, [authFirmId, email]);
+      await pool.query(`INSERT INTO users (firm_id, email) VALUES ($1::uuid, $2)`, [firm, email]);
       authUser = true;
     }
-  } catch {
+  } catch (err) {
+    console.error("provision.authUser.failed", err);
     authUser = false;
   }
 
@@ -1367,6 +1371,7 @@ export async function handleMachineProvision(c: Context) {
     authUser,
     campaignState: "armed-for-activation",
     loginPath,
+    bound: true,
   });
 }
 
@@ -1392,4 +1397,31 @@ export async function handleMachineHealth(c: Context) {
   } catch (e) {
     return json(c, { ok: false, error: String(e) }, 500);
   }
+}
+
+/** List contact_records for the session firm — empty book when freshly provisioned. */
+export async function handleContactRecordsList(c: Context) {
+  const firm = await firmId(c);
+  const pool = getPool();
+  const rows = await pool.query<{
+    id: string;
+    firm_id: string;
+    email: string | null;
+    phone: string | null;
+    name: string | null;
+  }>(
+    `SELECT id, firm_id, email, phone, name FROM contact_records
+     WHERE firm_id=$1 ORDER BY updated_at DESC NULLS LAST, id ASC`,
+    [firm],
+  );
+  return json(c, {
+    firmId: firm,
+    contacts: rows.rows.map((r) => ({
+      id: r.id,
+      firmId: r.firm_id,
+      email: r.email,
+      phone: r.phone,
+      name: r.name,
+    })),
+  });
 }

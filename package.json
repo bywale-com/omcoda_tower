@@ -15,6 +15,7 @@
     "verify:worker": "tsx --env-file=.env scripts/verify-worker-actuation.ts",
     "verify:continuous-worker": "tsx --env-file=.env scripts/verify-continuous-worker.ts",
     "verify:session-firm": "tsx --env-file=.env scripts/verify-session-firm.ts",
+    "verify:firm-binding": "tsx --env-file=.env scripts/verify-firm-binding.ts",
     "verify:boot-env": "tsx --env-file=.env scripts/verify-boot-env.ts",
     "verify:automations": "tsx --env-file=.env scripts/verify-automations-alive.ts",
     "verify:modular": "tsx --env-file=.env scripts/verify-modular-surfaces.ts",

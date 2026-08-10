@@ -44,17 +44,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(!authDisabled);
 
   const refresh = useCallback(async () => {
-    if (isAuthDisabled()) {
-      setUser(devBypassUser());
-      setIsLoading(false);
-      return;
-    }
     setIsLoading(true);
     try {
+      // Prefer a real session cookie even when AUTH_DISABLED — OTP login binds the
+      // provisioned firm. Fall back to VITE_DEV_FIRM_ID only when no session exists.
       const session = await fetchSession();
-      setUser(session?.user ?? null);
-    } catch {
+      if (session?.user) {
+        setUser(session.user);
+        return;
+      }
+      if (isAuthDisabled()) {
+        setUser(devBypassUser());
+        return;
+      }
       setUser(null);
+    } catch {
+      if (isAuthDisabled()) {
+        setUser(devBypassUser());
+      } else {
+        setUser(null);
+      }
     } finally {
       setIsLoading(false);
     }
