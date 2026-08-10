@@ -463,6 +463,17 @@ export const standInMachineApi: MachineApiPort = {
 
   async upsertReference(input) {
     const referenceId = input.id ?? `ref.${input.key}.local`;
+    const payload =
+      input.payload && typeof input.payload === "object"
+        ? (input.payload as Record<string, unknown>)
+        : {};
+    referenceVersions.set(referenceId, {
+      id: referenceId,
+      firm_id: null,
+      key: input.key,
+      payload,
+      version: input.version ?? 1,
+    });
     const contactIds = input.contactIds ?? ["contact-local-1"];
     const cascade: unknown[] = [{ table: "reference_versions", id: referenceId }];
     for (const contactId of contactIds) {
