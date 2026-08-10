@@ -113,7 +113,7 @@ function cellsToSteps(cells: unknown[]): AgentStep[] {
         timing: { delayMinutes: Number(row.waitMinutes ?? 0) || 0 },
         email: {
           subject: String(row.subject ?? row.label ?? ""),
-          body: String(row.body ?? ""),
+          body: String(row.bodyText ?? row.body ?? ""),
           threadType: "new" as const,
         },
       };
