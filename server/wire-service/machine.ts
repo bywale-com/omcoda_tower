@@ -321,6 +321,14 @@ export async function handleAuditRunCreate(c: Context) {
   );
 
   const contacts = body.contactIds ?? [];
+  const verdicts: Array<{
+    contactId: string;
+    verdict: string;
+    ready: boolean;
+    email?: string | null;
+    phone?: string | null;
+    name?: string | null;
+  }> = [];
   for (const contact of contacts) {
     await pool.query(
       `INSERT INTO contact_records (id, firm_id, email, phone, name)
@@ -328,8 +336,11 @@ export async function handleAuditRunCreate(c: Context) {
        ON CONFLICT (id) DO UPDATE SET email=EXCLUDED.email, phone=EXCLUDED.phone, name=EXCLUDED.name, updated_at=now()`,
       [contact.id, firm, contact.email ?? null, contact.phone ?? null, contact.name ?? null],
     );
-    const hasChannel = Boolean(contact.email || contact.phone);
-    const verdict = hasChannel ? "reachable" : "unreachable";
+    const hasEmail = Boolean(contact.email);
+    const hasPhone = Boolean(contact.phone);
+    const verdict =
+      hasEmail && hasPhone ? "reachable" : hasEmail || hasPhone ? "partial" : "unreachable";
+    const ready = verdict === "reachable" || verdict === "partial";
     await pool.query(
       `INSERT INTO reachability_verdicts (contact_id, firm_id, verdict, details)
        VALUES ($1,$2,$3,$4::jsonb)
@@ -340,17 +351,35 @@ export async function handleAuditRunCreate(c: Context) {
       `INSERT INTO sequence_ready (contact_id, firm_id, ready)
        VALUES ($1,$2,$3)
        ON CONFLICT (contact_id, firm_id) DO UPDATE SET ready=EXCLUDED.ready, updated_at=now()`,
-      [contact.id, firm, verdict === "reachable"],
+      [contact.id, firm, ready],
     );
+    verdicts.push({
+      contactId: contact.id,
+      verdict,
+      ready,
+      email: contact.email ?? null,
+      phone: contact.phone ?? null,
+      name: contact.name ?? null,
+    });
   }
 
   await pool.query(
     `UPDATE audit_runs SET status='complete', finished_at=now(),
       summary=$2::jsonb WHERE id=$1`,
-    [runId, JSON.stringify({ contacts: contacts.length })],
+    [runId, JSON.stringify({ contacts: contacts.length, ready: verdicts.filter((v) => v.ready).length })],
   );
 
-  return json(c, { id: runId, status: "complete", contacts: contacts.length });
+  return json(c, {
+    id: runId,
+    firm_id: firm,
+    status: "complete",
+    import_ids: body.importIds ?? [],
+    summary: { contacts: contacts.length, ready: verdicts.filter((v) => v.ready).length },
+    started_at: new Date().toISOString(),
+    finished_at: new Date().toISOString(),
+    contacts: contacts.length,
+    verdicts,
+  });
 }
 
 export async function handleWorkflowRunsList(c: Context) {
@@ -734,6 +763,267 @@ export async function handleEligibilityPipelineList(c: Context) {
     [firm],
   );
   return json(c, { stages: rows.rows });
+}
+
+const MODULAR_RULE_TABLES = {
+  rule_eligibility_pathway: "rule_eligibility_pathway",
+  rule_motion_precedence: "rule_motion_precedence",
+  rule_field_class_routing: "rule_field_class_routing",
+} as const;
+
+type ModularRuleTable = keyof typeof MODULAR_RULE_TABLES;
+
+async function listModularRules(table: ModularRuleTable, firm: string) {
+  const pool = getPool();
+  const safe = MODULAR_RULE_TABLES[table];
+  const rows = await pool.query(
+    `SELECT * FROM ${safe}
+     WHERE firm_id IS NULL OR firm_id = $1
+     ORDER BY CASE WHEN firm_id = $1 THEN 0 ELSE 1 END, ord ASC`,
+    [firm],
+  );
+  return rows.rows;
+}
+
+async function upsertModularRuleEnabled(
+  table: ModularRuleTable,
+  id: string,
+  firm: string,
+  body: { enabled?: boolean; label?: string; ord?: number },
+) {
+  const pool = getPool();
+  const safe = MODULAR_RULE_TABLES[table];
+  const existing = await pool.query(`SELECT * FROM ${safe} WHERE id=$1`, [id]);
+  if (!existing.rowCount) return null;
+  const prev = existing.rows[0] as Record<string, unknown>;
+  const enabled = body.enabled ?? prev.enabled;
+  const label = body.label ?? prev.label;
+  const ord = body.ord ?? prev.ord;
+  const firmIdNext = (prev.firm_id as string | null) ?? firm;
+  await pool.query(
+    `UPDATE ${safe} SET enabled=$2, label=$3, ord=$4, firm_id=$5, version=version+1 WHERE id=$1`,
+    [id, enabled, label, ord, firmIdNext],
+  );
+  const updated = await pool.query(`SELECT * FROM ${safe} WHERE id=$1`, [id]);
+  return updated.rows[0];
+}
+
+/** List rule_eligibility_pathway rows. */
+export async function handleEligibilityPathwaysList(c: Context) {
+  const firm = firmId(c);
+  return json(c, { pathways: await listModularRules("rule_eligibility_pathway", firm) });
+}
+
+export async function handleEligibilityPathwayUpsert(c: Context) {
+  const firm = firmId(c);
+  const id = c.req.param("id");
+  const body = await c.req.json<{ enabled?: boolean; label?: string; ord?: number }>();
+  const row = await upsertModularRuleEnabled("rule_eligibility_pathway", id, firm, body);
+  if (!row) return json(c, { error: "eligibility pathway not found", id }, 404);
+  return json(c, row);
+}
+
+/** List rule_motion_precedence rows. */
+export async function handleMotionPrecedenceList(c: Context) {
+  const firm = firmId(c);
+  return json(c, { rules: await listModularRules("rule_motion_precedence", firm) });
+}
+
+export async function handleMotionPrecedenceUpsert(c: Context) {
+  const firm = firmId(c);
+  const id = c.req.param("id");
+  const body = await c.req.json<{ enabled?: boolean; label?: string; ord?: number }>();
+  const row = await upsertModularRuleEnabled("rule_motion_precedence", id, firm, body);
+  if (!row) return json(c, { error: "motion precedence not found", id }, 404);
+  return json(c, row);
+}
+
+/** List rule_field_class_routing rows. */
+export async function handleFieldClassRoutingList(c: Context) {
+  const firm = firmId(c);
+  return json(c, { rules: await listModularRules("rule_field_class_routing", firm) });
+}
+
+export async function handleFieldClassRoutingUpsert(c: Context) {
+  const firm = firmId(c);
+  const id = c.req.param("id");
+  const body = await c.req.json<{ enabled?: boolean; label?: string; ord?: number }>();
+  const row = await upsertModularRuleEnabled("rule_field_class_routing", id, firm, body);
+  if (!row) return json(c, { error: "field class routing not found", id }, 404);
+  return json(c, row);
+}
+
+/** List reference_versions for Evaluation pack pin picker. */
+export async function handleReferenceVersionsList(c: Context) {
+  const firm = firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(
+    `SELECT id, firm_id, key, payload, version
+     FROM reference_versions
+     WHERE firm_id IS NULL OR firm_id = $1
+     ORDER BY key ASC, version DESC`,
+    [firm],
+  );
+  return json(c, { versions: rows.rows });
+}
+
+function evalPinPackId(packId: string) {
+  return `eval.pin.${packId}`;
+}
+
+/** GET evaluation pack pin from constants_packs id eval.pin.{packId}. */
+export async function handleEvaluationPinGet(c: Context) {
+  const packId = c.req.param("packId");
+  const pool = getPool();
+  const id = evalPinPackId(packId);
+  const rows = await pool.query(`SELECT id, payload FROM constants_packs WHERE id=$1`, [id]);
+  if (!rows.rowCount) {
+    return json(c, {
+      packId,
+      referenceVersionId: null,
+      rulesetId: null,
+      missing: true,
+    });
+  }
+  const payload = (rows.rows[0].payload ?? {}) as Record<string, unknown>;
+  return json(c, {
+    packId,
+    referenceVersionId: typeof payload.referenceVersionId === "string" ? payload.referenceVersionId : null,
+    rulesetId: typeof payload.rulesetId === "string" ? payload.rulesetId : null,
+    missing: false,
+  });
+}
+
+/** PUT evaluation pack pin → constants_packs eval.pin.{packId}. */
+export async function handleEvaluationPinPut(c: Context) {
+  const packId = c.req.param("packId");
+  const body = await c.req.json<{
+    referenceVersionId: string;
+    rulesetId: string;
+  }>();
+  if (!body.referenceVersionId || !body.rulesetId) {
+    return json(c, { error: "referenceVersionId and rulesetId required" }, 400);
+  }
+  const pool = getPool();
+  const id = evalPinPackId(packId);
+  const payload = {
+    referenceVersionId: body.referenceVersionId,
+    rulesetId: body.rulesetId,
+    packId,
+  };
+  await pool.query(
+    `INSERT INTO constants_packs (id, firm_id, name, payload, version)
+     VALUES ($1, NULL, $2, $3::jsonb, 1)
+     ON CONFLICT (id) DO UPDATE SET payload=EXCLUDED.payload, version=constants_packs.version+1, name=EXCLUDED.name`,
+    [id, id, JSON.stringify(payload)],
+  );
+  return json(c, { packId, ...payload, table: "constants_packs", id });
+}
+
+/** GET/POST campaign_states for Bind Armed/Active. */
+export async function handleCampaignStateGet(c: Context) {
+  const firm = firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(`SELECT firm_id, state, updated_at FROM campaign_states WHERE firm_id=$1`, [
+    firm,
+  ]);
+  if (!rows.rowCount) {
+    return json(c, { firmId: firm, state: "armed-for-activation", missing: true });
+  }
+  return json(c, {
+    firmId: rows.rows[0].firm_id,
+    state: rows.rows[0].state,
+    updatedAt: rows.rows[0].updated_at,
+    missing: false,
+  });
+}
+
+export async function handleCampaignStatePost(c: Context) {
+  const firm = firmId(c);
+  const body = await c.req.json<{ state: "running" | "armed-for-activation" }>();
+  if (body.state !== "running" && body.state !== "armed-for-activation") {
+    return json(c, { error: "state must be running | armed-for-activation" }, 400);
+  }
+  const pool = getPool();
+  await pool.query(
+    `INSERT INTO campaign_states (firm_id, state, updated_at)
+     VALUES ($1,$2,now())
+     ON CONFLICT (firm_id) DO UPDATE SET state=EXCLUDED.state, updated_at=now()`,
+    [firm, body.state],
+  );
+  return json(c, { firmId: firm, state: body.state });
+}
+
+/**
+ * Assisted Provision — write ct_firms + campaign_states; also mint auth firms/users
+ * when the UUID auth tables are present so Login OTP can resolve the email.
+ */
+export async function handleMachineProvision(c: Context) {
+  const body = await c.req.json<{
+    firmId?: string;
+    firmName: string;
+    email: string;
+    website?: string;
+    role?: string;
+  }>();
+  const firmName = (body.firmName ?? "").trim();
+  const email = (body.email ?? "").trim().toLowerCase();
+  if (!firmName || !email) {
+    return json(c, { error: "firmName and email required" }, 400);
+  }
+  const slug = firmName
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 40);
+  const firm = body.firmId?.trim() || `firm-${slug || randomUUID().slice(0, 8)}`;
+  const pool = getPool();
+
+  await pool.query(
+    `INSERT INTO ct_firms (id, name, posture, updated_at)
+     VALUES ($1,$2,'Idle',now())
+     ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, updated_at=now()`,
+    [firm, firmName],
+  );
+  await pool.query(
+    `INSERT INTO campaign_states (firm_id, state, updated_at)
+     VALUES ($1,'armed-for-activation',now())
+     ON CONFLICT (firm_id) DO UPDATE SET state='armed-for-activation', updated_at=now()`,
+    [firm],
+  );
+
+  let authUser = false;
+  try {
+    const existing = await pool.query(`SELECT id FROM users WHERE lower(email)=lower($1) LIMIT 1`, [
+      email,
+    ]);
+    if (existing.rowCount) {
+      authUser = true;
+    } else {
+      const firmRow = await pool.query(
+        `INSERT INTO firms (name) VALUES ($1) RETURNING id`,
+        [firmName],
+      );
+      const authFirmId = firmRow.rows[0]?.id as string;
+      await pool.query(`INSERT INTO users (firm_id, email) VALUES ($1,$2)`, [authFirmId, email]);
+      authUser = true;
+    }
+  } catch {
+    authUser = false;
+  }
+
+  const loginPath = `/login?tenancy=assisted&email=${encodeURIComponent(email)}`;
+  return json(c, {
+    firmId: firm,
+    firmName,
+    email,
+    website: body.website ?? null,
+    role: body.role ?? null,
+    ctFirm: true,
+    authUser,
+    campaignState: "armed-for-activation",
+    loginPath,
+  });
 }
 
 /** Manual tick (same as worker once) — for ops/verify. */

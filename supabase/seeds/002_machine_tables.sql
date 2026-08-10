@@ -47,8 +47,17 @@ INSERT INTO rule_reachability_checks (id, firm_id, label, enabled, ord, source) 
 ON CONFLICT (id) DO UPDATE SET enabled = EXCLUDED.enabled;
 
 INSERT INTO rule_eligibility_pathway (id, firm_id, label, enabled, set_value, ord, source) VALUES
-  ('epath-any', NULL, 'Pass if any of CEC|FSW|FST|PNP-* asserts', true, 'any_pathway_pass', 0, 'Seed §5.7')
-ON CONFLICT (id) DO UPDATE SET label = EXCLUDED.label;
+  ('epath-any', NULL, 'Pass if any of CEC|FSW|FST|PNP-* asserts', true, 'any_pathway_pass', 0, 'Seed §5.7'),
+  ('epath-cec', NULL, 'CEC pathway assert', true, 'pathway_cec', 1, 'Seed §5.7'),
+  ('epath-fsw', NULL, 'FSW pathway assert', true, 'pathway_fsw', 2, 'Seed §5.7'),
+  ('epath-pnp', NULL, 'PNP-* pathway assert', false, 'pathway_pnp', 3, 'Seed §5.7')
+ON CONFLICT (id) DO UPDATE SET label = EXCLUDED.label, enabled = EXCLUDED.enabled;
+
+INSERT INTO rule_field_class_routing (id, firm_id, label, enabled, when_clause, condition_clause, set_value, ord, source) VALUES
+  ('fcr-identity', NULL, 'Identity facts → contact_records', true, 'field_class=identity', 'always', 'route_contact_records', 0, 'Seed §5.9'),
+  ('fcr-eligibility', NULL, 'Eligibility facts → evaluation inputs', true, 'field_class=eligibility', 'always', 'route_eligibility_inputs', 1, 'Seed §5.9'),
+  ('fcr-agenda', NULL, 'Agenda / secondary → live_brief', true, 'field_class=agenda', 'motion chosen', 'route_live_brief', 2, 'Seed §5.9')
+ON CONFLICT (id) DO UPDATE SET label = EXCLUDED.label, enabled = EXCLUDED.enabled;
 
 INSERT INTO rule_cohort_scoring (id, firm_id, label, enabled, set_value, ord, source) VALUES
   ('cs-open-click', NULL, 'open+click > open only > no open', true, 'tier_from_open_click', 0, 'guidelines/Reactivation.md'),

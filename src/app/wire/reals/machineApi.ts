@@ -3,12 +3,19 @@ import { wireFetch } from "../http";
 import type {
   AttemptCriteriaRow,
   AuditRunRow,
+  CampaignState,
   ChannelOwnershipOrderRow,
+  EligibilityPathwayRow,
   EligibilityPipelineRow,
   EligibilityResultRow,
   EnrollmentRow,
+  EvaluationPin,
+  FieldClassRoutingRow,
   FirmSequenceBindingRow,
   MotionDecisionRow,
+  MotionPrecedenceRow,
+  ProvisionResult,
+  ReferenceVersionRow,
   SequenceTemplateRow,
   SignalRow,
   WorkflowRow,
@@ -247,5 +254,96 @@ export const realMachineApi: MachineApiPort = {
       { headers: firmHeader() },
     );
     return res.stages;
+  },
+
+  async listEligibilityPathways() {
+    const res = await wireFetch<{ pathways: EligibilityPathwayRow[] }>(
+      `/machine/rules/eligibility-pathways?firmId=${encodeURIComponent(FIRM)}`,
+      { headers: firmHeader() },
+    );
+    return res.pathways;
+  },
+
+  async upsertEligibilityPathway(id, patch) {
+    return wireFetch<EligibilityPathwayRow>(
+      `/machine/rules/eligibility-pathways/${encodeURIComponent(id)}?firmId=${encodeURIComponent(FIRM)}`,
+      { method: "PUT", headers: firmHeader(), body: JSON.stringify(patch) },
+    );
+  },
+
+  async listMotionPrecedence() {
+    const res = await wireFetch<{ rules: MotionPrecedenceRow[] }>(
+      `/machine/rules/motion-precedence?firmId=${encodeURIComponent(FIRM)}`,
+      { headers: firmHeader() },
+    );
+    return res.rules;
+  },
+
+  async upsertMotionPrecedence(id, patch) {
+    return wireFetch<MotionPrecedenceRow>(
+      `/machine/rules/motion-precedence/${encodeURIComponent(id)}?firmId=${encodeURIComponent(FIRM)}`,
+      { method: "PUT", headers: firmHeader(), body: JSON.stringify(patch) },
+    );
+  },
+
+  async listFieldClassRouting() {
+    const res = await wireFetch<{ rules: FieldClassRoutingRow[] }>(
+      `/machine/rules/field-class-routing?firmId=${encodeURIComponent(FIRM)}`,
+      { headers: firmHeader() },
+    );
+    return res.rules;
+  },
+
+  async upsertFieldClassRouting(id, patch) {
+    return wireFetch<FieldClassRoutingRow>(
+      `/machine/rules/field-class-routing/${encodeURIComponent(id)}?firmId=${encodeURIComponent(FIRM)}`,
+      { method: "PUT", headers: firmHeader(), body: JSON.stringify(patch) },
+    );
+  },
+
+  async listReferenceVersions() {
+    const res = await wireFetch<{ versions: ReferenceVersionRow[] }>(
+      `/machine/reference-versions?firmId=${encodeURIComponent(FIRM)}`,
+      { headers: firmHeader() },
+    );
+    return res.versions;
+  },
+
+  async getEvaluationPin(packId) {
+    return wireFetch<{
+      packId: string;
+      referenceVersionId: string | null;
+      rulesetId: string | null;
+      missing?: boolean;
+    }>(`/machine/evaluation-pins/${encodeURIComponent(packId)}`, { headers: firmHeader() });
+  },
+
+  async putEvaluationPin(packId, pin) {
+    return wireFetch<EvaluationPin & { table?: string; id?: string }>(
+      `/machine/evaluation-pins/${encodeURIComponent(packId)}`,
+      { method: "PUT", headers: firmHeader(), body: JSON.stringify(pin) },
+    );
+  },
+
+  async getCampaignState() {
+    return wireFetch<{ firmId: string; state: CampaignState; missing?: boolean }>(
+      `/machine/campaign-state?firmId=${encodeURIComponent(FIRM)}`,
+      { headers: firmHeader() },
+    );
+  },
+
+  async setCampaignState(state) {
+    return wireFetch<{ firmId: string; state: CampaignState }>(
+      `/machine/campaign-state?firmId=${encodeURIComponent(FIRM)}`,
+      { method: "POST", headers: firmHeader(), body: JSON.stringify({ state }) },
+    );
+  },
+
+  async provisionFirm(input) {
+    return wireFetch<ProvisionResult>(`/machine/provision`, {
+      method: "POST",
+      headers: firmHeader(),
+      body: JSON.stringify(input),
+    });
   },
 };

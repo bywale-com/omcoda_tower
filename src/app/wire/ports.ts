@@ -349,7 +349,12 @@ export type MachineApiPort = {
   createAuditRun(input: {
     importIds?: string[];
     contactIds?: Array<{ id: string; email?: string; phone?: string; name?: string }>;
-  }): Promise<import("./machineTypes").AuditRunRow & { contacts: number }>;
+  }): Promise<
+    import("./machineTypes").AuditRunRow & {
+      contacts: number;
+      verdicts?: import("./machineTypes").AuditContactVerdict[];
+    }
+  >;
   fireOnboarding(): Promise<{
     skipped?: boolean;
     enrollments?: number;
@@ -402,4 +407,45 @@ export type MachineApiPort = {
   }): Promise<{ eventName: string; workflowsFired: unknown[] }>;
   /** Read-only ordered stages from seq_eligibility_pipeline. */
   listEligibilityPipeline(): Promise<import("./machineTypes").EligibilityPipelineRow[]>;
+  listEligibilityPathways(): Promise<import("./machineTypes").EligibilityPathwayRow[]>;
+  upsertEligibilityPathway(
+    id: string,
+    patch: { enabled?: boolean; label?: string; ord?: number },
+  ): Promise<import("./machineTypes").EligibilityPathwayRow>;
+  listMotionPrecedence(): Promise<import("./machineTypes").MotionPrecedenceRow[]>;
+  upsertMotionPrecedence(
+    id: string,
+    patch: { enabled?: boolean; label?: string; ord?: number },
+  ): Promise<import("./machineTypes").MotionPrecedenceRow>;
+  listFieldClassRouting(): Promise<import("./machineTypes").FieldClassRoutingRow[]>;
+  upsertFieldClassRouting(
+    id: string,
+    patch: { enabled?: boolean; label?: string; ord?: number },
+  ): Promise<import("./machineTypes").FieldClassRoutingRow>;
+  listReferenceVersions(): Promise<import("./machineTypes").ReferenceVersionRow[]>;
+  getEvaluationPin(packId: string): Promise<{
+    packId: string;
+    referenceVersionId: string | null;
+    rulesetId: string | null;
+    missing?: boolean;
+  }>;
+  putEvaluationPin(
+    packId: string,
+    pin: { referenceVersionId: string; rulesetId: string },
+  ): Promise<import("./machineTypes").EvaluationPin & { table?: string; id?: string }>;
+  getCampaignState(): Promise<{
+    firmId: string;
+    state: import("./machineTypes").CampaignState;
+    missing?: boolean;
+  }>;
+  setCampaignState(
+    state: import("./machineTypes").CampaignState,
+  ): Promise<{ firmId: string; state: import("./machineTypes").CampaignState }>;
+  provisionFirm(input: {
+    firmId?: string;
+    firmName: string;
+    email: string;
+    website?: string;
+    role?: string;
+  }): Promise<import("./machineTypes").ProvisionResult>;
 };

@@ -33,16 +33,28 @@ import {
   handleAttemptCriteriaUpsert,
   handleBoardDetections,
   handleBindingUpsert,
+  handleCampaignStateGet,
+  handleCampaignStatePost,
   handleChannelOrderList,
   handleChannelOrderUpsert,
+  handleEligibilityPathwayUpsert,
+  handleEligibilityPathwaysList,
   handleEligibilityPipelineList,
   handleEnrollmentCreate,
+  handleEvaluationPinGet,
+  handleEvaluationPinPut,
+  handleFieldClassRoutingList,
+  handleFieldClassRoutingUpsert,
   handleMachineEvent,
   handleMachineHealth,
+  handleMachineProvision,
   handleMachineTick,
+  handleMotionPrecedenceList,
+  handleMotionPrecedenceUpsert,
   handleOnboardingFire,
   handlePauseWorkflow,
   handleReferenceUpsert,
+  handleReferenceVersionsList,
   handleTemplateUpsert,
   handleTemplatesList,
   handleWebhookTrigger,
@@ -116,6 +128,18 @@ export function createWireRoutes(): Hono {
   wire.get("/machine/seq/channel-order", handleChannelOrderList);
   wire.put("/machine/seq/channel-order", handleChannelOrderUpsert);
   wire.get("/machine/eligibility-pipeline", handleEligibilityPipelineList);
+  wire.get("/machine/rules/eligibility-pathways", handleEligibilityPathwaysList);
+  wire.put("/machine/rules/eligibility-pathways/:id", handleEligibilityPathwayUpsert);
+  wire.get("/machine/rules/motion-precedence", handleMotionPrecedenceList);
+  wire.put("/machine/rules/motion-precedence/:id", handleMotionPrecedenceUpsert);
+  wire.get("/machine/rules/field-class-routing", handleFieldClassRoutingList);
+  wire.put("/machine/rules/field-class-routing/:id", handleFieldClassRoutingUpsert);
+  wire.get("/machine/reference-versions", handleReferenceVersionsList);
+  wire.get("/machine/evaluation-pins/:packId", handleEvaluationPinGet);
+  wire.put("/machine/evaluation-pins/:packId", handleEvaluationPinPut);
+  wire.get("/machine/campaign-state", handleCampaignStateGet);
+  wire.post("/machine/campaign-state", handleCampaignStatePost);
+  wire.post("/machine/provision", handleMachineProvision);
   wire.post("/machine/events", handleMachineEvent);
   wire.post("/hook/:webhookId", handleWebhookTrigger);
 

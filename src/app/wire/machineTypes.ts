@@ -137,3 +137,55 @@ export type ChannelOwnershipOrderRow = {
   ord: number;
   version: number;
 };
+
+/** Shared shape for enable-toggle rule tables (eligibility / motion / field-class). */
+export type ModularRuleRow = {
+  id: string;
+  firm_id: string | null;
+  label: string;
+  enabled: boolean;
+  when_clause: string | null;
+  condition_clause: string | null;
+  set_value: string | null;
+  ord: number;
+  source: string | null;
+  version: number;
+};
+
+export type EligibilityPathwayRow = ModularRuleRow;
+export type MotionPrecedenceRow = ModularRuleRow;
+export type FieldClassRoutingRow = ModularRuleRow;
+
+/** Evaluation pack pin — reference_version + ruleset id (no dedicated Evaluation table). */
+export type EvaluationPin = {
+  packId: string;
+  referenceVersionId: string;
+  rulesetId: string;
+};
+
+export type ReferenceVersionRow = {
+  id: string;
+  firm_id: string | null;
+  key: string;
+  payload: Record<string, unknown>;
+  version: number;
+};
+
+export type AuditContactVerdict = {
+  contactId: string;
+  verdict: ReachabilityVerdict;
+  ready: boolean;
+  email?: string | null;
+  phone?: string | null;
+  name?: string | null;
+};
+
+export type ProvisionResult = {
+  firmId: string;
+  firmName: string;
+  email: string;
+  ctFirm: boolean;
+  authUser: boolean;
+  campaignState: CampaignState;
+  loginPath: string;
+};

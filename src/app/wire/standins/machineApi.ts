@@ -5,11 +5,19 @@
 import type { MachineApiPort } from "../ports";
 import type {
   AttemptCriteriaRow,
+  CampaignState,
   ChannelOwnershipOrderRow,
+  EligibilityPathwayRow,
   EligibilityPipelineRow,
   EligibilityResultRow,
   EnrollmentRow,
+  EvaluationPin,
+  FieldClassRoutingRow,
+  ModularRuleRow,
   MotionDecisionRow,
+  MotionPrecedenceRow,
+  ProvisionResult,
+  ReferenceVersionRow,
   SignalRow,
   WorkflowRow,
   WorkflowRunRow,
@@ -133,6 +141,82 @@ const channelOrder = new Map<string, ChannelOwnershipOrderRow>([
   ["ch-email", { id: "ch-email", firm_id: null, token: "email", label: "Email", ord: 1, version: 1 }],
   ["ch-form", { id: "ch-form", firm_id: null, token: "form", label: "Form", ord: 2, version: 1 }],
 ]);
+
+function seedRule(
+  id: string,
+  label: string,
+  enabled: boolean,
+  ord: number,
+  setValue: string,
+): ModularRuleRow {
+  return {
+    id,
+    firm_id: null,
+    label,
+    enabled,
+    when_clause: null,
+    condition_clause: null,
+    set_value: setValue,
+    ord,
+    source: "stand-in",
+    version: 1,
+  };
+}
+
+const eligibilityPathways = new Map<string, EligibilityPathwayRow>([
+  ["epath-any", seedRule("epath-any", "Pass if any of CEC|FSW|FST|PNP-* asserts", true, 0, "any_pathway_pass")],
+  ["epath-cec", seedRule("epath-cec", "CEC pathway assert", true, 1, "pathway_cec")],
+  ["epath-fsw", seedRule("epath-fsw", "FSW pathway assert", true, 2, "pathway_fsw")],
+  ["epath-pnp", seedRule("epath-pnp", "PNP-* pathway assert", false, 3, "pathway_pnp")],
+]);
+
+const motionPrecedence = new Map<string, MotionPrecedenceRow>([
+  ["mp-1", seedRule("mp-1", "Reactivation first if anything reactivation-worthy", true, 0, "reactivation")],
+  ["mp-2", seedRule("mp-2", "Nudge only when nothing reactivation-worthy", true, 1, "nudge")],
+  ["mp-3", seedRule("mp-3", "Nudge consolidates every self-reportable need into one form", true, 2, "one_consolidated_form")],
+]);
+
+const fieldClassRouting = new Map<string, FieldClassRoutingRow>([
+  ["fcr-identity", seedRule("fcr-identity", "Identity facts → contact_records", true, 0, "route_contact_records")],
+  ["fcr-eligibility", seedRule("fcr-eligibility", "Eligibility facts → evaluation inputs", true, 1, "route_eligibility_inputs")],
+  ["fcr-agenda", seedRule("fcr-agenda", "Agenda / secondary → live_brief", true, 2, "route_live_brief")],
+]);
+
+const referenceVersions = new Map<string, ReferenceVersionRow>([
+  [
+    "ref.crs.cutoff.v1",
+    {
+      id: "ref.crs.cutoff.v1",
+      firm_id: null,
+      key: "crs_cutoff",
+      payload: { cutoff: 480, program: "CEC" },
+      version: 1,
+    },
+  ],
+]);
+
+const evaluationPins = new Map<string, EvaluationPin>();
+const campaignStates = new Map<string, CampaignState>([["firm-cedar", "running"]]);
+const provisionedFirms = new Map<string, ProvisionResult>();
+
+function patchRuleRow<T extends ModularRuleRow>(
+  map: Map<string, T>,
+  id: string,
+  patch: { enabled?: boolean; label?: string; ord?: number },
+): T {
+  const prev = map.get(id);
+  if (!prev) throw new Error(`rule missing: ${id}`);
+  const next = {
+    ...prev,
+    enabled: patch.enabled ?? prev.enabled,
+    label: patch.label ?? prev.label,
+    ord: patch.ord ?? prev.ord,
+    version: prev.version + 1,
+    firm_id: prev.firm_id ?? FIRM,
+  } as T;
+  map.set(id, next);
+  return next;
+}
 
 function now() {
   return new Date().toISOString();
@@ -344,15 +428,30 @@ export const standInMachineApi: MachineApiPort = {
 
   async createAuditRun(input) {
     const contacts = input.contactIds ?? [];
+    const verdicts = contacts.map((contact) => {
+      const hasEmail = Boolean(contact.email);
+      const hasPhone = Boolean(contact.phone);
+      const verdict =
+        hasEmail && hasPhone ? ("reachable" as const) : hasEmail || hasPhone ? ("partial" as const) : ("unreachable" as const);
+      return {
+        contactId: contact.id,
+        verdict,
+        ready: verdict === "reachable" || verdict === "partial",
+        email: contact.email ?? null,
+        phone: contact.phone ?? null,
+        name: contact.name ?? null,
+      };
+    });
     return {
       id: `arun-local-${Date.now()}`,
       firm_id: FIRM,
       status: "complete" as const,
       import_ids: input.importIds ?? [],
-      summary: { contacts: contacts.length },
+      summary: { contacts: contacts.length, ready: verdicts.filter((v) => v.ready).length },
       started_at: now(),
       finished_at: now(),
       contacts: contacts.length,
+      verdicts,
     };
   },
 
@@ -468,5 +567,79 @@ export const standInMachineApi: MachineApiPort = {
 
   async listEligibilityPipeline() {
     return [...ELIGIBILITY_PIPELINE].sort((a, b) => a.ord - b.ord);
+  },
+
+  async listEligibilityPathways() {
+    return [...eligibilityPathways.values()].sort((a, b) => a.ord - b.ord);
+  },
+
+  async upsertEligibilityPathway(id, patch) {
+    return patchRuleRow(eligibilityPathways, id, patch);
+  },
+
+  async listMotionPrecedence() {
+    return [...motionPrecedence.values()].sort((a, b) => a.ord - b.ord);
+  },
+
+  async upsertMotionPrecedence(id, patch) {
+    return patchRuleRow(motionPrecedence, id, patch);
+  },
+
+  async listFieldClassRouting() {
+    return [...fieldClassRouting.values()].sort((a, b) => a.ord - b.ord);
+  },
+
+  async upsertFieldClassRouting(id, patch) {
+    return patchRuleRow(fieldClassRouting, id, patch);
+  },
+
+  async listReferenceVersions() {
+    return [...referenceVersions.values()];
+  },
+
+  async getEvaluationPin(packId) {
+    const pin = evaluationPins.get(packId);
+    if (!pin) {
+      return { packId, referenceVersionId: null, rulesetId: null, missing: true };
+    }
+    return { ...pin, missing: false };
+  },
+
+  async putEvaluationPin(packId, pin) {
+    const next: EvaluationPin = { packId, ...pin };
+    evaluationPins.set(packId, next);
+    return next;
+  },
+
+  async getCampaignState() {
+    const state = campaignStates.get(FIRM) ?? "armed-for-activation";
+    return { firmId: FIRM, state, missing: !campaignStates.has(FIRM) };
+  },
+
+  async setCampaignState(state) {
+    campaignStates.set(FIRM, state);
+    return { firmId: FIRM, state };
+  },
+
+  async provisionFirm(input) {
+    const slug = input.firmName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 40);
+    const firmId = input.firmId?.trim() || `firm-${slug || Date.now()}`;
+    const email = input.email.trim().toLowerCase();
+    const result: ProvisionResult = {
+      firmId,
+      firmName: input.firmName.trim(),
+      email,
+      ctFirm: true,
+      authUser: true,
+      campaignState: "armed-for-activation",
+      loginPath: `/login?tenancy=assisted&email=${encodeURIComponent(email)}`,
+    };
+    provisionedFirms.set(firmId, result);
+    campaignStates.set(firmId, "armed-for-activation");
+    return result;
   },
 };
