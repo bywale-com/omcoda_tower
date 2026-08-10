@@ -16,9 +16,12 @@
 | Automations Runs | `workflow_run` | ✓ |
 | Automations Settings | schedule / enrollment / eligibility pipeline | ✓ Ant |
 | Agents Editor | `sequence_template.cells` | ✓ Save |
-| Agents Settings | `rule_attempt_criteria`, `seq_channel_ownership_order` | ✓ Ant |
-| Evaluation packs | pin `reference_version` + ruleset; pathway/motion/field-class | ✓ Ant editor; Plant Publish → pin |
+| Agents Settings | `rule_attempt_criteria`, `seq_channel_ownership_order`, cohort, metrics, phase order | ✓ Ant |
+| Evaluation packs | pin + pathway/motion/field-class **+ reachability + setValue** | ✓ Ant editor; Plant Publish → pin |
 | Publish → Bind | shared `packCatalogStore` (Plant + Ant) | ✓ |
+| Fact writebacks | Contact forms → `fact_writebacks` + re-eval cascade; Live brief hydrate | ✓ |
+| Prepared workspaces | Forward-deploy → `prepared_workspaces` (not primary_store) | ✓ |
+| In-flight attempts | Firm health reads `active_attempts` / `engagement_records` | ✓ |
 
 ## Spine
 
