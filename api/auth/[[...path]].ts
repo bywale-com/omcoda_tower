@@ -1,15 +1,5 @@
 /**
- * Vercel Node serverless entry for /api/auth/* (and rewritten /auth/*).
- * Keep free of wire-service imports (Twilio). Use Node handler, not Edge.
+ * Vercel entry — implementation is pre-bundled (see scripts/bundle-vercel-api.mjs).
+ * Do not import server/** from this file; the tracer will miss it.
  */
-import { handle } from "@hono/node-server/vercel";
-import { app } from "../../server/auth-service/app";
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-  maxDuration: 10,
-};
-
-export default handle(app);
+export { default, config } from "./_handler.js";

@@ -1,0 +1,34 @@
+# Production tick host (Hobby Vercel cannot run * * * * * crons).
+# Fires every 5 minutes against the live tick endpoint — same Postgres as the API.
+name: prod-tick
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  tick:
+    name: production machine tick
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Invoke production tick
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          TICK_URL: https://omcoda-tower.vercel.app/api/wire/machine/tick
+        run: |
+          set -euo pipefail
+          if [ -z "${CRON_SECRET:-}" ]; then
+            echo "CRON_SECRET repo secret missing — add it in GitHub → Settings → Secrets"
+            exit 1
+          fi
+          code=$(curl -sS -o /tmp/tick.json -w '%{http_code}' \
+            -X GET \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            -H "x-cron-secret: ${CRON_SECRET}" \
+            "$TICK_URL")
+          echo "HTTP $code"
+          cat /tmp/tick.json
+          echo
+          test "$code" = "200"

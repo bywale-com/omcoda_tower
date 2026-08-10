@@ -5,6 +5,8 @@ node_modules/
 dist/
 dist-ssr/
 *.local
+api/wire/_handler.js
+api/auth/_handler.js
 
 # Environment & secrets
 .env

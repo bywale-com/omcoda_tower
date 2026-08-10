@@ -22,13 +22,15 @@
 
 ## Worker host (Gap 1)
 
-**Where:** **Vercel Cron** on the same project — `GET /api/wire/machine/tick` every minute (`vercel.json` `crons`).
+**Where (Hobby-compatible):** **GitHub Actions** workflow [`prod-tick.yml`](../../.github/workflows/prod-tick.yml) — every **5 minutes** `GET https://omcoda-tower.vercel.app/api/wire/machine/tick` with `CRON_SECRET`.
 
-Not a second vendor. Each tick is one serverless invocation (fits `maxDuration`). Same Postgres as the API. Protect with `CRON_SECRET` / `WORKER_CRON_SECRET` when set.
+Same Postgres as the API. No second vendor. Vercel Hobby only allows **daily** crons, so minute/5-minute cadence cannot live in `vercel.json` (daily cron kept as a backup at 12:00 UTC).
 
-Alternative if minute-cron isn’t available on the plan: persistent `npm run worker` on Fly/Railway/Docker using `docker-compose.worker.yml`.
+Alternative: persistent `npm run worker` on Fly/Railway/Docker (`docker-compose.worker.yml`), or upgrade Vercel to Pro for `* * * * *`.
 
-**Proof status:** code + cron wired in this PR; **unattended prod escalation pending** green `/wire/health` + first cron after deploy.
+**Repo secret required:** GitHub → Settings → Secrets → Actions → `CRON_SECRET` (same value as Vercel Production).
+
+**Proof status:** tick endpoint + GHA host wired; **unattended prod escalation pending** green `/wire/health` + first successful `prod-tick` run.
 
 ---
 
@@ -48,6 +50,7 @@ Alternative if minute-cron isn’t available on the plan: persistent `npm run wo
 2. Disable Vercel body parser (`bodyParser: false`).
 3. Health returns env snapshot JSON (no throw); `/api/ping` diagnostic with no Hono.
 4. CORS allows production SPA + preview hosts.
+5. **esbuild pre-bundle** (`npm run build:api` via `build:vercel`): Vercel’s tracer did not ship `server/**`, so cold start threw `Cannot find module '/var/task/server/…/app'`. Thin `api/*/[[...path]].ts` re-exports `api/*/_handler.js` with `server/**` inlined.
 
 ### Human step required (Vercel dashboard)
 

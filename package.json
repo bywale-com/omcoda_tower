@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
+    "build:api": "node scripts/bundle-vercel-api.mjs",
+    "build:vercel": "vite build && npm run build:api",
     "dev": "vite",
     "dev:auth": "tsx --env-file=.env server/auth-service/index.ts",
     "db:migrate": "tsx --env-file=.env scripts/run-migration.ts",
@@ -98,6 +100,7 @@
     "@types/papaparse": "^5.5.2",
     "@types/pg": "^8.11.11",
     "@vitejs/plugin-react": "4.7.0",
+    "esbuild": "^0.28.2",
     "tailwindcss": "4.1.12",
     "tsx": "^4.19.3",
     "vite": "6.4.3"

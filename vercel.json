@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run build:vercel",
   "outputDirectory": "dist",
   "functions": {
     "api/auth/[[...path]].ts": {
@@ -18,7 +18,7 @@
   "crons": [
     {
       "path": "/api/wire/machine/tick",
-      "schedule": "* * * * *"
+      "schedule": "0 12 * * *"
     }
   ],
   "rewrites": [
