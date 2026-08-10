@@ -570,8 +570,29 @@ function fieldBlock(
   t: Tokens,
   label: string,
   value: string,
-  opts?: { placeholder?: boolean; hint?: string; readOnly?: boolean },
+  opts?: {
+    placeholder?: boolean;
+    hint?: string;
+    readOnly?: boolean;
+    onChange?: (value: string) => void;
+    inputPlaceholder?: string;
+    surface?: string;
+  },
 ) {
+  const editable = Boolean(opts?.onChange) && !opts?.readOnly;
+  const fieldStyle: CSSProperties = {
+    padding: "9px 11px",
+    borderRadius: 6,
+    border: `1px solid ${t.border}`,
+    background: opts?.readOnly ? t.bgSecondary : opts?.placeholder ? t.hoverBg : t.bgPrimary,
+    fontSize: 13,
+    color: opts?.placeholder && !value ? t.textDim : t.textPrimary,
+    minHeight: 36,
+    width: "100%",
+    boxSizing: "border-box",
+    opacity: opts?.readOnly ? 0.85 : 1,
+  };
+
   return (
     <div key={label} style={{ marginBottom: 12 }}>
       <div
@@ -589,22 +610,31 @@ function fieldBlock(
           <span style={{ marginLeft: 6, color: FIRM.brand, fontWeight: 700 }}>Already held</span>
         ) : null}
       </div>
-      <div
-        style={{
-          padding: "9px 11px",
-          borderRadius: 6,
-          border: `1px solid ${t.border}`,
-          background: opts?.readOnly ? t.bgSecondary : opts?.placeholder ? t.hoverBg : t.bgPrimary,
-          fontSize: 13,
-          color: opts?.placeholder ? t.textDim : t.textPrimary,
-          minHeight: 36,
-          display: "flex",
-          alignItems: "center",
-          opacity: opts?.readOnly ? 0.85 : 1,
-        }}
-      >
-        {value}
-      </div>
+      {editable ? (
+        <input
+          type="text"
+          data-register-surface={opts?.surface}
+          value={value}
+          placeholder={opts?.inputPlaceholder}
+          onChange={(e) => opts?.onChange?.(e.target.value)}
+          style={{
+            ...fieldStyle,
+            display: "block",
+            outline: "none",
+            fontFamily: "inherit",
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            ...fieldStyle,
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {value}
+        </div>
+      )}
       {opts?.hint ? (
         <div style={{ fontSize: 10, color: t.textDim, marginTop: 4 }}>{opts.hint}</div>
       ) : null}
@@ -1190,6 +1220,12 @@ function NudgeForm({
   const outstandingTotal = 4;
   const [filled, setFilled] = useState(1);
   const remaining = Math.max(0, outstandingTotal - filled);
+  const [stillInPool, setStillInPool] = useState("Yes");
+  const [lastEeUpdate, setLastEeUpdate] = useState("Jan 2026");
+  const [languageProduct, setLanguageProduct] = useState("IELTS General");
+  const [testDate, setTestDate] = useState("Mar 12, 2025");
+  const [validThrough, setValidThrough] = useState("Mar 12, 2027");
+  const [clbLowest, setClbLowest] = useState("CLB 9");
 
   return portalShell({
     t,
@@ -1226,21 +1262,28 @@ function NudgeForm({
             Outstanding
           </div>
           <div data-register-surface="Self-reportable fields">
-            {fieldBlock(t, "Still in pool", draftRestored ? "Yes" : "—", {
-              placeholder: !draftRestored,
+            {fieldBlock(t, "Still in pool", stillInPool, {
+              onChange: setStillInPool,
+              surface: "Nudge fact value",
             })}
-            {fieldBlock(t, "Approximate last EE update", draftRestored ? "Jan 2026" : "—", {
-              placeholder: !draftRestored,
+            {fieldBlock(t, "Approximate last EE update", lastEeUpdate, {
+              onChange: setLastEeUpdate,
             })}
-            {fieldBlock(t, "Language test product", "IELTS General")}
+            {fieldBlock(t, "Language test product", languageProduct, {
+              onChange: setLanguageProduct,
+            })}
             {/* contact-furnish-06 — Language / dated-fact helper */}
-            {fieldBlock(t, "Test date", "Mar 12, 2025", {
+            {fieldBlock(t, "Test date", testDate, {
+              onChange: setTestDate,
               hint: "Enter the day you took the test — not the expiry. Validity is usually test date + 2 years for EE profiles.",
             })}
-            {fieldBlock(t, "Validity / still valid through", "Mar 12, 2027", {
+            {fieldBlock(t, "Validity / still valid through", validThrough, {
+              onChange: setValidThrough,
               hint: "Optional: if you know the window is still open, enter the end of validity. Do not upload the certificate.",
             })}
-            {fieldBlock(t, "CLB-equivalent band (lowest)", "CLB 9")}
+            {fieldBlock(t, "CLB-equivalent band (lowest)", clbLowest, {
+              onChange: setClbLowest,
+            })}
           </div>
         </LeafSurface>
         <LeafSurface label="Submit" focused={focusLabel === "Submit"} t={t} style={{ marginTop: 4 }}>
@@ -1252,9 +1295,27 @@ function NudgeForm({
                 clientId: DEMO_CONTACT_ID,
                 source: "Nudge form",
                 facts: [
-                  { label: "Still in pool", value: "Yes", signal: "Current", signalHint: "Nudge write-back" },
-                  { label: "CLB lowest", value: "CLB 9", signal: "Language met", signalHint: "Nudge write-back" },
-                  { label: "Test date", value: "Mar 12, 2025", signal: "Dated fact", signalHint: "Nudge write-back" },
+                  { label: "Still in pool", value: stillInPool, signal: "Current", signalHint: "Nudge write-back" },
+                  { label: "CLB lowest", value: clbLowest, signal: "Language met", signalHint: "Nudge write-back" },
+                  { label: "Test date", value: testDate, signal: "Dated fact", signalHint: "Nudge write-back" },
+                  {
+                    label: "Approximate last EE update",
+                    value: lastEeUpdate,
+                    signal: "Current",
+                    signalHint: "Nudge write-back",
+                  },
+                  {
+                    label: "Language test product",
+                    value: languageProduct,
+                    signal: "Language",
+                    signalHint: "Nudge write-back",
+                  },
+                  {
+                    label: "Validity still valid through",
+                    value: validThrough,
+                    signal: "Dated fact",
+                    signalHint: "Nudge write-back",
+                  },
                 ],
               });
             }}
@@ -1688,6 +1749,10 @@ function LoopCloserForm({
   const [filled, setFilled] = useState(0);
   const remaining = Math.max(0, outstandingTotal - filled);
   const clear = remaining === 0;
+  const [permitEnd, setPermitEnd] = useState("Sep 15, 2026");
+  const [hoursWeek, setHoursWeek] = useState("40");
+  const [teerGuess, setTeerGuess] = useState("TEER 1");
+  const [testDate, setTestDate] = useState("Mar 12, 2025");
 
   return portalShell({
     t,
@@ -1732,10 +1797,18 @@ function LoopCloserForm({
           <div data-register-surface="Booking confirm">
             <LeafSurface label="Outstanding" focused={focusLabel === "Outstanding"} t={t}>
               <div data-register-surface="Self-reportable fields">
-                {fieldBlock(t, "Work permit end date (approx)", "Sep 15, 2026")}
-                {fieldBlock(t, "Hours/week (current role)", "40")}
-                {fieldBlock(t, "TEER guess", "TEER 1")}
-                {fieldBlock(t, "Test date", "Mar 12, 2025", {
+                {fieldBlock(t, "Work permit end date (approx)", permitEnd, {
+                  onChange: setPermitEnd,
+                  surface: "Loop-closer fact value",
+                })}
+                {fieldBlock(t, "Hours/week (current role)", hoursWeek, {
+                  onChange: setHoursWeek,
+                })}
+                {fieldBlock(t, "TEER guess", teerGuess, {
+                  onChange: setTeerGuess,
+                })}
+                {fieldBlock(t, "Test date", testDate, {
+                  onChange: setTestDate,
                   hint: "Test date (day of exam), not document upload. Validity window is separate.",
                 })}
               </div>
@@ -1751,12 +1824,13 @@ function LoopCloserForm({
                     facts: [
                       {
                         label: "Work permit end",
-                        value: "Sep 15, 2026",
+                        value: permitEnd,
                         signal: "Timing risk",
                         signalHint: "Loop-closer write-back",
                       },
-                      { label: "Hours/week", value: "40", signal: "Current", signalHint: "Loop-closer write-back" },
-                      { label: "TEER guess", value: "TEER 1", signal: "Skilled", signalHint: "Loop-closer write-back" },
+                      { label: "Hours/week", value: hoursWeek, signal: "Current", signalHint: "Loop-closer write-back" },
+                      { label: "TEER guess", value: teerGuess, signal: "Skilled", signalHint: "Loop-closer write-back" },
+                      { label: "Test date", value: testDate, signal: "Dated fact", signalHint: "Loop-closer write-back" },
                     ],
                     signalMissingFieldKey: "validity_still_valid",
                   });
@@ -1793,6 +1867,10 @@ function UpdateFacts({
   const [draftRestored, setDraftRestored] = useState(false);
   const outstandingTotal = 3;
   const [filled, setFilled] = useState(0);
+  const [whatChanged, setWhatChanged] = useState("New language test booked");
+  const [effectiveDate, setEffectiveDate] = useState("Aug 2026");
+  const [testDate, setTestDate] = useState("");
+  const [clbTarget, setClbTarget] = useState("CLB 10");
 
   return portalShell({
     t,
@@ -1833,15 +1911,22 @@ function UpdateFacts({
         </LeafSurface>
         <LeafSurface label="Outstanding" focused={focusLabel === "Outstanding"} t={t}>
           <div data-register-surface="Update fields">
-            {fieldBlock(t, "What changed", draftRestored ? "New language test booked" : "—", {
-              placeholder: !draftRestored,
+            {fieldBlock(t, "What changed", whatChanged, {
+              onChange: setWhatChanged,
+              surface: "Update facts value",
             })}
-            {fieldBlock(t, "Effective date", "Aug 2026")}
-            {fieldBlock(t, "Test date", "—", {
+            {fieldBlock(t, "Effective date", effectiveDate, {
+              onChange: setEffectiveDate,
+            })}
+            {fieldBlock(t, "Test date", testDate, {
+              onChange: setTestDate,
+              inputPlaceholder: "—",
               placeholder: true,
               hint: "Enter the exam day. Validity / still-valid window is separate — no certificate upload.",
             })}
-            {fieldBlock(t, "Updated CLB target", "CLB 10")}
+            {fieldBlock(t, "Updated CLB target", clbTarget, {
+              onChange: setClbTarget,
+            })}
           </div>
         </LeafSurface>
         <LeafSurface label="Submit" focused={focusLabel === "Submit"} t={t}>
@@ -1855,17 +1940,32 @@ function UpdateFacts({
                 facts: [
                   {
                     label: "What changed",
-                    value: "New language test booked",
+                    value: whatChanged,
                     signal: "Life change",
                     signalHint: "Update facts write-back",
                   },
                   {
                     label: "Updated CLB target",
-                    value: "CLB 10",
+                    value: clbTarget,
                     signal: "Language target",
                     signalHint: "Update facts write-back",
                   },
-                  { label: "Effective date", value: "Aug 2026", signal: "Current", signalHint: "Update facts write-back" },
+                  {
+                    label: "Effective date",
+                    value: effectiveDate,
+                    signal: "Current",
+                    signalHint: "Update facts write-back",
+                  },
+                  ...(testDate.trim()
+                    ? [
+                        {
+                          label: "Test date",
+                          value: testDate,
+                          signal: "Dated fact",
+                          signalHint: "Update facts write-back",
+                        },
+                      ]
+                    : []),
                 ],
               });
             }}
