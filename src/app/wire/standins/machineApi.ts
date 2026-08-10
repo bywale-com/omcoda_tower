@@ -25,13 +25,15 @@ import type {
 import { standInHaltStore } from "./haltStore";
 
 /** Mirrors supabase/seeds/002_machine_tables.sql seq_eligibility_pipeline. */
-const ELIGIBILITY_PIPELINE: EligibilityPipelineRow[] = [
-  { id: "ep-trig", firm_id: null, token: "trigger", label: "Trigger (scoped pull)", ord: 0 },
-  { id: "ep-const", firm_id: null, token: "constants", label: "Constants", ord: 1 },
-  { id: "ep-cond", firm_id: null, token: "conditions", label: "Conditions (If)", ord: 2 },
-  { id: "ep-rules", firm_id: null, token: "rules", label: "Rules", ord: 3 },
-  { id: "ep-out", firm_id: null, token: "output", label: "Structured output", ord: 4 },
-];
+const eligibilityPipeline = new Map<string, EligibilityPipelineRow>(
+  [
+    { id: "ep-trig", firm_id: null, token: "trigger", label: "Trigger (scoped pull)", ord: 0 },
+    { id: "ep-const", firm_id: null, token: "constants", label: "Constants", ord: 1 },
+    { id: "ep-cond", firm_id: null, token: "conditions", label: "Conditions (If)", ord: 2 },
+    { id: "ep-rules", firm_id: null, token: "rules", label: "Rules", ord: 3 },
+    { id: "ep-out", firm_id: null, token: "output", label: "Structured output", ord: 4 },
+  ].map((row) => [row.id, row]),
+);
 
 const FIRM = "firm-cedar";
 
@@ -199,6 +201,42 @@ const referenceVersions = new Map<string, ReferenceVersionRow>([
 const evaluationPins = new Map<string, EvaluationPin>();
 const campaignStates = new Map<string, CampaignState>([["firm-cedar", "running"]]);
 const provisionedFirms = new Map<string, ProvisionResult>();
+
+/** Book audit stand-in tables — createAuditRun persists so trials can read back. */
+const bookAuditRuns = new Map<
+  string,
+  {
+    id: string;
+    firm_id: string;
+    status: "running" | "complete" | "failed";
+    import_ids: unknown[];
+    summary: Record<string, unknown>;
+    started_at: string;
+    finished_at: string | null;
+  }
+>();
+const bookContacts = new Map<
+  string,
+  { id: string; email: string | null; phone: string | null; name: string | null }
+>();
+const bookVerdicts = new Map<string, string>();
+const bookSequenceReady = new Map<string, boolean>();
+
+/** Trial read-back for Book audit tables (stand-in only). */
+export function getStandInBookSnapshot() {
+  return {
+    audit_runs: [...bookAuditRuns.values()],
+    contact_records: [...bookContacts.values()],
+    reachability_verdicts: [...bookVerdicts.entries()].map(([contactId, verdict]) => ({
+      contactId,
+      verdict,
+    })),
+    sequence_ready: [...bookSequenceReady.entries()].map(([contactId, ready]) => ({
+      contactId,
+      ready,
+    })),
+  };
+}
 
 function now() {
   return new Date().toISOString();
@@ -463,6 +501,17 @@ export const standInMachineApi: MachineApiPort = {
 
   async upsertReference(input) {
     const referenceId = input.id ?? `ref.${input.key}.local`;
+    const payload =
+      input.payload && typeof input.payload === "object"
+        ? (input.payload as Record<string, unknown>)
+        : {};
+    referenceVersions.set(referenceId, {
+      id: referenceId,
+      firm_id: null,
+      key: input.key,
+      payload,
+      version: input.version ?? 1,
+    });
     const contactIds = input.contactIds ?? ["contact-local-1"];
     const cascade: unknown[] = [{ table: "reference_versions", id: referenceId }];
     for (const contactId of contactIds) {
@@ -526,14 +575,37 @@ export const standInMachineApi: MachineApiPort = {
         name: contact.name ?? null,
       };
     });
+    const id = `arun-local-${Date.now()}`;
+    const started = now();
+    bookAuditRuns.set(id, {
+      id,
+      firm_id: FIRM,
+      status: "complete",
+      import_ids: input.importIds ?? [],
+      summary: { contacts: contacts.length, ready: verdicts.filter((v) => v.ready).length },
+      started_at: started,
+      finished_at: started,
+    });
+    for (const contact of contacts) {
+      bookContacts.set(contact.id, {
+        id: contact.id,
+        email: contact.email ?? null,
+        phone: contact.phone ?? null,
+        name: contact.name ?? null,
+      });
+    }
+    for (const v of verdicts) {
+      bookVerdicts.set(v.contactId, v.verdict);
+      bookSequenceReady.set(v.contactId, v.ready);
+    }
     return {
-      id: `arun-local-${Date.now()}`,
+      id,
       firm_id: FIRM,
       status: "complete" as const,
       import_ids: input.importIds ?? [],
       summary: { contacts: contacts.length, ready: verdicts.filter((v) => v.ready).length },
-      started_at: now(),
-      finished_at: now(),
+      started_at: started,
+      finished_at: started,
       contacts: contacts.length,
       verdicts,
     };
@@ -650,7 +722,23 @@ export const standInMachineApi: MachineApiPort = {
   },
 
   async listEligibilityPipeline() {
-    return [...ELIGIBILITY_PIPELINE].sort((a, b) => a.ord - b.ord);
+    return [...eligibilityPipeline.values()].sort((a, b) => a.ord - b.ord);
+  },
+
+  async upsertEligibilityPipeline(stages) {
+    for (const item of stages) {
+      const prev = eligibilityPipeline.get(item.id);
+      if (!prev) continue;
+      eligibilityPipeline.set(item.id, {
+        ...prev,
+        token: item.token ?? prev.token,
+        label: item.label ?? prev.label,
+        ord: item.ord,
+        version: (prev.version ?? 0) + 1,
+        firm_id: prev.firm_id ?? FIRM,
+      });
+    }
+    return [...eligibilityPipeline.values()].sort((a, b) => a.ord - b.ord);
   },
 
   async listEligibilityPathways() {

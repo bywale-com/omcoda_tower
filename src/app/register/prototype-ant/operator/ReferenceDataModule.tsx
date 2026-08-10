@@ -1,15 +1,20 @@
 /**
  * Reference data — tables, import Modal, publish Modal with dual-check, ingestion Steps.
- * Publish version → machineApi.upsertReference so eligibility.changed can fire.
+ * Grid edits modulate draft row values; Publish version upserts those values into reference_versions.
  */
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AUTOMATION_CONSTANT_INDUSTRIES,
-  formatConstantValue,
-  getConstantsForIndustry,
   type AutomationConstantIndustryId,
 } from "../../../data/automationConstants";
 import { wirePorts } from "../../../wire";
+import {
+  draftFromPublishedOrSeed,
+  formatReferenceCellValue,
+  parseReferenceCellValue,
+  seedReferenceDraft,
+  type ReferenceDraftRow,
+} from "../../prototype/shared/referenceDraft";
 import {
   Button,
   Card,
@@ -70,9 +75,18 @@ const TABLES: TableMeta[] = [
   },
 ];
 
+function emptyDrafts(): Record<AutomationConstantIndustryId, ReferenceDraftRow[]> {
+  return {
+    immigration: seedReferenceDraft("immigration"),
+    legal: seedReferenceDraft("legal"),
+    financial_services: seedReferenceDraft("financial_services"),
+  };
+}
+
 export function ReferenceDataModule() {
   const [tables, setTables] = useState(TABLES);
   const [tableId, setTableId] = useState<AutomationConstantIndustryId>("immigration");
+  const [drafts, setDrafts] = useState(emptyDrafts);
   const [importOpen, setImportOpen] = useState(false);
   const [publishOpen, setPublishOpen] = useState(false);
   const [publishNotes, setPublishNotes] = useState("");
@@ -81,15 +95,61 @@ export function ReferenceDataModule() {
 
   const meta = tables.find((r) => r.id === tableId) ?? tables[0];
   const industry = AUTOMATION_CONSTANT_INDUSTRIES.find((i) => i.id === tableId);
-  const rows = useMemo(() => getConstantsForIndustry(tableId).slice(0, 8), [tableId]);
+  const rows = drafts[tableId] ?? [];
   const publishReady = meta.schemaOk && meta.dualCheckOk && meta.publishGroupOk;
   const stageIdx = PIPE_STAGES.indexOf(meta.stage);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const versions = await wirePorts.machineApi.listReferenceVersions();
+        if (cancelled || !versions.length) return;
+        setDrafts((prev) => {
+          const next = { ...prev };
+          for (const industryId of Object.keys(next) as AutomationConstantIndustryId[]) {
+            const key = `reference.${industryId}`;
+            const match = versions.find((v) => v.key === key);
+            if (match?.payload) {
+              next[industryId] = draftFromPublishedOrSeed(industryId, match.payload);
+            }
+          }
+          return next;
+        });
+      } catch {
+        /* seed drafts remain */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const setRowValue = (key: string, text: string) => {
+    setDrafts((prev) => {
+      const list = prev[tableId] ?? [];
+      return {
+        ...prev,
+        [tableId]: list.map((row) =>
+          row.key === key
+            ? { ...row, value: parseReferenceCellValue(row.type, text) }
+            : row,
+        ),
+      };
+    });
+    setTables((prev) =>
+      prev.map((row) =>
+        row.id === tableId ? { ...row, status: "Draft" as const } : row,
+      ),
+    );
+  };
 
   const onConfirmPublish = async () => {
     if (!publishReady) return;
     const nextNum = (parseFloat(meta.version.replace("v", "")) + 0.1).toFixed(1);
     const version = `v${nextNum}`;
     const versionInt = Math.round(parseFloat(nextNum) * 10);
+    const draftRows = drafts[tableId] ?? [];
     setPublishing(true);
     try {
       const payload = {
@@ -97,18 +157,35 @@ export function ReferenceDataModule() {
         label: industry?.label ?? tableId,
         version,
         notes: publishNotes.trim() || undefined,
-        rows: rows.map((r) => ({
+        rows: draftRows.map((r) => ({
           key: r.key,
           label: r.label,
           value: r.value,
           type: r.type,
         })),
       };
+      const referenceId = `ref.reference.${tableId}.local`;
       const result = await wirePorts.machineApi.upsertReference({
+        id: referenceId,
         key: `reference.${tableId}`,
         payload,
         version: versionInt,
       });
+      const stored = (await wirePorts.machineApi.listReferenceVersions()).find(
+        (v) => v.id === result.referenceId || v.key === `reference.${tableId}`,
+      );
+      const storedRows = Array.isArray(stored?.payload?.rows)
+        ? (stored!.payload.rows as Array<{ key: string; value: unknown }>)
+        : [];
+      const sample = draftRows[0];
+      const persisted = sample
+        ? storedRows.find((r) => r.key === sample.key)?.value
+        : undefined;
+      if (sample && persisted !== sample.value) {
+        throw new Error(
+          `Publish did not persist modular value for ${sample.key}: expected ${String(sample.value)}, got ${String(persisted)}`,
+        );
+      }
       setTables((prev) =>
         prev.map((row) =>
           row.id === tableId
@@ -129,6 +206,7 @@ export function ReferenceDataModule() {
       const fired = Array.isArray(result.workflowsFired) ? result.workflowsFired.length : 0;
       message.success(
         `Published ${industry?.label ?? tableId} · ${version}` +
+          (sample ? ` · ${sample.key}=${formatReferenceCellValue(sample.value)}` : "") +
           (fired > 0 ? ` · eligibility.changed → ${fired} workflow(s)` : " · reference upserted"),
       );
     } catch (err) {
@@ -194,15 +272,23 @@ export function ReferenceDataModule() {
     },
   ];
 
-  const dataColumns: ColumnsType<{ key: string; label: string; value: unknown; type: string }> = [
-    { title: "Key", dataIndex: "key", key: "key" },
+  const dataColumns: ColumnsType<ReferenceDraftRow> = [
+    { title: "Key", dataIndex: "key", key: "key", width: 160 },
     { title: "Label", dataIndex: "label", key: "label" },
     {
       title: "Value",
       key: "value",
-      render: (_, r) => formatConstantValue(r as Parameters<typeof formatConstantValue>[0]),
+      render: (_, r) => (
+        <Input
+          size="small"
+          data-register-surface="Reference row value"
+          value={formatReferenceCellValue(r.value)}
+          onChange={(e) => setRowValue(r.key, e.target.value)}
+          aria-label={`Edit ${r.key}`}
+        />
+      ),
     },
-    { title: "Type", dataIndex: "type", key: "type" },
+    { title: "Type", dataIndex: "type", key: "type", width: 80 },
   ];
 
   return (
@@ -309,8 +395,8 @@ export function ReferenceDataModule() {
       >
         <Surface label="Publish version">
           <Typography.Paragraph type="secondary">
-            Publish {industry?.label ?? tableId} — upserts reference via machineApi so eligibility.changed
-            can fire for Configuration libraries evaluation packs.
+            Publish writes the edited grid values into <code>reference_versions</code>, then eligibility
+            re-eval can fire for evaluation packs.
           </Typography.Paragraph>
           <Surface label="Dual-check glance">
             <Space wrap style={{ marginBottom: 12 }}>

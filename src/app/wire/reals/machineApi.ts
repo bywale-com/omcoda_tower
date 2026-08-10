@@ -256,6 +256,18 @@ export const realMachineApi: MachineApiPort = {
     return res.stages;
   },
 
+  async upsertEligibilityPipeline(stages) {
+    const res = await wireFetch<{ stages: EligibilityPipelineRow[] }>(
+      `/machine/eligibility-pipeline?firmId=${encodeURIComponent(FIRM)}`,
+      {
+        method: "PUT",
+        headers: firmHeader(),
+        body: JSON.stringify({ stages }),
+      },
+    );
+    return res.stages;
+  },
+
   async listEligibilityPathways() {
     const res = await wireFetch<{ pathways: EligibilityPathwayRow[] }>(
       `/machine/rules/eligibility-pathways?firmId=${encodeURIComponent(FIRM)}`,

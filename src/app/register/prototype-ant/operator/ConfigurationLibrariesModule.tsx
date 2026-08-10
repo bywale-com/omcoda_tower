@@ -213,16 +213,19 @@ function RuleEnableList<T extends { id: string; label: string; enabled: boolean 
   rows,
   savingId,
   onToggle,
+  onMove,
 }: {
   title: string;
   hint: string;
   rows: T[];
   savingId: string | null;
   onToggle: (id: string, enabled: boolean) => void;
+  /** When set, Up/Down modulates modular `ord` for this rule table. */
+  onMove?: (fromIndex: number, toIndex: number) => void;
 }) {
   const { token } = theme.useToken();
   return (
-    <div style={{ marginTop: 16 }}>
+    <div style={{ marginTop: 16 }} data-register-surface={title}>
       <Typography.Text strong>{title}</Typography.Text>
       <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginBottom: 8 }}>
         {hint}
@@ -231,7 +234,7 @@ function RuleEnableList<T extends { id: string; label: string; enabled: boolean 
         size="small"
         dataSource={rows}
         locale={{ emptyText: "No rows loaded." }}
-        renderItem={(row) => (
+        renderItem={(row, index) => (
           <List.Item
             key={row.id}
             style={{
@@ -241,6 +244,28 @@ function RuleEnableList<T extends { id: string; label: string; enabled: boolean 
               padding: "8px 12px",
             }}
             actions={[
+              ...(onMove
+                ? [
+                    <Button
+                      key="up"
+                      size="small"
+                      disabled={index === 0 || savingId === row.id}
+                      aria-label={`Move ${row.label} up`}
+                      onClick={() => onMove(index, index - 1)}
+                    >
+                      ↑
+                    </Button>,
+                    <Button
+                      key="down"
+                      size="small"
+                      disabled={index === rows.length - 1 || savingId === row.id}
+                      aria-label={`Move ${row.label} down`}
+                      onClick={() => onMove(index, index + 1)}
+                    >
+                      ↓
+                    </Button>,
+                  ]
+                : []),
               <Switch
                 key="en"
                 checked={row.enabled}
@@ -349,6 +374,40 @@ function EvaluationPacksEditor({
       setMotion((prev) => prev.map((row) => (row.id === id ? updated : row)));
     } catch (err) {
       message.error(`Motion enable failed: ${String(err)}`);
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const moveMotion = async (fromIndex: number, toIndex: number) => {
+    if (toIndex < 0 || toIndex >= motion.length) return;
+    const next = [...motion];
+    const [moved] = next.splice(fromIndex, 1);
+    if (!moved) return;
+    next.splice(toIndex, 0, moved);
+    const reordered = next.map((row, index) => ({ ...row, ord: index }));
+    setMotion(reordered);
+    setSavingId(moved.id);
+    try {
+      const saved = await Promise.all(
+        reordered.map((row) =>
+          wirePorts.machineApi.upsertMotionPrecedence(row.id, { ord: row.ord }),
+        ),
+      );
+      setMotion(saved.sort((a, b) => a.ord - b.ord));
+      message.success(
+        `rule_motion_precedence · ${saved
+          .sort((a, b) => a.ord - b.ord)
+          .map((r) => r.label)
+          .join(" → ")}`,
+      );
+    } catch (err) {
+      message.error(`Motion reorder failed: ${String(err)}`);
+      try {
+        setMotion(await wirePorts.machineApi.listMotionPrecedence());
+      } catch {
+        /* keep optimistic */
+      }
     } finally {
       setSavingId(null);
     }
@@ -486,10 +545,11 @@ function EvaluationPacksEditor({
               />
               <RuleEnableList
                 title="Motion precedence"
-                hint="rule_motion_precedence — which motion wins when signals compete."
+                hint="rule_motion_precedence — enable + reorder which motion wins when signals compete."
                 rows={motion}
                 savingId={savingId}
                 onToggle={(id, enabled) => void toggleMotion(id, enabled)}
+                onMove={(from, to) => void moveMotion(from, to)}
               />
               <RuleSetValueList
                 title="Field-class routing"

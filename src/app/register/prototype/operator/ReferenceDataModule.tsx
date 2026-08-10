@@ -1,16 +1,22 @@
 /**
  * Reference data — Reference tables → edit/import → Publish version modal.
+ * Grid edits modulate draft row values; Publish upserts those into reference_versions.
  * Furnish: dual-check / schema-contract / publish-group readiness glance (Confirm gated).
  * Densify: light ingestion stage rail (pipe detect→…→dual-check).
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AUTOMATION_CONSTANT_INDUSTRIES,
-  formatConstantValue,
-  getConstantsForIndustry,
   type AutomationConstantIndustryId,
 } from "../../../data/automationConstants";
 import { wirePorts } from "../../../wire";
+import {
+  draftFromPublishedOrSeed,
+  formatReferenceCellValue,
+  parseReferenceCellValue,
+  seedReferenceDraft,
+  type ReferenceDraftRow,
+} from "../shared/referenceDraft";
 import { RegisterSurfaceMount, navBtnStyle, sectionLabelStyle } from "../registerSurfaceChrome";
 import {
   filterSelectStyle,
@@ -74,11 +80,20 @@ const PIPE_STAGES = [
   "ready",
 ] as const;
 
+function emptyDrafts(): Record<AutomationConstantIndustryId, ReferenceDraftRow[]> {
+  return {
+    immigration: seedReferenceDraft("immigration"),
+    legal: seedReferenceDraft("legal"),
+    financial_services: seedReferenceDraft("financial_services"),
+  };
+}
+
 export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModuleProps) {
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Reference data", focusedEntry, hoveredEntry);
   const [tables, setTables] = useState<TableMeta[]>(TABLES);
   const [tableId, setTableId] = useState<AutomationConstantIndustryId>("immigration");
+  const [drafts, setDrafts] = useState(emptyDrafts);
   const [importOpen, setImportOpen] = useState(false);
   const [publishOpen, setPublishOpen] = useState(false);
   const [publishNotes, setPublishNotes] = useState("");
@@ -105,16 +120,62 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
     }
   }, [focusedEntry]);
 
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const versions = await wirePorts.machineApi.listReferenceVersions();
+        if (cancelled || !versions.length) return;
+        setDrafts((prev) => {
+          const next = { ...prev };
+          for (const industryId of Object.keys(next) as AutomationConstantIndustryId[]) {
+            const key = `reference.${industryId}`;
+            const match = versions.find((v) => v.key === key);
+            if (match?.payload) {
+              next[industryId] = draftFromPublishedOrSeed(industryId, match.payload);
+            }
+          }
+          return next;
+        });
+      } catch {
+        /* seed drafts remain */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const meta = tables.find((row) => row.id === tableId) ?? tables[0];
   const industry = AUTOMATION_CONSTANT_INDUSTRIES.find((i) => i.id === tableId);
-  const rows = useMemo(() => getConstantsForIndustry(tableId).slice(0, 8), [tableId]);
+  const rows = drafts[tableId] ?? [];
   const publishReady = meta.schemaOk && meta.dualCheckOk && meta.publishGroupOk;
+
+  function setRowValue(key: string, text: string) {
+    setDrafts((prev) => {
+      const list = prev[tableId] ?? [];
+      return {
+        ...prev,
+        [tableId]: list.map((row) =>
+          row.key === key
+            ? { ...row, value: parseReferenceCellValue(row.type, text) }
+            : row,
+        ),
+      };
+    });
+    setTables((prev) =>
+      prev.map((row) =>
+        row.id === tableId ? { ...row, status: "Draft" as const } : row,
+      ),
+    );
+  }
 
   async function onConfirmPublish() {
     if (!publishReady) return;
     const nextNum = (parseFloat(meta.version.replace("v", "")) + 0.1).toFixed(1);
     const version = `v${nextNum}`;
     const versionInt = Math.round(parseFloat(nextNum) * 10);
+    const draftRows = drafts[tableId] ?? [];
     setPublishing(true);
     try {
       const payload = {
@@ -122,18 +183,35 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
         label: industry?.label ?? tableId,
         version,
         notes: publishNotes.trim() || undefined,
-        rows: rows.map((r) => ({
+        rows: draftRows.map((r) => ({
           key: r.key,
           label: r.label,
           value: r.value,
           type: r.type,
         })),
       };
+      const referenceId = `ref.reference.${tableId}.local`;
       const result = await wirePorts.machineApi.upsertReference({
+        id: referenceId,
         key: `reference.${tableId}`,
         payload,
         version: versionInt,
       });
+      const stored = (await wirePorts.machineApi.listReferenceVersions()).find(
+        (v) => v.id === result.referenceId || v.key === `reference.${tableId}`,
+      );
+      const storedRows = Array.isArray(stored?.payload?.rows)
+        ? (stored!.payload.rows as Array<{ key: string; value: unknown }>)
+        : [];
+      const sample = draftRows[0];
+      const persisted = sample
+        ? storedRows.find((r) => r.key === sample.key)?.value
+        : undefined;
+      if (sample && persisted !== sample.value) {
+        throw new Error(
+          `Publish did not persist modular value for ${sample.key}: expected ${String(sample.value)}, got ${String(persisted)}`,
+        );
+      }
       setTables((prev) =>
         prev.map((row) =>
           row.id === tableId
@@ -154,6 +232,7 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
       const fired = Array.isArray(result.workflowsFired) ? result.workflowsFired.length : 0;
       setPublishNote(
         `Published ${version}` +
+          (sample ? ` · ${sample.key}=${formatReferenceCellValue(sample.value)}` : "") +
           (fired > 0 ? ` · eligibility.changed → ${fired} workflow(s)` : " · reference upserted"),
       );
     } catch (err) {
@@ -192,7 +271,10 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
         return {
           ...row,
           stage: next,
-          schemaOk: next === "validate" || next === "draft" || next === "dual-check" || next === "ready" ? true : row.schemaOk,
+          schemaOk:
+            next === "validate" || next === "draft" || next === "dual-check" || next === "ready"
+              ? true
+              : row.schemaOk,
           dualCheckOk: next === "ready",
           publishGroupOk: next === "ready" || next === "dual-check" ? true : row.publishGroupOk,
           status: next === "ready" ? row.status : ("Draft" as const),
@@ -401,12 +483,22 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
                         <td
                           style={{
                             padding: "7px 10px",
-                            color: t.textPrimary,
-                            fontWeight: 600,
                             borderBottom: `1px solid ${t.borderLight}`,
                           }}
                         >
-                          {formatConstantValue(row)}
+                          <input
+                            data-register-surface="Reference row value"
+                            aria-label={`Edit ${row.key}`}
+                            value={formatReferenceCellValue(row.value)}
+                            onChange={(e) => setRowValue(row.key, e.target.value)}
+                            style={{
+                              ...filterSelectStyle(t),
+                              width: "100%",
+                              minWidth: 0,
+                              boxSizing: "border-box",
+                              fontWeight: 600,
+                            }}
+                          />
                         </td>
                         <td
                           style={{
@@ -452,8 +544,8 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
                   Publish version
                 </div>
                 <p style={{ margin: "0 0 10px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
-                  Current {meta.version}. Evaluation packs in Configuration libraries score against the
-                  published reference snapshot. Confirm stays disabled until dual-check chips are green.
+                  Current {meta.version}. Confirm writes edited grid values into reference_versions for
+                  Evaluation packs. Confirm stays disabled until dual-check chips are green.
                 </p>
                 <div
                   data-register-surface="Dual-check glance"
@@ -478,6 +570,9 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
                 <button type="button" onClick={() => setPublishOpen(true)} style={secondaryBtnStyle(t)}>
                   Publish version…
                 </button>
+                {publishNote ? (
+                  <div style={{ marginTop: 10, fontSize: 11, color: t.accent }}>{publishNote}</div>
+                ) : null}
               </>,
             )}
           </div>
@@ -547,8 +642,8 @@ export function ReferenceDataModule({ t, focusedEntry, hoveredId }: OperatorModu
               Publish version
             </div>
             <p style={{ margin: "0 0 12px", fontSize: 12, color: t.textMuted }}>
-              Publish {industry?.label ?? tableId} — Configuration libraries evaluation packs consume this
-              version.
+              Publish {industry?.label ?? tableId} — writes edited values into reference_versions for
+              Evaluation packs.
             </p>
             <div
               data-register-surface="Dual-check glance"

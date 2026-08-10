@@ -43,6 +43,7 @@ import {
   handleEligibilityPathwayUpsert,
   handleEligibilityPathwaysList,
   handleEligibilityPipelineList,
+  handleEligibilityPipelineUpsert,
   handleEngagementRecordsList,
   handleEnrollmentCreate,
   handleEvaluationPinGet,
@@ -144,6 +145,7 @@ export function createWireRoutes(): Hono {
   wire.get("/machine/seq/channel-order", handleChannelOrderList);
   wire.put("/machine/seq/channel-order", handleChannelOrderUpsert);
   wire.get("/machine/eligibility-pipeline", handleEligibilityPipelineList);
+  wire.put("/machine/eligibility-pipeline", handleEligibilityPipelineUpsert);
   wire.get("/machine/rules/eligibility-pathways", handleEligibilityPathwaysList);
   wire.put("/machine/rules/eligibility-pathways/:id", handleEligibilityPathwayUpsert);
   wire.get("/machine/rules/motion-precedence", handleMotionPrecedenceList);

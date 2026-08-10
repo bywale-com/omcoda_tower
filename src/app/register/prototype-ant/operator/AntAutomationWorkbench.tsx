@@ -29,9 +29,10 @@ import {
   Tabs,
   Tag,
   Typography,
+  message,
   theme,
 } from "antd";
-import { PlayCircleOutlined, SaveOutlined } from "@ant-design/icons";
+import { ArrowDownOutlined, ArrowUpOutlined, PlayCircleOutlined, SaveOutlined } from "@ant-design/icons";
 import { useAutomations } from "../../../context/AutomationContext";
 import {
   WORKFLOW_AGENT_OPTIONS,
@@ -52,6 +53,18 @@ import { wirePorts } from "../../../wire/registry";
 import type { EligibilityPipelineRow } from "../../../wire/machineTypes";
 
 type WorkflowFlowNode = Node<WorkflowNodeData, WorkflowNodeType>;
+
+function reorderOrdRows<T extends { ord: number }>(
+  rows: T[],
+  fromIndex: number,
+  toIndex: number,
+): T[] {
+  const next = [...rows];
+  const [moved] = next.splice(fromIndex, 1);
+  if (!moved) return rows;
+  next.splice(toIndex, 0, moved);
+  return next.map((row, index) => ({ ...row, ord: index }));
+}
 
 const NODE_TYPE_LABELS: Record<WorkflowNodeType, string> = {
   trigger: "Trigger",
@@ -361,6 +374,28 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
     };
   }, [activeTab]);
 
+  const movePipelineStage = async (fromIndex: number, toIndex: number) => {
+    if (toIndex < 0 || toIndex >= pipeline.length) return;
+    const next = reorderOrdRows(pipeline, fromIndex, toIndex);
+    setPipeline(next);
+    try {
+      const saved = await wirePorts.machineApi.upsertEligibilityPipeline(
+        next.map((row) => ({ id: row.id, token: row.token, label: row.label, ord: row.ord })),
+      );
+      setPipeline(saved);
+      message.success(
+        `seq_eligibility_pipeline · ${saved.map((s) => s.token).join(" → ")}`,
+      );
+    } catch (err) {
+      message.error(`Pipeline reorder failed: ${String(err)}`);
+      try {
+        setPipeline(await wirePorts.machineApi.listEligibilityPipeline());
+      } catch {
+        /* keep optimistic next */
+      }
+    }
+  };
+
   if (!workflow) {
     return (
       <div style={{ padding: 24 }}>
@@ -626,10 +661,11 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
                     )}
                   </div>
 
-                  <div>
+                  <div data-register-surface="Eligibility pipeline order">
                     <Typography.Title level={5}>Eligibility pipeline</Typography.Title>
                     <Typography.Paragraph type="secondary" style={{ marginBottom: 12 }}>
-                      Read-only stages from seq_eligibility_pipeline (reorder API not shipped).
+                      Reorder stages in <code>seq_eligibility_pipeline</code> — evaluation walks this
+                      ladder.
                     </Typography.Paragraph>
                     {pipelineError ? (
                       <Typography.Text type="danger">{pipelineError}</Typography.Text>
@@ -639,7 +675,26 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
                         bordered
                         dataSource={pipeline}
                         renderItem={(stage, index) => (
-                          <List.Item>
+                          <List.Item
+                            actions={[
+                              <Button
+                                key="up"
+                                size="small"
+                                icon={<ArrowUpOutlined />}
+                                disabled={index === 0}
+                                aria-label={`Move ${stage.token} up`}
+                                onClick={() => void movePipelineStage(index, index - 1)}
+                              />,
+                              <Button
+                                key="down"
+                                size="small"
+                                icon={<ArrowDownOutlined />}
+                                disabled={index === pipeline.length - 1}
+                                aria-label={`Move ${stage.token} down`}
+                                onClick={() => void movePipelineStage(index, index + 1)}
+                              />,
+                            ]}
+                          >
                             <Space>
                               <Tag>{index + 1}</Tag>
                               <Typography.Text strong>{stage.label}</Typography.Text>
