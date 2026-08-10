@@ -129,6 +129,102 @@ export type EngagementHealthRow = {
   health: HealthSignal;
 };
 
+export type ForwardDeployStaging = "idle" | "enriching" | "hydrated" | "stale";
+
+export type ForwardDeployActivationRow = {
+  id: string;
+  firmId: string;
+  firm: string;
+  owner: string;
+  staging: ForwardDeployStaging;
+  factsFresh: "fresh" | "stale" | "pending";
+  brandPinned: "pinned" | "placeholder" | "missing";
+  authorizeBook: "pending" | "complete";
+  acceptTerms: "pending" | "complete";
+  publicUrl: string;
+  brandPackage: string;
+  templateVersion: string;
+};
+
+export type InFlightAttemptRow = {
+  contactId: string;
+  ownerChannel: string;
+  status: string;
+  waitingOn: string;
+  step: string;
+};
+
+export type EngagementRecordSummary = {
+  total: number;
+  kinds: { kind: string; count: number }[];
+};
+
+function preparedWorkspaceId(firmId: string): string {
+  return `pw-${firmId}`;
+}
+
+export async function hydrateForwardDeployRows<T extends ForwardDeployActivationRow>(
+  initial: T[],
+): Promise<T[]> {
+  const workspaces = await wirePorts.machineApi.listPreparedWorkspaces();
+  if (workspaces.length === 0) return initial;
+
+  const byId = new Map(workspaces.map((w) => [w.id, w]));
+  const byFirmId = new Map(
+    workspaces.map((w) => [(w.body?.firmId as string | undefined) ?? w.firm_id, w]),
+  );
+
+  return initial.map((row) => {
+    const ws =
+      byId.get(preparedWorkspaceId(row.firmId)) ?? byFirmId.get(row.firmId);
+    if (!ws?.body || Object.keys(ws.body).length === 0) return row;
+
+    const body = ws.body as Partial<T>;
+    const stagingFromStatus: ForwardDeployStaging | undefined =
+      ws.status === "hydrated"
+        ? "hydrated"
+        : ws.status === "staged"
+          ? body.staging ?? "idle"
+          : undefined;
+
+    return {
+      ...row,
+      ...body,
+      id: row.id,
+      firmId: row.firmId,
+      ...(stagingFromStatus && body.staging === undefined ? { staging: stagingFromStatus } : {}),
+    };
+  });
+}
+
+export async function persistForwardDeployRow<T extends ForwardDeployActivationRow>(
+  row: T,
+): Promise<void> {
+  await wirePorts.machineApi.upsertPreparedWorkspace({
+    id: preparedWorkspaceId(row.firmId),
+    status: row.staging === "hydrated" ? "hydrated" : "staged",
+    body: { ...row } as Record<string, unknown>,
+  });
+}
+
+export async function loadForwardDeployStagingForFirm(
+  firmId: string,
+): Promise<ForwardDeployStaging | null> {
+  const workspaces = await wirePorts.machineApi.listPreparedWorkspaces();
+  const ws =
+    workspaces.find((w) => w.id === preparedWorkspaceId(firmId)) ??
+    workspaces.find(
+      (w) => (w.body?.firmId as string | undefined) === firmId || w.firm_id === firmId,
+    );
+  if (!ws) return null;
+
+  const staging = ws.body?.staging;
+  if (staging === "idle" || staging === "enriching" || staging === "hydrated" || staging === "stale") {
+    return staging;
+  }
+  return ws.status === "hydrated" ? "hydrated" : "idle";
+}
+
 const DEMO_FLEET: FleetHealthRow[] = [
   {
     firmId: "firm-northwind",
@@ -387,12 +483,17 @@ export async function loadFleetHealthRows(
 export async function loadFirmHealthData(firmId: string): Promise<{
   sequences: SequenceHealthRow[];
   engagement: EngagementHealthRow[];
+  inFlightAttempts: InFlightAttemptRow[];
+  engagementRecords: EngagementRecordSummary;
 }> {
-  const [templatesPack, detections, workflows] = await Promise.all([
-    wirePorts.machineApi.listTemplates(),
-    wirePorts.machineApi.boardDetections(),
-    wirePorts.machineApi.listWorkflows(),
-  ]);
+  const [templatesPack, detections, workflows, activeAttempts, engagementRecordRows] =
+    await Promise.all([
+      wirePorts.machineApi.listTemplates(),
+      wirePorts.machineApi.boardDetections(),
+      wirePorts.machineApi.listWorkflows(),
+      wirePorts.machineApi.listActiveAttempts(),
+      wirePorts.machineApi.listEngagementRecords(),
+    ]);
 
   const firmBindings = templatesPack.bindings.filter((b) => b.firm_id === firmId);
   const firmWorkflows = workflows.filter((w) => w.firm_id === firmId);
@@ -456,7 +557,41 @@ export async function loadFirmHealthData(firmId: string): Promise<{
         ]
       : DEMO_ENGAGEMENT;
 
-  return { sequences, engagement };
+  const firmAttempts = activeAttempts.filter((a) => a.firm_id === firmId);
+  const inFlightAttempts: InFlightAttemptRow[] = firmAttempts.map((a) => {
+    const state = a.state ?? {};
+    const waitingOn =
+      typeof state.waitingOn === "string"
+        ? state.waitingOn
+        : state.waitingOn != null
+          ? String(state.waitingOn)
+          : "—";
+    const step =
+      typeof state.step === "number" || typeof state.step === "string"
+        ? String(state.step)
+        : "—";
+    return {
+      contactId: a.contact_id,
+      ownerChannel: a.owner_channel ?? "—",
+      status: a.status,
+      waitingOn,
+      step,
+    };
+  });
+
+  const firmRecords = engagementRecordRows.filter((r) => r.firm_id === firmId);
+  const kindCounts = new Map<string, number>();
+  for (const record of firmRecords) {
+    kindCounts.set(record.event_kind, (kindCounts.get(record.event_kind) ?? 0) + 1);
+  }
+  const engagementRecords: EngagementRecordSummary = {
+    total: firmRecords.length,
+    kinds: [...kindCounts.entries()]
+      .map(([kind, count]) => ({ kind, count }))
+      .sort((a, b) => b.count - a.count || a.kind.localeCompare(b.kind)),
+  };
+
+  return { sequences, engagement, inFlightAttempts, engagementRecords };
 }
 
 export async function hydratePrimaryStoreRows<T extends { id: string }>(

@@ -17,7 +17,7 @@ import {
   surfaceBlock,
   type OperatorModuleProps,
 } from "./operatorChrome";
-import { hydratePrimaryStoreRows } from "./operatorWireHelpers";
+import { loadForwardDeployStagingForFirm } from "./operatorWireHelpers";
 import { useOperatorNav } from "../operatorNav";
 
 type GateId = "forward-deployed" | "authorize-book" | "ready-to-send" | "escrow-held" | "running";
@@ -90,22 +90,23 @@ export function ActivationStateModule({ t, focusedEntry, hoveredId }: OperatorMo
     }
   }, [focusedEntry]);
 
-  // Fail closed — re-read wire ports + forward_deploy store + campaign state.
+  // Fail closed — re-read wire ports + prepared_workspaces + campaign state.
   useEffect(() => {
     let cancelled = false;
+    const seedStaging = FORWARD_DEPLOY_SEED.find((r) => r.firmId === selectedId)?.staging ?? "idle";
     void Promise.all([
       wirePorts.crmOAuth.get(selectedId),
       wirePorts.escrow.get(selectedId),
       wirePorts.machineApi.getCampaignState().catch(() => null),
-      hydratePrimaryStoreRows("forward_deploy", FORWARD_DEPLOY_SEED),
-    ]).then(([grant, escrow, campaign, deployRows]) => {
+      loadForwardDeployStagingForFirm(selectedId),
+    ]).then(([grant, escrow, campaign, staging]) => {
       if (cancelled) return;
-      const deploy = deployRows.find((r) => r.firmId === selectedId);
+      const deployStaging = staging ?? seedStaging;
       setLive({
         authorizeBook: grant.granted && !grant.revoked,
         readyToSend: isSendingIdentityReady(selectedId),
         escrowHeld: escrow.status === "held",
-        forwardDeployed: deploy?.staging === "hydrated" || deploy?.staging === "enriching",
+        forwardDeployed: deployStaging === "hydrated" || deployStaging === "enriching",
         campaignRunning: campaign?.state === "running",
       });
     });

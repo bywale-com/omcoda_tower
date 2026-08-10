@@ -21,30 +21,16 @@ import {
 import { useOperatorNav } from "../operatorNav";
 import {
   appendOperatorAudit,
-  hydratePrimaryStoreRows,
-  persistPrimaryStoreRow,
+  hydrateForwardDeployRows,
+  persistForwardDeployRow,
+  type ForwardDeployActivationRow,
 } from "./operatorWireHelpers";
 
-const FORWARD_DEPLOY_COLLECTION = "forward_deploy";
+type StagingChip = ForwardDeployActivationRow["staging"];
+type FactsFresh = ForwardDeployActivationRow["factsFresh"];
+type BrandPinned = ForwardDeployActivationRow["brandPinned"];
 
-type StagingChip = "idle" | "enriching" | "hydrated" | "stale";
-type FactsFresh = "fresh" | "stale" | "pending";
-type BrandPinned = "pinned" | "placeholder" | "missing";
-
-type ActivationRow = {
-  id: string;
-  firmId: string;
-  firm: string;
-  owner: string;
-  staging: StagingChip;
-  factsFresh: FactsFresh;
-  brandPinned: BrandPinned;
-  authorizeBook: "pending" | "complete";
-  acceptTerms: "pending" | "complete";
-  publicUrl: string;
-  brandPackage: string;
-  templateVersion: string;
-};
+type ActivationRow = ForwardDeployActivationRow;
 
 const TEMPLATES = [
   "Engagement · ALG desk v3 (published)",
@@ -183,7 +169,7 @@ export function ActivationForwardDeployModule({
 
   useEffect(() => {
     let cancelled = false;
-    void hydratePrimaryStoreRows(FORWARD_DEPLOY_COLLECTION, INITIAL).then((stored) => {
+    void hydrateForwardDeployRows(INITIAL).then((stored) => {
       if (!cancelled) {
         setRows(stored);
         setSelectedId(stored[0]?.id ?? INITIAL[0].id);
@@ -215,7 +201,7 @@ export function ActivationForwardDeployModule({
       prev.map((r) => {
         if (r.id !== selected.id) return r;
         const next = { ...r, ...patch };
-        void persistPrimaryStoreRow(FORWARD_DEPLOY_COLLECTION, next);
+        void persistForwardDeployRow(next);
         return next;
       }),
     );
@@ -233,7 +219,7 @@ export function ActivationForwardDeployModule({
             factsFresh: "fresh" as FactsFresh,
             brandPinned: r.brandPinned === "missing" ? "placeholder" as BrandPinned : r.brandPinned,
           };
-          void persistPrimaryStoreRow(FORWARD_DEPLOY_COLLECTION, next);
+          void persistForwardDeployRow(next);
           void appendOperatorAudit({
             actorId: "ops.marco",
             kind: "activation.hydrate",

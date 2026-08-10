@@ -8,7 +8,7 @@ import { Button, Progress, Space, Table, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { isSendingIdentityReady, useWireTick, wirePorts } from "../../../wire";
 import { useOperatorNav } from "../../prototype/operatorNav";
-import { hydratePrimaryStoreRows } from "../../prototype/operator/operatorWireHelpers";
+import { loadForwardDeployStagingForFirm } from "../../prototype/operator/operatorWireHelpers";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { DEMO_FIRMS } from "./operatorAntData";
 import { StatusTag } from "./operatorAntTags";
@@ -58,19 +58,20 @@ export function ActivationStateModule() {
 
   useEffect(() => {
     let cancelled = false;
+    const seedStaging = FORWARD_DEPLOY_SEED.find((r) => r.firmId === selectedId)?.staging ?? "idle";
     void Promise.all([
       wirePorts.crmOAuth.get(selectedId),
       wirePorts.escrow.get(selectedId),
       wirePorts.machineApi.getCampaignState().catch(() => null),
-      hydratePrimaryStoreRows("forward_deploy", FORWARD_DEPLOY_SEED),
-    ]).then(([grant, escrow, campaign, deployRows]) => {
+      loadForwardDeployStagingForFirm(selectedId),
+    ]).then(([grant, escrow, campaign, staging]) => {
       if (cancelled) return;
-      const deploy = deployRows.find((r) => r.firmId === selectedId);
+      const deployStaging = staging ?? seedStaging;
       setLive({
         authorizeBook: grant.granted && !grant.revoked,
         readyToSend: isSendingIdentityReady(selectedId),
         escrowHeld: escrow.status === "held",
-        forwardDeployed: deploy?.staging === "hydrated" || deploy?.staging === "enriching",
+        forwardDeployed: deployStaging === "hydrated" || deployStaging === "enriching",
         campaignRunning: campaign?.state === "running",
       });
     });

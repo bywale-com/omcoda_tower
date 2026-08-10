@@ -18,6 +18,8 @@ import {
 import {
   loadFirmHealthData,
   type EngagementHealthRow,
+  type EngagementRecordSummary,
+  type InFlightAttemptRow,
   type SequenceHealthRow,
 } from "./operatorWireHelpers";
 
@@ -28,6 +30,11 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
   const [stickyFirmId, setStickyFirmId] = useState<string | null>(DEMO_FIRMS[3].id);
   const [sequences, setSequences] = useState<SequenceHealthRow[]>([]);
   const [engagementRows, setEngagementRows] = useState<EngagementHealthRow[]>([]);
+  const [inFlightAttempts, setInFlightAttempts] = useState<InFlightAttemptRow[]>([]);
+  const [engagementRecords, setEngagementRecords] = useState<EngagementRecordSummary>({
+    total: 0,
+    kinds: [],
+  });
   const [detailId, setDetailId] = useState<string | null>(null);
   const [supportCue, setSupportCue] = useState<string | null>(null);
 
@@ -40,6 +47,8 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
       if (!cancelled) {
         setSequences(data.sequences);
         setEngagementRows(data.engagement);
+        setInFlightAttempts(data.inFlightAttempts);
+        setEngagementRecords(data.engagementRecords);
       }
     });
     return () => {
@@ -232,6 +241,72 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
                   </div>
                 ))}
               </div>
+            </>,
+          )}
+
+          {surfaceBlock(
+            t,
+            "In-flight attempts",
+            focus.labelFocused("In-flight attempts"),
+            focus.labelHovered("In-flight attempts"),
+            <>
+              <div style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary, marginBottom: 10 }}>
+                In-flight attempts
+              </div>
+              {inFlightAttempts.length === 0 ? (
+                <div style={{ fontSize: 12, color: t.textMuted }}>No in-flight attempts for this firm.</div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  {inFlightAttempts.map((attempt) => (
+                    <div
+                      key={`${attempt.contactId}-${attempt.ownerChannel}-${attempt.status}`}
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr 0.8fr 0.7fr 0.8fr 0.5fr",
+                        gap: 8,
+                        alignItems: "center",
+                        padding: "10px 12px",
+                        border: `1px solid ${t.border}`,
+                        borderRadius: 4,
+                        background: t.bgPrimary,
+                        fontSize: 12,
+                      }}
+                    >
+                      <span style={{ color: t.textPrimary }}>{attempt.contactId}</span>
+                      <span style={{ color: t.textMuted }}>{attempt.ownerChannel}</span>
+                      <span style={{ color: t.textMuted }}>{attempt.status}</span>
+                      <span style={{ color: t.textMuted }}>{attempt.waitingOn}</span>
+                      <span style={{ color: t.textDim }}>step {attempt.step}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>,
+          )}
+
+          {surfaceBlock(
+            t,
+            "Engagement records",
+            focus.labelFocused("Engagement records"),
+            focus.labelHovered("Engagement records"),
+            <>
+              <div style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary, marginBottom: 10 }}>
+                Engagement records
+              </div>
+              <div style={{ fontSize: 12, color: t.textMuted, marginBottom: 8 }}>
+                Recent records · <strong style={{ color: t.textPrimary }}>{engagementRecords.total}</strong> total
+              </div>
+              {engagementRecords.kinds.length === 0 ? (
+                <div style={{ fontSize: 12, color: t.textMuted }}>No engagement records for this firm.</div>
+              ) : (
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {engagementRecords.kinds.map((kind) => (
+                    <span key={kind.kind}>
+                      {statusChip(t, `${kind.kind} · ${kind.count}`, "muted")}
+                    </span>
+                  ))}
+                </div>
+              )}
             </>,
           )}
 

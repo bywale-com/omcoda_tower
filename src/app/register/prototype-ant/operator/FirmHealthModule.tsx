@@ -7,6 +7,8 @@ import type { ColumnsType } from "antd/es/table";
 import {
   loadFirmHealthData,
   type EngagementHealthRow,
+  type EngagementRecordSummary,
+  type InFlightAttemptRow,
   type SequenceHealthRow,
 } from "../../prototype/operator/operatorWireHelpers";
 import { ModulePage, Surface } from "../chrome";
@@ -18,6 +20,11 @@ export function FirmHealthModule() {
   const [stickyFirmId, setStickyFirmId] = useState<string | null>(DEMO_FIRMS[3].id);
   const [sequences, setSequences] = useState<SequenceHealthRow[]>([]);
   const [engagementRows, setEngagementRows] = useState<EngagementHealthRow[]>([]);
+  const [inFlightAttempts, setInFlightAttempts] = useState<InFlightAttemptRow[]>([]);
+  const [engagementRecords, setEngagementRecords] = useState<EngagementRecordSummary>({
+    total: 0,
+    kinds: [],
+  });
   const [detailId, setDetailId] = useState<string | null>(null);
   const [supportCue, setSupportCue] = useState<string | null>(null);
 
@@ -31,6 +38,8 @@ export function FirmHealthModule() {
       if (!cancelled) {
         setSequences(data.sequences);
         setEngagementRows(data.engagement);
+        setInFlightAttempts(data.inFlightAttempts);
+        setEngagementRecords(data.engagementRecords);
       }
     });
     return () => {
@@ -60,6 +69,14 @@ export function FirmHealthModule() {
       width: 100,
       render: (h) => <StatusTag label={h} color={chipTone(h)} />,
     },
+  ];
+
+  const attemptColumns: ColumnsType<InFlightAttemptRow> = [
+    { title: "Contact", dataIndex: "contactId", key: "contactId" },
+    { title: "Channel", dataIndex: "ownerChannel", key: "ownerChannel", width: 90 },
+    { title: "Status", dataIndex: "status", key: "status", width: 80 },
+    { title: "Waiting on", dataIndex: "waitingOn", key: "waitingOn", ellipsis: true },
+    { title: "Step", dataIndex: "step", key: "step", width: 60 },
   ];
 
   const seedSupport = (seq?: SequenceHealthRow) => {
@@ -105,6 +122,36 @@ export function FirmHealthModule() {
 
       <Surface label="Engagement health" style={{ marginTop: 16 }}>
         <Table size="small" rowKey="label" columns={engColumns} dataSource={engagementRows} pagination={false} />
+      </Surface>
+
+      <Surface label="In-flight attempts" style={{ marginTop: 16 }}>
+        <Table
+          size="small"
+          rowKey={(row) => `${row.contactId}-${row.ownerChannel}-${row.status}`}
+          columns={attemptColumns}
+          dataSource={inFlightAttempts}
+          pagination={false}
+          locale={{ emptyText: "No in-flight attempts for this firm." }}
+        />
+      </Surface>
+
+      <Surface label="Engagement records" style={{ marginTop: 16 }}>
+        <Typography.Text type="secondary">
+          Recent records · <strong>{engagementRecords.total}</strong> total
+        </Typography.Text>
+        {engagementRecords.kinds.length === 0 ? (
+          <Typography.Text type="secondary" style={{ display: "block", marginTop: 8 }}>
+            No engagement records for this firm.
+          </Typography.Text>
+        ) : (
+          <Space wrap style={{ marginTop: 8 }}>
+            {engagementRecords.kinds.map((kind) => (
+              <Tag key={kind.kind}>
+                {kind.kind} · {kind.count}
+              </Tag>
+            ))}
+          </Space>
+        )}
       </Surface>
 
       <Surface label="Open support context" style={{ marginTop: 16 }}>
