@@ -558,5 +558,19 @@ export async function tickOnce(now = new Date()): Promise<{
     }
   }
 
+  // Also fire active schedule workflow_trigger rows (validated-shape walk)
+  try {
+    const { dispatchScheduleTriggers } = await import("./workflowWalk.js");
+    const scheduled = await dispatchScheduleTriggers(pool);
+    if (scheduled.length) {
+      console.log(
+        "[cascade] schedule workflows fired",
+        scheduled.map((s) => `${s.workflowId}:${s.enrollments}`).join(","),
+      );
+    }
+  } catch (err) {
+    console.warn("[cascade] schedule triggers:", err);
+  }
+
   return { scanned: attempts.rowCount ?? 0, fired, nullified };
 }

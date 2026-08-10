@@ -4,7 +4,6 @@ import type { EventTriggerConfig, ManualTriggerConfig } from "./automationEvents
 import {
   emptyEventTriggerConfig,
   emptyManualTriggerConfig,
-  isEventTriggerConfigured,
   isManualTriggerConfigured,
 } from "./automationEvents";
 import type { IfConditionConfig } from "./automationConditions";
@@ -55,7 +54,28 @@ export type WorkflowConstantKind = "data_reference" | "client" | "automation";
 
 export type WorkflowOperationKind = "delay" | "exit" | "transform";
 
-export type WorkflowTriggerKind = "event" | "schedule" | "manual" | "constant";
+export type WorkflowTriggerKind = "event" | "schedule" | "manual" | "constant" | "webhook";
+
+/** Agent / sequence_template refs Action nodes bind to (resolved via firm_sequence_binding). */
+export type WorkflowAgentRef =
+  | "tpl.optin_launch.v1"
+  | "tpl.launch_day.v1"
+  | "tpl.reactivation.v1"
+  | "tpl.reengagement.v1";
+
+export const WORKFLOW_AGENT_OPTIONS: { id: WorkflowAgentRef; label: string; sequenceClass: string }[] =
+  [
+    { id: "tpl.optin_launch.v1", label: "Opt-in launch agent", sequenceClass: "optin_launch" },
+    { id: "tpl.launch_day.v1", label: "Launch day agent", sequenceClass: "launch_day" },
+    { id: "tpl.reactivation.v1", label: "Reactivation agent", sequenceClass: "reactivation" },
+    { id: "tpl.reengagement.v1", label: "Re-engagement / nudge agent", sequenceClass: "reengagement" },
+  ];
+
+export const WORKFLOW_CONSTANT_PACK_OPTIONS: { id: string; label: string }[] = [
+  { id: "pack.crs.defaults", label: "CRS defaults pack" },
+  { id: "pack.eligibility.scope", label: "Eligibility scope pack" },
+  { id: "pack.firm.cedar", label: "Firm Cedar constants" },
+];
 
 export type WorkflowNodeData = {
   label: string;
@@ -67,9 +87,12 @@ export type WorkflowNodeData = {
   eventTriggerConfig?: EventTriggerConfig;
   manualTriggerConfig?: ManualTriggerConfig;
   scheduleSummary?: string;
+  scheduleCron?: string;
+  webhookId?: string;
   enrollmentHint?: string;
   constantKind?: WorkflowConstantKind;
   constantSummary?: string;
+  constantsPackId?: string;
   branchKind?: WorkflowBranchKind;
   filterSummary?: string;
   operationKind?: WorkflowOperationKind;
@@ -78,6 +101,8 @@ export type WorkflowNodeData = {
   ruleConfig?: RuleNodeConfig;
   actionType?: WorkflowActionType;
   actionSummary?: string;
+  /** Binds Action → action.agent_ref / firm_sequence_binding */
+  agentRef?: WorkflowAgentRef | string;
   delayLabel?: string;
   conditionConfig?: IfConditionConfig;
   runStatus?: WorkflowNodeRunStatus;
@@ -154,11 +179,27 @@ export const WORKFLOW_TRIGGER_OPTIONS: TriggerOption[] = [
     triggerKind: "manual",
   },
   {
+    id: "trigger-webhook",
+    label: "Webhook trigger",
+    description: "Run when an external system posts to /wire/hook/:id",
+    triggerKind: "webhook",
+  },
+  {
     id: "trigger-constant",
     label: "Constant trigger",
     description: "Run when a constant value changes",
     triggerKind: "constant",
   },
+];
+
+/** Flat catalog of machine event names Trigger(event) can subscribe to. */
+export const WORKFLOW_EVENT_CATALOG: { id: WorkflowTriggerEvent; label: string }[] = [
+  { id: "eligibility.changed", label: "Eligibility changed" },
+  { id: "contact.created", label: "Contact created" },
+  { id: "contact.updated", label: "Contact updated" },
+  { id: "import.created", label: "Import created" },
+  { id: "audit.completed", label: "Audit completed" },
+  { id: "audit.failed", label: "Audit failed" },
 ];
 
 export const WORKFLOW_PALETTE_BLOCKS: PaletteBlock[] = [
@@ -587,85 +628,117 @@ function createEmptyWorkflow(id: string, name: string, target: WorkflowTarget): 
   };
 }
 
+/** Three canonical workflows — drawable + runnable via validated-shape walk. */
 const SEED_WORKFLOWS: WorkflowDefinition[] = [
   {
-    id: "auto-welcome",
-    name: "Welcome sequence armer",
-    status: "active",
+    id: "wf-optin-launch",
+    name: "New firm → opt-in launch",
+    status: "draft",
     target: "audit",
-    updatedAt: "2026-06-19T10:00:00.000Z",
+    updatedAt: "2026-08-10T00:00:00.000Z",
     nodes: [
       verticalNode("trigger-1", "trigger", 0, {
-        label: "Event-based trigger",
+        label: "Onboarding / audit completed",
         configured: true,
         triggerKind: "event",
         target: "audit",
         triggerEvent: "audit.completed",
-        enrollmentHint: "Reachable contacts from completed audit batches.",
+        enrollmentHint: "Firm reaches running / onboarding complete → scope book.",
       }),
-      verticalNode("branch-1", "branch", 1, {
-        label: "Filter",
+      verticalNode("rule-1", "rule", 1, {
+        label: "Scope book (eligibility)",
         configured: true,
-        branchKind: "true_false",
-        filterSummary: "Reachable · score ≥ medium · not on active opt-in",
+        ruleId: "immigration-service-eligibility",
+        ruleSummary: "Pass if any CEC|FSW|FST|PNP pathway asserts",
+        ruleConfig: emptyRuleNodeConfig("immigration-service-eligibility"),
       }),
       verticalNode("action-1", "action", 2, {
-        label: "Manage sequences",
+        label: "Call opt-in agent",
         configured: true,
         actionType: "enroll_sequence",
-        actionSummary: "Enroll in Opt-in · Standard v2",
+        agentRef: "tpl.optin_launch.v1",
+        actionSummary: "Call agent · tpl.optin_launch.v1",
+      }),
+      verticalNode("exit-1", "exit", 3, { label: "Exit", configured: true }),
+    ],
+    edges: chainEdges(["trigger-1", "rule-1", "action-1", "exit-1"]),
+  },
+  {
+    id: "wf-eligibility-reactivation",
+    name: "Eligibility changed → reactivation",
+    status: "draft",
+    target: "client",
+    updatedAt: "2026-08-10T00:00:00.000Z",
+    nodes: [
+      verticalNode("trigger-1", "trigger", 0, {
+        label: "Eligibility changed",
+        configured: true,
+        triggerKind: "event",
+        target: "client",
+        triggerEvent: "eligibility.changed",
+        enrollmentHint: "Fires when reference_version / fact_writeback yields new eligibility_result.",
+      }),
+      verticalNode("branch-1", "branch", 1, {
+        label: "Reactivation-worthy?",
+        configured: true,
+        branchKind: "if",
+        filterSummary: "reactivation-worthy",
+        conditionConfig: emptyIfConditionConfig(),
+      }),
+      verticalNode("action-1", "action", 2, {
+        label: "Call reactivation agent",
+        configured: true,
+        actionType: "enroll_sequence",
+        agentRef: "tpl.reactivation.v1",
+        actionSummary: "Call agent · tpl.reactivation.v1",
       }),
       verticalNode("exit-1", "exit", 3, { label: "Exit", configured: true }),
     ],
     edges: chainEdges(["trigger-1", "branch-1", "action-1", "exit-1"]),
   },
   {
-    id: "auto-crs-alert",
-    name: "CRS threshold alert",
-    status: "active",
+    id: "wf-webhook-reeval",
+    name: "External change (webhook) → re-evaluate",
+    status: "draft",
     target: "client",
-    updatedAt: "2026-06-18T14:30:00.000Z",
+    updatedAt: "2026-08-10T00:00:00.000Z",
     nodes: [
       verticalNode("trigger-1", "trigger", 0, {
-        label: "Event-based trigger",
+        label: "Webhook · external CRS/score",
         configured: true,
-        triggerKind: "event",
+        triggerKind: "webhook",
         target: "client",
-        triggerEvent: "eligibility.changed",
-        enrollmentHint: "Clients with CRS within 5 points of latest draw threshold.",
+        webhookId: "wh_crs_external_v1",
+        enrollmentHint: "POST /wire/hook/wh_crs_external_v1 fires this workflow.",
       }),
-      verticalNode("action-1", "action", 1, {
-        label: "Send notification",
+      verticalNode("constant-1", "constant", 1, {
+        label: "CRS defaults",
         configured: true,
-        actionType: "notify_consultant",
-        actionSummary: "Notify assigned consultant · CRS alert",
+        constantKind: "data_reference",
+        constantsPackId: "pack.crs.defaults",
+        constantSummary: "pack.crs.defaults",
       }),
-      verticalNode("exit-1", "exit", 2, { label: "Exit", configured: true }),
-    ],
-    edges: chainEdges(["trigger-1", "action-1", "exit-1"]),
-  },
-  {
-    id: "auto-stale-file",
-    name: "Stale file escalator",
-    status: "paused",
-    target: "client",
-    updatedAt: "2026-06-17T09:00:00.000Z",
-    nodes: [
-      verticalNode("trigger-1", "trigger", 0, {
-        label: "Schedule-based trigger",
-        configured: false,
-        triggerKind: "schedule",
-        target: "client",
-        scheduleSummary: "Add schedule",
-        enrollmentHint: "Clients with no activity past the stale threshold.",
+      verticalNode("rule-1", "rule", 2, {
+        label: "Re-evaluate eligibility",
+        configured: true,
+        ruleId: "immigration-service-eligibility",
+        ruleSummary: "Re-evaluate eligibility pathways",
+        ruleConfig: emptyRuleNodeConfig("immigration-service-eligibility"),
       }),
-      verticalNode("exit-1", "exit", 1, { label: "Exit", configured: true }),
+      verticalNode("action-1", "action", 3, {
+        label: "Call reactivation / nudge agent",
+        configured: true,
+        actionType: "enroll_sequence",
+        agentRef: "tpl.reactivation.v1",
+        actionSummary: "Call agent · tpl.reactivation.v1",
+      }),
+      verticalNode("exit-1", "exit", 4, { label: "Exit", configured: true }),
     ],
-    edges: chainEdges(["trigger-1", "exit-1"]),
+    edges: chainEdges(["trigger-1", "constant-1", "rule-1", "action-1", "exit-1"]),
   },
 ];
 
-const WORKFLOWS_STORAGE_KEY = "tower.automations.workflows";
+const WORKFLOWS_STORAGE_KEY = "tower.automations.workflows.v2";
 
 function isWorkflowDefinition(value: unknown): value is WorkflowDefinition {
   if (!value || typeof value !== "object") return false;
@@ -754,12 +827,14 @@ export function createTriggerNode(
     event: "Event-based trigger",
     schedule: "Schedule-based trigger",
     manual: "Manual trigger",
+    webhook: "Webhook trigger",
     constant: "Constant trigger",
   };
   const enrollmentHints: Record<WorkflowTriggerKind, string> = {
     event: "Records matching enrollment criteria when the event fires.",
     schedule: "Records matching enrollment criteria on each scheduled run.",
     manual: "Records included when this automation is run manually.",
+    webhook: "Records included when an external system hits the webhook URL.",
     constant: "Records evaluated when the constant value changes.",
   };
 
@@ -775,9 +850,19 @@ export function createTriggerNode(
       runStatus: "idle",
       lastInput: null,
       lastOutput: null,
-      ...(triggerKind === "event" ? { eventTriggerConfig: emptyEventTriggerConfig() } : {}),
+      ...(triggerKind === "event"
+        ? {
+            eventTriggerConfig: emptyEventTriggerConfig(),
+            triggerEvent: "eligibility.changed" as WorkflowTriggerEvent,
+          }
+        : {}),
       ...(triggerKind === "manual" ? { manualTriggerConfig: emptyManualTriggerConfig() } : {}),
-      ...(triggerKind === "schedule" ? { scheduleSummary: "Add schedule" } : {}),
+      ...(triggerKind === "schedule"
+        ? { scheduleSummary: "Every hour", scheduleCron: "0 * * * *" }
+        : {}),
+      ...(triggerKind === "webhook"
+        ? { webhookId: `wh_${id}`, enrollmentHint: enrollmentHints.webhook }
+        : {}),
       ...(triggerKind === "constant"
         ? { constantKind: "automation", constantSummary: "Select constant…" }
         : {}),
@@ -787,16 +872,19 @@ export function createTriggerNode(
 
 export function isTriggerNodeConfigured(data: WorkflowNodeData): boolean {
   if (data.triggerKind === "event") {
-    if (data.eventTriggerConfig) {
-      return isEventTriggerConfigured(data.eventTriggerConfig);
-    }
-    return data.configured;
+    return Boolean(data.triggerEvent) || data.configured;
   }
   if (data.triggerKind === "manual") {
     if (data.manualTriggerConfig) {
       return isManualTriggerConfigured(data.manualTriggerConfig);
     }
     return data.configured;
+  }
+  if (data.triggerKind === "webhook") {
+    return Boolean(data.webhookId);
+  }
+  if (data.triggerKind === "schedule") {
+    return Boolean(data.scheduleCron || data.scheduleSummary);
   }
   return data.configured;
 }
@@ -835,6 +923,10 @@ export function createNodeFromBlock(
       ruleConfig: block.defaultData.ruleConfig,
       actionType: block.defaultData.actionType,
       actionSummary: block.defaultData.actionSummary,
+      agentRef: block.defaultData.agentRef,
+      constantsPackId: block.defaultData.constantsPackId,
+      webhookId: block.defaultData.webhookId,
+      scheduleCron: block.defaultData.scheduleCron,
       delayLabel: block.defaultData.delayLabel,
       conditionConfig: block.defaultData.conditionConfig,
       runStatus: "idle",

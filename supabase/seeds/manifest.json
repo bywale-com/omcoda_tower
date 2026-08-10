@@ -47,6 +47,34 @@
           "name": "crs_cutoff"
         }
       ]
+    },
+    {
+      "id": "003_canonical_workflows",
+      "file": "003_canonical_workflows.sql",
+      "environments": ["development", "staging"],
+      "description": "Three canonical Automations workflows + constants packs + workflow_trigger rows",
+      "records": [
+        {
+          "table": "workflow",
+          "id": "wf-optin-launch",
+          "name": "New firm → opt-in launch"
+        },
+        {
+          "table": "workflow",
+          "id": "wf-eligibility-reactivation",
+          "name": "Eligibility changed → reactivation"
+        },
+        {
+          "table": "workflow",
+          "id": "wf-webhook-reeval",
+          "name": "External change (webhook) → re-evaluate"
+        },
+        {
+          "table": "constants_packs",
+          "id": "pack.crs.defaults",
+          "name": "CRS defaults pack"
+        }
+      ]
     }
   ]
 }

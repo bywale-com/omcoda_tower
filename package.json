@@ -11,7 +11,8 @@
     "db:seed": "tsx --env-file=.env scripts/run-seed.ts",
     "worker": "tsx --env-file=.env server/wire-service/worker.ts",
     "verify:machine": "tsx --env-file=.env scripts/verify-machine-e2e.ts",
-    "verify:worker": "tsx --env-file=.env scripts/verify-worker-actuation.ts"
+    "verify:worker": "tsx --env-file=.env scripts/verify-worker-actuation.ts",
+    "verify:automations": "tsx --env-file=.env scripts/verify-automations-alive.ts"
   },
   "dependencies": {
     "@ant-design/icons": "^6.3.2",

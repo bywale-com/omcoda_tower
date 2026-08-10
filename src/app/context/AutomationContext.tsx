@@ -20,10 +20,12 @@ import {
   savePersistedWorkflows,
   workflowStatusLabel,
   type WorkflowDefinition,
+  type WorkflowNodeData,
 } from "../data/automationWorkflows";
 import type { HubAutomation } from "../data/hub";
 import { wirePorts } from "../wire/registry";
 import { wireRealEnabled } from "../wire/http";
+import type { Edge, Node } from "@xyflow/react";
 
 type WorkflowPatch = Partial<
   Pick<WorkflowDefinition, "name" | "status" | "target" | "nodes" | "edges">
@@ -60,18 +62,32 @@ function mapDbRun(row: {
   trigger_label: string | null;
   started_at: string;
   finished_at: string | null;
+  counts?: Record<string, unknown> | null;
 }): AutomationRun {
+  const enrollments =
+    typeof row.counts?.enrollments === "number" ? row.counts.enrollments : undefined;
   return {
     id: row.id,
     workflowId: row.workflow_id,
     entityKind: "contact",
     entityId: "machine",
-    entityLabel: "Machine run",
+    entityLabel:
+      enrollments != null ? `Machine run · ${enrollments} enrolled` : "Machine run",
     status: (row.status === "stopped" ? "failed" : row.status) as AutomationRun["status"],
     triggerLabel: row.trigger_label ?? "Run",
     startedAt: row.started_at,
     finishedAt: row.finished_at ?? undefined,
   };
+}
+
+function asGraphNodes(value: unknown): Node<WorkflowNodeData>[] | null {
+  if (!Array.isArray(value)) return null;
+  return value as Node<WorkflowNodeData>[];
+}
+
+function asGraphEdges(value: unknown): Edge[] | null {
+  if (!Array.isArray(value)) return null;
+  return value as Edge[];
 }
 
 export function AutomationProvider({ children }: { children: ReactNode }) {
@@ -83,7 +99,7 @@ export function AutomationProvider({ children }: { children: ReactNode }) {
     savePersistedWorkflows(workflows);
   }, [workflows]);
 
-  // Hydrate statuses from Postgres when real wire is on
+  // Hydrate workflows (including graph) from Postgres when real wire is on
   useEffect(() => {
     if (!wireRealEnabled()) return;
     let cancelled = false;
@@ -95,6 +111,9 @@ export function AutomationProvider({ children }: { children: ReactNode }) {
           const byId = new Map(prev.map((w) => [w.id, w]));
           for (const row of rows) {
             const existing = byId.get(row.id);
+            const graph = row.graph ?? { nodes: [], edges: [] };
+            const nodes = asGraphNodes(graph.nodes);
+            const edges = asGraphEdges(graph.edges);
             if (existing) {
               byId.set(row.id, {
                 ...existing,
@@ -102,6 +121,18 @@ export function AutomationProvider({ children }: { children: ReactNode }) {
                 status: (row.status as WorkflowDefinition["status"]) ?? existing.status,
                 target: (row.target as WorkflowDefinition["target"]) ?? existing.target,
                 updatedAt: row.updated_at ?? existing.updatedAt,
+                ...(nodes && nodes.length ? { nodes } : {}),
+                ...(edges && edges.length ? { edges } : {}),
+              });
+            } else if (nodes && edges) {
+              byId.set(row.id, {
+                id: row.id,
+                name: row.name,
+                status: (row.status as WorkflowDefinition["status"]) ?? "draft",
+                target: (row.target as WorkflowDefinition["target"]) ?? "contact",
+                updatedAt: row.updated_at,
+                nodes,
+                edges,
               });
             }
           }
@@ -121,31 +152,22 @@ export function AutomationProvider({ children }: { children: ReactNode }) {
   const createAutomation = useCallback(() => {
     const workflow = createAutomationWorkflow(workflows);
     setWorkflows((prev) => [workflow, ...prev]);
-    if (wireRealEnabled()) {
-      void wirePorts.machineApi
-        .createWorkflow({
-          id: workflow.id,
-          name: workflow.name,
-          target: workflow.target,
-          graph: { nodes: workflow.nodes, edges: workflow.edges },
-        })
-        .catch(() => {
-          /* keep local draft if wire down */
-        });
-    } else {
-      void wirePorts.machineApi.createWorkflow({
+    void wirePorts.machineApi
+      .createWorkflow({
         id: workflow.id,
         name: workflow.name,
         target: workflow.target,
         graph: { nodes: workflow.nodes, edges: workflow.edges },
+      })
+      .catch(() => {
+        /* keep local draft if wire down */
       });
-    }
     return workflow;
   }, [workflows]);
 
   const updateWorkflow = useCallback((id: string, patch: WorkflowPatch) => {
-    setWorkflows((prev) =>
-      prev.map((workflow) => {
+    setWorkflows((prev) => {
+      const next = prev.map((workflow) => {
         if (workflow.id !== id) return workflow;
         const nextName =
           patch.name !== undefined ? normalizeAutomationName(patch.name) : workflow.name;
@@ -155,27 +177,37 @@ export function AutomationProvider({ children }: { children: ReactNode }) {
           name: nextName,
           updatedAt: new Date().toISOString(),
         };
-      }),
-    );
-    if (wireRealEnabled() && (patch.name || patch.nodes || patch.edges || patch.target)) {
-      const current = workflows.find((w) => w.id === id);
-      if (current) {
-        void wirePorts.machineApi
-          .createWorkflow({
-            id,
-            name: patch.name ?? current.name,
-            target: patch.target ?? current.target,
-            graph: {
-              nodes: patch.nodes ?? current.nodes,
-              edges: patch.edges ?? current.edges,
-            },
-          })
-          .catch(() => undefined);
+      });
+      if (wireRealEnabled() && (patch.name || patch.nodes || patch.edges || patch.target)) {
+        const current = next.find((w) => w.id === id);
+        if (current) {
+          void wirePorts.machineApi
+            .createWorkflow({
+              id,
+              name: current.name,
+              target: current.target,
+              graph: { nodes: current.nodes, edges: current.edges },
+            })
+            .catch(() => undefined);
+        }
       }
-    }
-  }, [workflows]);
+      return next;
+    });
+  }, []);
 
   const activateWorkflow = useCallback(async (id: string) => {
+    const current = workflows.find((w) => w.id === id);
+    if (current && wireRealEnabled()) {
+      // Persist latest graph before materializing workflow_trigger rows
+      await wirePorts.machineApi
+        .createWorkflow({
+          id,
+          name: current.name,
+          target: current.target,
+          graph: { nodes: current.nodes, edges: current.edges },
+        })
+        .catch(() => undefined);
+    }
     setWorkflows((prev) =>
       prev.map((w) =>
         w.id === id ? { ...w, status: "active", updatedAt: new Date().toISOString() } : w,
@@ -186,7 +218,7 @@ export function AutomationProvider({ children }: { children: ReactNode }) {
     } catch {
       // Local status already flipped; Postgres write retried on next activate
     }
-  }, []);
+  }, [workflows]);
 
   const renameAutomation = useCallback(
     (id: string, name: string) => {
@@ -205,6 +237,12 @@ export function AutomationProvider({ children }: { children: ReactNode }) {
       const seeded = getAutomationRuns(workflowId);
       const extra = sessionRuns.filter((run) => run.workflowId === workflowId);
       const remote = remoteRuns.filter((run) => run.workflowId === workflowId);
+      // Prefer remote/session over seed chrome when wire is real
+      if (wireRealEnabled() && (extra.length > 0 || remote.length > 0)) {
+        return [...extra, ...remote].sort(
+          (a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime(),
+        );
+      }
       return [...extra, ...remote, ...seeded].sort(
         (a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime(),
       );
@@ -225,69 +263,72 @@ export function AutomationProvider({ children }: { children: ReactNode }) {
     [sessionRuns],
   );
 
+  const refreshRemoteRuns = useCallback(async (workflowId: string) => {
+    try {
+      const rows = await wirePorts.machineApi.listRuns(workflowId);
+      setRemoteRuns((prev) => {
+        const others = prev.filter((r) => r.workflowId !== workflowId);
+        return [...rows.map(mapDbRun), ...others];
+      });
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
   const startManualRun = useCallback((workflowId: string) => {
     const run = createManualAutomationRun(workflowId);
     setSessionRuns((prev) => [run, ...prev]);
 
-    if (wireRealEnabled()) {
-      void (async () => {
-        try {
-          const started = await wirePorts.machineApi.startRun(workflowId, "Manual run");
-          setSessionRuns((prev) =>
-            prev.map((item) =>
-              item.id === run.id ? { ...item, id: started.id } : item,
-            ),
-          );
-          window.setTimeout(() => {
-            void wirePorts.machineApi
-              .completeRun(started.id, {
-                status: "success",
-                counts: { processed: 1, success: 1, failed: 0 },
-              })
-              .then(() => {
-                setSessionRuns((prev) =>
-                  prev.map((item) =>
-                    item.id === started.id && item.status === "running"
-                      ? completeAutomationRun({ ...item, id: started.id }, "success")
-                      : item,
-                  ),
-                );
-                void wirePorts.machineApi.listRuns(workflowId).then((rows) => {
-                  setRemoteRuns((prev) => {
-                    const others = prev.filter((r) => r.workflowId !== workflowId);
-                    return [...rows.map(mapDbRun), ...others];
-                  });
-                });
-              });
-          }, 1800);
-        } catch {
-          window.setTimeout(() => {
-            setSessionRuns((prev) =>
-              prev.map((item) =>
-                item.id === run.id && item.status === "running"
-                  ? completeAutomationRun(item, "success")
-                  : item,
-              ),
-            );
-          }, 1800);
+    void (async () => {
+      try {
+        const started = await wirePorts.machineApi.startRun(workflowId, "Manual run", {
+          payload: { manual: true },
+        });
+        const finalStatus =
+          started.status === "failed" || started.status === "success"
+            ? started.status
+            : "success";
+        const enrollmentCount = started.enrollments?.length ?? 0;
+        setSessionRuns((prev) =>
+          prev.map((item) =>
+            item.id === run.id
+              ? completeAutomationRun(
+                  {
+                    ...item,
+                    id: started.id,
+                    entityLabel:
+                      enrollmentCount > 0
+                        ? `Machine run · ${enrollmentCount} enrolled`
+                        : item.entityLabel,
+                  },
+                  finalStatus === "failed" ? "failed" : "success",
+                )
+              : item,
+          ),
+        );
+        // Server already finished the walk — do not fake-complete with a timer
+        if (started.status === "running") {
+          void wirePorts.machineApi
+            .completeRun(started.id, {
+              status: "success",
+              nodeStatus: started.nodeStatus,
+              counts: { processed: 1, success: 1, enrollments: enrollmentCount },
+            })
+            .catch(() => undefined);
         }
-      })();
-    } else {
-      void wirePorts.machineApi.startRun(workflowId, "Manual run").then((started) => {
-        window.setTimeout(() => {
-          void wirePorts.machineApi.completeRun(started.id, { status: "success" });
-          setSessionRuns((prev) =>
-            prev.map((item) =>
-              item.id === run.id && item.status === "running"
-                ? completeAutomationRun(item, "success")
-                : item,
-            ),
-          );
-        }, 1800);
-      });
-    }
+        await refreshRemoteRuns(workflowId);
+      } catch {
+        setSessionRuns((prev) =>
+          prev.map((item) =>
+            item.id === run.id && item.status === "running"
+              ? completeAutomationRun(item, "failed")
+              : item,
+          ),
+        );
+      }
+    })();
     return run;
-  }, []);
+  }, [refreshRemoteRuns]);
 
   const stopManualRun = useCallback((runId: string) => {
     setSessionRuns((prev) =>

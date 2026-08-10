@@ -45,10 +45,16 @@ export const realMachineApi: MachineApiPort = {
   },
 
   async activateWorkflow(workflowId) {
-    return wireFetch<{ workflowId: string; status: string; transition?: string }>(
-      `/machine/workflows/${encodeURIComponent(workflowId)}/activate`,
-      { method: "POST", headers: firmHeader(), body: "{}" },
-    );
+    return wireFetch<{
+      workflowId: string;
+      status: string;
+      transition?: string;
+      triggersMaterialized?: number;
+    }>(`/machine/workflows/${encodeURIComponent(workflowId)}/activate`, {
+      method: "POST",
+      headers: firmHeader(),
+      body: "{}",
+    });
   },
 
   async pauseWorkflow(workflowId) {
@@ -58,13 +64,24 @@ export const realMachineApi: MachineApiPort = {
     );
   },
 
-  async startRun(workflowId, triggerLabel) {
-    return wireFetch<{ id: string; workflowId: string; status: string }>(
+  async startRun(workflowId, triggerLabel, opts) {
+    return wireFetch<{
+      id: string;
+      workflowId: string;
+      status: string;
+      nodeStatus?: Record<string, unknown>;
+      enrollments?: string[];
+      error?: string;
+    }>(
       `/machine/workflows/${encodeURIComponent(workflowId)}/runs?firmId=${encodeURIComponent(FIRM)}`,
       {
         method: "POST",
         headers: firmHeader(),
-        body: JSON.stringify({ triggerLabel: triggerLabel ?? "Manual run" }),
+        body: JSON.stringify({
+          triggerLabel: triggerLabel ?? "Manual run",
+          contactIds: opts?.contactIds,
+          payload: opts?.payload,
+        }),
       },
     );
   },
@@ -142,5 +159,43 @@ export const realMachineApi: MachineApiPort = {
       templates: SequenceTemplateRow[];
       bindings: FirmSequenceBindingRow[];
     }>(`/machine/templates?firmId=${encodeURIComponent(FIRM)}`, { headers: firmHeader() });
+  },
+
+  async upsertTemplate(input) {
+    return wireFetch<{ id: string; cells: number; table: string }>(
+      `/machine/templates/${encodeURIComponent(input.id)}`,
+      {
+        method: "PUT",
+        headers: firmHeader(),
+        body: JSON.stringify({
+          sequenceClass: input.sequenceClass,
+          label: input.label,
+          cells: input.cells,
+          variant: input.variant,
+        }),
+      },
+    );
+  },
+
+  async upsertBinding(input) {
+    return wireFetch<{ id: string; sequenceClass: string; templateId: string }>(
+      `/machine/bindings?firmId=${encodeURIComponent(FIRM)}`,
+      {
+        method: "POST",
+        headers: firmHeader(),
+        body: JSON.stringify(input),
+      },
+    );
+  },
+
+  async fireEvent(input) {
+    return wireFetch<{ eventName: string; workflowsFired: unknown[] }>(
+      `/machine/events?firmId=${encodeURIComponent(FIRM)}`,
+      {
+        method: "POST",
+        headers: firmHeader(),
+        body: JSON.stringify(input),
+      },
+    );
   },
 };

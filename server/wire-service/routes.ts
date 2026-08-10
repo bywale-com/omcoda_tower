@@ -43,6 +43,10 @@ import {
   handleWorkflowRunComplete,
   handleWorkflowRunStart,
   handleWorkflowRunsList,
+  handleMachineEvent,
+  handleWebhookTrigger,
+  handleTemplateUpsert,
+  handleBindingUpsert,
 } from "./machine.ts";
 
 export function createWireRoutes(): Hono {
@@ -100,6 +104,10 @@ export function createWireRoutes(): Hono {
   wire.post("/machine/onboarding/fire", handleOnboardingFire);
   wire.get("/machine/board", handleBoardDetections);
   wire.get("/machine/templates", handleTemplatesList);
+  wire.put("/machine/templates/:id", handleTemplateUpsert);
+  wire.post("/machine/bindings", handleBindingUpsert);
+  wire.post("/machine/events", handleMachineEvent);
+  wire.post("/hook/:webhookId", handleWebhookTrigger);
 
   return wire;
 }

@@ -3,6 +3,12 @@ import { randomUUID } from "node:crypto";
 import { getPool } from "./db.ts";
 import { enrollAndActuate, tickOnce } from "./cascade.ts";
 import { sendGateSnapshot } from "./sendMode.ts";
+import {
+  dispatchEventToWorkflows,
+  materializeTriggersFromGraph,
+  walkValidatedWorkflow,
+  type RfNode,
+} from "./workflowWalk.ts";
 
 function json(c: Context, body: unknown, status = 200) {
   return c.json(body, status);
@@ -47,23 +53,39 @@ export async function handleWorkflowCreate(c: Context) {
   return json(c, { id, firmId: firm, name: body.name, status: "draft", target });
 }
 
-/** Activate: draft → active (the proof transition). */
+/** Activate: draft → active + materialize workflow_trigger rows from graph. */
 export async function handleWorkflowActivate(c: Context) {
   const workflowId = c.req.param("id");
+  const firm = firmId(c);
   const pool = getPool();
   const cur = await pool.query<{ status: string }>(
     `SELECT status FROM workflow_state WHERE workflow_id=$1`,
     [workflowId],
   );
   if (!cur.rowCount) return json(c, { error: "workflow_state missing" }, 404);
-  if (cur.rows[0].status === "active") {
-    return json(c, { workflowId, status: "active", noop: true });
-  }
+
+  const wf = await pool.query<{ graph: { nodes: RfNode[]; edges: unknown[] }; firm_id: string }>(
+    `SELECT graph, firm_id FROM workflow WHERE id=$1`,
+    [workflowId],
+  );
+  if (!wf.rowCount) return json(c, { error: "workflow missing" }, 404);
+
   await pool.query(
     `UPDATE workflow_state SET status='active', updated_at=now() WHERE workflow_id=$1`,
     [workflowId],
   );
-  return json(c, { workflowId, status: "active", transition: "draft→active" });
+  const triggers = await materializeTriggersFromGraph(
+    pool,
+    workflowId,
+    wf.rows[0].firm_id || firm,
+    wf.rows[0].graph ?? { nodes: [], edges: [] },
+  );
+  return json(c, {
+    workflowId,
+    status: "active",
+    transition: cur.rows[0].status === "active" ? "active→active" : "draft→active",
+    triggersMaterialized: triggers,
+  });
 }
 
 export async function handleWorkflowList(c: Context) {
@@ -83,7 +105,13 @@ export async function handleWorkflowList(c: Context) {
 export async function handleWorkflowRunStart(c: Context) {
   const workflowId = c.req.param("id");
   const firm = firmId(c);
-  const body = await c.req.json<{ triggerLabel?: string }>().catch(() => ({}));
+  const body = await c.req
+    .json<{
+      triggerLabel?: string;
+      contactIds?: string[];
+      payload?: Record<string, unknown>;
+    }>()
+    .catch(() => ({}));
   const id = `run-${randomUUID()}`;
   const pool = getPool();
   await pool.query(
@@ -91,7 +119,23 @@ export async function handleWorkflowRunStart(c: Context) {
      VALUES ($1,$2,$3,'running',$4)`,
     [id, workflowId, firm, body.triggerLabel ?? "Manual run"],
   );
-  return json(c, { id, workflowId, status: "running" });
+  // Walk the saved graph (validated shape) — real execution, not a client timer
+  const walked = await walkValidatedWorkflow(pool, {
+    workflowId,
+    firmId: firm,
+    runId: id,
+    triggerLabel: body.triggerLabel ?? "Manual run",
+    triggerPayload: body.payload ?? { manual: true },
+    contactIds: body.contactIds,
+  });
+  return json(c, {
+    id,
+    workflowId,
+    status: walked.ok ? "success" : "failed",
+    nodeStatus: walked.nodeStatus,
+    enrollments: walked.enrollments,
+    error: walked.error,
+  });
 }
 
 export async function handleWorkflowRunComplete(c: Context) {
@@ -216,41 +260,49 @@ export async function handleReferenceUpsert(c: Context) {
       [motionId, firm, contactId, motion, JSON.stringify({ signalId, precedence: "mp-1" })],
     );
 
-    // Resolve binding + enroll (send gated by SEND_MODE + cohort)
-    const bind = await pool.query<{ template_id: string }>(
-      `SELECT template_id FROM firm_sequence_binding
-       WHERE firm_id=$1 AND sequence_class=$2`,
-      [firm, motion === "reactivation" ? "reactivation" : "reengagement"],
-    );
-    const agentRef = bind.rows[0]?.template_id ?? "tpl.reactivation.v1";
-    const enrolled = await enrollAndActuate({
-      firmId: firm,
-      contactId,
-      agentRef,
-      sequenceId: agentRef,
-      payload: { motionId, faceless: true },
-      purpose: motion === "reactivation" ? "reactivation" : "cem",
-    });
-
     cascade.push({
       contactId,
       evaluationId: evalId,
       resultId,
       signalId,
       motionId,
-      enrollmentId: enrolled.enrollmentId,
-      attemptId: enrolled.attemptId,
-      agentRef,
-      dryRun: enrolled.dryRun,
-      send: enrolled.send,
+      motion,
     });
+  }
+
+  // Emit eligibility.changed → active workflows walk their saved graphs
+  const dispatched = await dispatchEventToWorkflows(pool, {
+    firmId: firm,
+    eventName: "eligibility.changed",
+    payload: { referenceId: id, anyPass: true, motion: "reactivation" },
+    contactIds: contacts,
+  });
+
+  // Fallback enroll only when no active workflow subscribed
+  if (dispatched.length === 0) {
+    for (const contactId of contacts) {
+      const enrolled = await enrollAndActuate({
+        firmId: firm,
+        contactId,
+        agentRef: "tpl.reactivation.v1",
+        sequenceId: "tpl.reactivation.v1",
+        payload: { faceless: true, fallback: true },
+        purpose: "reactivation",
+      });
+      cascade.push({
+        contactId,
+        enrollmentId: enrolled.enrollmentId,
+        fallback: true,
+      });
+    }
   }
 
   return json(c, {
     referenceId: id,
     cascade,
+    workflowsFired: dispatched,
     gate: sendGateSnapshot(),
-    note: "Faceless cascade wrote eligibility→signal→motion→enrollment; send follows SEND_MODE/cohort",
+    note: "eligibility.changed emitted; active workflows walked when subscribed",
   });
 }
 
@@ -393,6 +445,24 @@ export async function handleOnboardingFire(c: Context) {
     [firm],
   );
 
+  const contactIds = ready.rows.map((r) => r.contact_id);
+  const dispatched = await dispatchEventToWorkflows(pool, {
+    firmId: firm,
+    eventName: "audit.completed",
+    payload: { trigger: "campaign_state=running", onboarding: true },
+    contactIds,
+  });
+  if (dispatched.length > 0) {
+    return json(c, {
+      firmId: firm,
+      agentRef,
+      enrollments: dispatched.reduce((n, d) => n + d.enrollments, 0),
+      workflowsFired: dispatched,
+      gate: sendGateSnapshot(),
+      note: "Onboarding via workflow walk (audit.completed)",
+    });
+  }
+
   const enrolled: Array<{ id: string; dryRun: boolean }> = [];
   for (const row of ready.rows) {
     const result = await enrollAndActuate({
@@ -414,8 +484,130 @@ export async function handleOnboardingFire(c: Context) {
     dryRuns: enrolled.filter((e) => e.dryRun).length,
     liveSends: enrolled.filter((e) => !e.dryRun).length,
     gate: sendGateSnapshot(),
-    note: "Opt-in enrollments; send follows SEND_MODE + SEND_TEST_COHORT (fail closed)",
+    note: "Opt-in enrollments (no subscribed workflow); SEND_MODE gate",
   });
+}
+
+/** Fire a named machine event into subscribed workflows. */
+export async function handleMachineEvent(c: Context) {
+  const firm = firmId(c);
+  const body = await c.req.json<{
+    eventName: string;
+    payload?: Record<string, unknown>;
+    contactIds?: string[];
+  }>();
+  if (!body.eventName) return json(c, { error: "eventName required" }, 400);
+  const pool = getPool();
+  const dispatched = await dispatchEventToWorkflows(pool, {
+    firmId: firm,
+    eventName: body.eventName,
+    payload: body.payload,
+    contactIds: body.contactIds,
+  });
+  return json(c, { eventName: body.eventName, workflowsFired: dispatched });
+}
+
+/** Webhook trigger: POST /wire/hook/:webhookId */
+export async function handleWebhookTrigger(c: Context) {
+  const webhookId = c.req.param("webhookId");
+  const body = await c.req.json().catch(() => ({}));
+  const pool = getPool();
+  const trig = await pool.query<{
+    workflow_id: string;
+    firm_id: string;
+  }>(
+    `SELECT t.workflow_id, t.firm_id
+     FROM workflow_trigger t
+     JOIN workflow_state s ON s.workflow_id = t.workflow_id
+     WHERE t.webhook_id=$1 AND t.enabled=true AND t.type='webhook' AND s.status='active'
+     LIMIT 1`,
+    [webhookId],
+  );
+  if (!trig.rowCount) return json(c, { error: "webhook trigger not found or inactive" }, 404);
+
+  const runId = `run-${randomUUID()}`;
+  const workflowId = trig.rows[0].workflow_id;
+  const firm = trig.rows[0].firm_id;
+  await pool.query(
+    `INSERT INTO workflow_run (id, workflow_id, firm_id, status, trigger_label)
+     VALUES ($1,$2,$3,'running',$4)`,
+    [runId, workflowId, firm, `webhook:${webhookId}`],
+  );
+  const walked = await walkValidatedWorkflow(pool, {
+    workflowId,
+    firmId: firm,
+    runId,
+    triggerLabel: `webhook:${webhookId}`,
+    triggerPayload: { webhookId, body, anyPass: true },
+    contactIds: Array.isArray((body as { contactIds?: string[] }).contactIds)
+      ? (body as { contactIds: string[] }).contactIds
+      : undefined,
+  });
+  return json(c, {
+    webhookId,
+    workflowId,
+    runId,
+    status: walked.ok ? "success" : "failed",
+    nodeStatus: walked.nodeStatus,
+    enrollments: walked.enrollments,
+  });
+}
+
+/** Upsert sequence_template cells (Agents editor save). */
+export async function handleTemplateUpsert(c: Context) {
+  const id = c.req.param("id");
+  const body = await c.req.json<{
+    sequenceClass?: string;
+    label?: string;
+    cells: unknown[];
+    variant?: string;
+  }>();
+  const pool = getPool();
+  await pool.query(
+    `INSERT INTO sequence_template (id, sequence_class, variant, label, cells, version)
+     VALUES ($1,$2,$3,$4,$5::jsonb,1)
+     ON CONFLICT (id) DO UPDATE SET
+       cells=EXCLUDED.cells,
+       label=COALESCE(EXCLUDED.label, sequence_template.label),
+       updated_at=now(),
+       version=sequence_template.version + 1`,
+    [
+      id,
+      body.sequenceClass ?? "reengagement",
+      body.variant ?? "v1",
+      body.label ?? id,
+      JSON.stringify(body.cells ?? []),
+    ],
+  );
+  return json(c, { id, cells: body.cells?.length ?? 0, table: "sequence_template" });
+}
+
+/** Upsert firm_sequence_binding (Agents assign template to firm). */
+export async function handleBindingUpsert(c: Context) {
+  const firm = firmId(c);
+  const body = await c.req.json<{
+    sequenceClass: string;
+    templateId: string;
+    variableBindings?: Record<string, unknown>;
+  }>();
+  const id = `bind.${firm}.${body.sequenceClass}`;
+  const pool = getPool();
+  await pool.query(
+    `INSERT INTO firm_sequence_binding (id, firm_id, sequence_class, template_id, variable_bindings)
+     VALUES ($1,$2,$3,$4,$5::jsonb)
+     ON CONFLICT (firm_id, sequence_class) DO UPDATE SET
+       template_id=EXCLUDED.template_id,
+       variable_bindings=EXCLUDED.variable_bindings,
+       updated_at=now()`,
+    [
+      id,
+      firm,
+      body.sequenceClass,
+      body.templateId,
+      JSON.stringify(body.variableBindings ?? {}),
+    ],
+  );
+  return json(c, { id, firmId: firm, table: "firm_sequence_binding" });
 }
 
 /** Manual tick (same as worker once) — for ops/verify. */
