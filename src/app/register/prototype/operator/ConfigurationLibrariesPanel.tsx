@@ -9,11 +9,10 @@ import { RegisterSurfaceMount, navBtnStyle, sectionLabelStyle } from "../registe
 import {
   type ConfigPack,
   type PackKind,
-  nextVersionId,
   packLabel,
   publishedPacks,
-  seedConfigPacks,
 } from "./operatorConfigLibraries";
+import { publishPackInCatalog, usePackCatalog } from "./packCatalogStore";
 import {
   filterSelectStyle,
   moduleFocus,
@@ -29,6 +28,7 @@ import { AutomationDetailView } from "../../../components/hub/automation/Automat
 import { AutomationProvider } from "../../../context/AutomationContext";
 import { getAllAgentDefinitions } from "../../../data/agentDefinitions";
 import { getAllWorkflowDefinitions } from "../../../data/automationWorkflows";
+import { wirePorts } from "../../../wire";
 
 
 export type ConfigLibSub =
@@ -42,7 +42,10 @@ const CONFIG_LIB_SUBS: { id: ConfigLibSub; kind: PackKind; newLabel: string; nav
   { id: "Engagement templates", kind: "engagement", newLabel: "New template", navLabel: "Agents" },
 ];
 
-const DEMO_AUTOMATION_ID = getAllWorkflowDefinitions()[0]?.id ?? "auto-welcome";
+const DEMO_AUTOMATION_ID =
+  getAllWorkflowDefinitions().find((w) => w.id === "wf-eligibility-reactivation")?.id ??
+  getAllWorkflowDefinitions()[0]?.id ??
+  "wf-eligibility-reactivation";
 const DEMO_AGENT_ID =
   getAllAgentDefinitions().find((a) => a.stepCount > 0)?.id ??
   getAllAgentDefinitions()[0]?.id ??
@@ -91,7 +94,7 @@ export function ConfigurationLibrariesPanel({
   const focus = moduleFocus("Configuration libraries", focusedEntry, hoveredEntry);
   const subMeta = CONFIG_LIB_SUBS.find((s) => s.id === sub)!;
 
-  const [packs, setPacks] = useState<ConfigPack[]>(seedConfigPacks);
+  const [packs, setPacks] = usePackCatalog();
   const [selectedId, setSelectedId] = useState<string | null>("eval-alg-v2");
   const [editorNote, setEditorNote] = useState("");
   const [compareOpen, setCompareOpen] = useState(false);
@@ -142,12 +145,12 @@ export function ConfigurationLibrariesPanel({
 
   function onPublish() {
     if (!selected) return;
-    const versionId = nextVersionId(selected.kind, packs);
-    setPacks((prev) =>
-      prev.map((p) =>
-        p.id === selected.id ? { ...p, status: "Published", versionId } : p,
-      ),
-    );
+    publishPackInCatalog(selected.id, selected.kind, {
+      summary: editorNote || selected.summary,
+    });
+    if (selected.kind === "evaluation" && selected.pin) {
+      void wirePorts.machineApi.putEvaluationPin(selected.id, selected.pin);
+    }
   }
 
   function openCompare() {

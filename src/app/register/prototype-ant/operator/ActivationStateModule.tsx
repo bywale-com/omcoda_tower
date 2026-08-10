@@ -7,23 +7,50 @@ import { useEffect, useState } from "react";
 import { Button, Progress, Space, Table, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { isSendingIdentityReady, useWireTick, wirePorts } from "../../../wire";
+import { useOperatorNav } from "../../prototype/operatorNav";
+import { loadForwardDeployStagingForFirm } from "../../prototype/operator/operatorWireHelpers";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { DEMO_FIRMS } from "./operatorAntData";
 import { StatusTag } from "./operatorAntTags";
 
 type Gate = { id: string; title: string; done: boolean; jump?: string };
 
+type ForwardDeployRow = {
+  id: string;
+  firmId: string;
+  staging: "idle" | "enriching" | "hydrated" | "stale";
+};
+
 const ACTIVATION_ROWS = [
-  { firmId: DEMO_FIRMS[1].id, pct: 50, next: "Authorize book", forwardDeployed: true },
-  { firmId: DEMO_FIRMS[2].id, pct: 75, next: "Escrow held", forwardDeployed: true },
-  { firmId: DEMO_FIRMS[3].id, pct: 25, next: "Forward-deployed", forwardDeployed: false },
+  { firmId: DEMO_FIRMS[1].id, pct: 50, next: "Authorize book" },
+  { firmId: DEMO_FIRMS[2].id, pct: 75, next: "Escrow held" },
+  { firmId: DEMO_FIRMS[3].id, pct: 25, next: "Forward-deployed" },
 ];
 
-type LiveGates = { authorizeBook: boolean; readyToSend: boolean; escrowHeld: boolean };
+const FORWARD_DEPLOY_SEED: ForwardDeployRow[] = [
+  { id: "act-cedar", firmId: DEMO_FIRMS[1].id, staging: "hydrated" },
+  { id: "act-harbor", firmId: DEMO_FIRMS[2].id, staging: "hydrated" },
+  { id: "act-atlas", firmId: DEMO_FIRMS[3].id, staging: "idle" },
+];
 
-const EMPTY_LIVE: LiveGates = { authorizeBook: false, readyToSend: false, escrowHeld: false };
+type LiveGates = {
+  authorizeBook: boolean;
+  readyToSend: boolean;
+  escrowHeld: boolean;
+  forwardDeployed: boolean;
+  campaignRunning: boolean;
+};
+
+const EMPTY_LIVE: LiveGates = {
+  authorizeBook: false,
+  readyToSend: false,
+  escrowHeld: false,
+  forwardDeployed: false,
+  campaignRunning: false,
+};
 
 export function ActivationStateModule() {
+  const { jumpTo } = useOperatorNav();
   const [selectedId, setSelectedId] = useState(ACTIVATION_ROWS[0].firmId);
   const [jumpNote, setJumpNote] = useState<string | null>(null);
   const [live, setLive] = useState<LiveGates>(EMPTY_LIVE);
@@ -31,16 +58,23 @@ export function ActivationStateModule() {
 
   useEffect(() => {
     let cancelled = false;
-    void Promise.all([wirePorts.crmOAuth.get(selectedId), wirePorts.escrow.get(selectedId)]).then(
-      ([grant, escrow]) => {
-        if (cancelled) return;
-        setLive({
-          authorizeBook: grant.granted && !grant.revoked,
-          readyToSend: isSendingIdentityReady(selectedId),
-          escrowHeld: escrow.status === "held",
-        });
-      },
-    );
+    const seedStaging = FORWARD_DEPLOY_SEED.find((r) => r.firmId === selectedId)?.staging ?? "idle";
+    void Promise.all([
+      wirePorts.crmOAuth.get(selectedId),
+      wirePorts.escrow.get(selectedId),
+      wirePorts.machineApi.getCampaignState().catch(() => null),
+      loadForwardDeployStagingForFirm(selectedId),
+    ]).then(([grant, escrow, campaign, staging]) => {
+      if (cancelled) return;
+      const deployStaging = staging ?? seedStaging;
+      setLive({
+        authorizeBook: grant.granted && !grant.revoked,
+        readyToSend: isSendingIdentityReady(selectedId),
+        escrowHeld: escrow.status === "held",
+        forwardDeployed: deployStaging === "hydrated" || deployStaging === "enriching",
+        campaignRunning: campaign?.state === "running",
+      });
+    });
     return () => {
       cancelled = true;
     };
@@ -52,8 +86,8 @@ export function ActivationStateModule() {
     {
       id: "forward-deployed",
       title: "Forward-deployed",
-      done: row.forwardDeployed,
-      jump: row.forwardDeployed ? undefined : "Jump to Activation & forward-deploy",
+      done: live.forwardDeployed,
+      jump: live.forwardDeployed ? undefined : "Jump to Activation & forward-deploy",
     },
     {
       id: "authorize-book",
@@ -76,7 +110,9 @@ export function ActivationStateModule() {
     {
       id: "running",
       title: "Running",
-      done: row.forwardDeployed && live.authorizeBook && live.readyToSend && live.escrowHeld,
+      done:
+        live.campaignRunning ||
+        (live.forwardDeployed && live.authorizeBook && live.readyToSend && live.escrowHeld),
     },
   ];
   const stalledCount = gates.filter((g) => !g.done && g.jump).length;
@@ -105,7 +141,7 @@ export function ActivationStateModule() {
       width: 200,
       render: (_, g) =>
         !g.done && g.jump ? (
-          <Button size="small" data-register-surface="Progress Jump" onClick={() => setJumpNote(g.jump!)}>
+          <Button size="small" data-register-surface="Progress Jump" onClick={() => { jumpTo(g.jump!); setJumpNote(g.jump!); }}>
             {g.jump}
           </Button>
         ) : null,

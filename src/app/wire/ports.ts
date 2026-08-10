@@ -308,12 +308,25 @@ export type MachineApiPort = {
   }): Promise<{ id: string; status: string; name: string; target: string }>;
   activateWorkflow(
     workflowId: string,
-  ): Promise<{ workflowId: string; status: string; transition?: string }>;
+  ): Promise<{
+    workflowId: string;
+    status: string;
+    transition?: string;
+    triggersMaterialized?: number;
+  }>;
   pauseWorkflow(workflowId: string): Promise<{ workflowId: string; status: string }>;
   startRun(
     workflowId: string,
     triggerLabel?: string,
-  ): Promise<{ id: string; workflowId: string; status: string }>;
+    opts?: { contactIds?: string[]; payload?: Record<string, unknown> },
+  ): Promise<{
+    id: string;
+    workflowId: string;
+    status: string;
+    nodeStatus?: Record<string, unknown>;
+    enrollments?: string[];
+    error?: string;
+  }>;
   completeRun(
     runId: string,
     body?: { status?: string; nodeStatus?: unknown; counts?: unknown },
@@ -332,11 +345,16 @@ export type MachineApiPort = {
     payload: unknown;
     version?: number;
     contactIds?: string[];
-  }): Promise<{ referenceId: string; cascade: unknown[] }>;
+  }): Promise<{ referenceId: string; cascade: unknown[]; workflowsFired?: unknown[] }>;
   createAuditRun(input: {
     importIds?: string[];
     contactIds?: Array<{ id: string; email?: string; phone?: string; name?: string }>;
-  }): Promise<import("./machineTypes").AuditRunRow & { contacts: number }>;
+  }): Promise<
+    import("./machineTypes").AuditRunRow & {
+      contacts: number;
+      verdicts?: import("./machineTypes").AuditContactVerdict[];
+    }
+  >;
   fireOnboarding(): Promise<{
     skipped?: boolean;
     enrollments?: number;
@@ -352,4 +370,149 @@ export type MachineApiPort = {
     templates: import("./machineTypes").SequenceTemplateRow[];
     bindings: import("./machineTypes").FirmSequenceBindingRow[];
   }>;
+  upsertTemplate(input: {
+    id: string;
+    sequenceClass: string;
+    label?: string;
+    cells: unknown[];
+    variant?: string;
+  }): Promise<{ id: string; cells: number; table: string }>;
+  upsertBinding(input: {
+    sequenceClass: string;
+    templateId: string;
+    variableBindings?: Record<string, unknown>;
+  }): Promise<{ id: string; firmId?: string; table?: string; sequenceClass?: string; templateId?: string }>;
+  listAttemptCriteria(): Promise<import("./machineTypes").AttemptCriteriaRow[]>;
+  upsertAttemptCriteria(
+    id: string,
+    patch: {
+      label?: string;
+      enabled?: boolean;
+      threshold?: number | null;
+      thresholdUnit?: string | null;
+      whenClause?: string | null;
+      conditionClause?: string | null;
+      setValue?: string | null;
+      ord?: number;
+    },
+  ): Promise<import("./machineTypes").AttemptCriteriaRow>;
+  listChannelOrder(): Promise<import("./machineTypes").ChannelOwnershipOrderRow[]>;
+  upsertChannelOrder(
+    order: Array<{ id: string; token?: string; label?: string; ord: number }>,
+  ): Promise<import("./machineTypes").ChannelOwnershipOrderRow[]>;
+  fireEvent(input: {
+    eventName: string;
+    payload?: Record<string, unknown>;
+    contactIds?: string[];
+  }): Promise<{ eventName: string; workflowsFired: unknown[] }>;
+  /** Read-only ordered stages from seq_eligibility_pipeline. */
+  listEligibilityPipeline(): Promise<import("./machineTypes").EligibilityPipelineRow[]>;
+  listEligibilityPathways(): Promise<import("./machineTypes").EligibilityPathwayRow[]>;
+  upsertEligibilityPathway(
+    id: string,
+    patch: { enabled?: boolean; label?: string; ord?: number },
+  ): Promise<import("./machineTypes").EligibilityPathwayRow>;
+  listMotionPrecedence(): Promise<import("./machineTypes").MotionPrecedenceRow[]>;
+  upsertMotionPrecedence(
+    id: string,
+    patch: { enabled?: boolean; label?: string; ord?: number },
+  ): Promise<import("./machineTypes").MotionPrecedenceRow>;
+  listFieldClassRouting(): Promise<import("./machineTypes").FieldClassRoutingRow[]>;
+  upsertFieldClassRouting(
+    id: string,
+    patch: {
+      enabled?: boolean;
+      label?: string;
+      ord?: number;
+      whenClause?: string | null;
+      conditionClause?: string | null;
+      setValue?: string | null;
+    },
+  ): Promise<import("./machineTypes").FieldClassRoutingRow>;
+  listCohortScoring(): Promise<import("./machineTypes").CohortScoringRow[]>;
+  upsertCohortScoring(
+    id: string,
+    patch: {
+      enabled?: boolean;
+      label?: string;
+      ord?: number;
+      setValue?: string | null;
+      whenClause?: string | null;
+      conditionClause?: string | null;
+    },
+  ): Promise<import("./machineTypes").CohortScoringRow>;
+  listMetricsThresholds(): Promise<import("./machineTypes").MetricsThresholdRow[]>;
+  upsertMetricsThreshold(
+    id: string,
+    patch: {
+      enabled?: boolean;
+      label?: string;
+      ord?: number;
+      threshold?: number | null;
+      setValue?: string | null;
+    },
+  ): Promise<import("./machineTypes").MetricsThresholdRow>;
+  listReachabilityChecks(): Promise<import("./machineTypes").ReachabilityCheckRow[]>;
+  upsertReachabilityCheck(
+    id: string,
+    patch: {
+      enabled?: boolean;
+      label?: string;
+      ord?: number;
+      whenClause?: string | null;
+      conditionClause?: string | null;
+      setValue?: string | null;
+    },
+  ): Promise<import("./machineTypes").ReachabilityCheckRow>;
+  listPhaseOrder(): Promise<import("./machineTypes").PhaseOrderRow[]>;
+  upsertPhaseOrder(
+    order: Array<{ id: string; token?: string; label?: string; ord: number }>,
+  ): Promise<import("./machineTypes").PhaseOrderRow[]>;
+  writeFact(input: {
+    contactId: string;
+    fieldKey: string;
+    value: unknown;
+    source?: string;
+    missingFieldKeys?: string[];
+  }): Promise<import("./machineTypes").FactWritebackResult>;
+  listFactWritebacks(contactId?: string): Promise<import("./machineTypes").FactWritebackRow[]>;
+  listMissingFactSignals(contactId?: string): Promise<import("./machineTypes").MissingFactSignalRow[]>;
+  signalMissingFact(input: {
+    contactId: string;
+    fieldKey: string;
+  }): Promise<{ id: string; contactId: string; fieldKey: string }>;
+  listPreparedWorkspaces(): Promise<import("./machineTypes").PreparedWorkspaceRow[]>;
+  upsertPreparedWorkspace(input: {
+    id?: string;
+    status?: string;
+    body?: Record<string, unknown>;
+  }): Promise<import("./machineTypes").PreparedWorkspaceRow>;
+  listActiveAttempts(): Promise<import("./machineTypes").ActiveAttemptRow[]>;
+  listEngagementRecords(): Promise<import("./machineTypes").EngagementRecordRow[]>;
+  listReferenceVersions(): Promise<import("./machineTypes").ReferenceVersionRow[]>;
+  getEvaluationPin(packId: string): Promise<{
+    packId: string;
+    referenceVersionId: string | null;
+    rulesetId: string | null;
+    missing?: boolean;
+  }>;
+  putEvaluationPin(
+    packId: string,
+    pin: { referenceVersionId: string; rulesetId: string },
+  ): Promise<import("./machineTypes").EvaluationPin & { table?: string; id?: string }>;
+  getCampaignState(): Promise<{
+    firmId: string;
+    state: import("./machineTypes").CampaignState;
+    missing?: boolean;
+  }>;
+  setCampaignState(
+    state: import("./machineTypes").CampaignState,
+  ): Promise<{ firmId: string; state: import("./machineTypes").CampaignState }>;
+  provisionFirm(input: {
+    firmId?: string;
+    firmName: string;
+    email: string;
+    website?: string;
+    role?: string;
+  }): Promise<import("./machineTypes").ProvisionResult>;
 };

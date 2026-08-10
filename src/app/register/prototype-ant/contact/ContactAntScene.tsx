@@ -3,7 +3,7 @@
  * Source parity: ContactPrototypeScene (read-only reference). No plant imports.
  * Brand accent: synthesize #1B4F72 from source FIRM constant for portal identity chips.
  */
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   Alert,
   Button,
@@ -30,6 +30,12 @@ import {
   SafetyCertificateOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+import { FIRM_BRAND } from "../../../wire/firmBrand";
+import { wirePorts } from "../../../wire";
+import {
+  confirmContactBooking,
+  writeBackContactFacts,
+} from "../../prototype/shared/meetingsStore";
 import { Hint, ModulePage, Surface } from "../chrome";
 
 const { Sider, Content } = Layout;
@@ -51,21 +57,15 @@ const CONTACT_SURFACES = [
 
 type ContactSurface = (typeof CONTACT_SURFACES)[number];
 
-const FIRM = {
-  name: "Tower Immigration",
-  short: "Tower",
-  email: "hello@towerimmigration.ca",
-  mailAddress: "120 King St W, Suite 800, Toronto ON M5H 1J9",
-  phone: "+1 (416) 555-0142",
-  initials: "TI",
-  brand: "#1B4F72",
-  brandSoft: "rgba(27, 79, 114, 0.12)",
-};
+const FIRM = FIRM_BRAND;
+
+/** Demo contact id — matches `src/app/data` sarah client row. */
+const DEMO_CONTACT_ID = "sarah";
 
 const CONSULTANT = {
   name: "Sarah Chen",
   role: "RCIC · Consultant",
-  firm: "Tower Immigration",
+  firm: FIRM_BRAND.name,
 };
 
 const CONTACT = {
@@ -783,7 +783,18 @@ function NudgeForm({ onSilence }: { onSilence: () => void }) {
             icon={<ArrowRightOutlined />}
             iconPosition="end"
             style={{ background: FIRM.brand }}
-            onClick={() => setFilled(outstandingTotal)}
+            onClick={() => {
+              setFilled(outstandingTotal);
+              void writeBackContactFacts({
+                clientId: DEMO_CONTACT_ID,
+                source: "Nudge form",
+                facts: [
+                  { label: "Still in pool", value: "Yes", signal: "Current", signalHint: "Nudge write-back" },
+                  { label: "CLB lowest", value: "CLB 9", signal: "Language met", signalHint: "Nudge write-back" },
+                  { label: "Test date", value: "Mar 12, 2025", signal: "Dated fact", signalHint: "Nudge write-back" },
+                ],
+              });
+            }}
           >
             Submit
           </Button>
@@ -796,15 +807,15 @@ function NudgeForm({ onSilence }: { onSilence: () => void }) {
 
 function SilenceOptOut({
   silenced,
-  setSilenced,
+  onConfirmSilence,
 }: {
   silenced: boolean;
-  setSilenced: (v: boolean) => void;
+  onConfirmSilence: () => void;
 }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   const confirmSilence = () => {
-    setSilenced(true);
+    onConfirmSilence();
     setModalOpen(false);
   };
 
@@ -879,7 +890,7 @@ function MeetingInvitation({
   return (
     <CemShell
       surface="Meeting invitation"
-      subject="You're invited — discovery with Tower Immigration"
+      subject={`You're invited — discovery with ${FIRM.name}`}
       headline="Eligibility warrants a conversation"
       body={`Hi ${CONTACT.first} — based on your current self-reportable facts, ${FIRM.name} would like to meet for a short discovery on Express Entry / CEC timing. Pick a slot that works; we'll already hold your current facts for the consultant.`}
       cta="Book a time"
@@ -918,7 +929,7 @@ function MeetingInvitation({
   );
 }
 
-function BookingSurface() {
+function BookingSurface({ onConfirmBooking }: { onConfirmBooking: (slot: string) => void }) {
   const [slot, setSlot] = useState<string | null>("Thu 2:00 PM");
   const [confirmed, setConfirmed] = useState(false);
   const [factsOnFile, setFactsOnFile] = useState(true);
@@ -1011,7 +1022,10 @@ function BookingSurface() {
                 icon={<ArrowRightOutlined />}
                 iconPosition="end"
                 style={{ background: FIRM.brand }}
-                onClick={() => setConfirmed(true)}
+                onClick={() => {
+                  if (slot) onConfirmBooking(slot);
+                  setConfirmed(true);
+                }}
               >
                 Confirm booking
               </Button>
@@ -1102,7 +1116,24 @@ function LoopCloserForm({ onSilence }: { onSilence: () => void }) {
                 icon={<ArrowRightOutlined />}
                 iconPosition="end"
                 style={{ background: FIRM.brand, marginTop: 8 }}
-                onClick={() => setFilled(outstandingTotal)}
+                onClick={() => {
+                  setFilled(outstandingTotal);
+                  void writeBackContactFacts({
+                    clientId: DEMO_CONTACT_ID,
+                    source: "Loop-closer form",
+                    facts: [
+                      {
+                        label: "Work permit end",
+                        value: "Sep 15, 2026",
+                        signal: "Timing risk",
+                        signalHint: "Loop-closer write-back",
+                      },
+                      { label: "Hours/week", value: "40", signal: "Current", signalHint: "Loop-closer write-back" },
+                      { label: "TEER guess", value: "TEER 1", signal: "Skilled", signalHint: "Loop-closer write-back" },
+                    ],
+                    signalMissingFieldKey: "validity_still_valid",
+                  });
+                }}
               >
                 Submit
               </Button>
@@ -1165,7 +1196,28 @@ function UpdateFactsSurface({ onSilence }: { onSilence: () => void }) {
             icon={<ArrowRightOutlined />}
             iconPosition="end"
             style={{ background: FIRM.brand }}
-            onClick={() => setFilled(outstandingTotal)}
+            onClick={() => {
+              setFilled(outstandingTotal);
+              void writeBackContactFacts({
+                clientId: DEMO_CONTACT_ID,
+                source: "Update facts",
+                facts: [
+                  {
+                    label: "What changed",
+                    value: "New language test booked",
+                    signal: "Life change",
+                    signalHint: "Update facts write-back",
+                  },
+                  {
+                    label: "Updated CLB target",
+                    value: "CLB 10",
+                    signal: "Language target",
+                    signalHint: "Update facts write-back",
+                  },
+                  { label: "Effective date", value: "Aug 2026", signal: "Current", signalHint: "Update facts write-back" },
+                ],
+              });
+            }}
           >
             Submit
           </Button>
@@ -1252,13 +1304,17 @@ function LinkStatePage() {
 function ActiveSurface({
   surface,
   silenced,
-  setSilenced,
+  onConfirmSilence,
+  onAgree,
+  onConfirmBooking,
   goSilence,
   navigate,
 }: {
   surface: ContactSurface;
   silenced: boolean;
-  setSilenced: (v: boolean) => void;
+  onConfirmSilence: () => void;
+  onAgree: () => void;
+  onConfirmBooking: (slot: string) => void;
   goSilence: () => void;
   navigate: (s: ContactSurface) => void;
 }) {
@@ -1274,7 +1330,10 @@ function ActiveSurface({
       return (
         <ConsentRequest
           onSilence={goSilence}
-          onAgreed={() => navigate("Meeting invitation")}
+          onAgreed={() => {
+            onAgree();
+            navigate("Meeting invitation");
+          }}
         />
       );
     case "Nudge message":
@@ -1282,7 +1341,7 @@ function ActiveSurface({
     case "Nudge form":
       return <NudgeForm onSilence={goSilence} />;
     case "Silence / Opt out":
-      return <SilenceOptOut silenced={silenced} setSilenced={setSilenced} />;
+      return <SilenceOptOut silenced={silenced} onConfirmSilence={onConfirmSilence} />;
     case "Meeting invitation":
       return (
         <MeetingInvitation
@@ -1291,7 +1350,7 @@ function ActiveSurface({
         />
       );
     case "Booking":
-      return <BookingSurface />;
+      return <BookingSurface onConfirmBooking={onConfirmBooking} />;
     case "Loop-closer form":
       return <LoopCloserForm onSilence={goSilence} />;
     case "Update facts":
@@ -1309,10 +1368,43 @@ export function ContactAntScene() {
   const [silenced, setSilenced] = useState(false);
   const [walkStep, setWalkStep] = useState(0);
 
+  useEffect(() => {
+    let cancelled = false;
+    void wirePorts.consentSilence.get(DEMO_CONTACT_ID).then((state) => {
+      if (!cancelled) setSilenced(state.silenced);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const applyConsent = () => {
+    void wirePorts.consentSilence.setConsent(DEMO_CONTACT_ID, FIRM.firmId, "express");
+  };
+
+  const applySilence = () => {
+    void wirePorts.consentSilence
+      .silence(DEMO_CONTACT_ID, FIRM.firmId, "contact-portal")
+      .then(() => setSilenced(true));
+  };
+
+  const confirmBooking = (slot: string) => {
+    confirmContactBooking({
+      contactName: CONTACT.name,
+      clientId: DEMO_CONTACT_ID,
+      slot,
+      consultantName: CONSULTANT.name,
+    });
+  };
+
   const goSilence = () => {
-    setSilenced(true);
-    setSurface("Silence / Opt out");
-    setWalkStep(WALK_SURFACES.length - 1);
+    void wirePorts.consentSilence
+      .silence(DEMO_CONTACT_ID, FIRM.firmId, "contact-portal")
+      .then(() => {
+        setSilenced(true);
+        setSurface("Silence / Opt out");
+        setWalkStep(WALK_SURFACES.length - 1);
+      });
   };
 
   const startWalk = () => {
@@ -1394,7 +1486,9 @@ export function ContactAntScene() {
               <ActiveSurface
                 surface={surface}
                 silenced={silenced}
-                setSilenced={setSilenced}
+                onConfirmSilence={applySilence}
+                onAgree={applyConsent}
+                onConfirmBooking={confirmBooking}
                 goSilence={goSilence}
                 navigate={setSurface}
               />

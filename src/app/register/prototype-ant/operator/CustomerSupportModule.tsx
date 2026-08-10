@@ -1,12 +1,21 @@
 /**
  * Customer support — ticket queue Table, context Tabs, Resolve.
+ * Tickets persist via primaryStore; Resolve appends auditTrail.
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Card, Col, Row, Space, Table, Tabs, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import { useOperatorNav } from "../../prototype/operatorNav";
+import {
+  appendOperatorAudit,
+  hydratePrimaryStoreRows,
+  persistPrimaryStoreRow,
+} from "../../prototype/operator/operatorWireHelpers";
 import { ModulePage, Surface } from "../chrome";
 import { DEMO_FIRMS } from "./operatorAntData";
 import { StatusTag } from "./operatorAntTags";
+
+const SUPPORT_TICKETS_COLLECTION = "support_tickets";
 
 type TicketStatus = "Open" | "Waiting" | "Resolved";
 
@@ -59,16 +68,28 @@ const TICKETS: Ticket[] = [
 ];
 
 export function CustomerSupportModule() {
+  const { jumpTo } = useOperatorNav();
+  const [tickets, setTickets] = useState<Ticket[]>(TICKETS);
   const [selectedId, setSelectedId] = useState(TICKETS[0].id);
-  const [statuses, setStatuses] = useState<Record<string, TicketStatus>>(
-    Object.fromEntries(TICKETS.map((tk) => [tk.id, tk.status])),
-  );
   const [activeTab, setActiveTab] = useState("bind");
   const [jumpNote, setJumpNote] = useState<string | null>(null);
   const [resolveNote, setResolveNote] = useState<string | null>(null);
 
-  const selected = TICKETS.find((x) => x.id === selectedId) ?? TICKETS[0];
-  const ticketStatus = statuses[selected.id] ?? selected.status;
+  useEffect(() => {
+    let cancelled = false;
+    void hydratePrimaryStoreRows(SUPPORT_TICKETS_COLLECTION, TICKETS).then((stored) => {
+      if (!cancelled) {
+        setTickets(stored);
+        setSelectedId(stored[0]?.id ?? TICKETS[0].id);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const selected = tickets.find((x) => x.id === selectedId) ?? tickets[0] ?? TICKETS[0];
+  const ticketStatus = selected.status;
   const tabMeta = CONTEXT_TABS.find((tab) => tab.id === activeTab)!;
   const contextRows = CONTEXT_SNAPSHOTS[activeTab]?.[selected.firm] ?? [{ k: "Scope", v: selected.firm }];
 
@@ -82,8 +103,27 @@ export function CustomerSupportModule() {
       width: 80,
       render: (s) => <StatusTag label={s} color={s === "High" ? "error" : s === "Normal" ? "warning" : "default"} />,
     },
-    { title: "Status", key: "status", width: 90, render: (_, row) => statuses[row.id] ?? row.status },
+    { title: "Status", dataIndex: "status", key: "status", width: 90 },
   ];
+
+  const resolveTicket = () => {
+    const next: Ticket = { ...selected, status: "Resolved" };
+    setTickets((prev) => prev.map((tk) => (tk.id === next.id ? next : tk)));
+    void persistPrimaryStoreRow(SUPPORT_TICKETS_COLLECTION, next);
+    void appendOperatorAudit({
+      actorId: "ops.support",
+      kind: "support.resolve",
+      subjectType: "support_ticket",
+      subjectId: next.id,
+      action: `Resolve · ${next.id} · ${next.subject}`,
+      kindLabel: "Support",
+      before: selected.status,
+      after: "Resolved",
+      surface: "Customer support",
+      firmName: next.firm,
+    });
+    setResolveNote("Resolved · Audit trail records closure");
+  };
 
   return (
     <ModulePage title="Customer support" surface="Customer support">
@@ -94,7 +134,7 @@ export function CustomerSupportModule() {
               size="small"
               rowKey="id"
               columns={columns}
-              dataSource={TICKETS}
+              dataSource={tickets}
               pagination={false}
               rowSelection={{
                 type: "radio",
@@ -113,17 +153,14 @@ export function CustomerSupportModule() {
             <Card size="small" title={`${selected.id} · ${selected.subject}`} extra={<StatusTag label={ticketStatus} color={ticketStatus === "Resolved" ? "success" : "warning"} />}>
               <Typography.Paragraph type="secondary">{selected.body}</Typography.Paragraph>
               <Space wrap>
-                <Button data-register-surface="Linked per-tenancy actions" onClick={() => setJumpNote(`${selected.jumpTarget} · ${selected.firm}`)}>
+                <Button data-register-surface="Linked per-tenancy actions" onClick={() => { const n = `${selected.jumpTarget} · ${selected.firm}`; jumpTo(n); setJumpNote(n); }}>
                   {selected.jumpTarget}
                 </Button>
                 <Button
                   type="primary"
                   data-register-surface="Resolve"
                   disabled={ticketStatus === "Resolved"}
-                  onClick={() => {
-                    setStatuses((prev) => ({ ...prev, [selected.id]: "Resolved" }));
-                    setResolveNote("Resolved · Audit trail records closure");
-                  }}
+                  onClick={resolveTicket}
                 >
                   Resolve
                 </Button>
@@ -165,7 +202,7 @@ export function CustomerSupportModule() {
             <Button
               style={{ marginTop: 12 }}
               data-register-surface="Jump to scoped module"
-              onClick={() => setJumpNote(`${tabMeta.jump} · ${selected.firm}`)}
+              onClick={() => { const n = `${tabMeta.jump} · ${selected.firm}`; jumpTo(n); setJumpNote(n); }}
             >
               {tabMeta.jump}
             </Button>

@@ -17,14 +17,12 @@ import {
   AUTOMATION_DATA_CLASSES,
   formatEventTriggerSummary,
   formatManualTriggerSummary,
-  isEventTriggerConfigured,
   isManualTriggerConfigured,
   type AutomationDataClassId,
   type DataClassScopeSelection,
   type EventTriggerConfig,
   type ManualTriggerConfig,
 } from "../../../data/automationEvents";
-import { DATA_MUTATION_EVENTS } from "../../../data/automationEvents";
 import { buildManualPullPayload } from "../../../data/automationNodeRuntime";
 import type { NodeDataPayload } from "../../../data/automationNodeRuntime";
 import {
@@ -36,7 +34,11 @@ import {
 } from "../../../data/automationRules";
 import {
   listUpstreamDataSources,
+  WORKFLOW_AGENT_OPTIONS,
+  WORKFLOW_CONSTANT_PACK_OPTIONS,
+  WORKFLOW_EVENT_CATALOG,
   type WorkflowNodeData,
+  type WorkflowTriggerEvent,
 } from "../../../data/automationWorkflows";
 import { DOCS_TREE_LABEL_SIZE } from "../../docs/treeLayout";
 import { Checkbox } from "../../ui/checkbox";
@@ -123,8 +125,12 @@ export function AutomationNodeConfigModal({
   const isTrigger = node.type === "trigger";
   const isManual = isTrigger && data.triggerKind === "manual";
   const isEvent = isTrigger && data.triggerKind === "event";
-  const isIf = node.type === "branch" && data.branchKind === "if";
+  const isSchedule = isTrigger && data.triggerKind === "schedule";
+  const isWebhook = isTrigger && data.triggerKind === "webhook";
+  const isIf = node.type === "branch" && (data.branchKind === "if" || data.branchKind === "true_false");
   const isRule = node.type === "rule";
+  const isAction = node.type === "action";
+  const isConstant = node.type === "constant";
   const canRun = Boolean(onRunNode) && (isManual || isIf || isRule);
 
   const selectedSource =
@@ -137,14 +143,22 @@ export function AutomationNodeConfigModal({
 
   const title = data.label;
   const subtitle = isManual
-    ? "Manual trigger"
+    ? "Manual trigger · workflow_trigger"
     : isEvent
-      ? "Event trigger"
-      : isIf
-        ? "If condition"
-        : isRule
-          ? "Rule · service eligibility"
-          : node.type ?? "Node";
+      ? "Event trigger · workflow_trigger"
+      : isSchedule
+        ? "Schedule trigger · workflow_trigger"
+        : isWebhook
+          ? "Webhook trigger · workflow_trigger"
+          : isIf
+            ? "If / Branch · condition"
+            : isRule
+              ? "Rule · rule.eligibility_pathway"
+              : isAction
+                ? "Action · action.call_agent"
+                : isConstant
+                  ? "Constant · constants_packs"
+                  : node.type ?? "Node";
 
   const middleLabel = isTrigger
     ? "Configuration"
@@ -280,6 +294,10 @@ export function AutomationNodeConfigModal({
               />
             ) : isEvent ? (
               <EventParams data={data} t={t} onUpdate={onUpdate} />
+            ) : isSchedule ? (
+              <ScheduleParams data={data} t={t} onUpdate={onUpdate} />
+            ) : isWebhook ? (
+              <WebhookParams data={data} t={t} onUpdate={onUpdate} />
             ) : isIf ? (
               <IfConditionConfigForm
                 config={normalizeIfConditionConfig(data.conditionConfig)}
@@ -308,10 +326,17 @@ export function AutomationNodeConfigModal({
                   })
                 }
               />
+            ) : isAction ? (
+              <ActionParams data={data} t={t} onUpdate={onUpdate} />
+            ) : isConstant ? (
+              <ConstantParams data={data} t={t} onUpdate={onUpdate} />
+            ) : node.type === "exit" ? (
+              <p className={TOWER_DIALOG_HINT_CLASS} style={{ margin: 0, color: t.textMuted }}>
+                Terminal node. Walk ends here after Action enrollments are written.
+              </p>
             ) : (
               <p className={TOWER_DIALOG_HINT_CLASS} style={{ margin: 0, color: t.textMuted }}>
-                Configuration for this node type is coming next. Drop fields from Input when Actions
-                land.
+                No editable parameters for this node.
               </p>
             )}
           </div>
@@ -517,6 +542,7 @@ function EventParams({
     mutationEvents: [],
     scopes: {},
   };
+  const selectedEvent = data.triggerEvent ?? "eligibility.changed";
 
   function patchConfig(patch: Partial<EventTriggerConfig>) {
     const next: EventTriggerConfig = {
@@ -525,17 +551,18 @@ function EventParams({
     };
     onUpdate({
       eventTriggerConfig: next,
-      configured: isEventTriggerConfigured(next),
+      triggerEvent: selectedEvent,
+      configured: Boolean(selectedEvent),
     });
   }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       <div>
-        <SectionLabel t={t}>Event types</SectionLabel>
+        <SectionLabel t={t}>Machine event (workflow_trigger.event_name)</SectionLabel>
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-          {DATA_MUTATION_EVENTS.map((event) => {
-            const checked = config.mutationEvents.includes(event.id);
+          {WORKFLOW_EVENT_CATALOG.map((event) => {
+            const checked = selectedEvent === event.id;
             return (
               <label
                 key={event.id}
@@ -552,10 +579,13 @@ function EventParams({
                 <Checkbox
                   checked={checked}
                   onCheckedChange={(value) => {
-                    const next = value === true
-                      ? [...config.mutationEvents, event.id]
-                      : config.mutationEvents.filter((id) => id !== event.id);
-                    patchConfig({ mutationEvents: next });
+                    if (value !== true) return;
+                    onUpdate({
+                      triggerEvent: event.id as WorkflowTriggerEvent,
+                      eventTriggerConfig: config,
+                      configured: true,
+                      enrollmentHint: `Fires on ${event.id}`,
+                    });
                   }}
                   className={SCOPE_CHECKBOX_CLASS}
                 />
@@ -571,7 +601,7 @@ function EventParams({
                     {event.label}
                   </span>
                   <span className={TOWER_DIALOG_HINT_CLASS} style={{ color: t.textMuted }}>
-                    {event.description}
+                    {event.id}
                   </span>
                 </span>
               </label>
@@ -580,7 +610,7 @@ function EventParams({
         </div>
       </div>
       <div>
-        <SectionLabel t={t}>Applies to</SectionLabel>
+        <SectionLabel t={t}>Applies to (condition JSON)</SectionLabel>
         <DataClassScopeSelectorList
           scopes={config.scopes}
           onChange={(classId, selection) => {
@@ -594,8 +624,215 @@ function EventParams({
         />
       </div>
       <p className={TOWER_DIALOG_HINT_CLASS} style={{ margin: 0, color: t.textMuted }}>
-        {formatEventTriggerSummary(config)}
+        Subscribes via workflow_trigger · {selectedEvent}
+        {config.scopes && Object.keys(config.scopes).length
+          ? ` · ${formatEventTriggerSummary(config)}`
+          : ""}
       </p>
+    </div>
+  );
+}
+
+function ScheduleParams({
+  data,
+  t,
+  onUpdate,
+}: {
+  data: WorkflowNodeData;
+  t: Tokens;
+  onUpdate: (patch: Partial<WorkflowNodeData>) => void;
+}) {
+  const cron = data.scheduleCron ?? "0 * * * *";
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <SectionLabel t={t}>Cron (workflow_trigger.schedule)</SectionLabel>
+      <input
+        value={cron}
+        onChange={(e) =>
+          onUpdate({
+            scheduleCron: e.target.value,
+            scheduleSummary: e.target.value,
+            configured: Boolean(e.target.value.trim()),
+          })
+        }
+        style={{
+          height: 36,
+          padding: "0 10px",
+          borderRadius: 8,
+          border: `1px solid ${t.border}`,
+          background: t.bgPrimary,
+          color: t.textPrimary,
+          fontSize: 13,
+          fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+        }}
+      />
+      <p className={TOWER_DIALOG_HINT_CLASS} style={{ margin: 0, color: t.textMuted }}>
+        Worker tick fires active schedule triggers. Default: hourly.
+      </p>
+    </div>
+  );
+}
+
+function WebhookParams({
+  data,
+  t,
+  onUpdate,
+}: {
+  data: WorkflowNodeData;
+  t: Tokens;
+  onUpdate: (patch: Partial<WorkflowNodeData>) => void;
+}) {
+  const webhookId = data.webhookId ?? "wh_external";
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <SectionLabel t={t}>Webhook id (workflow_trigger.webhook_id)</SectionLabel>
+      <input
+        value={webhookId}
+        onChange={(e) =>
+          onUpdate({
+            webhookId: e.target.value.trim(),
+            configured: Boolean(e.target.value.trim()),
+            enrollmentHint: `POST /wire/hook/${e.target.value.trim()}`,
+          })
+        }
+        style={{
+          height: 36,
+          padding: "0 10px",
+          borderRadius: 8,
+          border: `1px solid ${t.border}`,
+          background: t.bgPrimary,
+          color: t.textPrimary,
+          fontSize: 13,
+          fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+        }}
+      />
+      <p className={TOWER_DIALOG_HINT_CLASS} style={{ margin: 0, color: t.textMuted }}>
+        Inbound URL: <code>/wire/hook/{webhookId}</code>
+      </p>
+    </div>
+  );
+}
+
+function ActionParams({
+  data,
+  t,
+  onUpdate,
+}: {
+  data: WorkflowNodeData;
+  t: Tokens;
+  onUpdate: (patch: Partial<WorkflowNodeData>) => void;
+}) {
+  const selected = data.agentRef ?? "tpl.optin_launch.v1";
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <SectionLabel t={t}>Agent / sequence (action.agent_ref)</SectionLabel>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        {WORKFLOW_AGENT_OPTIONS.map((opt) => {
+          const checked = selected === opt.id;
+          return (
+            <label
+              key={opt.id}
+              style={{
+                display: "flex",
+                gap: 10,
+                padding: "8px 10px",
+                borderRadius: 8,
+                border: `1px solid ${checked ? t.accent : t.border}`,
+                background: checked ? t.accentBg : t.bgPrimary,
+                cursor: "pointer",
+              }}
+            >
+              <Checkbox
+                checked={checked}
+                onCheckedChange={(value) => {
+                  if (value !== true) return;
+                  onUpdate({
+                    agentRef: opt.id,
+                    actionType: "enroll_sequence",
+                    actionSummary: `Call agent · ${opt.id}`,
+                    configured: true,
+                  });
+                }}
+                className={SCOPE_CHECKBOX_CLASS}
+              />
+              <span>
+                <span
+                  style={{
+                    display: "block",
+                    fontSize: DOCS_TREE_LABEL_SIZE,
+                    fontWeight: 500,
+                    color: t.textPrimary,
+                  }}
+                >
+                  {opt.label}
+                </span>
+                <span className={TOWER_DIALOG_HINT_CLASS} style={{ color: t.textMuted }}>
+                  {opt.id} · firm_sequence_binding.{opt.sequenceClass}
+                </span>
+              </span>
+            </label>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ConstantParams({
+  data,
+  t,
+  onUpdate,
+}: {
+  data: WorkflowNodeData;
+  t: Tokens;
+  onUpdate: (patch: Partial<WorkflowNodeData>) => void;
+}) {
+  const selected = data.constantsPackId ?? data.constantSummary ?? "";
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <SectionLabel t={t}>Constants pack (constants_packs)</SectionLabel>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        {WORKFLOW_CONSTANT_PACK_OPTIONS.map((opt) => {
+          const checked = selected === opt.id;
+          return (
+            <label
+              key={opt.id}
+              style={{
+                display: "flex",
+                gap: 10,
+                padding: "8px 10px",
+                borderRadius: 8,
+                border: `1px solid ${checked ? t.accent : t.border}`,
+                background: checked ? t.accentBg : t.bgPrimary,
+                cursor: "pointer",
+              }}
+            >
+              <Checkbox
+                checked={checked}
+                onCheckedChange={(value) => {
+                  if (value !== true) return;
+                  onUpdate({
+                    constantsPackId: opt.id,
+                    constantSummary: opt.id,
+                    constantKind: "data_reference",
+                    configured: true,
+                  });
+                }}
+                className={SCOPE_CHECKBOX_CLASS}
+              />
+              <span
+                style={{
+                  fontSize: DOCS_TREE_LABEL_SIZE,
+                  fontWeight: 500,
+                  color: t.textPrimary,
+                }}
+              >
+                {opt.label}
+              </span>
+            </label>
+          );
+        })}
+      </div>
     </div>
   );
 }

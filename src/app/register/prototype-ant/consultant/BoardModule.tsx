@@ -1,10 +1,17 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button, Input, Segmented, Space, Splitter, Table, Tag, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { clientList } from "../../../data/clients";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { ClientWorkspace } from "./ClientWorkspace";
-import { CONSULTANT_TODAY_MEETINGS, MEETING_READY_CLIENT_IDS } from "./meetingsData";
+import { selectConsultantTodayMeetings, selectMeetingReadyClientIds, useMeetings } from "./meetingsData";
+import { useWireTick, wirePorts } from "../../../wire";
+import type {
+  EligibilityResultRow,
+  EnrollmentRow,
+  MotionDecisionRow,
+  SignalRow,
+} from "../../../wire/machineTypes";
 import {
   PHASE_LABEL,
   phaseTagColor,
@@ -64,6 +71,41 @@ export function BoardModule({
 }: BoardModuleProps) {
   const [search, setSearch] = useState("");
   const [sortNewest, setSortNewest] = useState(true);
+  const wireTick = useWireTick();
+  const meetings = useMeetings();
+  const todayMeetings = useMemo(() => selectConsultantTodayMeetings(meetings), [meetings]);
+  const meetingReadyClientIds = useMemo(
+    () => selectMeetingReadyClientIds(meetings),
+    [meetings],
+  );
+  const [eligibilityResults, setEligibilityResults] = useState<EligibilityResultRow[]>([]);
+  const [signals, setSignals] = useState<SignalRow[]>([]);
+  const [motionDecisions, setMotionDecisions] = useState<MotionDecisionRow[]>([]);
+  const [enrollments, setEnrollments] = useState<EnrollmentRow[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void wirePorts.machineApi
+      .boardDetections()
+      .then((data) => {
+        if (cancelled) return;
+        setEligibilityResults(data.eligibilityResults);
+        setSignals(data.signals);
+        setMotionDecisions(data.motionDecisions);
+        setEnrollments(data.enrollments);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setEligibilityResults([]);
+          setSignals([]);
+          setMotionDecisions([]);
+          setEnrollments([]);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [wireTick]);
 
   const haltForClient = (id: string): HaltRetention | null =>
     bookHalt ?? haltByContact[id] ?? null;
@@ -71,7 +113,7 @@ export function BoardModule({
   const rows: BoardRow[] = useMemo(() => {
     const list = clientList.map((client) => {
       const halt = haltForClient(client.id);
-      const phase = resolveWorkspacePhase(client.id, Boolean(halt), MEETING_READY_CLIENT_IDS);
+      const phase = resolveWorkspacePhase(client.id, Boolean(halt), meetingReadyClientIds);
       const runtime =
         client.reactivationPhase === "active"
           ? "Active"
@@ -120,7 +162,7 @@ export function BoardModule({
         <Surface label="Phase signal">
           <Tag
             color={phaseTagColor(
-              resolveWorkspacePhase(row.id, row.halted, MEETING_READY_CLIENT_IDS),
+              resolveWorkspacePhase(row.id, row.halted, meetingReadyClientIds),
             )}
           >
             {phase}
@@ -216,7 +258,7 @@ export function BoardModule({
                 </Button>
               </Space>
               <Space wrap>
-                {CONSULTANT_TODAY_MEETINGS.map((m) => (
+                {todayMeetings.map((m) => (
                   <Button key={m.id} size="small" onClick={() => onMeetingClick(m.id)}>
                     {m.contactName} · {m.time}
                   </Button>
@@ -231,6 +273,66 @@ export function BoardModule({
               <Tag color="warning">In motion</Tag>
               <Tag>Silent</Tag>
               <Tag color="error">Halted</Tag>
+            </Space>
+          </Surface>
+
+          <Surface label="Machine detections">
+            <Space direction="vertical" size="small" style={{ width: "100%" }}>
+              <Text type="secondary" style={{ fontSize: 11 }}>
+                Eligibility passes:{" "}
+                {eligibilityResults.filter((r) => r.any_pathway_pass).length} · Signals: {signals.length} ·
+                Motions: {motionDecisions.length} · Enrollments: {enrollments.length}
+              </Text>
+              {eligibilityResults.length > 0 ? (
+                <Table
+                  size="small"
+                  pagination={false}
+                  dataSource={eligibilityResults.map((r) => ({ ...r, key: r.id }))}
+                  columns={[
+                    { title: "Contact", dataIndex: "contact_id", key: "contact_id", width: 100 },
+                    {
+                      title: "Pass",
+                      dataIndex: "any_pathway_pass",
+                      key: "any_pathway_pass",
+                      width: 56,
+                      render: (v: boolean) => <Tag color={v ? "success" : "default"}>{v ? "yes" : "no"}</Tag>,
+                    },
+                  ]}
+                />
+              ) : null}
+              {motionDecisions.length > 0 ? (
+                <Table
+                  size="small"
+                  pagination={false}
+                  dataSource={motionDecisions.map((m) => ({ ...m, key: m.id }))}
+                  columns={[
+                    { title: "Contact", dataIndex: "contact_id", key: "contact_id", width: 100 },
+                    { title: "Motion", dataIndex: "motion", key: "motion" },
+                  ]}
+                />
+              ) : null}
+              {signals.length > 0 ? (
+                <Table
+                  size="small"
+                  pagination={false}
+                  dataSource={signals.map((s) => ({ ...s, key: s.id }))}
+                  columns={[
+                    { title: "Contact", dataIndex: "contact_id", key: "contact_id", width: 100 },
+                    { title: "Kind", dataIndex: "kind", key: "kind" },
+                  ]}
+                />
+              ) : null}
+              {enrollments.length > 0 ? (
+                <Table
+                  size="small"
+                  pagination={false}
+                  dataSource={enrollments.map((e) => ({ ...e, key: e.id }))}
+                  columns={[
+                    { title: "Contact", dataIndex: "contact_id", key: "contact_id", width: 100 },
+                    { title: "Agent", dataIndex: "agent_ref", key: "agent_ref", ellipsis: true },
+                  ]}
+                />
+              ) : null}
             </Space>
           </Surface>
 

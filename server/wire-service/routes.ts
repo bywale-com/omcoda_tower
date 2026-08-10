@@ -28,15 +28,52 @@ import {
 } from "./pool.ts";
 import { handleListEvents, handleResendWebhook } from "./webhooks.ts";
 import {
+  handleActiveAttemptsList,
   handleAuditRunCreate,
+  handleAttemptCriteriaList,
+  handleAttemptCriteriaUpsert,
   handleBoardDetections,
+  handleBindingUpsert,
+  handleCampaignStateGet,
+  handleCampaignStatePost,
+  handleChannelOrderList,
+  handleChannelOrderUpsert,
+  handleCohortScoringList,
+  handleCohortScoringUpsert,
+  handleEligibilityPathwayUpsert,
+  handleEligibilityPathwaysList,
+  handleEligibilityPipelineList,
+  handleEngagementRecordsList,
   handleEnrollmentCreate,
+  handleEvaluationPinGet,
+  handleEvaluationPinPut,
+  handleFactWriteback,
+  handleFactWritebacksList,
+  handleFieldClassRoutingList,
+  handleFieldClassRoutingUpsert,
+  handleMachineEvent,
   handleMachineHealth,
+  handleMachineProvision,
   handleMachineTick,
+  handleMetricsThresholdsList,
+  handleMetricsThresholdsUpsert,
+  handleMissingFactSignalCreate,
+  handleMissingFactSignalsList,
+  handleMotionPrecedenceList,
+  handleMotionPrecedenceUpsert,
   handleOnboardingFire,
   handlePauseWorkflow,
+  handlePhaseOrderList,
+  handlePhaseOrderUpsert,
+  handlePreparedWorkspaceUpsert,
+  handlePreparedWorkspacesList,
+  handleReachabilityChecksList,
+  handleReachabilityChecksUpsert,
   handleReferenceUpsert,
+  handleReferenceVersionsList,
+  handleTemplateUpsert,
   handleTemplatesList,
+  handleWebhookTrigger,
   handleWorkflowActivate,
   handleWorkflowCreate,
   handleWorkflowList,
@@ -100,6 +137,44 @@ export function createWireRoutes(): Hono {
   wire.post("/machine/onboarding/fire", handleOnboardingFire);
   wire.get("/machine/board", handleBoardDetections);
   wire.get("/machine/templates", handleTemplatesList);
+  wire.put("/machine/templates/:id", handleTemplateUpsert);
+  wire.post("/machine/bindings", handleBindingUpsert);
+  wire.get("/machine/rules/attempt-criteria", handleAttemptCriteriaList);
+  wire.put("/machine/rules/attempt-criteria/:id", handleAttemptCriteriaUpsert);
+  wire.get("/machine/seq/channel-order", handleChannelOrderList);
+  wire.put("/machine/seq/channel-order", handleChannelOrderUpsert);
+  wire.get("/machine/eligibility-pipeline", handleEligibilityPipelineList);
+  wire.get("/machine/rules/eligibility-pathways", handleEligibilityPathwaysList);
+  wire.put("/machine/rules/eligibility-pathways/:id", handleEligibilityPathwayUpsert);
+  wire.get("/machine/rules/motion-precedence", handleMotionPrecedenceList);
+  wire.put("/machine/rules/motion-precedence/:id", handleMotionPrecedenceUpsert);
+  wire.get("/machine/rules/field-class-routing", handleFieldClassRoutingList);
+  wire.put("/machine/rules/field-class-routing/:id", handleFieldClassRoutingUpsert);
+  wire.get("/machine/rules/cohort-scoring", handleCohortScoringList);
+  wire.put("/machine/rules/cohort-scoring/:id", handleCohortScoringUpsert);
+  wire.get("/machine/rules/metrics-thresholds", handleMetricsThresholdsList);
+  wire.put("/machine/rules/metrics-thresholds/:id", handleMetricsThresholdsUpsert);
+  wire.get("/machine/rules/reachability-checks", handleReachabilityChecksList);
+  wire.put("/machine/rules/reachability-checks/:id", handleReachabilityChecksUpsert);
+  wire.get("/machine/seq/phase-order", handlePhaseOrderList);
+  wire.put("/machine/seq/phase-order", handlePhaseOrderUpsert);
+  wire.post("/machine/fact-writebacks", handleFactWriteback);
+  wire.get("/machine/fact-writebacks", handleFactWritebacksList);
+  wire.get("/machine/missing-fact-signals", handleMissingFactSignalsList);
+  wire.post("/machine/missing-fact-signals", handleMissingFactSignalCreate);
+  wire.get("/machine/prepared-workspaces", handlePreparedWorkspacesList);
+  wire.put("/machine/prepared-workspaces/:id", handlePreparedWorkspaceUpsert);
+  wire.post("/machine/prepared-workspaces", handlePreparedWorkspaceUpsert);
+  wire.get("/machine/active-attempts", handleActiveAttemptsList);
+  wire.get("/machine/engagement-records", handleEngagementRecordsList);
+  wire.get("/machine/reference-versions", handleReferenceVersionsList);
+  wire.get("/machine/evaluation-pins/:packId", handleEvaluationPinGet);
+  wire.put("/machine/evaluation-pins/:packId", handleEvaluationPinPut);
+  wire.get("/machine/campaign-state", handleCampaignStateGet);
+  wire.post("/machine/campaign-state", handleCampaignStatePost);
+  wire.post("/machine/provision", handleMachineProvision);
+  wire.post("/machine/events", handleMachineEvent);
+  wire.post("/hook/:webhookId", handleWebhookTrigger);
 
   return wire;
 }

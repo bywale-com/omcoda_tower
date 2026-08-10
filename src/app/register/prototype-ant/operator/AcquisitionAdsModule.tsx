@@ -28,6 +28,12 @@ import {
 } from "../../../wire";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { StatusTag } from "./operatorAntTags";
+import {
+  hydratePrimaryStoreRows,
+  persistPrimaryStoreRow,
+} from "../../prototype/operator/operatorWireHelpers";
+
+const ACQUISITION_CAMPAIGNS_COLLECTION = "acquisition_campaigns";
 
 const REVIEW_STATES: MetaReviewState[] = ["draft", "in_review", "approved", "rejected"];
 const DELIVERY_STATES: MetaDeliveryState[] = ["not_started", "scheduled", "active", "paused", "ended"];
@@ -121,6 +127,20 @@ export function AcquisitionAdsModule() {
 
   useEffect(() => {
     let cancelled = false;
+    void hydratePrimaryStoreRows(ACQUISITION_CAMPAIGNS_COLLECTION, INITIAL).then((stored) => {
+      if (!cancelled) {
+        setCampaigns(stored);
+        setSelectedId(stored[0]?.id ?? INITIAL[0].id);
+        setInstrId(stored[0]?.id ?? INITIAL[0].id);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
     void wirePorts.metaAds.getCampaign(CT_DEMO.firmId).then((s) => {
       if (!cancelled) setMetaState(s);
     });
@@ -143,7 +163,14 @@ export function AcquisitionAdsModule() {
   const instr = INSTRUMENTATION[instrId] ?? INSTRUMENTATION["camp-q3"];
 
   const patchSelected = (patch: Partial<Campaign>) => {
-    setCampaigns((prev) => prev.map((c) => (c.id === selectedId ? { ...c, ...patch } : c)));
+    setCampaigns((prev) =>
+      prev.map((c) => {
+        if (c.id !== selectedId) return c;
+        const next = { ...c, ...patch };
+        void persistPrimaryStoreRow(ACQUISITION_CAMPAIGNS_COLLECTION, next);
+        return next;
+      }),
+    );
   };
 
   const columns: ColumnsType<Campaign> = [
@@ -196,6 +223,7 @@ export function AcquisitionAdsModule() {
                 captureWebsite: "",
                 captureChannel: "Email",
               };
+              void persistPrimaryStoreRow(ACQUISITION_CAMPAIGNS_COLLECTION, camp);
               setCampaigns((p) => [...p, camp]);
               setSelectedId(id);
               setEditorOpen(true);
@@ -420,7 +448,14 @@ export function AcquisitionAdsModule() {
         onOk={() => {
           const camp = campaigns.find((c) => c.id === instrId)?.name ?? "campaign";
           if (killAction === "kill") {
-            setCampaigns((p) => p.map((c) => (c.id === instrId ? { ...c, status: "Paused" as CampaignStatus } : c)));
+            setCampaigns((p) =>
+              p.map((c) => {
+                if (c.id !== instrId) return c;
+                const next = { ...c, status: "Paused" as CampaignStatus };
+                void persistPrimaryStoreRow(ACQUISITION_CAMPAIGNS_COLLECTION, next);
+                return next;
+              }),
+            );
           }
           message.info(`${killAction === "kill" ? "Killed" : "Held"} · ${camp} · threshold ${killThreshold}`);
           setKillOpen(false);

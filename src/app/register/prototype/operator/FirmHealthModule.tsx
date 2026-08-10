@@ -15,47 +15,46 @@ import {
   surfaceBlock,
   type OperatorModuleProps,
 } from "./operatorChrome";
-
-const SEQUENCES = [
-  {
-    id: "seq-optin",
-    name: "Opt-in Standard",
-    health: "Healthy",
-    stuckReason: "3 contacts on WhatsApp confirm step",
-    lastRunner: "Runner tick · Today 14:01 · step advance",
-    gates: ["Consent OK", "Send gate open", "Channel WhatsApp"],
-  },
-  {
-    id: "seq-nudge",
-    name: "Nudge · dormant 90d",
-    health: "Watch",
-    stuckReason: "11 contacts past silence clock on step 2",
-    lastRunner: "Runner tick · Today 13:52 · silence hold",
-    gates: ["Consent OK", "Send gate open", "Unsubscribe armed"],
-  },
-  {
-    id: "seq-react",
-    name: "Reactivation · CEC window",
-    health: "At risk",
-    stuckReason: "9 contacts — consent ledger incomplete after import",
-    lastRunner: "Runner tick · Today 11:48 · send gate blocked",
-    gates: ["Consent partial", "Send gate hold", "Channel Email"],
-  },
-] as const;
-
-const ENGAGEMENT_ROWS = [
-  { label: "7d reply rate", value: "11%", health: "Watch" },
-  { label: "Send-gate holds", value: "4", health: "At risk" },
-  { label: "Active enrollments", value: "214", health: "Healthy" },
-] as const;
+import {
+  loadFirmHealthData,
+  type EngagementHealthRow,
+  type EngagementRecordSummary,
+  type InFlightAttemptRow,
+  type SequenceHealthRow,
+} from "./operatorWireHelpers";
 
 export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleProps) {
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Firm health", focusedEntry, hoveredEntry);
   const [selectedFirmId, setSelectedFirmId] = useState(DEMO_FIRMS[0].id);
   const [stickyFirmId, setStickyFirmId] = useState<string | null>(DEMO_FIRMS[3].id);
+  const [sequences, setSequences] = useState<SequenceHealthRow[]>([]);
+  const [engagementRows, setEngagementRows] = useState<EngagementHealthRow[]>([]);
+  const [inFlightAttempts, setInFlightAttempts] = useState<InFlightAttemptRow[]>([]);
+  const [engagementRecords, setEngagementRecords] = useState<EngagementRecordSummary>({
+    total: 0,
+    kinds: [],
+  });
   const [detailId, setDetailId] = useState<string | null>(null);
   const [supportCue, setSupportCue] = useState<string | null>(null);
+
+  const scopedId = stickyFirmId ?? selectedFirmId;
+  const firm = DEMO_FIRMS.find((f) => f.id === scopedId) ?? DEMO_FIRMS[0];
+
+  useEffect(() => {
+    let cancelled = false;
+    void loadFirmHealthData(scopedId).then((data) => {
+      if (!cancelled) {
+        setSequences(data.sequences);
+        setEngagementRows(data.engagement);
+        setInFlightAttempts(data.inFlightAttempts);
+        setEngagementRecords(data.engagementRecords);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [scopedId]);
 
   useEffect(() => {
     if (!focusedEntry || focusedEntry.module !== "Firm health") return;
@@ -67,24 +66,20 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
     ) {
       setSelectedFirmId(DEMO_FIRMS[3].id);
       setStickyFirmId(DEMO_FIRMS[3].id);
-      setDetailId(SEQUENCES.find((s) => s.health !== "Healthy")?.id ?? SEQUENCES[0].id);
+      setDetailId(sequences.find((s) => s.health !== "Healthy")?.id ?? sequences[0]?.id ?? null);
     }
     if (focusedEntry.label === "Open support context") {
       setSupportCue(`Support context · ${DEMO_FIRMS[3].name}`);
     }
-  }, [focusedEntry]);
+  }, [focusedEntry, sequences]);
 
-  const scopedId = stickyFirmId ?? selectedFirmId;
-  const firm = DEMO_FIRMS.find((f) => f.id === scopedId) ?? DEMO_FIRMS[0];
-  const detail = detailId ? SEQUENCES.find((s) => s.id === detailId) : null;
+  const detail = detailId ? sequences.find((s) => s.id === detailId) : null;
 
-  const seedSupport = (seq?: (typeof SEQUENCES)[number]) => {
+  const seedSupport = (seq?: SequenceHealthRow) => {
     const reason = seq
       ? `${seq.name} · ${seq.stuckReason} · gates ${seq.gates.join(", ")}`
       : "Firm health drill";
-    setSupportCue(
-      `Customer support · Ticket seeded · ${firm.name} · ${reason}`,
-    );
+    setSupportCue(`Customer support · Ticket seeded · ${firm.name} · ${reason}`);
   };
 
   return (
@@ -185,7 +180,7 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
                 Sequence health
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                {SEQUENCES.map((seq) => (
+                {sequences.map((seq) => (
                   <button
                     key={seq.id}
                     type="button"
@@ -224,7 +219,7 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
                 Engagement health
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                {ENGAGEMENT_ROWS.map((row) => (
+                {engagementRows.map((row) => (
                   <div
                     key={row.label}
                     style={{
@@ -249,6 +244,72 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
             </>,
           )}
 
+          {surfaceBlock(
+            t,
+            "In-flight attempts",
+            focus.labelFocused("In-flight attempts"),
+            focus.labelHovered("In-flight attempts"),
+            <>
+              <div style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary, marginBottom: 10 }}>
+                In-flight attempts
+              </div>
+              {inFlightAttempts.length === 0 ? (
+                <div style={{ fontSize: 12, color: t.textMuted }}>No in-flight attempts for this firm.</div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  {inFlightAttempts.map((attempt) => (
+                    <div
+                      key={`${attempt.contactId}-${attempt.ownerChannel}-${attempt.status}`}
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr 0.8fr 0.7fr 0.8fr 0.5fr",
+                        gap: 8,
+                        alignItems: "center",
+                        padding: "10px 12px",
+                        border: `1px solid ${t.border}`,
+                        borderRadius: 4,
+                        background: t.bgPrimary,
+                        fontSize: 12,
+                      }}
+                    >
+                      <span style={{ color: t.textPrimary }}>{attempt.contactId}</span>
+                      <span style={{ color: t.textMuted }}>{attempt.ownerChannel}</span>
+                      <span style={{ color: t.textMuted }}>{attempt.status}</span>
+                      <span style={{ color: t.textMuted }}>{attempt.waitingOn}</span>
+                      <span style={{ color: t.textDim }}>step {attempt.step}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>,
+          )}
+
+          {surfaceBlock(
+            t,
+            "Engagement records",
+            focus.labelFocused("Engagement records"),
+            focus.labelHovered("Engagement records"),
+            <>
+              <div style={{ fontSize: 13, fontWeight: 600, color: t.textPrimary, marginBottom: 10 }}>
+                Engagement records
+              </div>
+              <div style={{ fontSize: 12, color: t.textMuted, marginBottom: 8 }}>
+                Recent records · <strong style={{ color: t.textPrimary }}>{engagementRecords.total}</strong> total
+              </div>
+              {engagementRecords.kinds.length === 0 ? (
+                <div style={{ fontSize: 12, color: t.textMuted }}>No engagement records for this firm.</div>
+              ) : (
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {engagementRecords.kinds.map((kind) => (
+                    <span key={kind.kind}>
+                      {statusChip(t, `${kind.kind} · ${kind.count}`, "muted")}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </>,
+          )}
+
           <div
             data-register-surface="Open support context"
             style={{
@@ -261,11 +322,7 @@ export function FirmHealthModule({ t, focusedEntry, hoveredId }: OperatorModuleP
               borderRadius: 4,
             }}
           >
-            <button
-              type="button"
-              style={primaryBtnStyle(t)}
-              onClick={() => seedSupport()}
-            >
+            <button type="button" style={primaryBtnStyle(t)} onClick={() => seedSupport()}>
               Open support context
             </button>
             {supportCue ? (

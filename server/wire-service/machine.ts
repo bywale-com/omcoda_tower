@@ -3,6 +3,12 @@ import { randomUUID } from "node:crypto";
 import { getPool } from "./db.ts";
 import { enrollAndActuate, tickOnce } from "./cascade.ts";
 import { sendGateSnapshot } from "./sendMode.ts";
+import {
+  dispatchEventToWorkflows,
+  materializeTriggersFromGraph,
+  walkValidatedWorkflow,
+  type RfNode,
+} from "./workflowWalk.ts";
 
 function json(c: Context, body: unknown, status = 200) {
   return c.json(body, status);
@@ -47,23 +53,39 @@ export async function handleWorkflowCreate(c: Context) {
   return json(c, { id, firmId: firm, name: body.name, status: "draft", target });
 }
 
-/** Activate: draft → active (the proof transition). */
+/** Activate: draft → active + materialize workflow_trigger rows from graph. */
 export async function handleWorkflowActivate(c: Context) {
   const workflowId = c.req.param("id");
+  const firm = firmId(c);
   const pool = getPool();
   const cur = await pool.query<{ status: string }>(
     `SELECT status FROM workflow_state WHERE workflow_id=$1`,
     [workflowId],
   );
   if (!cur.rowCount) return json(c, { error: "workflow_state missing" }, 404);
-  if (cur.rows[0].status === "active") {
-    return json(c, { workflowId, status: "active", noop: true });
-  }
+
+  const wf = await pool.query<{ graph: { nodes: RfNode[]; edges: unknown[] }; firm_id: string }>(
+    `SELECT graph, firm_id FROM workflow WHERE id=$1`,
+    [workflowId],
+  );
+  if (!wf.rowCount) return json(c, { error: "workflow missing" }, 404);
+
   await pool.query(
     `UPDATE workflow_state SET status='active', updated_at=now() WHERE workflow_id=$1`,
     [workflowId],
   );
-  return json(c, { workflowId, status: "active", transition: "draft→active" });
+  const triggers = await materializeTriggersFromGraph(
+    pool,
+    workflowId,
+    wf.rows[0].firm_id || firm,
+    wf.rows[0].graph ?? { nodes: [], edges: [] },
+  );
+  return json(c, {
+    workflowId,
+    status: "active",
+    transition: cur.rows[0].status === "active" ? "active→active" : "draft→active",
+    triggersMaterialized: triggers,
+  });
 }
 
 export async function handleWorkflowList(c: Context) {
@@ -83,7 +105,13 @@ export async function handleWorkflowList(c: Context) {
 export async function handleWorkflowRunStart(c: Context) {
   const workflowId = c.req.param("id");
   const firm = firmId(c);
-  const body = await c.req.json<{ triggerLabel?: string }>().catch(() => ({}));
+  const body = await c.req
+    .json<{
+      triggerLabel?: string;
+      contactIds?: string[];
+      payload?: Record<string, unknown>;
+    }>()
+    .catch(() => ({}));
   const id = `run-${randomUUID()}`;
   const pool = getPool();
   await pool.query(
@@ -91,7 +119,23 @@ export async function handleWorkflowRunStart(c: Context) {
      VALUES ($1,$2,$3,'running',$4)`,
     [id, workflowId, firm, body.triggerLabel ?? "Manual run"],
   );
-  return json(c, { id, workflowId, status: "running" });
+  // Walk the saved graph (validated shape) — real execution, not a client timer
+  const walked = await walkValidatedWorkflow(pool, {
+    workflowId,
+    firmId: firm,
+    runId: id,
+    triggerLabel: body.triggerLabel ?? "Manual run",
+    triggerPayload: body.payload ?? { manual: true },
+    contactIds: body.contactIds,
+  });
+  return json(c, {
+    id,
+    workflowId,
+    status: walked.ok ? "success" : "failed",
+    nodeStatus: walked.nodeStatus,
+    enrollments: walked.enrollments,
+    error: walked.error,
+  });
 }
 
 export async function handleWorkflowRunComplete(c: Context) {
@@ -137,6 +181,14 @@ export async function handleEnrollmentCreate(c: Context) {
     purpose: body.purpose ?? "opt-in",
     fireFirstStep: body.fireFirstStep,
   });
+  if (result.blocked === "halt") {
+    return json(c, {
+      deny: "policy",
+      detail: "halt active",
+      blocked: "halt",
+      gate: sendGateSnapshot(),
+    }, 403);
+  }
   return json(c, {
     id: result.enrollmentId,
     attemptId: result.attemptId,
@@ -145,6 +197,95 @@ export async function handleEnrollmentCreate(c: Context) {
     enrolledAt: new Date().toISOString(),
     gate: sendGateSnapshot(),
   });
+}
+
+/**
+ * Shared re-eval ring: eligibility_evaluation → result → signal → motion_decision
+ * → eligibility.changed (workflows) / fallback enroll.
+ */
+async function runContactEligibilityCascade(opts: {
+  firm: string;
+  contactIds: string[];
+  triggerKind: string;
+  resultPayload: Record<string, unknown>;
+  eventPayload: Record<string, unknown>;
+}): Promise<{ cascade: unknown[]; workflowsFired: unknown[] }> {
+  const pool = getPool();
+  const cascade: unknown[] = [];
+  for (const contactId of opts.contactIds) {
+    const evalId = `eval-${randomUUID()}`;
+    await pool.query(
+      `INSERT INTO eligibility_evaluations (id, firm_id, contact_id, trigger_kind, status)
+       VALUES ($1,$2,$3,$4,'done')`,
+      [evalId, opts.firm, contactId, opts.triggerKind],
+    );
+    const resultId = `eres-${randomUUID()}`;
+    const anyPass = true;
+    await pool.query(
+      `INSERT INTO eligibility_results (id, evaluation_id, firm_id, contact_id, result, any_pathway_pass)
+       VALUES ($1,$2,$3,$4,$5::jsonb,$6)`,
+      [
+        resultId,
+        evalId,
+        opts.firm,
+        contactId,
+        JSON.stringify({ trigger: opts.triggerKind, ...opts.resultPayload }),
+        anyPass,
+      ],
+    );
+    const signalId = `sig-${randomUUID()}`;
+    await pool.query(
+      `INSERT INTO signals (id, firm_id, contact_id, kind, payload)
+       VALUES ($1,$2,$3,'eligibility_determination',$4::jsonb)`,
+      [signalId, opts.firm, contactId, JSON.stringify({ resultId, anyPass })],
+    );
+    const motion = anyPass ? "reactivation" : "nudge";
+    const motionId = `mot-${randomUUID()}`;
+    await pool.query(
+      `INSERT INTO motion_decisions (id, firm_id, contact_id, motion, reason)
+       VALUES ($1,$2,$3,$4,$5::jsonb)`,
+      [motionId, opts.firm, contactId, motion, JSON.stringify({ signalId, precedence: "mp-1" })],
+    );
+    cascade.push({
+      contactId,
+      evaluationId: evalId,
+      resultId,
+      signalId,
+      motionId,
+      motion,
+    });
+  }
+
+  const dispatched = await dispatchEventToWorkflows(pool, {
+    firmId: opts.firm,
+    eventName: "eligibility.changed",
+    payload: { ...opts.eventPayload, anyPass: true, motion: "reactivation" },
+    contactIds: opts.contactIds,
+  });
+
+  if (dispatched.length === 0) {
+    for (const contactId of opts.contactIds) {
+      const enrolled = await enrollAndActuate({
+        firmId: opts.firm,
+        contactId,
+        agentRef: "tpl.reactivation.v1",
+        sequenceId: "tpl.reactivation.v1",
+        payload: { faceless: true, fallback: true, trigger: opts.triggerKind },
+        purpose: "reactivation",
+      });
+      if (enrolled.blocked === "halt") {
+        cascade.push({ contactId, blocked: "halt", fallback: true });
+        continue;
+      }
+      cascade.push({
+        contactId,
+        enrollmentId: enrolled.enrollmentId,
+        fallback: true,
+      });
+    }
+  }
+
+  return { cascade, workflowsFired: dispatched };
 }
 
 /**
@@ -178,80 +319,137 @@ export async function handleReferenceUpsert(c: Context) {
       )
     ).rows.map((r) => r.id);
 
-  const cascade: unknown[] = [{ table: "reference_versions", id }];
-
-  for (const contactId of contacts) {
-    const evalId = `eval-${randomUUID()}`;
-    await pool.query(
-      `INSERT INTO eligibility_evaluations (id, firm_id, contact_id, trigger_kind, status)
-       VALUES ($1,$2,$3,'reference_version','done')`,
-      [evalId, firm, contactId],
-    );
-    const resultId = `eres-${randomUUID()}`;
-    const anyPass = true;
-    await pool.query(
-      `INSERT INTO eligibility_results (id, evaluation_id, firm_id, contact_id, result, any_pathway_pass)
-       VALUES ($1,$2,$3,$4,$5::jsonb,$6)`,
-      [
-        resultId,
-        evalId,
-        firm,
-        contactId,
-        JSON.stringify({ trigger: "reference_version", refId: id }),
-        anyPass,
-      ],
-    );
-    const signalId = `sig-${randomUUID()}`;
-    await pool.query(
-      `INSERT INTO signals (id, firm_id, contact_id, kind, payload)
-       VALUES ($1,$2,$3,'eligibility_determination',$4::jsonb)`,
-      [signalId, firm, contactId, JSON.stringify({ resultId, anyPass })],
-    );
-    // Engine 2: reactivation-first when pass (simplification of mp-1)
-    const motion = anyPass ? "reactivation" : "nudge";
-    const motionId = `mot-${randomUUID()}`;
-    await pool.query(
-      `INSERT INTO motion_decisions (id, firm_id, contact_id, motion, reason)
-       VALUES ($1,$2,$3,$4,$5::jsonb)`,
-      [motionId, firm, contactId, motion, JSON.stringify({ signalId, precedence: "mp-1" })],
-    );
-
-    // Resolve binding + enroll (send gated by SEND_MODE + cohort)
-    const bind = await pool.query<{ template_id: string }>(
-      `SELECT template_id FROM firm_sequence_binding
-       WHERE firm_id=$1 AND sequence_class=$2`,
-      [firm, motion === "reactivation" ? "reactivation" : "reengagement"],
-    );
-    const agentRef = bind.rows[0]?.template_id ?? "tpl.reactivation.v1";
-    const enrolled = await enrollAndActuate({
-      firmId: firm,
-      contactId,
-      agentRef,
-      sequenceId: agentRef,
-      payload: { motionId, faceless: true },
-      purpose: motion === "reactivation" ? "reactivation" : "cem",
-    });
-
-    cascade.push({
-      contactId,
-      evaluationId: evalId,
-      resultId,
-      signalId,
-      motionId,
-      enrollmentId: enrolled.enrollmentId,
-      attemptId: enrolled.attemptId,
-      agentRef,
-      dryRun: enrolled.dryRun,
-      send: enrolled.send,
-    });
-  }
+  const { cascade, workflowsFired } = await runContactEligibilityCascade({
+    firm,
+    contactIds: contacts,
+    triggerKind: "reference_version",
+    resultPayload: { refId: id },
+    eventPayload: { referenceId: id },
+  });
 
   return json(c, {
     referenceId: id,
-    cascade,
+    cascade: [{ table: "reference_versions", id }, ...cascade],
+    workflowsFired,
     gate: sendGateSnapshot(),
-    note: "Faceless cascade wrote eligibility→signal→motion→enrollment; send follows SEND_MODE/cohort",
+    note: "eligibility.changed emitted; active workflows walked when subscribed",
   });
+}
+
+/**
+ * Contact fact answer → fact_writebacks (+ clear missing_fact_signals) → immediate re-eval cascade.
+ */
+export async function handleFactWriteback(c: Context) {
+  const firm = firmId(c);
+  const body = await c.req.json<{
+    contactId: string;
+    fieldKey: string;
+    value: unknown;
+    source?: string;
+    missingFieldKeys?: string[];
+  }>();
+  if (!body.contactId?.trim() || !body.fieldKey?.trim()) {
+    return json(c, { error: "contactId and fieldKey required" }, 400);
+  }
+  const pool = getPool();
+  const contactId = body.contactId.trim();
+  const fieldKey = body.fieldKey.trim();
+  const writeId = `fwb-${randomUUID()}`;
+  await pool.query(
+    `INSERT INTO fact_writebacks (id, firm_id, contact_id, field_key, value)
+     VALUES ($1,$2,$3,$4,$5::jsonb)`,
+    [writeId, firm, contactId, fieldKey, JSON.stringify(body.value ?? null)],
+  );
+  // Answered fact clears its missing signal
+  await pool.query(
+    `DELETE FROM missing_fact_signals WHERE firm_id=$1 AND contact_id=$2 AND field_key=$3`,
+    [firm, contactId, fieldKey],
+  );
+  const missingIds: string[] = [];
+  for (const missingKey of body.missingFieldKeys ?? []) {
+    const existing = await pool.query(
+      `SELECT id FROM missing_fact_signals WHERE firm_id=$1 AND contact_id=$2 AND field_key=$3 LIMIT 1`,
+      [firm, contactId, missingKey],
+    );
+    if (existing.rowCount) {
+      missingIds.push(existing.rows[0].id as string);
+      continue;
+    }
+    const mid = `mfs-${randomUUID()}`;
+    await pool.query(
+      `INSERT INTO missing_fact_signals (id, firm_id, contact_id, field_key)
+       VALUES ($1,$2,$3,$4)`,
+      [mid, firm, contactId, missingKey],
+    );
+    missingIds.push(mid);
+  }
+
+  const { cascade, workflowsFired } = await runContactEligibilityCascade({
+    firm,
+    contactIds: [contactId],
+    triggerKind: "fact_writeback",
+    resultPayload: { writebackId: writeId, fieldKey, source: body.source ?? "contact" },
+    eventPayload: { writebackId: writeId, fieldKey, contactId },
+  });
+
+  return json(c, {
+    writebackId: writeId,
+    contactId,
+    fieldKey,
+    missingSignalIds: missingIds,
+    cascade: [{ table: "fact_writebacks", id: writeId }, ...cascade],
+    workflowsFired,
+    gate: sendGateSnapshot(),
+    note: "fact_writeback → re-eval → eligibility.changed",
+  });
+}
+
+export async function handleFactWritebacksList(c: Context) {
+  const firm = firmId(c);
+  const contactId = c.req.query("contactId");
+  const pool = getPool();
+  const rows = contactId
+    ? await pool.query(
+        `SELECT * FROM fact_writebacks WHERE firm_id=$1 AND contact_id=$2 ORDER BY created_at DESC LIMIT 100`,
+        [firm, contactId],
+      )
+    : await pool.query(
+        `SELECT * FROM fact_writebacks WHERE firm_id=$1 ORDER BY created_at DESC LIMIT 200`,
+        [firm],
+      );
+  return json(c, { writebacks: rows.rows });
+}
+
+export async function handleMissingFactSignalsList(c: Context) {
+  const firm = firmId(c);
+  const contactId = c.req.query("contactId");
+  const pool = getPool();
+  const rows = contactId
+    ? await pool.query(
+        `SELECT * FROM missing_fact_signals WHERE firm_id=$1 AND contact_id=$2 ORDER BY created_at DESC`,
+        [firm, contactId],
+      )
+    : await pool.query(
+        `SELECT * FROM missing_fact_signals WHERE firm_id=$1 ORDER BY created_at DESC LIMIT 200`,
+        [firm],
+      );
+  return json(c, { signals: rows.rows });
+}
+
+export async function handleMissingFactSignalCreate(c: Context) {
+  const firm = firmId(c);
+  const body = await c.req.json<{ contactId: string; fieldKey: string }>();
+  if (!body.contactId || !body.fieldKey) {
+    return json(c, { error: "contactId and fieldKey required" }, 400);
+  }
+  const pool = getPool();
+  const id = `mfs-${randomUUID()}`;
+  await pool.query(
+    `INSERT INTO missing_fact_signals (id, firm_id, contact_id, field_key)
+     VALUES ($1,$2,$3,$4)`,
+    [id, firm, body.contactId, body.fieldKey],
+  );
+  return json(c, { id, firmId: firm, contactId: body.contactId, fieldKey: body.fieldKey });
 }
 
 export async function handleAuditRunCreate(c: Context) {
@@ -269,6 +467,14 @@ export async function handleAuditRunCreate(c: Context) {
   );
 
   const contacts = body.contactIds ?? [];
+  const verdicts: Array<{
+    contactId: string;
+    verdict: string;
+    ready: boolean;
+    email?: string | null;
+    phone?: string | null;
+    name?: string | null;
+  }> = [];
   for (const contact of contacts) {
     await pool.query(
       `INSERT INTO contact_records (id, firm_id, email, phone, name)
@@ -276,8 +482,11 @@ export async function handleAuditRunCreate(c: Context) {
        ON CONFLICT (id) DO UPDATE SET email=EXCLUDED.email, phone=EXCLUDED.phone, name=EXCLUDED.name, updated_at=now()`,
       [contact.id, firm, contact.email ?? null, contact.phone ?? null, contact.name ?? null],
     );
-    const hasChannel = Boolean(contact.email || contact.phone);
-    const verdict = hasChannel ? "reachable" : "unreachable";
+    const hasEmail = Boolean(contact.email);
+    const hasPhone = Boolean(contact.phone);
+    const verdict =
+      hasEmail && hasPhone ? "reachable" : hasEmail || hasPhone ? "partial" : "unreachable";
+    const ready = verdict === "reachable" || verdict === "partial";
     await pool.query(
       `INSERT INTO reachability_verdicts (contact_id, firm_id, verdict, details)
        VALUES ($1,$2,$3,$4::jsonb)
@@ -288,17 +497,35 @@ export async function handleAuditRunCreate(c: Context) {
       `INSERT INTO sequence_ready (contact_id, firm_id, ready)
        VALUES ($1,$2,$3)
        ON CONFLICT (contact_id, firm_id) DO UPDATE SET ready=EXCLUDED.ready, updated_at=now()`,
-      [contact.id, firm, verdict === "reachable"],
+      [contact.id, firm, ready],
     );
+    verdicts.push({
+      contactId: contact.id,
+      verdict,
+      ready,
+      email: contact.email ?? null,
+      phone: contact.phone ?? null,
+      name: contact.name ?? null,
+    });
   }
 
   await pool.query(
     `UPDATE audit_runs SET status='complete', finished_at=now(),
       summary=$2::jsonb WHERE id=$1`,
-    [runId, JSON.stringify({ contacts: contacts.length })],
+    [runId, JSON.stringify({ contacts: contacts.length, ready: verdicts.filter((v) => v.ready).length })],
   );
 
-  return json(c, { id: runId, status: "complete", contacts: contacts.length });
+  return json(c, {
+    id: runId,
+    firm_id: firm,
+    status: "complete",
+    import_ids: body.importIds ?? [],
+    summary: { contacts: contacts.length, ready: verdicts.filter((v) => v.ready).length },
+    started_at: new Date().toISOString(),
+    finished_at: new Date().toISOString(),
+    contacts: contacts.length,
+    verdicts,
+  });
 }
 
 export async function handleWorkflowRunsList(c: Context) {
@@ -393,7 +620,25 @@ export async function handleOnboardingFire(c: Context) {
     [firm],
   );
 
-  const enrolled: Array<{ id: string; dryRun: boolean }> = [];
+  const contactIds = ready.rows.map((r) => r.contact_id);
+  const dispatched = await dispatchEventToWorkflows(pool, {
+    firmId: firm,
+    eventName: "audit.completed",
+    payload: { trigger: "campaign_state=running", onboarding: true },
+    contactIds,
+  });
+  if (dispatched.length > 0) {
+    return json(c, {
+      firmId: firm,
+      agentRef,
+      enrollments: dispatched.reduce((n, d) => n + d.enrollments, 0),
+      workflowsFired: dispatched,
+      gate: sendGateSnapshot(),
+      note: "Onboarding via workflow walk (audit.completed)",
+    });
+  }
+
+  const enrolled: Array<{ id: string; dryRun: boolean; blocked?: string }> = [];
   for (const row of ready.rows) {
     const result = await enrollAndActuate({
       firmId: firm,
@@ -403,6 +648,10 @@ export async function handleOnboardingFire(c: Context) {
       payload: { trigger: "campaign_state=running" },
       purpose: "opt-in",
     });
+    if (result.blocked === "halt") {
+      enrolled.push({ id: "", dryRun: true, blocked: "halt" });
+      continue;
+    }
     enrolled.push({ id: result.enrollmentId, dryRun: result.dryRun });
   }
 
@@ -414,7 +663,681 @@ export async function handleOnboardingFire(c: Context) {
     dryRuns: enrolled.filter((e) => e.dryRun).length,
     liveSends: enrolled.filter((e) => !e.dryRun).length,
     gate: sendGateSnapshot(),
-    note: "Opt-in enrollments; send follows SEND_MODE + SEND_TEST_COHORT (fail closed)",
+    note: "Opt-in enrollments (no subscribed workflow); SEND_MODE gate",
+  });
+}
+
+/** Fire a named machine event into subscribed workflows. */
+export async function handleMachineEvent(c: Context) {
+  const firm = firmId(c);
+  const body = await c.req.json<{
+    eventName: string;
+    payload?: Record<string, unknown>;
+    contactIds?: string[];
+  }>();
+  if (!body.eventName) return json(c, { error: "eventName required" }, 400);
+  const pool = getPool();
+  const dispatched = await dispatchEventToWorkflows(pool, {
+    firmId: firm,
+    eventName: body.eventName,
+    payload: body.payload,
+    contactIds: body.contactIds,
+  });
+  return json(c, { eventName: body.eventName, workflowsFired: dispatched });
+}
+
+/** Webhook trigger: POST /wire/hook/:webhookId */
+export async function handleWebhookTrigger(c: Context) {
+  const webhookId = c.req.param("webhookId");
+  const body = await c.req.json().catch(() => ({}));
+  const pool = getPool();
+  const trig = await pool.query<{
+    workflow_id: string;
+    firm_id: string;
+  }>(
+    `SELECT t.workflow_id, t.firm_id
+     FROM workflow_trigger t
+     JOIN workflow_state s ON s.workflow_id = t.workflow_id
+     WHERE t.webhook_id=$1 AND t.enabled=true AND t.type='webhook' AND s.status='active'
+     LIMIT 1`,
+    [webhookId],
+  );
+  if (!trig.rowCount) return json(c, { error: "webhook trigger not found or inactive" }, 404);
+
+  const runId = `run-${randomUUID()}`;
+  const workflowId = trig.rows[0].workflow_id;
+  const firm = trig.rows[0].firm_id;
+  await pool.query(
+    `INSERT INTO workflow_run (id, workflow_id, firm_id, status, trigger_label)
+     VALUES ($1,$2,$3,'running',$4)`,
+    [runId, workflowId, firm, `webhook:${webhookId}`],
+  );
+  const walked = await walkValidatedWorkflow(pool, {
+    workflowId,
+    firmId: firm,
+    runId,
+    triggerLabel: `webhook:${webhookId}`,
+    triggerPayload: { webhookId, body, anyPass: true },
+    contactIds: Array.isArray((body as { contactIds?: string[] }).contactIds)
+      ? (body as { contactIds: string[] }).contactIds
+      : undefined,
+  });
+  return json(c, {
+    webhookId,
+    workflowId,
+    runId,
+    status: walked.ok ? "success" : "failed",
+    nodeStatus: walked.nodeStatus,
+    enrollments: walked.enrollments,
+  });
+}
+
+/** Upsert sequence_template cells (Agents editor save). */
+export async function handleTemplateUpsert(c: Context) {
+  const id = c.req.param("id");
+  const body = await c.req.json<{
+    sequenceClass?: string;
+    label?: string;
+    cells: unknown[];
+    variant?: string;
+  }>();
+  const pool = getPool();
+  await pool.query(
+    `INSERT INTO sequence_template (id, sequence_class, variant, label, cells, version)
+     VALUES ($1,$2,$3,$4,$5::jsonb,1)
+     ON CONFLICT (id) DO UPDATE SET
+       cells=EXCLUDED.cells,
+       label=COALESCE(EXCLUDED.label, sequence_template.label),
+       updated_at=now(),
+       version=sequence_template.version + 1`,
+    [
+      id,
+      body.sequenceClass ?? "reengagement",
+      body.variant ?? "v1",
+      body.label ?? id,
+      JSON.stringify(body.cells ?? []),
+    ],
+  );
+  return json(c, { id, cells: body.cells?.length ?? 0, table: "sequence_template" });
+}
+
+/** Upsert firm_sequence_binding (Agents assign template to firm). */
+export async function handleBindingUpsert(c: Context) {
+  const firm = firmId(c);
+  const body = await c.req.json<{
+    sequenceClass: string;
+    templateId: string;
+    variableBindings?: Record<string, unknown>;
+  }>();
+  const id = `bind.${firm}.${body.sequenceClass}`;
+  const pool = getPool();
+  await pool.query(
+    `INSERT INTO firm_sequence_binding (id, firm_id, sequence_class, template_id, variable_bindings)
+     VALUES ($1,$2,$3,$4,$5::jsonb)
+     ON CONFLICT (firm_id, sequence_class) DO UPDATE SET
+       template_id=EXCLUDED.template_id,
+       variable_bindings=EXCLUDED.variable_bindings,
+       updated_at=now()`,
+    [
+      id,
+      firm,
+      body.sequenceClass,
+      body.templateId,
+      JSON.stringify(body.variableBindings ?? {}),
+    ],
+  );
+  return json(c, { id, firmId: firm, table: "firm_sequence_binding" });
+}
+
+/** List rule_attempt_criteria (platform defaults + firm rows). */
+export async function handleAttemptCriteriaList(c: Context) {
+  const firm = firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(
+    `SELECT * FROM rule_attempt_criteria
+     WHERE firm_id IS NULL OR firm_id = $1
+     ORDER BY CASE WHEN firm_id = $1 THEN 0 ELSE 1 END, ord ASC`,
+    [firm],
+  );
+  return json(c, { criteria: rows.rows });
+}
+
+/** Upsert a single rule_attempt_criteria row by id. */
+export async function handleAttemptCriteriaUpsert(c: Context) {
+  const firm = firmId(c);
+  const id = c.req.param("id");
+  const body = await c.req.json<{
+    label?: string;
+    enabled?: boolean;
+    threshold?: number | null;
+    thresholdUnit?: string | null;
+    whenClause?: string | null;
+    conditionClause?: string | null;
+    setValue?: string | null;
+    ord?: number;
+  }>();
+  const pool = getPool();
+  const existing = await pool.query(`SELECT * FROM rule_attempt_criteria WHERE id=$1`, [id]);
+  if (!existing.rowCount) {
+    return json(c, { error: "attempt criteria not found", id }, 404);
+  }
+  const prev = existing.rows[0] as Record<string, unknown>;
+  const next = {
+    label: body.label ?? prev.label,
+    enabled: body.enabled ?? prev.enabled,
+    threshold: body.threshold !== undefined ? body.threshold : prev.threshold,
+    threshold_unit:
+      body.thresholdUnit !== undefined ? body.thresholdUnit : prev.threshold_unit,
+    when_clause: body.whenClause !== undefined ? body.whenClause : prev.when_clause,
+    condition_clause:
+      body.conditionClause !== undefined ? body.conditionClause : prev.condition_clause,
+    set_value: body.setValue !== undefined ? body.setValue : prev.set_value,
+    ord: body.ord ?? prev.ord,
+    firm_id: (prev.firm_id as string | null) ?? firm,
+  };
+  await pool.query(
+    `UPDATE rule_attempt_criteria SET
+       label=$2, enabled=$3, threshold=$4, threshold_unit=$5,
+       when_clause=$6, condition_clause=$7, set_value=$8, ord=$9,
+       firm_id=$10, version=version+1
+     WHERE id=$1`,
+    [
+      id,
+      next.label,
+      next.enabled,
+      next.threshold,
+      next.threshold_unit,
+      next.when_clause,
+      next.condition_clause,
+      next.set_value,
+      next.ord,
+      next.firm_id,
+    ],
+  );
+  const updated = await pool.query(`SELECT * FROM rule_attempt_criteria WHERE id=$1`, [id]);
+  return json(c, updated.rows[0]);
+}
+
+/** List seq_channel_ownership_order ladder. */
+export async function handleChannelOrderList(c: Context) {
+  const firm = firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(
+    `SELECT * FROM seq_channel_ownership_order
+     WHERE firm_id IS NULL OR firm_id = $1
+     ORDER BY CASE WHEN firm_id = $1 THEN 0 ELSE 1 END, ord ASC`,
+    [firm],
+  );
+  return json(c, { order: rows.rows });
+}
+
+/** Replace ord for the full channel ladder (Agents Settings reorder). */
+export async function handleChannelOrderUpsert(c: Context) {
+  const firm = firmId(c);
+  const body = await c.req.json<{
+    order: Array<{ id: string; token?: string; label?: string; ord: number }>;
+  }>();
+  const items = body.order ?? [];
+  if (!items.length) return json(c, { error: "order required" }, 400);
+  const pool = getPool();
+  for (const item of items) {
+    await pool.query(
+      `UPDATE seq_channel_ownership_order SET
+         ord=$2,
+         token=COALESCE($3, token),
+         label=COALESCE($4, label),
+         firm_id=COALESCE(firm_id, $5),
+         version=version+1
+       WHERE id=$1`,
+      [item.id, item.ord, item.token ?? null, item.label ?? null, firm],
+    );
+  }
+  const rows = await pool.query(
+    `SELECT * FROM seq_channel_ownership_order
+     WHERE firm_id IS NULL OR firm_id = $1
+     ORDER BY CASE WHEN firm_id = $1 THEN 0 ELSE 1 END, ord ASC`,
+    [firm],
+  );
+  return json(c, { order: rows.rows });
+}
+
+/** Read-only seq_eligibility_pipeline stages (Automations Settings). */
+export async function handleEligibilityPipelineList(c: Context) {
+  const firm = firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(
+    `SELECT id, firm_id, token, label, ord, version
+     FROM seq_eligibility_pipeline
+     WHERE firm_id IS NULL OR firm_id = $1
+     ORDER BY CASE WHEN firm_id = $1 THEN 0 ELSE 1 END, ord ASC`,
+    [firm],
+  );
+  return json(c, { stages: rows.rows });
+}
+
+const MODULAR_RULE_TABLES = {
+  rule_eligibility_pathway: "rule_eligibility_pathway",
+  rule_motion_precedence: "rule_motion_precedence",
+  rule_field_class_routing: "rule_field_class_routing",
+  rule_cohort_scoring: "rule_cohort_scoring",
+  rule_reachability_checks: "rule_reachability_checks",
+  rule_metrics_thresholds: "rule_metrics_thresholds",
+} as const;
+
+type ModularRuleTable = keyof typeof MODULAR_RULE_TABLES;
+
+type ModularRulePatch = {
+  enabled?: boolean;
+  label?: string;
+  ord?: number;
+  whenClause?: string | null;
+  conditionClause?: string | null;
+  setValue?: string | null;
+  threshold?: number | null;
+};
+
+async function listModularRules(table: ModularRuleTable, firm: string) {
+  const pool = getPool();
+  const safe = MODULAR_RULE_TABLES[table];
+  const rows = await pool.query(
+    `SELECT * FROM ${safe}
+     WHERE firm_id IS NULL OR firm_id = $1
+     ORDER BY CASE WHEN firm_id = $1 THEN 0 ELSE 1 END, ord ASC`,
+    [firm],
+  );
+  return rows.rows;
+}
+
+async function upsertModularRuleEnabled(
+  table: ModularRuleTable,
+  id: string,
+  firm: string,
+  body: ModularRulePatch,
+) {
+  const pool = getPool();
+  const safe = MODULAR_RULE_TABLES[table];
+  const existing = await pool.query(`SELECT * FROM ${safe} WHERE id=$1`, [id]);
+  if (!existing.rowCount) return null;
+  const prev = existing.rows[0] as Record<string, unknown>;
+  const enabled = body.enabled ?? prev.enabled;
+  const label = body.label ?? prev.label;
+  const ord = body.ord ?? prev.ord;
+  const whenClause =
+    body.whenClause !== undefined ? body.whenClause : (prev.when_clause as string | null);
+  const conditionClause =
+    body.conditionClause !== undefined
+      ? body.conditionClause
+      : (prev.condition_clause as string | null);
+  const setValue =
+    body.setValue !== undefined ? body.setValue : (prev.set_value as string | null);
+  const firmIdNext = (prev.firm_id as string | null) ?? firm;
+  const hasThreshold = "threshold" in prev;
+  if (hasThreshold) {
+    const threshold =
+      body.threshold !== undefined ? body.threshold : (prev.threshold as number | null);
+    await pool.query(
+      `UPDATE ${safe} SET enabled=$2, label=$3, ord=$4, firm_id=$5,
+         when_clause=$6, condition_clause=$7, set_value=$8, threshold=$9, version=version+1
+       WHERE id=$1`,
+      [id, enabled, label, ord, firmIdNext, whenClause, conditionClause, setValue, threshold],
+    );
+  } else {
+    await pool.query(
+      `UPDATE ${safe} SET enabled=$2, label=$3, ord=$4, firm_id=$5,
+         when_clause=$6, condition_clause=$7, set_value=$8, version=version+1
+       WHERE id=$1`,
+      [id, enabled, label, ord, firmIdNext, whenClause, conditionClause, setValue],
+    );
+  }
+  const updated = await pool.query(`SELECT * FROM ${safe} WHERE id=$1`, [id]);
+  return updated.rows[0];
+}
+
+/** List rule_eligibility_pathway rows. */
+export async function handleEligibilityPathwaysList(c: Context) {
+  const firm = firmId(c);
+  return json(c, { pathways: await listModularRules("rule_eligibility_pathway", firm) });
+}
+
+export async function handleEligibilityPathwayUpsert(c: Context) {
+  const firm = firmId(c);
+  const id = c.req.param("id");
+  const body = await c.req.json<ModularRulePatch>();
+  const row = await upsertModularRuleEnabled("rule_eligibility_pathway", id, firm, body);
+  if (!row) return json(c, { error: "eligibility pathway not found", id }, 404);
+  return json(c, row);
+}
+
+/** List rule_motion_precedence rows. */
+export async function handleMotionPrecedenceList(c: Context) {
+  const firm = firmId(c);
+  return json(c, { rules: await listModularRules("rule_motion_precedence", firm) });
+}
+
+export async function handleMotionPrecedenceUpsert(c: Context) {
+  const firm = firmId(c);
+  const id = c.req.param("id");
+  const body = await c.req.json<ModularRulePatch>();
+  const row = await upsertModularRuleEnabled("rule_motion_precedence", id, firm, body);
+  if (!row) return json(c, { error: "motion precedence not found", id }, 404);
+  return json(c, row);
+}
+
+/** List rule_field_class_routing rows. */
+export async function handleFieldClassRoutingList(c: Context) {
+  const firm = firmId(c);
+  return json(c, { rules: await listModularRules("rule_field_class_routing", firm) });
+}
+
+export async function handleFieldClassRoutingUpsert(c: Context) {
+  const firm = firmId(c);
+  const id = c.req.param("id");
+  const body = await c.req.json<ModularRulePatch>();
+  const row = await upsertModularRuleEnabled("rule_field_class_routing", id, firm, body);
+  if (!row) return json(c, { error: "field class routing not found", id }, 404);
+  return json(c, row);
+}
+
+export async function handleCohortScoringList(c: Context) {
+  const firm = firmId(c);
+  return json(c, { rules: await listModularRules("rule_cohort_scoring", firm) });
+}
+
+export async function handleCohortScoringUpsert(c: Context) {
+  const firm = firmId(c);
+  const id = c.req.param("id");
+  const body = await c.req.json<ModularRulePatch>();
+  const row = await upsertModularRuleEnabled("rule_cohort_scoring", id, firm, body);
+  if (!row) return json(c, { error: "cohort scoring not found", id }, 404);
+  return json(c, row);
+}
+
+export async function handleMetricsThresholdsList(c: Context) {
+  const firm = firmId(c);
+  return json(c, { rules: await listModularRules("rule_metrics_thresholds", firm) });
+}
+
+export async function handleMetricsThresholdsUpsert(c: Context) {
+  const firm = firmId(c);
+  const id = c.req.param("id");
+  const body = await c.req.json<ModularRulePatch>();
+  const row = await upsertModularRuleEnabled("rule_metrics_thresholds", id, firm, body);
+  if (!row) return json(c, { error: "metrics threshold not found", id }, 404);
+  return json(c, row);
+}
+
+export async function handleReachabilityChecksList(c: Context) {
+  const firm = firmId(c);
+  return json(c, { rules: await listModularRules("rule_reachability_checks", firm) });
+}
+
+export async function handleReachabilityChecksUpsert(c: Context) {
+  const firm = firmId(c);
+  const id = c.req.param("id");
+  const body = await c.req.json<ModularRulePatch>();
+  const row = await upsertModularRuleEnabled("rule_reachability_checks", id, firm, body);
+  if (!row) return json(c, { error: "reachability check not found", id }, 404);
+  return json(c, row);
+}
+
+/** List seq_phase_order ladder. */
+export async function handlePhaseOrderList(c: Context) {
+  const firm = firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(
+    `SELECT * FROM seq_phase_order
+     WHERE firm_id IS NULL OR firm_id = $1
+     ORDER BY CASE WHEN firm_id = $1 THEN 0 ELSE 1 END, ord ASC`,
+    [firm],
+  );
+  return json(c, { order: rows.rows });
+}
+
+/** Replace ord for the full phase ladder (Agents Settings reorder). */
+export async function handlePhaseOrderUpsert(c: Context) {
+  const firm = firmId(c);
+  const body = await c.req.json<{
+    order: Array<{ id: string; token?: string; label?: string; ord: number }>;
+  }>();
+  const items = body.order ?? [];
+  if (!items.length) return json(c, { error: "order required" }, 400);
+  const pool = getPool();
+  for (const item of items) {
+    await pool.query(
+      `UPDATE seq_phase_order SET ord=$2, token=COALESCE($3,token), label=COALESCE($4,label),
+         firm_id=COALESCE(firm_id,$5), version=version+1
+       WHERE id=$1`,
+      [item.id, item.ord, item.token ?? null, item.label ?? null, firm],
+    );
+  }
+  const rows = await pool.query(
+    `SELECT * FROM seq_phase_order
+     WHERE firm_id IS NULL OR firm_id = $1
+     ORDER BY CASE WHEN firm_id = $1 THEN 0 ELSE 1 END, ord ASC`,
+    [firm],
+  );
+  return json(c, { order: rows.rows });
+}
+
+export async function handlePreparedWorkspacesList(c: Context) {
+  const firm = firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(
+    `SELECT * FROM prepared_workspaces WHERE firm_id=$1 ORDER BY created_at DESC`,
+    [firm],
+  );
+  return json(c, { workspaces: rows.rows });
+}
+
+export async function handlePreparedWorkspaceUpsert(c: Context) {
+  const firm = firmId(c);
+  const body = await c.req.json<{
+    id?: string;
+    status?: string;
+    body?: Record<string, unknown>;
+  }>();
+  const pool = getPool();
+  const id = c.req.param("id") || body.id || `pw-${firm}`;
+  await pool.query(
+    `INSERT INTO prepared_workspaces (id, firm_id, status, body)
+     VALUES ($1,$2,$3,$4::jsonb)
+     ON CONFLICT (id) DO UPDATE SET status=EXCLUDED.status, body=EXCLUDED.body`,
+    [id, firm, body.status ?? "staged", JSON.stringify(body.body ?? {})],
+  );
+  const row = await pool.query(`SELECT * FROM prepared_workspaces WHERE id=$1`, [id]);
+  return json(c, row.rows[0]);
+}
+
+export async function handleActiveAttemptsList(c: Context) {
+  const firm = firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(
+    `SELECT * FROM active_attempts WHERE firm_id=$1 ORDER BY updated_at DESC LIMIT 100`,
+    [firm],
+  );
+  return json(c, { attempts: rows.rows });
+}
+
+export async function handleEngagementRecordsList(c: Context) {
+  const firm = firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(
+    `SELECT * FROM engagement_records WHERE firm_id=$1 ORDER BY created_at DESC LIMIT 100`,
+    [firm],
+  );
+  return json(c, { records: rows.rows });
+}
+
+/** List reference_versions for Evaluation pack pin picker. */
+export async function handleReferenceVersionsList(c: Context) {
+  const firm = firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(
+    `SELECT id, firm_id, key, payload, version
+     FROM reference_versions
+     WHERE firm_id IS NULL OR firm_id = $1
+     ORDER BY key ASC, version DESC`,
+    [firm],
+  );
+  return json(c, { versions: rows.rows });
+}
+
+function evalPinPackId(packId: string) {
+  return `eval.pin.${packId}`;
+}
+
+/** GET evaluation pack pin from constants_packs id eval.pin.{packId}. */
+export async function handleEvaluationPinGet(c: Context) {
+  const packId = c.req.param("packId");
+  const pool = getPool();
+  const id = evalPinPackId(packId);
+  const rows = await pool.query(`SELECT id, payload FROM constants_packs WHERE id=$1`, [id]);
+  if (!rows.rowCount) {
+    return json(c, {
+      packId,
+      referenceVersionId: null,
+      rulesetId: null,
+      missing: true,
+    });
+  }
+  const payload = (rows.rows[0].payload ?? {}) as Record<string, unknown>;
+  return json(c, {
+    packId,
+    referenceVersionId: typeof payload.referenceVersionId === "string" ? payload.referenceVersionId : null,
+    rulesetId: typeof payload.rulesetId === "string" ? payload.rulesetId : null,
+    missing: false,
+  });
+}
+
+/** PUT evaluation pack pin → constants_packs eval.pin.{packId}. */
+export async function handleEvaluationPinPut(c: Context) {
+  const packId = c.req.param("packId");
+  const body = await c.req.json<{
+    referenceVersionId: string;
+    rulesetId: string;
+  }>();
+  if (!body.referenceVersionId || !body.rulesetId) {
+    return json(c, { error: "referenceVersionId and rulesetId required" }, 400);
+  }
+  const pool = getPool();
+  const id = evalPinPackId(packId);
+  const payload = {
+    referenceVersionId: body.referenceVersionId,
+    rulesetId: body.rulesetId,
+    packId,
+  };
+  await pool.query(
+    `INSERT INTO constants_packs (id, firm_id, name, payload, version)
+     VALUES ($1, NULL, $2, $3::jsonb, 1)
+     ON CONFLICT (id) DO UPDATE SET payload=EXCLUDED.payload, version=constants_packs.version+1, name=EXCLUDED.name`,
+    [id, id, JSON.stringify(payload)],
+  );
+  return json(c, { packId, ...payload, table: "constants_packs", id });
+}
+
+/** GET/POST campaign_states for Bind Armed/Active. */
+export async function handleCampaignStateGet(c: Context) {
+  const firm = firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(`SELECT firm_id, state, updated_at FROM campaign_states WHERE firm_id=$1`, [
+    firm,
+  ]);
+  if (!rows.rowCount) {
+    return json(c, { firmId: firm, state: "armed-for-activation", missing: true });
+  }
+  return json(c, {
+    firmId: rows.rows[0].firm_id,
+    state: rows.rows[0].state,
+    updatedAt: rows.rows[0].updated_at,
+    missing: false,
+  });
+}
+
+export async function handleCampaignStatePost(c: Context) {
+  const firm = firmId(c);
+  const body = await c.req.json<{ state: "running" | "armed-for-activation" }>();
+  if (body.state !== "running" && body.state !== "armed-for-activation") {
+    return json(c, { error: "state must be running | armed-for-activation" }, 400);
+  }
+  const pool = getPool();
+  await pool.query(
+    `INSERT INTO campaign_states (firm_id, state, updated_at)
+     VALUES ($1,$2,now())
+     ON CONFLICT (firm_id) DO UPDATE SET state=EXCLUDED.state, updated_at=now()`,
+    [firm, body.state],
+  );
+  return json(c, { firmId: firm, state: body.state });
+}
+
+/**
+ * Assisted Provision — write ct_firms + campaign_states; also mint auth firms/users
+ * when the UUID auth tables are present so Login OTP can resolve the email.
+ */
+export async function handleMachineProvision(c: Context) {
+  const body = await c.req.json<{
+    firmId?: string;
+    firmName: string;
+    email: string;
+    website?: string;
+    role?: string;
+  }>();
+  const firmName = (body.firmName ?? "").trim();
+  const email = (body.email ?? "").trim().toLowerCase();
+  if (!firmName || !email) {
+    return json(c, { error: "firmName and email required" }, 400);
+  }
+  const slug = firmName
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 40);
+  const firm = body.firmId?.trim() || `firm-${slug || randomUUID().slice(0, 8)}`;
+  const pool = getPool();
+
+  await pool.query(
+    `INSERT INTO ct_firms (id, name, posture, updated_at)
+     VALUES ($1,$2,'Idle',now())
+     ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, updated_at=now()`,
+    [firm, firmName],
+  );
+  await pool.query(
+    `INSERT INTO campaign_states (firm_id, state, updated_at)
+     VALUES ($1,'armed-for-activation',now())
+     ON CONFLICT (firm_id) DO UPDATE SET state='armed-for-activation', updated_at=now()`,
+    [firm],
+  );
+
+  let authUser = false;
+  try {
+    const existing = await pool.query(`SELECT id FROM users WHERE lower(email)=lower($1) LIMIT 1`, [
+      email,
+    ]);
+    if (existing.rowCount) {
+      authUser = true;
+    } else {
+      const firmRow = await pool.query(
+        `INSERT INTO firms (name) VALUES ($1) RETURNING id`,
+        [firmName],
+      );
+      const authFirmId = firmRow.rows[0]?.id as string;
+      await pool.query(`INSERT INTO users (firm_id, email) VALUES ($1,$2)`, [authFirmId, email]);
+      authUser = true;
+    }
+  } catch {
+    authUser = false;
+  }
+
+  const loginPath = `/login?tenancy=assisted&email=${encodeURIComponent(email)}`;
+  return json(c, {
+    firmId: firm,
+    firmName,
+    email,
+    website: body.website ?? null,
+    role: body.role ?? null,
+    ctFirm: true,
+    authUser,
+    campaignState: "armed-for-activation",
+    loginPath,
   });
 }
 

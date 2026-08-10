@@ -44,8 +44,21 @@ async function consentAndHaltGate(
   firmId: string,
   purpose: string,
 ): Promise<{ allow: true } | { allow: false; deny: string; detail: string }> {
-  if (!contactId) return { allow: true };
   const pool = getPool();
+
+  // H1: firm-book halt always blocks new sends (even without contactId).
+  const firmHalted = await pool.query(
+    `SELECT 1 FROM halt_records
+     WHERE lifted_at IS NULL AND scope = 'firm-book' AND firm_id = $1
+     LIMIT 1`,
+    [firmId],
+  );
+  if (firmHalted.rowCount && firmHalted.rowCount > 0) {
+    return { allow: false, deny: "policy", detail: "halt active" };
+  }
+
+  if (!contactId) return { allow: true };
+
   const consent = await pool.query<{ basis: string; silenced: boolean; status?: string }>(
     `SELECT basis, silenced, status FROM consent_records WHERE contact_id = $1 LIMIT 1`,
     [contactId],
@@ -57,18 +70,33 @@ async function consentAndHaltGate(
   if (purpose !== "opt-in" && (!row || row.basis === "none")) {
     return { allow: false, deny: "policy", detail: "consent missing" };
   }
-  const halted = await pool.query(
+  const contactHalted = await pool.query(
     `SELECT 1 FROM halt_records
-     WHERE lifted_at IS NULL
-       AND ((scope = 'contact' AND contact_id = $1)
-         OR (scope = 'firm-book' AND firm_id = $2))
+     WHERE lifted_at IS NULL AND scope = 'contact' AND contact_id = $1
      LIMIT 1`,
-    [contactId, firmId],
+    [contactId],
   );
-  if (halted.rowCount && halted.rowCount > 0) {
+  if (contactHalted.rowCount && contactHalted.rowCount > 0) {
     return { allow: false, deny: "policy", detail: "halt active" };
   }
   return { allow: true };
+}
+
+/** Exported for enrollAndActuate — block NEW enrollments under firm-book / contact halt (H1). */
+export async function isHaltBlockingNew(
+  firmId: string,
+  contactId?: string,
+): Promise<boolean> {
+  const pool = getPool();
+  const halted = await pool.query(
+    `SELECT 1 FROM halt_records
+     WHERE lifted_at IS NULL
+       AND ((scope = 'firm-book' AND firm_id = $1)
+         OR ($2::text IS NOT NULL AND scope = 'contact' AND contact_id = $2))
+     LIMIT 1`,
+    [firmId, contactId ?? null],
+  );
+  return Boolean(halted.rowCount && halted.rowCount > 0);
 }
 
 /** Real Resend send + outbound_messages / messaging_events writeback. */
@@ -191,8 +219,12 @@ export async function dispatchSmsLive(input: DispatchSmsInput): Promise<Dispatch
   }
 }
 
-/** Gated send for cascade/worker — fail closed to dry-run. */
+/** Gated send for cascade/worker — fail closed to dry-run, but halt still denies (H1). */
 export async function dispatchEmail(input: DispatchEmailInput): Promise<DispatchResult> {
+  const halt = await consentAndHaltGate(input.contactId, input.firmId, input.purpose);
+  if (!halt.allow) {
+    return { ok: false, deny: halt.deny, detail: halt.detail };
+  }
   if (!shouldLiveSend(input.contactId)) {
     return {
       ok: true,
@@ -205,6 +237,11 @@ export async function dispatchEmail(input: DispatchEmailInput): Promise<Dispatch
 }
 
 export async function dispatchSms(input: DispatchSmsInput): Promise<DispatchResult> {
+  const purpose = input.purpose ?? "cem";
+  const halt = await consentAndHaltGate(input.contactId, input.firmId, purpose);
+  if (!halt.allow) {
+    return { ok: false, deny: halt.deny, detail: halt.detail };
+  }
   if (!shouldLiveSend(input.contactId)) {
     return {
       ok: true,

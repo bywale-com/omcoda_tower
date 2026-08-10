@@ -17,76 +17,8 @@ export type AutomationRun = {
   durationMs?: number;
 };
 
-const SEED_RUNS: AutomationRun[] = [
-  {
-    id: "run-welcome-1",
-    workflowId: "auto-welcome",
-    entityKind: "contact",
-    entityId: "contact-marcus",
-    entityLabel: "Marcus Webb",
-    status: "success",
-    startedAt: "2026-07-09T14:02:00.000Z",
-    finishedAt: "2026-07-09T14:02:04.200Z",
-    triggerLabel: "Audit completed",
-    durationMs: 4200,
-  },
-  {
-    id: "run-welcome-2",
-    workflowId: "auto-welcome",
-    entityKind: "contact",
-    entityId: "contact-sarah",
-    entityLabel: "Sarah Jenkins",
-    status: "running",
-    startedAt: "2026-07-09T14:18:00.000Z",
-    triggerLabel: "Audit completed",
-  },
-  {
-    id: "run-welcome-3",
-    workflowId: "auto-welcome",
-    entityKind: "contact",
-    entityId: "contact-aisha",
-    entityLabel: "Aisha Khan",
-    status: "failed",
-    startedAt: "2026-07-09T13:40:00.000Z",
-    finishedAt: "2026-07-09T13:40:01.100Z",
-    triggerLabel: "Audit completed",
-    durationMs: 1100,
-  },
-  {
-    id: "run-crs-1",
-    workflowId: "auto-crs-alert",
-    entityKind: "client",
-    entityId: "sarah",
-    entityLabel: "Sarah Jenkins",
-    status: "success",
-    startedAt: "2026-07-09T12:05:00.000Z",
-    finishedAt: "2026-07-09T12:05:00.800Z",
-    triggerLabel: "Eligibility changed",
-    durationMs: 800,
-  },
-  {
-    id: "run-crs-2",
-    workflowId: "auto-crs-alert",
-    entityKind: "client",
-    entityId: "marcus",
-    entityLabel: "Marcus Webb",
-    status: "waiting",
-    startedAt: "2026-07-09T14:22:00.000Z",
-    triggerLabel: "Eligibility changed",
-  },
-  {
-    id: "run-crs-3",
-    workflowId: "auto-crs-alert",
-    entityKind: "client",
-    entityId: "priya",
-    entityLabel: "Priya Nair",
-    status: "success",
-    startedAt: "2026-07-08T09:15:00.000Z",
-    finishedAt: "2026-07-08T09:15:01.400Z",
-    triggerLabel: "Eligibility changed",
-    durationMs: 1400,
-  },
-];
+/** Seed chrome removed — Runs tab shows workflow_run rows from the machine walk. */
+const SEED_RUNS: AutomationRun[] = [];
 
 export function getAutomationRuns(workflowId: string): AutomationRun[] {
   return SEED_RUNS.filter((run) => run.workflowId === workflowId).sort(

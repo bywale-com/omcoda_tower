@@ -16,15 +16,15 @@ export type HubAutomation = {
 };
 
 export const hubAgentList: HubAgent[] = [
-  { id: "agent-intake", label: "Intake triage", meta: "Idle" },
-  { id: "agent-nudge", label: "Nudge composer", meta: "Running" },
-  { id: "agent-reactivation", label: "Reactivation scout", meta: "Idle" },
+  { id: "agent-intake", label: "Opt-in launch", meta: "Idle" },
+  { id: "agent-nudge", label: "Nudge / re-engagement", meta: "Running" },
+  { id: "agent-reactivation", label: "Reactivation", meta: "Idle" },
 ];
 
 export const hubAutomationList: HubAutomation[] = [
-  { id: "auto-welcome", label: "Welcome sequence armer", meta: "Active" },
-  { id: "auto-crs-alert", label: "CRS threshold alert", meta: "Active" },
-  { id: "auto-stale-file", label: "Stale file escalator", meta: "Paused" },
+  { id: "wf-optin-launch", label: "New firm → opt-in launch", meta: "Draft" },
+  { id: "wf-eligibility-reactivation", label: "Eligibility changed → reactivation", meta: "Draft" },
+  { id: "wf-webhook-reeval", label: "External change (webhook) → re-evaluate", meta: "Draft" },
 ];
 
 export function getHubAudit(id: string, audits: Audit[]): Audit | undefined {

@@ -94,6 +94,16 @@ export type MotionDecisionRow = {
   created_at: string;
 };
 
+/** Ordered stages for eligibility evaluation (seq_eligibility_pipeline). */
+export type EligibilityPipelineRow = {
+  id: string;
+  firm_id: string | null;
+  token: string;
+  label: string;
+  ord: number;
+  version?: number;
+};
+
 export type AuditRunRow = {
   id: string;
   firm_id: string;
@@ -102,4 +112,151 @@ export type AuditRunRow = {
   summary: Record<string, unknown>;
   started_at: string;
   finished_at: string | null;
+};
+
+export type AttemptCriteriaRow = {
+  id: string;
+  firm_id: string | null;
+  label: string;
+  enabled: boolean;
+  when_clause: string | null;
+  condition_clause: string | null;
+  set_value: string | null;
+  threshold: number | null;
+  threshold_unit: string | null;
+  ord: number;
+  source: string | null;
+  version: number;
+};
+
+export type ChannelOwnershipOrderRow = {
+  id: string;
+  firm_id: string | null;
+  token: string;
+  label: string;
+  ord: number;
+  version: number;
+};
+
+/** Shared shape for enable-toggle rule tables (eligibility / motion / field-class). */
+export type ModularRuleRow = {
+  id: string;
+  firm_id: string | null;
+  label: string;
+  enabled: boolean;
+  when_clause: string | null;
+  condition_clause: string | null;
+  set_value: string | null;
+  ord: number;
+  source: string | null;
+  version: number;
+};
+
+export type EligibilityPathwayRow = ModularRuleRow;
+export type MotionPrecedenceRow = ModularRuleRow;
+export type FieldClassRoutingRow = ModularRuleRow;
+export type CohortScoringRow = ModularRuleRow;
+export type ReachabilityCheckRow = ModularRuleRow;
+
+export type MetricsThresholdRow = ModularRuleRow & {
+  threshold: number | null;
+};
+
+export type PhaseOrderRow = {
+  id: string;
+  firm_id: string | null;
+  token: string;
+  label: string;
+  ord: number;
+  version: number;
+};
+
+export type FactWritebackRow = {
+  id: string;
+  firm_id: string;
+  contact_id: string;
+  field_key: string | null;
+  value: unknown;
+  created_at: string;
+};
+
+export type MissingFactSignalRow = {
+  id: string;
+  firm_id: string;
+  contact_id: string;
+  field_key: string;
+  created_at: string;
+};
+
+export type PreparedWorkspaceRow = {
+  id: string;
+  firm_id: string;
+  status: string;
+  body: Record<string, unknown>;
+  created_at: string;
+};
+
+export type ActiveAttemptRow = {
+  id: string;
+  firm_id: string;
+  contact_id: string;
+  enrollment_id: string | null;
+  owner_channel: string | null;
+  status: string;
+  state: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+
+export type EngagementRecordRow = {
+  id: string;
+  firm_id: string;
+  contact_id: string;
+  event_kind: string;
+  payload: Record<string, unknown>;
+  created_at: string;
+};
+
+export type FactWritebackResult = {
+  writebackId: string;
+  contactId: string;
+  fieldKey: string;
+  missingSignalIds: string[];
+  cascade: unknown[];
+  workflowsFired: unknown[];
+  note?: string;
+};
+
+/** Evaluation pack pin — reference_version + ruleset id (no dedicated Evaluation table). */
+export type EvaluationPin = {
+  packId: string;
+  referenceVersionId: string;
+  rulesetId: string;
+};
+
+export type ReferenceVersionRow = {
+  id: string;
+  firm_id: string | null;
+  key: string;
+  payload: Record<string, unknown>;
+  version: number;
+};
+
+export type AuditContactVerdict = {
+  contactId: string;
+  verdict: ReachabilityVerdict;
+  ready: boolean;
+  email?: string | null;
+  phone?: string | null;
+  name?: string | null;
+};
+
+export type ProvisionResult = {
+  firmId: string;
+  firmName: string;
+  email: string;
+  ctFirm: boolean;
+  authUser: boolean;
+  campaignState: CampaignState;
+  loginPath: string;
 };

@@ -1,7 +1,9 @@
 /**
  * Founder & agency controls — Agency policy Bounds + Kill-switch modal.
+ * Confirm writes firm-book halt via wirePorts.haltStore (H1) — not a local-only flag.
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useWireTick, wirePorts } from "../../../wire";
 import { RegisterSurfaceMount } from "../registerSurfaceChrome";
 import {
   DEMO_FIRMS,
@@ -15,6 +17,9 @@ import {
   surfaceBlock,
   type OperatorModuleProps,
 } from "./operatorChrome";
+
+/** DEMO_FIRMS includes CT_DEMO.firmId (`firm-cedar`) — kill targets those ids. */
+const FOUNDER_ACTOR = "founder";
 
 type BoundRow = { key: string; value: string };
 
@@ -44,21 +49,53 @@ export function FounderAgencyControlsModule({
   const [killReason, setKillReason] = useState("");
   const [confirmStep, setConfirmStep] = useState(false);
   const [killed, setKilled] = useState(false);
+  const [committing, setCommitting] = useState(false);
+  const wireTick = useWireTick();
 
   const updateBound = (index: number, value: string) => {
     setBounds((prev) => prev.map((row, i) => (i === index ? { ...row, value } : row)));
   };
 
   const selectedTargets = DEMO_FIRMS.slice(0, 3);
-  const firmCount = killScopeMode === "fleet" ? DEMO_FIRMS.length : selectedTargets.length;
-  const firmIds =
-    killScopeMode === "fleet"
-      ? DEMO_FIRMS.map((f) => f.name).join(" · ")
-      : selectedTargets.map((f) => f.name).join(" · ");
+  const targetFirms = killScopeMode === "fleet" ? [...DEMO_FIRMS] : selectedTargets;
+  const firmCount = targetFirms.length;
+  const firmIds = targetFirms.map((f) => f.name).join(" · ");
+
+  useEffect(() => {
+    let cancelled = false;
+    void Promise.all(DEMO_FIRMS.map((f) => wirePorts.haltStore.isFirmBookHalted(f.id))).then(
+      (flags) => {
+        if (!cancelled) setKilled(flags.some(Boolean));
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [wireTick]);
 
   const closeKill = () => {
     setKillOpen(false);
     setConfirmStep(false);
+  };
+
+  const onConfirmHalt = async () => {
+    setCommitting(true);
+    try {
+      await Promise.all(
+        targetFirms.map((firm) =>
+          wirePorts.haltStore.commit({
+            consultantId: FOUNDER_ACTOR,
+            firmId: firm.id,
+            scope: "firm-book",
+            reason: killReason.trim() || `Kill-switch · ${killScopeMode}`,
+          }),
+        ),
+      );
+      setKilled(true);
+      closeKill();
+    } finally {
+      setCommitting(false);
+    }
   };
 
   return (
@@ -201,7 +238,9 @@ export function FounderAgencyControlsModule({
               {statusChip(t, killed ? "halted" : "standby", killed ? "danger" : "muted")}
             </div>
             <p style={{ margin: "0 0 12px", fontSize: 12, lineHeight: 1.5, color: t.textMuted }}>
-              Halts outbound and Approach spend — fleet-wide or selected tenancies.
+              Halts outbound and Approach spend — fleet-wide or selected tenancies. Confirm writes
+              halt_records (firm-book) so new enrollments and new sends are suppressed (H1). In-flight
+              attempts are left alone.
             </p>
             <button
               type="button"
@@ -242,17 +281,24 @@ export function FounderAgencyControlsModule({
                 >
                   <dt style={{ color: t.textDim }}>Scope</dt>
                   <dd style={{ margin: 0, color: t.textPrimary }}>
-                    {killScopeMode === "fleet" ? "Fleet-wide" : "Selected tenancies"}
+                    {killScopeMode === "fleet"
+                      ? "Fleet-wide · firm-book"
+                      : "Selected tenancies · firm-book"}
                   </dd>
                   <dt style={{ color: t.textDim }}>Firm count</dt>
                   <dd style={{ margin: 0, color: t.textPrimary }}>{firmCount}</dd>
                   <dt style={{ color: t.textDim }}>Firms</dt>
                   <dd style={{ margin: 0, color: t.textMuted }}>{firmIds}</dd>
+                  <dt style={{ color: t.textDim }}>Firm ids</dt>
+                  <dd style={{ margin: 0, color: t.textMuted }}>
+                    {targetFirms.map((f) => f.id).join(" · ")}
+                  </dd>
                   <dt style={{ color: t.textDim }}>Reason</dt>
                   <dd style={{ margin: 0, color: t.textPrimary }}>{killReason.trim()}</dd>
                   <dt style={{ color: t.textDim }}>Audit preview</dt>
                   <dd style={{ margin: 0, color: t.textMuted }}>
-                    Kill-switch · {killScopeMode} · {firmCount} firms · actor founder
+                    Kill-switch · {killScopeMode} · {firmCount} firms · actor founder ·
+                    haltStore.commit
                   </dd>
                 </dl>
               </div>
@@ -342,13 +388,11 @@ export function FounderAgencyControlsModule({
                 </button>
                 <button
                   type="button"
-                  style={primaryBtnStyle(t)}
-                  onClick={() => {
-                    setKilled(true);
-                    closeKill();
-                  }}
+                  disabled={committing}
+                  style={primaryBtnStyle(t, committing)}
+                  onClick={() => void onConfirmHalt()}
                 >
-                  Halt motion
+                  {committing ? "Halting…" : "Halt motion"}
                 </button>
               </>
             ) : (

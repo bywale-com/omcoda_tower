@@ -13,7 +13,7 @@ import { TaskProvider } from "../../context/TaskContext";
 import type { HubToolRef } from "../../data/hub";
 import type { ConsultantTask } from "../../data/tasks";
 import { getContact } from "../../data/contacts";
-import { CT_DEMO, wirePorts } from "../../wire";
+import { CT_DEMO, FIRM_NAME, wirePorts } from "../../wire";
 import {
   CONSULTANT_NAV_MODULES,
   SURFACE_CATALOG,
@@ -24,9 +24,10 @@ import {
   type HaltRetention,
 } from "./ConsultantClientWorkspace";
 import {
-  CONSULTANT_TODAY_MEETINGS,
-  MEETING_READY_CLIENT_IDS,
   MeetingsModule,
+  selectConsultantTodayMeetings,
+  selectMeetingReadyClientIds,
+  useMeetings,
 } from "./MeetingsModule";
 import { PreparedWorkspaceModule } from "./PreparedWorkspaceModule";
 import { RegisterLoginScene } from "./RegisterLoginScene";
@@ -56,7 +57,6 @@ type ConsultantModule =
 
 type HaltScope = "contact" | "book";
 
-const FIRM_NAME = "Cedar Pathways";
 const DEFAULT_LICENSEE = "Sarah Chen · RCIC R123456";
 
 function moduleForFocus(entry: RegisterSurfaceEntry): ConsultantModule {
@@ -305,6 +305,12 @@ export function ConsultantPrototypeScene({
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [licensee, setLicensee] = useState(DEFAULT_LICENSEE);
   const [forceAcceptOpen, setForceAcceptOpen] = useState(false);
+  const meetings = useMeetings();
+  const todayMeetings = useMemo(() => selectConsultantTodayMeetings(meetings), [meetings]);
+  const meetingReadyClientIds = useMemo(
+    () => selectMeetingReadyClientIds(meetings),
+    [meetings],
+  );
 
   const onHardInputChange = useCallback(
     (state: { bookAuthorized: boolean; termsAccepted: boolean; licensee: string }) => {
@@ -642,7 +648,7 @@ export function ConsultantPrototypeScene({
                       firmName={FIRM_NAME}
                       licenseeLabel={licensee}
                       lastUpdatedStamp="Last updated · session open"
-                      todayMeetings={CONSULTANT_TODAY_MEETINGS}
+                      todayMeetings={todayMeetings}
                       onTodayMeetingClick={(id) => {
                         setMeetingsSelectId(id);
                         setModule("Meetings");
@@ -651,7 +657,7 @@ export function ConsultantPrototypeScene({
                         setMeetingsSelectId(null);
                         setModule("Meetings");
                       }}
-                      meetingReadyClientIds={MEETING_READY_CLIENT_IDS}
+                      meetingReadyClientIds={meetingReadyClientIds}
                       haltScopeByContactId={haltScopeByContactId}
                       silenceCauseByContactId={silenceCauseByContactId}
                       pendingHardInputs={pendingHardInputs}
@@ -680,7 +686,7 @@ export function ConsultantPrototypeScene({
                             haltByContact[workspaceClientId] ??
                             null
                           }
-                          meetingReady={MEETING_READY_CLIENT_IDS.has(workspaceClientId)}
+                          meetingReady={meetingReadyClientIds.has(workspaceClientId)}
                           licenseeLabel={licensee}
                           onHaltOutreach={() => {
                             setActiveClientId(workspaceClientId);

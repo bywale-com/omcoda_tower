@@ -43,36 +43,46 @@ export const AGENT_STEP_TYPES: AgentStepType[] = [
   { id: "consultant_task", label: "Task", description: "Manual follow-up task" },
 ];
 
+/** Hub agent id → sequence_template id / class (Agents ↔ machine tables). */
+export const AGENT_TEMPLATE_BINDING: Record<
+  string,
+  { templateId: string; sequenceClass: "optin_launch" | "launch_day" | "reengagement" | "reactivation" }
+> = {
+  "agent-intake": { templateId: "tpl.optin_launch.v1", sequenceClass: "optin_launch" },
+  "agent-nudge": { templateId: "tpl.reengagement.v1", sequenceClass: "reengagement" },
+  "agent-reactivation": { templateId: "tpl.reactivation.v1", sequenceClass: "reactivation" },
+};
+
 const SEED_AGENTS: AgentDefinition[] = [
   {
     id: "agent-intake",
-    name: "Intake triage",
+    name: "Opt-in launch",
     status: "idle",
     active: false,
     starred: false,
     stepCount: 0,
-    linkedAutomationIds: [],
-    updatedAt: "2026-06-10T09:00:00.000Z",
+    linkedAutomationIds: ["wf-optin-launch"],
+    updatedAt: "2026-08-10T00:00:00.000Z",
   },
   {
     id: "agent-nudge",
-    name: "Nudge composer",
+    name: "Nudge / re-engagement",
     status: "running",
     active: true,
     starred: true,
     stepCount: 4,
-    linkedAutomationIds: ["auto-welcome"],
-    updatedAt: "2026-06-19T14:20:00.000Z",
+    linkedAutomationIds: ["wf-webhook-reeval"],
+    updatedAt: "2026-08-10T00:00:00.000Z",
   },
   {
     id: "agent-reactivation",
-    name: "Reactivation scout",
+    name: "Reactivation",
     status: "idle",
     active: false,
     starred: false,
     stepCount: 0,
-    linkedAutomationIds: ["auto-stale-file"],
-    updatedAt: "2026-06-12T11:30:00.000Z",
+    linkedAutomationIds: ["wf-eligibility-reactivation"],
+    updatedAt: "2026-08-10T00:00:00.000Z",
   },
 ];
 

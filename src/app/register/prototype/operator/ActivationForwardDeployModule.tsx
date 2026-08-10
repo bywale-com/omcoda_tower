@@ -18,25 +18,19 @@ import {
   surfaceBlock,
   type OperatorModuleProps,
 } from "./operatorChrome";
+import { useOperatorNav } from "../operatorNav";
+import {
+  appendOperatorAudit,
+  hydrateForwardDeployRows,
+  persistForwardDeployRow,
+  type ForwardDeployActivationRow,
+} from "./operatorWireHelpers";
 
-type StagingChip = "idle" | "enriching" | "hydrated" | "stale";
-type FactsFresh = "fresh" | "stale" | "pending";
-type BrandPinned = "pinned" | "placeholder" | "missing";
+type StagingChip = ForwardDeployActivationRow["staging"];
+type FactsFresh = ForwardDeployActivationRow["factsFresh"];
+type BrandPinned = ForwardDeployActivationRow["brandPinned"];
 
-type ActivationRow = {
-  id: string;
-  firmId: string;
-  firm: string;
-  owner: string;
-  staging: StagingChip;
-  factsFresh: FactsFresh;
-  brandPinned: BrandPinned;
-  authorizeBook: "pending" | "complete";
-  acceptTerms: "pending" | "complete";
-  publicUrl: string;
-  brandPackage: string;
-  templateVersion: string;
-};
+type ActivationRow = ForwardDeployActivationRow;
 
 const TEMPLATES = [
   "Engagement · ALG desk v3 (published)",
@@ -165,12 +159,26 @@ export function ActivationForwardDeployModule({
   focusedEntry,
   hoveredId,
 }: OperatorModuleProps) {
+  const { jumpTo } = useOperatorNav();
   const hoveredEntry = resolveHoveredEntry(hoveredId);
   const focus = moduleFocus("Activation & forward-deploy", focusedEntry, hoveredEntry);
   const [rows, setRows] = useState(INITIAL);
   const [selectedId, setSelectedId] = useState(INITIAL[0].id);
   const [walkStep, setWalkStep] = useState(0);
   const [jumpNote, setJumpNote] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void hydrateForwardDeployRows(INITIAL).then((stored) => {
+      if (!cancelled) {
+        setRows(stored);
+        setSelectedId(stored[0]?.id ?? INITIAL[0].id);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (!focusedEntry || focusedEntry.module !== "Activation & forward-deploy") return;
@@ -189,23 +197,43 @@ export function ActivationForwardDeployModule({
   const selected = rows.find((a) => a.id === selectedId) ?? rows[0];
 
   function patchSelected(patch: Partial<ActivationRow>) {
-    setRows((prev) => prev.map((r) => (r.id === selected.id ? { ...r, ...patch } : r)));
+    setRows((prev) =>
+      prev.map((r) => {
+        if (r.id !== selected.id) return r;
+        const next = { ...r, ...patch };
+        void persistForwardDeployRow(next);
+        return next;
+      }),
+    );
   }
 
   function onHydrate() {
     patchSelected({ staging: "enriching", factsFresh: "pending" });
     window.setTimeout(() => {
       setRows((prev) =>
-        prev.map((r) =>
-          r.id === selected.id
-            ? {
-                ...r,
-                staging: "hydrated",
-                factsFresh: "fresh",
-                brandPinned: r.brandPinned === "missing" ? "placeholder" : r.brandPinned,
-              }
-            : r,
-        ),
+        prev.map((r) => {
+          if (r.id !== selected.id) return r;
+          const next = {
+            ...r,
+            staging: "hydrated" as StagingChip,
+            factsFresh: "fresh" as FactsFresh,
+            brandPinned: r.brandPinned === "missing" ? "placeholder" as BrandPinned : r.brandPinned,
+          };
+          void persistForwardDeployRow(next);
+          void appendOperatorAudit({
+            actorId: "ops.marco",
+            kind: "activation.hydrate",
+            subjectType: "firm",
+            subjectId: r.firmId,
+            action: `Forward-deploy staged Prepared Workspace · ${r.firm}`,
+            kindLabel: "Activation",
+            before: stagingLabel(r.staging),
+            after: "Prepared Workspace staged",
+            surface: "Activation & forward-deploy",
+            firmName: r.firm,
+          });
+          return next;
+        }),
       );
       setWalkStep(0);
     }, 700);
@@ -479,7 +507,7 @@ export function ActivationForwardDeployModule({
                           <button
                             type="button"
                             data-register-surface="Progress Jump"
-                            onClick={() => setJumpNote(step.jump)}
+                            onClick={() => { jumpTo(step.jump); setJumpNote(step.jump); }}
                             style={secondaryBtnStyle(t)}
                           >
                             {step.jump}
@@ -544,7 +572,7 @@ export function ActivationForwardDeployModule({
                   <button
                     type="button"
                     data-register-surface="Progress Jump"
-                    onClick={() => setJumpNote("Jump to Activation state")}
+                    onClick={() => { const n = "Jump to Activation state"; jumpTo(n); setJumpNote(n); }}
                     style={secondaryBtnStyle(t)}
                   >
                     Jump to Activation state
@@ -552,7 +580,7 @@ export function ActivationForwardDeployModule({
                   <button
                     type="button"
                     data-register-surface="Progress Jump"
-                    onClick={() => setJumpNote("Jump to Commercial")}
+                    onClick={() => { const n = "Jump to Commercial"; jumpTo(n); setJumpNote(n); }}
                     style={secondaryBtnStyle(t)}
                   >
                     Jump to Commercial

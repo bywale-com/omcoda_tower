@@ -22,6 +22,12 @@ import {
   surfaceBlock,
   type OperatorModuleProps,
 } from "./operatorChrome";
+import {
+  hydratePrimaryStoreRows,
+  persistPrimaryStoreRow,
+} from "./operatorWireHelpers";
+
+const ACQUISITION_CAMPAIGNS_COLLECTION = "acquisition_campaigns";
 
 const REVIEW_STATES: MetaReviewState[] = ["draft", "in_review", "approved", "rejected"];
 const DELIVERY_STATES: MetaDeliveryState[] = ["not_started", "scheduled", "active", "paused", "ended"];
@@ -121,6 +127,22 @@ export function AcquisitionAdsModule({ t, focusedEntry, hoveredId }: OperatorMod
 
   useEffect(() => {
     let cancelled = false;
+    void hydratePrimaryStoreRows(ACQUISITION_CAMPAIGNS_COLLECTION, INITIAL_CAMPAIGNS).then(
+      (stored) => {
+        if (!cancelled) {
+          setCampaigns(stored);
+          setSelectedId(stored[0]?.id ?? INITIAL_CAMPAIGNS[0].id);
+          setInstrFilterId(stored[0]?.id ?? INITIAL_CAMPAIGNS[0].id);
+        }
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
     void wirePorts.metaAds.getCampaign(CT_DEMO.firmId).then((s) => {
       if (!cancelled) setMetaState(s);
     });
@@ -159,12 +181,24 @@ export function AcquisitionAdsModule({ t, focusedEntry, hoveredId }: OperatorMod
 
   const patchSelected = (patch: Partial<Campaign>) => {
     setCampaigns((prev) =>
-      prev.map((c) => (c.id === selectedId ? { ...c, ...patch } : c)),
+      prev.map((c) => {
+        if (c.id !== selectedId) return c;
+        const next = { ...c, ...patch };
+        void persistPrimaryStoreRow(ACQUISITION_CAMPAIGNS_COLLECTION, next);
+        return next;
+      }),
     );
   };
 
   const patchSelectedStatus = (id: string, status: CampaignStatus) => {
-    setCampaigns((prev) => prev.map((c) => (c.id === id ? { ...c, status } : c)));
+    setCampaigns((prev) =>
+      prev.map((c) => {
+        if (c.id !== id) return c;
+        const next = { ...c, status };
+        void persistPrimaryStoreRow(ACQUISITION_CAMPAIGNS_COLLECTION, next);
+        return next;
+      }),
+    );
   };
 
   const newCampaign = () => {
@@ -181,6 +215,7 @@ export function AcquisitionAdsModule({ t, focusedEntry, hoveredId }: OperatorMod
       captureWebsite: "",
       captureChannel: "Email",
     };
+    void persistPrimaryStoreRow(ACQUISITION_CAMPAIGNS_COLLECTION, camp);
     setCampaigns((prev) => [...prev, camp]);
     setSelectedId(id);
     setActionNote("New campaign draft created");
