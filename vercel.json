@@ -8,9 +8,19 @@
     },
     "api/wire/[[...path]].ts": {
       "memory": 1024,
-      "maxDuration": 15
+      "maxDuration": 60
+    },
+    "api/ping.ts": {
+      "memory": 128,
+      "maxDuration": 5
     }
   },
+  "crons": [
+    {
+      "path": "/api/wire/machine/tick",
+      "schedule": "* * * * *"
+    }
+  ],
   "rewrites": [
     {
       "source": "/auth/:path*",

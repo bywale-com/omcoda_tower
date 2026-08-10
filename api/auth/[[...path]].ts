@@ -1,10 +1,14 @@
-import { handle } from "hono/vercel";
+/**
+ * Vercel Node serverless entry for /api/auth/* (and rewritten /auth/*).
+ * Keep free of wire-service imports (Twilio). Use Node handler, not Edge.
+ */
+import { handle } from "@hono/node-server/vercel";
 import { app } from "../../server/auth-service/app";
 
-// Keep this entry free of wire-service imports (Twilio). Wire is api/wire only.
 export const config = {
-  runtime: "nodejs",
-  memory: 1024,
+  api: {
+    bodyParser: false,
+  },
   maxDuration: 10,
 };
 

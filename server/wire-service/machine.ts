@@ -1375,10 +1375,28 @@ export async function handleMachineProvision(c: Context) {
   });
 }
 
-/** Manual tick (same as worker once) — for ops/verify. */
+/**
+ * Single tick (same as worker once).
+ * Production host: Vercel Cron GET /api/wire/machine/tick every minute
+ * (Authorization: Bearer $CRON_SECRET or WORKER_CRON_SECRET).
+ */
 export async function handleMachineTick(c: Context) {
+  const secret =
+    (process.env.CRON_SECRET ?? process.env.WORKER_CRON_SECRET ?? "").trim();
+  if (secret) {
+    const auth = (c.req.header("authorization") ?? "").trim();
+    const bearer = auth.toLowerCase().startsWith("bearer ")
+      ? auth.slice(7).trim()
+      : "";
+    const headerSecret = (c.req.header("x-cron-secret") ?? "").trim();
+    if (bearer !== secret && headerSecret !== secret) {
+      return json(c, { ok: false, error: "cron secret required" }, 401);
+    }
+  }
   const result = await tickOnce(new Date());
   return json(c, {
+    ok: true,
+    host: "vercel-cron-or-manual",
     ...result,
     fired: result.fired,
     gate: sendGateSnapshot(),

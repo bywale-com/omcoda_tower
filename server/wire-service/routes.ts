@@ -134,6 +134,8 @@ export function createWireRoutes(): Hono {
 
   // Machine tables (frozen System Map + automations objects)
   wire.get("/machine/health", handleMachineHealth);
+  // GET for Vercel Cron; POST for manual/ops
+  wire.get("/machine/tick", handleMachineTick);
   wire.post("/machine/tick", handleMachineTick);
   wire.get("/machine/workflows", handleWorkflowList);
   wire.post("/machine/workflows", handleWorkflowCreate);
