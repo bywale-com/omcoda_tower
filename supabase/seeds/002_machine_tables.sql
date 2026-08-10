@@ -71,7 +71,7 @@ ON CONFLICT (id) DO UPDATE SET threshold = EXCLUDED.threshold;
 
 INSERT INTO sequence_template (id, sequence_class, variant, label, cells, source, silences) VALUES
   ('tpl.optin_launch.v1', 'optin_launch', 'v1', 'Opt-in launch calendar v1',
-   '[{"id":"ol-d1-sms","token":"day1_text_primer","label":"Day1 text primer","mode":"templated"},{"id":"ol-d1-email","token":"day1_announcement_email","label":"Day1 announcement email","mode":"templated"},{"id":"ol-d2-social","token":"day2_social_follow","label":"Day2 social follow","mode":"templated"},{"id":"ol-d3-waitlist","token":"day3_waitlist","label":"Day3 waitlist","mode":"templated"},{"id":"ol-d4-7","token":"days4_7_nurture","label":"Days4–7 nurture","mode":"templated"}]'::jsonb,
+   '[{"id":"ol-d1-sms","token":"day1_text_primer","label":"Day1 text primer","mode":"templated","day":1,"channel":"text"},{"id":"ol-d1-email","token":"day1_announcement_email","label":"Day1 announcement email","mode":"templated","day":1,"channel":"email"},{"id":"ol-d2-social","token":"day2_social_follow","label":"Day2 social follow","mode":"templated","day":2,"channel":"form"},{"id":"ol-d3-waitlist","token":"day3_waitlist","label":"Day3 waitlist","mode":"templated","day":3,"channel":"email"},{"id":"ol-d4-7","token":"days4_7_nurture","label":"Days4–7 nurture","mode":"templated","day":4,"channel":"email"}]'::jsonb,
    'guidelines/Reactivation.md', '[]'::jsonb),
   ('tpl.launch_day.v1', 'launch_day', 'v1', 'Launch day sequence v1',
    '[{"id":"ld-signup-email","token":"signup_email","mode":"templated"},{"id":"ld-landing","token":"signup_landing","mode":"templated"},{"id":"ld-confirm","token":"signup_confirmation","mode":"templated"}]'::jsonb,
