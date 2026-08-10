@@ -24,7 +24,7 @@
 
 | Modular (left) | Control (right) | Status |
 |----------------|-----------------|--------|
-| `reference_versions` row / payload / version | Reference data → **Reference row value** + **Publish version** Confirm | `mapped` · trial: edit→publish→`listReferenceVersions` holds value |
+| `reference_versions` row / payload / version | Reference data → **Reference row value** + **Publish version** Confirm | `trial-pass` (2026-08-10) — edit `cec.min_hours`→1599 → Publish → toast + stand-in read-back hold value |
 | `reference_versions` import into draft | Reference data → **Import criteria** modal | `mapped` (draft stage only; values still via grid) |
 | Evaluation pin `referenceVersionId` + `rulesetId` | Config libraries → Evaluation → pin fields + **Publish version** | `mapped` |
 | `rule_eligibility_pathway` enable/params | Evaluation pack editor toggles | `mapped` |
