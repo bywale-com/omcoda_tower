@@ -10,6 +10,7 @@ import {
   SURFACE_CATALOG,
   type RegisterSurfaceEntry,
 } from "../trace/surfaceCatalog";
+import { FIRM_BRAND } from "../../wire/firmBrand";
 import {
   LeafSurface,
   RegisterSurfaceMount,
@@ -43,21 +44,12 @@ const CONTACT_SURFACES = [
 
 type ContactSurface = (typeof CONTACT_SURFACES)[number];
 
-const FIRM = {
-  name: "Tower Immigration",
-  short: "Tower",
-  email: "hello@towerimmigration.ca",
-  mailAddress: "120 King St W, Suite 800, Toronto ON M5H 1J9",
-  phone: "+1 (416) 555-0142",
-  initials: "TI",
-  brand: "#1B4F72",
-  brandSoft: "rgba(27, 79, 114, 0.12)",
-};
+const FIRM = FIRM_BRAND;
 
 const CONSULTANT = {
   name: "Sarah Chen",
   role: "RCIC · Consultant",
-  firm: "Tower Immigration",
+  firm: FIRM_BRAND.name,
 };
 
 const CONTACT = {
@@ -1361,7 +1353,7 @@ function MeetingInvitation({
   return cemShell({
     t,
     surface: "Meeting invitation",
-    subject: "You're invited — discovery with Tower Immigration",
+    subject: `You're invited — discovery with ${FIRM.name}`,
     headline: "Eligibility warrants a conversation",
     body: `Hi ${CONTACT.first} — based on your current self-reportable facts, ${FIRM.name} would like to meet for a short discovery on Express Entry / CEC timing. Pick a slot that works; we'll already hold your current facts for the consultant.`,
     cta: "Book a time",

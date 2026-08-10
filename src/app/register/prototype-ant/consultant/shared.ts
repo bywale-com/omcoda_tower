@@ -1,6 +1,7 @@
 import { getClientMeta } from "../../../data/clients";
+import { FIRM_NAME as SHARED_FIRM_NAME } from "../../../wire/firmBrand";
 
-export const FIRM_NAME = "Cedar Pathways";
+export const FIRM_NAME = SHARED_FIRM_NAME;
 export const DEFAULT_LICENSEE = "Sarah Chen · RCIC R123456";
 export const LICENSEES = ["Sarah Chen · RCIC R123456", "Marco Reyes · RCIC R654321"];
 

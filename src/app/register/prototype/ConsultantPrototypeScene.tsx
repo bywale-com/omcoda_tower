@@ -13,7 +13,7 @@ import { TaskProvider } from "../../context/TaskContext";
 import type { HubToolRef } from "../../data/hub";
 import type { ConsultantTask } from "../../data/tasks";
 import { getContact } from "../../data/contacts";
-import { CT_DEMO, wirePorts } from "../../wire";
+import { CT_DEMO, FIRM_NAME, wirePorts } from "../../wire";
 import {
   CONSULTANT_NAV_MODULES,
   SURFACE_CATALOG,
@@ -56,7 +56,6 @@ type ConsultantModule =
 
 type HaltScope = "contact" | "book";
 
-const FIRM_NAME = "Cedar Pathways";
 const DEFAULT_LICENSEE = "Sarah Chen · RCIC R123456";
 
 function moduleForFocus(entry: RegisterSurfaceEntry): ConsultantModule {
