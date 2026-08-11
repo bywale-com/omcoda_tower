@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Cloud } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router";
 import { abandonOtp, AuthRequestError, sendOtp, verifyOtp } from "../../auth/authClient";
@@ -31,10 +31,15 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
   const { refresh } = useAuth();
   const t = light;
   const [step, setStep] = useState<LoginStep>("email");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(() => searchParams.get("email")?.trim() ?? "");
   const [verificationCode, setVerificationCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fromQuery = searchParams.get("email")?.trim();
+    if (fromQuery && !email) setEmail(fromQuery);
+  }, [searchParams, email]);
 
   async function handleEmailSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

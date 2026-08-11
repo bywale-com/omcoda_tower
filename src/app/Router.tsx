@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import App from "./App";
+import { AccessEntry } from "./auth/AccessEntry";
 import { isAuthDisabled } from "./auth/authClient";
 import { AuthGate } from "./auth/AuthGate";
 import { AuthProvider } from "./auth/AuthContext";
@@ -31,6 +32,8 @@ export function AppRouter() {
               path="/login"
               element={authOff ? <Navigate to="/" replace /> : <LoginPage />}
             />
+            {/* Direct access — redeem token → consultant desk (not login portal). */}
+            <Route path="/a/:token" element={<AccessEntry />} />
             {/* Always declare /register so a missing env flag cannot silently
                 fall through to "*" → Board. RegisterPage itself Navigates home
                 when the route is intentionally disabled. */}

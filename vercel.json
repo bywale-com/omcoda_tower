@@ -4,7 +4,7 @@
   "functions": {
     "api/auth.ts": {
       "memory": 1024,
-      "maxDuration": 10,
+      "maxDuration": 60,
       "includeFiles": "dist-api/**"
     },
     "api/wire.ts": {
@@ -30,7 +30,7 @@
     },
     {
       "source": "/auth/:path*",
-      "destination": "/api/auth"
+      "destination": "/api/auth?path=:path*"
     },
     {
       "source": "/wire",
@@ -38,15 +38,15 @@
     },
     {
       "source": "/wire/:path*",
-      "destination": "/api/wire"
+      "destination": "/api/wire?path=:path*"
     },
     {
       "source": "/api/auth/:path*",
-      "destination": "/api/auth"
+      "destination": "/api/auth?path=:path*"
     },
     {
       "source": "/api/wire/:path*",
-      "destination": "/api/wire"
+      "destination": "/api/wire?path=:path*"
     },
     {
       "source": "/prototype-ant",
