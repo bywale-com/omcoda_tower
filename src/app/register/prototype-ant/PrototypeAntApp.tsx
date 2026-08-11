@@ -1,11 +1,14 @@
 /**
- * Isolated Ant Design whole-product shell for Tower Register plant translate.
- * Cross-link to source plant is full-document navigation only.
+ * Tower CT Ant shell — product face.
+ * Admin (admin@try-tower.com): Consultant ▾ | Operator | Contact
+ * Everyone else: consultant workspace only (no switcher).
+ * Prototype (auth bypass) keeps the full admin-shaped shell for modeling.
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   App,
   ConfigProvider,
+  Dropdown,
   Layout,
   Segmented,
   Space,
@@ -15,15 +18,21 @@ import {
 } from "antd";
 import {
   BulbOutlined,
+  ControlOutlined,
+  DownOutlined,
   LinkOutlined,
   TeamOutlined,
   UserOutlined,
-  ControlOutlined,
 } from "@ant-design/icons";
+import { useAuth } from "../../auth/AuthContext";
+import { isAuthDisabled } from "../../auth/authClient";
+import { isPlatformAdminEmail } from "../../auth/platformAdmin";
 import { buildTowerAntTheme, loadAntThemeMode, saveAntThemeMode, type AntThemeMode } from "./theme";
 import { ConsultantAntScene } from "./consultant/ConsultantAntScene";
 import { OperatorAntScene } from "./operator/OperatorAntScene";
 import { ContactAntScene } from "./contact/ContactAntScene";
+import { LoginModule } from "./consultant/LoginModule";
+import { ViewAsProvider, useViewAs } from "./viewAsContext";
 
 const { Header, Content } = Layout;
 const { Text } = Typography;
@@ -32,38 +41,99 @@ export type AntDesk = "consultant" | "operator" | "contact";
 
 export function PrototypeAntApp() {
   const [mode, setMode] = useState<AntThemeMode>(() => loadAntThemeMode());
-  const [desk, setDesk] = useState<AntDesk>("consultant");
   const themeConfig = useMemo(() => buildTowerAntTheme(mode), [mode]);
 
   return (
     <ConfigProvider theme={themeConfig}>
       <App style={{ height: "100%" }}>
-        <AntShell
-          desk={desk}
-          onDesk={setDesk}
-          mode={mode}
-          onMode={(m) => {
-            setMode(m);
-            saveAntThemeMode(m);
-          }}
-        />
+        <ViewAsProvider>
+          <AntShell
+            mode={mode}
+            onMode={(m) => {
+              setMode(m);
+              saveAntThemeMode(m);
+            }}
+          />
+        </ViewAsProvider>
       </App>
     </ConfigProvider>
   );
 }
 
 function AntShell({
-  desk,
-  onDesk,
   mode,
   onMode,
 }: {
-  desk: AntDesk;
-  onDesk: (d: AntDesk) => void;
   mode: AntThemeMode;
   onMode: (m: AntThemeMode) => void;
 }) {
   const { token } = antTheme.useToken();
+  const { user, isLoading, isAuthenticated } = useAuth();
+  const { isAdmin, consultants, selected, selectConsultant, loading: consultantsLoading } =
+    useViewAs();
+  const [desk, setDesk] = useState<AntDesk>("consultant");
+
+  // Non-admin never leaves consultant desk.
+  useEffect(() => {
+    if (!isAdmin && desk !== "consultant") setDesk("consultant");
+  }, [isAdmin, desk]);
+
+  const authOff = isAuthDisabled();
+  const needsLogin = !authOff && !isLoading && !isAuthenticated;
+
+  const consultantLabel = selected
+    ? `${selected.firmName}`
+    : consultantsLoading
+      ? "Consultants…"
+      : "Consultant";
+
+  const consultantMenuItems = consultants.map((c) => ({
+    key: c.firmId,
+    label: (
+      <div>
+        <div>{c.firmName}</div>
+        <Text type="secondary" style={{ fontSize: 11 }}>
+          {c.email}
+        </Text>
+      </div>
+    ),
+    onClick: () => {
+      selectConsultant(c.firmId);
+      setDesk("consultant");
+    },
+  }));
+
+  const segmentedOptions = isAdmin
+    ? [
+        {
+          label: (
+            <Dropdown
+              menu={{ items: consultantMenuItems, selectable: true, selectedKeys: selected ? [selected.firmId] : [] }}
+              trigger={["click"]}
+              disabled={!consultants.length}
+            >
+              <span
+                onClick={(e) => {
+                  // Keep Segmented on consultant; open dropdown instead of only switching desk.
+                  e.stopPropagation();
+                  setDesk("consultant");
+                }}
+                style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+              >
+                <UserOutlined />
+                <span style={{ maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {consultantLabel}
+                </span>
+                <DownOutlined style={{ fontSize: 10 }} />
+              </span>
+            </Dropdown>
+          ),
+          value: "consultant",
+        },
+        { label: "Operator", value: "operator", icon: <ControlOutlined /> },
+        { label: "Contact", value: "contact", icon: <TeamOutlined /> },
+      ]
+    : [{ label: "Consultant", value: "consultant", icon: <UserOutlined /> }];
 
   return (
     <Layout style={{ height: "100%", minHeight: "100vh" }}>
@@ -78,22 +148,34 @@ function AntShell({
           paddingInline: 20,
         }}
       >
-        <Space size="middle">
+        <Space size="middle" wrap>
           <Text strong style={{ fontSize: 16 }}>
             Tower
           </Text>
-          <Text type="secondary" style={{ fontSize: 12 }}>
-            Prototype · Ant Design
-          </Text>
-          <Segmented
-            value={desk}
-            onChange={(v) => onDesk(v as AntDesk)}
-            options={[
-              { label: "Consultant", value: "consultant", icon: <UserOutlined /> },
-              { label: "Operator", value: "operator", icon: <ControlOutlined /> },
-              { label: "Contact", value: "contact", icon: <TeamOutlined /> },
-            ]}
-          />
+          {authOff ? (
+            <Text type="secondary" style={{ fontSize: 12 }}>
+              Prototype · Ant Design
+            </Text>
+          ) : isPlatformAdminEmail(user?.email) ? (
+            <Text type="secondary" style={{ fontSize: 12 }}>
+              Admin
+            </Text>
+          ) : user?.email ? (
+            <Text type="secondary" style={{ fontSize: 12 }}>
+              {user.email}
+            </Text>
+          ) : null}
+          {!needsLogin ? (
+            <Segmented
+              value={desk}
+              onChange={(v) => {
+                const next = v as AntDesk;
+                if (!isAdmin && next !== "consultant") return;
+                setDesk(next);
+              }}
+              options={segmentedOptions}
+            />
+          ) : null}
         </Space>
         <Space size="middle">
           <Space size={6}>
@@ -106,7 +188,10 @@ function AntShell({
               unCheckedChildren="Light"
             />
           </Space>
-          {/* Full document nav — never in-SPA across CSS worlds */}
+          <a href="/hub" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <LinkOutlined />
+            Hub
+          </a>
           <a href="/register" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
             <LinkOutlined />
             Source plant
@@ -114,9 +199,13 @@ function AntShell({
         </Space>
       </Header>
       <Content style={{ height: "calc(100% - 56px)", overflow: "hidden", background: token.colorBgLayout }}>
-        {desk === "operator" ? (
+        {isLoading && !authOff ? (
+          <div style={{ padding: 24, textAlign: "center" }}>Loading…</div>
+        ) : needsLogin ? (
+          <LoginModule />
+        ) : desk === "operator" && isAdmin ? (
           <OperatorAntScene />
-        ) : desk === "contact" ? (
+        ) : desk === "contact" && isAdmin ? (
           <ContactAntScene />
         ) : (
           <ConsultantAntScene />

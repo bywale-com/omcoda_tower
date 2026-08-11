@@ -1009,6 +1009,23 @@ export const standInMachineApi: MachineApiPort = {
     return result;
   },
 
+  async listConsultants() {
+    return [
+      {
+        userId: "standin-u-1",
+        email: "consultant@harbor.test",
+        firmId: "firm-standin-harbor",
+        firmName: "Harbor RCIC",
+      },
+      {
+        userId: "standin-u-2",
+        email: "owner@cedar.test",
+        firmId: "firm-cedar",
+        firmName: "Cedar Immigration",
+      },
+    ];
+  },
+
   async bookMeeting(input) {
     const f = standInFirm();
     const id = `mtg-standin-${Date.now()}`;

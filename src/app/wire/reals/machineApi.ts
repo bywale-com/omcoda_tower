@@ -506,6 +506,25 @@ export const realMachineApi: MachineApiPort = {
     return res.contacts;
   },
 
+  async listConsultants() {
+    // Admin-global list — firm header optional (view-as may not be chosen yet).
+    const headers: Record<string, string> = {};
+    try {
+      headers["x-firm-id"] = firm();
+    } catch {
+      /* session firm not set yet */
+    }
+    const res = await wireFetch<{
+      consultants: Array<{
+        userId: string;
+        email: string;
+        firmId: string;
+        firmName: string;
+      }>;
+    }>(`/machine/consultants`, { headers });
+    return res.consultants;
+  },
+
   async bookMeeting(input) {
     return wireFetch<{
       id: string;

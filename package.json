@@ -26,7 +26,8 @@
     "verify:ship": "tsx --env-file=.env scripts/verify-ship-spine.ts && tsx --env-file=.env scripts/verify-deny-gates.ts",
     "verify:affordances": "tsx --env-file=.env scripts/verify-affordance-roundtrip.ts",
     "verify:deploy": "npm run verify:ship && npm run verify:session-firm && npm run verify:boot-env && npm run verify:continuous-worker",
-    "verify:all-ship": "npm run verify:ship && npm run verify:affordances && npx tsx --env-file=.env scripts/restore-channel-order.ts && VERIFY_LIVE_SEND=1 npm run verify:worker && npm run verify:session-firm && npm run verify:boot-env"
+    "verify:all-ship": "npm run verify:ship && npm run verify:affordances && npx tsx --env-file=.env scripts/restore-channel-order.ts && VERIFY_LIVE_SEND=1 npm run verify:worker && npm run verify:session-firm && npm run verify:boot-env",
+    "ensure:admin": "tsx --env-file=.env scripts/ensure-platform-admin.ts"
   },
   "dependencies": {
     "@ant-design/icons": "^6.3.2",
