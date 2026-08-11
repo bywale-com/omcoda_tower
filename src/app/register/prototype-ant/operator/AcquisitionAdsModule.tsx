@@ -1,5 +1,6 @@
 /**
  * Acquisition & ads — campaign Table, editor Drawer, instrumentation, kill criteria Modal.
+ * Campaigns start empty — never seeded Live/Paused theater (Meta outbound stays deferred).
  */
 import { useEffect, useState } from "react";
 import {
@@ -67,71 +68,30 @@ type Campaign = {
   captureChannel: string;
 };
 
-const INITIAL: Campaign[] = [
-  {
-    id: "camp-q3",
-    name: "Approach · Q3 RCIC pilots",
-    status: "Live",
-    budget: "≤ 3 clicks / lead",
-    captures: 42,
-    feedCreative: "RCIC desk · one-tap firm capture",
-    adCopy: "Run your immigration desk on Tower — name + site in one tap.",
-    captureName: "Priya Desai, RCIC",
-    captureWebsite: "cedarpathways.ca",
-    captureChannel: "WhatsApp",
-  },
-  {
-    id: "camp-retarget",
-    name: "Warm retarget · site visitors",
-    status: "Paused",
-    budget: "≤ 2 clicks / lead",
-    captures: 18,
-    feedCreative: "Still evaluating Tower?",
-    adCopy: "Return to your captured firm seed — continue in one tap.",
-    captureName: "Harbor RCIC Desk",
-    captureWebsite: "harborrcic.ca",
-    captureChannel: "Email",
-  },
-  {
-    id: "camp-assist",
-    name: "Assisted OLG mirror (non-Meta)",
-    status: "Draft",
-    budget: "Operator-led",
-    captures: 0,
-    feedCreative: "Operator-assisted onboarding mirror",
-    adCopy: "Same desk as ALG — assisted door only.",
-    captureName: "",
-    captureWebsite: "",
-    captureChannel: "Email",
-  },
-];
+const INITIAL: Campaign[] = [];
 
-const INSTRUMENTATION: Record<string, { dontUnderstand: number; understandDontTap: number; continueScroll: number }> = {
-  "camp-q3": { dontUnderstand: 1240, understandDontTap: 380, continueScroll: 2100 },
-  "camp-retarget": { dontUnderstand: 420, understandDontTap: 95, continueScroll: 680 },
-  "camp-assist": { dontUnderstand: 0, understandDontTap: 0, continueScroll: 0 },
-};
+const EMPTY_INSTR = { dontUnderstand: 0, understandDontTap: 0, continueScroll: 0 };
 
 export function AcquisitionAdsModule() {
-  const [campaigns, setCampaigns] = useState(INITIAL);
-  const [selectedId, setSelectedId] = useState(INITIAL[0].id);
+  const [campaigns, setCampaigns] = useState<Campaign[]>(INITIAL);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editorOpen, setEditorOpen] = useState(false);
-  const [instrId, setInstrId] = useState(INITIAL[0].id);
+  const [instrId, setInstrId] = useState<string | null>(null);
   const [killOpen, setKillOpen] = useState(false);
   const [killThreshold, setKillThreshold] = useState("400");
   const [killAction, setKillAction] = useState<"hold" | "kill">("hold");
   const [waitingJump, setWaitingJump] = useState<string | null>(null);
   const [metaState, setMetaState] = useState<MetaCampaignState | null>(null);
   const wireTick = useWireTick();
-  const waitingForHydrate = 7;
+  const waitingForHydrate = 0;
 
   useEffect(() => {
     let cancelled = false;
-    void hydratePrimaryStoreRows(ACQUISITION_CAMPAIGNS_COLLECTION, INITIAL).then((stored) => {
+    void hydratePrimaryStoreRows(ACQUISITION_CAMPAIGNS_COLLECTION, [] as Campaign[]).then((stored) => {
       if (!cancelled) {
         setCampaigns(stored);
-        setSelectedId(stored[0]?.id ?? INITIAL[0].id);
-        setInstrId(stored[0]?.id ?? INITIAL[0].id);
+        setSelectedId(stored[0]?.id ?? null);
+        setInstrId(stored[0]?.id ?? null);
       }
     });
     return () => {
@@ -159,10 +119,11 @@ export function AcquisitionAdsModule() {
     setMetaState(next);
   }
 
-  const selected = campaigns.find((c) => c.id === selectedId) ?? campaigns[0];
-  const instr = INSTRUMENTATION[instrId] ?? INSTRUMENTATION["camp-q3"];
+  const selected = selectedId ? campaigns.find((c) => c.id === selectedId) ?? null : null;
+  const instr = EMPTY_INSTR;
 
   const patchSelected = (patch: Partial<Campaign>) => {
+    if (!selectedId) return;
     setCampaigns((prev) =>
       prev.map((c) => {
         if (c.id !== selectedId) return c;
@@ -239,9 +200,10 @@ export function AcquisitionAdsModule() {
           columns={columns}
           dataSource={campaigns}
           pagination={false}
+          locale={{ emptyText: "No Approach campaigns" }}
           rowSelection={{
             type: "radio",
-            selectedRowKeys: [selectedId],
+            selectedRowKeys: selectedId ? [selectedId] : [],
             onChange: (keys) => setSelectedId(keys[0] as string),
           }}
         />
@@ -335,10 +297,12 @@ export function AcquisitionAdsModule() {
               extra={
                 <Select
                   size="small"
-                  value={instrId}
+                  value={instrId ?? undefined}
                   onChange={setInstrId}
+                  placeholder="No campaigns"
                   options={campaigns.map((c) => ({ value: c.id, label: c.name }))}
                   style={{ width: 180 }}
+                  disabled={campaigns.length === 0}
                 />
               }
             >
@@ -357,7 +321,7 @@ export function AcquisitionAdsModule() {
                   </Col>
                 ))}
               </Row>
-              <Button style={{ marginTop: 12 }} onClick={() => setKillOpen(true)}>
+              <Button style={{ marginTop: 12 }} onClick={() => setKillOpen(true)} disabled={!instrId}>
                 Kill / hold criteria…
               </Button>
             </Card>
@@ -367,78 +331,84 @@ export function AcquisitionAdsModule() {
 
       <Drawer
         title="Approach campaign editor"
-        open={editorOpen}
+        open={editorOpen && Boolean(selected)}
         onClose={() => setEditorOpen(false)}
         width={520}
         extra={
-          <Space>
-            <Button onClick={() => message.success(`Saved draft · ${selected.name}`)}>Save</Button>
-            <Button
-              type="primary"
-              data-register-surface="Save / Publish campaign"
-              onClick={() => {
-                patchSelected({ status: "Live" });
-                message.success(`Published · ${selected.name} live for capture`);
-              }}
-            >
-              Publish campaign
-            </Button>
-          </Space>
+          selected ? (
+            <Space>
+              <Button onClick={() => message.success(`Saved draft · ${selected.name}`)}>Save</Button>
+              <Button
+                type="primary"
+                data-register-surface="Save / Publish campaign"
+                onClick={() => {
+                  patchSelected({ status: "Live" });
+                  message.success(`Published · ${selected.name} live for capture`);
+                }}
+              >
+                Publish campaign
+              </Button>
+            </Space>
+          ) : null
         }
       >
-        <Surface label="Approach campaign editor">
-          <StatusTag
-            label={selected.status}
-            color={selected.status === "Live" ? "success" : selected.status === "Paused" ? "warning" : "default"}
-          />
-          <Form layout="vertical" style={{ marginTop: 12 }}>
-            <Form.Item label="Feed creative">
-              <Input value={selected.feedCreative} onChange={(e) => patchSelected({ feedCreative: e.target.value })} />
-            </Form.Item>
-            <Form.Item label="Ad copy">
-              <Input.TextArea
-                rows={2}
-                value={selected.adCopy}
-                onChange={(e) => patchSelected({ adCopy: e.target.value })}
+        {selected ? (
+          <>
+            <Surface label="Approach campaign editor">
+              <StatusTag
+                label={selected.status}
+                color={selected.status === "Live" ? "success" : selected.status === "Paused" ? "warning" : "default"}
               />
-            </Form.Item>
-          </Form>
-        </Surface>
-        <Surface label="Capture strip" style={{ marginTop: 16 }}>
-          <Row gutter={8}>
-            <Col span={8}>
-              <Form.Item label="Name">
-                <Input
-                  value={selected.captureName}
-                  onChange={(e) => patchSelected({ captureName: e.target.value })}
-                  placeholder="Firm / consultant name"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Website">
-                <Input
-                  value={selected.captureWebsite}
-                  onChange={(e) => patchSelected({ captureWebsite: e.target.value })}
-                  placeholder="firm.ca"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Channel">
-                <Select
-                  value={selected.captureChannel}
-                  onChange={(v) => patchSelected({ captureChannel: v })}
-                  options={[
-                    { value: "Email", label: "Email" },
-                    { value: "WhatsApp", label: "WhatsApp" },
-                    { value: "Phone", label: "Phone" },
-                  ]}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Surface>
+              <Form layout="vertical" style={{ marginTop: 12 }}>
+                <Form.Item label="Feed creative">
+                  <Input value={selected.feedCreative} onChange={(e) => patchSelected({ feedCreative: e.target.value })} />
+                </Form.Item>
+                <Form.Item label="Ad copy">
+                  <Input.TextArea
+                    rows={2}
+                    value={selected.adCopy}
+                    onChange={(e) => patchSelected({ adCopy: e.target.value })}
+                  />
+                </Form.Item>
+              </Form>
+            </Surface>
+            <Surface label="Capture strip" style={{ marginTop: 16 }}>
+              <Row gutter={8}>
+                <Col span={8}>
+                  <Form.Item label="Name">
+                    <Input
+                      value={selected.captureName}
+                      onChange={(e) => patchSelected({ captureName: e.target.value })}
+                      placeholder="Firm / consultant name"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={8}>
+                  <Form.Item label="Website">
+                    <Input
+                      value={selected.captureWebsite}
+                      onChange={(e) => patchSelected({ captureWebsite: e.target.value })}
+                      placeholder="firm.ca"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={8}>
+                  <Form.Item label="Channel">
+                    <Select
+                      value={selected.captureChannel}
+                      onChange={(v) => patchSelected({ captureChannel: v })}
+                      options={[
+                        { value: "Email", label: "Email" },
+                        { value: "WhatsApp", label: "WhatsApp" },
+                        { value: "Phone", label: "Phone" },
+                      ]}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Surface>
+          </>
+        ) : null}
       </Drawer>
 
       <Modal
