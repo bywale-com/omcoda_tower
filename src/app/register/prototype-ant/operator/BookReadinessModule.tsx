@@ -1,12 +1,14 @@
 /**
  * Book readiness — Ant-translated Audits / Audit run workbench.
  * Start Audit → machineApi.createAuditRun; verdicts + sequence_ready from response.
+ * Audit list starts empty (no SEED_AUDITS); Upload / Start Audit write paths kept.
  */
 import { useMemo, useState } from "react";
 import {
   Button,
   Card,
   Checkbox,
+  Empty,
   List,
   Select,
   Space,
@@ -29,7 +31,6 @@ import {
   AUDIT_CHECKS,
   buildConsolidatedRecords,
   finalizeAudit,
-  getInitialAudits,
   resolveGateOutcome,
   type Audit,
   type AuditCheckId,
@@ -117,8 +118,9 @@ function downloadRecordsCsv(audit: Audit) {
 }
 
 export function BookReadinessModule() {
-  const [audits, setAudits] = useState(() => getInitialAudits());
-  const [selectedId, setSelectedId] = useState("audit-crs-drift");
+  // Honest empty — no SEED_AUDITS densification. Upload / Start Audit write into this list.
+  const [audits, setAudits] = useState<Audit[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [verdictFilter, setVerdictFilter] = useState<VerdictFilter>("All");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [inspectedRecordId, setInspectedRecordId] = useState<string | null>(null);
@@ -132,8 +134,9 @@ export function BookReadinessModule() {
     return audits.filter((a) => auditVerdict(a) === verdictFilter);
   }, [audits, verdictFilter]);
 
-  const selected = audits.find((a) => a.id === selectedId) ?? audits[0];
+  const selected = audits.find((a) => a.id === selectedId) ?? audits[0] ?? null;
   const selectedRecords = useMemo(() => {
+    if (!selected) return [];
     const records = recordsForAudit(selected);
     return [...records].sort((a, b) =>
       sortDir === "asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name),
@@ -157,7 +160,7 @@ export function BookReadinessModule() {
             <Typography.Text strong={record.id === inspectedRecordId}>{name}</Typography.Text>
             {machine
               ? machineVerdictTag(machine.verdict, machine.ready)
-              : selected.status === "complete"
+              : selected?.status === "complete"
                 ? reachabilityTag(recordReachability(record))
                 : null}
           </Space>
@@ -169,6 +172,7 @@ export function BookReadinessModule() {
   ];
 
   const updateEnabledChecks = (checks: AuditCheckId[]) => {
+    if (!selected) return;
     setAudits((prev) =>
       prev.map((audit) =>
         audit.id === selected.id
@@ -190,6 +194,10 @@ export function BookReadinessModule() {
   };
 
   const startAuditRun = async () => {
+    if (!selected) {
+      message.warning("Upload a book CSV first — no audit runs yet.");
+      return;
+    }
     const auditId = selected.id;
     const records = recordsForAudit(selected);
     setStarting(true);
@@ -356,7 +364,7 @@ export function BookReadinessModule() {
     }
   };
 
-  const selectedVerdict = auditVerdict(selected);
+  const selectedVerdict = selected ? auditVerdict(selected) : "pending";
 
   return (
     <ModulePage title="Book readiness" surface="Book readiness">
@@ -384,7 +392,11 @@ export function BookReadinessModule() {
             </Surface>
             <Surface label="Sequence-ready glance">
               <Space size={6} wrap>
-                <Tag color={verdictColor(selectedVerdict)}>{sequenceReadyGlance(selected)}</Tag>
+                {selected ? (
+                  <Tag color={verdictColor(selectedVerdict)}>{sequenceReadyGlance(selected)}</Tag>
+                ) : (
+                  <Tag>No audit runs</Tag>
+                )}
                 {Object.keys(machineVerdicts).length > 0 ? (
                   <Tag color={readyCount > 0 ? "success" : "warning"}>
                     sequence_ready · {readyCount}/{Object.keys(machineVerdicts).length}
@@ -399,12 +411,18 @@ export function BookReadinessModule() {
                 type="primary"
                 icon={<PlayCircleOutlined />}
                 loading={starting}
+                disabled={!selected}
                 onClick={() => void startAuditRun()}
                 data-register-surface="Start Audit run"
               >
                 Start Audit run
               </Button>
-              <Button size="small" onClick={reAudit} style={{ marginLeft: 8 }} disabled={starting}>
+              <Button
+                size="small"
+                onClick={reAudit}
+                style={{ marginLeft: 8 }}
+                disabled={starting || !selected}
+              >
                 Re-audit remainder
               </Button>
               <Button
@@ -453,41 +471,47 @@ export function BookReadinessModule() {
             <Surface label="Audits">
               <div style={{ padding: "10px 12px", borderBottom: "1px solid var(--ant-color-split)" }}>
                 <Typography.Text strong>Audits</Typography.Text>
-                <Hint>Book readiness runs from hydrated imports.</Hint>
+                <Hint>Empty until you upload a book or start an audit run.</Hint>
               </div>
-              <List
-                dataSource={filtered}
-                renderItem={(audit) => {
-                  const verdict = auditVerdict(audit);
-                  const active = audit.id === selected.id;
-                  return (
-                    <List.Item
-                      onClick={() => setSelectedId(audit.id)}
-                      style={{
-                        cursor: "pointer",
-                        padding: "10px 12px",
-                        background: active ? "var(--ant-color-primary-bg)" : "transparent",
-                        borderBlockEnd: "1px solid var(--ant-color-split)",
-                      }}
-                    >
-                      <List.Item.Meta
-                        title={
-                          <Space size={6} wrap>
-                            <Typography.Text strong={active}>{audit.label}</Typography.Text>
-                            <Tag color={verdictColor(verdict)}>{verdict}</Tag>
-                          </Space>
-                        }
-                        description={
-                          <Space size={6} wrap>
-                            <Typography.Text type="secondary">{audit.meta}</Typography.Text>
-                            <Tag>{audit.importIds.length} import</Tag>
-                          </Space>
-                        }
-                      />
-                    </List.Item>
-                  );
-                }}
-              />
+              {filtered.length === 0 ? (
+                <div style={{ padding: 16 }}>
+                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No audit runs" />
+                </div>
+              ) : (
+                <List
+                  dataSource={filtered}
+                  renderItem={(audit) => {
+                    const verdict = auditVerdict(audit);
+                    const active = audit.id === selected?.id;
+                    return (
+                      <List.Item
+                        onClick={() => setSelectedId(audit.id)}
+                        style={{
+                          cursor: "pointer",
+                          padding: "10px 12px",
+                          background: active ? "var(--ant-color-primary-bg)" : "transparent",
+                          borderBlockEnd: "1px solid var(--ant-color-split)",
+                        }}
+                      >
+                        <List.Item.Meta
+                          title={
+                            <Space size={6} wrap>
+                              <Typography.Text strong={active}>{audit.label}</Typography.Text>
+                              <Tag color={verdictColor(verdict)}>{verdict}</Tag>
+                            </Space>
+                          }
+                          description={
+                            <Space size={6} wrap>
+                              <Typography.Text type="secondary">{audit.meta}</Typography.Text>
+                              <Tag>{audit.importIds.length} import</Tag>
+                            </Space>
+                          }
+                        />
+                      </List.Item>
+                    );
+                  }}
+                />
+              )}
             </Surface>
           </aside>
 
@@ -495,100 +519,112 @@ export function BookReadinessModule() {
             label="Audit run"
             style={{ flex: 1, minWidth: 0, minHeight: 0, display: "flex", flexDirection: "column" }}
           >
-            <div
-              style={{
-                padding: "12px 16px",
-                borderBottom: "1px solid var(--ant-color-split)",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                flexWrap: "wrap",
-              }}
-            >
-              <Typography.Title level={5} style={{ margin: 0 }}>
-                {selected.label}
-              </Typography.Title>
-              <Tag color={selected.status === "running" ? "processing" : "success"}>{selected.status}</Tag>
-              <Tag color={verdictColor(selectedVerdict)}>{selectedVerdict}</Tag>
-              <Typography.Text type="secondary">{selected.meta}</Typography.Text>
-            </div>
-
-            <div style={{ flex: 1, minHeight: 0, overflow: "auto", padding: 16 }}>
-              <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-                <Card size="small" title="Services / checks">
-                  <Checkbox.Group
-                    value={selected.enabledChecks}
-                    onChange={(values) => updateEnabledChecks(values as AuditCheckId[])}
-                    style={{ width: "100%" }}
-                  >
-                    <Space direction="vertical" size={8} style={{ width: "100%" }}>
-                      {AUDIT_CHECKS.map((check) => {
-                        const step = selected.gateSteps.find((item) => item.checkId === check.id);
-                        const status = step?.status ?? "pending";
-                        return (
-                          <Checkbox key={check.id} value={check.id}>
-                            <Space size={8} wrap>
-                              <span>{check.label}</span>
-                              <Tag color={gateColor(status)}>{status}</Tag>
-                              {step?.durationMs ? (
-                                <Typography.Text type="secondary">{step.durationMs}ms</Typography.Text>
-                              ) : null}
-                            </Space>
-                          </Checkbox>
-                        );
-                      })}
-                    </Space>
-                  </Checkbox.Group>
-                </Card>
-
-                <Card
-                  size="small"
-                  title="Records"
-                  extra={
-                    <Space size={4}>
-                      <Tooltip title={`Sort ${sortDir === "asc" ? "descending" : "ascending"}`}>
-                        <Button
-                          size="small"
-                          icon={sortDir === "asc" ? <SortAscendingOutlined /> : <SortDescendingOutlined />}
-                          onClick={() => setSortDir((prev) => (prev === "asc" ? "desc" : "asc"))}
-                        />
-                      </Tooltip>
-                      <Tooltip title="Inspect first record">
-                        <Button
-                          size="small"
-                          icon={<EyeOutlined />}
-                          disabled={selectedRecords.length === 0}
-                          onClick={() => setInspectedRecordId(selectedRecords[0]?.id ?? null)}
-                        />
-                      </Tooltip>
-                      <Tooltip title="Download records CSV">
-                        <Button
-                          size="small"
-                          icon={<DownloadOutlined />}
-                          onClick={() => downloadRecordsCsv(selected)}
-                        />
-                      </Tooltip>
-                    </Space>
-                  }
+            {!selected ? (
+              <div style={{ padding: 24 }}>
+                <Empty
+                  description="Upload a book CSV to create the first audit run."
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                />
+              </div>
+            ) : (
+              <>
+                <div
+                  style={{
+                    padding: "12px 16px",
+                    borderBottom: "1px solid var(--ant-color-split)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    flexWrap: "wrap",
+                  }}
                 >
-                  <Table
-                    size="small"
-                    rowKey="id"
-                    columns={recordColumns}
-                    dataSource={selectedRecords}
-                    pagination={false}
-                    onRow={(record) => ({
-                      onClick: () => setInspectedRecordId(record.id),
-                      style: {
-                        cursor: "pointer",
-                        background:
-                          record.id === inspectedRecordId ? "var(--ant-color-primary-bg)" : undefined,
-                      },
-                    })}
-                  />
-                </Card>
-              </Space>
-            </div>
+                  <Typography.Title level={5} style={{ margin: 0 }}>
+                    {selected.label}
+                  </Typography.Title>
+                  <Tag color={selected.status === "running" ? "processing" : "success"}>{selected.status}</Tag>
+                  <Tag color={verdictColor(selectedVerdict)}>{selectedVerdict}</Tag>
+                  <Typography.Text type="secondary">{selected.meta}</Typography.Text>
+                </div>
+
+                <div style={{ flex: 1, minHeight: 0, overflow: "auto", padding: 16 }}>
+                  <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+                    <Card size="small" title="Services / checks">
+                      <Checkbox.Group
+                        value={selected.enabledChecks}
+                        onChange={(values) => updateEnabledChecks(values as AuditCheckId[])}
+                        style={{ width: "100%" }}
+                      >
+                        <Space direction="vertical" size={8} style={{ width: "100%" }}>
+                          {AUDIT_CHECKS.map((check) => {
+                            const step = selected.gateSteps.find((item) => item.checkId === check.id);
+                            const status = step?.status ?? "pending";
+                            return (
+                              <Checkbox key={check.id} value={check.id}>
+                                <Space size={8} wrap>
+                                  <span>{check.label}</span>
+                                  <Tag color={gateColor(status)}>{status}</Tag>
+                                  {step?.durationMs ? (
+                                    <Typography.Text type="secondary">{step.durationMs}ms</Typography.Text>
+                                  ) : null}
+                                </Space>
+                              </Checkbox>
+                            );
+                          })}
+                        </Space>
+                      </Checkbox.Group>
+                    </Card>
+
+                    <Card
+                      size="small"
+                      title="Records"
+                      extra={
+                        <Space size={4}>
+                          <Tooltip title={`Sort ${sortDir === "asc" ? "descending" : "ascending"}`}>
+                            <Button
+                              size="small"
+                              icon={sortDir === "asc" ? <SortAscendingOutlined /> : <SortDescendingOutlined />}
+                              onClick={() => setSortDir((prev) => (prev === "asc" ? "desc" : "asc"))}
+                            />
+                          </Tooltip>
+                          <Tooltip title="Inspect first record">
+                            <Button
+                              size="small"
+                              icon={<EyeOutlined />}
+                              disabled={selectedRecords.length === 0}
+                              onClick={() => setInspectedRecordId(selectedRecords[0]?.id ?? null)}
+                            />
+                          </Tooltip>
+                          <Tooltip title="Download records CSV">
+                            <Button
+                              size="small"
+                              icon={<DownloadOutlined />}
+                              onClick={() => downloadRecordsCsv(selected)}
+                            />
+                          </Tooltip>
+                        </Space>
+                      }
+                    >
+                      <Table
+                        size="small"
+                        rowKey="id"
+                        columns={recordColumns}
+                        dataSource={selectedRecords}
+                        pagination={false}
+                        locale={{ emptyText: "No records in this audit." }}
+                        onRow={(record) => ({
+                          onClick: () => setInspectedRecordId(record.id),
+                          style: {
+                            cursor: "pointer",
+                            background:
+                              record.id === inspectedRecordId ? "var(--ant-color-primary-bg)" : undefined,
+                          },
+                        })}
+                      />
+                    </Card>
+                  </Space>
+                </div>
+              </>
+            )}
           </Surface>
         </div>
       </div>

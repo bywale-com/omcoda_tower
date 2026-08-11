@@ -2,6 +2,8 @@
  * Firm operations bind — firm index, Bind packs Modal, Armed/Active Segmented.
  * Shares published packs with Configuration libraries via packCatalogStore.
  * Active → activateWorkflow + upsertBinding + evaluation pin + campaign_states running.
+ *
+ * Index = session firm / listConsultants firms — never DEMO_FIRMS densification.
  */
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -26,7 +28,6 @@ import {
 } from "../../../wire";
 import { useOperatorNav } from "../../prototype/operatorNav";
 import { Hint, ModulePage, Surface } from "../chrome";
-import { DEMO_FIRMS } from "./operatorAntData";
 import { StatusTag } from "./operatorAntTags";
 import {
   type ConfigPack,
@@ -34,6 +35,12 @@ import {
   publishedPacks,
   resolveEngagementBinding,
 } from "./operatorConfigLibraries";
+import {
+  firmDisplayName,
+  peekOperatorFirms,
+  resolveOperatorFirms,
+  type OperatorFirm,
+} from "./operatorFirmIndex";
 import { usePackCatalog } from "./packCatalogStore";
 
 type Posture = "Armed" | "Active";
@@ -46,46 +53,19 @@ type FirmBindState = {
   posture: Posture;
 };
 
-function seedBindRows(): FirmBindState[] {
-  const sessionFirm = peekActiveFirmId();
-  const demoRows: FirmBindState[] = [
-    {
-      firmId: DEMO_FIRMS[0].id,
-      evalPackId: "eval-alg-v2",
-      autoPackId: "wf-optin-launch",
-      engPackId: "agent-intake",
-      posture: "Active",
-    },
-    {
-      firmId: DEMO_FIRMS[1].id,
-      evalPackId: "eval-soft-v1",
-      autoPackId: "wf-eligibility-reactivation",
-      engPackId: "agent-nudge",
-      posture: "Armed",
-    },
-    {
-      firmId: DEMO_FIRMS[2].id,
-      evalPackId: "eval-alg-v2",
-      autoPackId: "wf-optin-launch",
-      engPackId: "agent-intake",
-      posture: "Armed",
-    },
-    { firmId: DEMO_FIRMS[3].id, evalPackId: null, autoPackId: null, engPackId: null, posture: "Armed" },
-  ];
-  // Binding: session firm is first — Bind Active writes that firm's campaign_states.
-  if (sessionFirm && !demoRows.some((r) => r.firmId === sessionFirm)) {
-    return [
-      {
-        firmId: sessionFirm,
-        evalPackId: "eval-alg-v2",
-        autoPackId: "wf-optin-launch",
-        engPackId: "agent-intake",
-        posture: "Armed",
-      },
-      ...demoRows,
-    ];
-  }
-  return demoRows;
+/** Armed default for a real/session firm — packs pre-selected so Active path stays reachable. */
+function armedRowForFirm(firmId: string): FirmBindState {
+  return {
+    firmId,
+    evalPackId: "eval-alg-v2",
+    autoPackId: "wf-optin-launch",
+    engPackId: "agent-intake",
+    posture: "Armed",
+  };
+}
+
+function rowsFromFirms(firms: OperatorFirm[]): FirmBindState[] {
+  return firms.map((f) => armedRowForFirm(f.id));
 }
 
 function isBound(row: FirmBindState) {
@@ -97,8 +77,9 @@ const HELPER = "Published versions only — drafts omitted";
 export function FirmOperationsBindModule() {
   const { jumpTo } = useOperatorNav();
   const [packs] = usePackCatalog();
-  const [rows, setRows] = useState(seedBindRows);
-  const [selectedId, setSelectedId] = useState(rows[0].firmId);
+  const [firms, setFirms] = useState<OperatorFirm[]>(() => peekOperatorFirms());
+  const [rows, setRows] = useState<FirmBindState[]>(() => rowsFromFirms(peekOperatorFirms()));
+  const [selectedId, setSelectedId] = useState<string | null>(() => peekOperatorFirms()[0]?.id ?? null);
   const [bindOpen, setBindOpen] = useState(false);
   const [pickEval, setPickEval] = useState("");
   const [pickAuto, setPickAuto] = useState("");
@@ -113,30 +94,49 @@ export function FirmOperationsBindModule() {
   const [policyDenyForced, setPolicyDenyForced] = useState(false);
   const [activating, setActivating] = useState(false);
 
-  const row = rows.find((r) => r.firmId === selectedId) ?? rows[0];
-  const firm =
-    DEMO_FIRMS.find((f) => f.id === row.firmId) ??
-    (row.firmId === peekActiveFirmId()
-      ? { id: row.firmId, name: `Session firm · ${row.firmId.slice(0, 8)}…`, stage: "Prepared Workspace", health: "Watch" as const }
-      : DEMO_FIRMS[0]);
-  const bound = isBound(row);
+  const row = rows.find((r) => r.firmId === selectedId) ?? rows[0] ?? null;
+  const firmName = row ? firmDisplayName(firms, row.firmId) : "No firm";
+  const bound = row ? isBound(row) : false;
+
+  // Hydrate index from session firm + listConsultants (empty when neither).
+  useEffect(() => {
+    let cancelled = false;
+    void resolveOperatorFirms().then((nextFirms) => {
+      if (cancelled) return;
+      setFirms(nextFirms);
+      setRows((prev) => {
+        const byId = new Map(prev.map((r) => [r.firmId, r]));
+        return nextFirms.map((f) => byId.get(f.id) ?? armedRowForFirm(f.id));
+      });
+      setSelectedId((prev) => {
+        if (prev && nextFirms.some((f) => f.id === prev)) return prev;
+        return nextFirms[0]?.id ?? null;
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [tick]);
 
   // Keep session firm on the bind index when Auth/provision binds a new tenancy.
   useEffect(() => {
     const sessionFirm = peekActiveFirmId();
     if (!sessionFirm) return;
-    setRows((prev) => {
-      if (prev.some((r) => r.firmId === sessionFirm)) return prev;
+    setFirms((prev) => {
+      if (prev.some((f) => f.id === sessionFirm)) return prev;
       return [
         {
-          firmId: sessionFirm,
-          evalPackId: "eval-alg-v2",
-          autoPackId: "wf-optin-launch",
-          engPackId: "agent-intake",
-          posture: "Armed",
+          id: sessionFirm,
+          name: `Session firm · ${sessionFirm.slice(0, 8)}…`,
+          stage: "Prepared Workspace",
+          health: "Watch",
         },
         ...prev,
       ];
+    });
+    setRows((prev) => {
+      if (prev.some((r) => r.firmId === sessionFirm)) return prev;
+      return [armedRowForFirm(sessionFirm), ...prev];
     });
     setSelectedId(sessionFirm);
   }, [tick]);
@@ -146,17 +146,21 @@ export function FirmOperationsBindModule() {
   const engOptions = useMemo(() => publishedPacks("engagement", packs), [packs]);
 
   const boundPacks = useMemo(() => {
+    if (!row) return { eval: undefined, auto: undefined, eng: undefined };
     const find = (id: string | null) => packs.find((p) => p.id === id);
     return { eval: find(row.evalPackId), auto: find(row.autoPackId), eng: find(row.engPackId) };
   }, [packs, row]);
 
-  const completeness = [
-    { slot: "Evaluation", missing: !row.evalPackId },
-    { slot: "Automation", missing: !row.autoPackId },
-    { slot: "Engagement", missing: !row.engPackId },
-  ];
+  const completeness = row
+    ? [
+        { slot: "Evaluation", missing: !row.evalPackId },
+        { slot: "Automation", missing: !row.autoPackId },
+        { slot: "Engagement", missing: !row.engPackId },
+      ]
+    : [];
 
   const openBindModal = () => {
+    if (!row) return;
     setPickEval(row.evalPackId ?? evalOptions[0]?.id ?? "");
     setPickAuto(row.autoPackId ?? autoOptions[0]?.id ?? "");
     setPickEng(row.engPackId ?? engOptions[0]?.id ?? "");
@@ -165,6 +169,10 @@ export function FirmOperationsBindModule() {
   };
 
   useEffect(() => {
+    if (!row) {
+      setGateChips([]);
+      return;
+    }
     let alive = true;
     (async () => {
       const chips = await wirePorts.sendGate.chips(row.firmId);
@@ -173,7 +181,7 @@ export function FirmOperationsBindModule() {
     return () => {
       alive = false;
     };
-  }, [row.firmId, tick]);
+  }, [row?.firmId, tick]);
 
   const activateBoundPacks = async (firmId: string, bind: FirmBindState) => {
     // Machine calls follow session firm — bind Active to the selected tenancy.
@@ -207,6 +215,7 @@ export function FirmOperationsBindModule() {
   };
 
   const setPosture = async (posture: Posture) => {
+    if (!row) return;
     setRows((prev) => prev.map((r) => (r.firmId === row.firmId ? { ...r, posture } : r)));
     if (posture !== "Active") {
       setGateNote(null);
@@ -245,6 +254,7 @@ export function FirmOperationsBindModule() {
   };
 
   const probeCemLeave = async () => {
+    if (!row) return;
     setProbeResult(null);
     const decision = await wirePorts.sendGate.decide({
       firmId: row.firmId,
@@ -266,7 +276,7 @@ export function FirmOperationsBindModule() {
     }
     const result = await wirePorts.espMailer.send({
       to: "contact@example.test",
-      from: `${firm.name} <hello@${pooled.fullDomain}>`,
+      from: `${firmName} <hello@${pooled.fullDomain}>`,
       subject: "CEM probe",
       bodyText: "Probe send issued from Firm operations bind · Send gates.",
       firmId: row.firmId,
@@ -281,6 +291,7 @@ export function FirmOperationsBindModule() {
   };
 
   const togglePolicyDenyForced = async () => {
+    if (!row) return;
     const next = !policyDenyForced;
     forceEspPolicyDeny(next);
     setPolicyDenyForced(next);
@@ -291,7 +302,7 @@ export function FirmOperationsBindModule() {
     {
       title: "Firm",
       key: "firm",
-      render: (_, r) => DEMO_FIRMS.find((f) => f.id === r.firmId)?.name,
+      render: (_, r) => firmDisplayName(firms, r.firmId),
     },
     {
       title: "Bind state",
@@ -344,178 +355,191 @@ export function FirmOperationsBindModule() {
           columns={columns}
           dataSource={rows}
           pagination={false}
-          rowSelection={{
-            type: "radio",
-            selectedRowKeys: [selectedId],
-            onChange: (keys) => {
-              setSelectedId(keys[0] as string);
-              setJumpNote(null);
-            },
-          }}
+          locale={{ emptyText: "No firms bound — provision or select a session firm." }}
+          rowSelection={
+            rows.length > 0
+              ? {
+                  type: "radio",
+                  selectedRowKeys: selectedId ? [selectedId] : [],
+                  onChange: (keys) => {
+                    setSelectedId(keys[0] as string);
+                    setJumpNote(null);
+                  },
+                }
+              : undefined
+          }
         />
       </Surface>
 
-      <Typography.Text type="secondary" style={{ display: "block", marginTop: 12 }}>
-        Selected firm · <strong>{firm.name}</strong>
-      </Typography.Text>
-      {jumpNote ? <Typography.Text type="success">{jumpNote}</Typography.Text> : null}
+      {row ? (
+        <>
+          <Typography.Text type="secondary" style={{ display: "block", marginTop: 12 }}>
+            Selected firm · <strong>{firmName}</strong>
+          </Typography.Text>
+          {jumpNote ? <Typography.Text type="success">{jumpNote}</Typography.Text> : null}
 
-      <Surface label="Bind packs" style={{ marginTop: 16 }}>
-        <Card
-          size="small"
-          title="Bind packs"
-          extra={
-            <Button size="small" onClick={openBindModal}>
-              Bind packs
-            </Button>
-          }
-        >
-          <Hint>House-authored published versions only — drafts omitted. Catalog shared with Configuration libraries.</Hint>
-          {bound ? (
-            <Space wrap data-register-surface="Bound-version chips">
-              {boundPacks.eval ? <StatusTag label={`Evaluation · ${packLabel(boundPacks.eval)}`} /> : null}
-              {boundPacks.auto ? <StatusTag label={`Automation · ${packLabel(boundPacks.auto)}`} /> : null}
-              {boundPacks.eng ? <StatusTag label={`Engagement · ${packLabel(boundPacks.eng)}`} /> : null}
-            </Space>
-          ) : (
-            <Space>
-              <Typography.Text type="secondary">No packs bound</Typography.Text>
-              <Button
-                size="small"
-                data-register-surface="Jump to Configuration libraries"
-                onClick={() => { const n = "Jump to Configuration libraries"; jumpTo(n); setJumpNote(n); }}
-              >
-                Jump to Configuration libraries
-              </Button>
-            </Space>
-          )}
-        </Card>
-      </Surface>
-
-      <Surface label="Armed / Active" style={{ marginTop: 16 }}>
-        <Card size="small" title="Armed / Active">
-          <Surface label="Bind-completeness">
-            <Space wrap style={{ marginBottom: 12 }}>
-              {completeness.map((c) => (
-                <StatusTag
-                  key={c.slot}
-                  label={c.missing ? `${c.slot} · missing` : `${c.slot} · bound`}
-                  color={c.missing ? "warning" : "success"}
-                />
-              ))}
-            </Space>
+          <Surface label="Bind packs" style={{ marginTop: 16 }}>
+            <Card
+              size="small"
+              title="Bind packs"
+              extra={
+                <Button size="small" onClick={openBindModal}>
+                  Bind packs
+                </Button>
+              }
+            >
+              <Hint>House-authored published versions only — drafts omitted. Catalog shared with Configuration libraries.</Hint>
+              {bound ? (
+                <Space wrap data-register-surface="Bound-version chips">
+                  {boundPacks.eval ? <StatusTag label={`Evaluation · ${packLabel(boundPacks.eval)}`} /> : null}
+                  {boundPacks.auto ? <StatusTag label={`Automation · ${packLabel(boundPacks.auto)}`} /> : null}
+                  {boundPacks.eng ? <StatusTag label={`Engagement · ${packLabel(boundPacks.eng)}`} /> : null}
+                </Space>
+              ) : (
+                <Space>
+                  <Typography.Text type="secondary">No packs bound</Typography.Text>
+                  <Button
+                    size="small"
+                    data-register-surface="Jump to Configuration libraries"
+                    onClick={() => { const n = "Jump to Configuration libraries"; jumpTo(n); setJumpNote(n); }}
+                  >
+                    Jump to Configuration libraries
+                  </Button>
+                </Space>
+              )}
+            </Card>
           </Surface>
-          <Segmented
-            block
-            disabled={!bound || activating}
-            value={row.posture}
-            onChange={(v) => void setPosture(v as Posture)}
-            options={[
-              { label: "Armed", value: "Armed" },
-              { label: activating ? "Activating…" : "Active", value: "Active" },
-            ]}
-          />
-          {gateNote ? (
-            <Typography.Text type="secondary" style={{ display: "block", marginTop: 10 }}>
-              {gateNote}
-            </Typography.Text>
-          ) : null}
-        </Card>
-      </Surface>
 
-      <Surface label="Send gates" style={{ marginTop: 16 }}>
-        <Card
-          size="small"
-          title="Send gates"
-          extra={
-            <StatusTag
-              label={gateChips.some((c) => c.blocking) ? "blocking" : "clear"}
-              color={gateChips.some((c) => c.blocking) ? "error" : "success"}
-            />
-          }
-        >
-          <Hint>
-            Fail-closed snapshot from sendGate.chips — setting Active does not silence a deny; it stays blocking
-            until resolved.
-          </Hint>
+          <Surface label="Armed / Active" style={{ marginTop: 16 }}>
+            <Card size="small" title="Armed / Active">
+              <Surface label="Bind-completeness">
+                <Space wrap style={{ marginBottom: 12 }}>
+                  {completeness.map((c) => (
+                    <StatusTag
+                      key={c.slot}
+                      label={c.missing ? `${c.slot} · missing` : `${c.slot} · bound`}
+                      color={c.missing ? "warning" : "success"}
+                    />
+                  ))}
+                </Space>
+              </Surface>
+              <Segmented
+                block
+                disabled={!bound || activating}
+                value={row.posture}
+                onChange={(v) => void setPosture(v as Posture)}
+                options={[
+                  { label: "Armed", value: "Armed" },
+                  { label: activating ? "Activating…" : "Active", value: "Active" },
+                ]}
+              />
+              {gateNote ? (
+                <Typography.Text type="secondary" style={{ display: "block", marginTop: 10 }}>
+                  {gateNote}
+                </Typography.Text>
+              ) : null}
+            </Card>
+          </Surface>
 
-          <Surface label="Domain authentication readiness" style={{ marginBottom: 10 }}>
-            <Typography.Text type="secondary" style={{ fontSize: 11, display: "block", marginBottom: 4 }}>
-              Domain authentication readiness
-            </Typography.Text>
-            {(() => {
-              const authChip = gateChips.find((c) => c.reason === "auth");
-              return (
+          <Surface label="Send gates" style={{ marginTop: 16 }}>
+            <Card
+              size="small"
+              title="Send gates"
+              extra={
                 <StatusTag
-                  label={authChip ? (authChip.blocking ? "auth not ready" : "auth ready") : "auth unknown"}
-                  color={authChip?.blocking ? "error" : "success"}
+                  label={gateChips.some((c) => c.blocking) ? "blocking" : "clear"}
+                  color={gateChips.some((c) => c.blocking) ? "error" : "success"}
                 />
+              }
+            >
+              <Hint>
+                Fail-closed snapshot from sendGate.chips — setting Active does not silence a deny; it stays blocking
+                until resolved.
+              </Hint>
+
+              <Surface label="Domain authentication readiness" style={{ marginBottom: 10 }}>
+                <Typography.Text type="secondary" style={{ fontSize: 11, display: "block", marginBottom: 4 }}>
+                  Domain authentication readiness
+                </Typography.Text>
+                {(() => {
+                  const authChip = gateChips.find((c) => c.reason === "auth");
+                  return (
+                    <StatusTag
+                      label={authChip ? (authChip.blocking ? "auth not ready" : "auth ready") : "auth unknown"}
+                      color={authChip?.blocking ? "error" : "success"}
+                    />
+                  );
+                })()}
+              </Surface>
+
+              <Space wrap style={{ marginBottom: 12 }}>
+                {gateChips.map((c) => (
+                  <span key={c.reason} data-register-surface={c.reason === "policy" ? "ESP policy reject" : undefined}>
+                    <StatusTag
+                      label={c.label}
+                      color={c.advisory ? "warning" : c.blocking ? "error" : "success"}
+                    />
+                  </span>
+                ))}
+              </Space>
+
+              <Space wrap>
+                <Button onClick={() => void probeCemLeave()}>Probe CEM leave</Button>
+                <Button
+                  type={policyDenyForced ? "primary" : "default"}
+                  danger={policyDenyForced}
+                  onClick={() => void togglePolicyDenyForced()}
+                >
+                  {policyDenyForced ? "Force ESP policy deny · ON" : "Force ESP policy deny"}
+                </Button>
+              </Space>
+              {probeResult ? (
+                <Typography.Text
+                  type={probeResult.ok ? "success" : "danger"}
+                  style={{ display: "block", marginTop: 8 }}
+                >
+                  {probeResult.detail}
+                </Typography.Text>
+              ) : null}
+            </Card>
+          </Surface>
+
+          <Modal
+            title="Bind packs"
+            open={bindOpen}
+            onCancel={() => setBindOpen(false)}
+            onOk={() => {
+              if (!pickEval || !pickAuto || !pickEng || !row) return;
+              setRows((prev) =>
+                prev.map((r) =>
+                  r.firmId === row.firmId
+                    ? { ...r, evalPackId: pickEval, autoPackId: pickAuto, engPackId: pickEng }
+                    : r,
+                ),
               );
-            })()}
-          </Surface>
-
-          <Space wrap style={{ marginBottom: 12 }}>
-            {gateChips.map((c) => (
-              <span key={c.reason} data-register-surface={c.reason === "policy" ? "ESP policy reject" : undefined}>
-                <StatusTag
-                  label={c.label}
-                  color={c.advisory ? "warning" : c.blocking ? "error" : "success"}
-                />
-              </span>
-            ))}
-          </Space>
-
-          <Space wrap>
-            <Button onClick={() => void probeCemLeave()}>Probe CEM leave</Button>
-            <Button
-              type={policyDenyForced ? "primary" : "default"}
-              danger={policyDenyForced}
-              onClick={() => void togglePolicyDenyForced()}
-            >
-              {policyDenyForced ? "Force ESP policy deny · ON" : "Force ESP policy deny"}
-            </Button>
-          </Space>
-          {probeResult ? (
-            <Typography.Text
-              type={probeResult.ok ? "success" : "danger"}
-              style={{ display: "block", marginTop: 8 }}
-            >
-              {probeResult.detail}
-            </Typography.Text>
-          ) : null}
-        </Card>
-      </Surface>
-
-      <Modal
-        title="Bind packs"
-        open={bindOpen}
-        onCancel={() => setBindOpen(false)}
-        onOk={() => {
-          if (!pickEval || !pickAuto || !pickEng) return;
-          setRows((prev) =>
-            prev.map((r) =>
-              r.firmId === row.firmId
-                ? { ...r, evalPackId: pickEval, autoPackId: pickAuto, engPackId: pickEng }
-                : r,
-            ),
-          );
-          setBindOpen(false);
-          message.success("Packs bound");
-        }}
-        okText="Bind"
-        okButtonProps={{ disabled: !pickEval || !pickAuto || !pickEng, "data-register-surface": "Bind" } as object}
-      >
-        <Surface label="Bind packs">
-          <Typography.Paragraph type="secondary">
-            {firm.name} — select three published versions.
-          </Typography.Paragraph>
-          <Space direction="vertical" style={{ width: "100%" }} size="middle">
-            {packSelect("Evaluation pack version", "Evaluation pack", pickEval, setPickEval, evalOptions)}
-            {packSelect("Automation pack version", "Automation pack", pickAuto, setPickAuto, autoOptions)}
-            {packSelect("Engagement template version", "Engagement template", pickEng, setPickEng, engOptions)}
-          </Space>
-        </Surface>
-      </Modal>
+              setBindOpen(false);
+              message.success("Packs bound");
+            }}
+            okText="Bind"
+            okButtonProps={{ disabled: !pickEval || !pickAuto || !pickEng, "data-register-surface": "Bind" } as object}
+          >
+            <Surface label="Bind packs">
+              <Typography.Paragraph type="secondary">
+                {firmName} — select three published versions.
+              </Typography.Paragraph>
+              <Space direction="vertical" style={{ width: "100%" }} size="middle">
+                {packSelect("Evaluation pack version", "Evaluation pack", pickEval, setPickEval, evalOptions)}
+                {packSelect("Automation pack version", "Automation pack", pickAuto, setPickAuto, autoOptions)}
+                {packSelect("Engagement template version", "Engagement template", pickEng, setPickEng, engOptions)}
+              </Space>
+            </Surface>
+          </Modal>
+        </>
+      ) : (
+        <Typography.Text type="secondary" style={{ display: "block", marginTop: 12 }}>
+          No session firm — provision a firm or log in to bind packs.
+        </Typography.Text>
+      )}
     </ModulePage>
   );
 }

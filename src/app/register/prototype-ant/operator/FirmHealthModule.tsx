@@ -1,5 +1,6 @@
 /**
  * Firm health — health Table, firm filter, Sequence detail Modal, Open support context.
+ * Firm picker = session firm / real firms; nested collections empty when machine has no data.
  */
 import { useEffect, useState } from "react";
 import { Button, Modal, Select, Space, Table, Tag, Typography } from "antd";
@@ -11,13 +12,21 @@ import {
   type InFlightAttemptRow,
   type SequenceHealthRow,
 } from "../../prototype/operator/operatorWireHelpers";
+import { useWireTick } from "../../../wire";
 import { ModulePage, Surface } from "../chrome";
-import { DEMO_FIRMS } from "./operatorAntData";
 import { chipTone, StatusTag } from "./operatorAntTags";
+import {
+  firmDisplayName,
+  peekOperatorFirms,
+  resolveOperatorFirms,
+  type OperatorFirm,
+} from "./operatorFirmIndex";
 
 export function FirmHealthModule() {
-  const [selectedFirmId, setSelectedFirmId] = useState(DEMO_FIRMS[0].id);
-  const [stickyFirmId, setStickyFirmId] = useState<string | null>(DEMO_FIRMS[3].id);
+  const tick = useWireTick();
+  const [firms, setFirms] = useState<OperatorFirm[]>(() => peekOperatorFirms());
+  const [selectedFirmId, setSelectedFirmId] = useState<string | null>(() => peekOperatorFirms()[0]?.id ?? null);
+  const [stickyFirmId, setStickyFirmId] = useState<string | null>(null);
   const [sequences, setSequences] = useState<SequenceHealthRow[]>([]);
   const [engagementRows, setEngagementRows] = useState<EngagementHealthRow[]>([]);
   const [inFlightAttempts, setInFlightAttempts] = useState<InFlightAttemptRow[]>([]);
@@ -28,11 +37,33 @@ export function FirmHealthModule() {
   const [detailId, setDetailId] = useState<string | null>(null);
   const [supportCue, setSupportCue] = useState<string | null>(null);
 
+  useEffect(() => {
+    let cancelled = false;
+    void resolveOperatorFirms().then((next) => {
+      if (cancelled) return;
+      setFirms(next);
+      setSelectedFirmId((prev) => {
+        if (prev && next.some((f) => f.id === prev)) return prev;
+        return next[0]?.id ?? null;
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [tick]);
+
   const scopedId = stickyFirmId ?? selectedFirmId;
-  const firm = DEMO_FIRMS.find((f) => f.id === scopedId) ?? DEMO_FIRMS[0];
+  const firmName = scopedId ? firmDisplayName(firms, scopedId) : "No firm";
   const detail = detailId ? sequences.find((s) => s.id === detailId) : null;
 
   useEffect(() => {
+    if (!scopedId) {
+      setSequences([]);
+      setEngagementRows([]);
+      setInFlightAttempts([]);
+      setEngagementRecords({ total: 0, kinds: [] });
+      return;
+    }
     let cancelled = false;
     void loadFirmHealthData(scopedId).then((data) => {
       if (!cancelled) {
@@ -81,29 +112,35 @@ export function FirmHealthModule() {
 
   const seedSupport = (seq?: SequenceHealthRow) => {
     const reason = seq ? `${seq.name} · ${seq.stuckReason}` : "Firm health drill";
-    setSupportCue(`Customer support · Ticket seeded · ${firm.name} · ${reason}`);
+    setSupportCue(`Customer support · Ticket seeded · ${firmName} · ${reason}`);
   };
 
   return (
-    <ModulePage title="Firm health" surface="Firm health" extra={<StatusTag label={firm.name} />}>
+    <ModulePage title="Firm health" surface="Firm health" extra={scopedId ? <StatusTag label={firmName} /> : null}>
       <Space wrap style={{ marginBottom: 12 }}>
-        <Typography.Text type="secondary">Firm scope · <strong>{firm.name}</strong></Typography.Text>
-        {stickyFirmId ? (
-          <Tag closable onClose={() => setStickyFirmId(null)} data-register-surface="Firm-filter chip" color="processing">
-            Sticky · {firm.name}
-          </Tag>
+        {scopedId ? (
+          <Typography.Text type="secondary">
+            Firm scope · <strong>{firmName}</strong>
+          </Typography.Text>
         ) : (
+          <Typography.Text type="secondary">No session firm — provision or select a firm.</Typography.Text>
+        )}
+        {stickyFirmId && scopedId ? (
+          <Tag closable onClose={() => setStickyFirmId(null)} data-register-surface="Firm-filter chip" color="processing">
+            Sticky · {firmName}
+          </Tag>
+        ) : firms.length > 0 ? (
           <Select
             size="small"
-            value={selectedFirmId}
+            value={selectedFirmId ?? undefined}
             onChange={(v) => {
               setSelectedFirmId(v);
               setStickyFirmId(v);
             }}
             style={{ width: 200 }}
-            options={DEMO_FIRMS.map((f) => ({ value: f.id, label: f.name }))}
+            options={firms.map((f) => ({ value: f.id, label: f.name }))}
           />
-        )}
+        ) : null}
       </Space>
 
       <Surface label="Sequence health">
@@ -113,6 +150,7 @@ export function FirmHealthModule() {
           columns={seqColumns}
           dataSource={sequences}
           pagination={false}
+          locale={{ emptyText: "No sequence bindings for this firm." }}
           onRow={(row) => ({
             onClick: () => setDetailId(row.id),
             style: { cursor: "pointer" },
@@ -121,7 +159,14 @@ export function FirmHealthModule() {
       </Surface>
 
       <Surface label="Engagement health" style={{ marginTop: 16 }}>
-        <Table size="small" rowKey="label" columns={engColumns} dataSource={engagementRows} pagination={false} />
+        <Table
+          size="small"
+          rowKey="label"
+          columns={engColumns}
+          dataSource={engagementRows}
+          pagination={false}
+          locale={{ emptyText: "No engagement metrics for this firm." }}
+        />
       </Surface>
 
       <Surface label="In-flight attempts" style={{ marginTop: 16 }}>
@@ -155,7 +200,7 @@ export function FirmHealthModule() {
       </Surface>
 
       <Surface label="Open support context" style={{ marginTop: 16 }}>
-        <Button type="primary" onClick={() => seedSupport()}>
+        <Button type="primary" disabled={!scopedId} onClick={() => seedSupport()}>
           Open support context
         </Button>
         {supportCue ? (

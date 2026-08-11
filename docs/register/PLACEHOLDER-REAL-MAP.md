@@ -1,7 +1,7 @@
 # PLACEHOLDER → REAL MAP
 
 **Date:** 2026-08-11  
-**Status:** living record — Pass A (consultant honesty) done on this branch; Pass B operator next  
+**Status:** living record — Pass A (consultant honesty) + Pass B (operator indexes) done on this branch  
 **Contract:** If a product surface exists for consultant / operator / contact, and the fact it shows is machine-owned, then **no rows ⇒ empty UI** and **rows ⇒ personalized to the session firm**. Demo scenery is not “empty.”
 
 ---
@@ -62,10 +62,17 @@ Do **not** call demo scenery “empty.” Do **not** call Contacts empty “a pl
 | Surface | File | Today | Seed | Real API | Priority | Status |
 |---------|------|-------|------|----------|----------|--------|
 | Provision | `ProvisionModule.tsx` | Real mint | — | `ct_firms` / users / access | — | DONE |
-| Firm bind Active path | `FirmOperationsBindModule.tsx` | Real activate | — | workflow / bindings / campaign | — | DONE (index still DEMO) |
-| Firm bind **index** | same | 4 DEMO firms + session | `DEMO_FIRMS` | `ct_firms` | **P0** | Next pass |
-| Book readiness list | `BookReadinessModule.tsx` | SEED audits | `SEED_AUDITS` | `audit_runs` | **P0** | Next pass |
-| Firm health / Oversight / Activation indexes | various | DEMO fleet | `DEMO_FIRMS` | machine tables | **P0** | Next pass |
+| Firm bind Active path | `FirmOperationsBindModule.tsx` | Real activate | — | workflow / bindings / campaign | — | DONE |
+| Firm bind **index** | same | Session / listConsultants firms | — (was `DEMO_FIRMS`) | session + `listConsultants` | **P0** | **DONE** (Pass B) |
+| Book readiness list | `BookReadinessModule.tsx` | Empty until upload / Start Audit | — (was `SEED_AUDITS`) | `createAuditRun` (no list API) | **P0** | **DONE** (Pass B) |
+| Firm health picker + nested | `FirmHealthModule.tsx` | Session / real firms; empty collections | — (was DEMO fill) | templates / enrollments / attempts | **P0** | **DONE** (Pass B) |
+| Oversight fleet | `OversightModule.tsx` | Real firms or empty | — (was `DEMO_FLEET`) | session + machine health | **P0** | **DONE** (Pass B) |
+| Activation state index | `ActivationStateModule.tsx` | Session / real firms; live gates | — (was `DEMO_FIRMS`) | crmOAuth / escrow / campaign | **P0** | **DONE** (Pass B) |
+| Activation forward-deploy | `ActivationForwardDeployModule.tsx` | Session / real firms | — (was `DEMO_FIRMS`) | primaryStore hydrate | **P0** | **DONE** (Pass B) |
+| Customer support tickets | `CustomerSupportModule.tsx` | Demo ticket densification | `DEMO_FIRMS` labels | — | **P1** | Remaining (not densified further) |
+| Founder kill targets | `FounderAgencyControlsModule.tsx` | DEMO_FIRMS targets | `DEMO_FIRMS` | haltStore | **P1** | Remaining |
+| Sending infrastructure picker | `SendingInfrastructureModule.tsx` | DEMO_FIRMS picker | `DEMO_FIRMS` | sending pool | **P1** | Remaining |
+| Audit trail firm filter | `AuditTrailModule.tsx` | DEMO_FIRMS filter | `DEMO_FIRMS` | auditTrail | **P1** | Remaining |
 | Config libraries catalogs | Agents/Automations/Packs | Seed catalogs | `SEED_*` | templates / workflows / pins | **P1** | Later |
 | Commercial / Meta | Commercial, Acquisition | Stand-in | local / Meta fake | deferred | **P2** | Leave deferred |
 
@@ -104,9 +111,9 @@ Do **not** call demo scenery “empty.” Do **not** call Contacts empty “a pl
 5. Default selection = first contact or none
 6. Agents Activity tabs: honest empty (no “will live here” theater)
 
-### Pass B — Operator fleet honesty (follow-up)
+### Pass B — Operator fleet honesty (this branch)
 
-Replace `DEMO_FIRMS` indexes with `ct_firms` / session-scoped lists; Book readiness from `audit_runs`.
+Replace `DEMO_FIRMS` indexes with session firm / `listConsultants` unique firms (no `listCtFirms` API); Book readiness starts empty (no `SEED_AUDITS`); Firm health nested collections empty when machine returns none; Oversight drops `DEMO_FLEET` Healthy theater.
 
 ### Pass C — Contact token identity (follow-up)
 
@@ -125,6 +132,14 @@ Escrow · Meta stay stand-in until product opens them.
 - Open a contact with no engagement rows → Engagement empty (not Sarah journey).
 - Book a meeting → Meetings list shows it (and Board strip when “today”).
 - Agents Activity tabs say empty because no enrollments/activity — not “will live here” as unfinished product.
+
+## Acceptance (Pass B)
+
+- Session firm only → Firm bind / Activation / Oversight / Firm health show that one firm (Armed default on bind), not 4 DEMO_FIRMS.
+- No session firm → those indexes empty (not Northwind/Cedar/Harbor/Atlas scenery).
+- Book readiness opens with empty audit list; Upload book / Start Audit still write.
+- Firm health sequences / engagement metrics empty when machine has no bindings/enrollments (not DEMO_SEQUENCES fill).
+- Oversight does not paint DEMO_FLEET Healthy rows for fake ids.
 
 ---
 

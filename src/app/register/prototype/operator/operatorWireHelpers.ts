@@ -225,70 +225,6 @@ export async function loadForwardDeployStagingForFirm(
   return ws.status === "hydrated" ? "hydrated" : "idle";
 }
 
-const DEMO_FLEET: FleetHealthRow[] = [
-  {
-    firmId: "firm-northwind",
-    deliverability: "Healthy",
-    sequence: "Healthy",
-    engagement: "Watch",
-    lastRun: "Today · 14:02",
-  },
-  {
-    firmId: "firm-cedar",
-    deliverability: "Healthy",
-    sequence: "Watch",
-    engagement: "Watch",
-    lastRun: "Today · 13:48",
-  },
-  {
-    firmId: "firm-harbor",
-    deliverability: "Healthy",
-    sequence: "Healthy",
-    engagement: "Healthy",
-    lastRun: "Today · 12:15",
-  },
-  {
-    firmId: "firm-atlas",
-    deliverability: "Watch",
-    sequence: "At risk",
-    engagement: "At risk",
-    lastRun: "Today · 11:52",
-  },
-];
-
-const DEMO_SEQUENCES: SequenceHealthRow[] = [
-  {
-    id: "seq-optin",
-    name: "Opt-in Standard",
-    health: "Healthy",
-    stuckReason: "3 contacts on WhatsApp confirm step",
-    lastRunner: "Runner tick · Today 14:01 · step advance",
-    gates: ["Consent OK", "Send gate open", "Channel WhatsApp"],
-  },
-  {
-    id: "seq-nudge",
-    name: "Nudge · dormant 90d",
-    health: "Watch",
-    stuckReason: "11 contacts past silence clock on step 2",
-    lastRunner: "Runner tick · Today 13:52 · silence hold",
-    gates: ["Consent OK", "Send gate open", "Unsubscribe armed"],
-  },
-  {
-    id: "seq-react",
-    name: "Reactivation · CEC window",
-    health: "At risk",
-    stuckReason: "9 contacts — consent ledger incomplete after import",
-    lastRunner: "Runner tick · Today 11:48 · send gate blocked",
-    gates: ["Consent partial", "Send gate hold", "Channel Email"],
-  },
-];
-
-const DEMO_ENGAGEMENT: EngagementHealthRow[] = [
-  { label: "7d reply rate", value: "11%", health: "Watch" },
-  { label: "Send-gate holds", value: "4", health: "At risk" },
-  { label: "Active enrollments", value: "214", health: "Healthy" },
-];
-
 function firmNameById(firmId: string, firms: readonly { id: string; name: string }[]): string {
   return firms.find((f) => f.id === firmId)?.name ?? firmId;
 }
@@ -449,8 +385,7 @@ export async function loadFleetHealthRows(
   const runLists = await Promise.all(workflows.map((w) => wirePorts.machineApi.listRuns(w.id)));
   const allRuns = runLists.flat();
 
-  const demoByFirm = new Map(DEMO_FLEET.map((r) => [r.firmId, r]));
-
+  // Empty-or-personalized: no DEMO_FLEET Healthy theater when machine has nothing.
   return firms.map((firm) => {
     const hasMachineData =
       workflows.some((w) => w.firm_id === firm.id) ||
@@ -459,11 +394,11 @@ export async function loadFleetHealthRows(
       campaign.firmId === firm.id;
 
     if (!hasMachineData) {
-      return demoByFirm.get(firm.id) ?? {
+      return {
         firmId: firm.id,
-        deliverability: (firm.health as HealthSignal) ?? "Watch",
-        sequence: (firm.health as HealthSignal) ?? "Watch",
-        engagement: (firm.health as HealthSignal) ?? "Watch",
+        deliverability: "Watch" as HealthSignal,
+        sequence: "Watch" as HealthSignal,
+        engagement: "Watch" as HealthSignal,
         lastRun: "—",
       };
     }
@@ -507,35 +442,37 @@ export async function loadFirmHealthData(firmId: string): Promise<{
     (m) => m.firm_id === firmId && m.motion !== "none",
   ).length;
 
-  let sequences: SequenceHealthRow[] = DEMO_SEQUENCES;
-  if (firmBindings.length > 0) {
-    sequences = firmBindings.map((bind) => {
-      const tpl = templatesPack.templates.find((t) => t.id === bind.template_id);
-      const relatedRuns = firmRuns.filter((r) =>
-        String(r.trigger_label ?? "").includes(bind.sequence_class),
-      );
-      const failed = relatedRuns.some((r) => r.status === "failed");
-      const last = relatedRuns[0];
-      return {
-        id: bind.id,
-        name: tpl?.label ?? bind.sequence_class,
-        health: failed ? "At risk" : last ? "Healthy" : "Watch",
-        stuckReason:
-          motionHolds > 0
-            ? `${motionHolds} contacts past silence / hold`
-            : "Runner monitoring",
-        lastRunner: last
-          ? `Runner tick · ${formatLastRun(last.finished_at ?? last.started_at)} · ${last.status}`
-          : "No recent runner tick",
-        gates: [
-          enrollCount > 0 ? "Consent OK" : "Consent partial",
-          failed ? "Send gate hold" : "Send gate open",
-          `Channel ${tpl?.sequence_class ?? "email"}`,
-        ],
-      };
-    });
-  }
+  // Empty when no bindings — do not paint DEMO_SEQUENCES as live fleet health.
+  const sequences: SequenceHealthRow[] =
+    firmBindings.length > 0
+      ? firmBindings.map((bind) => {
+          const tpl = templatesPack.templates.find((t) => t.id === bind.template_id);
+          const relatedRuns = firmRuns.filter((r) =>
+            String(r.trigger_label ?? "").includes(bind.sequence_class),
+          );
+          const failed = relatedRuns.some((r) => r.status === "failed");
+          const last = relatedRuns[0];
+          return {
+            id: bind.id,
+            name: tpl?.label ?? bind.sequence_class,
+            health: (failed ? "At risk" : last ? "Healthy" : "Watch") as HealthSignal,
+            stuckReason:
+              motionHolds > 0
+                ? `${motionHolds} contacts past silence / hold`
+                : "Runner monitoring",
+            lastRunner: last
+              ? `Runner tick · ${formatLastRun(last.finished_at ?? last.started_at)} · ${last.status}`
+              : "No recent runner tick",
+            gates: [
+              enrollCount > 0 ? "Consent OK" : "Consent partial",
+              failed ? "Send gate hold" : "Send gate open",
+              `Channel ${tpl?.sequence_class ?? "email"}`,
+            ],
+          };
+        })
+      : [];
 
+  // Empty when no enrollments/motions — do not paint DEMO_ENGAGEMENT fake metrics.
   const engagement: EngagementHealthRow[] =
     enrollCount > 0 || motionActive > 0
       ? [
@@ -555,7 +492,7 @@ export async function loadFirmHealthData(firmId: string): Promise<{
             health: enrollCount > 50 ? "Healthy" : enrollCount > 0 ? "Watch" : "At risk",
           },
         ]
-      : DEMO_ENGAGEMENT;
+      : [];
 
   const firmAttempts = activeAttempts.filter((a) => a.firm_id === firmId);
   const inFlightAttempts: InFlightAttemptRow[] = firmAttempts.map((a) => {
