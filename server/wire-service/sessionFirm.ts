@@ -71,7 +71,12 @@ export async function requireSessionFirm(c: Context): Promise<string> {
       );
     }
     if (claimed && claimed !== devFirm) {
-      // Auth-disabled local: allow claimed firm for prototype view-as.
+      // Prototype view-as: only when DEV_SESSION_EMAIL is the platform admin.
+      // Unset / non-admin → same 403 as a real consultant session (verify:session-firm).
+      const email = (process.env.DEV_SESSION_EMAIL ?? "").trim();
+      if (!isPlatformAdminEmail(email)) {
+        throw new FirmScopeError(403, "firm scope mismatch — wrong tenant");
+      }
       return claimed;
     }
     return claimed || devFirm;

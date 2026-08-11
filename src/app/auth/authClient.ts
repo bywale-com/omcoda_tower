@@ -98,6 +98,32 @@ export async function abandonOtp(email: string): Promise<{ ok: true }> {
   });
 }
 
+export type AccessIssueOk = {
+  ok: true;
+  accessPath: string;
+  expiresAt: string;
+  emailed: boolean;
+};
+
+/** Redeem a one-time direct access token → session cookie. */
+export async function redeemAccessLink(token: string): Promise<{ ok: true; user: AuthUser }> {
+  return authFetch<{ ok: true; user: AuthUser }>("/auth/access/redeem", {
+    method: "POST",
+    body: JSON.stringify({ token }),
+  });
+}
+
+/** Issue a direct access link (admin / self / secret). */
+export async function issueAccessLink(
+  email: string,
+  opts?: { sendEmail?: boolean },
+): Promise<AccessIssueOk> {
+  return authFetch<AccessIssueOk>("/auth/access/issue", {
+    method: "POST",
+    body: JSON.stringify({ email, sendEmail: Boolean(opts?.sendEmail) }),
+  });
+}
+
 export async function fetchSession(): Promise<SessionOk | null> {
   try {
     return await authFetch<SessionOk>("/auth/session");

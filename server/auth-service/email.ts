@@ -33,3 +33,27 @@ export async function sendOtpEmail(to: string, code: string): Promise<void> {
     throw error;
   }
 }
+
+/** Direct access — open workspace without typing an OTP code. */
+export async function sendAccessLinkEmail(to: string, accessUrl: string): Promise<void> {
+  const from = process.env.RESEND_FROM_EMAIL ?? "Tower <onboarding@resend.dev>";
+  try {
+    const { error } = await getResend().emails.send({
+      from,
+      to,
+      subject: "Your Tower workspace link",
+      html:
+        `<p>Open your consultant workspace:</p>` +
+        `<p><a href="${accessUrl}">Enter Tower</a></p>` +
+        `<p>This link works once and expires in 7 days. If it was already used, ask your operator for a new one.</p>`,
+    });
+    if (error) {
+      logError("auth.access.send.resend_error", error, { to_domain: to.split("@")[1] });
+      throw new Error(error.message);
+    }
+    log("auth.access.send.resend_ok", { to_domain: to.split("@")[1] });
+  } catch (error) {
+    logError("auth.access.send.resend_error", error, { to_domain: to.split("@")[1] });
+    throw error;
+  }
+}

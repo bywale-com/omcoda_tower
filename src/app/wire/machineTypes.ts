@@ -258,5 +258,8 @@ export type ProvisionResult = {
   ctFirm: boolean;
   authUser: boolean;
   campaignState: CampaignState;
+  /** Prefer accessPath; loginPath kept for copy-handoff (may equal accessPath). */
   loginPath: string;
+  /** One-time direct access path `/a/<token>` when auth user was minted. */
+  accessPath?: string | null;
 };

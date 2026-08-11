@@ -103,13 +103,29 @@ try {
     ok("session-b", `sees own state=${b.body.state}`);
   }
 
-  // Wrong-tenant: session A claims firm B header
+  // Wrong-tenant: session A claims firm B header (non-admin DEV_SESSION_EMAIL).
+  const prevEmail = process.env.DEV_SESSION_EMAIL;
+  process.env.DEV_SESSION_EMAIL = "consultant@harbor.test";
   const wrong = await getCampaign(firmA, { "x-firm-id": firmB });
   if (wrong.status !== 403) {
     fail("wrong-tenant", `expected 403, got ${wrong.status} ${JSON.stringify(wrong.body)}`);
   } else {
     ok("wrong-tenant", "session A + x-firm-id B → 403");
   }
+
+  // Platform admin (prototype / DEV_SESSION_EMAIL) may view-as another firm.
+  process.env.DEV_SESSION_EMAIL = "admin@try-tower.com";
+  const adminView = await getCampaign(firmA, { "x-firm-id": firmB });
+  if (adminView.status !== 200 || adminView.body.firmId !== firmB) {
+    fail(
+      "admin-view-as",
+      `expected 200 firm B, got ${adminView.status} ${JSON.stringify(adminView.body)}`,
+    );
+  } else {
+    ok("admin-view-as", "DEV_SESSION_EMAIL=admin + x-firm-id B → scoped to B");
+  }
+  if (prevEmail !== undefined) process.env.DEV_SESSION_EMAIL = prevEmail;
+  else delete process.env.DEV_SESSION_EMAIL;
 
   // Cross-read: A must not receive B's state even if query claims B (blocked above).
   // Also confirm A listing path never returns B's firmId.

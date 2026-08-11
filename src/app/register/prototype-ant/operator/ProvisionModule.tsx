@@ -21,6 +21,7 @@ export function ProvisionModule() {
     firmName: string;
     email: string;
     loginPath: string;
+    accessPath: string | null;
     authUser: boolean;
   } | null>(null);
   const [handoffNote, setHandoffNote] = useState<string | null>(null);
@@ -41,7 +42,8 @@ export function ProvisionModule() {
         firmId: result.firmId,
         firmName: result.firmName,
         email: result.email,
-        loginPath: result.loginPath,
+        loginPath: result.accessPath || result.loginPath,
+        accessPath: result.accessPath ?? null,
         authUser: result.authUser,
       });
       // Bind operator wire calls to the firm just minted (Book / Bind Active follow this firm).
@@ -60,7 +62,7 @@ export function ProvisionModule() {
       });
       message.success(
         result.authUser
-          ? `Provisioned ${result.firmName} · auth user ready for OTP`
+          ? `Provisioned ${result.firmName} · direct access link ready`
           : `Provisioned ${result.firmName} · ct_firms written (auth user pending)`,
       );
     } catch (err) {
@@ -75,25 +77,34 @@ export function ProvisionModule() {
     const path = `${window.location.origin}${provisioned.loginPath}`;
     try {
       await navigator.clipboard.writeText(path);
-      setHandoffNote(`Copied · ${path}`);
+      setHandoffNote(
+        provisioned.accessPath
+          ? `Copied direct access · ${path}`
+          : `Copied · ${path}`,
+      );
     } catch {
-      setHandoffNote(`Login path · ${path}`);
+      setHandoffNote(`Access path · ${path}`);
     }
   };
 
   const sendInvite = async () => {
     if (!provisioned) return;
     try {
-      const issued = await wirePorts.otpStore.issue({ email: provisioned.email });
-      const path = `${window.location.origin}${provisioned.loginPath}`;
+      const issued = await wirePorts.machineApi.issueAccessInvite({
+        email: provisioned.email,
+        sendEmail: true,
+      });
+      const accessUrl = `${window.location.origin}${issued.accessPath}`;
+      setProvisioned({ ...provisioned, loginPath: issued.accessPath, accessPath: issued.accessPath });
       setHandoffNote(
-        `Invite simulated · OTP issued for ${provisioned.email}` +
-          (issued.debugCode ? ` · debug code ${issued.debugCode}` : "") +
-          ` · open ${path}`,
+        issued.emailed ? `Invite emailed · ${accessUrl}` : `Access link minted · ${accessUrl}`,
       );
-      message.success("Invite OTP issued (simulation note)");
+      message.success(issued.emailed ? "Direct access invite sent" : "Access link minted");
     } catch (err) {
-      setHandoffNote(`Invite note · open ${provisioned.loginPath} with ${provisioned.email} — OTP issue: ${String(err)}`);
+      setHandoffNote(
+        `Invite failed · copy access link for ${provisioned.email} — ${String(err)}`,
+      );
+      message.error("Could not send access invite");
     }
   };
 
@@ -149,12 +160,12 @@ export function ProvisionModule() {
             <Typography.Paragraph type="secondary">
               {provisioned.firmName} · {provisioned.email} · {role} · firm id{" "}
               <code>{provisioned.firmId}</code>
-              {provisioned.authUser ? " · auth user ready" : " · ct_firms only"}. Hand the consultant the same
-              Login OTP path.
+              {provisioned.authUser ? " · auth user ready" : " · ct_firms only"}. Hand the consultant the
+              direct access link (one-time). OTP login remains available as fallback.
             </Typography.Paragraph>
             <Space wrap>
               <Button data-register-surface="Copy Login path / Send invite" onClick={() => void copyLoginPath()}>
-                Copy Login path
+                Copy access link
               </Button>
               <Button onClick={() => void sendInvite()}>Send invite</Button>
             </Space>

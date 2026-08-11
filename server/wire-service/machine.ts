@@ -1,5 +1,9 @@
 import type { Context } from "hono";
 import { randomUUID } from "node:crypto";
+import { mintAccessLink } from "../auth-service/accessLinks.ts";
+import { resolveUserByEmail } from "../auth-service/db.ts";
+import { sendAccessLinkEmail } from "../auth-service/email.ts";
+import { isValidEmail, normalizeEmail } from "../auth-service/crypto.ts";
 import { getPool } from "./db.ts";
 import { enrollAndActuate, tickOnce } from "./cascade.ts";
 import { sendGateSnapshot } from "./sendMode.ts";
@@ -1340,6 +1344,7 @@ export async function handleMachineProvision(c: Context) {
   );
 
   let authUser = false;
+  let userId: string | null = null;
   try {
     const existing = await pool.query<{ id: string }>(
       `SELECT id FROM users WHERE lower(email)=lower($1) LIMIT 1`,
@@ -1351,17 +1356,38 @@ export async function handleMachineProvision(c: Context) {
         firm,
         existing.rows[0].id,
       ]);
+      userId = existing.rows[0].id;
       authUser = true;
     } else {
-      await pool.query(`INSERT INTO users (firm_id, email) VALUES ($1::uuid, $2)`, [firm, email]);
-      authUser = true;
+      const inserted = await pool.query<{ id: string }>(
+        `INSERT INTO users (firm_id, email) VALUES ($1::uuid, $2) RETURNING id`,
+        [firm, email],
+      );
+      userId = inserted.rows[0]?.id ?? null;
+      authUser = Boolean(userId);
     }
   } catch (err) {
     console.error("provision.authUser.failed", err);
     authUser = false;
   }
 
-  const loginPath = `/login?tenancy=assisted&email=${encodeURIComponent(email)}`;
+  // Direct access path (product entry) — one-time token; OTP login remains fallback.
+  let accessPath: string | null = null;
+  let loginPath = `/login?tenancy=assisted&email=${encodeURIComponent(email)}`;
+  if (authUser && userId) {
+    try {
+      const minted = await mintAccessLink(pool, {
+        id: userId,
+        firm_id: firm,
+        email,
+      });
+      accessPath = minted.accessPath;
+      loginPath = minted.accessPath;
+    } catch (err) {
+      console.error("provision.accessLink.failed", err);
+    }
+  }
+
   return json(c, {
     firmId: firm,
     firmName,
@@ -1372,8 +1398,73 @@ export async function handleMachineProvision(c: Context) {
     authUser,
     campaignState: "armed-for-activation",
     loginPath,
+    accessPath,
     bound: true,
   });
+}
+
+/**
+ * Mint (and optionally email) a direct access link for a provisioned consultant.
+ * Used from Provision handoff — product entry is /a/<token>, not the OTP portal.
+ */
+export async function handleMachineAccessInvite(c: Context) {
+  const body = await c.req.json<{ email?: string; sendEmail?: boolean }>().catch(() => ({}));
+  const email = normalizeEmail(body.email ?? "");
+  const sendEmail = body.sendEmail !== false;
+
+  if (!isValidEmail(email)) {
+    return json(c, { error: "email required" }, 400);
+  }
+
+  const pool = getPool();
+  const user = await resolveUserByEmail(pool, email);
+  if (!user) {
+    return json(c, { error: "unprovisioned", message: "No user for that email." }, 404);
+  }
+
+  try {
+    const minted = await mintAccessLink(pool, user);
+    const origin = (
+      process.env.PUBLIC_APP_URL ??
+      process.env.APP_ORIGIN ??
+      c.req.header("origin") ??
+      "https://omcoda-tower.vercel.app"
+    )
+      .trim()
+      .replace(/\/$/, "");
+    const accessUrl = `${origin}${minted.accessPath}`;
+
+    let emailed = false;
+    if (sendEmail) {
+      try {
+        await sendAccessLinkEmail(email, accessUrl);
+        emailed = true;
+      } catch (err) {
+        console.error("accessInvite.email.failed", err);
+        return json(
+          c,
+          {
+            ok: false,
+            error: "delivery_failed",
+            accessPath: minted.accessPath,
+            expiresAt: minted.expiresAt.toISOString(),
+            message: "Link minted but email failed — copy accessPath.",
+          },
+          503,
+        );
+      }
+    }
+
+    return json(c, {
+      ok: true,
+      accessPath: minted.accessPath,
+      expiresAt: minted.expiresAt.toISOString(),
+      emailed,
+    });
+  } catch (err) {
+    console.error("accessInvite.failed", err);
+    return json(c, { error: "server_error", message: String(err) }, 500);
+  }
 }
 
 /**

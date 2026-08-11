@@ -7,12 +7,12 @@ We are moving past treating the current machine/bind passes as “ready.” The 
 
 ---
 
-## Problem 1 — Access (still open)
+## Problem 1 — Access (closed on magic-access branch)
 
-**Today:** Invite = OTP **code** email + a login form. No magic / no-login link.  
-**Wanted:** Direct access link; not a login portal as the product.
+**Was:** Invite = OTP **code** email + a login form. No magic / no-login link.  
+**Now:** Direct access link `/a/<token>` — one-time redeem into session, lands on consultant desk. OTP remains fallback. See `MAGIC-ACCESS-LINK.md`.
 
-Session carries firm + email, not desk/role. Noted against live provision of **Omcoda Immigration** / `wale@marblespaces.com`.
+Session still carries firm + email, not desk/role.
 
 ---
 
@@ -54,16 +54,15 @@ Same class of gap is expected (not yet fully audited) in **Agents / Automations 
 2. **Keep** the prototype as the always-on prototype of the app — not deleted. Prototype (auth bypass) keeps the **admin-shaped** shell for modeling.
 3. **Shell (admin only):** `Consultant ▾ | Operator | Contact` — first slot is a **consultant dropdown** (view-as that consultant’s workspace). Sole admin: `admin@try-tower.com`.
 4. **Everyone else:** consultant workspace **only** (no switcher).
-5. **Access:** direct/magic link (no portal-as-product) — still open.
+5. **Access:** direct/magic link (no portal-as-product) — **closed** (`/a/<token>`; see `MAGIC-ACCESS-LINK.md`).
 6. **UI parity:** engagement record / Activity / client look-inside must exist in the elevated app at Hub depth — not a decorative tree over seeds.
-
 ---
 
 ## Gap list (honest)
 
 | # | Gap | Notes |
 |---|-----|-------|
-| A | Magic / direct access link | OTP-only today |
+| A | Magic / direct access link | **Shipped** — `/a/<token>` + provision `accessPath` |
 | B | Role → correct app desk after access | Not on session |
 | C | Elevate CT → `/` app; prototype kept at prototype URL | Naming + entry; **do not kill switcher on prototype** |
 | D | **Engagement / Activity / client module parity** | **Largest visible UI hole vs Hub** |
