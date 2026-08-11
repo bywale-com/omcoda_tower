@@ -12,7 +12,23 @@
 |-----|----------|----------|
 | **Information** | contact identity + `fact_writebacks` + `missing_fact_signals` | Profile table; empty facts stay blank |
 | **History** | writebacks whose `field_key` matches CRS/score/threshold/permit | Table + chart when ≥2 numeric points; else empty |
-| **Activity** | `engagement_records` + `active_attempts` | Projected rows (send / window / cell / form_visit / inbound / …); click opens inspect drawer |
+| **Activity** | `engagement_records` + `active_attempts` | Dual-pane chronology (`ActivityChronology`): list + time-axis timeline; click opens inspect drawer |
+
+### Activity chronology (`ActivityChronology`) — canonical list
+
+| Affordance | Status |
+|------------|--------|
+| Sequence / attempt / channel / form-visit / escalation-style rows from ledger | **Yes** — projected kinds + attempt tags |
+| Sent / delivered / opened / clicked signals | **Yes** — in-list Tags from attempt state |
+| Form-visit rows when written | **Yes** |
+| Expand criteria / wait / reasoning / outcome | **Yes** — Collapse on row |
+| Escalation wait window on timeline | **Yes** — striped wait bars + row text |
+| Sync-scroll list ↔ timeline + resize splitter | **Yes** |
+| Zoom timeline | **Yes** — px/hour zoom in/out |
+| Jump to Today | **Yes** — red today line + Today button |
+| Legend Historical / Active / Armed / Waiting / Attempts | **Yes** |
+| Empty chronology when zero rows | **Yes** |
+| Look-inside inspector | **Yes** — drawer Overview / Metadata / replay |
 
 ### Look-inside (`ActivityInspectDrawer`)
 
@@ -33,7 +49,7 @@
 
 ### Not in this pass
 
-- Hub JourneyTab gantt / zoom / seed embed (would reintroduce Sarah)
+- Hub JourneyTab / Sarah seed embed (Ant-native axis uses absolute time from ledger)
 - Automations graph persist (already works when `VITE_WIRE_REAL`)
 - Board filter chrome / Accepted terms / Brief Pass A (already done)
 

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   Empty,
-  List,
   Space,
   Table,
   Tabs,
@@ -25,11 +24,11 @@ import type {
   FactWritebackRow,
   MissingFactSignalRow,
 } from "../../../../wire/machineTypes";
+import { ActivityChronology } from "./ActivityChronology";
 import { ActivityInspectDrawer } from "./ActivityInspectDrawer";
 import {
   isHistoryFieldKey,
   projectEngagementRows,
-  type ActivityRow,
 } from "./engagementProjection";
 
 const { Text, Title } = Typography;
@@ -44,27 +43,6 @@ type Props = {
   activityKick?: number;
   focusRecordId?: string | null;
 };
-
-function kindColor(kind: ActivityRow["kind"]): string {
-  switch (kind) {
-    case "send":
-      return "blue";
-    case "window":
-      return "orange";
-    case "cell":
-      return "geekblue";
-    case "form_visit":
-      return "purple";
-    case "inbound":
-      return "green";
-    case "nullify":
-      return "default";
-    case "meeting":
-      return "gold";
-    default:
-      return "default";
-  }
-}
 
 export function ClientDataPanel({
   clientId,
@@ -264,51 +242,12 @@ export function ClientDataPanel({
             {
               key: "activity",
               label: "Activity",
-              children: !loaded ? null : activityRows.length === 0 ? (
-                <Empty description="No engagement activity for this contact yet" />
-              ) : (
-                <List
-                  size="small"
-                  bordered
-                  dataSource={activityRows}
-                  renderItem={(row) => (
-                    <List.Item
-                      key={row.id}
-                      onClick={() => setSelectedId(row.id)}
-                      style={{
-                        cursor: "pointer",
-                        background:
-                          row.id === selectedId ? "var(--ant-color-primary-bg)" : undefined,
-                      }}
-                    >
-                      <Space direction="vertical" size={2} style={{ width: "100%" }}>
-                        <Space wrap>
-                          <Tag color={kindColor(row.kind)}>{row.kind}</Tag>
-                          <Text strong>{row.title}</Text>
-                          {row.channel ? <Tag>{row.channel}</Tag> : null}
-                          {row.attemptStatus ? (
-                            <Tag color={row.attemptStatus === "open" ? "processing" : "default"}>
-                              attempt · {row.attemptStatus}
-                            </Tag>
-                          ) : null}
-                        </Space>
-                        <Text type="secondary" style={{ fontSize: 12 }}>
-                          {new Date(row.at).toLocaleString()}
-                        </Text>
-                        {row.waitWindow ? (
-                          <Text type="secondary" style={{ fontSize: 12 }}>
-                            Wait · {row.waitWindow}
-                            {row.criteriaLabel ? ` · ${row.criteriaLabel}` : ""}
-                          </Text>
-                        ) : null}
-                        {row.thoughtSummary ? (
-                          <Text type="secondary" style={{ fontSize: 12 }}>
-                            {row.thoughtSummary}
-                          </Text>
-                        ) : null}
-                      </Space>
-                    </List.Item>
-                  )}
+              children: !loaded ? null : (
+                <ActivityChronology
+                  rows={activityRows}
+                  attempts={attempts}
+                  selectedId={selectedId}
+                  onSelect={setSelectedId}
                 />
               ),
             },
