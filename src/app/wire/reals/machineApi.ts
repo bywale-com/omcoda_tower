@@ -505,4 +505,37 @@ export const realMachineApi: MachineApiPort = {
     });
     return res.contacts;
   },
+
+  async bookMeeting(input) {
+    return wireFetch<{
+      id: string;
+      firmId: string;
+      contactId: string;
+      slot: string | null;
+      attemptsStopped: number;
+      table: string;
+    }>(`/machine/meetings`, {
+      method: "POST",
+      headers: firmHeader(),
+      body: JSON.stringify(input),
+    });
+  },
+
+  async listMeetings() {
+    return wireFetch<{
+      firmId: string;
+      count: number;
+      meetings: Array<{
+        id: string;
+        firmId: string;
+        contactId: string;
+        bookedAt: string;
+        source: string;
+        slot: string | null;
+        consultantName: string | null;
+      }>;
+    }>(`/machine/meetings?firmId=${encodeURIComponent(firm())}`, {
+      headers: firmHeader(),
+    });
+  },
 };

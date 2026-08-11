@@ -64,24 +64,38 @@ const emptyCopy: Record<Exclude<AgentEditorTab, "editor" | "settings">, string> 
 };
 
 function stepsToTemplateCells(steps: AgentStep[]): unknown[] {
+  // Runtime (templateWalk) reads channel + day/offsetMinutes + subject/bodyText.
+  // Keep authoring fields honest — no email/task-only collapse that the machine ignores.
   return steps
     .slice()
     .sort((a, b) => a.order - b.order)
-    .map((step, index) => ({
-      id: step.id,
-      ord: index,
-      kind: step.kind,
-      channel: step.kind === "email" ? "email" : "task",
-      day:
-        step.kind === "email"
-          ? Math.max(0, Math.round((step.timing.delayMinutes ?? 0) / (60 * 24)))
-          : (step.timing.dueDays ?? 0),
-      waitMinutes: step.timing.delayMinutes ?? 0,
-      subject: step.email?.subject ?? "",
-      body: step.email?.body ?? "",
-      taskNote: step.task?.note ?? "",
-      mode: "authored",
-    }));
+    .map((step, index) => {
+      const isEmail = step.kind === "email";
+      const waitMinutes = isEmail
+        ? Math.max(0, step.timing.delayMinutes ?? 0)
+        : Math.max(0, (step.timing.dueDays ?? 0) * 24 * 60);
+      const day = isEmail
+        ? Math.max(0, Math.round(waitMinutes / (60 * 24)))
+        : Math.max(0, step.timing.dueDays ?? 0);
+      const subject = step.email?.subject ?? "";
+      const bodyText = isEmail ? (step.email?.body ?? "") : (step.task?.note ?? "");
+      return {
+        id: step.id,
+        token: step.id,
+        label: subject || step.task?.note || step.id,
+        ord: index,
+        kind: step.kind,
+        channel: isEmail ? "email" : "form",
+        day,
+        offsetMinutes: waitMinutes,
+        waitMinutes,
+        subject,
+        body: bodyText,
+        bodyText,
+        taskNote: step.task?.note ?? "",
+        mode: "authored",
+      };
+    });
 }
 
 function cellsToSteps(cells: unknown[]): AgentStep[] {
@@ -99,7 +113,7 @@ function cellsToSteps(cells: unknown[]): AgentStep[] {
         timing: { delayMinutes: Number(row.waitMinutes ?? 0) || 0 },
         email: {
           subject: String(row.subject ?? row.label ?? ""),
-          body: String(row.body ?? ""),
+          body: String(row.bodyText ?? row.body ?? ""),
           threadType: "new" as const,
         },
       };
@@ -187,20 +201,37 @@ function StepCard({
         </Tag>
         <Typography.Text type="secondary">{agentStepTimingLabel(step)}</Typography.Text>
         {isEmail ? (
-          <Input
-            value={step.email?.subject}
-            placeholder="Email subject"
-            onChange={(event) =>
-              onUpdate({
-                ...step,
-                email: {
-                  subject: event.target.value,
-                  body: step.email?.body ?? "",
-                  threadType: step.email?.threadType ?? "new",
-                },
-              })
-            }
-          />
+          <>
+            <Input
+              value={step.email?.subject}
+              placeholder="Email subject (authored → runtime)"
+              onChange={(event) =>
+                onUpdate({
+                  ...step,
+                  email: {
+                    subject: event.target.value,
+                    body: step.email?.body ?? "",
+                    threadType: step.email?.threadType ?? "new",
+                  },
+                })
+              }
+            />
+            <Input.TextArea
+              value={step.email?.body}
+              rows={3}
+              placeholder="Email body (authored → runtime)"
+              onChange={(event) =>
+                onUpdate({
+                  ...step,
+                  email: {
+                    subject: step.email?.subject ?? "",
+                    body: event.target.value,
+                    threadType: step.email?.threadType ?? "new",
+                  },
+                })
+              }
+            />
+          </>
         ) : (
           <Input.TextArea
             value={step.task?.note}

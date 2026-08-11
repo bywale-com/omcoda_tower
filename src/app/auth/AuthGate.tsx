@@ -1,4 +1,4 @@
-import { Navigate } from "react-router";
+import { Navigate, useLocation } from "react-router";
 import { isAuthDisabled } from "./authClient";
 import { useAuth } from "./AuthContext";
 
@@ -8,6 +8,7 @@ type AuthGateProps = {
 
 export function AuthGate({ children }: AuthGateProps) {
   const { isAuthenticated, isLoading } = useAuth();
+  const location = useLocation();
 
   // Check on every render — never redirect to Login while auth is disabled.
   if (isAuthDisabled()) {
@@ -23,7 +24,10 @@ export function AuthGate({ children }: AuthGateProps) {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    const next = `${location.pathname}${location.search}`;
+    const loginTo =
+      next && next !== "/" ? `/login?next=${encodeURIComponent(next)}` : "/login";
+    return <Navigate to={loginTo} replace />;
   }
 
   return <>{children}</>;

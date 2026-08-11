@@ -1453,7 +1453,7 @@ export function ContactAntScene() {
   };
 
   const confirmBooking = (slot: string) => {
-    confirmContactBooking({
+    void confirmContactBooking({
       contactName: CONTACT.name,
       clientId: DEMO_CONTACT_ID,
       slot,

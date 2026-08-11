@@ -7,6 +7,11 @@ import type { Pool } from "pg";
 import { getPool } from "./db.ts";
 import { dispatchEmail, dispatchSms, isHaltBlockingNew, type DispatchResult } from "./dispatchSend.ts";
 import { shouldLiveSend } from "./sendMode.ts";
+import {
+  loadTemplateCells,
+  resolveBoundTemplate,
+  type NormalizedCell,
+} from "./templateWalk.ts";
 
 export type AttemptState = {
   delivered?: boolean;
@@ -19,6 +24,11 @@ export type AttemptState = {
   opened_at?: string;
   form_started_at?: string;
   last_escalation?: string;
+  /** Authored template cursor — cells are the sequence; ladder escalates within a cell */
+  templateId?: string;
+  cellIndex?: number;
+  cellId?: string;
+  enrolledAt?: string;
   [key: string]: unknown;
 };
 
@@ -430,9 +440,13 @@ export async function enrollAndActuate(input: EnrollActuateInput) {
 
   const live = shouldLiveSend(input.contactId);
   const id = `enr-${randomUUID()}`;
+  const tpl = await resolveBoundTemplate(pool, input.firmId, input.agentRef);
+  const firstCell: NormalizedCell | null = tpl?.cells[0] ?? null;
   const payload = {
     ...(input.payload ?? {}),
     dryRun: !live,
+    templateId: tpl?.templateId ?? input.agentRef,
+    cellId: firstCell?.id ?? null,
   };
 
   await pool.query(
@@ -443,16 +457,27 @@ export async function enrollAndActuate(input: EnrollActuateInput) {
       input.firmId,
       input.contactId,
       input.agentRef,
-      input.sequenceId ?? null,
+      input.sequenceId ?? tpl?.templateId ?? null,
       input.workflowRunId ?? null,
       JSON.stringify(payload),
     ],
   );
 
   const order = await loadChannelOrder(pool, input.firmId);
-  const owner = input.ownerChannel ?? order[0] ?? "text";
+  // Authored cell channel wins; ladder is within-cell escalation after that.
+  const owner =
+    input.ownerChannel ?? firstCell?.channel ?? order[0] ?? "text";
   const attemptId = `att-${randomUUID()}`;
   const now = new Date().toISOString();
+  const state: AttemptState = {
+    delivered: true,
+    delivered_at: now,
+    step: firstCell?.token ?? "primer",
+    templateId: tpl?.templateId ?? input.agentRef,
+    cellIndex: 0,
+    cellId: firstCell?.id,
+    enrolledAt: now,
+  };
   await pool.query(
     `INSERT INTO active_attempts
        (id, firm_id, contact_id, enrollment_id, owner_channel, status, state, window_started_at, fired_criteria)
@@ -463,11 +488,7 @@ export async function enrollAndActuate(input: EnrollActuateInput) {
       input.contactId,
       id,
       owner,
-      JSON.stringify({
-        delivered: true,
-        delivered_at: now,
-        step: "primer",
-      }),
+      JSON.stringify(state),
       now,
     ],
   );
@@ -479,13 +500,18 @@ export async function enrollAndActuate(input: EnrollActuateInput) {
       contactId: input.contactId,
       channel: owner,
       purpose: input.purpose ?? "opt-in",
-      subject: `Tower — ${input.agentRef}`,
-      bodyText: `Sequence start via ${input.agentRef}`,
+      subject: firstCell?.subject ?? `Tower — ${input.agentRef}`,
+      bodyText:
+        firstCell?.bodyText ??
+        `Sequence start via ${input.agentRef}`,
     });
     await writeEngagement(pool, input.firmId, input.contactId, live ? "send_live" : "send_dry_run", {
       enrollmentId: id,
       attemptId,
       channel: owner,
+      templateId: state.templateId,
+      cellId: state.cellId,
+      cellIndex: 0,
       send,
     });
   }
@@ -495,7 +521,144 @@ export async function enrollAndActuate(input: EnrollActuateInput) {
     attemptId,
     dryRun: !live,
     send,
+    templateId: state.templateId,
+    cellId: state.cellId,
+    cellIndex: 0,
   };
+}
+
+/**
+ * Advance authored cell cursor when the next cell's offset is due.
+ * Channel ladder still escalates *within* the current cell via escalateAttemptWindow.
+ */
+export async function advanceTemplateCellIfDue(
+  pool: Pool,
+  attempt: ActiveAttemptRow,
+  now = new Date(),
+): Promise<TickFire | null> {
+  const state = attempt.state ?? {};
+  const templateId = typeof state.templateId === "string" ? state.templateId : null;
+  if (!templateId) return null;
+  const cellIndex = typeof state.cellIndex === "number" ? state.cellIndex : 0;
+  const enrolledAt = state.enrolledAt
+    ? new Date(String(state.enrolledAt))
+    : new Date(attempt.window_started_at);
+
+  const tpl = await loadTemplateCellsCached(pool, templateId);
+  if (!tpl || cellIndex >= tpl.cells.length - 1) return null;
+
+  const nextIndex = cellIndex + 1;
+  const next = tpl.cells[nextIndex];
+  const dueAt = enrolledAt.getTime() + next.offsetMs;
+  if (now.getTime() < dueAt) return null;
+
+  const fromChannel = (attempt.owner_channel ?? "text").toLowerCase();
+  const toChannel = next.channel;
+  const fired = { ...(attempt.fired_criteria ?? {}) };
+  const nextState: AttemptState = {
+    ...state,
+    cellIndex: nextIndex,
+    cellId: next.id,
+    step: next.token,
+    last_escalation: `cell:${next.id}`,
+    delivered: true,
+    delivered_at: now.toISOString(),
+    opened: false,
+    link_clicked: false,
+    // Fresh within-cell window
+  };
+
+  await pool.query(
+    `UPDATE active_attempts
+     SET owner_channel=$2,
+         fired_criteria='{}'::jsonb,
+         state=$3::jsonb,
+         window_started_at=$4::timestamptz,
+         updated_at=now()
+     WHERE id=$1 AND status='open'`,
+    [attempt.id, toChannel, JSON.stringify(nextState), now.toISOString()],
+  );
+
+  const workflowId = await ensureTickWorkflow(pool, attempt.firm_id);
+  const runId = `run-${randomUUID()}`;
+  await pool.query(
+    `INSERT INTO workflow_run (id, workflow_id, firm_id, status, trigger_label, node_status, counts, finished_at)
+     VALUES ($1,$2,$3,'success',$4,$5::jsonb,$6::jsonb,now())`,
+    [
+      runId,
+      workflowId,
+      attempt.firm_id,
+      `cell:${next.id}`,
+      JSON.stringify({
+        attemptId: attempt.id,
+        templateId,
+        fromCellIndex: cellIndex,
+        toCellIndex: nextIndex,
+        cellId: next.id,
+        fromChannel,
+        toChannel,
+      }),
+      JSON.stringify({ fired: 1 }),
+    ],
+  );
+
+  const engagementId = await writeEngagement(
+    pool,
+    attempt.firm_id,
+    attempt.contact_id,
+    "cell_advanced",
+    {
+      attemptId: attempt.id,
+      templateId,
+      fromCellIndex: cellIndex,
+      toCellIndex: nextIndex,
+      cellId: next.id,
+      cellLabel: next.label,
+      fromChannel,
+      toChannel,
+      runId,
+    },
+  );
+
+  let send: DispatchResult | undefined;
+  if (toChannel === "email" || toChannel === "text") {
+    send = await actuateChannelSend({
+      firmId: attempt.firm_id,
+      contactId: attempt.contact_id,
+      channel: toChannel,
+      purpose: "cem",
+      subject: next.subject,
+      bodyText: next.bodyText,
+    });
+    const live = shouldLiveSend(attempt.contact_id);
+    await writeEngagement(
+      pool,
+      attempt.firm_id,
+      attempt.contact_id,
+      live && send.ok && !send.dryRun ? "send_live" : "send_dry_run",
+      { attemptId: attempt.id, cellId: next.id, channel: toChannel, send, runId },
+    );
+  }
+
+  return {
+    attemptId: attempt.id,
+    criteriaId: `cell:${next.id}`,
+    setValue: "advance_template_cell",
+    fromChannel,
+    toChannel,
+    runId,
+    engagementId,
+    send,
+  };
+}
+
+const templateCache = new Map<string, Awaited<ReturnType<typeof loadTemplateCells>>>();
+
+async function loadTemplateCellsCached(pool: Pool, templateId: string) {
+  if (templateCache.has(templateId)) return templateCache.get(templateId)!;
+  const loaded = await loadTemplateCells(pool, templateId);
+  templateCache.set(templateId, loaded);
+  return loaded;
 }
 
 /** One worker tick across all open attempts (all firms). */
@@ -542,6 +705,12 @@ export async function tickOnce(now = new Date()): Promise<{
       );
       nullified += 1;
       continue;
+    }
+
+    // Authored cell cursor first (day/offset walk), then within-cell channel ladder.
+    {
+      const cellFire = await advanceTemplateCellIfDue(pool, attempt, now);
+      if (cellFire) fired.push(cellFire);
     }
 
     if (!criteriaByFirm.has(attempt.firm_id)) {

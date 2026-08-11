@@ -527,4 +527,31 @@ export type MachineApiPort = {
       name: string | null;
     }>
   >;
+  bookMeeting(input: {
+    contactId: string;
+    slot?: string;
+    consultantName?: string;
+    source?: string;
+    contactName?: string;
+  }): Promise<{
+    id: string;
+    firmId: string;
+    contactId: string;
+    slot: string | null;
+    attemptsStopped: number;
+    table: string;
+  }>;
+  listMeetings(): Promise<{
+    firmId: string;
+    count: number;
+    meetings: Array<{
+      id: string;
+      firmId: string;
+      contactId: string;
+      bookedAt: string;
+      source: string;
+      slot: string | null;
+      consultantName: string | null;
+    }>;
+  }>;
 };

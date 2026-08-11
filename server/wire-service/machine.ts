@@ -1443,3 +1443,120 @@ export async function handleContactRecordsList(c: Context) {
     })),
   });
 }
+
+/**
+ * Book a meeting — durable machine outcome. Stops open sequence chase for that contact.
+ */
+export async function handleMeetingBook(c: Context) {
+  const firm = await firmId(c);
+  const body = await c.req.json<{
+    contactId: string;
+    slot?: string;
+    consultantName?: string;
+    source?: string;
+    contactName?: string;
+  }>();
+  const contactId = (body.contactId ?? "").trim();
+  if (!contactId) return json(c, { error: "contactId required" }, 400);
+
+  const pool = getPool();
+  const id = `mtg-${randomUUID()}`;
+  const source = (body.source ?? "contact_portal").trim();
+  const enr = await pool.query<{ id: string }>(
+    `SELECT id FROM enrollment WHERE firm_id=$1 AND contact_id=$2
+     ORDER BY enrolled_at DESC LIMIT 1`,
+    [firm, contactId],
+  );
+  const enrollmentId = enr.rows[0]?.id ?? null;
+
+  await pool.query(
+    `INSERT INTO meeting_booked
+       (id, firm_id, contact_id, booked_at, source, slot, consultant_name, enrollment_id, payload)
+     VALUES ($1,$2,$3,now(),$4,$5,$6,$7,$8::jsonb)`,
+    [
+      id,
+      firm,
+      contactId,
+      source,
+      body.slot ?? null,
+      body.consultantName ?? null,
+      enrollmentId,
+      JSON.stringify({
+        contactName: body.contactName ?? null,
+        slot: body.slot ?? null,
+      }),
+    ],
+  );
+
+  // Close the loop: stop chasing this contact
+  const stopped = await pool.query(
+    `UPDATE active_attempts
+     SET status='nullified', updated_at=now(),
+         state = state || jsonb_build_object('meeting_booked', true, 'meeting_id', $3::text, 'nullified_at', now()::text)
+     WHERE firm_id=$1 AND contact_id=$2 AND status='open'
+     RETURNING id`,
+    [firm, contactId, id],
+  );
+
+  await pool.query(
+    `INSERT INTO engagement_records (id, firm_id, contact_id, event_kind, payload)
+     VALUES ($1,$2,$3,'meeting_booked',$4::jsonb)`,
+    [
+      `eng-${randomUUID()}`,
+      firm,
+      contactId,
+      JSON.stringify({
+        meetingId: id,
+        slot: body.slot ?? null,
+        source,
+        attemptsStopped: stopped.rows.map((r) => r.id),
+      }),
+    ],
+  );
+
+  return json(c, {
+    id,
+    firmId: firm,
+    contactId,
+    slot: body.slot ?? null,
+    source,
+    enrollmentId,
+    attemptsStopped: stopped.rowCount ?? 0,
+    table: "meeting_booked",
+  });
+}
+
+export async function handleMeetingsList(c: Context) {
+  const firm = await firmId(c);
+  const pool = getPool();
+  const rows = await pool.query<{
+    id: string;
+    firm_id: string;
+    contact_id: string;
+    booked_at: string;
+    source: string;
+    slot: string | null;
+    consultant_name: string | null;
+    enrollment_id: string | null;
+    payload: Record<string, unknown>;
+  }>(
+    `SELECT id, firm_id, contact_id, booked_at, source, slot, consultant_name, enrollment_id, payload
+     FROM meeting_booked WHERE firm_id=$1 ORDER BY booked_at DESC`,
+    [firm],
+  );
+  return json(c, {
+    firmId: firm,
+    count: rows.rowCount ?? 0,
+    meetings: rows.rows.map((r) => ({
+      id: r.id,
+      firmId: r.firm_id,
+      contactId: r.contact_id,
+      bookedAt: r.booked_at,
+      source: r.source,
+      slot: r.slot,
+      consultantName: r.consultant_name,
+      enrollmentId: r.enrollment_id,
+      payload: r.payload,
+    })),
+  });
+}

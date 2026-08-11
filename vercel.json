@@ -49,6 +49,14 @@
       "destination": "/api/wire"
     },
     {
+      "source": "/prototype-ant",
+      "destination": "/prototype-ant.html"
+    },
+    {
+      "source": "/prototype-ant/:path*",
+      "destination": "/prototype-ant.html"
+    },
+    {
       "source": "/((?!api/|assets/|fonts/|.*\\..*).*)",
       "destination": "/index.html"
     }
