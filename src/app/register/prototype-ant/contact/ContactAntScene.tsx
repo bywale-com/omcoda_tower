@@ -1426,21 +1426,55 @@ function ActiveSurface({
   }
 }
 
+/**
+ * Product contact identity comes from an access / invite token (Pass C).
+ * Until that token is present, do not paint Sarah Jenkins / Cedar demo scenery
+ * into the Contact desk — that made empty firms look "littered."
+ */
+function contactTokenFromLocation(): string | null {
+  if (typeof window === "undefined") return null;
+  const url = new URL(window.location.href);
+  const fromQuery =
+    url.searchParams.get("contactId")?.trim() ||
+    url.searchParams.get("contact")?.trim() ||
+    url.searchParams.get("token")?.trim();
+  if (fromQuery) return fromQuery;
+  // Allow explicit demo modeling only when ?demoContact=1
+  if (url.searchParams.get("demoContact") === "1") return DEMO_CONTACT_ID;
+  return null;
+}
+
 export function ContactAntScene() {
   const { token } = antTheme.useToken();
   const [surface, setSurface] = useState<ContactSurface>("Opt-in message");
   const [silenced, setSilenced] = useState(false);
   const [walkStep, setWalkStep] = useState(0);
+  const contactToken = contactTokenFromLocation();
 
   useEffect(() => {
+    if (!contactToken) return;
     let cancelled = false;
-    void wirePorts.consentSilence.get(DEMO_CONTACT_ID).then((state) => {
+    void wirePorts.consentSilence.get(contactToken).then((state) => {
       if (!cancelled) setSilenced(state.silenced);
     });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [contactToken]);
+
+  if (!contactToken) {
+    return (
+      <ModulePage title="Contact" surface="Contact portal">
+        <Surface label="Contact identity">
+          <Result
+            status="info"
+            title="No contact session"
+            subTitle="This desk stays empty until a contact opens their invite / access link. Demo Sarah Jenkins scenery is not shown on product desks."
+          />
+        </Surface>
+      </ModulePage>
+    );
+  }
 
   const applyConsent = () => {
     void wirePorts.consentSilence.setConsent(DEMO_CONTACT_ID, FIRM.firmId, "express");

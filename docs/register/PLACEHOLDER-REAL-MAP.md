@@ -84,8 +84,8 @@ Do **not** call demo scenery “empty.” Do **not** call Contacts empty “a pl
 
 | Surface | File | Today | Priority | Status |
 |---------|------|-------|----------|--------|
-| Identity | `ContactAntScene.tsx` | Hardcoded Sarah + Cedar | **P0** | Next pass (token-scoped contact) |
-| Consent / silence / book / facts | same | APIs real; ids demo | **P0** identity | Wire OK once id is real |
+| Identity | `ContactAntScene.tsx` | Empty until `?contactId=` / `?demoContact=1` | **P0** | **Honest empty** (no Sarah paint); full token Pass C later |
+| Consent / silence / book / facts | same | APIs real when token present | **P0** | Wire OK once id is real |
 
 ---
 

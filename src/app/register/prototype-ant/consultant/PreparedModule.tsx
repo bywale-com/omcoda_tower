@@ -91,10 +91,26 @@ export function PreparedModule({
     }
   }
 
+  const firmStaged = Boolean(peekActiveFirmId());
   const readinessRows = [
-    { key: "1", label: "Firm identity staged", state: "Ready", ready: true },
-    { key: "2", label: "Campaign under firm brand", state: "Ready", ready: true },
-    { key: "3", label: "Readiness walkthrough", state: "Presented", ready: true },
+    {
+      key: "1",
+      label: "Firm identity staged",
+      state: firmStaged ? "Ready" : "Pending",
+      ready: firmStaged,
+    },
+    {
+      key: "2",
+      label: "Campaign under firm brand",
+      state: "Pending",
+      ready: false,
+    },
+    {
+      key: "3",
+      label: "Readiness walkthrough",
+      state: "Pending",
+      ready: false,
+    },
     {
       key: "4",
       label: "Authorize book",
