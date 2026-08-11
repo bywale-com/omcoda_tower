@@ -25,13 +25,27 @@ try {
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ token: minted.rawToken }),
   });
-  const redeemBody = await redeem.json();
+  const redeemText = await redeem.text();
+  let redeemBody: {
+    ok?: boolean;
+    user?: { firmId?: string };
+    error?: string;
+    message?: string;
+  } = {};
+  try {
+    redeemBody = JSON.parse(redeemText) as typeof redeemBody;
+  } catch {
+    console.error("redeem_non_json", redeem.status, redeemText.slice(0, 200));
+    process.exit(1);
+  }
   const cookie = (redeem.headers.get("set-cookie") || "").split(";")[0];
 
   const session = await fetch(`${BASE}/api/auth/session`, {
     headers: cookie ? { cookie } : {},
   });
-  const sessionBody = await session.json();
+  const sessionBody = (await session.json().catch(() => ({}))) as {
+    authenticated?: boolean;
+  };
 
   // Second redeem must fail (one-time).
   const again = await fetch(`${BASE}/api/auth/access/redeem`, {
