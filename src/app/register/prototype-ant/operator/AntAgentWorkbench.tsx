@@ -45,9 +45,12 @@ import type {
   AttemptCriteriaRow,
   ChannelOwnershipOrderRow,
   CohortScoringRow,
+  EnrollmentRow,
+  EngagementRecordRow,
   MetricsThresholdRow,
   PhaseOrderRow,
 } from "../../../wire/machineTypes";
+import { useAuth } from "../../../auth/AuthContext";
 import { wirePorts } from "../../../wire/registry";
 
 function statusColor(status: AgentDefinition["status"]) {
@@ -674,13 +677,17 @@ export function AntAgentWorkbench({
   agent: AgentDefinition;
 }) {
   const { token } = theme.useToken();
+  const { user } = useAuth();
   const agentId = agent.id;
   const [activeTab, setActiveTab] = useState<AgentEditorTab>("editor");
   const [steps, setSteps] = useState<AgentStep[]>(() => getInitialAgentSteps(agentId));
   const [saving, setSaving] = useState(false);
   const [launching, setLaunching] = useState(false);
   const [statusNote, setStatusNote] = useState<string | null>(null);
+  const [enrollments, setEnrollments] = useState<EnrollmentRow[]>([]);
+  const [agentActivity, setAgentActivity] = useState<EngagementRecordRow[]>([]);
   const linkedAutomations = useMemo(() => getLinkedAutomationSummaries(agent), [agent]);
+  const firmName = user?.firmId ? `Firm ${user.firmId.slice(0, 8)}` : "Session firm";
 
   useEffect(() => {
     setSteps(getInitialAgentSteps(agentId));
@@ -699,6 +706,46 @@ export function AntAgentWorkbench({
       })
       .catch(() => undefined);
   }, [agentId]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const binding = AGENT_TEMPLATE_BINDING[agentId];
+    const agentRef = binding?.templateId;
+    void Promise.all([
+      wirePorts.machineApi.boardDetections(),
+      wirePorts.machineApi.listEngagementRecords(),
+    ])
+      .then(([board, records]) => {
+        if (cancelled) return;
+        const enr = board.enrollments.filter(
+          (e) =>
+            e.agent_ref === agentRef ||
+            e.sequence_id === agentRef ||
+            String(e.payload?.agentId ?? "") === agentId,
+        );
+        setEnrollments(enr);
+        const contactIds = new Set(enr.map((e) => e.contact_id));
+        const attemptIds = new Set(
+          enr.map((e) => String((e.payload as { attemptId?: string })?.attemptId ?? "")).filter(Boolean),
+        );
+        setAgentActivity(
+          records.filter((r) => {
+            if (contactIds.has(r.contact_id)) return true;
+            const aid = String(r.payload?.attemptId ?? "");
+            return Boolean(aid && attemptIds.has(aid));
+          }),
+        );
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setEnrollments([]);
+          setAgentActivity([]);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [agentId, statusNote]);
 
   const addStep = (kind: "email" | "consultant_task") => {
     setSteps((current) => insertAgentStep(current, kind, current.length - 1));
@@ -724,7 +771,7 @@ export function AntAgentWorkbench({
       const bind = await wirePorts.machineApi.upsertBinding({
         sequenceClass: binding.sequenceClass,
         templateId: binding.templateId,
-        variableBindings: { agentId, firm_name: "Cedar Immigration" },
+        variableBindings: { agentId, firm_name: firmName },
       });
       const note = `Saved ${tpl.cells} cells → ${tpl.id}; binding ${bind.id ?? binding.sequenceClass}`;
       setStatusNote(note);
@@ -742,6 +789,14 @@ export function AntAgentWorkbench({
     setLaunching(true);
     setStatusNote(null);
     try {
+      const contacts = await wirePorts.machineApi.listContactRecords();
+      const contactId = contacts[0]?.id;
+      if (!contactId) {
+        const note = "Launch blocked: firm book has no contacts — upload a list first.";
+        setStatusNote(note);
+        message.warning(note);
+        return;
+      }
       const mapped = AGENT_TEMPLATE_BINDING[agentId];
       const { templates, bindings } = await wirePorts.machineApi.listTemplates();
       const seqClass = mapped?.sequenceClass ?? "optin_launch";
@@ -755,12 +810,12 @@ export function AntAgentWorkbench({
         mapped?.templateId ??
         `tpl.${seqClass}.v1`;
       const enr = await wirePorts.machineApi.createEnrollment({
-        contactId: "board-selected-or-book",
+        contactId,
         agentRef,
         sequenceId: agentRef,
         payload: { source: "agent_launch", agentId, dryRun: false },
       });
-      const note = `Launched live → ${agentRef} (${enr.id})`;
+      const note = `Launched → ${agentRef} on ${contactId} (${enr.id})`;
       setStatusNote(note);
       message.success(note);
     } catch (err) {
@@ -892,6 +947,46 @@ export function AntAgentWorkbench({
               </div>
             ) : tab.id === "settings" ? (
               <AgentSettingsPanel />
+            ) : tab.id === "contacts" ? (
+              enrollments.length === 0 ? (
+                <Empty style={{ marginTop: 48 }} description={emptyCopy.contacts} />
+              ) : (
+                <List
+                  style={{ padding: 16 }}
+                  bordered
+                  dataSource={enrollments}
+                  renderItem={(row) => (
+                    <List.Item key={row.id}>
+                      <Space direction="vertical" size={0}>
+                        <Typography.Text strong>{row.contact_id}</Typography.Text>
+                        <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                          {row.agent_ref} · {new Date(row.enrolled_at).toLocaleString()}
+                        </Typography.Text>
+                      </Space>
+                    </List.Item>
+                  )}
+                />
+              )
+            ) : tab.id === "activity" ? (
+              agentActivity.length === 0 ? (
+                <Empty style={{ marginTop: 48 }} description={emptyCopy.activity} />
+              ) : (
+                <List
+                  style={{ padding: 16 }}
+                  bordered
+                  dataSource={agentActivity}
+                  renderItem={(row) => (
+                    <List.Item key={row.id}>
+                      <Space direction="vertical" size={0}>
+                        <Typography.Text strong>{row.event_kind}</Typography.Text>
+                        <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                          {row.contact_id} · {new Date(row.created_at).toLocaleString()}
+                        </Typography.Text>
+                      </Space>
+                    </List.Item>
+                  )}
+                />
+              )
             ) : (
               <Empty style={{ marginTop: 48 }} description={emptyCopy[tab.id]} />
             ),

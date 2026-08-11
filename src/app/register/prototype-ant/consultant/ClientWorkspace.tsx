@@ -3,17 +3,15 @@ import {
   Alert,
   Button,
   Descriptions,
-  Empty,
   Space,
   Tabs,
   Tag,
-  Timeline,
   Typography,
 } from "antd";
 import { Hint, Surface } from "../chrome";
 import { loadClientMachineNote } from "../../prototype/operator/operatorWireHelpers";
-import { useWireTick, wirePorts } from "../../../wire";
-import type { EngagementRecordRow } from "../../../wire/machineTypes";
+import { wirePorts } from "../../../wire";
+import { ClientDataPanel } from "./clientData/ClientDataPanel";
 import {
   PHASE_LABEL,
   contactDisplayName,
@@ -34,6 +32,7 @@ type ClientWorkspaceProps = {
   licenseeLabel: string;
   meetingReady?: boolean;
   activityKick?: number;
+  focusRecordId?: string | null;
   onHaltOutreach: () => void;
   onLiftHalt: () => void;
   onOpenAcceptedTerms?: () => void;
@@ -48,18 +47,16 @@ export function ClientWorkspace({
   licenseeLabel,
   meetingReady = false,
   activityKick = 0,
+  focusRecordId = null,
   onHaltOutreach,
   onLiftHalt,
   onOpenAcceptedTerms,
 }: ClientWorkspaceProps) {
-  const [tab, setTab] = useState<"brief" | "engagement">("brief");
+  const [tab, setTab] = useState<"brief" | "client-data">("brief");
   const [machineNote, setMachineNote] = useState<string | null>(null);
   const [name, setName] = useState(contactName ?? clientId);
   const [email, setEmail] = useState<string | null>(contactEmail ?? null);
   const [phone, setPhone] = useState<string | null>(contactPhone ?? null);
-  const [records, setRecords] = useState<EngagementRecordRow[]>([]);
-  const [recordsLoaded, setRecordsLoaded] = useState(false);
-  const wireTick = useWireTick();
   const meetingReadyIds = useMemo(
     () => (meetingReady ? new Set([clientId]) : new Set<string>()),
     [meetingReady, clientId],
@@ -67,8 +64,8 @@ export function ClientWorkspace({
   const phase = resolveWorkspacePhase(clientId, Boolean(halt), meetingReadyIds);
 
   useEffect(() => {
-    if (activityKick > 0) setTab("engagement");
-  }, [activityKick]);
+    if (activityKick > 0 || focusRecordId) setTab("client-data");
+  }, [activityKick, focusRecordId]);
 
   useEffect(() => {
     setName(contactName ?? clientId);
@@ -106,48 +103,6 @@ export function ClientWorkspace({
     };
   }, [clientId]);
 
-  useEffect(() => {
-    let cancelled = false;
-    setRecordsLoaded(false);
-    void wirePorts.machineApi
-      .listEngagementRecords()
-      .then((all) => {
-        if (cancelled) return;
-        const filtered = all
-          .filter((r) => r.contact_id === clientId)
-          .slice()
-          .sort((a, b) => b.created_at.localeCompare(a.created_at));
-        setRecords(filtered);
-        setRecordsLoaded(true);
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setRecords([]);
-          setRecordsLoaded(true);
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [clientId, wireTick, activityKick]);
-
-  const timelineItems = records.map((r) => ({
-    key: r.id,
-    children: (
-      <Space direction="vertical" size={0}>
-        <Text strong>{r.event_kind}</Text>
-        <Text type="secondary" style={{ fontSize: 12 }}>
-          {new Date(r.created_at).toLocaleString()}
-        </Text>
-        {Object.keys(r.payload ?? {}).length > 0 ? (
-          <Text type="secondary" style={{ fontSize: 11 }}>
-            {JSON.stringify(r.payload)}
-          </Text>
-        ) : null}
-      </Space>
-    ),
-  }));
-
   return (
     <Surface
       label="Client workspace"
@@ -177,7 +132,9 @@ export function ClientWorkspace({
           </Tag>
         </Surface>
         {machineNote ? (
-          <Tag color="processing" title="Machine board detection / enrollment">{machineNote}</Tag>
+          <Tag color="processing" title="Machine board detection / enrollment">
+            {machineNote}
+          </Tag>
         ) : null}
         <Tag
           color={silenceCauseLabel(clientId, halt) !== "—" ? "warning" : "default"}
@@ -223,7 +180,7 @@ export function ClientWorkspace({
 
       <Tabs
         activeKey={tab}
-        onChange={(k) => setTab(k as "brief" | "engagement")}
+        onChange={(k) => setTab(k as "brief" | "client-data")}
         style={{ flexShrink: 0 }}
         tabBarStyle={{ paddingInline: 16, marginBottom: 0 }}
         items={[
@@ -233,8 +190,8 @@ export function ClientWorkspace({
             children: null,
           },
           {
-            key: "engagement",
-            label: <Surface label="Engagement record">Engagement record</Surface>,
+            key: "client-data",
+            label: <Surface label="Client Data">Client Data</Surface>,
             children: null,
           },
         ]}
@@ -258,28 +215,20 @@ export function ClientWorkspace({
               </Descriptions.Item>
               <Descriptions.Item label="Phase">{PHASE_LABEL[phase]}</Descriptions.Item>
             </Descriptions>
+            <Button size="small" onClick={() => setTab("client-data")}>
+              Open Client Data
+            </Button>
           </Space>
         ) : (
-          <Surface label="Engagement record" style={{ height: "100%", minHeight: 0 }}>
-            <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-              <div>
-                <Title level={5} style={{ margin: 0 }}>
-                  Engagement record
-                </Title>
-                <Hint>Machine engagement_records for this contact.</Hint>
-              </div>
-              <Space wrap>
-                <Button type="primary" size="small" onClick={onHaltOutreach}>
-                  Halt outreach
-                </Button>
-              </Space>
-              {recordsLoaded && records.length === 0 ? (
-                <Empty description="No engagement activity for this contact yet" />
-              ) : records.length > 0 ? (
-                <Timeline items={timelineItems} />
-              ) : null}
-            </Space>
-          </Surface>
+          <ClientDataPanel
+            clientId={clientId}
+            contactName={name}
+            contactEmail={email}
+            contactPhone={phone}
+            phaseLabel={PHASE_LABEL[phase]}
+            activityKick={activityKick}
+            focusRecordId={focusRecordId}
+          />
         )}
       </div>
     </Surface>

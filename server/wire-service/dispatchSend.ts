@@ -138,10 +138,12 @@ export async function dispatchEmailLive(input: DispatchEmailInput): Promise<Disp
     }
     const messageId = data?.id ?? id("esp");
     const acceptedAt = new Date().toISOString();
+    const html = input.html ?? `<p>${input.bodyText.replace(/\n/g, "<br/>")}</p>`;
     await pool.query(
       `INSERT INTO outbound_messages
-        (id, firm_id, contact_id, channel, purpose, to_addr, from_addr, provider_message_id, status)
-       VALUES ($1,$2,$3,'email',$4,$5,$6,$7,'accepted')`,
+        (id, firm_id, contact_id, channel, purpose, to_addr, from_addr, provider_message_id, status,
+         subject, body_text, body_html, content)
+       VALUES ($1,$2,$3,'email',$4,$5,$6,$7,'accepted',$8,$9,$10,$11::jsonb)`,
       [
         id("out"),
         input.firmId,
@@ -150,6 +152,15 @@ export async function dispatchEmailLive(input: DispatchEmailInput): Promise<Disp
         input.to,
         from,
         messageId,
+        input.subject,
+        input.bodyText,
+        html,
+        JSON.stringify({
+          channel: "email",
+          subject: input.subject,
+          bodyText: input.bodyText,
+          bodyHtml: html,
+        }),
       ],
     );
     await pool.query(
@@ -189,8 +200,9 @@ export async function dispatchSmsLive(input: DispatchSmsInput): Promise<Dispatch
     const pool = getPool();
     await pool.query(
       `INSERT INTO outbound_messages
-        (id, firm_id, contact_id, channel, purpose, to_addr, from_addr, provider_message_id, status)
-       VALUES ($1,$2,$3,'sms',$4,$5,$6,$7,'accepted')`,
+        (id, firm_id, contact_id, channel, purpose, to_addr, from_addr, provider_message_id, status,
+         body_text, content)
+       VALUES ($1,$2,$3,'sms',$4,$5,$6,$7,'accepted',$8,$9::jsonb)`,
       [
         id("out"),
         input.firmId,
@@ -199,6 +211,8 @@ export async function dispatchSmsLive(input: DispatchSmsInput): Promise<Dispatch
         input.to,
         twilioFromNumber(),
         messageSid,
+        input.body,
+        JSON.stringify({ channel: "sms", bodyText: input.body }),
       ],
     );
     await pool.query(

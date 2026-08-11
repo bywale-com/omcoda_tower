@@ -289,6 +289,7 @@ export async function escalateAttemptWindow(
     {
       attemptId: attempt.id,
       criteriaId: criteria.id,
+      criteriaLabel: criteria.label,
       fromChannel,
       toChannel,
       setValue,
@@ -300,13 +301,15 @@ export async function escalateAttemptWindow(
 
   let send: DispatchResult | undefined;
   if (toChannel && (toChannel === "email" || toChannel === "text")) {
+    const subject = `Tower follow-up (${criteria.id})`;
+    const bodyText = `Sequence advanced: ${fromChannel} → ${toChannel} after ${criteria.label}`;
     send = await actuateChannelSend({
       firmId: attempt.firm_id,
       contactId: attempt.contact_id,
       channel: toChannel,
       purpose: "cem",
-      subject: `Tower follow-up (${criteria.id})`,
-      bodyText: `Sequence advanced: ${fromChannel} → ${toChannel} after ${criteria.label}`,
+      subject,
+      bodyText,
     });
     if (send.ok && !send.dryRun) {
       await writeEngagement(pool, attempt.firm_id, attempt.contact_id, "send_live", {
@@ -314,6 +317,10 @@ export async function escalateAttemptWindow(
         channel: toChannel,
         messageId: send.messageId,
         runId,
+        criteriaId: criteria.id,
+        criteriaLabel: criteria.label,
+        subject,
+        bodyText,
       });
     } else if (send.ok && send.dryRun) {
       await writeEngagement(pool, attempt.firm_id, attempt.contact_id, "send_dry_run", {
@@ -321,6 +328,10 @@ export async function escalateAttemptWindow(
         channel: toChannel,
         reason: send.reason,
         runId,
+        criteriaId: criteria.id,
+        criteriaLabel: criteria.label,
+        subject,
+        bodyText,
       });
     }
   }
@@ -495,15 +506,16 @@ export async function enrollAndActuate(input: EnrollActuateInput) {
 
   let send: DispatchResult | undefined;
   if (input.fireFirstStep !== false) {
+    const subject = firstCell?.subject ?? `Tower — ${input.agentRef}`;
+    const bodyText =
+      firstCell?.bodyText ?? `Sequence start via ${input.agentRef}`;
     send = await actuateChannelSend({
       firmId: input.firmId,
       contactId: input.contactId,
       channel: owner,
       purpose: input.purpose ?? "opt-in",
-      subject: firstCell?.subject ?? `Tower — ${input.agentRef}`,
-      bodyText:
-        firstCell?.bodyText ??
-        `Sequence start via ${input.agentRef}`,
+      subject,
+      bodyText,
     });
     await writeEngagement(pool, input.firmId, input.contactId, live ? "send_live" : "send_dry_run", {
       enrollmentId: id,
@@ -512,6 +524,10 @@ export async function enrollAndActuate(input: EnrollActuateInput) {
       templateId: state.templateId,
       cellId: state.cellId,
       cellIndex: 0,
+      subject,
+      bodyText,
+      messageId: send.ok && !send.dryRun ? send.messageId : undefined,
+      reason: send.ok && send.dryRun ? send.reason : undefined,
       send,
     });
   }
@@ -622,13 +638,15 @@ export async function advanceTemplateCellIfDue(
 
   let send: DispatchResult | undefined;
   if (toChannel === "email" || toChannel === "text") {
+    const subject = next.subject;
+    const bodyText = next.bodyText;
     send = await actuateChannelSend({
       firmId: attempt.firm_id,
       contactId: attempt.contact_id,
       channel: toChannel,
       purpose: "cem",
-      subject: next.subject,
-      bodyText: next.bodyText,
+      subject,
+      bodyText,
     });
     const live = shouldLiveSend(attempt.contact_id);
     await writeEngagement(
@@ -636,7 +654,18 @@ export async function advanceTemplateCellIfDue(
       attempt.firm_id,
       attempt.contact_id,
       live && send.ok && !send.dryRun ? "send_live" : "send_dry_run",
-      { attemptId: attempt.id, cellId: next.id, channel: toChannel, send, runId },
+      {
+        attemptId: attempt.id,
+        cellId: next.id,
+        cellLabel: next.label,
+        channel: toChannel,
+        subject,
+        bodyText,
+        messageId: send.ok && !send.dryRun ? send.messageId : undefined,
+        reason: send.ok && send.dryRun ? send.reason : undefined,
+        send,
+        runId,
+      },
     );
   }
 
