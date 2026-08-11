@@ -1012,6 +1012,23 @@ export const standInMachineApi: MachineApiPort = {
     return result;
   },
 
+  async listConsultants() {
+    return [
+      {
+        userId: "standin-u-1",
+        email: "consultant@harbor.test",
+        firmId: "firm-standin-harbor",
+        firmName: "Harbor RCIC",
+      },
+      {
+        userId: "standin-u-2",
+        email: "owner@cedar.test",
+        firmId: "firm-cedar",
+        firmName: "Cedar Immigration",
+      },
+    ];
+  },
+
   async issueAccessInvite(input) {
     const email = input.email.trim().toLowerCase();
     const accessPath = `/a/standin-invite-${email.split("@")[0] || "user"}`;

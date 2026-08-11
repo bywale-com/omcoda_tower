@@ -7,7 +7,8 @@ import { isValidEmail, normalizeEmail } from "../auth-service/crypto.ts";
 import { getPool } from "./db.ts";
 import { enrollAndActuate, tickOnce } from "./cascade.ts";
 import { sendGateSnapshot } from "./sendMode.ts";
-import { requireSessionFirm } from "./sessionFirm.ts";
+import { isPlatformAdminEmail } from "../auth-service/platformAdmin.ts";
+import { FirmScopeError, requireSessionActor, requireSessionFirm } from "./sessionFirm.ts";
 import {
   dispatchEventToWorkflows,
   materializeTriggersFromGraph,
@@ -1648,6 +1649,39 @@ export async function handleMeetingsList(c: Context) {
       consultantName: r.consultant_name,
       enrollmentId: r.enrollment_id,
       payload: r.payload,
+    })),
+  });
+}
+
+/**
+ * Platform admin: list consultants (users↔firms) for the Consultant ▾ dropdown.
+ * Non-admins get 403.
+ */
+export async function handleConsultantsList(c: Context) {
+  const actor = await requireSessionActor(c);
+  if (!isPlatformAdminEmail(actor.email)) {
+    throw new FirmScopeError(403, "platform admin only");
+  }
+  const pool = getPool();
+  const rows = await pool.query<{
+    user_id: string;
+    email: string;
+    firm_id: string;
+    firm_name: string;
+  }>(
+    `SELECT u.id AS user_id, u.email, u.firm_id::text AS firm_id, f.name AS firm_name
+     FROM users u
+     INNER JOIN firms f ON f.id = u.firm_id
+     WHERE lower(u.email) <> lower($1)
+     ORDER BY f.name ASC, u.email ASC`,
+    [actor.email],
+  );
+  return json(c, {
+    consultants: rows.rows.map((r) => ({
+      userId: r.user_id,
+      email: r.email,
+      firmId: r.firm_id,
+      firmName: r.firm_name,
     })),
   });
 }

@@ -537,6 +537,15 @@ export type MachineApiPort = {
       name: string | null;
     }>
   >;
+  /** Platform admin: consultants for Consultant ▾ view-as dropdown. */
+  listConsultants(): Promise<
+    Array<{
+      userId: string;
+      email: string;
+      firmId: string;
+      firmName: string;
+    }>
+  >;
   bookMeeting(input: {
     contactId: string;
     slot?: string;

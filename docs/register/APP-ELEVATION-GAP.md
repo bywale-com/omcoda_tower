@@ -51,11 +51,11 @@ Same class of gap is expected (not yet fully audited) in **Agents / Automations 
 ## Target shape (corrected)
 
 1. **Elevate** the new design system (CT Ant) to **app** entry for product use.
-2. **Keep** the prototype (including Consultant | Operator | Contact switcher) as the always-on prototype of the app — not deleted.
-3. **App desks** (elevated product): consultant world vs operator world; Contact **preview** under operator for live contact UI look; real contact delivery later.
-4. **Access:** direct/magic link (no portal-as-product) — **closed** (`/a/<token>`; see `MAGIC-ACCESS-LINK.md`).
-5. **UI parity first where it hurts:** engagement record / Activity / client look-inside must exist in the elevated app at Hub depth — not a decorative tree over seeds.
-
+2. **Keep** the prototype as the always-on prototype of the app — not deleted. Prototype (auth bypass) keeps the **admin-shaped** shell for modeling.
+3. **Shell (admin only):** `Consultant ▾ | Operator | Contact` — first slot is a **consultant dropdown** (view-as that consultant’s workspace). Sole admin: `admin@try-tower.com`.
+4. **Everyone else:** consultant workspace **only** (no switcher).
+5. **Access:** direct/magic link (no portal-as-product) — **closed** (`/a/<token>`; see `MAGIC-ACCESS-LINK.md`).
+6. **UI parity:** engagement record / Activity / client look-inside must exist in the elevated app at Hub depth — not a decorative tree over seeds.
 ---
 
 ## Gap list (honest)

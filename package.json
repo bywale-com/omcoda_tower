@@ -27,10 +27,10 @@
     "verify:affordances": "tsx --env-file=.env scripts/verify-affordance-roundtrip.ts",
     "verify:deploy": "npm run verify:ship && npm run verify:session-firm && npm run verify:boot-env && npm run verify:continuous-worker",
     "verify:all-ship": "npm run verify:ship && npm run verify:affordances && npx tsx --env-file=.env scripts/restore-channel-order.ts && VERIFY_LIVE_SEND=1 npm run verify:worker && npm run verify:session-firm && npm run verify:boot-env",
+    "ensure:admin": "tsx --env-file=.env scripts/ensure-platform-admin.ts",
     "issue:access": "tsx --env-file=.env scripts/issue-access-link.ts",
     "verify:access": "tsx --env-file=.env scripts/verify-access-link.ts"
-  },
-  "dependencies": {
+  },  "dependencies": {
     "@ant-design/icons": "^6.3.2",
     "@emotion/react": "11.14.0",
     "@emotion/styled": "11.14.1",

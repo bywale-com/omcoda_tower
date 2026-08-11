@@ -37,6 +37,7 @@ import {
   handleBindingUpsert,
   handleCampaignStateGet,
   handleCampaignStatePost,
+  handleConsultantsList,
   handleContactRecordsList,
   handleChannelOrderList,
   handleChannelOrderUpsert,
@@ -190,6 +191,7 @@ export function createWireRoutes(): Hono {
   wire.get("/machine/campaign-state", handleCampaignStateGet);
   wire.post("/machine/campaign-state", handleCampaignStatePost);
   wire.get("/machine/contact-records", handleContactRecordsList);
+  wire.get("/machine/consultants", handleConsultantsList);
   wire.post("/machine/meetings", handleMeetingBook);
   wire.get("/machine/meetings", handleMeetingsList);
   wire.post("/machine/provision", handleMachineProvision);
