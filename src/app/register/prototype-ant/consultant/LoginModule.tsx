@@ -34,6 +34,7 @@ export function LoginModule({ onVerified }: LoginModuleProps) {
   const [sent, setSent] = useState(false);
   const [cooldown, setCooldown] = useState(0);
   const [failure, setFailure] = useState<VerifyFailure>(null);
+  const [sendError, setSendError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -67,9 +68,12 @@ export function LoginModule({ onVerified }: LoginModuleProps) {
     }
     setBusy(true);
     setFailure(null);
+    setSendError(null);
     try {
       await issueChallenge(normalized);
       setStep("verify");
+    } catch (err) {
+      setSendError(err instanceof Error ? err.message : String(err));
     } finally {
       setBusy(false);
     }
@@ -79,8 +83,11 @@ export function LoginModule({ onVerified }: LoginModuleProps) {
     if (cooldown > 0 || busy) return;
     setBusy(true);
     setFailure(null);
+    setSendError(null);
     try {
       await issueChallenge(email.trim().toLowerCase());
+    } catch (err) {
+      setSendError(err instanceof Error ? err.message : String(err));
     } finally {
       setBusy(false);
     }

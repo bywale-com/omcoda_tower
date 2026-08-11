@@ -14,7 +14,18 @@ export function getPool(): pg.Pool {
     if (!connectionString) {
       throw new Error("DATABASE_URL is required");
     }
-    pool = new Pool({ connectionString, ssl: connectionString.includes("supabase") ? { rejectUnauthorized: false } : undefined });
+    // Session pooler caps clients (~15). Vercel/serverless must stay tiny or OTP/send
+    // dies with EMAXCONNSESSION and the login UI never advances.
+    const max = Number(process.env.PG_POOL_MAX ?? "1");
+    pool = new Pool({
+      connectionString,
+      max: Number.isFinite(max) && max > 0 ? max : 1,
+      idleTimeoutMillis: 5_000,
+      connectionTimeoutMillis: 10_000,
+      ssl: connectionString.includes("supabase")
+        ? { rejectUnauthorized: false }
+        : undefined,
+    });
   }
   return pool;
 }
