@@ -1,12 +1,19 @@
 /**
  * Register & evolution — gaps list, Gap Modal, save, regenerate handoff.
+ * Gaps start empty — never SEED_GAPS / DEMO_FIRMS densification.
+ * Firm picker = session/real firms.
  */
-import { useState } from "react";
-import { Button, Checkbox, Form, Input, Modal, Select, Space, Table, Typography, message } from "antd";
+import { useEffect, useState } from "react";
+import { Button, Checkbox, Empty, Form, Input, Modal, Select, Space, Table, Typography, message } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import { useWireTick } from "../../../wire";
 import { Hint, ModulePage, Surface } from "../chrome";
-import { DEMO_FIRMS } from "./operatorAntData";
 import { StatusTag } from "./operatorAntTags";
+import {
+  peekOperatorFirms,
+  resolveOperatorFirms,
+  type OperatorFirm,
+} from "./operatorFirmIndex";
 
 type GapRow = {
   id: string;
@@ -17,17 +24,13 @@ type GapRow = {
   written: boolean;
 };
 
-const SEED_GAPS: GapRow[] = [
-  { id: "gap-seq-silence", summary: "Sequence silence clock not visible on Fleet health — Atlas stuck 9 contacts unnoticed.", ticket: "SUP-184", firm: "Atlas Mobility", source: "Firm health", written: false },
-  { id: "gap-bind-gate", summary: "Bind pack commit lacks before/after on Audit trail for Send gate reviewers.", firm: "Cedar Pathways", source: "Firm operations bind", written: true },
-  { id: "gap-approach-cap", summary: "Approach click budget bound not enforced when firm re-binds mid-campaign.", source: "Acquisition & ads", written: false },
-];
-
 const SOURCE_SURFACES = ["Oversight", "Firm health", "Customer support", "Firm operations bind", "Acquisition & ads", "Commercial", "Activation & forward-deploy"];
 
 export function RegisterEvolutionModule() {
-  const [gaps, setGaps] = useState(SEED_GAPS);
-  const [selectedId, setSelectedId] = useState(SEED_GAPS[0].id);
+  const tick = useWireTick();
+  const [firms, setFirms] = useState<OperatorFirm[]>(() => peekOperatorFirms());
+  const [gaps, setGaps] = useState<GapRow[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [gapModalOpen, setGapModalOpen] = useState(false);
   const [editingNew, setEditingNew] = useState(false);
   const [formSummary, setFormSummary] = useState("");
@@ -36,13 +39,23 @@ export function RegisterEvolutionModule() {
   const [formSource, setFormSource] = useState("");
   const [handoffNote, setHandoffNote] = useState<string | null>(null);
 
-  const selected = gaps.find((g) => g.id === selectedId) ?? gaps[0];
+  useEffect(() => {
+    let cancelled = false;
+    void resolveOperatorFirms().then((next) => {
+      if (!cancelled) setFirms(next);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [tick]);
+
+  const selected = selectedId ? gaps.find((g) => g.id === selectedId) ?? null : null;
 
   const openNewGap = () => {
     setEditingNew(true);
     setFormSummary("");
     setFormTicket("");
-    setFormFirm("");
+    setFormFirm(firms[0]?.name ?? "");
     setFormSource("");
     setGapModalOpen(true);
   };
@@ -111,18 +124,22 @@ export function RegisterEvolutionModule() {
         <Space style={{ marginBottom: 12 }}>
           <Button type="primary" onClick={openNewGap}>+ New gap</Button>
         </Space>
-        <Table
-          size="small"
-          rowKey="id"
-          columns={columns}
-          dataSource={gaps}
-          pagination={false}
-          rowSelection={{
-            type: "radio",
-            selectedRowKeys: [selectedId],
-            onChange: (keys) => setSelectedId(keys[0] as string),
-          }}
-        />
+        {gaps.length === 0 ? (
+          <Empty description="No gaps recorded" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        ) : (
+          <Table
+            size="small"
+            rowKey="id"
+            columns={columns}
+            dataSource={gaps}
+            pagination={false}
+            rowSelection={{
+              type: "radio",
+              selectedRowKeys: selectedId ? [selectedId] : [],
+              onChange: (keys) => setSelectedId(keys[0] as string),
+            }}
+          />
+        )}
       </Surface>
 
       {selected ? (
@@ -182,7 +199,8 @@ export function RegisterEvolutionModule() {
                   onChange={setFormFirm}
                   allowClear
                   style={{ width: 200 }}
-                  options={DEMO_FIRMS.map((f) => ({ value: f.name, label: f.name }))}
+                  options={firms.map((f) => ({ value: f.name, label: f.name }))}
+                  notFoundContent="No session/real firms"
                 />
                 <Select
                   placeholder="Source surface"

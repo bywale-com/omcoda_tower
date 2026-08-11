@@ -1,9 +1,10 @@
 /**
  * Customer support — ticket queue Table, context Tabs, Resolve.
  * Tickets persist via primaryStore; Resolve appends auditTrail.
+ * Queue starts empty — never DEMO_FIRMS ticket densification.
  */
 import { useEffect, useState } from "react";
-import { Button, Card, Col, Row, Space, Table, Tabs, Typography } from "antd";
+import { Button, Card, Col, Empty, Row, Space, Table, Tabs, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useOperatorNav } from "../../prototype/operatorNav";
 import {
@@ -12,7 +13,6 @@ import {
   persistPrimaryStoreRow,
 } from "../../prototype/operator/operatorWireHelpers";
 import { ModulePage, Surface } from "../chrome";
-import { DEMO_FIRMS } from "./operatorAntData";
 import { StatusTag } from "./operatorAntTags";
 
 const SUPPORT_TICKETS_COLLECTION = "support_tickets";
@@ -32,55 +32,27 @@ type Ticket = {
 };
 
 const CONTEXT_TABS = [
-  { id: "bind", label: "Firm operations bind", jump: "Jump to Firm operations bind", badgeFor: (firm: string) => firm === DEMO_FIRMS[1].name ? { label: "stalled", color: "warning" as const } : null },
-  { id: "health", label: "Firm health", jump: "Jump to Firm health", badgeFor: (firm: string) => firm === DEMO_FIRMS[1].name || firm === DEMO_FIRMS[3].name ? { label: "unhealthy", color: "error" as const } : null },
-  { id: "commercial", label: "Commercial / escrow", jump: "Jump to Commercial", badgeFor: (firm: string) => firm === DEMO_FIRMS[2].name ? { label: "disputed", color: "error" as const } : firm === DEMO_FIRMS[1].name ? { label: "stalled", color: "warning" as const } : null },
-  { id: "activation", label: "Activation state", jump: "Jump to Activation state", badgeFor: (firm: string) => firm === DEMO_FIRMS[1].name || firm === DEMO_FIRMS[2].name ? { label: "stalled", color: "warning" as const } : null },
-  { id: "audit", label: "Audit trail", jump: "Jump to Audit trail", badgeFor: () => null },
-];
-
-const CONTEXT_SNAPSHOTS: Record<string, Record<string, { k: string; v: string }[]>> = {
-  bind: {
-    [DEMO_FIRMS[1].name]: [{ k: "Bound pack", v: "Evaluation · v2" }, { k: "Armed / Active", v: "Armed · outreach paused" }],
-    [DEMO_FIRMS[0].name]: [{ k: "Bound pack", v: "Evaluation · v3" }, { k: "Armed / Active", v: "Active · running" }],
-  },
-  health: {
-    [DEMO_FIRMS[1].name]: [{ k: "Sequence health", v: "Watch · 9 send holds" }, { k: "Reply rate", v: "7%" }],
-    [DEMO_FIRMS[0].name]: [{ k: "Sequence health", v: "Healthy · 4 holds" }, { k: "Reply rate", v: "11%" }],
-  },
-  commercial: {
-    [DEMO_FIRMS[1].name]: [{ k: "Escrow status", v: "release_pending_window" }, { k: "Terms version", v: "terms-v2" }],
-    [DEMO_FIRMS[2].name]: [{ k: "Escrow status", v: "disputed" }, { k: "Terms version", v: "terms-v1" }],
-  },
-  activation: {
-    [DEMO_FIRMS[1].name]: [{ k: "Progress", v: "50% · Authorize book stalled" }, { k: "Next gate", v: "authorize-book" }],
-    [DEMO_FIRMS[0].name]: [{ k: "Progress", v: "Running" }, { k: "Next gate", v: "—" }],
-  },
-  audit: {
-    [DEMO_FIRMS[1].name]: [{ k: "Last event", v: "Reachability audit · 2d ago" }, { k: "Actor", v: "operator@omcoda.com" }],
-  },
-};
-
-const TICKETS: Ticket[] = [
-  { id: "SUP-184", subject: "Authorize book stuck after CSV upload", firm: DEMO_FIRMS[1].name, severity: "High", source: "Consultant", owner: "ops-north", status: "Open", body: "Consultant uploaded a book export but Authorize book remains disabled.", jumpTarget: "Jump to Firm operations bind" },
-  { id: "SUP-179", subject: "Escrow release evidence question", firm: DEMO_FIRMS[2].name, severity: "Normal", source: "Firm email", owner: "ops-west", status: "Waiting", body: "Firm asks which meeting evidence bundle is required before Release control can fire.", jumpTarget: "Jump to Commercial" },
-  { id: "SUP-171", subject: "Quiet-hours policy override request", firm: DEMO_FIRMS[0].name, severity: "Low", source: "Agency policy", owner: "agency-desk", status: "Open", body: "Wants outbound after 20:00 local for one reactivation wave.", jumpTarget: "Jump to Founder & agency controls" },
+  { id: "bind", label: "Firm operations bind", jump: "Jump to Firm operations bind" },
+  { id: "health", label: "Firm health", jump: "Jump to Firm health" },
+  { id: "commercial", label: "Commercial / escrow", jump: "Jump to Commercial" },
+  { id: "activation", label: "Activation state", jump: "Jump to Activation state" },
+  { id: "audit", label: "Audit trail", jump: "Jump to Audit trail" },
 ];
 
 export function CustomerSupportModule() {
   const { jumpTo } = useOperatorNav();
-  const [tickets, setTickets] = useState<Ticket[]>(TICKETS);
-  const [selectedId, setSelectedId] = useState(TICKETS[0].id);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("bind");
   const [jumpNote, setJumpNote] = useState<string | null>(null);
   const [resolveNote, setResolveNote] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    void hydratePrimaryStoreRows(SUPPORT_TICKETS_COLLECTION, TICKETS).then((stored) => {
+    void hydratePrimaryStoreRows(SUPPORT_TICKETS_COLLECTION, [] as Ticket[]).then((stored) => {
       if (!cancelled) {
         setTickets(stored);
-        setSelectedId(stored[0]?.id ?? TICKETS[0].id);
+        setSelectedId(stored[0]?.id ?? null);
       }
     });
     return () => {
@@ -88,10 +60,12 @@ export function CustomerSupportModule() {
     };
   }, []);
 
-  const selected = tickets.find((x) => x.id === selectedId) ?? tickets[0] ?? TICKETS[0];
-  const ticketStatus = selected.status;
+  const selected = selectedId ? tickets.find((x) => x.id === selectedId) ?? null : null;
+  const ticketStatus = selected?.status;
   const tabMeta = CONTEXT_TABS.find((tab) => tab.id === activeTab)!;
-  const contextRows = CONTEXT_SNAPSHOTS[activeTab]?.[selected.firm] ?? [{ k: "Scope", v: selected.firm }];
+  const contextRows = selected
+    ? [{ k: "Scope", v: selected.firm }, { k: "Status", v: selected.status }]
+    : [];
 
   const columns: ColumnsType<Ticket> = [
     { title: "Id", dataIndex: "id", key: "id", width: 90 },
@@ -107,6 +81,7 @@ export function CustomerSupportModule() {
   ];
 
   const resolveTicket = () => {
+    if (!selected) return;
     const next: Ticket = { ...selected, status: "Resolved" };
     setTickets((prev) => prev.map((tk) => (tk.id === next.id ? next : tk)));
     void persistPrimaryStoreRow(SUPPORT_TICKETS_COLLECTION, next);
@@ -130,83 +105,85 @@ export function CustomerSupportModule() {
       <Row gutter={16}>
         <Col span={10}>
           <Surface label="Ticket queue">
-            <Table
-              size="small"
-              rowKey="id"
-              columns={columns}
-              dataSource={tickets}
-              pagination={false}
-              rowSelection={{
-                type: "radio",
-                selectedRowKeys: [selectedId],
-                onChange: (keys) => {
-                  setSelectedId(keys[0] as string);
-                  setJumpNote(null);
-                  setResolveNote(null);
-                },
-              }}
-            />
+            {tickets.length === 0 ? (
+              <Empty description="No support tickets" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            ) : (
+              <Table
+                size="small"
+                rowKey="id"
+                columns={columns}
+                dataSource={tickets}
+                pagination={false}
+                rowSelection={{
+                  type: "radio",
+                  selectedRowKeys: selectedId ? [selectedId] : [],
+                  onChange: (keys) => {
+                    setSelectedId(keys[0] as string);
+                    setJumpNote(null);
+                    setResolveNote(null);
+                  },
+                }}
+              />
+            )}
           </Surface>
         </Col>
         <Col span={14}>
-          <Surface label="Ticket">
-            <Card size="small" title={`${selected.id} · ${selected.subject}`} extra={<StatusTag label={ticketStatus} color={ticketStatus === "Resolved" ? "success" : "warning"} />}>
-              <Typography.Paragraph type="secondary">{selected.body}</Typography.Paragraph>
-              <Space wrap>
-                <Button data-register-surface="Linked per-tenancy actions" onClick={() => { const n = `${selected.jumpTarget} · ${selected.firm}`; jumpTo(n); setJumpNote(n); }}>
-                  {selected.jumpTarget}
-                </Button>
-                <Button
-                  type="primary"
-                  data-register-surface="Resolve"
-                  disabled={ticketStatus === "Resolved"}
-                  onClick={resolveTicket}
-                >
-                  Resolve
-                </Button>
-              </Space>
-              {jumpNote ? <Typography.Text type="success" style={{ display: "block", marginTop: 8 }}>{jumpNote}</Typography.Text> : null}
-              {resolveNote ? <Typography.Text type="success" style={{ display: "block", marginTop: 8 }}>{resolveNote}</Typography.Text> : null}
-            </Card>
-          </Surface>
+          {selected ? (
+            <>
+              <Surface label="Ticket">
+                <Card size="small" title={`${selected.id} · ${selected.subject}`} extra={<StatusTag label={ticketStatus!} color={ticketStatus === "Resolved" ? "success" : "warning"} />}>
+                  <Typography.Paragraph type="secondary">{selected.body}</Typography.Paragraph>
+                  <Space wrap>
+                    <Button data-register-surface="Linked per-tenancy actions" onClick={() => { const n = `${selected.jumpTarget} · ${selected.firm}`; jumpTo(n); setJumpNote(n); }}>
+                      {selected.jumpTarget}
+                    </Button>
+                    <Button
+                      type="primary"
+                      data-register-surface="Resolve"
+                      disabled={ticketStatus === "Resolved"}
+                      onClick={resolveTicket}
+                    >
+                      Resolve
+                    </Button>
+                  </Space>
+                  {jumpNote ? <Typography.Text type="success" style={{ display: "block", marginTop: 8 }}>{jumpNote}</Typography.Text> : null}
+                  {resolveNote ? <Typography.Text type="success" style={{ display: "block", marginTop: 8 }}>{resolveNote}</Typography.Text> : null}
+                </Card>
+              </Surface>
 
-          <Surface label="Support context" style={{ marginTop: 16 }}>
-            <Tabs
-              activeKey={activeTab}
-              onChange={setActiveTab}
-              items={CONTEXT_TABS.map((tab) => {
-                const badge = tab.badgeFor(selected.firm);
-                return {
-                  key: tab.id,
-                  label: badge ? (
-                    <span>
-                      {tab.label}
-                      <span data-register-surface="Context tab badge" style={{ marginLeft: 6 }}>
-                        <StatusTag label={badge.label} color={badge.color} />
-                      </span>
-                    </span>
-                  ) : tab.label,
-                };
-              })}
-            />
-            <Row gutter={8} style={{ marginTop: 12 }}>
-              {contextRows.map((row) => (
-                <Col span={12} key={row.k}>
-                  <Card size="small" styles={{ body: { padding: 10 } }}>
-                    <Typography.Text type="secondary" style={{ fontSize: 11 }}>{row.k}</Typography.Text>
-                    <div style={{ fontWeight: 600 }}>{row.v}</div>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-            <Button
-              style={{ marginTop: 12 }}
-              data-register-surface="Jump to scoped module"
-              onClick={() => { const n = `${tabMeta.jump} · ${selected.firm}`; jumpTo(n); setJumpNote(n); }}
-            >
-              {tabMeta.jump}
-            </Button>
-          </Surface>
+              <Surface label="Support context" style={{ marginTop: 16 }}>
+                <Tabs
+                  activeKey={activeTab}
+                  onChange={setActiveTab}
+                  items={CONTEXT_TABS.map((tab) => ({
+                    key: tab.id,
+                    label: tab.label,
+                  }))}
+                />
+                <Row gutter={8} style={{ marginTop: 12 }}>
+                  {contextRows.map((row) => (
+                    <Col span={12} key={row.k}>
+                      <Card size="small" styles={{ body: { padding: 10 } }}>
+                        <Typography.Text type="secondary" style={{ fontSize: 11 }}>{row.k}</Typography.Text>
+                        <div style={{ fontWeight: 600 }}>{row.v}</div>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+                <Button
+                  style={{ marginTop: 12 }}
+                  data-register-surface="Jump to scoped module"
+                  onClick={() => { const n = `${tabMeta.jump} · ${selected.firm}`; jumpTo(n); setJumpNote(n); }}
+                >
+                  {tabMeta.jump}
+                </Button>
+              </Surface>
+            </>
+          ) : (
+            <Surface label="Ticket">
+              <Empty description="Select a ticket or wait for one to arrive" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            </Surface>
+          )}
         </Col>
       </Row>
     </ModulePage>

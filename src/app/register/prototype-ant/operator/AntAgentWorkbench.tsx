@@ -49,6 +49,7 @@ import type {
   PhaseOrderRow,
 } from "../../../wire/machineTypes";
 import { wirePorts } from "../../../wire/registry";
+import { peekOperatorFirms } from "./operatorFirmIndex";
 
 function statusColor(status: AgentDefinition["status"]) {
   if (status === "running") return "processing";
@@ -721,10 +722,12 @@ export function AntAgentWorkbench({
         label: agent.name,
         cells,
       });
+      const sessionFirm = peekOperatorFirms()[0];
+      const firmName = sessionFirm?.name ?? "Unbound firm";
       const bind = await wirePorts.machineApi.upsertBinding({
         sequenceClass: binding.sequenceClass,
         templateId: binding.templateId,
-        variableBindings: { agentId, firm_name: "Cedar Immigration" },
+        variableBindings: { agentId, firm_name: firmName },
       });
       const note = `Saved ${tpl.cells} cells → ${tpl.id}; binding ${bind.id ?? binding.sequenceClass}`;
       setStatusNote(note);

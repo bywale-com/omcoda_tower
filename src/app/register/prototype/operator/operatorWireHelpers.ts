@@ -282,7 +282,8 @@ export async function loadAuditTrailEvents(
   firms: readonly { id: string; name: string }[],
 ): Promise<AuditTrailUiEvent[]> {
   const events = await wirePorts.auditTrail.list();
-  if (events.length === 0) return DEMO_AUDIT_TRAIL_EVENTS;
+  // Empty-or-personalized: never paint DEMO_AUDIT_TRAIL_EVENTS as live trail.
+  if (events.length === 0) return [];
   return events
     .map((ev) => mapAuditEventToUi(ev, firms))
     .sort((a, b) => b.id.localeCompare(a.id));
