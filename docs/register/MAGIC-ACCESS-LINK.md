@@ -31,11 +31,16 @@ Invite is a **direct access URL**, not a login portal as the product.
 
 ```bash
 npm run db:migrate   # applies 008_access_links.sql
-npx tsx --env-file=.env scripts/issue-access-link.ts user@firm.com
-npx tsx --env-file=.env scripts/verify-access-link.ts
+npm run issue:access -- user@firm.com
+npm run verify:access
 ```
 
 Optional env:
 
 - `PUBLIC_APP_URL` / `APP_ORIGIN` — absolute URL in invite emails
 - `ACCESS_ISSUE_SECRET` — header `x-access-issue-secret` for scripted `POST /auth/access/issue`
+
+## Deploy note (Vercel POST)
+
+Auth/wire entries use `scripts/vercel-entries/fetchBridge.ts` (buffer body → `app.fetch`).  
+The old `@hono/node-server/vercel` adapter left `c.req.json()` hanging (504) when the body stream was already drained — that blocked OTP and access redeem on production until this bridge.
