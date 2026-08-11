@@ -208,7 +208,7 @@ function AntShell({
         ) : desk === "contact" && isAdmin ? (
           <ContactAntScene />
         ) : (
-          <ConsultantAntScene />
+          <ConsultantAntScene key={selected?.firmId ?? user?.firmId ?? "self"} />
         )}
       </Content>
     </Layout>
