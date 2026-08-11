@@ -1,9 +1,6 @@
-import { getClientMeta } from "../../../data/clients";
-import { FIRM_NAME as SHARED_FIRM_NAME } from "../../../wire/firmBrand";
-
-export const FIRM_NAME = SHARED_FIRM_NAME;
-export const DEFAULT_LICENSEE = "Sarah Chen · RCIC R123456";
-export const LICENSEES = ["Sarah Chen · RCIC R123456", "Marco Reyes · RCIC R654321"];
+export const FIRM_NAME = "Firm desk";
+export const DEFAULT_LICENSEE = "Licensee · pending terms";
+export const LICENSEES = ["Licensee · pending terms", "Alternate licensee"];
 
 export type ConsultantModule =
   | "Board"
@@ -35,31 +32,19 @@ export function nowStamp(): string {
   return "Today · just now";
 }
 
+/** Phase from halt + meeting-ready only — no seed client meta / Sarah fallback. */
 export function resolveWorkspacePhase(
   clientId: string,
-  halted: boolean,
-  meetingReadyIds: ReadonlySet<string>,
+  halted = false,
+  meetingReadyIds: ReadonlySet<string> = new Set(),
 ): WorkspacePhase {
   if (halted) return "halted";
   if (meetingReadyIds.has(clientId)) return "meeting-ready";
-  const meta = getClientMeta(clientId);
-  if (!meta.optedIn) return "silent";
-  if (
-    meta.reactivationPhase === "active" ||
-    meta.reactivationPhase === "armed" ||
-    meta.nudge.active
-  ) {
-    return "in-motion";
-  }
-  if (meta.status === "grey") return "silent";
-  return "in-motion";
+  return "silent";
 }
 
-export function silenceCauseLabel(clientId: string, halt: HaltRetention | null): string {
+export function silenceCauseLabel(_clientId: string, halt: HaltRetention | null): string {
   if (halt) return halt.scope === "book" ? "My Halt · firm book" : "My Halt · this contact";
-  const meta = getClientMeta(clientId);
-  if (!meta.optedIn) return "Contact opt-out";
-  if (meta.status === "grey" && !meta.nudge.active) return "Sequence end · monitoring";
   return "—";
 }
 
@@ -70,4 +55,18 @@ export function phaseTagColor(phase: WorkspacePhase): string {
   return "warning";
 }
 
-export const CLIENT_IDS = ["sarah", "marcus", "mark", "aisha", "priya", "james", "daniel", "fatima", "lin"];
+export type BookContact = {
+  id: string;
+  name: string;
+  email: string | null;
+  phone: string | null;
+};
+
+export function contactDisplayName(c: {
+  id: string;
+  name?: string | null;
+  email?: string | null;
+  phone?: string | null;
+}): string {
+  return c.name?.trim() || c.email || c.phone || c.id;
+}
