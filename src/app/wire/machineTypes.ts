@@ -204,6 +204,8 @@ export type ActiveAttemptRow = {
   owner_channel: string | null;
   status: string;
   state: Record<string, unknown>;
+  window_started_at?: string;
+  fired_criteria?: Record<string, unknown>;
   created_at: string;
   updated_at: string;
 };
