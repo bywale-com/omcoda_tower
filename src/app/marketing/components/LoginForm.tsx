@@ -1,6 +1,6 @@
 import { FormEvent, useState } from "react";
 import { Cloud } from "lucide-react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { abandonOtp, AuthRequestError, sendOtp, verifyOtp } from "../../auth/authClient";
 import { useAuth } from "../../auth/AuthContext";
 import { HolonBoundary } from "../../components/docs/HolonBoundary";
@@ -20,8 +20,14 @@ type LoginFormProps = {
   onSuccess?: () => void;
 };
 
+function safeNextPath(raw: string | null): string | null {
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return null;
+  return raw;
+}
+
 export function LoginForm({ onSuccess }: LoginFormProps) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { refresh } = useAuth();
   const t = light;
   const [step, setStep] = useState<LoginStep>("email");
@@ -76,7 +82,8 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         onSuccess();
         return;
       }
-      navigate("/");
+      // Preserve Hub /activity (and other gated) destinations — do not always bounce to CT.
+      navigate(safeNextPath(searchParams.get("next")) ?? "/");
     } catch (err) {
       setError(
         err instanceof AuthRequestError

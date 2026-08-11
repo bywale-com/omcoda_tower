@@ -8,6 +8,17 @@ import { LoginPage } from "./marketing/pages/LoginPage";
 import { RegisterPage } from "./register/pages/RegisterPage";
 import { SystemMapPage } from "./system-map/SystemMapPage";
 
+/** Hub (legacy app) — engagement Activity / client look-inside live here until CT parity. */
+function HubApp() {
+  const authOff = isAuthDisabled();
+  if (authOff) return <App />;
+  return (
+    <AuthGate>
+      <App />
+    </AuthGate>
+  );
+}
+
 export function AppRouter() {
   const authOff = isAuthDisabled();
 
@@ -27,20 +38,17 @@ export function AppRouter() {
             <Route path="/Register" element={<Navigate to="/register" replace />} />
             {/* Machine System Map — isolated from Tower faces / prototype */}
             <Route path="/system-map" element={<SystemMapPage />} />
-            {/* Product face = CT prototype (Ant). Hub quarantined at /hub — not the default entry. */}
+            {/*
+              Product face = CT Ant (separate MPA at /prototype-ant).
+              Hub stays loadable for engagement-UI reference — do not steal /hub or
+              /activity into the CT redirect (that made the old app unreachable).
+            */}
             <Route path="/" element={<Navigate to="/prototype-ant" replace />} />
-            <Route
-              path="/hub"
-              element={
-                authOff ? (
-                  <App />
-                ) : (
-                  <AuthGate>
-                    <App />
-                  </AuthGate>
-                )
-              }
-            />
+            <Route path="/hub" element={<HubApp />} />
+            <Route path="/hub/*" element={<HubApp />} />
+            {/* Hub Activity is in-app tabs; /activity must still mount Hub, not CT. */}
+            <Route path="/activity" element={<HubApp />} />
+            <Route path="/activity/*" element={<HubApp />} />
             <Route path="*" element={<Navigate to="/prototype-ant" replace />} />
           </Routes>
         </DocsRegistryProvider>
