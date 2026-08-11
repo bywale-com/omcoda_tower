@@ -34,6 +34,7 @@ export function LoginModule({ onVerified }: LoginModuleProps) {
   const [sent, setSent] = useState(false);
   const [cooldown, setCooldown] = useState(0);
   const [failure, setFailure] = useState<VerifyFailure>(null);
+  const [sendError, setSendError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -67,9 +68,12 @@ export function LoginModule({ onVerified }: LoginModuleProps) {
     }
     setBusy(true);
     setFailure(null);
+    setSendError(null);
     try {
       await issueChallenge(normalized);
       setStep("verify");
+    } catch (err) {
+      setSendError(err instanceof Error ? err.message : String(err));
     } finally {
       setBusy(false);
     }
@@ -79,8 +83,11 @@ export function LoginModule({ onVerified }: LoginModuleProps) {
     if (cooldown > 0 || busy) return;
     setBusy(true);
     setFailure(null);
+    setSendError(null);
     try {
       await issueChallenge(email.trim().toLowerCase());
+    } catch (err) {
+      setSendError(err instanceof Error ? err.message : String(err));
     } finally {
       setBusy(false);
     }
@@ -120,6 +127,7 @@ export function LoginModule({ onVerified }: LoginModuleProps) {
     setChallengeId(null);
     setDebugCode(undefined);
     setFailure(null);
+    setSendError(null);
     setSent(false);
   }
 
@@ -168,18 +176,28 @@ export function LoginModule({ onVerified }: LoginModuleProps) {
                         onChange={(e) => {
                           setEmail(e.target.value);
                           setFailure(null);
+                          setSendError(null);
                         }}
                       />
                     </Form.Item>
                   </Form>
                 </Surface>
                 <Surface label="Send code">
-                  <Button type="primary" htmlType="submit" disabled={!email.trim() || busy}>
+                  <Button type="primary" htmlType="submit" disabled={!email.trim() || busy} loading={busy}>
                     Send code
                   </Button>
                 </Surface>
                 {failure === "unknown-email" ? (
                   <Alert type="error" message={FAILURE_COPY["unknown-email"]} style={{ marginTop: 12 }} />
+                ) : null}
+                {sendError ? (
+                  <Alert
+                    type="error"
+                    showIcon
+                    style={{ marginTop: 12 }}
+                    message="Could not send code"
+                    description={sendError}
+                  />
                 ) : null}
               </form>
             ) : (
@@ -205,9 +223,18 @@ export function LoginModule({ onVerified }: LoginModuleProps) {
                 {debugCode ? (
                   <Hint>Stand-in code (no mailbox): {debugCode}</Hint>
                 ) : null}
+                {sendError ? (
+                  <Alert
+                    type="error"
+                    showIcon
+                    style={{ marginBottom: 12 }}
+                    message="Could not resend code"
+                    description={sendError}
+                  />
+                ) : null}
                 <Space wrap style={{ marginTop: 12 }}>
                   <Surface label="Verify">
-                    <Button type="primary" htmlType="submit" disabled={!code.trim() || busy}>
+                    <Button type="primary" htmlType="submit" disabled={!code.trim() || busy} loading={busy}>
                       Verify
                     </Button>
                   </Surface>
