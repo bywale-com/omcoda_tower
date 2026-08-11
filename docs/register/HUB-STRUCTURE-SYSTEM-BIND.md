@@ -147,6 +147,131 @@ Do not start with Ant layout. Order:
 
 ---
 
+## Affordances this change makes possible
+
+Outcome sentences only — what a person can **view** or **do** once Hub structures bind the machine spine (richer rows/fields + projection). Not an implementation plan.  
+**Honesty rule baked in:** if the ledger has no rows for that firm/contact, you see empty — not Sarah.
+
+### Consultant — Board → client
+
+1. You can open a client from the Board and land in that contact’s workspace (`contact_records.id`), not a demo slug.
+2. You can open the same client from Contacts and get the same workspace.
+3. You can filter the Board by phase (silent / in-motion / meeting-ready / halted) against real halt + meeting + motion state.
+4. You can search the Board and only match people in this firm’s book.
+5. You can see today’s booked meetings on the Board from `meeting_booked`.
+6. You can halt one contact’s outreach and see that halt on their workspace.
+7. You can halt the whole firm book and see every contact treated as halted.
+8. You can lift a halt and watch outreach become eligible again.
+9. You can click “View in Activity” (or equivalent) from a Board phase signal and land on the **exact** engagement/attempt node, not just the Engagement tab.
+10. You can open a fresh provisioned firm and see an empty Board — proving the book is yours.
+
+### Consultant — Brief
+
+11. You can read a Client Brief whose name, email, phone, and pathway facts come from this contact’s record and writebacks.
+12. You can see pathway / status / expiry-style identity fields when those facts exist on the contact — and blanks when they don’t.
+13. You can read an Overview / Pathway / Engagement-history / Tower-observation narrative composed from machine state, not Sarah copy.
+14. You can see a live nudge / missing-fact briefing block when `missing_fact_signals` (or equivalent) exist for that contact.
+15. You can open Accepted terms for the licensee context of this firm.
+
+### Consultant — Information
+
+16. You can open an Information tab on the client and view a structured profile table (name, pathway, status, CRS, work permit, days in system, key-value facts).
+17. You can see profile fields update after a contact answers a fact (writeback lands → Information reflects it).
+18. You can see reachability / cohort / eligibility verdicts when those rows exist for the contact.
+19. You can tell which facts are still missing because the Information surface stays sparse instead of inventing demo profile rows.
+
+### Consultant — CRS History
+
+20. You can open a History tab and see CRS (or eligibility score) points over time when writebacks recorded them.
+21. You can scrub a CRS history control to a past point in time and see the score at that moment.
+22. You can view CRS stats (score, draw threshold, permit days, days in system) for the selected scrub point.
+23. You can view a CRS-vs-threshold chart for that contact when enough points exist.
+24. You can open History on a contact with no score history and see empty — not a fake scrubber series.
+
+### Consultant — Activity (chronology)
+
+25. You can open Activity and see a dual-pane engagement list + timeline for **this** contact only.
+26. You can see sequence / attempt / channel / form-visit / escalation / event rows derived from `engagement_records` + `active_attempts`.
+27. You can see sent / delivered / opened / clicked-style signal icons when `messaging_events` (or attempt state) recorded those milestones.
+28. You can see form-visit rows when inbound form events were written for the contact.
+29. You can expand reasoning / criteria / outcome lines on a row when the attempt fired with criteria payload.
+30. You can see an escalation wait window and what the machine was waiting on.
+31. You can scroll the list and timeline in sync and resize the splitter.
+32. You can zoom the timeline (week / day / hour-class resolution) to forensic detail.
+33. You can jump the timeline to Today.
+34. You can read a legend that means Historical / Active / Armed / Waiting / Attempts against real attempt status.
+35. You can open Activity with zero engagement rows and see an empty chronology.
+
+### Consultant — Node inspect + replay (look-inside)
+
+36. You can click an Activity list row or timeline marker and open a side inspector for that node.
+37. You can press Esc or use prev/next to move between related nodes in the inspector.
+38. You can switch Overview vs Metadata inside the inspector.
+39. You can view a milestone rail (sent → delivered → opened → …) for that touchpoint from real messaging/attempt state.
+40. You can view the decision and thought/criteria chain that caused that node to fire (when payload carried it).
+41. You can view forensic metadata: sequence id, touchpoint/cell id, channel, status, linked attempt / run ids.
+42. You can replay the **exact email** that was sent (from / to / subject / body) because outbound content was persisted.
+43. You can replay the **exact SMS** that was sent (body + thread context) from persisted outbound content.
+44. You can open form-channel replay and see the form fields / capture session when a form visit was recorded.
+45. You can see reply / follow-up thread items around a send when inbound replies were written to the ledger.
+46. You can refuse to show seed Sarah/Marcus email HTML when no outbound content exists for that node.
+
+### Consultant — Meetings & facts bridge
+
+47. You can book a meeting and later see it on Meetings and on the Board today strip.
+48. You can open a meeting-ready client and see Brief / Information informed by the same contact + writebacks.
+49. You can answer a contact fact (portal or desk) and later see that answer in Meetings live brief and Information.
+
+### Operator — Agents (engagement templates)
+
+50. You can create a new engagement template and save steps that persist as `sequence_template` / bindings for the firm.
+51. You can edit attempt criteria, channel order, cohort scoring, metrics thresholds, and phase order and have those rules drive the tick worker.
+52. You can launch / enroll contacts onto a template and create real `enrollment` + `active_attempts` rows.
+53. You can open an Agent’s Contacts tab and see who is enrolled on that template (or honest empty).
+54. You can open an Agent’s Activity tab and see runs/sends for that template (or honest empty).
+55. You can open linked automations from an agent and see which workflows are actually bound — names and status, not a count badge only.
+56. You can reorder or insert steps in the sequence editor and have Save write the cells the send path will use.
+57. You can author email/task step copy that later appears in client Activity replay when that step sends.
+
+### Operator — Automations
+
+58. You can build a workflow graph and Save it into `workflow.graph` for the firm (not a browser-only seed store).
+59. You can Activate a workflow and materialize `workflow_trigger` rows the cascade/tick actually dispatches.
+60. You can open Runs and see `workflow_run` history for that automation.
+61. You can reorder the eligibility pipeline and have faceless re-eval use that order.
+62. You can configure trigger kinds (event / schedule / manual / webhook / constant) that the machine can fire.
+63. You can inspect a node’s run status after a manual or scheduled fire.
+64. You can stop / pause an active workflow and see new fires cease.
+
+### Operator ↔ Consultant cinch (same spine)
+
+65. You can author a sequence as operator, enroll a contact, and as consultant see that contact’s Activity fill with real sends/windows.
+66. You can change attempt criteria as operator and later see different `window_fired` / escalation behavior on the consultant Activity for open attempts.
+67. You can activate an automation that reacts to a fact writeback and see the resulting motion/enrollment on the Board.
+68. You can halt as consultant and see the worker skip sends for that contact while the halt row stands.
+
+### Contact desk
+
+69. You can redeem an access link and land as that contact (not a demo contact id).
+70. You can answer a requested fact and know it wrote `fact_writebacks` the consultant Information/Brief will read.
+71. You can visit a form touchpoint and have that visit appear on the consultant Activity / form replay when recorded.
+
+### Proof / empty honesty (product trust)
+
+72. You can provision Firm B, upload no book, and see every Client Data tab empty.
+73. You can upload two contacts and see only those two on Board / Contacts.
+74. You can run the worker against an enrolled contact and watch Activity gain rows without refreshing demo seeds.
+75. You can compare two firms and never see Firm A’s engagement rows inside Firm B’s client workspace.
+76. You can trust that if replay shows an email body, that body is what was sent (or dry-run staged) — not plant copy.
+
+### Explicitly not claimed by this bind alone
+
+- You cannot cold-score strangers from public databases (out of Core Function).
+- You cannot treat Escrow / Meta commercial desks as live ledgers while they remain deferred stand-ins.
+- You cannot get Hub’s full editor chrome (A/B rail, AI bootstrap, Share) for free from table bind — those are UI-depth follow-ons after data ownership is real.
+
+---
+
 ## Direct answers (systems analyst checklist)
 
 | # | Question | Answer |
