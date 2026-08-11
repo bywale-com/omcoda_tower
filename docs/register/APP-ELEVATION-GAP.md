@@ -72,6 +72,8 @@ Same class of gap is expected (not yet fully audited) in **Agents / Automations 
 
 **Already real (insufficient alone):** firm bind spine, authored cells, `meeting_booked`, worker tick. Those do not replace missing engagement UI.
 
+**Map + Pass A:** See `PLACEHOLDER-REAL-MAP.md` — consultant Board / Engagement / Meetings rewired off Sarah seeds to `contact_records` / `engagement_records` / `meeting_booked` (empty-or-personalized). Operator DEMO_FIRMS indexes = Pass B.
+
 ---
 
 ## Pass posture
