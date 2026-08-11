@@ -7,9 +7,10 @@ import {
   FileTextOutlined,
   LoginOutlined,
 } from "@ant-design/icons";
-import { getContact } from "../../../data/contacts";
+import { useAuth } from "../../../auth/AuthContext";
 import { peekActiveFirmId, wireFirmId, wirePorts } from "../../../wire";
 import { Surface } from "../chrome";
+import { useViewAs } from "../viewAsContext";
 import { BoardModule } from "./BoardModule";
 import { ContactsModule } from "./ContactsModule";
 import { HaltOutreachModal } from "./HaltOutreachModal";
@@ -18,7 +19,6 @@ import { MeetingsModule } from "./MeetingsModule";
 import { PreparedModule } from "./PreparedModule";
 import {
   DEFAULT_LICENSEE,
-  FIRM_NAME,
   nowStamp,
   type ConsultantModule,
   type HaltRetention,
@@ -36,14 +36,11 @@ const MENU_ITEMS: { key: ConsultantModule; icon: ReactNode; label: string }[] = 
   { key: "Login", icon: <LoginOutlined />, label: "Login" },
 ];
 
-function contactListHasClient(id: string): boolean {
-  return Boolean(getContact(id)?.clientId) ||
-    ["sarah", "marcus", "mark", "aisha", "priya", "james", "daniel", "fatima", "lin"].includes(id);
-}
-
 export function ConsultantAntScene() {
+  const { user } = useAuth();
+  const { selected } = useViewAs();
   const [module, setModule] = useState<ConsultantModule>("Board");
-  const [activeClientId, setActiveClientId] = useState("sarah");
+  const [activeClientId, setActiveClientId] = useState<string | null>(null);
   const [activeContactId, setActiveContactId] = useState<string | null>(null);
   const [bookHalted, setBookHalted] = useState(false);
   const [bookHalt, setBookHalt] = useState<HaltRetention | null>(null);
@@ -58,6 +55,11 @@ export function ConsultantAntScene() {
   const [licensee, setLicensee] = useState(DEFAULT_LICENSEE);
   const [forceAcceptOpen, setForceAcceptOpen] = useState(false);
 
+  const firmLabel =
+    selected?.firmName?.trim() ||
+    (user?.firmId ? `Firm ${user.firmId.slice(0, 8)}…` : null) ||
+    (peekActiveFirmId() ? `Firm ${peekActiveFirmId()!.slice(0, 8)}…` : "Firm desk");
+
   const onHardInputChange = useCallback(
     (state: { bookAuthorized: boolean; termsAccepted: boolean; licensee: string }) => {
       setBookAuthorized(state.bookAuthorized);
@@ -67,7 +69,27 @@ export function ConsultantAntScene() {
     [],
   );
 
-  /** Hydrate UI halt state for the session firm (not demo Cedar). */
+  /** When book loads, optionally select first contact; keep prior UUID if still present. */
+  useEffect(() => {
+    let cancelled = false;
+    void wirePorts.machineApi
+      .listContactRecords()
+      .then((contacts) => {
+        if (cancelled) return;
+        setActiveClientId((prev) => {
+          if (prev && contacts.some((c) => c.id === prev)) return prev;
+          return contacts[0]?.id ?? null;
+        });
+      })
+      .catch(() => {
+        if (!cancelled) setActiveClientId(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  /** Hydrate UI halt state for the session firm. */
   useEffect(() => {
     let cancelled = false;
     const firmId = peekActiveFirmId();
@@ -104,11 +126,12 @@ export function ConsultantAntScene() {
 
   async function confirmHalt() {
     const portScope = haltScope === "book" ? "firm-book" : "contact";
+    if (portScope === "contact" && !activeClientId) return;
     const firmId = wireFirmId();
     const record = await wirePorts.haltStore.commit({
       consultantId: `consultant-${firmId}`,
       firmId,
-      contactId: portScope === "contact" ? activeClientId : undefined,
+      contactId: portScope === "contact" ? activeClientId! : undefined,
       scope: portScope,
       reason: haltReason.trim() || undefined,
     });
@@ -121,7 +144,7 @@ export function ConsultantAntScene() {
     if (haltScope === "book") {
       setBookHalted(true);
       setBookHalt(retention);
-    } else {
+    } else if (activeClientId) {
       setHaltByContact((prev) => ({ ...prev, [activeClientId]: retention }));
     }
     setHaltModalOpen(false);
@@ -133,7 +156,7 @@ export function ConsultantAntScene() {
       await wirePorts.haltStore.lift(bookHalt.haltId);
       setBookHalted(false);
       setBookHalt(null);
-    } else {
+    } else if (activeClientId) {
       const contactHalt = haltByContact[activeClientId];
       if (contactHalt?.haltId) {
         await wirePorts.haltStore.lift(contactHalt.haltId);
@@ -143,14 +166,16 @@ export function ConsultantAntScene() {
       setBookHalted(false);
       setBookHalt(null);
     }
-    setHaltByContact((prev) => {
-      const next = { ...prev };
-      delete next[activeClientId];
-      return next;
-    });
+    if (activeClientId) {
+      setHaltByContact((prev) => {
+        const next = { ...prev };
+        delete next[activeClientId];
+        return next;
+      });
+    }
   }
 
-  function openHaltModal(clientId?: string) {
+  function openHaltModal(clientId?: string | null) {
     if (clientId) setActiveClientId(clientId);
     setHaltModalOpen(true);
   }
@@ -163,15 +188,11 @@ export function ConsultantAntScene() {
 
   function handleContactClick(contactId: string) {
     setActiveContactId(contactId);
-    const contact = getContact(contactId);
-    const clientId = contact?.clientId ?? (contactListHasClient(contactId) ? contactId : null);
-    if (clientId) setActiveClientId(clientId);
+    setActiveClientId(contactId);
   }
 
   const workspaceClientId =
-    module === "Contacts" && activeContactId && contactListHasClient(activeContactId)
-      ? getContact(activeContactId)?.clientId ?? activeContactId
-      : activeClientId;
+    module === "Contacts" && activeContactId ? activeContactId : activeClientId;
 
   return (
     <Layout style={{ height: "100%", minHeight: 0 }}>
@@ -182,7 +203,7 @@ export function ConsultantAntScene() {
               Firm desk
             </Text>
             <div style={{ fontWeight: 700, marginTop: 4 }} title="Firm identity in shell">
-              {FIRM_NAME}
+              {firmLabel}
             </div>
           </div>
           <Menu
@@ -256,6 +277,7 @@ export function ConsultantAntScene() {
         {module === "Meetings" ? (
           <MeetingsModule
             initialSelectedId={meetingsSelectId}
+            firmLabel={firmLabel}
             onBackToBoard={() => setModule("Board")}
           />
         ) : null}

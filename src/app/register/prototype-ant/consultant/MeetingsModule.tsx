@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Button,
   Empty,
@@ -12,38 +12,113 @@ import {
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { Hint, ModulePage, Surface } from "../chrome";
-import { selectMeetingReadyClientIds, useMeetings, type LiveBriefMeeting } from "./meetingsData";
 import { hydrateFactsFromMachine, mergeFactsPreferMachine } from "../../prototype/shared/meetingsStore";
-import { FIRM_NAME } from "./shared";
+import type { LiveBriefFact } from "../../prototype/shared/meetingsStore";
+import { useWireTick, wirePorts } from "../../../wire";
+import { contactDisplayName } from "./shared";
 
 const { Text, Title, Paragraph } = Typography;
 
+type MeetingRow = {
+  id: string;
+  clientId: string;
+  contactName: string;
+  time: string;
+  status: "Upcoming" | "Tentative";
+  phase: string;
+  purpose: string;
+  overview: string;
+  pathway: string;
+  observation: string;
+  bookedAt: string;
+  slot: string | null;
+  source: string;
+  facts?: LiveBriefFact[];
+  asOf?: string;
+};
+
 type MeetingsModuleProps = {
   initialSelectedId?: string | null;
+  firmLabel?: string;
   onBackToBoard?: () => void;
 };
 
+function formatMeetingTime(bookedAt: string, slot: string | null): string {
+  if (slot?.trim()) return slot.trim();
+  const d = new Date(bookedAt);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleString([], {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export function MeetingsModule({
   initialSelectedId = null,
+  firmLabel = "Firm desk",
   onBackToBoard,
 }: MeetingsModuleProps) {
   const [selectedId, setSelectedId] = useState<string | null>(initialSelectedId);
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
-  const [demoEmpty, setDemoEmpty] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [hydratedFacts, setHydratedFacts] = useState<LiveBriefMeeting["facts"]>(null);
+  const [hydratedFacts, setHydratedFacts] = useState<LiveBriefFact[] | null>(null);
   const [cascadeNote, setCascadeNote] = useState<string | null>(null);
   const [hydratedAsOf, setHydratedAsOf] = useState<string | null>(null);
-  const meetings = useMeetings();
+  const [rows, setRows] = useState<MeetingRow[]>([]);
+  const [loaded, setLoaded] = useState(false);
+  const wireTick = useWireTick();
 
   useEffect(() => {
-    if (initialSelectedId) {
-      setSelectedId(initialSelectedId);
-      setDemoEmpty(false);
-    }
+    if (initialSelectedId) setSelectedId(initialSelectedId);
   }, [initialSelectedId]);
 
-  const rows = demoEmpty ? [] : meetings;
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const [mtg, contacts] = await Promise.all([
+          wirePorts.machineApi.listMeetings(),
+          wirePorts.machineApi.listContactRecords().catch(() => []),
+        ]);
+        if (cancelled) return;
+        const names = new Map(
+          contacts.map((c) => [c.id, contactDisplayName(c)] as const),
+        );
+        setRows(
+          mtg.meetings.map((m) => ({
+            id: m.id,
+            clientId: m.contactId,
+            contactName: names.get(m.contactId) ?? m.contactId.slice(0, 8),
+            time: formatMeetingTime(m.bookedAt, m.slot),
+            status: "Upcoming" as const,
+            phase: "Meeting-ready",
+            purpose: m.source ? `Booked · ${m.source}` : "Booked meeting",
+            overview: m.consultantName
+              ? `Booked with ${m.consultantName}.`
+              : "Meeting booked under this firm.",
+            pathway: "From meeting_booked — Live brief facts hydrate from write-backs when present.",
+            observation: "Machine meeting row — no seed scenery.",
+            bookedAt: m.bookedAt,
+            slot: m.slot,
+            source: m.source,
+          })),
+        );
+        setLoaded(true);
+      } catch {
+        if (!cancelled) {
+          setRows([]);
+          setLoaded(true);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [wireTick]);
+
   const selected = rows.find((m) => m.id === selectedId) ?? null;
 
   useEffect(() => {
@@ -79,8 +154,21 @@ export function MeetingsModule({
       : (selected?.facts ?? []);
   const briefAsOf = hydratedAsOf ?? selected?.asOf;
 
-  // Status is its own column — never jam Tag beside Contact in a narrow cell (SPACING.md).
-  const listColumns: ColumnsType<LiveBriefMeeting> = [
+  const dayBuckets = useMemo(() => {
+    const buckets = new Map<string, MeetingRow[]>();
+    for (const row of rows) {
+      const d = new Date(row.bookedAt);
+      const key = Number.isNaN(d.getTime())
+        ? "Unscheduled"
+        : d.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" });
+      const list = buckets.get(key) ?? [];
+      list.push(row);
+      buckets.set(key, list);
+    }
+    return [...buckets.entries()];
+  }, [rows]);
+
+  const listColumns: ColumnsType<MeetingRow> = [
     {
       title: "Contact",
       dataIndex: "contactName",
@@ -99,11 +187,11 @@ export function MeetingsModule({
       dataIndex: "status",
       key: "status",
       width: 104,
-      render: (status: LiveBriefMeeting["status"]) => (
+      render: (status: MeetingRow["status"]) => (
         <Tag color={status === "Tentative" ? "default" : "processing"}>{status}</Tag>
       ),
     },
-    { title: "Time", dataIndex: "time", key: "time", width: 118, ellipsis: true },
+    { title: "Time", dataIndex: "time", key: "time", width: 140, ellipsis: true },
     {
       title: "Phase",
       dataIndex: "phase",
@@ -113,12 +201,12 @@ export function MeetingsModule({
     },
   ];
 
-  function copyBrief(meeting: LiveBriefMeeting, factsOverride?: LiveBriefMeeting["facts"]) {
+  function copyBrief(meeting: MeetingRow, factsOverride?: LiveBriefFact[]) {
     const facts = factsOverride ?? meeting.facts ?? [];
     const lines = [
       `${meeting.contactName} · ${meeting.purpose}`,
-      meeting.startsIn ? `Starts: ${meeting.startsIn}` : `Time: ${meeting.time}`,
-      briefAsOf ?? meeting.asOf ?? "",
+      `Time: ${meeting.time}`,
+      briefAsOf ?? "",
       "",
       ...facts.map((f) => `${f.label}: ${f.value} (${f.signal})`),
       "",
@@ -128,12 +216,6 @@ export function MeetingsModule({
     setCopied(true);
     message.success("Brief copied");
     window.setTimeout(() => setCopied(false), 1600);
-  }
-
-  function calendarDayRows(day: string) {
-    return rows.filter(
-      (r) => r.time.startsWith(day) || (day === "Next week" && r.time.includes("Next")),
-    );
   }
 
   const indexPane = (
@@ -154,7 +236,7 @@ export function MeetingsModule({
         surface="Meetings"
         extra={
           <Text type="secondary" style={{ fontSize: 12 }}>
-            {FIRM_NAME} · {rows.length} booked
+            {firmLabel} · {rows.length} booked
           </Text>
         }
       >
@@ -170,25 +252,14 @@ export function MeetingsModule({
                 ]}
               />
             </Surface>
-            <Button
-              size="small"
-              onClick={() => {
-                setDemoEmpty((e) => !e);
-                setSelectedId(null);
-              }}
-            >
-              {demoEmpty ? "Show booked" : "Empty state"}
-            </Button>
           </Space>
 
-          {rows.length === 0 ? (
+          {loaded && rows.length === 0 ? (
             <Empty
               description={
                 <Space direction="vertical">
                   <Text strong>No meetings booked yet</Text>
-                  <Hint>
-                    Nothing booked under bound packs. Board still shows book inhabit — receive waits on contact booking.
-                  </Hint>
+                  <Hint>Nothing in meeting_booked for this firm.</Hint>
                 </Space>
               }
             >
@@ -198,39 +269,30 @@ export function MeetingsModule({
             </Empty>
           ) : viewMode === "calendar" ? (
             <Space direction="vertical" style={{ width: "100%" }}>
-              {["Thu", "Fri", "Next week"].map((day) => {
-                const dayRows = calendarDayRows(day);
-                return (
-                  <div key={day}>
-                    <Text type="secondary" strong style={{ fontSize: 11, textTransform: "uppercase" }}>
-                      {day}
-                    </Text>
-                    {dayRows.length === 0 ? (
-                      <Text type="secondary" style={{ display: "block", padding: "6px 0" }}>
-                        —
+              {dayBuckets.map(([day, dayRows]) => (
+                <div key={day}>
+                  <Text type="secondary" strong style={{ fontSize: 11, textTransform: "uppercase" }}>
+                    {day}
+                  </Text>
+                  {dayRows.map((row) => (
+                    <Button
+                      key={row.id}
+                      block
+                      type={selectedId === row.id ? "primary" : "default"}
+                      style={{ marginTop: 4, textAlign: "left", height: "auto" }}
+                      onClick={() => setSelectedId(row.id)}
+                      data-register-surface="Meeting row"
+                    >
+                      <div>{row.contactName}</div>
+                      <Text type="secondary" style={{ fontSize: 11 }}>
+                        {row.status} · {row.time} · {row.phase}
                       </Text>
-                    ) : (
-                      dayRows.map((row) => (
-                        <Button
-                          key={row.id}
-                          block
-                          type={selectedId === row.id ? "primary" : "default"}
-                          style={{ marginTop: 4, textAlign: "left", height: "auto" }}
-                          onClick={() => setSelectedId(row.id)}
-                          data-register-surface="Meeting row"
-                        >
-                          <div>{row.contactName}</div>
-                          <Text type="secondary" style={{ fontSize: 11 }}>
-                            {row.status} · {row.time} · {row.phase}
-                          </Text>
-                        </Button>
-                      ))
-                    )}
-                  </div>
-                );
-              })}
+                    </Button>
+                  ))}
+                </div>
+              ))}
             </Space>
-          ) : (
+          ) : rows.length > 0 ? (
             <Table
               size="small"
               columns={listColumns}
@@ -246,7 +308,7 @@ export function MeetingsModule({
                 },
               })}
             />
-          )}
+          ) : null}
         </Space>
       </ModulePage>
     </div>
@@ -287,13 +349,7 @@ export function MeetingsModule({
           <Space style={{ width: "100%", justifyContent: "space-between" }} wrap>
             <Space>
               <Text strong>Live brief</Text>
-              {selected.startsIn ? (
-                <Surface label="Starts in">
-                  <Tag color="processing">Starts {selected.startsIn}</Tag>
-                </Surface>
-              ) : (
-                <Text type="secondary">{selected.time}</Text>
-              )}
+              <Text type="secondary">{selected.time}</Text>
             </Space>
             <Space>
               {briefAsOf ? (
@@ -314,11 +370,6 @@ export function MeetingsModule({
               {selected.contactName}
             </Title>
             <Text type="secondary">{selected.purpose}</Text>
-            {selected.highlight ? (
-              <Tag color="processing" style={{ marginTop: 8 }}>
-                {selected.highlight}
-              </Tag>
-            ) : null}
           </div>
 
           {briefFacts.length > 0 ? (
@@ -346,7 +397,9 @@ export function MeetingsModule({
                 </Text>
               ) : null}
             </div>
-          ) : null}
+          ) : (
+            <Empty description="No fact write-backs for this contact yet" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          )}
 
           <div>
             <Text strong>Overview</Text>
@@ -357,7 +410,7 @@ export function MeetingsModule({
             <Paragraph style={{ marginTop: 8 }}>{selected.pathway}</Paragraph>
           </div>
           <div>
-            <Text strong>Tower&apos;s observation</Text>
+            <Text strong>Observation</Text>
             <Paragraph style={{ marginTop: 8 }}>{selected.observation}</Paragraph>
           </div>
         </Space>

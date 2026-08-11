@@ -58,9 +58,9 @@ function statusColor(status: AgentDefinition["status"]) {
 }
 
 const emptyCopy: Record<Exclude<AgentEditorTab, "editor" | "settings">, string> = {
-  contacts: "Contacts enrolled in or eligible for this agent — enrollment and suppression rules will live here.",
-  activity: "Live runs, delivery events, and escalation outcomes for this agent.",
-  report: "Reach, reply, and conversion reporting for this agent across channels.",
+  contacts: "No contacts enrolled for this agent yet.",
+  activity: "No activity for this agent yet.",
+  report: "No report data yet — no enrollments or delivery events.",
 };
 
 function stepsToTemplateCells(steps: AgentStep[]): unknown[] {

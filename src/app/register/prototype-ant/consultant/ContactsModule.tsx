@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { Alert, Button, Input, Space, Splitter, Table, Tag, Typography } from "antd";
+import { Alert, Button, Empty, Input, Space, Splitter, Table, Tag, Typography } from "antd";
 import { wireFirmId, wirePorts } from "../../../wire";
 import type { ColumnsType } from "antd/es/table";
-import { getContact } from "../../../data/contacts";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { ClientWorkspace } from "./ClientWorkspace";
-import { selectMeetingReadyClientIds, useMeetings } from "./meetingsData";
 import {
   PHASE_LABEL,
+  contactDisplayName,
   phaseTagColor,
   resolveWorkspacePhase,
   type HaltRetention,
@@ -21,14 +20,7 @@ type ContactRow = {
   name: string;
   phone: string;
   email?: string;
-  clientId?: string;
-  clientName?: string;
 };
-
-function contactListHasClient(id: string): boolean {
-  return Boolean(getContact(id)?.clientId) ||
-    ["sarah", "marcus", "mark", "aisha", "priya", "james", "daniel", "fatima", "lin"].includes(id);
-}
 
 type ContactsModuleProps = {
   activeContactId: string | null;
@@ -63,18 +55,17 @@ export function ContactsModule({
   const [bookRows, setBookRows] = useState<ContactRow[]>([]);
   const [bookError, setBookError] = useState<string | null>(null);
   const [bookFirmId, setBookFirmId] = useState<string | null>(null);
-  const meetings = useMeetings();
-  const meetingReadyClientIds = useMemo(
-    () => selectMeetingReadyClientIds(meetings),
-    [meetings],
-  );
+  const [meetingReadyIds, setMeetingReadyIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     let cancelled = false;
     void (async () => {
       try {
         const firmId = wireFirmId();
-        const contacts = await wirePorts.machineApi.listContactRecords();
+        const [contacts, mtg] = await Promise.all([
+          wirePorts.machineApi.listContactRecords(),
+          wirePorts.machineApi.listMeetings().catch(() => ({ meetings: [] as Array<{ contactId: string }> })),
+        ]);
         if (cancelled) return;
         setBookFirmId(firmId);
         setBookError(null);
@@ -82,12 +73,12 @@ export function ContactsModule({
           contacts.map((c) => ({
             key: c.id,
             id: c.id,
-            name: c.name?.trim() || c.email || c.phone || c.id,
+            name: contactDisplayName(c),
             phone: c.phone ?? "",
             email: c.email ?? undefined,
-            clientId: c.id,
           })),
         );
+        setMeetingReadyIds(new Set(mtg.meetings.map((m) => m.contactId)));
       } catch (err) {
         if (cancelled) return;
         setBookFirmId(null);
@@ -114,6 +105,11 @@ export function ContactsModule({
     );
   }, [search, bookRows]);
 
+  const activeRow = bookRows.find((r) => r.id === activeContactId) ?? null;
+  const showWorkspace = Boolean(
+    workspaceClientId && bookRows.some((r) => r.id === workspaceClientId),
+  );
+
   const columns: ColumnsType<ContactRow> = [
     {
       title: "Contact",
@@ -136,16 +132,12 @@ export function ContactsModule({
       key: "phase",
       width: 120,
       render: (_: unknown, row) => {
-        const phase = resolveWorkspacePhase(row.id);
+        const halt = haltForClient(row.id);
+        const phase = resolveWorkspacePhase(row.id, Boolean(halt), meetingReadyIds);
         return <Tag color={phaseTagColor(phase)}>{PHASE_LABEL[phase]}</Tag>;
       },
     },
   ];
-
-  const showWorkspace = Boolean(
-    workspaceClientId &&
-      (activeContactId === workspaceClientId || contactListHasClient(workspaceClientId)),
-  );
 
   const indexPane = (
     <div style={{ height: "100%", overflow: "auto" }}>
@@ -216,7 +208,7 @@ export function ContactsModule({
               type="info"
               showIcon
               message="This firm's book is empty"
-              description="Upload a contact list as operator (Book readiness) for this firm — you will not see Cedar's contacts here."
+              description="Upload a contact list as operator (Book readiness) for this firm."
             />
           ) : (
             <Table
@@ -234,11 +226,6 @@ export function ContactsModule({
               })}
             />
           )}
-          {meetingReadyClientIds.length ? (
-            <Text type="secondary" style={{ fontSize: 12 }}>
-              Meeting-ready in local meetings store: {meetingReadyClientIds.length}
-            </Text>
-          ) : null}
         </Space>
       </ModulePage>
     </div>
@@ -250,15 +237,15 @@ export function ContactsModule({
         {indexPane}
       </Splitter.Panel>
       <Splitter.Panel min={280}>
-        {activeContactId && !contactListHasClient(activeContactId) && !bookRows.some((r) => r.id === activeContactId) ? (
-          <div style={{ flex: 1, height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Hint>Contact not yet on Board — select a sequenced contact to open Client workspace</Hint>
-          </div>
-        ) : showWorkspace ? (
+        {showWorkspace && workspaceClientId ? (
           <ClientWorkspace
-            clientId={workspaceClientId!}
-            halt={haltForClient(workspaceClientId!)}
+            clientId={workspaceClientId}
+            contactName={activeRow?.name}
+            contactEmail={activeRow?.email ?? null}
+            contactPhone={activeRow?.phone || null}
+            halt={haltForClient(workspaceClientId)}
             licenseeLabel={licenseeLabel}
+            meetingReady={meetingReadyIds.has(workspaceClientId)}
             activityKick={activityKick}
             onHaltOutreach={onHaltOutreach}
             onLiftHalt={onLiftHalt}

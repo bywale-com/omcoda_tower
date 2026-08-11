@@ -1,5 +1,6 @@
 /**
  * Oversight — fleet health Table, unhealthy count, firm row selection.
+ * Fleet from real/session firms or empty — never DEMO_FIRMS Healthy theater.
  */
 import { useEffect, useMemo, useState } from "react";
 import { Alert, Select, Space, Table } from "antd";
@@ -8,15 +9,22 @@ import {
   loadFleetHealthRows,
   type FleetHealthRow,
 } from "../../prototype/operator/operatorWireHelpers";
+import { useWireTick } from "../../../wire";
 import { ModulePage, Surface } from "../chrome";
-import { DEMO_FIRMS } from "./operatorAntData";
 import { chipTone, StatusTag } from "./operatorAntTags";
+import {
+  firmDisplayName,
+  resolveOperatorFirms,
+  type OperatorFirm,
+} from "./operatorFirmIndex";
 
 function isUnhealthy(row: FleetHealthRow) {
   return row.deliverability !== "Healthy" || row.sequence !== "Healthy" || row.engagement !== "Healthy";
 }
 
 export function OversightModule() {
+  const tick = useWireTick();
+  const [firms, setFirms] = useState<OperatorFirm[]>([]);
   const [fleetRows, setFleetRows] = useState<FleetHealthRow[]>([]);
   const [sortBy, setSortBy] = useState("Last run");
   const [healthFilter, setHealthFilter] = useState("All signals");
@@ -24,29 +32,32 @@ export function OversightModule() {
 
   useEffect(() => {
     let cancelled = false;
-    void loadFleetHealthRows(DEMO_FIRMS).then((rows) => {
+    void resolveOperatorFirms().then(async (nextFirms) => {
+      if (cancelled) return;
+      setFirms(nextFirms);
+      const rows = nextFirms.length === 0 ? [] : await loadFleetHealthRows(nextFirms);
       if (!cancelled) setFleetRows(rows);
     });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [tick]);
 
   const rows = useMemo(() => {
     let list = [...fleetRows];
     if (healthFilter === "Unhealthy only") list = list.filter(isUnhealthy);
     if (sortBy === "Firm name") {
       list.sort((a, b) => {
-        const fa = DEMO_FIRMS.find((f) => f.id === a.firmId)!.name;
-        const fb = DEMO_FIRMS.find((f) => f.id === b.firmId)!.name;
+        const fa = firmDisplayName(firms, a.firmId);
+        const fb = firmDisplayName(firms, b.firmId);
         return fa.localeCompare(fb);
       });
     }
     return list;
-  }, [sortBy, healthFilter, fleetRows]);
+  }, [sortBy, healthFilter, fleetRows, firms]);
 
   const unhealthyCount = fleetRows.filter(isUnhealthy).length;
-  const selected = selectedId ? DEMO_FIRMS.find((f) => f.id === selectedId) : null;
+  const selected = selectedId ? firms.find((f) => f.id === selectedId) : null;
   const selectedRow = selectedId ? fleetRows.find((r) => r.firmId === selectedId) : null;
 
   const columns: ColumnsType<FleetHealthRow> = [
@@ -54,11 +65,12 @@ export function OversightModule() {
       title: "Firm",
       key: "firm",
       render: (_, row) => {
-        const firm = DEMO_FIRMS.find((f) => f.id === row.firmId)!;
+        const name = firmDisplayName(firms, row.firmId);
+        const stage = firms.find((f) => f.id === row.firmId)?.stage ?? "—";
         return (
           <span data-register-surface="Firm row">
-            <strong>{firm.name}</strong>
-            <div style={{ fontSize: 11, color: "#888" }}>{firm.stage}</div>
+            <strong>{name}</strong>
+            <div style={{ fontSize: 11, color: "#888" }}>{stage}</div>
           </span>
         );
       },
@@ -113,6 +125,7 @@ export function OversightModule() {
           columns={columns}
           dataSource={rows}
           pagination={false}
+          locale={{ emptyText: "No firms in fleet — provision or select a session firm." }}
           onRow={(row) => ({
             onClick: () => setSelectedId(row.firmId),
             style: { cursor: "pointer", background: row.firmId === selectedId ? "#e6f4ff" : undefined },

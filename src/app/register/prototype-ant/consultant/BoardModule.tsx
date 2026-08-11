@@ -1,10 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, Input, Segmented, Space, Splitter, Table, Tag, Typography } from "antd";
+import { Button, Empty, Input, Segmented, Space, Splitter, Table, Tag, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { clientList } from "../../../data/clients";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { ClientWorkspace } from "./ClientWorkspace";
-import { selectConsultantTodayMeetings, selectMeetingReadyClientIds, useMeetings } from "./meetingsData";
 import { useWireTick, wirePorts } from "../../../wire";
 import type {
   EligibilityResultRow,
@@ -14,26 +12,34 @@ import type {
 } from "../../../wire/machineTypes";
 import {
   PHASE_LABEL,
+  contactDisplayName,
   phaseTagColor,
   resolveWorkspacePhase,
+  type BookContact,
   type HaltRetention,
 } from "./shared";
 
 const { Text } = Typography;
 
+type MachineMeeting = {
+  id: string;
+  contactId: string;
+  bookedAt: string;
+  slot: string | null;
+};
+
 type BoardRow = {
   key: string;
   id: string;
   name: string;
+  email: string | null;
+  phone: string | null;
   phase: string;
-  runtime: string;
-  reachability: string;
-  lastTouch: string;
   halted: boolean;
 };
 
 type BoardModuleProps = {
-  activeClientId: string;
+  activeClientId: string | null;
   onClientSelect: (id: string) => void;
   haltByContact: Record<string, HaltRetention>;
   bookHalt: HaltRetention | null;
@@ -50,6 +56,24 @@ type BoardModuleProps = {
   onSeeAllMeetings: () => void;
   onOpenAcceptedTerms?: () => void;
 };
+
+function isToday(iso: string): boolean {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return false;
+  const now = new Date();
+  return (
+    d.getFullYear() === now.getFullYear() &&
+    d.getMonth() === now.getMonth() &&
+    d.getDate() === now.getDate()
+  );
+}
+
+function formatMeetingTime(m: MachineMeeting): string {
+  if (m.slot?.trim()) return m.slot.trim();
+  const d = new Date(m.bookedAt);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
 
 export function BoardModule({
   activeClientId,
@@ -72,12 +96,9 @@ export function BoardModule({
   const [search, setSearch] = useState("");
   const [sortNewest, setSortNewest] = useState(true);
   const wireTick = useWireTick();
-  const meetings = useMeetings();
-  const todayMeetings = useMemo(() => selectConsultantTodayMeetings(meetings), [meetings]);
-  const meetingReadyClientIds = useMemo(
-    () => selectMeetingReadyClientIds(meetings),
-    [meetings],
-  );
+  const [contacts, setContacts] = useState<BookContact[]>([]);
+  const [meetings, setMeetings] = useState<MachineMeeting[]>([]);
+  const [bookLoaded, setBookLoaded] = useState(false);
   const [eligibilityResults, setEligibilityResults] = useState<EligibilityResultRow[]>([]);
   const [signals, setSignals] = useState<SignalRow[]>([]);
   const [motionDecisions, setMotionDecisions] = useState<MotionDecisionRow[]>([]);
@@ -105,39 +126,86 @@ export function BoardModule({
     return () => {
       cancelled = true;
     };
-  }, [wireTick]);
+  }, [wireTick, activityKick]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const [book, mtg] = await Promise.all([
+          wirePorts.machineApi.listContactRecords(),
+          wirePorts.machineApi.listMeetings(),
+        ]);
+        if (cancelled) return;
+        setContacts(
+          book.map((c) => ({
+            id: c.id,
+            name: contactDisplayName(c),
+            email: c.email,
+            phone: c.phone,
+          })),
+        );
+        setMeetings(
+          mtg.meetings.map((m) => ({
+            id: m.id,
+            contactId: m.contactId,
+            bookedAt: m.bookedAt,
+            slot: m.slot,
+          })),
+        );
+        setBookLoaded(true);
+      } catch {
+        if (cancelled) return;
+        setContacts([]);
+        setMeetings([]);
+        setBookLoaded(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [wireTick, activityKick]);
+
+  const nameById = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const c of contacts) map.set(c.id, c.name);
+    return map;
+  }, [contacts]);
+
+  const meetingReadyClientIds = useMemo(
+    () => new Set(meetings.map((m) => m.contactId)),
+    [meetings],
+  );
+
+  const todayMeetings = useMemo(
+    () => meetings.filter((m) => isToday(m.bookedAt)),
+    [meetings],
+  );
 
   const haltForClient = (id: string): HaltRetention | null =>
     bookHalt ?? haltByContact[id] ?? null;
 
   const rows: BoardRow[] = useMemo(() => {
-    const list = clientList.map((client) => {
+    const list = contacts.map((client) => {
       const halt = haltForClient(client.id);
       const phase = resolveWorkspacePhase(client.id, Boolean(halt), meetingReadyClientIds);
-      const runtime =
-        client.reactivationPhase === "active"
-          ? "Active"
-          : client.reactivationPhase === "armed"
-            ? "Armed"
-            : "Idle";
-      const reachability =
-        !client.optedIn ? "Blocked" : client.status === "grey" ? "Unknown" : "Reachable";
       return {
         key: client.id,
         id: client.id,
         name: client.name,
+        email: client.email,
+        phone: client.phone,
         phase: PHASE_LABEL[phase],
-        runtime,
-        reachability,
-        lastTouch: client.id === "sarah" ? "Yesterday" : "Mon",
         halted: Boolean(halt),
       };
     });
     const filtered = search.trim()
       ? list.filter((r) => r.name.toLowerCase().includes(search.trim().toLowerCase()))
       : list;
-  return sortNewest ? filtered : [...filtered].reverse();
-  }, [search, sortNewest, haltByContact, bookHalt]);
+    return sortNewest ? filtered : [...filtered].reverse();
+  }, [contacts, search, sortNewest, haltByContact, bookHalt, meetingReadyClientIds]);
+
+  const activeContact = contacts.find((c) => c.id === activeClientId) ?? null;
 
   const columns: ColumnsType<BoardRow> = [
     {
@@ -171,25 +239,19 @@ export function BoardModule({
       ),
     },
     {
-      title: "Runtime",
-      dataIndex: "runtime",
-      key: "runtime",
-      width: 72,
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
       ellipsis: true,
+      render: (v: string | null) => v || "—",
     },
     {
-      title: "Reachability",
-      dataIndex: "reachability",
-      key: "reachability",
-      width: 100,
+      title: "Phone",
+      dataIndex: "phone",
+      key: "phone",
+      width: 120,
       ellipsis: true,
-    },
-    {
-      title: "Last touch",
-      dataIndex: "lastTouch",
-      key: "lastTouch",
-      width: 92,
-      ellipsis: true,
+      render: (v: string | null) => v || "—",
     },
   ];
 
@@ -257,13 +319,17 @@ export function BoardModule({
                   See all
                 </Button>
               </Space>
-              <Space wrap>
-                {todayMeetings.map((m) => (
-                  <Button key={m.id} size="small" onClick={() => onMeetingClick(m.id)}>
-                    {m.contactName} · {m.time}
-                  </Button>
-                ))}
-              </Space>
+              {todayMeetings.length === 0 ? (
+                <Text type="secondary">No meetings booked today</Text>
+              ) : (
+                <Space wrap>
+                  {todayMeetings.map((m) => (
+                    <Button key={m.id} size="small" onClick={() => onMeetingClick(m.id)}>
+                      {nameById.get(m.contactId) ?? m.contactId.slice(0, 8)} · {formatMeetingTime(m)}
+                    </Button>
+                  ))}
+                </Space>
+              )}
             </div>
           </Surface>
 
@@ -336,20 +402,31 @@ export function BoardModule({
             </Space>
           </Surface>
 
-          <Table
-            size="small"
-            columns={columns}
-            dataSource={rows}
-            pagination={false}
-            tableLayout="fixed"
-            onRow={(row) => ({
-              onClick: () => onClientSelect(row.id),
-              style: {
-                cursor: "pointer",
-                background: row.id === activeClientId ? "var(--ant-color-primary-bg)" : undefined,
-              },
-            })}
-          />
+          {bookLoaded && rows.length === 0 ? (
+            <Empty
+              description={
+                <Space direction="vertical">
+                  <Text strong>No contacts on this firm book</Text>
+                  <Hint>Upload a contact list — Board stays empty until the book has rows.</Hint>
+                </Space>
+              }
+            />
+          ) : (
+            <Table
+              size="small"
+              columns={columns}
+              dataSource={rows}
+              pagination={false}
+              tableLayout="fixed"
+              onRow={(row) => ({
+                onClick: () => onClientSelect(row.id),
+                style: {
+                  cursor: "pointer",
+                  background: row.id === activeClientId ? "var(--ant-color-primary-bg)" : undefined,
+                },
+              })}
+            />
+          )}
         </Space>
       </ModulePage>
     </div>
@@ -364,8 +441,12 @@ export function BoardModule({
         {activeClientId ? (
           <ClientWorkspace
             clientId={activeClientId}
+            contactName={activeContact?.name}
+            contactEmail={activeContact?.email}
+            contactPhone={activeContact?.phone}
             halt={haltForClient(activeClientId)}
             licenseeLabel={licenseeLabel}
+            meetingReady={meetingReadyClientIds.has(activeClientId)}
             activityKick={activityKick}
             onHaltOutreach={onHaltOutreach}
             onLiftHalt={onLiftHalt}
@@ -373,7 +454,7 @@ export function BoardModule({
           />
         ) : (
           <div style={{ flex: 1, height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Hint>Select a client from the board</Hint>
+            <Hint>{bookLoaded && contacts.length === 0 ? "Firm book is empty" : "Select a client from the board"}</Hint>
           </div>
         )}
       </Splitter.Panel>
