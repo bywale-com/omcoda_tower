@@ -1,5 +1,6 @@
 import type { Context } from "hono";
 import { getCookie, setCookie, deleteCookie } from "hono/cookie";
+import { mintAccessLink } from "./accessLinks.ts";
 import {
   MAX_SENDS_PER_WINDOW,
   MAX_VERIFY_ATTEMPTS,
@@ -13,13 +14,14 @@ import {
   sha256,
 } from "./crypto.ts";
 import { getPool, resolveUserByEmail, withTransaction } from "./db.ts";
-import { sendOtpEmail } from "./email.ts";
+import { sendAccessLinkEmail, sendOtpEmail } from "./email.ts";
 import { log, logError } from "./logger.ts";
 
 const GENERIC_SEND_MESSAGE =
   "If that address is registered, we sent a verification code.";
 
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const PLATFORM_ADMIN_EMAIL = "admin@try-tower.com";
 
 function isProduction(): boolean {
   return process.env.NODE_ENV === "production";
@@ -33,6 +35,37 @@ function setSessionCookie(c: Context, token: string): void {
     path: "/",
     maxAge: Math.floor(SESSION_TTL_MS / 1000),
   });
+}
+
+async function resolveSessionUser(
+  c: Context,
+): Promise<{ id: string; firm_id: string; email: string } | null> {
+  const token = getCookie(c, SESSION_COOKIE);
+  if (!token) return null;
+  const tokenHash = sha256(token);
+  const result = await getPool().query<{
+    user_id: string;
+    firm_id: string;
+    email: string;
+  }>(
+    `SELECT s.user_id, s.firm_id, u.email
+     FROM sessions s
+     INNER JOIN users u ON u.id = s.user_id
+     WHERE s.token_hash = $1 AND s.expires_at > now()
+     LIMIT 1`,
+    [tokenHash],
+  );
+  const row = result.rows[0];
+  if (!row) return null;
+  return { id: row.user_id, firm_id: row.firm_id, email: row.email };
+}
+
+function publicAppOrigin(c: Context): string {
+  const envOrigin = (process.env.PUBLIC_APP_URL ?? process.env.APP_ORIGIN ?? "").trim().replace(/\/$/, "");
+  if (envOrigin) return envOrigin;
+  const origin = (c.req.header("origin") ?? "").trim().replace(/\/$/, "");
+  if (origin) return origin;
+  return "https://omcoda-tower.vercel.app";
 }
 
 async function countRecentSends(email: string): Promise<number> {
@@ -317,4 +350,166 @@ export async function handleLogout(c: Context): Promise<Response> {
   deleteCookie(c, SESSION_COOKIE, { path: "/" });
   log("auth.session", { outcome: "logout" });
   return c.json({ ok: true });
+}
+
+/**
+ * Issue a direct access link for a provisioned email.
+ * Authz: platform admin, same-email session, or ACCESS_ISSUE_SECRET header.
+ * Returns accessPath once; optionally emails the link.
+ */
+export async function handleAccessIssue(c: Context): Promise<Response> {
+  const body = await c.req
+    .json<{ email?: string; sendEmail?: boolean }>()
+    .catch(() => ({}));
+  const email = normalizeEmail(body.email ?? "");
+  const sendEmail = Boolean(body.sendEmail);
+
+  if (!isValidEmail(email)) {
+    return c.json({ ok: false, error: "invalid_email", message: "Enter a valid email." }, 400);
+  }
+
+  const issueSecret = (process.env.ACCESS_ISSUE_SECRET ?? "").trim();
+  const providedSecret = (c.req.header("x-access-issue-secret") ?? "").trim();
+  const secretOk = Boolean(issueSecret && providedSecret && providedSecret === issueSecret);
+
+  const actor = await resolveSessionUser(c);
+  const actorEmail = normalizeEmail(actor?.email ?? "");
+  const isAdmin = actorEmail === PLATFORM_ADMIN_EMAIL;
+  const isSelf = Boolean(actor && actorEmail === email);
+
+  if (!secretOk && !isAdmin && !isSelf) {
+    log("auth.access.issue", { outcome: "unauthorized", email_domain: email.split("@")[1] });
+    return c.json({ ok: false, error: "unauthorized", message: "Not allowed to issue access links." }, 401);
+  }
+
+  const user = await resolveUserByEmail(getPool(), email);
+  if (!user) {
+    log("auth.access.issue", { outcome: "unprovisioned", email_domain: email.split("@")[1] });
+    return c.json({ ok: false, error: "unprovisioned", message: "No user for that email." }, 404);
+  }
+
+  try {
+    const minted = await mintAccessLink(getPool(), user);
+    const accessUrl = `${publicAppOrigin(c)}${minted.accessPath}`;
+
+    if (sendEmail) {
+      try {
+        await sendAccessLinkEmail(email, accessUrl);
+      } catch {
+        log("auth.access.issue", { outcome: "delivery_failed", firm_id: user.firm_id });
+        return c.json(
+          {
+            ok: false,
+            error: "delivery_failed",
+            message: "Link minted but email failed. Copy the path from the response.",
+            accessPath: minted.accessPath,
+            expiresAt: minted.expiresAt.toISOString(),
+          },
+          503,
+        );
+      }
+    }
+
+    log("auth.access.issue", { outcome: "ok", firm_id: user.firm_id, emailed: sendEmail });
+    return c.json({
+      ok: true,
+      accessPath: minted.accessPath,
+      expiresAt: minted.expiresAt.toISOString(),
+      emailed: sendEmail,
+    });
+  } catch (error) {
+    logError("auth.access.issue", error, { outcome: "server_error", firm_id: user.firm_id });
+    return c.json({ ok: false, error: "server_error", message: "Something went wrong. Try again." }, 500);
+  }
+}
+
+/** Redeem a one-time access token → session cookie (same as OTP verify). */
+export async function handleAccessRedeem(c: Context): Promise<Response> {
+  const body = await c.req.json<{ token?: string }>().catch(() => ({}));
+  const token = (body.token ?? "").trim();
+
+  if (!token || token.length < 16) {
+    return c.json({ ok: false, error: "invalid_request", message: "Access token required." }, 400);
+  }
+
+  const tokenHash = sha256(token);
+  const pool = getPool();
+
+  try {
+    const found = await pool.query<{
+      id: string;
+      user_id: string;
+      firm_id: string;
+      email: string;
+      expires_at: Date;
+    }>(
+      `SELECT id, user_id, firm_id, email, expires_at
+       FROM access_links
+       WHERE token_hash = $1
+         AND consumed_at IS NULL
+         AND invalidated_at IS NULL
+       LIMIT 1`,
+      [tokenHash],
+    );
+
+    const link = found.rows[0];
+    if (!link) {
+      log("auth.access.redeem", { outcome: "invalid_token" });
+      return c.json(
+        { ok: false, error: "invalid_token", message: "This access link is invalid or already used." },
+        401,
+      );
+    }
+
+    if (new Date(link.expires_at) <= new Date()) {
+      await pool.query(`UPDATE access_links SET invalidated_at = now() WHERE id = $1`, [link.id]);
+      log("auth.access.redeem", { outcome: "expired", firm_id: link.firm_id });
+      return c.json(
+        { ok: false, error: "expired", message: "This access link has expired. Request a new one." },
+        401,
+      );
+    }
+
+    const consumed = await withTransaction(async (client) => {
+      const consume = await client.query(
+        `UPDATE access_links
+         SET consumed_at = now()
+         WHERE id = $1
+           AND consumed_at IS NULL
+           AND invalidated_at IS NULL
+           AND expires_at > now()
+         RETURNING id`,
+        [link.id],
+      );
+      if (consume.rowCount === 0) return false;
+
+      const sessionToken = generateSessionToken();
+      const sessionHash = sha256(sessionToken);
+      const sessionExpires = new Date(Date.now() + SESSION_TTL_MS);
+      await client.query(
+        `INSERT INTO sessions (user_id, firm_id, token_hash, expires_at)
+         VALUES ($1, $2, $3, $4)`,
+        [link.user_id, link.firm_id, sessionHash, sessionExpires.toISOString()],
+      );
+      setSessionCookie(c, sessionToken);
+      return true;
+    });
+
+    if (!consumed) {
+      log("auth.access.redeem", { outcome: "race_consumed", firm_id: link.firm_id });
+      return c.json(
+        { ok: false, error: "invalid_token", message: "This access link is invalid or already used." },
+        401,
+      );
+    }
+
+    log("auth.access.redeem", { outcome: "ok", firm_id: link.firm_id });
+    return c.json({
+      ok: true,
+      user: { id: link.user_id, firmId: link.firm_id, email: link.email },
+    });
+  } catch (error) {
+    logError("auth.access.redeem", error, { outcome: "server_error" });
+    return c.json({ ok: false, error: "server_error", message: "Something went wrong. Try again." }, 500);
+  }
 }

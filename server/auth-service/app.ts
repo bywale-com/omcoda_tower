@@ -2,6 +2,8 @@ import { Hono } from "hono";
 import { createCorsMiddleware } from "./cors.ts";
 import { log } from "./logger.ts";
 import {
+  handleAccessIssue,
+  handleAccessRedeem,
   handleLogout,
   handleOtpAbandon,
   handleOtpSend,
@@ -29,6 +31,8 @@ function mountAuthRoutes(base: Hono): void {
   base.post("/otp/send", handleOtpSend);
   base.post("/otp/verify", handleOtpVerify);
   base.post("/otp/abandon", handleOtpAbandon);
+  base.post("/access/issue", handleAccessIssue);
+  base.post("/access/redeem", handleAccessRedeem);
   base.get("/session", handleSession);
   base.post("/logout", handleLogout);
 

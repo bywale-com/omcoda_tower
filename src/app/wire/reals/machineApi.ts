@@ -491,6 +491,18 @@ export const realMachineApi: MachineApiPort = {
     });
   },
 
+  async issueAccessInvite(input) {
+    return wireFetch<{
+      ok: boolean;
+      accessPath: string;
+      expiresAt: string;
+      emailed: boolean;
+    }>(`/machine/access-invite`, {
+      method: "POST",
+      body: JSON.stringify(input),
+    });
+  },
+
   async listContactRecords() {
     const res = await wireFetch<{
       contacts: Array<{

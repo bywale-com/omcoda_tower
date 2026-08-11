@@ -2,6 +2,8 @@ import { createHash, randomBytes, randomInt } from "node:crypto";
 
 export const SESSION_COOKIE = "tower_session";
 export const OTP_TTL_MS = 10 * 60 * 1000;
+/** Direct access invite TTL — long enough for handoff, still expires. */
+export const ACCESS_LINK_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 export const MAX_VERIFY_ATTEMPTS = 5;
 export const MAX_SENDS_PER_WINDOW = 3;
 export const SEND_RATE_WINDOW_MS = 15 * 60 * 1000;

@@ -64,7 +64,7 @@ export function ProvisionModule({ t, focusedEntry, hoveredId }: OperatorModulePr
         firmId: result.firmId,
         firmName: result.firmName,
         email: result.email,
-        loginPath: result.loginPath,
+        loginPath: result.accessPath || result.loginPath,
         authUser: result.authUser,
       });
       const { setActiveFirmId } = await import("../../../wire/sessionFirm");
@@ -102,13 +102,13 @@ export function ProvisionModule({ t, focusedEntry, hoveredId }: OperatorModulePr
   const sendInvite = async () => {
     if (!provisioned) return;
     try {
-      const issued = await wirePorts.otpStore.issue({ email: provisioned.email });
-      const path = `${typeof window !== "undefined" ? window.location.origin : ""}${provisioned.loginPath}`;
-      setHandoffNote(
-        `Invite simulated · OTP for ${provisioned.email}` +
-          (issued.debugCode ? ` · code ${issued.debugCode}` : "") +
-          ` · ${path}`,
-      );
+      const issued = await wirePorts.machineApi.issueAccessInvite({
+        email: provisioned.email,
+        sendEmail: true,
+      });
+      const path = `${typeof window !== "undefined" ? window.location.origin : ""}${issued.accessPath}`;
+      setProvisioned({ ...provisioned, loginPath: issued.accessPath });
+      setHandoffNote(issued.emailed ? `Invite emailed · ${path}` : `Access link · ${path}`);
     } catch (err) {
       setHandoffNote(`Invite · ${provisioned.loginPath} · ${String(err)}`);
     }

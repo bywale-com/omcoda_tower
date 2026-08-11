@@ -995,6 +995,8 @@ export const standInMachineApi: MachineApiPort = {
       input.firmId?.trim() ||
       (globalThis.crypto?.randomUUID?.() ?? `firm-standin-${Date.now()}`);
     const email = input.email.trim().toLowerCase();
+    // Stand-in token is not redeemable — real path mints via access_links.
+    const accessPath = `/a/standin-${firmId.slice(0, 8)}`;
     const result: ProvisionResult = {
       firmId,
       firmName: input.firmName.trim(),
@@ -1002,11 +1004,23 @@ export const standInMachineApi: MachineApiPort = {
       ctFirm: true,
       authUser: true,
       campaignState: "armed-for-activation",
-      loginPath: `/login?tenancy=assisted&email=${encodeURIComponent(email)}`,
+      loginPath: accessPath,
+      accessPath,
     };
     provisionedFirms.set(firmId, result);
     campaignStates.set(firmId, "armed-for-activation");
     return result;
+  },
+
+  async issueAccessInvite(input) {
+    const email = input.email.trim().toLowerCase();
+    const accessPath = `/a/standin-invite-${email.split("@")[0] || "user"}`;
+    return {
+      ok: true,
+      accessPath,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      emailed: input.sendEmail !== false,
+    };
   },
 
   async bookMeeting(input) {

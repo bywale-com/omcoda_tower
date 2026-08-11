@@ -518,6 +518,16 @@ export type MachineApiPort = {
     website?: string;
     role?: string;
   }): Promise<import("./machineTypes").ProvisionResult>;
+  /** Mint (+ optional email) a one-time `/a/<token>` access link. */
+  issueAccessInvite(input: {
+    email: string;
+    sendEmail?: boolean;
+  }): Promise<{
+    ok: boolean;
+    accessPath: string;
+    expiresAt: string;
+    emailed: boolean;
+  }>;
   listContactRecords(): Promise<
     Array<{
       id: string;

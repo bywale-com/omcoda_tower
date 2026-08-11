@@ -7,12 +7,12 @@ We are moving past treating the current machine/bind passes as “ready.” The 
 
 ---
 
-## Problem 1 — Access (still open)
+## Problem 1 — Access (closed on magic-access branch)
 
-**Today:** Invite = OTP **code** email + a login form. No magic / no-login link.  
-**Wanted:** Direct access link; not a login portal as the product.
+**Was:** Invite = OTP **code** email + a login form. No magic / no-login link.  
+**Now:** Direct access link `/a/<token>` — one-time redeem into session, lands on consultant desk. OTP remains fallback. See `MAGIC-ACCESS-LINK.md`.
 
-Session carries firm + email, not desk/role. Noted against live provision of **Omcoda Immigration** / `wale@marblespaces.com`.
+Session still carries firm + email, not desk/role.
 
 ---
 
@@ -53,7 +53,7 @@ Same class of gap is expected (not yet fully audited) in **Agents / Automations 
 1. **Elevate** the new design system (CT Ant) to **app** entry for product use.
 2. **Keep** the prototype (including Consultant | Operator | Contact switcher) as the always-on prototype of the app — not deleted.
 3. **App desks** (elevated product): consultant world vs operator world; Contact **preview** under operator for live contact UI look; real contact delivery later.
-4. **Access:** direct/magic link (no portal-as-product).
+4. **Access:** direct/magic link (no portal-as-product) — **closed** (`/a/<token>`; see `MAGIC-ACCESS-LINK.md`).
 5. **UI parity first where it hurts:** engagement record / Activity / client look-inside must exist in the elevated app at Hub depth — not a decorative tree over seeds.
 
 ---
@@ -62,7 +62,7 @@ Same class of gap is expected (not yet fully audited) in **Agents / Automations 
 
 | # | Gap | Notes |
 |---|-----|-------|
-| A | Magic / direct access link | OTP-only today |
+| A | Magic / direct access link | **Shipped** — `/a/<token>` + provision `accessPath` |
 | B | Role → correct app desk after access | Not on session |
 | C | Elevate CT → `/` app; prototype kept at prototype URL | Naming + entry; **do not kill switcher on prototype** |
 | D | **Engagement / Activity / client module parity** | **Largest visible UI hole vs Hub** |
