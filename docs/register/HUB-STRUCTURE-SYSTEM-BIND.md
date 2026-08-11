@@ -15,8 +15,21 @@
 | Can Ant grow Hub-shaped Client / Agents / Automations **cohesively**? | **Yes — if each surface binds the ledger the worker already writes.** Shape without bind = chrome. |
 | Embedding Hub `JourneyTab` / `ClientView` / seed Agents **as-is**? | **Cosmetic (and honesty-regressive).** Hub Activity still keys `getClientJourney` → `journeyByClient` seeds. Plant embed = same seed lie under Hub chrome. |
 | **New tables required for cohesive Client Activity / Information / Brief / Agents runtime / Automations runtime?** | **No** for the core loop. Tables already exist (migrations `003`–`008`). |
+| **New rows / new fields?** | **Yes — see “Rows vs fields vs tables” below.** No new *relations* does not mean the ledger is already dense enough for Hub inspect/replay. |
 | **Any new tables ever?** | **Maybe later**, only if CRS History needs chart-grade time series that `fact_writebacks` cannot carry cleanly. Not a blocker to start. |
-| What is actually missing? | **Projection + API completeness** (ledger → Hub row/inspector model), not schema invention. Some Ant authorship surfaces still write seed/context stores instead of `workflow` / templates. |
+| What is actually missing? | **Richer writes** (columns + JSONB keys + denser event rows) + **projection** (ledger → Hub row/inspector). Some Ant authorship surfaces still write seed/context stores instead of `workflow` / templates. |
+
+---
+
+## Rows vs fields vs tables (the precise answer)
+
+| Kind of “new” | Needed? | What |
+|---------------|---------|------|
+| **New tables** | **No** (core loop) | Do not invent parallel journey/CRS/inspector tables. |
+| **New rows** | **Yes, always** | Worker/cascade must keep writing `engagement_records`, `messaging_events`, `workflow_run`, `fact_writebacks`, etc. Empty book ⇒ empty UI. Cohesion also needs **denser** rows where Hub shows milestones Hub seeds invent today (opened/clicked/form_visit) — those become real `messaging_events` / engagement rows from webhooks + inbound, not seed. |
+| **New SQL columns (`ALTER TABLE`)** | **Yes, at least for send replay** | `outbound_messages` today stores envelope only (`to_addr`, `from_addr`, `provider_message_id`, `status`) — **not** `subject` / `body_text` / `body_html` / SMS `body`. Hub email/SMS replay cannot be durable without persisting content. Prefer columns (or one `content JSONB`) on `outbound_messages`. Form capture/replay may need durable capture payload somewhere (`engagement_records.payload` or a later table if volume demands). |
+| **New JSONB fields (no DDL table)** | **Yes** | Enrich writes into existing JSONB: `engagement_records.payload` (link `outboundMessageId`, `attemptId`, `criteriaId`, channel, template/cell ids, optional thought/decision summary), `active_attempts.state` / `fired_criteria` (already partly there), `contact_records.body` (profile / CRS facts Hub Information expects), `sequence_template.cells` (authored step copy the send path should use). |
+| **New `event_kind` values (rows, not schema)** | **Likely** | Chronology today: `window_fired`, `cell_advanced`, `send_live`, `send_dry_run`, `attempt_nullified`, inbound kinds. Inspector/list may want explicit kinds (or payload discriminators) for opened/clicked/reply if webhooks should surface as engagement rows rather than only `messaging_events`. |
 
 **Two contracts stay separate (do not collapse them):**
 
@@ -69,7 +82,7 @@ Ant consultant Engagement tab already lists `engagement_records` for the selecte
 | Information (profile table) | `contact_records` + `body`; `fact_writebacks`; reachability / cohort / eligibility | **No** | Project fields Hub’s `ProfileTable` expects from `body` + writebacks. Missing facts = `missing_fact_signals`, not fake Sarah profile. |
 | History (CRS scrubber / chart) | Hub: seed only. Ledger: `fact_writebacks` (`field_key` + time) and/or `contact_records.body` | **No to start.** Optional `crs_snapshots` later if chart needs dense series Hub seeds invent. | First ship: History tab empty or writeback-derived points. Do not paint seed CRS series. |
 | Activity list + gantt | `engagement_records` + `active_attempts` (+ enrollment / template cell labels) | **No** | **Projection layer:** map `event_kind` + payload → Hub row kinds (channel / attempt / formVisit / escalation). Empty firm ⇒ empty Activity. |
-| Node inspect + email/SMS/form replay | `engagement_records` row + `outbound_messages` / `messaging_events` (by `messageId` / contact) + attempt `state` | **No** | Inspector reads ledger ids. Hub `emailInspectorData` seed HTML is chrome until send payload / template body is stored or fetched. |
+| Node inspect + email/SMS/form replay | `engagement_records` row + `outbound_messages` / `messaging_events` (by `messageId` / contact) + attempt `state` | **No new table; yes content fields** | Inspector reads ledger ids. Today outbound row has **no body/subject columns** — must add fields (or stash content on engagement payload) before replay is real. Hub `emailInspectorData` seed HTML is chrome until then. |
 | Thought / criteria / outcome lines | Criteria rows + `fired_criteria` on attempt + `window_fired` payload | **No** | Show when payload has criteria id / threshold; omit theater when absent. |
 
 ### Engagement event_kinds the worker already writes
