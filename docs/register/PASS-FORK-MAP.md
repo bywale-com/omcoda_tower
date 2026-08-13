@@ -113,3 +113,12 @@ SYSTEMS-REQUIREMENTS → bind controls + panes as extrusions
   → Pass A / hand-back → Pass B
   → GO cutover
 ```
+
+---
+
+## Build phases (macro)
+
+Phase One = this fork map’s spine (UI-first face + parallel machine track through table inventory / plant).  
+Phase Two = same methodology at **micro scale** from in-app “I should be able to …” use cases → component and/or table/field.  
+
+See [`PHASE-TWO.md`](./PHASE-TWO.md).
