@@ -2,8 +2,8 @@
 
 **Seat:** Product Manager.  
 **Why this file:** law and excerpts. The **image lineup + spec** is [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md). Systems extract from both; they do not invent a different module.  
-**Join:** 15:43 flagship · [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · SA ascribe package [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md) · [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) (PR #84) · Phase Two log 17:25.  
-**Status:** Settings plates locked. UI blueprint lined up 2026-08-15 19:50. SA package [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md) 20:00. Flag stays [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC**.
+**Join:** 15:43 flagship · [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · SA ascribe package [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md) · Automations face (entered from here) [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md) · [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) (PR #84) · Phase Two log 17:25.  
+**Status:** Settings plates locked. UI blueprint lined up 2026-08-15 19:50. SA package [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md) 20:00. **Creation place complete enough to leave** (20:24) — Automations is next: [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Flag stays [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC**.
 
 ---
 
@@ -282,6 +282,7 @@ Per-campaign attempt rules stay **on the campaign**. They do not appear as a str
 - Not putting **sequencing** on the channel node. Sequencing = campaign.
 - Spoken “call”: now on the face as a channel node (ElevenLabs). Machine still has form until Story/SA extract. Do not mint tables here.
 - Not minting tables in this file. Table-first extract is SA, after Story promotion where needed. Modularity law still: if it can be overridden, it must be a row.
+- Not creating **forms** here. A data-request form is Automations. Agents sends people to accomplish the goal. See [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md).
 
 ---
 

@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. UI blueprint canon lineup [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) (19:50). Face [`AGENTS-FACE.md`](./AGENTS-FACE.md). SA ascribe package [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md) (20:00).
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Agents **creation place** complete enough to leave (20:24). Next module **Automations** — [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) (19:50). Face [`AGENTS-FACE.md`](./AGENTS-FACE.md). SA ascribe package [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md) (20:00).
 
 **How we maintain this log**
 
@@ -415,4 +415,27 @@ Flag 15:43 untouched. Settings plates still locked.
 **Doc:** [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md). Paste-block in that file. Same two questions on every canon plate, then a rollup. Indexed from README SA identity + FACE + blueprint.
 
 Flag 15:43 untouched. Settings plates still locked. Blueprint not rewritten.
+
+---
+
+## 2026-08-15 20:24 UTC — Agents creation-place complete enough; enter Automations from the outskirts
+
+**Why:** Founder: Agents as its own module — as a place things get created — is probably complete. Current shape redefines Agents as where you **create campaigns**; that feels great. Automations is the **brain / operations**. Use the join as the **bridge** into Automations. Always clean up where we’re working.
+
+**Capture (founder wording, not a second Agents flag):**
+
+- Connection: a variable operation can trigger an agent. It does **not** trigger a “re-engagement objective.” **Re-engagement is not an objective** — it is a **campaign** (the name of a campaign). The objective is more than likely a **data request** (and maybe other types).
+- Automation may **trigger creation of a campaign** when that campaign is already **templated**.
+- When we create an objective: click this / fill this form. A **trigger would not trigger click-this**. It would trigger **fill this form** — a data request is kind of a form, with these specific questions.
+- **Where is the form created?** Not cleaned up, then decided: **Automations creates the form.** Agents is **not** about creating forms or creating what is needed. Agents is about **sending people to accomplish the goal**. How Automations works the form has nothing to do with Agents.
+- **Automations shape:** perform **on this event** (schedule or trigger) → perform **this operation** → **nothing in the middle changes; it is definite** → on this kind of result do X, on that kind do Y. **Binary** (or the binaries we’ve defined). More **DAG-like**. Those are **exit points** at the end of each instance that ran.
+- **Recursive:** the data request is already an **event of origin for Agents**. Data request = a form, handled by Automations. Endpoints (this was the action of an agent) **mirror** the beginning of Agents (defining the objective). Uncanny resemblance.
+- Form creation as its own graph node vs **embedded with calling an agent** — not locked; founder leans **embedded**. Same end node: start an agent **or** select an existing one, **and** declare the objective right there; if data request, **create the form there**.
+- Select an **agent** (sequences — same thing). **No separate campaign pick** — campaigns live inside sequences. Selecting the agent = selecting the entire campaign. Campaigns can be templated. **Choice of agent/campaign is limited by the objective** — can be enforced.
+
+**Doc:** [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). 14:49 perimeter map said we would enter the next module from these outskirts. That is this stamp.
+
+**Do not:** overwrite 15:43; put Automations triggers on Agents; treat re-engagement as an objective; move form-building into Agents; plant an Automations editor this stamp; mint tables; silently kill Seed §5.6.
+
+Flag 15:43 untouched. SA Agents package still waiting; this is PM module enter, not SA rewrite.
 
