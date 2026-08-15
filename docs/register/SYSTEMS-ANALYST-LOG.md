@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-15 16:58 UTC — unmet after full escalation = **failure mode** (obvious; 14:49 family). What failure *does* walked by class in SYSTEMS-GOAL (SA suggestions, not flag). Product flag stays PHASE-TWO-LOG 15:43 UTC.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-15 17:05 UTC — Agents has two grains: **sequence** and **campaign**. Opt-in is the large campaign (window + launch day). 16:58 class-failure is after the whole campaign, not after one sequence. Product flag stays PHASE-TWO-LOG 15:43 UTC.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -386,3 +386,19 @@ Parked on [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) so it is not only here.
 **SA suggestions** (in [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md); not law): success escalates; failure is the other pole, default **not** “force another campaign.” Opt-in fail → end; do not enroll nudge/reactivation (consent). Re-engagement fail → `missing_fact_signal`; do not clone the nudge. Reactivation fail → record drop-off; do not auto-ask again; repeat-compression stays a silence.
 
 **Ask:** class-walk rows correct, or a row is wrong?
+
+---
+
+## 2026-08-15 17:05 UTC — Opt-in is a campaign (two grains)
+
+**Why:** Founder: 16:58 still a bit closed. Opt-in is a **larger campaign**. Agents = sequence rules, node content, attempt sequencing, **and** a larger-style campaign. Show reasoning; expand opt-in at that scale.
+
+**Excerpts:** “I need to see the reasoning behind it. It's still a bit closed.” · “with the opt-in, especially the opt-in, we're saying that the opt-in is actually a larger campaign, don't forget.” · “What we're trying to do with agents module is to be able to define the sequence rules … contents for each node, so sequence for attempts. But also a larger style campaign” · “Talk about what the expansion of the opt-in could look like on a large scale campaign.”
+
+**Reasoning:** Last table flattened **sequence = campaign**. Corpus already has two sequences under one opt-in objective: launch window (5–7d, waitlist) + launch day (the real sign-up). Mini-goals escalate **inside** that campaign (waitlist → launch day). Class failure is only after **A+B**. SQL `launch_day` is that inner sequence, not a fourth class.
+
+**Between classes** still: don’t force another campaign. **Inside opt-in:** you do sequence-to-sequence.
+
+**Open:** do non-waitlisted contacts still get launch day?
+
+Parked on [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md).

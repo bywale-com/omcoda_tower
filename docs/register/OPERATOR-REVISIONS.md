@@ -81,7 +81,7 @@ Founder expansion (will not be taken back). **Not Seed/World until Story §7 is 
 
 A **goal is a completion of an objective.** Sequence **classes are classes of objective** (opt-in · re-engagement = data request · reactivation = meeting request). A goal is **required** to create an agent and a workflow. Mini-goals = checkmarks inside a class (already in `guidelines/Reactivation.md`). Escalation is already several levels; **goals as escalation events** (including **between campaigns**) is the one that definitely emerges. Reactivation’s completion **is** meeting booked.
 
-Full excerpts, three-class housing vs gap, mini-goal inventory, four-level stack: [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md).
+Full excerpts, three-class housing vs gap, mini-goal inventory, four-level stack: [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md). **Campaign grain (17:05):** Agents authors sequences **and** larger campaigns; opt-in is window + launch day under one objective.
 
 ---
 

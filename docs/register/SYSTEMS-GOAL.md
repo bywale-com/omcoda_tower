@@ -81,7 +81,7 @@ Story 7 + seeded `seq_phase_order`: **opt-in → re-engagement → reactivation*
 | **Re-engagement** | **Data request** done (form submitted / facts in) | `fact_writebacks`. Map `acr-form-submit` → `state.finishing_event` `close_and_arm_next`. `tpl.reengagement.v1` cell labeled “data ask”. | `acr-form-submit` **not** in `rule_attempt_criteria` seed. Reengagement template is a **placeholder** (two mixed cells). |
 | **Reactivation** | **Meeting request** done = **meeting booked** | `meeting_booked` (`007`). Guidelines: slot booking rate = “the outcome.” | System **12**, not a field **on** `sequence_template` / the agent. Book does not fire goal-met → escalate. |
 
-**Four vs three (do not wash):** SQL `sequence_template.sequence_class` CHECK is `optin_launch` \| `launch_day` \| `reengagement` \| `reactivation`. Phase order has **three**. Guidelines: waitlist = anticipation; launch day = real opt-in (three jobs: set expectations, establish consequences, plant reactivation seed). Open: `launch_day` is a second template **inside** the opt-in objective, or a fourth class.
+**Four vs three (do not wash):** SQL `sequence_template.sequence_class` CHECK is `optin_launch` \| `launch_day` \| `reengagement` \| `reactivation`. Phase order has **three**. Guidelines: waitlist = anticipation; launch day = real opt-in. **Campaign grain (17:05):** `launch_day` is a second **sequence inside** the opt-in campaign, not a fourth objective — unless corrected.
 
 ---
 
@@ -161,19 +161,80 @@ Failure = authored escalation exhausted (sequence deployed + attempt ladder spen
 
 | Class | Goal | If it fails | Suggestion (what it does) |
 |---|---|---|---|
-| **Opt-in** | Sign-up | Never opted in | **Cannot** enroll re-engagement or reactivation (Story 6: silence / no deep collection without opt-in). This agent **ends**. Write drop-off node + contact tier. Downstream is not a retry of the same ask. |
+| **Opt-in** | Sign-up | Never opted in **after the whole campaign** (window + launch day) | **Cannot** enroll re-engagement or reactivation (Story 6). This **campaign** ends. Interior drop-offs are not this row — see campaign grain below. |
 | **Re-engagement** | Data request (form in) | Needed the fact; didn’t get it | Do **not** clone another nudge agent (one motion; one form). Write `missing_fact_signal` (Story 8 already). Engine 2 later decides motion. Contact score: didn’t give facts. Campaign score: this nudge shape failed at form. Attempt-level retry (24h → head) is **not** class-failure; class-failure is after that is exhausted. |
 | **Reactivation** | Meeting booked | Slot ran; no book | Do **not** auto-fire another meeting ask. Record where they dropped (never opened vs viewed vs didn’t book). Repeat-compression is already a Story silence. Engine 2 still owns “still reactivation-worthy?” |
 
 Silent fail would hide both axes. Minimum writes: engagement event (already the record) + contact `cohort_tiers` + campaign/node rollup. Worker today writes the first, not the other two.
 
+The 16:58 opt-in row was **too closed**: it treated opt-in as one sequence that ends. Opt-in in the corpus is a **larger campaign**. Grain below.
+
+---
+
+## Two grains in Agents, and opt-in as a large campaign (2026-08-15 17:05)
+
+**Founder:** The 16:58 walk was still a bit closed. Opt-in is actually a **larger campaign**. Agents is sequence rules, content per node, sequence for attempts — **and** a larger-style campaign. Talk about what expansion of opt-in looks like at that scale.
+
+**Reasoning (why the last table flattened it):** Agents authorship has two grains. I walked only the first, then jumped to class-failure.
+
+| Grain | What the operator defines | Already named |
+|---|---|---|
+| **Sequence** | Order of nodes, **content on each node**, attempt sequencing (email criteria fail → text) | Flagship sequencing + 7b |
+| **Campaign** | Compose more than one sequence toward **one** class objective. Mini-goals / sequence-completion escalate **inside** the campaign. The class goal is campaign completion. | “Agents … help you create a campaign”; “between campaigns” is the next grain up; opt-in is the one that is already large in `guidelines/Reactivation.md` |
+
+Re-engagement and reactivation in the corpus are mostly **one sequence** each (data ask; meeting ask). Opt-in is the expansion that shows the campaign grain.
+
+**What the opt-in campaign already is (not invented — `guidelines/Reactivation.md`):**
+
+```
+CAMPAIGN  objective = opt-in (get them into the system)
+│
+├─ Sequence A — Launch window (5–7 days)
+│    Day1 text primer     mini: Y-reply     (signal, not a gate — email still comes)
+│    Day1 announcement    mini: open, click
+│    Day2 social          mini: follow      (micro-yes)
+│    Day3 waitlist        mini: join        (“first real opt-in signal”; primary metric)
+│    Days4–7 nurture      keep the campaign alive until go-live
+│
+│    Waitlist met → escalate INSIDE this campaign to Sequence B
+│    (not to re-engagement; still the same objective)
+│
+├─ Sequence B — Launch day
+│    sign-up email
+│    landing (expectations, consequences, plant reactivation seed)
+│    confirmation
+│
+│    Sign-up met = CAMPAIGN GOAL → consent sequenced
+│    Then the flagship success pole: other agent · workflow · or end
+│
+└─ Class failure = A+B fully deployed, never signed up
+     Then the 16:58 opt-in row (this campaign ends; do not enroll nudge/meeting)
+```
+
+SQL already split this: `optin_launch` + `launch_day` templates. Phase order has **three** classes. That is not a fourth class — it is two sequences **inside** one opt-in campaign. That was the open 3-vs-4; this grain closes it as a standing-up accident, not a fourth objective.
+
+**Interior vs campaign-failure (do not collapse):**
+
+- Node / attempt fail → 7b (still in the same node’s ladder).
+- Mini-goal miss (no Y-reply) → campaign **continues** (guidelines: primer is not a gate).
+- Waitlist met → next **sequence** in the same campaign (launch day).
+- Sign-up met → **campaign** complete.
+- Never signed up after A+B → **class failure**.
+
+So “don’t force another campaign” still holds **between classes**. Inside opt-in you **do** escalate sequence-to-sequence. That is the campaign grain.
+
+**Open inside the campaign (simple, not filled):** if waitlist is anticipation and launch day is the real opt-in, do contacts who never waitlisted still get Sequence B, or is launch day only for waitlisted? Guidelines name scarcity (“slots are limited”) and do not close the branch.
+
+Guidelines also leave packaging open (one-time managed launch vs product feature). That is not the machine shape. The machine can still author this campaign.
+
 ---
 
 ## Open (ask; do not fill)
 
-1. Promote Story 7: class **is** the objective; the goal **is** its completion; that completion **is** an escalation event (agent · workflow · end; once met, met); exhausted escalation without completion **is** a failure mode (not silent)?
-2. Failure *does* — accept the class walk above, or correct a row?
+1. Promote Story 7: class **is** the objective; the goal **is** its completion; that completion **is** an escalation event (agent · workflow · end; once met, met); exhausted **campaign** without completion **is** a failure mode (not silent)?
+2. Failure *does* at **class** grain — accept the 16:58 rows as **after the whole campaign**, not after one sequence?
+3. Launch day only for waitlisted, or the whole book still gets Sequence B?
 
-`launch_day` vs three classes, and mini-goals as destinations vs checkmarks, are **not** this kind of gap: waitlist = mini-goal, sign-up = opt-in completion is already in `guidelines/Reactivation.md`.
+`launch_day` as a fourth **class** is no longer the ask — it is a sequence inside the opt-in campaign unless corrected.
 
-After (1) is yes: Requirements extract a state; table-first then wants a **rule** (when completion → destination) bound to the package — not prose in `cascade.ts`. Failure destination is likely **end this agent + record**, not a fourth success destination.
+After (1) is yes: Requirements extract a state; table-first then wants a **rule** (when completion → destination) bound to the package — not prose in `cascade.ts`. Failure destination is likely **end this campaign + record**, not a fourth success destination. Sequence-to-sequence inside a campaign is a different rule (mini-goal / sequence completion).
