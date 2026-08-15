@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Control layers (global / sequence / campaign; overrides on canvas) = 2026-08-15 17:45 UTC. Face doc [`AGENTS-FACE.md`](./AGENTS-FACE.md).
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Override this** reveal / two opt-in campaigns = 2026-08-15 18:08 UTC. Face doc [`AGENTS-FACE.md`](./AGENTS-FACE.md).
 
 **How we maintain this log**
 
