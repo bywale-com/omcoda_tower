@@ -3,7 +3,7 @@
 **Seat:** Systems Analyst.  
 **Status:** Founder expansion 2026-08-15. Same grade as OPERATOR-REVISIONS: **denser than Seed/World, not Seed/World law until Story is promoted.** Founder: this is an expansion, not a trial balloon — will not be taken back.  
 **Does not:** mint a table; overwrite the Agents flagship (PHASE-TWO-LOG 15:43 UTC); rewrite Seed/World.  
-**Join:** [`SYSTEMS-STORY.md`](./SYSTEMS-STORY.md) §7 · [`OPERATOR-REVISIONS.md`](./OPERATOR-REVISIONS.md) §5c · [`guidelines/Reactivation.md`](../../guidelines/Reactivation.md) · SA log through **17:12 UTC handoff**.
+**Join:** [`SYSTEMS-STORY.md`](./SYSTEMS-STORY.md) §7 · [`OPERATOR-REVISIONS.md`](./OPERATOR-REVISIONS.md) §5c · [`guidelines/Reactivation.md`](../../guidelines/Reactivation.md) · SA log through **17:12 UTC handoff** · UI-blueprint ascribe [`SYSTEMS-AGENTS-ASCRIBE.md`](./SYSTEMS-AGENTS-ASCRIBE.md) (20:10; not this file).
 
 Requirements must **not** extract a `goal` state from this file until Story §7 carries a promoted **must**. Until then this file is the substance so the detail is not background.
 

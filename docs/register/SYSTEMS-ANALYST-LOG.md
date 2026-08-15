@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-15 17:12 UTC — **Handoff to PM.** Witnessing history of this SA chat, up to here. Detail in [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md). Product flag stays PHASE-TWO-LOG **15:43 UTC** — do not overwrite. Newest stamp is the handoff; stamps above are the record.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-15 20:10 UTC — **Ascribe: Agents UI blueprint vs stood-up machine.** Answer to PM package on PR #85. Full A/B + rollup: [`SYSTEMS-AGENTS-ASCRIBE.md`](./SYSTEMS-AGENTS-ASCRIBE.md). Product flag stays PHASE-TWO-LOG **15:43 UTC** — do not overwrite. No mint. No second flag. Handoff 17:12 and [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) still stand.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -473,3 +473,86 @@ Parked on [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md).
 SA suggestions on (2) are in SYSTEMS-GOAL (opt-in fail after A+B → campaign ends, no nudge/meeting; re-engagement fail → missing-fact signal, don’t clone the nudge; reactivation fail → record drop-off, don’t auto-ask again). Labeled suggestions, not flag.
 
 **Do not (PM or next SA):** overwrite 15:43; mint a `goal` table that duplicates `meeting_booked`; put triggers inside Agents; treat attempt-ladder as a goal; flatten opt-in back to one sequence.
+
+---
+
+## 2026-08-15 20:10 UTC — Ascribe: Agents UI blueprint (PM package) vs stood-up machine
+
+**Why:** Founder: check the newest PRs; there is a package for SA; answer it with the same rigor. Newest PR [#85](https://github.com/bywale-com/omcoda_tower/pull/85) — *Agents face: five-beat mock of the sequence canvas*. Dated prompt: `AGENTS-SA-PACKAGE.md` (20:00 on that branch). Plates C1–C7 + C2b/C5b. Law `AGENTS-FACE.md`. **This is a UI blueprint for systems handoff, not a systems blueprint.**
+
+**Read:** 15:43 flag (untouched) · inventory 16:28 · SYSTEMS-GOAL · 17:05 campaign grain · then the package. Full A/B + rollup parked [`SYSTEMS-AGENTS-ASCRIBE.md`](./SYSTEMS-AGENTS-ASCRIBE.md) so the detail is not only in this log.
+
+**Do not:** mint from pixels; put `workflow_trigger` on the canvas; restore discarded plates (content-as-siblings, content-as-button, attempt-cycles in the middle); invent a call table from C5; restore 14:58; overwrite 15:43.
+
+---
+
+### Per plate (short; quotes in the ascribe file)
+
+```text
+C1 —
+A. Our system: sequence_template catalog. Empty world possible. Face: 3 sequence templates. SQL CHECK has 4 tokens including launch_day (campaign-grain stuffed into sequence_class). firm_sequence_binding UNIQUE (firm_id, sequence_class) = one per class per firm, not an open named catalog. sequence_definitions unused. seq_phase_order is the three phases — order, not catalog.
+B. Externals / configs / possible?: none.
+Affordances: partial. UI can look like this if catalog is curated to three. UI would change if C1 listed every sequence_template row (fourth card = launch_day).
+
+C2 —
+A. Our system: campaign / objective grain. No campaign table, no objective table. Closest: sequence_template optin_launch / launch_day as classes. Additional unnamed — Story silent. Hub Add-configuration is the seat, not workflow_trigger on this canvas. Qualify = finishing_event map-only. Save today = cells jsonb / binding.overrides (cell/variable).
+B. Externals / configs / possible?: none.
+Affordances: missing as rows. UI can look like this as authorship. UI would change if Set objective claimed persist.
+
+C2b —
+A. Our system: binary then name. Click → messaging_events / acr-email “link not clicked” (channel criteria, not an objective row). Book → meeting_booked (007); calendar vendor not a port. Form → fact_writebacks; acr-form-submit map-only, not in seed. No objective name column.
+B. Externals / configs / possible?: Resend click live; no calendar port; form is in-app; webhook = Automations later.
+Affordances: partial. UI can look like this as a picker. UI would change if Set objective saved a named binary on the campaign.
+
+C3 —
+A. Our system: two campaigns + qualify edge. Runtime is a flat cell cursor (templateWalk: ladder escalates within a cell). Seeded optin cells = day calendar, not two campaign nodes. campaign_states = firm armed/running — name collision. Override this off ≠ binding.overrides. C3 still says Form (honest to machine; stale vs C5).
+B. Externals / configs / possible?: none.
+Affordances: missing for campaigns + qualify as rows. UI can look like this as the face. UI would change if bound to cells as-is (calendar strip, not two cards).
+
+C4 —
+A. Our system: seq_channel_ownership_order + active_attempts.owner_channel. Seed text/email/form. loadChannelOrder firm then NULL; fallback ["text","email","form"]. No Override-this column. Form on this plate is honest to SQL.
+B. Externals / configs / possible?: none until send.
+Affordances: channel order housed; Override-this persist missing. UI can look like this. UI would change if the third closed medium were Call.
+
+C5 / C5b —
+A. Our system: cells subject/bodyText; outbound_messages 009. Channel rules = rule_attempt_criteria (30m/24h/24h). {{phone}} → contact_records.phone. Call/ElevenLabs: no port in registry.ts (live: espMailer Resend, smsApi Twilio). NormalizedCell.channel is text|email|form only. Do not mint call.
+B. Externals / configs / possible?: Resend + Twilio live when secrets+DB. ElevenLabs not possible. Calendar not this plate. SMS 160-count is chrome.
+Affordances: text/email partial; call missing. UI can look like this for text/email. UI would have to stay Form (or Call face-only) until Story + a call port.
+
+C6 —
+A. Our system: NULL-firm rule_*/seq_* = platform default. Channel order housed. Channel windows housed (those are not “number of attempts”). Attempt-cycle params (count, wait after last node, nth-sequence) silent. Global content ≠ a table. C6 Form = machine.
+B. Externals / configs / possible?: none.
+Affordances: partial. UI can look like this. UI would change if Save claimed attempt-count / nth-sequence / global content.
+
+C7 —
+A. Our system: inherit ≈ NULL-firm vs firm row. No per-family Override boolean on a sequence instance. Binding is firm×class, not CSS campaign→sequence→global. Per-campaign attempt rules “on the campaign”: no campaign table.
+B. Externals / configs / possible?: none.
+Affordances: partial. UI can look like this. UI would change if inherit/override Save had no row for which family is overridden.
+```
+
+---
+
+### Rollup (not a new flag)
+
+1. **Our machine.** Pictures traverse two grains SQL flattened into one: `sequence_template` + `firm_sequence_binding` (CHECK includes `launch_day`) for catalog/calendars; `seq_channel_ownership_order` + `rule_attempt_criteria` + `active_attempts` + cascade for the ladder. Content = cells jsonb + `outbound_messages`. C2b completions already exist as **other** tables (`meeting_booked`, `fact_writebacks`, `messaging_events`) — not as an objective on a campaign. Runtime ≠ campaign graph. `workflow_trigger` is Automations — seat only.
+
+2. **Externals.** Resend CEM + webhooks **live**. Twilio SMS **live**. Sending domains **live**. ElevenLabs **no port**. Calendar vendor **no port** (`meeting_booked` is ours). Form vendor **no**. Webhook completion = Automations later. No call port, live or stand-in.
+
+3. **UI can look like this** as chrome on grains already named. **Honesty set (smallest):** (1) C5 Call vs machine Form — face-only or don’t save Call; do not mint. (2) C1 must stay curated to three sequence templates, or a fourth `launch_day` card lies. (3) Do not persist Override this / objective / qualify / attempt-count as if they were `overrides` jsonb. (4) UNIQUE `(firm_id, sequence_class)` cannot house many named sequences per class.
+
+**If this is true** (sequence is a blank container for multiple campaigns), **and** binding is UNIQUE `(firm_id, sequence_class)` with `launch_day` itself a class, **what happens with** C3’s two campaigns inside one opt-in sequence? Today those are two sibling bindings, not two campaigns on one template. Housing question — not a mint.
+
+**If this is true** (channel wires = campaign sequencing), **and** `tpl.optin_launch.v1.cells` is a day calendar of mixed mediums, **what happens with** Story 7a (calendar cells) vs 7b (ownership ladder inside a cell)? Face C4/C6 is 7b. Seeded opt-in is 7a. Do not collapse them in Settings.
+
+**Grain-name witness:** 17:05 said opt-in is a larger **campaign** containing inner **sequences**. Face says opt-in is a **sequence** containing **campaigns**. Same two grains; words swapped. Face is what these plates ascribe to.
+
+---
+
+### Inflections (ask)
+
+1. Call vs Form — keep Form on the machine until Story, or is Call a Story must now?
+2. Campaign/objective housing before any table. Waitlist → launch day still open (17:05): only waitlisted, or the whole book?
+3. C6 attempt-cycle params vs today’s channel windows — only windows are rows.
+4. Automations later. Triggers stay off this canvas.
+
+**Do not:** overwrite 15:43; mint call / campaign / objective / qualify from C3–C5; put Automations triggers here.
