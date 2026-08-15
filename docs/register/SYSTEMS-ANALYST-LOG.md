@@ -2,9 +2,9 @@
 
 **Seat:** Systems Analyst (machine). PM / founder product talk stays in [`PHASE-TWO.md`](./PHASE-TWO.md) / [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md). Identity: [`../README.md`](../README.md) § Systems Analyst.
 
-**Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped.
+**Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-15 17:05 UTC — Agents has two grains: **sequence** and **campaign**. Opt-in is the large campaign (window + launch day). 16:58 class-failure is after the whole campaign, not after one sequence. Product flag stays PHASE-TWO-LOG 15:43 UTC.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-15 17:12 UTC — **Handoff to PM.** Witnessing history of this SA chat, up to here. Detail in [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md). Product flag stays PHASE-TWO-LOG **15:43 UTC** — do not overwrite. Newest stamp is the handoff; stamps above are the record.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -402,3 +402,74 @@ Parked on [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) so it is not only here.
 **Open:** do non-waitlisted contacts still get launch day?
 
 Parked on [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md).
+
+---
+
+## 2026-08-15 17:12 UTC — Handoff to PM (witnessing history, up to here)
+
+**Why:** Founder leaving this SA chat to go back to the PM. Log everything up to this point as witnessing history. Do not invent a new idea in this stamp.
+
+**Read (PM / next agent):** this stamp first. Then [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) for excerpts and the campaign diagram. Flag stays [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **2026-08-15 15:43 UTC**. Do **not** overwrite that flag with a generated list. Do **not** mint a table. Do **not** extract Requirements from SYSTEMS-GOAL until Story is promoted. Automations is the other engine — named, not decomposed here.
+
+---
+
+### What this chat witnessed (in order)
+
+1. **Inventory vs flagship (16:28).** Stood-up Postgres `001`–`009`, map-only nodes, live vs stand-in ports. Goal-as-escalation-point was **not** a table. SA over-claimed “no goal.”
+2. **Correction (16:40).** Founder: a **goal is a completion of an objective**. Classes are classes of **objective** (three: opt-in, re-engagement = data request, reactivation = meeting request). Meeting booked **is** the reactivation goal. Mini-goals = checkmarks inside a class (already in `guidelines/Reactivation.md`). Escalation already has levels; **goals as escalation events** (including **between campaigns**) definitely emerges. A goal is **required** to create an agent **and** a workflow.
+3. **Marked down (16:50).** Durable expansion, will not be taken back. Parked [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) (OPERATOR-REVISIONS grade). Pointers: Story §7 labeled clarifier, OPERATOR-REVISIONS §5c, SA repo walk. Not Seed/World until Story promoted.
+4. **Loop walk (16:55).** Agents **authorship shape is closed**. One walk-break: sequence fully deployed + channel criteria spent + objective still unmet → no law. Automations is later.
+5. **Failure mode (16:58).** Founder: already answered (escalation). Run the **entire** escalation, don’t meet the objective → **failure mode**. Failure criteria = not meeting the objective. What failure *does* still needs work; **cannot fail silently**. Two axes: campaign/node effectiveness across contacts, and **that contact** (`cohort_tiers`). Do not default to “force another campaign.” Engagement still needed the data point. 14:49 failure rules = **attempt-level**. This = **class-goal** after the whole stack. Do **not** restore 14:58 “actions on goals” as the flag.
+6. **Campaign grain (17:05).** Founder: 16:58 was still too closed. Opt-in is a **larger campaign**. Agents defines sequence rules, content per node, attempt sequencing, **and** a larger-style campaign. Last table flattened sequence = campaign. Corpus: launch window (5–7d, waitlist) + launch day (real sign-up) under **one** opt-in objective. Waitlist escalates **inside** the campaign. Sign-up = campaign goal. Class-failure only after **both**. SQL `launch_day` = inner sequence, not a fourth class. Between classes: don’t force another campaign. Inside opt-in: sequence-to-sequence.
+
+---
+
+### Founder wording this chat must not lose
+
+> A goal is a completion of an objective.
+
+> A goal is critical to creating any agent. … you can't even create the workflow without the goal.
+
+> the way we even class sequences is by their objective.
+
+> What is a reactivation? A reactivation is a meeting request. … There is a goal, which is meeting books.
+
+> Why does someone get an engagement? … It's data requests.
+
+> check marks that must be met inside of the opt-in, which are kind of like mini goals.
+
+> one that definitely emerges is goals as escalation events.
+
+> if you run through the entire escalation … and you don't meet the goal … then it's a failure mode. … can it just fail silently? … it does something.
+
+> data across at least two axes … down to the node … up to the entire campaign … also … that specific contact.
+
+> the opt-in is actually a larger campaign, don't forget. … sequence rules, contents for each node, so sequence for attempts. But also a larger style campaign.
+
+> I'm expanding the idea. … not gonna … say … that was a mistake.
+
+---
+
+### Where it lives
+
+| Artifact | Job |
+|---|---|
+| PHASE-TWO-LOG **15:43** | Agents **flag**. Untouched. |
+| This log (stamps 16:01–17:12) | Witnessing history of the SA chat. |
+| [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) | Durable expansion (excerpts, three class completions, escalation stack, failure walk, opt-in campaign diagram). |
+| Story §7 | Labeled OPERATOR-REVISIONS clarifier only — **not** a promoted must. |
+| OPERATOR-REVISIONS §5c | Pointer into SYSTEMS-GOAL. |
+| Postgres | Unchanged this chat. No mint. |
+
+---
+
+### Still open (for the PM conversation — not filled here)
+
+1. Promote Story 7 (class = objective; goal = completion; completion = escalation event; exhausted campaign = failure mode, not silent)?
+2. What failure **does** at class grain — after the **whole campaign**, not after one sequence?
+3. Launch day only for waitlisted, or the whole book still gets Sequence B?
+4. Automations: same decomposition rigor, later.
+
+SA suggestions on (2) are in SYSTEMS-GOAL (opt-in fail after A+B → campaign ends, no nudge/meeting; re-engagement fail → missing-fact signal, don’t clone the nudge; reactivation fail → record drop-off, don’t auto-ask again). Labeled suggestions, not flag.
+
+**Do not (PM or next SA):** overwrite 15:43; mint a `goal` table that duplicates `meeting_booked`; put triggers inside Agents; treat attempt-ladder as a goal; flatten opt-in back to one sequence.
