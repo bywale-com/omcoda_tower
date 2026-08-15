@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Automations lineup + SA package 22:17. **Before building:** unclosed loops between Agents and Automations named 23:07 (goal → other workflow; enroll/bind/send; form write-back; book-in). Do not plant editors this stamp.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Before building: unclosed loops **23:07**. Events: form completion; **global vs local** (not Settings) **23:16**. SA packages waiting. Do not plant.
 
 **How we maintain this log**
 
@@ -586,6 +586,26 @@ Flag 15:43 untouched. Agents SA package still waiting; this is a **second** pack
 6. **Instantiate vs enroll.** Automation may “create a campaign” only when a **template** already exists. Still open: new sequence row vs enroll into the existing one.
 
 **Do not:** start building the editors this stamp; overwrite 15:43; invent a COO; mint tables.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 23:16 UTC — Form completion is an event; events are global or local (not Settings)
+
+**Why:** Founder on loop 1 (goal → other workflow): same thing, different angle — **what events actually trigger an automation**. Form completion **is** an event. What they were trying to remember: there are no quote-unquote **Settings**. It is **global versus local**. That is why Automations needs that divide — it matches everything.
+
+**Capture (founder wording):**
+
+- On **all kinds of form submissions** — anytime a form is submitted — whoever submitted, **run this evaluation** on them. That is **global**.
+- On **this specific form** — every time **this** form is submitted — run this evaluation. That is **local**.
+- The same divide applies elsewhere. Do not fill the catalog. It expands **what counts as an event**.
+
+**Hub today (do not pretend):** `WORKFLOW_EVENT_CATALOG` is eligibility.changed / contact created|updated / import.created / audit completed|failed. **No form_submitted.** Map `finishing_event` can be `form_submitted` as an **attempt terminal**, not this trigger. Journey trees paint `form_submitted`. Not stood up as Automations event-of-origin.
+
+**Law 27** in [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Not a Settings modal. Not a new plate this stamp.
+
+**Do not:** invent the event list; copy Agents C6/C7 into Automations; plant; overwrite 15:43; collapse Agents C2b “event” with this trigger.
 
 Flag 15:43 untouched.
 

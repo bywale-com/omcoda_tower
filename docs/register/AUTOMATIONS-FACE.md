@@ -2,8 +2,8 @@
 
 **Seat:** Product Manager.  
 **Why this file:** law and excerpts for Automations. Entered from the Agents outskirts — not a disconnected menu pick.  
-**Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub-as-source **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC** · required-data listing not stood up **21:36 UTC** · listing plates A11–A13 **21:48 UTC** · chosen lineup + SA package **22:17 UTC** [`AUTOMATIONS-SA-PACKAGE.md`](./AUTOMATIONS-SA-PACKAGE.md).  
-**Status:** Automations terrain enclosed enough for SA extract. Chosen images lined up (priors kept; revisions canonical). Package waiting for Systems Analyst. **Work from Hub Automations** (`/hub`) — that plant is the complete one. CT Ant Automations is a translation of Hub (same kind, poorer quality) and **this entire Rule part does not exist in Ant**. Image mocks are **from scratch**. Look at **Rules** first. Do not plant the editor.
+**Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub-as-source **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC** · required-data listing not stood up **21:36 UTC** · listing plates A11–A13 **21:48 UTC** · chosen lineup + SA package **22:17 UTC** [`AUTOMATIONS-SA-PACKAGE.md`](./AUTOMATIONS-SA-PACKAGE.md) · unclosed loops **23:07** · events global vs local **23:16**.  
+**Status:** Loops before building named. Form completion is an event; events have a **global / local** divide (not “Settings”). SA packages still waiting. Do not plant the editor. Do not invent the event catalog.
 
 ---
 
@@ -63,6 +63,14 @@
 
 > There's actually at least one class missing. Our system is a real system — it doesn't need any AI to determine what data is required. It's deterministic. When it needs data, that's a re-engagement signal — and that should be a class. When we need a form, we know everything that must exist in the form because of that required data. We can create forms from that data — as many questions as needed. It would not be smart to lock ourselves into a locked objective given a specific signal. We can create the objective anyway.
 
+> What events actually trigger an automation … Form completion is an event. On form completion.
+
+> How there is no quote-unquote settings. It's less about what is quote-unquote settings — about what is **global** versus what is **local**. … One very clear reason why there should be something like that inside of automations. It matches everything.
+
+> On all kinds of form submissions … anytime there's a form submission … whoever submitted that form, run this evaluation on them. But it's also a local … on this specific form submission, every time this specific form is submitted, run this evaluation.
+
+> That already gives you … ideas of wherever else it applies. … It expands our thinking of what events look like. What counts as an event.
+
 > I don't know if [A13 is] related to the image … it's very different.
 
 > Don't forget the node that sits after the rule output … was a condition node that says hey if this … it's already like calling from the previous results.
@@ -101,6 +109,7 @@
 24. **This loop is deterministic.** Seed already: collectible field class (self-reportable / document-dependent / employer-directed); every missing-data detection is a signal; nudge consolidates outstanding self-reportable needs into **one** form. No AI to decide what data is required. If that ever stops being true, say so.
 25. **Required data as a class is a listing, not a flag — and it is not stood up.** The data being requested is **more than one** item. A catalog of collectible fields exists in code (`COLLECTIBLE_FIELDS`) and is **unused**. Rule-node output today is headline / pass / pathway & gap **result ids** / services / nudge & reactivation **signals** — not a list of requested fields. No UI lists that request. No form authoring **references** those ids. Contact forms that look like a list are painted demos. Until the listing is on rule output, a form cannot bind to it. Do not invent the rest of the catalog; do not mint tables.
 26. **Two grains of condition. Do not collapse them.** Inside the rule: field · operator · constant (or named code). After the rule, on the DAG: a **condition / If node** that **calls from the previous result** (rule Output) and forks actions. Hub already has that If node. A10 / A13 are **diagrams of the lattice idea**, not a screenshot of that node, and not a screen to build. Founder 22:17: A13 is a different kind of picture.
+27. **An event has a global grain and a local grain. That is not “Settings.”** Form completion **is** an event that can trigger an automation. **Global:** on all form submissions of that kind — whoever submitted, run this evaluation. **Local:** on **this** form — every time this specific form is submitted, run this evaluation. The same divide is why Automations needs a global/local place (it matches Agents’ global → sequence → campaign, without copying a Settings modal). This expands **what counts as an event**. Do not invent the rest of the event catalog this stamp. Do not call it Settings.
 
 ---
 
@@ -154,6 +163,7 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 - Not a UI blueprint of the whole DAG. Smallest workflow first: [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md). Mock = generate the image. Do not plant `AntAutomationWorkbench` this pass.
 - Not generating or refining A9/A10 until asked. 21:36 answered the listing question first. A11–A13 mock the listing (Output rows, form bind, lattice **diagram**). A13 is not a screen. Do not plant the editor.
 - Not collapsing inside-the-rule conditions with the If node after the rule.
+- Not inventing an Automations **Settings** modal. Global vs local is the divide (law 27). Not filling an event catalog.
 
 ---
 
@@ -163,9 +173,10 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 2. Full list of **exit points** besides start/select agent.
 3. Form creation: **own graph node** vs **embedded** in the start-agent node (lean: embedded).
 4. Whether “create a campaign” is instantiate-from-template vs enroll-into-existing sequence.
-5. Word “event” on Agents C2b vs Automations’ event-of-origin (schedule / trigger) — do not collapse them without asking.
+5. Word “event” on Agents C2b vs Automations’ event-of-origin (schedule / trigger) — do not collapse them without asking. Form completion is an Automations trigger (law 27); that does not rename C2b.
 6. Catalog of **in-system outcomes** besides enroll-agent (lists, tasks, notify, and whatever else Hub already names). Do not invent a new catalog this stamp.
 7. Seed §5.6 vs Hub-as-built vs the 20:24 definite-middle shape — **do not silently kill any of them**. Hub Rules are what to look at. Alignment is later.
 9. Remaining output classes besides **required data** (law 23). Do not invent a full catalog this stamp. Hub-today vs lattice is A9 / A10.
 10. **Listing of requested data on rule output + form bind** (law 25). Named 21:36 as not stood up in code. Mocked as A11–A12 (chrome) and A13 (diagram). Do not fill the listing in the product this stamp. Do not mint tables.
 11. **Ant plate of the If node after the rule.** Hub has it. Named 22:17. Do not invent the plate in this package.
+12. **Event catalog + global vs local on each event** (law 27). Form completion named. Do not fill the rest. Hub `WORKFLOW_EVENT_CATALOG` today has no `form_submitted`. Map `finishing_event` includes `form_submitted` as attempt-terminal — not the same as this trigger.

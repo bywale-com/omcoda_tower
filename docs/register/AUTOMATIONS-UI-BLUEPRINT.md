@@ -321,7 +321,8 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 | **Form as own graph node vs embedded** | Lean: **embedded** in the start-agent node. Not locked. | A12 draws embedded. |
 | **Remaining output classes besides required data** | Lattice classes named on A9–A13: pass, re-engagement signal, reactivation signal, recommended services, required-data listing. | Do not invent the rest. |
 | **In-system action kinds** | Hub names `manage_lists`, `assign_task`, `notify_consultant` plus agent enroll. A7 is the split. | Do not invent a longer catalog. |
-| **Word “event”** | Agents C2b vs Automations event-of-origin. | Do not collapse. |
+| **Word “event”** | Agents C2b vs Automations event-of-origin. Form completion **is** an Automations trigger (23:16). | Do not collapse C2b with this. |
+| **Event: global vs local** | **Global:** all form submissions of that kind → run this evaluation on whoever submitted. **Local:** this specific form, every time it is submitted. Not “Settings.” Same divide elsewhere — do not fill the catalog. | No plate. Hub event catalog has no `form_submitted`. |
 | **Ant Rule GUI** | Does not exist. Hub does. | Pictures are the face until built. |
 | **Required-data listing in code** | 21:36: not stood up. Catalog unused. | SA: what would have to change — do not mint from the picture. |
 
