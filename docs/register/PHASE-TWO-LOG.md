@@ -96,7 +96,9 @@ Starting module **Agents** means building out this stack and dual entry — whic
 
 **Flag plant — Agents module definition** (founder order preserved; lightly enriched where essential):
 
-The **Agents** module is where a firm defines an **outreach package**. It lets us define:
+The **Agents** module is where the **operator** authors an **outreach package** — **per firm** or as a **default** (house/platform default that firms can inherit). It is **not** “the firm’s module” and not defined by firm choice as its nature; firm is a **scope of application** (this firm vs default), not the author-seat.
+
+It lets us define:
 
 1. **Outreach sequence** — the engagement package itself (the unit that can run against contacts).
 2. **Ordering / sequencing of outreach** — nodes and order inside that package; including **attempt-aware defaults** (e.g. default for all attempts except X; attempt-1 vs later-attempt shapes).
@@ -109,10 +111,12 @@ The **Agents** module is where a firm defines an **outreach package**. It lets u
 **Essential enrichments (kept short):**
 
 - **Content** sits on the sequence nodes: copy that goes out, plus ability to embed/use **structured information** (often from Automations) inside that content — otherwise “sequence” has nothing real to send.
-- **Firm binding** — an agent is authored and run in a firm context; enrollments and sends inherit that firm’s book and rules.
+- **Scope of application** — operator applies the package **per firm** or as **default**; runtime enrollments/sends then run in the firm context that package was bound to — without making Agents “a firm product.”
 - **Record** — what runs should leave a consultant-visible engagement record (Activity), not a black box.
 
 **Out of this definition (perimeter, not Agents’ interior):** Automations’ graph authorship, book import/authorize UI, Board chrome — except as **triggers**, **info into content**, and **record** touchpoints named above.
+
+**Correction (same stamp):** Do **not** define Agents as “where a firm defines…”. Author seat = **operator**; firm = optional/default **scope**, not the nature of the module.
 
 ---
 
