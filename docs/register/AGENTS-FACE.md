@@ -89,17 +89,19 @@ That is **not** four nodes in one flat list. It is two campaigns. Flattening it 
 
 `firm_sequence_binding` + `rule_*.firm_id` NULL is the **firm vs platform** default. This face adds **in-package** override: this campaign, this node, without forking a new law engine.
 
-Inspector pattern (every selected node/campaign):
+**Three control layers (founder — this is every control):**
 
-```
-Sequencing     [ Default ]  [ Override ]
-Attempt        [ Default ]  [ Override ]
-Escalation     [ Default ]  [ Override ]     ← failure lives here
-Goal           [ Default ]  [ Override ]
-Content        [ Default ]  [ Override ]
-```
+| Layer | What | Lives in the UI |
+|-------|------|-----------------|
+| **Global** | House defaults for every rule family | **Settings** tab only |
+| **Sequence** | This agent/package: override the typical sequencing, attempt, escalation | **On the canvas** (sequence chrome — not a modal far from the nodes) |
+| **Campaign** | This campaign inside the sequence | **On the campaign node**, on the canvas |
 
-Blank canvas is illegal. You always land on defaults. Override is the only authorship move besides placing nodes.
+**Channel node rules never move.** Every time you place that channel node (text / email / form), those attempt/escalation (“if not opened”) controls are **on the node**. They are not a fourth Settings page. They are the node’s law. Values still default from global (or sequence/campaign override); the **controls stay on the node**.
+
+Failure is part of escalation at whatever layer you are on.
+
+**Settings is global only.** Overrides do not live in Settings. If it is not global, it is on the canvas.
 
 ---
 
@@ -113,7 +115,7 @@ Blank canvas is illegal. You always land on defaults. Override is the only autho
 
 Same React-flow-class surface as Automations, **not** Automations’ graph (triggers / conditions / call_agent). Agents canvas authors **engagement packages**. Automations canvas authors **when/motion**. Do not merge the two canvases.
 
-**Today (honest):** Ant `AntAgentWorkbench` editor is a **Timeline** of email / consultant-task steps. Hub `AgentSequenceCanvas` is a vertical step list. Neither is this canvas. That is the Type B hole sitting on the Type A shape we now have.
+**Today (honest, 2026-08-15 screenshot):** Operator → Configuration libraries → Agents → **Nudge / re-engagement**. Editor = Timeline of Email / Consultant-task cards + Step toolbar. Settings tab holds **all** attempt criteria (`rule_attempt_criteria`) and channel order — the global list sitting far from the steps. That is the opposite of “overrides on the canvas.”
 
 ---
 
@@ -132,4 +134,5 @@ Same React-flow-class surface as Automations, **not** Automations’ graph (trig
 1. Plant this canvas on Ant (Type B) vs keep specifying.
 2. May one package mix objective types in practice, or only “technically”?
 3. Is the launch goal a **node** on the campaign canvas, a **campaign**, or a completion chip on Launch day?
-4. Override inheritance: node override vs campaign override vs package vs firm vs platform — which wins? (Must be a single rule, not five UIs.)
+4. Override inheritance: **campaign > sequence > global**. Channel-node controls always show; they display the winning value. Not five UIs.
+5. Plant the canvas in `AntAgentWorkbench` (this module, this chrome) vs keep overlaying pictures.

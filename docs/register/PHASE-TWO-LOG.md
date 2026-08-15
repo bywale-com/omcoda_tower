@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. App-facing canvas / defaults / objective types = 2026-08-15 17:32 UTC in [`AGENTS-FACE.md`](./AGENTS-FACE.md). The 14:58 numbered list is an agent restatement, **not** the founder flag.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Control layers (global / sequence / campaign; overrides on canvas) = 2026-08-15 17:45 UTC. Face doc [`AGENTS-FACE.md`](./AGENTS-FACE.md).
 
 **How we maintain this log**
 
@@ -258,3 +258,22 @@ Layer 3 is still **app-facing**: it is what the panes must be able to display, a
 **Today’s Ant editor** is a Timeline of email/task steps. That is not this canvas.
 
 **Ask:** plant the canvas next, or keep specifying while you tinker?
+
+---
+
+## 2026-08-15 17:45 UTC — Work from the real Agents UI; three layers; overrides on canvas
+
+**Why:** Founder: abstract mockups waste the fact the module already exists. Screenshot the Ant Agents UI and work on **that**. Fractal canvas. Grain of images: channel-node rules that **never move**; more at campaign; actually **three** layers for every control — **global**, **the sequence**, **each campaign inside the sequence**. UI: modular, obvious, **on the canvas** — not a Settings modal far from it. **Only global** lives in Settings. **Override lives on the canvas.**
+
+**Today (screenshotted):** Editor = Email/Task timeline. Settings = the whole `rule_attempt_criteria` list. That list is the global default. It is currently also the only place those rules exist.
+
+**Placement:**
+
+| Layer | UI |
+|-------|-----|
+| Global | Settings tab |
+| Sequence | Canvas (sequence chrome) |
+| Campaign | On the campaign node, on the canvas |
+| Channel node rules | On the node, always — they never move to Settings |
+
+**Ask:** plant this in `AntAgentWorkbench` next (same chrome), or keep specifying?
