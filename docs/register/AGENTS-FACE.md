@@ -100,8 +100,7 @@ SEQUENCE TEMPLATE  (blank canvas — opt-in / re-engagement / reactivation)
 │         pick a template  → populates the campaign
 │         or from scratch  → binary event (yes/no), then name it
 │    sequencing (channel order / how many channels)     ← campaign level
-│    content defaults                                   ← campaign level
-│    defaults for channel rules + attempt rules
+│    rules fall back: campaign override → sequence Settings → Agents Settings
 │    [ Override this ]  → reveals wired CHANNEL nodes
 │         └─ Channel node  (medium: text / email / form)
 │              [ Override content ]  ← button INSIDE the node; editor opens here
