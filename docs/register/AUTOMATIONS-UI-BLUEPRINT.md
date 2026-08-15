@@ -36,7 +36,7 @@ Hub’s “View code” can remain as under-the-hood. It must not be the only wa
 | **A6** | [`A6-add-node.png`](./automations-blueprint/A6-add-node.png) | Add a node. Select Action. |
 | **A7** | [`A7-action-two-kinds.png`](./automations-blueprint/A7-action-two-kinds.png) | Inside action: **Agents** vs **in the application**. |
 | **A8** | [`A8-action-agents-objective.png`](./automations-blueprint/A8-action-agents-objective.png) | Agents as the action: select agent, or create the objective / form. |
-| **A9** | [`A9-rule-output-gap.png`](./automations-blueprint/A9-rule-output-gap.png) | Rule output: what Hub emits **today** (including both signals) vs the **not-yet-accepted** complete idea. |
+| **A10** | [`A10-output-classes-lattice.png`](./automations-blueprint/A10-output-classes-lattice.png) | Output classes as a **lattice**. Missing class: **required data**. Conditions on a class fork actions. |
 
 Chrome: Operator → Configuration libraries → Automations. Light mode. Ant. From scratch.
 
@@ -117,6 +117,14 @@ Chrome: Operator → Configuration libraries → Automations. Light mode. Ant. F
 ![A9 rule output gap](./automations-blueprint/A9-rule-output-gap.png)
 
 **On the glass:** Today: headline, pass, nudge (re-engagement) signal, reactivation signal, services — one, the other, or both. Named gap: form, enrich, how actions consume. Do not invent the catalog in the picture.
+
+---
+
+### A10 — Output classes as a lattice; required-data missing
+
+![A10 output classes lattice](./automations-blueprint/A10-output-classes-lattice.png)
+
+**On the glass:** Existing classes as a lattice. Missing class: **required data**. A condition on a class forks three actions on the same data. Form questions come from the required-data set. Do not lock objective type to a signal.
 
 ---
 

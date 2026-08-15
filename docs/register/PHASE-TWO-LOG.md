@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Automations next — Hub source; from-scratch images A1–A9 [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md). Face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Rule output named as a gap (21:10). Agents creation place complete enough to leave (20:24).
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Automations: output classes are a **lattice**; missing class **required data** (21:28). Images A1–A10 [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md). Face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md).
 
 **How we maintain this log**
 
@@ -484,6 +484,20 @@ Flag 15:43 untouched.
 **Images:** A4–A9 in [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md). Law 17–22 in [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md).
 
 **Do not:** invent the output catalog; split the rule to separate re-engagement from reactivation; plant the editor; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 21:28 UTC — Output classes are a lattice; missing class is required data
+
+**Why:** Start from the end. Founder: the output classes are excellent — they all need to exist. Each is a **lattice**: a simple condition on a class **forks actions**. Example on the same data: if re-engagement signal · if **only** re-engagement · if **anything other than that** → three kinds of actions.
+
+**Missing class (at least one): required data.** The system is **deterministic** — it does not need AI to know what data is required (Seed field-class + missing-data as signal + one form of outstanding self-reportable needs). When data is required, that is a re-engagement signal **and** it must be an output class. Forms are generated from that set (questions = required fields). Do **not** lock an objective type to a given signal.
+
+**Image:** A10. Law 22–24.
+
+**Do not:** invent the rest of the class catalog; lock form-objective to re-engagement; overwrite 15:43.
 
 Flag 15:43 untouched.
 

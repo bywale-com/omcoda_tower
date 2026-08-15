@@ -59,6 +59,10 @@
 
 > This operation — we're implying that it creates both a re-engagement event and a reactivation event, or that it can create both a re-engagement and/or reactivation signal. Can we separate them? No, why would we need to separate them? If it can create one or the other, or both at the same time, which I think is also possible somewhere in our docs — that's why we can have different actions. We actually need to define what the output of a rule is. We haven't a super clear, congruent, complete idea of the output of a rule. Whatever it outputs has to be what we're able to use to create a form. Maybe it also enriches many other things. We are not even super clear on what it creates.
 
+> The output classes are excellent. They all need to exist because each one offers us a lattice in which we can run something as simple as even a condition that then creates forks of actions. If there's a re-engagement signal, if only re-engagement signal, and if there's anything other than that — three different kinds of actions on the same data.
+
+> There's actually at least one class missing. Our system is a real system — it doesn't need any AI to determine what data is required. It's deterministic. When it needs data, that's a re-engagement signal — and that should be a class. When we need a form, we know everything that must exist in the form because of that required data. We can create forms from that data — as many questions as needed. It would not be smart to lock ourselves into a locked objective given a specific signal. We can create the objective anyway.
+
 ---
 
 ## Law of the face (short)
@@ -84,7 +88,9 @@
 19. **At least two kinds of actions:** (a) **in the application** — change something inside the system from the operation; (b) **agents** — send people to a goal.
 20. **Agents as the action:** select an agent, or create / select the objective. Creating the objective probably **creates the form** (already Automations-owns-the-form).
 21. **A rule can emit re-engagement and/or reactivation as signals — one, the other, or both at once.** Do not split the rule to separate them. That is why we can have **different actions**. Engine 2 already: every detection is a signal; outreach is one motion (reactivation first; nudge only if not; secondary attaches as agenda).
-22. **Rule output is not yet a complete accepted idea.** Hub today outputs headline, pass, pathway/gap signals, recommended services, a **nudge (re-engagement) signal**, and a **reactivation signal**. What we have **not** accepted: that this output is what we use to **create a form**, what **enriches** other things, and how **different actions consume** those signals. Name the gap. Do not invent the catalog.
+22. **Rule output classes are a lattice.** They all need to exist. Each class is something you can put a simple **condition** on, and that **forks actions** — including three kinds of actions on the **same data** (example: if re-engagement signal · if **only** re-engagement signal · if **anything other than that**).
+23. **At least one class is missing: required data.** When the system knows data is required, that is a re-engagement signal **and** it must be an output class. Forms are built from that set — the questions **are** the required fields. Do **not** lock an objective type to a given signal; you can still create the objective.
+24. **This loop is deterministic.** Seed already: collectible field class (self-reportable / document-dependent / employer-directed); every missing-data detection is a signal; nudge consolidates outstanding self-reportable needs into **one** form. No AI to decide what data is required. If that ever stops being true, say so.
 
 ---
 
@@ -144,4 +150,4 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 5. Word “event” on Agents C2b vs Automations’ event-of-origin (schedule / trigger) — do not collapse them without asking.
 6. Catalog of **in-system outcomes** besides enroll-agent (lists, tasks, notify, and whatever else Hub already names). Do not invent a new catalog this stamp.
 7. Seed §5.6 vs Hub-as-built vs the 20:24 definite-middle shape — **do not silently kill any of them**. Hub Rules are what to look at. Alignment is later.
-9. Complete **rule output** as the thing that creates a form / enriches / feeds actions. Hub-today vs accepted idea is named in law 22 and plate A9. Do not fill it here.
+9. Remaining output classes besides **required data** (law 23). Do not invent a full catalog this stamp. Hub-today vs lattice is A9 / A10.
