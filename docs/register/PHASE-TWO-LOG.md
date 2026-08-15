@@ -1,8 +1,16 @@
 # Phase Two — log
 
-**Purpose:** Running log for Phase Two thinking and decisions. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md).  
-**Rule:** Unless the founder says “mark this as a separate entry/doc,” new Phase Two talk lands **here** as dated additions (newest at bottom).  
-**Area:** Same register folder as the thesis — thesis + log, not scattered one-offs.
+**Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
+
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. The 14:58 numbered list is an agent restatement, **not** the founder flag.
+
+**How we maintain this log**
+
+- Unless the founder says “mark this as a separate entry/doc,” talk lands **here** — append-only, newest at bottom. Do not scatter one-offs.
+- **Flagship / definition statements:** capture **founder wording**. Do not generate a substitute list that overwrites the flag. If you enrich, label it as agent alignment — never as the flag.
+- **Cadence floor** while in session: **at least four times a day**; denser conversation → denser stamps.
+- Agent **notices inflection** (flag restated, Type A/B split, module enter/exit, perimeter newly opened, founder correction of an agent restatement) and **asks** whether to stamp. When in doubt, stamp here.
+- Area: same register folder as the thesis.
 
 ---
 
@@ -128,3 +136,59 @@ Recorded so the log carries the split without only living in chat:
 2. **Type B — face outcome parity** — Canonical leaves restated as granular “I should be able to … so that …” and rebuilt in Ant (e.g. engagement chart).
 
 Same Phase Two thesis; different grain. Don’t mix methods.
+
+---
+
+## 2026-08-15 15:43 UTC — Agents flagship (founder wording) + log discipline
+
+**Why this stamp:** Founder correction. The 14:58 “flag plant” did **not** drop the exact flag. It generated a 7-item list (including **triggers** as Agents interior, and splitting the goal into “a goal” + “actions on goals”) that overwrote the flagship and messed a huge portion of the definition. This stamp **is** the flag. Do not enrich it into another generated stack.
+
+**Log discipline (same conversation):** Keep this log so new agents start where we stopped. Stamp here unless told to mark a separate entry. Cadence floor ≥4/day in session; agent asks at inflections. Capture founder wording on flags.
+
+**Module-by-module (how Type A vs Type B get seen):**
+
+- We go **module by module**. That is how Type A and Type B become identifiable.
+- Autonomous module-by-module audit is an **open feeling** — founder does not yet know if we can audit that way. Not a blocker: we still enter module by module.
+- **Rigor in decomposing a module makes it impossible not to come upon other modules.** Do not sweep interactions under the rug. Ask exactly how this module should interact.
+- Do **not** define app-level stuff yet. Define **what the system does**.
+- That definition gives **starting points on neighboring modules** = next on the map, in addition to the module just decomposed. Then align with how it currently works today.
+
+---
+
+### Flagship — what Agents is
+
+Agents is the place where the **operator** defines:
+
+- **Outreach sequencing** — not only the sequence itself, the **order in which outreach is deployed**.
+- That sequencing **per firm or as a default**, and other kinds of **overrides**.
+- **Escalations** between nodes — or better: escalation between **attempts**; **retry rules**; **attempt rules**.
+- Very importantly: a **goal / goal criteria**. The goal is itself an **escalation point**: to **other agents**, to **other workflows**, or **it ends there**. Once it is met, it is met. That is the **endpoint**.
+- Everything in the middle of that is **modular**.
+
+Author seat = **operator**. Firm / default / overrides = **scope of application**, not the nature of the module.
+
+---
+
+### Alignment with systems as they exist today (looked; not invented)
+
+Machine law is already the one the flagship assumes: **tables + a dumb runtime** ([`system-map/BUILD-system-map-v2-table-inventory.md`](./system-map/BUILD-system-map-v2-table-inventory.md)). Anything that should be modifiable is a table. Story system **7** is the Agents interior: **7a** campaign calendar (order of outreach) · **7b** attempt / channel-ownership (attempt rules, retries, escalate when criteria are met, finishing event). System **11** (signal / motion) and Automations tables (`workflow`, `workflow_trigger`, `action` type `call_agent`) are **perimeter**, not Agents’ interior. System **12** `meeting_booked` is the loop win — not the authored goal-criteria on an agent.
+
+| Flagship piece | Housed today? |
+|----------------|---------------|
+| Outreach sequence / order deployed | Partial — `sequence_template.cells` (cells by class); `seq_phase_order`. Not attempt-aware sequence defaults. |
+| Per firm or default + overrides | Partial — `firm_sequence_binding` (firm → template + `overrides`); `rule_*.firm_id` NULL = platform default. |
+| Attempt / retry rules | Partial — `rule_attempt_criteria` + worker. |
+| Escalation between nodes / attempts | Partial — `seq_channel_ownership_order` (channel ladder **inside** an attempt). Authored escalation **between attempts**, and node-to-node as data, thin. |
+| **Goal / goal criteria as escalation point** (→ other agent · → other workflow · or end; once met, met) | **Not housed as operator-authored modular data on the agent.** Map has `state.finishing_event` (close + arm next) as a Story **chain**, not a goal table. `action` is Automations → `call_agent` only. `meeting_booked` is system-12. **This is the flagship hole.** |
+
+If goal criteria is operator-defined and can vary, the modularity law already says it must eventually be a **table** (rule or state) — not prose. This stamp **names the silence**; it does not mint the table.
+
+**Perimeter this flagship opens (starting points, not those modules defined):**
+
+- **Automations** — a goal can escalate into a workflow.
+- **Another Agent** — a goal can escalate into another agent.
+- **Terminal** — goal met = end.
+
+Do **not** put **triggers** inside this flagship (that was the 14:58 error). Triggers stay on the Automations / dual-entry perimeter already logged 14:49.
+
+The 14:49 relational picture remains Type A **context**. It is not this flagship. The 14:58 numbered list is **superseded** as the Agents definition.
