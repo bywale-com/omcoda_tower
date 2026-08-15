@@ -186,7 +186,7 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 1. Full list of **operations** Automations performs (data request is one; engagement was spoken as a maybe).
 2. Full list of **exit points** besides start/select agent.
 3. Form creation: **own graph node** vs **embedded** in the start-agent node (lean: embedded).
-4. Whether “create a campaign” is instantiate-from-template vs enroll-into-existing sequence.
+4. When an automation starts a campaign: **new copy of the template**, or **put them on the campaign already authored**? Not picked (23:47).
 5. Word “event” — **settled 23:35 / law 28:** all objectives are events. C2b and Automations triggers are the same grain. Do not split them again.
 6. Catalog of **in-system actions** besides enroll-agent. **Named:** ascribe a tag / create a record on campaign failure (law 30). Do not invent the rest.
 7. Seed §5.6 vs Hub-as-built vs the 20:24 definite-middle shape — **do not silently kill any of them**. Hub Rules are what to look at. Alignment is later.

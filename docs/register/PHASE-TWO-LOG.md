@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. 23:07 six loops scored **23:38**: 1 and 4 settled as events; 2 partly (failure→tag); leftover = enroll/bind, send, book-in door, instantiate vs enroll, **queryable lineage**. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Leftovers said in plain language **23:47**: (2) putting people on the agent, (3) the message actually leaving, (6) new copy of the campaign vs put them on the one you already made. Do not plant.
 
 **How we maintain this log**
 
@@ -651,6 +651,22 @@ Flag 15:43 untouched.
 **Still left (the list now):** enroll/bind (2); send (3); book-in as a door (5); instantiate vs enroll (6); queryable lineage (remainder of 1, and the record side of 3). Named events: form completion, campaign failure, opt-out/unsubscribe. Named in-app action: ascribe a tag. Do not fill those catalogs.
 
 **Do not:** plant; mint tables; invent the rest; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 23:47 UTC — Say 2, 3, and 6 in plain language
+
+**Why:** Founder: I still don’t understand number two. Expand create-and-enroll. What goes out / unsubscribe / Activity — no clue. Number six — you’re not giving me anything to work with.
+
+**2 — Putting people on the agent.** Drawing the sequence is creating the agent. **Enroll** = this person is now **on** that campaign; outreach is running on them. Failure → tag happens **after** they were already on it and it failed. It does not put them on it. Two ways on: you put them on by hand, or an automation puts them on when an event fires. Until one of those exists, the canvas is empty.
+
+**3 — The message leaving.** **What goes out** = the text / email / call actually sends. Unsubscribe → tag = they said stop; we mark them. That is **after** (or instead of later) send — not the send. **Activity** = you can see on the contact that we sent it. I had mixed that with “can we query the path.” Same leftover, bad words.
+
+**6 — Copy vs put them on the one you made.** When an automation says start this campaign: does it **make a new copy** of the template for this person, or **put them on the campaign you already authored**? We never picked. That is the whole item.
+
+**Do not:** plant; overwrite 15:43.
 
 Flag 15:43 untouched.
 
