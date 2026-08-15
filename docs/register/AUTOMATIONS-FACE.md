@@ -2,7 +2,7 @@
 
 **Seat:** Product Manager.  
 **Why this file:** law and excerpts for Automations. Entered from the Agents outskirts — not a disconnected menu pick.  
-**Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub-as-source **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC** · required-data listing not stood up **21:36 UTC**.  
+**Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub-as-source **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC** · required-data listing not stood up **21:36 UTC** · listing plates A11–A13 **21:48 UTC**.  
 **Status:** Agents as a **creation place** (campaigns) is complete enough to leave. Automations is the next module. **Work from Hub Automations** (`/hub`) — that plant is the complete one. CT Ant Automations is a translation of Hub (same kind, poorer quality) and **this entire Rule part does not exist in Ant**. Image mocks are **from scratch**. Look at **Rules** first.
 
 ---
@@ -139,7 +139,7 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 - Not a full catalog of operations or exit points. “Add them to …” was not finished. Name the silence.
 - Not minting tables. SA extract after this face is specified enough — same discipline as Agents.
 - Not a UI blueprint of the whole DAG. Smallest workflow first: [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md). Mock = generate the image. Do not plant `AntAutomationWorkbench` this pass.
-- Not generating or refining A9/A10 until asked. 21:36 answered the listing question first: model+UI do not yet support it.
+- Not generating or refining A9/A10 until asked. 21:36 answered the listing question first: model+UI do not yet support it. A11–A13 are the mocks of that listing (Output rows, form bind, lattice class). Do not plant the editor.
 
 ---
 
@@ -153,4 +153,4 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 6. Catalog of **in-system outcomes** besides enroll-agent (lists, tasks, notify, and whatever else Hub already names). Do not invent a new catalog this stamp.
 7. Seed §5.6 vs Hub-as-built vs the 20:24 definite-middle shape — **do not silently kill any of them**. Hub Rules are what to look at. Alignment is later.
 9. Remaining output classes besides **required data** (law 23). Do not invent a full catalog this stamp. Hub-today vs lattice is A9 / A10.
-10. **Listing of requested data on rule output + form bind** (law 25). Named 21:36 as not stood up. Do not fill the listing this stamp. Images: none until asked; A9/A10 would refine if we mock the list on Output.
+10. **Listing of requested data on rule output + form bind** (law 25). Named 21:36 as not stood up in code. Mocked as A11–A13. Do not fill the listing in the product this stamp. Do not mint tables.

@@ -38,6 +38,9 @@ Hub’s “View code” can remain as under-the-hood. It must not be the only wa
 | **A8** | [`A8-action-agents-objective.png`](./automations-blueprint/A8-action-agents-objective.png) | Agents as the action: select agent, or create the objective / form. |
 | **A9** | [`A9-rule-output-gap.png`](./automations-blueprint/A9-rule-output-gap.png) | Rule output today vs unnamed complete idea. |
 | **A10** | [`A10-output-classes-lattice.png`](./automations-blueprint/A10-output-classes-lattice.png) | Output classes as a **lattice**. Missing class: **required data**. Conditions on a class fork actions. |
+| **A11** | [`A11-rule-output-required-data-listing.png`](./automations-blueprint/A11-rule-output-required-data-listing.png) | Rule Output: **required data as field rows** (a listing, not a flag). |
+| **A12** | [`A12-form-from-required-data.png`](./automations-blueprint/A12-form-from-required-data.png) | Form questions **are those rows**. The form references the listing. |
+| **A13** | [`A13-lattice-required-data-listing.png`](./automations-blueprint/A13-lattice-required-data-listing.png) | Lattice with required data as a **listing class**. If listing not empty → create form from those rows. |
 
 Chrome: Operator → Configuration libraries → Automations. Light mode. Ant. From scratch.
 
@@ -127,7 +130,37 @@ Chrome: Operator → Configuration libraries → Automations. Light mode. Ant. F
 
 **On the glass:** Existing classes as a lattice. Missing class: **required data**. A condition on a class forks three actions on the same data. Form questions come from the required-data set. Do not lock objective type to a signal.
 
-**21:36 — no new plates this stamp.** Founder asked first whether model + UI already support a **listing** of requested data (more than one), a form that **references** it, and whether it **shows on rule-node output**. They do not (catalog unused; output is signals/result ids; forms are not bound). A9/A10 still name the gap. If we mock next: the missing class as **field rows on Output**, and form questions as those rows — refinements, not a new class name. Do not generate until asked.
+**21:36 named the hole.** Model + UI did not support the listing. A9/A10 stay as the gap. A11–A13 are the plates that should exist once the class is a listing.
+
+---
+
+### A11 — Rule Output: required data as a listing
+
+![A11 rule output required-data listing](./automations-blueprint/A11-rule-output-required-data-listing.png)
+
+**On the glass:** Same Output tab as A9. Existing classes still there (headline, pass, nudge, reactivation, services). **Required data** is a **listing of field rows** — not a boolean. Rows from the collectible catalog (Canadian skilled hours, Language CLB, Foreign work years, EE profile last updated), each self-reportable, each tagged **form**. ECA status is document-dependent — **never a form**. Caption: this listing is the output class; form questions come from these rows.
+
+**Not this plate:** Inventing fields. Binding UI in the action node (that is A12).
+
+---
+
+### A12 — Form questions are those rows
+
+![A12 form from required data](./automations-blueprint/A12-form-from-required-data.png)
+
+**On the glass:** Action · Agents. Re-engagement is a **sequence template** (campaign), selected. Objective is a **data request** (on). Form is not a blank “Field label / Add field” builder. Banner: **Questions from required data (rule output)**. The four questions **are** the listing rows, each marked **from listing**. Document-dependent never enter the form.
+
+**Not this plate:** Locking the objective type to a signal. Authoring extra questions that are not on the listing.
+
+---
+
+### A13 — Lattice: required data is the listing class
+
+![A13 lattice required-data listing](./automations-blueprint/A13-lattice-required-data-listing.png)
+
+**On the glass:** Same lattice as A10, but required data is **no longer a dashed hole**. It is a solid class containing the field chips. Caption: a listing, not a flag. Condition **if required data (listing not empty)** forks **create form from those rows**. The other three forks on the same data still stand. Do not lock an objective type to a signal.
+
+**Not this plate:** Replacing A10. A10 still names the gap; A13 is what the class looks like when it exists.
 
 ---
 
@@ -138,5 +171,4 @@ Chrome: Operator → Configuration libraries → Automations. Light mode. Ant. F
 - Not saying the evaluator must be operator-authored as code.
 - Not throwing away Hub Rules. This is the Ant image of that grain.
 - Not a full Automations DAG yet. Smallest workflow first; then the insides of those three pieces (A5–A8).
-- Not filling rule-output as a complete catalog (A9 names the gap).
-- Not generating new/refined plates on 21:36. Listing of requested data is not on rule output or bound in a form; A9/A10 stay as named gap until asked to mock the list.
+- Not filling rule-output as a complete catalog (A9 names the gap; A11–A13 mock **required data as a listing** only). Mock = the image. Do not plant the editor.

@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Automations: required-data class is a **listing** of requested fields — **not stood up** in rule output, form bind, or UI (21:36). Images A1–A10 unchanged. Face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md).
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Automations: required-data **listing** mocked as A11–A13 (21:48). Not stood up in code (21:36). Face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md).
 
 **How we maintain this log**
 
@@ -527,6 +527,23 @@ Flag 15:43 untouched.
 **Images this stamp:** **none generated.** A9/A10 already name the missing class. Refinement would be warranted **if** we mock next: the class as a **list of field rows** on Output (not a flag), and a form whose questions **are those rows**. Do not generate until asked.
 
 **Do not:** invent the catalog; mint tables; plant the editor; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 21:48 UTC — Images that should exist: required data as a listing
+
+**Why:** Founder: anyway, let me see the images that clearly should exist now. After 21:36 (listing not stood up in model/UI/output).
+
+**Plates (from scratch, Ant chrome, not planted):**
+- **A11** — Rule Output. Required data is **field rows**, not a flag. Catalog fields only. Document-dependent never a form.
+- **A12** — Form questions **are those rows**. Bound “from listing.” Not a blank Add-field builder. Re-engagement stays a campaign/template.
+- **A13** — Lattice with required data as a **solid listing class**. If listing not empty → create form from those rows. A10 still names the gap; A13 is the class when it exists.
+
+**Still not stood up in code.** These are mocks of what the glass should be. Do not mint tables. Do not invent the rest of the output catalog.
+
+**Do not:** plant `AntAutomationWorkbench`; overwrite 15:43; lock objective type to a signal.
 
 Flag 15:43 untouched.
 
