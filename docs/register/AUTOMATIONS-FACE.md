@@ -2,7 +2,7 @@
 
 **Seat:** Product Manager.  
 **Why this file:** law and excerpts for Automations. Entered from the Agents outskirts — not a disconnected menu pick.  
-**Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub-as-source **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC**.  
+**Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub-as-source **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC** · required-data listing not stood up **21:36 UTC**.  
 **Status:** Agents as a **creation place** (campaigns) is complete enough to leave. Automations is the next module. **Work from Hub Automations** (`/hub`) — that plant is the complete one. CT Ant Automations is a translation of Hub (same kind, poorer quality) and **this entire Rule part does not exist in Ant**. Image mocks are **from scratch**. Look at **Rules** first.
 
 ---
@@ -91,6 +91,7 @@
 22. **Rule output classes are a lattice.** They all need to exist. Each class is something you can put a simple **condition** on, and that **forks actions** — including three kinds of actions on the **same data** (example: if re-engagement signal · if **only** re-engagement signal · if **anything other than that**).
 23. **At least one class is missing: required data.** When the system knows data is required, that is a re-engagement signal **and** it must be an output class. Forms are built from that set — the questions **are** the required fields. Do **not** lock an objective type to a given signal; you can still create the objective.
 24. **This loop is deterministic.** Seed already: collectible field class (self-reportable / document-dependent / employer-directed); every missing-data detection is a signal; nudge consolidates outstanding self-reportable needs into **one** form. No AI to decide what data is required. If that ever stops being true, say so.
+25. **Required data as a class is a listing, not a flag — and it is not stood up.** The data being requested is **more than one** item. A catalog of collectible fields exists in code (`COLLECTIBLE_FIELDS`) and is **unused**. Rule-node output today is headline / pass / pathway & gap **result ids** / services / nudge & reactivation **signals** — not a list of requested fields. No UI lists that request. No form authoring **references** those ids. Contact forms that look like a list are painted demos. Until the listing is on rule output, a form cannot bind to it. Do not invent the rest of the catalog; do not mint tables.
 
 ---
 
@@ -138,6 +139,7 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 - Not a full catalog of operations or exit points. “Add them to …” was not finished. Name the silence.
 - Not minting tables. SA extract after this face is specified enough — same discipline as Agents.
 - Not a UI blueprint of the whole DAG. Smallest workflow first: [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md). Mock = generate the image. Do not plant `AntAutomationWorkbench` this pass.
+- Not generating or refining A9/A10 until asked. 21:36 answered the listing question first: model+UI do not yet support it.
 
 ---
 
@@ -151,3 +153,4 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 6. Catalog of **in-system outcomes** besides enroll-agent (lists, tasks, notify, and whatever else Hub already names). Do not invent a new catalog this stamp.
 7. Seed §5.6 vs Hub-as-built vs the 20:24 definite-middle shape — **do not silently kill any of them**. Hub Rules are what to look at. Alignment is later.
 9. Remaining output classes besides **required data** (law 23). Do not invent a full catalog this stamp. Hub-today vs lattice is A9 / A10.
+10. **Listing of requested data on rule output + form bind** (law 25). Named 21:36 as not stood up. Do not fill the listing this stamp. Images: none until asked; A9/A10 would refine if we mock the list on Output.

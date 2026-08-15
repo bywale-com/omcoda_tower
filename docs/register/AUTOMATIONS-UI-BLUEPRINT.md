@@ -36,6 +36,7 @@ Hub’s “View code” can remain as under-the-hood. It must not be the only wa
 | **A6** | [`A6-add-node.png`](./automations-blueprint/A6-add-node.png) | Add a node. Select Action. |
 | **A7** | [`A7-action-two-kinds.png`](./automations-blueprint/A7-action-two-kinds.png) | Inside action: **Agents** vs **in the application**. |
 | **A8** | [`A8-action-agents-objective.png`](./automations-blueprint/A8-action-agents-objective.png) | Agents as the action: select agent, or create the objective / form. |
+| **A9** | [`A9-rule-output-gap.png`](./automations-blueprint/A9-rule-output-gap.png) | Rule output today vs unnamed complete idea. |
 | **A10** | [`A10-output-classes-lattice.png`](./automations-blueprint/A10-output-classes-lattice.png) | Output classes as a **lattice**. Missing class: **required data**. Conditions on a class fork actions. |
 
 Chrome: Operator → Configuration libraries → Automations. Light mode. Ant. From scratch.
@@ -126,6 +127,8 @@ Chrome: Operator → Configuration libraries → Automations. Light mode. Ant. F
 
 **On the glass:** Existing classes as a lattice. Missing class: **required data**. A condition on a class forks three actions on the same data. Form questions come from the required-data set. Do not lock objective type to a signal.
 
+**21:36 — no new plates this stamp.** Founder asked first whether model + UI already support a **listing** of requested data (more than one), a form that **references** it, and whether it **shows on rule-node output**. They do not (catalog unused; output is signals/result ids; forms are not bound). A9/A10 still name the gap. If we mock next: the missing class as **field rows on Output**, and form questions as those rows — refinements, not a new class name. Do not generate until asked.
+
 ---
 
 ## What this is not
@@ -136,3 +139,4 @@ Chrome: Operator → Configuration libraries → Automations. Light mode. Ant. F
 - Not throwing away Hub Rules. This is the Ant image of that grain.
 - Not a full Automations DAG yet. Smallest workflow first; then the insides of those three pieces (A5–A8).
 - Not filling rule-output as a complete catalog (A9 names the gap).
+- Not generating new/refined plates on 21:36. Listing of requested data is not on rule output or bound in a form; A9/A10 stay as named gap until asked to mock the list.

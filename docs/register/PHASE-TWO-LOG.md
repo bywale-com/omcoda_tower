@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Automations: output classes are a **lattice**; missing class **required data** (21:28). Images A1–A10 [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md). Face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md).
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Automations: required-data class is a **listing** of requested fields — **not stood up** in rule output, form bind, or UI (21:36). Images A1–A10 unchanged. Face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md).
 
 **How we maintain this log**
 
@@ -498,6 +498,35 @@ Flag 15:43 untouched.
 **Image:** A10. Law 22–24.
 
 **Do not:** invent the rest of the class catalog; lock form-objective to re-engagement; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 21:36 UTC — Does a listing of requested data exist (model + UI + rule output)?
+
+**Why (founder, before any new images):** Precisely — does that generate any new images / refinements of the images we have? **Before answering that:** does the data model **and** the UI support a **listing of data requests** — the data being requested, more than one; **referencing that listing inside a form**; and does it **show up in the data output of the rule node**.
+
+**Answer (honest, not a catalog invent):** **Partial / no on the glass.** Three questions:
+
+1. **Listing of the data being requested (more than one).**  
+   - **Catalog exists:** `COLLECTIBLE_FIELDS` in `src/app/data/collectibleFields.ts` — many rows (id, label, path, capture `self_reportable` | `document_dependent`, optional `employerDirected`, optional `signalHints` to R-* ids). Helper `selfReportableOutstandingPaths(presentPaths)` returns the outstanding self-reportable subset. **Nothing in the repo imports this file.** The join `signalHints` is declared and unwired.  
+   - **Map names, not an instance listing:** `state.fact_ask` = “outstanding asks”; `state.pending_capture` = `closed|open` (a door, not field rows); `state.missing_fact_signal` = absent|present. Postgres `rule_field_class_routing` is enable-toggle **rule** rows (when/condition/set_value), not a per-run list of requested fields.  
+   - **UI:** Hub Rule Analysis / Output does not list requested fields. Ant rule config is null (no Rule GUI). Contact / Nudge / Loop-closer demos use **hardcoded** outstanding counts and painted fields — not this catalog. No Automations picker of “these fields are the request.”
+
+2. **Referencing that listing inside a form.**  
+   **Law yes. Stood-up authoring: no.** Seed / Engine 2 / FACE 23: one form of outstanding self-reportables; questions **are** the required fields; document-dependent never enter a form. There is **no** form builder in Automations (or Agents) that binds collectible field ids as questions. Inspector `NodeFormField` is engagement **replay**, not authoring from a request listing. Nothing to point a form at, because there is no instance listing.
+
+3. **Show up in the data output of the rule node.**  
+   **No as a class.** Hub `RuleEvaluationSummary` is: headline, pass, `pathwaySignals[]` (R-CEC / R-FSW / …), `gapSignals[]` (**R-GAP-\*** result ids, not field ids), recommended services, nudge `{needed, kind, reason}` (a sentence like “Gaps asserted (R-GAP-01, …)”), reactivation `{warranted, reason}`. Analysis pane shows those. JSON dump is the same object. Checks carry `leftField` (what the condition **inspected**), not “what we now need from the client.” `evaluateRulePack` never reads `COLLECTIBLE_FIELDS`. Ant: no output pane for rules.
+
+**This is the missing required-data class (21:28) named as a listing.** A boolean “data required” is not enough. The class is **the set of requested fields** (more than one), which is what a form would reference and what a condition on the lattice would fork from.
+
+**Would have to exist (name, do not fill, do not mint tables):** rule output emits that listing; form questions reference those ids; rule Output pane **shows the list**. Document-dependent stays off the form.
+
+**Images this stamp:** **none generated.** A9/A10 already name the missing class. Refinement would be warranted **if** we mock next: the class as a **list of field rows** on Output (not a flag), and a form whose questions **are those rows**. Do not generate until asked.
+
+**Do not:** invent the catalog; mint tables; plant the editor; overwrite 15:43.
 
 Flag 15:43 untouched.
 
