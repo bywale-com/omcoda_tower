@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Override this = 18:08. Objective = binary event 18:40. Placement: content inside the channel; attempt ≠ channel (19:10). Face [`AGENTS-FACE.md`](./AGENTS-FACE.md).
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Attempt rules: campaign on the campaign; sequence/global in Settings modals (19:30). Face [`AGENTS-FACE.md`](./AGENTS-FACE.md).
 
 **How we maintain this log**
 
@@ -370,4 +370,17 @@ Founder: when they said mock they meant **generate the image**, not plant an in-
 **Nesting:** every rule can be global, sequence, or campaign. No override → fall back up (CSS). **Two Settings:** Agents **module** = global. **That sequence** = sequence rules. Attempt is **not** that layer. Content at attempt = **variation on the same channel node**. UI does not grow: attempts are cycles of the same sequence.
 
 Flag 15:43 untouched. Recreate beat 5 image; second image = attempt as cycle + two Settings.
+
+---
+
+## 2026-08-15 19:30 UTC — Attempt is per campaign; sequence/global attempt rules live in Settings modals
+
+**Why:** Founder: do **not** generate the middle-of-canvas attempt-cycles image. Attempts are **per campaign**. Sequence-grain attempt rules do not sit in the middle of the graph — that canvas is the sequence. They live in the **settings modal**.
+
+**Where attempt rules live (no gray area):**
+- **Campaign** → on that campaign
+- **Sequence** → Sequence Settings modal
+- **Agents** → Agents Settings (global)
+
+**Ask:** generate those two Settings modals — they now hold a bunch, given everything discussed (attempt rules, channel/escalation rules, content, sequencing defaults). Mock = generate the image.
 
