@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Loop 1 settled **23:35**: no special return — objectives/write-back **are** events. Campaign failure is an event; in-app action = **ascribe a tag**. Lineage **queryable** at minimum. Hub is not the app. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. 23:07 six loops scored **23:38**: 1 and 4 settled as events; 2 partly (failure→tag); leftover = enroll/bind, send, book-in door, instantiate vs enroll, **queryable lineage**. Do not plant.
 
 **How we maintain this log**
 
@@ -626,6 +626,31 @@ Flag 15:43 untouched.
 **Law 28–30** in [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md).
 
 **Do not:** treat Hub as the app; invent the event or action catalog; mint a lineage table from “queryable”; plant; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 23:38 UTC — What the last refinements do to the 23:07 list
+
+**Why:** Founder: these last refinements — what do they do to that initial list? Some things obvious in hindsight? What’s still left?
+
+**The 23:07 six, scored:**
+
+| # | Then | Now |
+|---|------|-----|
+| **1. Other direction / return** | Special wire: goal met → other agent / other workflow / end | **Settled.** No return to build. Completion **is** an event. “Escalate to another workflow” = an automation listening (global or local). “It ends” = nothing listening. **Left on 1:** lineage **queryable** (who created — agent vs hand — path, completion, time). |
+| **2. Create + enroll** | Bind + dual-entry enroll or the canvas is fake | **Partly.** Failure → ascribe a tag is a real in-app action after a campaign has already run. It does **not** open the enroll door. **Left:** firm bind, enroll a contact, two doors (hand and automation). The test “create an agent and enroll contacts” is still this item. |
+| **3. What goes out** | Send (consent/halt) + Activity as record | **Mostly still left.** Unsubscribe / opt-out as an event that assigns a tag **touches the edge** (they left). It is not the send path. Activity-as-record and **queryable lineage** are the same leftover from two sides. |
+| **4. Form write-back** | Special loop: fill → facts → fire Automations again | **Settled.** Write-back **is** the event (form completion). Obvious in hindsight. **Left as build, not as a missing idea:** required-data listing still not on rule output, so the form still cannot bind questions. |
+| **5. Book-in** | Contacts must exist; meeting booked is the win, not the word “event” | **Idea is obvious now:** meeting booked is an objective, so it is an event (global/local). **Left as a door:** authorize book / import — no contact, nothing to enroll. |
+| **6. Instantiate vs enroll** | New sequence row vs enroll into the one that exists | **Still left.** Not discussed. |
+
+**Obvious in hindsight (do not rebuild as extra machinery):** a return wire; a write-back module; “Settings”; treating Hub as the app; keeping Agents C2b “event” and Automations triggers as two different kinds of thing — **all objectives are events**.
+
+**Still left (the list now):** enroll/bind (2); send (3); book-in as a door (5); instantiate vs enroll (6); queryable lineage (remainder of 1, and the record side of 3). Named events: form completion, campaign failure, opt-out/unsubscribe. Named in-app action: ascribe a tag. Do not fill those catalogs.
+
+**Do not:** plant; mint tables; invent the rest; overwrite 15:43.
 
 Flag 15:43 untouched.
 

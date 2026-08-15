@@ -2,8 +2,8 @@
 
 **Seat:** Product Manager.  
 **Why this file:** law and excerpts for Automations. Entered from the Agents outskirts — not a disconnected menu pick.  
-**Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub as **advanced plant for those modules** (not the app) **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC** · SA package **22:17 UTC** · loops **23:07** · global/local events **23:16** · objectives are events; failure → tag **23:35**.  
-**Status:** Loop 1 settled: no special return — the return is an event. Campaign failure is an event; an in-app action named: ascribe a tag. Lineage queryable at minimum. Product face = CT Ant. Hub is the advanced module plant, **not the app**. Do not plant. Do not invent catalogs.
+**Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub as **advanced plant for those modules** (not the app) **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC** · SA package **22:17 UTC** · loops **23:07** · global/local **23:16** · objectives are events; failure → tag **23:35** · list scored **23:38**.  
+**Status:** 23:07 list scored 23:38. Settled: return and write-back are events. Left: enroll/bind, send, book-in door, instantiate vs enroll, queryable lineage. Product face = CT Ant. Hub is not the app. Do not plant.
 
 ---
 
@@ -187,7 +187,7 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 2. Full list of **exit points** besides start/select agent.
 3. Form creation: **own graph node** vs **embedded** in the start-agent node (lean: embedded).
 4. Whether “create a campaign” is instantiate-from-template vs enroll-into-existing sequence.
-5. Word “event” on Agents C2b vs Automations’ event-of-origin (schedule / trigger) — do not collapse them without asking. Form completion is an Automations trigger (law 27); that does not rename C2b.
+5. Word “event” — **settled 23:35 / law 28:** all objectives are events. C2b and Automations triggers are the same grain. Do not split them again.
 6. Catalog of **in-system actions** besides enroll-agent. **Named:** ascribe a tag / create a record on campaign failure (law 30). Do not invent the rest.
 7. Seed §5.6 vs Hub-as-built vs the 20:24 definite-middle shape — **do not silently kill any of them**. Hub Rules are what to look at. Alignment is later.
 9. Remaining output classes besides **required data** (law 23). Do not invent a full catalog this stamp. Hub-today vs lattice is A9 / A10.
