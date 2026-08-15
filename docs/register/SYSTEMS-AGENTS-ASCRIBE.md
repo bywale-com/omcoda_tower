@@ -6,17 +6,23 @@
 **Flag:** PHASE-TWO-LOG **15:43 UTC** — not overwritten. This file is **not** a second Agents flag.  
 **Does not:** mint tables; put `workflow_trigger` on this canvas; restore discarded plates; invent a call table from C5; restore 14:58 “actions on goals.”
 
-Inventory already walked (SA log **16:28**). Goal expansion: [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md). Campaign vs sequence grains: SA log **17:05** (then face inverted the *words* — named below).
+Inventory already walked (SA log **16:28**). Goal expansion: [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md). Campaign vs sequence grains: SA log **17:05** (words inverted; **22:41 lock** below).
 
 ---
 
-## Grain names (witness; do not fight)
+## Grain names — locked 2026-08-15 22:41 UTC (more recent is current)
 
-SA **17:05** (founder then): opt-in is a **larger campaign**; launch window + launch day are **inner sequences**. SQL `launch_day` is not a fourth class.
+Founder: everything that came after 17:05 is canonical. Agents **are** sequences. A **blank agent sequence** is agnostic: **campaigns live inside sequences**. All campaigns within sequences.
 
-PM face **18:08+** (these plates): opt-in is a **sequence** template (blank canvas); launch window + launch day are **campaigns** (objectives) inside it. Qualify between them.
+| Grain | Canonical name | Not |
+|-------|----------------|-----|
+| The agent / blank canvas / C1 card | **Sequence** (classed: opt-in · re-engagement · reactivation) | Not a campaign. Not `launch_day` as a class |
+| One objective on the canvas | **Campaign** (launch window · launch day · additional · from-scratch) | Not a sequence. Not a fourth `sequence_class` |
+| Done on that objective | **Goal** (completion) | Not the attempt ladder |
 
-**Same two grains. Words swapped.** Face is what the pictures ascribe to. SQL still stores both grains as `sequence_class` tokens on one table.
+**17:05** used the opposite words for the same two boxes (opt-in as “larger campaign,” window/day as “inner sequences”). That stamp stays as witnessing. **Do not use it as law.**
+
+SQL still stores both grains as `sequence_class` tokens on one table. Housing delta (no mint): § Canonical housing below.
 
 ---
 
@@ -168,15 +174,51 @@ Stand-in (unchanged from 16:28): Meta, escrow, enrich, Postmaster, warmup, list-
 3. **Save that claims campaign / objective / Override this / Override content / CSS inherit / attempt-count / nth-sequence / qualify.** Those have no rows. Looking like the mock is fine; persisting those toggles as if they were `firm_sequence_binding.overrides` would be a grain lie.
 4. **Binding many named sequences per class.** UNIQUE `(firm_id, sequence_class)` cannot house an open C1 catalog of several opt-in sequences. Change the binding **after** Story, not from this package.
 
-**If this is true** (a sequence is a blank container that holds multiple campaigns), **and** `firm_sequence_binding` is UNIQUE `(firm_id, sequence_class)` with `launch_day` itself a `sequence_class`, **what happens with** C3’s two campaigns inside one opt-in sequence? Today those are two **sibling bindings**, not two campaigns on one template. That is the housing question — not a table minted from C3.
+**Locked true (22:41):** a sequence is a blank container that holds multiple campaigns. Binding UNIQUE `(firm_id, sequence_class)` with `launch_day` itself a class is the **lie**. Today those are two sibling bindings, not two campaigns on one template.
 
-**If this is true** (channel wires = the campaign’s sequencing), **and** `tpl.optin_launch.v1.cells` is a day calendar of mixed mediums, **what happens with** 7a (calendar cells) vs 7b (ownership ladder inside a cell)? Face C4/C6 is looking at 7b. Seeded opt-in is looking at 7a. Do not collapse them in Settings.
+**Still open (7a vs 7b):** channel wires = the campaign’s sequencing (face C4/C6 = 7b). Seeded `tpl.optin_launch.v1.cells` is a day calendar of mixed mediums (7a). Do not collapse them in Settings. Finish or park on the face before Story 7a/7b is rewritten.
+
+---
+
+## Canonical housing — what would have to change (22:41, no mint)
+
+Not a migration. Not CREATE TABLE. Story first, then Requirements, then table-first. If it can be overridden, it must be a row — **after** Story bears it.
+
+### Keep (this grain does not touch)
+
+- `seq_phase_order` three tokens (`optin` / `reengagement` / `reactivation`) — these **are** the sequence classes.
+- Channel ladder: `seq_channel_ownership_order` + `rule_attempt_criteria` + `active_attempts.owner_channel` — 7b **inside** a campaign.
+- Completions as **other** tables the campaign objective **points at**: `meeting_booked`, `fact_writebacks`, `messaging_events`. Do not mint a `goal` that duplicates `meeting_booked`.
+- NULL-firm `rule_*` / `seq_*` = Agents Settings (C6).
+- `campaign_states` = firm `armed-for-activation` \| `running`. **Name collision.** Leave the table; do not reuse it for canvas campaigns.
+- `sequence_definitions` unused. Leave dead. Do not revive as the campaign table.
+- `workflow_trigger` — Automations. Seat analogy only.
+
+### Change (when Story §7 is promoted)
+
+| Stood up | Why it is wrong for sequence⊃campaign | What the model needs |
+|----------|----------------------------------------|----------------------|
+| `sequence_template.sequence_class` CHECK `optin_launch` \| **`launch_day`** \| `reengagement` \| `reactivation` | `launch_day` is a **campaign** (objective template), not a sequence class. `optin_launch` is the window calendar stuffed as the whole opt-in sequence | **Three** sequence classes matching C1 / `seq_phase_order`. `launch_day` and launch-window are campaign/objective templates **inside** opt-in |
+| `firm_sequence_binding` UNIQUE `(firm_id, sequence_class)` | One template per class per firm. Face: empty world; many named sequences; two campaigns in **one** sequence | Bind **sequence** (instance or template id), not class. Many sequences per firm. “Default opt-in for this firm” is a different flag, not UNIQUE on class |
+| `sequence_template.cells` as the runtime spine (`templateWalk` cell cursor; ladder **within** a cell) | Cells are a 7a day calendar mixing mediums. Face: campaigns on the canvas; channels hang off Override this; content inside the channel | Cells cannot remain “the sequence.” Campaigns are children of the sequence. Channel content / 7a offsets sit **on the campaign** (or its channels), not as the sequence’s only jsonb |
+| Enroll / `workflowWalk` `WHERE sequence_class=$2` (incl. sibling `optin_launch` vs `launch_day`) | Two classes = two enrolls = two sequences | Enroll into a **sequence**; cursor is **campaign**, then 7b inside that campaign; qualify → next campaign |
+| Objective / qualify | No campaign row. Completions exist as other tables. `finishing_event` map-only (Engine 2 arm-next **between classes**) | Objective **on the campaign**: kind + name + pointer at an existing completion (`messaging_events` click, `meeting_booked`, `fact_writebacks`). Qualify = campaign A met → campaign B **in the same sequence**. Distinct from Engine-2 motion between sequence classes |
+| `SequenceClass` in `machineTypes.ts` | Four tokens including `launch_day` | Follows the CHECK. Types change with the CHECK — not before Story |
+
+**Qualify vs class-escalation (do not collapse):** C3 qualify is **between campaigns inside one sequence**. 15:43 other-agent · other-workflow · or end is still **after the sequence / class** (or after the campaign that *is* the class completion — for opt-in, launch day’s sign-up). Engine 2 stays between classes. Do not put `workflow_trigger` on the canvas to implement qualify.
+
+### Do not change for *this* grain (still moving on the face)
+
+Call / ElevenLabs. Attempt-cycle columns (count, wait after last node, nth-sequence). CSS Override-per-family booleans. C2 Additional. Word “event.” Failure-*does*. Waitlist → who gets launch day.
 
 ---
 
 ## Inflections (ask; do not fill)
 
 1. **Call vs Form.** Keep Form on the machine until Story, or is Call a Story must now? (Face-only is already named.)
-2. **Campaign / objective housing** — before any table. Face sequence⊃campaign vs SQL both-as-`sequence_class`. Waitlist → launch day branch still open (SA 17:05): only waitlisted, or the whole book?
-3. **Attempt-cycle params** (count, wait after last node, nth-sequence) vs today’s channel windows. C6 draws both families; only windows are rows.
-4. Automations still later. Triggers stay off this canvas.
+2. Waitlist → launch day: only waitlisted, or the whole book? (Open since 17:05; now: qualify from campaign A → campaign B.)
+3. **Attempt-cycle params** vs today’s channel windows. C6 draws both families; only windows are rows.
+4. 7a day-calendar vs 7b channel wires once campaigns exist — finish or park on the face; do not collapse in Settings.
+5. Automations still later. Triggers stay off this canvas.
+
+**Process (founder 22:41):** finish what is still moving on the face **before** SA mints or rewrites cascade. This grain lock is **determined** — housing is named so PM does not re-flatten `launch_day` into `sequence_class`. SA is witness + conflict-namer until Story promotion.

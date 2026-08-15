@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-15 20:10 UTC — **Ascribe: Agents UI blueprint vs stood-up machine.** Answer to PM package on PR #85. Full A/B + rollup: [`SYSTEMS-AGENTS-ASCRIBE.md`](./SYSTEMS-AGENTS-ASCRIBE.md). Product flag stays PHASE-TWO-LOG **15:43 UTC** — do not overwrite. No mint. No second flag. Handoff 17:12 and [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) still stand.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-15 22:41 UTC — **Grain lock: sequence contains campaigns.** More recent is current. Housing named, no mint. Process: finish moving face before SA builds. Detail: [`SYSTEMS-AGENTS-ASCRIBE.md`](./SYSTEMS-AGENTS-ASCRIBE.md) § Canonical housing · [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) 22:41 overlay. Product flag stays PHASE-TWO-LOG **15:43 UTC**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -556,3 +556,31 @@ Affordances: partial. UI can look like this. UI would change if inherit/override
 4. Automations later. Triggers stay off this canvas.
 
 **Do not:** overwrite 15:43; mint call / campaign / objective / qualify from C3–C5; put Automations triggers here.
+
+---
+
+## 2026-08-15 22:41 UTC — Grain lock: sequence contains campaigns. Housing named. No mint.
+
+**Why:** Founder confirmed the grain-name witness. More recent is current. Asked what table changes for that to be true, and whether PM should finish the face before SA builds (so SA is not on moving ground).
+
+**Excerpts**
+
+> everything that has come after take it as like the canonical thing
+
+> the more recent is the more, um, current
+
+> agents are sequenced … within a … blank agent sequence … it's campaigns. It's all, all campaigns within sequences.
+
+> would you say it's better for us to go and … totally finish everything before we then come to you on the system side. I think that makes sense … so that if we're changing stuff in the future, you're not building on like constantly moving ground
+
+**Canonical names (law of the grains, not a second flag):** Agent = sequence. Sequence is blank / agnostic. Campaigns live inside it. Launch window and launch day are **campaigns**, not sequence classes. `launch_day` in SQL CHECK is the lie. 17:05 used the opposite words for the same two boxes — witnessing only.
+
+**Process:** Yes — finish what is still **moving** on the face before SA mints or rewrites `cascade`. This grain lock is **determined**; housing is named now so PM does not re-flatten `launch_day` into `sequence_class`. SA stays witness + conflict-namer until Story §7 is promoted.
+
+**Determined (do not wait to name; do wait to migrate):** sequence⊃campaigns · three sequence templates · objective on the campaign · qualify between campaigns · empty world · Override this / content toggle / attempts not at channel · Automations triggers off canvas · no `goal` table duplicating `meeting_booked`.
+
+**Still moving (finish or park before mint):** Call vs Form · attempt-cycle params on the campaign · C2 Additional · waitlist → who gets launch day · word “event” · mix objective types · campaign Settings modal · failure-*does* · 7a calendar vs 7b wires.
+
+**Housing (no CREATE TABLE).** Keep: `seq_phase_order` (three) · channel ladder · completion tables as pointers · NULL-firm Settings · `campaign_states` as firm run-state (name collision) · `sequence_definitions` dead · `workflow_trigger` off canvas. Change when Story bears it: CHECK drops `launch_day` (three classes) · binding UNIQUE off `(firm_id, sequence_class)` · `cells` stop being the sequence spine · enroll into sequence, cursor = campaign then 7b · objective on campaign pointing at existing completions · qualify = campaign→campaign in the same sequence, distinct from Engine 2 between classes. Full table: [`SYSTEMS-AGENTS-ASCRIBE.md`](./SYSTEMS-AGENTS-ASCRIBE.md) § Canonical housing. Overlay: [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) 22:41.
+
+**Do not:** mint tonight; reuse `campaign_states` for canvas campaigns; revive `sequence_definitions` as the campaign table; put qualify on `workflow_trigger`.
