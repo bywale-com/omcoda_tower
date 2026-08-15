@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped.
 
-**Current (read first, then the newest stamp at the bottom):** Log opened 2026-08-15 16:01 UTC. First assigned question not yet answered in this file — see docs/README.md § Systems Analyst “First question.”
+**Current (read first, then the newest stamp at the bottom):** Log opened 2026-08-15 16:01 UTC. First assigned question not yet answered — see docs/README.md § Systems Analyst “First question.” Package waiting: [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md).
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -23,3 +23,11 @@
 **Assigned first question (answer in a later stamp, after the repo walk):** given the Agents flagship (operator-authored sequencing, firm/default/overrides, attempt/retry/escalation, goal-criteria as escalation point → other agent · other workflow · or end; middle modular), what must change in the systems model? Inventory every stood-up table/field/relation first.
 
 **Do not:** generate a substitute Agents list; invent Ant chrome; mint a goal table in this opening stamp.
+
+---
+
+## 2026-08-15 20:00 UTC — Package waiting (PM handoff; do not answer here as PM)
+
+**Why:** PM committed [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md). New SA chats: walk + first question (flagship inventory/fit), then that package (ascribe C1–C7: our machine vs externals/configs/affordances). Answer in a later stamp in **this** file.
+
+**Do not:** treat the package as Story; mint tables from the pictures; overwrite 15:43.

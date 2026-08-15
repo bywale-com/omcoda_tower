@@ -241,4 +241,4 @@ This is the under-documented remainder **before** systems. Not for SA to invent 
 - Not restoring the discarded plates.
 - Not a second Agents flag.
 
-**SA:** read 15:43, then [`AGENTS-FACE.md`](./AGENTS-FACE.md), then **this file in lineup order**. Extract the machine from the law + these plates. Do not design a different Agents module from the old Timeline.
+**SA:** read 15:43, then [`AGENTS-FACE.md`](./AGENTS-FACE.md), then **this file in lineup order**. Dated prompt: [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md). Extract the machine from the law + these plates. Do not design a different Agents module from the old Timeline.

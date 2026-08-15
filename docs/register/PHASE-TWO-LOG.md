@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. UI blueprint canon lineup [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) (19:50). Face [`AGENTS-FACE.md`](./AGENTS-FACE.md).
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. UI blueprint canon lineup [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) (19:50). Face [`AGENTS-FACE.md`](./AGENTS-FACE.md). SA ascribe package [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md) (20:00).
 
 **How we maintain this log**
 
@@ -405,4 +405,14 @@ Mock = generate the image. Settings untouched. Flag 15:43 untouched.
 **Under-specified (named in the blueprint, not filled):** attempt rules on the campaign card (said, not drawn); attempt-N content variation control; additional opt-in objectives; word “event”; campaign Settings modal; Call vs Form on the machine.
 
 Flag 15:43 untouched. Settings plates still locked.
+
+---
+
+## 2026-08-15 20:00 UTC — Systems Analyst package committed (ascribe the plates)
+
+**Why:** Founder: the SA already has the context. The prompt should stay small. This is what we’re thinking; these are the systems traversing. For **our** system (tables, workers, runtime): what are we looking at? For **external** systems the mock is clearly calling — especially because the image is going to look like this — look at the configurations we are implying, is this possible, does the UI have to change, do we have the affordances we’re hoping for? Commit that as a **package prompt in time** so the next thing can start.
+
+**Doc:** [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md). Paste-block in that file. Same two questions on every canon plate, then a rollup. Indexed from README SA identity + FACE + blueprint.
+
+Flag 15:43 untouched. Settings plates still locked. Blueprint not rewritten.
 
