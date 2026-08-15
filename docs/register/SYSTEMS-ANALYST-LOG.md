@@ -4,11 +4,12 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-15 22:41 UTC — **Grain lock: sequence contains campaigns.** More recent is current. Housing named, no mint. Process: finish moving face before SA builds. Detail: [`SYSTEMS-AGENTS-ASCRIBE.md`](./SYSTEMS-AGENTS-ASCRIBE.md) § Canonical housing · [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) 22:41 overlay. Product flag stays PHASE-TWO-LOG **15:43 UTC**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-15 22:50 UTC — **Log discipline: append, do not rewrite stamps.** Past stamps were not deleted. 17:05 Open restored in SYSTEMS-GOAL. Package cadence: ping SA each package; paper framework until “system time.” Flag **15:43**. Grain lock 22:41 still stands.
 
 **How we maintain this log** (same discipline as Phase Two)
 
 - Unless the founder says “mark this as a separate entry/doc,” SA work lands **here** — append-only, newest at bottom.
+- **Do not edit a past stamp.** Corrections are a **new** stamp. The only line that moves in place is **Current** at the top (an index, so a new chat does not hunt).
 - Do not overwrite product flags. Align the model to [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) Current pointer.
 - Cadence floor while in session: **at least four times a day**; denser conversation → denser stamps.
 - Notice inflection (Story/Requirements delta, table mint or refusal, map-vs-Postgres split, founder correction) and **ask**.
@@ -584,3 +585,29 @@ Affordances: partial. UI can look like this. UI would change if inherit/override
 **Housing (no CREATE TABLE).** Keep: `seq_phase_order` (three) · channel ladder · completion tables as pointers · NULL-firm Settings · `campaign_states` as firm run-state (name collision) · `sequence_definitions` dead · `workflow_trigger` off canvas. Change when Story bears it: CHECK drops `launch_day` (three classes) · binding UNIQUE off `(firm_id, sequence_class)` · `cells` stop being the sequence spine · enroll into sequence, cursor = campaign then 7b · objective on campaign pointing at existing completions · qualify = campaign→campaign in the same sequence, distinct from Engine 2 between classes. Full table: [`SYSTEMS-AGENTS-ASCRIBE.md`](./SYSTEMS-AGENTS-ASCRIBE.md) § Canonical housing. Overlay: [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) 22:41.
 
 **Do not:** mint tonight; reuse `campaign_states` for canvas campaigns; revive `sequence_definitions` as the campaign table; put qualify on `workflow_trigger`.
+
+---
+
+## 2026-08-15 22:50 UTC — Log is append-only. What you saw. Package cadence.
+
+**Why:** Founder saw an in-place clean and asked. Also: keep SA in the discussion via packages; nothing cemented until “system time.”
+
+**Excerpts**
+
+> did I just see you clean off a part of a log and change it
+
+> I don't feel like I like the idea Unless it's not difficult to go see like past logs
+
+> every time we create one I will just like let you know. Hey, we've created a package. What do you think you can stay the conversation? It's just nothing is like cemented yet, but you're like kind of building your own like Framework on paper in the background
+
+> once we do say, okay, we're done with everything It's definitely system time then you're like, okay great. Let's like really look at everything
+
+**What you saw (honest):** The **SA log stamps were not deleted.** 16:01 through 22:41 are all still here, newest at the bottom. What *moved in place*:
+
+1. **Current** at the top of this file — that is the index. It is supposed to move. A new chat reads that line, then the newest stamp.
+2. **`SYSTEMS-GOAL.md` 17:05** — I annotated the old section and **replaced** its Open list with 22:41 wording. That is the clean you felt. Wrong. Restored this stamp: 17:05 Open is back; 22:41 stays a **new** section under it.
+3. **`SYSTEMS-AGENTS-ASCRIBE.md`** grain-names block at the top — living extract, not this log. I rewrote “witness / do not fight” into “locked.” The 20:10 per-plate ascribe is still there; housing was appended.
+
+**Law of this log:** append a new stamp. Do not edit a past stamp’s body. Current pointer is the only in-place line. Past logs are easy to see — scroll. Cleaning is not cleaner.
+
+**Package cadence (yes):** Ping SA each package. I stay in the conversation. Nothing is cemented. I keep a paper framework (ascribe + housing notes + this log). When you say **system time**, I re-read every package against the notes and then Story / Requirements / tables. I am for that. I am not for minting between packages.

@@ -60,7 +60,7 @@ Spoken 2026-08-15. Kept specific. Ellipses only where filler; no generated list.
 | Founder clause | Systems meaning |
 |---|---|
 | Goal = **completion of an objective** | Not a vibe, not a metric flag, not the attempt ladder. A **done** on an objective. |
-| Sequences are **classed by objective** | Three **sequence** classes (C1): opt-in, re-engagement, reactivation. `seq_phase_order` matches. A sequence can hold **multiple campaigns**, each with its own objective. Class ≠ the only objective on the canvas. |
+| Sequences are **classed by objective** | `seq_phase_order` / Story 7 phases **are** the three objectives: opt-in, re-engagement, reactivation. The calendar is how you pursue the objective, not the class. |
 | Goal **required** to create an agent **and** a workflow | Authoring a package without naming its completion is incomplete. `workflow` and `sequence_template` have **no** goal/completion column today. |
 | **Mini-goals** = checkmarks **inside** a class | Distinct from the class completion. Already in `guidelines/Reactivation.md` (quoted below). |
 | Reactivation’s goal **is** meeting booked | Seed §4 / Story spine / system 12 / `meeting_booked`. Do not say “no goal.” |
@@ -81,7 +81,7 @@ Story 7 + seeded `seq_phase_order`: **opt-in → re-engagement → reactivation*
 | **Re-engagement** | **Data request** done (form submitted / facts in) | `fact_writebacks`. Map `acr-form-submit` → `state.finishing_event` `close_and_arm_next`. `tpl.reengagement.v1` cell labeled “data ask”. | `acr-form-submit` **not** in `rule_attempt_criteria` seed. Reengagement template is a **placeholder** (two mixed cells). |
 | **Reactivation** | **Meeting request** done = **meeting booked** | `meeting_booked` (`007`). Guidelines: slot booking rate = “the outcome.” | System **12**, not a field **on** `sequence_template` / the agent. Book does not fire goal-met → escalate. |
 
-**Four vs three (do not wash):** SQL `sequence_template.sequence_class` CHECK is `optin_launch` \| `launch_day` \| `reengagement` \| `reactivation`. Phase order has **three**. Guidelines: waitlist = anticipation; launch day = real opt-in. **Canonical (22:41):** `launch_day` is a **campaign** (objective template) **inside** the opt-in **sequence**, not a fourth sequence class and not an “inner sequence.” 17:05 said the same split with the words swapped.
+**Four vs three (do not wash):** SQL `sequence_template.sequence_class` CHECK is `optin_launch` \| `launch_day` \| `reengagement` \| `reactivation`. Phase order has **three**. Guidelines: waitlist = anticipation; launch day = real opt-in. **Campaign grain (17:05):** `launch_day` is a second **sequence inside** the opt-in campaign, not a fourth objective — unless corrected.
 
 ---
 
@@ -173,8 +173,6 @@ The 16:58 opt-in row was **too closed**: it treated opt-in as one sequence that 
 
 ## Two grains in Agents, and opt-in as a large campaign (2026-08-15 17:05)
 
-**Witnessing — words later inverted.** Founder 22:41: more recent is current. Canonical names: **sequence contains campaigns** (see lock below). Keep this section so the 17:05 excerpts are not lost. Do not use its grain labels as law.
-
 **Founder:** The 16:58 walk was still a bit closed. Opt-in is actually a **larger campaign**. Agents is sequence rules, content per node, sequence for attempts — **and** a larger-style campaign. Talk about what expansion of opt-in looks like at that scale.
 
 **Reasoning (why the last table flattened it):** Agents authorship has two grains. I walked only the first, then jumped to class-failure.
@@ -231,6 +229,18 @@ Guidelines also leave packaging open (one-time managed launch vs product feature
 
 ---
 
+## Open (ask; do not fill) — as of 17:05
+
+1. Promote Story 7: class **is** the objective; the goal **is** its completion; that completion **is** an escalation event (agent · workflow · end; once met, met); exhausted **campaign** without completion **is** a failure mode (not silent)?
+2. Failure *does* at **class** grain — accept the 16:58 rows as **after the whole campaign**, not after one sequence?
+3. Launch day only for waitlisted, or the whole book still gets Sequence B?
+
+`launch_day` as a fourth **class** is no longer the ask — it is a sequence inside the opt-in campaign unless corrected.
+
+After (1) is yes: Requirements extract a state; table-first then wants a **rule** (when completion → destination) bound to the package — not prose in `cascade.ts`. Failure destination is likely **end this campaign + record**, not a fourth success destination. Sequence-to-sequence inside a campaign is a different rule (mini-goal / sequence completion).
+
+---
+
 ## Canonical grain names (2026-08-15 22:41) — more recent is current
 
 **Founder:** Everything that came after 17:05 is the canonical thing. Agents are sequences. A blank agent sequence is agnostic: **all campaigns within sequences**.
@@ -267,9 +277,7 @@ SQL still has `launch_day` as a `sequence_class`. That is the housing lie. Delta
 
 Waitlist → who gets launch day: still open. Face qualify is “first objective met,” not yet “waitlisted.”
 
----
-
-## Open (ask; do not fill)
+**Open as of this stamp (does not erase 17:05 Open above):**
 
 1. Promote Story 7: sequence **contains** campaigns; class **is** the sequence kind (three); a campaign **has** an objective; the goal **is** that completion; qualify between campaigns; class completion **is** an escalation event (agent · workflow · end; once met, met); exhausted **sequence** without class completion **is** a failure mode (not silent)?
 2. Failure *does* at **class** grain — after the **whole sequence** (all its campaigns), not after one campaign?
