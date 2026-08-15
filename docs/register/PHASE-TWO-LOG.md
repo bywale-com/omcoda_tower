@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Automations next — **work from Hub** (20:44). Face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Agents creation place complete enough to leave (20:24). UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md). Face [`AGENTS-FACE.md`](./AGENTS-FACE.md). SA ascribe package [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md).
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Automations next — **work from Hub**; from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) (20:54). Face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Agents creation place complete enough to leave (20:24). UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md). Face [`AGENTS-FACE.md`](./AGENTS-FACE.md). SA ascribe package [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md).
 
 **How we maintain this log**
 
@@ -454,6 +454,20 @@ Flag 15:43 untouched. SA Agents package still waiting; this is PM module enter, 
 **Doc:** [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md) law 11–13.
 
 **Do not:** overwrite 15:43; treat CT Ant Automations as the source; throw away Hub node kinds; invent a new in-system-outcomes catalog this stamp; mint tables.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 20:54 UTC — Rule GUI vs Custom; smallest workflow; from-scratch images
+
+**Why:** Founder: likes that there is code to build it, does **not** want to be limited to code. Two options: **Custom** (code, like JSON) and **GUI** where the logic is simple enough. If it really isn’t simple enough, say so. This entire Rule part **does not exist in the Ant translation** — that’s a problem. Mocks = images; **building from scratch**. A rule lets us create the **smallest workflow**: trigger · rule · action. Fewer pieces; then build those pieces.
+
+**PM verdict:** the authored logic **is simple enough for a GUI**. Condition = field · operator · constant. Rule = togglable families of those. Evaluator stays under the hood. GUI default; Custom when GUI isn’t enough.
+
+**Images:** [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) A1–A3. Not planted in the app.
+
+**Do not:** overwrite 15:43; plant AntAutomationWorkbench this stamp; say it all has to be code.
 
 Flag 15:43 untouched.
 

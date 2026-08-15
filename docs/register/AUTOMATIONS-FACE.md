@@ -2,10 +2,8 @@
 
 **Seat:** Product Manager.  
 **Why this file:** law and excerpts for Automations. Entered from the Agents outskirts — not a disconnected menu pick.  
-**Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub-as-source **20:44 UTC**.  
-**Status:** Agents as a **creation place** (campaigns) is complete enough to leave. Automations is the next module. **Work from Hub Automations** (`/hub`) — that plant is the complete one. CT Ant Automations is a translation of Hub (same kind, poorer quality). Not Story. Not a UI blueprint yet.
-
-Look at **Rules** first — Immigration · Service eligibility — to see the end goal.
+**Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub-as-source **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC**.  
+**Status:** Agents as a **creation place** (campaigns) is complete enough to leave. Automations is the next module. **Work from Hub Automations** (`/hub`) — that plant is the complete one. CT Ant Automations is a translation of Hub (same kind, poorer quality) and **this entire Rule part does not exist in Ant**. Image mocks are **from scratch**. Look at **Rules** first.
 
 ---
 
@@ -47,6 +45,12 @@ Look at **Rules** first — Immigration · Service eligibility — to see the en
 
 > It's very easy to mess up the automations module because it actually touches more of the app. There's something coming in from somewhere, from outreach, from existing data, and maybe other sources. And then we perform an operation on it. And the actions that are possible are not just limited to outreach. There's outcomes that change stuff inside the system as well. That's why the automations module is such an easy to miss module.
 
+> I like that there's code to build it. However, I don't want to be limited to code. Where it's possible — great. Even with the blocks themselves, even with the code itself, it's still like blocks. There are two options: where there's a custom, where you have to use code, just like with JSON. But then there's also the option if you wanted to use like some kind of GUI. I feel like the logic and even the operations themselves are simple enough where it's not all code. If it really isn't, I need you to say so. Where it can be like that, let's do it.
+
+> This entire part of the module doesn't even exist in the Ant translation. That's a problem. With the mocks that are going to be generating in terms of images — we're building from scratch. Let's call it what it is.
+
+> A rule allows us to create the smallest kind of workflow in an automation. It's just a trigger, a rule, and an action. It can be as simple as that. Smallest looking workflow. Then we can still say, what makes up this thing completely? Less pieces to think about. Then we can go about building those pieces separately.
+
 ---
 
 ## Law of the face (short)
@@ -64,6 +68,9 @@ Look at **Rules** first — Immigration · Service eligibility — to see the en
 11. **Hub is the complete Automations module.** Current-app / CT Ant Automations was **born from Hub**. It is a **translation** (same kind) and a **poor rendition of quality**. Work from Hub nodes. Do not “fix” Ant independently as if it were the source.
 12. **Look at Rules to see the end goal.** Plate: Hub → Automations → **New firm → opt-in launch** → Rule **Immigration · Service eligibility**. Open it: **toggles** on outcome families (Pathway detection, Gaps, Profile & operations, Category draws, Draw competitiveness). Under the hood: conditions against constants. A **rule is a composite of conditions and constants**. Rules are **creatable**. Modular **across industries**.
 13. **Easy to miss because it touches more of the app.** Something comes in (outreach, existing data, other sources) → perform an operation → **actions are not only outreach**. Outcomes also **change stuff inside the system**.
+14. **Not limited to code.** PM verdict: the authored logic **is simple enough for a GUI**. A condition is field · operator · constant. A rule is togglable families of those. Under-the-hood evaluator stays code. **Two options:** **GUI** (default where possible) · **Custom** (code / JSON when the GUI isn’t enough).
+15. **Smallest workflow = trigger · rule · action.** A rule lets us create the smallest looking automation. Then name the pieces and build them separately.
+16. **This Rule part does not exist in the Ant translation.** Image mocks are **from scratch** in Ant chrome. Mock = generate the image. See [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md).
 
 ---
 
@@ -110,7 +117,7 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 - Not locking form-as-node vs embedded — lean is embedded; still named open.
 - Not a full catalog of operations or exit points. “Add them to …” was not finished. Name the silence.
 - Not minting tables. SA extract after this face is specified enough — same discipline as Agents.
-- Not a UI blueprint yet. Mock = generate the image when we get there; do not plant a second Automations editor.
+- Not a UI blueprint of the whole DAG. Smallest workflow first: [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md). Mock = generate the image. Do not plant `AntAutomationWorkbench` this pass.
 
 ---
 
@@ -123,3 +130,4 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 5. Word “event” on Agents C2b vs Automations’ event-of-origin (schedule / trigger) — do not collapse them without asking.
 6. Catalog of **in-system outcomes** besides enroll-agent (lists, tasks, notify, and whatever else Hub already names). Do not invent a new catalog this stamp.
 7. Seed §5.6 vs Hub-as-built vs the 20:24 definite-middle shape — **do not silently kill any of them**. Hub Rules are what to look at. Alignment is later.
+8. Whether Custom is JSON specifically vs another code surface. Founder said “just like with JSON.”

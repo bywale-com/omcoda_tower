@@ -3,7 +3,7 @@
 **Status:** Declared 2026-08-13 — Phase Two starts now.  
 **Seat:** Founder prompts from inside the live app; agent runs the same methodology at micro scale.  
 **Companion:** Phase One spine = [`PASS-FORK-MAP.md`](./PASS-FORK-MAP.md) · machine table law = [`system-map/BUILD-system-map-v2-table-inventory.md`](./system-map/BUILD-system-map-v2-table-inventory.md).  
-**Running log:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) — dated additions (newest at bottom). Thesis stays here; talk lands in the log unless marked as a separate entry. **Agents flagship** is the 2026-08-15 15:43 UTC stamp in that log — not the 14:58 numbered list. **App-facing:** [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · Automations face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). **Seats:** Product Manager vs Systems Analyst — paste prompts in [`docs/README.md`](../README.md). SA log: [`SYSTEMS-ANALYST-LOG.md`](./SYSTEMS-ANALYST-LOG.md).
+**Running log:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) — dated additions (newest at bottom). Thesis stays here; talk lands in the log unless marked as a separate entry. **Agents flagship** is the 2026-08-15 15:43 UTC stamp in that log — not the 14:58 numbered list. **App-facing:** [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · Automations face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md) · Automations images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md). **Seats:** Product Manager vs Systems Analyst — paste prompts in [`docs/README.md`](../README.md). SA log: [`SYSTEMS-ANALYST-LOG.md`](./SYSTEMS-ANALYST-LOG.md).
 
 ---
 
