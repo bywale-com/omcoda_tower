@@ -90,6 +90,32 @@ Starting module **Agents** means building out this stack and dual entry — whic
 
 ---
 
+## 2026-08-15 14:58 UTC — Creation stance + Agents module definition (flag plant)
+
+**Stance:** Phase Two here is **creation**, not audit/prune. No separate “module audit system” required for this. Founder defines scope; agent builds via existing click-path / build methodology. Founder does not need to hunt the UI to authorize changes.
+
+**Flag plant — Agents module definition** (founder order preserved; lightly enriched where essential):
+
+The **Agents** module is where a firm defines an **outreach package**. It lets us define:
+
+1. **Outreach sequence** — the engagement package itself (the unit that can run against contacts).
+2. **Ordering / sequencing of outreach** — nodes and order inside that package; including **attempt-aware defaults** (e.g. default for all attempts except X; attempt-1 vs later-attempt shapes).
+3. **Triggers for the outreach** — what starts this package (Agent-native launch and/or Automations hand-off; existing book contacts and/or new contacts).
+4. **Attempt and retry rules** — what counts as an attempt; windows; retries inside an attempt.
+5. **Escalation rules within attempts** — channel/ownership handoff and failure→next step inside the attempt ladder.
+6. **A goal** — what this outreach is trying to achieve (success condition for the package / attempt family).
+7. **Actions on goals** — connect outreach and escalations to the goal: what happens on goal **success** and goal **failure**, on orthogonal axes (e.g. per attempt default vs per event), including defaults when a goal fails.
+
+**Essential enrichments (kept short):**
+
+- **Content** sits on the sequence nodes: copy that goes out, plus ability to embed/use **structured information** (often from Automations) inside that content — otherwise “sequence” has nothing real to send.
+- **Firm binding** — an agent is authored and run in a firm context; enrollments and sends inherit that firm’s book and rules.
+- **Record** — what runs should leave a consultant-visible engagement record (Activity), not a black box.
+
+**Out of this definition (perimeter, not Agents’ interior):** Automations’ graph authorship, book import/authorize UI, Board chrome — except as **triggers**, **info into content**, and **record** touchpoints named above.
+
+---
+
 ## 2026-08-15 14:49 UTC — Two problem kinds (booth reminder)
 
 Recorded so the log carries the split without only living in chat:
