@@ -202,3 +202,35 @@ Automations is `workflow` + `workflow.graph` + `workflow_trigger` + `action` + `
 ## Paper vs cement
 
 This file is the background framework for the Automations package. Nothing here is Story. When founder says **system time**, re-read this against the packages and then promote / extract / table-first. Until then: witness + conflict-namer.
+
+---
+
+## Correction 2026-08-15 23:00 — Hub is reference only. Ant is the product. Systems for the pictured UI.
+
+**Founder:** Do not worry about the UI. Worry about **current systems** and what must change so that UI works **exactly as the images look**. Hub is **not** continuing. Hub had the canonical Automations and Agents modules; we used it to replicate those images in Ant. **No work commences in Hub.** Everything is prototype Ant. Images are the face even though Ant does not look like them yet. System work has not started; UI work soon.
+
+Looked at the plates (A1–A13, C3). This section is the systems delta. Not chrome. Not mint.
+
+**Wrong in the 22:55 rollup:** “honesty = Hub is the plant until Ant grows Rule GUI / operators stay on Hub.” That is discarded. Ant Save / Launch / Output / form must be true against Postgres + `workflowWalk` + cascade. Hub TS packs are **reference**, same as the images’ source.
+
+### What the pictures require the machine to do (Automations)
+
+| Picture does | Stood up today | Must change (when Story bears it — not tonight) |
+|--------------|----------------|--------------------------------------------------|
+| A1 Save / Launch a 3-node graph; list Draft vs Published; target audit/client | `workflow.graph`, `workflow_state` (`draft`/`active`/`paused`), `workflow.target` | Ant persist path (not Hub seed store). Map Published → `active` (or add a status — do not invent tonight). Walker already accepts trigger+action |
+| A2 Save GUI families + field·op·constant rows | Hub `automationRules.ts` only. Walker `rule_eligibility_pathway` LIMIT 1 | Rule must be **data** the walker **evaluates**. Creatable ⇒ row (modularity). Not “look at Hub” |
+| A3 Custom JSON Save | Silent | Body on the rule row / graph node that the walker can run. Escape hatch |
+| A4 Save named JS beside GUI, toggle on/off | `constants_packs` for constants. No JS evaluator, no port | Persist named-code + on/off. Evaluator is a **must** if Save runs. No Python/JS port today |
+| A5 Save Event vs Schedule | `workflow_trigger` types housed | Ant materialize on Save (already `materializeTriggersFromGraph`). Event names must dispatch (partial) |
+| A6 / A7 Branch on some canvases; Action kind Agents vs in-app | Graph can hold `branch`. `action` CHECK `call_agent` only. Walker skips in-app kinds | In-app kinds do not run until CHECK + walker change (V2 backlog). Agents kind already enrolls |
+| A8 / A12 Select 3 sequence templates; objective + form from listing | Enroll by `agent_ref`. `WorkflowAgentRef` still has `tpl.launch_day.v1`. No form bind | Drop launch_day as enrollable sequence. Objective + form **reference listing ids**. Image caption “Re-engagement is a campaign” is **stale pixels** — cards are sequence templates (grain lock) |
+| A9 / A11 Output tab + required-data **listing** + Save | `RuleEvaluationSummary` has no listing. `COLLECTIBLE_FIELDS` unused | Output object the next node reads **must include the listing**. Filter `self_reportable` → form; `document_dependent` never. Do not mint a second catalog — use/stand up the unused one on the output |
+| A13 lattice | Diagram, not a screen | Do not build a lattice page. If-after-rule must read listing-not-empty (Hub If exists; walker `evalBranch` is eligibility true/false — **too thin**) |
+
+### What the pictures require (Agents — same rule: Ant, not Hub)
+
+Already named 22:41. For C3 to **run** as drawn: campaign children on a sequence; objective on each; qualify edge; Override this; cells stop being the sequence spine; CHECK drops `launch_day`. C5 Call: no port — either Call stays face-only or Story + a call port. C3/C4/C6 still show Form; that is the machine third medium.
+
+### Do not
+
+Mint tonight. Continue Hub. Treat A13 as a screen. Collapse C2b with A5. Put triggers on the Agents canvas. Build a campaign picker because A12’s caption slipped.

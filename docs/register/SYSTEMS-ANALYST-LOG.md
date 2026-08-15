@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-15 22:55 UTC — **Paper ascribe: Automations package (PR #85 A1–A13).** Not cemented. Not mint. Hub is the plant. Detail: [`SYSTEMS-AUTOMATIONS-ASCRIBE.md`](./SYSTEMS-AUTOMATIONS-ASCRIBE.md). Agents grain lock 22:41 and log discipline 22:50 still stand. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-15 23:00 UTC — **Hub is reference only. Ant is the product. Systems for the pictured UI.** Looked at the plates. No mint. 22:55 “stay on Hub” discarded. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -635,3 +635,27 @@ Affordances: partial. UI can look like this. UI would change if inherit/override
 - Ant has no Rule GUI. Honesty: Hub is the plant until Ant grows it.
 
 Not cemented.
+
+---
+
+## 2026-08-15 23:00 UTC — Hub is reference only. Ant is the product. Systems for the pictured UI.
+
+**Why:** Founder correction. Do not worry about the UI. Systems must change so the **images** work exactly. Hub is not continuing — it was the source for the pictures. All work is prototype Ant. Looked at A1–A13 and C3.
+
+**Excerpts**
+
+> I'm not asking you to don't worry about the UI Worry about the current systems and how they need to be changed to to make that UI work Exactly as it looks
+
+> we will not be continuing working … hub … It just had the canonical automations and agents module So we just worked with that to replicate that image in … the ants design system But not no work is gonna commence or continue inside of hub Everything is moving … prototype ants
+
+> I don't know if you actually be looking at the images I think you should
+
+> we've not actually start working on the system, but we will we will work on the UI very very soon
+
+**Discarded:** 22:55 “honesty = stay on Hub for Rules.” Hub TS is reference, not the plant.
+
+**Systems so the pictures run (no mint tonight).** Automations: Ant Save must persist `workflow.graph` + materialize `workflow_trigger`; rule GUI rows must be data the walker **evaluates** (today TS pack + `LIMIT 1`); Output must carry a required-data **listing** (`COLLECTIBLE_FIELDS` unused; do not mint a second catalog); form on A12 **references those ids**; `action` CHECK is `call_agent` only — in-app kinds do not run; named JS (A4) has no evaluator; walker `evalBranch` is too thin for listing-not-empty; A13 is not a screen. Agents: 22:41 housing (campaigns inside sequence; drop `launch_day` as class) so C3 qualify runs. A12 caption “Re-engagement is a campaign” is stale pixels — the three cards are sequence templates.
+
+Full table appended on [`SYSTEMS-AUTOMATIONS-ASCRIBE.md`](./SYSTEMS-AUTOMATIONS-ASCRIBE.md) § Correction 23:00.
+
+**Do not:** mint; continue Hub; build a lattice page; campaign picker from the slipped caption.
