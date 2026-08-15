@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Override this** graph = 2026-08-15 18:08 UTC. Planted on Ant Editor → Canvas 18:25 UTC. Face doc [`AGENTS-FACE.md`](./AGENTS-FACE.md).
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Override this** graph = 2026-08-15 18:08 UTC. Objective = binary event on the campaign (18:40 UTC). Face doc [`AGENTS-FACE.md`](./AGENTS-FACE.md). Mock paused until founder says go.
 
 **How we maintain this log**
 
@@ -305,4 +305,28 @@ Spoken “email, text, and call”: ladder stood up is text / email / form — d
 **Still open:** window’s one objective (waitlist?); mix types in one sequence; deeper-than-channel grain; spoken “call”.
 
 **Ask:** is Launch window’s one thing the waitlist, or still unnamed?
+
+---
+
+## 2026-08-15 18:40 UTC — Objective is the first thing on a campaign; binary event; two template layers
+
+**Why:** Founder answering the waitlist question, then the real grain. Mock **not** this turn — “if you recorded the revision, that’s great.” 18:08 Override-this / two-campaign / channel-as-medium **is** in this log and [`AGENTS-FACE.md`](./AGENTS-FACE.md).
+
+**Waitlist:** not the most important thing. Leave the window’s named “one thing” open. What matters is **how an objective is created**.
+
+**Empty world:** if no one has created templates, there are no templates. Keep that in the open.
+
+**Two template layers (do not mix):**
+- **Sequence templates** = the full canvas. Opt-in, re-engagement, reactivation **are sequences**, not objectives. You would not see “opt-in” in an objective picker.
+- **Objective templates** = a **single campaign**. In the opt-in sequence, examples already named: **launch window**, **launch day**. There are **additional** objectives in that sequence — unnamed here.
+
+**Creating a campaign:** the first thing you define is the **objective**. Hub Automations analogy (`/hub`): you start with a trigger; on that node the first thing is **Add configuration** (event configuration). Same idea — not “put Automations triggers on the Agents canvas.”
+
+**Untemplated objective:** looks like an **event** (maybe not called events; can expand). Binary. Direct. Everyone enrolled in this campaign is campaigned to do **one thing**. Yes or no. It happened or it didn’t. Then you **name** it (e.g. meeting booked).
+
+Spoken examples: click this link · book a meeting in this calendar · submit / complete this form. Launch window as a from-scratch event: probably **click this link**. Down the line: a webhook / table query (did they follow us / is their name in this). System should not be so complicated that that is impossible. Do not mint that now.
+
+Picking a **templated** objective populates everything related to that template.
+
+**Doc:** [`AGENTS-FACE.md`](./AGENTS-FACE.md). Flag 15:43 untouched. No mock this stamp.
 

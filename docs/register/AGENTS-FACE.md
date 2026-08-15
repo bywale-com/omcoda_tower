@@ -47,6 +47,18 @@
 
 > The toggles that live at the campaign level always remain at the campaign level. The toggles that now open up the lower nodes … live in those nodes. You go through the node, open it up, and then it reveals something deeper about that node with a wire that connects it. Now you're seeing a real full graph.
 
+> If no one has created any templates, then there are no templates. Opt-in sequence, re-engagement sequence, reactivation sequence — they're just templates.
+
+> When you're creating a campaign the first thing you define is the objective. … If you look at /hub … automations … you start with the trigger … the first thing you do is you actually have to add the event configuration. It just sits inside of like that's where node. So that's the same idea.
+
+> Objective is different from sequence. A sequence houses the full … sequences have templates. But objectives also have templates. You wouldn't see opt-in in objectives. Opt-in is a sequence. Re-engagement is a sequence … the full canvas. Objective is like a single campaign. Two perfect examples … in the opt-in sequence are the launch window … launch day. Some additional ones.
+
+> There is an absolute way to create an objective. Very binary. Very direct.
+
+> What is selecting an objective that has not been templated? It looks like an event. … Everyone that we enroll into this … campaigned … to do this one thing … yes or no. He didn't happen. Do we want them to click this link? We want them to book a meeting in this calendar. … Submit this form … complete this form. … You name it, as like … meeting booked. … Launch window … that would probably be something like we wanted to click this link.
+
+> Where does a webhook that searches if their name is inside of something … if it is that event is completed for them. … That's down the line. … Our system should not be so complicated that that's not possible.
+
 ---
 
 ## Law of the face (short)
@@ -59,6 +71,10 @@
 6. **Content defaults at campaign** (preset campaigns). Content is 1:1 with nodes; override content by opening the node.
 7. **Override this** is the first toggle on a campaign. It **opens the campaign** and **reveals channel nodes as wires** connected to it. Campaign-level toggles **stay on the campaign**. Channel-level toggles **live on those revealed nodes**. Open a channel node → deeper still, still wired. That is the full graph.
 8. **Settings = global only.** Defaults exist for every rule. Authorship is override. Modular: overridable ⇒ a row.
+9. **Empty world:** no templates until someone authors them. Opt-in / re-engagement / reactivation are **sequence templates** (the full canvas), not objective names.
+10. **Objective ≠ sequence.** Objective = **one campaign**. Sequences have templates; objectives have templates. You do not put “opt-in” in the objective picker.
+11. **First thing on a campaign is the objective.** Hub Automations: trigger node → **Add configuration**. Same seat, not the same module — do not import Automations triggers onto this canvas.
+12. **Untemplated objective is a binary event** (word “event” may change). One yes/no: everyone enrolled is campaigned to do **this one thing**. Happened or it didn’t. Then you name it. Templated objective populates the rest of that campaign.
 
 ---
 
@@ -67,9 +83,12 @@
 An **agent** is still the 15:43 thing. The **sequence** is a **blank container** for campaigns (goals). The **canvas** is how that looks.
 
 ```
-SEQUENCE  (blank — can hold multiple goals)
+SEQUENCE TEMPLATE  (blank canvas — opt-in / re-engagement / reactivation)
 │
-├─ Campaign  (has a campaign objective)
+├─ Campaign  = one OBJECTIVE
+│    [ first thing: the objective ]
+│         pick a template  → populates the campaign
+│         or from scratch  → binary event (yes/no), then name it
 │    sequencing (channel order / how many channels)     ← campaign level
 │    content defaults                                   ← campaign level
 │    defaults for channel rules + attempt rules
@@ -82,16 +101,19 @@ SEQUENCE  (blank — can hold multiple goals)
 └─ next Campaign  (only if prior campaign objective met → qualify)
 ```
 
-**Opt-in — two clear objectives, two campaigns:**
+**Opt-in — campaigns (objectives) on the sequence template:**
 
-| Campaign | Objective | Why it exists |
+| Campaign (objective template) | Binary event (from-scratch shape) | Why it exists |
 |----------|-----------|----------------|
-| **Launch window** | One thing that raises the chance of opt-in (build desire) | We don’t start at reactivation. Window first. |
-| **Launch day = opt-in day** | They opt in | Justified only because the first objective was met — they **qualify** for this phase |
+| **Launch window** | Spoken: probably **click this link**. Not “waitlist vs unnamed” as the important question. | Build desire. Why we don’t start at reactivation. |
+| **Launch day = opt-in day** | They opt in (yes/no) | Justified only because the first objective was met — they **qualify** |
+| **Additional** | Unnamed here | Founder: there are a couple more in this sequence |
 
-Between them: **goal accomplished → qualify for phase 2.** That is the edge on the canvas, not a Settings row.
+Between campaigns: **goal accomplished → qualify for the next.** That is the edge on the canvas.
 
-Spoken “email, text, and call”: **stood-up ladder is text → email → form.** Call is not a fourth medium unless Story says so. Capture the wording; do not mint a call channel here.
+Picking a **templated** objective populates everything related to that template. From scratch: configure the binary event, then name it.
+
+Spoken “email, text, and call”: **stood-up ladder is text → email → form.** Call is not a fourth medium unless Story says so.
 
 That is **not** four emails in one Timeline. Flattening it is the miss.
 
@@ -136,7 +158,26 @@ On each campaign, **one first toggle at the bottom: Override this.**
 
 Do not jump to a Settings modal. Do not replace the campaign with a Timeline. The campaign stays; the channels **hang off it**.
 
-**Today:** Editor tab now has **Canvas** (this graph, local prototype) and **Timeline (today)** (the Email/Task save path). Settings still lists every modular row — those rows are **global defaults**; campaign/channel overrides belong on the canvas.
+**Today:** A Canvas prototype was planted on the Editor tab (18:25). Founder asked to **pause the mock** until the revision is recorded. This file is the record. Timeline save path is unchanged.
+
+---
+
+## Objective first (binary event) — two template layers
+
+Hub Automations (`/hub`): empty canvas → add a trigger → on that node, **Add configuration** (event configuration). Campaign authorship uses the same *seat*: the first thing on a campaign is the **objective**. That is not a license to put Automations triggers on the Agents canvas.
+
+**From scratch:** the untemplated objective looks like an event (name may change). Everyone enrolled in this campaign is campaigned to do **one thing**. Yes or no. Then you name it.
+
+| Spoken from-scratch | Binary |
+|---------------------|--------|
+| Click this link | Did they, or not |
+| Book a meeting in this calendar | Did they, or not |
+| Submit / complete this form | Did they, or not |
+| Later: webhook / table (name in a list) | Did they, or not — do not mint now |
+
+**From a template:** pick an **objective template** (a campaign, e.g. launch window). It populates everything related to that template. You do not pick “opt-in” here — that is a **sequence template**.
+
+Empty world: no templates exist until authored. Keep that in the open.
 
 ---
 
@@ -148,7 +189,13 @@ Founder: “I’m not circling, I’m enriching, and I think you can even furthe
 
 **Why a launch window exists (the meta-reason).** We do not start at reactivation. The window’s job is to **build desire** for opt-in. Launch day **is** opt-in day. Phase 2 is justified only because phase 1’s objective was met — they **qualify**. That qualify-edge is the 15:43 “goal is itself an escalation point,” drawn as a wire between campaigns, not as a Settings row and not as a fourth channel.
 
-**One thing in the window.** The window campaign has **one** objective: the thing that, if they do it, raises the chance of opt-in. Still unnamed here (waitlist is a candidate, not confirmed). Do not split the window into two campaigns unless there are two objectives.
+**One thing in the window.** Not the waitlist question. The window’s objective is still **one binary event** — everyone enrolled is campaigned to do that one yes/no. Spoken from-scratch for the window: probably **click this link**. Do not split the window into two campaigns unless there are two objectives.
+
+**Two template layers.** Sequence templates = the full canvas (opt-in, re-engagement, reactivation). Objective templates = a single campaign (launch window, launch day, plus additional unnamed in opt-in). Empty world: no templates until authored. Keep that in the open.
+
+**First thing on a campaign is the objective.** Same *seat* as Hub Automations (`/hub`): you add a trigger, then on that node **Add configuration**. Here you add a campaign, then the first thing on it is the objective. Do **not** put Automations triggers on this canvas.
+
+**Untemplated objective = binary event** (the word “event” may change). Click this link · book this calendar · submit this form. Happened or it didn’t. Then you name it. Webhook / table lookup (name in a list → completed) is down the line; the system should not be so complicated that it is impossible. Do not mint that now.
 
 **Toggle locality (law of the graph).** A toggle lives at the layer it governs and **does not migrate** when the graph opens.
 
@@ -174,7 +221,9 @@ So Override this is not “show more fields on this card.” It **materializes t
 ## What this is not
 
 - Not overwriting the 15:43 flag.
-- Not putting Automations **triggers** on this canvas.
+- Not putting Automations **triggers** on this canvas. The Hub analogy is the **seat** (first thing on the node is configuration), not a copied trigger picker.
+- Not treating “opt-in” as an objective template. Opt-in is a **sequence** template.
+- Not minting webhook / table-query completion now. Named as possible later.
 - Not restoring 14:58 “actions on goals” as a seventh list item — failure is **inside escalation**.
 - Not assigning **objectives** to channels. Channels = medium + rules.
 - Not putting **sequencing** on the channel node. Sequencing = campaign.
@@ -185,7 +234,9 @@ So Override this is not “show more fields on this card.” It **materializes t
 
 ## Open (tinkering — do not fill)
 
-1. May one sequence mix objective types in practice, or only “technically”?
-2. Launch window’s single objective — waitlist, or still unnamed?
-3. Opening a channel: rules listed on the node (current plant) vs a further wired grain (attempts as nodes). Founder said “reveals something deeper with a wire” — grain unnamed.
-4. Spoken “call” as a third channel vs stood-up ladder text / email / form.
+1. Additional objectives inside the opt-in sequence besides launch window and launch day — unnamed.
+2. What we call the untemplated objective (“event” vs another word).
+3. May one sequence mix objective types in practice, or only “technically”?
+4. Opening a channel: rules listed on the node vs a further wired grain. Founder said “reveals something deeper with a wire” — grain unnamed.
+5. Spoken “call” as a third channel vs stood-up ladder text / email / form.
+6. Mock of this shape — founder wants to see it; **paused** until they say go.
