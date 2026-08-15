@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. App-facing first (one description → prototype **and** systems) = 2026-08-15 17:25 UTC. SA handoff lives on PR #84 / `SYSTEMS-GOAL.md` — not yet on main. The 14:58 numbered list is an agent restatement, **not** the founder flag.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. App-facing canvas / defaults / objective types = 2026-08-15 17:32 UTC in [`AGENTS-FACE.md`](./AGENTS-FACE.md). The 14:58 numbered list is an agent restatement, **not** the founder flag.
 
 **How we maintain this log**
 
@@ -246,3 +246,15 @@ Layer 3 is still **app-facing**: it is what the panes must be able to display, a
 **Seats:** PM writes/holds that inhabited description (prototype + the “I should be able to” that implies unattended). SA extracts Requirements / table-first / worker jobs from it and from Story — does not invent a second Agents flag. Same description, two outputs. Bind still late: a control does not create substance; if the description names a state the machine lacks, that is a **missing system** (Phase Two), not an excuse to fake it in the prototype.
 
 **Do not:** treat Hub JourneyTab as the description; put Automations triggers inside Agents; mint a `goal` table in this stamp.
+
+---
+
+## 2026-08-15 17:32 UTC — Agents canvas: campaign+node, default on every rule
+
+**Why:** Founder: still not specified as its most comprehensive document. Final form is modular. Canvas: you place **campaign and node**. One campaign → node canvas; add campaigns → consolidates to campaign canvas; you can always go that deep. Canonical **two-campaign sequence ≠ two-node sequence** (opt-in style; launch goal can sit in the sequence). **Objective type** = opt-in / reactivation / re-engagement; technically multiple inside the same sequence. First campaign: sequencing/order; **choose a default; everything is an override; always a default on everything** — including typical text→email→… Escalation rules **per node**, down to if-not-open, down to attempt rules. Failure is **part of escalation**. Every rule that can exist can be defined and overridden. **The UI is what is missing.** Tinkering continues.
+
+**Doc (this is the comprehensive face, not a second flag):** [`AGENTS-FACE.md`](./AGENTS-FACE.md)
+
+**Today’s Ant editor** is a Timeline of email/task steps. That is not this canvas.
+
+**Ask:** plant the canvas next, or keep specifying while you tinker?
