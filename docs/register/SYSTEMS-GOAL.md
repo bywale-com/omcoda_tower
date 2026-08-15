@@ -143,23 +143,37 @@ Thinner. Story 8: one consolidated form for every outstanding self-reportable ne
 
 Authorship shape is closed: class = objective; sequence + order; attempt sequencing; mini-goals as checkmarks; goal = completion; when met → other agent · workflow · or end. Triggers / Automations are another engine (not this gap).
 
-**The break:** goal-escalation is only named for **when it is met**. Attempt rules only name **channel** criteria (opened, clicked, form started…).
+**The break (answered 16:58):** if you run the **entire** escalation and do not meet the objective, that is a **failure mode**. Failure criteria = not meeting the objective. What failure *does* is not yet law — it cannot be silent.
 
-If the sequence has finished deploying, **and** those channel criteria are already spent, **and** the objective is still not complete — what happens?
+Do not mix with 7b attempt-level “failure → next channel” (PHASE-TWO-LOG 14:49). Do not restore 14:58 “actions on goals” as the flag. This is the other pole of **once met, met**.
 
-Example: reactivation slot is open, they clicked, they did not book. Opt-in days 4–7 are done, they did not sign up.
+---
 
-That is not Automations. That is this agent, after the calendar, without the goal. No law.
+## Failure mode — walk the three classes (2026-08-15 16:58)
 
-(Re-engagement is the exception that has a law: form started, not submitted → back to sequence head. Booking and sign-up have no equivalent.)
+**Founder (this stamp):** Escalation already implied it. If you run through the entire escalation and don’t meet the goal, it’s a failure mode. Still have to define what failure *does*. Cannot fail silently — it does something. Two axes of data: (1) effectiveness of sequencing/campaign, down to the **node**, up to the **campaign**, across contacts — you know **where** it fails; (2) data about **that contact**. Do not default to “force another campaign.” Engagement still needed the data point.
+
+**Score already in the repo (the contact axis):** `cohort_tiers` (`contact_id`, `firm_id`, `tier`, `score` JSONB) + `rule_cohort_scoring` (open+click; Y-reply+view+nurture+booking = top tier). Guidelines: each step that completes without the next tells you where the friction is. **Campaign/node axis:** `engagement_records` (written) + `rule_metrics_thresholds` / `metrics_flags` (tables exist; worker does **not** write `cohort_tiers`). Do not confuse with eligibility/CRS `client_score_snapshot` (system 10). PCRE in `guidelines/Reactivation.md` is inherited firm-authority at opt-in start, not this score.
+
+**SA walk / suggestions — not founder flag, not Story must, not a mint.**
+
+Failure = authored escalation exhausted (sequence deployed + attempt ladder spent) **and** class goal unmet. Success still escalates (agent · workflow · end). Failure is the other pole. Default is **not** “try another campaign” — that is success-shaped escalation without the completion.
+
+| Class | Goal | If it fails | Suggestion (what it does) |
+|---|---|---|---|
+| **Opt-in** | Sign-up | Never opted in | **Cannot** enroll re-engagement or reactivation (Story 6: silence / no deep collection without opt-in). This agent **ends**. Write drop-off node + contact tier. Downstream is not a retry of the same ask. |
+| **Re-engagement** | Data request (form in) | Needed the fact; didn’t get it | Do **not** clone another nudge agent (one motion; one form). Write `missing_fact_signal` (Story 8 already). Engine 2 later decides motion. Contact score: didn’t give facts. Campaign score: this nudge shape failed at form. Attempt-level retry (24h → head) is **not** class-failure; class-failure is after that is exhausted. |
+| **Reactivation** | Meeting booked | Slot ran; no book | Do **not** auto-fire another meeting ask. Record where they dropped (never opened vs viewed vs didn’t book). Repeat-compression is already a Story silence. Engine 2 still owns “still reactivation-worthy?” |
+
+Silent fail would hide both axes. Minimum writes: engagement event (already the record) + contact `cohort_tiers` + campaign/node rollup. Worker today writes the first, not the other two.
 
 ---
 
 ## Open (ask; do not fill)
 
-1. Promote Story 7: class **is** the objective; the goal **is** its completion; that completion **is** an escalation event (agent · workflow · end; once met, met)?
-2. When sequence is fully deployed and the class goal is still unmet — still in-flight forever, retry like the form, escalate anyway, or end?
+1. Promote Story 7: class **is** the objective; the goal **is** its completion; that completion **is** an escalation event (agent · workflow · end; once met, met); exhausted escalation without completion **is** a failure mode (not silent)?
+2. Failure *does* — accept the class walk above, or correct a row?
 
 `launch_day` vs three classes, and mini-goals as destinations vs checkmarks, are **not** this kind of gap: waitlist = mini-goal, sign-up = opt-in completion is already in `guidelines/Reactivation.md`.
 
-After (1) is yes: Requirements extract a state; table-first then wants a **rule** (when completion → destination) bound to the package — not prose in `cascade.ts`.
+After (1) is yes: Requirements extract a state; table-first then wants a **rule** (when completion → destination) bound to the package — not prose in `cascade.ts`. Failure destination is likely **end this agent + record**, not a fourth success destination.

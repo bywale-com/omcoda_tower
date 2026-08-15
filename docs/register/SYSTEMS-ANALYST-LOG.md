@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-15 16:55 UTC — Agents authorship shape is closed. One walk-break: sequence fully deployed + channel criteria spent + class goal still unmet → no law. See SYSTEMS-GOAL.md. Product flag stays PHASE-TWO-LOG 15:43 UTC.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-15 16:58 UTC — unmet after full escalation = **failure mode** (obvious; 14:49 family). What failure *does* walked by class in SYSTEMS-GOAL (SA suggestions, not flag). Product flag stays PHASE-TWO-LOG 15:43 UTC.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -372,3 +372,17 @@ Not Automations. This agent, after the last node, without the goal.
 Parked on [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) so it is not only here.
 
 **Ask:** is unmet-after-the-sequence-is-done still in-flight, retry (like the form), escalate anyway, or end? If that is “still in the agent until they complete or halt,” there is **no** Agents-interior gap.
+
+---
+
+## 2026-08-15 16:58 UTC — Failure mode (the obvious pole; class walk)
+
+**Why:** Founder: already answered (last conversation / escalation). Unmet after **entire** escalation = **failure mode**. Failure criteria = not meeting the objective. What it *does* still needs work; cannot be silent. Two data axes. Walk the three classes. Suggestions welcome. Do not overwrite 15:43. Do not restore 14:58 “actions on goals” as the flag. 14:49 “failure rules (same family as escalation)” is **attempt-level**; this is **class-goal** after the whole stack.
+
+**Excerpts:** “I actually already answered this, but I answered this in the last conversation” · “Escalation rules, but the answer is so obvious” · “if you run through the entire escalation, right, and you don't meet the goal, the objective, then it's a failure mode” · “you still have to define what does a failure mode mean” · “failure criteria is already defined by not meeting the objective” · “can it just fail silently? I mean, it does something” · “there's something in our … repo about, it's a score, a score that's related to contacts” · “data across at least two axes … effectiveness of our sequencing and campaign … even by as down to the node … all the way up to the entire campaign” · “also in data about that specific contact” · “why force another one” · “if it's an engagement campaign, we did need that data point” · “walk it down through across the different classes” · “I'm open to suggestions.”
+
+**Score found:** `cohort_tiers` + `rule_cohort_scoring`. Guidelines drop-off reading. `engagement_records` + `metrics_flags` for the campaign/node axis. Worker writes engagement only. Not CRS.
+
+**SA suggestions** (in [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md); not law): success escalates; failure is the other pole, default **not** “force another campaign.” Opt-in fail → end; do not enroll nudge/reactivation (consent). Re-engagement fail → `missing_fact_signal`; do not clone the nudge. Reactivation fail → record drop-off; do not auto-ask again; repeat-compression stays a silence.
+
+**Ask:** class-walk rows correct, or a row is wrong?
