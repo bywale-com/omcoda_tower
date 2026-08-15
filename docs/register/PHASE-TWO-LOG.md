@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Override this** graph = 2026-08-15 18:08 UTC. Objective = binary event (18:40). Mock beats on Editor → Mock (18:50). Face [`AGENTS-FACE.md`](./AGENTS-FACE.md).
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Override this = 18:08. Objective = binary event 18:40. Mock = **generated images** of five beats (18:55). Face [`AGENTS-FACE.md`](./AGENTS-FACE.md).
 
 **How we maintain this log**
 
@@ -329,4 +329,26 @@ Spoken examples: click this link · book a meeting in this calendar · submit / 
 Picking a **templated** objective populates everything related to that template.
 
 **Doc:** [`AGENTS-FACE.md`](./AGENTS-FACE.md). Flag 15:43 untouched. No mock this stamp.
+
+---
+
+## 2026-08-15 18:50 UTC — Mock: five beats so everything said is visible
+
+**Why:** Founder: not one mock. Distinct things; some as open modals, some their own beat. Should be able to see everything just said.
+
+**Five beats on Editor → Mock** (Timeline remains the save path):
+
+1. Sequence templates (empty world toggle; opt-in / re-engagement / reactivation as sequence templates — not objectives)
+2. Add objective — **modal** (template: launch window / launch day / additional; from scratch: click / calendar / form, then name it)
+3. Two campaigns + qualify
+4. Override this → wired channels; campaign toggles stay
+5. Open a channel → deeper nodes still wired
+
+Webhook / table not mocked. Call channel not mocked. Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 18:55 UTC — “Mock” = generated images
+
+Founder: when they said mock they meant **generate the image**, not plant an in-app prototype. Distinct beats: sequence templates · add objective (template + from scratch) · two campaigns · Override this · open channel. Images: `agents-mock-1` … `agents-mock-5` plus `2b` from-scratch.
 
