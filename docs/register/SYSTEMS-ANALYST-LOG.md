@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-15 16:28 UTC — first question answered (inventory + flagship fit). Goal-as-escalation-point is **not** housed as operator-authored modular data. Story is silent on that must; do not mint a table until Story is promoted. Product flag stays in PHASE-TWO-LOG 15:43 UTC.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-15 16:40 UTC — founder correction: a goal **is** completion of an objective; sequence **class = objective**. Reactivation’s completion is `meeting_booked` (was wrongly called “no goal”). Hole = class-completion not bound as data, and **goals as escalation events** (between campaigns) not operator-authored. Product flag stays PHASE-TWO-LOG 15:43 UTC.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -262,3 +262,66 @@ Seeds: `002_machine_tables` (templates, firm-cedar bindings, attempt criteria 30
 **Ask (inflection):** Promote Story 7 with an operator-authored **goal / goal criteria as escalation point** (destinations: other agent · other workflow · end; once met, met) **before** any Requirements extraction or table? I will not mint without that. Second, smaller: `sequence_definitions` is stood up and unused — collapse into `sequence_template`, or leave as V2 dead row?
 
 **Do not:** overwrite the 15:43 flag; put triggers inside Agents; treat `meeting_booked` as the authored goal; generate a 7-item substitute.
+
+---
+
+## 2026-08-15 16:40 UTC — What a goal is (founder correction; no mint)
+
+**Why:** Founder correction of the 16:28 “not housed / no goal” line. Capture founder wording. Align the model. Do not overwrite 15:43.
+
+**Founder wording (this stamp’s substance, not a new flag):** A **goal is a completion of an objective**. Sequence **classes are classes of objective** — not random calendars. A goal is **required to create an agent** (and a workflow). Inside a class there are **mini-goals** (checkmarks). Escalation already lives at more than one level; **goals as escalation events** (including **between campaigns**) is one that **definitely emerges**.
+
+**Correction of 16:28:** Reactivation already has a completion: **meeting booked**. Seed §4 / Story spine / system 12 / `meeting_booked` (007). Calling that “no goal” was wrong. The hole is narrower: **completion is not a first-class type on the package**, and it is **not** an operator-authored **escalation event**.
+
+---
+
+### Three objectives (already the class set)
+
+Story 7 + `seq_phase_order` (seeded): **opt-in → re-engagement → reactivation**. Founder maps objective → completion:
+
+| Class (objective) | Completion (the goal) | Already in the machine | Gap |
+|---|---|---|---|
+| **Opt-in / launch** | Consent / in-system: waitlist then **sign-up** (guidelines: waitlist = first opt-in signal, **primary success metric**; launch day = **the real opt-in**) | `consent_records.status` includes `waitlisted` \| `sequenced`. Map: Day3 waitlist → `waitlisted`. Activity badge **Complete** = opt-in finished. | Cascade **never writes** `waitlisted`/`sequenced`. `cs-waitlist` is on the **map** (`tables.ts`), **not** in seed `002`. |
+| **Re-engagement (nudge)** | **Data request** complete — form submitted / facts in (Story 8 `fact_ask` → `fact_writeback`; OPERATOR-REVISIONS §5b: form submitted **closes the nudge and can arm the next**) | `fact_writebacks` table. Map row `acr-form-submit` → `state.finishing_event` `close_and_arm_next`. Template `tpl.reengagement.v1` cell is literally “data ask”. | `acr-form-submit` is **map-only** — **not** in `rule_attempt_criteria` seed. Reengagement calendar is a **placeholder** (two mixed cells). |
+| **Reactivation** | **Meeting request** complete = **meeting booked** | `meeting_booked` table. Guidelines: slot booking rate = **the outcome**. Spine success event. | Table exists; it is **system 12**, not a field **on** `sequence_template` / the agent. Runtime does not treat book as “goal met → escalate.” |
+
+SQL `sequence_class` has **four** tokens: `optin_launch`, `launch_day`, `reengagement`, `reactivation`. Phase order has **three**. Guidelines split waitlist (anticipation) vs launch-day (real opt-in). **Do not wash that.** Either launch-day is a second template **inside** the opt-in objective, or it is a fourth class — Story has not said.
+
+`workflow` create has **no** goal column. Founder: you cannot create the agent **or** the workflow without the goal. That constraint is not in SQL.
+
+---
+
+### Mini-goals already in the corpus (opt-in / reactivation checkmarks)
+
+Not a goal table. They live as guidelines metrics + some `rule_cohort_scoring` / `rule_metrics_thresholds` rows + engagement events.
+
+**Opt-in** (`guidelines/Reactivation.md` Success Metrics — these are the checkmarks): SMS delivered; **Y-reply**; announcement **open**; announcement **click**; **social follow** (micro-yes); **waitlist conversion** (named primary); nurture open; unsubscribe (health, not completion). Top-tier reading: open+click+follow+waitlist.
+
+**Reactivation** (same file, Metrics): Y-reply; view-click (no-login); nurture open; **booking**. Seeded `cs-top-tier`: “Y-reply + view-click + nurture-open + booking = top tier”. That is **cohort**, not “goal met.”
+
+**Re-engagement** mini-goals are thinner: Story 8 field-class routing + one consolidated form. No denser nudge calendar in guidelines (named pending).
+
+---
+
+### Escalation is already layered — goal-as-event is the missing layer
+
+| Level | What it is | Housed? |
+|---|---|---|
+| **1. Attempt sequencing** (within a node / owning channel) | Email criteria not met → text; 30/24/24; forward-only ladder | **Yes.** `seq_channel_ownership_order` + `rule_attempt_criteria` + worker. This is 7b. Do not rename it “goal.” |
+| **2. Mini-goals / checkmarks** toward the class completion | Y-reply, waitlist, form submit, view-click | **Partial.** Corpus + some rule rows. Not a type. Not destinations. |
+| **3. Sequence / class completion** | The objective is done (opt-in signed; facts in; meeting booked) | **Partial.** Reactivation → `meeting_booked`. Others: enum / map / prose. **No** `class → completion predicate` on the template. |
+| **4. Between campaigns** | Completion of one package **escalates** into the next agent, a workflow, or **ends** | **Not housed as operator-authored data.** Story 7b: finishing event **arms next**; next-motion from **Engine 2** (`rule_motion_precedence`). Flagship hole is **this layer**: goal = escalation event. |
+
+---
+
+### Model delta (still no mint)
+
+If founder law is: **class = objective**, **goal = that objective’s completion**, **that completion can escalate** — then Story 7 is not silent on *whether completions exist* (they do: meeting booked, waitlist/sign-up, form-submit). It **is** silent on: (a) completion as a **required** property of every agent/workflow, (b) mini-goals vs class-goal as two kinds, (c) completion as an **escalation event** with destinations agent | workflow | end.
+
+Promote Story for (a)–(c) before Requirements extract a state. Table-first would then want a **rule** (when completion → destination), bound to the class/package — after Story bears it. Do not invent a generic `goal` table that duplicates `meeting_booked` for reactivation.
+
+---
+
+**Ask:** (1) Promote Story 7: sequence class **is** the objective; the goal **is** its completion; that completion **is** an escalation event (agent · workflow · end)? (2) SQL four classes vs founder three — is `launch_day` a class or a mini-goal/template **inside** opt-in? (3) Are mini-goals (Y-reply, waitlist, form submit) themselves escalation points, or only checkmarks toward the class goal?
+
+**Do not:** overwrite 15:43; mint; call attempt-ladder a goal; collapse class-goal into `meeting_booked` for opt-in/nudge.
