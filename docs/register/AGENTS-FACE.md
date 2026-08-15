@@ -1,9 +1,9 @@
 # Agents — app-facing form (canvas, defaults, objective types)
 
 **Seat:** Product Manager.  
-**Status:** Founder expansion 2026-08-15 (tinkering). App-facing first. Not a second Agents flag — flag stays [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC**.  
-**Why this file:** the log + SYSTEMS-GOAL still felt **insufficient as a comprehensive Agents document**. This is the face: what you place, what has a default, how deep you go. Systems extract from here; they do not invent a different module.  
-**Join:** 15:43 flagship · [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) (PR #84, campaign grain) · Phase Two log 17:25 (one description → prototype and systems).
+**Why this file:** law and excerpts. The **image lineup + spec** is [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md). Systems extract from both; they do not invent a different module.  
+**Join:** 15:43 flagship · [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) (PR #84) · Phase Two log 17:25.  
+**Status:** Settings plates locked. UI blueprint lined up 2026-08-15 19:50. Flag stays [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC**.
 
 ---
 
@@ -238,14 +238,14 @@ Founder: “I’m not circling, I’m enriching, and I think you can even furthe
 |-------------------------|-----------|---------------------|
 | The campaign as a whole (sequencing, the objective, Override this) | On the campaign node | **Still on the campaign** |
 | Escalation on that medium (channel rules) | Does not exist until the node exists | **Wired off the open channel** |
-| Content for that medium | Button **inside** the channel node | Editor opens **in the node** |
+| Content for that medium | **Override content toggle** inside the channel node | On → node expands to the composer |
 | Attempt (cycle count, gap after failed last node) | **Not the channel** | Attempt is a container around the sequence |
 
-So Override this is not “show more fields on this card.” It **materializes the child layer**. The campaign stays. Channel nodes **hang off it on wires**. Open a channel → **channel rules** hang off; **content** stays inside as a button.
+So Override this is not “show more fields on this card.” It **materializes the child layer**. The campaign stays. Channel nodes **hang off it on wires**. Open a channel → **channel rules** hang off; **content** stays inside as a **toggle** that expands the node.
 
 **Channels are a sequencing method, not a goal layer.** Choosing how many channels, which, in what order **is** campaign sequencing. Channel rules = escalation on that medium. Attempt rules = parameters of the **cycle**, not of the medium.
 
-**Content is inside the channel node.** Small button → editor in the node. Sequence / global content is possible (sequence Settings / Agents Settings). Attempt copy is a **variation on that same node** for that cycle. The UI does not grow a new layer: attempts are cycles of the same sequence.
+**Content is inside the channel node.** **Override content** is a toggle. On → the node expands to the composer. Sequence / global content is possible (sequence Settings / Agents Settings). Attempt copy is a **variation on that same node** for that cycle.
 
 **Closed campaign = accepting defaults** (sequence, then global). Open Override this only to author at the channel grain.
 

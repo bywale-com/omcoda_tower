@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Settings modals locked canonical (19:30). Content override = toggle that expands the channel node; call via ElevenLabs (19:45). Face [`AGENTS-FACE.md`](./AGENTS-FACE.md).
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. UI blueprint canon lineup [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) (19:50). Face [`AGENTS-FACE.md`](./AGENTS-FACE.md).
 
 **How we maintain this log**
 
@@ -393,4 +393,16 @@ Flag 15:43 untouched. Recreate beat 5 image; second image = attempt as cycle + t
 **Last change, different image:** the Override content **button** inside the channel should have been a **toggle**. Toggle on → the **node expands** to contain that medium’s **content-creation block**. Richer than a thin text box. Show **text, email, and call** overridden. Call will exist; **via ElevenLabs**.
 
 Mock = generate the image. Settings untouched. Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 19:50 UTC — Canon image lineup + UI blueprint (last pass before systems)
+
+**Why:** Founder: enough to talk to Systems Analyst. Same chat holds thinking, mocks, excerpts. Some images are revisions of others — line up **canon**, map each plate to the log stamp that birthed it, then spec the plates as a **UI blueprint**. Not a systems blueprint. Do not go into where it touches Postgres. If anything is under-specified, that is this pass.
+
+**Doc:** [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md). Canon C1–C7 (+ C2b, C5b). Discarded: open-channel siblings, content-as-button, attempt-cycles-in-the-middle.
+
+**Under-specified (named in the blueprint, not filled):** attempt rules on the campaign card (said, not drawn); attempt-N content variation control; additional opt-in objectives; word “event”; campaign Settings modal; Call vs Form on the machine.
+
+Flag 15:43 untouched. Settings plates still locked.
 
