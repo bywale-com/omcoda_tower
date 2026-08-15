@@ -2,8 +2,8 @@
 
 **Seat:** Product Manager.  
 **Why this file:** law and excerpts for Automations. Entered from the Agents outskirts — not a disconnected menu pick.  
-**Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub-as-source **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC** · required-data listing not stood up **21:36 UTC** · listing plates A11–A13 **21:48 UTC**.  
-**Status:** Agents as a **creation place** (campaigns) is complete enough to leave. Automations is the next module. **Work from Hub Automations** (`/hub`) — that plant is the complete one. CT Ant Automations is a translation of Hub (same kind, poorer quality) and **this entire Rule part does not exist in Ant**. Image mocks are **from scratch**. Look at **Rules** first.
+**Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub-as-source **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC** · required-data listing not stood up **21:36 UTC** · listing plates A11–A13 **21:48 UTC** · chosen lineup + SA package **22:17 UTC** [`AUTOMATIONS-SA-PACKAGE.md`](./AUTOMATIONS-SA-PACKAGE.md).  
+**Status:** Automations terrain enclosed enough for SA extract. Chosen images lined up (priors kept; revisions canonical). Package waiting for Systems Analyst. **Work from Hub Automations** (`/hub`) — that plant is the complete one. CT Ant Automations is a translation of Hub (same kind, poorer quality) and **this entire Rule part does not exist in Ant**. Image mocks are **from scratch**. Look at **Rules** first. Do not plant the editor.
 
 ---
 
@@ -63,6 +63,14 @@
 
 > There's actually at least one class missing. Our system is a real system — it doesn't need any AI to determine what data is required. It's deterministic. When it needs data, that's a re-engagement signal — and that should be a class. When we need a form, we know everything that must exist in the form because of that required data. We can create forms from that data — as many questions as needed. It would not be smart to lock ourselves into a locked objective given a specific signal. We can create the objective anyway.
 
+> I don't know if [A13 is] related to the image … it's very different.
+
+> Don't forget the node that sits after the rule output … was a condition node that says hey if this … it's already like calling from the previous results.
+
+> We've mapped out a pretty concrete terrain in automations … pretty enclosed in a real way … images, ideas, refinements, revisions … strong thinking … we've defined the rules. Constants obviously exist in rules. The rules have their own conditioning.
+
+> I have enough to go ahead and create that package for the automations for the systems analysts … spec everything out … logs, not transcripts … selecting a lineup of chosen images … if a specific image is a revision of a prior image … add that prior … the revision is the one that's canonical … why we evolved it … spec of these images down to detail … every system that is required … tables, workers … some external systems … we want this UI to look the exact way it is so that when we build it it works exactly how we want it to work.
+
 ---
 
 ## Law of the face (short)
@@ -92,6 +100,7 @@
 23. **At least one class is missing: required data.** When the system knows data is required, that is a re-engagement signal **and** it must be an output class. Forms are built from that set — the questions **are** the required fields. Do **not** lock an objective type to a given signal; you can still create the objective.
 24. **This loop is deterministic.** Seed already: collectible field class (self-reportable / document-dependent / employer-directed); every missing-data detection is a signal; nudge consolidates outstanding self-reportable needs into **one** form. No AI to decide what data is required. If that ever stops being true, say so.
 25. **Required data as a class is a listing, not a flag — and it is not stood up.** The data being requested is **more than one** item. A catalog of collectible fields exists in code (`COLLECTIBLE_FIELDS`) and is **unused**. Rule-node output today is headline / pass / pathway & gap **result ids** / services / nudge & reactivation **signals** — not a list of requested fields. No UI lists that request. No form authoring **references** those ids. Contact forms that look like a list are painted demos. Until the listing is on rule output, a form cannot bind to it. Do not invent the rest of the catalog; do not mint tables.
+26. **Two grains of condition. Do not collapse them.** Inside the rule: field · operator · constant (or named code). After the rule, on the DAG: a **condition / If node** that **calls from the previous result** (rule Output) and forks actions. Hub already has that If node. A10 / A13 are **diagrams of the lattice idea**, not a screenshot of that node, and not a screen to build. Founder 22:17: A13 is a different kind of picture.
 
 ---
 
@@ -102,11 +111,15 @@ An **automation** is not an agent sequence. Sketch (20:24 DAG still stands; Hub 
 ```
 EVENT  (schedule | trigger)
   → OPERATION   (definite; nothing in the middle changes)
+       RULE  (conditions + constants; GUI or named code; toggles)
+       OUTPUT (classes including required-data listing)
+       → CONDITION / If   (calls from previous results; forks)
        → result A  → do X     ← exit points (binary / defined binaries)
        → result B  → do Y
             one exit: START / SELECT an AGENT
                  same node: declare the OBJECTIVE
                  if data request: CREATE THE FORM here
+                     questions = required-data rows
                  selecting an agent = the whole sequence
                  (campaigns inside; choice limited by the objective)
 ```
@@ -139,7 +152,8 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 - Not a full catalog of operations or exit points. “Add them to …” was not finished. Name the silence.
 - Not minting tables. SA extract after this face is specified enough — same discipline as Agents.
 - Not a UI blueprint of the whole DAG. Smallest workflow first: [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md). Mock = generate the image. Do not plant `AntAutomationWorkbench` this pass.
-- Not generating or refining A9/A10 until asked. 21:36 answered the listing question first: model+UI do not yet support it. A11–A13 are the mocks of that listing (Output rows, form bind, lattice class). Do not plant the editor.
+- Not generating or refining A9/A10 until asked. 21:36 answered the listing question first. A11–A13 mock the listing (Output rows, form bind, lattice **diagram**). A13 is not a screen. Do not plant the editor.
+- Not collapsing inside-the-rule conditions with the If node after the rule.
 
 ---
 
@@ -153,4 +167,5 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 6. Catalog of **in-system outcomes** besides enroll-agent (lists, tasks, notify, and whatever else Hub already names). Do not invent a new catalog this stamp.
 7. Seed §5.6 vs Hub-as-built vs the 20:24 definite-middle shape — **do not silently kill any of them**. Hub Rules are what to look at. Alignment is later.
 9. Remaining output classes besides **required data** (law 23). Do not invent a full catalog this stamp. Hub-today vs lattice is A9 / A10.
-10. **Listing of requested data on rule output + form bind** (law 25). Named 21:36 as not stood up in code. Mocked as A11–A13. Do not fill the listing in the product this stamp. Do not mint tables.
+10. **Listing of requested data on rule output + form bind** (law 25). Named 21:36 as not stood up in code. Mocked as A11–A12 (chrome) and A13 (diagram). Do not fill the listing in the product this stamp. Do not mint tables.
+11. **Ant plate of the If node after the rule.** Hub has it. Named 22:17. Do not invent the plate in this package.

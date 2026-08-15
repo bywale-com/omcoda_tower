@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Automations: required-data **listing** mocked as A11–A13 (21:48). Not stood up in code (21:36). Face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md).
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Automations **SA package waiting** (22:17): [`AUTOMATIONS-SA-PACKAGE.md`](./AUTOMATIONS-SA-PACKAGE.md). Chosen lineup A1–A13 (priors kept; A12/A11/A13 canonical revisions). Face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md).
 
 **How we maintain this log**
 
@@ -546,4 +546,18 @@ Flag 15:43 untouched.
 **Do not:** plant `AntAutomationWorkbench`; overwrite 15:43; lock objective type to a signal.
 
 Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 22:17 UTC — Automations chosen lineup + Systems Analyst package
+
+**Why:** Founder: terrain is enclosed enough. A13 is a **different kind of picture** — not the condition node. **Don't forget** the node after rule output: a **condition node** that says “if this,” already **calling from the previous results**. Rules have constants and their own conditioning. Spec everything from **logs** (transcripts inaccessible). Line up **chosen images in order**; if a plate is a revision, **keep the prior**, revision is **canonical**, say why it evolved. Spec down to detail. Then the SA package: tables, workers, fields, relationships, externals — UI should look like these plates so when built it works as wanted.
+
+**Chosen lineup** (priors kept): A1–A8 · **A12 revises A8 form** · A9 · **A11 revises A9 Output** · A10 (diagram) · **A13 revises A10** (still a diagram, not chrome). Spec: [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md). Law 26: two grains of condition.
+
+**Package:** [`AUTOMATIONS-SA-PACKAGE.md`](./AUTOMATIONS-SA-PACKAGE.md). Same two questions as Agents (our machine vs externals/configs/affordances), then rollup. Indexed from README SA identity.
+
+**Do not:** plant the editor; mint tables; treat A13 as a screen; overwrite 15:43; collapse the two condition grains.
+
+Flag 15:43 untouched. Agents SA package still waiting; this is a **second** package, not a replacement.
 

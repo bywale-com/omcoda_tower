@@ -2,7 +2,7 @@
 
 **Seat:** Product Manager.  
 **Why this file:** law and excerpts. The **image lineup + spec** is [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md). Systems extract from both; they do not invent a different module.  
-**Join:** 15:43 flagship · [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · SA ascribe package [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md) · Automations face (entered from here) [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md) · [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) (PR #84) · Phase Two log 17:25.  
+**Join:** 15:43 flagship · [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · SA ascribe package [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md) · Automations face (entered from here) [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md) · Automations SA package [`AUTOMATIONS-SA-PACKAGE.md`](./AUTOMATIONS-SA-PACKAGE.md) · [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) (PR #84) · Phase Two log 17:25.  
 **Status:** Settings plates locked. UI blueprint lined up 2026-08-15 19:50. SA package [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md) 20:00. **Creation place complete enough to leave** (20:24) — Automations is next: [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Flag stays [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC**.
 
 ---

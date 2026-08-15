@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped.
 
-**Current (read first, then the newest stamp at the bottom):** Log opened 2026-08-15 16:01 UTC. First assigned question not yet answered — see docs/README.md § Systems Analyst “First question.” Package waiting: [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md).
+**Current (read first, then the newest stamp at the bottom):** Log opened 2026-08-15 16:01 UTC. First assigned question not yet answered — see docs/README.md § Systems Analyst “First question.” Packages waiting (in order): [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md), then [`AUTOMATIONS-SA-PACKAGE.md`](./AUTOMATIONS-SA-PACKAGE.md).
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -31,3 +31,14 @@
 **Why:** PM committed [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md). New SA chats: walk + first question (flagship inventory/fit), then that package (ascribe C1–C7: our machine vs externals/configs/affordances). Answer in a later stamp in **this** file.
 
 **Do not:** treat the package as Story; mint tables from the pictures; overwrite 15:43.
+
+---
+
+## 2026-08-15 22:17 UTC — Automations package waiting (PM handoff; do not answer here as PM)
+
+**Why:** PM committed [`AUTOMATIONS-SA-PACKAGE.md`](./AUTOMATIONS-SA-PACKAGE.md). Chosen image lineup + spec: [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md). Face: [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md).
+
+**Order for new SA chats:** walk + first question (Agents flagship inventory/fit) → Agents package (ascribe C1–C7) → **this Automations package** (ascribe A1–A13: our machine vs externals/configs/affordances; A13 is a diagram not a screen; two grains of condition; required-data listing not stood up). Answer in a later stamp in **this** file.
+
+**Do not:** treat the package as Story; mint tables from the pictures; overwrite 15:43; skip the Agents walk.
+
