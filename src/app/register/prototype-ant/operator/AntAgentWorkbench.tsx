@@ -900,7 +900,7 @@ export function AntAgentWorkbench({
                     value={editorView}
                     onChange={(value) => setEditorView(value as "canvas" | "timeline")}
                     options={[
-                      { label: "Canvas", value: "canvas" },
+                      { label: "Mock", value: "canvas" },
                       { label: "Timeline (today)", value: "timeline" },
                     ]}
                   />

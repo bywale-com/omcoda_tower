@@ -158,7 +158,23 @@ On each campaign, **one first toggle at the bottom: Override this.**
 
 Do not jump to a Settings modal. Do not replace the campaign with a Timeline. The campaign stays; the channels **hang off it**.
 
-**Today:** A Canvas prototype was planted on the Editor tab (18:25). Founder asked to **pause the mock** until the revision is recorded. This file is the record. Timeline save path is unchanged.
+**Today:** Editor → **Mock** (five beats, objective as a modal). Timeline (today) is the save path. Settings is global defaults.
+
+---
+
+## Mock map (what you said → what you can see)
+
+Not one picture. Five beats, one labeled mock. Objective is a **modal** on the canvas (same idea as Hub Add configuration). Sequence templates are their own beat because that picker is a different layer.
+
+| Beat | What you said | Same mock or own |
+|------|----------------|------------------|
+| **1. Sequence templates** | Empty world; opt-in / re-engagement / reactivation are sequence templates, not objectives | Own beat (different picker) |
+| **2. Add objective** | First thing on a campaign. Template (launch window, launch day, additional) vs from scratch (click / calendar / form, then name it) | **Modal** on the canvas |
+| **3. Two campaigns** | Two objectives → two campaigns. Qualify. Launch day = opt-in day | Canvas |
+| **4. Override this** | First toggle. Reveals text / email / form as wires. Campaign toggles stay | Canvas |
+| **5. Open a channel** | Node toggles live on the node. Deeper grain still wired | Canvas expand |
+
+Webhook / table lookup is named, not mocked. Call channel is not mocked.
 
 ---
 
@@ -239,4 +255,4 @@ So Override this is not “show more fields on this card.” It **materializes t
 3. May one sequence mix objective types in practice, or only “technically”?
 4. Opening a channel: rules listed on the node vs a further wired grain. Founder said “reveals something deeper with a wire” — grain unnamed.
 5. Spoken “call” as a third channel vs stood-up ladder text / email / form.
-6. Mock of this shape — founder wants to see it; **paused** until they say go.
+6. Mock of this shape — five beats on Editor → **Mock** (sequence templates · add objective modal · two campaigns · Override this · open a channel).

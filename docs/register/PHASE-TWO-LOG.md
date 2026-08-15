@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Override this** graph = 2026-08-15 18:08 UTC. Objective = binary event on the campaign (18:40 UTC). Face doc [`AGENTS-FACE.md`](./AGENTS-FACE.md). Mock paused until founder says go.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Override this** graph = 2026-08-15 18:08 UTC. Objective = binary event (18:40). Mock beats on Editor → Mock (18:50). Face [`AGENTS-FACE.md`](./AGENTS-FACE.md).
 
 **How we maintain this log**
 
