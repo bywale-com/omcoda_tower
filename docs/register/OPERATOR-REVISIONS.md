@@ -75,6 +75,14 @@ Sarah Jenkins → nudge `00f-nudge-001` — **Text · Email · Form**, then **At
 
 Activity = event record. Authorship = Agents. Windows / R-* labels may still be prototype vs product-locked.
 
+### 5c. Goal / class-as-objective / escalation events (2026-08-15)
+
+Founder expansion (will not be taken back). **Not Seed/World until Story §7 is promoted.** Do not keep this only in chat.
+
+A **goal is a completion of an objective.** Sequence **classes are classes of objective** (opt-in · re-engagement = data request · reactivation = meeting request). A goal is **required** to create an agent and a workflow. Mini-goals = checkmarks inside a class (already in `guidelines/Reactivation.md`). Escalation is already several levels; **goals as escalation events** (including **between campaigns**) is the one that definitely emerges. Reactivation’s completion **is** meeting booked.
+
+Full excerpts, three-class housing vs gap, mini-goal inventory, four-level stack: [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md).
+
 ---
 
 ## 6. Who finds what the product must contain (methodology gap — open)
@@ -120,4 +128,5 @@ Storing the firm’s files alone and never reaching out solves **only side 1**. 
 
 - Console purpose popovers = verify *what each holon is for* in the running UI.  
 - This file = Hub/open-box shape, attempt-engine DNA, methodology gaps, **and** operator belief lens for craft questions.  
+- §5c / [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) = founder expansion on goal as class-objective completion (not Seed/World until Story promoted).  
 - Do not mint World seats from these bets until a value-chain gap forces one.

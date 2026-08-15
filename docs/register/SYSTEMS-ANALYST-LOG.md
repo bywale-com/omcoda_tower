@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-15 16:40 UTC — founder correction: a goal **is** completion of an objective; sequence **class = objective**. Reactivation’s completion is `meeting_booked` (was wrongly called “no goal”). Hole = class-completion not bound as data, and **goals as escalation events** (between campaigns) not operator-authored. Product flag stays PHASE-TWO-LOG 15:43 UTC.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-15 16:50 UTC — goal expansion marked down in [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) (excerpts; not Story must until promoted). Pointers in Story §7 + OPERATOR-REVISIONS §5c. Product flag stays PHASE-TWO-LOG 15:43 UTC.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -13,6 +13,7 @@
 - Cadence floor while in session: **at least four times a day**; denser conversation → denser stamps.
 - Notice inflection (Story/Requirements delta, table mint or refusal, map-vs-Postgres split, founder correction) and **ask**.
 - Area: this file + machine docs under `docs/register/` and `docs/register/system-map/`. Do not scatter one-offs.
+- **Durable founder expansions** (they are expanding the idea; they will not take it back): stamp **here with specific excerpts**, and park a register markdown so the detail is not only in the log. Same grade as OPERATOR-REVISIONS until Story is promoted. Do not leave critical wording in the background.
 
 ---
 
@@ -325,3 +326,25 @@ Promote Story for (a)–(c) before Requirements extract a state. Table-first wou
 **Ask:** (1) Promote Story 7: sequence class **is** the objective; the goal **is** its completion; that completion **is** an escalation event (agent · workflow · end)? (2) SQL four classes vs founder three — is `launch_day` a class or a mini-goal/template **inside** opt-in? (3) Are mini-goals (Y-reply, waitlist, form submit) themselves escalation points, or only checkmarks toward the class goal?
 
 **Do not:** overwrite 15:43; mint; call attempt-ladder a goal; collapse class-goal into `meeting_booked` for opt-in/nudge.
+
+---
+
+## 2026-08-15 16:50 UTC — Goal expansion marked down (excerpts; not Story must)
+
+**Why:** Founder: this class of thing is **log-automatic**, and this expansion is **markdown-worthy** — they are expanding the idea and will not take it back. Detail must not stay in the background.
+
+**Where (SA choice, not a second flag):**
+
+| Place | Job |
+|---|---|
+| [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) | Durable home. Verbatim excerpts + three class completions + mini-goals from `guidelines/Reactivation.md` + four escalation levels + SQL 3-vs-4. **OPERATOR-REVISIONS grade — not Seed/World until Story promoted.** |
+| [`SYSTEMS-STORY.md`](./SYSTEMS-STORY.md) §7 | Labeled clarifier block pointing at that file (same pattern as 5b windows). Silences note: this is an expansion, not a silence for Requirements to fill. |
+| [`OPERATOR-REVISIONS.md`](./OPERATOR-REVISIONS.md) §5c | Sequencing stack: 5a calendar · 5b attempt · **5c goal / class-as-objective**. |
+| [`../README.md`](../README.md) SA repo walk | So the next SA chat does not miss it. |
+| This log | Pointer + excerpts below. Product flag stays PHASE-TWO-LOG 15:43. |
+
+**Excerpts parked in SYSTEMS-GOAL (not left here as the only copy):** “A goal is a completion of an objective.” “A goal is critical to creating any agent … you can't even create the workflow without the goal.” “The way we even class sequences is by their objective.” Opt-in is not a random sequence; it has “check marks … mini goals” already in the repo. Engagement = “data requests.” Reactivation = “a meeting request.” “There is a goal, which is meeting books.” Escalation at “so many different levels”: within nodes = “attempt sequencing” (email criteria isn’t met → text); sequence completion (“could literally just be like a node”); “between campaigns” escalation points; “one that definitely emerges is goals as escalation events.” Durability: “I’m expanding the idea” / will not say it was a mistake.
+
+**Still not done:** Story **must** not yet rewritten. No table. Open asks in SYSTEMS-GOAL remain (promote? `launch_day`? mini-goals as destinations?).
+
+**Log rule added (this file header):** durable founder expansions → excerpts in the log **and** a register markdown. Do not leave critical wording only in chat.

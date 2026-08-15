@@ -231,6 +231,8 @@ Two engines that must **never** be conflated (`Seed §5.5`; `World §3.3`). The 
 - Live **form visit** is a named inbound override that can open the next step.
 - Form submitted closes the nudge and can arm the next (e.g. reactivation scheduled).
 
+**OPERATOR-REVISIONS clarifier — goal / class-as-objective (not Seed/World law until promoted).** Founder expansion 2026-08-15, durable: a **goal is a completion of an objective**; sequence **classes are classes of objective** (opt-in, re-engagement = data request, reactivation = meeting request); mini-goals are checkmarks **inside** a class; escalation already has several levels (attempt sequencing · mini-goals · sequence completion · **between campaigns**); **goals as escalation events** is the level that emerges. Reactivation’s completion **is** meeting booked — do not call that “no goal.” Full excerpts + housing vs gap: [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md). Do not extract Requirements or mint a table from that file until this block is promoted into a Story **must**.
+
 **Must not:**
 
 - Let Engine 2 replace the attempt engine inside a sequence (`World §0.4`).
@@ -238,7 +240,7 @@ Two engines that must **never** be conflated (`Seed §5.5`; `World §3.3`). The 
 
 **Chains to:** Each touchpoint carries Fact-refresh data asks; finishing events arm the next sequence; chosen motions arrive from Engine 2 (`Seed §5.4, §5.8`; `World §3.3`).
 
-**Silences:** Exact product-locked criteria windows (beyond World’s “when criteria are met”); SMS reply-failure escalation (`Seed §13.15`); event-based enrollment trigger set beyond manual pull (`Seed §5.6, §11`).
+**Silences:** Exact product-locked criteria windows (beyond World’s “when criteria are met”); SMS reply-failure escalation (`Seed §13.15`); event-based enrollment trigger set beyond manual pull (`Seed §5.6, §11`). Goal-as-required-completion / goals-as-escalation-events is **not** a silence to fill from Requirements — it is a founder expansion parked in [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) until promoted.
 
 ---
 
