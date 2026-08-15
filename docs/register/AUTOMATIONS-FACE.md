@@ -2,8 +2,8 @@
 
 **Seat:** Product Manager.  
 **Why this file:** law and excerpts for Automations. Entered from the Agents outskirts — not a disconnected menu pick.  
-**Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub-as-source **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC** · required-data listing not stood up **21:36 UTC** · listing plates A11–A13 **21:48 UTC** · chosen lineup + SA package **22:17 UTC** [`AUTOMATIONS-SA-PACKAGE.md`](./AUTOMATIONS-SA-PACKAGE.md) · unclosed loops **23:07** · events global vs local **23:16**.  
-**Status:** Loops before building named. Form completion is an event; events have a **global / local** divide (not “Settings”). SA packages still waiting. Do not plant the editor. Do not invent the event catalog.
+**Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub as **advanced plant for those modules** (not the app) **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC** · SA package **22:17 UTC** · loops **23:07** · global/local events **23:16** · objectives are events; failure → tag **23:35**.  
+**Status:** Loop 1 settled: no special return — the return is an event. Campaign failure is an event; an in-app action named: ascribe a tag. Lineage queryable at minimum. Product face = CT Ant. Hub is the advanced module plant, **not the app**. Do not plant. Do not invent catalogs.
 
 ---
 
@@ -71,6 +71,16 @@
 
 > That already gives you … ideas of wherever else it applies. … It expands our thinking of what events look like. What counts as an event.
 
+> Don't look at hub. … Hub is like the most advanced version for those modules. … If you're just mentioning hub because you just thought like that's the app. That's not the app.
+
+> There's no need for a return. The return itself is an event. … All objectives are themselves events. … The write-back itself is the event. The event itself happening is the write-back because it can be detected across the app in the database. It's not lost.
+
+> The only thing … is there a clear tracking between what created the objective — whether it was agent or hand created — the path … all the way till its completion … the completion event … track the time it took. … That's querying. … Queryable at the minimum.
+
+> If a campaign fails, for every person that failed this campaign, we want you to create a record … even as simple as a tag. … Failure of a campaign has to be an event … so it can be referenced in the automations module. Global and local applies even there. Then action. … One of the first potential actions … in the app.
+
+> Subscription campaign with that bell … subscribed or not subscribed is literally just a tag … a tag that we've created in automations so that if people don't opt-in, if they opt out or they unsubscribe, which is also an event, it creates that tag … assigns that tag. … Subscription campaign fails, it ascribes that tag.
+
 > I don't know if [A13 is] related to the image … it's very different.
 
 > Don't forget the node that sits after the rule output … was a condition node that says hey if this … it's already like calling from the previous results.
@@ -110,6 +120,9 @@
 25. **Required data as a class is a listing, not a flag — and it is not stood up.** The data being requested is **more than one** item. A catalog of collectible fields exists in code (`COLLECTIBLE_FIELDS`) and is **unused**. Rule-node output today is headline / pass / pathway & gap **result ids** / services / nudge & reactivation **signals** — not a list of requested fields. No UI lists that request. No form authoring **references** those ids. Contact forms that look like a list are painted demos. Until the listing is on rule output, a form cannot bind to it. Do not invent the rest of the catalog; do not mint tables.
 26. **Two grains of condition. Do not collapse them.** Inside the rule: field · operator · constant (or named code). After the rule, on the DAG: a **condition / If node** that **calls from the previous result** (rule Output) and forks actions. Hub already has that If node. A10 / A13 are **diagrams of the lattice idea**, not a screenshot of that node, and not a screen to build. Founder 22:17: A13 is a different kind of picture.
 27. **An event has a global grain and a local grain. That is not “Settings.”** Form completion **is** an event that can trigger an automation. **Global:** on all form submissions of that kind — whoever submitted, run this evaluation. **Local:** on **this** form — every time this specific form is submitted, run this evaluation. The same divide is why Automations needs a global/local place (it matches Agents’ global → sequence → campaign, without copying a Settings modal). This expands **what counts as an event**. Do not invent the rest of the event catalog this stamp. Do not call it Settings.
+28. **No special return.** The return **is** an event. **All objectives are events.** The write-back **is** the event; the event happening **is** the write-back. It is detected across the app / in the database. It is not lost. Loop 1 (23:07) is settled this way — not a separate return wire.
+29. **Lineage is queryable at the minimum.** What created the objective (agent-created or hand-created). The path that agent took from that creation to completion. The completion event. Time it took. Map it correctly. That is querying, not a new module. If it is not queryable, the loop is not real.
+30. **Campaign failure is an event.** Global and local apply (all campaign failures vs **this** campaign). Then an **in-app action**: create a record — even as simple as **ascribe a tag**. Named example: the subscription bell (subscribed / not) **is a tag** created in Automations. Opt-out / unsubscribe is also an event; it assigns that tag. Campaign fails → ascribes that tag. This is one of the first in-app actions named. Do not invent the rest of the action catalog.
 
 ---
 
@@ -155,7 +168,8 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 - Not overwriting 15:43. Not restoring 14:58. Not putting Automations **triggers** on the Agents canvas.
 - Not treating “re-engagement” as an objective. Not treating opt-in / reactivation that way either.
 - Not moving form creation into Agents. Not making Agents a form builder.
-- Not treating **CT Ant** Automations as the source. Hub is. Ant is the translation.
+- Not treating **Hub as the app**. Product face = CT Ant. Hub is the **advanced plant** for Automations/Rules — look at it for that grain, not as if it were the product.
+- Not treating **CT Ant** Automations as the source plant for Rules. Hub is that plant. Ant is the translation.
 - Not throwing away Hub’s node kinds (rule / constant / condition). Rules with toggles **are** the end-goal grain to look at.
 - Not locking form-as-node vs embedded — lean is embedded; still named open.
 - Not a full catalog of operations or exit points. “Add them to …” was not finished. Name the silence.
@@ -174,9 +188,10 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 3. Form creation: **own graph node** vs **embedded** in the start-agent node (lean: embedded).
 4. Whether “create a campaign” is instantiate-from-template vs enroll-into-existing sequence.
 5. Word “event” on Agents C2b vs Automations’ event-of-origin (schedule / trigger) — do not collapse them without asking. Form completion is an Automations trigger (law 27); that does not rename C2b.
-6. Catalog of **in-system outcomes** besides enroll-agent (lists, tasks, notify, and whatever else Hub already names). Do not invent a new catalog this stamp.
+6. Catalog of **in-system actions** besides enroll-agent. **Named:** ascribe a tag / create a record on campaign failure (law 30). Do not invent the rest.
 7. Seed §5.6 vs Hub-as-built vs the 20:24 definite-middle shape — **do not silently kill any of them**. Hub Rules are what to look at. Alignment is later.
 9. Remaining output classes besides **required data** (law 23). Do not invent a full catalog this stamp. Hub-today vs lattice is A9 / A10.
 10. **Listing of requested data on rule output + form bind** (law 25). Named 21:36 as not stood up in code. Mocked as A11–A12 (chrome) and A13 (diagram). Do not fill the listing in the product this stamp. Do not mint tables.
 11. **Ant plate of the If node after the rule.** Hub has it. Named 22:17. Do not invent the plate in this package.
-12. **Event catalog + global vs local on each event** (law 27). Form completion named. Do not fill the rest. Hub `WORKFLOW_EVENT_CATALOG` today has no `form_submitted`. Map `finishing_event` includes `form_submitted` as attempt-terminal — not the same as this trigger.
+12. **Event catalog + global vs local** (law 27). Named: form completion, campaign failure, opt-out / unsubscribe. Do not fill the rest.
+13. **Queryable lineage** (law 29). Agent-created vs hand-created objective → path → completion → time. Minimum: queryable. Do not mint a table from this sentence.

@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Before building: unclosed loops **23:07**. Events: form completion; **global vs local** (not Settings) **23:16**. SA packages waiting. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Loop 1 settled **23:35**: no special return — objectives/write-back **are** events. Campaign failure is an event; in-app action = **ascribe a tag**. Lineage **queryable** at minimum. Hub is not the app. Do not plant.
 
 **How we maintain this log**
 
@@ -606,6 +606,26 @@ Flag 15:43 untouched.
 **Law 27** in [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Not a Settings modal. Not a new plate this stamp.
 
 **Do not:** invent the event list; copy Agents C6/C7 into Automations; plant; overwrite 15:43; collapse Agents C2b “event” with this trigger.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 23:35 UTC — No special return; objectives are events; failure → tag
+
+**Why:** Founder: don’t look at Hub as the app. Hub is the **advanced version of those modules** — fair if that is the lens. Not fair if we mention Hub because we thought that was the product. Product face = CT Ant.
+
+**Loop 1 settled (different angle, same thing):** There is **no need for a return**. The return **is** an event. **All objectives are events.** The write-back **is** the event; the event happening **is** the write-back. Detected across the app / in the database. Not lost.
+
+**Still open on that loop — querying, not a new wire:** clear tracking from what **created** the objective (agent-created or **hand-created**), the path that agent took through to **completion**, the completion event, **time it took**. Map it correctly. **Queryable at the minimum.** Critical.
+
+**Number 2 (create + enroll / in-app action):** If a campaign **fails**, for every person who failed it, create a record — even as simple as a **tag**. Failure of a campaign **has to be an event** so Automations can reference it. **Global and local apply.** Then the **action**: ascribe that tag. First in-app action named this way.
+
+**Why they thought of it:** the subscription campaign bell (subscribed / not) **is a tag** — an icon tag — **created in Automations**. Don’t opt-in / opt out / **unsubscribe** (also an event) → assign that tag. Subscription campaign **fails** → ascribes that tag.
+
+**Law 28–30** in [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md).
+
+**Do not:** treat Hub as the app; invent the event or action catalog; mint a lineage table from “queryable”; plant; overwrite 15:43.
 
 Flag 15:43 untouched.
 
