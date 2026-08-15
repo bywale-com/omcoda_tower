@@ -31,6 +31,12 @@ Hub’s “View code” can remain as under-the-hood. It must not be the only wa
 | **A1** | [`A1-smallest-workflow.png`](./automations-blueprint/A1-smallest-workflow.png) | Smallest workflow: **trigger · rule · action**. Fewer pieces. Then build those pieces. |
 | **A2** | [`A2-rule-gui.png`](./automations-blueprint/A2-rule-gui.png) | Open the rule. **GUI.** Toggles on families. Conditions as rows, not a code block. |
 | **A3** | [`A3-rule-custom.png`](./automations-blueprint/A3-rule-custom.png) | Same rule. **Custom** — JSON when GUI isn’t enough. |
+| **A4** | [`A4-gui-plus-named-code.png`](./automations-blueprint/A4-gui-plus-named-code.png) | Side-by-side: GUI outcome (constant) **plus** named code outcome, both **on/off**. |
+| **A5** | [`A5-inside-trigger.png`](./automations-blueprint/A5-inside-trigger.png) | Inside the trigger. Event or schedule. |
+| **A6** | [`A6-add-node.png`](./automations-blueprint/A6-add-node.png) | Add a node. Select Action. |
+| **A7** | [`A7-action-two-kinds.png`](./automations-blueprint/A7-action-two-kinds.png) | Inside action: **Agents** vs **in the application**. |
+| **A8** | [`A8-action-agents-objective.png`](./automations-blueprint/A8-action-agents-objective.png) | Agents as the action: select agent, or create the objective / form. |
+| **A9** | [`A9-rule-output-gap.png`](./automations-blueprint/A9-rule-output-gap.png) | Rule output: what Hub emits **today** (including both signals) vs the **not-yet-accepted** complete idea. |
 
 Chrome: Operator → Configuration libraries → Automations. Light mode. Ant. From scratch.
 
@@ -64,10 +70,61 @@ Chrome: Operator → Configuration libraries → Automations. Light mode. Ant. F
 
 ---
 
+### A4 — GUI plus named code (both on/off)
+
+![A4 GUI plus named code](./automations-blueprint/A4-gui-plus-named-code.png)
+
+**On the glass:** One outcome as field/operator/constant. One outcome as **named** JavaScript, created in this rule, still toggled on. Prefer a constant when one exists.
+
+**Not this plate:** Whole-rule Custom (that is A3). Inventing rule-output catalog.
+
+---
+
+### A5 — Inside trigger
+
+![A5 inside trigger](./automations-blueprint/A5-inside-trigger.png)
+
+**On the glass:** Event or schedule. Perform on this event.
+
+---
+
+### A6 — Add a node
+
+![A6 add node](./automations-blueprint/A6-add-node.png)
+
+**On the glass:** Insert control. Select Action as the node.
+
+---
+
+### A7 — Two kinds of action
+
+![A7 action two kinds](./automations-blueprint/A7-action-two-kinds.png)
+
+**On the glass:** **Agents** vs **in the application**. At least two kinds.
+
+---
+
+### A8 — Agents as the action
+
+![A8 action agents objective](./automations-blueprint/A8-action-agents-objective.png)
+
+**On the glass:** Select an agent, or create the objective (and the form). Objective limits the agent list.
+
+---
+
+### A9 — Rule output (today vs gap)
+
+![A9 rule output gap](./automations-blueprint/A9-rule-output-gap.png)
+
+**On the glass:** Today: headline, pass, nudge (re-engagement) signal, reactivation signal, services — one, the other, or both. Named gap: form, enrich, how actions consume. Do not invent the catalog in the picture.
+
+---
+
 ## What this is not
 
 - Not overwriting 15:43.
 - Not planting these into `AntAutomationWorkbench` this pass.
 - Not saying the evaluator must be operator-authored as code.
 - Not throwing away Hub Rules. This is the Ant image of that grain.
-- Not a full Automations DAG yet. Smallest workflow first.
+- Not a full Automations DAG yet. Smallest workflow first; then the insides of those three pieces (A5–A8).
+- Not filling rule-output as a complete catalog (A9 names the gap).

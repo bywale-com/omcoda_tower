@@ -51,6 +51,14 @@
 
 > A rule allows us to create the smallest kind of workflow in an automation. It's just a trigger, a rule, and an action. It can be as simple as that. Smallest looking workflow. Then we can still say, what makes up this thing completely? Less pieces to think about. Then we can go about building those pieces separately.
 
+> Even inside the ones that we've prepared in those outcomes inside of the rules — the ones that can be represented, perhaps only the constant itself, or maybe even no constant. There's no constant that can be referenced and it has to just be completely code. But it's still not hard-coded because we still created it inside of our rules module. It can exist as something that you've created and it will probably live as JSON or JavaScript or Python. You'd still be able to go through that code and it would still count on or off. You would just name it. I want to see a side-by-side of something that's GUI plus something that was created as code.
+
+> You might be referencing a constant. Some things are not constants — especially as we start going from industry to industry. That's fair. We should try to always define a constant when they're possible.
+
+> I'm not yet satisfied because we've started with trigger. I want to see inside of trigger and I also want to see inside of the action. I want to see what it looks like to select a node, add a node, and then select action as a node. There are at least two kinds of different actions: actions that are inside of the application itself based on an operation, but also actions that are agents. Then selecting when you selected agents as the action — selecting that objective, creating that objective. If you're creating the objective, you're probably creating the form.
+
+> This operation — we're implying that it creates both a re-engagement event and a reactivation event, or that it can create both a re-engagement and/or reactivation signal. Can we separate them? No, why would we need to separate them? If it can create one or the other, or both at the same time, which I think is also possible somewhere in our docs — that's why we can have different actions. We actually need to define what the output of a rule is. We haven't a super clear, congruent, complete idea of the output of a rule. Whatever it outputs has to be what we're able to use to create a form. Maybe it also enriches many other things. We are not even super clear on what it creates.
+
 ---
 
 ## Law of the face (short)
@@ -71,6 +79,12 @@
 14. **Not limited to code.** PM verdict: the authored logic **is simple enough for a GUI**. A condition is field · operator · constant. A rule is togglable families of those. Under-the-hood evaluator stays code. **Two options:** **GUI** (default where possible) · **Custom** (code / JSON when the GUI isn’t enough).
 15. **Smallest workflow = trigger · rule · action.** A rule lets us create the smallest looking automation. Then name the pieces and build them separately.
 16. **This Rule part does not exist in the Ant translation.** Image mocks are **from scratch** in Ant chrome. Mock = generate the image. See [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md).
+17. **Inside a rule, outcomes can be GUI or named code.** Where a constant can be referenced, GUI (prefer always defining a constant when possible). Where no constant can be referenced — especially across industries — it is **named code** (JavaScript or Python), **created in the rules module**, not hard-coded. It still **toggles on or off**. You name it. Side-by-side with GUI outcomes. (Whole-rule Custom/JSON remains the escape hatch for the entire rule.)
+18. **Look inside trigger and inside action.** Add a node, select Action as a node. Not satisfied with canvas-only.
+19. **At least two kinds of actions:** (a) **in the application** — change something inside the system from the operation; (b) **agents** — send people to a goal.
+20. **Agents as the action:** select an agent, or create / select the objective. Creating the objective probably **creates the form** (already Automations-owns-the-form).
+21. **A rule can emit re-engagement and/or reactivation as signals — one, the other, or both at once.** Do not split the rule to separate them. That is why we can have **different actions**. Engine 2 already: every detection is a signal; outreach is one motion (reactivation first; nudge only if not; secondary attaches as agenda).
+22. **Rule output is not yet a complete accepted idea.** Hub today outputs headline, pass, pathway/gap signals, recommended services, a **nudge (re-engagement) signal**, and a **reactivation signal**. What we have **not** accepted: that this output is what we use to **create a form**, what **enriches** other things, and how **different actions consume** those signals. Name the gap. Do not invent the catalog.
 
 ---
 
@@ -130,4 +144,4 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 5. Word “event” on Agents C2b vs Automations’ event-of-origin (schedule / trigger) — do not collapse them without asking.
 6. Catalog of **in-system outcomes** besides enroll-agent (lists, tasks, notify, and whatever else Hub already names). Do not invent a new catalog this stamp.
 7. Seed §5.6 vs Hub-as-built vs the 20:24 definite-middle shape — **do not silently kill any of them**. Hub Rules are what to look at. Alignment is later.
-8. Whether Custom is JSON specifically vs another code surface. Founder said “just like with JSON.”
+9. Complete **rule output** as the thing that creates a form / enriches / feeds actions. Hub-today vs accepted idea is named in law 22 and plate A9. Do not fill it here.
