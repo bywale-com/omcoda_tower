@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Attempt rules: campaign on the campaign; sequence/global in Settings modals (19:30). Face [`AGENTS-FACE.md`](./AGENTS-FACE.md).
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Settings modals locked canonical (19:30). Content override = toggle that expands the channel node; call via ElevenLabs (19:45). Face [`AGENTS-FACE.md`](./AGENTS-FACE.md).
 
 **How we maintain this log**
 
@@ -383,4 +383,14 @@ Flag 15:43 untouched. Recreate beat 5 image; second image = attempt as cycle + t
 - **Agents** → Agents Settings (global)
 
 **Ask:** generate those two Settings modals — they now hold a bunch, given everything discussed (attempt rules, channel/escalation rules, content, sequencing defaults). Mock = generate the image.
+
+---
+
+## 2026-08-15 19:45 UTC — Settings images locked; Override content is a toggle; call node (ElevenLabs)
+
+**Why:** Founder: the Settings images are canonical — “perfect,” nothing to add. Do not regenerate those.
+
+**Last change, different image:** the Override content **button** inside the channel should have been a **toggle**. Toggle on → the **node expands** to contain that medium’s **content-creation block**. Richer than a thin text box. Show **text, email, and call** overridden. Call will exist; **via ElevenLabs**.
+
+Mock = generate the image. Settings untouched. Flag 15:43 untouched.
 

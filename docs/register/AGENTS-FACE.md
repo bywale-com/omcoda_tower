@@ -78,7 +78,7 @@
 3. **Opt-in (the obvious two):** Launch window builds desire (why we don’t just start reactivating). Launch day **is opt-in day**. Window objective met → qualify for opt-in day.
 4. **Campaigns have objectives. Channels do not.** Channels are the **medium**. **Channel rules = escalation on that medium** (not opened, not clicked, …). **Attempt rules are not at the channel.** An attempt is a **container / cycle** of the same sequence.
 5. **Sequencing lives at campaign level** (“how many channels here, in what order”) — not at the channel node.
-6. **Content lives inside the channel node** as a small button. Click → editor opens **in the node** (text box, or the email composer if email). Not a wired sibling. Attempt-specific copy is a **variation on that same node**, not a new layer.
+6. **Content lives inside the channel node** as an **Override content toggle**. On → the node **expands** to contain that medium’s content-creation block (SMS composer, email composer, call script). Not a wired sibling. Not a small button. Attempt-specific copy is a **variation on that same node**.
 7. **Override this** is the first toggle on a campaign. It **opens the campaign** and **reveals channel nodes as wires**. Campaign-level toggles **stay on the campaign**. Open a channel → **channel rules** (escalation) hang off as the channel’s deeper grain. Content stays inside.
 8. **Rules nest like CSS.** Global (Agents module Settings) → sequence Settings → campaign if overridden → channel. If you do not override, fall back up.
 9. **Attempt rules sit where their grain is.** Per **campaign** → on that campaign (visible, no gray area). Per **sequence** → **Sequence Settings** modal, not in the middle of the canvas. **Global** → **Agents Settings**. Do not draw attempt cycles between campaigns.
@@ -105,7 +105,8 @@ SEQUENCE TEMPLATE  (blank canvas — opt-in / re-engagement / reactivation)
 │    attempt rules when per-campaign live ON this campaign
 │    [ Override this ]  → reveals wired CHANNEL nodes
 │         └─ Channel node  (medium: text / email / form)
-│              [ Override content ]  ← button INSIDE the node; editor opens here
+│              [ Override content ]  ← TOGGLE INSIDE the node; on → node expands
+│                   to the content-creation block for that medium
 │                   variation at attempt N  (same node, same sequence cycle)
 │              channel rules = escalation (not opened, not clicked, …)
 │                   hang off this node when you open the channel
@@ -129,7 +130,7 @@ Between campaigns: **goal accomplished → qualify for the next.** That is the e
 
 Picking a **templated** objective populates everything related to that template. From scratch: configure the binary event, then name it.
 
-Spoken “email, text, and call”: **stood-up ladder is text → email → form.** Call is not a fourth medium unless Story says so.
+Spoken ladder in this mock: **text → email → call** (call via ElevenLabs). Stood-up machine still has form; do not silently drop form from the machine. Call is now on the face because the founder asked to see the node.
 
 That is **not** four emails in one Timeline. Flattening it is the miss.
 
@@ -276,10 +277,10 @@ Per-campaign attempt rules stay **on the campaign**. They do not appear as a str
 - Not minting webhook / table-query completion now. Named as possible later.
 - Not restoring 14:58 “actions on goals” as a seventh list item — failure is **inside escalation**.
 - Not putting **attempt rules** on the channel node. Attempt is a cycle of the sequence.
-- Not hanging **content override** off the channel as a connected sibling. It is a button inside the node.
+- Not hanging **content override** off the channel as a connected sibling. It is a **toggle inside** the node; on → the node expands to the content-creation block.
 - Not assigning **objectives** to channels. Channels = medium + escalation rules.
 - Not putting **sequencing** on the channel node. Sequencing = campaign.
-- Spoken “call” as a third channel: not stood up; ladder is text / email / form until Story says otherwise.
+- Spoken “call”: now on the face as a channel node (ElevenLabs). Machine still has form until Story/SA extract. Do not mint tables here.
 - Not minting tables in this file. Table-first extract is SA, after Story promotion where needed. Modularity law still: if it can be overridden, it must be a row.
 
 ---
@@ -289,6 +290,6 @@ Per-campaign attempt rules stay **on the campaign**. They do not appear as a str
 1. Additional objectives inside the opt-in sequence besides launch window and launch day — unnamed.
 2. What we call the untemplated objective (“event” vs another word).
 3. May one sequence mix objective types in practice, or only “technically”?
-4. Spoken “call” as a third channel vs stood-up ladder text / email / form.
+4. Call via ElevenLabs — face only for now; machine still form.
 5. Where campaign-level rule overrides sit besides attempt-on-campaign (sequencing already on the campaign).
-6. Sequence Settings vs Agents Settings — generated next; not the discarded middle-of-canvas attempt image.
+6. Settings images locked canonical.
