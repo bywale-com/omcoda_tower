@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Automations **SA package waiting** (22:17): [`AUTOMATIONS-SA-PACKAGE.md`](./AUTOMATIONS-SA-PACKAGE.md). Chosen lineup A1–A13 (priors kept; A12/A11/A13 canonical revisions). Face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md).
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Automations lineup + SA package 22:17. **Before building:** unclosed loops between Agents and Automations named 23:07 (goal → other workflow; enroll/bind/send; form write-back; book-in). Do not plant editors this stamp.
 
 **How we maintain this log**
 
@@ -560,4 +560,32 @@ Flag 15:43 untouched.
 **Do not:** plant the editor; mint tables; treat A13 as a screen; overwrite 15:43; collapse the two condition grains.
 
 Flag 15:43 untouched. Agents SA package still waiting; this is a **second** package, not a replacement.
+
+---
+
+## 2026-08-15 23:07 UTC — Before building: the loops still open between Agents and Automations
+
+**Why:** Founder: keep the images (pristine, design system); can live with the cost. Natural question: if we built both modules to spec, could we **create an agent and enroll contacts**? Still more to discuss — connections / loops that should be closed, not remembered in the moment. State them directly. Do not plant.
+
+**Image regen (correction):** cut **re-generating** the same plates. Do **not** cut using the canon images to build. Cut **rereading the entire log** every turn.
+
+**If we only built the two UIs:** you would have two editors. You would **not** yet be able to create an agent and enroll contacts as a working loop. That is systems: bind, enroll, send, goal-done, write-back.
+
+**Loops still open (the connections, not a new flag):**
+
+1. **The other direction (15:43).** We specified Automations → start/select an agent. We did **not** specify what happens when the agent’s **goal is met**: escalate to **other agents**, to **other workflows**, or **it ends**. That is the flagship endpoint. Without it, Automations can throw people in; Agents cannot throw work back.
+
+2. **Create + enroll is one loop, not two screens.** Author the sequence in Agents. Automations action selects that sequence (or creates the objective/form and then selects). Someone has to **bind** it to a firm and **enroll a contact**. Dual entry: operator enroll from Contacts **and** workflow `call_agent`. If only the canvas exists, enroll is fake.
+
+3. **What goes out.** Enrollment that does not send (Resend/Twilio, consent, halt, silence) is a dark agent. Activity is the **record**, not the author.
+
+4. **Form write-back.** Automations owns the data-request form. Fill → facts land → eligibility re-evaluates → that can **fire Automations again**. Required-data listing is **not stood up**; the form cannot bind yet. Without write-back, the form is scenery.
+
+5. **Book-in.** Contacts have to exist (authorize book / import). The loop win is still **meeting booked** — an objective Agents can campaign toward; not Automations’ trigger word “event.” Named 14:49; not closed.
+
+6. **Instantiate vs enroll.** Automation may “create a campaign” only when a **template** already exists. Still open: new sequence row vs enroll into the existing one.
+
+**Do not:** start building the editors this stamp; overwrite 15:43; invent a COO; mint tables.
+
+Flag 15:43 untouched.
 
