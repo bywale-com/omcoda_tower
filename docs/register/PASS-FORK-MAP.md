@@ -121,4 +121,4 @@ SYSTEMS-REQUIREMENTS → bind controls + panes as extrusions
 Phase One = this fork map’s spine (UI-first face + parallel machine track through table inventory / plant).  
 Phase Two = same methodology at **micro scale** from in-app “I should be able to …” use cases → component and/or table/field.  
 
-See [`PHASE-TWO.md`](./PHASE-TWO.md).
+See [`PHASE-TWO.md`](./PHASE-TWO.md) (thesis) · [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) (running log).

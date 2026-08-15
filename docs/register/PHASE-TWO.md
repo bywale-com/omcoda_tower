@@ -2,7 +2,8 @@
 
 **Status:** Declared 2026-08-13 — Phase Two starts now.  
 **Seat:** Founder prompts from inside the live app; agent runs the same methodology at micro scale.  
-**Companion:** Phase One spine = [`PASS-FORK-MAP.md`](./PASS-FORK-MAP.md) · machine table law = [`system-map/BUILD-system-map-v2-table-inventory.md`](./system-map/BUILD-system-map-v2-table-inventory.md).
+**Companion:** Phase One spine = [`PASS-FORK-MAP.md`](./PASS-FORK-MAP.md) · machine table law = [`system-map/BUILD-system-map-v2-table-inventory.md`](./system-map/BUILD-system-map-v2-table-inventory.md).  
+**Running log:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) — dated additions (Agents relation, entry posture, problem kinds, micro-pass ships). Thesis stays here; talk lands in the log unless marked as a separate entry.
 
 ---
 
@@ -52,7 +53,7 @@ For each founder prompt:
 3. **Map to spine:** which System Map table(s) / Requirements state(s) / existing Ant surface?  
 4. **Decide writes:** reuse table · enrich field/payload · new table (rare — justify) · new UI leaf.  
 5. **Ship thin vertical:** empty-or-personalized; no demo scenery.  
-6. **Log the pass** in the Phase Two ledger below (append-only).
+6. **Log the pass** in [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) (append-only, dated).
 
 Prompt shape the founder will use (canonical):
 
@@ -120,11 +121,9 @@ Snapshot so micro-passes have ground to stand on. Update when a pass lands.
 
 ---
 
-## Phase Two ledger (append each micro-pass)
+## Phase Two ledger
 
-| Date | Use case (“I should be able to…”) | Class | Bind (table/field · UI) | PR / commit |
-|------|-----------------------------------|-------|-------------------------|-------------|
-| *(empty — Phase Two opens here)* | | | | |
+Shipped micro-passes and booth notes append in [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) — not here.
 
 ---
 
@@ -139,6 +138,7 @@ Snapshot so micro-passes have ground to stand on. Update when a pass lands.
 
 ## Index
 
+- **Running log:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md)  
 - Phase One forks: [`PASS-FORK-MAP.md`](./PASS-FORK-MAP.md)  
 - Gates: [`ORCHESTRATION.md`](./ORCHESTRATION.md)  
-- Table-first birth: System Map v2 (`BUILD-system-map-v2-table-inventory.md`) — see also conversation record: table-first was a **pass on the map**, not Story-native.
+- Table-first birth: System Map v2 (`BUILD-system-map-v2-table-inventory.md`) — table-first was a **pass on the map**, not Story-native.
