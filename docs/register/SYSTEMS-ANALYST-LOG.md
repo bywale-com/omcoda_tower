@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-15 16:50 UTC — goal expansion marked down in [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) (excerpts; not Story must until promoted). Pointers in Story §7 + OPERATOR-REVISIONS §5c. Product flag stays PHASE-TWO-LOG 15:43 UTC.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-15 16:55 UTC — Agents authorship shape is closed. One walk-break: sequence fully deployed + channel criteria spent + class goal still unmet → no law. See SYSTEMS-GOAL.md. Product flag stays PHASE-TWO-LOG 15:43 UTC.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -348,3 +348,27 @@ Promote Story for (a)–(c) before Requirements extract a state. Table-first wou
 **Still not done:** Story **must** not yet rewritten. No table. Open asks in SYSTEMS-GOAL remain (promote? `launch_day`? mini-goals as destinations?).
 
 **Log rule added (this file header):** durable founder expansions → excerpts in the log **and** a register markdown. Do not leave critical wording only in chat.
+
+---
+
+## 2026-08-15 16:55 UTC — Agents loop walk: one break
+
+**Why:** Founder: Agents module may have closed; some of what they said wasn’t required for completion; find a **true** gap or say there isn’t one. Test: if this is true, and X, what happens with Y. Walk the law; find what breaks. Automations is a **different** engine (same rigor later) — not this gap.
+
+**Excerpts:** “completion of the agents module that might have just taken place” · “some of the things I said weren't required for the completion” · “more coherent module” · “something about the agents loop is pretty much closed, or is it?” · “something that isn't closed at all” · “If this is true, and X, what happens with Y?” · “walk down the existing logic, and you find what breaks” · Automations “we do need to … apply the same level of decomposition rigor” (later).
+
+**Closed (authorship):** class = objective; sequence + order deployed; firm/default/overrides; attempt sequencing; mini-goals as checkmarks; goal = completion; when **met** → other agent · workflow · or end. That shape holds. Do not reopen `launch_day` or mini-goals-as-destinations as if they broke it.
+
+**The break (one):**
+
+If the goal-escalation fires **when the objective is complete**, **and** the sequence has finished deploying, **and** attempt/channel criteria are already spent (opened, clicked, …), **and** they still have not signed up / booked — what happens?
+
+Not named. Attempt law is channel criteria, not class-goal. Goal law is **once met**. Calendar running out is neither.
+
+Re-engagement is the exception: form started, not submitted → back to head (24h). Booking and sign-up have no such row.
+
+Not Automations. This agent, after the last node, without the goal.
+
+Parked on [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) so it is not only here.
+
+**Ask:** is unmet-after-the-sequence-is-done still in-flight, retry (like the form), escalate anyway, or end? If that is “still in the agent until they complete or halt,” there is **no** Agents-interior gap.
