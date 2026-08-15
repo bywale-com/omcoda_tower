@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-15 22:50 UTC — **Log discipline: append, do not rewrite stamps.** Past stamps were not deleted. 17:05 Open restored in SYSTEMS-GOAL. Package cadence: ping SA each package; paper framework until “system time.” Flag **15:43**. Grain lock 22:41 still stands.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-15 22:55 UTC — **Paper ascribe: Automations package (PR #85 A1–A13).** Not cemented. Not mint. Hub is the plant. Detail: [`SYSTEMS-AUTOMATIONS-ASCRIBE.md`](./SYSTEMS-AUTOMATIONS-ASCRIBE.md). Agents grain lock 22:41 and log discipline 22:50 still stand. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -611,3 +611,27 @@ Affordances: partial. UI can look like this. UI would change if inherit/override
 **Law of this log:** append a new stamp. Do not edit a past stamp’s body. Current pointer is the only in-place line. Past logs are easy to see — scroll. Cleaning is not cleaner.
 
 **Package cadence (yes):** Ping SA each package. I stay in the conversation. Nothing is cemented. I keep a paper framework (ascribe + housing notes + this log). When you say **system time**, I re-read every package against the notes and then Story / Requirements / tables. I am for that. I am not for minting between packages.
+
+---
+
+## 2026-08-15 22:55 UTC — Paper ascribe: Automations package (A1–A13)
+
+**Why:** Founder curious — another package landed on PR #85 (22:17 / commit *chosen image lineup and Systems Analyst package*). Cadence: stay in the conversation; paper only; not system time.
+
+**Prompt:** [`AUTOMATIONS-SA-PACKAGE.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/phase-two-app-facing-agents-2bec/docs/register/AUTOMATIONS-SA-PACKAGE.md). Face + blueprint A1–A13. Hub is the plant. Full A/B: [`SYSTEMS-AUTOMATIONS-ASCRIBE.md`](./SYSTEMS-AUTOMATIONS-ASCRIBE.md).
+
+**Do not:** mint; treat A13 as a screen; collapse the two condition grains; put `workflow_trigger` on the Agents canvas; overwrite 15:43; edit a past stamp.
+
+**What I think (short):**
+
+- Smallest workflow (A1) is already `workflow.graph` + `workflowWalk` (trigger + action required; rule allowed).
+- Rule GUI (A2) is Hub **TypeScript pack**, not a PG table. Walker only peeks `rule_eligibility_pathway` + `constants_packs`.
+- Trigger (A5) is `workflow_trigger` — do not collapse with Agents C2b.
+- Action SQL is `CHECK (type = 'call_agent')`. Hub also names `manage_lists` / `assign_task` / `notify_consultant`; walker ignores them (A7).
+- Select agent = whole sequence (A8) matches grain lock. `WorkflowAgentRef` still includes `tpl.launch_day.v1` — Agents housing lie visible from this node.
+- Required-data listing (A11/A12): `COLLECTIBLE_FIELDS` unused; `RuleEvaluationSummary` has no field rows. 21:36 was right. Do not mint a table from the listing.
+- A10/A13 are diagrams. Fork is Hub If (`branch`, `lastOutput`). No Ant plate.
+- Named code JS/Python (A4): no port.
+- Ant has no Rule GUI. Honesty: Hub is the plant until Ant grows it.
+
+Not cemented.
