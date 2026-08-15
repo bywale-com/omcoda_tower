@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Override this** reveal / two opt-in campaigns = 2026-08-15 18:08 UTC. Face doc [`AGENTS-FACE.md`](./AGENTS-FACE.md).
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Override this** graph = 2026-08-15 18:08 UTC. Planted on Ant Editor → Canvas 18:25 UTC. Face doc [`AGENTS-FACE.md`](./AGENTS-FACE.md).
 
 **How we maintain this log**
 
@@ -277,3 +277,32 @@ Layer 3 is still **app-facing**: it is what the panes must be able to display, a
 | Channel node rules | On the node, always — they never move to Settings |
 
 **Ask:** plant this in `AntAgentWorkbench` next (same chrome), or keep specifying?
+
+---
+
+## 2026-08-15 18:08 UTC — Sequence is blank; two opt-in objectives; Override this reveals the graph
+
+**Why:** Founder enriching, not circling. Sequence = **blank**, multiple goals. Opt-in = **two clear objectives** → **two campaigns**. Launch window builds desire (why we don’t start at reactivation). Launch day **is opt-in day**. First objective met → **qualify** for phase 2 — that is the edge between campaigns.
+
+**Channels are not objectives.** They are the **medium**. Channel rules + attempt rules on the node. **Sequencing and content defaults live at campaign.** Content 1:1 with nodes; override by opening the node.
+
+**The first toggle on a campaign: Override this.** Opens that campaign; **reveals channel nodes as wires** connected to it. Campaign toggles stay on the campaign. Channel toggles live on those nodes. Open a channel → deeper, still wired = **full graph**.
+
+Spoken “email, text, and call”: ladder stood up is text / email / form — do not mint call here.
+
+**Doc:** [`AGENTS-FACE.md`](./AGENTS-FACE.md) updated. Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 18:25 UTC — Planted Override this on the real Agents editor
+
+**Why:** Founder: the shape is locked; enrich further; Override this reveals channel nodes as wires; campaign toggles stay on the campaign; node toggles live on the node. They asked to see the graph, not another overlay.
+
+**Plant:** Editor tab on Ant Agents (`AntAgentWorkbench`) now has **Canvas** (default) and **Timeline (today)**. Canvas is local prototype — not the save path. Opt-in sequence seeds **Launch window** (Override this on, Text open) → qualify → **Launch day** (closed). Channels = text / email / form. Settings tab banner: global defaults only.
+
+**Enrichment (agent alignment, not a flag):** toggle locality; agent = blank sequence; qualify-edge = 15:43 goal-as-escalation drawn between campaigns; channels = sequencing method. In [`AGENTS-FACE.md`](./AGENTS-FACE.md).
+
+**Still open:** window’s one objective (waitlist?); mix types in one sequence; deeper-than-channel grain; spoken “call”.
+
+**Ask:** is Launch window’s one thing the waitlist, or still unnamed?
+

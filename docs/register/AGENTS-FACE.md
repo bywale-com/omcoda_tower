@@ -136,7 +136,38 @@ On each campaign, **one first toggle at the bottom: Override this.**
 
 Do not jump to a Settings modal. Do not replace the campaign with a Timeline. The campaign stays; the channels **hang off it**.
 
-**Today (honest, screenshot):** Editor = Email/Task Timeline. Settings = all `rule_attempt_criteria`. Opposite of this graph.
+**Today:** Editor tab now has **Canvas** (this graph, local prototype) and **Timeline (today)** (the Email/Task save path). Settings still lists every modular row — those rows are **global defaults**; campaign/channel overrides belong on the canvas.
+
+---
+
+## Further enrichment (agent alignment — not a second flag)
+
+Founder: “I’m not circling, I’m enriching, and I think you can even further enrich.” This section is that enrichment. It does not replace 15:43 or the excerpts above.
+
+**The agent is a sequence, not a campaign.** The list item (Opt-in, Nudge, Reactivation) is a **blank sequence**. Campaigns live inside it. Opt-in is the teaching case because it already needs **two** objectives, therefore **two** campaigns.
+
+**Why a launch window exists (the meta-reason).** We do not start at reactivation. The window’s job is to **build desire** for opt-in. Launch day **is** opt-in day. Phase 2 is justified only because phase 1’s objective was met — they **qualify**. That qualify-edge is the 15:43 “goal is itself an escalation point,” drawn as a wire between campaigns, not as a Settings row and not as a fourth channel.
+
+**One thing in the window.** The window campaign has **one** objective: the thing that, if they do it, raises the chance of opt-in. Still unnamed here (waitlist is a candidate, not confirmed). Do not split the window into two campaigns unless there are two objectives.
+
+**Toggle locality (law of the graph).** A toggle lives at the layer it governs and **does not migrate** when the graph opens.
+
+| If the toggle is about… | It lives… | After Override this |
+|-------------------------|-----------|---------------------|
+| The campaign as a whole (sequencing, content defaults, the objective, Override this) | On the campaign node | **Still on the campaign** |
+| One medium (channel rules, attempt rules, content for that node) | Does not exist until the node exists | **On that channel node** |
+
+So Override this is not “show more fields on this card.” It **materializes the child layer**. The campaign stays. Channel nodes **hang off it on wires**. Open a channel → that node’s toggles appear **on it**, still wired. That is the full graph.
+
+**Channels are a sequencing method, not a goal layer.** Choosing how many channels, which, in what order **is** campaign sequencing. After Override this, those choices are visible as the hanging nodes. Reordering them is still a campaign-level fact; the nodes are the display of that method. Channels come with **defaults** for channel rules (escalation per node) and attempt rules (retries). Campaigns **bring** those defaults. You override them on the node.
+
+**Content is 1:1 with nodes.** Campaign holds the default pack. Opening a node is how you override that node’s copy. There is no separate content canvas.
+
+**Closed campaign = accepting defaults.** Most of the time Override this stays off. Open it only to author at the channel grain.
+
+**Settings never receives these overrides.** Global defaults only. If a control is specific to a campaign or a node, it is already on the graph.
+
+**Deeper than a channel** is still a wire off that channel, not a jump. What that next grain *is* (attempt rows as nodes vs rules listed on the node) is still open — do not mint attempt-nodes until the founder names them.
 
 ---
 
@@ -154,7 +185,7 @@ Do not jump to a Settings modal. Do not replace the campaign with a Timeline. Th
 
 ## Open (tinkering — do not fill)
 
-1. Plant this canvas on Ant (Type B) vs keep specifying.
-2. May one package mix objective types in practice, or only “technically”?
-3. Launch day = opt-in day: confirm the window’s single objective (the “one thing” that raises opt-in chance) — waitlist, or still unnamed?
-4. Plant `Override this` reveal in `AntAgentWorkbench` vs keep pictures.
+1. May one sequence mix objective types in practice, or only “technically”?
+2. Launch window’s single objective — waitlist, or still unnamed?
+3. Opening a channel: rules listed on the node (current plant) vs a further wired grain (attempts as nodes). Founder said “reveals something deeper with a wire” — grain unnamed.
+4. Spoken “call” as a third channel vs stood-up ladder text / email / form.
