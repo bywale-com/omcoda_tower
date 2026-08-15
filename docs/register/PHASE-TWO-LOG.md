@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Override this = 18:08. Objective = binary event 18:40. Mock = **generated images** of five beats (18:55). Face [`AGENTS-FACE.md`](./AGENTS-FACE.md).
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Override this = 18:08. Objective = binary event 18:40. Placement: content inside the channel; attempt ≠ channel (19:10). Face [`AGENTS-FACE.md`](./AGENTS-FACE.md).
 
 **How we maintain this log**
 
@@ -351,4 +351,23 @@ Webhook / table not mocked. Call channel not mocked. Flag 15:43 untouched.
 ## 2026-08-15 18:55 UTC — “Mock” = generated images
 
 Founder: when they said mock they meant **generate the image**, not plant an in-app prototype. Distinct beats: sequence templates · add objective (template + from scratch) · two campaigns · Override this · open channel. Images: `agents-mock-1` … `agents-mock-5` plus `2b` from-scratch.
+
+---
+
+## 2026-08-15 19:10 UTC — Placement only: content inside the channel; attempt is a cycle
+
+**Why:** Founder: not adding. Changing **where** things live so it is natural. Image in question = beat 5 (campaign Override this ON + a channel open). Perfect recreation of that frame, then move the pieces.
+
+**Place 1 (that graph):**
+- **Override content** is a **small button inside the channel node**, not a wired sibling. Click → editor opens **in the node** (text box, or the email composer).
+- **Channel rules = escalation** on that medium (not opened, not clicked in time, …). Those stay the channel’s deeper grain.
+- **Attempt rules are not at the channel.**
+
+**Attempt vs channel:**
+- Attempt = **container / cycle** of the **same** sequence (unless nth-attempt uses a different sequence). Last node fails → next attempt. Attempt rules = count, distance after the failed last node, those parameters.
+- Channel / escalation rules = what that medium has to deal with.
+
+**Nesting:** every rule can be global, sequence, or campaign. No override → fall back up (CSS). **Two Settings:** Agents **module** = global. **That sequence** = sequence rules. Attempt is **not** that layer. Content at attempt = **variation on the same channel node**. UI does not grow: attempts are cycles of the same sequence.
+
+Flag 15:43 untouched. Recreate beat 5 image; second image = attempt as cycle + two Settings.
 

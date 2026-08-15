@@ -59,6 +59,16 @@
 
 > Where does a webhook that searches if their name is inside of something … if it is that event is completed for them. … That's down the line. … Our system should not be so complicated that that's not possible.
 
+> Override content should live as a small button inside of the channel. It shouldn't live outside as a connect. Once you override content you're giving yourself access to modify the content … a text box would open up or if it's an email the email [editor] would open up inside of that channel node.
+
+> Attempt rules are not at the channel level. Attempt rules are different from channel / escalation rules. What are attempt rules? Number of attempts. Attempt is a cycle of the exact same sequence — unless you've specified that on nth attempt you want a different sequence. An attempt is a container. At the end of the sequence when it fails, that's when it moves to the next attempt. The distance between attempts, after the failed last node of an attempt, can also be a rule. Those are the parameters for your attempt.
+
+> Escalation rules are what should be called channel rules … like with text, someone doesn't open … email, someone doesn't click a link in a specific amount of time.
+
+> Every single rule, whether it's an escalation rule or a channel rule … can also be set globally, but they can also exist at the campaign layer, or even at the sequence layer. Everything is always an override. If you do not override, it's gonna fall back up … sequence … then global. Like CSS nesting.
+
+> You set [global] in the settings of the Agents module. Then the settings of that specific sequence is where you set the sequence rules. An attempt is not on the same layer as global / sequence / campaign. Content lives inside the channel node itself. You just add a variation at a specific attempt. Attempts are just multiple cycles of the exact same sequence, but you might want a variation of a specific node in a specific cycle.
+
 ---
 
 ## Law of the face (short)
@@ -66,11 +76,11 @@
 1. **Sequence is blank.** An agent sequence is a container. It can hold **multiple goals** (multiple campaigns). Not one-objective-or-nothing.
 2. **Two objectives → two campaigns.** If you want two things met, each requires its own campaign. The first campaign’s goal **qualifies** them for the second. That qualification **is** the objective criteria between the two.
 3. **Opt-in (the obvious two):** Launch window builds desire (why we don’t just start reactivating). Launch day **is opt-in day**. Window objective met → qualify for opt-in day.
-4. **Campaigns have objectives. Channels do not.** Channels are the **medium** — the nodes outreach runs on. They have **channel rules** and **attempt rules**, not channel-objectives.
+4. **Campaigns have objectives. Channels do not.** Channels are the **medium**. **Channel rules = escalation on that medium** (not opened, not clicked, …). **Attempt rules are not at the channel.** An attempt is a **container / cycle** of the same sequence.
 5. **Sequencing lives at campaign level** (“how many channels here, in what order”) — not at the channel node.
-6. **Content defaults at campaign** (preset campaigns). Content is 1:1 with nodes; override content by opening the node.
-7. **Override this** is the first toggle on a campaign. It **opens the campaign** and **reveals channel nodes as wires** connected to it. Campaign-level toggles **stay on the campaign**. Channel-level toggles **live on those revealed nodes**. Open a channel node → deeper still, still wired. That is the full graph.
-8. **Settings = global only.** Defaults exist for every rule. Authorship is override. Modular: overridable ⇒ a row.
+6. **Content lives inside the channel node** as a small button. Click → editor opens **in the node** (text box, or the email composer if email). Not a wired sibling. Attempt-specific copy is a **variation on that same node**, not a new layer.
+7. **Override this** is the first toggle on a campaign. It **opens the campaign** and **reveals channel nodes as wires**. Campaign-level toggles **stay on the campaign**. Open a channel → **channel rules** (escalation) hang off as the channel’s deeper grain. Content stays inside.
+8. **Rules nest like CSS.** Global (Agents module Settings) → sequence Settings → campaign if overridden → channel. If you do not override, fall back up. Two Settings surfaces: **Agents module** (global) and **that sequence** (sequence rules). Attempt is **not** that stack.
 9. **Empty world:** no templates until someone authors them. Opt-in / re-engagement / reactivation are **sequence templates** (the full canvas), not objective names.
 10. **Objective ≠ sequence.** Objective = **one campaign**. Sequences have templates; objectives have templates. You do not put “opt-in” in the objective picker.
 11. **First thing on a campaign is the objective.** Hub Automations: trigger node → **Add configuration**. Same seat, not the same module — do not import Automations triggers onto this canvas.
@@ -94,10 +104,15 @@ SEQUENCE TEMPLATE  (blank canvas — opt-in / re-engagement / reactivation)
 │    defaults for channel rules + attempt rules
 │    [ Override this ]  → reveals wired CHANNEL nodes
 │         └─ Channel node  (medium: text / email / form)
-│              channel rules (escalation per node)      ← on the node, never move
-│              attempt rules                            ← on the node
-│              content override                         ← on the node
-│              [open] → deeper, still wired  = full graph
+│              [ Override content ]  ← button INSIDE the node; editor opens here
+│                   variation at attempt N  (same node, same sequence cycle)
+│              channel rules = escalation (not opened, not clicked, …)
+│                   hang off this node when you open the channel
+│              attempt rules do NOT live here
+│
+│    Attempt = a container / cycle of this same sequence
+│         after last node fails → next attempt
+│         attempt rules = count, distance after failed last node, nth-attempt exception
 └─ next Campaign  (only if prior campaign objective met → qualify)
 ```
 
@@ -123,13 +138,13 @@ That is **not** four emails in one Timeline. Flattening it is the miss.
 
 **There is a default on every single rule.** Failure rules are **part of escalation rules** — not a separate authored family that splits the 15:43 flag into “actions on goals.”
 
-| Rule family | Default lives | Override lives |
-|-------------|---------------|----------------|
-| **Sequencing** (how many channels, order) | Campaign (from global) | **On the campaign** — not the channel |
-| **Content** | Campaign (preset campaigns) | Channel node if you go down |
-| **Channel rules** (escalation per node, incl. failure) | Campaign brings defaults | **On the channel node** (never move) |
-| **Attempt rules** | Campaign brings defaults | **On the channel node** |
-| **Campaign objective** | The campaign itself | Qualify-edge to the next campaign |
+| Rule family | What it is | Where it lives |
+|-------------|------------|----------------|
+| **Channel rules** | Escalation on that medium (not opened, not clicked, …) | Channel node when opened. Fallback: campaign → sequence Settings → Agents Settings (global) |
+| **Attempt rules** | Number of attempts; cycle of the same sequence; distance after the failed last node; optional different sequence on nth | **Not on the channel.** Attempt is a container around the sequence. |
+| **Content** | What goes out on that medium | **Button inside the channel node.** Editor opens in the node. Sequence / global possible via that sequence’s Settings / Agents Settings. Attempt = a variation on the same node. |
+| **Sequencing** | How many channels, order | Campaign |
+| **Campaign objective** | The one yes/no | The campaign itself → qualify-edge |
 
 `firm_sequence_binding` + `rule_*.firm_id` NULL remains firm vs platform. In-package override is this graph, not a second Settings list.
 
@@ -137,28 +152,30 @@ That is **not** four emails in one Timeline. Flattening it is the miss.
 
 | Layer | UI |
 |-------|-----|
-| **Global** | Settings tab only |
-| **Campaign** | Always on the campaign node (sequencing, content defaults, Override this) |
-| **Channel** | On the revealed channel node (channel rules, attempt rules, content override). Open again → deeper, wired. |
+| **Global** | Agents **module** Settings |
+| **Sequence** | **That sequence’s** Settings |
+| **Campaign** | On the campaign node (sequencing, Override this). Campaign can override sequence/global. |
+| **Channel** | Channel rules (escalation) hang off the open channel. **Override content** is a button **inside** the node. |
+| **Attempt** | Not that stack. A cycle of the same sequence. Content variation on the channel node. |
 
-**Settings is global only.**
+Fallback is CSS-like: no override → sequence → global.
 
 ---
 
 ## Canvas behaviour — Override this (the graph)
 
-Closed: you see **campaign** nodes on the sequence (blank sequence, as many goals as you place). Between campaigns: **qualify** (first objective met → second phase).
+Closed: campaign nodes on the sequence. Between campaigns: **qualify**.
 
 On each campaign, **one first toggle at the bottom: Override this.**
 
 | Click | What happens |
 |-------|----------------|
-| **Override this** | Opens that campaign. **Reveals channel nodes as wires** connected to it. Campaign-level toggles **remain on the campaign**. |
-| Open a **channel** node | Reveals that node’s channel rules / attempt rules / content **on the node**, still wired. Full graph. |
+| **Override this** | Opens that campaign. **Reveals channel nodes as wires**. Campaign-level toggles **remain on the campaign**. |
+| Open a **channel** | **Channel rules** (escalation) hang off as wired deeper grain. **Override content** is a small button **inside** the channel — editor opens in the node (text, or the email composer). **Attempt rules do not appear here.** |
 
-Do not jump to a Settings modal. Do not replace the campaign with a Timeline. The campaign stays; the channels **hang off it**.
+Do not replace the campaign with a Timeline. The campaign stays; the channels **hang off it**.
 
-**Today:** Editor → **Mock** (five beats, objective as a modal). Timeline (today) is the save path. Settings is global defaults.
+**Today:** generated images. Beat 5 revised: content inside the node; attempt rules off the channel.
 
 ---
 
@@ -172,7 +189,7 @@ Not one picture. Five beats, one labeled mock. Objective is a **modal** on the c
 | **2. Add objective** | First thing on a campaign. Template (launch window, launch day, additional) vs from scratch (click / calendar / form, then name it) | **Modal** on the canvas |
 | **3. Two campaigns** | Two objectives → two campaigns. Qualify. Launch day = opt-in day | Canvas |
 | **4. Override this** | First toggle. Reveals text / email / form as wires. Campaign toggles stay | Canvas |
-| **5. Open a channel** | Node toggles live on the node. Deeper grain still wired | Canvas expand |
+| **5. Open a channel** | Channel rules (escalation) hang off. Content = button inside. Attempt rules are not here | Canvas expand |
 
 Webhook / table lookup is named, not mocked. Call channel is not mocked.
 
@@ -217,20 +234,22 @@ Founder: “I’m not circling, I’m enriching, and I think you can even furthe
 
 | If the toggle is about… | It lives… | After Override this |
 |-------------------------|-----------|---------------------|
-| The campaign as a whole (sequencing, content defaults, the objective, Override this) | On the campaign node | **Still on the campaign** |
-| One medium (channel rules, attempt rules, content for that node) | Does not exist until the node exists | **On that channel node** |
+| The campaign as a whole (sequencing, the objective, Override this) | On the campaign node | **Still on the campaign** |
+| Escalation on that medium (channel rules) | Does not exist until the node exists | **Wired off the open channel** |
+| Content for that medium | Button **inside** the channel node | Editor opens **in the node** |
+| Attempt (cycle count, gap after failed last node) | **Not the channel** | Attempt is a container around the sequence |
 
-So Override this is not “show more fields on this card.” It **materializes the child layer**. The campaign stays. Channel nodes **hang off it on wires**. Open a channel → that node’s toggles appear **on it**, still wired. That is the full graph.
+So Override this is not “show more fields on this card.” It **materializes the child layer**. The campaign stays. Channel nodes **hang off it on wires**. Open a channel → **channel rules** hang off; **content** stays inside as a button.
 
-**Channels are a sequencing method, not a goal layer.** Choosing how many channels, which, in what order **is** campaign sequencing. After Override this, those choices are visible as the hanging nodes. Reordering them is still a campaign-level fact; the nodes are the display of that method. Channels come with **defaults** for channel rules (escalation per node) and attempt rules (retries). Campaigns **bring** those defaults. You override them on the node.
+**Channels are a sequencing method, not a goal layer.** Choosing how many channels, which, in what order **is** campaign sequencing. Channel rules = escalation on that medium. Attempt rules = parameters of the **cycle**, not of the medium.
 
-**Content is 1:1 with nodes.** Campaign holds the default pack. Opening a node is how you override that node’s copy. There is no separate content canvas.
+**Content is inside the channel node.** Small button → editor in the node. Sequence / global content is possible (sequence Settings / Agents Settings). Attempt copy is a **variation on that same node** for that cycle. The UI does not grow a new layer: attempts are cycles of the same sequence.
 
-**Closed campaign = accepting defaults.** Most of the time Override this stays off. Open it only to author at the channel grain.
+**Closed campaign = accepting defaults** (sequence, then global). Open Override this only to author at the channel grain.
 
-**Settings never receives these overrides.** Global defaults only. If a control is specific to a campaign or a node, it is already on the graph.
+**Two Settings surfaces.** Agents **module** Settings = global. **This sequence’s** Settings = sequence rules. Campaign can still override (CSS fall-through). Attempt is not a third Settings modal — variation on the node.
 
-**Deeper than a channel** is still a wire off that channel, not a jump. What that next grain *is* (attempt rows as nodes vs rules listed on the node) is still open — do not mint attempt-nodes until the founder names them.
+**Deeper than a channel** for escalation is still a wire off that channel. Content is not that wire. Attempt rules are not that wire.
 
 ---
 
@@ -241,7 +260,9 @@ So Override this is not “show more fields on this card.” It **materializes t
 - Not treating “opt-in” as an objective template. Opt-in is a **sequence** template.
 - Not minting webhook / table-query completion now. Named as possible later.
 - Not restoring 14:58 “actions on goals” as a seventh list item — failure is **inside escalation**.
-- Not assigning **objectives** to channels. Channels = medium + rules.
+- Not putting **attempt rules** on the channel node. Attempt is a cycle of the sequence.
+- Not hanging **content override** off the channel as a connected sibling. It is a button inside the node.
+- Not assigning **objectives** to channels. Channels = medium + escalation rules.
 - Not putting **sequencing** on the channel node. Sequencing = campaign.
 - Spoken “call” as a third channel: not stood up; ladder is text / email / form until Story says otherwise.
 - Not minting tables in this file. Table-first extract is SA, after Story promotion where needed. Modularity law still: if it can be overridden, it must be a row.
@@ -253,6 +274,6 @@ So Override this is not “show more fields on this card.” It **materializes t
 1. Additional objectives inside the opt-in sequence besides launch window and launch day — unnamed.
 2. What we call the untemplated objective (“event” vs another word).
 3. May one sequence mix objective types in practice, or only “technically”?
-4. Opening a channel: rules listed on the node vs a further wired grain. Founder said “reveals something deeper with a wire” — grain unnamed.
-5. Spoken “call” as a third channel vs stood-up ladder text / email / form.
-6. Mock of this shape — five beats on Editor → **Mock** (sequence templates · add objective modal · two campaigns · Override this · open a channel).
+4. Spoken “call” as a third channel vs stood-up ladder text / email / form.
+5. Where campaign-level rule overrides sit in UI (named in the CSS stack; no campaign Settings modal placed).
+6. Visual for attempt-as-cycle on the canvas (image 6) vs only sequence Settings.
