@@ -52,6 +52,7 @@ import type {
 } from "../../../wire/machineTypes";
 import { useAuth } from "../../../auth/AuthContext";
 import { wirePorts } from "../../../wire/registry";
+import { peekOperatorFirms } from "./operatorFirmIndex";
 
 function statusColor(status: AgentDefinition["status"]) {
   if (status === "running") return "processing";
@@ -768,6 +769,8 @@ export function AntAgentWorkbench({
         label: agent.name,
         cells,
       });
+      const sessionFirm = peekOperatorFirms()[0];
+      const firmName = sessionFirm?.name ?? "Unbound firm";
       const bind = await wirePorts.machineApi.upsertBinding({
         sequenceClass: binding.sequenceClass,
         templateId: binding.templateId,

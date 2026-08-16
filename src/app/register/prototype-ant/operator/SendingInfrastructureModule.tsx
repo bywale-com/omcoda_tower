@@ -3,12 +3,14 @@
  * subdomain per firm, authenticates it on the house zone, warms it up, and previews the
  * CEM envelope (deliv-19). Custom-domain attach is a deferred upgrade — not built here.
  *
+ * Firm picker = session/real firms — never DEMO_FIRMS.
+ *
  * Fixture honesty: DNS auth chips only flip green from an explicit platform-ops action
  * (markPlatformDnsPublished) — never automatically on allocate. Founder-input fixtures
  * (ESP account, postmaster) are likewise only markable by an explicit founder action.
  */
 import { useEffect, useState } from "react";
-import { Button, Col, Input, Row, Select, Space, Typography } from "antd";
+import { Button, Col, Empty, Input, Row, Select, Space, Typography } from "antd";
 import {
   FOUNDER_INPUT_FIXTURES,
   bootstrapRealAccountFixtures,
@@ -23,8 +25,13 @@ import {
   type WarmupState,
 } from "../../../wire";
 import { Hint, ModulePage, Surface } from "../chrome";
-import { DEMO_FIRMS } from "./operatorAntData";
 import { StatusTag } from "./operatorAntTags";
+import {
+  firmDisplayName,
+  peekOperatorFirms,
+  resolveOperatorFirms,
+  type OperatorFirm,
+} from "./operatorFirmIndex";
 
 const WARMUP_STAGES: WarmupStage[] = ["cold", "ramp", "steady", "hold", "re-warmup"];
 const FOUNDER_ROW_IDS = FOUNDER_INPUT_FIXTURES.filter(
@@ -35,10 +42,18 @@ const FOUNDER_ROW_IDS = FOUNDER_INPUT_FIXTURES.filter(
     id === "sms_account_provisioned",
 );
 
+function slugFromFirmId(id: string) {
+  return id.replace(/^firm-/, "").slice(0, 24);
+}
+
 export function SendingInfrastructureModule() {
   const tick = useWireTick();
-  const [firmId, setFirmId] = useState<string>(DEMO_FIRMS[0].id);
-  const [slug, setSlug] = useState(DEMO_FIRMS[0].id.replace(/^firm-/, ""));
+  const [firms, setFirms] = useState<OperatorFirm[]>(() => peekOperatorFirms());
+  const [firmId, setFirmId] = useState<string | null>(() => peekOperatorFirms()[0]?.id ?? null);
+  const [slug, setSlug] = useState(() => {
+    const id = peekOperatorFirms()[0]?.id;
+    return id ? slugFromFirmId(id) : "";
+  });
   const [localPart, setLocalPart] = useState("hello");
   const [pool, setPool] = useState<PoolSubdomain | null>(null);
   const [authChips, setAuthChips] = useState<
@@ -54,6 +69,31 @@ export function SendingInfrastructureModule() {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+    void resolveOperatorFirms().then((next) => {
+      if (cancelled) return;
+      setFirms(next);
+      setFirmId((prev) => {
+        if (prev && next.some((f) => f.id === prev)) return prev;
+        const first = next[0]?.id ?? null;
+        if (first) setSlug(slugFromFirmId(first));
+        else setSlug("");
+        return first;
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [tick]);
+
+  useEffect(() => {
+    if (!firmId) {
+      setPool(null);
+      setAuthChips([]);
+      setWarmup(null);
+      setIpTier(null);
+      return;
+    }
     let alive = true;
     (async () => {
       const [p, chips, w, tier] = await Promise.all([
@@ -73,10 +113,11 @@ export function SendingInfrastructureModule() {
     };
   }, [firmId, tick]);
 
-  const firm = DEMO_FIRMS.find((f) => f.id === firmId) ?? DEMO_FIRMS[0];
+  const firmName = firmId ? firmDisplayName(firms, firmId) : "No firm";
   const authReady = authChips.length > 0 && authChips.every((c) => c.present);
 
   async function onAllocate() {
+    if (!firmId) return;
     const row = await wirePorts.sendingPool.allocate(firmId, slug);
     setPool(row);
     setAuthChips(await wirePorts.sendingPool.authChips(firmId));
@@ -84,6 +125,7 @@ export function SendingInfrastructureModule() {
   }
 
   async function onMarkDns() {
+    if (!firmId) return;
     try {
       await wirePorts.sendingPool.markPlatformDnsPublished(firmId);
       setAuthChips(await wirePorts.sendingPool.authChips(firmId));
@@ -94,12 +136,22 @@ export function SendingInfrastructureModule() {
   }
 
   async function onSetStage(stage: WarmupStage) {
+    if (!firmId) return;
     setWarmup(await wirePorts.warmup.setStage(firmId, stage));
   }
 
   async function onAssignShared() {
+    if (!firmId) return;
     await wirePorts.ipPool.assignShared(firmId);
     setIpTier(await wirePorts.ipPool.getTier(firmId));
+  }
+
+  if (!firmId) {
+    return (
+      <ModulePage title="Sending infrastructure" surface="Sending infrastructure">
+        <Empty description="No session/real firm bound — allocate path idle" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      </ModulePage>
+    );
   }
 
   return (
@@ -112,12 +164,12 @@ export function SendingInfrastructureModule() {
           value={firmId}
           onChange={(v) => {
             setFirmId(v);
-            setSlug(v.replace(/^firm-/, ""));
+            setSlug(slugFromFirmId(v));
             setAllocNote(null);
             setDnsMarkedNote(null);
           }}
           style={{ width: 200 }}
-          options={DEMO_FIRMS.map((f) => ({ value: f.id, label: f.name }))}
+          options={firms.map((f) => ({ value: f.id, label: f.name }))}
         />
       }
     >
@@ -256,7 +308,7 @@ export function SendingInfrastructureModule() {
               />
             </div>
             <Typography.Text code>
-              {firm.name} &lt;{localPart || "hello"}@{pool.fullDomain}&gt;
+              {firmName} &lt;{localPart || "hello"}@{pool.fullDomain}&gt;
             </Typography.Text>
           </Space>
         ) : (

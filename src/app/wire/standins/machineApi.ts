@@ -314,19 +314,8 @@ const phaseOrder = new Map<string, ChannelOwnershipOrderRow>([
 const factWritebacks: import("../machineTypes").FactWritebackRow[] = [];
 const missingFactSignals: import("../machineTypes").MissingFactSignalRow[] = [];
 const preparedWorkspaces = new Map<string, import("../machineTypes").PreparedWorkspaceRow>();
-const activeAttempts: import("../machineTypes").ActiveAttemptRow[] = [
-  {
-    id: "aa-local-1",
-    firm_id: standInFirm(),
-    contact_id: "sarah",
-    enrollment_id: null,
-    owner_channel: "email",
-    status: "open",
-    state: { step: 2, waitingOn: "24h_open_window" },
-    created_at: now(),
-    updated_at: now(),
-  },
-];
+/** Honest empty — no Sarah / Cedar seed attempts or engagement scenery. */
+const activeAttempts: import("../machineTypes").ActiveAttemptRow[] = [];
 const standInMeetings: Array<{
   id: string;
   firmId: string;
@@ -337,16 +326,7 @@ const standInMeetings: Array<{
   consultantName: string | null;
 }> = [];
 
-const engagementRecordsLocal: import("../machineTypes").EngagementRecordRow[] = [
-  {
-    id: "eng-local-1",
-    firm_id: standInFirm(),
-    contact_id: "sarah",
-    event_kind: "email_opened",
-    payload: { step: 2 },
-    created_at: now(),
-  },
-];
+const engagementRecordsLocal: import("../machineTypes").EngagementRecordRow[] = [];
 
 function walkStandInGraph(
   workflowId: string,

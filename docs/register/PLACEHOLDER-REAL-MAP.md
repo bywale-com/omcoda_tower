@@ -1,7 +1,7 @@
 # PLACEHOLDER → REAL MAP
 
 **Date:** 2026-08-11  
-**Status:** living record — Pass A (consultant honesty) + Pass B (operator indexes) done on this branch  
+**Status:** living record — Pass A (consultant honesty) + Pass B (operator indexes) + Pass B′ (remaining DEMO densification) done on this branch  
 **Contract:** If a product surface exists for consultant / operator / contact, and the fact it shows is machine-owned, then **no rows ⇒ empty UI** and **rows ⇒ personalized to the session firm**. Demo scenery is not “empty.”
 
 ---
@@ -69,12 +69,14 @@ Do **not** call demo scenery “empty.” Do **not** call Contacts empty “a pl
 | Oversight fleet | `OversightModule.tsx` | Real firms or empty | — (was `DEMO_FLEET`) | session + machine health | **P0** | **DONE** (Pass B) |
 | Activation state index | `ActivationStateModule.tsx` | Session / real firms; live gates | — (was `DEMO_FIRMS`) | crmOAuth / escrow / campaign | **P0** | **DONE** (Pass B) |
 | Activation forward-deploy | `ActivationForwardDeployModule.tsx` | Session / real firms | — (was `DEMO_FIRMS`) | primaryStore hydrate | **P0** | **DONE** (Pass B) |
-| Customer support tickets | `CustomerSupportModule.tsx` | Demo ticket densification | `DEMO_FIRMS` labels | — | **P1** | Remaining (not densified further) |
-| Founder kill targets | `FounderAgencyControlsModule.tsx` | DEMO_FIRMS targets | `DEMO_FIRMS` | haltStore | **P1** | Remaining |
-| Sending infrastructure picker | `SendingInfrastructureModule.tsx` | DEMO_FIRMS picker | `DEMO_FIRMS` | sending pool | **P1** | Remaining |
-| Audit trail firm filter | `AuditTrailModule.tsx` | DEMO_FIRMS filter | `DEMO_FIRMS` | auditTrail | **P1** | Remaining |
+| Customer support tickets | `CustomerSupportModule.tsx` | Empty until tickets persist | — (was DEMO tickets) | primaryStore | **P1** | **DONE** (Pass B′) |
+| Founder kill targets | `FounderAgencyControlsModule.tsx` | Session / real firms | — (was `DEMO_FIRMS`) | haltStore | **P1** | **DONE** (Pass B′) |
+| Sending infrastructure picker | `SendingInfrastructureModule.tsx` | Session / real firms | — (was `DEMO_FIRMS`) | sending pool | **P1** | **DONE** (Pass B′) |
+| Audit trail firm filter | `AuditTrailModule.tsx` | Session / real firms; empty trail | — (was DEMO filter + DEMO_AUDIT fallback) | auditTrail | **P1** | **DONE** (Pass B′) |
 | Config libraries catalogs | Agents/Automations/Packs | Seed catalogs | `SEED_*` | templates / workflows / pins | **P1** | Later |
-| Commercial / Meta | Commercial, Acquisition | Stand-in | local / Meta fake | deferred | **P2** | Leave deferred |
+| Commercial / Meta | `CommercialModule`, `AcquisitionAdsModule` | Honest empty / session shells; campaigns empty | — (was DEMO held rows / Live campaigns) | deferred stand-in | **P2** | **DONE** honesty (Pass B′ · still deferred product) |
+| Register & evolution gaps | `RegisterEvolutionModule.tsx` | Empty gaps; firm picker session/real | — (was `SEED_GAPS` + `DEMO_FIRMS`) | local | **P1** | **DONE** (Pass B′) |
+| Agents binding firm_name | `AntAgentWorkbench.tsx` | Session firm name | — (was `"Cedar Immigration"`) | bindings | **P0** | **DONE** (Pass B′) |
 
 ---
 
@@ -82,8 +84,8 @@ Do **not** call demo scenery “empty.” Do **not** call Contacts empty “a pl
 
 | Surface | File | Today | Priority | Status |
 |---------|------|-------|----------|--------|
-| Identity | `ContactAntScene.tsx` | Hardcoded Sarah + Cedar | **P0** | Next pass (token-scoped contact) |
-| Consent / silence / book / facts | same | APIs real; ids demo | **P0** identity | Wire OK once id is real |
+| Identity | `ContactAntScene.tsx` | Empty until `?contactId=` / `?demoContact=1` | **P0** | **Honest empty** (no Sarah paint); full token Pass C later |
+| Consent / silence / book / facts | same | APIs real when token present | **P0** | Wire OK once id is real |
 
 ---
 
@@ -115,13 +117,17 @@ Do **not** call demo scenery “empty.” Do **not** call Contacts empty “a pl
 
 Replace `DEMO_FIRMS` indexes with session firm / `listConsultants` unique firms (no `listCtFirms` API); Book readiness starts empty (no `SEED_AUDITS`); Firm health nested collections empty when machine returns none; Oversight drops `DEMO_FLEET` Healthy theater.
 
+### Pass B′ — Remaining DEMO densification (this branch)
+
+Customer support tickets empty; Founder kill targets / Sending / Audit trail / Register gaps use `operatorFirmIndex`; Audit trail helper returns `[]` (no `DEMO_AUDIT_TRAIL_EVENTS`); Commercial session-firm shells only (no fake held/disputed); Acquisition campaigns start empty; Agents `firm_name` binding uses session firm.
+
 ### Pass C — Contact token identity (follow-up)
 
 Access-link / contact id drives portal; drop `DEMO_CONTACT_ID`.
 
 ### Pass D — Deferred
 
-Escrow · Meta stay stand-in until product opens them.
+Escrow · Meta stay stand-in until product opens them — but UI must not densify DEMO held/Live rows (Pass B′ honesty).
 
 ---
 
@@ -140,6 +146,17 @@ Escrow · Meta stay stand-in until product opens them.
 - Book readiness opens with empty audit list; Upload book / Start Audit still write.
 - Firm health sequences / engagement metrics empty when machine has no bindings/enrollments (not DEMO_SEQUENCES fill).
 - Oversight does not paint DEMO_FLEET Healthy rows for fake ids.
+
+## Acceptance (Pass B′)
+
+- Customer support queue empty (no SUP-184 / Cedar / Harbor tickets).
+- Founder kill-switch targets only session/real firms (or disabled when none).
+- Sending infrastructure firm picker = session/real firms only.
+- Audit trail empty when `auditTrail.list()` is empty — no Northwind/Cedar demo events.
+- Commercial shows no fake $2,400 / disputed rows; empty or session-firm shells with `—` held.
+- Register gaps start empty; firm picker from session/real firms.
+- Acquisition Approach campaigns table empty until New campaign.
+- Agents Save binding uses session firm name, not `"Cedar Immigration"`.
 
 ---
 

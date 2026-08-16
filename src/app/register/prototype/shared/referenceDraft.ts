@@ -17,35 +17,57 @@ export type ReferenceDraftRow = {
 export function seedReferenceDraft(
   industryId: AutomationConstantIndustryId,
 ): ReferenceDraftRow[] {
-  return getConstantsForIndustry(industryId)
-    .slice(0, 8)
-    .map((r) => ({
-      key: r.key,
-      label: r.label,
-      value: r.value,
-      type: r.type,
-    }));
+  return getConstantsForIndustry(industryId).map((r) => ({
+    key: r.key,
+    label: r.label,
+    value: r.value,
+    type: r.type,
+  }));
 }
 
-/** Prefer published payload.rows when present; else seed constants. */
+/**
+ * Catalog = industry constants. Published payload overlays values by key.
+ * Ship/spine tests used to publish a 1-row stub (`cec.min_hours` only); that must
+ * not wipe the rest of the immigration criteria from the desk.
+ */
 export function draftFromPublishedOrSeed(
   industryId: AutomationConstantIndustryId,
   payload: Record<string, unknown> | null | undefined,
 ): ReferenceDraftRow[] {
+  const catalog = seedReferenceDraft(industryId);
+  const byKey = new Map(catalog.map((r) => [r.key, { ...r }]));
+
   const rows = payload?.rows;
-  if (Array.isArray(rows) && rows.length > 0) {
-    return rows.map((raw) => {
+  if (Array.isArray(rows)) {
+    for (const raw of rows) {
       const r = raw as Record<string, unknown>;
-      const type = (typeof r.type === "string" ? r.type : "string") as AutomationConstantType;
-      return {
-        key: String(r.key ?? ""),
-        label: String(r.label ?? r.key ?? ""),
-        value: (r.value as number | string | boolean) ?? "",
+      const key = String(r.key ?? "").trim();
+      if (!key) continue;
+      const type = (typeof r.type === "string" ? r.type : byKey.get(key)?.type ?? "string") as AutomationConstantType;
+      const prev = byKey.get(key);
+      byKey.set(key, {
+        key,
+        label: String(r.label ?? prev?.label ?? key),
+        value: (r.value as number | string | boolean) ?? prev?.value ?? "",
         type,
-      };
-    });
+      });
+    }
   }
-  return seedReferenceDraft(industryId);
+
+  // Preserve catalog order; append any published-only keys at the end.
+  const ordered: ReferenceDraftRow[] = [];
+  const seen = new Set<string>();
+  for (const row of catalog) {
+    const next = byKey.get(row.key);
+    if (next) {
+      ordered.push(next);
+      seen.add(row.key);
+    }
+  }
+  for (const [key, row] of byKey) {
+    if (!seen.has(key)) ordered.push(row);
+  }
+  return ordered;
 }
 
 export function parseReferenceCellValue(

@@ -1,15 +1,18 @@
 /**
  * Founder kill-switch — Confirm writes firm-book halt via wirePorts.haltStore (H1).
  * Not a local-only killed flag — engagement runners / send gates honor halt_records.
+ * Kill targets = session/real firms — never DEMO_FIRMS.
  */
 import { useEffect, useState } from "react";
 import { Button, Card, Form, Input, Modal, Segmented, Space, Typography, message } from "antd";
 import { useWireTick, wirePorts } from "../../../wire";
 import { Hint, ModulePage, Surface } from "../chrome";
-import { DEMO_FIRMS } from "./operatorAntData";
 import { StatusTag } from "./operatorAntTags";
-
-/** DEMO_FIRMS includes CT_DEMO.firmId (`firm-cedar`) — kill targets those ids. */
+import {
+  peekOperatorFirms,
+  resolveOperatorFirms,
+  type OperatorFirm,
+} from "./operatorFirmIndex";
 
 type BoundRow = { key: string; value: string };
 
@@ -31,16 +34,31 @@ export function FounderAgencyControlsModule() {
   const [committing, setCommitting] = useState(false);
   const [killScopeMode, setKillScopeMode] = useState<"fleet" | "selected">("fleet");
   const [killReason, setKillReason] = useState("");
+  const [firms, setFirms] = useState<OperatorFirm[]>(() => peekOperatorFirms());
   const wireTick = useWireTick();
-
-  const selectedTargets = DEMO_FIRMS.slice(0, 3);
-  const targetFirms = killScopeMode === "fleet" ? [...DEMO_FIRMS] : selectedTargets;
-  const firmCount = targetFirms.length;
-  const firmIds = targetFirms.map((f) => f.name).join(" · ");
 
   useEffect(() => {
     let cancelled = false;
-    void Promise.all(DEMO_FIRMS.map((f) => wirePorts.haltStore.isFirmBookHalted(f.id))).then(
+    void resolveOperatorFirms().then((next) => {
+      if (!cancelled) setFirms(next);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [wireTick]);
+
+  const selectedTargets = firms.slice(0, Math.min(3, firms.length));
+  const targetFirms = killScopeMode === "fleet" ? [...firms] : selectedTargets;
+  const firmCount = targetFirms.length;
+  const firmIds = targetFirms.map((f) => f.name).join(" · ") || "—";
+
+  useEffect(() => {
+    if (firms.length === 0) {
+      setKilled(false);
+      return;
+    }
+    let cancelled = false;
+    void Promise.all(firms.map((f) => wirePorts.haltStore.isFirmBookHalted(f.id))).then(
       (flags) => {
         if (!cancelled) setKilled(flags.some(Boolean));
       },
@@ -48,9 +66,13 @@ export function FounderAgencyControlsModule() {
     return () => {
       cancelled = true;
     };
-  }, [wireTick]);
+  }, [wireTick, firms]);
 
   const onConfirmHalt = async () => {
+    if (targetFirms.length === 0) {
+      message.warning("No session/real firms to halt");
+      return;
+    }
     setCommitting(true);
     try {
       await Promise.all(
@@ -120,9 +142,17 @@ export function FounderAgencyControlsModule() {
           <code>halt_records</code> (firm-book) so new enrollments and new sends are suppressed (H1).
           In-flight attempts are left alone.
         </Typography.Paragraph>
-        <Button onClick={() => { setKillReason(""); setKillScopeMode("fleet"); setKillOpen(true); }}>
+        <Button
+          onClick={() => { setKillReason(""); setKillScopeMode("fleet"); setKillOpen(true); }}
+          disabled={firms.length === 0}
+        >
           Open Kill-switch
         </Button>
+        {firms.length === 0 ? (
+          <Typography.Text type="secondary" style={{ display: "block", marginTop: 8 }}>
+            No session/real firms bound — kill targets empty.
+          </Typography.Text>
+        ) : null}
       </Card>
 
       <Modal
@@ -130,7 +160,7 @@ export function FounderAgencyControlsModule() {
         open={killOpen}
         onCancel={() => setKillOpen(false)}
         okText="Review confirmation"
-        okButtonProps={{ disabled: !killReason.trim() }}
+        okButtonProps={{ disabled: !killReason.trim() || firmCount === 0 }}
         onOk={() => {
           setKillOpen(false);
           setConfirmOpen(true);
@@ -149,11 +179,11 @@ export function FounderAgencyControlsModule() {
           />
           {killScopeMode === "selected" ? (
             <Typography.Text type="secondary" style={{ display: "block", marginBottom: 8 }}>
-              Targets · {selectedTargets.map((f) => `${f.name} (${f.id})`).join(" · ")}
+              Targets · {selectedTargets.map((f) => `${f.name} (${f.id})`).join(" · ") || "—"}
             </Typography.Text>
           ) : (
             <Typography.Text type="secondary" style={{ display: "block", marginBottom: 8 }}>
-              Fleet · {DEMO_FIRMS.map((f) => f.id).join(" · ")}
+              Fleet · {firms.map((f) => f.id).join(" · ") || "—"}
             </Typography.Text>
           )}
           <Input.TextArea
@@ -183,7 +213,7 @@ export function FounderAgencyControlsModule() {
             <dt>Firms</dt>
             <dd>{firmIds}</dd>
             <dt>Firm ids</dt>
-            <dd>{targetFirms.map((f) => f.id).join(" · ")}</dd>
+            <dd>{targetFirms.map((f) => f.id).join(" · ") || "—"}</dd>
             <dt>Reason</dt>
             <dd>{killReason.trim()}</dd>
             <dt>Audit preview</dt>

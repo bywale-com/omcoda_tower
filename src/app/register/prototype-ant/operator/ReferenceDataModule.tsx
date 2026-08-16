@@ -104,20 +104,20 @@ export function ReferenceDataModule() {
     void (async () => {
       try {
         const versions = await wirePorts.machineApi.listReferenceVersions();
-        if (cancelled || !versions.length) return;
+        if (cancelled) return;
+        // API returns version DESC per key — first match is latest publish.
         setDrafts((prev) => {
           const next = { ...prev };
           for (const industryId of Object.keys(next) as AutomationConstantIndustryId[]) {
             const key = `reference.${industryId}`;
             const match = versions.find((v) => v.key === key);
-            if (match?.payload) {
-              next[industryId] = draftFromPublishedOrSeed(industryId, match.payload);
-            }
+            // Always merge onto catalog — never replace with a sparse ship stub.
+            next[industryId] = draftFromPublishedOrSeed(industryId, match?.payload ?? null);
           }
           return next;
         });
       } catch {
-        /* seed drafts remain */
+        /* catalog drafts remain */
       }
     })();
     return () => {

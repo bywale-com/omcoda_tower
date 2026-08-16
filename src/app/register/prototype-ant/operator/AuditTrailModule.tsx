@@ -1,20 +1,29 @@
 /**
  * Audit trail — filters, change event Table, detail Modal, jump chips.
+ * Firm filter = session/real firms; empty trail when auditTrail has no events
+ * (never DEMO_AUDIT densification).
  */
 import { useEffect, useMemo, useState } from "react";
-import { Button, Modal, Select, Space, Table, Tag } from "antd";
+import { Button, Empty, Modal, Select, Space, Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useOperatorNav } from "../../prototype/operatorNav";
 import {
   loadAuditTrailEvents,
   type AuditTrailUiEvent,
 } from "../../prototype/operator/operatorWireHelpers";
+import { useWireTick } from "../../../wire";
 import { ModulePage, Surface } from "../chrome";
-import { DEMO_FIRMS } from "./operatorAntData";
 import { StatusTag } from "./operatorAntTags";
+import {
+  peekOperatorFirms,
+  resolveOperatorFirms,
+  type OperatorFirm,
+} from "./operatorFirmIndex";
 
 export function AuditTrailModule() {
   const { jumpTo } = useOperatorNav();
+  const tick = useWireTick();
+  const [firms, setFirms] = useState<OperatorFirm[]>(() => peekOperatorFirms());
   const [events, setEvents] = useState<AuditTrailUiEvent[]>([]);
   const [firmFilter, setFirmFilter] = useState("All firms");
   const [actorFilter, setActorFilter] = useState("All actors");
@@ -24,13 +33,16 @@ export function AuditTrailModule() {
 
   useEffect(() => {
     let cancelled = false;
-    void loadAuditTrailEvents(DEMO_FIRMS).then((rows) => {
+    void resolveOperatorFirms().then(async (nextFirms) => {
+      if (cancelled) return;
+      setFirms(nextFirms);
+      const rows = await loadAuditTrailEvents(nextFirms);
       if (!cancelled) setEvents(rows);
     });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [tick]);
 
   const actors = useMemo(() => {
     const set = new Set(events.map((e) => e.actor));
@@ -83,7 +95,7 @@ export function AuditTrailModule() {
             style={{ width: 180 }}
             options={[
               { value: "All firms", label: "All firms" },
-              ...DEMO_FIRMS.map((f) => ({ value: f.name, label: f.name })),
+              ...firms.map((f) => ({ value: f.name, label: f.name })),
               { value: "House-global", label: "House-global" },
             ]}
           />
@@ -119,19 +131,23 @@ export function AuditTrailModule() {
       ) : null}
 
       <Surface label="Change event list">
-        <Table
-          size="small"
-          rowKey="id"
-          columns={columns}
-          dataSource={filtered}
-          pagination={false}
-          onRow={(row) => ({
-            onClick: () => {
-              setSelected(row);
-              setJumpNote(null);
-            },
-          })}
-        />
+        {filtered.length === 0 ? (
+          <Empty description="No audit events" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        ) : (
+          <Table
+            size="small"
+            rowKey="id"
+            columns={columns}
+            dataSource={filtered}
+            pagination={false}
+            onRow={(row) => ({
+              onClick: () => {
+                setSelected(row);
+                setJumpNote(null);
+              },
+            })}
+          />
+        )}
       </Surface>
 
       <Modal
