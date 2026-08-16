@@ -142,6 +142,7 @@ export type WorkflowNodeData = {
   ifThen?: string;
   ifElse?: string;
   grain?: "global" | "local";
+  localRef?: string;
   scope?: "every_firm" | "select_from";
   scopeContactIds?: string[];
   delayLabel?: string;
@@ -238,7 +239,12 @@ export const WORKFLOW_TRIGGER_OPTIONS: TriggerOption[] = [
   },
 ];
 
-/** Flat catalog of machine event names Trigger(event) can subscribe to. */
+export const WORKFLOW_EVENTS_WITH_LOCAL = new Set<WorkflowTriggerEvent>([
+  "fact_writebacks",
+  "campaign_failure",
+  "ct_firms",
+  "consent_records.sequenced",
+]);
 export const WORKFLOW_EVENT_CATALOG: { id: WorkflowTriggerEvent; label: string }[] = [
   { id: "fact_writebacks", label: "Fact writeback" },
   { id: "meeting_booked", label: "Meeting booked" },
@@ -933,6 +939,7 @@ export function createTriggerNode(
         ? {
             eventTriggerConfig: emptyEventTriggerConfig(),
             triggerEvent: "eligibility.changed" as WorkflowTriggerEvent,
+            grain: "global" as const,
           }
         : {}),
       ...(triggerKind === "manual" ? { manualTriggerConfig: emptyManualTriggerConfig() } : {}),

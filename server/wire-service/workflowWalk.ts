@@ -175,6 +175,13 @@ export async function materializeTriggersFromGraph(
         : null;
     const id = `wtrig-${workflowId}-${node.id}`;
     const grain = String(data.grain ?? "global") === "local" ? "local" : "global";
+    const eventNameForGrain = String(data.triggerEvent ?? data.eventName ?? "");
+    const localAllowed = ["fact_writebacks", "campaign_failure", "ct_firms", "consent_records.sequenced"].includes(
+      eventNameForGrain,
+    );
+    const requestedLocal = localAllowed && grain === "local";
+    const localRef = requestedLocal ? String(data.localRef ?? data.local_ref ?? "").trim() || null : null;
+    const grainFinal = requestedLocal && localRef ? "local" : "global";
     const scope = String(data.scope ?? "every_firm") === "select_from" ? "select_from" : "every_firm";
     const scopeIds = Array.isArray(data.scopeContactIds)
       ? (data.scopeContactIds as unknown[]).map(String)
@@ -182,8 +189,8 @@ export async function materializeTriggersFromGraph(
     await pool.query(
       `INSERT INTO workflow_trigger
          (id, workflow_id, firm_id, node_id, type, event_name, condition, schedule, webhook_id,
-          enabled, grain, scope, scope_contact_ids)
-       VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8::jsonb,$9,true,$10,$11,$12::text[])
+          enabled, grain, scope, scope_contact_ids, local_ref)
+       VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8::jsonb,$9,true,$10,$11,$12::text[],$13)
        ON CONFLICT (workflow_id, node_id) DO UPDATE SET
          type=EXCLUDED.type,
          event_name=EXCLUDED.event_name,
@@ -193,6 +200,7 @@ export async function materializeTriggersFromGraph(
          grain=EXCLUDED.grain,
          scope=EXCLUDED.scope,
          scope_contact_ids=EXCLUDED.scope_contact_ids,
+         local_ref=EXCLUDED.local_ref,
          enabled=true,
          updated_at=now()`,
       [
@@ -208,9 +216,10 @@ export async function materializeTriggersFromGraph(
           cron: data.scheduleCron ?? null,
         }),
         webhookId,
-        grain,
+        grainFinal,
         scope,
         scopeIds,
+        localRef,
       ],
     );
     n += 1;
@@ -593,6 +602,30 @@ export async function dispatchScheduleTriggers(
   return out;
 }
 
+function localRefFromPayload(
+  eventName: string,
+  payload: Record<string, unknown> | undefined,
+): string | null {
+  if (!payload) return null;
+  if (eventName === "fact_writebacks") {
+    const v = payload.form_ref ?? payload.formRef;
+    return typeof v === "string" && v.trim() ? v.trim() : null;
+  }
+  if (eventName === "campaign_failure") {
+    const v = payload.campaign_id ?? payload.campaignId;
+    return typeof v === "string" && v.trim() ? v.trim() : null;
+  }
+  if (eventName === "ct_firms") {
+    const v = payload.id ?? payload.firm_id ?? payload.firmId;
+    return typeof v === "string" && v.trim() ? v.trim() : null;
+  }
+  if (eventName === "consent_records.sequenced") {
+    const v = payload.sequence_id ?? payload.sequenceId;
+    return typeof v === "string" && v.trim() ? v.trim() : null;
+  }
+  return null;
+}
+
 /** Dispatch event to all active workflows subscribed via workflow_trigger. */
 export async function dispatchEventToWorkflows(
   pool: Pool,
@@ -603,20 +636,48 @@ export async function dispatchEventToWorkflows(
     contactIds?: string[];
   },
 ): Promise<Array<{ workflowId: string; runId: string; enrollments: number }>> {
-  const triggers = await pool.query<{ workflow_id: string }>(
-    `SELECT DISTINCT t.workflow_id
+  const triggers = await pool.query<{
+    workflow_id: string;
+    grain: string;
+    local_ref: string | null;
+    audience_scope: string | null;
+    audience_contact_ids: string[] | null;
+  }>(
+    `SELECT DISTINCT ON (t.workflow_id)
+            t.workflow_id, t.grain, t.local_ref,
+            w.audience_scope, w.audience_contact_ids
      FROM workflow_trigger t
      JOIN workflow_state s ON s.workflow_id = t.workflow_id
+     JOIN workflow w ON w.id = t.workflow_id
      WHERE t.firm_id=$1
        AND t.enabled=true
        AND t.type='event'
        AND t.event_name=$2
-       AND s.status='active'`,
+       AND s.status='active'
+     ORDER BY t.workflow_id, t.updated_at DESC`,
     [opts.firmId, opts.eventName],
   );
 
+  const writeRef = localRefFromPayload(opts.eventName, opts.payload);
   const out: Array<{ workflowId: string; runId: string; enrollments: number }> = [];
   for (const row of triggers.rows) {
+    if (row.grain === "local") {
+      if (!row.local_ref || writeRef !== row.local_ref) continue;
+    }
+    let contactIds = opts.contactIds;
+    const scope = row.audience_scope === "select_from" ? "select_from" : "every_firm";
+    if (scope === "select_from") {
+      const audience = row.audience_contact_ids ?? [];
+      contactIds = (contactIds?.length ? contactIds : audience).filter((id) => audience.includes(id));
+      if (!contactIds.length) continue;
+    } else if (!contactIds?.length) {
+      const book = await pool.query<{ id: string }>(
+        `SELECT id FROM contact_records WHERE firm_id=$1`,
+        [opts.firmId],
+      );
+      contactIds = book.rows.map((r) => r.id);
+    }
+
     const runId = `run-${randomUUID()}`;
     await pool.query(
       `INSERT INTO workflow_run (id, workflow_id, firm_id, status, trigger_label)
@@ -629,7 +690,7 @@ export async function dispatchEventToWorkflows(
       runId,
       triggerLabel: `event:${opts.eventName}`,
       triggerPayload: { ...(opts.payload ?? {}), eventName: opts.eventName, anyPass: true },
-      contactIds: opts.contactIds,
+      contactIds,
     });
     out.push({
       workflowId: row.workflow_id,

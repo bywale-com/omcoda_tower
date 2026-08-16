@@ -278,6 +278,23 @@ export const realMachineApi: MachineApiPort = {
     );
   },
 
+  async listSeqChannelRules(sequenceId) {
+    const q = sequenceId ? `?sequenceId=${encodeURIComponent(sequenceId)}` : "";
+    const res = await wireFetch<{ rules: import("../machineTypes").SeqChannelRulesRow[] }>(
+      `/machine/seq/channel-rules${q}`,
+      { headers: firmHeader() },
+    );
+    return res.rules;
+  },
+
+  async saveSeqChannelRules(input) {
+    const res = await wireFetch<{ rules: import("../machineTypes").SeqChannelRulesRow[] }>(
+      `/machine/seq/channel-rules`,
+      { method: "PUT", headers: firmHeader(), body: JSON.stringify(input) },
+    );
+    return res.rules;
+  },
+
   async listChannelOrder() {
     const res = await wireFetch<{ order: ChannelOwnershipOrderRow[] }>(
       `/machine/seq/channel-order?firmId=${encodeURIComponent(firm())}`,
@@ -570,6 +587,7 @@ export const realMachineApi: MachineApiPort = {
         phone: string | null;
         name: string | null;
         firmName?: string | null;
+        createdAt?: string | null;
       }>;
     }>(`/machine/contact-records?firmId=${encodeURIComponent(firm())}`, {
       headers: firmHeader(),

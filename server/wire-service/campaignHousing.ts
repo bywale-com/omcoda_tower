@@ -23,6 +23,7 @@ export type CampaignChannelDraft = {
     content?: Record<string, unknown>;
   }>;
   rulesOverride?: boolean;
+  withinSeconds?: number | null;
   rules?: Array<{
     id?: string;
     key?: string;
@@ -83,6 +84,8 @@ export type CampaignRow = {
       attempt_n: number | null;
       content: Record<string, unknown>;
     }>;
+    rules_override: boolean;
+    within_seconds: number | null;
     rules: Array<{
       id: string;
       label: string;
@@ -149,8 +152,11 @@ export async function loadHousing(
     ord: number;
     override_content: boolean;
     content: Record<string, unknown>;
+    rules_override: boolean;
+    within_seconds: number | null;
   }>(
-    `SELECT id, campaign_id, token, ord, override_content, content
+    `SELECT id, campaign_id, token, ord, override_content, content,
+            COALESCE(rules_override, false) AS rules_override, within_seconds
      FROM campaign_channel WHERE campaign_id = ANY($1::text[])
      ORDER BY ord ASC`,
     [ids],
@@ -270,6 +276,8 @@ export async function loadHousing(
                   content: leftover,
                 },
               ],
+          rules_override: Boolean(ch.rules_override),
+          within_seconds: ch.within_seconds,
           rules: (ruleBy.get(ch.id) ?? []).map((r) => ({
             id: r.id,
             label: r.label,
@@ -361,12 +369,15 @@ export async function saveHousing(
         const leftoverContent = variations[0]?.content ?? ch.content ?? {};
         const saved = await pool.query<{ id: string }>(
           `INSERT INTO campaign_channel
-             (id, campaign_id, token, ord, override_content, content, updated_at)
-           VALUES ($1,$2,$3,$4,$5,$6::jsonb,now())
+             (id, campaign_id, token, ord, override_content, content,
+              rules_override, within_seconds, updated_at)
+           VALUES ($1,$2,$3,$4,$5,$6::jsonb,$7,$8,now())
            ON CONFLICT (campaign_id, token) DO UPDATE SET
              ord=EXCLUDED.ord,
              override_content=EXCLUDED.override_content,
              content=EXCLUDED.content,
+             rules_override=EXCLUDED.rules_override,
+             within_seconds=EXCLUDED.within_seconds,
              updated_at=now()
            RETURNING id`,
           [
@@ -376,6 +387,8 @@ export async function saveHousing(
             ch.ord ?? 0,
             Boolean(ch.overrideContent),
             JSON.stringify(leftoverContent),
+            Boolean(ch.rulesOverride),
+            ch.withinSeconds ?? null,
           ],
         );
         const realChId = saved.rows[0]?.id ?? chId;
@@ -422,15 +435,16 @@ export async function saveHousing(
         if (ch.rulesOverride) {
           const ruleKeep: string[] = [];
           for (const [i, rule] of (ch.rules ?? []).entries()) {
-            const key = rule.key?.trim() || `r${i}`;
+            const key = (rule.key?.trim() || `r${i}`).replace(/-/g, "_");
+            if (key === "within_time") continue;
             const ruleId = rule.id?.trim() || `acr-ch-${realChId}-${key}`;
             ruleKeep.push(ruleId);
             const label = rule.label?.trim() || `${ch.token} · ${key.replace(/_/g, " ")}`;
             await pool.query(
               `INSERT INTO rule_attempt_criteria
                  (id, firm_id, label, enabled, when_clause, condition_clause, set_value,
-                  threshold, threshold_unit, ord, source, campaign_channel_id)
-               VALUES ($1,$2,$3,$4,$5,$6,'escalate_forward',$7,$8,$9,'channel_local',$10)
+                  threshold, threshold_unit, ord, source, campaign_channel_id, channel_token)
+               VALUES ($1,$2,$3,$4,$5,$6,'escalate_forward',$7,$8,$9,'channel_local',$10,$11)
                ON CONFLICT (id) DO UPDATE SET
                  label=EXCLUDED.label,
                  enabled=EXCLUDED.enabled,
@@ -440,6 +454,7 @@ export async function saveHousing(
                  threshold_unit=EXCLUDED.threshold_unit,
                  ord=EXCLUDED.ord,
                  campaign_channel_id=EXCLUDED.campaign_channel_id,
+                 channel_token=EXCLUDED.channel_token,
                  version=rule_attempt_criteria.version+1`,
               [
                 ruleId,
@@ -448,10 +463,11 @@ export async function saveHousing(
                 Boolean(rule.enabled),
                 `channel=${ch.token}`,
                 rule.condition ?? key.replace(/_/g, " "),
-                rule.threshold ?? null,
-                rule.thresholdUnit ?? null,
+                null,
+                null,
                 rule.ord ?? i,
                 realChId,
+                ch.token,
               ],
             );
           }
@@ -555,7 +571,8 @@ export async function copySequenceFromTemplate(
         attemptN: v.attempt_n,
         content: v.content,
       })),
-      rulesOverride: ch.rules.length > 0,
+      rulesOverride: Boolean(ch.rules_override),
+      withinSeconds: ch.within_seconds,
       rules: ch.rules.map((r, i) => ({
         label: r.label,
         enabled: r.enabled,

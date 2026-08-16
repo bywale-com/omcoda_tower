@@ -80,9 +80,9 @@ try {
 
   // ── A3: tick → escalate text→email, write run ────────────────────────────
   const tick1 = await tickOnce(new Date());
-  const fire = tick1.fired.find((f) => f.attemptId === attemptId && f.criteriaId === "acr-text");
+  const fire = tick1.fired.find((f) => f.attemptId === attemptId && f.criteriaId === "acr-text-not-opened");
   if (!fire) {
-    fail("auto-escalate", `no acr-text fire for ${attemptId}; fired=${JSON.stringify(tick1.fired)}`);
+    fail("auto-escalate", `no acr-text-not-opened fire for ${attemptId}; fired=${JSON.stringify(tick1.fired)}`);
   } else if (fire.toChannel !== "email") {
     fail("auto-escalate", `expected toChannel=email, got ${fire.toChannel}`);
   } else {
@@ -93,20 +93,20 @@ try {
     `SELECT owner_channel, fired_criteria FROM active_attempts WHERE id=$1`,
     [attemptId],
   );
-  const firedAt = after.rows[0]?.fired_criteria?.["acr-text"];
+  const firedAt = after.rows[0]?.fired_criteria?.["acr-text-not-opened"];
   if (after.rows[0]?.owner_channel !== "email" || !firedAt) {
     fail("attempt-state", JSON.stringify(after.rows[0]));
   } else {
-    ok("attempt-state", `owner=email fired_criteria.acr-text=${firedAt}`);
+    ok("attempt-state", `owner=email fired_criteria.acr-text-not-opened=${firedAt}`);
   }
 
   // ── A4: re-tick must not double-fire ─────────────────────────────────────
   const tick2 = await tickOnce(new Date());
-  const dup = tick2.fired.filter((f) => f.attemptId === attemptId && f.criteriaId === "acr-text");
+  const dup = tick2.fired.filter((f) => f.attemptId === attemptId && f.criteriaId === "acr-text-not-opened");
   if (dup.length > 0) {
-    fail("idempotent", `acr-text fired again on re-tick (${dup.length})`);
+    fail("idempotent", `acr-text-not-opened fired again on re-tick (${dup.length})`);
   } else {
-    ok("idempotent", "re-tick did not double-fire acr-text");
+    ok("idempotent", "re-tick did not double-fire acr-text-not-opened");
   }
 
   // ── A5: inbound override nullifies before escalate ───────────────────────

@@ -79,6 +79,8 @@ import {
   handleReferenceUpsert,
   handleReferenceVersionsList,
   handleRulePackUpsert,
+  handleSeqChannelRulesList,
+  handleSeqChannelRulesSave,
   handleSequenceEnrollContacts,
   handleSequenceHousingGet,
   handleSequenceHousingPut,
@@ -170,6 +172,8 @@ export function createWireRoutes(): Hono {
   wire.put("/machine/rule-packs", handleRulePackUpsert);
   wire.get("/machine/rules/attempt-criteria", handleAttemptCriteriaList);
   wire.put("/machine/rules/attempt-criteria/:id", handleAttemptCriteriaUpsert);
+  wire.get("/machine/seq/channel-rules", handleSeqChannelRulesList);
+  wire.put("/machine/seq/channel-rules", handleSeqChannelRulesSave);
   wire.get("/machine/seq/channel-order", handleChannelOrderList);
   wire.put("/machine/seq/channel-order", handleChannelOrderUpsert);
   wire.get("/machine/eligibility-pipeline", handleEligibilityPipelineList);
