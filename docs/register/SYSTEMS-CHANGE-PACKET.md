@@ -5,7 +5,7 @@
 **What this is:** the standing change-management deliverable. This is the SA job. Pictures are the spec. For each plate: alter / add / persist / dispatch. Implementer **cuts** this (`010_…sql` + walker + Ant Save) and does **no** analysis. Not another “don’t mint.” Founder is the only instruction source.  
 **Handback:** Implementation specialist / CTO drafted the missing layer. This file **accepts** that draft, **corrects** it against stood-up SQL, and **leaves only the actually-open** product questions.  
 **Flag:** PHASE-TWO-LOG **15:43** untouched (product). This packet is the machine change that makes those pictures true.  
-**Join:** 22:41 housing in [`SYSTEMS-AGENTS-ASCRIBE.md`](./SYSTEMS-AGENTS-ASCRIBE.md) · Automations ascribe · [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) · [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-SLICE-PACKAGE.md) (first vertical of **this** packet, not a cap on the rest) · caption reading [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) (PR #87 — **02:23 overlay**).
+**Join:** 22:41 housing · Automations ascribe · [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) · [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-SLICE-PACKAGE.md) · pixel walk [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) (PR #87 — **02:31**, every canon PNG; 02:19 coverage table is superseded).
 
 Do not reuse `campaign_states`. Do not revive `sequence_definitions`. Do not mint `goal` copying `meeting_booked`. Do not mint an `events` table that copies the write. Do not stuff campaigns into `cells` or Override this into `binding.overrides`.
 
@@ -40,9 +40,11 @@ Send, book-in, lineage query — leftover product. Not a reason to withhold this
 
 ---
 
-## Caption audit 2026-08-16 02:23 — what I wrongly froze
+## Caption / pixel walk — what I wrongly froze (02:23) and what the PNGs added (02:31)
 
-Read [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) before cutting. **SA 02:25:** that file **lists** every plate. Deep rewrite is C3 + C1–C4 glass. Automations rows are a classification pass (A3/A6/A7 are “—”); they did not confirm every PNG. C3 / example names / no qualify object is **founder law**. I treated founder labels as types. **Drop these from 02:03:**
+Read [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) before cutting. **02:19 was a coverage table. 02:31 opened every canon PNG.** A dash is not a look. C3 law unchanged.
+
+**Drop these from 02:03 (still):**
 
 | I specified | Kind | Correction |
 |-------------|------|------------|
@@ -54,6 +56,32 @@ Read [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) before cutting. **SA 0
 | C3 plate → persist qualify FK | Caption as node | Persist two `campaign` rows + `ord`. Distance is chrome. |
 
 `sequence_class` CHECK `optin` \| `reengagement` \| `reactivation` **stays**. That is Story 7 / `seq_phase_order` / class-by-objective (16:40), not the C1 catalog **label**. `sequence_template.label` is renamable. Do not CHECK “Opt-in” the string. Do not require every sequence to have two campaigns.
+
+**Hard decisions from the pixel walk (implementer does not re-decide):**
+
+| Pixel fact | Systems |
+|------------|---------|
+| “qualify — first objective met” on **C3, C4, and C5** | **One** caption. **Zero** columns. Not three nodes. Not on C5b. Not on any A plate. |
+| **C5 ≠ C5b** | C5 = spine + open channels + composers. C5b = composer crop only (Harbor / Alex / intake = **E**). Persist composers from C5b **shape**, not the example copy. |
+| C4 mediums Text · Email · **Form** | Stale vs C5 **Call**. Persist `campaign_channel.token` `text\|email\|call`. Do not add `form` because C4 still shows it. |
+| C5b “via ElevenLabs” | Illustrative. Not a column. Call **saves** `content` jsonb. Does not dial until the port. |
+| C5b goal dropdown “Click the link (opt-in)” | **E.** Not a fourth `kind`. |
+| C6/C7 Form as third channel | Same stale. Ladder seed stays `text\|email\|form` until Call port. Authored wires are Call. |
+| Compare versions · Publish version (headers) | **Generated drift.** Persist path is **Save · Launch**. Do not map Publish to enroll. |
+| Catalog Nudge vs Opt-in vs Launch window | **Generated drift.** Ignore. |
+| A1 list “4 nodes” / canvas 3 | Drift. Smallest = trigger · rule · action. |
+| **A6 palette** Trigger · Rule · Action · **Exit** | `exit` is a **node kind**. `workflow.graph` may hold it. Walker already allows action **or** exit. |
+| **A15 palette** Trigger · Rule · Action · **Condition (If)** | `branch` is a **node kind**. **Do not freeze one palette from the other.** Graph allows both Exit and If. UI may show a subset. No palette CHECK. |
+| A7 background **Branch** “Reactivation-worthy?” | **Generated drift.** Not the smallest workflow. If = **A16**. |
+| A7 “lists, tasks, records” | Do not invent a longer `action.type` list from this plate. Widen only as already specified. |
+| A8 chevrons + blank Field-label builder | **Not canon.** Assign = **A14** radios. Form = **A12**. |
+| A8/A7 “create the objective / create an agent” | **A14** wins: do not create an agent here. |
+| A12 “Re-engagement is a campaign, not an objective” | **C** + stale grain. Re-engagement is an **E** sequence **name**. Do not persist that sentence. |
+| **A10 ≠ A13** | Both **diagrams, not screens**. A10 = dashed missing class. A13 = listing filled + fork **if listing not empty → create form**. If on the DAG = **A16**, not these. |
+| A14 “You do not create an agent here…” | **On the glass** (caption). Obey. “Not a third option…” is **not** on that PNG — law still; do not ship that sentence. |
+| A16 “If X” | Label. X is not a field. Reads previous result (action or rule). |
+| Shared desk: Hub / Source plant | **Not** the app. Do not persist Hub leaves. |
+| Harbor RCIC / fake C8 people | **E.** |
 
 ---
 
@@ -154,6 +182,11 @@ CREATE TABLE campaign_channel (
   ord INT NOT NULL DEFAULT 0,
   override_content BOOLEAN NOT NULL DEFAULT false,
   content JSONB NOT NULL DEFAULT '{}'::jsonb,
+  -- C5b shape (keys, not example copy):
+  --   text:  { to, body }
+  --   email: { subject, from, reply_to, body_html, body_text }
+  --   call:  { voice, script, listening_prompt, goal, notes }
+  -- Do not persist Harbor / Alex / {{first_name}} examples. Do not persist ElevenLabs as a column.
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE (campaign_id, token)
@@ -194,7 +227,9 @@ CREATE TABLE campaign_failure (
 
 Walk: `sequence_template` → `campaign` ordered by `ord` → cursor on `enrollment.campaign_id` → that campaign’s **objective met** (row in its `completion_table` for that contact) → advance cursor to the next `ord` on the same sequence (if any) → 7b ladder (`seq_channel_ownership_order` + `rule_attempt_criteria` + `active_attempts`) **inside** the current campaign. If `override_this`, authored wires are `campaign_channel`.
 
-There is **no qualify node, column, or gate**. Engine 2 stays between **sequence classes**, not between campaigns. Do not put `workflow_trigger` on the Agents canvas.
+There is **no qualify node, column, or gate** — including because the same pill is on C3 **and** C4 **and** C5. Engine 2 stays between **sequence classes**, not between campaigns. Do not put `workflow_trigger` on the Agents canvas.
+
+`workflow.graph` node kinds the walker must accept: `trigger` · `rule` · `action` · `exit` (A6) · `branch` (A15/A16). `constant` already named in Hub — keep if present; A1 does not require it. **Palette shown on a plate is not a CHECK.** A6 and A15 show different subsets.
 
 Call: no port in `registry.ts`. Composer on `campaign_channel` where `token='call'` **saves**. Send path does not dial. Third live send medium remains form/email/sms as today.
 
@@ -207,12 +242,13 @@ Call: no port in `registry.ts`. Composer on `campaign_channel` where `token='cal
 | **C1** | Catalog = `sequence_template` (`firm_id IS NULL` or this firm’s copies). `sequence_class` = three **kinds**. `label` = example name, renamable. Empty world = no rows. |
 | **C2** | INSERT `campaign` + `campaign_objective` (`source=template` or scratch). Additional **disabled**. Template **names** on the plate are examples. |
 | **C2b** | `source=scratch`, `kind` click\|form\|meeting (spec radios), `name` TEXT, `completion_table` pointer. |
-| **C3** | N campaigns (`ord`). Each has one objective. `override_this=false`. Distance / tick / “qualify — first objective met” = **chrome only**. Do not persist. |
-| **C4** | `override_this=true` → INSERT `campaign_channel` rows (wires). Campaign toggles stay on `campaign`. |
-| **C5 / C5b** | `campaign_channel.override_content` + `content` jsonb (text / email / call composer). Channel rules = `rule_attempt_criteria` scoped to `campaign_channel_id`. Attempt rules **not** here. Call does not dial. |
-| **C6** | NULL-firm `seq_attempt_cycle` + existing NULL-firm `rule_*` / `seq_*`. Attempt-count / wait / nth = `seq_attempt_cycle` columns (new). |
-| **C7** | Binding inherit booleans. Per-campaign attempt columns on `campaign`. Sequence Settings = this `firm_sequence_binding`. |
-| **C8** | Contacts = `enrollment` for this `sequence_id`. Add contact in header. Select from = this firm’s `contact_records`. Every firm = all `contact_records`. Starts now. Not Publish. |
+| **C3** | N campaigns (`ord`). Each has one objective. `override_this=false`. Qualify pill = **C** (also on C4, C5 — still zero columns). |
+| **C4** | `override_this=true` → `campaign_channel` rows, **closed**. Campaign fields stay on `campaign`. Tokens from **C5** (`text\|email\|call`), not C4’s Form pixel. Same qualify pill = still **C**. |
+| **C5** | Spine still here (two campaign cards + qualify **C**). Channels **open**. `override_content` + composers. Channel-rules **wire**. Attempt rules **not** here. |
+| **C5b** | Composers only. Persist `content` jsonb **keys** above. Harbor / Alex / intake / ElevenLabs badge = **E** / illustrative. No campaign rows from this crop. |
+| **C6** | NULL-firm `seq_attempt_cycle` (count, wait, nth) + NULL-firm `rule_*` / `seq_*`. Form rows stale. No inherit column (this is the top). |
+| **C7** | Binding `override_*` booleans. Per-campaign attempt columns on `campaign`, **not** this modal. |
+| **C8** | `enrollment` for this `sequence_id`. Add contact in header. Every firm / Select from as specified. Helpers = **C** (behavior is law). Not Publish. |
 
 ---
 
@@ -323,20 +359,23 @@ Walker **evaluates** `families` (creatable ⇒ row). Evaluator stays code; autho
 
 | Plate | Persist / change |
 |-------|------------------|
-| **A1** | Save `workflow.graph`; materialize triggers; activate. Smallest: trigger · rule · action. |
-| **A2** | Save `rule_pack.families`. Walker evaluates. |
-| **A3** | `rule_pack.custom_json`. |
-| **A4** | `rule_pack.named_code` + `named_code_on`. No JS port required to **save**; run is later. |
-| **A5** | `workflow_trigger.type` event\|schedule + `event_name` from the dispatch picker + `grain` + `scope`. |
-| **A6** | Graph node `action`. |
-| **A7** | `action.type` Agents vs in-app (widened CHECK). |
-| **A8 / A14** | Select sequence = whole `sequence_template`. Radios, no chevron. Assign existing vs copy-from-template. No create-agent. |
-| **A9 / A11** | Output includes collectible **listing** (unused catalog, stood up on output). |
-| **A12** | Form questions = those ids. Bind in graph JSONB. |
-| **A13** | Diagram. Do not build a page. |
-| **A15** | Graph may chain: trigger → action → If → action. Same `workflow.graph`. No new table. |
-| **A16** | `branch` node reads **previous** output (rule or action). Thicken `evalBranch`. Not a rule. Not a qualify. “If X” is a label; X is not a field. |
-| **A17** | Trigger event_name = `ct_firms` (provisioned, this pass). Example copy on the plate is not a second event type. |
+| **A1** | Persist `workflow.graph` (trigger · rule · action). Materialize triggers. Activate. Footer caption = **C**. List/canvas node-count drift = ignore. |
+| **A2** | `rule_pack.families` (toggles + field·op·constant). Walker evaluates. Pack **name** is **E**. |
+| **A3** | `rule_pack.custom_json`. Caption “When the GUI isn’t enough — same as JSON.” = **C**. Same pack, two editors. |
+| **A4** | `named_code` + `named_code_on` beside GUI. Save text; run later. |
+| **A5** | `workflow_trigger.type` event\|schedule + `event_name`. `grain` / `scope` from FACE 27 / C8 — **not drawn on this PNG**; still persist (law). Do not invent Settings. |
+| **A6** | Author DAG. Palette here includes **Exit**. Persist `exit` nodes. Insert-menu copy = **C**. |
+| **A7** | `action.type` Agents vs in-app. Footer **C**. Background Branch = drift. Do not lengthen the CHECK from the in-app blurb. |
+| **A8** | **Prior.** Do not implement chevrons or blank field builder. Select-agent = whole sequence (still). Form → **A12**. Assign chrome → **A14**. |
+| **A9** | **Prior** Output (signals). Teaching grey box = **C**. Canonical Output = **A11**. |
+| **A11** | Required-data **listing** on output (`COLLECTIBLE_FIELDS` ids, `self_reportable` → form). |
+| **A10** | **Diagram.** Dashed missing class. Do not build a page. |
+| **A13** | **Diagram, not A10.** Listing filled. Fork: listing not empty → create form (A12 bind). Do not build a page. |
+| **A12** | Form questions = listing ids in `workflow.graph`. Document-dependent never enter. Sequence name on the plate = **E**. |
+| **A14** | Radios: assign existing \| copy from template. No chevron. No create-agent. Caption on glass = **C** (obey). |
+| **A15** | Chain: trigger → action → If → action. Palette here includes **If**, not Exit. Same graph. No new table. |
+| **A16** | `branch` reads previous output (action or rule). Field · op · constant. Then / else. Not a rule. “If X” = label. |
+| **A17** | Event picker; `event_name='ct_firms'` this pass. “Things inside still have to happen” = **C**. |
 
 ---
 
@@ -372,4 +411,7 @@ Same vertical as [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-SLICE-PACKAGE.md): one c
 - Not filling an event catalog beyond the dispatch table.
 - Not a Call port this cut — composer only.
 - Not unifying `firms` UUID with `ct_firms` TEXT this cut — pick `ct_firms` for provisioned.
-- Not putting founder captions into Postgres (`qualify`, “first objective”, “Launch window” as a type, “They opt in” as a class, A10/A13 as a page).
+- Not putting founder captions into Postgres (`qualify` on C3–C5, “first objective”, “Launch window” as a type, “They opt in” as a class, A10/A13 as a page).
+- Not freezing A6’s palette or A15’s palette as the only node kinds.
+- Not treating A7’s background Branch as the smallest workflow.
+- Not implementing A8 chevrons or blank form builder.

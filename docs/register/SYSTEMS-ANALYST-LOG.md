@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 02:25 UTC — **PM caption file lists every plate. Deep work is C3 + C1–C4. Not a pixel walk of all images.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 02:31 UTC — **Pixel walk in. Packet audited plate-by-plate. Ready for implementer cut.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -944,3 +944,17 @@ For **both modules, forever: no.** Housing is paper. Story 7 not promoted. I hav
 **For this seat:** C3 / names / no `qualify_gate` is law (you said it). I already stripped the packet. I will not treat A3 “—” as “we opened that PNG and classified every mark.”
 
 **Do not:** accuse them of skipping the file; treat the table as a pixel walk.
+
+---
+
+## 2026-08-16 02:31 UTC — Pixel walk. Fuller packet. Ready for the cut.
+
+**Why:** Founder: 02:19 was a coverage table; this pass opened every canon PNG. Share the new audit. Do a fuller systems audit — last before the CTO. Be thorough.
+
+**Pixel facts I took (S/E/C):** qualify pill on **C3+C4+C5** (one caption, still zero columns; not on C5b, not on A). **C5 ≠ C5b.** **A10 ≠ A13.** A3/A6/A7 are not empty. A6 **Exit** vs A15 **If** — do not freeze one palette. A7 Branch = drift. A14 on-glass caption vs the sentence that is not on the PNG.
+
+**Packet:** [`SYSTEMS-CHANGE-PACKET.md`](./SYSTEMS-CHANGE-PACKET.md) plate tables split; `content` jsonb keys from C5b; graph kinds `exit` + `branch`; C4 Form pixel does not add a token; Publish/catalog drift ignored; A8 chevrons/blank form not implemented. Audit file replaced with the pixel walk.
+
+**Still not a product invent:** waitlist (new ask); C2 Additional disabled; Call port; send / book-in / lineage.
+
+**Do not:** mint qualify three times; freeze palettes; build A10/A13 as pages; implement A8.
