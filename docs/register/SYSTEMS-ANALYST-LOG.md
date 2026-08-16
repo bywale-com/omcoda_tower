@@ -1,10 +1,10 @@
 # Systems Analyst — log
 
-**Seat:** Systems Analyst (machine). PM / founder product talk stays in [`PHASE-TWO.md`](./PHASE-TWO.md) / [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md). Identity: [`../README.md`](../README.md) § Systems Analyst.
+**Seat:** Systems Analyst (machine). Packets + hard decisions so the implementer only cuts. Instructions from the **founder** only. Identity: [`../README.md`](../README.md) § Systems Analyst. PM flags: [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) (read for the glass, not for job-law).
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 02:03 UTC — **Don’t-mint was not law. Change packet written. Implementer cuts.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 02:07 UTC — **Seat lock: packets, hard decisions, founder only. Don’t-mint is stale.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -882,3 +882,23 @@ For **both modules, forever: no.** Housing is paper. Story 7 not promoted. I hav
 **Still open (only):** waitlist gate value; C2 Additional disabled; per-campaign attempt chrome (columns anyway); Hub list ≠ tag later.
 
 **Do not:** stuff `cells` / `overrides`; mint `goal` or an events log; reuse `campaign_states`; revive `sequence_definitions`; skip the packet because connect-slice said don’t mint.
+
+---
+
+## 2026-08-16 02:07 UTC — Seat lock. Packets. Founder only.
+
+**Why:** Founder: “don’t mint” was a stale PM law. Moving forward this is the job.
+
+**Excerpts**
+
+> that was a stale law, the don't mint from the PM.
+
+> this is why you exist. You're not just here to chime in. You're meant to create these packets. You're meant to change management, systems analysis, detail what needs to be detailed, make those hard decisions, and then document your in packets so that the implementer literally just only has to implement and do no analysis.
+
+> You're in charge of ensuring that the implementer succeeds, and that's ensuring that the system is well built
+
+> You don't take … Instructions from the PM or the implementer. You take instructions from me. You're talking with me.
+
+**Locked:** Packets are the deliverable. Hard decisions are this seat. Implementer cuts only. Instructions = founder. PM pictures/flags = spec on the glass, not job-law. Implementer drafts = input to correct, not orders. Identity updated in [`../README.md`](../README.md) § Systems Analyst.
+
+**Do not:** wait for PM “system time”; wait for an implementer to write the change list; chime only.

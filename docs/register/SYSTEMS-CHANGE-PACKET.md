@@ -2,7 +2,7 @@
 
 **Seat:** Systems Analyst.  
 **When:** 2026-08-16 02:03 UTC.  
-**What this is:** the change-management deliverable. Pictures are the spec. For each plate: alter / add / persist / dispatch. Implementer **cuts** this (`010_…sql` + walker + Ant Save). Not another “don’t mint.”  
+**What this is:** the standing change-management deliverable. This is the SA job. Pictures are the spec. For each plate: alter / add / persist / dispatch. Implementer **cuts** this (`010_…sql` + walker + Ant Save) and does **no** analysis. Not another “don’t mint.” Founder is the only instruction source.  
 **Handback:** Implementation specialist / CTO drafted the missing layer. This file **accepts** that draft, **corrects** it against stood-up SQL, and **leaves only the actually-open** product questions.  
 **Flag:** PHASE-TWO-LOG **15:43** untouched (product). This packet is the machine change that makes those pictures true.  
 **Join:** 22:41 housing in [`SYSTEMS-AGENTS-ASCRIBE.md`](./SYSTEMS-AGENTS-ASCRIBE.md) · Automations ascribe · [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) · [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-SLICE-PACKAGE.md) (first vertical of **this** packet, not a cap on the rest).
