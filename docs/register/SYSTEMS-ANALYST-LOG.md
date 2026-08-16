@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 22:31 UTC — **App = form + graph (on stores/events). Modules are faces. Fast = wrap existing handlers as verbs.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 22:47 UTC — **Event→op→agent and provision are the same Automations idea. Difference = minting `firm_id`, not many tables.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1108,3 +1108,15 @@ Locked in [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 22:25 (deepened 22:26) and 
 Locked in [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 22:31. 014 stays the first wrap.
 
 **Do not:** skip 012/013/014 for provision; melt Book readiness into the canvas; mint `form_submitted` with no row. Flag **15:43**.
+
+---
+
+## 2026-08-16 22:47 UTC — Canonical vs provision: same idea; mint is the extra
+
+**Why:** Founder: Automations should make provision possible; if it needs too much fixture maybe we are not building it. Then provision is a cascade across tables. Canonical: eligibility / firm-interior event → operation → agent. Is that really different?
+
+**Hard:** Not different as Automations. A verb **is** a cascade (eligibility already four tables; audit three; provision five). The feel is **minting `firm_id`** vs operating inside one. Dispatch today matches a firm that already exists. Canonical is the proof of the module. Provision is the same pattern after the mint. Eligibility today still enrolls if no graph hears — same trap as hardcoded audit. Invert: cascade in the verb, agent on the graph.
+
+Locked in [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 22:47.
+
+**Do not:** pass/fail Automations on provision; mint an events bus because many tables; keep fallback enroll as the product. Flag **15:43**.

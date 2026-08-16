@@ -215,3 +215,32 @@ Provision is the example. The **module** stays (Operator desk). The **interior**
 
 **Do not:** overwrite 15:43; skip 012/013/014 to start with provision; melt faces into the canvas; generic SQL action this pass.
 
+---
+
+## 2026-08-16 22:47 — Canonical event→op→agent vs provision: same idea, different first write
+
+**Founder:** if Automations is real, provisioning a firm should be possible on that canvas; if it needs so much fixture maybe we are not building it. Then: provision is a cascade across many tables. Canonical use that always comes to mind: eligibility changed (or a grounded write inside a firm / contacts / writeback) → run this operation → then this agent action. How come that feels different? Is it really different from the first idea?
+
+**Not really different as Automations.** Both are: a detectable write → a verb (a **bundle** of writes) → `call_agent`. A verb **is** a cascade. That is normal, not a special provision problem.
+
+| | Tables the handler already cascades | Then |
+|--|-------------------------------------|------|
+| Eligibility today | `eligibility_evaluations` → `eligibility_results` → `signals` → `motion_decisions` | `dispatchEventToWorkflows('eligibility.changed')`. If **no** graph hears it, TypeScript **enrolls anyway** |
+| Audit | `audit_runs` → `reachability_verdicts` → `sequence_ready` | sometimes onboarding |
+| Provision | `firms` → `ct_firms` → `campaign_states` → `users` → `access_links` | **no** dispatch |
+
+Many tables is not the difference. **Where the first write sits** is:
+
+| | Canonical (eligibility / contact / writeback) | Provision |
+|--|-----------------------------------------------|-----------|
+| Grain | Write already has `firm_id` (and usually contacts) | The write **mints** `firm_id` |
+| Dispatch today | `WHERE t.firm_id=$1` — a world exists | No firm to match until the verb finishes |
+| Privilege | Author a chain **inside** a world | Who may **create** a world |
+| Context | `ctx.firmId` / `ctx.contactIds` already | Payload **is** name + email; context is born |
+
+Same module. Same “if this isn’t possible we aren’t building Automations.” The test of Automations is the canonical one: **event inside a firm → operation → agent**, with the operation a wrapped handler, not a hardcoded fallback enroll. Provision is that pattern **after** the mint. Extra (tenancy + privilege + no firm yet). Not a different product. Not the first proof.
+
+The fixture feeling was “many tables = different machine.” False. Eligibility is already many tables, and it still hardcodes the agent if the graph is silent — that is the same trap as audit-on-upload. Real Automations **inverts** it: the cascade lives in the verb node; the graph chooses the agent; the handler does not enroll behind the graph’s back.
+
+**Do not:** use provision as the pass/fail of Automations; treat cascade-across-tables as a reason to mint an events bus; keep the eligibility fallback enroll as the product. Flag **15:43**.
+
