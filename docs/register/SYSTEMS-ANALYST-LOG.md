@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 22:17 UTC — **014: house workflow import → audit → tag + notes. Pieces exist; chain cannot run.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 22:26 UTC — **014 is heavy because the graph must become the app (compiler + dual runtime), not because of tables.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1084,3 +1084,15 @@ Packet: [`SYSTEMS-CHANGE-PACKET-013.md`](./SYSTEMS-CHANGE-PACKET-013.md).
 **Hard decisions:** House `workflow.firm_id` NULL. Walker by type. If on this contact’s verdict. Tag on `contact_tag`. Notes on `contact_records.notes`. Do not hardcode audit on upload. Packet [`SYSTEMS-CHANGE-PACKET-014.md`](./SYSTEMS-CHANGE-PACKET-014.md). 013 still lands the file.
 
 **Do not:** enroll because an action exists; Hub `import.created`; skip 012/013. Flag **15:43**.
+
+---
+
+## 2026-08-16 22:26 UTC — It is a lot. Dual runtime + compiler, not three flags.
+
+**Why:** Founder: look how much is required just to make this work. Not as simple as why. Deeper reason, given where the app is going.
+
+**Hard:** Destination = the graph **is** the app. Today the app **is** TypeScript. 014 is the first path that must live in the graph instead of in a handler. The picture (file → audit → tag) is writes; the machine needs named events + action types; edges are not the machine. Dual-running handler + walker until the walker can do what `handleAuditRunCreate` already does is the load. Do not shrink it. Do not add tables to skip it. Hardcoding the path is backwards.
+
+Locked in [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 22:25 (deepened 22:26) and packet [`SYSTEMS-CHANGE-PACKET-014.md`](./SYSTEMS-CHANGE-PACKET-014.md).
+
+**Do not:** pretend 014 is a small flip; mint events table / LISTEN; skip 012/013. Flag **15:43**.

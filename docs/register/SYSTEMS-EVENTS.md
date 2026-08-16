@@ -152,3 +152,25 @@ How: list the tables this flow must INSERT/UPDATE. Those writes must **dispatch*
 
 **Do not:** overwrite 15:43; treat inbox as the machine.
 
+---
+
+## 2026-08-16 22:25 — Why the first authored workflow looks expensive
+
+**Founder:** look how much is required just to make this work. Deeper reason, given where the app is going (canvas is the app; you do not go into code for the next listen).
+
+**The pile is not new housing.** Audit, tags, contacts, triggers, workflows already exist. Book readiness **already** does import+audit in one HTTP function. That is the hardcoded version of the workflow they want on the canvas.
+
+**The hole is not three small patches.** Those three facts are symptoms:
+
+1. **A write is heard.** INSERT does not dispatch unless someone coded that fire. The trigger node is a subscription row, not a table watch.
+2. **An action is that action’s write.** The walker treats every action as enroll. `run_audit` / `ascribe_tag` are allowed on `action.type` and do not run.
+3. **House can hear.** Dispatch is one firm. “Anyone in any firm” is `workflow.firm_id` NULL plus dispatch including those rows.
+
+**Deeper (22:26, founder: it is a lot; not as simple as why; especially given where the app is going):** Destination = **the graph is the app**. Today the app **is TypeScript** (`handleAuditRunCreate`, `handleMachineProvision`, `fireOnboarding`). The canvas is a second, incomplete runtime that only enrolls. Cut 014 is the first product path that must live in the graph **instead of** in a handler. That is a regime change.
+
+The founder drawing file → audit → tag is drawing **writes**. The machine needs **named events + action types**. Edges on the canvas are not FKs and are not LISTEN. Someone has to **compile** the picture into `workflow_trigger.event_name` + walker cases. Every new verb is a compiler extension until the catalog is closed. Dual-running both runtimes until the graph can do what the handler already does is why it feels like a lot. **It is a lot.** Hardcoding the path in TypeScript is less now and goes **backwards** from no-code-the-app.
+
+Do not mint an events table to skip this. Do not LISTEN/NOTIFY as the answer. Do not hardcode audit on upload and call it modular.
+
+**Do not:** overwrite 15:43.
+

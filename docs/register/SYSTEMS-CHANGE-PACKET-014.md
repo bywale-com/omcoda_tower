@@ -3,7 +3,9 @@
 **Seat:** Systems Analyst.  
 **When:** 2026-08-16 22:17 UTC.  
 **What this is:** the machine for the workflow the founder named. Implementer **only implements**. No analysis.  
-**Why:** Anyone in any firm imports a **contact file** → **audit** (a node, not a hard-coded path) → for each contact, **tag** valid / invalid and **notes** with the rationale, on the contact. Editable on the canvas. Platform: every heard write can be a trigger; every action is a write.  
+**Why:** Anyone in any firm imports a **contact file** → **audit** (a node, not a hard-coded path) → for each contact, **tag** valid / invalid and **notes** with the rationale, on the contact. Editable on the canvas. Platform: every heard write can be a trigger; every action is a write.
+
+**Why this cut is heavy (not 14 tables — a compiler):** Destination = the graph **is** the app. Today the app **is** TypeScript. This path cannot stay hardcoded in `handleAuditRunCreate` or the canvas stays theater. The lot is dual-running: keep the handler world, stand up a walker that executes **verbs** (`run_audit`, `ascribe_tag`), dispatch after the file write, house hear. The canvas picture must compile to named events + action types — edges are not the machine.  
 **Join:** [`SYSTEMS-CHANGE-PACKET-013.md`](./SYSTEMS-CHANGE-PACKET-013.md) still lands the file (`import_batch` + `contact_import` dispatch). This packet is the walk after that write.  
 **Flag:** 15:43 untouched.  
 **Instructions:** founder only.
