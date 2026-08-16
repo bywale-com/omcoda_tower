@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 22:26 UTC — **014 is heavy because the graph must become the app (compiler + dual runtime), not because of tables.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 22:31 UTC — **App = form + graph (on stores/events). Modules are faces. Fast = wrap existing handlers as verbs.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1096,3 +1096,15 @@ Packet: [`SYSTEMS-CHANGE-PACKET-013.md`](./SYSTEMS-CHANGE-PACKET-013.md).
 Locked in [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 22:25 (deepened 22:26) and packet [`SYSTEMS-CHANGE-PACKET-014.md`](./SYSTEMS-CHANGE-PACKET-014.md).
 
 **Do not:** pretend 014 is a small flip; mint events table / LISTEN; skip 012/013. Flag **15:43**.
+
+---
+
+## 2026-08-16 22:31 UTC — Two things. Modules are faces. Fast = wrap the handler.
+
+**Why:** Founder: the app is two things; everything else is an alternate way in. Provision should exist — and what it does is recreatable on the graph (on this form, do X Y Z). Graph + automations + agents is most of the app. What are the other modules? Can the graph do what they do? How quickly? Why incomplete?
+
+**Hard:** Machine = store + event (objective ⊂ event). Product = **form** (human write) + **graph** (hear write, write more). Agents ⊂ graph. **Module = face + door, not a third primitive.** Not all of it: faces, ports, walls, privilege stay. Incomplete because interiors are trapped in TypeScript (uncompiled verbs), not because modules are missing. **Fast:** wrap `handleAuditRunCreate` as `run_audit` — do not generic-SQL, do not start with provision. Later `provision_firm` = `handleMachineProvision` on that form’s write.
+
+Locked in [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 22:31. 014 stays the first wrap.
+
+**Do not:** skip 012/013/014 for provision; melt Book readiness into the canvas; mint `form_submitted` with no row. Flag **15:43**.

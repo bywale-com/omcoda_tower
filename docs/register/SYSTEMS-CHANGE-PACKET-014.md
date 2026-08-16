@@ -5,7 +5,9 @@
 **What this is:** the machine for the workflow the founder named. Implementer **only implements**. No analysis.  
 **Why:** Anyone in any firm imports a **contact file** → **audit** (a node, not a hard-coded path) → for each contact, **tag** valid / invalid and **notes** with the rationale, on the contact. Editable on the canvas. Platform: every heard write can be a trigger; every action is a write.
 
-**Why this cut is heavy (not 14 tables — a compiler):** Destination = the graph **is** the app. Today the app **is** TypeScript. This path cannot stay hardcoded in `handleAuditRunCreate` or the canvas stays theater. The lot is dual-running: keep the handler world, stand up a walker that executes **verbs** (`run_audit`, `ascribe_tag`), dispatch after the file write, house hear. The canvas picture must compile to named events + action types — edges are not the machine.  
+**Why this cut is heavy (not 14 tables — a compiler):** Destination = the graph **is** the app. Today the app **is** TypeScript. This path cannot stay hardcoded in `handleAuditRunCreate` or the canvas stays theater. The lot is dual-running: keep the handler world, stand up a walker that executes **verbs** (`run_audit`, `ascribe_tag`), dispatch after the file write, house hear. The canvas picture must compile to named events + action types — edges are not the machine.
+
+**Fast (22:31):** `run_audit` **is** `handleAuditRunCreate`, named as `action.type`. Do not rewrite audit. Do not invent generic table-write nodes. File land is the door (a form-shaped write). Book readiness **stays the face** on `audit_runs`. Provision stays a module; wrapping `handleMachineProvision` is a **later** verb, not this cut.  
 **Join:** [`SYSTEMS-CHANGE-PACKET-013.md`](./SYSTEMS-CHANGE-PACKET-013.md) still lands the file (`import_batch` + `contact_import` dispatch). This packet is the walk after that write.  
 **Flag:** 15:43 untouched.  
 **Instructions:** founder only.
@@ -84,7 +86,7 @@ Stop treating every action as enroll.
 
 | `action.type` | Write |
 |---------------|--------|
-| `run_audit` | Same set as `handleAuditRunCreate` for `ctx.contactIds`: INSERT/UPDATE `audit_runs`, `contact_records` (already there), `reachability_verdicts`, `sequence_ready`. Complete the run. `dispatchEventToWorkflows('audit.completed')`. Put verdicts on walk context **per contact**. |
+| `run_audit` | **Wrap** `handleAuditRunCreate` (same writes), for `ctx.contactIds`. Do not recode audit. Then `dispatchEventToWorkflows('audit.completed')`. Put verdicts on walk context **per contact**. |
 | `ascribe_tag` | INSERT `contact_tag` (`firm_id`, `contact_id`, `tag` from node data, `source_workflow_id`). UPDATE `contact_records.notes` when the node has a notes/rationale binding (from previous verdict). |
 | `call_agent` | Today’s enroll. Unchanged. |
 

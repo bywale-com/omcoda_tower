@@ -174,3 +174,44 @@ Do not mint an events table to skip this. Do not LISTEN/NOTIFY as the answer. Do
 
 **Do not:** overwrite 15:43.
 
+---
+
+## 2026-08-16 22:31 — The app is two things. Modules are faces. Fast = wrap the handler.
+
+**Founder:** the app is literally two things; everything else is an alternate way in. Provision should exist as a module — and if the app is built correctly, what it **does** can be recreated on the graph: on filling this form, do X Y Z. Graph + automations + agents is most of the app. What are the other modules then? Belief: a real modular app means the graph can do (in reason) what the other modules do, because everything is writes / events / data stores. Maybe all of that — maybe not. How do we recreate this quickly? Why does it feel incomplete?
+
+**Nest (do not overwrite Event / Objective above):**
+
+| Grain | The two things | How they join |
+|-------|----------------|---------------|
+| **Machine** | **Store** (the table) · **Event** (a detectable write in it) | Objective = a named completion write. Already law. |
+| **Product** | **Form** (human causes a write) · **Graph** (hears a write, causes more writes) | Agents / sequences = a specialized graph (timed sends + enroll). File land is a door like a form. |
+| **Module** | **Face** on a store + sometimes a **door** (form / file / button) | Not a third primitive. The interior chain is graph-recreatable. The desk stays so you can **see** the rows and so **privilege** has a place. |
+
+Provision is the example. The **module** stays (Operator desk). The **interior** is already a form: firm name + email → `handleMachineProvision` writes `firms`, `ct_firms`, `campaign_states`, `users`, `access_links` (website/role still not stored; no dispatch). Graph recreation: **this form submitted** → verb `provision_firm` (those writes). Teaching walk after that is more nodes, not a different machine.
+
+**Not all of it (in reason):**
+
+| Graph can recreate | Graph cannot replace |
+|--------------------|----------------------|
+| The **writes** a module performs, once they are a **verb** | The **face** (Contacts, Book readiness, Provision screen) — you still look at the store |
+| The **chain** between writes | **Ports** (Twilio, Resend, calendar) |
+| Alternate doors into the same write | **Walls** (consent, halt, tenancy) |
+| | **Who may fire** a privileged verb (provision mints a firm) |
+
+**Why it feels incomplete:** interiors are trapped in TypeScript. The walker cannot call them, so each module looks like its own product. The canvas looks like theater. That is not missing modules. That is **uncompiled verbs**.
+
+**How to go fast:** do **not** invent generic “write any table” nodes. Do **not** rebuild provision as six canvas nodes first. **Name the handler you already have as `action.type`.** Dispatch after its writes. Keep the module as the face. Seed the graph that is the same chain.
+
+| Module interior today | Verb (wrap, don’t rewrite) | Door that should dispatch |
+|-----------------------|----------------------------|---------------------------|
+| `handleAuditRunCreate` | `run_audit` (014) | File land `contact_import`; later form |
+| `ascribe_tag` / notes | `ascribe_tag` (014) | After audit / If |
+| `enrollAndActuate` | `call_agent` (already) | Graph action |
+| `handleMachineProvision` | `provision_firm` (**later**, not this cut) | Provision **form** submit |
+| Fact form | the `fact_writebacks` INSERT already exists | Dispatch that write (`form` grain = this form) |
+
+014 is the template: wrap audit, don’t recode it. Provision waits — more writes, dual tenancy, privilege. Forms as a primitive means the **submit write** is the trigger (local = this form). Do not mint `form_submitted` with no row.
+
+**Do not:** overwrite 15:43; skip 012/013/014 to start with provision; melt faces into the canvas; generic SQL action this pass.
+
