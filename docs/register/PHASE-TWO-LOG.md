@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **01:35 SA:** ready to **connect**, not to “build Agents / Automations.” Slice + two paste tickets: [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-SLICE-PACKAGE.md) on PR #86. Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **01:40:** the **middle** = machinery that can hear any event and run toward any objective. Adding events/objectives stays open. SA is not blocking that middle. Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -803,6 +803,31 @@ They already wrote the two tickets (paste-blocks) you asked for:
 They are not saying the pictures or the law are insufficient. They are saying: do not spin “build the modules.” Spin **listen to one completion write → assign an existing agent.** That is the first connect. Then the next ticket when the next workflow blocks.
 
 **Do not:** treat this as me answering for SA; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 01:40 UTC — Events and objectives; the middle is the machinery
+
+**Why:** Founder: talk in events and objectives. The middle has to support any new event or objective. Is SA saying we can’t build that middle yet? Maybe middle is still too large. Rules already built; conditions should be. Agents middle should be buildable all the way to the end — is anything in that middle still unknown? Automations has more node types — what in that middle isn’t built? As events come we add an event; as objectives come we add an objective. Those stay in a build state. Maybe even new classes of objectives.
+
+**What they are saying (not a flag):**
+
+They are **not** saying we cannot build the middle. They are saying do not spin “build every event, every objective, every node.” The connect slice **is** the first cut of that middle: hear a write → run the graph → assign an existing agent.
+
+**Two layers (do not collapse):**
+
+| Layer | What it is | Build state |
+|-------|------------|-------------|
+| **Starts** | **Event** = a detectable table change. **Objective** = a named completion (a kind of event). Starts of Automations and of a campaign. | Always open. Add when a workflow needs it. Do not fill a catalog first. |
+| **Middle** | The machinery that can hear **any** of those and run toward an objective: persist the graph, dispatch on the write, If on the previous result, assign / enroll. | This is what to build. One slice at a time. |
+
+**Agents middle — ideas are known.** Sequence, campaigns, Override this, channels, content, Settings fallback, enroll. Not unknown. What is not stood up is **housing / persist** (campaign is not a row; Override this is not a column; attempt-cycle count / nth-sequence silent) and **Call** (face only; machine is still form). **Send** is leftover 3 — the message leaving — known leftover, not a missing idea. So: yes, you can build that middle. You cannot honestly Save every toggle until those rows exist. That is SA’s “housing,” not “we don’t know the sequence.”
+
+**Automations middle — more unbuilt than unknown.** Node kinds already named (trigger · rule · if · action). What is not stood up: Ant Save is a flash; completions do not dispatch; `action` is `call_agent` only (audit / tag cannot run); rule GUI is a TypeScript pack, not rows the walker evaluates; If exists and is thin. Adding a new **event** or **objective** later is exactly “connect UI to that table.” Adding a new **class** of objective is rarer — name it when it appears; do not invent classes tonight.
+
+**Do not:** fill the event or objective catalog; mint housing tonight; treat Hub as the app; overwrite 15:43.
 
 Flag 15:43 untouched.
 
