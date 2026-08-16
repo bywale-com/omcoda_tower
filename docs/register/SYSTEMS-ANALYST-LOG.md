@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 23:06 UTC — **Input/Output on the rules node is editor preview. Live wire is still then-next, not an n8n packet.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 23:09 UTC — **“Not n8n’s pipe” was a guard against the Input/Output panes. Bag vs pipe is not a large distinction.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1175,3 +1175,17 @@ Trade-off: hear-after (form stays on Provision; graph runs next) is cheaper. Ask
 - So: n8n chrome in the editor. Then-next machine when it actually runs. The panes are not the pipe.
 
 **Do not:** treat Input/Output as the live contract; mint a packet table to look like n8n. Flag **15:43**.
+
+---
+
+## 2026-08-16 23:09 UTC — Why “bag not n8n pipe” was placed. Guard, not a big distinction.
+
+**Why:** Founder: why exactly that line? Because I might think we already have n8n’s pipe? What is actually different? Truth, not an excuse.
+
+**Hard:** The line was placed **because you had just pointed at Input/Output after n8n.** I was stopping you from taking those panes as the live machine. Yes — that was the reason.
+
+Bag vs pipe is **not** a large distinction. Walk-in-order while carrying facts forward is close to a pipe. I named “bag” because the live walk has one shared pile, not “this line carries this node’s result into the next.” That is a small code fact. It does not matter much as leverage.
+
+What **does** matter, and is why I said it: live run does **not** use those panes. Editor copies previous result into Input for show. Live does not. I overstated bag-vs-pipe as if it were the point. The point was: don’t trust the panes.
+
+**Do not:** treat bag vs pipe as law. Flag **15:43**.
