@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **01:20:** chain plates **A15** · **A16** · **A17**. Automations blank canvas. Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **01:35 SA:** ready to **connect**, not to “build Agents / Automations.” Slice + two paste tickets: [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-SLICE-PACKAGE.md) on PR #86. Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -776,6 +776,33 @@ Flag 15:43 untouched.
 **Not drawn (do not invent):** inside of the audit action. Global/local picker on the trigger.
 
 **Do not:** plant; regenerate A1–A14; mint tables; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 01:35 UTC — What the Systems Analyst said (they did not say the face is not enough)
+
+**Why:** Founder: SA made PRs. I told them I’m ready to build Agents and Automations up to what we’ve identified. I don’t want PM and SA only guiding architecture while I spin a worker. I want **very specific tickets** so an agent builds what we architected. What did they say? Were they saying it’s not enough?
+
+**What they said** (PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86), stamp 01:35, brief [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-SLICE-PACKAGE.md) — on their branch, not yet on main):
+
+Ready enough to **connect**. **Not** ready to “build Agents” and “build Automations” as whole modules.
+
+They already wrote the two tickets (paste-blocks) you asked for:
+
+| Agent | Does this only |
+|-------|----------------|
+| **Systems** | Ant Automations Save actually persists (`workflow` + graph + triggers). When `fact_writebacks` or `meeting_booked` is inserted, dispatch. Action stays today’s `call_agent` / enroll into the existing sequence. |
+| **UI** | A1 Save is real (not a flash tag). A5 picker = only those one or two completions. A14 = assign existing, three radios, no chevron. Look like the pictures. |
+
+**Order:** not UI first, not systems first. Two agents on **one slice**.
+
+**Not this spin (their list):** teaching walk (provision → audit → if); C8 Every firm; Agents housing mint; Call; Rule GUI; fill an event catalog; send; book-in; listing bind.
+
+They are not saying the pictures or the law are insufficient. They are saying: do not spin “build the modules.” Spin **listen to one completion write → assign an existing agent.** That is the first connect. Then the next ticket when the next workflow blocks.
+
+**Do not:** treat this as me answering for SA; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 
