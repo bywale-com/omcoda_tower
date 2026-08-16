@@ -103,6 +103,8 @@ Do not treat this confirmation as a mint or a filled catalog.
 
 **01:44 (PM):** Starts (events / objectives) stay open forever — connect when a workflow needs that table. **Middle** = hear the write → run the graph → If → assign / enroll. The connect slice is that middle, once. Do not spin “build every event and every objective.”
 
+**02:03:** Dispatch list and new writes (`campaign_failure`, `contact_tag`, `ct_firms` as provisioned) are specified in [`SYSTEMS-CHANGE-PACKET.md`](./SYSTEMS-CHANGE-PACKET.md). Still no events table that copies the write.
+
 ---
 
 ## Do not

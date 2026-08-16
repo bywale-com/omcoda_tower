@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 01:47 UTC — **Three seats. SA designs the machine. Implementer wires Save. Connect slice is ready to begin; SA is not done forever.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 02:03 UTC — **Don’t-mint was not law. Change packet written. Implementer cuts.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -858,3 +858,27 @@ For the **connect slice: yes.** Brief is [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-
 For **both modules, forever: no.** Housing is paper. Story 7 not promoted. I have not minted. I have not written the walker. I stay — next table when a workflow blocks, next housing when you say **system time**.
 
 **Do not:** I write the connect code in this seat; treat paper housing as CREATE TABLE; leave after the first ticket.
+
+---
+
+## 2026-08-16 02:03 UTC — Handback accepted. Don’t-mint was not law. Change packet.
+
+**Why:** Implementation specialist / CTO handback via founder. “Don’t mint” was treated as law. It isn’t. SA inventoried and named; did not write the change. Pictures are the spec. Ask: finish 22:41 + Automations ascribe in connect-package form for every plate. Accept / correct / replace their draft. Not “go write the SQL.” Not another stamp that says wait for Story.
+
+**Excerpts (theirs)**
+
+> What exists is the past. What we specified today is what must exist, exactly as the pictures, UI and tables.
+
+> I treated SA’s “don’t mint” as a law. It isn’t. That’s their job, and they didn’t finish it.
+
+> If a control is on the glass, it needs a row, a field, or a relationship.
+
+> They did the analysis of the machine. They did not finish the change-management deliverable.
+
+> the ask is not “go write the SQL.” The ask is: take 22:41 and the Automations ascribe and finish them in the same form as the connect package — for every plate
+
+**Done:** [`SYSTEMS-CHANGE-PACKET.md`](./SYSTEMS-CHANGE-PACKET.md). Accept their campaign / objective / channel / CHECK / dispatch / tag / rule_pack. Corrections against SQL: `action.agent_ref` must be nullable; no second `sequence` table (`template_id` is the sequence); class token `optin` not `optin_launch`; `enrollment.sequence_id` already exists; provisioned = `ct_firms` this pass; Every firm = loop `contact_records`; failure write = `campaign_failure`; call vs form tokens not collapsed; Hub in-app besides tag → `engagement_records` this pass.
+
+**Still open (only):** waitlist gate value; C2 Additional disabled; per-campaign attempt chrome (columns anyway); Hub list ≠ tag later.
+
+**Do not:** stuff `cells` / `overrides`; mint `goal` or an events log; reuse `campaign_states`; revive `sequence_definitions`; skip the packet because connect-slice said don’t mint.

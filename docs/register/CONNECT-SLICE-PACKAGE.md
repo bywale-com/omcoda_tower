@@ -5,7 +5,9 @@
 **Law:** PHASE-TWO-LOG **15:43** untouched. Events: [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md). Objectives: [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md). Ascribe: [`SYSTEMS-AGENTS-ASCRIBE.md`](./SYSTEMS-AGENTS-ASCRIBE.md) · [`SYSTEMS-AUTOMATIONS-ASCRIBE.md`](./SYSTEMS-AUTOMATIONS-ASCRIBE.md).  
 **Product face:** prototype Ant. Hub is **reference only**.
 
-**Who (01:47):** Founder/PM = what should happen. SA = what the machine is (this brief). **Implementer** = the third seat — wires Save and dispatch. SA is done **enough for this ticket**. SA is not done forever.
+**Who (01:47):** Founder/PM = what should happen. SA = what the machine is. **Implementer** = wires Save and dispatch.
+
+**02:03:** This slice is the **first cut** of [`SYSTEMS-CHANGE-PACKET.md`](./SYSTEMS-CHANGE-PACKET.md), not a cap. Do not skip Agents housing or the rest of the packet because this file said “do not mint.” That stop was the miss.
 
 ---
 
@@ -66,13 +68,11 @@ Verify: npm run build. Manual against the running SPA. If Save has no systems do
 
 ---
 
-## Not this spin (still paper)
+## Rest of the day (not skipped)
 
-- Agents housing (campaigns as rows; CHECK drops `launch_day`; qualify). Needs **system time** on Story 7.
-- C8 **Every firm** (cross-tenant). This-firm Add contact can be a **later** slice — enroll already exists.
-- Teaching walk #87 (firm provisioned → audit → if X → agents). Audit is not an `action.type`. If is too thin. Dual tenancy ununified.
-- Send, book-in door, listing bind, lineage screen, failure → tag, named JS.
-- Schedule / manual / webhook as table-change events — founder: cross that bridge later.
+Housing, C8 Every firm, dispatch list, `contact_tag`, `rule_pack`, widened `action.type` — specified in [`SYSTEMS-CHANGE-PACKET.md`](./SYSTEMS-CHANGE-PACKET.md). Implementer may cut SQL for the whole packet and wire this slice first.
+
+Still leftover product (no plate): send, book-in, lineage query. Call = port, composer saves. Named-code **run** is later; **save** is on `rule_pack`.
 
 ---
 

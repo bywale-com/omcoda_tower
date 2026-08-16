@@ -264,3 +264,9 @@ Mint tonight. Continue Hub. Treat A13 as a screen. Collapse C2b with A5. Put tri
 **Founder boil-down (same stamp):** a system event **is** a detectable change inside a table; all table changes should be detectable; those are the triggers. Objectives already defined. Two primitives. Full park: [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md).
 
 Do not mint an events table. Do not collapse If (read) with event (write). Do not put this chain on the Agents canvas.
+
+---
+
+## Change packet 2026-08-16 02:03 — holes become the change
+
+01:10 / 01:25 named Save-flash, no dispatch, `call_agent` only, listing unused, no tag row. That is now the brief: [`SYSTEMS-CHANGE-PACKET.md`](./SYSTEMS-CHANGE-PACKET.md). Implementer cuts. SA does not stop at “when Story bears it.”

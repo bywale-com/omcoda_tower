@@ -240,3 +240,9 @@ Call / ElevenLabs. Attempt-cycle columns (count, wait after last node, nth-seque
 ## Paper 2026-08-16 01:25 — C2b sits on the events substrate (not a rewrite)
 
 C2b (campaign objective) is a **named completion** — a kind of event. The event itself is the table change (`fact_writebacks`, `meeting_booked`, consent sign-up). C8 Add contact is **not** an event (01:10): it is an enroll write that **starts** the mission. Same substrate: [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md). Do not put `workflow_trigger` on this canvas.
+
+---
+
+## Change packet 2026-08-16 02:03 — 22:41 finished as implementer brief
+
+22:41 named the lie and stopped at “don’t mint.” That stop was wrong. Pictures are the spec. The change (columns, CHECKs, new tables, FKs, walk) is [`SYSTEMS-CHANGE-PACKET.md`](./SYSTEMS-CHANGE-PACKET.md). Do not treat the 22:41 “Not a migration” line as law.
