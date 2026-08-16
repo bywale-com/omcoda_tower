@@ -139,10 +139,15 @@ SELECT
 WHERE EXISTS (SELECT 1 FROM sequence_template WHERE id = 'tpl.optin_launch.v1')
 ON CONFLICT (id) DO NOTHING;
 
+-- Teaching pair lives in seed 002. Only attach here when the campaign rows
+-- actually inserted (templates exist). Fresh migrate has no templates yet.
 INSERT INTO campaign_objective (id, campaign_id, kind, name, completion_table, source)
-VALUES
+SELECT v.id, v.campaign_id, v.kind, v.name, v.completion_table, v.source
+FROM (VALUES
   ('obj.optin.window', 'camp.optin.window', 'click', 'Click this link', 'messaging_events', 'template'),
   ('obj.optin.day', 'camp.optin.day', 'form', 'They opt in', 'fact_writebacks', 'template')
+) AS v(id, campaign_id, kind, name, completion_table, source)
+WHERE EXISTS (SELECT 1 FROM campaign c WHERE c.id = v.campaign_id)
 ON CONFLICT (campaign_id) DO NOTHING;
 
 -- Drop UNIQUE (firm_id, sequence_class) BEFORE remapping two classes onto optin.
