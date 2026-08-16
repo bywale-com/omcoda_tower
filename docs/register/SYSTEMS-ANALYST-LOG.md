@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 22:50 UTC — **22:47 overclaimed. Same-idea was inference, not a cut.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 22:55 UTC — **Automations works with the app. Handing to a module is still automations. Does not break events=writes if the same trail is left and can be heard.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1132,3 +1132,20 @@ Locked in [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 22:47.
 [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 22:50.
 
 **Do not:** treat destination talk as SQL. Flag **15:43**.
+
+---
+
+## 2026-08-16 22:55 UTC — Automations works with the app. Handing to a module is still automations.
+
+**Why:** Founder: Automations is not replacing the app. It works with the app. Graph lives on detecting and using events/writes (same thing in practice). Walked off “provision as many nodes” because gargantuan. Cascade, as they mean it: you don’t need a node per table — put the data where something already knows how (even the Provision module). That is still an automation. Does interfacing that way break the principle?
+
+**Hard:**
+- Automations **works with** the app. It does not replace Provision, Book, Contacts. Earlier “graph is the app” talk overspoke.
+- “Cascade” here is not magic: one write does not fill every related store by itself. The **one place** is the module that already does the whole job. Graph does not need a node per table.
+- Handing the form to Provision, or hearing when Provision is done, **is** automations. The graph is the **when**. The module is the **how**.
+- Does not break events=writes **if** Provision still leaves the same trail it already leaves, and the graph can **use** that trail for the next step.
+- **Would** break: a second provision path that doesn’t leave that trail; or Provision finishes and the graph never hears it (then you cannot chain). Today the second hole is real — after a firm is created, automations is not offered that fact. Cost to fix: connect the existing finish to the graph, not rebuild Provision.
+
+Trade-off: hear-after (form stays on Provision; graph runs next) is cheaper. Ask-to-run (graph decides when to hand the form over) is the same principle, more wiring. Neither requires exploding tables into nodes.
+
+**Do not:** rebuild Provision as canvas nodes; a second provision trail; speak as if the graph replaces desks. Flag **15:43**.

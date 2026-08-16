@@ -270,3 +270,17 @@ Those were analogy from two handlers that both INSERT more than one row, plus de
 
 **Do not:** overwrite 15:43.
 
+---
+
+## 2026-08-16 22:55 — Works with the app. One place that already knows. Interfacing does not break writes.
+
+**Founder (leverage, not internals):** Automations is not replacing the app. The graph exists to detect and use events/writes. Provision-as-many-nodes felt gargantuan. Cascade as they mean it: you do not need a node per table — write to the place that already knows (even the Provision module). That is still an automation. Does that interface break the principle?
+
+**Cut:**
+- Works **with**. Desks stay. Graph is when / next. Module is how.
+- One place already knows the whole provision job. Graph does not explode into one node per store.
+- Hand off to that place, or hear when it finished — both are automations.
+- Principle holds if the module still leaves the **same trail** it already leaves, and the graph can **use** that trail. Breaks if you invent a second trail, or if the finish is never offered to the graph (that hole exists today: firm created, graph not offered it). Fix = connect, not rebuild.
+
+**Do not:** overwrite 15:43; treat this as rebuild-Provision; mint an events table.
+
