@@ -117,8 +117,8 @@ try {
   );
   const enr2 = `enr-inbound-${randomUUID().slice(0, 8)}`;
   await pool.query(
-    `INSERT INTO enrollment (id, firm_id, contact_id, agent_ref, payload)
-     VALUES ($1,$2,$3,'tpl.optin_launch.v1','{}'::jsonb)`,
+    `INSERT INTO enrollment (id, firm_id, contact_id, agent_ref, sequence_id, payload)
+     VALUES ($1,$2,$3,'tpl.optin_launch.v1','tpl.optin_launch.v1','{}'::jsonb)`,
     [enr2, firm, contact2],
   );
   const stale2 = new Date(Date.now() - 40 * 60 * 1000).toISOString();
