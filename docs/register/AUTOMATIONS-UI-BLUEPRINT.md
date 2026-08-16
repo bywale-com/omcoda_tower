@@ -3,7 +3,7 @@
 **Seat:** Product Manager.  
 **What this is:** the **UI blueprint** for Automations, before Systems Analyst extract. Not a systems blueprint. Do not invent tables from this file.  
 **Flag:** Agents [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
-**Law and excerpts:** [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). This file is the **chosen image lineup + spec**. Rationale lives in the log stamps named on each plate. Transcripts are not accessible — if it is not in the log or this spec, it is not in the package.  
+**Law and excerpts:** [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). This file is the **chosen image lineup + spec**. Rationale lives in the log stamps named on each plate. **Captions vs spec:** [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md). Transcripts are not accessible — if it is not in the log or this spec, it is not in the package.  
 **Founder (2026-08-15 22:17):** terrain is enclosed enough. Line up **chosen images in order**. If a plate is a **revision**, keep the **prior** in the lineup and make the revision **canonical**. Spec why each thing does what we wanted. Then the SA package. Hub is the complete plant; Ant Automations is a poorer translation; Rule GUI **does not exist in Ant** — mocks are from scratch.
 
 **Mock = generate the image.** Do not plant `AntAutomationWorkbench`.

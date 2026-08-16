@@ -2,7 +2,7 @@
 
 **What this is:** a dated prompt. Paste into a Systems Analyst chat. Not Story. Not a second Automations flag. Not a rewrite of the Agents flagship.  
 **Seat that wrote it:** Product Manager.  
-**Law:** Agents [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite. Automations face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Chosen images + spec [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) (A1–A13; priors kept; revisions canonical). **Later plate (after this package was issued):** **A14** — assign existing vs from a template; no create-agent in Automations. Ascribe it the same two questions if you reach it.  
+**Law:** Agents [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite. Automations face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Chosen images + spec [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) (A1–A13; priors kept; revisions canonical). **Caption audit (read before ascribing pixels):** [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) — teaching copy on the plates is not a node. **Later plates (after this package was issued):** **A14** — assign existing vs from a template; no create-agent in Automations. **A15–A17** — chain, If, firm-provisioned trigger. Ascribe them the same two questions if you reach them. Do not mint nodes from banner sentences. Do not build A10/A13 as a page.  
 **Context you already have (do not re-ask the PM to restate it):** that FACE, that blueprint in **lineup order**, Hub Automations (`/hub`) as the **complete plant**, CT Ant Automations as a poorer **translation** (Rule GUI **does not exist** there). Logs in [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) from **20:24** through **22:17**. Transcripts are not accessible — if it is not in those files, it is not in this package.  
 **Your identity and walk:** [`../README.md`](../README.md) § Systems Analyst. Answer lands in [`SYSTEMS-ANALYST-LOG.md`](./SYSTEMS-ANALYST-LOG.md). If the Agents package is still unanswered, walk + first question still come first; this package is **next**, not a replacement.
 
@@ -15,7 +15,7 @@ You are Tower’s Systems Analyst. Identity: docs/README.md § Systems Analyst. 
 
 If you have not already walked the machine (Story → Requirements → migrations 001–009 → cascade/worker/workflowWalk → live vs stand-in ports) and inventoried tables/fields/relations, do that first. Then the Agents package if it is still waiting. Then open this package: docs/register/AUTOMATIONS-SA-PACKAGE.md.
 
-This is what we are thinking. These plates are the systems traversing. The images are the mock; the UI is going to look like this. Ascribe. Find a way — usually tables, workers, fields, relationships, live vs stand-in. Do not mint tables from pictures.
+This is what we are thinking. These plates are the systems traversing. The images are the mock; the UI is going to look like this. Ascribe. Find a way — usually tables, workers, fields, relationships, live vs stand-in. Do not mint tables from pictures. Read docs/register/IMAGE-CAPTION-AUDIT.md first — teaching copy on the plates (workflow titles, “smallest workflow…”, “If X”, “you do not create an agent here…”) is not a node and not a field.
 
 For each chosen plate in lineup order (A1 → A13, including priors; then later plate A14 if you reach it), answer two questions. Short. Quote SQL / cascade / workflowWalk / ports, not screens.
 
@@ -89,3 +89,4 @@ Then **Rollup** (not a new flag):
 - Not collapsing the two condition grains.
 - Not treating CT Ant Automations as the source plant.
 - Not a second Agents package. Agents package still stands.
+- Not ascribing founder captions as nodes. Read [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) first.

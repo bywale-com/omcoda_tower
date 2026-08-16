@@ -3,7 +3,7 @@
 **Seat:** Product Manager.  
 **What this is:** the **UI blueprint** for Agents, before Systems Analyst extract. Not a systems blueprint. Do not invent tables from this file.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
-**Law and excerpts:** [`AGENTS-FACE.md`](./AGENTS-FACE.md). This file is the **image lineup + spec**. Rationale lives in the log stamps named on each plate.  
+**Law and excerpts:** [`AGENTS-FACE.md`](./AGENTS-FACE.md). This file is the **image lineup + spec**. Rationale lives in the log stamps named on each plate. **Captions vs spec:** [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) — teaching copy on the plates is not a node.  
 **Founder (2026-08-15 19:47):** Settings images are canonical. This pass = lineup of canon vs revision, map each plate to the rationale that birthed it, then spec the plates. Click paths / what is on the glass. If anything is under-specified, that is the point of this pass.
 
 Chrome for every plate unless noted: Operator desk → Configuration libraries → Agents.
@@ -17,9 +17,9 @@ These ten files are **canon**. Later plates revise earlier ones only where the t
 | # | File | What it is | Born from (log) | Revises |
 |---|------|------------|-----------------|---------|
 | **C1** | [`C1-sequence-templates.png`](./agents-blueprint/C1-sequence-templates.png) | Sequence templates. Empty world possible. Opt-in / re-engagement / reactivation are **sequence** templates, not objectives. | 18:40 two template layers · 18:50 beat 1 · 18:55 mock = image | — |
-| **C2** | [`C2-add-objective-template.png`](./agents-blueprint/C2-add-objective-template.png) | First thing on a campaign: **Add objective**. Modal, from a template. Launch window / launch day / additional. Opt-in is not in this list. | 18:40 Hub Add-configuration analogy · 18:50 beat 2 | — |
+| **C2** | [`C2-add-objective-template.png`](./agents-blueprint/C2-add-objective-template.png) | First thing on a campaign: **Add objective**. Modal, from a template. Example names: Launch window / launch day / additional. Opt-in is not in this list. | 18:40 Hub Add-configuration analogy · 18:50 beat 2 | — |
 | **C2b** | [`C2b-add-objective-scratch.png`](./agents-blueprint/C2b-add-objective-scratch.png) | Same modal, **from scratch**. One yes/no, then name it. | 18:40 binary event · 18:50 beat 2 | companion to C2 |
-| **C3** | [`C3-two-campaigns.png`](./agents-blueprint/C3-two-campaigns.png) | Blank sequence with two campaigns. Qualify edge. Launch day = opt-in day. Override this **off**. | 18:08 two objectives · 18:50 beat 3 | — |
+| **C3** | [`C3-two-campaigns.png`](./agents-blueprint/C3-two-campaigns.png) | Blank sequence with two campaigns (example names). Distance = previous **objective met** (caption, not a qualify node). Override this **off**. | 18:08 two objectives · 18:50 beat 3 | — |
 | **C4** | [`C4-override-this.png`](./agents-blueprint/C4-override-this.png) | Override this **on**. Channel nodes hang as wires. Campaign toggles stay. Channels **closed**. | 18:08 Override this · 18:50 beat 4 | — |
 | **C5** | [`C5-content-toggle.png`](./agents-blueprint/C5-content-toggle.png) | Channel open. **Override content is a toggle**; node expands into that medium’s content-creation block. Text, email, **call (ElevenLabs)**. Channel rules still a wire off the channel. | 19:10 content inside the node · 19:45 toggle + richness + call | **C5 supersedes** open-channel siblings and the content-as-button frame |
 | **C5b** | [`C5b-content-toggle-closeup.png`](./agents-blueprint/C5b-content-toggle-closeup.png) | Same as C5, close-up of the three expanded composers. | 19:45 richness | companion to C5 |
@@ -56,9 +56,9 @@ Not a test script. The path that produces each plate.
 | New template *or* open a sequence (e.g. Opt-in) | Blank **sequence** canvas. |
 | Add campaign | Untitled campaign node. First control: **Add objective** (same *seat* as Hub Automations “Add configuration”). |
 | Add objective | Modal (C2 / C2b). Template **or** from scratch. Not Automations triggers. |
-| Template: Launch window / Launch day | Campaign named and objectived. Opt-in is **not** a choice here. |
+| Template: example names Launch window / Launch day | Campaign named and objectived. Opt-in is **not** a choice here. Names are renamable. |
 | From scratch: pick the one yes/no → name it | Campaign objectived from a binary event. |
-| Second campaign, first objective met | Qualify edge (C3). |
+| String a second campaign when the previous objective is met | Distance on C3. Caption, not a qualify node. Tick allowed. |
 | Campaign: Override this **on** | Channel nodes appear as **wires** (C4). Sequencing / objective stay on the campaign. |
 | Channel: Open (channel rules) | **Channel rules** (escalation) hang off that channel. |
 | Channel: Override content **on** | That channel **expands** into its composer (C5 / C5b). |
@@ -80,9 +80,9 @@ Fallback if a control is not overridden: campaign → sequence Settings → Agen
 **Rationale:** If no one has created templates, there are none. Opt-in, re-engagement, reactivation are **sequence** templates (the full canvas). You would not see those names in an objective picker.
 
 **On the glass:**
-- Heading: Sequence templates. Line: “If no one has created any, there are none.”
-- Three cards: Opt-in sequence · Re-engagement sequence · Reactivation sequence. Tag: sequence template.
-- Footer: “These are the full canvas. You would not see these names in an objective picker.”
+- Heading: Sequence templates. Teaching line on the plate (founder caption, need not ship as copy): “If no one has created any, there are none.”
+- Three cards: Opt-in sequence · Re-engagement sequence · Reactivation sequence — **example names**. Tag: sequence template.
+- Footer on the plate is founder caption: “These are the full canvas. You would not see these names in an objective picker.” Law is real; the sentence need not live on the glass.
 
 **Controls:** open a sequence (goes to canvas) · New template. Empty-world is the same page with zero cards.
 
@@ -99,8 +99,8 @@ Fallback if a control is not overridden: campaign → sequence Settings → Agen
 **On the glass:**
 - Behind: untitled campaign with **Add objective**.
 - Modal title: Add objective. Tabs: From a template (this plate) | From scratch (C2b).
-- Template list: **Launch window** (probably click this link) · **Launch day** (they opt in) · **Additional** (disabled, unnamed — a couple more).
-- Note: “Opt-in is a sequence template. It does not appear here.”
+- Template list (example names, operator can rename): **Launch window** (parenthetical “probably click this link”) · **Launch day** (“they opt in” — a **title at best**, not an objective class) · **Additional** (disabled, unnamed).
+- Note on the plate is founder caption: “Opt-in is a sequence template. It does not appear here.”
 
 **Controls:** pick a template · Set objective · cancel.
 
@@ -116,10 +116,10 @@ Fallback if a control is not overridden: campaign → sequence Settings → Agen
 
 **On the glass:**
 - Same modal, tab **From scratch**.
-- Line: “One thing. Yes or no. Then you name it.”
+- Teaching line on the plate (founder caption): “One thing. Yes or no. Then you name it.” Law is real; the sentence need not ship as copy.
 - Radios: Click this link · Book a meeting in this calendar · Submit / complete this form.
 - Name field (example: “Click this link”).
-- Note: “Everyone enrolled in this campaign is campaigned to do this one thing. Happened or it didn’t.”
+- Note on the plate is founder caption: “Everyone enrolled in this campaign is campaigned to do this one thing. Happened or it didn’t.”
 
 **Controls:** pick the event · name it · Set objective.
 
@@ -131,13 +131,12 @@ Fallback if a control is not overridden: campaign → sequence Settings → Agen
 
 ![C3 two campaigns](./agents-blueprint/C3-two-campaigns.png)
 
-**Rationale:** Two objectives → two campaigns. Launch window builds desire. Launch day **is** opt-in day. First objective met → they **qualify**. That edge is the 15:43 goal-as-escalation, drawn.
+**Rationale:** Two objectives → two campaigns **in this example**. Launch window / Launch day are **names**. Distance between them = previous **objective met** (caption, not a qualify node). See [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md).
 
 **On the glass:**
-- Sequence chrome: two campaigns.
-- **Launch window:** objective (click this link / binary) · sequencing Text → Email → Form *(stale vs C5)* · Override this **off**.
-- Tag: **qualify — first objective met**.
-- **Launch day:** objective they opt in · Override this **off**.
+- Sequence chrome: two campaigns (example names).
+- Each campaign: an **objective**, sequencing, Override this **off**.
+- Wire between them: founder caption **“qualify — first objective met”** — **not spec**. Do not mint. A tick is allowed chrome.
 
 **Controls:** Override this on a campaign (goes to C4) · Add campaign · Add objective on an unconfigured campaign.
 
@@ -154,7 +153,7 @@ Fallback if a control is not overridden: campaign → sequence Settings → Agen
 **On the glass:**
 - Launch window: Override this **on**. Sequencing and objective still on that card.
 - Wires to **Text / Email / Form** *(Form stale vs C5 Call)*, each **closed**. Copy: open this node to author its rules; campaign toggles stay.
-- Qualify → Launch day still closed.
+- Next campaign (example name Launch day) still closed. Leftover qualify pill in the pixels is founder caption — not spec.
 
 **Controls:** Override this off (returns to C3) · Open a channel (channel rules) · Override content (C5).
 

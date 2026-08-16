@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **01:40:** the **middle** = machinery that can hear any event and run toward any objective. Adding events/objectives stays open. SA is not blocking that middle. Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **02:19:** captions on the canon plates are **not spec**. There is no “first objective” — there is an **objective**. Launch window / Launch day are **example names**. Share [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) with SA. **01:40:** the **middle** = machinery that can hear any event and run toward any objective. Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -828,6 +828,24 @@ They are **not** saying we cannot build the middle. They are saying do not spin 
 **Automations middle — more unbuilt than unknown.** Node kinds already named (trigger · rule · if · action). What is not stood up: Ant Save is a flash; completions do not dispatch; `action` is `call_agent` only (audit / tag cannot run); rule GUI is a TypeScript pack, not rows the walker evaluates; If exists and is thin. Adding a new **event** or **objective** later is exactly “connect UI to that table.” Adding a new **class** of objective is rarer — name it when it appears; do not invent classes tonight.
 
 **Do not:** fill the event or objective catalog; mint housing tonight; treat Hub as the app; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 02:19 UTC — Captions on the plates are not spec
+
+**Why:** Founder: implementers are treating teaching copy on the images as if it were the UI. It is not. There is **no first objective** — there is an **objective**. You string as many campaigns as you want **when that objective is met**. Launch window vs Launch day was an **example** of multiple campaigns inside the same sequence — one of the first images. Those are **campaign names we created**. The operator can rename them. You *may* seed campaign templates or sequence templates because we already know what belongs inside — easy to mess up if the names freeze as types.
+
+**“qualify — first objective met”** is a founder caption of the **distance** between two campaigns. It communicates the system fact that the previous objective was met. It has nothing to do with qualify as a node. It is not a query. A green tick is allowed chrome. It must not cause a systems question unless the question is something else (it was not).
+
+**“They opt in”** on that second campaign is a **title at best**. Not an objective class.
+
+Same is true for a couple of other marks across the canon images: descriptions so the founder could read the picture. Not nodes. A bad description if we use the image as spec. Audit all plates that way. Share the audit with Systems Analysts so they have not ascribe those captions as the system.
+
+**What we wrote:** [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) — every C1–C8 and A1–A17 mark is **spec**, **example name**, or **founder caption**. Closes `qualify_gate` as a UI reading of C3. Waitlist-vs-whole-book is **not on C3**. Pixels stay; this file is the reading. Do not regenerate the lineup this pass.
+
+**Do not:** mint `qualify` / `first_objective`; freeze Launch window / Launch day as types; treat “they opt in” as a class; put founder captions into Postgres; plant; overwrite 15:43.
 
 Flag 15:43 untouched.
 
