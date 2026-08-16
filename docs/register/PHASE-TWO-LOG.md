@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **20:17:** specify with **UI tests** (pass/fail). Specimen = Add contact. [`IMPLEMENTER-UI-TESTS.md`](./IMPLEMENTER-UI-TESTS.md). Packet still [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md). Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **20:26:** UI test = **visual.** The plate is the test. Image is enough. [`IMPLEMENTER-UI-TESTS.md`](./IMPLEMENTER-UI-TESTS.md). Packet [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md). Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -937,6 +937,18 @@ Flag 15:43 untouched.
 **What we wrote:** [`IMPLEMENTER-UI-TESTS.md`](./IMPLEMENTER-UI-TESTS.md) — Add contact as the specimen. Fourteen pass/fail tests from the last printed spec (header, C8 modal not popover, two radios, Select from opens the list, everyone selected, deselect then pick, search, list scrolls, Contacts table, Automations same modal, start-now vs not, data from tables). More tests than the spec sentences is fair. Cannot ship the slice if any fail. Same format for the rest of the packet next.
 
 **Do not:** plant; write Playwright this stamp; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 20:26 UTC — The UI test is visual; the image is enough
+
+**Why:** Founder: stop intellectualizing. It is a **visual test**. We are not telling how to build it. Principles / standards stay in the spec. Click Add contact → the modal that shows **is** the test (C8). If the image were code there would be no problem — we are **not** pulling code out of the image; we are not generating the product from the picture. The image **is enough** to build properly. Reading a prose checklist does not make it obvious how the current look fails. Looking at the plate does.
+
+**What we wrote:** [`IMPLEMENTER-UI-TESTS.md`](./IMPLEMENTER-UI-TESTS.md) recast. Click Add contact → must look like C8. Click Select from → must look like C8b. Automations Contacts → A19. No T-AC-01…14. 20:17 prose tests were too much writing for a visual fail.
+
+**Do not:** plant; extract code from plates; overwrite 15:43.
 
 Flag 15:43 untouched.
 
