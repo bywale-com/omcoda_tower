@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 22:55 UTC — **Automations works with the app. Handing to a module is still automations. Does not break events=writes if the same trail is left and can be heard.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 23:02 UTC — **Provision-finished = the firm-row event already named (not connected). Canvas wire emits nothing; it is “then next.”** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1149,3 +1149,15 @@ Locked in [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 22:47.
 Trade-off: hear-after (form stays on Provision; graph runs next) is cheaper. Ask-to-run (graph decides when to hand the form over) is the same principle, more wiring. Neither requires exploding tables into nodes.
 
 **Do not:** rebuild Provision as canvas nodes; a second provision trail; speak as if the graph replaces desks. Flag **15:43**.
+
+---
+
+## 2026-08-16 23:02 UTC — Provision-finished is the firm-row event already named. The canvas wire emits nothing.
+
+**Why:** Founder: is “provision finished” different from the event already in there for a new firm/row added? Second: when you connect a node to a trigger, what does that wire emit / do?
+
+**Hard:**
+- Not a second event. “Provision finished” **is** “a new firm row exists” (named A17 / 010). Not in the live picker today. Picker *does* have **Contact created** and **Import created** — those are a person row / an import row, not a firm. Same shape, different thing. When you actually provision, that firm-row fact is still **not offered** to Automations.
+- Drawing a wire **emits nothing**. It means **then this next**. Saved with the picture. Activate: the **trigger node** becomes the listen (“wake on this named event”). The wire is not the listen. Later, when the event happens, the engine starts at the trigger and **follows the lines**. No extra signal on the wire.
+
+**Do not:** mint a second “provision finished” name; treat Contact created as firm provisioned; treat drawing a line as firing the workflow. Flag **15:43**.
