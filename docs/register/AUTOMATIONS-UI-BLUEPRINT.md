@@ -319,6 +319,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 **Rationale (00:02):** Leftover 6. Keep it simple. **Do not create agents inside Automations.** Create the agent in Agents, then assign. Two choices only: **assign to an existing sequence**, or **create from a template**. Can evolve later — not now. A8 stays so select-agent = whole sequence is visible. A12 stays the form.
 
 **On the glass:**
+- Same Operator-desk chrome as A8 / A7 / A1 (00:51 rebuild). Do not invent surrounding.
 - Kind: Agents.
 - Line: “You do not create an agent here. Create the agent in Agents, then assign.”
 - Two cards: **Assign to an existing sequence** (put them on one you already authored) · **Create from a template** (new copy from a sequence template, then put them on that).

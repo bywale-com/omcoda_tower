@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **00:02:** leftover **2** (enroll) and **6** (copy vs assign) answered. Still left: **3** the message actually leaving; queryable lineage; book-in door. Plates **C8** · **A14**. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **00:02:** leftover **2** and **6** answered. **00:51:** C8 · A14 rebuilt on the validated chrome. Add contact lives in the sequence header. Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -700,6 +700,20 @@ Flag 15:43 untouched.
 | **6** | **Answered.** Assign existing, or from a template. No create-agent in Automations. |
 
 **Do not:** plant the Ant editor; mint tables; regenerate C1–C7 or A1–A13; treat Hub as the app; overwrite 15:43; put enroll on Publish; draw the engagement chart as the lineage query.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 00:51 UTC — C8 and A14 on the validated chrome
+
+**Why:** Founder: the parts that matter are right (Contacts selected; Add contact; assign existing / from a template). The **surrounding looks different**. Build on the **already validated** plates. Same canonical platform.
+
+**Add contact placement:** it is **always in the top portion** of the sequence — same row as Save / Launch agent. Not inside the Contacts tab body. Contacts still displays who is enrolled.
+
+**Plates rebuilt** (same filenames, same law; chrome from C3/C6/C7 and A8/A7/A1). Do not regenerate C1–C7 or A1–A13.
+
+**Do not:** plant; invent new chrome; overwrite 15:43.
 
 Flag 15:43 untouched.
 

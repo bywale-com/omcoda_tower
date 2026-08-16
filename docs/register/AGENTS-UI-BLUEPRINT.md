@@ -227,9 +227,11 @@ Fallback if a control is not overridden: campaign → sequence Settings → Agen
 **Rationale (00:02):** Drawing the sequence is not putting people on it. The **self path from Agents** is this sequence’s **Contacts** model — it **displays who is enrolled** — plus **Add a contact**. **Not Publish.** Automations enroll is the other door (on an event). Agents enroll **starts the mission now**. Apollo was inspiration, not a clone. Ant already has a Contacts tab with empty copy and no Add button — this plate is the face; do not plant the editor.
 
 **On the glass:**
-- Sequence: Opt-in. Tabs: Editor · **Contacts** (on) · Activity · Report · Settings.
-- Enrolled list behind the modal (names, firm, enrolled date).
-- **Add contact** opens a modal.
+- Same Operator-desk chrome as C3 / C6 / C7 (00:51 rebuild). Do not invent surrounding.
+- Sequence: Opt-in. Header row: Save · **Add contact** · Launch agent. Add contact is **always in that top portion**, not inside the Contacts tab.
+- Tabs: Editor · **Contacts** (on) · Activity · Report · Settings.
+- Enrolled list in the workspace (names, firm, enrolled date).
+- **Add contact** (header) opens a modal.
 - Scope radios: **This firm** (firm picker) · **Every firm** · **This contact within this firm**.
 - Matching people, checkboxes, **Add to sequence**.
 - Caption: “This starts the mission now. It does not wait on an event.”
