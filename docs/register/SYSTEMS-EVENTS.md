@@ -130,3 +130,25 @@ Do not treat this confirmation as a mint or a filled catalog.
 
 Audit is Global-only as a **trigger** (one-time). Same-canvas chain uses If, not Local audit.
 
+---
+
+## 2026-08-16 21:22 — How we know a flow worked (monitor, not a second bus)
+
+**Founder:** systems are events. To see if a flow works, name the events it should create, connect (maybe email), and watch whether those events show up — so you are not stuck inside the systems.
+
+**Yes.** The unit of “did it work” is the **write**. Same law: the write is the event. Do not mint an `events` table that copies it.
+
+**Tighten (do not wash):**
+
+| Thing | What it is |
+|-------|------------|
+| **Did the flow work?** | Did the **expected writes** for **this** flow happen, in order. That list is a **per-flow checklist**, not the operator catalog. |
+| **Product email** (CEM to a contact) | Only some events send. Enroll, audit, If, form, call composer, cursor advance — **writes**, often **no** contact email. “I got the outreach email” proves send. It does not prove the rest. |
+| **Monitor email** (to you) | A **pane** on the same dispatch. After the write, CEM `TEST_EMAIL_TO` / notify. You are not sitting in Postgres. This is not a second event system. |
+
+How: list the tables this flow must INSERT/UPDATE. Those writes must **dispatch** (today many still do not). Then either read the rows (Activity) or hang a tiny automation on those `event_name`s that mails you. Same `dispatchEventToWorkflows` Automations already uses.
+
+**Not:** “almost everything emails.” **Not:** filling the catalog so we can monitor. **Not:** an events table. If a write is not dispatched, email cannot see it — that is the honesty hole, not a reason to copy the row.
+
+**Do not:** overwrite 15:43; treat inbox as the machine.
+

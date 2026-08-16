@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 19:25 UTC — **011 ratified. #89 18:53 needs 012.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 21:22 UTC — **How we know a flow worked: expected writes, not inbox-as-machine.** Flag **15:43**. 012 still the cut.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1032,3 +1032,21 @@ For **both modules, forever: no.** Housing is paper. Story 7 not promoted. I hav
 **Hard split:** 02:31 lumped `grain` with C8. A18 ≠ A19. Trigger `scope` leftover.
 
 **Do not:** collapse Global/Local with Contacts; timer per toggle; enroll from Automations Contacts; Local on audit; overwrite 15:43.
+
+---
+
+## 2026-08-16 21:22 UTC — How we know a flow worked
+
+**Why:** Founder: systems are events. To check they work, name the events a flow should create, connect (maybe email), see if they fire — monitor, don’t get stuck inside the systems.
+
+**Excerpts**
+
+> ultimately, systems are just events … Almost everything create the system event.
+
+> we identify all the system events that this flow should create. And then we see if … all those system events figure their requisite emails.
+
+> I don't want to be stuck in the systems, I want to be able to monitor.
+
+**Thoughts (locked in [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 21:22):** Yes on the unit. The check is **expected writes for this flow**, not “everything emailed.” Product CEM to a contact ≠ monitor mail to you. Monitor hangs off the same dispatch — no `events` table. If a write is not dispatched, email cannot see it.
+
+**Do not:** fill the catalog to monitor; make inbox the machine; skip 012 for this. Flag **15:43**.
