@@ -75,7 +75,7 @@ If a control is on the glass, it needs a row, a field, or a relationship. Specif
 - How tables relate (reads / writes / triggers) and how the dumb runtime consumes them (`server/wire-service/cascade.ts`, `worker.ts`, `workflowWalk.ts`).
 - Your log: [`register/SYSTEMS-ANALYST-LOG.md`](./register/SYSTEMS-ANALYST-LOG.md). Same discipline as the Phase Two log. New SA chats start there.
 
-**Implementer (third seat):** not you. They cut the packet. They do not re-analyse. You owe them a complete change list (columns, CHECKs, FKs, which INSERT fires dispatch, walker). Standing packet: [`register/SYSTEMS-CHANGE-PACKET.md`](./register/SYSTEMS-CHANGE-PACKET.md). Waiting cuts: [`register/SYSTEMS-CHANGE-PACKET-012.md`](./register/SYSTEMS-CHANGE-PACKET-012.md) (`012`) · [`register/SYSTEMS-CHANGE-PACKET-013.md`](./register/SYSTEMS-CHANGE-PACKET-013.md) (`013`). Connect slice is the first vertical, not a cap: [`register/CONNECT-SLICE-PACKAGE.md`](./register/CONNECT-SLICE-PACKAGE.md).
+**Implementer (third seat):** not you. They cut the packet. They do not re-analyse. You owe them a complete change list (columns, CHECKs, FKs, which INSERT fires dispatch, walker). Standing packet: [`register/SYSTEMS-CHANGE-PACKET.md`](./register/SYSTEMS-CHANGE-PACKET.md). Waiting cuts: [`register/SYSTEMS-CHANGE-PACKET-012.md`](./register/SYSTEMS-CHANGE-PACKET-012.md) (`012`) · [`register/SYSTEMS-CHANGE-PACKET-013.md`](./register/SYSTEMS-CHANGE-PACKET-013.md) (`013`) · [`register/SYSTEMS-CHANGE-PACKET-014.md`](./register/SYSTEMS-CHANGE-PACKET-014.md) (`014`). Connect slice is the first vertical, not a cap: [`register/CONNECT-SLICE-PACKAGE.md`](./register/CONNECT-SLICE-PACKAGE.md).
 
 **You do not own**
 
@@ -101,6 +101,7 @@ Walk in this order. Read the files. Quote tables from SQL, not from memory.
 | Change packet enrichment (011 — C11 variations; C0/C9/C13 map) | `docs/register/SYSTEMS-CHANGE-PACKET-ENRICH.md` — **cut on main** (PR #90) |
 | Change packet 012 (A18 grain, A19 audience, C14/C15 one timer, seed) | `docs/register/SYSTEMS-CHANGE-PACKET-012.md` — after #89 18:53; implementer cuts this |
 | Change packet 013 (contact import → audit; Book readiness pane) | `docs/register/SYSTEMS-CHANGE-PACKET-013.md` — Confirm book lands the book; every `audit_runs` row is the artifact |
+| Change packet 014 (house import → audit → tag + notes) | `docs/register/SYSTEMS-CHANGE-PACKET-014.md` — walker by action type; any firm |
 | Image caption audit (PR #87 — spec vs example name vs founder caption) | `docs/register/IMAGE-CAPTION-AUDIT.md` — do not mint `qualify` from C3 |
 | Agents UI ascribe (plates C1–C7 vs SQL / cascade / ports; grain lock sequence⊃campaigns; not a second flag) | `docs/register/SYSTEMS-AGENTS-ASCRIBE.md` |
 | Automations UI ascribe (plates A1–A13 vs workflowWalk / Hub rules; paper, not cemented) | `docs/register/SYSTEMS-AUTOMATIONS-ASCRIBE.md` — PR #85 package |

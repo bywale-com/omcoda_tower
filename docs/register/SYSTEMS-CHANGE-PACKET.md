@@ -439,3 +439,9 @@ PR #89 **18:53** is not pass-through. Next cut: [`SYSTEMS-CHANGE-PACKET-012.md`]
 Founder: Confirm book for Tower **is** the upload. Trigger **contact import**. Action **audit the contacts**. Every `audit_runs` row shows in Operator Book readiness. Canvas **deletes** a node.
 
 Cut [`SYSTEMS-CHANGE-PACKET-013.md`](./SYSTEMS-CHANGE-PACKET-013.md). Does not wait on 012. Does not merge desks. Does not use Hub `import.created`.
+
+---
+
+## 014 — 2026-08-16 22:17 — authored workflow: import → audit → tag + notes (any firm)
+
+Founder: not hardcoded. House canvas. Tag invalid data. Notes on the contact. Walker must run `run_audit` / `ascribe_tag` (today every action enrolls). House `workflow.firm_id` NULL. Cut [`SYSTEMS-CHANGE-PACKET-014.md`](./SYSTEMS-CHANGE-PACKET-014.md).

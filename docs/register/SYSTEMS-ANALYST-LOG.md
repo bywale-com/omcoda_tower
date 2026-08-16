@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 21:57 UTC — **013: Confirm book is contact import → audit; Book readiness is the pane.** Flag **15:43**. 012 still waiting.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 22:17 UTC — **014: house workflow import → audit → tag + notes. Pieces exist; chain cannot run.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1072,3 +1072,15 @@ For **both modules, forever: no.** Housing is paper. Story 7 not promoted. I hav
 Packet: [`SYSTEMS-CHANGE-PACKET-013.md`](./SYSTEMS-CHANGE-PACKET-013.md).
 
 **Do not:** Hub `import.created`; events table; merge Consultant into Operator; skip 012. Flag **15:43**.
+
+---
+
+## 2026-08-16 22:17 UTC — This workflow, authored. Pieces exist; chain cannot run.
+
+**Why:** Founder: stop solving it as the specialist. They named the workflow. Any firm, contact file import → audit (a node) → tag + notes on each contact. No-code the app.
+
+**Can it exist today:** `contact_tag` and `run_audit` / `ascribe_tag` CHECKs are on main. Walker still **enrolls** every action. Confirm book does not land a file. Dispatch is one-firm. No `notes` column.
+
+**Hard decisions:** House `workflow.firm_id` NULL. Walker by type. If on this contact’s verdict. Tag on `contact_tag`. Notes on `contact_records.notes`. Do not hardcode audit on upload. Packet [`SYSTEMS-CHANGE-PACKET-014.md`](./SYSTEMS-CHANGE-PACKET-014.md). 013 still lands the file.
+
+**Do not:** enroll because an action exists; Hub `import.created`; skip 012/013. Flag **15:43**.
