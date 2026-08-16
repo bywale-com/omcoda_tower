@@ -53,15 +53,16 @@ try {
 
   await pool.query(
     `INSERT INTO sequence_template (id, sequence_class, variant, label, cells)
-     VALUES ($1,'optin_launch','v1',$2,$3::jsonb)
+     VALUES ($1,'optin','v1',$2,$3::jsonb)
      ON CONFLICT (id) DO UPDATE SET cells=EXCLUDED.cells, label=EXCLUDED.label`,
     [tplId, `Author runtime ${marker}`, JSON.stringify(cells)],
   );
   await pool.query(
-    `INSERT INTO firm_sequence_binding (id, firm_id, sequence_class, template_id, variable_bindings)
-     VALUES ($1,$2,'optin_launch',$3,'{}'::jsonb)
-     ON CONFLICT (firm_id, sequence_class) DO UPDATE SET template_id=EXCLUDED.template_id`,
-    [`bind.${firm}.optin_launch`, firm, tplId],
+    `INSERT INTO firm_sequence_binding
+       (id, firm_id, sequence_class, template_id, variable_bindings, is_default)
+     VALUES ($1,$2,'optin',$3,'{}'::jsonb, true)
+     ON CONFLICT (firm_id, sequence_class) WHERE is_default DO UPDATE SET template_id=EXCLUDED.template_id`,
+    [`bind.${firm}.optin`, firm, tplId],
   );
   await pool.query(
     `INSERT INTO contact_records (id, firm_id, email, phone, name)

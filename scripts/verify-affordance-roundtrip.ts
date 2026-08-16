@@ -183,12 +183,13 @@ try {
     body,
   );
 
-  // Binding (unique on firm_id + sequence_class)
+  // Binding: 010 dropped UNIQUE (firm_id, sequence_class); one default per pair remains.
   const bindId = `bind.${firm}.reactivation`;
   await pool.query(
-    `INSERT INTO firm_sequence_binding (id, firm_id, sequence_class, template_id, variable_bindings)
-     VALUES ($1,$2,'reactivation',$3,$4::jsonb)
-     ON CONFLICT (firm_id, sequence_class) DO UPDATE
+    `INSERT INTO firm_sequence_binding
+       (id, firm_id, sequence_class, template_id, variable_bindings, is_default)
+     VALUES ($1,$2,'reactivation',$3,$4::jsonb, true)
+     ON CONFLICT (firm_id, sequence_class) WHERE is_default DO UPDATE
        SET template_id=EXCLUDED.template_id,
            variable_bindings=EXCLUDED.variable_bindings,
            updated_at=now()`,
