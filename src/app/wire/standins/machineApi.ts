@@ -201,6 +201,8 @@ const referenceVersions = new Map<string, ReferenceVersionRow>([
 const evaluationPins = new Map<string, EvaluationPin>();
 const campaignStates = new Map<string, CampaignState>();
 const provisionedFirms = new Map<string, ProvisionResult>();
+const standInHousing = new Map<string, import("../machineTypes").CampaignHousingRow[]>();
+const standInRulePacks = new Map<string, unknown>();
 
 /** Book audit stand-in tables — createAuditRun persists so trials can read back. */
 const bookAuditRuns = new Map<
@@ -673,6 +675,77 @@ export const standInMachineApi: MachineApiPort = {
       variable_bindings: input.variableBindings ?? {},
     });
     return { id, sequenceClass: input.sequenceClass, templateId: input.templateId };
+  },
+
+  async listSequenceHousing(sequenceId) {
+    const rows = standInHousing.get(sequenceId) ?? [];
+    return { sequenceId, campaigns: rows };
+  },
+
+  async saveSequenceHousing(sequenceId, campaigns) {
+    const rows = campaigns.map((draft, index) => ({
+      id: draft.id ?? `camp-local-${sequenceId}-${index}`,
+      firm_id: standInFirm(),
+      sequence_id: sequenceId,
+      name: draft.name,
+      ord: draft.ord,
+      override_this: Boolean(draft.overrideThis),
+      attempt_count: draft.attemptCount ?? null,
+      wait_after_last_failed_seconds: draft.waitAfterLastFailedSeconds ?? null,
+      nth_exception: draft.nthException ?? {},
+      objective: draft.objective
+        ? {
+            id: draft.objective.id ?? `obj-local-${index}`,
+            kind: draft.objective.kind,
+            name: draft.objective.name,
+            completion_table: draft.objective.completionTable,
+            source: draft.objective.source ?? "scratch",
+          }
+        : null,
+      channels: (draft.channels ?? []).map((ch, i) => ({
+        id: ch.id ?? `ch-local-${index}-${ch.token}`,
+        token: ch.token,
+        ord: ch.ord ?? i,
+        override_content: Boolean(ch.overrideContent),
+        content: ch.content ?? {},
+      })),
+    }));
+    standInHousing.set(sequenceId, rows);
+    return { sequenceId, campaigns: rows };
+  },
+
+  async enrollSequenceContacts(sequenceId, input) {
+    const scope = input.scope === "select_from" ? "select_from" : "every_firm";
+    const contacts =
+      scope === "select_from" && input.contactIds?.length
+        ? input.contactIds
+        : [...bookContacts.values()].map((c) => c.id);
+    for (const contactId of contacts) {
+      enrollments.push({
+        id: `enr-local-${Date.now()}-${contactId}`,
+        firm_id: standInFirm(),
+        contact_id: contactId,
+        agent_ref: input.agentRef ?? sequenceId,
+        sequence_id: sequenceId,
+        campaign_id: null,
+        workflow_run_id: null,
+        payload: { source: "c8_add_contact", scope },
+        enrolled_at: now(),
+      });
+    }
+    return {
+      sequenceId,
+      scope,
+      enrolled: contacts.length,
+      blocked: 0,
+      ids: contacts,
+    };
+  },
+
+  async upsertRulePack(input) {
+    const id = input.id ?? `rpack-local-${Date.now()}`;
+    standInRulePacks.set(id, input);
+    return { id, table: "rule_pack" };
   },
 
   async listAttemptCriteria() {

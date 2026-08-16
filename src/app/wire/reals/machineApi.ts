@@ -201,6 +201,48 @@ export const realMachineApi: MachineApiPort = {
     );
   },
 
+  async listSequenceHousing(sequenceId) {
+    return wireFetch<{
+      sequenceId: string;
+      campaigns: import("../machineTypes").CampaignHousingRow[];
+    }>(`/machine/sequences/${encodeURIComponent(sequenceId)}/housing`, {
+      headers: firmHeader(),
+    });
+  },
+
+  async saveSequenceHousing(sequenceId, campaigns) {
+    return wireFetch<{
+      sequenceId: string;
+      campaigns: import("../machineTypes").CampaignHousingRow[];
+    }>(`/machine/sequences/${encodeURIComponent(sequenceId)}/housing`, {
+      method: "PUT",
+      headers: firmHeader(),
+      body: JSON.stringify({ campaigns }),
+    });
+  },
+
+  async enrollSequenceContacts(sequenceId, input) {
+    return wireFetch<{
+      sequenceId: string;
+      scope: string;
+      enrolled: number;
+      blocked: number;
+      ids: string[];
+    }>(`/machine/sequences/${encodeURIComponent(sequenceId)}/enroll`, {
+      method: "POST",
+      headers: firmHeader(),
+      body: JSON.stringify(input),
+    });
+  },
+
+  async upsertRulePack(input) {
+    return wireFetch<{ id: string; table: string }>(`/machine/rule-packs`, {
+      method: "PUT",
+      headers: firmHeader(),
+      body: JSON.stringify(input),
+    });
+  },
+
   async listAttemptCriteria() {
     const res = await wireFetch<{ criteria: AttemptCriteriaRow[] }>(
       `/machine/rules/attempt-criteria?firmId=${encodeURIComponent(firm())}`,

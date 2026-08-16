@@ -3,16 +3,17 @@ import {
   Alert,
   Button,
   Card,
+  Checkbox,
   Empty,
   Input,
   InputNumber,
   List,
-  Segmented,
+  Modal,
+  Radio,
   Space,
   Switch,
   Tabs,
   Tag,
-  Timeline,
   Typography,
   message,
   theme,
@@ -24,6 +25,7 @@ import {
   PlayCircleOutlined,
   PlusOutlined,
   SaveOutlined,
+  UserAddOutlined,
   UserSwitchOutlined,
 } from "@ant-design/icons";
 import {
@@ -54,7 +56,7 @@ import type {
 } from "../../../wire/machineTypes";
 import { useAuth } from "../../../auth/AuthContext";
 import { wirePorts } from "../../../wire/registry";
-import { AntAgentCanvas } from "./AntAgentCanvas";
+import { AntAgentCanvas, draftsToHousing, housingToDrafts, type CampaignDraft } from "./AntAgentCanvas";
 
 function statusColor(status: AgentDefinition["status"]) {
   if (status === "running") return "processing";
@@ -689,10 +691,18 @@ export function AntAgentWorkbench({
   const { user } = useAuth();
   const agentId = agent.id;
   const [activeTab, setActiveTab] = useState<AgentEditorTab>("editor");
-  const [editorView, setEditorView] = useState<"canvas" | "timeline">("canvas");
-  const [steps, setSteps] = useState<AgentStep[]>(() => getInitialAgentSteps(agentId));
+  const [campaigns, setCampaigns] = useState<CampaignDraft[]>([]);
   const [saving, setSaving] = useState(false);
   const [launching, setLaunching] = useState(false);
+  const [addingContact, setAddingContact] = useState(false);
+  const [addContactOpen, setAddContactOpen] = useState(false);
+  const [enrollScope, setEnrollScope] = useState<"every_firm" | "select_from">("every_firm");
+  const [bookContacts, setBookContacts] = useState<Array<{ id: string; name: string | null; email: string | null }>>([]);
+  const [selectedContactIds, setSelectedContactIds] = useState<string[]>([]);
+  const [overrideAttempt, setOverrideAttempt] = useState(false);
+  const [overrideChannel, setOverrideChannel] = useState(false);
+  const [overrideContent, setOverrideContent] = useState(false);
+  const [overrideSequencing, setOverrideSequencing] = useState(false);
   const [statusNote, setStatusNote] = useState<string | null>(null);
   const [enrollments, setEnrollments] = useState<EnrollmentRow[]>([]);
   const [agentActivity, setAgentActivity] = useState<EngagementRecordRow[]>([]);
@@ -700,19 +710,28 @@ export function AntAgentWorkbench({
   const firmName = user?.firmId ? `Firm ${user.firmId.slice(0, 8)}` : "Session firm";
 
   useEffect(() => {
-    setSteps(getInitialAgentSteps(agentId));
     setActiveTab("editor");
     setStatusNote(null);
+    const binding = AGENT_TEMPLATE_BINDING[agentId];
+    if (!binding) {
+      setCampaigns([]);
+      return;
+    }
+    void wirePorts.machineApi
+      .listSequenceHousing(binding.templateId)
+      .then(({ campaigns: rows }) => {
+        const drafts = housingToDrafts(rows);
+        setCampaigns(drafts.length ? drafts : []);
+      })
+      .catch(() => setCampaigns([]));
     void wirePorts.machineApi
       .listTemplates()
-      .then(({ templates }) => {
-        const binding = AGENT_TEMPLATE_BINDING[agentId];
-        if (!binding) return;
-        const tpl = templates.find((row) => row.id === binding.templateId);
-        const cells = Array.isArray(tpl?.cells) ? tpl!.cells : [];
-        if (!cells.length) return;
-        const hydrated = cellsToSteps(cells);
-        if (hydrated.length) setSteps(hydrated);
+      .then(({ bindings }) => {
+        const row = bindings.find((b) => b.sequence_class === binding.sequenceClass);
+        setOverrideAttempt(Boolean(row?.override_attempt));
+        setOverrideChannel(Boolean(row?.override_channel));
+        setOverrideContent(Boolean(row?.override_content));
+        setOverrideSequencing(Boolean(row?.override_sequencing));
       })
       .catch(() => undefined);
   }, [agentId]);
@@ -757,10 +776,6 @@ export function AntAgentWorkbench({
     };
   }, [agentId, statusNote]);
 
-  const addStep = (kind: "email" | "consultant_task") => {
-    setSteps((current) => insertAgentStep(current, kind, current.length - 1));
-  };
-
   const handleSave = async () => {
     const binding = AGENT_TEMPLATE_BINDING[agentId];
     if (!binding) {
@@ -771,19 +786,21 @@ export function AntAgentWorkbench({
     setSaving(true);
     setStatusNote(null);
     try {
-      const cells = stepsToTemplateCells(steps);
-      const tpl = await wirePorts.machineApi.upsertTemplate({
-        id: binding.templateId,
-        sequenceClass: binding.sequenceClass,
-        label: agent.name,
-        cells,
-      });
-      const bind = await wirePorts.machineApi.upsertBinding({
+      const saved = await wirePorts.machineApi.saveSequenceHousing(
+        binding.templateId,
+        draftsToHousing(campaigns),
+      );
+      await wirePorts.machineApi.upsertBinding({
         sequenceClass: binding.sequenceClass,
         templateId: binding.templateId,
         variableBindings: { agentId, firm_name: firmName },
+        overrideAttempt,
+        overrideChannel,
+        overrideContent,
+        overrideSequencing,
       });
-      const note = `Saved ${tpl.cells} cells → ${tpl.id}; binding ${bind.id ?? binding.sequenceClass}`;
+      setCampaigns(housingToDrafts(saved.campaigns));
+      const note = `Saved ${saved.campaigns.length} campaigns → ${binding.templateId}`;
       setStatusNote(note);
       message.success(note);
     } catch (err) {
@@ -809,7 +826,7 @@ export function AntAgentWorkbench({
       }
       const mapped = AGENT_TEMPLATE_BINDING[agentId];
       const { templates, bindings } = await wirePorts.machineApi.listTemplates();
-      const seqClass = mapped?.sequenceClass ?? "optin_launch";
+      const seqClass = mapped?.sequenceClass ?? "optin";
       const binding = bindings.find((b) => b.sequence_class === seqClass);
       const template =
         templates.find((tpl) => tpl.id === (binding?.template_id ?? mapped?.templateId)) ??
@@ -864,6 +881,19 @@ export function AntAgentWorkbench({
                 {statusNote}
               </Typography.Text>
             ) : null}
+            <Button
+              icon={<UserAddOutlined />}
+              onClick={() => {
+                void wirePorts.machineApi.listContactRecords().then((rows) => {
+                  setBookContacts(rows.map((r) => ({ id: r.id, name: r.name, email: r.email })));
+                  setSelectedContactIds(rows.map((r) => r.id));
+                  setEnrollScope("every_firm");
+                  setAddContactOpen(true);
+                }).catch((err) => message.error(`Book load failed: ${String(err)}`));
+              }}
+            >
+              Add contact
+            </Button>
             <Button icon={<SaveOutlined />} loading={saving} onClick={() => void handleSave()}>
               Save
             </Button>
@@ -887,101 +917,32 @@ export function AntAgentWorkbench({
           label: tab.label,
           children:
             tab.id === "editor" ? (
-              <div style={{ height: "100%", display: "flex", flexDirection: "column", minHeight: 0 }}>
-                <div
-                  style={{
-                    flexShrink: 0,
-                    padding: "8px 16px",
-                    borderBottom: `1px solid ${token.colorSplit}`,
-                    background: token.colorBgContainer,
-                  }}
-                >
-                  <Segmented
-                    value={editorView}
-                    onChange={(value) => setEditorView(value as "canvas" | "timeline")}
-                    options={[
-                      { label: "Mock", value: "canvas" },
-                      { label: "Timeline (today)", value: "timeline" },
-                    ]}
-                  />
-                </div>
-                <div style={{ flex: 1, minHeight: 0, minWidth: 0 }}>
-                  {editorView === "canvas" ? (
-                    <AntAgentCanvas agent={agent} />
-                  ) : (
-                    <div style={{ height: "100%", display: "flex", minHeight: 0 }}>
-                      <aside
-                        style={{
-                          width: 230,
-                          flexShrink: 0,
-                          borderRight: `1px solid ${token.colorSplit}`,
-                          padding: 12,
-                          background: token.colorBgLayout,
-                          overflow: "auto",
-                        }}
-                      >
-                        <Typography.Text strong>Step toolbar</Typography.Text>
-                        <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginTop: 4 }}>
-                          Add outreach and consultant work to the sequence.
-                        </Typography.Paragraph>
-                        <Space direction="vertical" style={{ width: "100%" }}>
-                          {AGENT_STEP_TYPES.map((stepType) => (
-                            <Button
-                              key={stepType.id}
-                              block
-                              icon={stepType.id === "email" ? <MailOutlined /> : <UserSwitchOutlined />}
-                              onClick={() => addStep(stepType.id)}
-                            >
-                              {stepType.label}
-                            </Button>
-                          ))}
-                        </Space>
-                      </aside>
-                      <div
-                        data-register-surface="Agent / sequence editor"
-                        style={{ flex: 1, minWidth: 0, minHeight: 0, overflow: "auto", padding: 18 }}
-                      >
-                        {steps.length === 0 ? (
-                          <Empty
-                            description="Start this agent by adding an email or consultant task."
-                            image={Empty.PRESENTED_IMAGE_SIMPLE}
-                          >
-                            <Space>
-                              <Button icon={<PlusOutlined />} onClick={() => addStep("email")}>
-                                Add email
-                              </Button>
-                              <Button icon={<PlusOutlined />} onClick={() => addStep("consultant_task")}>
-                                Add consultant task
-                              </Button>
-                            </Space>
-                          </Empty>
-                        ) : (
-                          <Timeline
-                            items={steps.map((step, index) => ({
-                              color: step.kind === "email" ? "blue" : "purple",
-                              children: (
-                                <StepCard
-                                  step={step}
-                                  index={index}
-                                  total={steps.length}
-                                  onMove={(from, to) => setSteps((current) => reorderSteps(current, from, to))}
-                                  onUpdate={(updated) =>
-                                    setSteps((current) =>
-                                      current.map((item) => (item.id === updated.id ? updated : item)),
-                                    )
-                                  }
-                                />
-                              ),
-                            }))}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <AntAgentCanvas campaigns={campaigns} onChange={setCampaigns} />
             ) : tab.id === "settings" ? (
-              <AgentSettingsPanel />
+              <div>
+                <div style={{ padding: 16 }}>
+                  <Typography.Title level={5}>Inherit / override (this sequence)</Typography.Title>
+                  <Space direction="vertical">
+                    <Space>
+                      <Switch checked={overrideAttempt} onChange={setOverrideAttempt} />
+                      <Typography.Text>Override attempt cycle</Typography.Text>
+                    </Space>
+                    <Space>
+                      <Switch checked={overrideChannel} onChange={setOverrideChannel} />
+                      <Typography.Text>Override channel order</Typography.Text>
+                    </Space>
+                    <Space>
+                      <Switch checked={overrideContent} onChange={setOverrideContent} />
+                      <Typography.Text>Override content</Typography.Text>
+                    </Space>
+                    <Space>
+                      <Switch checked={overrideSequencing} onChange={setOverrideSequencing} />
+                      <Typography.Text>Override sequencing</Typography.Text>
+                    </Space>
+                  </Space>
+                </div>
+                <AgentSettingsPanel />
+              </div>
             ) : tab.id === "contacts" ? (
               enrollments.length === 0 ? (
                 <Empty style={{ marginTop: 48 }} description={emptyCopy.contacts} />
@@ -1032,6 +993,58 @@ export function AntAgentWorkbench({
           content: { flex: 1, minHeight: 0, overflow: "hidden" },
         }}
       />
+      <Modal
+        title="Add contact"
+        open={addContactOpen}
+        confirmLoading={addingContact}
+        onCancel={() => setAddContactOpen(false)}
+        onOk={() => {
+          const binding = AGENT_TEMPLATE_BINDING[agentId];
+          if (!binding) {
+            message.warning("No sequence binding");
+            return;
+          }
+          setAddingContact(true);
+          void wirePorts.machineApi
+            .enrollSequenceContacts(binding.templateId, {
+              scope: enrollScope,
+              contactIds: enrollScope === "select_from" ? selectedContactIds : undefined,
+              agentRef: binding.templateId,
+            })
+            .then((result) => {
+              const note = `Enrolled ${result.enrolled} · blocked ${result.blocked}`;
+              setStatusNote(note);
+              message.success(note);
+              setAddContactOpen(false);
+            })
+            .catch((err) => message.error(`Enroll failed: ${String(err)}`))
+            .finally(() => setAddingContact(false));
+        }}
+      >
+        <Radio.Group
+          value={enrollScope}
+          onChange={(event) => setEnrollScope(event.target.value)}
+          style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}
+        >
+          <Radio value="every_firm">Every firm</Radio>
+          <Radio value="select_from">Select from</Radio>
+        </Radio.Group>
+        {enrollScope === "select_from" ? (
+          <Checkbox.Group
+            value={selectedContactIds}
+            onChange={(ids) => setSelectedContactIds(ids as string[])}
+            style={{ display: "flex", flexDirection: "column", gap: 6 }}
+            options={bookContacts.map((row) => ({
+              value: row.id,
+              label: row.name || row.email || row.id,
+            }))}
+          />
+        ) : (
+          <Typography.Text type="secondary">
+            Enrolls every contact_records row (all TEXT firm ids). Halt still per enrollment firm.
+          </Typography.Text>
+        )}
+      </Modal>
     </div>
   );
 }

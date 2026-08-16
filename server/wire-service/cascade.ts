@@ -336,6 +336,34 @@ export async function escalateAttemptWindow(
     }
   }
 
+  if (!toChannel) {
+    const enr = attempt.enrollment_id
+      ? await pool.query<{ sequence_id: string | null; campaign_id: string | null }>(
+          `SELECT sequence_id, campaign_id FROM enrollment WHERE id=$1`,
+          [attempt.enrollment_id],
+        )
+      : { rows: [] as Array<{ sequence_id: string | null; campaign_id: string | null }> };
+    const { recordCampaignFailure } = await import("./campaignHousing.ts");
+    const failId = await recordCampaignFailure(pool, {
+      firmId: attempt.firm_id,
+      contactId: attempt.contact_id,
+      sequenceId: enr.rows[0]?.sequence_id ?? null,
+      campaignId: enr.rows[0]?.campaign_id ?? null,
+      payload: { attemptId: attempt.id, criteriaId: criteria.id, setValue },
+    });
+    try {
+      const { dispatchEventToWorkflows } = await import("./workflowWalk.ts");
+      await dispatchEventToWorkflows(pool, {
+        firmId: attempt.firm_id,
+        eventName: "campaign_failure",
+        payload: { campaignFailureId: failId, attemptId: attempt.id },
+        contactIds: [attempt.contact_id],
+      });
+    } catch (err) {
+      console.warn("[cascade] campaign_failure dispatch:", err);
+    }
+  }
+
   return {
     attemptId: attempt.id,
     criteriaId: criteria.id,
@@ -452,32 +480,42 @@ export async function enrollAndActuate(input: EnrollActuateInput) {
   const live = shouldLiveSend(input.contactId);
   const id = `enr-${randomUUID()}`;
   const tpl = await resolveBoundTemplate(pool, input.firmId, input.agentRef);
+  const sequenceId = input.sequenceId ?? tpl?.templateId ?? input.agentRef;
+  const { firstCampaignId, firstAuthoredChannel } = await import("./campaignHousing.ts");
+  const campaignId = await firstCampaignId(pool, sequenceId);
+  const authored = await firstAuthoredChannel(pool, campaignId);
   const firstCell: NormalizedCell | null = tpl?.cells[0] ?? null;
   const payload = {
     ...(input.payload ?? {}),
     dryRun: !live,
     templateId: tpl?.templateId ?? input.agentRef,
     cellId: firstCell?.id ?? null,
+    campaignId,
   };
 
   await pool.query(
-    `INSERT INTO enrollment (id, firm_id, contact_id, agent_ref, sequence_id, workflow_run_id, payload)
-     VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb)`,
+    `INSERT INTO enrollment (id, firm_id, contact_id, agent_ref, sequence_id, workflow_run_id, payload, campaign_id)
+     VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8)`,
     [
       id,
       input.firmId,
       input.contactId,
       input.agentRef,
-      input.sequenceId ?? tpl?.templateId ?? null,
+      sequenceId,
       input.workflowRunId ?? null,
       JSON.stringify(payload),
+      campaignId,
     ],
   );
 
   const order = await loadChannelOrder(pool, input.firmId);
-  // Authored cell channel wins; ladder is within-cell escalation after that.
+  // Authored campaign_channel wins when Override this; else ladder head.
   const owner =
-    input.ownerChannel ?? firstCell?.channel ?? order[0] ?? "text";
+    input.ownerChannel ??
+    (authored?.token === "call" ? order[0] : authored?.token) ??
+    firstCell?.channel ??
+    order[0] ??
+    "text";
   const attemptId = `att-${randomUUID()}`;
   const now = new Date().toISOString();
   const state: AttemptState = {
@@ -506,9 +544,17 @@ export async function enrollAndActuate(input: EnrollActuateInput) {
 
   let send: DispatchResult | undefined;
   if (input.fireFirstStep !== false) {
-    const subject = firstCell?.subject ?? `Tower — ${input.agentRef}`;
+    const authoredContent = (authored?.content ?? {}) as Record<string, unknown>;
+    const subject =
+      (typeof authoredContent.subject === "string" && authoredContent.subject) ||
+      firstCell?.subject ||
+      `Tower — ${input.agentRef}`;
     const bodyText =
-      firstCell?.bodyText ?? `Sequence start via ${input.agentRef}`;
+      (typeof authoredContent.body === "string" && authoredContent.body) ||
+      (typeof authoredContent.body_text === "string" && authoredContent.body_text) ||
+      (typeof authoredContent.bodyText === "string" && authoredContent.bodyText) ||
+      firstCell?.bodyText ||
+      `Sequence start via ${input.agentRef}`;
     send = await actuateChannelSend({
       firmId: input.firmId,
       contactId: input.contactId,
@@ -736,7 +782,11 @@ export async function tickOnce(now = new Date()): Promise<{
       continue;
     }
 
-    // Authored cell cursor first (day/offset walk), then within-cell channel ladder.
+    // Campaign cursor first (objective met → next ord), then leftover cell walk, then 7b ladder.
+    if (attempt.enrollment_id) {
+      const { advanceEnrollmentCampaign } = await import("./campaignHousing.ts");
+      await advanceEnrollmentCampaign(pool, attempt.enrollment_id);
+    }
     {
       const cellFire = await advanceTemplateCellIfDue(pool, attempt, now);
       if (cellFire) fired.push(cellFire);

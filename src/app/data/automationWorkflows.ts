@@ -35,18 +35,28 @@ export type WorkflowEditorTab = "workflow" | "runs" | "settings" | "enrollment";
 export type WorkflowNodeType = "trigger" | "constant" | "branch" | "rule" | "action" | "exit";
 
 export type WorkflowTriggerEvent =
+  | "fact_writebacks"
+  | "meeting_booked"
+  | "campaign_failure"
+  | "consent_records.opt_out"
+  | "halt_records"
+  | "ct_firms"
+  | "eligibility.changed"
   | "audit.completed"
   | "audit.failed"
+  | "consent_records.sequenced"
   | "contact.created"
   | "contact.updated"
-  | "import.created"
-  | "eligibility.changed";
+  | "import.created";
 
 export type WorkflowActionType =
   | "enroll_sequence"
+  | "call_agent"
+  | "ascribe_tag"
   | "manage_lists"
   | "assign_task"
-  | "notify_consultant";
+  | "notify_consultant"
+  | "run_audit";
 
 export type WorkflowBranchKind = "true_false" | "multi_split" | "delay" | "if";
 
@@ -59,17 +69,34 @@ export type WorkflowTriggerKind = "event" | "schedule" | "manual" | "constant" |
 /** Agent / sequence_template refs Action nodes bind to (resolved via firm_sequence_binding). */
 export type WorkflowAgentRef =
   | "tpl.optin_launch.v1"
-  | "tpl.launch_day.v1"
   | "tpl.reactivation.v1"
   | "tpl.reengagement.v1";
 
 export const WORKFLOW_AGENT_OPTIONS: { id: WorkflowAgentRef; label: string; sequenceClass: string }[] =
   [
-    { id: "tpl.optin_launch.v1", label: "Opt-in launch agent", sequenceClass: "optin_launch" },
-    { id: "tpl.launch_day.v1", label: "Launch day agent", sequenceClass: "launch_day" },
-    { id: "tpl.reactivation.v1", label: "Reactivation agent", sequenceClass: "reactivation" },
-    { id: "tpl.reengagement.v1", label: "Re-engagement / nudge agent", sequenceClass: "reengagement" },
+    { id: "tpl.optin_launch.v1", label: "Opt-in sequence", sequenceClass: "optin" },
+    { id: "tpl.reactivation.v1", label: "Reactivation sequence", sequenceClass: "reactivation" },
+    { id: "tpl.reengagement.v1", label: "Re-engagement sequence", sequenceClass: "reengagement" },
   ];
+
+export const ACTION_TYPE_DEFAULT_LABELS: Record<WorkflowActionType, string> = {
+  enroll_sequence: "Call agent",
+  call_agent: "Call agent",
+  ascribe_tag: "Ascribe a tag",
+  manage_lists: "Manage lists",
+  assign_task: "Assign a task",
+  notify_consultant: "Notify consultant",
+  run_audit: "Audit the contacts",
+};
+
+export const WORKFLOW_ACTION_TYPE_OPTIONS: { id: WorkflowActionType; label: string }[] = [
+  { id: "call_agent", label: ACTION_TYPE_DEFAULT_LABELS.call_agent },
+  { id: "run_audit", label: ACTION_TYPE_DEFAULT_LABELS.run_audit },
+  { id: "ascribe_tag", label: ACTION_TYPE_DEFAULT_LABELS.ascribe_tag },
+  { id: "manage_lists", label: ACTION_TYPE_DEFAULT_LABELS.manage_lists },
+  { id: "assign_task", label: ACTION_TYPE_DEFAULT_LABELS.assign_task },
+  { id: "notify_consultant", label: ACTION_TYPE_DEFAULT_LABELS.notify_consultant },
+];
 
 export const WORKFLOW_CONSTANT_PACK_OPTIONS: { id: string; label: string }[] = [
   { id: "pack.crs.defaults", label: "CRS defaults pack" },
@@ -103,6 +130,20 @@ export type WorkflowNodeData = {
   actionSummary?: string;
   /** Binds Action → action.agent_ref / firm_sequence_binding */
   agentRef?: WorkflowAgentRef | string;
+  assignMode?: "existing" | "from_template";
+  copySequenceClass?: "optin" | "reengagement" | "reactivation";
+  tag?: string;
+  formQuestionIds?: string[];
+  /** A12 — objective declared on the Agents action. */
+  objectiveName?: string;
+  dataRequestOn?: boolean;
+  /** A16 — If reads the previous node's output. */
+  previousResultFrom?: string;
+  ifThen?: string;
+  ifElse?: string;
+  grain?: "global" | "local";
+  scope?: "every_firm" | "select_from";
+  scopeContactIds?: string[];
   delayLabel?: string;
   conditionConfig?: IfConditionConfig;
   runStatus?: WorkflowNodeRunStatus;
@@ -136,11 +177,16 @@ export const TRIGGER_EVENTS_BY_TARGET: Record<
     { id: "audit.failed", label: "Audit failed" },
   ],
   contact: [
-    { id: "contact.created", label: "Contact created" },
-    { id: "contact.updated", label: "Contact updated" },
+    { id: "fact_writebacks", label: "Fact writeback" },
+    { id: "consent_records.opt_out", label: "Consent opt-out" },
+    { id: "halt_records", label: "Halt" },
   ],
-  import: [{ id: "import.created", label: "Import created" }],
-  client: [{ id: "eligibility.changed", label: "Eligibility changed" }],
+  import: [{ id: "ct_firms", label: "Firm provisioned" }],
+  client: [
+    { id: "eligibility.changed", label: "Eligibility changed" },
+    { id: "meeting_booked", label: "Meeting booked" },
+    { id: "campaign_failure", label: "Campaign failure" },
+  ],
 };
 
 export type PaletteBlock = {
@@ -194,12 +240,16 @@ export const WORKFLOW_TRIGGER_OPTIONS: TriggerOption[] = [
 
 /** Flat catalog of machine event names Trigger(event) can subscribe to. */
 export const WORKFLOW_EVENT_CATALOG: { id: WorkflowTriggerEvent; label: string }[] = [
+  { id: "fact_writebacks", label: "Fact writeback" },
+  { id: "meeting_booked", label: "Meeting booked" },
+  { id: "campaign_failure", label: "Campaign failure" },
+  { id: "consent_records.opt_out", label: "Consent opt-out" },
+  { id: "halt_records", label: "Halt" },
+  { id: "ct_firms", label: "Firm provisioned" },
   { id: "eligibility.changed", label: "Eligibility changed" },
-  { id: "contact.created", label: "Contact created" },
-  { id: "contact.updated", label: "Contact updated" },
-  { id: "import.created", label: "Import created" },
   { id: "audit.completed", label: "Audit completed" },
   { id: "audit.failed", label: "Audit failed" },
+  { id: "consent_records.sequenced", label: "Consent sequenced" },
 ];
 
 export const WORKFLOW_PALETTE_BLOCKS: PaletteBlock[] = [
@@ -249,10 +299,12 @@ export const WORKFLOW_PALETTE_BLOCKS: PaletteBlock[] = [
     module: "conditions",
     nodeType: "branch",
     defaultData: {
-      label: "If",
+      label: "If X — previous result",
       branchKind: "if",
       conditionConfig: emptyIfConditionConfig(),
-      filterSummary: formatIfConditionSummary(emptyIfConditionConfig()),
+      filterSummary: "Calls from the previous result",
+      ifThen: "Assign agent",
+      ifElse: "stop",
       configured: true,
     },
   },
@@ -388,14 +440,41 @@ export const WORKFLOW_PALETTE_BLOCKS: PaletteBlock[] = [
   },
   {
     id: "action-sequence",
-    label: "Manage sequences",
-    description: "Enroll or remove from a sequence",
+    label: "Call agent",
+    description: "Assign an existing sequence or copy from a template",
     module: "actions",
     nodeType: "action",
     defaultData: {
-      label: "Manage sequences",
-      actionType: "enroll_sequence",
-      actionSummary: "Add to sequence…",
+      label: "Call agent",
+      actionType: "call_agent",
+      assignMode: "existing",
+      actionSummary: "Assign existing sequence…",
+      configured: false,
+    },
+  },
+  {
+    id: "action-audit",
+    label: "Audit the contacts",
+    description: "Run an audit on the pulled contacts",
+    module: "actions",
+    nodeType: "action",
+    defaultData: {
+      label: "Audit the contacts",
+      actionType: "run_audit",
+      actionSummary: "Audit the contacts",
+      configured: true,
+    },
+  },
+  {
+    id: "action-tag",
+    label: "Ascribe a tag",
+    description: "Write contact_tag",
+    module: "actions",
+    nodeType: "action",
+    defaultData: {
+      label: "Ascribe a tag",
+      actionType: "ascribe_tag",
+      actionSummary: "Ascribe a tag",
       configured: false,
     },
   },
@@ -924,6 +1003,15 @@ export function createNodeFromBlock(
       actionType: block.defaultData.actionType,
       actionSummary: block.defaultData.actionSummary,
       agentRef: block.defaultData.agentRef,
+      assignMode: block.defaultData.assignMode,
+      copySequenceClass: block.defaultData.copySequenceClass,
+      tag: block.defaultData.tag,
+      formQuestionIds: block.defaultData.formQuestionIds,
+      objectiveName: block.defaultData.objectiveName,
+      dataRequestOn: block.defaultData.dataRequestOn,
+      previousResultFrom: block.defaultData.previousResultFrom,
+      ifThen: block.defaultData.ifThen,
+      ifElse: block.defaultData.ifElse,
       constantsPackId: block.defaultData.constantsPackId,
       webhookId: block.defaultData.webhookId,
       scheduleCron: block.defaultData.scheduleCron,

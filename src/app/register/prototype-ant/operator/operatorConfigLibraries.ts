@@ -82,7 +82,7 @@ const SEED: ConfigPack[] = [
     status: "Published",
     summary: "Opt-in → nudge → meeting invite sequence",
     templateId: "tpl.optin_launch.v1",
-    sequenceClass: "optin_launch",
+    sequenceClass: "optin",
   },
   {
     id: "agent-nudge",
@@ -157,10 +157,10 @@ export function resolveEngagementBinding(pack: ConfigPack | null | undefined): {
     return { templateId: pack.templateId, sequenceClass: pack.sequenceClass };
   }
   const fallback: Record<string, { templateId: string; sequenceClass: string }> = {
-    "agent-intake": { templateId: "tpl.optin_launch.v1", sequenceClass: "optin_launch" },
+    "agent-intake": { templateId: "tpl.optin_launch.v1", sequenceClass: "optin" },
     "agent-nudge": { templateId: "tpl.reengagement.v1", sequenceClass: "reengagement" },
     "agent-reactivation": { templateId: "tpl.reactivation.v1", sequenceClass: "reactivation" },
-    "eng-optin": { templateId: "tpl.optin_launch.v1", sequenceClass: "optin_launch" },
+    "eng-optin": { templateId: "tpl.optin_launch.v1", sequenceClass: "optin" },
     "eng-nudge": { templateId: "tpl.reengagement.v1", sequenceClass: "reengagement" },
   };
   return fallback[pack.id] ?? null;

@@ -15,6 +15,11 @@ import {
   walkValidatedWorkflow,
   type RfNode,
 } from "./workflowWalk.ts";
+import {
+  loadHousing,
+  saveHousing,
+  type CampaignDraft,
+} from "./campaignHousing.ts";
 
 function json(c: Context, body: unknown, status = 200) {
   return c.json(body, status);
@@ -53,7 +58,49 @@ export async function handleWorkflowCreate(c: Context) {
      ON CONFLICT (workflow_id) DO UPDATE SET target=EXCLUDED.target`,
     [id, target],
   );
-  return json(c, { id, firmId: firm, name: body.name, status: "draft", target });
+  const graph = (body.graph ?? { nodes: [], edges: [] }) as { nodes?: RfNode[]; edges?: unknown[] };
+  const triggersMaterialized = await materializeTriggersFromGraph(pool, id, firm, {
+    nodes: graph.nodes ?? [],
+    edges: (graph.edges ?? []) as never,
+  });
+  for (const node of graph.nodes ?? []) {
+    if (node.type !== "rule") continue;
+    const data = (node.data ?? {}) as Record<string, unknown>;
+    const cfg =
+      data.ruleConfig && typeof data.ruleConfig === "object"
+        ? (data.ruleConfig as Record<string, unknown>)
+        : {};
+    const packId = String(cfg.packId ?? `rpack-${id}-${node.id}`);
+    await pool.query(
+      `INSERT INTO rule_pack
+         (id, firm_id, workflow_id, name, families, custom_json, named_code, named_code_on, updated_at)
+       VALUES ($1,$2,$3,$4,$5::jsonb,$6::jsonb,$7,$8,now())
+       ON CONFLICT (id) DO UPDATE SET
+         families=EXCLUDED.families,
+         custom_json=EXCLUDED.custom_json,
+         named_code=EXCLUDED.named_code,
+         named_code_on=EXCLUDED.named_code_on,
+         updated_at=now()`,
+      [
+        packId,
+        firm,
+        id,
+        String(data.label ?? data.ruleSummary ?? "Rule"),
+        JSON.stringify(cfg.enabledOutcomeIds ?? cfg.families ?? []),
+        JSON.stringify(cfg.customJson ?? null),
+        typeof cfg.namedCode === "string" ? cfg.namedCode : null,
+        Boolean(cfg.namedCodeOn),
+      ],
+    );
+  }
+  return json(c, {
+    id,
+    firmId: firm,
+    name: body.name,
+    status: "draft",
+    target,
+    triggersMaterialized,
+  });
 }
 
 /** Activate: draft → active + materialize workflow_trigger rows from graph. */
@@ -395,15 +442,22 @@ export async function handleFactWriteback(c: Context) {
     eventPayload: { writebackId: writeId, fieldKey, contactId },
   });
 
+  const factDispatched = await dispatchEventToWorkflows(pool, {
+    firmId: firm,
+    eventName: "fact_writebacks",
+    payload: { writebackId: writeId, fieldKey, contactId },
+    contactIds: [contactId],
+  });
+
   return json(c, {
     writebackId: writeId,
     contactId,
     fieldKey,
     missingSignalIds: missingIds,
     cascade: [{ table: "fact_writebacks", id: writeId }, ...cascade],
-    workflowsFired,
+    workflowsFired: [...factDispatched, ...workflowsFired],
     gate: sendGateSnapshot(),
-    note: "fact_writeback → re-eval → eligibility.changed",
+    note: "fact_writebacks dispatched; eligibility.changed also emitted",
   });
 }
 
@@ -518,6 +572,13 @@ export async function handleAuditRunCreate(c: Context) {
     [runId, JSON.stringify({ contacts: contacts.length, ready: verdicts.filter((v) => v.ready).length })],
   );
 
+  const dispatched = await dispatchEventToWorkflows(pool, {
+    firmId: firm,
+    eventName: "audit.completed",
+    payload: { auditRunId: runId, contacts: contacts.length },
+    contactIds: contacts.map((c) => c.id),
+  });
+
   return json(c, {
     id: runId,
     firm_id: firm,
@@ -528,6 +589,7 @@ export async function handleAuditRunCreate(c: Context) {
     finished_at: new Date().toISOString(),
     contacts: contacts.length,
     verdicts,
+    workflowsFired: dispatched,
   });
 }
 
@@ -613,7 +675,8 @@ export async function handleOnboardingFire(c: Context) {
 
   const bind = await pool.query<{ template_id: string }>(
     `SELECT template_id FROM firm_sequence_binding
-     WHERE firm_id=$1 AND sequence_class='optin_launch'`,
+     WHERE firm_id=$1 AND sequence_class='optin'
+     ORDER BY is_default DESC LIMIT 1`,
     [firm],
   );
   const agentRef = bind.rows[0]?.template_id ?? "tpl.optin_launch.v1";
@@ -771,15 +834,26 @@ export async function handleBindingUpsert(c: Context) {
     sequenceClass: string;
     templateId: string;
     variableBindings?: Record<string, unknown>;
+    isDefault?: boolean;
+    overrideAttempt?: boolean;
+    overrideChannel?: boolean;
+    overrideContent?: boolean;
+    overrideSequencing?: boolean;
   }>();
   const id = `bind.${firm}.${body.sequenceClass}`;
   const pool = getPool();
   await pool.query(
-    `INSERT INTO firm_sequence_binding (id, firm_id, sequence_class, template_id, variable_bindings)
-     VALUES ($1,$2,$3,$4,$5::jsonb)
-     ON CONFLICT (firm_id, sequence_class) DO UPDATE SET
+    `INSERT INTO firm_sequence_binding
+       (id, firm_id, sequence_class, template_id, variable_bindings, is_default,
+        override_attempt, override_channel, override_content, override_sequencing)
+     VALUES ($1,$2,$3,$4,$5::jsonb,COALESCE($6,true),$7,$8,$9,$10)
+     ON CONFLICT (id) DO UPDATE SET
        template_id=EXCLUDED.template_id,
        variable_bindings=EXCLUDED.variable_bindings,
+       override_attempt=EXCLUDED.override_attempt,
+       override_channel=EXCLUDED.override_channel,
+       override_content=EXCLUDED.override_content,
+       override_sequencing=EXCLUDED.override_sequencing,
        updated_at=now()`,
     [
       id,
@@ -787,6 +861,11 @@ export async function handleBindingUpsert(c: Context) {
       body.sequenceClass,
       body.templateId,
       JSON.stringify(body.variableBindings ?? {}),
+      body.isDefault ?? true,
+      Boolean(body.overrideAttempt),
+      Boolean(body.overrideChannel),
+      Boolean(body.overrideContent),
+      Boolean(body.overrideSequencing),
     ],
   );
   return json(c, { id, firmId: firm, table: "firm_sequence_binding" });
@@ -1388,6 +1467,12 @@ export async function handleMachineProvision(c: Context) {
     }
   }
 
+  const dispatched = await dispatchEventToWorkflows(pool, {
+    firmId: firm,
+    eventName: "ct_firms",
+    payload: { firmId: firm, firmName, email },
+  });
+
   return json(c, {
     firmId: firm,
     firmName,
@@ -1400,6 +1485,7 @@ export async function handleMachineProvision(c: Context) {
     loginPath,
     accessPath,
     bound: true,
+    workflowsFired: dispatched,
   });
 }
 
@@ -1580,6 +1666,13 @@ export async function handleMeetingBook(c: Context) {
     ],
   );
 
+  const dispatched = await dispatchEventToWorkflows(pool, {
+    firmId: firm,
+    eventName: "meeting_booked",
+    payload: { meetingId: id, contactId, slot: body.slot ?? null },
+    contactIds: [contactId],
+  });
+
   // Close the loop: stop chasing this contact
   const stopped = await pool.query(
     `UPDATE active_attempts
@@ -1615,6 +1708,7 @@ export async function handleMeetingBook(c: Context) {
     enrollmentId,
     attemptsStopped: stopped.rowCount ?? 0,
     table: "meeting_booked",
+    workflowsFired: dispatched,
   });
 }
 
@@ -1684,4 +1778,129 @@ export async function handleConsultantsList(c: Context) {
       firmName: r.firm_name,
     })),
   });
+}
+
+export async function handleSequenceHousingGet(c: Context) {
+  const sequenceId = c.req.param("id");
+  const pool = getPool();
+  const campaigns = await loadHousing(pool, sequenceId);
+  return json(c, { sequenceId, campaigns });
+}
+
+export async function handleSequenceHousingPut(c: Context) {
+  const sequenceId = c.req.param("id");
+  const firm = await firmId(c);
+  const body = await c.req.json<{
+    firmId?: string | null;
+    campaigns: CampaignDraft[];
+  }>();
+  const pool = getPool();
+  const campaigns = await saveHousing(
+    pool,
+    sequenceId,
+    body.firmId === undefined ? firm : body.firmId,
+    body.campaigns ?? [],
+  );
+  return json(c, { sequenceId, campaigns });
+}
+
+export async function handleSequenceEnrollContacts(c: Context) {
+  const sequenceId = c.req.param("id");
+  const firm = await firmId(c);
+  const body = await c.req.json<{
+    scope?: "every_firm" | "select_from";
+    contactIds?: string[];
+    agentRef?: string;
+  }>();
+  const pool = getPool();
+  const scope = body.scope === "select_from" ? "select_from" : "every_firm";
+  let contactRows: Array<{ id: string; firm_id: string }>;
+  if (scope === "select_from") {
+    const ids = (body.contactIds ?? []).filter(Boolean);
+    if (!ids.length) {
+      const all = await pool.query<{ id: string; firm_id: string }>(
+        `SELECT id, firm_id FROM contact_records WHERE firm_id=$1`,
+        [firm],
+      );
+      contactRows = all.rows;
+    } else {
+      const picked = await pool.query<{ id: string; firm_id: string }>(
+        `SELECT id, firm_id FROM contact_records WHERE firm_id=$1 AND id = ANY($2::text[])`,
+        [firm, ids],
+      );
+      contactRows = picked.rows;
+    }
+  } else {
+    const all = await pool.query<{ id: string; firm_id: string }>(
+      `SELECT id, firm_id FROM contact_records`,
+    );
+    contactRows = all.rows;
+  }
+
+  const agentRef = body.agentRef ?? sequenceId;
+  const enrolled: string[] = [];
+  const blocked: string[] = [];
+  for (const row of contactRows) {
+    const result = await enrollAndActuate({
+      firmId: row.firm_id,
+      contactId: row.id,
+      agentRef,
+      sequenceId,
+      payload: { source: "c8_add_contact", scope },
+      purpose: "opt-in",
+    });
+    if (result.blocked === "halt") {
+      blocked.push(row.id);
+      continue;
+    }
+    enrolled.push(result.enrollmentId);
+  }
+  return json(c, {
+    sequenceId,
+    scope,
+    enrolled: enrolled.length,
+    blocked: blocked.length,
+    ids: enrolled,
+  });
+}
+
+export async function handleRulePackUpsert(c: Context) {
+  const firm = await firmId(c);
+  const body = await c.req.json<{
+    id?: string;
+    workflowId?: string;
+    name: string;
+    families?: unknown;
+    customJson?: unknown;
+    namedCode?: string | null;
+    namedCodeOn?: boolean;
+    enabled?: boolean;
+  }>();
+  const id = body.id ?? `rpack-${randomUUID()}`;
+  const pool = getPool();
+  await pool.query(
+    `INSERT INTO rule_pack
+       (id, firm_id, workflow_id, name, families, custom_json, named_code, named_code_on, enabled, updated_at)
+     VALUES ($1,$2,$3,$4,$5::jsonb,$6::jsonb,$7,$8,$9,now())
+     ON CONFLICT (id) DO UPDATE SET
+       name=EXCLUDED.name,
+       families=EXCLUDED.families,
+       custom_json=EXCLUDED.custom_json,
+       named_code=EXCLUDED.named_code,
+       named_code_on=EXCLUDED.named_code_on,
+       enabled=EXCLUDED.enabled,
+       updated_at=now()`,
+    [
+      id,
+      firm,
+      body.workflowId ?? null,
+      body.name,
+      JSON.stringify(body.families ?? []),
+      JSON.stringify(body.customJson ?? null),
+      body.namedCode ?? null,
+      Boolean(body.namedCodeOn),
+      body.enabled !== false,
+    ],
+  );
+  return json(c, { id, table: "rule_pack" });
 }

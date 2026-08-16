@@ -6,7 +6,7 @@
 export type WorkflowStatus = "draft" | "active" | "paused";
 export type WorkflowTarget = "audit" | "contact" | "import" | "client";
 export type WorkflowRunStatus = "running" | "success" | "failed" | "stopped";
-export type SequenceClass = "optin_launch" | "launch_day" | "reengagement" | "reactivation";
+export type SequenceClass = "optin" | "reengagement" | "reactivation";
 export type MotionKind = "nudge" | "reactivation" | "none";
 export type ReachabilityVerdict = "reachable" | "partial" | "unreachable";
 export type CampaignState = "armed-for-activation" | "running";
@@ -41,6 +41,7 @@ export type EnrollmentRow = {
   contact_id: string;
   agent_ref: string;
   sequence_id: string | null;
+  campaign_id?: string | null;
   workflow_run_id: string | null;
   payload: Record<string, unknown>;
   enrolled_at: string;
@@ -55,6 +56,7 @@ export type SequenceTemplateRow = {
   source: string | null;
   silences: unknown[];
   version: number;
+  firm_id?: string | null;
 };
 
 export type FirmSequenceBindingRow = {
@@ -64,6 +66,64 @@ export type FirmSequenceBindingRow = {
   template_id: string;
   overrides: unknown[];
   variable_bindings: Record<string, unknown>;
+  is_default?: boolean;
+  override_attempt?: boolean;
+  override_channel?: boolean;
+  override_content?: boolean;
+  override_sequencing?: boolean;
+};
+
+export type CampaignChannelToken = "text" | "email" | "call";
+export type CampaignObjectiveKind = "click" | "form" | "meeting";
+
+export type CampaignHousingRow = {
+  id: string;
+  firm_id: string | null;
+  sequence_id: string;
+  name: string;
+  ord: number;
+  override_this: boolean;
+  attempt_count: number | null;
+  wait_after_last_failed_seconds: number | null;
+  nth_exception: Record<string, unknown>;
+  objective: {
+    id: string;
+    kind: CampaignObjectiveKind;
+    name: string;
+    completion_table: "messaging_events" | "fact_writebacks" | "meeting_booked";
+    source: "template" | "scratch";
+  } | null;
+  channels: Array<{
+    id: string;
+    token: CampaignChannelToken;
+    ord: number;
+    override_content: boolean;
+    content: Record<string, unknown>;
+  }>;
+};
+
+export type CampaignHousingDraft = {
+  id?: string;
+  name: string;
+  ord: number;
+  overrideThis?: boolean;
+  attemptCount?: number | null;
+  waitAfterLastFailedSeconds?: number | null;
+  nthException?: Record<string, unknown>;
+  objective?: {
+    id?: string;
+    kind: CampaignObjectiveKind;
+    name: string;
+    completionTable: "messaging_events" | "fact_writebacks" | "meeting_booked";
+    source?: "template" | "scratch";
+  };
+  channels?: Array<{
+    id?: string;
+    token: CampaignChannelToken;
+    ord?: number;
+    overrideContent?: boolean;
+    content?: Record<string, unknown>;
+  }>;
 };
 
 export type EligibilityResultRow = {

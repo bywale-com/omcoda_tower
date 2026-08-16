@@ -54,6 +54,15 @@ export type RulePackDefinition = {
 export type RuleNodeConfig = {
   packId: string;
   enabledOutcomeIds: string[];
+  listingFieldIds?: string[];
+  customJson?: unknown;
+  namedCode?: string;
+  namedCodeOn?: boolean;
+  /** A2/A3 segmented control. */
+  authorMode?: "gui" | "custom";
+  namedCodeTitle?: string;
+  nudgeSignalOn?: boolean;
+  reactivationSignalOn?: boolean;
 };
 
 export type RuleCheckResult = {
