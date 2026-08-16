@@ -578,7 +578,8 @@ export const realMachineApi: MachineApiPort = {
     });
   },
 
-  async listContactRecords() {
+  async listContactRecords(opts) {
+    const scope = opts?.scope === "every_firm" ? "every_firm" : "session";
     const res = await wireFetch<{
       contacts: Array<{
         id: string;
@@ -589,7 +590,7 @@ export const realMachineApi: MachineApiPort = {
         firmName?: string | null;
         createdAt?: string | null;
       }>;
-    }>(`/machine/contact-records?firmId=${encodeURIComponent(firm())}`, {
+    }>(`/machine/contact-records?scope=${encodeURIComponent(scope)}&firmId=${encodeURIComponent(firm())}`, {
       headers: firmHeader(),
     });
     return res.contacts;

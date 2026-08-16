@@ -577,7 +577,7 @@ export type MachineApiPort = {
     expiresAt: string;
     emailed: boolean;
   }>;
-  listContactRecords(): Promise<
+  listContactRecords(opts?: { scope?: "session" | "every_firm" }): Promise<
     Array<{
       id: string;
       firmId: string;
