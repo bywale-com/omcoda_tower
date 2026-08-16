@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 23:09 UTC — **“Not n8n’s pipe” was a guard against the Input/Output panes. Bag vs pipe is not a large distinction.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 23:11 UTC — **Preview = real test on pulled sample data in the editor. Not fake math. Not the live event path.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1189,3 +1189,15 @@ Bag vs pipe is **not** a large distinction. Walk-in-order while carrying facts f
 What **does** matter, and is why I said it: live run does **not** use those panes. Editor copies previous result into Input for show. Live does not. I overstated bag-vs-pipe as if it were the point. The point was: don’t trust the panes.
 
 **Do not:** treat bag vs pipe as law. Flag **15:43**.
+
+---
+
+## 2026-08-16 23:11 UTC — Preview is a real test on pulled sample data. It is not the live event.
+
+**Why:** Founder: then what is the preview for? Is it fake? Does it not carry trigger data, run the operation, and show the selected output?
+
+**Hard:** In the **editor**, for Manual → Rule: yes it does that. Pull the records you selected in parameters (Hub demo/seed clients/contacts in the browser, not a live write). Rule **really** evaluates that object against the pack. Output **really** is that result. Purpose: author/test without waiting for a real event.
+
+Not fake math. Not the live event either. Clicking Run on an **event** trigger does **not** fill Output from a real write. When a real event later wakes the workflow, this path is not used — live rules do not read that Input or write that Output.
+
+**Do not:** call the panes random; call the live path the same as Run in the inspector. Flag **15:43**.
