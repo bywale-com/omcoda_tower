@@ -1681,9 +1681,10 @@ export async function handleMachineHealth(c: Context) {
   }
 }
 
-/** List contact_records for the session firm — empty book when freshly provisioned. */
+/** List contact_records. session = this firm. every_firm = operator book (Add contact). */
 export async function handleContactRecordsList(c: Context) {
   const firm = await firmId(c);
+  const scope = c.req.query("scope") === "every_firm" ? "every_firm" : "session";
   const pool = getPool();
   const rows = await pool.query<{
     id: string;
@@ -1694,11 +1695,16 @@ export async function handleContactRecordsList(c: Context) {
     firm_name: string | null;
     created_at: string;
   }>(
-    `SELECT c.id, c.firm_id, c.email, c.phone, c.name, f.name AS firm_name, c.created_at
-     FROM contact_records c
-     LEFT JOIN ct_firms f ON f.id = c.firm_id
-     WHERE c.firm_id=$1 ORDER BY c.updated_at DESC NULLS LAST, c.id ASC`,
-    [firm],
+    scope === "every_firm"
+      ? `SELECT c.id, c.firm_id, c.email, c.phone, c.name, f.name AS firm_name, c.created_at
+         FROM contact_records c
+         LEFT JOIN ct_firms f ON f.id = c.firm_id
+         ORDER BY f.name ASC NULLS LAST, c.name ASC NULLS LAST, c.id ASC`
+      : `SELECT c.id, c.firm_id, c.email, c.phone, c.name, f.name AS firm_name, c.created_at
+         FROM contact_records c
+         LEFT JOIN ct_firms f ON f.id = c.firm_id
+         WHERE c.firm_id=$1 ORDER BY c.updated_at DESC NULLS LAST, c.id ASC`,
+    scope === "every_firm" ? [] : [firm],
   );
   return json(c, {
     firmId: firm,
@@ -1958,7 +1964,7 @@ export async function handleAttemptCyclePut(c: Context) {
 
 export async function handleSequenceEnrollContacts(c: Context) {
   const sequenceId = c.req.param("id");
-  const firm = await firmId(c);
+  await firmId(c);
   const body = await c.req.json<{
     scope?: "every_firm" | "select_from";
     contactIds?: string[];
@@ -1970,15 +1976,11 @@ export async function handleSequenceEnrollContacts(c: Context) {
   if (scope === "select_from") {
     const ids = (body.contactIds ?? []).filter(Boolean);
     if (!ids.length) {
-      const all = await pool.query<{ id: string; firm_id: string }>(
-        `SELECT id, firm_id FROM contact_records WHERE firm_id=$1`,
-        [firm],
-      );
-      contactRows = all.rows;
+      contactRows = [];
     } else {
       const picked = await pool.query<{ id: string; firm_id: string }>(
-        `SELECT id, firm_id FROM contact_records WHERE firm_id=$1 AND id = ANY($2::text[])`,
-        [firm, ids],
+        `SELECT id, firm_id FROM contact_records WHERE id = ANY($1::text[])`,
+        [ids],
       );
       contactRows = picked.rows;
     }

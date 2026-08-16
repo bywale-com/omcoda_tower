@@ -130,9 +130,19 @@ INSERT INTO rule_attempt_criteria
   ('acr-call-not-completed',  NULL, 'not completed',    true,  'channel=call',  'not completed',    'escalate_forward', 'call',  1, 'C6')
 ON CONFLICT (id) DO NOTHING;
 
+INSERT INTO ct_firms (id, name, posture, updated_at) VALUES
+  ('firm-cedar', 'Cedar Immigration', 'Active', now()),
+  ('firm-harbor', 'Harbor RCIC', 'Active', now())
+ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, posture = EXCLUDED.posture, updated_at = now();
+
 INSERT INTO contact_records (id, firm_id, name, email, phone) VALUES
   ('cr-cedar-1', 'firm-cedar', 'Ana Ruiz', 'ana.ruiz@example.com', NULL),
-  ('cr-cedar-2', 'firm-cedar', 'Jon Hale', 'jon.hale@example.com', NULL)
+  ('cr-cedar-2', 'firm-cedar', 'Jon Hale', 'jon.hale@example.com', NULL),
+  ('cr-cedar-3', 'firm-cedar', 'Priya Shah', 'priya.shah@example.com', NULL),
+  ('cr-harbor-1', 'firm-harbor', 'Daniel Okonkwo', 'daniel.okonkwo@example.com', NULL),
+  ('cr-harbor-2', 'firm-harbor', 'Amina Cole', 'amina.cole@example.com', NULL),
+  ('cr-harbor-3', 'firm-harbor', 'Wei Chen', 'wei.chen@example.com', NULL),
+  ('cr-harbor-4', 'firm-harbor', 'Samira Haddad', 'samira.haddad@example.com', NULL)
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO enrollment (id, firm_id, contact_id, agent_ref, sequence_id, campaign_id)

@@ -4,6 +4,24 @@
 import { useState, type ReactNode } from "react";
 import { Layout, Menu, theme as antTheme } from "antd";
 import {
+  AppstoreOutlined,
+  AuditOutlined,
+  BookOutlined,
+  CustomerServiceOutlined,
+  DatabaseOutlined,
+  DollarOutlined,
+  ExperimentOutlined,
+  EyeOutlined,
+  HeartOutlined,
+  LinkOutlined,
+  MailOutlined,
+  NotificationOutlined,
+  PlusSquareOutlined,
+  RocketOutlined,
+  SafetyCertificateOutlined,
+  ThunderboltOutlined,
+} from "@ant-design/icons";
+import {
   OPERATOR_HOUSE_MODULES,
   OPERATOR_SUPPORT_MODULES,
   OPERATOR_TENANCY_MODULES,
@@ -35,6 +53,25 @@ type ModuleId =
   | (typeof OPERATOR_TENANCY_MODULES)[number]
   | (typeof OPERATOR_SUPPORT_MODULES)[number];
 
+const MODULE_ICON: Record<ModuleId, ReactNode> = {
+  "Acquisition & ads": <NotificationOutlined />,
+  "Activation & forward-deploy": <RocketOutlined />,
+  "Reference data": <DatabaseOutlined />,
+  "Configuration libraries": <AppstoreOutlined />,
+  "Sending infrastructure": <MailOutlined />,
+  "Oversight": <EyeOutlined />,
+  "Audit trail": <AuditOutlined />,
+  "Register & evolution": <ExperimentOutlined />,
+  "Founder & agency controls": <SafetyCertificateOutlined />,
+  Provision: <PlusSquareOutlined />,
+  Commercial: <DollarOutlined />,
+  "Firm operations bind": <LinkOutlined />,
+  "Book readiness": <BookOutlined />,
+  "Firm health": <HeartOutlined />,
+  "Activation state": <ThunderboltOutlined />,
+  "Customer support": <CustomerServiceOutlined />,
+};
+
 export function OperatorAntScene() {
   const { token } = antTheme.useToken();
   const [module, setModule] = useState<ModuleId>(OPERATOR_HOUSE_MODULES[0]);
@@ -44,17 +81,29 @@ export function OperatorAntScene() {
     {
       type: "group" as const,
       label: "House-global",
-      children: OPERATOR_HOUSE_MODULES.map((id) => ({ key: id, label: id })),
+      children: OPERATOR_HOUSE_MODULES.map((id) => ({
+        key: id,
+        icon: MODULE_ICON[id],
+        label: id,
+      })),
     },
     {
       type: "group" as const,
       label: "Per-tenancy",
-      children: OPERATOR_TENANCY_MODULES.map((id) => ({ key: id, label: id })),
+      children: OPERATOR_TENANCY_MODULES.map((id) => ({
+        key: id,
+        icon: MODULE_ICON[id],
+        label: id,
+      })),
     },
     {
       type: "group" as const,
       label: "Support",
-      children: OPERATOR_SUPPORT_MODULES.map((id) => ({ key: id, label: id })),
+      children: OPERATOR_SUPPORT_MODULES.map((id) => ({
+        key: id,
+        icon: MODULE_ICON[id],
+        label: id,
+      })),
     },
   ];
 
@@ -129,7 +178,7 @@ export function OperatorAntScene() {
             selectedKeys={[module]}
             items={menuItems}
             onClick={({ key }) => setModule(key as ModuleId)}
-            style={{ borderInlineEnd: "none", height: "100%" }}
+            style={{ borderInlineEnd: "none", height: "100%", overflow: "auto" }}
           />
         </Sider>
         {/* Inset lives on ModulePage (SPACING.md) — do not double-pad here. */}
