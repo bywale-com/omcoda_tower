@@ -415,3 +415,11 @@ Same vertical as [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-SLICE-PACKAGE.md): one c
 - Not freezing A6’s palette or A15’s palette as the only node kinds.
 - Not treating A7’s background Branch as the smallest workflow.
 - Not implementing A8 chevrons or blank form builder.
+
+---
+
+## Enrichment 2026-08-16 17:05 — 010 ratify + C0/C9/C11/C13
+
+010 is on **main**. Cut matched the packet. Extra `run_audit` **accepted** (writes `audit_runs`, dispatches `audit.completed`).
+
+PR [#89](https://github.com/bywale-com/omcoda_tower/pull/89) written spec: C0 / C9 / C13 / channel rules / add-channel map onto **stood-up** rows. **C11 variations do not.** Next cut: [`SYSTEMS-CHANGE-PACKET-ENRICH.md`](./SYSTEMS-CHANGE-PACKET-ENRICH.md) (`011` — `campaign_channel_variation`). Do not persist the dead three radios. Do not mint a second channel-rules table.

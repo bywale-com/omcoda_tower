@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 02:31 UTC — **Pixel walk in. Packet audited plate-by-plate. Ready for implementer cut.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 17:05 UTC — **010 ratified. #89 needs 011 variations. Rest maps.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -958,3 +958,42 @@ For **both modules, forever: no.** Housing is paper. Story 7 not promoted. I hav
 **Still not a product invent:** waitlist (new ask); C2 Additional disabled; Call port; send / book-in / lineage.
 
 **Do not:** mint qualify three times; freeze palettes; build A10/A13 as pages; implement A8.
+
+---
+
+## 2026-08-16 17:05 UTC — 010 ratified. #89 needs 011 variations. Rest maps.
+
+**Why:** Founder: go through the latest PR. Implementer already cut housing well. Did #89 / later commits add tables, fields, or system requirements that need a packet? Edit this PR or write an enrichment packet if they did.
+
+**Looked at:** main tip `4993a02` (`010_sequence_campaign_housing.sql` + `campaignHousing.ts`) · PR [#89](https://github.com/bywale-com/omcoda_tower/pull/89) `IMPLEMENTER-FACE-PASS.md` (C0, C9, C11, C13) · parent packet [`SYSTEMS-CHANGE-PACKET.md`](./SYSTEMS-CHANGE-PACKET.md).
+
+**Answer:** most of #89 was already specified. **One gap** needs a new table. That is the enrichment packet: [`SYSTEMS-CHANGE-PACKET-ENRICH.md`](./SYSTEMS-CHANGE-PACKET-ENRICH.md).
+
+### 010 extras vs 02:31 packet — accept, do not reopen
+
+| Extra | Decision |
+|-------|----------|
+| `action.type` **`run_audit`** | **Accept.** A15 audit. Write `audit_runs` then `dispatchEventToWorkflows('audit.completed')`. |
+| `seq_attempt_cycle` defaults 3 / 86400 | **Accept.** C6 examples. |
+| `campaign_failure.created_at` (no `failed_at`) | **Accept.** INSERT time is the event. |
+| Seed name “They opt in” | **E.** `kind=form` is spec. Do not CHECK the string. |
+| `enrollment.sequence_id` still nullable | Leftover. NOT NULL in 011 if nulls remain. |
+| `rule_attempt_criteria.campaign_channel_id` | Stood up. Channel-rules node uses this. **No second rules table.** |
+
+### #89 → machine (copy grain, extrapolate, no extra PNG)
+
+| Plate / writing | New table / field? | Persist |
+|-----------------|--------------------|---------|
+| **C0** gear | No | Opens C6. `sac-global`. |
+| **C9** attempt count + distance | No (columns already on `campaign`) | `attempt_count` · `wait_after_last_failed_seconds`. Ignore + Add channel on that PNG. |
+| **C11 + Add variation** | **Yes — `campaign_channel_variation`** | `apply_mode` `every` \| `only_this` \| `every_except` + `attempt_n`. Content jsonb same keys as channel. **Every** channel. Dead: three radios. |
+| Channel rules extra node | No | `rule_attempt_criteria` where `campaign_channel_id` set. Text/email/call toggle families. Shared by variations. Not per attempt. No Form rows on Call. |
+| **C13** Activity | No | Query `engagement_records` join `contact_records`. Time · Name · Firm · Channel · What happened. Not the chart. |
+| Contacts | No | Same chrome. Name · Firm · Enrolled date. C8 modal. |
+| + Add channel | No | INSERT remaining `campaign_channel.token` from `{text,email,call}`. No fourth medium. |
+| Open/closed channels | No | Canvas chrome. **No `is_open`.** |
+| Rename in place / override above modulators / modals scroll | No | Existing rows / UI. |
+
+**Hard decision:** variations are the only mint from this pass. Runtime reads `campaign_channel_variation`. Parent `campaign_channel.content` stays as leftover (like `cells`). Do not persist the dead radios.
+
+**Do not:** mint qualify from C9 leftover; mint a second channel-rules table; mint `is_open`; add a fourth channel token; overwrite 15:43.
