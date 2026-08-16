@@ -13,6 +13,8 @@ Each new plate has **one purpose**. Copy that. Everything else on that PNG is no
 
 **This pass also drew (so they cannot miss it):** C8b Select from list · C14 sequence Settings · C15 channel-rules one timer · A18 trigger Global/Local · A19 Automations Contacts. Allude to C8 / C6 / A5 when the look already exists.
 
+**UI tests:** [`IMPLEMENTER-UI-TESTS.md`](./IMPLEMENTER-UI-TESTS.md) — same product, pass/fail. Add contact is the specimen. Cannot ship that slice if any test fails.
+
 ---
 
 ## C0 — only the Agents settings control
@@ -89,6 +91,8 @@ Plate: [`agents-blueprint/C14-sequence-settings-channel-rules.png`](./agents-blu
 Add contact remains in the **header** with Save / Launch. Modal is **Every firm** / **Select from**, not a thin popover.
 
 Plate for the radios: [`C8-sequence-contacts-enroll.png`](./agents-blueprint/C8-sequence-contacts-enroll.png).
+
+**Tests (pass/fail):** [`IMPLEMENTER-UI-TESTS.md`](./IMPLEMENTER-UI-TESTS.md) suite **AC**. T-AC-01 … T-AC-14. Cannot ship Add contact if any fail.
 
 ### C8b — Select from actually opens the list (fix the modal)
 

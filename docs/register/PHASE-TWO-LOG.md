@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **18:53:** implementer packet fills the misses — Automations Contacts (A19), trigger Global/Local (A18), sequence Settings at C6 quality (C14), channel-rules one timer (C15), Select from list (C8b), canvas scroll, seed the connected tables. [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md). Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **20:17:** specify with **UI tests** (pass/fail). Specimen = Add contact. [`IMPLEMENTER-UI-TESTS.md`](./IMPLEMENTER-UI-TESTS.md). Packet still [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md). Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -925,6 +925,18 @@ Flag 15:43 untouched.
 **What we wrote / drew:** [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md). Plates: **C8b** Select from list · **C14** sequence Settings at C6 quality · **C15** channel-rules one timer + canvas scrollbar · **A18** trigger Global/Local (form submitted) · **A19** Automations Contacts. Seed named to existing `contact_records` / `enrollment` / `engagement_records` / `workflow_run` — do not mint.
 
 **Do not:** plant; collapse Global/Local with Contacts; put a timer per toggle; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 20:17 UTC — Specify with tests (UI, PM)
+
+**Why:** Founder: no ambiguity. Gap is **execution**, not planning, not specification. Point of giving instruction is that it gets built. We take engineering one level higher: not only write the spec — **specify with tests**. PM writes tests for the UI. Systems Analyst writes theirs (not this stamp; system side has not shown a depth-of-execution miss yet). Start on the UI side. If the app is underbuilt vs the mock, you cannot even use it — you don’t know what is what.
+
+**What we wrote:** [`IMPLEMENTER-UI-TESTS.md`](./IMPLEMENTER-UI-TESTS.md) — Add contact as the specimen. Fourteen pass/fail tests from the last printed spec (header, C8 modal not popover, two radios, Select from opens the list, everyone selected, deselect then pick, search, list scrolls, Contacts table, Automations same modal, start-now vs not, data from tables). More tests than the spec sentences is fair. Cannot ship the slice if any fail. Same format for the rest of the packet next.
+
+**Do not:** plant; write Playwright this stamp; overwrite 15:43.
 
 Flag 15:43 untouched.
 
