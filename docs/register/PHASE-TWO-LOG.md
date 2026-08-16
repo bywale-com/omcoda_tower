@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **20:26:** UI test = **visual.** The plate is the test. Image is enough. [`IMPLEMENTER-UI-TESTS.md`](./IMPLEMENTER-UI-TESTS.md). Packet [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md). Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **22:43:** primitives — what we can hear, what we can do. [`PRIMITIVES.md`](./PRIMITIVES.md). Automations + Agents is most of the app. Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -949,6 +949,18 @@ Flag 15:43 untouched.
 **What we wrote:** [`IMPLEMENTER-UI-TESTS.md`](./IMPLEMENTER-UI-TESTS.md) recast. Click Add contact → must look like C8. Click Select from → must look like C8b. Automations Contacts → A19. No T-AC-01…14. 20:17 prose tests were too much writing for a visual fail.
 
 **Do not:** plant; extract code from plates; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 22:43 UTC — Primitives: what we can hear, what we can do
+
+**Why:** Founder: Automations + Agents is most of the app. Adding something basic is too complicated — foundation isn’t stood up as a list. Provision is four fields on a form; Automations should do that too: make the form, listen to **this form** submitted (not global), then do the thing. “Do these things in the tables” is the wrong sentence. Do things **in the app**. That sometimes **is** the system. Need the primitives **from now** so a new idea either fits the shape or it doesn’t.
+
+**What we wrote:** [`PRIMITIVES.md`](./PRIMITIVES.md). Events we can hear. Actions we can do. Webhook is a way in, not an action. Not any-table. Provision example = form + this-form-submitted + provision a firm.
+
+**Do not:** plant; mint; overwrite 15:43.
 
 Flag 15:43 untouched.
 

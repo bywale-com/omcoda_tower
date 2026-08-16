@@ -200,10 +200,10 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 3. Form creation: **own graph node** vs **embedded** in the start-agent node (lean: embedded).
 4. When an automation starts a campaign: **settled 00:02 / law 31.** Assign to an **existing** sequence, or **create from a template**. Do not create the agent in Automations.
 5. Word “event” — **settled 23:35 / law 28:** all objectives are events. C2b and Automations triggers are the same grain. Do not split them again.
-6. Catalog of **in-system actions** besides enroll-agent. **Named:** ascribe a tag / create a record on campaign failure (law 30); **run an audit on the contacts** (01:17). Do not invent the rest.
+6. Catalog of **in-system actions** besides enroll-agent. **Shape list (22:43):** [`PRIMITIVES.md`](./PRIMITIVES.md). Named: ascribe a tag · run an audit · who this applies to · make a form · **provision a firm**. Not “write any table.” Not webhook-as-an-action.
 7. Seed §5.6 vs Hub-as-built vs the 20:24 definite-middle shape — **do not silently kill any of them**. Hub Rules are what to look at. Alignment is later.
 9. Remaining output classes besides **required data** (law 23). Do not invent a full catalog this stamp. Hub-today vs lattice is A9 / A10.
 10. **Listing of requested data on rule output + form bind** (law 25). Named 21:36 as not stood up in code. Mocked as A11–A12 (chrome) and A13 (diagram). Do not fill the listing in the product this stamp. Do not mint tables.
 11. **Ant plate of the If node** — **drawn 01:20:** A15 (chain) · A16 (open). Hub still has the plant. A13 is still not this screen.
-12. **Event catalog + global vs local** (law 27). **Drawn 18:53: A18.** Named: form completion, campaign failure, opt-out / unsubscribe, **firm created / provisioned** (01:17). Some events may not have Local (audit as one-time) — SA maps. Do not fill the rest.
+12. **Event catalog + global vs local** (law 27). **Drawn 18:53: A18.** **Shape list (22:43):** [`PRIMITIVES.md`](./PRIMITIVES.md). Form submitted (this form) · campaign failed · opt-out · firm created · audit finished · contact file imported · objective met. Not “any row changed.”
 13. **Queryable lineage** (law 29). Agent-created vs hand-created objective → path → completion → time. Minimum: queryable. Do not mint a table from this sentence.
