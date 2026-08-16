@@ -65,7 +65,7 @@ Not a test script. The path that produces each plate.
 | Agents module → Settings | **C6** global. |
 | This sequence → Settings | **C7** this sequence. Inherit from C6 unless Override is on. |
 | This sequence → **Contacts** | Enrolled list (C8). Empty until someone is on it. |
-| Contacts → **Add contact** | Filter modal. Scope: this firm / every firm / this contact within this firm. Add to sequence. Starts the mission now. |
+| This sequence header → **Add contact** | Always in the top row with Save / Launch. Opens the filter modal. Scope: this firm / every firm / this contact. Add to sequence. Starts the mission now. |
 
 Fallback if a control is not overridden: campaign → sequence Settings → Agents Settings (CSS).
 
