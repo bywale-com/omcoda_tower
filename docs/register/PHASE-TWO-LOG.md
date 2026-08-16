@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **02:19:** captions on the canon plates are **not spec**. There is no “first objective” — there is an **objective**. Launch window / Launch day are **example names**. Share [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) with SA. **01:40:** the **middle** = machinery that can hear any event and run toward any objective. Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **02:27:** pixel walk of every C1–C8 and A1–A17 PNG. The 02:19 file was a coverage table; this is the audit. Qualify caption is on **C3, C4, and C5**. Share [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) with SA. Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -843,9 +843,29 @@ Flag 15:43 untouched.
 
 Same is true for a couple of other marks across the canon images: descriptions so the founder could read the picture. Not nodes. A bad description if we use the image as spec. Audit all plates that way. Share the audit with Systems Analysts so they have not ascribe those captions as the system.
 
-**What we wrote:** [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) — every C1–C8 and A1–A17 mark is **spec**, **example name**, or **founder caption**. Closes `qualify_gate` as a UI reading of C3. Waitlist-vs-whole-book is **not on C3**. Pixels stay; this file is the reading. Do not regenerate the lineup this pass.
+**What we wrote (02:19):** a coverage table in [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md). Deep work was C3. That table is **not** the pixel walk. Superseded 02:27.
 
 **Do not:** mint `qualify` / `first_objective`; freeze Launch window / Launch day as types; treat “they opt in” as a class; put founder captions into Postgres; plant; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 02:27 UTC — Pixel walk of every canon PNG
+
+**Why:** Founder: they listed every plate. They did not actually audit every image the same way. The 02:19 file was a coverage table. C3 was the correction. A3/A6/A7 caption columns were “—”. C5 and C5b lumped. A10 and A13 lumped. C4 said leftover qualify “if still in the pixels.” Do the full walk.
+
+**What we did:** Opened every PNG in `agents-blueprint/` and `automations-blueprint/`. Rewrote [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) as a per-mark walk (S / E / C). Blueprints C4/C5 and A3/A6/A7/A14 now match the pixels.
+
+**Confirmed in pixels:**
+- **qualify — first objective met** is on **C3, C4, and C5**. Not on C5b. Not on Automations.
+- A3 caption: **“When the GUI isn’t enough — same as JSON.”**
+- A6: palette helpers, insert-menu lines, **Exit** as a node kind on that plate.
+- A7 footer: **“At least two kinds of actions.”** Background Branch is generated drift.
+- A10 ≠ A13: dashed missing class vs filled listing + form fork.
+- A14: instructional line is on the glass; “Not a third option…” is **not** on that PNG.
+
+**Do not:** treat the 02:19 table as the walk; mint `qualify` three times because it is on three plates; freeze A6 Exit with A15 If as one palette; regenerate; plant; overwrite 15:43.
 
 Flag 15:43 untouched.
 

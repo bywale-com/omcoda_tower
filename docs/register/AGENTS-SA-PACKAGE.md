@@ -41,7 +41,7 @@ Read the plate in [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) (image + 
 | **C2b** | Same modal, from scratch. One binary (click link / book this calendar / submit this form), then name it. |
 | **C3** | Two campaigns. There is **no first objective** — there is an objective. String the next campaign when it is met. Distance on the plate is founder caption, not a qualify node. Override this **off**. Do not mint `qualify` / `qualify_gate`. |
 | **C4** | Override this **on**. Channel nodes hang as **wires**. Campaign toggles stay on the campaign. Channels closed. |
-| **C5 / C5b** | Override content is a **toggle** inside the channel; on → node expands into that medium’s composer. Text, email, **call (ElevenLabs)**. Channel rules still a wire. Attempt rules are **not** here. |
+| **C5 / C5b** | Override content is a **toggle** inside the channel; on → node expands into that medium’s composer. Text, email, **call (ElevenLabs)**. Channel rules still a wire. Attempt rules are **not** here. **C5 still has the two-campaign spine and the qualify caption** (same as C3/C4 — not a node). **C5b is composers only.** |
 | **C6** | Agents Settings = **global** defaults (attempt, channel/escalation, content, sequencing). Locked on the face. |
 | **C7** | Sequence Settings = **this sequence**; inherit unless Override. Per-campaign attempt rules live **on the campaign**, not in this modal. Locked on the face. |
 | **C8** (later) | This sequence → **Contacts**. Displays enrolled. **Add contact** in the header. Scope: **Every firm** (default) or **Select from** (all selected; deselect to pick one). Starts the mission now. Not Publish. Ant tab exists; Add contact does not. |

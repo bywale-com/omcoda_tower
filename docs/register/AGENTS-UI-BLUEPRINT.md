@@ -153,7 +153,8 @@ Fallback if a control is not overridden: campaign → sequence Settings → Agen
 **On the glass:**
 - Launch window: Override this **on**. Sequencing and objective still on that card.
 - Wires to **Text / Email / Form** *(Form stale vs C5 Call)*, each **closed**. Copy: open this node to author its rules; campaign toggles stay.
-- Next campaign (example name Launch day) still closed. Leftover qualify pill in the pixels is founder caption — not spec.
+- Next campaign (example name Launch day) still closed.
+- Connector copy **is on this PNG:** **“qualify — first objective met.”** Founder caption, same as C3. Not spec.
 
 **Controls:** Override this off (returns to C3) · Open a channel (channel rules) · Override content (C5).
 
@@ -169,12 +170,16 @@ Fallback if a control is not overridden: campaign → sequence Settings → Agen
 
 **Rationale:** Content is not a wired sibling. Not a small button. **Toggle** inside the channel; on → the node **expands** to that medium’s content-creation block. Founder asked to **see text, email, and call** overridden. Call **via ElevenLabs**. Channel rules (escalation) remain the wired deeper grain. Attempt rules are **not** here.
 
-**On the glass (each channel):**
+**On the glass (C5 — full canvas, not the C5b crop):**
+- Two campaign cards still present (example names Launch window / Launch day). **Override this** on.
+- Connector copy **is on this PNG too:** **“qualify — first objective met.”** Same founder caption as C3/C4. Not a node.
 - **Override content** toggle **on** (blue). Node is tall because it now contains the composer.
 - **Text:** To `{{phone}}` · SMS body · 160 count · variable / emoji · device preview.
 - **Email:** Subject · From · Reply-to · body with formatting · personalization. Grain of the real Timeline email card, on the canvas node.
 - **Call:** badge **via ElevenLabs** · voice picker · call script · goal of this call. Richness in the image is **illustrative** of a call-authoring block, not a frozen ElevenLabs field list.
-- **Channel rules** card still wired off Text: escalation on this medium (not opened, not clicked, …).
+- **Channel rules** card still a wire: escalation on this medium (not opened, not clicked, …). Teaching ellipsis, not a catalog.
+
+**On the glass (C5b — composers only):** no campaign cards, no qualify pill. Harbor / Alex / intake copy is **example content**.
 
 **Controls:** Override content off → composer collapses, node shrinks · Open channel rules · campaign Override this still on.
 

@@ -143,7 +143,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Rationale (20:54):** Two options. Custom when the GUI isn’t enough — same idea as JSON. Escape hatch, not the default.
 
-**On the glass:** Same modal, **Custom** on. JSON of the same rule.
+**On the glass:** Same modal, **Custom** on. JSON of the same rule. Caption under the switch: **“When the GUI isn’t enough — same as JSON.”** Founder caption — not a node.
 
 **Why this does what we wanted:** not limited to code; not forbidden from code.
 
@@ -188,11 +188,11 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Rationale (21:10):** See what it looks like to select a node, add a node, then select **Action** as a node.
 
-**On the glass:** Insert control. Select Action.
+**On the glass:** Build palette **Trigger · Rule · Action · Exit**. Insert **+** on the wire. Action selected. Insert-menu helper lines (Starts the workflow / Gate or branch logic / In the app, or an agent / End the workflow) are **founder captions**. Footer **“Select a node. Then configure it.”** is a caption.
 
 **Why this does what we wanted:** the DAG is authored. Action is a kind you pick, not a hidden enroll.
 
-**Not this plate:** The If / condition node in that same picker — Hub palette has it; this plate shows Action.
+**Not this plate:** The If / condition node in that same picker — Hub palette has it; **A15** is the plate that adds Condition (If). Do not freeze A6’s Exit and A15’s If as one palette.
 
 ---
 
@@ -202,7 +202,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Rationale (21:10, law 19):** At least two kinds: **in the application** (change something inside the system) and **agents** (send people to a goal). Actions are not only outreach.
 
-**On the glass:** Agents vs in the application.
+**On the glass:** Agents vs in the application. Card body copy + footer **“At least two kinds of actions.”** are **founder captions**. Background canvas showing a **Branch** “Reactivation-worthy?” is **generated drift** — A1’s smallest is still trigger · rule · action.
 
 **Why this does what we wanted:** Automations touches more of the app. Hub already names in-app kinds (`manage_lists`, `assign_task`, `notify_consultant`) and agent enroll (`enroll_sequence` + agent ref). Do not invent a longer catalog in the picture.
 
@@ -329,7 +329,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 - Line: “You do not create an agent here. Create the agent in Agents, then assign.”
 - Two cards: **Assign to an existing sequence** (put them on one you already authored) · **Create from a template** (new copy from a sequence template, then put them on that).
 - Same three names on both sides (Opt-in / Re-engagement / Reactivation) — left tagged Existing, right tagged Sequence template. Each row is a **radio**. One selected. **No chevron / arrow.** There is nothing further after you pick the sequence (select agent = the whole sequence).
-- Footer: “Not a third option: author a new agent in this module.”
+- Footer on this PNG: **Cancel · Save** only. The sentence “Not a third option: author a new agent in this module” is **not** on the pixels. Law still; do not require that sentence as UI.
 
 **Why this does what we wanted:** the copy-vs-assign choice is obvious on the glass. It is not a third authoring place.
 
