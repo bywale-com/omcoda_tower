@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   Background,
   Controls,
@@ -9,6 +9,7 @@ import {
   useEdgesState,
   useNodesState,
   type Edge,
+  type EdgeTypes,
   type Node,
   type NodeProps,
   type NodeTypes,
@@ -16,48 +17,54 @@ import {
 import "@xyflow/react/dist/style.css";
 import {
   Button,
-  Card,
-  Checkbox,
-  Collapse,
   Descriptions,
   Drawer,
   Empty,
   Form,
   Input,
   List,
-  Radio,
   Select,
   Space,
-  Switch,
   Tabs,
   Tag,
   Typography,
   message,
   theme,
 } from "antd";
-import { ArrowDownOutlined, ArrowUpOutlined, PlayCircleOutlined, SaveOutlined } from "@ant-design/icons";
+import {
+  ArrowDownOutlined,
+  ArrowUpOutlined,
+  ForkOutlined,
+  LogoutOutlined,
+  PlayCircleOutlined,
+  SaveOutlined,
+  ThunderboltOutlined,
+} from "@ant-design/icons";
+import { FilterOutlined, PlayCircleOutlined as ActionGlyph } from "@ant-design/icons";
 import { useAutomations } from "../../../context/AutomationContext";
 import {
-  WORKFLOW_AGENT_OPTIONS,
-  WORKFLOW_ACTION_TYPE_OPTIONS,
-  ACTION_TYPE_DEFAULT_LABELS,
   WORKFLOW_CONSTANT_PACK_OPTIONS,
   WORKFLOW_EVENT_CATALOG,
   WORKFLOW_PALETTE_BLOCKS,
-  WORKFLOW_TRIGGER_OPTIONS,
+  appendNodeAfter,
   createNodeFromBlock,
   createTriggerNode,
-  getDetachedNodePosition,
+  insertNodeOnEdge,
+  relayoutWorkflowNodes,
   workflowStatusLabel,
-  type WorkflowActionType,
+  type PaletteBlock,
   type WorkflowDefinition,
   type WorkflowNodeData,
   type WorkflowNodeType,
   type WorkflowTriggerEvent,
 } from "../../../data/automationWorkflows";
-import { collectibleFieldsByCapture } from "../../../data/collectibleFields";
 import { wirePorts } from "../../../wire/registry";
 import type { EligibilityPipelineRow } from "../../../wire/machineTypes";
+import { ActionAgentsModal, ActionInAppModal, ActionKindModal } from "./automationPlates/ActionPlateModals";
+import { IfPlateModal } from "./automationPlates/IfPlateModal";
+import { PlateInsertEdge } from "./automationPlates/PlateInsertEdge";
+import { PLATE_NODE_TAG } from "./automationPlates/plateChrome";
+import { RulePlateModal } from "./automationPlates/RulePlateModal";
 
 type WorkflowFlowNode = Node<WorkflowNodeData, WorkflowNodeType>;
 
@@ -117,36 +124,44 @@ function nodeSummary(data: WorkflowNodeData) {
 
 function AntWorkflowNode({ data, type, selected }: NodeProps<WorkflowFlowNode>) {
   const workflowType = (type ?? "action") as WorkflowNodeType;
+  const chip = PLATE_NODE_TAG[workflowType];
   return (
-    <Card
-      size="small"
-      bordered
+    <div
       style={{
-        width: 220,
-        borderColor: selected ? "#1677ff" : undefined,
-        boxShadow: selected ? "0 0 0 2px rgba(22, 119, 255, 0.18)" : undefined,
+        width: 248,
+        background: "#fff",
+        borderRadius: 8,
+        border: selected ? "2px solid #1677ff" : "1px solid #e5e7eb",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+        padding: 12,
       }}
-      styles={{ body: { padding: 10 } }}
     >
       <Handle type="target" position={Position.Top} />
-      <Space direction="vertical" size={6} style={{ width: "100%" }}>
-        <Space style={{ justifyContent: "space-between", width: "100%" }}>
-          <Tag color={NODE_TONE[workflowType]} style={{ marginInlineEnd: 0 }}>
-            {NODE_TYPE_LABELS[workflowType]}
-          </Tag>
-          <Tag color={data.configured ? "success" : "warning"} style={{ marginInlineEnd: 0 }}>
-            {data.configured ? "configured" : "needs setup"}
-          </Tag>
-        </Space>
-        <Typography.Text strong ellipsis>
-          {data.label}
-        </Typography.Text>
-        <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-          {nodeSummary(data)}
-        </Typography.Text>
-      </Space>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+        <span
+          style={{
+            background: chip.bg,
+            color: chip.color,
+            fontSize: 11,
+            fontWeight: 600,
+            padding: "1px 8px",
+            borderRadius: 4,
+          }}
+        >
+          {chip.label}
+        </span>
+        <Tag color={data.configured ? "success" : "warning"} style={{ marginInlineEnd: 0 }}>
+          {data.configured ? "configured" : "needs setup"}
+        </Tag>
+      </div>
+      <Typography.Text strong style={{ display: "block", fontSize: 14 }}>
+        {data.label}
+      </Typography.Text>
+      <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+        {nodeSummary(data)}
+      </Typography.Text>
       <Handle type="source" position={Position.Bottom} />
-    </Card>
+    </div>
   );
 }
 
@@ -262,229 +277,6 @@ function NodeConfigFields({
     );
   }
 
-  if (kind === "action") {
-    const actionType = (data.actionType === "enroll_sequence" ? "call_agent" : data.actionType) ?? "call_agent";
-    const listing = collectibleFieldsByCapture("self_reportable");
-    return (
-      <Space direction="vertical" size={12} style={{ width: "100%" }}>
-        <Form.Item label="Node title">
-          <Input
-            value={data.label}
-            onChange={(event) =>
-              onPatch({
-                label: event.target.value,
-                configured: true,
-              })
-            }
-          />
-        </Form.Item>
-        <Form.Item label="Action type">
-          <Select
-            value={actionType}
-            options={WORKFLOW_ACTION_TYPE_OPTIONS.map((opt) => ({
-              value: opt.id,
-              label: opt.label,
-            }))}
-            onChange={(value: WorkflowActionType) =>
-              onPatch({
-                actionType: value,
-                label: data.label || ACTION_TYPE_DEFAULT_LABELS[value],
-                configured: true,
-                actionSummary: ACTION_TYPE_DEFAULT_LABELS[value],
-              })
-            }
-          />
-        </Form.Item>
-        {actionType === "call_agent" || actionType === "enroll_sequence" ? (
-          <>
-            <Form.Item label="Assign">
-              <Radio.Group
-                value={data.assignMode ?? "existing"}
-                onChange={(event) =>
-                  onPatch({
-                    assignMode: event.target.value,
-                    actionType: "call_agent",
-                    configured: true,
-                  })
-                }
-              >
-                <Space direction="vertical">
-                  <Radio value="existing">Assign an existing sequence</Radio>
-                  <Radio value="from_template">Copy from a template</Radio>
-                </Space>
-              </Radio.Group>
-            </Form.Item>
-            {(data.assignMode ?? "existing") === "existing" ? (
-              <Form.Item label="Sequence">
-                <Select
-                  value={data.agentRef ?? "tpl.optin_launch.v1"}
-                  options={WORKFLOW_AGENT_OPTIONS.map((opt) => ({
-                    value: opt.id,
-                    label: `${opt.label} · ${opt.id}`,
-                  }))}
-                  onChange={(value) =>
-                    onPatch({
-                      agentRef: value,
-                      actionType: "call_agent",
-                      assignMode: "existing",
-                      actionSummary: `Call agent · ${value}`,
-                      configured: true,
-                    })
-                  }
-                />
-              </Form.Item>
-            ) : (
-              <Form.Item label="Template class">
-                <Radio.Group
-                  value={data.copySequenceClass ?? "optin"}
-                  onChange={(event) => {
-                    const copySequenceClass = event.target.value as "optin" | "reengagement" | "reactivation";
-                    const opt = WORKFLOW_AGENT_OPTIONS.find((row) => row.sequenceClass === copySequenceClass);
-                    onPatch({
-                      copySequenceClass,
-                      assignMode: "from_template",
-                      actionType: "call_agent",
-                      agentRef: opt?.id,
-                      actionSummary: `Copy ${copySequenceClass} template`,
-                      configured: true,
-                    });
-                  }}
-                >
-                  <Space direction="vertical">
-                    <Radio value="optin">Opt-in</Radio>
-                    <Radio value="reengagement">Re-engagement</Radio>
-                    <Radio value="reactivation">Reactivation</Radio>
-                  </Space>
-                </Radio.Group>
-              </Form.Item>
-            )}
-            <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginBottom: 0 }}>
-              You do not create an agent here. Assign existing, or copy from a template.
-            </Typography.Paragraph>
-          </>
-        ) : null}
-        {actionType === "ascribe_tag" ? (
-          <Form.Item label="Tag">
-            <Input
-              value={data.tag ?? ""}
-              onChange={(event) =>
-                onPatch({
-                  tag: event.target.value,
-                  configured: Boolean(event.target.value.trim()),
-                  actionSummary: event.target.value,
-                })
-              }
-            />
-          </Form.Item>
-        ) : null}
-        <Form.Item label="Form questions (listing ids)">
-          <Checkbox.Group
-            value={data.formQuestionIds ?? []}
-            onChange={(ids) => onPatch({ formQuestionIds: ids as string[], configured: true })}
-            options={listing.map((field) => ({ label: field.label, value: field.id }))}
-          />
-        </Form.Item>
-      </Space>
-    );
-  }
-
-  if (kind === "rule") {
-    const listing = collectibleFieldsByCapture("self_reportable");
-    const selected = data.ruleConfig?.listingFieldIds ?? [];
-    return (
-      <Space direction="vertical" size={12} style={{ width: "100%" }}>
-        <Form.Item label="Required-data listing">
-          <Checkbox.Group
-            value={selected}
-            onChange={(ids) =>
-              onPatch({
-                ruleConfig: {
-                  packId: data.ruleConfig?.packId ?? "custom",
-                  enabledOutcomeIds: data.ruleConfig?.enabledOutcomeIds ?? [],
-                  listingFieldIds: ids as string[],
-                  customJson: data.ruleConfig?.customJson,
-                  namedCode: data.ruleConfig?.namedCode,
-                  namedCodeOn: data.ruleConfig?.namedCodeOn,
-                },
-                configured: true,
-              })
-            }
-            options={listing.map((field) => ({ label: field.label, value: field.id }))}
-          />
-        </Form.Item>
-        <Form.Item label="Custom JSON">
-          <Input.TextArea
-            rows={3}
-            value={
-              typeof data.ruleConfig?.customJson === "string"
-                ? data.ruleConfig.customJson
-                : data.ruleConfig?.customJson
-                  ? JSON.stringify(data.ruleConfig.customJson)
-                  : ""
-            }
-            onChange={(event) => {
-              let customJson: unknown = event.target.value;
-              try {
-                customJson = event.target.value.trim() ? JSON.parse(event.target.value) : null;
-              } catch {
-                customJson = event.target.value;
-              }
-              onPatch({
-                ruleConfig: {
-                  packId: data.ruleConfig?.packId ?? "custom",
-                  enabledOutcomeIds: data.ruleConfig?.enabledOutcomeIds ?? [],
-                  listingFieldIds: data.ruleConfig?.listingFieldIds ?? [],
-                  namedCode: data.ruleConfig?.namedCode,
-                  namedCodeOn: data.ruleConfig?.namedCodeOn,
-                  customJson,
-                },
-                configured: true,
-              });
-            }}
-          />
-        </Form.Item>
-        <Form.Item label="Named code (saved, run later)">
-          <Input.TextArea
-            rows={4}
-            value={data.ruleConfig?.namedCode ?? ""}
-            onChange={(event) =>
-              onPatch({
-                ruleConfig: {
-                  packId: data.ruleConfig?.packId ?? "custom",
-                  enabledOutcomeIds: data.ruleConfig?.enabledOutcomeIds ?? [],
-                  listingFieldIds: data.ruleConfig?.listingFieldIds ?? [],
-                  customJson: data.ruleConfig?.customJson,
-                  namedCodeOn: data.ruleConfig?.namedCodeOn,
-                  namedCode: event.target.value,
-                },
-                configured: true,
-              })
-            }
-          />
-        </Form.Item>
-        <Form.Item>
-          <Switch
-            checked={Boolean(data.ruleConfig?.namedCodeOn)}
-            onChange={(namedCodeOn) =>
-              onPatch({
-                ruleConfig: {
-                  packId: data.ruleConfig?.packId ?? "custom",
-                  enabledOutcomeIds: data.ruleConfig?.enabledOutcomeIds ?? [],
-                  listingFieldIds: data.ruleConfig?.listingFieldIds ?? [],
-                  customJson: data.ruleConfig?.customJson,
-                  namedCode: data.ruleConfig?.namedCode,
-                  namedCodeOn,
-                },
-              })
-            }
-            checkedChildren="named code on"
-            unCheckedChildren="named code off"
-          />
-        </Form.Item>
-      </Space>
-    );
-  }
-
   if (kind === "constant") {
     return (
       <Form.Item label="Constants pack (constants_packs)">
@@ -528,6 +320,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
   const [savedFlash, setSavedFlash] = useState(false);
   const [activeTab, setActiveTab] = useState("workflow");
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [plate, setPlate] = useState<null | "rule" | "action-kind" | "action-agents" | "action-inapp" | "if">(null);
   const [pipeline, setPipeline] = useState<EligibilityPipelineRow[]>([]);
   const [pipelineError, setPipelineError] = useState<string | null>(null);
   const skipPersistRef = useRef(true);
@@ -545,6 +338,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
     setNodes(workflow ? cloneNodes(workflow.nodes) : []);
     setEdges(workflow ? cloneEdges(workflow.edges) : []);
     setSelectedNodeId(null);
+    setPlate(null);
     setActiveTab("workflow");
   }, [workflow?.id, setEdges, setNodes]);
 
@@ -613,68 +407,92 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
   }
 
   const hasTrigger = nodes.some((node) => node.type === "trigger");
-  const paletteItems = [
+  const ruleNode = nodes.find((node) => node.type === "rule");
+  const listingIds = ruleNode?.data.ruleConfig?.listingFieldIds ?? [];
+  const previousOptions = nodes
+    .filter((node) => node.type !== "branch" && node.type !== "exit")
+    .map((node) => ({ id: node.id, label: node.data.label }));
+
+  const openNode = (node: WorkflowFlowNode) => {
+    setSelectedNodeId(node.id);
+    if (node.type === "rule") setPlate("rule");
+    else if (node.type === "action") setPlate("action-kind");
+    else if (node.type === "branch") setPlate("if");
+    else setPlate(null);
+  };
+
+  const addBlock = (block: PaletteBlock) => {
+    const last = [...nodes].sort((a, b) => a.position.y - b.position.y).at(-1);
+    const created = createNodeFromBlock(
+      block,
+      nodes.map((node) => node.id),
+      { x: last?.position.x ?? 320, y: (last?.position.y ?? 40) + 160 },
+    ) as WorkflowFlowNode | null;
+    if (!created) return;
+    if (last) {
+      const next = appendNodeAfter(nodes, edges, last.id, created);
+      setNodes(relayoutWorkflowNodes(next.nodes) as WorkflowFlowNode[]);
+      setEdges(next.edges);
+    } else {
+      setNodes([...nodes, created]);
+    }
+    openNode(created);
+  };
+
+  const plateKinds: { id: string; title: string; body: string; icon: ReactNode; disabled?: boolean; onClick: () => void }[] = [
     {
-      key: "trigger",
-      label: "Trigger",
-      children: (
-        <Space direction="vertical" size={8} style={{ width: "100%" }}>
-          {WORKFLOW_TRIGGER_OPTIONS.map((trigger) => (
-            <Button
-              key={trigger.id}
-              block
-              disabled={hasTrigger}
-              onClick={() => {
-                const next = createTriggerNode(
-                  trigger.triggerKind,
-                  nodes.map((node) => node.id),
-                ) as WorkflowFlowNode;
-                setNodes([next, ...nodes]);
-                setSelectedNodeId(next.id);
-              }}
-            >
-              {trigger.label}
-            </Button>
-          ))}
-        </Space>
-      ),
+      id: "trigger",
+      title: "Trigger",
+      body: "Starts the workflow.",
+      icon: <ThunderboltOutlined />,
+      disabled: hasTrigger,
+      onClick: () => {
+        const next = createTriggerNode("event", nodes.map((node) => node.id)) as WorkflowFlowNode;
+        setNodes(relayoutWorkflowNodes([next, ...nodes]) as WorkflowFlowNode[]);
+        setSelectedNodeId(next.id);
+        setPlate(null);
+      },
     },
-    ...(["constant", "branch", "rule", "action", "exit"] as WorkflowNodeType[]).map((type) => ({
-      key: type,
-      label: NODE_TYPE_LABELS[type],
-      children: (
-        <List
-          size="small"
-          dataSource={WORKFLOW_PALETTE_BLOCKS.filter((block) => block.nodeType === type)}
-          locale={{ emptyText: "No blocks" }}
-          renderItem={(block) => (
-            <List.Item style={{ paddingInline: 0 }}>
-              <Button
-                block
-                style={{ height: "auto", textAlign: "left", whiteSpace: "normal" }}
-                onClick={() => {
-                  const next = createNodeFromBlock(
-                    block,
-                    nodes.map((node) => node.id),
-                    getDetachedNodePosition(nodes),
-                  ) as WorkflowFlowNode | null;
-                  if (!next) return;
-                  setNodes([...nodes, next]);
-                  setSelectedNodeId(next.id);
-                }}
-              >
-                <Space direction="vertical" size={0}>
-                  <Typography.Text strong>{block.label}</Typography.Text>
-                  <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                    {block.description}
-                  </Typography.Text>
-                </Space>
-              </Button>
-            </List.Item>
-          )}
-        />
-      ),
-    })),
+    {
+      id: "rule",
+      title: "Rule",
+      body: "Gate or branch logic.",
+      icon: <FilterOutlined />,
+      onClick: () => {
+        const block = WORKFLOW_PALETTE_BLOCKS.find((row) => row.id === "rule-immigration-service-eligibility");
+        if (block) addBlock(block);
+      },
+    },
+    {
+      id: "action",
+      title: "Action",
+      body: "In the app, or an agent.",
+      icon: <ActionGlyph />,
+      onClick: () => {
+        const block = WORKFLOW_PALETTE_BLOCKS.find((row) => row.id === "action-sequence");
+        if (block) addBlock(block);
+      },
+    },
+    {
+      id: "if",
+      title: "Condition (If)",
+      body: "Calls from the previous result.",
+      icon: <ForkOutlined />,
+      onClick: () => {
+        const block = WORKFLOW_PALETTE_BLOCKS.find((row) => row.id === "condition-if");
+        if (block) addBlock(block);
+      },
+    },
+    {
+      id: "exit",
+      title: "Exit",
+      body: "End the workflow.",
+      icon: <LogoutOutlined />,
+      onClick: () => {
+        const block = WORKFLOW_PALETTE_BLOCKS.find((row) => row.id === "operation-exit");
+        if (block) addBlock(block);
+      },
+    },
   ];
 
   const handleSave = async () => {
@@ -754,7 +572,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
               <div style={{ height: "100%", display: "flex", minHeight: 0 }}>
                 <aside
                   style={{
-                    width: 260,
+                    width: 176,
                     flexShrink: 0,
                     borderRight: `1px solid ${token.colorSplit}`,
                     padding: 12,
@@ -763,28 +581,98 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
                   }}
                 >
                   <Typography.Text strong>Build</Typography.Text>
-                  <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginTop: 4 }}>
-                    Add workflow blocks to the canvas.
+                  <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginTop: 4, marginBottom: 12 }}>
+                    Add nodes to the canvas.
                   </Typography.Paragraph>
-                  <Collapse size="small" defaultActiveKey={["trigger", "action", "branch"]} items={paletteItems} />
+                  <Space direction="vertical" size={6} style={{ width: "100%" }}>
+                    {plateKinds.map((row) => (
+                      <Button
+                        key={row.id}
+                        block
+                        disabled={row.disabled}
+                        icon={row.icon}
+                        onClick={row.onClick}
+                        style={{ height: "auto", textAlign: "left", whiteSpace: "normal", padding: "8px 10px" }}
+                      >
+                        <span style={{ display: "block", fontWeight: 600 }}>{row.title}</span>
+                        <span style={{ display: "block", fontSize: 11, color: "#8c8c8c", fontWeight: 400 }}>
+                          {row.body}
+                        </span>
+                      </Button>
+                    ))}
+                  </Space>
                 </aside>
                 <div
                   data-register-surface="Workflow canvas"
-                  style={{ flex: 1, minWidth: 0, minHeight: 0, background: token.colorBgContainer }}
+                  style={{ flex: 1, minWidth: 0, minHeight: 0, background: token.colorBgContainer, position: "relative" }}
                 >
                   <ReactFlow
                     nodes={nodes}
                     edges={edges}
                     nodeTypes={nodeTypes}
+                    edgeTypes={
+                      {
+                        default: (props) => (
+                          <PlateInsertEdge
+                            {...props}
+                            hasTrigger={hasTrigger}
+                            blocks={WORKFLOW_PALETTE_BLOCKS}
+                            onInsert={(edgeId, block) => {
+                              const created = createNodeFromBlock(
+                                block,
+                                nodes.map((node) => node.id),
+                                { x: 320, y: 160 },
+                              );
+                              if (!created) return;
+                              const next = insertNodeOnEdge(nodes, edges, edgeId, created);
+                              setNodes(relayoutWorkflowNodes(next.nodes) as WorkflowFlowNode[]);
+                              setEdges(next.edges);
+                              openNode(created as WorkflowFlowNode);
+                            }}
+                          />
+                        ),
+                        automationInsert: (props) => (
+                          <PlateInsertEdge
+                            {...props}
+                            hasTrigger={hasTrigger}
+                            blocks={WORKFLOW_PALETTE_BLOCKS}
+                            onInsert={(edgeId, block) => {
+                              const created = createNodeFromBlock(
+                                block,
+                                nodes.map((node) => node.id),
+                                { x: 320, y: 160 },
+                              );
+                              if (!created) return;
+                              const next = insertNodeOnEdge(nodes, edges, edgeId, created);
+                              setNodes(relayoutWorkflowNodes(next.nodes) as WorkflowFlowNode[]);
+                              setEdges(next.edges);
+                              openNode(created as WorkflowFlowNode);
+                            }}
+                          />
+                        ),
+                      } satisfies EdgeTypes
+                    }
                     onNodesChange={onNodesChange}
                     onEdgesChange={onEdgesChange}
-                    onNodeClick={(_, node) => setSelectedNodeId(node.id)}
+                    onNodeClick={(_, node) => openNode(node)}
                     fitView
                   >
                     <Background />
                     <MiniMap pannable zoomable />
                     <Controls />
                   </ReactFlow>
+                  <Typography.Text
+                    type="secondary"
+                    style={{
+                      position: "absolute",
+                      left: 16,
+                      bottom: 12,
+                      fontSize: 12,
+                      pointerEvents: "none",
+                    }}
+                  >
+                    Select a node. Then configure it. Smallest workflow: trigger · rule · action.
+                  </Typography.Text>
                 </div>
               </div>
             ),
@@ -937,7 +825,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
 
       <Drawer
         title="Node details"
-        open={Boolean(selectedNode)}
+        open={Boolean(selectedNode) && (selectedNode?.type === "trigger" || selectedNode?.type === "constant" || selectedNode?.type === "exit")}
         onClose={() => setSelectedNodeId(null)}
         width={420}
       >
@@ -973,13 +861,84 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
               {selectedNode.data.triggerKind ? (
                 <Descriptions.Item label="Trigger kind">{selectedNode.data.triggerKind}</Descriptions.Item>
               ) : null}
-              {selectedNode.data.actionType ? (
-                <Descriptions.Item label="Action">{selectedNode.data.actionType}</Descriptions.Item>
-              ) : null}
             </Descriptions>
           </Space>
         ) : null}
       </Drawer>
+      <RulePlateModal
+        open={plate === "rule" && selectedNode?.type === "rule"}
+        title={selectedNode?.data.label ?? "Rule"}
+        config={selectedNode?.data.ruleConfig}
+        onCancel={() => {
+          setPlate(null);
+          setSelectedNodeId(null);
+        }}
+        onSave={(ruleConfig) => {
+          if (!selectedNode) return;
+          patchNodeData(setNodes, selectedNode.id, {
+            ruleConfig,
+            configured: true,
+            ruleSummary: selectedNode.data.label,
+          });
+          setPlate(null);
+          setSelectedNodeId(null);
+        }}
+      />
+      <ActionKindModal
+        open={plate === "action-kind" && selectedNode?.type === "action"}
+        onCancel={() => {
+          setPlate(null);
+          setSelectedNodeId(null);
+        }}
+        onPickAgents={() => setPlate("action-agents")}
+        onPickInApp={() => setPlate("action-inapp")}
+      />
+      <ActionAgentsModal
+        open={plate === "action-agents" && selectedNode?.type === "action"}
+        data={selectedNode?.data ?? { label: "Call agent", configured: false }}
+        listingIds={listingIds}
+        onCancel={() => {
+          setPlate(null);
+          setSelectedNodeId(null);
+        }}
+        onChangeKind={() => setPlate("action-kind")}
+        onSave={(patch) => {
+          if (!selectedNode) return;
+          patchNodeData(setNodes, selectedNode.id, patch);
+          setPlate(null);
+          setSelectedNodeId(null);
+        }}
+      />
+      <ActionInAppModal
+        open={plate === "action-inapp" && selectedNode?.type === "action"}
+        data={selectedNode?.data ?? { label: "Action", configured: false }}
+        onCancel={() => {
+          setPlate(null);
+          setSelectedNodeId(null);
+        }}
+        onChangeKind={() => setPlate("action-kind")}
+        onSave={(patch) => {
+          if (!selectedNode) return;
+          patchNodeData(setNodes, selectedNode.id, patch);
+          setPlate(null);
+          setSelectedNodeId(null);
+        }}
+      />
+      <IfPlateModal
+        open={plate === "if" && selectedNode?.type === "branch"}
+        data={selectedNode?.data ?? { label: "If X — previous result", configured: false }}
+        previousOptions={previousOptions}
+        onCancel={() => {
+          setPlate(null);
+          setSelectedNodeId(null);
+        }}
+        onSave={(patch) => {
+          if (!selectedNode) return;
+          patchNodeData(setNodes, selectedNode.id, patch);
+          setPlate(null);
+          setSelectedNodeId(null);
+        }}
+      />
     </div>
   );
 }

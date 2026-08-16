@@ -134,6 +134,13 @@ export type WorkflowNodeData = {
   copySequenceClass?: "optin" | "reengagement" | "reactivation";
   tag?: string;
   formQuestionIds?: string[];
+  /** A12 — objective declared on the Agents action. */
+  objectiveName?: string;
+  dataRequestOn?: boolean;
+  /** A16 — If reads the previous node's output. */
+  previousResultFrom?: string;
+  ifThen?: string;
+  ifElse?: string;
   grain?: "global" | "local";
   scope?: "every_firm" | "select_from";
   scopeContactIds?: string[];
@@ -292,10 +299,12 @@ export const WORKFLOW_PALETTE_BLOCKS: PaletteBlock[] = [
     module: "conditions",
     nodeType: "branch",
     defaultData: {
-      label: "If",
+      label: "If X — previous result",
       branchKind: "if",
       conditionConfig: emptyIfConditionConfig(),
-      filterSummary: formatIfConditionSummary(emptyIfConditionConfig()),
+      filterSummary: "Calls from the previous result",
+      ifThen: "Assign agent",
+      ifElse: "stop",
       configured: true,
     },
   },
@@ -998,6 +1007,11 @@ export function createNodeFromBlock(
       copySequenceClass: block.defaultData.copySequenceClass,
       tag: block.defaultData.tag,
       formQuestionIds: block.defaultData.formQuestionIds,
+      objectiveName: block.defaultData.objectiveName,
+      dataRequestOn: block.defaultData.dataRequestOn,
+      previousResultFrom: block.defaultData.previousResultFrom,
+      ifThen: block.defaultData.ifThen,
+      ifElse: block.defaultData.ifElse,
       constantsPackId: block.defaultData.constantsPackId,
       webhookId: block.defaultData.webhookId,
       scheduleCron: block.defaultData.scheduleCron,
