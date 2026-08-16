@@ -222,3 +222,15 @@ Call / ElevenLabs. Attempt-cycle columns (count, wait after last node, nth-seque
 5. Automations still later. Triggers stay off this canvas.
 
 **Process (founder 22:41):** finish what is still moving on the face **before** SA mints or rewrites cascade. This grain lock is **determined** — housing is named so PM does not re-flatten `launch_day` into `sequence_class`. SA is witness + conflict-namer until Story promotion.
+
+---
+
+## Paper 2026-08-16 01:10 — C8 on main (not a rewrite of 20:10)
+
+**C8 —** Add contact in the sequence header. Two scopes: Every firm (default) · Select from (all selected, deselect to pick). Starts now.
+
+**A. Our system:** `enrollment` + `enrollAndActuate` (`cascade.ts`, halt-blocks new). Ant Contacts tab already lists `contact_id` / `agent_ref` / `enrolled_at`. No Add button. Enroll is **one firm**.
+
+**B. Externals:** none (book already in `contact_records`). Send after enroll is loop 3 (left).
+
+**Affordances:** enroll path stood-up **per firm**. **Every firm** is missing as a machine scope. **UI would change if** Add to sequence only called today’s enroll with session `firmId` — that is not Every firm. Select from as “everyone already selected” needs a house-wide contact read we do not have.

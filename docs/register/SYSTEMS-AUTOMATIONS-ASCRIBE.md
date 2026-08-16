@@ -234,3 +234,17 @@ Already named 22:41. For C3 to **run** as drawn: campaign children on a sequence
 ### Do not
 
 Mint tonight. Continue Hub. Treat A13 as a screen. Collapse C2b with A5. Put triggers on the Agents canvas. Build a campaign picker because A12’s caption slipped.
+
+---
+
+## Paper 2026-08-16 01:10 — A14 + event law on main
+
+**A14 —** Assign existing · or create from a template. Three sequence radios. No create-agent here.
+
+**A. Our system:** Assign existing ≈ `firm_sequence_binding` + `action.agent_ref` + `enrollAndActuate`. Create-from-template = **new sequence instance** then enroll — **silent**. UNIQUE `(firm_id, sequence_class)` fights more than one named copy.
+
+**B. Externals:** enroll → send via Agents ports (loop 3 still left as product).
+
+**Affordances:** assign-existing partial (one bound template per class). Create-from-template missing. **UI would change if** both cards called the same `agent_ref` enroll.
+
+**Objectives are events (23:16–23:35):** no return wire. Completions we already have must **dispatch** `workflow_trigger` (global = all of kind; local = this one). `form_submitted` is not in the Hub event catalog. Failure → ascribe a tag: first in-app action named; SQL still `call_agent` only. Lineage queryable: do not mint a table from the word.

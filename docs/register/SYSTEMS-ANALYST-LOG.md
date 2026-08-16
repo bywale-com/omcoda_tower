@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-15 23:00 UTC — **Hub is reference only. Ant is the product. Systems for the pictured UI.** Looked at the plates. No mint. 22:55 “stay on Hub” discarded. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 01:10 UTC — **Main absorbed #85.** Looked at C8 / A14 and 23:07–01:01 law. Paper only. No mint. Flag **15:43**. No new PR after #85. #84 still open, now behind main.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -659,3 +659,37 @@ Not cemented.
 Full table appended on [`SYSTEMS-AUTOMATIONS-ASCRIBE.md`](./SYSTEMS-AUTOMATIONS-ASCRIBE.md) § Correction 23:00.
 
 **Do not:** mint; continue Hub; build a lattice page; campaign picker from the slipped caption.
+
+---
+
+## 2026-08-16 01:10 UTC — Main absorbed #85. C8 / A14 / event law (paper)
+
+**Why:** Founder: look at main and the new PRs.
+
+**What is on main:** Merge `c899df7` = PR [#85](https://github.com/bywale-com/omcoda_tower/pull/85) (01:06). Flag Current still **15:43**. PM Current **01:01**. No PR **#86**. Open besides us: #84 (this branch, behind main), #78 #77 #76 #70 (older). The new work is **on main**, not a new PR.
+
+**Looked at:** PHASE-TWO-LOG 23:07–01:01 · C8 · A14. Images opened.
+
+**Law that landed after our last ascribe (do not overwrite 15:43):**
+
+- All **objectives are events**. Completion **is** the write-back. No special return wire. Automations **listens** (global = all of that kind; local = this one). Named: form completion, campaign failure, opt-out/unsubscribe. `WORKFLOW_EVENT_CATALOG` has **no** `form_submitted`.
+- Failure of a campaign **is** an event; first named in-app action = **ascribe a tag**. No tag table.
+- Lineage **queryable** (who created — agent vs hand — path, completion, time). Not the engagement chart. Do not mint a lineage table from the word.
+- **C8:** enroll is this sequence’s Contacts. Add contact in the **header** (with Save / Launch). Two scopes only: **Every firm** (default) · **Select from** (everyone selected; deselect to pick one). Starts the mission **now**. Not Publish. Not an event.
+- **A14:** Automations does **not** create agents. **Assign existing** or **create from a template**. Three sequence radios. No chevron.
+- Still left on their list: **send** (3); **book-in door** (5); listing bind (build leftover of 4).
+
+**Systems vs those pictures (no mint):**
+
+| Picture / law | Stood up | Hole |
+|---------------|----------|------|
+| C8 Add to sequence | `enrollment` + `enrollAndActuate` (firm-scoped). Ant Contacts tab lists rows; **no Add contact** | **Every firm** is cross-tenant. `enrollment.firm_id` + halt are **per firm**. Walker/enroll take one `firmId`. That scope is not a filter on one firm’s book |
+| C8 Select from | `contact_records` per firm | House-wide contact list is not a query we have as one enroll call |
+| A14 assign existing | `firm_sequence_binding` + `agent_ref` → enroll into the bound template | One per class per firm (UNIQUE). Matches “the one you authored” only if there is one |
+| A14 create from a template | No copy-then-enroll. `sequence_definitions` unused | New sequence **instance** then enroll — silent. Same UNIQUE fight |
+| Objectives are events / form completion | Completions exist (`fact_writebacks`, `meeting_booked`, `messaging_events`). Trigger types exist | Those completions do **not** dispatch `workflow_trigger`. No `form_submitted` event name |
+| Failure → tag | Failure mode named 16:58. No tag row | In-app action still `CHECK (type = 'call_agent')` |
+| Lineage queryable | `enrollment.workflow_run_id`, `engagement_records` | No “who created / time-to-completion” query. Do not mint from the word |
+| Send (still left) | Resend/Twilio live when secrets+DB; consent/halt in `dispatchSend` | Loop 3 is product-left, not a missing port |
+
+**Do not:** mint; treat Every firm as a chrome checkbox; put enroll on Publish; build lineage as a screen; create-agent in Automations.
