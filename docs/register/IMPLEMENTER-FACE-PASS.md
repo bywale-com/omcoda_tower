@@ -11,6 +11,8 @@ Each new plate has **one purpose**. Copy that. Everything else on that PNG is no
 
 **Literal reading will miss the product.** A plate shows one grain on one example (often Text). If that grain belongs on every channel, or on Email and Call, **build it there**. No extra PNG. C5 / C5b already show Text, Email, and Call composers — those exist. C11 showing Text does not mean Email and Call have no variation and no channel rules.
 
+**This pass also drew (so they cannot miss it):** C8b Select from list · C14 sequence Settings · C15 channel-rules one timer · A18 trigger Global/Local · A19 Automations Contacts. Allude to C8 / C6 / A5 when the look already exists.
+
 ---
 
 ## C0 — only the Agents settings control
@@ -68,23 +70,51 @@ Plate: [`agents-blueprint/C13-sequence-activity.png`](./agents-blueprint/C13-seq
 
 ---
 
-## Contacts — same table, no new image
+## C14 — sequence Settings, same quality as Agents settings
 
-Do not need a new PNG. **Contacts** uses the **same table chrome as C13**.
+Plate: [`agents-blueprint/C14-sequence-settings-channel-rules.png`](./agents-blueprint/C14-sequence-settings-channel-rules.png)
 
-Columns: **Name · Firm · Enrolled date**. Search. Pagination. People and firms, not `contact_id` / “lead 351”.
+**Copy:** This sequence’s Settings. Same four families as [`C6`](./agents-blueprint/C6-agents-settings-global.png). Each family has **Override**. When Channel rules Override is **on**, the **rows underneath** match C6: toggles per medium + **one** Within time per channel (Text / Email / Call). Not a naked Override. Not the live tab that dumps `rule_attempt_criteria`.
 
-Add contact remains the **C8 modal** (Every firm / Select from), not a thin popover. Header button still sits with Save / Launch.
+[`C7-sequence-settings.png`](./agents-blueprint/C7-sequence-settings.png) is **prior**. C7’s channel-rules family was only a time dropdown. That is why it looked empty next to C6. **C14 is canon for sequence Settings.**
 
-Plate for the modal only: [`C8-sequence-contacts-enroll.png`](./agents-blueprint/C8-sequence-contacts-enroll.png). Copy the modal and the table grain. Ignore founder-caption sentences on C8.
+**Ignore:** Teaching “Fall back up like CSS” as a banner. Inherit behavior is law.
+
+---
+
+## Contacts — Agents table, Select from list, same thing in Automations
+
+**Contacts tab (Agents)** uses the **same table chrome as C13**. Columns: **Name · Firm · Enrolled date**. Search. Pagination. People and firms, not `contact_id` / “lead 351”. Not the empty “No contacts enrolled for this agent yet.” when rows exist.
+
+Add contact remains in the **header** with Save / Launch. Modal is **Every firm** / **Select from**, not a thin popover.
+
+Plate for the radios: [`C8-sequence-contacts-enroll.png`](./agents-blueprint/C8-sequence-contacts-enroll.png).
+
+### C8b — Select from actually opens the list (fix the modal)
+
+Plate: [`C8b-select-from-list.png`](./agents-blueprint/C8b-select-from-list.png)
+
+**Copy:** Click **Select from** → the modal **shows the contact list**. Everyone is **already selected**. Deselect, then pick. Search. The list **scrolls inside the modal**. That is the old “this contact” option. No third radio.
+
+**Ignore:** Teaching footer on C8 (“starts the mission now”) as a banner. The **behavior** is law. Agents enroll **does** start the mission now.
+
+### A19 — Automations Contacts is the same look
+
+Plate: [`A19-automations-contacts.png`](./automations-blueprint/A19-automations-contacts.png)
+
+**Copy:** Automations has **Contacts** the **exact same way** Agents does. Same tab. Same table (Name · Firm · Enrolled date). Same **Add contact** in the header. Same modal: Every firm / Select from (and C8b when Select from is on).
+
+**One difference (law, not a different-looking modal):** Automations does **not** start a mission now. Who this automation applies to is Contacts. Global vs local of the **event** is a different control (A18). Do not collapse those.
+
+Live Automations today is Workflow · Runs · Settings — **no Contacts**. Build it. Do not skip because A1–A17 never showed the tab.
 
 ---
 
 ## Channel rules — extra node, actual parameters, that channel in that campaign
 
-No new PNG. The **seat** is already on C5 / C11: a **wired node off that channel**. Keep it there.
-
 **Grain (lowest it goes):** channel rules are for **this channel in this campaign**. Not per variation. Not per attempt. Variations share them. Attempts share them.
+
+The **seat** is the extra wired node off that channel (C5 / C11 / **C15**). Keep it. **C15 is the filled node** — copy that, not the teaching caption on C5.
 
 **Still by channel.** Some parameters are the same family on every medium (within time). Some are specific to the medium (text not delivered · email link not clicked). Either way the row lives **on that channel’s rules node**, not as one global blob.
 
@@ -97,9 +127,19 @@ No new PNG. The **seat** is already on C5 / C11: a **wired node off that channel
 | **Call** | same family for this medium (not answered / not completed · within time). Face is Call (C5). Do not put Form rows on a Call node. |
 | **Any channel you add** | same idea: escalation on **that** medium, on **this** campaign |
 
-Fallback still: this campaign’s this channel → sequence Settings (C7) → Agents settings (C6). Override toggle **above** the modulators; off = greyed inherit; on = you can edit.
+Fallback still: this campaign’s this channel → sequence Settings (C14) → Agents settings (C6). Override toggle **above** the modulators; off = greyed inherit; on = you can edit.
 
-Look at C6 / C7 for the parameter grain. Look at C5 / C11 for **where** the node sits.
+Look at C6 / C14 for the parameter grain. Look at C5 / C11 / **C15** for **where** the node sits.
+
+### One timer (confirm)
+
+Plate: [`C15-channel-rules-one-timer.png`](./agents-blueprint/C15-channel-rules-one-timer.png)
+
+**Copy this node:** **Override this channel** on → the **toggles** (not opened · not delivered · … for that medium) → **one** **Within time** field (example 30 minutes).
+
+Every rule you toggle **on** uses **that** timer. Not a timer per toggle. Same on every channel. Same in sequence Settings (C14) and global (C6). The helper sentence on the PNG need not ship; the **one field** is the spec.
+
+**Ignore:** The rest of that PNG (composers, Launch window teaching). **Do not ignore the scrollbar** — that canvas must scroll (next section).
 
 ---
 
@@ -111,7 +151,7 @@ If a grain is true of a channel, it is true of **every** channel on that campaig
 |-------|----------|----------------|
 | Composer + Override content | C5 / C5b — **Text, Email, and Call** | Any channel you add |
 | **+ Add variation** + per-variation attempt apply | C11 — Text | Email, Call, any channel you add |
-| Channel rules extra node + actual parameters | C5 / C11 seat; C6 / C7 parameters | Every channel on that campaign |
+| Channel rules extra node + actual parameters + **one timer** | C15 (Text) · C14 · C6 | Email, Call, any channel you add |
 | Channels independently open | Written (not radios) | All channels |
 | **+ Add channel** | Written | That campaign, once Override this is on |
 
@@ -127,13 +167,53 @@ These were asked. They are not “copy from C9/C11.”
 |----|-----|
 | **Add a channel** | On the open campaign, **+ Add channel**. Do not stub. Do not change a number first. Not taken from C9. |
 | **Channels are not radios** | Opening one channel must not close the others. Any mix of open/closed. |
-| **Sequence Settings** | This sequence’s Settings tab = [`C7`](./agents-blueprint/C7-sequence-settings.png). Attempt cycle ≠ channel rules. Channel rules in that modal are sequence defaults per medium. Canvas channel-rules node is **this campaign’s this channel**. |
+| **Sequence Settings** | This sequence’s Settings = [`C14`](./agents-blueprint/C14-sequence-settings-channel-rules.png) (revises C7). Same **quality** as [`C6`](./agents-blueprint/C6-agents-settings-global.png). Override **on** for channel rules → the **same rows** as C6 underneath (toggles + **one** within-time per channel). A naked Override is not a control. C7 stays as prior. Live Settings tab dumping `rule_attempt_criteria` is the **wrong surface**. |
 | **Override toggle** | Lives **above** its modulators. Off = greyed inherit. On = you can edit. Toggling with nothing underneath is not a control. |
-| **Global vs sequence vs campaign vs channel** | C0 gear → C6 global. Sequence tab → C7. Campaign Override this → C9 attempt count / distance. Channel = composer + variations + channel rules. Channels nest inside a campaign; they are not a fourth CSS sibling of the same kind. |
-| **Modals scroll** | Every modal and submodal body scrolls. Pervasive today. Fix it. |
+| **Global vs sequence vs campaign vs channel** | C0 gear → C6 global. Sequence tab → C14. Campaign Override this → C9 attempt count / distance. Channel = composer + variations + channel rules (C15). Channels nest inside a campaign; they are not a fourth CSS sibling of the same kind. |
+| **Scroll — canvas and modals** | Not only modals. **Agents canvas must scroll.** Override-this, added channels, Call, channel-rules hang below the fold — you have to reach them. Automations canvas is already fine. Sequence Settings body scrolls (C14). Select from list scrolls (C8b). Every panel that has content underneath the fold scrolls. Live Settings already cuts off channel ownership. Fix it. |
 | **Action · Agents** | Match [`A12`](./automations-blueprint/A12-form-from-required-data.png) — an actual form from the listing. Assign path [`A14`](./automations-blueprint/A14-action-assign-or-template.png). |
 | **Rename nodes** | Click the title, edit in place, same as renaming a campaign in Agents. Including the If / condition node. Same pattern everywhere a name is changed. |
 | **Rule Output** | Match [`A11`](./automations-blueprint/A11-rule-output-required-data-listing.png). |
+
+---
+
+## A18 — trigger grain: Global or Local
+
+Plate: [`A18-trigger-global-local.png`](./automations-blueprint/A18-trigger-global-local.png)
+
+**Copy:** When you select a **trigger event**, you set **Global** or **Local**. Not Settings. Not “who this applies to” (that is Contacts / A19).
+
+- **Global** = all of that kind. Example: **all form submissions** — whoever submitted, run this.
+- **Local** = this specific one. Example: **this form** — every time this form is submitted, run this. The “this form” picker is **disabled on Global**; it **enables on Local**.
+
+Same divide elsewhere (campaign failure: all campaigns vs **this** campaign). Do not fill the event catalog.
+
+**Idea for SA (do not invent UI this stamp):** some events may **not** have Local. An **audit** is a one-time event — maybe it cannot be local, or cannot be only-global. Map which events allow which grain. Do not drop the idea.
+
+**Ignore:** The rest of A18 (which workflow is selected in the catalog). Copy the **modal**.
+
+Allude: [`A5-inside-trigger.png`](./automations-blueprint/A5-inside-trigger.png) is inside-trigger Event vs Schedule. **A18 adds the grain.** A5 is prior for Event/Schedule. A17 is firm provisioned. Do not skip A18 because A5 exists.
+
+---
+
+## Seed the connected tables (SA + implementer)
+
+Not a thick seed. Not fake rows painted into an empty-state component.
+
+**SA:** seed the tables that **already exist** and are **already connected**. Then Save. The desk shows people.
+
+Named (do not mint new tables from this sentence):
+
+| Surface | What you should see | Already-there tables (SA maps the rows) |
+|---------|---------------------|------------------------------------------|
+| Agents **Contacts** / Select from (C8b) | Names, firms, enrolled dates | `contact_records` + `enrollment` |
+| Agents **Activity** (C13) | Time · Name · Firm · Channel · What happened | `engagement_records` (and the enrollment those rows hang off) |
+| Automations **Contacts** (A19) | Same people grain | same enroll/contact rows for that workflow |
+| Automations **Runs** | Runs exist | `workflow_run` |
+
+Today Contacts is empty (“No contacts enrolled…”) because those rows are not in the seed. `002_machine_tables` / `003_canonical_workflows` bind templates and workflows. They do **not** put people on them. That is the gap.
+
+**Implementer:** do not hard-code Marita Patel in the SPA. Read the connected rows. If the seed is right, the table fills. If Select from is right, the list fills.
 
 ---
 
@@ -148,5 +228,9 @@ These were asked. They are not “copy from C9/C11.”
 - Not putting attempt-cycle settings on the channel-rules node.
 - Not making channel rules per variation.
 - Not planting from this file into a different module.
+- Not skipping Automations Contacts because Agents already has C8.
+- Not putting Global/Local on Contacts, or Contacts on the trigger.
+- Not a timer per toggle.
+- Not seeding fake UI strings. Seed the tables.
 
 **Reports** may stay empty.

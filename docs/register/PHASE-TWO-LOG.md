@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **16:41:** written spec is the product — extrapolate per channel (variation; channel rules with actual parameters). Plates are one grain on one example; no extra PNG. [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md). Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **18:53:** implementer packet fills the misses — Automations Contacts (A19), trigger Global/Local (A18), sequence Settings at C6 quality (C14), channel-rules one timer (C15), Select from list (C8b), canvas scroll, seed the connected tables. [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md). Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -904,6 +904,27 @@ Flag 15:43 untouched.
 **What we wrote:** [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md) — extrapolate table; channel-rules parameter table (Text / Email / Call / any added channel). No extra Email or Call PNGs.
 
 **Do not:** omit Email / Call / channel rules because C11 showed Text; put attempt settings on the channel-rules node; make channel rules per variation; plant; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 18:53 UTC — Misses into the packet: Contacts in Automations, Global/Local, C14, one timer, scroll, seed
+
+**Why:** Founder: some of the things talked about were not done. Implementers are too literal — generate the image or allude to the existing one. No ambiguity.
+
+**Capture (founder wording):**
+
+- **Contacts / Add contact** in **Automations** the **exact same way** it looks in Agents.
+- When selecting a **trigger** event: detail **Global** or **Local**. Global = all of that kind. Local = what events specifically (example: form submission — all forms vs this form). Who this applies to is **Contacts**. Some things maybe cannot be local; some maybe cannot be only-global. **Audit** is a one-time event — SA maps that. Log it. Do not miss it.
+- **Sequence Settings** (not global Agents settings) is not the same quality as Agents settings. Channel rules escalation is just Override — no stuff underneath. Look at it.
+- **Seed** the tables. Not a thick seed. A proper seed. Everything is already connected — it just appears. Want data in Contacts, in the Contacts modal, in Select from (and **fix that modal**), in Activity, in Automations — wherever you would see data. Do **not** seed data in the app. Seed the right tables.
+- Agents **canvas cannot scroll** — stiff; content underneath the fold; added channels you cannot reach. Automations canvas is fine. Across modules that have data going underneath the fold, you have to be able to scroll.
+- Channel rules: like the position. **Override this channel**, then **one timer**. Confirm: every rule you toggle on (not opened, not delivered) works on **that** timer (30 minutes or whatever). Same within every channel.
+
+**What we wrote / drew:** [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md). Plates: **C8b** Select from list · **C14** sequence Settings at C6 quality · **C15** channel-rules one timer + canvas scrollbar · **A18** trigger Global/Local (form submitted) · **A19** Automations Contacts. Seed named to existing `contact_records` / `enrollment` / `engagement_records` / `workflow_run` — do not mint.
+
+**Do not:** plant; collapse Global/Local with Contacts; put a timer per toggle; overwrite 15:43.
 
 Flag 15:43 untouched.
 

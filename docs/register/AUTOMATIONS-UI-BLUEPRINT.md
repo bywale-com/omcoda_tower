@@ -60,6 +60,8 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A15** | [`A15-blank-canvas-chain.png`](./automations-blueprint/A15-blank-canvas-chain.png) | chrome | Blank canvas. Chain: **firm provisioned → audit contacts → if X → agents**. Palette includes Condition (If). A1 stays the smallest. | 01:17 · 01:20 | — |
 | **A16** | [`A16-if-previous-result.png`](./automations-blueprint/A16-if-previous-result.png) | chrome | **First Ant If plate.** Calls from the previous result (the audit). Not a rule. | 01:20 | fills open item 11 |
 | **A17** | [`A17-trigger-firm-provisioned.png`](./automations-blueprint/A17-trigger-firm-provisioned.png) | chrome | Inside trigger. Event = **firm created / provisioned**. | 01:20 | companion to A5 |
+| **A18** | [`A18-trigger-global-local.png`](./automations-blueprint/A18-trigger-global-local.png) | chrome | Inside trigger. After the event: **Global** (all of that kind) or **Local** (this specific one). Example: form submitted. | 18:53 | fills law 27. A5 stays Event vs Schedule |
+| **A19** | [`A19-automations-contacts.png`](./automations-blueprint/A19-automations-contacts.png) | chrome | Automations **Contacts** = the same look as Agents C8. Same Add contact modal. Does not start a mission now. | 18:53 · 01:01 | companion to C8 / C8b |
 
 **Why A10 / A13 are in the lineup and still not chrome:** they are the **idea** of output classes as a lattice. They are not Operator screens. The DAG piece that does that fork is the **If / condition node**, now on the glass as **A16**. Keep both diagrams so the evolution (hole → listing) is visible. Do not ascribe A13 as a screen.
 
@@ -384,7 +386,37 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 - Event: Firm created / provisioned.
 - Who this run is about: that line.
 
-**Not this plate:** Global vs local picker. Audit completed (A5). Filling the event catalog.
+**Not this plate:** Global vs local picker (**A18**). Audit completed (A5). Filling the event catalog.
+
+---
+
+### A18 — Trigger: Global or Local
+
+![A18 trigger global local](./automations-blueprint/A18-trigger-global-local.png)
+
+**Rationale (23:16 law 27, drawn 18:53):** When you select an event to trigger, you detail **Global** or **Local**. Not Settings. Who this applies to is **Contacts** (A19), not this modal.
+
+**On the glass:**
+- When this happens: **Event**.
+- Event: **Form submitted** (the clear example).
+- Grain: **Global** | **Local**. Global on: all form submissions.
+- **This form** picker **disabled** on Global; enables on Local.
+
+**SA idea (do not invent UI):** some events may not have Local (an **audit** is one-time). Map which events allow which grain. Do not fill the catalog.
+
+**Not this plate:** Contacts picker. A Settings modal. Firm provisioned (A17).
+
+---
+
+### A19 — Automations Contacts (same as Agents)
+
+![A19 automations contacts](./automations-blueprint/A19-automations-contacts.png)
+
+**Rationale (01:01, 18:53):** Add contact and Contacts exist in Automations **the exact same way** they look in Agents. Live Automations has no Contacts tab. Build it.
+
+**On the glass:** Workflow · **Contacts** · Runs · Settings. Table Name · Firm · Enrolled date. **Add contact** in the header. Same Every firm / Select from modal. Footer: who this automation applies to; it does **not** start a mission now.
+
+**Not this plate:** Trigger Global/Local (A18). Agents start-now (C8).
 
 ---
 
@@ -400,7 +432,8 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 | **Remaining output classes besides required data** | Lattice classes named on A9–A13: pass, re-engagement signal, reactivation signal, recommended services, required-data listing. | Do not invent the rest. |
 | **In-system action kinds** | Hub names `manage_lists`, `assign_task`, `notify_consultant` plus agent enroll. A7 is the split. | Do not invent a longer catalog. |
 | **Word “event”** | Agents C2b vs Automations event-of-origin. Form completion **is** an Automations trigger (23:16). | Do not collapse C2b with this. |
-| **Event: global vs local** | **Global:** all of that kind. **Local:** this specific one. Named: form completion, campaign failure, opt-out / unsubscribe. Not “Settings.” | No plate. Do not fill the catalog. |
+| **Event: global vs local** | **Global:** all of that kind. **Local:** this specific one. Named: form completion, campaign failure, opt-out / unsubscribe. Not “Settings.” **A18** draws the picker. Some events may not have Local (audit as one-time) — SA maps. | Catalog still not filled. |
+| **Automations Contacts** | Same look as Agents C8 / C8b. **A19**. Who this applies to. Does not start now. | Drawn. |
 | **In-app action: ascribe a tag** | Campaign fails → record / tag. Subscription bell is that tag. | Named. Do not invent the rest. |
 | **Lineage queryable** | Who created the objective (agent vs hand), path to completion, completion event, time. | Queryable at minimum. Not a new screen. |
 | **Assign existing vs from template** | **Settled 00:02.** A14. No create-agent in Automations. | Drawn. |

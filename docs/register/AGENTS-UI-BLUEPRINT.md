@@ -26,12 +26,15 @@ These ten files are **canon**. Later plates revise earlier ones only where the t
 | **C5** | [`C5-content-toggle.png`](./agents-blueprint/C5-content-toggle.png) | Channel open. **Override content is a toggle**; node expands into that medium’s content-creation block. Text, email, **call (ElevenLabs)**. Channel rules still a wire off the channel. | 19:10 content inside the node · 19:45 toggle + richness + call | **C5 supersedes** open-channel siblings and the content-as-button frame |
 | **C5b** | [`C5b-content-toggle-closeup.png`](./agents-blueprint/C5b-content-toggle-closeup.png) | Same as C5, close-up of the three expanded composers. | 19:45 richness | companion to C5 |
 | **C6** | [`C6-agents-settings-global.png`](./agents-blueprint/C6-agents-settings-global.png) | **Agents Settings** = global defaults. Founder: locked, perfect. | 19:30 two Settings surfaces | — |
-| **C7** | [`C7-sequence-settings.png`](./agents-blueprint/C7-sequence-settings.png) | **Sequence Settings** = this sequence; inherit unless override. Founder: locked, perfect. | 19:30 | — |
-| **C8** | [`C8-sequence-contacts-enroll.png`](./agents-blueprint/C8-sequence-contacts-enroll.png) | This sequence → **Contacts**. Displays enrolled. **Add contact** in the header. Scope: **Every firm** (default) or **Select from** (all selected; deselect to pick one). Starts the mission now. | 00:02 · 01:01 scope | — |
+| **C7** | [`C7-sequence-settings.png`](./agents-blueprint/C7-sequence-settings.png) | Sequence Settings **prior**. Inherit unless override. Channel-rules family on this plate is only a time dropdown — not C6 quality. | 19:30 | **prior.** Channel-rules fill → **C14** |
+| **C14** | [`C14-sequence-settings-channel-rules.png`](./agents-blueprint/C14-sequence-settings-channel-rules.png) | **Canon sequence Settings.** Same quality as C6. Override on → toggles + **one** within-time per channel underneath. | 18:53 | **revises C7** (channel-rules family) |
+| **C8** | [`C8-sequence-contacts-enroll.png`](./agents-blueprint/C8-sequence-contacts-enroll.png) | This sequence → **Contacts**. Displays enrolled. **Add contact** in the header. Scope: **Every firm** (default) or **Select from**. Starts the mission now. | 00:02 · 01:01 scope | — |
+| **C8b** | [`C8b-select-from-list.png`](./agents-blueprint/C8b-select-from-list.png) | **Select from** opens the list. Everyone already selected. Modal list scrolls. | 18:53 | companion to C8 |
 | **C0** | [`C0-agents-global-settings-entry.png`](./agents-blueprint/C0-agents-global-settings-entry.png) | **Copy only:** Agents settings gear next to New template (global). Ignore the rest of the PNG. | 16:10 · 16:34 | — |
 | **C9** | [`C9-campaign-local-attempt-add-channel.png`](./agents-blueprint/C9-campaign-local-attempt-add-channel.png) | **Copy only:** Override this on → **Attempt count** + **Distance between attempts** on the campaign. Ignore the rest of the PNG. | 16:10 · 16:34 | — |
-| **C11** | [`C11-channel-attempt-variation.png`](./agents-blueprint/C11-channel-attempt-variation.png) | **+ Add variation** at the top of the channel. Each variation then selects how it applies in the attempt cycle. Not three radios. **On every channel** (plate is Text). Channel-rules extra node: keep the seat; fill **actual parameters** — [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md). | 16:34 · 16:41 | — |
-| **C13** | [`C13-sequence-activity.png`](./agents-blueprint/C13-sequence-activity.png) | **Activity** table: Time · Name · Firm · Channel · What happened. Contacts uses the same table chrome (Name · Firm · Enrolled date) — no extra PNG. | 16:10 · 16:34 | — |
+| **C11** | [`C11-channel-attempt-variation.png`](./agents-blueprint/C11-channel-attempt-variation.png) | **+ Add variation** at the top of the channel. Each variation then selects how it applies in the attempt cycle. Not three radios. **On every channel** (plate is Text). | 16:34 · 16:41 | — |
+| **C13** | [`C13-sequence-activity.png`](./agents-blueprint/C13-sequence-activity.png) | **Activity** table: Time · Name · Firm · Channel · What happened. Contacts uses the same table chrome (Name · Firm · Enrolled date). | 16:10 · 16:34 | — |
+| **C15** | [`C15-channel-rules-one-timer.png`](./agents-blueprint/C15-channel-rules-one-timer.png) | Channel-rules extra node **filled**: Override this channel + toggles + **one** Within time. Agents canvas **scrolls**. | 18:53 | fills C5/C11 seat |
 
 ### Discarded (do not spec, do not hand to SA as face)
 
@@ -212,22 +215,15 @@ Fallback if a control is not overridden: campaign → sequence Settings → Agen
 
 ---
 
-### C7 — Sequence Settings — locked
+### C7 — Sequence Settings — prior
 
 ![C7 Sequence Settings](./agents-blueprint/C7-sequence-settings.png)
 
-**Rationale:** Sequence-grain rules live in **this sequence’s** Settings, not in the middle of the canvas. Inherit from Agents unless Override. Per-campaign attempt rules live **on the campaign**, not in this modal. Founder: perfect; do not regenerate.
+**Rationale:** Sequence-grain rules live in **this sequence’s** Settings, not in the middle of the canvas. Inherit from Agents unless Override. Per-campaign attempt rules live **on the campaign**, not in this modal.
 
-**On the glass:**
-- Title: Opt-in sequence · Settings. Grain: this sequence.
-- Each family has **Override**. Off = Inherited from Agents · global.
-- Attempt rules Override **on:** number of attempts · wait after failed last node · nth-attempt exception. Caption: “For this whole sequence. Per-campaign attempt rules live on the campaign, not here.”
-- Channel rules Override **on:** per medium.
-- Content Override **off:** inherits.
-- Sequencing Override **off:** inherits Text → Email → Form.
-- Footer: “Fall back up like CSS.” Cancel · Save.
+**On the glass (prior):** Override toggles. Channel rules family here was **only a time dropdown per medium** — that is why it looked empty next to C6. **C14 revises that family.**
 
-**Controls:** flip Override per family · Save.
+**Canonical for sequence Settings:** [`C14`](./agents-blueprint/C14-sequence-settings-channel-rules.png).
 
 ---
 
@@ -248,7 +244,43 @@ Fallback if a control is not overridden: campaign → sequence Settings → Agen
 
 **Controls:** Every firm, or Select from then deselect/pick · Add to sequence.
 
-**Not this plate:** Publish-to-enroll. The engagement chart. Automations assign (A14). A third scope radio. A full filter catalog.
+**Not this plate:** Publish-to-enroll. The engagement chart. Automations assign (A14). A third scope radio. A full filter catalog. **Select from opened** is **C8b**. Automations Contacts is **A19**.
+
+---
+
+### C8b — Select from opens the list
+
+![C8b select from list](./agents-blueprint/C8b-select-from-list.png)
+
+**Rationale (18:53):** C8 named Select from. The list itself was not on the glass. Implementers shipped radios without the list. Fix the modal.
+
+**On the glass:** Add contact modal. **Select from** on. Contact list with everyone **already checked**. Search. List **scrolls inside the modal**. Behind: Contacts table with names and firms (what seeded rows look like when connected).
+
+**Copy only that.** Ignore C8 teaching footer as a banner.
+
+---
+
+### C14 — Sequence Settings at C6 quality
+
+![C14 sequence settings channel rules](./agents-blueprint/C14-sequence-settings-channel-rules.png)
+
+**Rationale (18:53):** C7 channel-rules family was only a time dropdown under Override. Founder: not the same quality as Agents settings. When Override is on, **stuff underneath** = C6 rows (toggles + **one** within-time per channel).
+
+**On the glass:** Opt-in launch · Settings. Attempt Override on (count / wait / nth). Channel rules Override on: Text not opened · not delivered · Within time 30 minutes; Email not opened · link not clicked · 24 hours; Call not answered · not completed · 24 hours. Content / Sequencing inherited. Modal body scrolls.
+
+**C7 stays prior.** C14 is canon for this sequence’s Settings.
+
+---
+
+### C15 — Channel rules node: one timer; canvas scrolls
+
+![C15 channel rules one timer](./agents-blueprint/C15-channel-rules-one-timer.png)
+
+**Rationale (18:53):** Confirm: every toggle that is on uses **that channel’s one timer**. Seat was on C5/C11 as a caption. Fill it. Agents canvas was stiff — added channels hang below the fold.
+
+**On the glass:** Override this **on**. Channel rules extra node: **Override this channel** on · not opened · not delivered · **one** Within time (30 minutes). Workspace **scrollbar** visible.
+
+**On every channel.** Plate is Text.
 
 ---
 

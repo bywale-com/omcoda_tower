@@ -362,6 +362,56 @@ Do not re-ascribe this on every plate.
 
 ---
 
+### C8b — [`C8b-select-from-list.png`](./agents-blueprint/C8b-select-from-list.png)
+
+**S:** Add contact modal. **Select from** on. Contact list, everyone checked. Search. List scrolls in the modal. Contacts table behind with Name · Firm · Enrolled date.
+
+**E:** Harbor RCIC names (Marita Patel, …). 25 selected.
+
+**C:** Footer **“This starts the mission now. It does not wait on an event.”** (Agents law; behavior is law). Select-from helper on C8.
+
+---
+
+### C14 — [`C14-sequence-settings-channel-rules.png`](./agents-blueprint/C14-sequence-settings-channel-rules.png)
+
+**S:** Sequence Settings modal. Four families. Override on Attempt and Channel rules. Channel rows: toggles + **one** Within time per channel (Text / Email / Call). Content / Sequencing inherited. Modal scrollbar.
+
+**E:** 30 minutes / 24 hours. Opt-in launch.
+
+**C:** Banner inherit sentence. **“Every toggle that is on uses that channel's one timer. Not a timer per toggle.”** — that sentence is **spec**, need not ship as a banner. The one timer field is the spec. “Fall back up like CSS.”
+
+---
+
+### C15 — [`C15-channel-rules-one-timer.png`](./agents-blueprint/C15-channel-rules-one-timer.png)
+
+**S:** Campaign Override this on. Channel-rules extra node: **Override this channel** on · not opened · not delivered · one Within time 30 minutes. Workspace scrollbar.
+
+**E:** Launch window / Opt-in launch. Text composer copy.
+
+**C:** **“Both rules use this timer.”** Spec, need not ship. Do not copy composer teaching.
+
+---
+
+### A18 — [`A18-trigger-global-local.png`](./automations-blueprint/A18-trigger-global-local.png)
+
+**S:** Trigger modal. Event. Event = Form submitted. Grain **Global | Local**. Global on. This-form picker disabled.
+
+**E:** Workflow catalog drift (which row is selected).
+
+**C:** **“All of this kind. Every form submission.”** / **“Enable Local to pick specific forms.”** Spec of the grain, not a Settings modal.
+
+---
+
+### A19 — [`A19-automations-contacts.png`](./automations-blueprint/A19-automations-contacts.png)
+
+**S:** Automations **Contacts** tab. Table Name · Firm · Enrolled date. Add contact in header. Same Every firm / Select from modal.
+
+**E:** Same Harbor names as C8.
+
+**C:** **“Who this automation applies to. It does not start a mission now.”** Law. Keep.
+
+---
+
 ## Repeating captions (same sentence, several plates)
 
 Do not mint once per occurrence.
@@ -408,7 +458,7 @@ You mess it up if you:
 
 ## What this is not
 
-- Not regenerating C1–C8 or A1–A17. Pixels stay; this file is the reading.
+- Not regenerating C1–C8 or A1–A17 as a block. New plates C8b / C14 / C15 / A18 / A19 are this packet. Pixels on the old set stay; this file is the reading.
 - Not the 02:19 coverage table. That table is superseded.
 - Not overwriting 15:43. Goal-as-escalation is still: **objective met** can continue the sequence. The word on C3–C5 was a bad spec caption, not a new object.
 - Not a table inventory. SA: if you ascribe a caption as a row, you missed.
