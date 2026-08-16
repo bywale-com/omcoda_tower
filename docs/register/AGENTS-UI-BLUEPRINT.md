@@ -12,7 +12,7 @@ Chrome for every plate unless noted: Operator desk → Configuration libraries �
 
 ## Canon lineup (read in this order)
 
-These nine files are **canon**. Later plates revise earlier ones only where the table says so. Do not treat discarded files as face.
+These ten files are **canon**. Later plates revise earlier ones only where the table says so. Do not treat discarded files as face.
 
 | # | File | What it is | Born from (log) | Revises |
 |---|------|------------|-----------------|---------|
@@ -25,6 +25,7 @@ These nine files are **canon**. Later plates revise earlier ones only where the 
 | **C5b** | [`C5b-content-toggle-closeup.png`](./agents-blueprint/C5b-content-toggle-closeup.png) | Same as C5, close-up of the three expanded composers. | 19:45 richness | companion to C5 |
 | **C6** | [`C6-agents-settings-global.png`](./agents-blueprint/C6-agents-settings-global.png) | **Agents Settings** = global defaults. Founder: locked, perfect. | 19:30 two Settings surfaces | — |
 | **C7** | [`C7-sequence-settings.png`](./agents-blueprint/C7-sequence-settings.png) | **Sequence Settings** = this sequence; inherit unless override. Founder: locked, perfect. | 19:30 | — |
+| **C8** | [`C8-sequence-contacts-enroll.png`](./agents-blueprint/C8-sequence-contacts-enroll.png) | This sequence → **Contacts**. Displays enrolled. **Add contact.** Scope: this firm / every firm / this contact. Starts the mission now — not Publish, not waiting on an event. | 00:02 | — |
 
 ### Discarded (do not spec, do not hand to SA as face)
 
@@ -63,6 +64,8 @@ Not a test script. The path that produces each plate.
 | Channel: Override content **on** | That channel **expands** into its composer (C5 / C5b). |
 | Agents module → Settings | **C6** global. |
 | This sequence → Settings | **C7** this sequence. Inherit from C6 unless Override is on. |
+| This sequence → **Contacts** | Enrolled list (C8). Empty until someone is on it. |
+| Contacts → **Add contact** | Filter modal. Scope: this firm / every firm / this contact within this firm. Add to sequence. Starts the mission now. |
 
 Fallback if a control is not overridden: campaign → sequence Settings → Agents Settings (CSS).
 
@@ -217,6 +220,26 @@ Fallback if a control is not overridden: campaign → sequence Settings → Agen
 
 ---
 
+### C8 — Contacts on this sequence; Add contact
+
+![C8 sequence contacts enroll](./agents-blueprint/C8-sequence-contacts-enroll.png)
+
+**Rationale (00:02):** Drawing the sequence is not putting people on it. The **self path from Agents** is this sequence’s **Contacts** model — it **displays who is enrolled** — plus **Add a contact**. **Not Publish.** Automations enroll is the other door (on an event). Agents enroll **starts the mission now**. Apollo was inspiration, not a clone. Ant already has a Contacts tab with empty copy and no Add button — this plate is the face; do not plant the editor.
+
+**On the glass:**
+- Sequence: Opt-in. Tabs: Editor · **Contacts** (on) · Activity · Report · Settings.
+- Enrolled list behind the modal (names, firm, enrolled date).
+- **Add contact** opens a modal.
+- Scope radios: **This firm** (firm picker) · **Every firm** · **This contact within this firm**.
+- Matching people, checkboxes, **Add to sequence**.
+- Caption: “This starts the mission now. It does not wait on an event.”
+
+**Controls:** pick scope · check people · Add to sequence.
+
+**Not this plate:** Publish-to-enroll. The engagement chart. Automations assign (A14). A full filter catalog — only the three named scopes.
+
+---
+
 ## What is specified but not on a canon plate
 
 This is the under-documented remainder **before** systems. Not for SA to invent UI.
@@ -230,6 +253,7 @@ This is the under-documented remainder **before** systems. Not for SA to invent 
 | Mix objective types in one sequence | Not drawn. |
 | Campaign-level Settings modal | Not placed. Campaign has Override this + sequencing on the node. |
 | Call vs Form on the **machine** | Face C5 shows Call (ElevenLabs). C4/C6/C7 still show Form. SA does not mint call from the picture. |
+| Add-contact filters beyond the three named scopes | C8 names this firm / every firm / this contact. Do not invent the rest. |
 
 ---
 

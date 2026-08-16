@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Leftovers said in plain language **23:47**: (2) putting people on the agent, (3) the message actually leaving, (6) new copy of the campaign vs put them on the one you already made. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **00:02:** leftover **2** (enroll) and **6** (copy vs assign) answered. Still left: **3** the message actually leaving; queryable lineage; book-in door. Plates **C8** · **A14**. Do not plant.
 
 **How we maintain this log**
 
@@ -667,6 +667,39 @@ Flag 15:43 untouched.
 **6 — Copy vs put them on the one you made.** When an automation says start this campaign: does it **make a new copy** of the template for this person, or **put them on the campaign you already authored**? We never picked. That is the whole item.
 
 **Do not:** plant; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 00:02 UTC — Enroll is Contacts; Automations only assigns; activity ≠ query
+
+**Why:** Founder answered leftover **2** and **6**, and the question before 6 (activity vs query). Additions justify two plates. Save space.
+
+**2 — Putting people on the agent (answered).** Two doors. Automations → enroll is already solidified (on an event). The **self path from Agents** is **not** Publish. Founder walked Publish back. It lives **inside that sequence’s Contacts model**. That model **displays the contacts enrolled in that sequence**. There is a button: **Add a contact**. Inspiration: Apollo sequence Contacts / Add Contacts + filter modal (not a clone). Filters can get granular later; named now: **only this firm / every firm / only this contact within this firm**. Same global/local grain lives in Automations too — events depend on **which contacts are enrolled**. Difference: Automations is **an event**, not something that starts right now. Agents is **starting a mission right now** — we have this objective, go get it done. Not waiting on a current event.
+
+**Stood up today (checked, not planted):** Ant `AntAgentWorkbench` already has a **Contacts** tab. Empty copy: “No contacts enrolled for this agent yet.” If rows exist it lists `contact_id` + `agent_ref` + `enrolled_at`. **No Add contact. No filter modal.** C1–C7 had no enroll plate. **C8** is that plate.
+
+**Activity vs query (the question before 6).** Those are **two different things**. Activity / **engagement chart** = a **tree of outreach**. It does **not** connect all the way left to the trigger or event that created the agent or assigned the agent to the objective. Keep engagement charts **pristine** when we build. Lineage (who created — agent vs hand — path, completion, time) stays **queryable** (law 29). Not the same surface. No extra plate this stamp.
+
+**6 — Copy vs put them on the one you made (answered).** Already defined; keep it simple. **Do not create agents inside Automations.** You create the agent in Agents, then you **assign**. Automations only: **assign to an existing sequence** or **create from a template**. Can evolve later to create directly from Automations — not now. **A14** is that plate. A8 stays prior for select-agent = whole sequence. A12 stays canonical form bind.
+
+**Plates (from scratch, Ant chrome, not planted):**
+- **C8** — This sequence → **Contacts**. Enrolled list. **Add contact.** Scope: this firm / every firm / this contact. Caption: starts the mission now; does not wait on an event.
+- **A14** — Action · Agents: **Assign to existing sequence** | **Create from a template**. Explicit: you do **not** create an agent here.
+
+**The 23:07 six, now:**
+
+| # | Now |
+|---|-----|
+| **1** | Settled as an event. Left: **queryable lineage**. |
+| **2** | **Answered.** Contacts on the sequence (hand). Automations on an event. |
+| **3** | **Still left.** The text / email / call actually sends. |
+| **4** | Settled as an event. Build leftover: listing not on rule output. |
+| **5** | Idea obvious. Left as a **door**: contacts must exist. |
+| **6** | **Answered.** Assign existing, or from a template. No create-agent in Automations. |
+
+**Do not:** plant the Ant editor; mint tables; regenerate C1–C7 or A1–A13; treat Hub as the app; overwrite 15:43; put enroll on Publish; draw the engagement chart as the lineage query.
 
 Flag 15:43 untouched.
 

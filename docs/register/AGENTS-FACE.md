@@ -3,7 +3,7 @@
 **Seat:** Product Manager.  
 **Why this file:** law and excerpts. The **image lineup + spec** is [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md). Systems extract from both; they do not invent a different module.  
 **Join:** 15:43 flagship · [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · SA ascribe package [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md) · Automations face (entered from here) [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md) · Automations SA package [`AUTOMATIONS-SA-PACKAGE.md`](./AUTOMATIONS-SA-PACKAGE.md) · [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) (PR #84) · Phase Two log 17:25.  
-**Status:** Settings plates locked. UI blueprint lined up 2026-08-15 19:50. SA package [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md) 20:00. **Creation place complete enough to leave** (20:24) — Automations is next: [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Flag stays [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC**.
+**Status:** Settings plates locked. UI blueprint lined up 2026-08-15 19:50. SA package [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md) 20:00. **Creation place complete enough to leave** (20:24). **Enroll on Contacts** (00:02) — plate **C8**. Flag stays [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC**.
 
 ---
 
@@ -69,6 +69,14 @@
 
 > Attempts are per campaign. … It can live at the campaign level. We already know it lives at the deepest in the sequence level or it lives in the settings modal. When it's at Agents, it's global. When it's at sequence, it's for the sequence. Attempt rules can live at the Agents and Sequence settings modal. When it's in the campaign, it's per campaign. If it's per sequence it lives in the settings modal. It wouldn't live [in the middle of the canvas] because this is essentially per sequence.
 
+> Contacts Inside the contacts model is what we're going to do that. … that modo, just kind of displays the contacts that are enrolled in that sequence. There's also a button for you to add a contact.
+
+> when the contact module model does open up, like the ad contacts model or the contacts model itself. I think there would be a way for you to like filter … only for this firm or every firm or only this contact within this firm.
+
+> [Automations] is just an event, it's not something that starts right now. … the agents is like, you're starting a mission right now. It doesn't … isn't dependent on any current event. It's just like, hey, we have this outcome. … we have this objective, go out. Go ahead and get it done.
+
+> the engagement chart is just like, it's just a tree of like outreach. It doesn't connect. It doesn't really connect the all the way really on the left side, which is like the trigger or events that created the agents or rather assigned an agent to the objective.
+
 ---
 
 ## Law of the face (short)
@@ -86,6 +94,8 @@
 11. **Objective ≠ sequence.** Objective = **one campaign**. Sequences have templates; objectives have templates. You do not put “opt-in” in the objective picker.
 12. **First thing on a campaign is the objective.** Hub Automations: trigger node → **Add configuration**. Same seat, not the same module — do not import Automations triggers onto this canvas.
 13. **Untemplated objective is a binary event** (word “event” may change). One yes/no: everyone enrolled is campaigned to do **this one thing**. Happened or it didn’t. Then you name it. Templated objective populates the rest of that campaign.
+14. **Enroll lives on this sequence’s Contacts.** That model **displays who is enrolled**. **Add a contact** is the hand door. Scope named: **this firm / every firm / this contact within this firm**. **Not Publish.** Automations enroll is the other door (on an event). Agents enroll **starts the mission now** — it is not waiting on a current event.
+15. **Activity / engagement chart ≠ lineage query.** The engagement chart is a **tree of outreach**. It does **not** connect left to the trigger or event that created the agent or assigned it to the objective. Keep that chart pristine. Who created / path / completion / time is **queryable** (Automations law 29) — a different thing.
 
 ---
 
@@ -115,6 +125,12 @@ SEQUENCE TEMPLATE  (blank canvas — opt-in / re-engagement / reactivation)
 │    Attempt = a cycle of this campaign’s sequence work
 │         after last node fails → next attempt
 │         attempt rules at sequence/global → Settings modals, not the canvas middle
+│
+├─ Contacts   = who is enrolled on THIS sequence
+│    displays enrolled
+│    Add contact  → this firm / every firm / this contact
+│    starts the mission now (not an event, not Publish)
+│
 └─ next Campaign  (only if prior campaign objective met → qualify)
 ```
 
@@ -283,6 +299,8 @@ Per-campaign attempt rules stay **on the campaign**. They do not appear as a str
 - Spoken “call”: now on the face as a channel node (ElevenLabs). Machine still has form until Story/SA extract. Do not mint tables here.
 - Not minting tables in this file. Table-first extract is SA, after Story promotion where needed. Modularity law still: if it can be overridden, it must be a row.
 - Not creating **forms** here. A data-request form is Automations. Agents sends people to accomplish the goal. See [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md).
+- Not putting enroll on **Publish**. Enroll is **Contacts** on that sequence (C8).
+- Not treating the **engagement chart** as the lineage query. Those are two surfaces.
 
 ---
 
@@ -294,3 +312,4 @@ Per-campaign attempt rules stay **on the campaign**. They do not appear as a str
 4. Call via ElevenLabs — face only for now; machine still form.
 5. Where campaign-level rule overrides sit besides attempt-on-campaign (sequencing already on the campaign).
 6. Settings images locked canonical.
+7. Filter catalog on Add contact beyond the three named scopes — brainstorm later; do not fill.

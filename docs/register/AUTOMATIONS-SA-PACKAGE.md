@@ -2,7 +2,7 @@
 
 **What this is:** a dated prompt. Paste into a Systems Analyst chat. Not Story. Not a second Automations flag. Not a rewrite of the Agents flagship.  
 **Seat that wrote it:** Product Manager.  
-**Law:** Agents [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite. Automations face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Chosen images + spec [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) (A1–A13; priors kept; revisions canonical).  
+**Law:** Agents [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite. Automations face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Chosen images + spec [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) (A1–A13; priors kept; revisions canonical). **Later plate (after this package was issued):** **A14** — assign existing vs from a template; no create-agent in Automations. Ascribe it the same two questions if you reach it.  
 **Context you already have (do not re-ask the PM to restate it):** that FACE, that blueprint in **lineup order**, Hub Automations (`/hub`) as the **complete plant**, CT Ant Automations as a poorer **translation** (Rule GUI **does not exist** there). Logs in [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) from **20:24** through **22:17**. Transcripts are not accessible — if it is not in those files, it is not in this package.  
 **Your identity and walk:** [`../README.md`](../README.md) § Systems Analyst. Answer lands in [`SYSTEMS-ANALYST-LOG.md`](./SYSTEMS-ANALYST-LOG.md). If the Agents package is still unanswered, walk + first question still come first; this package is **next**, not a replacement.
 
@@ -17,7 +17,7 @@ If you have not already walked the machine (Story → Requirements → migration
 
 This is what we are thinking. These plates are the systems traversing. The images are the mock; the UI is going to look like this. Ascribe. Find a way — usually tables, workers, fields, relationships, live vs stand-in. Do not mint tables from pictures.
 
-For each chosen plate in lineup order (A1 → A13, including priors), answer two questions. Short. Quote SQL / cascade / workflowWalk / ports, not screens.
+For each chosen plate in lineup order (A1 → A13, including priors; then later plate A14 if you reach it), answer two questions. Short. Quote SQL / cascade / workflowWalk / ports, not screens.
 
 A. Our system. Tables, workers, runtime, Story — what are we looking at on this plate? What already houses it, what partially houses it, what is silent?
 
@@ -51,6 +51,7 @@ Hub node kinds already named in code (`WorkflowNodeType`): `trigger` | `constant
 | **A11** (canon Output) | **Required data** as a **listing of field rows** on Output. Catalog fields only. Self-reportable → form. Document-dependent → never a form. 21:36: **not stood up**. |
 | **A10** (prior, **diagram**) | Output classes are a **lattice**. Missing class: required data. A condition on a class forks actions on the same data. **Not a screen.** |
 | **A13** (canon **diagram**) | Same lattice; required data is the **listing** class. If listing not empty → create form from those rows. **Not a screen.** Founder 22:17: different kind of picture. The DAG fork is the **If node after the rule**, which calls from previous results — Hub has it; **no Ant plate**. |
+| **A14** (later, canon assign) | Assign to an **existing** sequence, or **create from a template**. You do **not** create an agent here. A8 still holds select-agent = whole sequence. A12 still holds the form. |
 
 **Under-specified remainder** (blueprint § “Under-specified”): If/condition node after the rule (no Ant plate); constants as a canvas node; full operations catalog; full exit points; form-as-own-node vs embedded (lean embedded); remaining output classes; in-system actions besides the one named (**ascribe a tag** on campaign failure / unsubscribe); word “event”; Ant Rule GUI missing; required-data listing; form completion / campaign failure / opt-out as events; **global vs local** (not Settings); **lineage queryable** (who created the objective — agent vs hand — path, completion, time). Hub is the advanced **module plant**, not the app — do not ascribe Hub screens as the product. Name whether the machine already has a place, or Story is silent. Do not invent UI. Do not mint tables.
 

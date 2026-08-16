@@ -2,8 +2,8 @@
 
 **Seat:** Product Manager.  
 **Why this file:** law and excerpts for Automations. Entered from the Agents outskirts — not a disconnected menu pick.  
-**Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub as **advanced plant for those modules** (not the app) **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC** · SA package **22:17 UTC** · loops **23:07** · global/local **23:16** · objectives are events; failure → tag **23:35** · list scored **23:38**.  
-**Status:** 23:07 list scored 23:38. Settled: return and write-back are events. Left: enroll/bind, send, book-in door, instantiate vs enroll, queryable lineage. Product face = CT Ant. Hub is not the app. Do not plant.
+**Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub as **advanced plant for those modules** (not the app) **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC** · SA package **22:17 UTC** · loops **23:07** · global/local **23:16** · objectives are events; failure → tag **23:35** · list scored **23:38** · enroll + assign **00:02** (C8 · A14).  
+**Status:** 23:07 list scored 23:38; **2** and **6** answered **00:02**. Settled: return and write-back are events; enroll doors named; assign existing or from template (no create-agent here). Left: send, book-in door, queryable lineage. Product face = CT Ant. Hub is not the app. Do not plant.
 
 ---
 
@@ -89,6 +89,12 @@
 
 > I have enough to go ahead and create that package for the automations for the systems analysts … spec everything out … logs, not transcripts … selecting a lineup of chosen images … if a specific image is a revision of a prior image … add that prior … the revision is the one that's canonical … why we evolved it … spec of these images down to detail … every system that is required … tables, workers … some external systems … we want this UI to look the exact way it is so that when we build it it works exactly how we want it to work.
 
+> just to keep it simple, you create an agent and then you can assign, you can assign it. So there's no creating agents inside of directly from the automations module. So it only leaves assigning to an existing sequence or creating or creating from a template.
+
+> we can always improve our model, evolve it to be able to like create directly from automations, but just to keep it simple
+
+> [global vs local] that's also dependent on the contacts that are enrolled as well. … that same thing lives inside of automations, as well. … it's just an event, it's not something that starts right now.
+
 ---
 
 ## Law of the face (short)
@@ -100,7 +106,7 @@
 5. **What an automation typically originates** is a **data request** objective — fill this form with these questions — **not** “click this button.” Maybe other objective types. Click-this still lives on **Agents** (launch window). Automations would not trigger it.
 6. **The form is created in Automations.** Agents is not about creating forms or creating what is needed. Agents is about **sending people to accomplish the goal**. How Automations works the form has nothing to do with Agents.
 7. **Recursive join:** a **data request is already an event of origin for Agents**. Data request = a form, handled by Automations. The Automations **end node** (start / select an agent) **mirrors** the Agents **beginning** (declare the objective).
-8. **Same end node (leaning embedded):** start an agent **or** select an existing agent, **and** declare the objective right there. If that objective is a data request, **create the form in that same node**. Form-as-its-own-graph-node vs embedded-with-calling-the-agent is **not locked** — founder leans **embedded**.
+8. **Same end node (leaning embedded):** assign an agent **or** instantiate from a template, **and** declare the objective right there. If that objective is a data request, **create the form in that same node**. Form-as-its-own-graph-node vs embedded-with-calling-the-agent is **not locked** — founder leans **embedded**. **00:02:** you do **not** author a new agent in this module (law 31).
 9. **Select an agent = the whole sequence.** Campaigns live **inside** sequences. No separate campaign picker on that node. Campaigns can be templated. **Which agents you may select is limited by the objective** — can be enforced.
 10. **Automation may trigger creation of a campaign** when a **templated** campaign already exists for that objective. That is enroll / instantiate, not Agents growing a form builder.
 11. **Hub is the complete Automations module.** Current-app / CT Ant Automations was **born from Hub**. It is a **translation** (same kind) and a **poor rendition of quality**. Work from Hub nodes. Do not “fix” Ant independently as if it were the source.
@@ -123,6 +129,7 @@
 28. **No special return.** The return **is** an event. **All objectives are events.** The write-back **is** the event; the event happening **is** the write-back. It is detected across the app / in the database. It is not lost. Loop 1 (23:07) is settled this way — not a separate return wire.
 29. **Lineage is queryable at the minimum.** What created the objective (agent-created or hand-created). The path that agent took from that creation to completion. The completion event. Time it took. Map it correctly. That is querying, not a new module. If it is not queryable, the loop is not real.
 30. **Campaign failure is an event.** Global and local apply (all campaign failures vs **this** campaign). Then an **in-app action**: create a record — even as simple as **ascribe a tag**. Named example: the subscription bell (subscribed / not) **is a tag** created in Automations. Opt-out / unsubscribe is also an event; it assigns that tag. Campaign fails → ascribes that tag. This is one of the first in-app actions named. Do not invent the rest of the action catalog.
+31. **Automations does not create agents.** Create the agent in **Agents**, then **assign**. On the Agents action there are two choices: **assign to an existing sequence**, or **create from a template**. No third choice: author a new agent here. Can evolve later — not now. Plate **A14**. A8 stays prior for select-agent = whole sequence. A12 stays the form. Global/local of the event is also **dependent on which contacts are enrolled**. Automations still does **not** start a mission right now — that is Agents (C8).
 
 ---
 
@@ -178,6 +185,7 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 - Not generating or refining A9/A10 until asked. 21:36 answered the listing question first. A11–A13 mock the listing (Output rows, form bind, lattice **diagram**). A13 is not a screen. Do not plant the editor.
 - Not collapsing inside-the-rule conditions with the If node after the rule.
 - Not inventing an Automations **Settings** modal. Global vs local is the divide (law 27). Not filling an event catalog.
+- Not **creating agents** inside Automations. Assign existing, or from a template (law 31 / A14).
 
 ---
 
@@ -186,7 +194,7 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 1. Full list of **operations** Automations performs (data request is one; engagement was spoken as a maybe).
 2. Full list of **exit points** besides start/select agent.
 3. Form creation: **own graph node** vs **embedded** in the start-agent node (lean: embedded).
-4. When an automation starts a campaign: **new copy of the template**, or **put them on the campaign already authored**? Not picked (23:47).
+4. When an automation starts a campaign: **settled 00:02 / law 31.** Assign to an **existing** sequence, or **create from a template**. Do not create the agent in Automations.
 5. Word “event” — **settled 23:35 / law 28:** all objectives are events. C2b and Automations triggers are the same grain. Do not split them again.
 6. Catalog of **in-system actions** besides enroll-agent. **Named:** ascribe a tag / create a record on campaign failure (law 30). Do not invent the rest.
 7. Seed §5.6 vs Hub-as-built vs the 20:24 definite-middle shape — **do not silently kill any of them**. Hub Rules are what to look at. Alignment is later.

@@ -55,6 +55,7 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A11** | [`A11-rule-output-required-data-listing.png`](./automations-blueprint/A11-rule-output-required-data-listing.png) | chrome | **Canonical Output.** Required data as **field rows**. Not a flag. | 21:36 then 21:48 | **revises A9** |
 | **A10** | [`A10-output-classes-lattice.png`](./automations-blueprint/A10-output-classes-lattice.png) | **diagram** | Output classes as a **lattice**. Missing class: **required data**. A condition on a class forks actions. | 21:28 | **prior.** Listing class → **A13** |
 | **A13** | [`A13-lattice-required-data-listing.png`](./automations-blueprint/A13-lattice-required-data-listing.png) | **diagram** | Lattice with required data as a **listing class**. If listing not empty → create form from those rows. | 21:48 · founder 22:17: this is a **different kind of picture** | **revises A10.** Not a node screenshot. Not the If node |
+| **A14** | [`A14-action-assign-or-template.png`](./automations-blueprint/A14-action-assign-or-template.png) | chrome | Action · Agents: **assign to an existing sequence** or **create from a template**. You do **not** create an agent here. | 00:02 | **revises A8** (assign path only). Select-agent = sequence still A8. Form still **A12** |
 
 **Why A10 / A13 are in the lineup and still not chrome:** they are the **idea** of output classes as a lattice (a simple condition on a class forks actions on the **same data**). They are not Operator screens to rebuild as a “lattice page.” The DAG piece that does that fork is Hub’s **If / condition node after the rule**, which reads previous results. That node is **not drawn** as an Ant plate. Keep both diagrams so the evolution (hole → listing) is visible. Do not ascribe A13 as a screen.
 
@@ -71,6 +72,7 @@ In-app Ant Automations workbench is **not** this blueprint. Mock = generated ima
 - A9 still names the Output gap. **A11** is the listing on Output.
 - A10 still shows required data as a dashed hole. **A13** fills the hole **as a diagram**.
 - A1 smallest workflow is trigger · rule · action with **no If node** on the canvas. The If-after-rule is Hub-as-built and founder-named (22:17); it is not on A1.
+- **A14** nav chrome sometimes drifts (Home / Workspaces vs House-global). Trust the **modal contents**.
 
 ---
 
@@ -85,7 +87,7 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | Open the **Trigger** node | Event or schedule (A5). Perform on this event. |
 | Insert / add a node | Palette. Select **Action** (A6). |
 | Open the **Action** node | Kind: **Agents** vs **in the application** (A7). |
-| Action kind = Agents | Select agent (whole sequence) · declare objective · if data request, create the form (A8 prior / **A12** canon). |
+| Action kind = Agents | First: **assign existing** or **from a template** (**A14**). Then select agent (whole sequence) · declare objective · if data request, create the form (A8 prior / **A12** canon). You do **not** author a new agent here. |
 | Open the **Rule** node | Immigration · Service eligibility. GUI \| Custom (A2 / A3). Outcomes toggle on/off. GUI + named code (A4). |
 | Rule tab **Output** | Today’s signals (A9 prior) · required-data **listing** (**A11** canon). |
 | After the rule, on the DAG | **Condition / If node** that reads that Output and forks. **Hub has this. No Ant plate.** A10 / A13 diagram the idea. |
@@ -216,9 +218,9 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Why this does what we wanted (and why it evolved):** this plate locked **select agent = sequence** and **form lives in Automations**. The form itself was still a blank builder — that is why **A12** exists. Keep A8 so the agent/objective law is visible without pretending the blank builder is canon.
 
-**Canonical for the form:** A12. **Canonical for select-agent / sequence templates:** still this plate.
+**Canonical for the form:** A12. **Canonical for select-agent / sequence templates:** still this plate. **Canonical for assign-existing vs from-template (no create-agent here):** **A14**.
 
-**Not this plate:** Binding questions to rule Output (A12). In-app action kinds (A7).
+**Not this plate:** Binding questions to rule Output (A12). In-app action kinds (A7). The 00:02 assign choice (A14).
 
 ---
 
@@ -310,6 +312,25 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 ---
 
+### A14 — Assign existing, or from a template (canonical assign)
+
+![A14 action assign or template](./automations-blueprint/A14-action-assign-or-template.png)
+
+**Rationale (00:02):** Leftover 6. Keep it simple. **Do not create agents inside Automations.** Create the agent in Agents, then assign. Two choices only: **assign to an existing sequence**, or **create from a template**. Can evolve later — not now. A8 stays so select-agent = whole sequence is visible. A12 stays the form.
+
+**On the glass:**
+- Kind: Agents.
+- Line: “You do not create an agent here. Create the agent in Agents, then assign.”
+- Two cards: **Assign to an existing sequence** (put them on one you already authored) · **Create from a template** (new copy from a sequence template, then put them on that).
+- Same three names on both sides (Opt-in / Re-engagement / Reactivation) — left tagged Existing, right tagged Sequence template.
+- Footer: “Not a third option: author a new agent in this module.”
+
+**Why this does what we wanted:** the copy-vs-assign choice is obvious on the glass. It is not a third authoring place.
+
+**Not this plate:** Authoring a sequence (that is Agents / C1). Form bind (A12). Hand enroll (C8).
+
+---
+
 ## Under-specified (named, not filled)
 
 | Remainder | What we know | What is not drawn |
@@ -325,6 +346,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 | **Event: global vs local** | **Global:** all of that kind. **Local:** this specific one. Named: form completion, campaign failure, opt-out / unsubscribe. Not “Settings.” | No plate. Do not fill the catalog. |
 | **In-app action: ascribe a tag** | Campaign fails → record / tag. Subscription bell is that tag. | Named. Do not invent the rest. |
 | **Lineage queryable** | Who created the objective (agent vs hand), path to completion, completion event, time. | Queryable at minimum. Not a new screen. |
+| **Assign existing vs from template** | **Settled 00:02.** A14. No create-agent in Automations. | Drawn. |
 | **Ant Rule GUI** | Does not exist. Hub does. | Pictures are the face until built. |
 | **Required-data listing in code** | 21:36: not stood up. Catalog unused. | SA: what would have to change — do not mint from the picture. |
 
@@ -340,5 +362,6 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 - Not a full Automations DAG. Smallest workflow first; insides of those pieces; Output listing; form bind; lattice **idea**.
 - Not filling a complete output-class catalog.
 - Not restoring a blank form builder as canon (A8 stays as prior).
+- Not creating agents inside Automations (A14).
 
 **SA:** read 15:43 (do not overwrite), then [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md), then **this file in lineup order**. Dated prompt: [`AUTOMATIONS-SA-PACKAGE.md`](./AUTOMATIONS-SA-PACKAGE.md). Extract the machine from the law + these plates. Do not design a different Automations module from Ant’s poor translation. Hub is the source plant.

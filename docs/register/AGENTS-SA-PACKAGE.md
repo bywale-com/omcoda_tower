@@ -3,7 +3,7 @@
 **What this is:** a dated prompt. Paste into a Systems Analyst chat. Not Story. Not a second Agents flag.  
 **Seat that wrote it:** Product Manager.  
 **Law:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
-**Context you already have (do not re-ask the PM to restate it):** [`AGENTS-FACE.md`](./AGENTS-FACE.md) · [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · canon plates `docs/register/agents-blueprint/C1`–`C7`.  
+**Context you already have (do not re-ask the PM to restate it):** [`AGENTS-FACE.md`](./AGENTS-FACE.md) · [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · canon plates `docs/register/agents-blueprint/C1`–`C7`. **Later plate (after this package was issued):** **C8** — this sequence’s Contacts + Add contact. Ascribe it the same two questions if you reach it. Do not mint an enroll table from the picture.  
 **Your identity and walk:** [`../README.md`](../README.md) § Systems Analyst. Answer lands in [`SYSTEMS-ANALYST-LOG.md`](./SYSTEMS-ANALYST-LOG.md).
 
 ---
@@ -17,7 +17,7 @@ If you have not already walked the machine (Story → Requirements → migration
 
 This is what we are thinking. These plates are the systems traversing. The images are the mock; the UI is going to look like this. Ascribe.
 
-For each canon plate C1 → C7 (and C2b, C5b with their parents), answer two questions. Short. Quote SQL / cascade / ports, not screens.
+For each canon plate C1 → C7 (and C2b, C5b with their parents; then later plate C8 if you reach it), answer two questions. Short. Quote SQL / cascade / ports, not screens.
 
 A. Our system. Tables, workers, runtime, Story — what are we looking at on this plate? What already houses it, what partially houses it, what is silent?
 
@@ -44,6 +44,7 @@ Read the plate in [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) (image + 
 | **C5 / C5b** | Override content is a **toggle** inside the channel; on → node expands into that medium’s composer. Text, email, **call (ElevenLabs)**. Channel rules still a wire. Attempt rules are **not** here. |
 | **C6** | Agents Settings = **global** defaults (attempt, channel/escalation, content, sequencing). Locked on the face. |
 | **C7** | Sequence Settings = **this sequence**; inherit unless Override. Per-campaign attempt rules live **on the campaign**, not in this modal. Locked on the face. |
+| **C8** (later) | This sequence → **Contacts**. Displays enrolled. **Add contact.** Scope: this firm / every firm / this contact. Starts the mission now. Not Publish. Ant tab exists; Add contact does not. |
 
 **Under-specified remainder** (blueprint § “specified but not on a canon plate”): attempt rules drawn on the campaign card; attempt-N content variation; additional opt-in objectives; word “event”; campaign Settings modal; Call vs Form on the machine. Name whether the machine already has a place, or Story is silent. Do not invent UI for these.
 
