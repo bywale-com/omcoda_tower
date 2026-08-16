@@ -74,9 +74,11 @@ Same class of gap is expected (not yet fully audited) in **Agents / Automations 
 
 **Map + Pass A:** See `PLACEHOLDER-REAL-MAP.md` — consultant Board / Engagement / Meetings rewired off Sarah seeds to `contact_records` / `engagement_records` / `meeting_booked` (empty-or-personalized). Operator DEMO_FIRMS indexes = Pass B.
 
+**Systems bind (before UI shape restore):** See `HUB-STRUCTURE-SYSTEM-BIND.md` — integrating Hub Client/Agents/Automations structures into Ant does **not** need new core tables; cohesion = project worker ledger (`engagement_records`, attempts, outbound, workflows) into Hub-shaped surfaces. Hub embed of seed `journeyByClient` = chrome.
+
 ---
 
 ## Pass posture
 
 **Current number pass (bind / author-runtime / production walk): not a UI-ready pass.**  
-Next pass must close engagement-record / Activity translation (and restore Hub access for comparison) before claiming the consultant product is ready.
+Next pass starts from the system bind map (projection contract), then closes engagement-record / Activity translation — not Hub chrome first.
