@@ -15,6 +15,24 @@ export type CampaignChannelDraft = {
   ord?: number;
   overrideContent?: boolean;
   content?: Record<string, unknown>;
+  variations?: Array<{
+    id?: string;
+    ord?: number;
+    applyMode?: "every" | "only_this" | "every_except";
+    attemptN?: number | null;
+    content?: Record<string, unknown>;
+  }>;
+  rulesOverride?: boolean;
+  rules?: Array<{
+    id?: string;
+    key?: string;
+    label?: string;
+    enabled?: boolean;
+    condition?: string;
+    threshold?: number | null;
+    thresholdUnit?: string | null;
+    ord?: number;
+  }>;
 };
 
 export type CampaignDraft = {
@@ -58,6 +76,23 @@ export type CampaignRow = {
     ord: number;
     override_content: boolean;
     content: Record<string, unknown>;
+    variations: Array<{
+      id: string;
+      ord: number;
+      apply_mode: "every" | "only_this" | "every_except";
+      attempt_n: number | null;
+      content: Record<string, unknown>;
+    }>;
+    rules: Array<{
+      id: string;
+      label: string;
+      enabled: boolean;
+      when_clause: string | null;
+      condition_clause: string | null;
+      threshold: number | null;
+      threshold_unit: string | null;
+      ord: number;
+    }>;
   }>;
 };
 
@@ -120,6 +155,60 @@ export async function loadHousing(
      ORDER BY ord ASC`,
     [ids],
   );
+  const channelIds = chans.rows.map((ch) => ch.id);
+  const variations = channelIds.length
+    ? await pool.query<{
+        id: string;
+        campaign_channel_id: string;
+        ord: number;
+        apply_mode: "every" | "only_this" | "every_except";
+        attempt_n: number | null;
+        content: Record<string, unknown>;
+      }>(
+        `SELECT id, campaign_channel_id, ord, apply_mode, attempt_n, content
+         FROM campaign_channel_variation
+         WHERE campaign_channel_id = ANY($1::text[])
+         ORDER BY ord ASC`,
+        [channelIds],
+      )
+    : { rows: [] as Array<{
+        id: string;
+        campaign_channel_id: string;
+        ord: number;
+        apply_mode: "every" | "only_this" | "every_except";
+        attempt_n: number | null;
+        content: Record<string, unknown>;
+      }> };
+  const rules = channelIds.length
+    ? await pool.query<{
+        id: string;
+        campaign_channel_id: string | null;
+        label: string;
+        enabled: boolean;
+        when_clause: string | null;
+        condition_clause: string | null;
+        threshold: number | null;
+        threshold_unit: string | null;
+        ord: number;
+      }>(
+        `SELECT id, campaign_channel_id, label, enabled, when_clause, condition_clause,
+                threshold, threshold_unit, ord
+         FROM rule_attempt_criteria
+         WHERE campaign_channel_id = ANY($1::text[])
+         ORDER BY ord ASC`,
+        [channelIds],
+      )
+    : { rows: [] as Array<{
+        id: string;
+        campaign_channel_id: string | null;
+        label: string;
+        enabled: boolean;
+        when_clause: string | null;
+        condition_clause: string | null;
+        threshold: number | null;
+        threshold_unit: string | null;
+        ord: number;
+      }> };
 
   const objBy = new Map(objs.rows.map((o) => [o.campaign_id, o]));
   const chBy = new Map<string, typeof chans.rows>();
@@ -127,6 +216,19 @@ export async function loadHousing(
     const list = chBy.get(ch.campaign_id) ?? [];
     list.push(ch);
     chBy.set(ch.campaign_id, list);
+  }
+  const varBy = new Map<string, typeof variations.rows>();
+  for (const row of variations.rows) {
+    const list = varBy.get(row.campaign_channel_id) ?? [];
+    list.push(row);
+    varBy.set(row.campaign_channel_id, list);
+  }
+  const ruleBy = new Map<string, typeof rules.rows>();
+  for (const row of rules.rows) {
+    if (!row.campaign_channel_id) continue;
+    const list = ruleBy.get(row.campaign_channel_id) ?? [];
+    list.push(row);
+    ruleBy.set(row.campaign_channel_id, list);
   }
 
   return camps.rows.map((c) => {
@@ -142,13 +244,44 @@ export async function loadHousing(
             source: o.source,
           }
         : null,
-      channels: (chBy.get(c.id) ?? []).map((ch) => ({
-        id: ch.id,
-        token: ch.token,
-        ord: ch.ord,
-        override_content: ch.override_content,
-        content: ch.content ?? {},
-      })),
+      channels: (chBy.get(c.id) ?? []).map((ch) => {
+        const vars = varBy.get(ch.id) ?? [];
+        const leftover = ch.content ?? {};
+        return {
+          id: ch.id,
+          token: ch.token,
+          ord: ch.ord,
+          override_content: ch.override_content,
+          content: vars[0]?.content ?? leftover,
+          variations: vars.length
+            ? vars.map((v) => ({
+                id: v.id,
+                ord: v.ord,
+                apply_mode: v.apply_mode,
+                attempt_n: v.attempt_n,
+                content: v.content ?? {},
+              }))
+            : [
+                {
+                  id: `var-${ch.id}`,
+                  ord: 0,
+                  apply_mode: "every" as const,
+                  attempt_n: null,
+                  content: leftover,
+                },
+              ],
+          rules: (ruleBy.get(ch.id) ?? []).map((r) => ({
+            id: r.id,
+            label: r.label,
+            enabled: r.enabled,
+            when_clause: r.when_clause,
+            condition_clause: r.condition_clause,
+            threshold: r.threshold,
+            threshold_unit: r.threshold_unit,
+            ord: r.ord,
+          })),
+        };
+      }),
     };
   });
 }
@@ -222,8 +355,11 @@ export async function saveHousing(
           ] satisfies CampaignChannelDraft[]);
       for (const ch of channels) {
         const chId = ch.id?.trim() || `ch-${id}-${ch.token}`;
-        channelKeep.push(chId);
-        await pool.query(
+        const variations = ch.variations?.length
+          ? ch.variations
+          : [{ ord: 0, applyMode: "every" as const, attemptN: null, content: ch.content ?? {} }];
+        const leftoverContent = variations[0]?.content ?? ch.content ?? {};
+        const saved = await pool.query<{ id: string }>(
           `INSERT INTO campaign_channel
              (id, campaign_id, token, ord, override_content, content, updated_at)
            VALUES ($1,$2,$3,$4,$5,$6::jsonb,now())
@@ -231,16 +367,106 @@ export async function saveHousing(
              ord=EXCLUDED.ord,
              override_content=EXCLUDED.override_content,
              content=EXCLUDED.content,
-             updated_at=now()`,
+             updated_at=now()
+           RETURNING id`,
           [
             chId,
             id,
             ch.token,
             ch.ord ?? 0,
             Boolean(ch.overrideContent),
-            JSON.stringify(ch.content ?? {}),
+            JSON.stringify(leftoverContent),
           ],
         );
+        const realChId = saved.rows[0]?.id ?? chId;
+        channelKeep.push(realChId);
+
+        const varKeep: string[] = [];
+        for (const [i, variation] of variations.entries()) {
+          const applyMode =
+            variation.applyMode === "only_this" || variation.applyMode === "every_except"
+              ? variation.applyMode
+              : "every";
+          const attemptN = applyMode === "every" ? null : (variation.attemptN ?? 1);
+          const varId = variation.id?.trim() || `var-${realChId}-${i}`;
+          varKeep.push(varId);
+          await pool.query(
+            `INSERT INTO campaign_channel_variation
+               (id, campaign_channel_id, ord, apply_mode, attempt_n, content, updated_at)
+             VALUES ($1,$2,$3,$4,$5,$6::jsonb,now())
+             ON CONFLICT (id) DO UPDATE SET
+               campaign_channel_id=EXCLUDED.campaign_channel_id,
+               ord=EXCLUDED.ord,
+               apply_mode=EXCLUDED.apply_mode,
+               attempt_n=EXCLUDED.attempt_n,
+               content=EXCLUDED.content,
+               updated_at=now()`,
+            [
+              varId,
+              realChId,
+              variation.ord ?? i,
+              applyMode,
+              attemptN,
+              JSON.stringify(variation.content ?? {}),
+            ],
+          );
+        }
+        if (varKeep.length) {
+          await pool.query(
+            `DELETE FROM campaign_channel_variation
+             WHERE campaign_channel_id=$1 AND NOT (id = ANY($2::text[]))`,
+            [realChId, varKeep],
+          );
+        }
+
+        if (ch.rulesOverride) {
+          const ruleKeep: string[] = [];
+          for (const [i, rule] of (ch.rules ?? []).entries()) {
+            const key = rule.key?.trim() || `r${i}`;
+            const ruleId = rule.id?.trim() || `acr-ch-${realChId}-${key}`;
+            ruleKeep.push(ruleId);
+            const label = rule.label?.trim() || `${ch.token} · ${key.replace(/_/g, " ")}`;
+            await pool.query(
+              `INSERT INTO rule_attempt_criteria
+                 (id, firm_id, label, enabled, when_clause, condition_clause, set_value,
+                  threshold, threshold_unit, ord, source, campaign_channel_id)
+               VALUES ($1,$2,$3,$4,$5,$6,'escalate_forward',$7,$8,$9,'channel_local',$10)
+               ON CONFLICT (id) DO UPDATE SET
+                 label=EXCLUDED.label,
+                 enabled=EXCLUDED.enabled,
+                 when_clause=EXCLUDED.when_clause,
+                 condition_clause=EXCLUDED.condition_clause,
+                 threshold=EXCLUDED.threshold,
+                 threshold_unit=EXCLUDED.threshold_unit,
+                 ord=EXCLUDED.ord,
+                 campaign_channel_id=EXCLUDED.campaign_channel_id,
+                 version=rule_attempt_criteria.version+1`,
+              [
+                ruleId,
+                firmId,
+                label,
+                Boolean(rule.enabled),
+                `channel=${ch.token}`,
+                rule.condition ?? key.replace(/_/g, " "),
+                rule.threshold ?? null,
+                rule.thresholdUnit ?? null,
+                rule.ord ?? i,
+                realChId,
+              ],
+            );
+          }
+          if (ruleKeep.length) {
+            await pool.query(
+              `DELETE FROM rule_attempt_criteria
+               WHERE campaign_channel_id=$1 AND NOT (id = ANY($2::text[]))`,
+              [realChId, ruleKeep],
+            );
+          }
+        } else {
+          await pool.query(`DELETE FROM rule_attempt_criteria WHERE campaign_channel_id=$1`, [
+            realChId,
+          ]);
+        }
       }
     }
     if (channelKeep.length) {
@@ -323,6 +549,21 @@ export async function copySequenceFromTemplate(
       ord: ch.ord,
       overrideContent: ch.override_content,
       content: ch.content,
+      variations: ch.variations.map((v) => ({
+        ord: v.ord,
+        applyMode: v.apply_mode,
+        attemptN: v.attempt_n,
+        content: v.content,
+      })),
+      rulesOverride: ch.rules.length > 0,
+      rules: ch.rules.map((r, i) => ({
+        label: r.label,
+        enabled: r.enabled,
+        condition: r.condition_clause ?? undefined,
+        threshold: r.threshold,
+        thresholdUnit: r.threshold_unit,
+        ord: r.ord ?? i,
+      })),
     })),
   }));
   await saveHousing(pool, newId, opts.firmId, drafts);
@@ -441,9 +682,31 @@ export async function recordCampaignFailure(
   return id;
 }
 
-export async function firstAuthoredChannel(
+export function pickVariationContent(
+  variations: Array<{
+    apply_mode: string;
+    attempt_n: number | null;
+    ord: number;
+    content: Record<string, unknown>;
+  }>,
+  attemptN: number,
+): Record<string, unknown> {
+  const sorted = variations.slice().sort((a, b) => a.ord - b.ord);
+  const only = sorted.find((row) => row.apply_mode === "only_this" && row.attempt_n === attemptN);
+  if (only) return only.content ?? {};
+  const excepted = sorted.find(
+    (row) => row.apply_mode === "every_except" && row.attempt_n != null && row.attempt_n !== attemptN,
+  );
+  if (excepted) return excepted.content ?? {};
+  const every = sorted.find((row) => row.apply_mode === "every");
+  return (every ?? sorted[0])?.content ?? {};
+}
+
+export async function pickAuthoredContent(
   pool: Pool,
   campaignId: string | null,
+  token: string,
+  attemptN: number,
 ): Promise<{ token: string; content: Record<string, unknown> } | null> {
   if (!campaignId) return null;
   const camp = await pool.query<{ override_this: boolean }>(
@@ -451,12 +714,49 @@ export async function firstAuthoredChannel(
     [campaignId],
   );
   if (!camp.rows[0]?.override_this) return null;
-  const ch = await pool.query<{ token: string; content: Record<string, unknown> }>(
-    `SELECT token, content FROM campaign_channel
+  const ch = await pool.query<{ id: string; token: string; content: Record<string, unknown> }>(
+    `SELECT id, token, content FROM campaign_channel
+     WHERE campaign_id=$1 AND token=$2
+     ORDER BY ord ASC LIMIT 1`,
+    [campaignId, token],
+  );
+  const row = ch.rows[0];
+  if (!row) return null;
+  const vars = await pool.query<{
+    apply_mode: string;
+    attempt_n: number | null;
+    ord: number;
+    content: Record<string, unknown>;
+  }>(
+    `SELECT apply_mode, attempt_n, ord, content
+     FROM campaign_channel_variation WHERE campaign_channel_id=$1 ORDER BY ord ASC`,
+    [row.id],
+  );
+  const content = vars.rows.length
+    ? pickVariationContent(vars.rows, attemptN)
+    : (row.content ?? {});
+  return { token: row.token, content };
+}
+
+export async function firstAuthoredChannel(
+  pool: Pool,
+  campaignId: string | null,
+  attemptN = 1,
+): Promise<{ token: string; content: Record<string, unknown> } | null> {
+  if (!campaignId) return null;
+  const camp = await pool.query<{ override_this: boolean }>(
+    `SELECT override_this FROM campaign WHERE id=$1`,
+    [campaignId],
+  );
+  if (!camp.rows[0]?.override_this) return null;
+  const ch = await pool.query<{ token: string }>(
+    `SELECT token FROM campaign_channel
      WHERE campaign_id=$1 ORDER BY ord ASC LIMIT 1`,
     [campaignId],
   );
-  return ch.rows[0] ?? null;
+  const token = ch.rows[0]?.token;
+  if (!token) return null;
+  return pickAuthoredContent(pool, campaignId, token, attemptN);
 }
 
 export function platformTemplateIdForClass(sequenceClass: string): string {

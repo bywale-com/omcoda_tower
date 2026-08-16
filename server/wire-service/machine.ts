@@ -901,7 +901,26 @@ export async function handleAttemptCriteriaUpsert(c: Context) {
   const pool = getPool();
   const existing = await pool.query(`SELECT * FROM rule_attempt_criteria WHERE id=$1`, [id]);
   if (!existing.rowCount) {
-    return json(c, { error: "attempt criteria not found", id }, 404);
+    await pool.query(
+      `INSERT INTO rule_attempt_criteria
+         (id, firm_id, label, enabled, when_clause, condition_clause, set_value,
+          threshold, threshold_unit, ord, source)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'c6')`,
+      [
+        id,
+        firm,
+        body.label ?? id,
+        body.enabled ?? true,
+        body.whenClause ?? null,
+        body.conditionClause ?? null,
+        body.setValue ?? "escalate_forward",
+        body.threshold ?? null,
+        body.thresholdUnit ?? null,
+        body.ord ?? 0,
+      ],
+    );
+    const created = await pool.query(`SELECT * FROM rule_attempt_criteria WHERE id=$1`, [id]);
+    return json(c, created.rows[0]);
   }
   const prev = existing.rows[0] as Record<string, unknown>;
   const next = {
@@ -1605,9 +1624,12 @@ export async function handleContactRecordsList(c: Context) {
     email: string | null;
     phone: string | null;
     name: string | null;
+    firm_name: string | null;
   }>(
-    `SELECT id, firm_id, email, phone, name FROM contact_records
-     WHERE firm_id=$1 ORDER BY updated_at DESC NULLS LAST, id ASC`,
+    `SELECT c.id, c.firm_id, c.email, c.phone, c.name, f.name AS firm_name
+     FROM contact_records c
+     LEFT JOIN ct_firms f ON f.id = c.firm_id
+     WHERE c.firm_id=$1 ORDER BY c.updated_at DESC NULLS LAST, c.id ASC`,
     [firm],
   );
   return json(c, {
@@ -1618,6 +1640,7 @@ export async function handleContactRecordsList(c: Context) {
       email: r.email,
       phone: r.phone,
       name: r.name,
+      firmName: r.firm_name,
     })),
   });
 }
@@ -1802,6 +1825,66 @@ export async function handleSequenceHousingPut(c: Context) {
     body.campaigns ?? [],
   );
   return json(c, { sequenceId, campaigns });
+}
+
+export async function handleAttemptCycleGet(c: Context) {
+  const sequenceId = c.req.query("sequenceId") || null;
+  const pool = getPool();
+  if (sequenceId) {
+    const row = await pool.query(
+      `SELECT id, firm_id, sequence_id, attempt_count, wait_after_last_failed_seconds, nth_exception
+       FROM seq_attempt_cycle WHERE sequence_id=$1 LIMIT 1`,
+      [sequenceId],
+    );
+    if (row.rows[0]) return json(c, { cycle: row.rows[0] });
+  }
+  const global = await pool.query(
+    `SELECT id, firm_id, sequence_id, attempt_count, wait_after_last_failed_seconds, nth_exception
+     FROM seq_attempt_cycle WHERE id='sac-global' LIMIT 1`,
+  );
+  return json(c, {
+    cycle: global.rows[0] ?? {
+      id: "sac-global",
+      firm_id: null,
+      sequence_id: null,
+      attempt_count: 3,
+      wait_after_last_failed_seconds: 86400,
+      nth_exception: {},
+    },
+  });
+}
+
+export async function handleAttemptCyclePut(c: Context) {
+  const firm = await firmId(c);
+  const body = await c.req.json<{
+    sequenceId?: string | null;
+    attemptCount?: number;
+    waitAfterLastFailedSeconds?: number;
+    nthException?: Record<string, unknown>;
+  }>();
+  const sequenceId = body.sequenceId || null;
+  const id = sequenceId ? `sac-seq-${sequenceId}` : "sac-global";
+  const pool = getPool();
+  await pool.query(
+    `INSERT INTO seq_attempt_cycle
+       (id, firm_id, sequence_id, attempt_count, wait_after_last_failed_seconds, nth_exception, updated_at)
+     VALUES ($1,$2,$3,$4,$5,$6::jsonb,now())
+     ON CONFLICT (id) DO UPDATE SET
+       attempt_count=EXCLUDED.attempt_count,
+       wait_after_last_failed_seconds=EXCLUDED.wait_after_last_failed_seconds,
+       nth_exception=EXCLUDED.nth_exception,
+       updated_at=now()`,
+    [
+      id,
+      sequenceId ? firm : null,
+      sequenceId,
+      body.attemptCount ?? 3,
+      body.waitAfterLastFailedSeconds ?? 86400,
+      JSON.stringify(body.nthException ?? {}),
+    ],
+  );
+  const row = await pool.query(`SELECT * FROM seq_attempt_cycle WHERE id=$1`, [id]);
+  return json(c, { cycle: row.rows[0] });
 }
 
 export async function handleSequenceEnrollContacts(c: Context) {

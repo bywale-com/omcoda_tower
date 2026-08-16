@@ -10,8 +10,10 @@ import {
   List,
   Modal,
   Radio,
+  Select,
   Space,
   Switch,
+  Table,
   Tabs,
   Tag,
   Typography,
@@ -57,6 +59,8 @@ import type {
 import { useAuth } from "../../../auth/AuthContext";
 import { wirePorts } from "../../../wire/registry";
 import { AntAgentCanvas, draftsToHousing, housingToDrafts, type CampaignDraft } from "./AntAgentCanvas";
+import { channelFromPayload, DISTANCE_OPTIONS, eventKindProse } from "./channelRuleGrain";
+import { MODAL_SCROLL } from "./modalScroll";
 
 function statusColor(status: AgentDefinition["status"]) {
   if (status === "running") return "processing";
@@ -706,8 +710,16 @@ export function AntAgentWorkbench({
   const [statusNote, setStatusNote] = useState<string | null>(null);
   const [enrollments, setEnrollments] = useState<EnrollmentRow[]>([]);
   const [agentActivity, setAgentActivity] = useState<EngagementRecordRow[]>([]);
+  const [book, setBook] = useState<
+    Array<{ id: string; name: string | null; email: string | null; firmName?: string | null }>
+  >([]);
+  const [attemptCount, setAttemptCount] = useState(3);
+  const [waitSeconds, setWaitSeconds] = useState(86400);
+  const [contactQuery, setContactQuery] = useState("");
+  const [activityQuery, setActivityQuery] = useState("");
   const linkedAutomations = useMemo(() => getLinkedAutomationSummaries(agent), [agent]);
   const firmName = user?.firmId ? `Firm ${user.firmId.slice(0, 8)}` : "Session firm";
+  const contactById = useMemo(() => new Map(book.map((row) => [row.id, row])), [book]);
 
   useEffect(() => {
     setActiveTab("editor");
@@ -734,6 +746,13 @@ export function AntAgentWorkbench({
         setOverrideSequencing(Boolean(row?.override_sequencing));
       })
       .catch(() => undefined);
+    void wirePorts.machineApi
+      .getAttemptCycle(binding.templateId)
+      .then(({ cycle }) => {
+        setAttemptCount(cycle.attempt_count ?? 3);
+        setWaitSeconds(cycle.wait_after_last_failed_seconds ?? 86400);
+      })
+      .catch(() => undefined);
   }, [agentId]);
 
   useEffect(() => {
@@ -743,9 +762,11 @@ export function AntAgentWorkbench({
     void Promise.all([
       wirePorts.machineApi.boardDetections(),
       wirePorts.machineApi.listEngagementRecords(),
+      wirePorts.machineApi.listContactRecords().catch(() => []),
     ])
-      .then(([board, records]) => {
+      .then(([board, records, contacts]) => {
         if (cancelled) return;
+        setBook(contacts);
         const enr = board.enrollments.filter(
           (e) =>
             e.agent_ref === agentRef ||
@@ -799,6 +820,13 @@ export function AntAgentWorkbench({
         overrideContent,
         overrideSequencing,
       });
+      if (overrideAttempt) {
+        await wirePorts.machineApi.saveAttemptCycle({
+          sequenceId: binding.templateId,
+          attemptCount,
+          waitAfterLastFailedSeconds: waitSeconds,
+        });
+      }
       setCampaigns(housingToDrafts(saved.campaigns));
       const note = `Saved ${saved.campaigns.length} campaigns → ${binding.templateId}`;
       setStatusNote(note);
@@ -919,70 +947,168 @@ export function AntAgentWorkbench({
             tab.id === "editor" ? (
               <AntAgentCanvas campaigns={campaigns} onChange={setCampaigns} />
             ) : tab.id === "settings" ? (
-              <div>
-                <div style={{ padding: 16 }}>
-                  <Typography.Title level={5}>Inherit / override (this sequence)</Typography.Title>
-                  <Space direction="vertical">
-                    <Space>
-                      <Switch checked={overrideAttempt} onChange={setOverrideAttempt} />
-                      <Typography.Text>Override attempt cycle</Typography.Text>
+              <div style={{ padding: 16, overflow: "auto", height: "100%" }}>
+                <Typography.Paragraph type="secondary">
+                  This sequence — inherits from Agents (global) unless you override.
+                </Typography.Paragraph>
+                <Space direction="vertical" size={16} style={{ width: "100%", maxWidth: 560 }}>
+                  <div>
+                    <Space style={{ justifyContent: "space-between", width: "100%" }}>
+                      <Typography.Text strong>1. Attempt rules</Typography.Text>
+                      <Space>
+                        <Typography.Text type="secondary">Override</Typography.Text>
+                        <Switch checked={overrideAttempt} onChange={setOverrideAttempt} />
+                      </Space>
                     </Space>
-                    <Space>
-                      <Switch checked={overrideChannel} onChange={setOverrideChannel} />
-                      <Typography.Text>Override channel order</Typography.Text>
+                    <div style={{ opacity: overrideAttempt ? 1 : 0.45, pointerEvents: overrideAttempt ? "auto" : "none", marginTop: 8 }}>
+                      <Space direction="vertical" size={8} style={{ width: "100%" }}>
+                        <div>
+                          <Typography.Text type="secondary" style={{ fontSize: 12, display: "block" }}>
+                            Number of attempts
+                          </Typography.Text>
+                          <InputNumber min={1} value={attemptCount} onChange={(value) => setAttemptCount(typeof value === "number" ? value : 3)} />
+                        </div>
+                        <div>
+                          <Typography.Text type="secondary" style={{ fontSize: 12, display: "block" }}>
+                            Wait after failed last node
+                          </Typography.Text>
+                          <Select
+                            value={waitSeconds}
+                            style={{ width: 200 }}
+                            options={DISTANCE_OPTIONS.filter(
+                              (row, i, all) => all.findIndex((other) => other.seconds === row.seconds) === i,
+                            ).map((row) => ({ value: row.seconds, label: row.label }))}
+                            onChange={setWaitSeconds}
+                          />
+                        </div>
+                      </Space>
+                    </div>
+                  </div>
+                  <div>
+                    <Space style={{ justifyContent: "space-between", width: "100%" }}>
+                      <Typography.Text strong>2. Channel rules / escalation</Typography.Text>
+                      <Space>
+                        <Typography.Text type="secondary">Override</Typography.Text>
+                        <Switch checked={overrideChannel} onChange={setOverrideChannel} />
+                      </Space>
                     </Space>
-                    <Space>
-                      <Switch checked={overrideContent} onChange={setOverrideContent} />
-                      <Typography.Text>Override content</Typography.Text>
+                    <Typography.Paragraph type="secondary" style={{ marginTop: 8, marginBottom: 0 }}>
+                      Sequence defaults per medium. The canvas channel-rules node is this campaign’s this channel.
+                    </Typography.Paragraph>
+                  </div>
+                  <div>
+                    <Space style={{ justifyContent: "space-between", width: "100%" }}>
+                      <Typography.Text strong>3. Content</Typography.Text>
+                      <Space>
+                        <Typography.Text type="secondary">Override</Typography.Text>
+                        <Switch checked={overrideContent} onChange={setOverrideContent} />
+                      </Space>
                     </Space>
-                    <Space>
-                      <Switch checked={overrideSequencing} onChange={setOverrideSequencing} />
-                      <Typography.Text>Override sequencing</Typography.Text>
+                  </div>
+                  <div>
+                    <Space style={{ justifyContent: "space-between", width: "100%" }}>
+                      <Typography.Text strong>4. Sequencing</Typography.Text>
+                      <Space>
+                        <Typography.Text type="secondary">Override</Typography.Text>
+                        <Switch checked={overrideSequencing} onChange={setOverrideSequencing} />
+                      </Space>
                     </Space>
-                  </Space>
-                </div>
-                <AgentSettingsPanel />
+                  </div>
+                </Space>
               </div>
             ) : tab.id === "contacts" ? (
-              enrollments.length === 0 ? (
-                <Empty style={{ marginTop: 48 }} description={emptyCopy.contacts} />
-              ) : (
-                <List
-                  style={{ padding: 16 }}
-                  bordered
-                  dataSource={enrollments}
-                  renderItem={(row) => (
-                    <List.Item key={row.id}>
-                      <Space direction="vertical" size={0}>
-                        <Typography.Text strong>{row.contact_id}</Typography.Text>
-                        <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                          {row.agent_ref} · {new Date(row.enrolled_at).toLocaleString()}
-                        </Typography.Text>
-                      </Space>
-                    </List.Item>
-                  )}
+              <div style={{ padding: 16, height: "100%", overflow: "auto" }}>
+                <Input.Search
+                  placeholder="Search contacts"
+                  value={contactQuery}
+                  onChange={(event) => setContactQuery(event.target.value)}
+                  style={{ marginBottom: 12, maxWidth: 320 }}
                 />
-              )
+                <Table
+                  size="small"
+                  rowKey="id"
+                  pagination={{ pageSize: 10 }}
+                  dataSource={enrollments.filter((row) => {
+                    const person = contactById.get(row.contact_id);
+                    const hay = `${person?.name ?? ""} ${person?.email ?? ""} ${person?.firmName ?? ""}`.toLowerCase();
+                    return hay.includes(contactQuery.trim().toLowerCase());
+                  })}
+                  columns={[
+                    {
+                      title: "Name",
+                      dataIndex: "contact_id",
+                      render: (id: string) => {
+                        const person = contactById.get(id);
+                        return person?.name || person?.email || "—";
+                      },
+                    },
+                    {
+                      title: "Firm",
+                      dataIndex: "firm_id",
+                      render: (_: string, row: EnrollmentRow) =>
+                        contactById.get(row.contact_id)?.firmName || "—",
+                    },
+                    {
+                      title: "Enrolled date",
+                      dataIndex: "enrolled_at",
+                      render: (value: string) => new Date(value).toLocaleString(),
+                    },
+                  ]}
+                  locale={{ emptyText: emptyCopy.contacts }}
+                />
+              </div>
             ) : tab.id === "activity" ? (
-              agentActivity.length === 0 ? (
-                <Empty style={{ marginTop: 48 }} description={emptyCopy.activity} />
-              ) : (
-                <List
-                  style={{ padding: 16 }}
-                  bordered
-                  dataSource={agentActivity}
-                  renderItem={(row) => (
-                    <List.Item key={row.id}>
-                      <Space direction="vertical" size={0}>
-                        <Typography.Text strong>{row.event_kind}</Typography.Text>
-                        <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                          {row.contact_id} · {new Date(row.created_at).toLocaleString()}
-                        </Typography.Text>
-                      </Space>
-                    </List.Item>
-                  )}
+              <div style={{ padding: 16, height: "100%", overflow: "auto" }}>
+                <Input.Search
+                  placeholder="Search activity"
+                  value={activityQuery}
+                  onChange={(event) => setActivityQuery(event.target.value)}
+                  style={{ marginBottom: 12, maxWidth: 320 }}
                 />
-              )
+                <Table
+                  size="small"
+                  rowKey="id"
+                  pagination={{ pageSize: 10 }}
+                  dataSource={agentActivity.filter((row) => {
+                    const person = contactById.get(row.contact_id);
+                    const hay = `${person?.name ?? ""} ${person?.firmName ?? ""} ${eventKindProse(row.event_kind)} ${channelFromPayload(row.event_kind, row.payload)}`.toLowerCase();
+                    return hay.includes(activityQuery.trim().toLowerCase());
+                  })}
+                  columns={[
+                    {
+                      title: "Time",
+                      dataIndex: "created_at",
+                      render: (value: string) => new Date(value).toLocaleString(),
+                    },
+                    {
+                      title: "Name",
+                      dataIndex: "contact_id",
+                      render: (id: string) => {
+                        const person = contactById.get(id);
+                        return person?.name || person?.email || "—";
+                      },
+                    },
+                    {
+                      title: "Firm",
+                      dataIndex: "firm_id",
+                      render: (_: string, row: EngagementRecordRow) =>
+                        contactById.get(row.contact_id)?.firmName || "—",
+                    },
+                    {
+                      title: "Channel",
+                      key: "channel",
+                      render: (_: unknown, row: EngagementRecordRow) =>
+                        channelFromPayload(row.event_kind, row.payload),
+                    },
+                    {
+                      title: "What happened",
+                      dataIndex: "event_kind",
+                      render: (kind: string) => eventKindProse(kind),
+                    },
+                  ]}
+                  locale={{ emptyText: emptyCopy.activity }}
+                />
+              </div>
             ) : (
               <Empty style={{ marginTop: 48 }} description={emptyCopy[tab.id]} />
             ),
@@ -998,6 +1124,7 @@ export function AntAgentWorkbench({
         open={addContactOpen}
         confirmLoading={addingContact}
         onCancel={() => setAddContactOpen(false)}
+        {...MODAL_SCROLL}
         onOk={() => {
           const binding = AGENT_TEMPLATE_BINDING[agentId];
           if (!binding) {

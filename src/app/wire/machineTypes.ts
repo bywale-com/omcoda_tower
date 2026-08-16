@@ -76,6 +76,27 @@ export type FirmSequenceBindingRow = {
 export type CampaignChannelToken = "text" | "email" | "call";
 export type CampaignObjectiveKind = "click" | "form" | "meeting";
 
+export type VariationApplyMode = "every" | "only_this" | "every_except";
+
+export type CampaignChannelVariationRow = {
+  id: string;
+  ord: number;
+  apply_mode: VariationApplyMode;
+  attempt_n: number | null;
+  content: Record<string, unknown>;
+};
+
+export type CampaignChannelRuleRow = {
+  id: string;
+  label: string;
+  enabled: boolean;
+  when_clause: string | null;
+  condition_clause: string | null;
+  threshold: number | null;
+  threshold_unit: string | null;
+  ord: number;
+};
+
 export type CampaignHousingRow = {
   id: string;
   firm_id: string | null;
@@ -99,6 +120,8 @@ export type CampaignHousingRow = {
     ord: number;
     override_content: boolean;
     content: Record<string, unknown>;
+    variations: CampaignChannelVariationRow[];
+    rules: CampaignChannelRuleRow[];
   }>;
 };
 
@@ -123,7 +146,34 @@ export type CampaignHousingDraft = {
     ord?: number;
     overrideContent?: boolean;
     content?: Record<string, unknown>;
+    variations?: Array<{
+      id?: string;
+      ord?: number;
+      applyMode?: VariationApplyMode;
+      attemptN?: number | null;
+      content?: Record<string, unknown>;
+    }>;
+    rulesOverride?: boolean;
+    rules?: Array<{
+      id?: string;
+      key?: string;
+      label?: string;
+      enabled?: boolean;
+      condition?: string;
+      threshold?: number | null;
+      thresholdUnit?: string | null;
+      ord?: number;
+    }>;
   }>;
+};
+
+export type AttemptCycleRow = {
+  id: string;
+  firm_id: string | null;
+  sequence_id: string | null;
+  attempt_count: number;
+  wait_after_last_failed_seconds: number;
+  nth_exception: Record<string, unknown>;
 };
 
 export type EligibilityResultRow = {
@@ -187,6 +237,7 @@ export type AttemptCriteriaRow = {
   ord: number;
   source: string | null;
   version: number;
+  campaign_channel_id?: string | null;
 };
 
 export type ChannelOwnershipOrderRow = {

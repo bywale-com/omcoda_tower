@@ -394,6 +394,15 @@ export type MachineApiPort = {
     sequenceId: string,
     campaigns: import("./machineTypes").CampaignHousingDraft[],
   ): Promise<{ sequenceId: string; campaigns: import("./machineTypes").CampaignHousingRow[] }>;
+  getAttemptCycle(sequenceId?: string | null): Promise<{
+    cycle: import("./machineTypes").AttemptCycleRow;
+  }>;
+  saveAttemptCycle(input: {
+    sequenceId?: string | null;
+    attemptCount?: number;
+    waitAfterLastFailedSeconds?: number;
+    nthException?: Record<string, unknown>;
+  }): Promise<{ cycle: import("./machineTypes").AttemptCycleRow }>;
   enrollSequenceContacts(
     sequenceId: string,
     input: {
@@ -565,6 +574,7 @@ export type MachineApiPort = {
       email: string | null;
       phone: string | null;
       name: string | null;
+      firmName?: string | null;
     }>
   >;
   /** Platform admin: consultants for Consultant ▾ view-as dropdown. */

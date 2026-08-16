@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { AppstoreOutlined, TeamOutlined } from "@ant-design/icons";
 import { Button, Input, Modal, Radio, Space, Switch, Tag, Typography } from "antd";
 import { COLLECTIBLE_FIELDS } from "../../../../data/collectibleFields";
+import { MODAL_SCROLL } from "../modalScroll";
 import {
   ACTION_TYPE_DEFAULT_LABELS,
   WORKFLOW_AGENT_OPTIONS,
@@ -83,6 +84,7 @@ export function ActionKindModal({
     <Modal
       open={open}
       onCancel={onCancel}
+      {...MODAL_SCROLL}
       title={
         <div>
           <Typography.Title level={4} style={{ margin: 0 }}>
@@ -238,6 +240,7 @@ export function ActionAgentsModal({
     <Modal
       open={open}
       onCancel={onCancel}
+      {...MODAL_SCROLL}
       title={
         <div>
           <Typography.Title level={4} style={{ margin: 0 }}>
@@ -400,6 +403,7 @@ export function ActionInAppModal({
     <Modal
       open={open}
       onCancel={onCancel}
+      {...MODAL_SCROLL}
       title={
         <div>
           <Typography.Title level={4} style={{ margin: 0 }}>

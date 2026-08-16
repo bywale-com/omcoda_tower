@@ -6,6 +6,7 @@ import {
   emptyIfConditionRow,
   type IfConditionConfig,
 } from "../../../../data/automationConditions";
+import { MODAL_SCROLL } from "../modalScroll";
 import type { WorkflowNodeData } from "../../../../data/automationWorkflows";
 
 export function IfPlateModal({
@@ -44,11 +45,15 @@ export function IfPlateModal({
     <Modal
       open={open}
       onCancel={onCancel}
+      {...MODAL_SCROLL}
       title={
         <div>
-          <Typography.Title level={4} style={{ margin: 0 }}>
-            {label || "If X — previous result"}
-          </Typography.Title>
+          <Input
+            value={label}
+            variant="borderless"
+            onChange={(event) => setLabel(event.target.value)}
+            style={{ fontSize: 20, fontWeight: 600, paddingInline: 0 }}
+          />
           <Tag color="orange" style={{ marginTop: 6 }}>
             Condition
           </Tag>

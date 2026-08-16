@@ -203,6 +203,19 @@ const campaignStates = new Map<string, CampaignState>();
 const provisionedFirms = new Map<string, ProvisionResult>();
 const standInHousing = new Map<string, import("../machineTypes").CampaignHousingRow[]>();
 const standInRulePacks = new Map<string, unknown>();
+const standInAttemptCycle = new Map<string, import("../machineTypes").AttemptCycleRow>([
+  [
+    "sac-global",
+    {
+      id: "sac-global",
+      firm_id: null,
+      sequence_id: null,
+      attempt_count: 3,
+      wait_after_last_failed_seconds: 86400,
+      nth_exception: {},
+    },
+  ],
+]);
 
 /** Book audit stand-in tables — createAuditRun persists so trials can read back. */
 const bookAuditRuns = new Map<
@@ -702,16 +715,75 @@ export const standInMachineApi: MachineApiPort = {
             source: draft.objective.source ?? "scratch",
           }
         : null,
-      channels: (draft.channels ?? []).map((ch, i) => ({
-        id: ch.id ?? `ch-local-${index}-${ch.token}`,
-        token: ch.token,
-        ord: ch.ord ?? i,
-        override_content: Boolean(ch.overrideContent),
-        content: ch.content ?? {},
-      })),
+      channels: (draft.channels ?? []).map((ch, i) => {
+        const variations = (ch.variations?.length
+          ? ch.variations
+          : [{ ord: 0, applyMode: "every" as const, attemptN: null, content: ch.content ?? {} }]
+        ).map((v, vi) => ({
+          id: v.id ?? `var-local-${index}-${ch.token}-${vi}`,
+          ord: v.ord ?? vi,
+          apply_mode: (v.applyMode ?? "every") as "every" | "only_this" | "every_except",
+          attempt_n: v.applyMode === "every" || !v.applyMode ? null : (v.attemptN ?? 1),
+          content: v.content ?? {},
+        }));
+        return {
+          id: ch.id ?? `ch-local-${index}-${ch.token}`,
+          token: ch.token,
+          ord: ch.ord ?? i,
+          override_content: Boolean(ch.overrideContent),
+          content: variations[0]?.content ?? ch.content ?? {},
+          variations,
+          rules: ch.rulesOverride
+            ? (ch.rules ?? []).map((r, ri) => ({
+                id: r.id ?? `acr-local-${index}-${ch.token}-${r.key ?? ri}`,
+                label: r.label ?? `${ch.token} · ${r.key ?? ri}`,
+                enabled: Boolean(r.enabled),
+                when_clause: `channel=${ch.token}`,
+                condition_clause: r.condition ?? null,
+                threshold: r.threshold ?? null,
+                threshold_unit: r.thresholdUnit ?? null,
+                ord: r.ord ?? ri,
+              }))
+            : [],
+        };
+      }),
     }));
     standInHousing.set(sequenceId, rows);
     return { sequenceId, campaigns: rows };
+  },
+
+  async getAttemptCycle(sequenceId) {
+    if (sequenceId) {
+      const hit = standInAttemptCycle.get(`sac-seq-${sequenceId}`);
+      if (hit) return { cycle: hit };
+    }
+    return {
+      cycle: standInAttemptCycle.get("sac-global") ?? {
+        id: "sac-global",
+        firm_id: null,
+        sequence_id: null,
+        attempt_count: 3,
+        wait_after_last_failed_seconds: 86400,
+        nth_exception: {},
+      },
+    };
+  },
+
+  async saveAttemptCycle(input) {
+    const sequenceId = input.sequenceId || null;
+    const id = sequenceId ? `sac-seq-${sequenceId}` : "sac-global";
+    const prev = standInAttemptCycle.get(id);
+    const cycle = {
+      id,
+      firm_id: sequenceId ? standInFirm() : null,
+      sequence_id: sequenceId,
+      attempt_count: input.attemptCount ?? prev?.attempt_count ?? 3,
+      wait_after_last_failed_seconds:
+        input.waitAfterLastFailedSeconds ?? prev?.wait_after_last_failed_seconds ?? 86400,
+      nth_exception: input.nthException ?? prev?.nth_exception ?? {},
+    };
+    standInAttemptCycle.set(id, cycle);
+    return { cycle };
   },
 
   async enrollSequenceContacts(sequenceId, input) {
@@ -754,21 +826,21 @@ export const standInMachineApi: MachineApiPort = {
 
   async upsertAttemptCriteria(id, patch) {
     const prev = attemptCriteria.get(id);
-    if (!prev) throw new Error(`attempt criteria missing: ${id}`);
     const next: AttemptCriteriaRow = {
-      ...prev,
-      label: patch.label ?? prev.label,
-      enabled: patch.enabled ?? prev.enabled,
-      threshold: patch.threshold !== undefined ? patch.threshold : prev.threshold,
+      id,
+      firm_id: prev?.firm_id ?? standInFirm(),
+      label: patch.label ?? prev?.label ?? id,
+      enabled: patch.enabled ?? prev?.enabled ?? true,
+      threshold: patch.threshold !== undefined ? patch.threshold : (prev?.threshold ?? null),
       threshold_unit:
-        patch.thresholdUnit !== undefined ? patch.thresholdUnit : prev.threshold_unit,
-      when_clause: patch.whenClause !== undefined ? patch.whenClause : prev.when_clause,
+        patch.thresholdUnit !== undefined ? patch.thresholdUnit : (prev?.threshold_unit ?? null),
+      when_clause: patch.whenClause !== undefined ? patch.whenClause : (prev?.when_clause ?? null),
       condition_clause:
-        patch.conditionClause !== undefined ? patch.conditionClause : prev.condition_clause,
-      set_value: patch.setValue !== undefined ? patch.setValue : prev.set_value,
-      ord: patch.ord ?? prev.ord,
-      version: prev.version + 1,
-      firm_id: prev.firm_id ?? standInFirm(),
+        patch.conditionClause !== undefined ? patch.conditionClause : (prev?.condition_clause ?? null),
+      set_value: patch.setValue !== undefined ? patch.setValue : (prev?.set_value ?? "escalate_forward"),
+      ord: patch.ord ?? prev?.ord ?? 0,
+      source: prev?.source ?? "c6",
+      version: (prev?.version ?? 0) + 1,
     };
     attemptCriteria.set(id, next);
     return next;
@@ -1060,6 +1132,7 @@ export const standInMachineApi: MachineApiPort = {
       email: c.email ?? null,
       phone: c.phone ?? null,
       name: c.name ?? null,
+      firmName: "Harbor RCIC",
     }));
   },
 

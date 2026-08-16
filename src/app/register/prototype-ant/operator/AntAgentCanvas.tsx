@@ -1,15 +1,17 @@
 /**
- * Agents canvas — C1–C5 / C5b. Pictures are the spec.
+ * Agents canvas — C1–C5 / C9 / C11. Pictures are the spec.
  * Qualify pill is chrome only. Channels: text | email | call.
- * C8 Add contact lives in the sequence header (workbench).
+ * Independently open. Variations on every channel. Channel-rules extra node.
  */
 import { useState } from "react";
 import {
   Button,
   Card,
   Input,
+  InputNumber,
   Modal,
   Radio,
+  Select,
   Space,
   Switch,
   Tag,
@@ -18,8 +20,21 @@ import {
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import type { CampaignHousingDraft, CampaignObjectiveKind } from "../../../wire/machineTypes";
+import {
+  ALL_CHANNELS,
+  CHANNEL_LABEL,
+  CHANNEL_RULE_TOGGLES,
+  DISTANCE_OPTIONS,
+  emptyChannelRules,
+  emptyContent,
+  emptyVariation,
+  type ChannelId,
+  type ChannelRulesDraft,
+  type ChannelVariationDraft,
+  type VariationApplyMode,
+} from "./channelRuleGrain";
+import { MODAL_SCROLL } from "./modalScroll";
 
-export type ChannelId = "text" | "email" | "call";
 type ScratchKind = "click" | "meeting" | "form";
 
 export type CampaignDraft = {
@@ -31,14 +46,12 @@ export type CampaignDraft = {
   objectiveSource: "template" | "scratch";
   sequencing: ChannelId[];
   overrideThis: boolean;
-  openChannelId: ChannelId | null;
-  channelContent: Record<ChannelId, Record<string, unknown>>;
-};
-
-const CHANNEL_LABEL: Record<ChannelId, string> = {
-  text: "Text",
-  email: "Email",
-  call: "Call",
+  attemptCount: number | null;
+  waitAfterLastFailedSeconds: number | null;
+  openChannelIds: ChannelId[];
+  channelOverrideContent: Record<ChannelId, boolean>;
+  channelVariations: Record<ChannelId, ChannelVariationDraft[]>;
+  channelRules: Record<ChannelId, ChannelRulesDraft>;
 };
 
 const SCRATCH_LABEL: Record<ScratchKind, string> = {
@@ -68,10 +81,20 @@ const OBJECTIVE_TEMPLATES = [
   { id: "additional", name: "Additional", hint: "Unnamed", disabled: true, kind: "click" as const },
 ];
 
-function emptyContent(token: ChannelId): Record<string, unknown> {
-  if (token === "text") return { to: "", body: "" };
-  if (token === "email") return { subject: "", from: "", reply_to: "", body_html: "", body_text: "" };
-  return { voice: "", script: "", listening_prompt: "", goal: "", notes: "" };
+function emptyChannelBag() {
+  return {
+    channelOverrideContent: { text: true, email: true, call: true } as Record<ChannelId, boolean>,
+    channelVariations: {
+      text: [emptyVariation("text", 0)],
+      email: [emptyVariation("email", 0)],
+      call: [emptyVariation("call", 0)],
+    } as Record<ChannelId, ChannelVariationDraft[]>,
+    channelRules: {
+      text: emptyChannelRules(),
+      email: emptyChannelRules(),
+      call: emptyChannelRules(),
+    } as Record<ChannelId, ChannelRulesDraft>,
+  };
 }
 
 export function emptyCampaign(id: string): CampaignDraft {
@@ -82,26 +105,71 @@ export function emptyCampaign(id: string): CampaignDraft {
     objectiveName: "",
     objectiveKind: null,
     objectiveSource: "scratch",
-    sequencing: ["text", "email", "call"],
+    sequencing: [...ALL_CHANNELS],
     overrideThis: false,
-    openChannelId: null,
-    channelContent: {
-      text: emptyContent("text"),
-      email: emptyContent("email"),
-      call: emptyContent("call"),
-    },
+    attemptCount: 3,
+    waitAfterLastFailedSeconds: 86400,
+    openChannelIds: [],
+    ...emptyChannelBag(),
   };
 }
 
-export function housingToDrafts(campaigns: import("../../../wire/machineTypes").CampaignHousingRow[]): CampaignDraft[] {
+function rulesFromRows(
+  token: ChannelId,
+  rows: Array<{
+    label: string;
+    enabled: boolean;
+    condition_clause: string | null;
+    threshold: number | null;
+    threshold_unit: string | null;
+  }>,
+): ChannelRulesDraft {
+  if (!rows.length) return emptyChannelRules();
+  const toggles: Record<string, boolean> = {};
+  let withinTime: number | null = 30;
+  let withinUnit: string | null = "minutes";
+  for (const spec of CHANNEL_RULE_TOGGLES[token]) {
+    const hit = rows.find(
+      (row) =>
+        (row.condition_clause ?? "").toLowerCase().includes(spec.condition) ||
+        row.label.toLowerCase().includes(spec.label),
+    );
+    toggles[spec.key] = hit ? hit.enabled : false;
+    if (spec.key === "within_time" && hit) {
+      withinTime = hit.threshold;
+      withinUnit = hit.threshold_unit;
+    }
+  }
+  return { override: true, toggles, withinTime, withinUnit };
+}
+
+export function housingToDrafts(
+  campaigns: import("../../../wire/machineTypes").CampaignHousingRow[],
+): CampaignDraft[] {
   return campaigns.map((row) => {
-    const content: CampaignDraft["channelContent"] = {
-      text: emptyContent("text"),
-      email: emptyContent("email"),
-      call: emptyContent("call"),
-    };
+    const bag = emptyChannelBag();
     for (const ch of row.channels) {
-      content[ch.token] = ch.content ?? emptyContent(ch.token);
+      const vars = (ch.variations?.length
+        ? ch.variations
+        : [
+            {
+              id: `var-${ch.id}`,
+              ord: 0,
+              apply_mode: "every" as const,
+              attempt_n: null,
+              content: ch.content ?? emptyContent(ch.token),
+            },
+          ]
+      ).map((v, i) => ({
+        id: v.id,
+        ord: v.ord ?? i,
+        applyMode: v.apply_mode,
+        attemptN: v.attempt_n,
+        content: v.content ?? emptyContent(ch.token),
+      }));
+      bag.channelVariations[ch.token] = vars;
+      bag.channelOverrideContent[ch.token] = ch.override_content;
+      bag.channelRules[ch.token] = rulesFromRows(ch.token, ch.rules ?? []);
     }
     const sequencing: ChannelId[] =
       row.channels.length > 0
@@ -109,7 +177,7 @@ export function housingToDrafts(campaigns: import("../../../wire/machineTypes").
             .slice()
             .sort((a, b) => a.ord - b.ord)
             .map((ch) => ch.token)
-        : ["text", "email", "call"];
+        : [...ALL_CHANNELS];
     return {
       id: row.id,
       name: row.name,
@@ -119,8 +187,10 @@ export function housingToDrafts(campaigns: import("../../../wire/machineTypes").
       objectiveSource: row.objective?.source ?? "scratch",
       sequencing,
       overrideThis: row.override_this,
-      openChannelId: null,
-      channelContent: content,
+      attemptCount: row.attempt_count,
+      waitAfterLastFailedSeconds: row.wait_after_last_failed_seconds,
+      openChannelIds: [],
+      ...bag,
     };
   });
 }
@@ -131,21 +201,45 @@ export function draftsToHousing(drafts: CampaignDraft[]): CampaignHousingDraft[]
     name: draft.name,
     ord: index,
     overrideThis: draft.overrideThis,
-    objective: draft.configured && draft.objectiveKind
-      ? {
-          kind: draft.objectiveKind,
-          name: draft.objectiveName || draft.name,
-          completionTable: COMPLETION_FOR_KIND[draft.objectiveKind],
-          source: draft.objectiveSource,
-        }
-      : undefined,
+    attemptCount: draft.attemptCount,
+    waitAfterLastFailedSeconds: draft.waitAfterLastFailedSeconds,
+    objective:
+      draft.configured && draft.objectiveKind
+        ? {
+            kind: draft.objectiveKind,
+            name: draft.objectiveName || draft.name,
+            completionTable: COMPLETION_FOR_KIND[draft.objectiveKind],
+            source: draft.objectiveSource,
+          }
+        : undefined,
     channels: draft.overrideThis
-      ? draft.sequencing.map((token, ord) => ({
-          token,
-          ord,
-          overrideContent: true,
-          content: draft.channelContent[token] ?? emptyContent(token),
-        }))
+      ? draft.sequencing.map((token, ord) => {
+          const variations = draft.channelVariations[token] ?? [emptyVariation(token, 0)];
+          const rules = draft.channelRules[token] ?? emptyChannelRules();
+          return {
+            token,
+            ord,
+            overrideContent: draft.channelOverrideContent[token] ?? true,
+            content: variations[0]?.content ?? emptyContent(token),
+            variations: variations.map((v, i) => ({
+              id: v.id,
+              ord: v.ord ?? i,
+              applyMode: v.applyMode,
+              attemptN: v.attemptN,
+              content: v.content,
+            })),
+            rulesOverride: rules.override,
+            rules: CHANNEL_RULE_TOGGLES[token].map((spec, i) => ({
+              key: spec.key,
+              label: `${CHANNEL_LABEL[token]} · ${spec.label}`,
+              enabled: Boolean(rules.toggles[spec.key]),
+              condition: spec.condition,
+              threshold: spec.key === "within_time" ? rules.withinTime : null,
+              thresholdUnit: spec.key === "within_time" ? rules.withinUnit : null,
+              ord: i,
+            })),
+          };
+        })
       : [],
   }));
 }
@@ -177,13 +271,9 @@ function ChannelComposer({
   if (channel === "text") {
     return (
       <Space direction="vertical" size={8} style={{ width: "100%" }}>
-        <Input
-          placeholder="To"
-          value={String(content.to ?? "")}
-          onChange={(event) => patch("to", event.target.value)}
-        />
+        <Input placeholder="To" value={String(content.to ?? "")} onChange={(event) => patch("to", event.target.value)} />
         <Input.TextArea
-          placeholder="Body"
+          placeholder="Message"
           rows={3}
           value={String(content.body ?? "")}
           onChange={(event) => patch("body", event.target.value)}
@@ -194,21 +284,9 @@ function ChannelComposer({
   if (channel === "email") {
     return (
       <Space direction="vertical" size={8} style={{ width: "100%" }}>
-        <Input
-          placeholder="Subject"
-          value={String(content.subject ?? "")}
-          onChange={(event) => patch("subject", event.target.value)}
-        />
-        <Input
-          placeholder="From"
-          value={String(content.from ?? "")}
-          onChange={(event) => patch("from", event.target.value)}
-        />
-        <Input
-          placeholder="Reply to"
-          value={String(content.reply_to ?? "")}
-          onChange={(event) => patch("reply_to", event.target.value)}
-        />
+        <Input placeholder="Subject" value={String(content.subject ?? "")} onChange={(event) => patch("subject", event.target.value)} />
+        <Input placeholder="From" value={String(content.from ?? "")} onChange={(event) => patch("from", event.target.value)} />
+        <Input placeholder="Reply to" value={String(content.reply_to ?? "")} onChange={(event) => patch("reply_to", event.target.value)} />
         <Input.TextArea
           placeholder="Body"
           rows={4}
@@ -220,33 +298,15 @@ function ChannelComposer({
   }
   return (
     <Space direction="vertical" size={8} style={{ width: "100%" }}>
-      <Input
-        placeholder="Voice"
-        value={String(content.voice ?? "")}
-        onChange={(event) => patch("voice", event.target.value)}
-      />
-      <Input.TextArea
-        placeholder="Script"
-        rows={3}
-        value={String(content.script ?? "")}
-        onChange={(event) => patch("script", event.target.value)}
-      />
+      <Input placeholder="Voice" value={String(content.voice ?? "")} onChange={(event) => patch("voice", event.target.value)} />
+      <Input.TextArea placeholder="Script" rows={3} value={String(content.script ?? "")} onChange={(event) => patch("script", event.target.value)} />
       <Input
         placeholder="Listening prompt"
         value={String(content.listening_prompt ?? "")}
         onChange={(event) => patch("listening_prompt", event.target.value)}
       />
-      <Input
-        placeholder="Goal"
-        value={String(content.goal ?? "")}
-        onChange={(event) => patch("goal", event.target.value)}
-      />
-      <Input.TextArea
-        placeholder="Notes"
-        rows={2}
-        value={String(content.notes ?? "")}
-        onChange={(event) => patch("notes", event.target.value)}
-      />
+      <Input placeholder="Goal" value={String(content.goal ?? "")} onChange={(event) => patch("goal", event.target.value)} />
+      <Input.TextArea placeholder="Notes" rows={2} value={String(content.notes ?? "")} onChange={(event) => patch("notes", event.target.value)} />
       <Typography.Text type="secondary" style={{ fontSize: 12 }}>
         Call saves the composer. It does not dial.
       </Typography.Text>
@@ -254,20 +314,104 @@ function ChannelComposer({
   );
 }
 
+function ChannelRulesNode({
+  channel,
+  rules,
+  onChange,
+}: {
+  channel: ChannelId;
+  rules: ChannelRulesDraft;
+  onChange: (next: ChannelRulesDraft) => void;
+}) {
+  const { token } = theme.useToken();
+  const disabled = !rules.override;
+  return (
+    <Card size="small" title="Channel rules">
+      <Space direction="vertical" size={8} style={{ width: "100%" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Typography.Text>Override this channel</Typography.Text>
+          <Switch
+            size="small"
+            checked={rules.override}
+            onChange={(override) => onChange({ ...rules, override })}
+          />
+        </div>
+        {CHANNEL_RULE_TOGGLES[channel].map((spec) => (
+          <div
+            key={spec.key}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              opacity: disabled ? 0.45 : 1,
+              pointerEvents: disabled ? "none" : "auto",
+            }}
+          >
+            <Typography.Text>{spec.label}</Typography.Text>
+            {spec.key === "within_time" ? (
+              <Space size={4}>
+                <Switch
+                  size="small"
+                  checked={Boolean(rules.toggles[spec.key])}
+                  onChange={(on) => onChange({ ...rules, toggles: { ...rules.toggles, [spec.key]: on } })}
+                />
+                <InputNumber
+                  size="small"
+                  min={1}
+                  value={rules.withinTime ?? undefined}
+                  onChange={(value) => onChange({ ...rules, withinTime: typeof value === "number" ? value : null })}
+                  style={{ width: 72 }}
+                />
+                <Select
+                  size="small"
+                  value={rules.withinUnit ?? "minutes"}
+                  style={{ width: 100 }}
+                  options={[
+                    { value: "minutes", label: "minutes" },
+                    { value: "hours", label: "hours" },
+                    { value: "days", label: "days" },
+                  ]}
+                  onChange={(withinUnit) => onChange({ ...rules, withinUnit })}
+                />
+              </Space>
+            ) : (
+              <Switch
+                size="small"
+                checked={Boolean(rules.toggles[spec.key])}
+                onChange={(on) => onChange({ ...rules, toggles: { ...rules.toggles, [spec.key]: on } })}
+              />
+            )}
+          </div>
+        ))}
+        <Typography.Text type="secondary" style={{ fontSize: 11, color: token.colorTextSecondary }}>
+          This {CHANNEL_LABEL[channel]} in this campaign. Variations share these.
+        </Typography.Text>
+      </Space>
+    </Card>
+  );
+}
+
 function ChannelNode({
   channel,
   open,
-  content,
+  overrideContent,
+  variations,
   onOpen,
-  onContent,
+  onOverrideContent,
+  onVariations,
 }: {
   channel: ChannelId;
   open: boolean;
-  content: Record<string, unknown>;
+  overrideContent: boolean;
+  variations: ChannelVariationDraft[];
   onOpen: (next: boolean) => void;
-  onContent: (next: Record<string, unknown>) => void;
+  onOverrideContent: (next: boolean) => void;
+  onVariations: (next: ChannelVariationDraft[]) => void;
 }) {
   const { token } = theme.useToken();
+  const patchVar = (id: string, next: Partial<ChannelVariationDraft>) => {
+    onVariations(variations.map((row) => (row.id === id ? { ...row, ...next } : row)));
+  };
   return (
     <Card
       size="small"
@@ -283,7 +427,65 @@ function ChannelNode({
       }
     >
       {open ? (
-        <ChannelComposer channel={channel} content={content} onChange={onContent} />
+        <Space direction="vertical" size={10} style={{ width: "100%" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Typography.Text>Override content</Typography.Text>
+            <Switch size="small" checked={overrideContent} onChange={onOverrideContent} />
+          </div>
+          <Button
+            size="small"
+            icon={<PlusOutlined />}
+            onClick={() =>
+              onVariations([...variations, emptyVariation(channel, variations.length)])
+            }
+          >
+            Add variation
+          </Button>
+          {variations.map((variation, index) => (
+            <Card key={variation.id} size="small" title={`Variation ${index + 1}`}>
+              <Space direction="vertical" size={8} style={{ width: "100%" }}>
+                <Space wrap>
+                  <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                    Runs on
+                  </Typography.Text>
+                  <Select
+                    size="small"
+                    value={variation.applyMode}
+                    style={{ minWidth: 200 }}
+                    options={[
+                      { value: "every", label: "Every attempt" },
+                      { value: "only_this", label: "Only this attempt" },
+                      { value: "every_except", label: "Every attempt except this one" },
+                    ]}
+                    onChange={(applyMode: VariationApplyMode) =>
+                      patchVar(variation.id, {
+                        applyMode,
+                        attemptN: applyMode === "every" ? null : (variation.attemptN ?? 1),
+                      })
+                    }
+                  />
+                  {variation.applyMode !== "every" ? (
+                    <InputNumber
+                      size="small"
+                      min={1}
+                      value={variation.attemptN ?? 1}
+                      onChange={(value) =>
+                        patchVar(variation.id, { attemptN: typeof value === "number" ? value : 1 })
+                      }
+                    />
+                  ) : null}
+                </Space>
+                <div style={{ opacity: overrideContent ? 1 : 0.45, pointerEvents: overrideContent ? "auto" : "none" }}>
+                  <ChannelComposer
+                    channel={channel}
+                    content={variation.content}
+                    onChange={(content) => patchVar(variation.id, { content })}
+                  />
+                </div>
+              </Space>
+            </Card>
+          ))}
+        </Space>
       ) : (
         <Typography.Text type="secondary" style={{ fontSize: 12 }}>
           Open this node. Campaign toggles stay on the campaign.
@@ -303,18 +505,19 @@ function CampaignNode({
   onAddObjective: () => void;
 }) {
   const { token } = theme.useToken();
-  const n = campaign.sequencing.length;
+  const n = Math.max(campaign.sequencing.length, 1);
+  const remaining = ALL_CHANNELS.filter((ch) => !campaign.sequencing.includes(ch));
   return (
     <div
       style={{
         display: "grid",
         gridTemplateColumns: campaign.overrideThis
-          ? "minmax(260px, 320px) 56px minmax(220px, 1fr)"
+          ? "minmax(260px, 320px) 56px minmax(280px, 1fr)"
           : "minmax(260px, 320px)",
         alignItems: "stretch",
       }}
     >
-      <div style={{ gridColumn: 1, gridRow: `1 / span ${campaign.overrideThis ? n : 1}` }}>
+      <div style={{ gridColumn: 1, gridRow: `1 / span ${campaign.overrideThis ? n + 1 : 1}` }}>
         <Card
           size="small"
           style={{ height: "100%", borderColor: token.colorPrimaryBorder }}
@@ -363,11 +566,43 @@ function CampaignNode({
                     onChange({
                       ...campaign,
                       overrideThis,
-                      openChannelId: overrideThis ? campaign.openChannelId : null,
+                      openChannelIds: overrideThis ? campaign.openChannelIds : [],
                     })
                   }
                 />
               </div>
+              {campaign.overrideThis ? (
+                <Space direction="vertical" size={8} style={{ width: "100%" }}>
+                  <div>
+                    <Typography.Text type="secondary" style={{ fontSize: 11, display: "block" }}>
+                      Attempt count
+                    </Typography.Text>
+                    <InputNumber
+                      min={1}
+                      value={campaign.attemptCount ?? 3}
+                      onChange={(value) =>
+                        onChange({ ...campaign, attemptCount: typeof value === "number" ? value : 3 })
+                      }
+                      style={{ width: "100%" }}
+                    />
+                  </div>
+                  <div>
+                    <Typography.Text type="secondary" style={{ fontSize: 11, display: "block" }}>
+                      Distance between attempts
+                    </Typography.Text>
+                    <Select
+                      value={campaign.waitAfterLastFailedSeconds ?? 86400}
+                      style={{ width: "100%" }}
+                      options={DISTANCE_OPTIONS.filter(
+                        (row, i, all) => all.findIndex((other) => other.seconds === row.seconds) === i,
+                      ).map((row) => ({ value: row.seconds, label: row.label }))}
+                      onChange={(waitAfterLastFailedSeconds) =>
+                        onChange({ ...campaign, waitAfterLastFailedSeconds })
+                      }
+                    />
+                  </div>
+                </Space>
+              ) : null}
             </Space>
           ) : (
             <Button danger block onClick={onAddObjective}>
@@ -381,22 +616,85 @@ function CampaignNode({
             <div key="wires" style={{ gridColumn: 2, gridRow: `1 / span ${n}`, minHeight: 160 }}>
               <ForkWires count={n} color={token.colorPrimary} />
             </div>,
-            ...campaign.sequencing.map((ch, i) => (
-              <div key={ch} style={{ gridColumn: 3, gridRow: i + 1, padding: "6px 0 6px 4px" }}>
-                <ChannelNode
-                  channel={ch}
-                  open={campaign.openChannelId === ch}
-                  content={campaign.channelContent[ch]}
-                  onOpen={(next) => onChange({ ...campaign, openChannelId: next ? ch : null })}
-                  onContent={(content) =>
+            ...campaign.sequencing.map((ch, i) => {
+              const open = campaign.openChannelIds.includes(ch);
+              return (
+                <div key={ch} style={{ gridColumn: 3, gridRow: i + 1, padding: "6px 0 6px 4px" }}>
+                  <div style={{ display: "flex", gap: 8, alignItems: "stretch" }}>
+                    <div style={{ flex: 1, minWidth: 220 }}>
+                      <ChannelNode
+                        channel={ch}
+                        open={open}
+                        overrideContent={campaign.channelOverrideContent[ch]}
+                        variations={campaign.channelVariations[ch] ?? [emptyVariation(ch, 0)]}
+                        onOpen={(next) =>
+                          onChange({
+                            ...campaign,
+                            openChannelIds: next
+                              ? [...campaign.openChannelIds.filter((id) => id !== ch), ch]
+                              : campaign.openChannelIds.filter((id) => id !== ch),
+                          })
+                        }
+                        onOverrideContent={(value) =>
+                          onChange({
+                            ...campaign,
+                            channelOverrideContent: { ...campaign.channelOverrideContent, [ch]: value },
+                          })
+                        }
+                        onVariations={(variations) =>
+                          onChange({
+                            ...campaign,
+                            channelVariations: { ...campaign.channelVariations, [ch]: variations },
+                          })
+                        }
+                      />
+                    </div>
+                    {open ? (
+                      <>
+                        <svg width="24" height="24" style={{ alignSelf: "center", flexShrink: 0 }} aria-hidden>
+                          <path d="M0 12 H24" fill="none" stroke={token.colorPrimary} strokeWidth="1.75" />
+                        </svg>
+                        <div style={{ flex: 1, minWidth: 200 }}>
+                          <ChannelRulesNode
+                            channel={ch}
+                            rules={campaign.channelRules[ch] ?? emptyChannelRules()}
+                            onChange={(rules) =>
+                              onChange({
+                                ...campaign,
+                                channelRules: { ...campaign.channelRules, [ch]: rules },
+                              })
+                            }
+                          />
+                        </div>
+                      </>
+                    ) : null}
+                  </div>
+                </div>
+              );
+            }),
+            remaining.length ? (
+              <div key="add-channel" style={{ gridColumn: 3, gridRow: n + 1, padding: "8px 0 0 4px" }}>
+                <Button
+                  icon={<PlusOutlined />}
+                  onClick={() => {
+                    const token = remaining[0];
+                    if (!token) return;
                     onChange({
                       ...campaign,
-                      channelContent: { ...campaign.channelContent, [ch]: content },
-                    })
-                  }
-                />
+                      sequencing: [...campaign.sequencing, token],
+                      channelVariations: {
+                        ...campaign.channelVariations,
+                        [token]: campaign.channelVariations[token]?.length
+                          ? campaign.channelVariations[token]
+                          : [emptyVariation(token, 0)],
+                      },
+                    });
+                  }}
+                >
+                  Add channel
+                </Button>
               </div>
-            )),
+            ) : null,
           ]
         : null}
     </div>
@@ -428,11 +726,16 @@ function ObjectiveModal({
       open={open}
       onCancel={onCancel}
       okText="Set objective"
+      {...MODAL_SCROLL}
       onOk={() => {
         if (tab === "template") {
           const picked = OBJECTIVE_TEMPLATES.find((row) => row.id === templateId);
           onApply({
-            name: picked?.hint.includes("Example") ? (picked?.kind === "click" ? "Click this link" : "They opt in") : (picked?.name ?? "Launch window"),
+            name: picked?.hint.includes("Example")
+              ? picked?.kind === "click"
+                ? "Click this link"
+                : "They opt in"
+              : (picked?.name ?? "Launch window"),
             kind: picked?.kind ?? "click",
             source: "template",
             campaignName: picked?.name ?? "Launch window",
@@ -543,7 +846,7 @@ export function AntAgentCanvas({
       data-register-surface="Agent / sequence editor"
       style={{ height: "100%", minWidth: 0, minHeight: 0, overflow: "auto", padding: 18 }}
     >
-      <Space direction="vertical" size={16} style={{ width: "100%", maxWidth: 1100 }}>
+      <Space direction="vertical" size={16} style={{ width: "100%", maxWidth: 1200 }}>
         <Button icon={<PlusOutlined />} onClick={addCampaign}>
           Add campaign
         </Button>
