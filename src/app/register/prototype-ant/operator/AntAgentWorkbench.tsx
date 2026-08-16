@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
+  Alert,
   Button,
   Card,
   Empty,
   Input,
   InputNumber,
   List,
+  Segmented,
   Space,
   Switch,
   Tabs,
@@ -52,6 +54,7 @@ import type {
 } from "../../../wire/machineTypes";
 import { useAuth } from "../../../auth/AuthContext";
 import { wirePorts } from "../../../wire/registry";
+import { AntAgentCanvas } from "./AntAgentCanvas";
 
 function statusColor(status: AgentDefinition["status"]) {
   if (status === "running") return "processing";
@@ -385,6 +388,12 @@ function AgentSettingsPanel() {
   return (
     <div style={{ padding: 18, overflow: "auto", height: "100%" }}>
       <Space direction="vertical" size={20} style={{ width: "100%", maxWidth: 720 }}>
+        <Alert
+          type="info"
+          showIcon
+          message="This tab is global defaults only"
+          description="Campaign sequencing, channel rules, attempt rules, and content overrides live on the canvas (Editor → Canvas). Turning Override this on a campaign reveals those nodes as wires."
+        />
         <div>
           <Typography.Title level={5} style={{ marginTop: 0 }}>
             Attempt criteria
@@ -680,6 +689,7 @@ export function AntAgentWorkbench({
   const { user } = useAuth();
   const agentId = agent.id;
   const [activeTab, setActiveTab] = useState<AgentEditorTab>("editor");
+  const [editorView, setEditorView] = useState<"canvas" | "timeline">("canvas");
   const [steps, setSteps] = useState<AgentStep[]>(() => getInitialAgentSteps(agentId));
   const [saving, setSaving] = useState(false);
   const [launching, setLaunching] = useState(false);
@@ -877,71 +887,96 @@ export function AntAgentWorkbench({
           label: tab.label,
           children:
             tab.id === "editor" ? (
-              <div style={{ height: "100%", display: "flex", minHeight: 0 }}>
-                <aside
+              <div style={{ height: "100%", display: "flex", flexDirection: "column", minHeight: 0 }}>
+                <div
                   style={{
-                    width: 230,
                     flexShrink: 0,
-                    borderRight: `1px solid ${token.colorSplit}`,
-                    padding: 12,
-                    background: token.colorBgLayout,
-                    overflow: "auto",
+                    padding: "8px 16px",
+                    borderBottom: `1px solid ${token.colorSplit}`,
+                    background: token.colorBgContainer,
                   }}
                 >
-                  <Typography.Text strong>Step toolbar</Typography.Text>
-                  <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginTop: 4 }}>
-                    Add outreach and consultant work to the sequence.
-                  </Typography.Paragraph>
-                  <Space direction="vertical" style={{ width: "100%" }}>
-                    {AGENT_STEP_TYPES.map((stepType) => (
-                      <Button
-                        key={stepType.id}
-                        block
-                        icon={stepType.id === "email" ? <MailOutlined /> : <UserSwitchOutlined />}
-                        onClick={() => addStep(stepType.id)}
-                      >
-                        {stepType.label}
-                      </Button>
-                    ))}
-                  </Space>
-                </aside>
-                <div
-                  data-register-surface="Agent / sequence editor"
-                  style={{ flex: 1, minWidth: 0, minHeight: 0, overflow: "auto", padding: 18 }}
-                >
-                  {steps.length === 0 ? (
-                    <Empty
-                      description="Start this agent by adding an email or consultant task."
-                      image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    >
-                      <Space>
-                        <Button icon={<PlusOutlined />} onClick={() => addStep("email")}>
-                          Add email
-                        </Button>
-                        <Button icon={<PlusOutlined />} onClick={() => addStep("consultant_task")}>
-                          Add consultant task
-                        </Button>
-                      </Space>
-                    </Empty>
+                  <Segmented
+                    value={editorView}
+                    onChange={(value) => setEditorView(value as "canvas" | "timeline")}
+                    options={[
+                      { label: "Mock", value: "canvas" },
+                      { label: "Timeline (today)", value: "timeline" },
+                    ]}
+                  />
+                </div>
+                <div style={{ flex: 1, minHeight: 0, minWidth: 0 }}>
+                  {editorView === "canvas" ? (
+                    <AntAgentCanvas agent={agent} />
                   ) : (
-                    <Timeline
-                      items={steps.map((step, index) => ({
-                        color: step.kind === "email" ? "blue" : "purple",
-                        children: (
-                          <StepCard
-                            step={step}
-                            index={index}
-                            total={steps.length}
-                            onMove={(from, to) => setSteps((current) => reorderSteps(current, from, to))}
-                            onUpdate={(updated) =>
-                              setSteps((current) =>
-                                current.map((item) => (item.id === updated.id ? updated : item)),
-                              )
-                            }
+                    <div style={{ height: "100%", display: "flex", minHeight: 0 }}>
+                      <aside
+                        style={{
+                          width: 230,
+                          flexShrink: 0,
+                          borderRight: `1px solid ${token.colorSplit}`,
+                          padding: 12,
+                          background: token.colorBgLayout,
+                          overflow: "auto",
+                        }}
+                      >
+                        <Typography.Text strong>Step toolbar</Typography.Text>
+                        <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginTop: 4 }}>
+                          Add outreach and consultant work to the sequence.
+                        </Typography.Paragraph>
+                        <Space direction="vertical" style={{ width: "100%" }}>
+                          {AGENT_STEP_TYPES.map((stepType) => (
+                            <Button
+                              key={stepType.id}
+                              block
+                              icon={stepType.id === "email" ? <MailOutlined /> : <UserSwitchOutlined />}
+                              onClick={() => addStep(stepType.id)}
+                            >
+                              {stepType.label}
+                            </Button>
+                          ))}
+                        </Space>
+                      </aside>
+                      <div
+                        data-register-surface="Agent / sequence editor"
+                        style={{ flex: 1, minWidth: 0, minHeight: 0, overflow: "auto", padding: 18 }}
+                      >
+                        {steps.length === 0 ? (
+                          <Empty
+                            description="Start this agent by adding an email or consultant task."
+                            image={Empty.PRESENTED_IMAGE_SIMPLE}
+                          >
+                            <Space>
+                              <Button icon={<PlusOutlined />} onClick={() => addStep("email")}>
+                                Add email
+                              </Button>
+                              <Button icon={<PlusOutlined />} onClick={() => addStep("consultant_task")}>
+                                Add consultant task
+                              </Button>
+                            </Space>
+                          </Empty>
+                        ) : (
+                          <Timeline
+                            items={steps.map((step, index) => ({
+                              color: step.kind === "email" ? "blue" : "purple",
+                              children: (
+                                <StepCard
+                                  step={step}
+                                  index={index}
+                                  total={steps.length}
+                                  onMove={(from, to) => setSteps((current) => reorderSteps(current, from, to))}
+                                  onUpdate={(updated) =>
+                                    setSteps((current) =>
+                                      current.map((item) => (item.id === updated.id ? updated : item)),
+                                    )
+                                  }
+                                />
+                              ),
+                            }))}
                           />
-                        ),
-                      }))}
-                    />
+                        )}
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
@@ -991,8 +1026,11 @@ export function AntAgentWorkbench({
               <Empty style={{ marginTop: 48 }} description={emptyCopy[tab.id]} />
             ),
         }))}
-        style={{ flex: 1, minHeight: 0 }}
+        style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}
         tabBarStyle={{ margin: 0, paddingInline: 16, flexShrink: 0 }}
+        styles={{
+          content: { flex: 1, minHeight: 0, overflow: "hidden" },
+        }}
       />
     </div>
   );
