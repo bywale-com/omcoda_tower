@@ -7,6 +7,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   App,
+  Button,
   ConfigProvider,
   Dropdown,
   Layout,
@@ -21,6 +22,7 @@ import {
   ControlOutlined,
   DownOutlined,
   LinkOutlined,
+  LogoutOutlined,
   TeamOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -68,7 +70,7 @@ function AntShell({
   onMode: (m: AntThemeMode) => void;
 }) {
   const { token } = antTheme.useToken();
-  const { user, isLoading, isAuthenticated } = useAuth();
+  const { user, isLoading, isAuthenticated, logout } = useAuth();
   const { isAdmin, consultants, selected, selectConsultant, loading: consultantsLoading } =
     useViewAs();
   const [desk, setDesk] = useState<AntDesk>("consultant");
@@ -79,7 +81,7 @@ function AntShell({
   }, [isAdmin, desk]);
 
   const authOff = isAuthDisabled();
-  const needsLogin = !authOff && !isLoading && !isAuthenticated;
+  const needsLogin = !isLoading && !isAuthenticated;
 
   const consultantLabel = selected
     ? `${selected.firmName}`
@@ -188,6 +190,15 @@ function AntShell({
               unCheckedChildren="Light"
             />
           </Space>
+          {!needsLogin && desk !== "contact" ? (
+            <Button
+              type="text"
+              icon={<LogoutOutlined />}
+              onClick={() => void logout()}
+            >
+              Log out
+            </Button>
+          ) : null}
           <a href="/hub" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
             <LinkOutlined />
             Hub

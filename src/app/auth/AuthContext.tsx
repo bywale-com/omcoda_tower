@@ -15,6 +15,32 @@ import {
 } from "./authClient";
 import { setActiveFirmId } from "../wire/sessionFirm";
 
+const LOGGED_OUT_KEY = "tower.loggedOut";
+
+function hasExplicitLogout(): boolean {
+  try {
+    return sessionStorage.getItem(LOGGED_OUT_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function markExplicitLogout(): void {
+  try {
+    sessionStorage.setItem(LOGGED_OUT_KEY, "1");
+  } catch {
+    /* private mode */
+  }
+}
+
+function clearExplicitLogout(): void {
+  try {
+    sessionStorage.removeItem(LOGGED_OUT_KEY);
+  } catch {
+    /* private mode */
+  }
+}
+
 /** AUTH_DISABLED only — firm from explicit VITE_DEV_FIRM_ID, never a code default. */
 function devBypassUser(): AuthUser | null {
   const firmId = String(import.meta.env.VITE_DEV_FIRM_ID ?? "").trim();
@@ -39,7 +65,7 @@ const AuthContext = createContext<AuthState | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const authDisabled = isAuthDisabled();
   const [user, setUser] = useState<AuthUser | null>(() =>
-    authDisabled ? devBypassUser() : null,
+    authDisabled && !hasExplicitLogout() ? devBypassUser() : null,
   );
   const [isLoading, setIsLoading] = useState(!authDisabled);
 
@@ -50,7 +76,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // provisioned firm. Fall back to VITE_DEV_FIRM_ID only when no session exists.
       const session = await fetchSession();
       if (session?.user) {
+        clearExplicitLogout();
         setUser(session.user);
+        return;
+      }
+      if (hasExplicitLogout()) {
+        setUser(null);
         return;
       }
       if (isAuthDisabled()) {
@@ -59,7 +90,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       setUser(null);
     } catch {
-      if (isAuthDisabled()) {
+      if (hasExplicitLogout()) {
+        setUser(null);
+      } else if (isAuthDisabled()) {
         setUser(devBypassUser());
       } else {
         setUser(null);
@@ -70,12 +103,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
-    if (isAuthDisabled()) {
-      setUser(devBypassUser());
-      return;
+    markExplicitLogout();
+    try {
+      await logoutRequest();
+    } catch {
+      // Cookie already gone, or auth process not running.
     }
-    await logoutRequest();
     setUser(null);
+    setActiveFirmId(null);
+    window.location.reload();
   }, []);
 
   useEffect(() => {
