@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **16:34:** each new plate has one purpose — C0 gear, C9 campaign attempt modulators, C11 + Add variation, C13 Activity table. Written spec [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md). Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **16:41:** written spec is the product — extrapolate per channel (variation; channel rules with actual parameters). Plates are one grain on one example; no extra PNG. [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md). Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -892,6 +892,18 @@ Flag 15:43 untouched.
 **What we wrote:** [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md). Regenerated C11 (+ Add variation, stacked variations). Tightened C9 (campaign attempt count + distance). C0 and C13 kept; spec says ignore the rest of C0.
 
 **Do not:** copy Mock beats from C0; copy channel composers from C9; ship three radios as variation; plant; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 16:41 UTC — Written spec must be pristine; extrapolate; channel rules are parameters
+
+**Why:** Founder: implementation specialists are too literal. You do **not** generate an image for every channel. **+ Add variation** is per channel. **Channel rules** are per channel. The extra node on C5 / C11 is the right seat — keep it. Fill it with **actual toggleable parameters**, not the teaching caption. Grain is **that specific channel in that campaign** — regardless of variation, regardless of attempts. Some parameters are general (within time); some are medium-specific (text not delivered, email link not clicked). Still by channel. Image spec is great because it keeps the design system congruent. The written spec has to be pristine. Leave nothing big.
+
+**What we wrote:** [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md) — extrapolate table; channel-rules parameter table (Text / Email / Call / any added channel). No extra Email or Call PNGs.
+
+**Do not:** omit Email / Call / channel rules because C11 showed Text; put attempt settings on the channel-rules node; make channel rules per variation; plant; overwrite 15:43.
 
 Flag 15:43 untouched.
 

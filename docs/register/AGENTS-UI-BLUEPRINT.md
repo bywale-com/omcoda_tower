@@ -5,7 +5,7 @@
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
 **Law and excerpts:** [`AGENTS-FACE.md`](./AGENTS-FACE.md). This file is the **image lineup + spec**. Rationale lives in the log stamps named on each plate. **Captions vs spec:** [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) — teaching copy on the plates is not a node.  
 **Plate chrome:** [`PLATE-CHROME-RULE.md`](./PLATE-CHROME-RULE.md) — screenshot the live `/prototype-ant` desk first; do not invent a different left nav.  
-**Implementer copy-filter:** [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md) — each new plate has one purpose; ignore the rest of the PNG.  
+**Implementer copy-filter:** [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md) — each new plate has one purpose; ignore the rest of the PNG. Plates are one grain on one example; **extrapolate** (variation and channel-rules parameters on every channel). Images keep the desk congruent. The written spec is the product.  
 **Founder (2026-08-15 19:47):** Settings images are canonical. This pass = lineup of canon vs revision, map each plate to the rationale that birthed it, then spec the plates. Click paths / what is on the glass. If anything is under-specified, that is the point of this pass.
 
 Chrome for every plate unless noted: Operator desk → Configuration libraries → Agents.
@@ -30,7 +30,7 @@ These ten files are **canon**. Later plates revise earlier ones only where the t
 | **C8** | [`C8-sequence-contacts-enroll.png`](./agents-blueprint/C8-sequence-contacts-enroll.png) | This sequence → **Contacts**. Displays enrolled. **Add contact** in the header. Scope: **Every firm** (default) or **Select from** (all selected; deselect to pick one). Starts the mission now. | 00:02 · 01:01 scope | — |
 | **C0** | [`C0-agents-global-settings-entry.png`](./agents-blueprint/C0-agents-global-settings-entry.png) | **Copy only:** Agents settings gear next to New template (global). Ignore the rest of the PNG. | 16:10 · 16:34 | — |
 | **C9** | [`C9-campaign-local-attempt-add-channel.png`](./agents-blueprint/C9-campaign-local-attempt-add-channel.png) | **Copy only:** Override this on → **Attempt count** + **Distance between attempts** on the campaign. Ignore the rest of the PNG. | 16:10 · 16:34 | — |
-| **C11** | [`C11-channel-attempt-variation.png`](./agents-blueprint/C11-channel-attempt-variation.png) | **+ Add variation** at the top of the channel. Each variation then selects how it applies in the attempt cycle. Not three radios. | 16:34 | — |
+| **C11** | [`C11-channel-attempt-variation.png`](./agents-blueprint/C11-channel-attempt-variation.png) | **+ Add variation** at the top of the channel. Each variation then selects how it applies in the attempt cycle. Not three radios. **On every channel** (plate is Text). Channel-rules extra node: keep the seat; fill **actual parameters** — [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md). | 16:34 · 16:41 | — |
 | **C13** | [`C13-sequence-activity.png`](./agents-blueprint/C13-sequence-activity.png) | **Activity** table: Time · Name · Firm · Channel · What happened. Contacts uses the same table chrome (Name · Firm · Enrolled date) — no extra PNG. | 16:10 · 16:34 | — |
 
 ### Discarded (do not spec, do not hand to SA as face)
