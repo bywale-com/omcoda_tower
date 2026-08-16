@@ -94,7 +94,7 @@
 11. **Objective ≠ sequence.** Objective = **one campaign**. Sequences have templates; objectives have templates. You do not put “opt-in” in the objective picker.
 12. **First thing on a campaign is the objective.** Hub Automations: trigger node → **Add configuration**. Same seat, not the same module — do not import Automations triggers onto this canvas.
 13. **Untemplated objective is a binary event** (word “event” may change). One yes/no: everyone enrolled is campaigned to do **this one thing**. Happened or it didn’t. Then you name it. Templated objective populates the rest of that campaign.
-14. **Enroll lives on this sequence’s Contacts.** That model **displays who is enrolled**. **Add contact** is the hand door, and it lives in the **sequence header** — same row as Save / Launch agent — always there, not inside the Contacts tab body. Scope named: **this firm / every firm / this contact within this firm**. **Not Publish.** Automations enroll is the other door (on an event). Agents enroll **starts the mission now** — it is not waiting on a current event.
+14. **Enroll lives on this sequence’s Contacts.** That model **displays who is enrolled**. **Add contact** is the hand door, and it lives in the **sequence header** — same row as Save / Launch agent — always there, not inside the Contacts tab body. Same Add-contact grain also lives in **Automations and events**. Scope is **two**, not three: **Every firm** (top, default) or **Select from** (bottom — list opens with everyone selected; deselect to pick a specific contact). No separate “this firm” / “this contact” radios. **Not Publish.** Automations enroll is the other door (on an event). Agents enroll **starts the mission now** — it is not waiting on a current event.
 15. **Activity / engagement chart ≠ lineage query.** The engagement chart is a **tree of outreach**. It does **not** connect left to the trigger or event that created the agent or assigned it to the objective. Keep that chart pristine. Who created / path / completion / time is **queryable** (Automations law 29) — a different thing.
 
 ---
@@ -130,7 +130,8 @@ SEQUENCE TEMPLATE  (blank canvas — opt-in / re-engagement / reactivation)
 │    displays enrolled
 │    Add contact lives in the sequence HEADER (same row as Save / Launch)
 │         not inside the Contacts tab body
-│    scope: this firm / every firm / this contact
+│    scope: Every firm (default) · Select from (all selected; deselect to pick one)
+│    same grain in Automations / events
 │    starts the mission now (not an event, not Publish)
 │
 └─ next Campaign  (only if prior campaign objective met → qualify)
@@ -314,4 +315,4 @@ Per-campaign attempt rules stay **on the campaign**. They do not appear as a str
 4. Call via ElevenLabs — face only for now; machine still form.
 5. Where campaign-level rule overrides sit besides attempt-on-campaign (sequencing already on the campaign).
 6. Settings images locked canonical.
-7. Filter catalog on Add contact beyond the three named scopes — brainstorm later; do not fill.
+7. Filter catalog on Add contact beyond **Every firm** / **Select from** — brainstorm later; do not fill.

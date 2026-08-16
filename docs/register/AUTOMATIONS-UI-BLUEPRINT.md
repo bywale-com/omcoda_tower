@@ -323,7 +323,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 - Kind: Agents.
 - Line: “You do not create an agent here. Create the agent in Agents, then assign.”
 - Two cards: **Assign to an existing sequence** (put them on one you already authored) · **Create from a template** (new copy from a sequence template, then put them on that).
-- Same three names on both sides (Opt-in / Re-engagement / Reactivation) — left tagged Existing, right tagged Sequence template.
+- Same three names on both sides (Opt-in / Re-engagement / Reactivation) — left tagged Existing, right tagged Sequence template. Each row is a **radio**. One selected. **No chevron / arrow.** There is nothing further after you pick the sequence (select agent = the whole sequence).
 - Footer: “Not a third option: author a new agent in this module.”
 
 **Why this does what we wanted:** the copy-vs-assign choice is obvious on the glass. It is not a third authoring place.

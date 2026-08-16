@@ -25,7 +25,7 @@ These ten files are **canon**. Later plates revise earlier ones only where the t
 | **C5b** | [`C5b-content-toggle-closeup.png`](./agents-blueprint/C5b-content-toggle-closeup.png) | Same as C5, close-up of the three expanded composers. | 19:45 richness | companion to C5 |
 | **C6** | [`C6-agents-settings-global.png`](./agents-blueprint/C6-agents-settings-global.png) | **Agents Settings** = global defaults. Founder: locked, perfect. | 19:30 two Settings surfaces | — |
 | **C7** | [`C7-sequence-settings.png`](./agents-blueprint/C7-sequence-settings.png) | **Sequence Settings** = this sequence; inherit unless override. Founder: locked, perfect. | 19:30 | — |
-| **C8** | [`C8-sequence-contacts-enroll.png`](./agents-blueprint/C8-sequence-contacts-enroll.png) | This sequence → **Contacts**. Displays enrolled. **Add contact.** Scope: this firm / every firm / this contact. Starts the mission now — not Publish, not waiting on an event. | 00:02 | — |
+| **C8** | [`C8-sequence-contacts-enroll.png`](./agents-blueprint/C8-sequence-contacts-enroll.png) | This sequence → **Contacts**. Displays enrolled. **Add contact** in the header. Scope: **Every firm** (default) or **Select from** (all selected; deselect to pick one). Starts the mission now. | 00:02 · 01:01 scope | — |
 
 ### Discarded (do not spec, do not hand to SA as face)
 
@@ -65,7 +65,7 @@ Not a test script. The path that produces each plate.
 | Agents module → Settings | **C6** global. |
 | This sequence → Settings | **C7** this sequence. Inherit from C6 unless Override is on. |
 | This sequence → **Contacts** | Enrolled list (C8). Empty until someone is on it. |
-| This sequence header → **Add contact** | Always in the top row with Save / Launch. Opens the filter modal. Scope: this firm / every firm / this contact. Add to sequence. Starts the mission now. |
+| This sequence header → **Add contact** | Always in the top row with Save / Launch. Opens the modal. **Every firm** (default, top) or **Select from** (bottom; everyone selected; deselect to pick one). Add to sequence. Starts the mission now. |
 
 Fallback if a control is not overridden: campaign → sequence Settings → Agents Settings (CSS).
 
@@ -232,13 +232,12 @@ Fallback if a control is not overridden: campaign → sequence Settings → Agen
 - Tabs: Editor · **Contacts** (on) · Activity · Report · Settings.
 - Enrolled list in the workspace (names, firm, enrolled date).
 - **Add contact** (header) opens a modal.
-- Scope radios: **This firm** (firm picker) · **Every firm** · **This contact within this firm**.
-- Matching people, checkboxes, **Add to sequence**.
+- Scope radios, two only: **Every firm** (top, selected by default) · **Select from** (bottom). Select from opens the list with **everyone already selected**; deselect to pick a specific contact. That is the old “this contact” option. No third radio.
 - Caption: “This starts the mission now. It does not wait on an event.”
 
-**Controls:** pick scope · check people · Add to sequence.
+**Controls:** Every firm, or Select from then deselect/pick · Add to sequence.
 
-**Not this plate:** Publish-to-enroll. The engagement chart. Automations assign (A14). A full filter catalog — only the three named scopes.
+**Not this plate:** Publish-to-enroll. The engagement chart. Automations assign (A14). A third scope radio. A full filter catalog.
 
 ---
 
@@ -255,7 +254,7 @@ This is the under-documented remainder **before** systems. Not for SA to invent 
 | Mix objective types in one sequence | Not drawn. |
 | Campaign-level Settings modal | Not placed. Campaign has Override this + sequencing on the node. |
 | Call vs Form on the **machine** | Face C5 shows Call (ElevenLabs). C4/C6/C7 still show Form. SA does not mint call from the picture. |
-| Add-contact filters beyond the three named scopes | C8 names this firm / every firm / this contact. Do not invent the rest. |
+| Add-contact filters beyond Every firm / Select from | C8 names those two. Do not invent the rest. |
 
 ---
 

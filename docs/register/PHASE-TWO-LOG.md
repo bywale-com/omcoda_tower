@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **00:02:** leftover **2** and **6** answered. **00:51:** C8 · A14 rebuilt on the validated chrome. Add contact lives in the sequence header. Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **01:01:** Add contact scope is **Every firm** (default) or **Select from** (all selected; deselect to pick one). A14 sequence pick is a **radio** — no chevron, nothing further. Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -714,6 +714,24 @@ Flag 15:43 untouched.
 **Plates rebuilt** (same filenames, same law; chrome from C3/C6/C7 and A8/A7/A1). Do not regenerate C1–C7 or A1–A13.
 
 **Do not:** plant; invent new chrome; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 01:01 UTC — Add contact is Every firm or Select from; sequence pick is a radio
+
+**Why:** UI note for when we build. Founder: Add contact also lives in Automations and events. You do **not** need three selections (this firm / every firm / a contact in every firm).
+
+**Scope (two, not three):**
+- **Every firm** — first, at the top, **selected by default**.
+- **Select from** — at the bottom. Click it: **all those contacts are already selected**. Deselect all, then pick a specific contact — that is the old “this contact” option. No third radio.
+
+**A14 sequence rows:** Opt-in / Re-engagement / Reactivation looked like there was more because of the **arrow**. Founder: you put that arrow when there is more configuration. **There is not more.** Select agent = the whole sequence (law 9). Those rows are **radios**. No chevron.
+
+**Plates rebuilt** (same filenames, same chrome). Do not regenerate C1–C7 or A1–A13.
+
+**Do not:** plant; invent a third scope; put a chevron on a radio; overwrite 15:43.
 
 Flag 15:43 untouched.
 

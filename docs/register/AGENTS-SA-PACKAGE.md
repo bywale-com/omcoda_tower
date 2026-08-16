@@ -44,7 +44,7 @@ Read the plate in [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) (image + 
 | **C5 / C5b** | Override content is a **toggle** inside the channel; on → node expands into that medium’s composer. Text, email, **call (ElevenLabs)**. Channel rules still a wire. Attempt rules are **not** here. |
 | **C6** | Agents Settings = **global** defaults (attempt, channel/escalation, content, sequencing). Locked on the face. |
 | **C7** | Sequence Settings = **this sequence**; inherit unless Override. Per-campaign attempt rules live **on the campaign**, not in this modal. Locked on the face. |
-| **C8** (later) | This sequence → **Contacts**. Displays enrolled. **Add contact.** Scope: this firm / every firm / this contact. Starts the mission now. Not Publish. Ant tab exists; Add contact does not. |
+| **C8** (later) | This sequence → **Contacts**. Displays enrolled. **Add contact** in the header. Scope: **Every firm** (default) or **Select from** (all selected; deselect to pick one). Starts the mission now. Not Publish. Ant tab exists; Add contact does not. |
 
 **Under-specified remainder** (blueprint § “specified but not on a canon plate”): attempt rules drawn on the campaign card; attempt-N content variation; additional opt-in objectives; word “event”; campaign Settings modal; Call vs Form on the machine. Name whether the machine already has a place, or Story is silent. Do not invent UI for these.
 
