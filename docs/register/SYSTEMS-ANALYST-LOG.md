@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 22:47 UTC — **Event→op→agent and provision are the same Automations idea. Difference = minting `firm_id`, not many tables.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 22:50 UTC — **22:47 overclaimed. Same-idea was inference, not a cut.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1120,3 +1120,15 @@ Locked in [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 22:31. 014 stays the first 
 Locked in [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 22:47.
 
 **Do not:** pass/fail Automations on provision; mint an events bus because many tables; keep fallback enroll as the product. Flag **15:43**.
+
+---
+
+## 2026-08-16 22:50 UTC — Basis. 22:47 was not a cut.
+
+**Why:** Founder: this chat’s problem is basis. What is the basis for canonical vs provision.
+
+**Hard:** 22:47 “same idea / mint is the extra / canonical is the proof” is **unlocked**. Observed: event=write (01:35); #87 names firm provisioned as a trigger; eligibility cascade dispatches then maybe enrolls; provision writes five tables and does not dispatch; dispatch matches `firm_id` + `event_name`. Not observed: that those facts make them the same operator move. Do not implement from 22:47.
+
+[`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 22:50.
+
+**Do not:** treat destination talk as SQL. Flag **15:43**.

@@ -244,3 +244,29 @@ The fixture feeling was “many tables = different machine.” False. Eligibilit
 
 **Do not:** use provision as the pass/fail of Automations; treat cascade-across-tables as a reason to mint an events bus; keep the eligibility fallback enroll as the product. Flag **15:43**.
 
+---
+
+## 2026-08-16 22:50 — 22:47 overclaimed. Basis vs inference.
+
+**Founder:** what is the basis for that argument.
+
+**Observed (code / locked law only):**
+
+- Event = detectable table write. Founder **01:35**. Firm provisioned named as a teaching **trigger** in #87 / this file’s walk table. Packet 010: that write this pass = `ct_firms` INSERT.
+- `runContactEligibilityCascade` INSERTs four tables then `dispatchEventToWorkflows('eligibility.changed')`; if zero workflows, **enrolls**. `handleMachineProvision` INSERTs `firms` / `ct_firms` / `campaign_states` / `users` / access link. **No** dispatch.
+- `dispatchEventToWorkflows` SQL: `WHERE t.firm_id=$1 AND t.event_name=$2`. Provision does not call it. Eligibility does, with a firm that already exists.
+- Walker: every action **enrolls**. `run_audit` / `ascribe_tag` are CHECK tokens, not walker cases.
+
+**Not observed — 22:47 treated these as found:**
+
+- “Same Automations idea.”
+- “A verb is a cascade” as a reason they are the same operator move.
+- Canonical interior event is **the** proof of the module; provision is not.
+- Privilege / “create a world” as machine law.
+
+Those were analogy from two handlers that both INSERT more than one row, plus destination talk. They are **not** a cut. Unlocked. Do not implement from 22:47.
+
+**Still a cut (unchanged):** 012 / 013 / 014. Walker by type. Do not hardcode audit on upload. No events table.
+
+**Do not:** overwrite 15:43.
+
