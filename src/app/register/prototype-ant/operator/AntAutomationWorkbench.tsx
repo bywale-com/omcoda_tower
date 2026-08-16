@@ -8,6 +8,7 @@ import {
   ReactFlow,
   useEdgesState,
   useNodesState,
+  useReactFlow,
   type Edge,
   type EdgeTypes,
   type Node,
@@ -122,9 +123,10 @@ function nodeSummary(data: WorkflowNodeData) {
   );
 }
 
-function AntWorkflowNode({ data, type, selected }: NodeProps<WorkflowFlowNode>) {
+function AntWorkflowNode({ id, data, type, selected }: NodeProps<WorkflowFlowNode>) {
   const workflowType = (type ?? "action") as WorkflowNodeType;
   const chip = PLATE_NODE_TAG[workflowType];
+  const { setNodes } = useReactFlow();
   return (
     <div
       style={{
@@ -154,9 +156,20 @@ function AntWorkflowNode({ data, type, selected }: NodeProps<WorkflowFlowNode>) 
           {data.configured ? "configured" : "needs setup"}
         </Tag>
       </div>
-      <Typography.Text strong style={{ display: "block", fontSize: 14 }}>
-        {data.label}
-      </Typography.Text>
+      <Input
+        value={data.label}
+        variant="borderless"
+        onChange={(event) => {
+          const label = event.target.value;
+          setNodes((current) =>
+            current.map((node) =>
+              node.id === id ? { ...node, data: { ...node.data, label } } : node,
+            ),
+          );
+        }}
+        onMouseDown={(event) => event.stopPropagation()}
+        style={{ display: "block", fontSize: 14, fontWeight: 600, paddingInline: 0 }}
+      />
       <Typography.Text type="secondary" style={{ fontSize: 12 }}>
         {nodeSummary(data)}
       </Typography.Text>

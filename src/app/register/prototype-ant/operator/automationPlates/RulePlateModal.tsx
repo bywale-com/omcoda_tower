@@ -12,6 +12,7 @@ import {
   type RuleOutcomeDefinition,
 } from "../../../../data/automationRules";
 import { DEFAULT_NAMED_CODE, formatConstantEnvName } from "./plateChrome";
+import { MODAL_SCROLL } from "../modalScroll";
 
 function shortField(path: string): string {
   const parts = path.split(".");
@@ -167,6 +168,7 @@ export function RulePlateModal({
     <Modal
       open={open}
       onCancel={onCancel}
+      {...MODAL_SCROLL}
       title={
         <div>
           <Typography.Title level={4} style={{ margin: 0 }}>

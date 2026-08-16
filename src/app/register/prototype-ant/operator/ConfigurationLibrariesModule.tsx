@@ -19,6 +19,7 @@ import {
   message,
   theme,
 } from "antd";
+import { SettingOutlined } from "@ant-design/icons";
 import { AutomationProvider, useAutomations } from "../../../context/AutomationContext";
 import {
   AGENT_TEMPLATE_BINDING,
@@ -36,6 +37,7 @@ import type {
 import { wirePorts } from "../../../wire/registry";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { AntAgentWorkbench } from "./AntAgentWorkbench";
+import { AgentsSettingsModal } from "./AgentsSettingsModal";
 import { AntAutomationWorkbench } from "./AntAutomationWorkbench";
 import {
   CONFIG_LIB_SUBS,
@@ -670,6 +672,7 @@ function AgentLibrary({
   onCreatePack: (id: string, name: string, summary: string) => void;
 }) {
   const [agents, setAgents] = useState<AgentDefinition[]>(() => getAllAgentDefinitions());
+  const [agentsSettingsOpen, setAgentsSettingsOpen] = useState(false);
   const selectedAgent = agents.find((agent) => agent.id === selectedId) ?? agents[0];
 
   useEffect(() => {
@@ -688,27 +691,33 @@ function AgentLibrary({
         label="Engagement templates"
         title="Agents"
         actions={
-          <Button
-            size="small"
-            onClick={() => {
-              const id = `agent-new-${Date.now()}`;
-              const agent: AgentDefinition = {
-                id,
-                name: "Untitled template",
-                status: "draft",
-                active: false,
-                starred: false,
-                stepCount: 0,
-                linkedAutomationIds: [],
-                updatedAt: new Date().toISOString(),
-              };
-              setAgents((prev) => [...prev, agent]);
-              onCreatePack(id, agent.name, "Draft template — publish to appear in Bind dropdowns");
-              onSelect(agent);
-            }}
-          >
-            New template
-          </Button>
+          <Space direction="vertical" size={8} align="end">
+            <Button
+              size="small"
+              type="primary"
+              onClick={() => {
+                const id = `agent-new-${Date.now()}`;
+                const agent: AgentDefinition = {
+                  id,
+                  name: "Untitled template",
+                  status: "draft",
+                  active: false,
+                  starred: false,
+                  stepCount: 0,
+                  linkedAutomationIds: [],
+                  updatedAt: new Date().toISOString(),
+                };
+                setAgents((prev) => [...prev, agent]);
+                onCreatePack(id, agent.name, "Draft template — publish to appear in Bind dropdowns");
+                onSelect(agent);
+              }}
+            >
+              New template
+            </Button>
+            <Button size="small" icon={<SettingOutlined />} onClick={() => setAgentsSettingsOpen(true)}>
+              Agents settings
+            </Button>
+          </Space>
         }
       >
         <List
@@ -731,6 +740,7 @@ function AgentLibrary({
       <Surface label="Agent / sequence editor" style={{ flex: 1, minWidth: 0, minHeight: 0 }}>
         <AntAgentWorkbench agent={selectedAgent} />
       </Surface>
+      <AgentsSettingsModal open={agentsSettingsOpen} onClose={() => setAgentsSettingsOpen(false)} />
     </div>
   );
 }

@@ -41,6 +41,7 @@ export type CriteriaRow = {
   set_value: string | null;
   threshold: string | number | null;
   threshold_unit: string | null;
+  campaign_channel_id?: string | null;
 };
 
 export type ActiveAttemptRow = {
@@ -65,7 +66,7 @@ function msForThreshold(threshold: number, unit: string | null): number {
 
 function channelFromWhen(whenClause: string | null): string | null {
   if (!whenClause) return null;
-  const m = whenClause.match(/channel\s*=\s*(text|email|form|sms)/i);
+  const m = whenClause.match(/channel\s*=\s*(text|email|form|sms|call)/i);
   return m ? m[1].toLowerCase().replace("sms", "text") : null;
 }
 
@@ -82,13 +83,41 @@ export async function loadChannelOrder(pool: Pool, firmId: string): Promise<stri
 
 export async function loadAttemptCriteria(pool: Pool, firmId: string): Promise<CriteriaRow[]> {
   const rows = await pool.query<CriteriaRow>(
-    `SELECT id, label, enabled, when_clause, condition_clause, set_value, threshold, threshold_unit
+    `SELECT id, label, enabled, when_clause, condition_clause, set_value, threshold, threshold_unit,
+            campaign_channel_id
      FROM rule_attempt_criteria
      WHERE enabled = true AND (firm_id IS NULL OR firm_id = $1)
      ORDER BY ord ASC`,
     [firmId],
   );
   return rows.rows;
+}
+
+async function campaignChannelIdForAttempt(
+  pool: Pool,
+  attempt: ActiveAttemptRow,
+): Promise<string | null> {
+  if (!attempt.enrollment_id) return null;
+  const token = (attempt.owner_channel ?? "text").toLowerCase().replace("sms", "text");
+  const enr = await pool.query<{ campaign_id: string | null }>(
+    `SELECT campaign_id FROM enrollment WHERE id=$1`,
+    [attempt.enrollment_id],
+  );
+  const campaignId = enr.rows[0]?.campaign_id;
+  if (!campaignId) return null;
+  const ch = await pool.query<{ id: string }>(
+    `SELECT id FROM campaign_channel WHERE campaign_id=$1 AND token=$2 LIMIT 1`,
+    [campaignId, token],
+  );
+  return ch.rows[0]?.id ?? null;
+}
+
+function criteriaForChannel(all: CriteriaRow[], channelId: string | null): CriteriaRow[] {
+  if (channelId) {
+    const local = all.filter((row) => row.campaign_channel_id === channelId);
+    if (local.length) return local;
+  }
+  return all.filter((row) => !row.campaign_channel_id);
 }
 
 export async function ensureTickWorkflow(pool: Pool, firmId: string): Promise<string> {
@@ -176,6 +205,9 @@ function criteriaDue(
   if (cond.includes("not opened") && state.opened) return false;
   if (cond.includes("link not clicked") && state.link_clicked) return false;
   if (cond.includes("not submitted") && state.form_submitted) return false;
+  if (cond.includes("not delivered") && state.delivered) return false;
+  if (cond.includes("not answered") && state.answered) return false;
+  if (cond.includes("not completed") && state.completed) return false;
   if (cond.includes("non_reply") && state.opened) return false; // reply counted as opened/inbound
 
   const threshold = Number(row.threshold);
@@ -237,17 +269,65 @@ export async function escalateAttemptWindow(
     toChannel = idx >= 0 && idx < channelOrder.length - 1 ? channelOrder[idx + 1] : null;
   }
 
-  const fired = {
-    ...(attempt.fired_criteria ?? {}),
-    [criteria.id]: now.toISOString(),
-  };
+  let queuedNextAttempt = false;
+  let campaignId: string | null = null;
+  if (attempt.enrollment_id) {
+    const enrPeek = await pool.query<{ campaign_id: string | null }>(
+      `SELECT campaign_id FROM enrollment WHERE id=$1`,
+      [attempt.enrollment_id],
+    );
+    campaignId = enrPeek.rows[0]?.campaign_id ?? null;
+  }
+
+  if (!toChannel && campaignId) {
+    const camp = await pool.query<{
+      attempt_count: number | null;
+      wait_after_last_failed_seconds: number | null;
+    }>(
+      `SELECT attempt_count, wait_after_last_failed_seconds FROM campaign WHERE id=$1`,
+      [campaignId],
+    );
+    const sac = await pool.query<{
+      attempt_count: number;
+      wait_after_last_failed_seconds: number;
+    }>(
+      `SELECT attempt_count, wait_after_last_failed_seconds FROM seq_attempt_cycle WHERE id='sac-global'`,
+    );
+    const max =
+      camp.rows[0]?.attempt_count ?? sac.rows[0]?.attempt_count ?? 1;
+    const waitSec =
+      camp.rows[0]?.wait_after_last_failed_seconds ??
+      sac.rows[0]?.wait_after_last_failed_seconds ??
+      86400;
+    const attemptN = Number(attempt.state?.attempt_n ?? 1);
+    if (attemptN < max) {
+      toChannel = channelOrder[0] ?? "text";
+      queuedNextAttempt = true;
+      (attempt.state ?? {}).attempt_n = attemptN + 1;
+      (attempt.state ?? {}).attempt_wait_until = new Date(
+        now.getTime() + waitSec * 1000,
+      ).toISOString();
+    }
+  }
+
+  const fired = queuedNextAttempt
+    ? {}
+    : {
+        ...(attempt.fired_criteria ?? {}),
+        [criteria.id]: now.toISOString(),
+      };
   const nextState: AttemptState = {
     ...(attempt.state ?? {}),
     last_escalation: criteria.id,
-    // Do NOT reset window_started_at — re-entries keep original clock
     delivered: toChannel === fromChannel ? attempt.state?.delivered : false,
     opened: false,
     link_clicked: false,
+    attempt_n: queuedNextAttempt
+      ? Number(attempt.state?.attempt_n ?? 1)
+      : (attempt.state?.attempt_n ?? 1),
+    attempt_wait_until: queuedNextAttempt
+      ? attempt.state?.attempt_wait_until
+      : undefined,
   };
 
   await pool.query(
@@ -300,9 +380,27 @@ export async function escalateAttemptWindow(
   );
 
   let send: DispatchResult | undefined;
-  if (toChannel && (toChannel === "email" || toChannel === "text")) {
-    const subject = `Tower follow-up (${criteria.id})`;
-    const bodyText = `Sequence advanced: ${fromChannel} → ${toChannel} after ${criteria.label}`;
+  const waiting =
+    queuedNextAttempt &&
+    typeof nextState.attempt_wait_until === "string" &&
+    new Date(String(nextState.attempt_wait_until)).getTime() > now.getTime();
+  if (toChannel && !waiting && (toChannel === "email" || toChannel === "text")) {
+    const attemptN = Number(nextState.attempt_n ?? 1);
+    const { pickAuthoredContent } = await import("./campaignHousing.ts");
+    const authored = await pickAuthoredContent(
+      pool,
+      campaignId,
+      toChannel === "sms" ? "text" : toChannel,
+      attemptN,
+    );
+    const authoredContent = (authored?.content ?? {}) as Record<string, unknown>;
+    const subject =
+      (typeof authoredContent.subject === "string" && authoredContent.subject) ||
+      `Tower follow-up (${criteria.id})`;
+    const bodyText =
+      (typeof authoredContent.body === "string" && authoredContent.body) ||
+      (typeof authoredContent.body_text === "string" && authoredContent.body_text) ||
+      `Sequence advanced: ${fromChannel} → ${toChannel} after ${criteria.label}`;
     send = await actuateChannelSend({
       firmId: attempt.firm_id,
       contactId: attempt.contact_id,
@@ -526,6 +624,7 @@ export async function enrollAndActuate(input: EnrollActuateInput) {
     cellIndex: 0,
     cellId: firstCell?.id,
     enrolledAt: now,
+    attempt_n: 1,
   };
   await pool.query(
     `INSERT INTO active_attempts
@@ -796,8 +895,65 @@ export async function tickOnce(now = new Date()): Promise<{
       criteriaByFirm.set(attempt.firm_id, await loadAttemptCriteria(pool, attempt.firm_id));
       orderByFirm.set(attempt.firm_id, await loadChannelOrder(pool, attempt.firm_id));
     }
-    const criteria = criteriaByFirm.get(attempt.firm_id)!;
+    const criteria = criteriaForChannel(
+      criteriaByFirm.get(attempt.firm_id)!,
+      await campaignChannelIdForAttempt(pool, attempt),
+    );
     const order = orderByFirm.get(attempt.firm_id)!;
+    const waitUntil = attempt.state?.attempt_wait_until;
+    if (typeof waitUntil === "string" && new Date(waitUntil).getTime() > now.getTime()) {
+      continue;
+    }
+    if (typeof waitUntil === "string") {
+      const cleared = { ...(attempt.state ?? {}) };
+      delete cleared.attempt_wait_until;
+      await pool.query(
+        `UPDATE active_attempts
+         SET state=$2::jsonb, window_started_at=$3::timestamptz, updated_at=now()
+         WHERE id=$1 AND status='open'`,
+        [attempt.id, JSON.stringify(cleared), now.toISOString()],
+      );
+      attempt.state = cleared;
+      const owner = (attempt.owner_channel ?? "text").toLowerCase().replace("sms", "text");
+      if (owner === "email" || owner === "text") {
+        const { pickAuthoredContent } = await import("./campaignHousing.ts");
+        const enr = attempt.enrollment_id
+          ? await pool.query<{ campaign_id: string | null }>(
+              `SELECT campaign_id FROM enrollment WHERE id=$1`,
+              [attempt.enrollment_id],
+            )
+          : { rows: [] as Array<{ campaign_id: string | null }> };
+        const authored = await pickAuthoredContent(
+          pool,
+          enr.rows[0]?.campaign_id ?? null,
+          owner,
+          Number(cleared.attempt_n ?? 1),
+        );
+        const content = (authored?.content ?? {}) as Record<string, unknown>;
+        const subject =
+          (typeof content.subject === "string" && content.subject) ||
+          `Tower — attempt ${Number(cleared.attempt_n ?? 1)}`;
+        const bodyText =
+          (typeof content.body === "string" && content.body) ||
+          (typeof content.body_text === "string" && content.body_text) ||
+          `Attempt ${Number(cleared.attempt_n ?? 1)}`;
+        await actuateChannelSend({
+          firmId: attempt.firm_id,
+          contactId: attempt.contact_id,
+          channel: owner,
+          purpose: "cem",
+          subject,
+          bodyText,
+        });
+        await writeEngagement(pool, attempt.firm_id, attempt.contact_id, "send_dry_run", {
+          attemptId: attempt.id,
+          channel: owner,
+          subject,
+          bodyText,
+          attempt_n: cleared.attempt_n,
+        });
+      }
+    }
 
     for (const row of criteria) {
       // Reload attempt after possible prior fire in this tick

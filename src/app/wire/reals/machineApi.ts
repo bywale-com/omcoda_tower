@@ -221,6 +221,22 @@ export const realMachineApi: MachineApiPort = {
     });
   },
 
+  async getAttemptCycle(sequenceId) {
+    const q = sequenceId ? `?sequenceId=${encodeURIComponent(sequenceId)}` : "";
+    return wireFetch<{ cycle: import("../machineTypes").AttemptCycleRow }>(
+      `/machine/attempt-cycle${q}`,
+      { headers: firmHeader() },
+    );
+  },
+
+  async saveAttemptCycle(input) {
+    return wireFetch<{ cycle: import("../machineTypes").AttemptCycleRow }>(`/machine/attempt-cycle`, {
+      method: "PUT",
+      headers: firmHeader(),
+      body: JSON.stringify(input),
+    });
+  },
+
   async enrollSequenceContacts(sequenceId, input) {
     return wireFetch<{
       sequenceId: string;
@@ -553,6 +569,7 @@ export const realMachineApi: MachineApiPort = {
         email: string | null;
         phone: string | null;
         name: string | null;
+        firmName?: string | null;
       }>;
     }>(`/machine/contact-records?firmId=${encodeURIComponent(firm())}`, {
       headers: firmHeader(),
