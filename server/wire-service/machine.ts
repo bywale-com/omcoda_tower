@@ -1708,7 +1708,7 @@ export async function handleContactRecordsList(c: Context) {
       email: r.email,
       phone: r.phone,
       name: r.name,
-      firmName: r.firm_name || (r.firm_id === "firm-cedar" ? "Cedar Immigration" : null),
+      firmName: r.firm_name,
       createdAt: r.created_at,
     })),
   });
