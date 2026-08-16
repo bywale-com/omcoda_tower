@@ -22,6 +22,8 @@ That is the connect. The write **is** the event. The action **is** today’s `ca
 
 **Watch law (founder 01:31):** not everything is watched by default. Not everything needs to be watched needlessly. No picker row until a workflow needs that table. This slice needs **one** completion table. Connect that. Stop.
 
+**01:44 (PM + founder):** This slice **is** the Automations middle, once — not a smaller idea. Founder spec is the pictures + FACE. They do not specify persist. Save means the picture is true. Do not ask them for SQL. Do not build every plate because the pictures exist.
+
 ---
 
 ## Paste this — Systems agent

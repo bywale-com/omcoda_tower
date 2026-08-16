@@ -101,6 +101,8 @@ If this is true, and “firm provisioned” is the teaching event, **which table
 
 Do not treat this confirmation as a mint or a filled catalog.
 
+**01:44 (PM):** Starts (events / objectives) stay open forever — connect when a workflow needs that table. **Middle** = hear the write → run the graph → If → assign / enroll. The connect slice is that middle, once. Do not spin “build every event and every objective.”
+
 ---
 
 ## Do not

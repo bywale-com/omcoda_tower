@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 01:35 UTC — **Four answers locked. Ready to connect, not to build the modules.** Two agents, one slice. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 01:44 UTC — **Founder spec is the pictures. Enough for the middle. First ticket is still the connect.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -790,3 +790,35 @@ Brief: [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-SLICE-PACKAGE.md).
 **Ask:** Is that the first spin — one completion heard → existing agent assigned? If yes, paste the two blocks in that file. If you want C8 this-firm Add contact instead (or as well), say so — enroll is already there; Every firm is not.
 
 **Do not:** mint; fill the catalog; plant Hub; overwrite 15:43; treat this as system time on Story 7.
+
+---
+
+## 2026-08-16 01:44 UTC — Pictures are the spec. Enough. Connect is the middle once.
+
+**Why:** PM restated the middle. Founder: UI-first; if the images exist, the rest is a systems question; their job is to say what should happen — have they detailed that enough?
+
+**PM (alignment, not a flag):** Do not spin “build every event and every objective.” Starts stay open (connect UI to the table when a workflow needs it). **Middle = hear the write → run the graph → If on the previous result → assign / enroll.** The connect slice **is** that middle, once. Agents authorship middle is **named**; housing/Save not stood up; Call face-only; send known leftover. Automations more **unbuilt than unknown**. Build the machinery. First ticket still one completion heard, one existing agent assigned.
+
+**Founder excerpts**
+
+> that's why I always think from UI first … the UI and those images you've generated exist right now … then everything is just a system question
+
+> all I can do is describe what I want to happen. And then it knows what should happen
+
+> the save button should be what, like, pushes something to the back end. Like, I don't know a lot about that. Like, that's not my job. Right? My job is to say exactly what I want to happen.
+
+> have I not detailed that enough? Isn't that obvious enough from like, everything that I've done? Plus the images plus the specs of each thing.
+
+**Thoughts:**
+
+Yes. You have detailed **what should happen**. That is the job. You do not specify persist paths. 23:00 already: systems change so the pictured UI works **exactly**. Save means the picture is true — not a flash tag.
+
+The first ticket is not because you under-specified. It is so implementers do not build every plate and mint a catalog. PM is right: that ticket **is** the middle working, once.
+
+“If the UI exists, everything is a system question” — **yes** for: does Save persist, does the write fire the graph, can If read the last result, does assign enroll. **No** for inventing the still-open leftovers (Call live, Every firm as house-wide enroll, failure *does*, additional opt-in objectives, operations catalog). Those stay founder/PM when they show up. Same as events: connect when the workflow needs it.
+
+Agents: the sequence/campaign/Override/channel/content/Settings/enroll middle is **named**. Honest Save of every toggle still needs housing (campaign row, Override this, attempt-count). That is systems, from your pictures — not a new product question. Do not persist Override this into `overrides` jsonb (20:10 honesty).
+
+Automations: trigger · rule · If · action are named. Unbuilt: real Save, dispatch on completion, action only `call_agent`, rule still a TS pack, If thin. You pictured those. You do not owe a backend essay.
+
+**Do not:** treat “enough” as mint-everything; ask the founder for SQL; overwrite 15:43.
