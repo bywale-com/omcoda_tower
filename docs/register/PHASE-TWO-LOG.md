@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Seats (PM vs Systems Analyst) = 2026-08-15 16:01 UTC. The 14:58 numbered list is an agent restatement, **not** the founder flag.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **01:01:** Add contact scope is **Every firm** (default) or **Select from** (all selected; deselect to pick one). A14 sequence pick is a **radio** — no chevron, nothing further. Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -204,3 +204,534 @@ The 14:49 relational picture remains Type A **context**. It is not this flagship
 **What should be current on main (this turn):** Phase Two thesis + this log + seat prompts + SA log. Not Hub-gap maps, Apex honesty code, or other draft product PRs.
 
 **Ask:** seats live in `docs/README.md` (not a separate entry). Stamp here because spinning a second seat is an inflection.
+
+---
+
+## 2026-08-15 17:25 UTC — App-facing first: one description → prototype and systems
+
+**Why:** Founder continues in the **PM** chat because the Agents module shape is now **app-facing first**. Systems still get worked; the question is whether the **same** description of the UI / the way the module works can produce **both** the UI prototype **and** the systems requirements (tables, other systems, runtime nodes, workers — data and worker architecture).
+
+**SA context (not this stamp’s job):** PR [#84](https://github.com/bywale-com/omcoda_tower/pull/84) has the inventory + `SYSTEMS-GOAL.md` handoff (goal = completion; campaign grain; failure mode). Not on main. Flag stays **15:43**. Do not overwrite.
+
+**Answer (PM):**
+
+**Yes — if the description is the inhabited module, not the chrome.** Operator authorship + consultant record + what continues when nobody is present. That one spec has two extrusions:
+
+| Output | What it is |
+|--------|------------|
+| **UI prototype** | Controls that **write** authorship; panes that **show** the record |
+| **Systems requirements** | The **tables** those write/show, plus the **faceless** transitions the runtime/worker must perform so the panes stay true after the operator leaves |
+
+**No — if “UI” means only clicks.** “Someone opens an email,” a window elapses, inbound nullifies an attempt — no control. That is why Phase One said you cannot discover the machine from screens. An app-facing Agents description that omits unattended runtime will ship a pretty editor whose Activity pane lies.
+
+So the description must name **three layers**, not two:
+
+1. **Authorship** — what the operator defines (sequence, order, content, attempt rules, firm/default/overrides, campaign composition, goal as completion, success destination, failure).
+2. **Record** — what Board / Client Data Activity must show because (1) actually ran.
+3. **Unattended** — tick, inbound, send, completion, exhausted-campaign failure. Nobody present.
+
+Layer 3 is still **app-facing**: it is what the panes must be able to display, and what must happen for “once met, met” to be true. It is not Automations’ graph (that engine stays perimeter). It is Agents’ **data + worker** so authored rows actually run.
+
+**What that description extracts (architecture, not a mint):**
+
+| Kind | Agents interior already / missing |
+|------|-----------------------------------|
+| **Sequence / rule / binding tables** | `sequence_template.cells`, `seq_channel_ownership_order`, `rule_attempt_criteria`, `firm_sequence_binding` — Save already writes some of this |
+| **State tables the worker writes** | `enrollment`, `active_attempts`, `engagement_records`, `outbound_messages` |
+| **Runtime (two paths, dumb)** | **Time:** `worker.ts` tick reads rule tables. **Event:** cascade / webhooks / inbound. Runtime holds **no** content |
+| **Completion / campaign / failure** | **Not housed as authored data.** Story chain + `meeting_booked` + Engine 2. This is what an app-facing goal + campaign grain would force SA to extract — after Story promotion, not from chrome |
+
+**What else besides tables and workers:** campaign composition (sequences toward one class objective); destinations on completion (other agent · workflow · end); failure writes (cannot be silent); event kinds on the record. Not a fourth engine.
+
+**Seats:** PM writes/holds that inhabited description (prototype + the “I should be able to” that implies unattended). SA extracts Requirements / table-first / worker jobs from it and from Story — does not invent a second Agents flag. Same description, two outputs. Bind still late: a control does not create substance; if the description names a state the machine lacks, that is a **missing system** (Phase Two), not an excuse to fake it in the prototype.
+
+**Do not:** treat Hub JourneyTab as the description; put Automations triggers inside Agents; mint a `goal` table in this stamp.
+
+---
+
+## 2026-08-15 17:32 UTC — Agents canvas: campaign+node, default on every rule
+
+**Why:** Founder: still not specified as its most comprehensive document. Final form is modular. Canvas: you place **campaign and node**. One campaign → node canvas; add campaigns → consolidates to campaign canvas; you can always go that deep. Canonical **two-campaign sequence ≠ two-node sequence** (opt-in style; launch goal can sit in the sequence). **Objective type** = opt-in / reactivation / re-engagement; technically multiple inside the same sequence. First campaign: sequencing/order; **choose a default; everything is an override; always a default on everything** — including typical text→email→… Escalation rules **per node**, down to if-not-open, down to attempt rules. Failure is **part of escalation**. Every rule that can exist can be defined and overridden. **The UI is what is missing.** Tinkering continues.
+
+**Doc (this is the comprehensive face, not a second flag):** [`AGENTS-FACE.md`](./AGENTS-FACE.md)
+
+**Today’s Ant editor** is a Timeline of email/task steps. That is not this canvas.
+
+**Ask:** plant the canvas next, or keep specifying while you tinker?
+
+---
+
+## 2026-08-15 17:45 UTC — Work from the real Agents UI; three layers; overrides on canvas
+
+**Why:** Founder: abstract mockups waste the fact the module already exists. Screenshot the Ant Agents UI and work on **that**. Fractal canvas. Grain of images: channel-node rules that **never move**; more at campaign; actually **three** layers for every control — **global**, **the sequence**, **each campaign inside the sequence**. UI: modular, obvious, **on the canvas** — not a Settings modal far from it. **Only global** lives in Settings. **Override lives on the canvas.**
+
+**Today (screenshotted):** Editor = Email/Task timeline. Settings = the whole `rule_attempt_criteria` list. That list is the global default. It is currently also the only place those rules exist.
+
+**Placement:**
+
+| Layer | UI |
+|-------|-----|
+| Global | Settings tab |
+| Sequence | Canvas (sequence chrome) |
+| Campaign | On the campaign node, on the canvas |
+| Channel node rules | On the node, always — they never move to Settings |
+
+**Ask:** plant this in `AntAgentWorkbench` next (same chrome), or keep specifying?
+
+---
+
+## 2026-08-15 18:08 UTC — Sequence is blank; two opt-in objectives; Override this reveals the graph
+
+**Why:** Founder enriching, not circling. Sequence = **blank**, multiple goals. Opt-in = **two clear objectives** → **two campaigns**. Launch window builds desire (why we don’t start at reactivation). Launch day **is opt-in day**. First objective met → **qualify** for phase 2 — that is the edge between campaigns.
+
+**Channels are not objectives.** They are the **medium**. Channel rules + attempt rules on the node. **Sequencing and content defaults live at campaign.** Content 1:1 with nodes; override by opening the node.
+
+**The first toggle on a campaign: Override this.** Opens that campaign; **reveals channel nodes as wires** connected to it. Campaign toggles stay on the campaign. Channel toggles live on those nodes. Open a channel → deeper, still wired = **full graph**.
+
+Spoken “email, text, and call”: ladder stood up is text / email / form — do not mint call here.
+
+**Doc:** [`AGENTS-FACE.md`](./AGENTS-FACE.md) updated. Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 18:25 UTC — Planted Override this on the real Agents editor
+
+**Why:** Founder: the shape is locked; enrich further; Override this reveals channel nodes as wires; campaign toggles stay on the campaign; node toggles live on the node. They asked to see the graph, not another overlay.
+
+**Plant:** Editor tab on Ant Agents (`AntAgentWorkbench`) now has **Canvas** (default) and **Timeline (today)**. Canvas is local prototype — not the save path. Opt-in sequence seeds **Launch window** (Override this on, Text open) → qualify → **Launch day** (closed). Channels = text / email / form. Settings tab banner: global defaults only.
+
+**Enrichment (agent alignment, not a flag):** toggle locality; agent = blank sequence; qualify-edge = 15:43 goal-as-escalation drawn between campaigns; channels = sequencing method. In [`AGENTS-FACE.md`](./AGENTS-FACE.md).
+
+**Still open:** window’s one objective (waitlist?); mix types in one sequence; deeper-than-channel grain; spoken “call”.
+
+**Ask:** is Launch window’s one thing the waitlist, or still unnamed?
+
+---
+
+## 2026-08-15 18:40 UTC — Objective is the first thing on a campaign; binary event; two template layers
+
+**Why:** Founder answering the waitlist question, then the real grain. Mock **not** this turn — “if you recorded the revision, that’s great.” 18:08 Override-this / two-campaign / channel-as-medium **is** in this log and [`AGENTS-FACE.md`](./AGENTS-FACE.md).
+
+**Waitlist:** not the most important thing. Leave the window’s named “one thing” open. What matters is **how an objective is created**.
+
+**Empty world:** if no one has created templates, there are no templates. Keep that in the open.
+
+**Two template layers (do not mix):**
+- **Sequence templates** = the full canvas. Opt-in, re-engagement, reactivation **are sequences**, not objectives. You would not see “opt-in” in an objective picker.
+- **Objective templates** = a **single campaign**. In the opt-in sequence, examples already named: **launch window**, **launch day**. There are **additional** objectives in that sequence — unnamed here.
+
+**Creating a campaign:** the first thing you define is the **objective**. Hub Automations analogy (`/hub`): you start with a trigger; on that node the first thing is **Add configuration** (event configuration). Same idea — not “put Automations triggers on the Agents canvas.”
+
+**Untemplated objective:** looks like an **event** (maybe not called events; can expand). Binary. Direct. Everyone enrolled in this campaign is campaigned to do **one thing**. Yes or no. It happened or it didn’t. Then you **name** it (e.g. meeting booked).
+
+Spoken examples: click this link · book a meeting in this calendar · submit / complete this form. Launch window as a from-scratch event: probably **click this link**. Down the line: a webhook / table query (did they follow us / is their name in this). System should not be so complicated that that is impossible. Do not mint that now.
+
+Picking a **templated** objective populates everything related to that template.
+
+**Doc:** [`AGENTS-FACE.md`](./AGENTS-FACE.md). Flag 15:43 untouched. No mock this stamp.
+
+---
+
+## 2026-08-15 18:50 UTC — Mock: five beats so everything said is visible
+
+**Why:** Founder: not one mock. Distinct things; some as open modals, some their own beat. Should be able to see everything just said.
+
+**Five beats on Editor → Mock** (Timeline remains the save path):
+
+1. Sequence templates (empty world toggle; opt-in / re-engagement / reactivation as sequence templates — not objectives)
+2. Add objective — **modal** (template: launch window / launch day / additional; from scratch: click / calendar / form, then name it)
+3. Two campaigns + qualify
+4. Override this → wired channels; campaign toggles stay
+5. Open a channel → deeper nodes still wired
+
+Webhook / table not mocked. Call channel not mocked. Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 18:55 UTC — “Mock” = generated images
+
+Founder: when they said mock they meant **generate the image**, not plant an in-app prototype. Distinct beats: sequence templates · add objective (template + from scratch) · two campaigns · Override this · open channel. Images: `agents-mock-1` … `agents-mock-5` plus `2b` from-scratch.
+
+---
+
+## 2026-08-15 19:10 UTC — Placement only: content inside the channel; attempt is a cycle
+
+**Why:** Founder: not adding. Changing **where** things live so it is natural. Image in question = beat 5 (campaign Override this ON + a channel open). Perfect recreation of that frame, then move the pieces.
+
+**Place 1 (that graph):**
+- **Override content** is a **small button inside the channel node**, not a wired sibling. Click → editor opens **in the node** (text box, or the email composer).
+- **Channel rules = escalation** on that medium (not opened, not clicked in time, …). Those stay the channel’s deeper grain.
+- **Attempt rules are not at the channel.**
+
+**Attempt vs channel:**
+- Attempt = **container / cycle** of the **same** sequence (unless nth-attempt uses a different sequence). Last node fails → next attempt. Attempt rules = count, distance after the failed last node, those parameters.
+- Channel / escalation rules = what that medium has to deal with.
+
+**Nesting:** every rule can be global, sequence, or campaign. No override → fall back up (CSS). **Two Settings:** Agents **module** = global. **That sequence** = sequence rules. Attempt is **not** that layer. Content at attempt = **variation on the same channel node**. UI does not grow: attempts are cycles of the same sequence.
+
+Flag 15:43 untouched. Recreate beat 5 image; second image = attempt as cycle + two Settings.
+
+---
+
+## 2026-08-15 19:30 UTC — Attempt is per campaign; sequence/global attempt rules live in Settings modals
+
+**Why:** Founder: do **not** generate the middle-of-canvas attempt-cycles image. Attempts are **per campaign**. Sequence-grain attempt rules do not sit in the middle of the graph — that canvas is the sequence. They live in the **settings modal**.
+
+**Where attempt rules live (no gray area):**
+- **Campaign** → on that campaign
+- **Sequence** → Sequence Settings modal
+- **Agents** → Agents Settings (global)
+
+**Ask:** generate those two Settings modals — they now hold a bunch, given everything discussed (attempt rules, channel/escalation rules, content, sequencing defaults). Mock = generate the image.
+
+---
+
+## 2026-08-15 19:45 UTC — Settings images locked; Override content is a toggle; call node (ElevenLabs)
+
+**Why:** Founder: the Settings images are canonical — “perfect,” nothing to add. Do not regenerate those.
+
+**Last change, different image:** the Override content **button** inside the channel should have been a **toggle**. Toggle on → the **node expands** to contain that medium’s **content-creation block**. Richer than a thin text box. Show **text, email, and call** overridden. Call will exist; **via ElevenLabs**.
+
+Mock = generate the image. Settings untouched. Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 19:50 UTC — Canon image lineup + UI blueprint (last pass before systems)
+
+**Why:** Founder: enough to talk to Systems Analyst. Same chat holds thinking, mocks, excerpts. Some images are revisions of others — line up **canon**, map each plate to the log stamp that birthed it, then spec the plates as a **UI blueprint**. Not a systems blueprint. Do not go into where it touches Postgres. If anything is under-specified, that is this pass.
+
+**Doc:** [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md). Canon C1–C7 (+ C2b, C5b). Discarded: open-channel siblings, content-as-button, attempt-cycles-in-the-middle.
+
+**Under-specified (named in the blueprint, not filled):** attempt rules on the campaign card (said, not drawn); attempt-N content variation control; additional opt-in objectives; word “event”; campaign Settings modal; Call vs Form on the machine.
+
+Flag 15:43 untouched. Settings plates still locked.
+
+---
+
+## 2026-08-15 20:00 UTC — Systems Analyst package committed (ascribe the plates)
+
+**Why:** Founder: the SA already has the context. The prompt should stay small. This is what we’re thinking; these are the systems traversing. For **our** system (tables, workers, runtime): what are we looking at? For **external** systems the mock is clearly calling — especially because the image is going to look like this — look at the configurations we are implying, is this possible, does the UI have to change, do we have the affordances we’re hoping for? Commit that as a **package prompt in time** so the next thing can start.
+
+**Doc:** [`AGENTS-SA-PACKAGE.md`](./AGENTS-SA-PACKAGE.md). Paste-block in that file. Same two questions on every canon plate, then a rollup. Indexed from README SA identity + FACE + blueprint.
+
+Flag 15:43 untouched. Settings plates still locked. Blueprint not rewritten.
+
+---
+
+## 2026-08-15 20:24 UTC — Agents creation-place complete enough; enter Automations from the outskirts
+
+**Why:** Founder: Agents as its own module — as a place things get created — is probably complete. Current shape redefines Agents as where you **create campaigns**; that feels great. Automations is the **brain / operations**. Use the join as the **bridge** into Automations. Always clean up where we’re working.
+
+**Capture (founder wording, not a second Agents flag):**
+
+- Connection: a variable operation can trigger an agent. It does **not** trigger a “re-engagement objective.” **Re-engagement is not an objective** — it is a **campaign** (the name of a campaign). The objective is more than likely a **data request** (and maybe other types).
+- Automation may **trigger creation of a campaign** when that campaign is already **templated**.
+- When we create an objective: click this / fill this form. A **trigger would not trigger click-this**. It would trigger **fill this form** — a data request is kind of a form, with these specific questions.
+- **Where is the form created?** Not cleaned up, then decided: **Automations creates the form.** Agents is **not** about creating forms or creating what is needed. Agents is about **sending people to accomplish the goal**. How Automations works the form has nothing to do with Agents.
+- **Automations shape:** perform **on this event** (schedule or trigger) → perform **this operation** → **nothing in the middle changes; it is definite** → on this kind of result do X, on that kind do Y. **Binary** (or the binaries we’ve defined). More **DAG-like**. Those are **exit points** at the end of each instance that ran.
+- **Recursive:** the data request is already an **event of origin for Agents**. Data request = a form, handled by Automations. Endpoints (this was the action of an agent) **mirror** the beginning of Agents (defining the objective). Uncanny resemblance.
+- Form creation as its own graph node vs **embedded with calling an agent** — not locked; founder leans **embedded**. Same end node: start an agent **or** select an existing one, **and** declare the objective right there; if data request, **create the form there**.
+- Select an **agent** (sequences — same thing). **No separate campaign pick** — campaigns live inside sequences. Selecting the agent = selecting the entire campaign. Campaigns can be templated. **Choice of agent/campaign is limited by the objective** — can be enforced.
+
+**Doc:** [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). 14:49 perimeter map said we would enter the next module from these outskirts. That is this stamp.
+
+**Do not:** overwrite 15:43; put Automations triggers on Agents; treat re-engagement as an objective; move form-building into Agents; plant an Automations editor this stamp; mint tables; silently kill Seed §5.6.
+
+Flag 15:43 untouched. SA Agents package still waiting; this is PM module enter, not SA rewrite.
+
+---
+
+## 2026-08-15 20:44 UTC — Automations: Hub is the complete plant; look at Rules
+
+**Why:** Founder: Automations is the most under-rated, under-built module — supposed to be more. The **Hub** Automations module (how the nodes are and look) was **more complete**. Everything in the current-app Automations was **born from Hub**. Current app = poor rendition of **quality**, great kind of **translation**. Focus on Hub.
+
+**Look at Rules** (the immigration one — the one with **toggles**). Open the rule: toggle things on and off. That is the idea. What a rule is, what a constant is, what a condition is: **rules are composites of conditions and constants**; within a rule you turn outcomes on and off. If you look at rules you see the **end goal**: rules are creatable; more rules as you want; **modular across industries**.
+
+**Easy to miss:** Automations touches more of the app. Something comes in (outreach, existing data, other sources) → perform an operation → **actions are not just outreach**. Outcomes also **change stuff inside the system**.
+
+**Plate already on the glass (Hub, light):** New firm → opt-in launch → Rule **Immigration · Service eligibility** → config modal **Outcomes** with five toggles (Pathway detection, Gaps, Profile & operations, Category draws, Draw competitiveness). Input / Outcomes / Output. Build palette already names Constants, Conditions, Rules.
+
+**Doc:** [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md) law 11–13.
+
+**Do not:** overwrite 15:43; treat CT Ant Automations as the source; throw away Hub node kinds; invent a new in-system-outcomes catalog this stamp; mint tables.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 20:54 UTC — Rule GUI vs Custom; smallest workflow; from-scratch images
+
+**Why:** Founder: likes that there is code to build it, does **not** want to be limited to code. Two options: **Custom** (code, like JSON) and **GUI** where the logic is simple enough. If it really isn’t simple enough, say so. This entire Rule part **does not exist in the Ant translation** — that’s a problem. Mocks = images; **building from scratch**. A rule lets us create the **smallest workflow**: trigger · rule · action. Fewer pieces; then build those pieces.
+
+**PM verdict:** the authored logic **is simple enough for a GUI**. Condition = field · operator · constant. Rule = togglable families of those. Evaluator stays under the hood. GUI default; Custom when GUI isn’t enough.
+
+**Images:** [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) A1–A3. Not planted in the app.
+
+**Do not:** overwrite 15:43; plant AntAutomationWorkbench this stamp; say it all has to be code.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 21:10 UTC — Named code beside GUI; insides of trigger and action; rule-output gap
+
+**Why:** Founder: even inside prepared outcomes, some are GUI (maybe only the constant), some have no constant and must be **named code** — still created in the rules module, JS or Python, still **on or off**, you **name it**. Side-by-side. Prefer a constant when possible; across industries some things aren’t constants. Not satisfied with canvas-only: see **inside trigger**, **add a node**, **inside action**. At least two kinds of actions: **in the application** vs **agents**. Agents as action: select/create objective (creating it creates the form).
+
+**Rule output (do not get lost, do not miss):** implying the operation creates both a re-engagement **and** a reactivation event — or both as **signals**. Separate them? **No — no need.** One, the other, or both at once is why we can have **different actions**. We do **not** yet have a congruent complete idea of **what a rule outputs** — and that output is supposedly what we use to create a form, and maybe enrich many other things.
+
+**Hub today (not the accepted complete idea):** `RuleEvaluationSummary` already carries headline, pass, pathway/gap signals, recommended services, **nudge** signal, **reactivation** signal. Engine 2: every detection is a signal; one client, one motion.
+
+**Images:** A4–A9 in [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md). Law 17–22 in [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md).
+
+**Do not:** invent the output catalog; split the rule to separate re-engagement from reactivation; plant the editor; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 21:28 UTC — Output classes are a lattice; missing class is required data
+
+**Why:** Start from the end. Founder: the output classes are excellent — they all need to exist. Each is a **lattice**: a simple condition on a class **forks actions**. Example on the same data: if re-engagement signal · if **only** re-engagement · if **anything other than that** → three kinds of actions.
+
+**Missing class (at least one): required data.** The system is **deterministic** — it does not need AI to know what data is required (Seed field-class + missing-data as signal + one form of outstanding self-reportable needs). When data is required, that is a re-engagement signal **and** it must be an output class. Forms are generated from that set (questions = required fields). Do **not** lock an objective type to a given signal.
+
+**Image:** A10. Law 22–24.
+
+**Do not:** invent the rest of the class catalog; lock form-objective to re-engagement; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 21:36 UTC — Does a listing of requested data exist (model + UI + rule output)?
+
+**Why (founder, before any new images):** Precisely — does that generate any new images / refinements of the images we have? **Before answering that:** does the data model **and** the UI support a **listing of data requests** — the data being requested, more than one; **referencing that listing inside a form**; and does it **show up in the data output of the rule node**.
+
+**Answer (honest, not a catalog invent):** **Partial / no on the glass.** Three questions:
+
+1. **Listing of the data being requested (more than one).**  
+   - **Catalog exists:** `COLLECTIBLE_FIELDS` in `src/app/data/collectibleFields.ts` — many rows (id, label, path, capture `self_reportable` | `document_dependent`, optional `employerDirected`, optional `signalHints` to R-* ids). Helper `selfReportableOutstandingPaths(presentPaths)` returns the outstanding self-reportable subset. **Nothing in the repo imports this file.** The join `signalHints` is declared and unwired.  
+   - **Map names, not an instance listing:** `state.fact_ask` = “outstanding asks”; `state.pending_capture` = `closed|open` (a door, not field rows); `state.missing_fact_signal` = absent|present. Postgres `rule_field_class_routing` is enable-toggle **rule** rows (when/condition/set_value), not a per-run list of requested fields.  
+   - **UI:** Hub Rule Analysis / Output does not list requested fields. Ant rule config is null (no Rule GUI). Contact / Nudge / Loop-closer demos use **hardcoded** outstanding counts and painted fields — not this catalog. No Automations picker of “these fields are the request.”
+
+2. **Referencing that listing inside a form.**  
+   **Law yes. Stood-up authoring: no.** Seed / Engine 2 / FACE 23: one form of outstanding self-reportables; questions **are** the required fields; document-dependent never enter a form. There is **no** form builder in Automations (or Agents) that binds collectible field ids as questions. Inspector `NodeFormField` is engagement **replay**, not authoring from a request listing. Nothing to point a form at, because there is no instance listing.
+
+3. **Show up in the data output of the rule node.**  
+   **No as a class.** Hub `RuleEvaluationSummary` is: headline, pass, `pathwaySignals[]` (R-CEC / R-FSW / …), `gapSignals[]` (**R-GAP-\*** result ids, not field ids), recommended services, nudge `{needed, kind, reason}` (a sentence like “Gaps asserted (R-GAP-01, …)”), reactivation `{warranted, reason}`. Analysis pane shows those. JSON dump is the same object. Checks carry `leftField` (what the condition **inspected**), not “what we now need from the client.” `evaluateRulePack` never reads `COLLECTIBLE_FIELDS`. Ant: no output pane for rules.
+
+**This is the missing required-data class (21:28) named as a listing.** A boolean “data required” is not enough. The class is **the set of requested fields** (more than one), which is what a form would reference and what a condition on the lattice would fork from.
+
+**Would have to exist (name, do not fill, do not mint tables):** rule output emits that listing; form questions reference those ids; rule Output pane **shows the list**. Document-dependent stays off the form.
+
+**Images this stamp:** **none generated.** A9/A10 already name the missing class. Refinement would be warranted **if** we mock next: the class as a **list of field rows** on Output (not a flag), and a form whose questions **are those rows**. Do not generate until asked.
+
+**Do not:** invent the catalog; mint tables; plant the editor; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 21:48 UTC — Images that should exist: required data as a listing
+
+**Why:** Founder: anyway, let me see the images that clearly should exist now. After 21:36 (listing not stood up in model/UI/output).
+
+**Plates (from scratch, Ant chrome, not planted):**
+- **A11** — Rule Output. Required data is **field rows**, not a flag. Catalog fields only. Document-dependent never a form.
+- **A12** — Form questions **are those rows**. Bound “from listing.” Not a blank Add-field builder. Re-engagement stays a campaign/template.
+- **A13** — Lattice with required data as a **solid listing class**. If listing not empty → create form from those rows. A10 still names the gap; A13 is the class when it exists.
+
+**Still not stood up in code.** These are mocks of what the glass should be. Do not mint tables. Do not invent the rest of the output catalog.
+
+**Do not:** plant `AntAutomationWorkbench`; overwrite 15:43; lock objective type to a signal.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 22:17 UTC — Automations chosen lineup + Systems Analyst package
+
+**Why:** Founder: terrain is enclosed enough. A13 is a **different kind of picture** — not the condition node. **Don't forget** the node after rule output: a **condition node** that says “if this,” already **calling from the previous results**. Rules have constants and their own conditioning. Spec everything from **logs** (transcripts inaccessible). Line up **chosen images in order**; if a plate is a revision, **keep the prior**, revision is **canonical**, say why it evolved. Spec down to detail. Then the SA package: tables, workers, fields, relationships, externals — UI should look like these plates so when built it works as wanted.
+
+**Chosen lineup** (priors kept): A1–A8 · **A12 revises A8 form** · A9 · **A11 revises A9 Output** · A10 (diagram) · **A13 revises A10** (still a diagram, not chrome). Spec: [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md). Law 26: two grains of condition.
+
+**Package:** [`AUTOMATIONS-SA-PACKAGE.md`](./AUTOMATIONS-SA-PACKAGE.md). Same two questions as Agents (our machine vs externals/configs/affordances), then rollup. Indexed from README SA identity.
+
+**Do not:** plant the editor; mint tables; treat A13 as a screen; overwrite 15:43; collapse the two condition grains.
+
+Flag 15:43 untouched. Agents SA package still waiting; this is a **second** package, not a replacement.
+
+---
+
+## 2026-08-15 23:07 UTC — Before building: the loops still open between Agents and Automations
+
+**Why:** Founder: keep the images (pristine, design system); can live with the cost. Natural question: if we built both modules to spec, could we **create an agent and enroll contacts**? Still more to discuss — connections / loops that should be closed, not remembered in the moment. State them directly. Do not plant.
+
+**Image regen (correction):** cut **re-generating** the same plates. Do **not** cut using the canon images to build. Cut **rereading the entire log** every turn.
+
+**If we only built the two UIs:** you would have two editors. You would **not** yet be able to create an agent and enroll contacts as a working loop. That is systems: bind, enroll, send, goal-done, write-back.
+
+**Loops still open (the connections, not a new flag):**
+
+1. **The other direction (15:43).** We specified Automations → start/select an agent. We did **not** specify what happens when the agent’s **goal is met**: escalate to **other agents**, to **other workflows**, or **it ends**. That is the flagship endpoint. Without it, Automations can throw people in; Agents cannot throw work back.
+
+2. **Create + enroll is one loop, not two screens.** Author the sequence in Agents. Automations action selects that sequence (or creates the objective/form and then selects). Someone has to **bind** it to a firm and **enroll a contact**. Dual entry: operator enroll from Contacts **and** workflow `call_agent`. If only the canvas exists, enroll is fake.
+
+3. **What goes out.** Enrollment that does not send (Resend/Twilio, consent, halt, silence) is a dark agent. Activity is the **record**, not the author.
+
+4. **Form write-back.** Automations owns the data-request form. Fill → facts land → eligibility re-evaluates → that can **fire Automations again**. Required-data listing is **not stood up**; the form cannot bind yet. Without write-back, the form is scenery.
+
+5. **Book-in.** Contacts have to exist (authorize book / import). The loop win is still **meeting booked** — an objective Agents can campaign toward; not Automations’ trigger word “event.” Named 14:49; not closed.
+
+6. **Instantiate vs enroll.** Automation may “create a campaign” only when a **template** already exists. Still open: new sequence row vs enroll into the existing one.
+
+**Do not:** start building the editors this stamp; overwrite 15:43; invent a COO; mint tables.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 23:16 UTC — Form completion is an event; events are global or local (not Settings)
+
+**Why:** Founder on loop 1 (goal → other workflow): same thing, different angle — **what events actually trigger an automation**. Form completion **is** an event. What they were trying to remember: there are no quote-unquote **Settings**. It is **global versus local**. That is why Automations needs that divide — it matches everything.
+
+**Capture (founder wording):**
+
+- On **all kinds of form submissions** — anytime a form is submitted — whoever submitted, **run this evaluation** on them. That is **global**.
+- On **this specific form** — every time **this** form is submitted — run this evaluation. That is **local**.
+- The same divide applies elsewhere. Do not fill the catalog. It expands **what counts as an event**.
+
+**Hub today (do not pretend):** `WORKFLOW_EVENT_CATALOG` is eligibility.changed / contact created|updated / import.created / audit completed|failed. **No form_submitted.** Map `finishing_event` can be `form_submitted` as an **attempt terminal**, not this trigger. Journey trees paint `form_submitted`. Not stood up as Automations event-of-origin.
+
+**Law 27** in [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Not a Settings modal. Not a new plate this stamp.
+
+**Do not:** invent the event list; copy Agents C6/C7 into Automations; plant; overwrite 15:43; collapse Agents C2b “event” with this trigger.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 23:35 UTC — No special return; objectives are events; failure → tag
+
+**Why:** Founder: don’t look at Hub as the app. Hub is the **advanced version of those modules** — fair if that is the lens. Not fair if we mention Hub because we thought that was the product. Product face = CT Ant.
+
+**Loop 1 settled (different angle, same thing):** There is **no need for a return**. The return **is** an event. **All objectives are events.** The write-back **is** the event; the event happening **is** the write-back. Detected across the app / in the database. Not lost.
+
+**Still open on that loop — querying, not a new wire:** clear tracking from what **created** the objective (agent-created or **hand-created**), the path that agent took through to **completion**, the completion event, **time it took**. Map it correctly. **Queryable at the minimum.** Critical.
+
+**Number 2 (create + enroll / in-app action):** If a campaign **fails**, for every person who failed it, create a record — even as simple as a **tag**. Failure of a campaign **has to be an event** so Automations can reference it. **Global and local apply.** Then the **action**: ascribe that tag. First in-app action named this way.
+
+**Why they thought of it:** the subscription campaign bell (subscribed / not) **is a tag** — an icon tag — **created in Automations**. Don’t opt-in / opt out / **unsubscribe** (also an event) → assign that tag. Subscription campaign **fails** → ascribes that tag.
+
+**Law 28–30** in [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md).
+
+**Do not:** treat Hub as the app; invent the event or action catalog; mint a lineage table from “queryable”; plant; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 23:38 UTC — What the last refinements do to the 23:07 list
+
+**Why:** Founder: these last refinements — what do they do to that initial list? Some things obvious in hindsight? What’s still left?
+
+**The 23:07 six, scored:**
+
+| # | Then | Now |
+|---|------|-----|
+| **1. Other direction / return** | Special wire: goal met → other agent / other workflow / end | **Settled.** No return to build. Completion **is** an event. “Escalate to another workflow” = an automation listening (global or local). “It ends” = nothing listening. **Left on 1:** lineage **queryable** (who created — agent vs hand — path, completion, time). |
+| **2. Create + enroll** | Bind + dual-entry enroll or the canvas is fake | **Partly.** Failure → ascribe a tag is a real in-app action after a campaign has already run. It does **not** open the enroll door. **Left:** firm bind, enroll a contact, two doors (hand and automation). The test “create an agent and enroll contacts” is still this item. |
+| **3. What goes out** | Send (consent/halt) + Activity as record | **Mostly still left.** Unsubscribe / opt-out as an event that assigns a tag **touches the edge** (they left). It is not the send path. Activity-as-record and **queryable lineage** are the same leftover from two sides. |
+| **4. Form write-back** | Special loop: fill → facts → fire Automations again | **Settled.** Write-back **is** the event (form completion). Obvious in hindsight. **Left as build, not as a missing idea:** required-data listing still not on rule output, so the form still cannot bind questions. |
+| **5. Book-in** | Contacts must exist; meeting booked is the win, not the word “event” | **Idea is obvious now:** meeting booked is an objective, so it is an event (global/local). **Left as a door:** authorize book / import — no contact, nothing to enroll. |
+| **6. Instantiate vs enroll** | New sequence row vs enroll into the one that exists | **Still left.** Not discussed. |
+
+**Obvious in hindsight (do not rebuild as extra machinery):** a return wire; a write-back module; “Settings”; treating Hub as the app; keeping Agents C2b “event” and Automations triggers as two different kinds of thing — **all objectives are events**.
+
+**Still left (the list now):** enroll/bind (2); send (3); book-in as a door (5); instantiate vs enroll (6); queryable lineage (remainder of 1, and the record side of 3). Named events: form completion, campaign failure, opt-out/unsubscribe. Named in-app action: ascribe a tag. Do not fill those catalogs.
+
+**Do not:** plant; mint tables; invent the rest; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-15 23:47 UTC — Say 2, 3, and 6 in plain language
+
+**Why:** Founder: I still don’t understand number two. Expand create-and-enroll. What goes out / unsubscribe / Activity — no clue. Number six — you’re not giving me anything to work with.
+
+**2 — Putting people on the agent.** Drawing the sequence is creating the agent. **Enroll** = this person is now **on** that campaign; outreach is running on them. Failure → tag happens **after** they were already on it and it failed. It does not put them on it. Two ways on: you put them on by hand, or an automation puts them on when an event fires. Until one of those exists, the canvas is empty.
+
+**3 — The message leaving.** **What goes out** = the text / email / call actually sends. Unsubscribe → tag = they said stop; we mark them. That is **after** (or instead of later) send — not the send. **Activity** = you can see on the contact that we sent it. I had mixed that with “can we query the path.” Same leftover, bad words.
+
+**6 — Copy vs put them on the one you made.** When an automation says start this campaign: does it **make a new copy** of the template for this person, or **put them on the campaign you already authored**? We never picked. That is the whole item.
+
+**Do not:** plant; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 00:02 UTC — Enroll is Contacts; Automations only assigns; activity ≠ query
+
+**Why:** Founder answered leftover **2** and **6**, and the question before 6 (activity vs query). Additions justify two plates. Save space.
+
+**2 — Putting people on the agent (answered).** Two doors. Automations → enroll is already solidified (on an event). The **self path from Agents** is **not** Publish. Founder walked Publish back. It lives **inside that sequence’s Contacts model**. That model **displays the contacts enrolled in that sequence**. There is a button: **Add a contact**. Inspiration: Apollo sequence Contacts / Add Contacts + filter modal (not a clone). Filters can get granular later; named now: **only this firm / every firm / only this contact within this firm**. Same global/local grain lives in Automations too — events depend on **which contacts are enrolled**. Difference: Automations is **an event**, not something that starts right now. Agents is **starting a mission right now** — we have this objective, go get it done. Not waiting on a current event.
+
+**Stood up today (checked, not planted):** Ant `AntAgentWorkbench` already has a **Contacts** tab. Empty copy: “No contacts enrolled for this agent yet.” If rows exist it lists `contact_id` + `agent_ref` + `enrolled_at`. **No Add contact. No filter modal.** C1–C7 had no enroll plate. **C8** is that plate.
+
+**Activity vs query (the question before 6).** Those are **two different things**. Activity / **engagement chart** = a **tree of outreach**. It does **not** connect all the way left to the trigger or event that created the agent or assigned the agent to the objective. Keep engagement charts **pristine** when we build. Lineage (who created — agent vs hand — path, completion, time) stays **queryable** (law 29). Not the same surface. No extra plate this stamp.
+
+**6 — Copy vs put them on the one you made (answered).** Already defined; keep it simple. **Do not create agents inside Automations.** You create the agent in Agents, then you **assign**. Automations only: **assign to an existing sequence** or **create from a template**. Can evolve later to create directly from Automations — not now. **A14** is that plate. A8 stays prior for select-agent = whole sequence. A12 stays canonical form bind.
+
+**Plates (from scratch, Ant chrome, not planted):**
+- **C8** — This sequence → **Contacts**. Enrolled list. **Add contact.** Scope: this firm / every firm / this contact. Caption: starts the mission now; does not wait on an event.
+- **A14** — Action · Agents: **Assign to existing sequence** | **Create from a template**. Explicit: you do **not** create an agent here.
+
+**The 23:07 six, now:**
+
+| # | Now |
+|---|-----|
+| **1** | Settled as an event. Left: **queryable lineage**. |
+| **2** | **Answered.** Contacts on the sequence (hand). Automations on an event. |
+| **3** | **Still left.** The text / email / call actually sends. |
+| **4** | Settled as an event. Build leftover: listing not on rule output. |
+| **5** | Idea obvious. Left as a **door**: contacts must exist. |
+| **6** | **Answered.** Assign existing, or from a template. No create-agent in Automations. |
+
+**Do not:** plant the Ant editor; mint tables; regenerate C1–C7 or A1–A13; treat Hub as the app; overwrite 15:43; put enroll on Publish; draw the engagement chart as the lineage query.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 00:51 UTC — C8 and A14 on the validated chrome
+
+**Why:** Founder: the parts that matter are right (Contacts selected; Add contact; assign existing / from a template). The **surrounding looks different**. Build on the **already validated** plates. Same canonical platform.
+
+**Add contact placement:** it is **always in the top portion** of the sequence — same row as Save / Launch agent. Not inside the Contacts tab body. Contacts still displays who is enrolled.
+
+**Plates rebuilt** (same filenames, same law; chrome from C3/C6/C7 and A8/A7/A1). Do not regenerate C1–C7 or A1–A13.
+
+**Do not:** plant; invent new chrome; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 01:01 UTC — Add contact is Every firm or Select from; sequence pick is a radio
+
+**Why:** UI note for when we build. Founder: Add contact also lives in Automations and events. You do **not** need three selections (this firm / every firm / a contact in every firm).
+
+**Scope (two, not three):**
+- **Every firm** — first, at the top, **selected by default**.
+- **Select from** — at the bottom. Click it: **all those contacts are already selected**. Deselect all, then pick a specific contact — that is the old “this contact” option. No third radio.
+
+**A14 sequence rows:** Opt-in / Re-engagement / Reactivation looked like there was more because of the **arrow**. Founder: you put that arrow when there is more configuration. **There is not more.** Select agent = the whole sequence (law 9). Those rows are **radios**. No chevron.
+
+**Plates rebuilt** (same filenames, same chrome). Do not regenerate C1–C7 or A1–A13.
+
+**Do not:** plant; invent a third scope; put a chevron on a radio; overwrite 15:43.
+
+Flag 15:43 untouched.
+

@@ -47,15 +47,16 @@ Agents is where the **operator** defines outreach **sequencing** (the sequence a
 
 1. This file (seats + orientation).
 2. [`register/PHASE-TWO.md`](./register/PHASE-TWO.md) · [`register/PHASE-TWO-LOG.md`](./register/PHASE-TWO-LOG.md) (current pointer + newest stamp).
-3. [`register/PLACEHOLDER-REAL-MAP.md`](./register/PLACEHOLDER-REAL-MAP.md) · [`register/APP-ELEVATION-GAP.md`](./register/APP-ELEVATION-GAP.md) as needed.
-4. Do not invent Hub chrome as the answer to a Type A question.
+3. Agents: [`register/AGENTS-FACE.md`](./register/AGENTS-FACE.md) then [`register/AGENTS-UI-BLUEPRINT.md`](./register/AGENTS-UI-BLUEPRINT.md) · SA package [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md). Automations (entered from Agents outskirts): [`register/AUTOMATIONS-FACE.md`](./register/AUTOMATIONS-FACE.md) then [`register/AUTOMATIONS-UI-BLUEPRINT.md`](./register/AUTOMATIONS-UI-BLUEPRINT.md) · SA package [`register/AUTOMATIONS-SA-PACKAGE.md`](./register/AUTOMATIONS-SA-PACKAGE.md).
+4. [`register/PLACEHOLDER-REAL-MAP.md`](./register/PLACEHOLDER-REAL-MAP.md) · [`register/APP-ELEVATION-GAP.md`](./register/APP-ELEVATION-GAP.md) as needed.
+5. Do not invent Hub chrome as the answer to a Type A question.
 
 ---
 
 ## Systems Analyst — paste this
 
 ```text
-You are Tower’s Systems Analyst. Read docs/README.md “Systems Analyst — identity” and accept it. You are not the Product Manager. You live with the systems: Story, Requirements, table-first law, Postgres as stood up, live vs stand-in ports. Keep docs/register/SYSTEMS-ANALYST-LOG.md (same log rules as Phase Two: append unless I mark a separate entry; founder wording on flags; ask at inflections). Stay current via that log plus docs/register/PHASE-TWO-LOG.md (read-only for product flags — do not overwrite them). Then walk the repo map in the identity section, inventory every stood-up table/field/relation and every live integration, and answer the first question in that section.
+You are Tower’s Systems Analyst. Read docs/README.md “Systems Analyst — identity” and accept it. You are not the Product Manager. You live with the systems: Story, Requirements, table-first law, Postgres as stood up, live vs stand-in ports. Keep docs/register/SYSTEMS-ANALYST-LOG.md (same log rules as Phase Two: append unless I mark a separate entry; founder wording on flags; ask at inflections). Stay current via that log plus docs/register/PHASE-TWO-LOG.md (read-only for product flags — do not overwrite them). Then walk the repo map in the identity section, inventory every stood-up table/field/relation and every live integration, and answer the first question in that section. Then the dated packages in order: docs/register/AGENTS-SA-PACKAGE.md, then docs/register/AUTOMATIONS-SA-PACKAGE.md (paste-blocks are in those files).
 ```
 
 ### Systems Analyst — identity
@@ -72,7 +73,7 @@ You **design the systems**. You are the oldest systems seat. You live with the s
 
 **You do not own**
 
-- Product-module flags, Type A vs Type B method mixing, Ant chrome, Hub leaf parity. Read the PM log for those; do not rewrite the Agents flagship into a generated 7-item list.
+- Product-module flags, Type A vs Type B method mixing, Ant chrome, Hub leaf parity. Read the PM log for those; do not rewrite the Agents flagship into a generated 7-item list. Agents face for extract: [`register/AGENTS-FACE.md`](./register/AGENTS-FACE.md) + [`register/AGENTS-UI-BLUEPRINT.md`](./register/AGENTS-UI-BLUEPRINT.md) (UI only — do not mint tables from the pictures). Dated ascribe packages (after the walk + first question): [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md), then [`register/AUTOMATIONS-SA-PACKAGE.md`](./register/AUTOMATIONS-SA-PACKAGE.md) (Automations face [`register/AUTOMATIONS-FACE.md`](./register/AUTOMATIONS-FACE.md) + images [`register/AUTOMATIONS-UI-BLUEPRINT.md`](./register/AUTOMATIONS-UI-BLUEPRINT.md)).
 - Face-track invention (How / Furnish / controls as a way to discover the machine). Controls and panes **extrude** onto states you already named.
 - Shipping Vercel/secrets. You do need to know which **ports** are real vs stand-in.
 
@@ -158,6 +159,10 @@ Answer, in systems language (tables, fields, triggers, silences) — not Ant scr
 4. **Perimeter:** which other systems (Automations/11, meeting/12, enrollment, workflow_trigger) the goal-escalation point necessarily touches — as starting points, not as those modules fully redesigned.
 5. Stamp [`register/SYSTEMS-ANALYST-LOG.md`](./register/SYSTEMS-ANALYST-LOG.md) with the inventory-delta, not a second Agents flag.
 
+### Second package (after the walk + first question)
+
+Dated prompts: [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md), then [`register/AUTOMATIONS-SA-PACKAGE.md`](./register/AUTOMATIONS-SA-PACKAGE.md). Paste-blocks are in those files. Same two questions on every canon plate: **our** system (tables / workers / runtime) vs **external** systems the mock is clearly calling (configs implied, possible as stood up, would the UI have to change, do we have the affordances). Do not mint tables from pictures.
+
 ---
 
 ## Orientation path (read in this order)
@@ -165,7 +170,7 @@ Answer, in systems language (tables, fields, triggers, silences) — not Ant scr
 1. **`method/00-INDEX.md`** — the method map. Read the two portable docs it names: `method/DECISION-CONSTITUTION.md` and `method/TWO-COLUMN-SYNTHESIS.md`. This is *how we think*.
 2. **`sme/DOCTRINE-sme-cto-implementation.md`** — the doctrine spine. The single most important conceptual doc; `method/` and `wiring/` both point back to it.
 3. **`build-foundation/`** — *how we build*. Start at `build-foundation/README.md` and `build-foundation/00-rudiments.md`, then the enforced rules in `build-foundation/cursor-rules/*.mdc` (the rules an agent actually obeys).
-4. **`register/`** — *what the app is*. Machine track: `SEED.md` → `WORLD.md` → [`register/SYSTEMS-STORY.md`](./register/SYSTEMS-STORY.md) (substance) → [`register/SYSTEMS-REQUIREMENTS-FILLED.md`](./register/SYSTEMS-REQUIREMENTS-FILLED.md) (spec) → Interactive System Map `/system-map` → **materialized Postgres** + **actuation** (`npm run worker`, `SEND_MODE` gate; [`register/system-map/ACTUATION-REPORT.md`](./register/system-map/ACTUATION-REPORT.md), [`END-TO-END-REPORT.md`](./register/system-map/END-TO-END-REPORT.md)). Corpus includes `guidelines/`. Face track (parallel): `OUTCOMES.md` / `how/` / controls. Bind extrusions only after Requirements. Pass forks: [`register/PASS-FORK-MAP.md`](./register/PASS-FORK-MAP.md). **Phase Two:** thesis [`register/PHASE-TWO.md`](./register/PHASE-TWO.md) · PM log [`register/PHASE-TWO-LOG.md`](./register/PHASE-TWO-LOG.md) · SA log [`register/SYSTEMS-ANALYST-LOG.md`](./register/SYSTEMS-ANALYST-LOG.md). **Seats:** [Product Manager](#product-manager--paste-this) · [Systems Analyst](#systems-analyst--paste-this). Cohesion initiative: [`register/PROTOTYPE-COHESION-PLAN.md`](./register/PROTOTYPE-COHESION-PLAN.md) + [`register/PROTOTYPE-COHESION-ANALYSIS.md`](./register/PROTOTYPE-COHESION-ANALYSIS.md).
+4. **`register/`** — *what the app is*. Machine track: `SEED.md` → `WORLD.md` → [`register/SYSTEMS-STORY.md`](./register/SYSTEMS-STORY.md) (substance) → [`register/SYSTEMS-REQUIREMENTS-FILLED.md`](./register/SYSTEMS-REQUIREMENTS-FILLED.md) (spec) → Interactive System Map `/system-map` → **materialized Postgres** + **actuation** (`npm run worker`, `SEND_MODE` gate; [`register/system-map/ACTUATION-REPORT.md`](./register/system-map/ACTUATION-REPORT.md), [`END-TO-END-REPORT.md`](./register/system-map/END-TO-END-REPORT.md)). Corpus includes `guidelines/`. Face track (parallel): `OUTCOMES.md` / `how/` / controls. Bind extrusions only after Requirements. Pass forks: [`register/PASS-FORK-MAP.md`](./register/PASS-FORK-MAP.md). **Phase Two:** thesis [`register/PHASE-TWO.md`](./register/PHASE-TWO.md) · PM log [`register/PHASE-TWO-LOG.md`](./register/PHASE-TWO-LOG.md) · SA log [`register/SYSTEMS-ANALYST-LOG.md`](./register/SYSTEMS-ANALYST-LOG.md) · Agents canvas [`register/AGENTS-FACE.md`](./register/AGENTS-FACE.md) · UI blueprint [`register/AGENTS-UI-BLUEPRINT.md`](./register/AGENTS-UI-BLUEPRINT.md) · SA ascribe package [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md) · Automations face [`register/AUTOMATIONS-FACE.md`](./register/AUTOMATIONS-FACE.md) · Automations images [`register/AUTOMATIONS-UI-BLUEPRINT.md`](./register/AUTOMATIONS-UI-BLUEPRINT.md). **Seats:** [Product Manager](#product-manager--paste-this) · [Systems Analyst](#systems-analyst--paste-this). Cohesion initiative: [`register/PROTOTYPE-COHESION-PLAN.md`](./register/PROTOTYPE-COHESION-PLAN.md) + [`register/PROTOTYPE-COHESION-ANALYSIS.md`](./register/PROTOTYPE-COHESION-ANALYSIS.md).
 5. **`sme/`** — *what expertise shaped it*. The SME passes: `capability/`, `implementation/` (`00-INDEX.md`), `pass2/`.
 6. **`wiring/00-INDEX.md`** — *how it's connected and what's live*. Nodes in `paper-trace/`, the 67 externals in `external-models/`, and the as-built record in `wire-log/` — including **`wire-log/GO-CUTOVER.md`**, the record of the real Resend/Twilio/Postgres cutover that shipped.
 7. **`product/product-state-index.md`** — current-state snapshot.
