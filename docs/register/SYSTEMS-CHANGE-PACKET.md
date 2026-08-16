@@ -423,3 +423,11 @@ Same vertical as [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-SLICE-PACKAGE.md): one c
 010 is on **main**. Cut matched the packet. Extra `run_audit` **accepted** (writes `audit_runs`, dispatches `audit.completed`).
 
 PR [#89](https://github.com/bywale-com/omcoda_tower/pull/89) written spec: C0 / C9 / C13 / channel rules / add-channel map onto **stood-up** rows. **C11 variations do not.** Next cut: [`SYSTEMS-CHANGE-PACKET-ENRICH.md`](./SYSTEMS-CHANGE-PACKET-ENRICH.md) (`011` — `campaign_channel_variation`). Do not persist the dead three radios. Do not mint a second channel-rules table.
+
+---
+
+## 012 — 2026-08-16 19:25 — 011 cut; A18/A19/C14/C15/seed
+
+011 is on **main** (PR [#90](https://github.com/bywale-com/omcoda_tower/pull/90)). Variations matched.
+
+PR #89 **18:53** is not pass-through. Next cut: [`SYSTEMS-CHANGE-PACKET-012.md`](./SYSTEMS-CHANGE-PACKET-012.md). One timer (not per toggle). `grain` is A18 + `local_ref`. Audience on `workflow`, not enrollment. Seed people into existing tables. Do not collapse Global/Local with Contacts.

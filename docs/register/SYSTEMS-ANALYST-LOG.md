@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 17:05 UTC — **010 ratified. #89 needs 011 variations. Rest maps.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 19:25 UTC — **011 ratified. #89 18:53 needs 012.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -997,3 +997,38 @@ For **both modules, forever: no.** Housing is paper. Story 7 not promoted. I hav
 **Hard decision:** variations are the only mint from this pass. Runtime reads `campaign_channel_variation`. Parent `campaign_channel.content` stays as leftover (like `cells`). Do not persist the dead radios.
 
 **Do not:** mint qualify from C9 leftover; mint a second channel-rules table; mint `is_open`; add a fourth channel token; overwrite 15:43.
+
+---
+
+## 2026-08-16 19:25 UTC — 011 ratified. #89 18:53 needs 012. Not pass-through.
+
+**Why:** Founder: go through the recent PR and commit. Anything to add, or all good to pass to the engineer?
+
+**Looked at:** main `db37fed` · merged [#90](https://github.com/bywale-com/omcoda_tower/pull/90) (`011_channel_variations.sql`) · merged [#91](https://github.com/bywale-com/omcoda_tower/pull/91) logout · open [#89](https://github.com/bywale-com/omcoda_tower/pull/89) commit `171e8f4` (18:53: A18 / A19 / C8b / C14 / C15 / seed).
+
+**Answer:** **011 is good.** Do not reopen. **#89’s new plates are not all good to pass.** They need hard decisions. Packet: [`SYSTEMS-CHANGE-PACKET-012.md`](./SYSTEMS-CHANGE-PACKET-012.md).
+
+### 011 extras — accept / correct in 012
+
+| Extra | Decision |
+|-------|----------|
+| `enrollment.sequence_id` NOT NULL | **Accept.** Leftover we named. |
+| `pickAuthoredContent` by attempt n | **Accept.** |
+| `within_time` as a **toggle** on the face | **Wrong vs C15.** Drop it. Within time is one field. |
+| `threshold` per criteria row | **Wrong vs one timer.** Timer lives on the group (`seq_channel_rules` / `campaign_channel.within_seconds`). |
+| Logout #91 | Chrome. Not this packet. |
+
+### #89 18:53 → machine
+
+| Plate | Mint? | Decision |
+|-------|-------|----------|
+| **C8b** | No | Query. All selected. Agents still INSERT `enrollment`. |
+| **C14** | `seq_channel_rules` + criteria `sequence_id` | Sequence Settings = C6 quality. Override = `binding.override_channel`. One timer per token. |
+| **C15** | `campaign_channel.rules_override` + `within_seconds` | One timer for every toggle that is on. Same at C6/C14. |
+| **A18** | `local_ref` (`grain` already exists) | All of that kind vs **this** one. Not Contacts. Audit = Global only. `meeting_booked` Local = not this pass (no type row). |
+| **A19** | `workflow.audience_scope` + `audience_contact_ids` | Same look as C8. **No enrollment.** Does not start a mission. |
+| **Seed** | No new tables | `contact_records` / `enrollment` / `engagement_records` / `workflow_run` for `firm-cedar`. |
+
+**Hard split:** 02:31 lumped `grain` with C8. A18 ≠ A19. Trigger `scope` leftover.
+
+**Do not:** collapse Global/Local with Contacts; timer per toggle; enroll from Automations Contacts; Local on audit; overwrite 15:43.

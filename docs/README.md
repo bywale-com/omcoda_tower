@@ -71,11 +71,11 @@ If a control is on the glass, it needs a row, a field, or a relationship. Specif
 
 - Machine track: [`register/SYSTEMS-STORY.md`](./register/SYSTEMS-STORY.md) (substance — must / must-not / chain / silence) → [`register/SYSTEMS-REQUIREMENTS.md`](./register/SYSTEMS-REQUIREMENTS.md) + [`register/SYSTEMS-REQUIREMENTS-FILLED.md`](./register/SYSTEMS-REQUIREMENTS-FILLED.md) (spec extraction, not a second invention) → Interactive System Map (`/system-map`, `src/app/system-map/`) → materialized Postgres.
 - Table-first law: the machine is **tables + a dumb runtime**. Kinds: **state | rule | sequence**. Anything that should be modifiable is a table. Frozen-in-prose that should vary is a bug unless it is a hard-gate / must-not / immutable wall. Canonical: [`register/system-map/BUILD-system-map-v2-table-inventory.md`](./register/system-map/BUILD-system-map-v2-table-inventory.md).
-- What is **actually stood up** in Supabase (migrations `001`–`010`) vs what exists only on the map vs named silences / V2 backlog. Never confuse those three. Next cut is `011` ([`register/SYSTEMS-CHANGE-PACKET-ENRICH.md`](./register/SYSTEMS-CHANGE-PACKET-ENRICH.md) — `campaign_channel_variation`).
+- What is **actually stood up** in Supabase (migrations `001`–`011`) vs what exists only on the map vs named silences / V2 backlog. Never confuse those three. Next cut is `012` ([`register/SYSTEMS-CHANGE-PACKET-012.md`](./register/SYSTEMS-CHANGE-PACKET-012.md) — one timer, A18 `local_ref`, A19 audience, seed).
 - How tables relate (reads / writes / triggers) and how the dumb runtime consumes them (`server/wire-service/cascade.ts`, `worker.ts`, `workflowWalk.ts`).
 - Your log: [`register/SYSTEMS-ANALYST-LOG.md`](./register/SYSTEMS-ANALYST-LOG.md). Same discipline as the Phase Two log. New SA chats start there.
 
-**Implementer (third seat):** not you. They cut the packet. They do not re-analyse. You owe them a complete change list (columns, CHECKs, FKs, which INSERT fires dispatch, walker). Standing packet: [`register/SYSTEMS-CHANGE-PACKET.md`](./register/SYSTEMS-CHANGE-PACKET.md). Next cut: [`register/SYSTEMS-CHANGE-PACKET-ENRICH.md`](./register/SYSTEMS-CHANGE-PACKET-ENRICH.md) (`011`). Connect slice is the first vertical, not a cap: [`register/CONNECT-SLICE-PACKAGE.md`](./register/CONNECT-SLICE-PACKAGE.md).
+**Implementer (third seat):** not you. They cut the packet. They do not re-analyse. You owe them a complete change list (columns, CHECKs, FKs, which INSERT fires dispatch, walker). Standing packet: [`register/SYSTEMS-CHANGE-PACKET.md`](./register/SYSTEMS-CHANGE-PACKET.md). Next cut: [`register/SYSTEMS-CHANGE-PACKET-012.md`](./register/SYSTEMS-CHANGE-PACKET-012.md) (`012`). Connect slice is the first vertical, not a cap: [`register/CONNECT-SLICE-PACKAGE.md`](./register/CONNECT-SLICE-PACKAGE.md).
 
 **You do not own**
 
@@ -98,7 +98,8 @@ Walk in this order. Read the files. Quote tables from SQL, not from memory.
 | Events (founder expansion; not Story must until promoted) | `docs/register/SYSTEMS-EVENTS.md` — event = detectable table change; all objectives are events; not all events are objectives |
 | Connect slice (first Automations vertical) | `docs/register/CONNECT-SLICE-PACKAGE.md` — one completion write → assign existing agent |
 | Change packet (implementer brief — cut this) | `docs/register/SYSTEMS-CHANGE-PACKET.md` — columns, CHECKs, new tables, dispatch, walker; pictures are the spec |
-| Change packet enrichment (011 — C11 variations; C0/C9/C13 map) | `docs/register/SYSTEMS-CHANGE-PACKET-ENRICH.md` — after 010 on main + PR #89 face pass |
+| Change packet enrichment (011 — C11 variations; C0/C9/C13 map) | `docs/register/SYSTEMS-CHANGE-PACKET-ENRICH.md` — **cut on main** (PR #90) |
+| Change packet 012 (A18 grain, A19 audience, C14/C15 one timer, seed) | `docs/register/SYSTEMS-CHANGE-PACKET-012.md` — after #89 18:53; implementer cuts this |
 | Image caption audit (PR #87 — spec vs example name vs founder caption) | `docs/register/IMAGE-CAPTION-AUDIT.md` — do not mint `qualify` from C3 |
 | Agents UI ascribe (plates C1–C7 vs SQL / cascade / ports; grain lock sequence⊃campaigns; not a second flag) | `docs/register/SYSTEMS-AGENTS-ASCRIBE.md` |
 | Automations UI ascribe (plates A1–A13 vs workflowWalk / Hub rules; paper, not cemented) | `docs/register/SYSTEMS-AUTOMATIONS-ASCRIBE.md` — PR #85 package |
@@ -127,6 +128,7 @@ Read every file in `supabase/migrations/` in number order. Inventory **every tab
 | `008_access_links.sql` | `access_links` |
 | `009_outbound_message_content.sql` | `outbound_messages.subject`, `body_text`, `body_html`, `content` |
 | `010_sequence_campaign_housing.sql` | `campaign` · `campaign_objective` · `campaign_channel` · `seq_attempt_cycle` · `campaign_failure` · `contact_tag` · `rule_pack`; three-class CHECK; binding inherit flags; `action.type` widen + `run_audit`; `workflow_trigger.grain/scope`; `rule_attempt_criteria.campaign_channel_id`. **On main.** |
+| `011_channel_variations.sql` | `campaign_channel_variation`; `enrollment.sequence_id` NOT NULL. **On main.** |
 
 Types mirror: `src/app/wire/machineTypes.ts`. Seeds: `supabase/seeds/` + `manifest.json`.
 
@@ -136,7 +138,7 @@ Types mirror: `src/app/wire/machineTypes.ts`. Seeds: `supabase/seeds/` + `manife
 
 | Path | Job |
 |------|-----|
-| `server/wire-service/campaignHousing.ts` | 010 sequence⊃campaigns load/save (on main). 011 will load/save variations. |
+| `server/wire-service/campaignHousing.ts` | 010–011 housing + variations load/save (on main). 012: one timer on the channel, not per toggle. |
 | `server/wire-service/cascade.ts` | Shared enroll / escalate / send; reads `rule_attempt_criteria` + `seq_channel_ownership_order` |
 | `server/wire-service/worker.ts` | Tick — time path |
 | `server/wire-service/workflowWalk.ts` | Automations graph walk; Action `call_agent` → enroll |

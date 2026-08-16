@@ -114,3 +114,19 @@ Do not treat this confirmation as a mint or a filled catalog.
 - Put `workflow_trigger` on the Agents canvas.
 - Collapse objectives with events (FACE 28 already said objectives **are** events; this file says the converse is false).
 - Overwrite 15:43. Treat #87 as Story. Cement tonight.
+
+---
+
+## 2026-08-16 19:25 — Global/Local is not Contacts
+
+**Correction.** The boil-down above said FACE 27 global/local and C8 Every-firm / Select-from were “the same divide.” **They are not.** A18 vs A19 (PR #89 18:53).
+
+| Control | What it scopes | Column |
+|---------|----------------|--------|
+| **A18 Global / Local** | The **event instance** — all form submissions vs **this** form; all campaign failures vs **this** campaign | `workflow_trigger.grain` + `local_ref` (012) |
+| **A19 / C8 audience** | **Which people** the workflow / sequence applies to | `workflow.audience_*` (Automations) · `enrollment` (Agents) |
+
+`workflow_trigger.scope` from 010 was the C8 lump on the trigger. Leftover. Packet: [`SYSTEMS-CHANGE-PACKET-012.md`](./SYSTEMS-CHANGE-PACKET-012.md).
+
+Audit is Global-only as a **trigger** (one-time). Same-canvas chain uses If, not Local audit.
+
