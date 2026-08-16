@@ -42,7 +42,7 @@ Send, book-in, lineage query — leftover product. Not a reason to withhold this
 
 ## Caption audit 2026-08-16 02:23 — what I wrongly froze
 
-Read [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) before cutting. I treated founder labels as types. **Drop these from 02:03:**
+Read [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) before cutting. **SA 02:25:** that file **lists** every plate. Deep rewrite is C3 + C1–C4 glass. Automations rows are a classification pass (A3/A6/A7 are “—”); they did not confirm every PNG. C3 / example names / no qualify object is **founder law**. I treated founder labels as types. **Drop these from 02:03:**
 
 | I specified | Kind | Correction |
 |-------------|------|------------|

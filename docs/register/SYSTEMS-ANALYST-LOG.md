@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 02:23 UTC — **Caption audit. Dropped qualify_gate / launch_* types. Next campaign = ord.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 02:25 UTC — **PM caption file lists every plate. Deep work is C3 + C1–C4. Not a pixel walk of all images.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -922,3 +922,25 @@ For **both modules, forever: no.** Housing is paper. Story 7 not promoted. I hav
 **Hard decision now:** next campaign = next `ord` when this campaign’s objective is met. No qualify object. `campaign.name` TEXT. `source` only `template` \| `scratch`. C2b `kind` radios stay (spec). `sequence_class` three tokens stay as **kind** (`seq_phase_order`), not as C1 label. Seed **may** use those example names. Waitlist is not in this packet.
 
 **Do not:** mint qualify; freeze example names; treat “If X” as a field (A16).
+
+---
+
+## 2026-08-16 02:25 UTC — Did the PM audit all the images?
+
+**Why:** Founder: just to make sure — did they actually audit all the images?
+
+**Looked at:** [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) · #87 commit `c7d2e37` · PHASE-TWO-LOG **02:19** · AGENTS-UI-BLUEPRINT / FACE diffs · AUTOMATIONS-UI-BLUEPRINT diff.
+
+**Answer:** They **named** every plate C1–C8 and A1–A17 in a table. They did **not** equally re-read every image.
+
+| What they did | Evidence |
+|---------------|----------|
+| Deep correction | C3 (the trigger). FACE laws 2, 3, 16 rewritten. C1–C4 “on the glass” reclassified as caption vs example name. |
+| Coverage table | One row per plate in the audit file. |
+| Thin / not confirmed | A3 / A6 / A7 caption columns are “—”. C5+C5b lumped (“teaching labels”). A10+A13 lumped. C4: “leftover qualify pill **if still** in the pixels” — they did not confirm the pixels. |
+| Automations blueprint | Caption commit: **+2 / −1** on `AUTOMATIONS-UI-BLUEPRINT.md` (a pointer). Per-plate Automations specs were not rewritten. |
+| Their own 02:19 | Founder asked to audit all plates. Their stamp is the C3 law, then “same is true for **a couple of other marks**.” Then they wrote the table. They said this pass **did not regenerate** the lineup. |
+
+**For this seat:** C3 / names / no `qualify_gate` is law (you said it). I already stripped the packet. I will not treat A3 “—” as “we opened that PNG and classified every mark.”
+
+**Do not:** accuse them of skipping the file; treat the table as a pixel walk.
