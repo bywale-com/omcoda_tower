@@ -46,9 +46,9 @@ export const AGENT_STEP_TYPES: AgentStepType[] = [
 /** Hub agent id → sequence_template id / class (Agents ↔ machine tables). */
 export const AGENT_TEMPLATE_BINDING: Record<
   string,
-  { templateId: string; sequenceClass: "optin_launch" | "launch_day" | "reengagement" | "reactivation" }
+  { templateId: string; sequenceClass: "optin" | "reengagement" | "reactivation" }
 > = {
-  "agent-intake": { templateId: "tpl.optin_launch.v1", sequenceClass: "optin_launch" },
+  "agent-intake": { templateId: "tpl.optin_launch.v1", sequenceClass: "optin" },
   "agent-nudge": { templateId: "tpl.reengagement.v1", sequenceClass: "reengagement" },
   "agent-reactivation": { templateId: "tpl.reactivation.v1", sequenceClass: "reactivation" },
 };

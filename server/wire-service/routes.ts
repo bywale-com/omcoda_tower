@@ -78,6 +78,10 @@ import {
   handleReachabilityChecksUpsert,
   handleReferenceUpsert,
   handleReferenceVersionsList,
+  handleRulePackUpsert,
+  handleSequenceEnrollContacts,
+  handleSequenceHousingGet,
+  handleSequenceHousingPut,
   handleTemplateUpsert,
   handleTemplatesList,
   handleWebhookTrigger,
@@ -156,6 +160,10 @@ export function createWireRoutes(): Hono {
   wire.get("/machine/templates", handleTemplatesList);
   wire.put("/machine/templates/:id", handleTemplateUpsert);
   wire.post("/machine/bindings", handleBindingUpsert);
+  wire.get("/machine/sequences/:id/housing", handleSequenceHousingGet);
+  wire.put("/machine/sequences/:id/housing", handleSequenceHousingPut);
+  wire.post("/machine/sequences/:id/enroll", handleSequenceEnrollContacts);
+  wire.put("/machine/rule-packs", handleRulePackUpsert);
   wire.get("/machine/rules/attempt-criteria", handleAttemptCriteriaList);
   wire.put("/machine/rules/attempt-criteria/:id", handleAttemptCriteriaUpsert);
   wire.get("/machine/seq/channel-order", handleChannelOrderList);

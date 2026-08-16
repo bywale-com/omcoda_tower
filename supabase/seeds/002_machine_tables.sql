@@ -70,27 +70,41 @@ INSERT INTO rule_metrics_thresholds (id, firm_id, label, enabled, set_value, thr
 ON CONFLICT (id) DO UPDATE SET threshold = EXCLUDED.threshold;
 
 INSERT INTO sequence_template (id, sequence_class, variant, label, cells, source, silences) VALUES
-  ('tpl.optin_launch.v1', 'optin_launch', 'v1', 'Opt-in launch calendar v1',
+  ('tpl.optin_launch.v1', 'optin', 'v1', 'Opt-in',
    '[{"id":"ol-d1-sms","token":"day1_text_primer","label":"Day1 text primer","mode":"templated","day":1,"channel":"text"},{"id":"ol-d1-email","token":"day1_announcement_email","label":"Day1 announcement email","mode":"templated","day":1,"channel":"email"},{"id":"ol-d2-social","token":"day2_social_follow","label":"Day2 social follow","mode":"templated","day":2,"channel":"form"},{"id":"ol-d3-waitlist","token":"day3_waitlist","label":"Day3 waitlist","mode":"templated","day":3,"channel":"email"},{"id":"ol-d4-7","token":"days4_7_nurture","label":"Days4–7 nurture","mode":"templated","day":4,"channel":"email"}]'::jsonb,
    'guidelines/Reactivation.md', '[]'::jsonb),
-  ('tpl.launch_day.v1', 'launch_day', 'v1', 'Launch day sequence v1',
-   '[{"id":"ld-signup-email","token":"signup_email","mode":"templated"},{"id":"ld-landing","token":"signup_landing","mode":"templated"},{"id":"ld-confirm","token":"signup_confirmation","mode":"templated"}]'::jsonb,
-   'guidelines/Reactivation.md', '[]'::jsonb),
-  ('tpl.reactivation.v1', 'reactivation', 'v1', 'Reactivation calendar v1',
+  ('tpl.reactivation.v1', 'reactivation', 'v1', 'Reactivation',
    '[{"id":"rx-d0-sms","token":"day0_text_primer","mode":"templated"},{"id":"rx-d0-email","token":"day0_email","mode":"templated","deferredSlots":["no_login_client_view_link"]},{"id":"rx-d1-3","token":"days1_3_nurture","mode":"templated"},{"id":"rx-d3-slot","token":"day3_slot_opens","mode":"templated"}]'::jsonb,
    'guidelines/Reactivation.md',
    '["Repeat-compression undecided"]'::jsonb),
-  ('tpl.reengagement.v1', 'reengagement', 'v1', 'Re-engagement nudge calendar v1',
+  ('tpl.reengagement.v1', 'reengagement', 'v1', 'Re-engagement',
    '[{"id":"re-touch-1","token":"nudge_1","mode":"templated"},{"id":"re-touch-2","token":"nudge_2","mode":"templated"}]'::jsonb,
    'Seed §5.3–5.5', '[]'::jsonb)
-ON CONFLICT (id) DO UPDATE SET cells = EXCLUDED.cells, label = EXCLUDED.label;
+ON CONFLICT (id) DO UPDATE SET cells = EXCLUDED.cells, label = EXCLUDED.label, sequence_class = EXCLUDED.sequence_class;
 
-INSERT INTO firm_sequence_binding (id, firm_id, sequence_class, template_id, variable_bindings) VALUES
-  ('bind.demo-firm.optin_launch', 'firm-cedar', 'optin_launch', 'tpl.optin_launch.v1', '{"firm_name":"Cedar Immigration"}'::jsonb),
-  ('bind.demo-firm.launch_day', 'firm-cedar', 'launch_day', 'tpl.launch_day.v1', '{"firm_name":"Cedar Immigration"}'::jsonb),
-  ('bind.demo-firm.reactivation', 'firm-cedar', 'reactivation', 'tpl.reactivation.v1', '{"firm_name":"Cedar Immigration"}'::jsonb),
-  ('bind.demo-firm.reengagement', 'firm-cedar', 'reengagement', 'tpl.reengagement.v1', '{"firm_name":"Cedar Immigration"}'::jsonb)
-ON CONFLICT (id) DO UPDATE SET template_id = EXCLUDED.template_id;
+DELETE FROM firm_sequence_binding
+WHERE id IN ('bind.demo-firm.optin_launch', 'bind.demo-firm.launch_day');
+
+INSERT INTO firm_sequence_binding (id, firm_id, sequence_class, template_id, variable_bindings, is_default) VALUES
+  ('bind.demo-firm.optin', 'firm-cedar', 'optin', 'tpl.optin_launch.v1', '{"firm_name":"Cedar Immigration"}'::jsonb, true),
+  ('bind.demo-firm.reactivation', 'firm-cedar', 'reactivation', 'tpl.reactivation.v1', '{"firm_name":"Cedar Immigration"}'::jsonb, true),
+  ('bind.demo-firm.reengagement', 'firm-cedar', 'reengagement', 'tpl.reengagement.v1', '{"firm_name":"Cedar Immigration"}'::jsonb, true)
+ON CONFLICT (id) DO UPDATE SET template_id = EXCLUDED.template_id, sequence_class = EXCLUDED.sequence_class, is_default = EXCLUDED.is_default;
+
+-- Teaching campaigns (names are examples; operator can rename). Next = next ord.
+INSERT INTO campaign (id, firm_id, sequence_id, name, ord, override_this) VALUES
+  ('camp.optin.window', NULL, 'tpl.optin_launch.v1', 'Launch window', 0, false),
+  ('camp.optin.day', NULL, 'tpl.optin_launch.v1', 'Launch day', 1, false),
+  ('camp.reeng.nudge', NULL, 'tpl.reengagement.v1', 'Nudge', 0, false),
+  ('camp.react.meeting', NULL, 'tpl.reactivation.v1', 'Book a meeting', 0, false)
+ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, ord = EXCLUDED.ord, sequence_id = EXCLUDED.sequence_id;
+
+INSERT INTO campaign_objective (id, campaign_id, kind, name, completion_table, source) VALUES
+  ('obj.optin.window', 'camp.optin.window', 'click', 'Click this link', 'messaging_events', 'template'),
+  ('obj.optin.day', 'camp.optin.day', 'form', 'They opt in', 'fact_writebacks', 'template'),
+  ('obj.reeng.nudge', 'camp.reeng.nudge', 'form', 'Submit this form', 'fact_writebacks', 'template'),
+  ('obj.react.meeting', 'camp.react.meeting', 'meeting', 'Book a meeting', 'meeting_booked', 'template')
+ON CONFLICT (id) DO UPDATE SET kind = EXCLUDED.kind, name = EXCLUDED.name, completion_table = EXCLUDED.completion_table;
 
 INSERT INTO campaign_states (firm_id, state) VALUES ('firm-cedar', 'running')
 ON CONFLICT (firm_id) DO UPDATE SET state = EXCLUDED.state;

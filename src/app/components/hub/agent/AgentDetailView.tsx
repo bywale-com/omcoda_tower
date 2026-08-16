@@ -22,7 +22,7 @@ export function AgentDetailView({ agentId, t, isDark: _isDark }: AgentDetailView
     try {
       const mapped = AGENT_TEMPLATE_BINDING[agent.id];
       const { templates, bindings } = await wirePorts.machineApi.listTemplates();
-      const seqClass = mapped?.sequenceClass ?? "optin_launch";
+      const seqClass = mapped?.sequenceClass ?? "optin";
       const binding = bindings.find((b) => b.sequence_class === seqClass);
       const template =
         templates.find((tpl) => tpl.id === (binding?.template_id ?? mapped?.templateId)) ??

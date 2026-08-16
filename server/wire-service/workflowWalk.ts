@@ -4,7 +4,11 @@
  */
 import { randomUUID } from "node:crypto";
 import type { Pool } from "pg";
-import { enrollAndActuate } from "./cascade.ts";
+import { enrollAndActuate, writeEngagement } from "./cascade.ts";
+import {
+  copySequenceFromTemplate,
+  platformTemplateIdForClass,
+} from "./campaignHousing.ts";
 
 export type RfNode = {
   id: string;
@@ -26,7 +30,25 @@ export type WalkContext = {
   contactIds: string[];
   eligibilityPass?: boolean;
   branchTaken?: string;
+  lastOutput?: Record<string, unknown>;
+  listingFieldIds?: string[];
 };
+
+const ACTION_TYPES = [
+  "call_agent",
+  "ascribe_tag",
+  "manage_lists",
+  "assign_task",
+  "notify_consultant",
+  "run_audit",
+] as const;
+
+function normalizeActionType(data: Record<string, unknown> | undefined): string {
+  const raw = String(data?.actionType ?? data?.type ?? "call_agent");
+  if (raw === "enroll_sequence") return "call_agent";
+  if ((ACTION_TYPES as readonly string[]).includes(raw)) return raw;
+  return "call_agent";
+}
 
 export type NodeRunStatus = {
   status: "success" | "skipped" | "failed";
@@ -59,20 +81,18 @@ function triggerKind(data: Record<string, unknown> | undefined): string {
 
 function actionAgentRef(data: Record<string, unknown> | undefined): string | null {
   const summary = String(data?.actionSummary ?? "");
-  const actionType = String(data?.actionType ?? "enroll_sequence");
-  if (actionType !== "enroll_sequence" && actionType !== "call_agent") {
-    return null;
-  }
-  // Prefer explicit agent_ref on data; else parse class from summary heuristics
+  const actionType = normalizeActionType(data);
+  if (actionType !== "call_agent") return null;
   if (typeof data?.agentRef === "string" && data.agentRef) return data.agentRef;
   if (typeof data?.agent_ref === "string" && data.agent_ref) return data.agent_ref as string;
+  const copyClass = String(data?.copySequenceClass ?? data?.sequenceClass ?? "");
+  if (copyClass === "reactivation" || copyClass === "reengagement" || copyClass === "optin") {
+    return platformTemplateIdForClass(copyClass);
+  }
   const lower = summary.toLowerCase();
   if (lower.includes("reactivation")) return "tpl.reactivation.v1";
   if (lower.includes("nudge") || lower.includes("re-engagement") || lower.includes("reengagement")) {
     return "tpl.reengagement.v1";
-  }
-  if (lower.includes("opt-in") || lower.includes("optin") || lower.includes("welcome")) {
-    return "tpl.optin_launch.v1";
   }
   return "tpl.optin_launch.v1";
 }
@@ -80,8 +100,7 @@ function actionAgentRef(data: Record<string, unknown> | undefined): string | nul
 function sequenceClassForAgent(agentRef: string): string {
   if (agentRef.includes("reactivation")) return "reactivation";
   if (agentRef.includes("reengagement") || agentRef.includes("nudge")) return "reengagement";
-  if (agentRef.includes("launch_day")) return "launch_day";
-  return "optin_launch";
+  return "optin";
 }
 
 async function resolveAgentRef(
@@ -92,10 +111,24 @@ async function resolveAgentRef(
   const seqClass = sequenceClassForAgent(preferred);
   const bind = await pool.query<{ template_id: string }>(
     `SELECT template_id FROM firm_sequence_binding
-     WHERE firm_id=$1 AND sequence_class=$2`,
+     WHERE firm_id=$1 AND sequence_class=$2
+     ORDER BY is_default DESC, created_at ASC
+     LIMIT 1`,
     [firmId, seqClass],
   );
   return bind.rows[0]?.template_id ?? preferred;
+}
+
+function listingNotEmpty(ctx: WalkContext): boolean {
+  const fromCtx = ctx.listingFieldIds ?? [];
+  const fromOut = ctx.lastOutput?.listingFieldIds;
+  const ids = Array.isArray(fromOut) ? (fromOut as unknown[]).map(String) : fromCtx;
+  if (ids.length > 0) return true;
+  if (ctx.lastOutput?.listingNotEmpty === true) return true;
+  if (typeof ctx.lastOutput?.listingCount === "number") {
+    return (ctx.lastOutput.listingCount as number) > 0;
+  }
+  return false;
 }
 
 function evalBranch(
@@ -104,14 +137,18 @@ function evalBranch(
 ): "true" | "false" {
   const kind = String(data?.branchKind ?? "true_false");
   if (kind === "if" || kind === "true_false") {
-    // Prefer eligibility / reactivation-worthy from context
+    const filter = String(data?.filterSummary ?? data?.label ?? "").toLowerCase();
+    if (filter.includes("listing")) {
+      return listingNotEmpty(ctx) ? "true" : "false";
+    }
+    if (ctx.lastOutput?.pass === false || ctx.lastOutput?.ok === false) return "false";
+    if (ctx.lastOutput?.pass === true || ctx.lastOutput?.ok === true) return "true";
     if (ctx.eligibilityPass === false) return "false";
     if (ctx.eligibilityPass === true) return "true";
-    const filter = String(data?.filterSummary ?? "").toLowerCase();
     if (filter.includes("reactivation") && ctx.triggerPayload.motion === "nudge") {
       return "false";
     }
-    return "true";
+    return listingNotEmpty(ctx) || Object.keys(ctx.lastOutput ?? {}).length > 0 ? "true" : "true";
   }
   return "true";
 }
@@ -137,16 +174,25 @@ export async function materializeTriggersFromGraph(
         ? String(data.webhookId ?? `wh_${workflowId}_${node.id}`)
         : null;
     const id = `wtrig-${workflowId}-${node.id}`;
+    const grain = String(data.grain ?? "global") === "local" ? "local" : "global";
+    const scope = String(data.scope ?? "every_firm") === "select_from" ? "select_from" : "every_firm";
+    const scopeIds = Array.isArray(data.scopeContactIds)
+      ? (data.scopeContactIds as unknown[]).map(String)
+      : [];
     await pool.query(
       `INSERT INTO workflow_trigger
-         (id, workflow_id, firm_id, node_id, type, event_name, condition, schedule, webhook_id, enabled)
-       VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8::jsonb,$9,true)
+         (id, workflow_id, firm_id, node_id, type, event_name, condition, schedule, webhook_id,
+          enabled, grain, scope, scope_contact_ids)
+       VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8::jsonb,$9,true,$10,$11,$12::text[])
        ON CONFLICT (workflow_id, node_id) DO UPDATE SET
          type=EXCLUDED.type,
          event_name=EXCLUDED.event_name,
          condition=EXCLUDED.condition,
          schedule=EXCLUDED.schedule,
          webhook_id=EXCLUDED.webhook_id,
+         grain=EXCLUDED.grain,
+         scope=EXCLUDED.scope,
+         scope_contact_ids=EXCLUDED.scope_contact_ids,
          enabled=true,
          updated_at=now()`,
       [
@@ -162,6 +208,9 @@ export async function materializeTriggersFromGraph(
           cron: data.scheduleCron ?? null,
         }),
         webhookId,
+        grain,
+        scope,
+        scopeIds,
       ],
     );
     n += 1;
@@ -297,13 +346,29 @@ export async function walkValidatedWorkflow(
 
       if (type === "rule") {
         const ruleId = String(data.ruleId ?? "eligibility");
-        // Rules consume pathway tables when present; v1 marks pass from context
+        const ruleConfig =
+          data.ruleConfig && typeof data.ruleConfig === "object"
+            ? (data.ruleConfig as Record<string, unknown>)
+            : {};
+        const listingFieldIds = Array.isArray(ruleConfig.listingFieldIds)
+          ? (ruleConfig.listingFieldIds as unknown[]).map(String)
+          : Array.isArray(data.listingFieldIds)
+            ? (data.listingFieldIds as unknown[]).map(String)
+            : [];
+        ctx.listingFieldIds = listingFieldIds;
         const pathway = await pool.query(
           `SELECT id FROM rule_eligibility_pathway WHERE enabled=true LIMIT 1`,
         );
+        ctx.lastOutput = {
+          ruleId,
+          pass: true,
+          listingFieldIds,
+          listingNotEmpty: listingFieldIds.length > 0,
+          listingCount: listingFieldIds.length,
+        };
         nodeStatus[nodeId] = {
           status: "success",
-          detail: `rule ${ruleId}; pathways=${pathway.rowCount ?? 0}`,
+          detail: `rule ${ruleId}; listing=${listingFieldIds.length}; pathways=${pathway.rowCount ?? 0}`,
           at: now(),
         };
         if (ctx.eligibilityPass === undefined) ctx.eligibilityPass = true;
@@ -312,50 +377,140 @@ export async function walkValidatedWorkflow(
       }
 
       if (type === "action") {
-        const preferred = actionAgentRef(data) ?? "tpl.optin_launch.v1";
-        const agentRef = await resolveAgentRef(pool, opts.firmId, preferred);
-        let enrolled = 0;
-        for (const contactId of ctx.contactIds) {
-          const result = await enrollAndActuate({
-            firmId: opts.firmId,
-            contactId,
-            agentRef,
-            sequenceId: agentRef,
-            workflowRunId: opts.runId,
-            purpose: sequenceClassForAgent(agentRef) === "optin_launch" ? "opt-in" : "cem",
-            payload: {
-              workflowId: opts.workflowId,
-              runId: opts.runId,
-              constants: ctx.constants,
-              trigger: opts.triggerPayload,
-              dryRunBinding: true,
-            },
-            fireFirstStep: true,
-          });
-          if (result.blocked === "halt") {
-            // H1: skip new enrollment; do not abort other contacts / in-flight attempts
-            continue;
-          }
-          enrollments.push(result.enrollmentId);
-          enrolled += 1;
-
-          // Persist action row for this node (idempotent upsert by id)
+        const actionType = normalizeActionType(data);
+        const actionId = `act-${opts.workflowId}-${nodeId}`;
+        const persistAction = async (
+          agentRef: string | null,
+          payload: Record<string, unknown>,
+        ) => {
           await pool.query(
             `INSERT INTO action (id, workflow_id, node_id, type, agent_ref, payload_binding)
-             VALUES ($1,$2,$3,'call_agent',$4,$5::jsonb)
-             ON CONFLICT (id) DO UPDATE SET agent_ref=EXCLUDED.agent_ref, payload_binding=EXCLUDED.payload_binding`,
-            [
-              `act-${opts.workflowId}-${nodeId}`,
-              opts.workflowId,
-              nodeId,
+             VALUES ($1,$2,$3,$4,$5,$6::jsonb)
+             ON CONFLICT (id) DO UPDATE SET
+               type=EXCLUDED.type,
+               agent_ref=EXCLUDED.agent_ref,
+               payload_binding=EXCLUDED.payload_binding`,
+            [actionId, opts.workflowId, nodeId, actionType, agentRef, JSON.stringify(payload)],
+          );
+        };
+
+        if (actionType === "call_agent") {
+          let preferred = actionAgentRef(data) ?? "tpl.optin_launch.v1";
+          if (String(data.assignMode ?? "existing") === "from_template") {
+            const seqClass = sequenceClassForAgent(
+              String(data.copySequenceClass ?? preferred),
+            );
+            preferred = await copySequenceFromTemplate(pool, {
+              firmId: opts.firmId,
+              sequenceClass: seqClass,
+              sourceTemplateId: platformTemplateIdForClass(seqClass),
+            });
+          }
+          const agentRef = await resolveAgentRef(pool, opts.firmId, preferred);
+          let enrolled = 0;
+          for (const contactId of ctx.contactIds) {
+            const result = await enrollAndActuate({
+              firmId: opts.firmId,
+              contactId,
               agentRef,
-              JSON.stringify({ contactId, enrollmentId: result.enrollmentId }),
+              sequenceId: agentRef,
+              workflowRunId: opts.runId,
+              purpose: sequenceClassForAgent(agentRef) === "optin" ? "opt-in" : "cem",
+              payload: {
+                workflowId: opts.workflowId,
+                runId: opts.runId,
+                constants: ctx.constants,
+                trigger: opts.triggerPayload,
+                dryRunBinding: true,
+              },
+              fireFirstStep: true,
+            });
+            if (result.blocked === "halt") continue;
+            enrollments.push(result.enrollmentId);
+            enrolled += 1;
+          }
+          await persistAction(agentRef, {
+            enrollments,
+            label: data.label ?? null,
+            formQuestionIds: data.formQuestionIds ?? [],
+          });
+          ctx.lastOutput = { ok: true, actionType, agentRef, enrollments: enrolled };
+          nodeStatus[nodeId] = {
+            status: "success",
+            detail: `action ${agentRef}; enrollments=${enrolled}`,
+            at: now(),
+          };
+          for (const e of outgoing(edges, nodeId)) await visit(e.target);
+          return;
+        }
+
+        if (actionType === "ascribe_tag") {
+          const tag = String(data.tag ?? data.actionSummary ?? data.label ?? "tagged");
+          let n = 0;
+          for (const contactId of ctx.contactIds) {
+            await pool.query(
+              `INSERT INTO contact_tag (id, firm_id, contact_id, tag, source_workflow_id)
+               VALUES ($1,$2,$3,$4,$5)`,
+              [`tag-${randomUUID()}`, opts.firmId, contactId, tag, opts.workflowId],
+            );
+            n += 1;
+          }
+          await persistAction(null, { tag, contacts: n });
+          ctx.lastOutput = { ok: true, actionType, tag, contacts: n };
+          nodeStatus[nodeId] = {
+            status: "success",
+            detail: `ascribe_tag ${tag}; contacts=${n}`,
+            at: now(),
+          };
+          for (const e of outgoing(edges, nodeId)) await visit(e.target);
+          return;
+        }
+
+        if (actionType === "run_audit") {
+          const runId = `arun-${randomUUID()}`;
+          await pool.query(
+            `INSERT INTO audit_runs (id, firm_id, status, import_ids, summary, finished_at)
+             VALUES ($1,$2,'complete','[]'::jsonb,$3::jsonb,now())`,
+            [
+              runId,
+              opts.firmId,
+              JSON.stringify({ contacts: ctx.contactIds.length, source: "run_audit" }),
             ],
           );
+          await persistAction(null, { auditRunId: runId, label: data.label ?? "Audit the contacts" });
+          ctx.lastOutput = { ok: true, actionType, auditRunId: runId };
+          if (!String(opts.triggerLabel).includes("audit.completed")) {
+            await dispatchEventToWorkflows(pool, {
+              firmId: opts.firmId,
+              eventName: "audit.completed",
+              payload: { auditRunId: runId, workflowId: opts.workflowId },
+              contactIds: ctx.contactIds,
+            });
+          }
+          nodeStatus[nodeId] = {
+            status: "success",
+            detail: `run_audit ${runId}`,
+            at: now(),
+          };
+          for (const e of outgoing(edges, nodeId)) await visit(e.target);
+          return;
         }
+
+        let n = 0;
+        for (const contactId of ctx.contactIds) {
+          await writeEngagement(pool, opts.firmId, contactId, actionType, {
+            workflowId: opts.workflowId,
+            runId: opts.runId,
+            label: data.label ?? null,
+            formQuestionIds: data.formQuestionIds ?? [],
+          });
+          n += 1;
+        }
+        await persistAction(null, { contacts: n, formQuestionIds: data.formQuestionIds ?? [] });
+        ctx.lastOutput = { ok: true, actionType, contacts: n };
         nodeStatus[nodeId] = {
           status: "success",
-          detail: `action ${agentRef}; enrollments=${enrolled}`,
+          detail: `${actionType}; contacts=${n}`,
           at: now(),
         };
         for (const e of outgoing(edges, nodeId)) await visit(e.target);

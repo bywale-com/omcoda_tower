@@ -1,5 +1,6 @@
 import type { Context } from "hono";
 import { getPool } from "./db.ts";
+import { dispatchEventToWorkflows } from "./workflowWalk.ts";
 
 function id(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -112,6 +113,14 @@ export async function handleHaltCommit(c: Context) {
       JSON.stringify({ haltId, reason: body.reason }),
     ],
   );
+  if (body.scope === "contact") {
+    await dispatchEventToWorkflows(getPool(), {
+      firmId: body.firmId,
+      eventName: "halt_records",
+      payload: { haltId, contactId: body.contactId ?? null },
+      contactIds: body.contactId ? [body.contactId] : undefined,
+    });
+  }
   return c.json({
     id: haltId,
     consultantId: body.consultantId,
@@ -229,6 +238,12 @@ export async function handleConsentSilence(c: Context) {
        SET silenced = true, source = EXCLUDED.source, updated_at = now()`,
     [body.contactId, body.firmId, body.source],
   );
+  await dispatchEventToWorkflows(getPool(), {
+    firmId: body.firmId,
+    eventName: "consent_records.opt_out",
+    payload: { contactId: body.contactId, source: body.source },
+    contactIds: [body.contactId],
+  });
   return c.json({ ok: true });
 }
 

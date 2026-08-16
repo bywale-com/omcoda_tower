@@ -17,6 +17,7 @@ import "@xyflow/react/dist/style.css";
 import {
   Button,
   Card,
+  Checkbox,
   Collapse,
   Descriptions,
   Drawer,
@@ -24,8 +25,10 @@ import {
   Form,
   Input,
   List,
+  Radio,
   Select,
   Space,
+  Switch,
   Tabs,
   Tag,
   Typography,
@@ -36,6 +39,8 @@ import { ArrowDownOutlined, ArrowUpOutlined, PlayCircleOutlined, SaveOutlined } 
 import { useAutomations } from "../../../context/AutomationContext";
 import {
   WORKFLOW_AGENT_OPTIONS,
+  WORKFLOW_ACTION_TYPE_OPTIONS,
+  ACTION_TYPE_DEFAULT_LABELS,
   WORKFLOW_CONSTANT_PACK_OPTIONS,
   WORKFLOW_EVENT_CATALOG,
   WORKFLOW_PALETTE_BLOCKS,
@@ -44,11 +49,13 @@ import {
   createTriggerNode,
   getDetachedNodePosition,
   workflowStatusLabel,
+  type WorkflowActionType,
   type WorkflowDefinition,
   type WorkflowNodeData,
   type WorkflowNodeType,
   type WorkflowTriggerEvent,
 } from "../../../data/automationWorkflows";
+import { collectibleFieldsByCapture } from "../../../data/collectibleFields";
 import { wirePorts } from "../../../wire/registry";
 import type { EligibilityPipelineRow } from "../../../wire/machineTypes";
 
@@ -256,24 +263,225 @@ function NodeConfigFields({
   }
 
   if (kind === "action") {
+    const actionType = (data.actionType === "enroll_sequence" ? "call_agent" : data.actionType) ?? "call_agent";
+    const listing = collectibleFieldsByCapture("self_reportable");
     return (
-      <Form.Item label="Agent / sequence (action.agent_ref)">
-        <Select
-          value={data.agentRef ?? "tpl.optin_launch.v1"}
-          options={WORKFLOW_AGENT_OPTIONS.map((opt) => ({
-            value: opt.id,
-            label: `${opt.label} · ${opt.id}`,
-          }))}
-          onChange={(value) =>
-            onPatch({
-              agentRef: value,
-              actionType: "enroll_sequence",
-              actionSummary: `Call agent · ${value}`,
-              configured: true,
-            })
-          }
-        />
-      </Form.Item>
+      <Space direction="vertical" size={12} style={{ width: "100%" }}>
+        <Form.Item label="Node title">
+          <Input
+            value={data.label}
+            onChange={(event) =>
+              onPatch({
+                label: event.target.value,
+                configured: true,
+              })
+            }
+          />
+        </Form.Item>
+        <Form.Item label="Action type">
+          <Select
+            value={actionType}
+            options={WORKFLOW_ACTION_TYPE_OPTIONS.map((opt) => ({
+              value: opt.id,
+              label: opt.label,
+            }))}
+            onChange={(value: WorkflowActionType) =>
+              onPatch({
+                actionType: value,
+                label: data.label || ACTION_TYPE_DEFAULT_LABELS[value],
+                configured: true,
+                actionSummary: ACTION_TYPE_DEFAULT_LABELS[value],
+              })
+            }
+          />
+        </Form.Item>
+        {actionType === "call_agent" || actionType === "enroll_sequence" ? (
+          <>
+            <Form.Item label="Assign">
+              <Radio.Group
+                value={data.assignMode ?? "existing"}
+                onChange={(event) =>
+                  onPatch({
+                    assignMode: event.target.value,
+                    actionType: "call_agent",
+                    configured: true,
+                  })
+                }
+              >
+                <Space direction="vertical">
+                  <Radio value="existing">Assign an existing sequence</Radio>
+                  <Radio value="from_template">Copy from a template</Radio>
+                </Space>
+              </Radio.Group>
+            </Form.Item>
+            {(data.assignMode ?? "existing") === "existing" ? (
+              <Form.Item label="Sequence">
+                <Select
+                  value={data.agentRef ?? "tpl.optin_launch.v1"}
+                  options={WORKFLOW_AGENT_OPTIONS.map((opt) => ({
+                    value: opt.id,
+                    label: `${opt.label} · ${opt.id}`,
+                  }))}
+                  onChange={(value) =>
+                    onPatch({
+                      agentRef: value,
+                      actionType: "call_agent",
+                      assignMode: "existing",
+                      actionSummary: `Call agent · ${value}`,
+                      configured: true,
+                    })
+                  }
+                />
+              </Form.Item>
+            ) : (
+              <Form.Item label="Template class">
+                <Radio.Group
+                  value={data.copySequenceClass ?? "optin"}
+                  onChange={(event) => {
+                    const copySequenceClass = event.target.value as "optin" | "reengagement" | "reactivation";
+                    const opt = WORKFLOW_AGENT_OPTIONS.find((row) => row.sequenceClass === copySequenceClass);
+                    onPatch({
+                      copySequenceClass,
+                      assignMode: "from_template",
+                      actionType: "call_agent",
+                      agentRef: opt?.id,
+                      actionSummary: `Copy ${copySequenceClass} template`,
+                      configured: true,
+                    });
+                  }}
+                >
+                  <Space direction="vertical">
+                    <Radio value="optin">Opt-in</Radio>
+                    <Radio value="reengagement">Re-engagement</Radio>
+                    <Radio value="reactivation">Reactivation</Radio>
+                  </Space>
+                </Radio.Group>
+              </Form.Item>
+            )}
+            <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginBottom: 0 }}>
+              You do not create an agent here. Assign existing, or copy from a template.
+            </Typography.Paragraph>
+          </>
+        ) : null}
+        {actionType === "ascribe_tag" ? (
+          <Form.Item label="Tag">
+            <Input
+              value={data.tag ?? ""}
+              onChange={(event) =>
+                onPatch({
+                  tag: event.target.value,
+                  configured: Boolean(event.target.value.trim()),
+                  actionSummary: event.target.value,
+                })
+              }
+            />
+          </Form.Item>
+        ) : null}
+        <Form.Item label="Form questions (listing ids)">
+          <Checkbox.Group
+            value={data.formQuestionIds ?? []}
+            onChange={(ids) => onPatch({ formQuestionIds: ids as string[], configured: true })}
+            options={listing.map((field) => ({ label: field.label, value: field.id }))}
+          />
+        </Form.Item>
+      </Space>
+    );
+  }
+
+  if (kind === "rule") {
+    const listing = collectibleFieldsByCapture("self_reportable");
+    const selected = data.ruleConfig?.listingFieldIds ?? [];
+    return (
+      <Space direction="vertical" size={12} style={{ width: "100%" }}>
+        <Form.Item label="Required-data listing">
+          <Checkbox.Group
+            value={selected}
+            onChange={(ids) =>
+              onPatch({
+                ruleConfig: {
+                  packId: data.ruleConfig?.packId ?? "custom",
+                  enabledOutcomeIds: data.ruleConfig?.enabledOutcomeIds ?? [],
+                  listingFieldIds: ids as string[],
+                  customJson: data.ruleConfig?.customJson,
+                  namedCode: data.ruleConfig?.namedCode,
+                  namedCodeOn: data.ruleConfig?.namedCodeOn,
+                },
+                configured: true,
+              })
+            }
+            options={listing.map((field) => ({ label: field.label, value: field.id }))}
+          />
+        </Form.Item>
+        <Form.Item label="Custom JSON">
+          <Input.TextArea
+            rows={3}
+            value={
+              typeof data.ruleConfig?.customJson === "string"
+                ? data.ruleConfig.customJson
+                : data.ruleConfig?.customJson
+                  ? JSON.stringify(data.ruleConfig.customJson)
+                  : ""
+            }
+            onChange={(event) => {
+              let customJson: unknown = event.target.value;
+              try {
+                customJson = event.target.value.trim() ? JSON.parse(event.target.value) : null;
+              } catch {
+                customJson = event.target.value;
+              }
+              onPatch({
+                ruleConfig: {
+                  packId: data.ruleConfig?.packId ?? "custom",
+                  enabledOutcomeIds: data.ruleConfig?.enabledOutcomeIds ?? [],
+                  listingFieldIds: data.ruleConfig?.listingFieldIds ?? [],
+                  namedCode: data.ruleConfig?.namedCode,
+                  namedCodeOn: data.ruleConfig?.namedCodeOn,
+                  customJson,
+                },
+                configured: true,
+              });
+            }}
+          />
+        </Form.Item>
+        <Form.Item label="Named code (saved, run later)">
+          <Input.TextArea
+            rows={4}
+            value={data.ruleConfig?.namedCode ?? ""}
+            onChange={(event) =>
+              onPatch({
+                ruleConfig: {
+                  packId: data.ruleConfig?.packId ?? "custom",
+                  enabledOutcomeIds: data.ruleConfig?.enabledOutcomeIds ?? [],
+                  listingFieldIds: data.ruleConfig?.listingFieldIds ?? [],
+                  customJson: data.ruleConfig?.customJson,
+                  namedCodeOn: data.ruleConfig?.namedCodeOn,
+                  namedCode: event.target.value,
+                },
+                configured: true,
+              })
+            }
+          />
+        </Form.Item>
+        <Form.Item>
+          <Switch
+            checked={Boolean(data.ruleConfig?.namedCodeOn)}
+            onChange={(namedCodeOn) =>
+              onPatch({
+                ruleConfig: {
+                  packId: data.ruleConfig?.packId ?? "custom",
+                  enabledOutcomeIds: data.ruleConfig?.enabledOutcomeIds ?? [],
+                  listingFieldIds: data.ruleConfig?.listingFieldIds ?? [],
+                  customJson: data.ruleConfig?.customJson,
+                  namedCode: data.ruleConfig?.namedCode,
+                  namedCodeOn,
+                },
+              })
+            }
+            checkedChildren="named code on"
+            unCheckedChildren="named code off"
+          />
+        </Form.Item>
+      </Space>
     );
   }
 
@@ -469,10 +677,21 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
     })),
   ];
 
-  const handleSave = () => {
+  const handleSave = async () => {
     updateWorkflow(workflow.id, { nodes, edges });
-    setSavedFlash(true);
-    window.setTimeout(() => setSavedFlash(false), 1200);
+    try {
+      await wirePorts.machineApi.createWorkflow({
+        id: workflow.id,
+        name: workflow.name,
+        target: workflow.target,
+        graph: { nodes, edges },
+      });
+      setSavedFlash(true);
+      window.setTimeout(() => setSavedFlash(false), 1200);
+      message.success("Saved workflow + triggers");
+    } catch (err) {
+      message.error(`Save failed: ${String(err)}`);
+    }
   };
 
   const handleLaunch = () => {
@@ -514,7 +733,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
             {savedFlash ? <Tag color="success">Saved</Tag> : null}
           </Space>
           <Space>
-            <Button icon={<SaveOutlined />} onClick={handleSave}>
+            <Button icon={<SaveOutlined />} onClick={() => void handleSave()}>
               Save
             </Button>
             <Button type="primary" icon={<PlayCircleOutlined />} onClick={handleLaunch}>

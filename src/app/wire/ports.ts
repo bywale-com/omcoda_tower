@@ -381,7 +381,37 @@ export type MachineApiPort = {
     sequenceClass: string;
     templateId: string;
     variableBindings?: Record<string, unknown>;
+    isDefault?: boolean;
+    overrideAttempt?: boolean;
+    overrideChannel?: boolean;
+    overrideContent?: boolean;
+    overrideSequencing?: boolean;
   }): Promise<{ id: string; firmId?: string; table?: string; sequenceClass?: string; templateId?: string }>;
+  listSequenceHousing(
+    sequenceId: string,
+  ): Promise<{ sequenceId: string; campaigns: import("./machineTypes").CampaignHousingRow[] }>;
+  saveSequenceHousing(
+    sequenceId: string,
+    campaigns: import("./machineTypes").CampaignHousingDraft[],
+  ): Promise<{ sequenceId: string; campaigns: import("./machineTypes").CampaignHousingRow[] }>;
+  enrollSequenceContacts(
+    sequenceId: string,
+    input: {
+      scope?: "every_firm" | "select_from";
+      contactIds?: string[];
+      agentRef?: string;
+    },
+  ): Promise<{ sequenceId: string; scope: string; enrolled: number; blocked: number; ids: string[] }>;
+  upsertRulePack(input: {
+    id?: string;
+    workflowId?: string;
+    name: string;
+    families?: unknown;
+    customJson?: unknown;
+    namedCode?: string | null;
+    namedCodeOn?: boolean;
+    enabled?: boolean;
+  }): Promise<{ id: string; table: string }>;
   listAttemptCriteria(): Promise<import("./machineTypes").AttemptCriteriaRow[]>;
   upsertAttemptCriteria(
     id: string,

@@ -54,6 +54,10 @@ export type RulePackDefinition = {
 export type RuleNodeConfig = {
   packId: string;
   enabledOutcomeIds: string[];
+  listingFieldIds?: string[];
+  customJson?: unknown;
+  namedCode?: string;
+  namedCodeOn?: boolean;
 };
 
 export type RuleCheckResult = {
