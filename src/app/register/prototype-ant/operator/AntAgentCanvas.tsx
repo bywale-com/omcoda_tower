@@ -803,7 +803,7 @@ export function AntAgentCanvas({
   return (
     <div
       data-register-surface="Agent / sequence editor"
-      style={{ height: "100%", minWidth: 0, minHeight: 0, overflow: "auto", padding: 18 }}
+      style={{ height: "100%", minWidth: 0, minHeight: 0, overflow: "auto", padding: 18, paddingBottom: 80 }}
     >
       <Space direction="vertical" size={16} style={{ width: "100%", maxWidth: 1400, paddingBottom: 48 }}>
         <Button icon={<PlusOutlined />} onClick={addCampaign}>

@@ -408,6 +408,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
       id: string;
       name: string | null;
       email: string | null;
+      firmId?: string | null;
       firmName?: string | null;
       createdAt?: string | null;
     }>
@@ -434,12 +435,13 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
       setAudienceScope(row?.audience_scope === "select_from" ? "select_from" : "every_firm");
       setAudienceIds(row?.audience_contact_ids ?? []);
     }).catch(() => undefined);
-    void wirePorts.machineApi.listContactRecords().then((rows) => {
+    void wirePorts.machineApi.listContactRecords({ scope: "every_firm" }).then((rows) => {
       setBook(
         rows.map((r) => ({
           id: r.id,
           name: r.name,
           email: r.email,
+          firmId: r.firmId,
           firmName: r.firmName,
           createdAt: r.createdAt,
         })),
@@ -707,8 +709,8 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
             <Button
               icon={<UserAddOutlined />}
               onClick={() => {
-                setPickScope(audienceScope);
-                setPickIds(audienceScope === "select_from" && audienceIds.length ? audienceIds : book.map((row) => row.id));
+                setPickScope("every_firm");
+                setPickIds([]);
                 setAddContactOpen(true);
               }}
             >
@@ -1027,6 +1029,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
             ),
           },
         ]}
+        className="tower-fill-tabs"
         style={{ flex: 1, minHeight: 0 }}
         tabBarStyle={{ margin: 0, paddingInline: 16, flexShrink: 0 }}
       />
@@ -1154,7 +1157,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
         scope={pickScope}
         contacts={book}
         selectedIds={pickIds}
-        everyFirmHint="Who this automation applies to. Does not start a mission."
+        footerHint="Who this automation applies to. It does not start a mission now."
         onScope={setPickScope}
         onSelectedIds={setPickIds}
         onCancel={() => setAddContactOpen(false)}

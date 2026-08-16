@@ -714,7 +714,7 @@ export function AntAgentWorkbench({
   const [addContactOpen, setAddContactOpen] = useState(false);
   const [enrollScope, setEnrollScope] = useState<"every_firm" | "select_from">("every_firm");
   const [bookContacts, setBookContacts] = useState<
-    Array<{ id: string; name: string | null; email: string | null; firmName?: string | null }>
+    Array<{ id: string; name: string | null; email: string | null; firmId?: string | null; firmName?: string | null }>
   >([]);
   const [selectedContactIds, setSelectedContactIds] = useState<string[]>([]);
   const [overrideAttempt, setOverrideAttempt] = useState(false);
@@ -725,7 +725,7 @@ export function AntAgentWorkbench({
   const [enrollments, setEnrollments] = useState<EnrollmentRow[]>([]);
   const [agentActivity, setAgentActivity] = useState<EngagementRecordRow[]>([]);
   const [book, setBook] = useState<
-    Array<{ id: string; name: string | null; email: string | null; firmName?: string | null }>
+    Array<{ id: string; name: string | null; email: string | null; firmId?: string | null; firmName?: string | null }>
   >([]);
   const [attemptCount, setAttemptCount] = useState(3);
   const [waitSeconds, setWaitSeconds] = useState(86400);
@@ -820,7 +820,7 @@ export function AntAgentWorkbench({
     void Promise.all([
       wirePorts.machineApi.boardDetections(),
       wirePorts.machineApi.listEngagementRecords(),
-      wirePorts.machineApi.listContactRecords().catch(() => []),
+      wirePorts.machineApi.listContactRecords({ scope: "every_firm" }).catch(() => []),
     ])
       .then(([board, records, contacts]) => {
         if (cancelled) return;
@@ -930,7 +930,7 @@ export function AntAgentWorkbench({
     setLaunching(true);
     setStatusNote(null);
     try {
-      const contacts = await wirePorts.machineApi.listContactRecords();
+      const contacts = await wirePorts.machineApi.listContactRecords({ scope: "every_firm" });
       const contactId = contacts[0]?.id;
       if (!contactId) {
         const note = "Launch blocked: firm book has no contacts — upload a list first.";
@@ -998,11 +998,17 @@ export function AntAgentWorkbench({
             <Button
               icon={<UserAddOutlined />}
               onClick={() => {
-                void wirePorts.machineApi.listContactRecords().then((rows) => {
+                void wirePorts.machineApi.listContactRecords({ scope: "every_firm" }).then((rows) => {
                   setBookContacts(
-                    rows.map((r) => ({ id: r.id, name: r.name, email: r.email, firmName: r.firmName })),
+                    rows.map((r) => ({
+                      id: r.id,
+                      name: r.name,
+                      email: r.email,
+                      firmId: r.firmId,
+                      firmName: r.firmName,
+                    })),
                   );
-                  setSelectedContactIds(rows.map((r) => r.id));
+                  setSelectedContactIds([]);
                   setEnrollScope("every_firm");
                   setAddContactOpen(true);
                 }).catch((err) => message.error(`Book load failed: ${String(err)}`));
@@ -1205,10 +1211,11 @@ export function AntAgentWorkbench({
               <Empty style={{ marginTop: 48 }} description={emptyCopy[tab.id]} />
             ),
         }))}
+        className="tower-fill-tabs"
         style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}
         tabBarStyle={{ margin: 0, paddingInline: 16, flexShrink: 0 }}
         styles={{
-          content: { flex: 1, minHeight: 0, overflow: "auto", height: "100%" },
+          content: { flex: 1, minHeight: 0, height: "100%", overflow: "hidden" },
         }}
       />
       <ContactPickModal
@@ -1218,7 +1225,7 @@ export function AntAgentWorkbench({
         scope={enrollScope}
         contacts={bookContacts}
         selectedIds={selectedContactIds}
-        everyFirmHint="Enrolls every contact_records row (all TEXT firm ids). Halt still per enrollment firm. Starts the mission now."
+        footerHint="This starts the mission now. It does not wait on an event."
         onScope={setEnrollScope}
         onSelectedIds={setSelectedContactIds}
         onCancel={() => setAddContactOpen(false)}

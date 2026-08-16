@@ -18,6 +18,7 @@ import {
   theme as antTheme,
 } from "antd";
 import {
+  BankOutlined,
   BulbOutlined,
   ControlOutlined,
   DownOutlined,
@@ -26,6 +27,7 @@ import {
   TeamOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+import "./antFill.css";
 import { useAuth } from "../../auth/AuthContext";
 import { isAuthDisabled } from "../../auth/authClient";
 import { isPlatformAdminEmail } from "../../auth/platformAdmin";
@@ -91,6 +93,7 @@ function AntShell({
 
   const consultantMenuItems = consultants.map((c) => ({
     key: c.firmId,
+    icon: <BankOutlined />,
     label: (
       <div>
         <div>{c.firmName}</div>
@@ -101,37 +104,12 @@ function AntShell({
     ),
     onClick: () => {
       selectConsultant(c.firmId);
-      setDesk("consultant");
     },
   }));
 
   const segmentedOptions = isAdmin
     ? [
-        {
-          label: (
-            <Dropdown
-              menu={{ items: consultantMenuItems, selectable: true, selectedKeys: selected ? [selected.firmId] : [] }}
-              trigger={["click"]}
-              disabled={!consultants.length}
-            >
-              <span
-                onClick={(e) => {
-                  // Keep Segmented on consultant; open dropdown instead of only switching desk.
-                  e.stopPropagation();
-                  setDesk("consultant");
-                }}
-                style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
-              >
-                <UserOutlined />
-                <span style={{ maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis" }}>
-                  {consultantLabel}
-                </span>
-                <DownOutlined style={{ fontSize: 10 }} />
-              </span>
-            </Dropdown>
-          ),
-          value: "consultant",
-        },
+        { label: "Consultant", value: "consultant", icon: <UserOutlined /> },
         { label: "Operator", value: "operator", icon: <ControlOutlined /> },
         { label: "Contact", value: "contact", icon: <TeamOutlined /> },
       ]
@@ -166,6 +144,38 @@ function AntShell({
             <Text type="secondary" style={{ fontSize: 12 }}>
               {user.email}
             </Text>
+          ) : null}
+          {!needsLogin && isAdmin ? (
+            <Dropdown
+              menu={{
+                items: consultantMenuItems,
+                selectable: true,
+                selectedKeys: selected ? [selected.firmId] : [],
+              }}
+              trigger={["click"]}
+              disabled={!consultants.length}
+            >
+              <span
+                role="button"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "4px 11px",
+                  border: `1px solid ${token.colorBorder}`,
+                  borderRadius: token.borderRadius,
+                  background: token.colorBgContainer,
+                  cursor: consultants.length ? "pointer" : "default",
+                  maxWidth: 240,
+                }}
+              >
+                <BankOutlined />
+                <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {consultantLabel}
+                </span>
+                <DownOutlined style={{ fontSize: 10 }} />
+              </span>
+            </Dropdown>
           ) : null}
           {!needsLogin ? (
             <Segmented

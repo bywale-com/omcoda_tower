@@ -653,7 +653,17 @@ function AutomationLibrary({
           }}
         />
       </CatalogShell>
-      <Surface label="Workflow canvas" style={{ flex: 1, minWidth: 0, minHeight: 0 }}>
+      <Surface
+        label="Workflow canvas"
+        style={{
+          flex: 1,
+          minWidth: 0,
+          minHeight: 0,
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <AntAutomationWorkbench workflowId={selectedWorkflow.id} />
       </Surface>
     </div>
@@ -737,7 +747,17 @@ function AgentLibrary({
           }}
         />
       </CatalogShell>
-      <Surface label="Agent / sequence editor" style={{ flex: 1, minWidth: 0, minHeight: 0 }}>
+      <Surface
+        label="Agent / sequence editor"
+        style={{
+          flex: 1,
+          minWidth: 0,
+          minHeight: 0,
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <AntAgentWorkbench agent={selectedAgent} />
       </Surface>
       <AgentsSettingsModal open={agentsSettingsOpen} onClose={() => setAgentsSettingsOpen(false)} />
@@ -851,7 +871,7 @@ export function ConfigurationLibrariesModule({
   const packB = packs.find((pack) => pack.id === compareB && pack.kind === subMeta.kind);
 
   return (
-    <ModulePage title="Configuration libraries" surface="Configuration libraries">
+    <ModulePage title="Configuration libraries" surface="Configuration libraries" overflow="hidden">
       <div
         style={{
           height: "100%",
@@ -861,6 +881,7 @@ export function ConfigurationLibrariesModule({
           borderRadius: 8,
           overflow: "hidden",
           background: token.colorBgContainer,
+          flex: 1,
         }}
       >
         <Surface

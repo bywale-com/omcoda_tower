@@ -10,6 +10,7 @@ import { ConsultantAntScene } from "./consultant/ConsultantAntScene";
 import { ContactAntScene } from "./contact/ContactAntScene";
 import { OperatorAntScene } from "./operator/OperatorAntScene";
 import { buildTowerAntTheme } from "./theme";
+import "./antFill.css";
 
 export function AntCtHost({ desk, isDark }: { desk: CtDeskId; isDark: boolean }) {
   const themeConfig = useMemo(

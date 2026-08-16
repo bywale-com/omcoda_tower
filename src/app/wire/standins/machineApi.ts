@@ -404,6 +404,66 @@ const bookContacts = new Map<
       createdAt: "2026-08-10T00:00:00.000Z",
     },
   ],
+  [
+    "cr-cedar-3",
+    {
+      id: "cr-cedar-3",
+      firmId: "firm-cedar",
+      email: "priya.shah@example.com",
+      phone: null,
+      name: "Priya Shah",
+      firmName: "Cedar Immigration",
+      createdAt: "2026-08-11T00:00:00.000Z",
+    },
+  ],
+  [
+    "cr-harbor-1",
+    {
+      id: "cr-harbor-1",
+      firmId: "firm-standin-harbor",
+      email: "daniel.okonkwo@example.com",
+      phone: null,
+      name: "Daniel Okonkwo",
+      firmName: "Harbor RCIC",
+      createdAt: "2026-08-10T00:00:00.000Z",
+    },
+  ],
+  [
+    "cr-harbor-2",
+    {
+      id: "cr-harbor-2",
+      firmId: "firm-standin-harbor",
+      email: "amina.cole@example.com",
+      phone: null,
+      name: "Amina Cole",
+      firmName: "Harbor RCIC",
+      createdAt: "2026-08-10T00:00:00.000Z",
+    },
+  ],
+  [
+    "cr-harbor-3",
+    {
+      id: "cr-harbor-3",
+      firmId: "firm-standin-harbor",
+      email: "wei.chen@example.com",
+      phone: null,
+      name: "Wei Chen",
+      firmName: "Harbor RCIC",
+      createdAt: "2026-08-11T00:00:00.000Z",
+    },
+  ],
+  [
+    "cr-harbor-4",
+    {
+      id: "cr-harbor-4",
+      firmId: "firm-standin-harbor",
+      email: "samira.haddad@example.com",
+      phone: null,
+      name: "Samira Haddad",
+      firmName: "Harbor RCIC",
+      createdAt: "2026-08-12T00:00:00.000Z",
+    },
+  ],
 ]);
 const bookVerdicts = new Map<string, string>();
 const bookSequenceReady = new Map<string, boolean>();
@@ -999,13 +1059,14 @@ export const standInMachineApi: MachineApiPort = {
   async enrollSequenceContacts(sequenceId, input) {
     const scope = input.scope === "select_from" ? "select_from" : "every_firm";
     const contacts =
-      scope === "select_from" && input.contactIds?.length
-        ? input.contactIds
+      scope === "select_from"
+        ? input.contactIds ?? []
         : [...bookContacts.values()].map((c) => c.id);
     for (const contactId of contacts) {
+      const person = bookContacts.get(contactId);
       enrollments.push({
         id: `enr-local-${Date.now()}-${contactId}`,
-        firm_id: standInFirm(),
+        firm_id: person?.firmId ?? standInFirm(),
         contact_id: contactId,
         agent_ref: input.agentRef ?? sequenceId,
         sequence_id: sequenceId,
@@ -1383,17 +1444,18 @@ export const standInMachineApi: MachineApiPort = {
     return { firmId: standInFirm(), state };
   },
 
-  async listContactRecords() {
+  async listContactRecords(opts) {
+    const scope = opts?.scope === "every_firm" ? "every_firm" : "session";
     const f = standInFirm();
     return [...bookContacts.values()]
-      .filter((c) => c.firmId === f || c.firmId === "firm-cedar")
+      .filter((c) => (scope === "every_firm" ? true : c.firmId === f))
       .map((c) => ({
         id: c.id,
         firmId: c.firmId,
         email: c.email ?? null,
         phone: c.phone ?? null,
         name: c.name ?? null,
-        firmName: c.firmName ?? (c.firmId === "firm-cedar" ? "Cedar Immigration" : "Harbor RCIC"),
+        firmName: c.firmName ?? "Firm",
         createdAt: c.createdAt ?? now(),
       }));
   },

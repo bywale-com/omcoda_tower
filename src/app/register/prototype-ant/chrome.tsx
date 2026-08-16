@@ -36,12 +36,15 @@ export function ModulePage({
   children,
   /** Override inset; default MODULE_PAGE_INSET (16). Use 0 only for true full-bleed shells. */
   inset = MODULE_PAGE_INSET,
+  /** Workbench shells (Agents / Automations) own their own scroll. */
+  overflow = "auto",
 }: {
   title: string;
   surface?: string;
   extra?: ReactNode;
   children: ReactNode;
   inset?: number;
+  overflow?: "auto" | "hidden";
 }) {
   const { token } = theme.useToken();
   const pad = inset;
@@ -76,7 +79,9 @@ export function ModulePage({
         style={{
           flex: 1,
           minHeight: 0,
-          overflow: "auto",
+          overflow,
+          display: overflow === "hidden" ? "flex" : undefined,
+          flexDirection: overflow === "hidden" ? "column" : undefined,
           padding: `0 ${pad}px ${pad}px`,
         }}
       >
