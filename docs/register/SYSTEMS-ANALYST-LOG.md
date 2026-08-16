@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 02:07 UTC — **Seat lock: packets, hard decisions, founder only. Don’t-mint is stale.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 02:23 UTC — **Caption audit. Dropped qualify_gate / launch_* types. Next campaign = ord.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -902,3 +902,23 @@ For **both modules, forever: no.** Housing is paper. Story 7 not promoted. I hav
 **Locked:** Packets are the deliverable. Hard decisions are this seat. Implementer cuts only. Instructions = founder. PM pictures/flags = spec on the glass, not job-law. Implementer drafts = input to correct, not orders. Identity updated in [`../README.md`](../README.md) § Systems Analyst.
 
 **Do not:** wait for PM “system time”; wait for an implementer to write the change list; chime only.
+
+---
+
+## 2026-08-16 02:23 UTC — Caption audit. Packet stripped of founder labels.
+
+**Why:** Founder: UI quirks we hoped SA had not baked in. PR #87 [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md). Audit the packet.
+
+**Excerpts / law**
+
+> There is no first objective. There is an **objective**. You string the next campaign when that objective is met. The C3 pill is a founder caption of that distance, not a node.
+
+> **Launch window** and **Launch day** are example campaign names … The operator can rename both. **“They opt in”** is a title at best, not an objective class. A green tick on “objective met” is allowed chrome. It must not become `qualify_gate`, a qualify node, or a systems question.
+
+> The 17:05 waitlist-vs-whole-book fork is **not on C3**. If that rule is still needed, it is a new ask.
+
+**What I had frozen (wrong):** `qualify_gate`, `qualify_next_campaign_id`, `source` CHECK `launch_window` \| `launch_day`. Waitlist left “open” off that caption.
+
+**Hard decision now:** next campaign = next `ord` when this campaign’s objective is met. No qualify object. `campaign.name` TEXT. `source` only `template` \| `scratch`. C2b `kind` radios stay (spec). `sequence_class` three tokens stay as **kind** (`seq_phase_order`), not as C1 label. Seed **may** use those example names. Waitlist is not in this packet.
+
+**Do not:** mint qualify; freeze example names; treat “If X” as a field (A16).

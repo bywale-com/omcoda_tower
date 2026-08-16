@@ -246,3 +246,5 @@ C2b (campaign objective) is a **named completion** — a kind of event. The even
 ## Change packet 2026-08-16 02:03 — 22:41 finished as implementer brief
 
 22:41 named the lie and stopped at “don’t mint.” That stop was wrong. Pictures are the spec. The change (columns, CHECKs, new tables, FKs, walk) is [`SYSTEMS-CHANGE-PACKET.md`](./SYSTEMS-CHANGE-PACKET.md). Do not treat the 22:41 “Not a migration” line as law.
+
+**02:23 caption audit:** C3 “qualify — first objective met” is a **founder caption**, not a node. Packet no longer has `qualify_gate` or `qualify_next_campaign_id`. Next campaign = next `ord` when the objective is met. Launch window / Launch day = example **names**. Reading: [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md).

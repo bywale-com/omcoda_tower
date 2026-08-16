@@ -5,7 +5,7 @@
 **What this is:** the standing change-management deliverable. This is the SA job. Pictures are the spec. For each plate: alter / add / persist / dispatch. Implementer **cuts** this (`010_…sql` + walker + Ant Save) and does **no** analysis. Not another “don’t mint.” Founder is the only instruction source.  
 **Handback:** Implementation specialist / CTO drafted the missing layer. This file **accepts** that draft, **corrects** it against stood-up SQL, and **leaves only the actually-open** product questions.  
 **Flag:** PHASE-TWO-LOG **15:43** untouched (product). This packet is the machine change that makes those pictures true.  
-**Join:** 22:41 housing in [`SYSTEMS-AGENTS-ASCRIBE.md`](./SYSTEMS-AGENTS-ASCRIBE.md) · Automations ascribe · [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) · [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-SLICE-PACKAGE.md) (first vertical of **this** packet, not a cap on the rest).
+**Join:** 22:41 housing in [`SYSTEMS-AGENTS-ASCRIBE.md`](./SYSTEMS-AGENTS-ASCRIBE.md) · Automations ascribe · [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) · [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-SLICE-PACKAGE.md) (first vertical of **this** packet, not a cap on the rest) · caption reading [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) (PR #87 — **02:23 overlay**).
 
 Do not reuse `campaign_states`. Do not revive `sequence_definitions`. Do not mint `goal` copying `meeting_booked`. Do not mint an `events` table that copies the write. Do not stuff campaigns into `cells` or Override this into `binding.overrides`.
 
@@ -30,12 +30,30 @@ Do not reuse `campaign_states`. Do not revive `sequence_definitions`. Do not min
 
 **Still open (do not invent; do not use to skip the rest):**
 
-1. Waitlist → launch day: only waitlisted, or the whole book? Column `campaign.qualify_gate` exists; **value** is product. Default `objective_met`.
-2. C2 Additional — unnamed. No third template. UI disabled.
-3. Per-campaign attempt **chrome** — not drawn. Columns on `campaign` anyway.
-4. What a Hub “list” is if it is not a tag — later. This pass `manage_lists` writes `contact_tag`.
+1. C2 Additional — unnamed. UI disabled. No third template token.
+2. Per-campaign attempt **chrome** — not drawn. Columns on `campaign` anyway.
+3. What a Hub “list” is if it is not a tag — later. This pass `manage_lists` writes `contact_tag`.
+
+Waitlist → who gets the next campaign is **not on C3**. Closed as a UI/systems question from that plate. If you still want that rule, it is a **new ask** — do not hide it in `qualify_gate`.
 
 Send, book-in, lineage query — leftover product. Not a reason to withhold this packet.
+
+---
+
+## Caption audit 2026-08-16 02:23 — what I wrongly froze
+
+Read [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) before cutting. I treated founder labels as types. **Drop these from 02:03:**
+
+| I specified | Kind | Correction |
+|-------------|------|------------|
+| `campaign.qualify_gate` (`objective_met` \| `waitlisted`) | Founder caption + 17:05 fork | **No column.** Green tick / “objective met” is chrome. Not a gate. Waitlist fork is a new ask, not C3. |
+| `campaign.qualify_next_campaign_id` | Qualify as an edge | **No column.** Next campaign = next `ord` on the same `sequence_id` when **this** campaign’s objective is met. There is no “first objective.” There is an objective. You string the next campaign. |
+| `campaign_objective.source` CHECK `launch_window` \| `launch_day` \| `scratch` | Example names as types | **No those tokens.** `from_scratch BOOLEAN` (C2b) or `source IN ('template','scratch')`. Names are `campaign.name` TEXT — operator renames. |
+| Seed that every opt-in **must** be Launch window → Launch day | Frozen teaching pair | **May** seed those **names** on two campaigns. Must not require them. Must not CHECK them. |
+| “They opt in” as launch-day class | Title at best | Objective `kind` is C2b radios (`click` \| `form` \| `meeting`) + `name` TEXT. Not a class. |
+| C3 plate → persist qualify FK | Caption as node | Persist two `campaign` rows + `ord`. Distance is chrome. |
+
+`sequence_class` CHECK `optin` \| `reengagement` \| `reactivation` **stays**. That is Story 7 / `seq_phase_order` / class-by-objective (16:40), not the C1 catalog **label**. `sequence_template.label` is renamable. Do not CHECK “Opt-in” the string. Do not require every sequence to have two campaigns.
 
 ---
 
@@ -105,9 +123,7 @@ CREATE TABLE campaign (
   name TEXT NOT NULL,
   ord INT NOT NULL DEFAULT 0,
   override_this BOOLEAN NOT NULL DEFAULT false,
-  qualify_next_campaign_id TEXT REFERENCES campaign(id) ON DELETE SET NULL,
-  qualify_gate TEXT NOT NULL DEFAULT 'objective_met'
-    CHECK (qualify_gate IN ('objective_met', 'waitlisted')),
+  -- NO qualify_next_campaign_id. NO qualify_gate. Next = next ord when objective met.
   attempt_count INT,
   wait_after_last_failed_seconds INT,
   nth_exception JSONB NOT NULL DEFAULT '{}'::jsonb,
@@ -123,11 +139,13 @@ CREATE TABLE campaign_objective (
   name TEXT NOT NULL,
   completion_table TEXT NOT NULL
     CHECK (completion_table IN ('messaging_events', 'fact_writebacks', 'meeting_booked')),
-  source TEXT NOT NULL CHECK (source IN ('launch_window', 'launch_day', 'scratch')),
+  source TEXT NOT NULL DEFAULT 'scratch'
+    CHECK (source IN ('template', 'scratch')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE (campaign_id)
 );
--- C2 Additional: no source token. UI disabled. Do not add a fourth source.
+-- C2 Additional: disabled. Do not add launch_window / launch_day as source tokens.
+-- kind = C2b radios (spec). name = operator string (example on the plate).
 
 CREATE TABLE campaign_channel (
   id TEXT PRIMARY KEY,
@@ -166,9 +184,7 @@ CREATE TABLE campaign_failure (
 -- Exhausted sequence / class unmet. INSERT is the event (dispatch campaign_failure).
 ```
 
-**Seed (opt-in):** one `sequence_template` `tpl.optin.v1` class `optin`. Two `campaign` rows: Launch window (`source=launch_window`, kind `click`, `completion_table=messaging_events`) → qualify → Launch day (`source=launch_day`, kind `form` or consent-sign-up — pointer `fact_writebacks` if form; if sign-up is consent status, still **do not** mint goal; use `fact_writebacks` or treat consent `sequenced` as the write and add it to the dispatch list). Re-engagement / reactivation: one campaign each (form → `fact_writebacks`; meeting → `meeting_booked`).
-
-Consent `waitlisted`/`sequenced` already exist. If launch-day objective **is** sign-up, dispatch on `consent_records` UPDATE to `sequenced` as well (same “write is the event”). Add `consent_records` to the picker when that is the pointer. Do not invent a fourth completion table.
+**Seed (optional teaching opt-in):** one `sequence_template` `tpl.optin.v1` class `optin`, **label** “Opt-in” (renamable). Two `campaign` rows with **names** “Launch window” / “Launch day” (`source=template`, `ord` 0 then 1). Window example: `kind=click`, `completion_table=messaging_events`. Day example: `kind=form`, `completion_table=fact_writebacks` (or point at `consent_records.sequenced` if that write is the objective — add that dispatch; do not mint `goal`). Operator can rename both. Re-engagement / reactivation seeds: one campaign each is enough (form → `fact_writebacks`; meeting → `meeting_booked`). Do not require two campaigns on every sequence.
 
 ---
 
@@ -176,9 +192,9 @@ Consent `waitlisted`/`sequenced` already exist. If launch-day objective **is** s
 
 `templateWalk` / `cascade.ts`: cells are **not** the sequence.
 
-Walk: `sequence_template` → `campaign` ordered by `ord` → cursor on `enrollment.campaign_id` → objective met (row in `completion_table` for that contact) → `qualify_next_campaign_id` (same sequence) → 7b ladder (`seq_channel_ownership_order` + `rule_attempt_criteria` + `active_attempts`) **inside** that campaign. If `override_this`, authored wires are `campaign_channel` (content from `content` jsonb when `override_content`).
+Walk: `sequence_template` → `campaign` ordered by `ord` → cursor on `enrollment.campaign_id` → that campaign’s **objective met** (row in its `completion_table` for that contact) → advance cursor to the next `ord` on the same sequence (if any) → 7b ladder (`seq_channel_ownership_order` + `rule_attempt_criteria` + `active_attempts`) **inside** the current campaign. If `override_this`, authored wires are `campaign_channel`.
 
-Qualify ≠ `workflow_trigger`. Qualify ≠ Engine 2 between classes.
+There is **no qualify node, column, or gate**. Engine 2 stays between **sequence classes**, not between campaigns. Do not put `workflow_trigger` on the Agents canvas.
 
 Call: no port in `registry.ts`. Composer on `campaign_channel` where `token='call'` **saves**. Send path does not dial. Third live send medium remains form/email/sms as today.
 
@@ -188,10 +204,10 @@ Call: no port in `registry.ts`. Composer on `campaign_channel` where `token='cal
 
 | Plate | Persist / change |
 |-------|------------------|
-| **C1** | Catalog = `sequence_template` where `firm_id IS NULL` **or** this firm’s copies. Three classes only. Empty world = no rows. Save new named sequence = INSERT `sequence_template` (`firm_id` set) + `firm_sequence_binding`. |
-| **C2** | INSERT `campaign` + `campaign_objective` (`source` launch_window \| launch_day). Additional **disabled**. |
-| **C2b** | Same + `source=scratch`, `kind` click\|form\|meeting, `name`, `completion_table` pointer. |
-| **C3** | Two campaigns; `qualify_next_campaign_id` from A to B. `override_this=false`. |
+| **C1** | Catalog = `sequence_template` (`firm_id IS NULL` or this firm’s copies). `sequence_class` = three **kinds**. `label` = example name, renamable. Empty world = no rows. |
+| **C2** | INSERT `campaign` + `campaign_objective` (`source=template` or scratch). Additional **disabled**. Template **names** on the plate are examples. |
+| **C2b** | `source=scratch`, `kind` click\|form\|meeting (spec radios), `name` TEXT, `completion_table` pointer. |
+| **C3** | N campaigns (`ord`). Each has one objective. `override_this=false`. Distance / tick / “qualify — first objective met” = **chrome only**. Do not persist. |
 | **C4** | `override_this=true` → INSERT `campaign_channel` rows (wires). Campaign toggles stay on `campaign`. |
 | **C5 / C5b** | `campaign_channel.override_content` + `content` jsonb (text / email / call composer). Channel rules = `rule_attempt_criteria` scoped to `campaign_channel_id`. Attempt rules **not** here. Call does not dial. |
 | **C6** | NULL-firm `seq_attempt_cycle` + existing NULL-firm `rule_*` / `seq_*`. Attempt-count / wait / nth = `seq_attempt_cycle` columns (new). |
@@ -318,7 +334,9 @@ Walker **evaluates** `families` (creatable ⇒ row). Evaluator stays code; autho
 | **A9 / A11** | Output includes collectible **listing** (unused catalog, stood up on output). |
 | **A12** | Form questions = those ids. Bind in graph JSONB. |
 | **A13** | Diagram. Do not build a page. |
-| **A15–A17** | If pictured after this packet: same grain (If / listing / bind). No extra tables until a plate names a new write. |
+| **A15** | Graph may chain: trigger → action → If → action. Same `workflow.graph`. No new table. |
+| **A16** | `branch` node reads **previous** output (rule or action). Thicken `evalBranch`. Not a rule. Not a qualify. “If X” is a label; X is not a field. |
+| **A17** | Trigger event_name = `ct_firms` (provisioned, this pass). Example copy on the plate is not a second event type. |
 
 ---
 
@@ -336,7 +354,7 @@ Walker **evaluates** `families` (creatable ⇒ row). Evaluator stays code; autho
 | `src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx` | Save campaigns, not only cells |
 | `src/app/data/automationWorkflows.ts` | Picker = dispatch list above, not Hub leftovers |
 
-`npm run build`. Manual: Save A1 → row + triggers; insert `fact_writebacks` or `meeting_booked` → run + enroll; Save C3 two campaigns + qualify.
+`npm run build`. Manual: Save A1 → row + triggers; insert `fact_writebacks` or `meeting_booked` → run + enroll; Save C3 two campaigns with `ord` 0 then 1 — no qualify row.
 
 ---
 
@@ -354,3 +372,4 @@ Same vertical as [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-SLICE-PACKAGE.md): one c
 - Not filling an event catalog beyond the dispatch table.
 - Not a Call port this cut — composer only.
 - Not unifying `firms` UUID with `ct_firms` TEXT this cut — pick `ct_firms` for provisioned.
+- Not putting founder captions into Postgres (`qualify`, “first objective”, “Launch window” as a type, “They opt in” as a class, A10/A13 as a page).

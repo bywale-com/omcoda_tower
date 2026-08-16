@@ -98,6 +98,7 @@ Walk in this order. Read the files. Quote tables from SQL, not from memory.
 | Events (founder expansion; not Story must until promoted) | `docs/register/SYSTEMS-EVENTS.md` — event = detectable table change; all objectives are events; not all events are objectives |
 | Connect slice (first Automations vertical) | `docs/register/CONNECT-SLICE-PACKAGE.md` — one completion write → assign existing agent |
 | Change packet (implementer brief — cut this) | `docs/register/SYSTEMS-CHANGE-PACKET.md` — columns, CHECKs, new tables, dispatch, walker; pictures are the spec |
+| Image caption audit (PR #87 — spec vs example name vs founder caption) | `docs/register/IMAGE-CAPTION-AUDIT.md` — do not mint `qualify` from C3 |
 | Agents UI ascribe (plates C1–C7 vs SQL / cascade / ports; grain lock sequence⊃campaigns; not a second flag) | `docs/register/SYSTEMS-AGENTS-ASCRIBE.md` |
 | Automations UI ascribe (plates A1–A13 vs workflowWalk / Hub rules; paper, not cemented) | `docs/register/SYSTEMS-AUTOMATIONS-ASCRIBE.md` — PR #85 package |
 | Requirements doctrine | `docs/register/SYSTEMS-REQUIREMENTS.md` |
