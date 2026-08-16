@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 21:22 UTC — **How we know a flow worked: expected writes, not inbox-as-machine.** Flag **15:43**. 012 still the cut.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 21:57 UTC — **013: Confirm book is contact import → audit; Book readiness is the pane.** Flag **15:43**. 012 still waiting.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1050,3 +1050,25 @@ For **both modules, forever: no.** Housing is paper. Story 7 not promoted. I hav
 **Thoughts (locked in [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 21:22):** Yes on the unit. The check is **expected writes for this flow**, not “everything emailed.” Product CEM to a contact ≠ monitor mail to you. Monitor hangs off the same dispatch — no `events` table. If a write is not dispatched, email cannot see it.
 
 **Do not:** fill the catalog to monitor; make inbox the machine; skip 012 for this. Flag **15:43**.
+
+---
+
+## 2026-08-16 21:57 UTC — Confirm book is the import. Audit artifact is Book readiness.
+
+**Why:** Founder on Consultant Contacts: no upload. Confirm book for Tower should land the book. Automations: trigger contact import → audit the contacts. Every audit should appear in Operator Book readiness. Cannot remove a node on the canvas.
+
+**Excerpts**
+
+> the confirm book for tower is supposed to be … a button that allows you to upload your contacts
+
+> on a contact import … Action … audit the contacts
+
+> every single audit that's happening on tower … whenever I go to book readiness … I should be able to see all those audits
+
+> there's literally no way to remove a node on the freaking canvas
+
+**Hard decisions:** Confirm book = file land, not `crmOAuth.grant`. Table `import_batch` `kind=contact`. INSERT is `contact_import`. `run_audit` writes `audit_runs`. Book readiness **loads that table**. Delete node is chrome. No condition this pass. Two desks stay two desks.
+
+Packet: [`SYSTEMS-CHANGE-PACKET-013.md`](./SYSTEMS-CHANGE-PACKET-013.md).
+
+**Do not:** Hub `import.created`; events table; merge Consultant into Operator; skip 012. Flag **15:43**.

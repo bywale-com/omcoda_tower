@@ -431,3 +431,11 @@ PR [#89](https://github.com/bywale-com/omcoda_tower/pull/89) written spec: C0 / 
 011 is on **main** (PR [#90](https://github.com/bywale-com/omcoda_tower/pull/90)). Variations matched.
 
 PR #89 **18:53** is not pass-through. Next cut: [`SYSTEMS-CHANGE-PACKET-012.md`](./SYSTEMS-CHANGE-PACKET-012.md). One timer (not per toggle). `grain` is A18 + `local_ref`. Audience on `workflow`, not enrollment. Seed people into existing tables. Do not collapse Global/Local with Contacts.
+
+---
+
+## 013 — 2026-08-16 21:57 — contact import → audit; Book readiness is the pane
+
+Founder: Confirm book for Tower **is** the upload. Trigger **contact import**. Action **audit the contacts**. Every `audit_runs` row shows in Operator Book readiness. Canvas **deletes** a node.
+
+Cut [`SYSTEMS-CHANGE-PACKET-013.md`](./SYSTEMS-CHANGE-PACKET-013.md). Does not wait on 012. Does not merge desks. Does not use Hub `import.created`.
