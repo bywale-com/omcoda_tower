@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 23:02 UTC — **Provision-finished = the firm-row event already named (not connected). Canvas wire emits nothing; it is “then next.”** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 23:06 UTC — **Input/Output on the rules node is editor preview. Live wire is still then-next, not an n8n packet.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1161,3 +1161,17 @@ Trade-off: hear-after (form stays on Provision; graph runs next) is cheaper. Ask
 - Drawing a wire **emits nothing**. It means **then this next**. Saved with the picture. Activate: the **trigger node** becomes the listen (“wake on this named event”). The wire is not the listen. Later, when the event happens, the engine starts at the trigger and **follows the lines**. No extra signal on the wire.
 
 **Do not:** mint a second “provision finished” name; treat Contact created as firm provisioned; treat drawing a line as firing the workflow. Flag **15:43**.
+
+---
+
+## 2026-08-16 23:06 UTC — n8n-shaped Input/Output is editor preview. Live walk does not pipe that packet.
+
+**Why:** Founder: then-this is not all n8n does — n8n shares information on the wire. Our rules node has Input / Data / Output. Explain that on the backend.
+
+**Hard:**
+- On the glass (Hub inspector): **Input** = previous node’s last result (shown). **Output** = this node’s result after you **Run** it in the editor. **Data/params** = how the node is set up; you can drag a field from Input into a param (n8n-shaped).
+- Connecting, in the editor: copies previous output onto next input **for that preview**. If-true / if-false pick which slice.
+- Live run: the wire is still **then next**. A shared bag (firm, people, the event that woke it) — not a JSON packet along the line. Rules in the live run do **not** consume that Input pane and do **not** write that Output pane. They peek a pathway row and continue. Action uses the bag, not the previous node’s output object.
+- So: n8n chrome in the editor. Then-next machine when it actually runs. The panes are not the pipe.
+
+**Do not:** treat Input/Output as the live contract; mint a packet table to look like n8n. Flag **15:43**.
