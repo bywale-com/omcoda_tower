@@ -2,8 +2,8 @@
 
 **Seat:** Product Manager.  
 **Why this file:** law and excerpts for Automations. Entered from the Agents outskirts — not a disconnected menu pick.  
-**Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub as **advanced plant for those modules** (not the app) **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC** · SA package **22:17 UTC** · loops **23:07** · global/local **23:16** · objectives are events; failure → tag **23:35** · list scored **23:38** · enroll + assign **00:02** (C8 · A14).  
-**Status:** 23:07 list scored 23:38; **2** and **6** answered **00:02**. Settled: return and write-back are events; enroll doors named; assign existing or from template (no create-agent here). Left: send, book-in door, queryable lineage. Product face = CT Ant. Hub is not the app. Do not plant.
+**Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub as **advanced plant for those modules** (not the app) **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC** · SA package **22:17 UTC** · loops **23:07** · global/local **23:16** · objectives are events; failure → tag **23:35** · list scored **23:38** · enroll + assign **00:02** (C8 · A14) · blank canvas / chain **01:17**.  
+**Status:** 23:07 list scored 23:38; **2** and **6** answered **00:02**. Automations is a **blank canvas** — you can chain (01:17). Left: send, book-in door, queryable lineage. Product face = CT Ant. Hub is not the app. Do not plant.
 
 ---
 
@@ -91,6 +91,8 @@
 
 > just to keep it simple, you create an agent and then you can assign, you can assign it. So there's no creating agents inside of directly from the automations module. So it only leaves assigning to an existing sequence or creating or creating from a template.
 
+> when a firm is provisioned, right? … when you create a firm, there are things inside of the firm that they need to do … the automations can be so underbuilt, but imagine this workflow. … when a firm is provisioned, just created … the action can be run and audit on the contacts … from the output of that action, you can also notice if X conditions are met … Then another action … we have a condition node. And another action is agents … even the automations is a blank canvas like that. … you can chain multiple campaigns. I'm realizing that you can also chain multiple events in a way like this.
+
 > we can always improve our model, evolve it to be able to like create directly from automations, but just to keep it simple
 
 > [global vs local] that's also dependent on the contacts that are enrolled as well. … that same thing lives inside of automations, as well. … it's just an event, it's not something that starts right now.
@@ -130,6 +132,7 @@
 29. **Lineage is queryable at the minimum.** What created the objective (agent-created or hand-created). The path that agent took from that creation to completion. The completion event. Time it took. Map it correctly. That is querying, not a new module. If it is not queryable, the loop is not real.
 30. **Campaign failure is an event.** Global and local apply (all campaign failures vs **this** campaign). Then an **in-app action**: create a record — even as simple as **ascribe a tag**. Named example: the subscription bell (subscribed / not) **is a tag** created in Automations. Opt-out / unsubscribe is also an event; it assigns that tag. Campaign fails → ascribes that tag. This is one of the first in-app actions named. Do not invent the rest of the action catalog.
 31. **Automations does not create agents.** Create the agent in **Agents**, then **assign**. On the Agents action there are two choices: **assign to an existing sequence**, or **create from a template**. No third choice: author a new agent here. Can evolve later — not now. Plate **A14**. A8 stays prior for select-agent = whole sequence. A12 stays the form. The sequence pick (Opt-in / Re-engagement / Reactivation) is a **radio**. There is **nothing further** — no chevron, no extra configuration. Add-contact scope is the same two as C8 (**Every firm** default, or **Select from**) and also lives on **events**. Global/local of the event is also **dependent on which contacts are enrolled**. Automations still does **not** start a mission right now — that is Agents (C8).
+32. **Automations is a blank canvas, the same way an agent is.** Smallest workflow is still trigger · rule · action. The canvas can **chain**: event → action → condition on that output → another action. Teaching walk: **firm created / provisioned** → **audit the contacts** → **if X** (condition node, previous result) → **agents**. Provisioning a firm is not only creating the firm — things inside still have to happen; that is why this module exists. The If node already named (law 26) can read an **action’s** output, not only a rule’s. Completion of a step is also an event (law 28), so the same chain can be one canvas or two automations listening. Do not collapse those. Do not put this chain on the Agents canvas.
 
 ---
 
@@ -138,19 +141,19 @@
 An **automation** is not an agent sequence. Sketch (20:24 DAG still stands; Hub **Rules** are the interior of the operation to look at):
 
 ```
+BLANK CANVAS  (same idea as a blank sequence — you can chain)
+
 EVENT  (schedule | trigger)
-  → OPERATION   (definite; nothing in the middle changes)
-       RULE  (conditions + constants; GUI or named code; toggles)
-       OUTPUT (classes including required-data listing)
-       → CONDITION / If   (calls from previous results; forks)
-       → result A  → do X     ← exit points (binary / defined binaries)
-       → result B  → do Y
-            one exit: START / SELECT an AGENT
-                 same node: declare the OBJECTIVE
-                 if data request: CREATE THE FORM here
-                     questions = required-data rows
+  e.g. firm created / provisioned
+  → ACTION     (in the application — e.g. audit the contacts)
+       OUTPUT  (previous result)
+  → CONDITION / If   (calls from that output; if X)
+  → ACTION     (agents — assign existing or from a template)
                  selecting an agent = the whole sequence
-                 (campaigns inside; choice limited by the objective)
+
+Smallest still legal: trigger · rule · action
+The rule can sit in the chain wherever the operation is.
+If reads the previous result — rule or action.
 ```
 
 **Inside the operation, look at Rules** (Hub plate — Immigration · Service eligibility):
@@ -183,7 +186,8 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 - Not minting tables. SA extract after this face is specified enough — same discipline as Agents.
 - Not a UI blueprint of the whole DAG. Smallest workflow first: [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md). Mock = generate the image. Do not plant `AntAutomationWorkbench` this pass.
 - Not generating or refining A9/A10 until asked. 21:36 answered the listing question first. A11–A13 mock the listing (Output rows, form bind, lattice **diagram**). A13 is not a screen. Do not plant the editor.
-- Not collapsing inside-the-rule conditions with the If node after the rule.
+- Not collapsing inside-the-rule conditions with the If node after the previous result.
+- Not treating Automations as a one-shot (trigger · rule · action only). That is the smallest. The canvas can chain (law 32).
 - Not inventing an Automations **Settings** modal. Global vs local is the divide (law 27). Not filling an event catalog.
 - Not **creating agents** inside Automations. Assign existing, or from a template (law 31 / A14).
 
@@ -196,10 +200,10 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 3. Form creation: **own graph node** vs **embedded** in the start-agent node (lean: embedded).
 4. When an automation starts a campaign: **settled 00:02 / law 31.** Assign to an **existing** sequence, or **create from a template**. Do not create the agent in Automations.
 5. Word “event” — **settled 23:35 / law 28:** all objectives are events. C2b and Automations triggers are the same grain. Do not split them again.
-6. Catalog of **in-system actions** besides enroll-agent. **Named:** ascribe a tag / create a record on campaign failure (law 30). Do not invent the rest.
+6. Catalog of **in-system actions** besides enroll-agent. **Named:** ascribe a tag / create a record on campaign failure (law 30); **run an audit on the contacts** (01:17). Do not invent the rest.
 7. Seed §5.6 vs Hub-as-built vs the 20:24 definite-middle shape — **do not silently kill any of them**. Hub Rules are what to look at. Alignment is later.
 9. Remaining output classes besides **required data** (law 23). Do not invent a full catalog this stamp. Hub-today vs lattice is A9 / A10.
 10. **Listing of requested data on rule output + form bind** (law 25). Named 21:36 as not stood up in code. Mocked as A11–A12 (chrome) and A13 (diagram). Do not fill the listing in the product this stamp. Do not mint tables.
-11. **Ant plate of the If node after the rule.** Hub has it. Named 22:17. Do not invent the plate in this package.
-12. **Event catalog + global vs local** (law 27). Named: form completion, campaign failure, opt-out / unsubscribe. Do not fill the rest.
+11. **Ant plate of the If node** (after the previous result). Hub has it. Named 22:17. Teaching walk 01:17 would be the plate (provisioned → audit → if X → agents). Do not invent the plate until asked.
+12. **Event catalog + global vs local** (law 27). Named: form completion, campaign failure, opt-out / unsubscribe, **firm created / provisioned** (01:17). Do not fill the rest.
 13. **Queryable lineage** (law 29). Agent-created vs hand-created objective → path → completion → time. Minimum: queryable. Do not mint a table from this sentence.

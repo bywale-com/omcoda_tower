@@ -336,7 +336,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 | Remainder | What we know | What is not drawn |
 |-----------|--------------|-------------------|
-| **If / condition node after the rule** | Hub: `branch` / `if`; reads previous `lastOutput`; true/false (or defined binaries). Founder 22:17: that node is already calling from previous results. A10/A13 diagram the idea. | No Ant plate of opening that node. |
+| **If / condition node after the previous result** | Hub: `branch` / `if`; reads previous `lastOutput`; true/false (or defined binaries). Founder 22:17: that node is already calling from previous results. **01:17:** can follow an **action** (audit), not only a rule. Teaching walk: firm provisioned → audit → if X → agents. A10/A13 diagram the lattice idea. | No Ant plate of that chain / of opening that node. Do not invent until asked. |
 | **Constants as a canvas node** | Hub palette: constant node. Also the right-hand of A2/A4 rows. | No Ant plate of the constant node itself. |
 | **Full operations catalog** | Data request is one. Engagement spoken as a maybe. | Do not invent. |
 | **Full exit points** | Start/select agent is one. | Do not invent. |

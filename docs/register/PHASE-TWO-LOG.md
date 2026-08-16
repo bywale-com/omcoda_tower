@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **01:01:** Add contact scope is **Every firm** (default) or **Select from** (all selected; deselect to pick one). A14 sequence pick is a **radio** — no chevron, nothing further. Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **01:17:** Automations is a **blank canvas** like Agents — you can chain. Teaching walk: firm provisioned → audit contacts → if X → agents. Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -732,6 +732,33 @@ Flag 15:43 untouched.
 **Plates rebuilt** (same filenames, same chrome). Do not regenerate C1–C7 or A1–A13.
 
 **Do not:** plant; invent a third scope; put a chevron on a radio; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 01:17 UTC — Automations is a blank canvas; you can chain
+
+**Why:** Founder: fascinating, perfect that we’re here. Provisioning a firm is not only creating the firm — things inside still have to happen. Automations can be so underbuilt. Then the walk: when a firm is **created / provisioned**, run an **audit on the contacts**. From the **output of that action**, if X conditions are met — a **condition node** — another action: **agents**. Realizing Automations is a **blank canvas the same way an agent is** — you can chain multiple campaigns on a sequence; you can also **chain** this way on Automations.
+
+**What this is (not a new module):**
+- Agents blank canvas = sequence. You can put one campaign, or **chain** campaigns (qualify).
+- Automations blank canvas = the workflow. Smallest is still **trigger · rule · action** (law 15). The canvas can hold **more**: event → action → condition on that output → action.
+- The If node we already named (law 26) is that middle. It **calls from the previous result**. That previous result can be an **action’s output**, not only a rule’s.
+- This is still the brain. It does **not** start a mission until the **agents** action fires (C8 / A14).
+
+**Named this stamp (do not fill the catalogs):**
+- Event: **firm created / provisioned**. Global / local still apply (all provisions vs this one).
+- In-app action: **run an audit on the contacts** (joins ascribe-a-tag as a named in-app action).
+- Then: condition on that output → **agents**.
+
+**Two ways the chain is real (do not collapse):**
+1. **On one canvas** — the walk they said. One automation, nodes down.
+2. **Because completion is an event** (law 28) — audit completed can also be listened to as its own event. Same recursive join. The canvas is how you author it in one place.
+
+**No plate this stamp.** The picture that would lock it is A1’s chrome with four nodes: provisioned → audit → if X → agents. That would also be the first Ant plate of the If node (open item 11). Do not generate until asked.
+
+**Do not:** plant; mint an audit or provision table; fill the event/action catalogs; put this chain on the Agents canvas; overwrite 15:43.
 
 Flag 15:43 untouched.
 
