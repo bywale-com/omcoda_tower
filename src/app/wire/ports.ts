@@ -305,6 +305,8 @@ export type MachineApiPort = {
     name: string;
     target?: string;
     graph?: unknown;
+    audienceScope?: "every_firm" | "select_from";
+    audienceContactIds?: string[];
   }): Promise<{ id: string; status: string; name: string; target: string }>;
   activateWorkflow(
     workflowId: string,
@@ -433,8 +435,15 @@ export type MachineApiPort = {
       conditionClause?: string | null;
       setValue?: string | null;
       ord?: number;
+      sequenceId?: string | null;
+      channelToken?: "text" | "email" | "call" | "form" | null;
     },
   ): Promise<import("./machineTypes").AttemptCriteriaRow>;
+  listSeqChannelRules(sequenceId?: string | null): Promise<import("./machineTypes").SeqChannelRulesRow[]>;
+  saveSeqChannelRules(input: {
+    sequenceId?: string | null;
+    rules: Array<{ token: "text" | "email" | "call"; withinSeconds: number }>;
+  }): Promise<import("./machineTypes").SeqChannelRulesRow[]>;
   listChannelOrder(): Promise<import("./machineTypes").ChannelOwnershipOrderRow[]>;
   upsertChannelOrder(
     order: Array<{ id: string; token?: string; label?: string; ord: number }>,
@@ -516,6 +525,7 @@ export type MachineApiPort = {
     value: unknown;
     source?: string;
     missingFieldKeys?: string[];
+    formRef?: string;
   }): Promise<import("./machineTypes").FactWritebackResult>;
   listFactWritebacks(contactId?: string): Promise<import("./machineTypes").FactWritebackRow[]>;
   listMissingFactSignals(contactId?: string): Promise<import("./machineTypes").MissingFactSignalRow[]>;
@@ -575,6 +585,7 @@ export type MachineApiPort = {
       phone: string | null;
       name: string | null;
       firmName?: string | null;
+      createdAt?: string | null;
     }>
   >;
   /** Platform admin: consultants for Consultant ▾ view-as dropdown. */

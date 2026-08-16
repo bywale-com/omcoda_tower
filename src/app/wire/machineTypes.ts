@@ -21,6 +21,8 @@ export type WorkflowRow = {
   created_at: string;
   updated_at: string;
   status?: WorkflowStatus;
+  audience_scope?: "every_firm" | "select_from";
+  audience_contact_ids?: string[];
 };
 
 export type WorkflowRunRow = {
@@ -121,6 +123,8 @@ export type CampaignHousingRow = {
     override_content: boolean;
     content: Record<string, unknown>;
     variations: CampaignChannelVariationRow[];
+    rules_override?: boolean;
+    within_seconds?: number | null;
     rules: CampaignChannelRuleRow[];
   }>;
 };
@@ -154,6 +158,7 @@ export type CampaignHousingDraft = {
       content?: Record<string, unknown>;
     }>;
     rulesOverride?: boolean;
+    withinSeconds?: number | null;
     rules?: Array<{
       id?: string;
       key?: string;
@@ -238,6 +243,16 @@ export type AttemptCriteriaRow = {
   source: string | null;
   version: number;
   campaign_channel_id?: string | null;
+  sequence_id?: string | null;
+  channel_token?: "text" | "email" | "call" | "form" | null;
+};
+
+export type SeqChannelRulesRow = {
+  id: string;
+  firm_id: string | null;
+  sequence_id: string | null;
+  token: CampaignChannelToken;
+  within_seconds: number;
 };
 
 export type ChannelOwnershipOrderRow = {

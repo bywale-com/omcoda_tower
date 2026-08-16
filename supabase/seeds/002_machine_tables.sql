@@ -112,3 +112,40 @@ ON CONFLICT (firm_id) DO UPDATE SET state = EXCLUDED.state;
 INSERT INTO reference_versions (id, firm_id, key, payload, version) VALUES
   ('ref.crs.cutoff.v1', NULL, 'crs_cutoff', '{"cutoff":480,"program":"CEC"}'::jsonb, 1)
 ON CONFLICT (id) DO UPDATE SET payload = EXCLUDED.payload;
+
+-- 012 people on connected tables. Named IDs. firm-cedar TEXT.
+INSERT INTO seq_channel_rules (id, firm_id, sequence_id, token, within_seconds) VALUES
+  ('scr-global-text',  NULL, NULL, 'text',  1800),
+  ('scr-global-email', NULL, NULL, 'email', 86400),
+  ('scr-global-call',  NULL, NULL, 'call',  1800)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO rule_attempt_criteria
+  (id, firm_id, label, enabled, when_clause, condition_clause, set_value, channel_token, ord, source) VALUES
+  ('acr-text-not-opened',     NULL, 'not opened',       true,  'channel=text',  'not opened',       'escalate_forward', 'text',  0, 'C6'),
+  ('acr-text-not-delivered',  NULL, 'not delivered',    true,  'channel=text',  'not delivered',    'escalate_forward', 'text',  1, 'C6'),
+  ('acr-email-not-opened',    NULL, 'not opened',       true,  'channel=email', 'not opened',       'escalate_forward', 'email', 0, 'C6'),
+  ('acr-email-link',          NULL, 'link not clicked', true,  'channel=email', 'link not clicked', 'escalate_forward', 'email', 1, 'C6'),
+  ('acr-call-not-answered',   NULL, 'not answered',     true,  'channel=call',  'not answered',     'escalate_forward', 'call',  0, 'C6'),
+  ('acr-call-not-completed',  NULL, 'not completed',    true,  'channel=call',  'not completed',    'escalate_forward', 'call',  1, 'C6')
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO contact_records (id, firm_id, name, email, phone) VALUES
+  ('cr-cedar-1', 'firm-cedar', 'Ana Ruiz', 'ana.ruiz@example.com', NULL),
+  ('cr-cedar-2', 'firm-cedar', 'Jon Hale', 'jon.hale@example.com', NULL)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO enrollment (id, firm_id, contact_id, agent_ref, sequence_id, campaign_id)
+SELECT v.id, v.firm_id, v.contact_id, v.agent_ref, v.sequence_id, v.campaign_id
+FROM (VALUES
+  ('enr-cedar-1', 'firm-cedar', 'cr-cedar-1', 'tpl.optin_launch.v1', 'tpl.optin_launch.v1', 'camp.optin.window'),
+  ('enr-cedar-2', 'firm-cedar', 'cr-cedar-2', 'tpl.optin_launch.v1', 'tpl.optin_launch.v1', 'camp.optin.window')
+) AS v(id, firm_id, contact_id, agent_ref, sequence_id, campaign_id)
+WHERE EXISTS (SELECT 1 FROM campaign c WHERE c.id = v.campaign_id)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO engagement_records (id, firm_id, contact_id, event_kind, payload) VALUES
+  ('eng-cedar-1', 'firm-cedar', 'cr-cedar-1', 'sent',   '{"channel":"email"}'::jsonb),
+  ('eng-cedar-2', 'firm-cedar', 'cr-cedar-1', 'opened', '{"channel":"email"}'::jsonb),
+  ('eng-cedar-3', 'firm-cedar', 'cr-cedar-2', 'sent',   '{"channel":"text"}'::jsonb)
+ON CONFLICT (id) DO NOTHING;

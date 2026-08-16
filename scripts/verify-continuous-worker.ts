@@ -110,7 +110,7 @@ try {
       owner_channel: string;
       fired_criteria: Record<string, string>;
     }>(`SELECT owner_channel, fired_criteria FROM active_attempts WHERE id=$1`, [attemptId]);
-    firedAt = row.rows[0]?.fired_criteria?.["acr-text"];
+    firedAt = row.rows[0]?.fired_criteria?.["acr-text-not-opened"];
     if (row.rows[0]?.owner_channel === "email" && firedAt) {
       escalated = true;
       break;
@@ -124,7 +124,7 @@ try {
       `attempt not escalated within window; logs=${logs.slice(-800)}`,
     );
   } else {
-    ok("unattended-escalate", `owner=email fired_criteria.acr-text=${firedAt}`);
+    ok("unattended-escalate", `owner=email fired_criteria.acr-text-not-opened=${firedAt}`);
   }
 
   // Wait for at least one more tick; fired_criteria must stay single-valued
@@ -133,7 +133,7 @@ try {
     owner_channel: string;
     fired_criteria: Record<string, string>;
   }>(`SELECT owner_channel, fired_criteria FROM active_attempts WHERE id=$1`, [attemptId]);
-  const again = after.rows[0]?.fired_criteria?.["acr-text"];
+  const again = after.rows[0]?.fired_criteria?.["acr-text-not-opened"];
   if (!escalated) {
     // already failed
   } else if (again !== firedAt) {

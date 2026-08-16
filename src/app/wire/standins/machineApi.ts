@@ -19,6 +19,7 @@ import type {
   MotionPrecedenceRow,
   ProvisionResult,
   ReferenceVersionRow,
+  SeqChannelRulesRow,
   SignalRow,
   WorkflowRow,
   WorkflowRunRow,
@@ -39,7 +40,30 @@ const eligibilityPipeline = new Map<string, EligibilityPipelineRow>(
 
 const workflows = new Map<string, WorkflowRow & { status: "draft" | "active" | "paused" }>();
 const runs = new Map<string, WorkflowRunRow>();
-const enrollments: EnrollmentRow[] = [];
+const enrollments: EnrollmentRow[] = [
+  {
+    id: "enr-cedar-1",
+    firm_id: "firm-cedar",
+    contact_id: "cr-cedar-1",
+    agent_ref: "tpl.optin_launch.v1",
+    sequence_id: "tpl.optin_launch.v1",
+    campaign_id: "camp.optin.window",
+    workflow_run_id: null,
+    payload: { source: "seed" },
+    enrolled_at: "2026-08-10T00:00:00.000Z",
+  },
+  {
+    id: "enr-cedar-2",
+    firm_id: "firm-cedar",
+    contact_id: "cr-cedar-2",
+    agent_ref: "tpl.optin_launch.v1",
+    sequence_id: "tpl.optin_launch.v1",
+    campaign_id: "camp.optin.window",
+    workflow_run_id: null,
+    payload: { source: "seed" },
+    enrolled_at: "2026-08-10T00:00:00.000Z",
+  },
+];
 const eligibilityResults: EligibilityResultRow[] = [];
 const signals: SignalRow[] = [];
 const motionDecisions: MotionDecisionRow[] = [];
@@ -137,6 +161,114 @@ const attemptCriteria = new Map<string, AttemptCriteriaRow>([
       version: 1,
     },
   ],
+  [
+    "acr-text-not-opened",
+    {
+      id: "acr-text-not-opened",
+      firm_id: null,
+      label: "not opened",
+      enabled: true,
+      when_clause: "channel=text",
+      condition_clause: "not opened",
+      set_value: "escalate_forward",
+      threshold: null,
+      threshold_unit: null,
+      ord: 10,
+      source: "C6",
+      version: 1,
+      channel_token: "text",
+    },
+  ],
+  [
+    "acr-text-not-delivered",
+    {
+      id: "acr-text-not-delivered",
+      firm_id: null,
+      label: "not delivered",
+      enabled: true,
+      when_clause: "channel=text",
+      condition_clause: "not delivered",
+      set_value: "escalate_forward",
+      threshold: null,
+      threshold_unit: null,
+      ord: 11,
+      source: "C6",
+      version: 1,
+      channel_token: "text",
+    },
+  ],
+  [
+    "acr-email-not-opened",
+    {
+      id: "acr-email-not-opened",
+      firm_id: null,
+      label: "not opened",
+      enabled: true,
+      when_clause: "channel=email",
+      condition_clause: "not opened",
+      set_value: "escalate_forward",
+      threshold: null,
+      threshold_unit: null,
+      ord: 12,
+      source: "C6",
+      version: 1,
+      channel_token: "email",
+    },
+  ],
+  [
+    "acr-email-link",
+    {
+      id: "acr-email-link",
+      firm_id: null,
+      label: "link not clicked",
+      enabled: true,
+      when_clause: "channel=email",
+      condition_clause: "link not clicked",
+      set_value: "escalate_forward",
+      threshold: null,
+      threshold_unit: null,
+      ord: 13,
+      source: "C6",
+      version: 1,
+      channel_token: "email",
+    },
+  ],
+  [
+    "acr-call-not-answered",
+    {
+      id: "acr-call-not-answered",
+      firm_id: null,
+      label: "not answered",
+      enabled: true,
+      when_clause: "channel=call",
+      condition_clause: "not answered",
+      set_value: "escalate_forward",
+      threshold: null,
+      threshold_unit: null,
+      ord: 14,
+      source: "C6",
+      version: 1,
+      channel_token: "call",
+    },
+  ],
+  [
+    "acr-call-not-completed",
+    {
+      id: "acr-call-not-completed",
+      firm_id: null,
+      label: "not completed",
+      enabled: true,
+      when_clause: "channel=call",
+      condition_clause: "not completed",
+      set_value: "escalate_forward",
+      threshold: null,
+      threshold_unit: null,
+      ord: 15,
+      source: "C6",
+      version: 1,
+      channel_token: "call",
+    },
+  ],
 ]);
 
 const channelOrder = new Map<string, ChannelOwnershipOrderRow>([
@@ -230,10 +362,49 @@ const bookAuditRuns = new Map<
     finished_at: string | null;
   }
 >();
+const seqChannelRules = new Map<string, SeqChannelRulesRow>([
+  ["scr-global-text", { id: "scr-global-text", firm_id: null, sequence_id: null, token: "text", within_seconds: 1800 }],
+  ["scr-global-email", { id: "scr-global-email", firm_id: null, sequence_id: null, token: "email", within_seconds: 86400 }],
+  ["scr-global-call", { id: "scr-global-call", firm_id: null, sequence_id: null, token: "call", within_seconds: 1800 }],
+]);
+
 const bookContacts = new Map<
   string,
-  { id: string; firmId: string; email: string | null; phone: string | null; name: string | null }
->();
+  {
+    id: string;
+    firmId: string;
+    email: string | null;
+    phone: string | null;
+    name: string | null;
+    firmName?: string | null;
+    createdAt?: string;
+  }
+>([
+  [
+    "cr-cedar-1",
+    {
+      id: "cr-cedar-1",
+      firmId: "firm-cedar",
+      email: "ana.ruiz@example.com",
+      phone: null,
+      name: "Ana Ruiz",
+      firmName: "Cedar Immigration",
+      createdAt: "2026-08-10T00:00:00.000Z",
+    },
+  ],
+  [
+    "cr-cedar-2",
+    {
+      id: "cr-cedar-2",
+      firmId: "firm-cedar",
+      email: "jon.hale@example.com",
+      phone: null,
+      name: "Jon Hale",
+      firmName: "Cedar Immigration",
+      createdAt: "2026-08-10T00:00:00.000Z",
+    },
+  ],
+]);
 const bookVerdicts = new Map<string, string>();
 const bookSequenceReady = new Map<string, boolean>();
 
@@ -354,12 +525,28 @@ const standInMeetings: Array<{
 
 const engagementRecordsLocal: import("../machineTypes").EngagementRecordRow[] = [
   {
-    id: "eng-local-1",
-    firm_id: standInFirm(),
-    contact_id: "sarah",
-    event_kind: "email_opened",
-    payload: { step: 2 },
-    created_at: now(),
+    id: "eng-cedar-1",
+    firm_id: "firm-cedar",
+    contact_id: "cr-cedar-1",
+    event_kind: "sent",
+    payload: { channel: "email" },
+    created_at: "2026-08-10T00:00:00.000Z",
+  },
+  {
+    id: "eng-cedar-2",
+    firm_id: "firm-cedar",
+    contact_id: "cr-cedar-1",
+    event_kind: "opened",
+    payload: { channel: "email" },
+    created_at: "2026-08-10T00:05:00.000Z",
+  },
+  {
+    id: "eng-cedar-3",
+    firm_id: "firm-cedar",
+    contact_id: "cr-cedar-2",
+    event_kind: "sent",
+    payload: { channel: "text" },
+    created_at: "2026-08-10T00:10:00.000Z",
   },
 ];
 
@@ -429,6 +616,18 @@ function standInFirm(): string {
   }
 }
 
+runs.set("run-cedar-1", {
+  id: "run-cedar-1",
+  workflow_id: "wf-optin-launch",
+  firm_id: "firm-cedar",
+  status: "success",
+  trigger_label: "event:audit.completed",
+  node_status: {},
+  counts: {},
+  started_at: "2026-08-10T00:00:00.000Z",
+  finished_at: "2026-08-10T00:00:01.000Z",
+});
+
 export const standInMachineApi: MachineApiPort = {
   tag: "stand-in",
 
@@ -451,6 +650,8 @@ export const standInMachineApi: MachineApiPort = {
       created_at: now(),
       updated_at: now(),
       status: "draft" as const,
+      audience_scope: input.audienceScope === "select_from" ? "select_from" : (workflows.get(id)?.audience_scope ?? "every_firm"),
+      audience_contact_ids: input.audienceContactIds ?? workflows.get(id)?.audience_contact_ids ?? [],
     };
     workflows.set(id, row);
     return { id, status: "draft", name: row.name, target: row.target };
@@ -686,6 +887,11 @@ export const standInMachineApi: MachineApiPort = {
       template_id: input.templateId,
       overrides: [],
       variable_bindings: input.variableBindings ?? {},
+      is_default: input.isDefault ?? true,
+      override_attempt: Boolean(input.overrideAttempt),
+      override_channel: Boolean(input.overrideChannel),
+      override_content: Boolean(input.overrideContent),
+      override_sequencing: Boolean(input.overrideSequencing),
     });
     return { id, sequenceClass: input.sequenceClass, templateId: input.templateId };
   },
@@ -733,15 +939,19 @@ export const standInMachineApi: MachineApiPort = {
           override_content: Boolean(ch.overrideContent),
           content: variations[0]?.content ?? ch.content ?? {},
           variations,
+          rules_override: Boolean(ch.rulesOverride),
+          within_seconds: ch.withinSeconds ?? null,
           rules: ch.rulesOverride
-            ? (ch.rules ?? []).map((r, ri) => ({
+            ? (ch.rules ?? [])
+                .filter((r) => r.key !== "within_time")
+                .map((r, ri) => ({
                 id: r.id ?? `acr-local-${index}-${ch.token}-${r.key ?? ri}`,
                 label: r.label ?? `${ch.token} · ${r.key ?? ri}`,
                 enabled: Boolean(r.enabled),
                 when_clause: `channel=${ch.token}`,
                 condition_clause: r.condition ?? null,
-                threshold: r.threshold ?? null,
-                threshold_unit: r.thresholdUnit ?? null,
+                threshold: null,
+                threshold_unit: null,
                 ord: r.ord ?? ri,
               }))
             : [],
@@ -841,6 +1051,8 @@ export const standInMachineApi: MachineApiPort = {
       ord: patch.ord ?? prev?.ord ?? 0,
       source: prev?.source ?? "c6",
       version: (prev?.version ?? 0) + 1,
+      sequence_id: patch.sequenceId !== undefined ? patch.sequenceId : (prev?.sequence_id ?? null),
+      channel_token: patch.channelToken !== undefined ? patch.channelToken : (prev?.channel_token ?? null),
     };
     attemptCriteria.set(id, next);
     return next;
@@ -866,6 +1078,35 @@ export const standInMachineApi: MachineApiPort = {
     return [...channelOrder.values()].sort((a, b) => a.ord - b.ord);
   },
 
+  async listSeqChannelRules(sequenceId) {
+    const seq = sequenceId?.trim() || null;
+    const rows = [...seqChannelRules.values()].filter((row) =>
+      seq ? row.sequence_id === seq : row.sequence_id == null && row.firm_id == null,
+    );
+    if (seq && !rows.length) {
+      return [...seqChannelRules.values()].filter((row) => row.sequence_id == null && row.firm_id == null);
+    }
+    return rows;
+  },
+
+  async saveSeqChannelRules(input) {
+    const sequenceId = input.sequenceId?.trim() || null;
+    const out: SeqChannelRulesRow[] = [];
+    for (const rule of input.rules) {
+      const id = sequenceId ? `scr-seq-${sequenceId}-${rule.token}` : `scr-global-${rule.token}`;
+      const row: SeqChannelRulesRow = {
+        id,
+        firm_id: sequenceId ? standInFirm() : null,
+        sequence_id: sequenceId,
+        token: rule.token,
+        within_seconds: rule.withinSeconds,
+      };
+      seqChannelRules.set(id, row);
+      out.push(row);
+    }
+    return out;
+  },
+
   async fireEvent(input) {
     const fired: unknown[] = [];
     for (const w of workflows.values()) {
@@ -881,6 +1122,24 @@ export const standInMachineApi: MachineApiPort = {
           n.data?.triggerEvent === input.eventName,
       );
       if (!trig) continue;
+      const grain = String(trig.data?.grain ?? "global") === "local" ? "local" : "global";
+      if (grain === "local") {
+        const localRef = String(trig.data?.localRef ?? trig.data?.local_ref ?? "");
+        const writeRef = String(
+          input.payload?.form_ref ??
+            input.payload?.campaign_id ??
+            input.payload?.sequence_id ??
+            input.payload?.id ??
+            "",
+        );
+        if (!localRef || writeRef !== localRef) continue;
+      }
+      const audienceScope = w.audience_scope === "select_from" ? "select_from" : "every_firm";
+      if (audienceScope === "select_from") {
+        const audience = w.audience_contact_ids ?? [];
+        const ids = input.contactIds?.length ? input.contactIds.filter((id) => audience.includes(id)) : audience;
+        if (!ids.length) continue;
+      }
       const started = await standInMachineApi.startRun(w.id, `event:${input.eventName}`);
       fired.push({ workflowId: w.id, runId: started.id, enrollments: started.enrollments?.length ?? 0 });
     }
@@ -1126,14 +1385,17 @@ export const standInMachineApi: MachineApiPort = {
 
   async listContactRecords() {
     const f = standInFirm();
-    return [...bookContacts.values()].filter((c) => c.firmId === f).map((c) => ({
-      id: c.id,
-      firmId: c.firmId,
-      email: c.email ?? null,
-      phone: c.phone ?? null,
-      name: c.name ?? null,
-      firmName: "Harbor RCIC",
-    }));
+    return [...bookContacts.values()]
+      .filter((c) => c.firmId === f || c.firmId === "firm-cedar")
+      .map((c) => ({
+        id: c.id,
+        firmId: c.firmId,
+        email: c.email ?? null,
+        phone: c.phone ?? null,
+        name: c.name ?? null,
+        firmName: c.firmName ?? (c.firmId === "firm-cedar" ? "Cedar Immigration" : "Harbor RCIC"),
+        createdAt: c.createdAt ?? now(),
+      }));
   },
 
   async provisionFirm(input) {

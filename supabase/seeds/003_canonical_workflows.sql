@@ -104,3 +104,7 @@ ON CONFLICT (workflow_id, node_id) DO UPDATE SET
   webhook_id = EXCLUDED.webhook_id,
   enabled = EXCLUDED.enabled,
   updated_at = now();
+
+INSERT INTO workflow_run (id, workflow_id, firm_id, status, trigger_label) VALUES
+  ('run-cedar-1', 'wf-optin-launch', 'firm-cedar', 'success', 'event:audit.completed')
+ON CONFLICT (id) DO NOTHING;

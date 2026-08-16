@@ -8,23 +8,60 @@ export type ChannelRuleToggle = {
   condition: string;
 };
 
+/** Medium conditions only. Within time is one field per channel, not a toggle. */
 export const CHANNEL_RULE_TOGGLES: Record<ChannelId, ChannelRuleToggle[]> = {
   text: [
     { key: "not_opened", label: "not opened", condition: "not opened" },
     { key: "not_delivered", label: "not delivered", condition: "not delivered" },
-    { key: "within_time", label: "within time", condition: "within time" },
   ],
   email: [
     { key: "not_opened", label: "not opened", condition: "not opened" },
     { key: "link_not_clicked", label: "link not clicked", condition: "link not clicked" },
-    { key: "within_time", label: "within time", condition: "within time" },
   ],
   call: [
     { key: "not_answered", label: "not answered", condition: "not answered" },
     { key: "not_completed", label: "not completed", condition: "not completed" },
-    { key: "within_time", label: "within time", condition: "within time" },
   ],
 };
+
+export const DEFAULT_WITHIN_SECONDS: Record<ChannelId, number> = {
+  text: 1800,
+  email: 86400,
+  call: 1800,
+};
+
+export const WITHIN_UNIT_OPTIONS = [
+  { value: "minutes", label: "minutes" },
+  { value: "hours", label: "hours" },
+  { value: "days", label: "days" },
+];
+
+export function partsToSeconds(value: number | null | undefined, unit: string | null | undefined): number {
+  const n = typeof value === "number" && Number.isFinite(value) ? value : 30;
+  const u = (unit ?? "minutes").toLowerCase();
+  if (u.startsWith("hour")) return n * 3600;
+  if (u.startsWith("day")) return n * 86400;
+  return n * 60;
+}
+
+export function secondsToParts(seconds: number | null | undefined): { value: number; unit: string } {
+  const s = typeof seconds === "number" && Number.isFinite(seconds) ? seconds : 1800;
+  if (s % 86400 === 0 && s >= 86400) return { value: s / 86400, unit: "days" };
+  if (s % 3600 === 0 && s >= 3600) return { value: s / 3600, unit: "hours" };
+  return { value: Math.max(1, Math.round(s / 60)), unit: "minutes" };
+}
+
+/** Seeded C6 ids. Email link uses acr-email-link. */
+export function globalCriteriaId(token: ChannelId, key: string): string {
+  if (token === "email" && key === "link_not_clicked") return "acr-email-link";
+  return `acr-${token}-${key}`;
+}
+
+export function sequenceCriteriaId(sequenceId: string, token: ChannelId, key: string): string {
+  return `acr-seq-${sequenceId}-${token}-${key}`;
+}
+
+export const LEFTOVER_CRITERIA_IDS = new Set(["acr-text", "acr-email", "acr-form", "acr-sms-nonreply"]);
 
 export const CHANNEL_LABEL: Record<ChannelId, string> = {
   text: "Text",
@@ -41,8 +78,9 @@ export type ChannelRulesDraft = {
   withinUnit: string | null;
 };
 
-export function emptyChannelRules(): ChannelRulesDraft {
-  return { override: false, toggles: {}, withinTime: 30, withinUnit: "minutes" };
+export function emptyChannelRules(token?: ChannelId): ChannelRulesDraft {
+  const parts = secondsToParts(token ? DEFAULT_WITHIN_SECONDS[token] : 1800);
+  return { override: false, toggles: {}, withinTime: parts.value, withinUnit: parts.unit };
 }
 
 export type ChannelVariationDraft = {

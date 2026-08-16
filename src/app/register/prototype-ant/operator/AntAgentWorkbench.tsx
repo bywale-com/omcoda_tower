@@ -3,13 +3,10 @@ import {
   Alert,
   Button,
   Card,
-  Checkbox,
   Empty,
   Input,
   InputNumber,
   List,
-  Modal,
-  Radio,
   Select,
   Space,
   Switch,
@@ -59,8 +56,23 @@ import type {
 import { useAuth } from "../../../auth/AuthContext";
 import { wirePorts } from "../../../wire/registry";
 import { AntAgentCanvas, draftsToHousing, housingToDrafts, type CampaignDraft } from "./AntAgentCanvas";
-import { channelFromPayload, DISTANCE_OPTIONS, eventKindProse } from "./channelRuleGrain";
-import { MODAL_SCROLL } from "./modalScroll";
+import {
+  ALL_CHANNELS,
+  CHANNEL_RULE_TOGGLES,
+  DEFAULT_WITHIN_SECONDS,
+  DISTANCE_OPTIONS,
+  emptyChannelRules,
+  eventKindProse,
+  channelFromPayload,
+  LEFTOVER_CRITERIA_IDS,
+  partsToSeconds,
+  secondsToParts,
+  sequenceCriteriaId,
+  type ChannelId,
+  type ChannelRulesDraft,
+} from "./channelRuleGrain";
+import { ChannelRulesFamilies } from "./ChannelRulesFields";
+import { ContactPickModal } from "./ContactPickModal";
 
 function statusColor(status: AgentDefinition["status"]) {
   if (status === "running") return "processing";
@@ -701,7 +713,9 @@ export function AntAgentWorkbench({
   const [addingContact, setAddingContact] = useState(false);
   const [addContactOpen, setAddContactOpen] = useState(false);
   const [enrollScope, setEnrollScope] = useState<"every_firm" | "select_from">("every_firm");
-  const [bookContacts, setBookContacts] = useState<Array<{ id: string; name: string | null; email: string | null }>>([]);
+  const [bookContacts, setBookContacts] = useState<
+    Array<{ id: string; name: string | null; email: string | null; firmName?: string | null }>
+  >([]);
   const [selectedContactIds, setSelectedContactIds] = useState<string[]>([]);
   const [overrideAttempt, setOverrideAttempt] = useState(false);
   const [overrideChannel, setOverrideChannel] = useState(false);
@@ -715,6 +729,11 @@ export function AntAgentWorkbench({
   >([]);
   const [attemptCount, setAttemptCount] = useState(3);
   const [waitSeconds, setWaitSeconds] = useState(86400);
+  const [seqRules, setSeqRules] = useState<Record<ChannelId, ChannelRulesDraft>>({
+    text: emptyChannelRules("text"),
+    email: emptyChannelRules("email"),
+    call: emptyChannelRules("call"),
+  });
   const [contactQuery, setContactQuery] = useState("");
   const [activityQuery, setActivityQuery] = useState("");
   const linkedAutomations = useMemo(() => getLinkedAutomationSummaries(agent), [agent]);
@@ -751,6 +770,45 @@ export function AntAgentWorkbench({
       .then(({ cycle }) => {
         setAttemptCount(cycle.attempt_count ?? 3);
         setWaitSeconds(cycle.wait_after_last_failed_seconds ?? 86400);
+      })
+      .catch(() => undefined);
+    void Promise.all([
+      wirePorts.machineApi.listSeqChannelRules(binding.templateId),
+      wirePorts.machineApi.listAttemptCriteria(),
+    ])
+      .then(([timers, criteria]) => {
+        const byToken = Object.fromEntries(timers.map((row) => [row.token, row.within_seconds])) as Record<
+          string,
+          number
+        >;
+        const next = {} as Record<ChannelId, ChannelRulesDraft>;
+        for (const token of ALL_CHANNELS) {
+          const draft = emptyChannelRules(token);
+          const parts = secondsToParts(byToken[token] ?? DEFAULT_WITHIN_SECONDS[token]);
+          draft.withinTime = parts.value;
+          draft.withinUnit = parts.unit;
+          const scopedSeq = criteria.filter((row) => {
+            if (LEFTOVER_CRITERIA_IDS.has(row.id)) return false;
+            if (row.campaign_channel_id) return false;
+            return row.sequence_id === binding.templateId && (!row.channel_token || row.channel_token === token);
+          });
+          const scopedGlobal = criteria.filter((row) => {
+            if (LEFTOVER_CRITERIA_IDS.has(row.id)) return false;
+            if (row.campaign_channel_id || row.sequence_id) return false;
+            return row.channel_token === token || row.id.startsWith(`acr-${token}-`) || row.id === "acr-email-link";
+          });
+          const scoped = scopedSeq.length ? scopedSeq : scopedGlobal;
+          for (const spec of CHANNEL_RULE_TOGGLES[token]) {
+            const hit = scoped.find(
+              (row) =>
+                row.id === sequenceCriteriaId(binding.templateId, token, spec.key) ||
+                (row.condition_clause ?? "").toLowerCase().includes(spec.condition),
+            );
+            draft.toggles[spec.key] = hit ? hit.enabled : false;
+          }
+          next[token] = draft;
+        }
+        setSeqRules(next);
       })
       .catch(() => undefined);
   }, [agentId]);
@@ -826,6 +884,34 @@ export function AntAgentWorkbench({
           attemptCount,
           waitAfterLastFailedSeconds: waitSeconds,
         });
+      }
+      if (overrideChannel) {
+        await wirePorts.machineApi.saveSeqChannelRules({
+          sequenceId: binding.templateId,
+          rules: ALL_CHANNELS.map((token) => ({
+            token,
+            withinSeconds: partsToSeconds(seqRules[token].withinTime, seqRules[token].withinUnit),
+          })),
+        });
+        let ord = 20;
+        for (const token of ALL_CHANNELS) {
+          const family = seqRules[token];
+          for (const spec of CHANNEL_RULE_TOGGLES[token]) {
+            await wirePorts.machineApi.upsertAttemptCriteria(
+              sequenceCriteriaId(binding.templateId, token, spec.key),
+              {
+                label: spec.label,
+                enabled: Boolean(family.toggles[spec.key]),
+                whenClause: `channel=${token}`,
+                conditionClause: spec.condition,
+                sequenceId: binding.templateId,
+                channelToken: token,
+                ord,
+              },
+            );
+            ord += 1;
+          }
+        }
       }
       setCampaigns(housingToDrafts(saved.campaigns));
       const note = `Saved ${saved.campaigns.length} campaigns → ${binding.templateId}`;
@@ -913,7 +999,9 @@ export function AntAgentWorkbench({
               icon={<UserAddOutlined />}
               onClick={() => {
                 void wirePorts.machineApi.listContactRecords().then((rows) => {
-                  setBookContacts(rows.map((r) => ({ id: r.id, name: r.name, email: r.email })));
+                  setBookContacts(
+                    rows.map((r) => ({ id: r.id, name: r.name, email: r.email, firmName: r.firmName })),
+                  );
                   setSelectedContactIds(rows.map((r) => r.id));
                   setEnrollScope("every_firm");
                   setAddContactOpen(true);
@@ -951,7 +1039,7 @@ export function AntAgentWorkbench({
                 <Typography.Paragraph type="secondary">
                   This sequence — inherits from Agents (global) unless you override.
                 </Typography.Paragraph>
-                <Space direction="vertical" size={16} style={{ width: "100%", maxWidth: 560 }}>
+                <Space direction="vertical" size={16} style={{ width: "100%", maxWidth: 640 }}>
                   <div>
                     <Space style={{ justifyContent: "space-between", width: "100%" }}>
                       <Typography.Text strong>1. Attempt rules</Typography.Text>
@@ -992,9 +1080,13 @@ export function AntAgentWorkbench({
                         <Switch checked={overrideChannel} onChange={setOverrideChannel} />
                       </Space>
                     </Space>
-                    <Typography.Paragraph type="secondary" style={{ marginTop: 8, marginBottom: 0 }}>
-                      Sequence defaults per medium. The canvas channel-rules node is this campaign’s this channel.
-                    </Typography.Paragraph>
+                    <div style={{ marginTop: 8 }}>
+                      <ChannelRulesFamilies
+                        rules={seqRules}
+                        disabled={!overrideChannel}
+                        onChange={(token, next) => setSeqRules((current) => ({ ...current, [token]: next }))}
+                      />
+                    </div>
                   </div>
                   <div>
                     <Space style={{ justifyContent: "space-between", width: "100%" }}>
@@ -1116,15 +1208,20 @@ export function AntAgentWorkbench({
         style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}
         tabBarStyle={{ margin: 0, paddingInline: 16, flexShrink: 0 }}
         styles={{
-          content: { flex: 1, minHeight: 0, overflow: "hidden" },
+          content: { flex: 1, minHeight: 0, overflow: "auto", height: "100%" },
         }}
       />
-      <Modal
-        title="Add contact"
+      <ContactPickModal
         open={addContactOpen}
+        title="Add contact"
         confirmLoading={addingContact}
+        scope={enrollScope}
+        contacts={bookContacts}
+        selectedIds={selectedContactIds}
+        everyFirmHint="Enrolls every contact_records row (all TEXT firm ids). Halt still per enrollment firm. Starts the mission now."
+        onScope={setEnrollScope}
+        onSelectedIds={setSelectedContactIds}
         onCancel={() => setAddContactOpen(false)}
-        {...MODAL_SCROLL}
         onOk={() => {
           const binding = AGENT_TEMPLATE_BINDING[agentId];
           if (!binding) {
@@ -1147,31 +1244,7 @@ export function AntAgentWorkbench({
             .catch((err) => message.error(`Enroll failed: ${String(err)}`))
             .finally(() => setAddingContact(false));
         }}
-      >
-        <Radio.Group
-          value={enrollScope}
-          onChange={(event) => setEnrollScope(event.target.value)}
-          style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}
-        >
-          <Radio value="every_firm">Every firm</Radio>
-          <Radio value="select_from">Select from</Radio>
-        </Radio.Group>
-        {enrollScope === "select_from" ? (
-          <Checkbox.Group
-            value={selectedContactIds}
-            onChange={(ids) => setSelectedContactIds(ids as string[])}
-            style={{ display: "flex", flexDirection: "column", gap: 6 }}
-            options={bookContacts.map((row) => ({
-              value: row.id,
-              label: row.name || row.email || row.id,
-            }))}
-          />
-        ) : (
-          <Typography.Text type="secondary">
-            Enrolls every contact_records row (all TEXT firm ids). Halt still per enrollment firm.
-          </Typography.Text>
-        )}
-      </Modal>
+      />
     </div>
   );
 }

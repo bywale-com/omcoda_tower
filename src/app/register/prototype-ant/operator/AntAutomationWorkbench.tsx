@@ -24,8 +24,10 @@ import {
   Form,
   Input,
   List,
+  Radio,
   Select,
   Space,
+  Table,
   Tabs,
   Tag,
   Typography,
@@ -40,12 +42,14 @@ import {
   PlayCircleOutlined,
   SaveOutlined,
   ThunderboltOutlined,
+  UserAddOutlined,
 } from "@ant-design/icons";
 import { FilterOutlined, PlayCircleOutlined as ActionGlyph } from "@ant-design/icons";
 import { useAutomations } from "../../../context/AutomationContext";
 import {
   WORKFLOW_CONSTANT_PACK_OPTIONS,
   WORKFLOW_EVENT_CATALOG,
+  WORKFLOW_EVENTS_WITH_LOCAL,
   WORKFLOW_PALETTE_BLOCKS,
   appendNodeAfter,
   createNodeFromBlock,
@@ -65,6 +69,7 @@ import { ActionAgentsModal, ActionInAppModal, ActionKindModal } from "./automati
 import { IfPlateModal } from "./automationPlates/IfPlateModal";
 import { PlateInsertEdge } from "./automationPlates/PlateInsertEdge";
 import { PLATE_NODE_TAG } from "./automationPlates/plateChrome";
+import { ContactPickModal } from "./ContactPickModal";
 import { RulePlateModal } from "./automationPlates/RulePlateModal";
 
 type WorkflowFlowNode = Node<WorkflowNodeData, WorkflowNodeType>;
@@ -210,32 +215,83 @@ function patchNodeData(
 function NodeConfigFields({
   node,
   onPatch,
+  localOptions,
 }: {
   node: WorkflowFlowNode;
   onPatch: (patch: Partial<WorkflowNodeData>) => void;
+  localOptions?: Array<{ value: string; label: string }>;
 }) {
   const kind = node.type ?? "action";
   const data = node.data;
 
   if (kind === "trigger") {
     if (data.triggerKind === "event") {
+      const event = (data.triggerEvent ?? "eligibility.changed") as WorkflowTriggerEvent;
+      const allowsLocal = WORKFLOW_EVENTS_WITH_LOCAL.has(event);
+      const grain = allowsLocal && data.grain === "local" ? "local" : "global";
       return (
-        <Form.Item label="Machine event (workflow_trigger.event_name)">
-          <Select
-            value={data.triggerEvent ?? "eligibility.changed"}
-            options={WORKFLOW_EVENT_CATALOG.map((event) => ({
-              value: event.id,
-              label: `${event.label} · ${event.id}`,
-            }))}
-            onChange={(value: WorkflowTriggerEvent) =>
-              onPatch({
-                triggerEvent: value,
-                configured: true,
-                enrollmentHint: `Fires on ${value}`,
-              })
-            }
-          />
-        </Form.Item>
+        <>
+          <Form.Item label="Machine event (workflow_trigger.event_name)">
+            <Select
+              value={event}
+              options={WORKFLOW_EVENT_CATALOG.map((row) => ({
+                value: row.id,
+                label: `${row.label} · ${row.id}`,
+              }))}
+              onChange={(value: WorkflowTriggerEvent) =>
+                onPatch({
+                  triggerEvent: value,
+                  configured: true,
+                  enrollmentHint: `Fires on ${value}`,
+                  grain: WORKFLOW_EVENTS_WITH_LOCAL.has(value) ? data.grain ?? "global" : "global",
+                  localRef: WORKFLOW_EVENTS_WITH_LOCAL.has(value) ? data.localRef : undefined,
+                })
+              }
+            />
+          </Form.Item>
+          {allowsLocal ? (
+            <>
+              <Form.Item label="Grain">
+                <Radio.Group
+                  value={grain}
+                  onChange={(eventChange) =>
+                    onPatch({
+                      grain: eventChange.target.value,
+                      localRef: eventChange.target.value === "global" ? undefined : data.localRef,
+                    })
+                  }
+                >
+                  <Radio.Button value="global">Global</Radio.Button>
+                  <Radio.Button value="local">Local</Radio.Button>
+                </Radio.Group>
+              </Form.Item>
+              <Form.Item
+                label={
+                  event === "fact_writebacks"
+                    ? "This form"
+                    : event === "campaign_failure"
+                      ? "This campaign"
+                      : event === "ct_firms"
+                        ? "This firm"
+                        : "This sequence"
+                }
+              >
+                <Select
+                  disabled={grain !== "local"}
+                  placeholder={grain === "local" ? "Pick this instance" : "Disabled on Global"}
+                  value={grain === "local" ? data.localRef : undefined}
+                  options={localOptions ?? []}
+                  onChange={(localRef) => onPatch({ localRef, grain: "local" })}
+                  allowClear
+                />
+              </Form.Item>
+            </>
+          ) : (
+            <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+              This event is Global only.
+            </Typography.Text>
+          )}
+        </>
       );
     }
     if (data.triggerKind === "webhook") {
@@ -345,6 +401,22 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
   const runs = workflow ? getRunsForWorkflow(workflow.id) : [];
   const selectedNode = selectedNodeId ? nodes.find((node) => node.id === selectedNodeId) : undefined;
   const triggerNode = useMemo(() => nodes.find((node) => node.type === "trigger"), [nodes]);
+  const [audienceScope, setAudienceScope] = useState<"every_firm" | "select_from">("every_firm");
+  const [audienceIds, setAudienceIds] = useState<string[]>([]);
+  const [book, setBook] = useState<
+    Array<{
+      id: string;
+      name: string | null;
+      email: string | null;
+      firmName?: string | null;
+      createdAt?: string | null;
+    }>
+  >([]);
+  const [addContactOpen, setAddContactOpen] = useState(false);
+  const [pickScope, setPickScope] = useState<"every_firm" | "select_from">("every_firm");
+  const [pickIds, setPickIds] = useState<string[]>([]);
+  const [contactQuery, setContactQuery] = useState("");
+  const [localOptions, setLocalOptions] = useState<Array<{ value: string; label: string }>>([]);
 
   useEffect(() => {
     skipPersistRef.current = true;
@@ -354,6 +426,26 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
     setPlate(null);
     setActiveTab("workflow");
   }, [workflow?.id, setEdges, setNodes]);
+
+  useEffect(() => {
+    if (!workflow) return;
+    void wirePorts.machineApi.listWorkflows().then((rows) => {
+      const row = rows.find((item) => item.id === workflow.id);
+      setAudienceScope(row?.audience_scope === "select_from" ? "select_from" : "every_firm");
+      setAudienceIds(row?.audience_contact_ids ?? []);
+    }).catch(() => undefined);
+    void wirePorts.machineApi.listContactRecords().then((rows) => {
+      setBook(
+        rows.map((r) => ({
+          id: r.id,
+          name: r.name,
+          email: r.email,
+          firmName: r.firmName,
+          createdAt: r.createdAt,
+        })),
+      );
+    }).catch(() => setBook([]));
+  }, [workflow?.id]);
 
   useEffect(() => {
     if (!workflow) return;
@@ -425,6 +517,52 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
   const previousOptions = nodes
     .filter((node) => node.type !== "branch" && node.type !== "exit")
     .map((node) => ({ id: node.id, label: node.data.label }));
+
+  useEffect(() => {
+    const event = triggerNode?.data.triggerEvent;
+    if (!event || !WORKFLOW_EVENTS_WITH_LOCAL.has(event) || triggerNode?.data.grain !== "local") {
+      setLocalOptions([]);
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      try {
+        if (event === "fact_writebacks") {
+          const opts = listingIds.map((id) => ({ value: id, label: id }));
+          if (!cancelled) setLocalOptions(opts);
+          return;
+        }
+        if (event === "campaign_failure") {
+          const { templates } = await wirePorts.machineApi.listTemplates();
+          const camps: Array<{ value: string; label: string }> = [];
+          for (const tpl of templates) {
+            const { campaigns } = await wirePorts.machineApi.listSequenceHousing(tpl.id);
+            for (const camp of campaigns) camps.push({ value: camp.id, label: camp.name });
+          }
+          if (!cancelled) setLocalOptions(camps);
+          return;
+        }
+        if (event === "ct_firms") {
+          const consultants = await wirePorts.machineApi.listConsultants();
+          const seen = new Map<string, string>();
+          for (const row of consultants) seen.set(row.firmId, row.firmName);
+          if (!cancelled) {
+            setLocalOptions([...seen.entries()].map(([value, label]) => ({ value, label })));
+          }
+          return;
+        }
+        const { templates } = await wirePorts.machineApi.listTemplates();
+        if (!cancelled) {
+          setLocalOptions(templates.map((tpl) => ({ value: tpl.id, label: tpl.label })));
+        }
+      } catch {
+        if (!cancelled) setLocalOptions([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [triggerNode?.data.triggerEvent, triggerNode?.data.grain, listingIds.join("|")]);
 
   const openNode = (node: WorkflowFlowNode) => {
     setSelectedNodeId(node.id);
@@ -516,6 +654,8 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
         name: workflow.name,
         target: workflow.target,
         graph: { nodes, edges },
+        audienceScope,
+        audienceContactIds: audienceScope === "select_from" ? audienceIds : [],
       });
       setSavedFlash(true);
       window.setTimeout(() => setSavedFlash(false), 1200);
@@ -564,6 +704,16 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
             {savedFlash ? <Tag color="success">Saved</Tag> : null}
           </Space>
           <Space>
+            <Button
+              icon={<UserAddOutlined />}
+              onClick={() => {
+                setPickScope(audienceScope);
+                setPickIds(audienceScope === "select_from" && audienceIds.length ? audienceIds : book.map((row) => row.id));
+                setAddContactOpen(true);
+              }}
+            >
+              Add contact
+            </Button>
             <Button icon={<SaveOutlined />} onClick={() => void handleSave()}>
               Save
             </Button>
@@ -687,6 +837,51 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
                     Select a node. Then configure it. Smallest workflow: trigger · rule · action.
                   </Typography.Text>
                 </div>
+              </div>
+            ),
+          },
+          {
+            key: "contacts",
+            label: "Contacts",
+            children: (
+              <div style={{ padding: 16, height: "100%", overflow: "auto" }}>
+                <Input.Search
+                  placeholder="Search contacts"
+                  value={contactQuery}
+                  onChange={(event) => setContactQuery(event.target.value)}
+                  style={{ marginBottom: 12, maxWidth: 320 }}
+                />
+                <Table
+                  size="small"
+                  rowKey="id"
+                  pagination={{ pageSize: 10 }}
+                  dataSource={(audienceScope === "select_from"
+                    ? book.filter((row) => audienceIds.includes(row.id))
+                    : book
+                  ).filter((row) => {
+                    const hay = `${row.name ?? ""} ${row.email ?? ""} ${row.firmName ?? ""}`.toLowerCase();
+                    return hay.includes(contactQuery.trim().toLowerCase());
+                  })}
+                  columns={[
+                    {
+                      title: "Name",
+                      dataIndex: "name",
+                      render: (_: unknown, row: (typeof book)[number]) => row.name || row.email || "—",
+                    },
+                    {
+                      title: "Firm",
+                      dataIndex: "firmName",
+                      render: (value: string | null | undefined) => value || "—",
+                    },
+                    {
+                      title: "Enrolled date",
+                      dataIndex: "createdAt",
+                      render: (value: string | null | undefined) =>
+                        value ? new Date(value).toLocaleString() : "—",
+                    },
+                  ]}
+                  locale={{ emptyText: "No contacts for this automation yet." }}
+                />
               </div>
             ),
           },
@@ -855,6 +1050,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
               </Form.Item>
               <NodeConfigFields
                 node={selectedNode}
+                localOptions={localOptions}
                 onPatch={(patch) => patchNodeData(setNodes, selectedNode.id, patch)}
               />
             </Form>
@@ -950,6 +1146,36 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
           patchNodeData(setNodes, selectedNode.id, patch);
           setPlate(null);
           setSelectedNodeId(null);
+        }}
+      />
+      <ContactPickModal
+        open={addContactOpen}
+        title="Add contact"
+        scope={pickScope}
+        contacts={book}
+        selectedIds={pickIds}
+        everyFirmHint="Who this automation applies to. Does not start a mission."
+        onScope={setPickScope}
+        onSelectedIds={setPickIds}
+        onCancel={() => setAddContactOpen(false)}
+        onOk={() => {
+          const nextScope = pickScope;
+          const nextIds = pickScope === "select_from" ? pickIds : [];
+          setAudienceScope(nextScope);
+          setAudienceIds(nextIds);
+          setAddContactOpen(false);
+          if (!workflow) return;
+          void wirePorts.machineApi
+            .createWorkflow({
+              id: workflow.id,
+              name: workflow.name,
+              target: workflow.target,
+              graph: { nodes, edges },
+              audienceScope: nextScope,
+              audienceContactIds: nextIds,
+            })
+            .then(() => message.success("Saved audience"))
+            .catch((err) => message.error(`Audience save failed: ${String(err)}`));
         }}
       />
     </div>

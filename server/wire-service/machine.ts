@@ -37,16 +37,25 @@ export async function handleWorkflowCreate(c: Context) {
     name: string;
     target?: string;
     graph?: unknown;
+    audienceScope?: "every_firm" | "select_from";
+    audienceContactIds?: string[];
   }>();
   const id = body.id ?? `wf-${randomUUID()}`;
   const firm = await firmId(c);
   const target = body.target ?? "contact";
+  const audienceScope = body.audienceScope === "select_from" ? "select_from" : "every_firm";
+  const audienceIds = Array.isArray(body.audienceContactIds) ? body.audienceContactIds.map(String) : [];
   const pool = getPool();
   await pool.query(
-    `INSERT INTO workflow (id, firm_id, name, target, graph)
-     VALUES ($1,$2,$3,$4,$5::jsonb)
-     ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, graph=EXCLUDED.graph, updated_at=now()`,
-    [id, firm, body.name, target, JSON.stringify(body.graph ?? { nodes: [], edges: [] })],
+    `INSERT INTO workflow (id, firm_id, name, target, graph, audience_scope, audience_contact_ids)
+     VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7::text[])
+     ON CONFLICT (id) DO UPDATE SET
+       name=EXCLUDED.name,
+       graph=EXCLUDED.graph,
+       audience_scope=EXCLUDED.audience_scope,
+       audience_contact_ids=EXCLUDED.audience_contact_ids,
+       updated_at=now()`,
+    [id, firm, body.name, target, JSON.stringify(body.graph ?? { nodes: [], edges: [] }), audienceScope, audienceIds],
   );
   await pool.query(
     `INSERT INTO workflow_state (workflow_id, status) VALUES ($1,'draft')
@@ -397,6 +406,7 @@ export async function handleFactWriteback(c: Context) {
     value: unknown;
     source?: string;
     missingFieldKeys?: string[];
+    formRef?: string;
   }>();
   if (!body.contactId?.trim() || !body.fieldKey?.trim()) {
     return json(c, { error: "contactId and fieldKey required" }, 400);
@@ -439,13 +449,13 @@ export async function handleFactWriteback(c: Context) {
     contactIds: [contactId],
     triggerKind: "fact_writeback",
     resultPayload: { writebackId: writeId, fieldKey, source: body.source ?? "contact" },
-    eventPayload: { writebackId: writeId, fieldKey, contactId },
+    eventPayload: { writebackId: writeId, fieldKey, contactId, form_ref: body.formRef ?? null },
   });
 
   const factDispatched = await dispatchEventToWorkflows(pool, {
     firmId: firm,
     eventName: "fact_writebacks",
-    payload: { writebackId: writeId, fieldKey, contactId },
+    payload: { writebackId: writeId, fieldKey, contactId, form_ref: body.formRef ?? null },
     contactIds: [contactId],
   });
 
@@ -897,6 +907,8 @@ export async function handleAttemptCriteriaUpsert(c: Context) {
     conditionClause?: string | null;
     setValue?: string | null;
     ord?: number;
+    sequenceId?: string | null;
+    channelToken?: "text" | "email" | "call" | "form" | null;
   }>();
   const pool = getPool();
   const existing = await pool.query(`SELECT * FROM rule_attempt_criteria WHERE id=$1`, [id]);
@@ -904,8 +916,8 @@ export async function handleAttemptCriteriaUpsert(c: Context) {
     await pool.query(
       `INSERT INTO rule_attempt_criteria
          (id, firm_id, label, enabled, when_clause, condition_clause, set_value,
-          threshold, threshold_unit, ord, source)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'c6')`,
+          threshold, threshold_unit, ord, source, sequence_id, channel_token)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'c6',$11,$12)`,
       [
         id,
         firm,
@@ -917,6 +929,8 @@ export async function handleAttemptCriteriaUpsert(c: Context) {
         body.threshold ?? null,
         body.thresholdUnit ?? null,
         body.ord ?? 0,
+        body.sequenceId ?? null,
+        body.channelToken ?? null,
       ],
     );
     const created = await pool.query(`SELECT * FROM rule_attempt_criteria WHERE id=$1`, [id]);
@@ -935,12 +949,14 @@ export async function handleAttemptCriteriaUpsert(c: Context) {
     set_value: body.setValue !== undefined ? body.setValue : prev.set_value,
     ord: body.ord ?? prev.ord,
     firm_id: (prev.firm_id as string | null) ?? firm,
+    sequence_id: body.sequenceId !== undefined ? body.sequenceId : prev.sequence_id,
+    channel_token: body.channelToken !== undefined ? body.channelToken : prev.channel_token,
   };
   await pool.query(
     `UPDATE rule_attempt_criteria SET
        label=$2, enabled=$3, threshold=$4, threshold_unit=$5,
        when_clause=$6, condition_clause=$7, set_value=$8, ord=$9,
-       firm_id=$10, version=version+1
+       firm_id=$10, sequence_id=$11, channel_token=$12, version=version+1
      WHERE id=$1`,
     [
       id,
@@ -953,10 +969,61 @@ export async function handleAttemptCriteriaUpsert(c: Context) {
       next.set_value,
       next.ord,
       next.firm_id,
+      next.sequence_id,
+      next.channel_token,
     ],
   );
   const updated = await pool.query(`SELECT * FROM rule_attempt_criteria WHERE id=$1`, [id]);
   return json(c, updated.rows[0]);
+}
+
+export async function handleSeqChannelRulesList(c: Context) {
+  const sequenceId = c.req.query("sequenceId") || null;
+  const pool = getPool();
+  if (sequenceId) {
+    const rows = await pool.query(
+      `SELECT id, firm_id, sequence_id, token, within_seconds
+       FROM seq_channel_rules WHERE sequence_id=$1 ORDER BY token ASC`,
+      [sequenceId],
+    );
+    if (rows.rowCount) return json(c, { rules: rows.rows });
+  }
+  const global = await pool.query(
+    `SELECT id, firm_id, sequence_id, token, within_seconds
+     FROM seq_channel_rules WHERE sequence_id IS NULL AND firm_id IS NULL
+     ORDER BY token ASC`,
+  );
+  return json(c, { rules: global.rows });
+}
+
+export async function handleSeqChannelRulesSave(c: Context) {
+  const firm = await firmId(c);
+  const body = await c.req.json<{
+    sequenceId?: string | null;
+    rules: Array<{ token: "text" | "email" | "call"; withinSeconds: number }>;
+  }>();
+  const sequenceId = body.sequenceId?.trim() || null;
+  const pool = getPool();
+  const saved: unknown[] = [];
+  for (const rule of body.rules ?? []) {
+    const token = rule.token;
+    const within = Number.isFinite(rule.withinSeconds) ? Math.max(1, Math.round(rule.withinSeconds)) : 1800;
+    const id = sequenceId ? `scr-seq-${sequenceId}-${token}` : `scr-global-${token}`;
+    await pool.query(
+      `INSERT INTO seq_channel_rules (id, firm_id, sequence_id, token, within_seconds, updated_at)
+       VALUES ($1,$2,$3,$4,$5,now())
+       ON CONFLICT (id) DO UPDATE SET
+         within_seconds=EXCLUDED.within_seconds,
+         updated_at=now()`,
+      [id, sequenceId ? firm : null, sequenceId, token, within],
+    );
+    const row = await pool.query(
+      `SELECT id, firm_id, sequence_id, token, within_seconds FROM seq_channel_rules WHERE id=$1`,
+      [id],
+    );
+    if (row.rows[0]) saved.push(row.rows[0]);
+  }
+  return json(c, { rules: saved });
 }
 
 /** List seq_channel_ownership_order ladder. */
@@ -1625,8 +1692,9 @@ export async function handleContactRecordsList(c: Context) {
     phone: string | null;
     name: string | null;
     firm_name: string | null;
+    created_at: string;
   }>(
-    `SELECT c.id, c.firm_id, c.email, c.phone, c.name, f.name AS firm_name
+    `SELECT c.id, c.firm_id, c.email, c.phone, c.name, f.name AS firm_name, c.created_at
      FROM contact_records c
      LEFT JOIN ct_firms f ON f.id = c.firm_id
      WHERE c.firm_id=$1 ORDER BY c.updated_at DESC NULLS LAST, c.id ASC`,
@@ -1641,6 +1709,7 @@ export async function handleContactRecordsList(c: Context) {
       phone: r.phone,
       name: r.name,
       firmName: r.firm_name,
+      createdAt: r.created_at,
     })),
   });
 }

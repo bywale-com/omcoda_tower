@@ -24,15 +24,19 @@ import {
   ALL_CHANNELS,
   CHANNEL_LABEL,
   CHANNEL_RULE_TOGGLES,
+  DEFAULT_WITHIN_SECONDS,
   DISTANCE_OPTIONS,
   emptyChannelRules,
   emptyContent,
   emptyVariation,
+  partsToSeconds,
+  secondsToParts,
   type ChannelId,
   type ChannelRulesDraft,
   type ChannelVariationDraft,
   type VariationApplyMode,
 } from "./channelRuleGrain";
+import { ChannelRulesFields } from "./ChannelRulesFields";
 import { MODAL_SCROLL } from "./modalScroll";
 
 type ScratchKind = "click" | "meeting" | "form";
@@ -90,9 +94,9 @@ function emptyChannelBag() {
       call: [emptyVariation("call", 0)],
     } as Record<ChannelId, ChannelVariationDraft[]>,
     channelRules: {
-      text: emptyChannelRules(),
-      email: emptyChannelRules(),
-      call: emptyChannelRules(),
+      text: emptyChannelRules("text"),
+      email: emptyChannelRules("email"),
+      call: emptyChannelRules("call"),
     } as Record<ChannelId, ChannelRulesDraft>,
   };
 }
@@ -120,27 +124,25 @@ function rulesFromRows(
     label: string;
     enabled: boolean;
     condition_clause: string | null;
-    threshold: number | null;
-    threshold_unit: string | null;
   }>,
+  rulesOverride: boolean,
+  withinSeconds: number | null | undefined,
 ): ChannelRulesDraft {
-  if (!rows.length) return emptyChannelRules();
-  const toggles: Record<string, boolean> = {};
-  let withinTime: number | null = 30;
-  let withinUnit: string | null = "minutes";
+  const draft = emptyChannelRules(token);
+  draft.override = rulesOverride;
+  const parts = secondsToParts(withinSeconds ?? DEFAULT_WITHIN_SECONDS[token]);
+  draft.withinTime = parts.value;
+  draft.withinUnit = parts.unit;
+  if (!rows.length && !rulesOverride) return draft;
   for (const spec of CHANNEL_RULE_TOGGLES[token]) {
     const hit = rows.find(
       (row) =>
         (row.condition_clause ?? "").toLowerCase().includes(spec.condition) ||
         row.label.toLowerCase().includes(spec.label),
     );
-    toggles[spec.key] = hit ? hit.enabled : false;
-    if (spec.key === "within_time" && hit) {
-      withinTime = hit.threshold;
-      withinUnit = hit.threshold_unit;
-    }
+    draft.toggles[spec.key] = hit ? hit.enabled : false;
   }
-  return { override: true, toggles, withinTime, withinUnit };
+  return draft;
 }
 
 export function housingToDrafts(
@@ -169,7 +171,12 @@ export function housingToDrafts(
       }));
       bag.channelVariations[ch.token] = vars;
       bag.channelOverrideContent[ch.token] = ch.override_content;
-      bag.channelRules[ch.token] = rulesFromRows(ch.token, ch.rules ?? []);
+      bag.channelRules[ch.token] = rulesFromRows(
+        ch.token,
+        ch.rules ?? [],
+        Boolean(ch.rules_override),
+        ch.within_seconds,
+      );
     }
     const sequencing: ChannelId[] =
       row.channels.length > 0
@@ -215,7 +222,7 @@ export function draftsToHousing(drafts: CampaignDraft[]): CampaignHousingDraft[]
     channels: draft.overrideThis
       ? draft.sequencing.map((token, ord) => {
           const variations = draft.channelVariations[token] ?? [emptyVariation(token, 0)];
-          const rules = draft.channelRules[token] ?? emptyChannelRules();
+          const rules = draft.channelRules[token] ?? emptyChannelRules(token);
           return {
             token,
             ord,
@@ -229,13 +236,12 @@ export function draftsToHousing(drafts: CampaignDraft[]): CampaignHousingDraft[]
               content: v.content,
             })),
             rulesOverride: rules.override,
+            withinSeconds: partsToSeconds(rules.withinTime, rules.withinUnit),
             rules: CHANNEL_RULE_TOGGLES[token].map((spec, i) => ({
               key: spec.key,
               label: `${CHANNEL_LABEL[token]} · ${spec.label}`,
               enabled: Boolean(rules.toggles[spec.key]),
               condition: spec.condition,
-              threshold: spec.key === "within_time" ? rules.withinTime : null,
-              thresholdUnit: spec.key === "within_time" ? rules.withinUnit : null,
               ord: i,
             })),
           };
@@ -324,7 +330,6 @@ function ChannelRulesNode({
   onChange: (next: ChannelRulesDraft) => void;
 }) {
   const { token } = theme.useToken();
-  const disabled = !rules.override;
   return (
     <Card size="small" title="Channel rules">
       <Space direction="vertical" size={8} style={{ width: "100%" }}>
@@ -336,53 +341,7 @@ function ChannelRulesNode({
             onChange={(override) => onChange({ ...rules, override })}
           />
         </div>
-        {CHANNEL_RULE_TOGGLES[channel].map((spec) => (
-          <div
-            key={spec.key}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              opacity: disabled ? 0.45 : 1,
-              pointerEvents: disabled ? "none" : "auto",
-            }}
-          >
-            <Typography.Text>{spec.label}</Typography.Text>
-            {spec.key === "within_time" ? (
-              <Space size={4}>
-                <Switch
-                  size="small"
-                  checked={Boolean(rules.toggles[spec.key])}
-                  onChange={(on) => onChange({ ...rules, toggles: { ...rules.toggles, [spec.key]: on } })}
-                />
-                <InputNumber
-                  size="small"
-                  min={1}
-                  value={rules.withinTime ?? undefined}
-                  onChange={(value) => onChange({ ...rules, withinTime: typeof value === "number" ? value : null })}
-                  style={{ width: 72 }}
-                />
-                <Select
-                  size="small"
-                  value={rules.withinUnit ?? "minutes"}
-                  style={{ width: 100 }}
-                  options={[
-                    { value: "minutes", label: "minutes" },
-                    { value: "hours", label: "hours" },
-                    { value: "days", label: "days" },
-                  ]}
-                  onChange={(withinUnit) => onChange({ ...rules, withinUnit })}
-                />
-              </Space>
-            ) : (
-              <Switch
-                size="small"
-                checked={Boolean(rules.toggles[spec.key])}
-                onChange={(on) => onChange({ ...rules, toggles: { ...rules.toggles, [spec.key]: on } })}
-              />
-            )}
-          </div>
-        ))}
+        <ChannelRulesFields token={channel} rules={rules} disabled={!rules.override} onChange={onChange} />
         <Typography.Text type="secondary" style={{ fontSize: 11, color: token.colorTextSecondary }}>
           This {CHANNEL_LABEL[channel]} in this campaign. Variations share these.
         </Typography.Text>
@@ -657,7 +616,7 @@ function CampaignNode({
                         <div style={{ flex: 1, minWidth: 200 }}>
                           <ChannelRulesNode
                             channel={ch}
-                            rules={campaign.channelRules[ch] ?? emptyChannelRules()}
+                            rules={campaign.channelRules[ch] ?? emptyChannelRules(ch)}
                             onChange={(rules) =>
                               onChange({
                                 ...campaign,
@@ -846,7 +805,7 @@ export function AntAgentCanvas({
       data-register-surface="Agent / sequence editor"
       style={{ height: "100%", minWidth: 0, minHeight: 0, overflow: "auto", padding: 18 }}
     >
-      <Space direction="vertical" size={16} style={{ width: "100%", maxWidth: 1200 }}>
+      <Space direction="vertical" size={16} style={{ width: "100%", maxWidth: 1400, paddingBottom: 48 }}>
         <Button icon={<PlusOutlined />} onClick={addCampaign}>
           Add campaign
         </Button>

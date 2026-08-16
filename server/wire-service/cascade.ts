@@ -42,6 +42,8 @@ export type CriteriaRow = {
   threshold: string | number | null;
   threshold_unit: string | null;
   campaign_channel_id?: string | null;
+  sequence_id?: string | null;
+  channel_token?: string | null;
 };
 
 export type ActiveAttemptRow = {
@@ -84,13 +86,95 @@ export async function loadChannelOrder(pool: Pool, firmId: string): Promise<stri
 export async function loadAttemptCriteria(pool: Pool, firmId: string): Promise<CriteriaRow[]> {
   const rows = await pool.query<CriteriaRow>(
     `SELECT id, label, enabled, when_clause, condition_clause, set_value, threshold, threshold_unit,
-            campaign_channel_id
+            campaign_channel_id, sequence_id, channel_token
      FROM rule_attempt_criteria
      WHERE enabled = true AND (firm_id IS NULL OR firm_id = $1)
      ORDER BY ord ASC`,
     [firmId],
   );
   return rows.rows;
+}
+
+const DEFAULT_WITHIN: Record<string, number> = { text: 1800, email: 86400, call: 1800, sms: 1800 };
+
+async function resolveRulesForAttempt(
+  pool: Pool,
+  attempt: ActiveAttemptRow,
+  all: CriteriaRow[],
+): Promise<{ withinSeconds: number | null; toggles: CriteriaRow[] }> {
+  const token = (attempt.owner_channel ?? "text").toLowerCase().replace("sms", "text");
+  const channelId = await campaignChannelIdForAttempt(pool, attempt);
+  if (channelId) {
+    const ch = await pool.query<{ rules_override: boolean; within_seconds: number | null }>(
+      `SELECT COALESCE(rules_override, false) AS rules_override, within_seconds
+       FROM campaign_channel WHERE id=$1`,
+      [channelId],
+    );
+    if (ch.rows[0]?.rules_override) {
+      return {
+        withinSeconds: ch.rows[0].within_seconds ?? DEFAULT_WITHIN[token] ?? 1800,
+        toggles: all.filter((row) => row.campaign_channel_id === channelId),
+      };
+    }
+  }
+
+  let sequenceId: string | null = null;
+  let firmId = attempt.firm_id;
+  if (attempt.enrollment_id) {
+    const enr = await pool.query<{ sequence_id: string | null; firm_id: string }>(
+      `SELECT sequence_id, firm_id FROM enrollment WHERE id=$1`,
+      [attempt.enrollment_id],
+    );
+    sequenceId = enr.rows[0]?.sequence_id ?? null;
+    firmId = enr.rows[0]?.firm_id ?? firmId;
+  }
+  if (sequenceId) {
+    const bind = await pool.query<{ override_channel: boolean }>(
+      `SELECT override_channel FROM firm_sequence_binding
+       WHERE template_id=$1 AND (firm_id=$2 OR firm_id IS NULL)
+       ORDER BY CASE WHEN firm_id=$2 THEN 0 ELSE 1 END
+       LIMIT 1`,
+      [sequenceId, firmId],
+    );
+    if (bind.rows[0]?.override_channel) {
+      const timer = await pool.query<{ within_seconds: number }>(
+        `SELECT within_seconds FROM seq_channel_rules
+         WHERE sequence_id=$1 AND token=$2 LIMIT 1`,
+        [sequenceId, token],
+      );
+      return {
+        withinSeconds: timer.rows[0]?.within_seconds ?? DEFAULT_WITHIN[token] ?? 1800,
+        toggles: all.filter(
+          (row) =>
+            row.sequence_id === sequenceId &&
+            row.channel_token === token &&
+            !row.campaign_channel_id,
+        ),
+      };
+    }
+  }
+
+  const timer = await pool.query<{ within_seconds: number }>(
+    `SELECT within_seconds FROM seq_channel_rules
+     WHERE sequence_id IS NULL AND firm_id IS NULL AND token=$1 LIMIT 1`,
+    [token],
+  );
+  const globalToggles = all.filter(
+    (row) =>
+      row.channel_token === token &&
+      !row.sequence_id &&
+      !row.campaign_channel_id,
+  );
+  if (globalToggles.length) {
+    return {
+      withinSeconds: timer.rows[0]?.within_seconds ?? DEFAULT_WITHIN[token] ?? 1800,
+      toggles: globalToggles,
+    };
+  }
+  return {
+    withinSeconds: null,
+    toggles: all.filter((row) => !row.campaign_channel_id && !row.channel_token),
+  };
 }
 
 async function campaignChannelIdForAttempt(
@@ -184,9 +268,10 @@ function criteriaDue(
   row: CriteriaRow,
   attempt: ActiveAttemptRow,
   now: Date,
+  withinSeconds?: number | null,
 ): boolean {
-  if (!row.enabled || row.threshold == null) return false;
-  const channel = channelFromWhen(row.when_clause);
+  if (!row.enabled) return false;
+  const channel = channelFromWhen(row.when_clause) ?? row.channel_token ?? null;
   const owner = (attempt.owner_channel ?? "").toLowerCase();
   if (channel && channel !== owner && !(channel === "text" && owner === "sms")) {
     return false;
@@ -198,21 +283,31 @@ function criteriaDue(
 
   // Match seeded when/condition semantics against attempt state
   if (when.includes("delivered") && !state.delivered) return false;
-  if (when.includes("opened") && !state.opened) return false;
+  if (when.includes("opened") && !when.includes("not") && !state.opened) return false;
   if (when.includes("started") && !state.form_started) return false;
   if (when.includes("primer_sent") && !state.delivered) return false;
 
-  if (cond.includes("not opened") && state.opened) return false;
-  if (cond.includes("link not clicked") && state.link_clicked) return false;
+  if ((cond.includes("not opened") || when.includes("not_opened")) && state.opened) return false;
+  if ((cond.includes("link not clicked") || when.includes("link_not_clicked")) && state.link_clicked) {
+    return false;
+  }
   if (cond.includes("not submitted") && state.form_submitted) return false;
-  if (cond.includes("not delivered") && state.delivered) return false;
-  if (cond.includes("not answered") && state.answered) return false;
-  if (cond.includes("not completed") && state.completed) return false;
+  if ((cond.includes("not delivered") || when.includes("not_delivered")) && state.delivered) {
+    return false;
+  }
+  if ((cond.includes("not answered") || when.includes("not_answered")) && state.answered) return false;
+  if ((cond.includes("not completed") || when.includes("not_completed")) && state.completed) {
+    return false;
+  }
   if (cond.includes("non_reply") && state.opened) return false; // reply counted as opened/inbound
 
+  const elapsed = now.getTime() - clockAnchor(attempt, channel ?? owner).getTime();
+  if (typeof withinSeconds === "number" && Number.isFinite(withinSeconds)) {
+    return elapsed >= withinSeconds * 1000;
+  }
+  if (row.threshold == null) return false;
   const threshold = Number(row.threshold);
   if (!Number.isFinite(threshold)) return false;
-  const elapsed = now.getTime() - clockAnchor(attempt, channel ?? owner).getTime();
   return elapsed >= msForThreshold(threshold, row.threshold_unit);
 }
 
@@ -233,6 +328,7 @@ export async function escalateAttemptWindow(
   criteria: CriteriaRow,
   channelOrder: string[],
   now = new Date(),
+  withinSeconds?: number | null,
 ): Promise<TickFire | null> {
   if (attempt.fired_criteria?.[criteria.id]) {
     return null; // idempotent — already fired
@@ -252,7 +348,7 @@ export async function escalateAttemptWindow(
     });
     return null;
   }
-  if (!criteriaDue(criteria, attempt, now)) return null;
+  if (!criteriaDue(criteria, attempt, now, withinSeconds)) return null;
 
   const fromChannel = (attempt.owner_channel ?? "text").toLowerCase();
   const setValue = criteria.set_value;
@@ -895,10 +991,12 @@ export async function tickOnce(now = new Date()): Promise<{
       criteriaByFirm.set(attempt.firm_id, await loadAttemptCriteria(pool, attempt.firm_id));
       orderByFirm.set(attempt.firm_id, await loadChannelOrder(pool, attempt.firm_id));
     }
-    const criteria = criteriaForChannel(
+    const resolved = await resolveRulesForAttempt(
+      pool,
+      attempt,
       criteriaByFirm.get(attempt.firm_id)!,
-      await campaignChannelIdForAttempt(pool, attempt),
     );
+    const criteria = resolved.toggles;
     const order = orderByFirm.get(attempt.firm_id)!;
     const waitUntil = attempt.state?.attempt_wait_until;
     if (typeof waitUntil === "string" && new Date(waitUntil).getTime() > now.getTime()) {
@@ -973,7 +1071,14 @@ export async function tickOnce(now = new Date()): Promise<{
         current.fired_criteria = JSON.parse(current.fired_criteria as unknown as string);
       }
 
-      const result = await escalateAttemptWindow(pool, current, row, order, now);
+      const result = await escalateAttemptWindow(
+        pool,
+        current,
+        row,
+        order,
+        now,
+        resolved.withinSeconds,
+      );
       if (result) fired.push(result);
     }
   }
