@@ -204,6 +204,6 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 7. Seed §5.6 vs Hub-as-built vs the 20:24 definite-middle shape — **do not silently kill any of them**. Hub Rules are what to look at. Alignment is later.
 9. Remaining output classes besides **required data** (law 23). Do not invent a full catalog this stamp. Hub-today vs lattice is A9 / A10.
 10. **Listing of requested data on rule output + form bind** (law 25). Named 21:36 as not stood up in code. Mocked as A11–A12 (chrome) and A13 (diagram). Do not fill the listing in the product this stamp. Do not mint tables.
-11. **Ant plate of the If node** (after the previous result). Hub has it. Named 22:17. Teaching walk 01:17 would be the plate (provisioned → audit → if X → agents). Do not invent the plate until asked.
+11. **Ant plate of the If node** — **drawn 01:20:** A15 (chain) · A16 (open). Hub still has the plant. A13 is still not this screen.
 12. **Event catalog + global vs local** (law 27). Named: form completion, campaign failure, opt-out / unsubscribe, **firm created / provisioned** (01:17). Do not fill the rest.
 13. **Queryable lineage** (law 29). Agent-created vs hand-created objective → path → completion → time. Minimum: queryable. Do not mint a table from this sentence.

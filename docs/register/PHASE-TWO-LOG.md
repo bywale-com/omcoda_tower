@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **01:17:** Automations is a **blank canvas** like Agents — you can chain. Teaching walk: firm provisioned → audit contacts → if X → agents. Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **01:20:** chain plates **A15** · **A16** · **A17**. Automations blank canvas. Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -759,6 +759,23 @@ Flag 15:43 untouched.
 **No plate this stamp.** The picture that would lock it is A1’s chrome with four nodes: provisioned → audit → if X → agents. That would also be the first Ant plate of the If node (open item 11). Do not generate until asked.
 
 **Do not:** plant; mint an audit or provision table; fill the event/action catalogs; put this chain on the Agents canvas; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 01:20 UTC — Chain plates: A15 canvas, A16 If, A17 trigger
+
+**Why:** Founder: yes, I want to see that image, or whatever other images it clearly generates.
+
+**Plates (from scratch, A1 chrome, not planted):**
+- **A15** — Blank canvas. Four nodes: firm created / provisioned → audit the contacts → if X (previous result) → assign agent. Palette now includes Condition (If). Caption: you can chain; smallest is still trigger · rule · action. A1 stays the smallest.
+- **A16** — First Ant plate of the **If** node. Calls from the previous result (the audit). Field · operator · constant. Then assign agent / else stop. This is **not** a rule.
+- **A17** — Inside the trigger. Event = **firm created / provisioned**. Things inside still have to happen.
+
+**Not drawn (do not invent):** inside of the audit action. Global/local picker on the trigger.
+
+**Do not:** plant; regenerate A1–A14; mint tables; overwrite 15:43.
 
 Flag 15:43 untouched.
 
