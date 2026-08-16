@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **22:43:** primitives — what we can hear, what we can do. [`PRIMITIVES.md`](./PRIMITIVES.md). Automations + Agents is most of the app. Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **22:46:** provision-as-action vs eligibility→agent — same listen→do, different seat. Canonical Automations **hears** a world that exists. Creating the firm is the cascade. [`PRIMITIVES.md`](./PRIMITIVES.md). Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 

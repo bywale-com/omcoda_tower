@@ -59,11 +59,21 @@ Two kinds. That is the whole split.
 | **Run an audit** | Same audit the desk already runs. A node. Not hardcoded on upload. |
 | **Who this applies to** | Contacts on the automation. Does **not** start a mission now. |
 | **Make a form** | Automations owns the form. Questions are the required data. |
-| **Provision a firm** | The same four fields as the Provision desk. After **this form** is submitted, provision. |
+| **Provision a firm** | Later idea — see below. Canonical Automations **hears** that a firm was created (event). It does not have to **be** the desk that creates it. |
 
 Not on the list: “write whatever into whatever table.” Not on the list: webhook-as-an-action.
 
 If / condition is not an action. It is a fork after a result.
+
+---
+
+## Same shape. Different seat.
+
+**Canonical (this is Automations):** something already happened **inside a firm that exists** — eligibility changed, a writeback, a form came back — **hear that** → run the operation → **then the agent**. A firm was created is the same pattern: the firm is already there; now do the inside (audit, agents).
+
+**The first idea:** **this form** was submitted → **create the firm**. Same listen → do. Opposite seat. You are not hearing a world that exists. You are making it. That is a cascade. That is why it suddenly felt like fixture.
+
+If adding “eligibility changed → operation → agent” is also fixture, the module is not built. If only **creating** the firm is fixture, that is expected — do not start there.
 
 ---
 
