@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **02:27:** pixel walk of every C1–C8 and A1–A17 PNG. The 02:19 file was a coverage table; this is the audit. Qualify caption is on **C3, C4, and C5**. Share [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) with SA. Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **16:16:** plates must screenshot live `/prototype-ant` chrome first — [`PLATE-CHROME-RULE.md`](./PLATE-CHROME-RULE.md). C0 / C9 / C11 / C13 regenerated on that desk. Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -866,6 +866,20 @@ Flag 15:43 untouched.
 - A14: instructional line is on the glass; “Not a third option…” is **not** on that PNG.
 
 **Do not:** treat the 02:19 table as the walk; mint `qualify` three times because it is on three plates; freeze A6 Exit with A15 If as one palette; regenerate; plant; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 16:16 UTC — Plates must be our desk
+
+**Why:** Founder stopped the first C0/C9/C11/C13 pass. The ideas were right. The left columns were a different app. That confuses the implementer. Screenshot how the app looks. Recreate on **our** design system.
+
+**Rule:** [`PLATE-CHROME-RULE.md`](./PLATE-CHROME-RULE.md). Screenshot live `/prototype-ant` first. Lock House-global / Libraries / catalog / top bar. Paint the new idea only in the workspace.
+
+**What we did:** Screenshotted the live Agents catalog, editor, settings, Automations canvas. Regenerated **C0** (Agents settings gear next to New template), **C9** (attempt count + distance on the campaign, + Add channel, both channels can stay open), **C11** (this variation runs on), **C13** (Activity table like C8). Chrome matches the Operator desk, not Hub, not a made-up sidebar.
+
+**Do not:** hand drifted plates to an implementer; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 

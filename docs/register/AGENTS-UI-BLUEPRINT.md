@@ -4,6 +4,7 @@
 **What this is:** the **UI blueprint** for Agents, before Systems Analyst extract. Not a systems blueprint. Do not invent tables from this file.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
 **Law and excerpts:** [`AGENTS-FACE.md`](./AGENTS-FACE.md). This file is the **image lineup + spec**. Rationale lives in the log stamps named on each plate. **Captions vs spec:** [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) — teaching copy on the plates is not a node.  
+**Plate chrome:** [`PLATE-CHROME-RULE.md`](./PLATE-CHROME-RULE.md) — screenshot the live `/prototype-ant` desk first; do not invent a different left nav.  
 **Founder (2026-08-15 19:47):** Settings images are canonical. This pass = lineup of canon vs revision, map each plate to the rationale that birthed it, then spec the plates. Click paths / what is on the glass. If anything is under-specified, that is the point of this pass.
 
 Chrome for every plate unless noted: Operator desk → Configuration libraries → Agents.
@@ -26,6 +27,10 @@ These ten files are **canon**. Later plates revise earlier ones only where the t
 | **C6** | [`C6-agents-settings-global.png`](./agents-blueprint/C6-agents-settings-global.png) | **Agents Settings** = global defaults. Founder: locked, perfect. | 19:30 two Settings surfaces | — |
 | **C7** | [`C7-sequence-settings.png`](./agents-blueprint/C7-sequence-settings.png) | **Sequence Settings** = this sequence; inherit unless override. Founder: locked, perfect. | 19:30 | — |
 | **C8** | [`C8-sequence-contacts-enroll.png`](./agents-blueprint/C8-sequence-contacts-enroll.png) | This sequence → **Contacts**. Displays enrolled. **Add contact** in the header. Scope: **Every firm** (default) or **Select from** (all selected; deselect to pick one). Starts the mission now. | 00:02 · 01:01 scope | — |
+| **C0** | [`C0-agents-global-settings-entry.png`](./agents-blueprint/C0-agents-global-settings-entry.png) | Agents **module** Settings entry: gear **Agents settings** on the catalog, next to New template. Global — every sequence. Same desk as live `/prototype-ant`. | 16:10 · 16:16 chrome | — |
+| **C9** | [`C9-campaign-local-attempt-add-channel.png`](./agents-blueprint/C9-campaign-local-attempt-add-channel.png) | Override this **on**: campaign **attempt count** + **distance between attempts**; **+ Add channel**; Text and Email can both stay open (not radios). Same Operator desk as C4/C5. | 16:10 · 16:16 chrome | revises C4/C5 for those grains |
+| **C11** | [`C11-channel-attempt-variation.png`](./agents-blueprint/C11-channel-attempt-variation.png) | Inside a channel: **this variation runs on** every attempt / only N / every except N. Not A/B. Same desk as C5. | 16:10 · 16:16 chrome | — |
+| **C13** | [`C13-sequence-activity.png`](./agents-blueprint/C13-sequence-activity.png) | **Activity** tab as a table: Time · Name · Firm · Channel · What happened. Same table chrome as C8. Not UUIDs. Not the engagement chart. | 16:10 · 16:16 chrome | — |
 
 ### Discarded (do not spec, do not hand to SA as face)
 
@@ -42,6 +47,7 @@ In-app Editor → Mock / Timeline plant is **not** this blueprint. Mock = genera
 - **C4** still shows Form as the third closed medium and Text → Email → Form on the campaign. **C5** is the call revision (Text → Email → Call, ElevenLabs). C4 remains canon for *closed* channel nodes after Override this.
 - **C3** still says Form in sequencing. Same: C5 is the later medium set for content.
 - **C6** channel-rules rows still mention Form. Call is on the face in C5; machine still has form until SA/Story. Do not mint a call table from C5.
+- **C3, C4, and C5** still show connector copy **“qualify — first objective met.”** Caption, not a node. C5b does not have it.
 - Generated chrome sometimes mislabels the selected agent (Nudge vs Launch window). Ignore catalog-selection drift. Trust the **canvas / modal contents**.
 
 ---
