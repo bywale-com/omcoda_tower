@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 01:10 UTC — **Main absorbed #85.** Looked at C8 / A14 and 23:07–01:01 law. Paper only. No mint. Flag **15:43**. No new PR after #85. #84 still open, now behind main.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 01:25 UTC — **Events = detectable table changes. Objectives are a kind of those.** PR #87 blank-canvas chain clicks. Paper. No mint. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -693,3 +693,51 @@ Full table appended on [`SYSTEMS-AUTOMATIONS-ASCRIBE.md`](./SYSTEMS-AUTOMATIONS-
 | Send (still left) | Resend/Twilio live when secrets+DB; consent/halt in `dispatchSend` | Loop 3 is product-left, not a missing port |
 
 **Do not:** mint; treat Every firm as a chrome checkbox; put enroll on Publish; build lineage as a screen; create-agent in Automations.
+
+---
+
+## 2026-08-16 01:25 UTC — Events = detectable table changes. Objectives are a kind. #87 clicks.
+
+**Why:** Founder, before / as PR [#87](https://github.com/bywale-com/omcoda_tower/pull/87) landed: the pattern is emerging; once the PR is seen it clicks. System events boiled down = **a change inside the table**, detectable; **all** table changes should be detectable; those **are** events / triggers. Objectives already defined. Boils down to **events and objectives**.
+
+**Excerpts**
+
+> I think the pattern is really emerging very cleanly. And once you see that new PR, it'll just click perfectly.
+
+> what is a system event anyway? It's just a change in the table … which is detectable, and it should be detectable. All changes inside every single table should be detectable. And those are events. Boom, those are events, triggers.
+
+> Objectives, we've already defined objectives. We've made all kinds of examples of objectives. So I think it's really boiling down to events and objectives.
+
+**#87 (looked at):** FACE law 32. Blank canvas; you can chain. Teaching walk: **firm created / provisioned** → **audit the contacts** → **if X** → **agents**. Provisioning is not only the firm row — things inside still have to happen. If reads previous result (rule **or** action). Completion is an event, so one canvas **or** two automations listening. Smallest workflow still stands. No new plate.
+
+**Thoughts (alignment, not a flag):**
+
+Yes. Same substrate as 23:16 / FACE 28 (write-back **is** the event). Sharpened:
+
+1. **Event** = detectable table change. Not a catalog we invent first. The write is the fact. Listeners point at it.
+2. **Objective** = already in [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md). Completions **are** events. **Not every write is an objective** (enroll, send, Save, halt).
+3. “Every table detectable” = **capability**, not an operator list of every UPDATE. Global/local already scopes listeners.
+4. **Do not mint** an events table that copies the write.
+5. #87 clicks because each step **is** a write (or a read of one): `firms`/`ct_firms` insert → audit/eligibility write → if (read) → `enrollment` insert. Later objectives (`fact_writebacks`, `meeting_booked`, consent sign-up) are the same grain.
+
+**Stood up vs this law (no mint):**
+
+| Law | Stood up | Hole |
+|-----|----------|------|
+| Any table change detectable | `dispatchEventToWorkflows` matches `event_name` **string** + firm + active | Closed catalog. Not “the write happened.” Hardcoded fires: `eligibility.changed`, `audit.completed`. `handleMachineEvent` is a **push**, not a detect |
+| Operator names | Hub `WORKFLOW_EVENT_CATALOG`: eligibility.changed · contact created/updated · import.created · audit completed/failed | No form_submitted, firm-provisioned, campaign-failure, meeting-booked, opt-out |
+| Completions are events | Rows exist | Those rows do **not** dispatch (01:10 still true) |
+| Firm provisioned | `firms` UUID **and** `ct_firms` TEXT | Dual tenancy. Which write is the teaching event? Ununified |
+| Audit the contacts | `audit_events` append; eligibility path | Not an `action.type`. CHECK still `call_agent` only |
+| Schedule / manual / webhook | Trigger **types** on `workflow_trigger` | Not table-change events. Do not wash them into this boil-down tonight |
+
+Durable park: [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md). Ascribe add: [`SYSTEMS-AUTOMATIONS-ASCRIBE.md`](./SYSTEMS-AUTOMATIONS-ASCRIBE.md) § Paper 01:25.
+
+**Ask (inflection):**
+
+1. Confirm: event = detectable table change; objective = named completion (**a kind** of those); not every write is an objective?
+2. Capability vs catalog — every table **can** be heard; the picker is a **named subset** (do not fill tonight)?
+3. Authorship Save (`sequence_template` / `workflow.graph` UPDATE) — detectable, but **not** an operator trigger?
+4. Schedule / manual / webhook stay as non-table-change trigger types?
+
+**Do not:** mint; fill the catalog; put triggers on Agents; overwrite 15:43; edit the 01:10 stamp; treat #87 as Story.

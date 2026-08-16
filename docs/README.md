@@ -89,6 +89,7 @@ Walk in this order. Read the files. Quote tables from SQL, not from memory.
 |------|------|
 | Story (12 systems) | `docs/register/SYSTEMS-STORY.md` — system **7** is engagement (7a calendar / 7b attempt engine); **11** motion; **12** meeting |
 | Goal / class-as-objective (founder expansion; not Story must until promoted) | `docs/register/SYSTEMS-GOAL.md` — excerpts + three class completions + escalation layers |
+| Events (founder expansion; not Story must until promoted) | `docs/register/SYSTEMS-EVENTS.md` — event = detectable table change; all objectives are events; not all events are objectives |
 | Agents UI ascribe (plates C1–C7 vs SQL / cascade / ports; grain lock sequence⊃campaigns; not a second flag) | `docs/register/SYSTEMS-AGENTS-ASCRIBE.md` |
 | Automations UI ascribe (plates A1–A13 vs workflowWalk / Hub rules; paper, not cemented) | `docs/register/SYSTEMS-AUTOMATIONS-ASCRIBE.md` — PR #85 package |
 | Requirements doctrine | `docs/register/SYSTEMS-REQUIREMENTS.md` |

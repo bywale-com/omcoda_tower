@@ -248,3 +248,19 @@ Mint tonight. Continue Hub. Treat A13 as a screen. Collapse C2b with A5. Put tri
 **Affordances:** assign-existing partial (one bound template per class). Create-from-template missing. **UI would change if** both cards called the same `agent_ref` enroll.
 
 **Objectives are events (23:16–23:35):** no return wire. Completions we already have must **dispatch** `workflow_trigger` (global = all of kind; local = this one). `form_submitted` is not in the Hub event catalog. Failure → ascribe a tag: first in-app action named; SQL still `call_agent` only. Lineage queryable: do not mint a table from the word.
+
+---
+
+## Paper 2026-08-16 01:25 — #87 blank-canvas chain + events = table changes
+
+**#87 —** Automations is a blank canvas. You can chain. Teaching walk: firm provisioned → audit contacts → if X → agents.
+
+**A. Our system:** Smallest walk already `workflow.graph` + `workflowWalk` (trigger + action). Chain of action → If → action is Hub `branch` / `lastOutput`; walker `evalBranch` is eligibility true/false — **too thin** for “if the audit output is X.” `action` CHECK is `call_agent` only — **audit the contacts** is not a type. Firm insert is `firms` and/or `ct_firms`; nothing dispatches a provisioned event. Completions still do not dispatch (01:10).
+
+**B. Externals:** none on the chain itself. Agents action → enroll → send (loop 3 still left).
+
+**Affordances:** smallest three-node **can** look like A1. The four-node teaching walk **cannot run**. **UI would change if** Save claimed audit-then-if-then-enroll against today’s walker.
+
+**Founder boil-down (same stamp):** a system event **is** a detectable change inside a table; all table changes should be detectable; those are the triggers. Objectives already defined. Two primitives. Full park: [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md).
+
+Do not mint an events table. Do not collapse If (read) with event (write). Do not put this chain on the Agents canvas.

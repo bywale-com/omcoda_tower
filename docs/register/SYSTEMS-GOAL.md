@@ -3,7 +3,7 @@
 **Seat:** Systems Analyst.  
 **Status:** Founder expansion 2026-08-15. Same grade as OPERATOR-REVISIONS: **denser than Seed/World, not Seed/World law until Story is promoted.** Founder: this is an expansion, not a trial balloon — will not be taken back.  
 **Does not:** mint a table; overwrite the Agents flagship (PHASE-TWO-LOG 15:43 UTC); rewrite Seed/World.  
-**Join:** [`SYSTEMS-STORY.md`](./SYSTEMS-STORY.md) §7 · [`OPERATOR-REVISIONS.md`](./OPERATOR-REVISIONS.md) §5c · [`guidelines/Reactivation.md`](../../guidelines/Reactivation.md) · SA log through **22:41 UTC grain lock** · UI-blueprint ascribe [`SYSTEMS-AGENTS-ASCRIBE.md`](./SYSTEMS-AGENTS-ASCRIBE.md). **Grain names:** more recent is current — **sequence contains campaigns**. 17:05 section below used the opposite words; witnessing only, not law.
+**Join:** [`SYSTEMS-STORY.md`](./SYSTEMS-STORY.md) §7 · [`OPERATOR-REVISIONS.md`](./OPERATOR-REVISIONS.md) §5c · [`guidelines/Reactivation.md`](../../guidelines/Reactivation.md) · SA log through **22:41 UTC grain lock** · UI-blueprint ascribe [`SYSTEMS-AGENTS-ASCRIBE.md`](./SYSTEMS-AGENTS-ASCRIBE.md) · events substrate [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) (01:25: event = detectable table change; **all objectives are events; not all events are objectives**). **Grain names:** more recent is current — **sequence contains campaigns**. 17:05 section below used the opposite words; witnessing only, not law.
 
 Requirements must **not** extract a `goal` state from this file until Story §7 carries a promoted **must**. Until then this file is the substance so the detail is not background.
 

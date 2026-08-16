@@ -234,3 +234,9 @@ Call / ElevenLabs. Attempt-cycle columns (count, wait after last node, nth-seque
 **B. Externals:** none (book already in `contact_records`). Send after enroll is loop 3 (left).
 
 **Affordances:** enroll path stood-up **per firm**. **Every firm** is missing as a machine scope. **UI would change if** Add to sequence only called today’s enroll with session `firmId` — that is not Every firm. Select from as “everyone already selected” needs a house-wide contact read we do not have.
+
+---
+
+## Paper 2026-08-16 01:25 — C2b sits on the events substrate (not a rewrite)
+
+C2b (campaign objective) is a **named completion** — a kind of event. The event itself is the table change (`fact_writebacks`, `meeting_booked`, consent sign-up). C8 Add contact is **not** an event (01:10): it is an enroll write that **starts** the mission. Same substrate: [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md). Do not put `workflow_trigger` on this canvas.
