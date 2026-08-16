@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **16:16:** plates must screenshot live `/prototype-ant` chrome first — [`PLATE-CHROME-RULE.md`](./PLATE-CHROME-RULE.md). C0 / C9 / C11 / C13 regenerated on that desk. Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **16:34:** each new plate has one purpose — C0 gear, C9 campaign attempt modulators, C11 + Add variation, C13 Activity table. Written spec [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md). Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -880,6 +880,18 @@ Flag 15:43 untouched.
 **What we did:** Screenshotted the live Agents catalog, editor, settings, Automations canvas. Regenerated **C0** (Agents settings gear next to New template), **C9** (attempt count + distance on the campaign, + Add channel, both channels can stay open), **C11** (this variation runs on), **C13** (Activity table like C8). Chrome matches the Operator desk, not Hub, not a made-up sidebar.
 
 **Do not:** hand drifted plates to an implementer; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 16:34 UTC — Copy only the purpose of each plate
+
+**Why:** Founder: C0 only the Agents settings button. C9 only the override-attempt modulators on the campaign. C11 radios do not work — it is **add a variation** (+ on the channel), then select how that variation applies in the attempt cycle. C13 Activity table is great. Contacts = same table, no extra PNG. Written spec must say exactly what to copy; the rest of those PNGs would confuse the implementer.
+
+**What we wrote:** [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md). Regenerated C11 (+ Add variation, stacked variations). Tightened C9 (campaign attempt count + distance). C0 and C13 kept; spec says ignore the rest of C0.
+
+**Do not:** copy Mock beats from C0; copy channel composers from C9; ship three radios as variation; plant; overwrite 15:43.
 
 Flag 15:43 untouched.
 
