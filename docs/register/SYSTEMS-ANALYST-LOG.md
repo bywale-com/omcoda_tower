@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 01:44 UTC — **Founder spec is the pictures. Enough for the middle. First ticket is still the connect.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 01:47 UTC — **Three seats. SA designs the machine. Implementer wires Save. Connect slice is ready to begin; SA is not done forever.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -822,3 +822,39 @@ Agents: the sequence/campaign/Override/channel/content/Settings/enroll middle is
 Automations: trigger · rule · If · action are named. Unbuilt: real Save, dispatch on completion, action only `call_agent`, rule still a TS pack, If thin. You pictured those. You do not owe a backend essay.
 
 **Do not:** treat “enough” as mint-everything; ask the founder for SQL; overwrite 15:43.
+
+---
+
+## 2026-08-16 01:47 UTC — Three seats. Who wires. Is SA done.
+
+**Why:** Founder: is SA the CTO / the one who specs the backend / only tables? Who connects pictured UI to the machine? Is there a third person for integration? Is SA fully done so they can begin?
+
+**Excerpts**
+
+> maybe I'm considering you a CTO, but the systems analyst
+
+> maybe all you do is create the tables … specify
+
+> who is doing this connection of like, okay We have the UI we have the specs … the nodes and systems that … need to exist on the back end for the front end to connect
+
+> maybe there's a third person that does the actual like Integration work that that would make the agents module actually work the automations module work Who is that person? And what do we need them to do? And is your job fully [done] for them to begin?
+
+**Seats (not a new flag):**
+
+| Seat | Job | Not |
+|------|-----|-----|
+| **You / PM** | What should happen. Pictures, FACE, flags. | Persist paths. SQL. |
+| **SA (this seat)** | What the machine **is**. Tables, relations, stood-up vs silent, what Save must write, what a write must fire. Story → Requirements → housing **when you say system time**. The implementation brief so they do not invent. Stay when the next workflow needs a table. | Ant chrome. Product flags. The PR that makes Save persist. Not CTO-as-company. Closest analog: machine architecture. |
+| **Implementer (the third)** | Integration. Ant Save → those rows. Completion INSERT → `dispatchEventToWorkflows` → walk → enroll. Look like the pictures. `npm run build` + a manual walk. | Invent event catalogs. Mint campaign housing. Overwrite 15:43. Ask you for SQL. |
+
+Identity already: “You **design the systems** … you say what the machine is, what it must be able to do, and what would have to change in the model.” I name the door. They cut the hole and hang the Save on it.
+
+Two implementers on one slice is still **one third seat**, split UI / persist. Not a fourth philosophy.
+
+**Is SA done so they can begin?**
+
+For the **connect slice: yes.** Brief is [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-SLICE-PACKAGE.md). Tables exist. Dispatch exists. Enroll exists. Honesty holes named. Do-nots named. Spin them.
+
+For **both modules, forever: no.** Housing is paper. Story 7 not promoted. I have not minted. I have not written the walker. I stay — next table when a workflow blocks, next housing when you say **system time**.
+
+**Do not:** I write the connect code in this seat; treat paper housing as CREATE TABLE; leave after the first ticket.

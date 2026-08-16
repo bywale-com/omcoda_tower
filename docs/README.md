@@ -71,6 +71,8 @@ You **design the systems**. You are the oldest systems seat. You live with the s
 - How tables relate (reads / writes / triggers) and how the dumb runtime consumes them (`server/wire-service/cascade.ts`, `worker.ts`, `workflowWalk.ts`).
 - Your log: [`register/SYSTEMS-ANALYST-LOG.md`](./register/SYSTEMS-ANALYST-LOG.md). Same discipline as the Phase Two log. New SA chats start there.
 
+**Implementer (third seat, named 01:47):** not you. They wire pictured Save to the rows you named, and a completion write to `dispatchEventToWorkflows`. First ticket: [`register/CONNECT-SLICE-PACKAGE.md`](./register/CONNECT-SLICE-PACKAGE.md). You stay when the next table is needed. You do not become the person who merges that PR unless the founder puts you in that seat.
+
 **You do not own**
 
 - Product-module flags, Type A vs Type B method mixing, Ant chrome, Hub leaf parity. Read the PM log for those; do not rewrite the Agents flagship into a generated 7-item list. Agents face for extract: [`register/AGENTS-FACE.md`](./register/AGENTS-FACE.md) + [`register/AGENTS-UI-BLUEPRINT.md`](./register/AGENTS-UI-BLUEPRINT.md) (UI only — do not mint tables from the pictures). Dated ascribe packages (after the walk + first question): [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md), then [`register/AUTOMATIONS-SA-PACKAGE.md`](./register/AUTOMATIONS-SA-PACKAGE.md) (Automations face [`register/AUTOMATIONS-FACE.md`](./register/AUTOMATIONS-FACE.md) + images [`register/AUTOMATIONS-UI-BLUEPRINT.md`](./register/AUTOMATIONS-UI-BLUEPRINT.md)).

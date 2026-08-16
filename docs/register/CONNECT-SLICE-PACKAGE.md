@@ -5,6 +5,8 @@
 **Law:** PHASE-TWO-LOG **15:43** untouched. Events: [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md). Objectives: [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md). Ascribe: [`SYSTEMS-AGENTS-ASCRIBE.md`](./SYSTEMS-AGENTS-ASCRIBE.md) · [`SYSTEMS-AUTOMATIONS-ASCRIBE.md`](./SYSTEMS-AUTOMATIONS-ASCRIBE.md).  
 **Product face:** prototype Ant. Hub is **reference only**.
 
+**Who (01:47):** Founder/PM = what should happen. SA = what the machine is (this brief). **Implementer** = the third seat — wires Save and dispatch. SA is done **enough for this ticket**. SA is not done forever.
+
 ---
 
 ## The slice (one vertical)
