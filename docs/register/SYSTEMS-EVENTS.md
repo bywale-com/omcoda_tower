@@ -87,6 +87,22 @@ If this is true, and “firm provisioned” is the teaching event, **which table
 
 ---
 
+## Confirmed 2026-08-16 01:35 — founder answers (do not re-ask)
+
+**1.** Event = detectable table change. Objective = named completion (a kind). Not every write is an objective. Every objective is an event; not all events are objectives. **Yes.**
+
+**2.** Capability vs catalog: every table **can** be heard. Do not fill the catalog tonight — **or in advance.** It becomes obvious when a workflow hits a block: “how do we create an automation for this?” The table already supports it (detectable). Then: UI for that, connect to that table. Boom.
+
+**3.** Authorship Save as a picker row **builds from 2.** Do not pre-fill. Uncovered when a workflow needs it.
+
+**Watch (new law, same stamp):** not everything is watched **by default**. Not everything needs to be watched needlessly. Detectable ≠ subscribed. No UI picker / pointer for every table until a workflow needs that write.
+
+**4.** Schedule / manual / webhook stay **separate trigger types** (for events). Are they non-table? Unsure — they may have tables. Cross that bridge later. Systems should not need a large change even if something must be built.
+
+Do not treat this confirmation as a mint or a filled catalog.
+
+---
+
 ## Do not
 
 - Mint `events`, `event_log`, or a lineage table from this sentence.

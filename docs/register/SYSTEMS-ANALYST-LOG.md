@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 01:25 UTC — **Events = detectable table changes. Objectives are a kind of those.** PR #87 blank-canvas chain clicks. Paper. No mint. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-16 01:35 UTC — **Four answers locked. Ready to connect, not to build the modules.** Two agents, one slice. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -741,3 +741,52 @@ Durable park: [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md). Ascribe add: [`SYSTEMS
 4. Schedule / manual / webhook stay as non-table-change trigger types?
 
 **Do not:** mint; fill the catalog; put triggers on Agents; overwrite 15:43; edit the 01:10 stamp; treat #87 as Story.
+
+---
+
+## 2026-08-16 01:35 UTC — Answers locked. Ready to connect — not to build Agents/Automations.
+
+**Why:** Founder answered the 01:25 asks, then: looking at today’s paper, ready enough to spin implementation — actually **two** agents — UI and systems, connecting. First the UI or the systems?
+
+**Excerpts**
+
+> not every write is an objective. Yeah. … every objective is an event But not all events are objectives. That's totally true
+
+> every table can be heard. … it doesn't need to be filled tonight. … it'll be obvious … when we need to … create an automation for this … the table supports it already because it's a detectable thing … create a UI for it and connect it to that … Boom
+
+> number threes builds from number two perfectly … better that it's uncovered when we hit a workflow that we need
+
+> not everything needs to be watched Needlessly or rather not every everything is already watched by default … we don't need a UI Selection for everything … yet
+
+> those are separate like triggers for events. … Are they non table? I don't know. I think they have tables … when we get to that point We'll cross that bridge … we shouldn't need to change a lot … of our systems
+
+> we're ready enough to like, go ahead and do something. … spin up. An implementation agent … both work on the u I and the system side of things when it comes to connecting. I actually want to spin up two agents. … First build the ui in the systems. Is that how it'll go?
+
+**Locked (do not re-ask):**
+
+1. Event = detectable table change. Objective = named completion (a kind). Not every write is an objective. Every objective is an event; not all events are objectives.
+2. Capability vs catalog: can hear every table. Catalog fills **when a workflow blocks**, by connecting UI to that table. Not in advance.
+3. Authorship Save picker = (2). Uncovered when needed.
+4. Schedule / manual / webhook = **separate trigger types**. Table-or-not later. Small systems change expected.
+
+**Watch law:** detectable ≠ watched. Not watched by default. No picker until a workflow needs that write.
+
+Parked on [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) § Confirmed 01:35.
+
+**Thoughts — ready or not:**
+
+Ready enough to **connect**. Not ready to “build Agents” and “build Automations.”
+
+Still moving / not this spin: Call vs Form; attempt-cycle params; waitlist → launch day; C2 Additional; 7a vs 7b; failure *does*; send; book-in; listing bind; C8 Every firm (cross-tenant); teaching walk (audit not an action type; If too thin; dual tenancy); Agents housing mint (campaign rows, drop `launch_day`) — that is **system time** on Story 7, and 22:41 said finish the moving face first. 22:50: nothing cemented until system time.
+
+What **is** ready: the boil-down, the pictures for A1 / A5 / A14 assign-existing, enroll + `dispatchEventToWorkflows` + completion tables already stood up. Ant Agents Save/Launch already hit the machine. Ant Automations Save is a **flash tag** (in-memory) — that is the honesty hole.
+
+**UI first or systems first?** Neither as a phase. Founder’s own #2: hit the need → connect UI to the table. Two agents on **one slice**, not one module each.
+
+**The slice:** listen to **one** existing completion write (`fact_writebacks` or `meeting_booked`) → assign **existing** agent (`call_agent` / enroll). Systems: persist + dispatch on that write. UI: pictured A1 Save real; A5 picker = only that completion; A14 radios. No catalog fill. No teaching walk. No housing mint.
+
+Brief: [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-SLICE-PACKAGE.md).
+
+**Ask:** Is that the first spin — one completion heard → existing agent assigned? If yes, paste the two blocks in that file. If you want C8 this-firm Add contact instead (or as well), say so — enroll is already there; Every firm is not.
+
+**Do not:** mint; fill the catalog; plant Hub; overwrite 15:43; treat this as system time on Story 7.
