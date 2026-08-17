@@ -1,10 +1,10 @@
 # Systems Analyst — log
 
-**Seat:** Systems Analyst (machine). PM / founder product talk stays in [`PHASE-TWO.md`](./PHASE-TWO.md) / [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md). Identity: [`../README.md`](../README.md) § Systems Analyst.
+**Seat:** Systems Analyst (machine). Packets + hard decisions so the implementer only cuts. Instructions from the **founder** only. Identity: [`../README.md`](../README.md) § Systems Analyst. PM flags: [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) (read for the glass, not for job-law).
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-15 23:00 UTC — **Hub is reference only. Ant is the product. Systems for the pictured UI.** Looked at the plates. No mint. 22:55 “stay on Hub” discarded. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-17 12:50 UTC — **015 is the handle. Go to the engineer. Ship 013+014+015.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -659,3 +659,621 @@ Not cemented.
 Full table appended on [`SYSTEMS-AUTOMATIONS-ASCRIBE.md`](./SYSTEMS-AUTOMATIONS-ASCRIBE.md) § Correction 23:00.
 
 **Do not:** mint; continue Hub; build a lattice page; campaign picker from the slipped caption.
+
+---
+
+## 2026-08-16 01:10 UTC — Main absorbed #85. C8 / A14 / event law (paper)
+
+**Why:** Founder: look at main and the new PRs.
+
+**What is on main:** Merge `c899df7` = PR [#85](https://github.com/bywale-com/omcoda_tower/pull/85) (01:06). Flag Current still **15:43**. PM Current **01:01**. No PR **#86**. Open besides us: #84 (this branch, behind main), #78 #77 #76 #70 (older). The new work is **on main**, not a new PR.
+
+**Looked at:** PHASE-TWO-LOG 23:07–01:01 · C8 · A14. Images opened.
+
+**Law that landed after our last ascribe (do not overwrite 15:43):**
+
+- All **objectives are events**. Completion **is** the write-back. No special return wire. Automations **listens** (global = all of that kind; local = this one). Named: form completion, campaign failure, opt-out/unsubscribe. `WORKFLOW_EVENT_CATALOG` has **no** `form_submitted`.
+- Failure of a campaign **is** an event; first named in-app action = **ascribe a tag**. No tag table.
+- Lineage **queryable** (who created — agent vs hand — path, completion, time). Not the engagement chart. Do not mint a lineage table from the word.
+- **C8:** enroll is this sequence’s Contacts. Add contact in the **header** (with Save / Launch). Two scopes only: **Every firm** (default) · **Select from** (everyone selected; deselect to pick one). Starts the mission **now**. Not Publish. Not an event.
+- **A14:** Automations does **not** create agents. **Assign existing** or **create from a template**. Three sequence radios. No chevron.
+- Still left on their list: **send** (3); **book-in door** (5); listing bind (build leftover of 4).
+
+**Systems vs those pictures (no mint):**
+
+| Picture / law | Stood up | Hole |
+|---------------|----------|------|
+| C8 Add to sequence | `enrollment` + `enrollAndActuate` (firm-scoped). Ant Contacts tab lists rows; **no Add contact** | **Every firm** is cross-tenant. `enrollment.firm_id` + halt are **per firm**. Walker/enroll take one `firmId`. That scope is not a filter on one firm’s book |
+| C8 Select from | `contact_records` per firm | House-wide contact list is not a query we have as one enroll call |
+| A14 assign existing | `firm_sequence_binding` + `agent_ref` → enroll into the bound template | One per class per firm (UNIQUE). Matches “the one you authored” only if there is one |
+| A14 create from a template | No copy-then-enroll. `sequence_definitions` unused | New sequence **instance** then enroll — silent. Same UNIQUE fight |
+| Objectives are events / form completion | Completions exist (`fact_writebacks`, `meeting_booked`, `messaging_events`). Trigger types exist | Those completions do **not** dispatch `workflow_trigger`. No `form_submitted` event name |
+| Failure → tag | Failure mode named 16:58. No tag row | In-app action still `CHECK (type = 'call_agent')` |
+| Lineage queryable | `enrollment.workflow_run_id`, `engagement_records` | No “who created / time-to-completion” query. Do not mint from the word |
+| Send (still left) | Resend/Twilio live when secrets+DB; consent/halt in `dispatchSend` | Loop 3 is product-left, not a missing port |
+
+**Do not:** mint; treat Every firm as a chrome checkbox; put enroll on Publish; build lineage as a screen; create-agent in Automations.
+
+---
+
+## 2026-08-16 01:25 UTC — Events = detectable table changes. Objectives are a kind. #87 clicks.
+
+**Why:** Founder, before / as PR [#87](https://github.com/bywale-com/omcoda_tower/pull/87) landed: the pattern is emerging; once the PR is seen it clicks. System events boiled down = **a change inside the table**, detectable; **all** table changes should be detectable; those **are** events / triggers. Objectives already defined. Boils down to **events and objectives**.
+
+**Excerpts**
+
+> I think the pattern is really emerging very cleanly. And once you see that new PR, it'll just click perfectly.
+
+> what is a system event anyway? It's just a change in the table … which is detectable, and it should be detectable. All changes inside every single table should be detectable. And those are events. Boom, those are events, triggers.
+
+> Objectives, we've already defined objectives. We've made all kinds of examples of objectives. So I think it's really boiling down to events and objectives.
+
+**#87 (looked at):** FACE law 32. Blank canvas; you can chain. Teaching walk: **firm created / provisioned** → **audit the contacts** → **if X** → **agents**. Provisioning is not only the firm row — things inside still have to happen. If reads previous result (rule **or** action). Completion is an event, so one canvas **or** two automations listening. Smallest workflow still stands. No new plate.
+
+**Thoughts (alignment, not a flag):**
+
+Yes. Same substrate as 23:16 / FACE 28 (write-back **is** the event). Sharpened:
+
+1. **Event** = detectable table change. Not a catalog we invent first. The write is the fact. Listeners point at it.
+2. **Objective** = already in [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md). Completions **are** events. **Not every write is an objective** (enroll, send, Save, halt).
+3. “Every table detectable” = **capability**, not an operator list of every UPDATE. Global/local already scopes listeners.
+4. **Do not mint** an events table that copies the write.
+5. #87 clicks because each step **is** a write (or a read of one): `firms`/`ct_firms` insert → audit/eligibility write → if (read) → `enrollment` insert. Later objectives (`fact_writebacks`, `meeting_booked`, consent sign-up) are the same grain.
+
+**Stood up vs this law (no mint):**
+
+| Law | Stood up | Hole |
+|-----|----------|------|
+| Any table change detectable | `dispatchEventToWorkflows` matches `event_name` **string** + firm + active | Closed catalog. Not “the write happened.” Hardcoded fires: `eligibility.changed`, `audit.completed`. `handleMachineEvent` is a **push**, not a detect |
+| Operator names | Hub `WORKFLOW_EVENT_CATALOG`: eligibility.changed · contact created/updated · import.created · audit completed/failed | No form_submitted, firm-provisioned, campaign-failure, meeting-booked, opt-out |
+| Completions are events | Rows exist | Those rows do **not** dispatch (01:10 still true) |
+| Firm provisioned | `firms` UUID **and** `ct_firms` TEXT | Dual tenancy. Which write is the teaching event? Ununified |
+| Audit the contacts | `audit_events` append; eligibility path | Not an `action.type`. CHECK still `call_agent` only |
+| Schedule / manual / webhook | Trigger **types** on `workflow_trigger` | Not table-change events. Do not wash them into this boil-down tonight |
+
+Durable park: [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md). Ascribe add: [`SYSTEMS-AUTOMATIONS-ASCRIBE.md`](./SYSTEMS-AUTOMATIONS-ASCRIBE.md) § Paper 01:25.
+
+**Ask (inflection):**
+
+1. Confirm: event = detectable table change; objective = named completion (**a kind** of those); not every write is an objective?
+2. Capability vs catalog — every table **can** be heard; the picker is a **named subset** (do not fill tonight)?
+3. Authorship Save (`sequence_template` / `workflow.graph` UPDATE) — detectable, but **not** an operator trigger?
+4. Schedule / manual / webhook stay as non-table-change trigger types?
+
+**Do not:** mint; fill the catalog; put triggers on Agents; overwrite 15:43; edit the 01:10 stamp; treat #87 as Story.
+
+---
+
+## 2026-08-16 01:35 UTC — Answers locked. Ready to connect — not to build Agents/Automations.
+
+**Why:** Founder answered the 01:25 asks, then: looking at today’s paper, ready enough to spin implementation — actually **two** agents — UI and systems, connecting. First the UI or the systems?
+
+**Excerpts**
+
+> not every write is an objective. Yeah. … every objective is an event But not all events are objectives. That's totally true
+
+> every table can be heard. … it doesn't need to be filled tonight. … it'll be obvious … when we need to … create an automation for this … the table supports it already because it's a detectable thing … create a UI for it and connect it to that … Boom
+
+> number threes builds from number two perfectly … better that it's uncovered when we hit a workflow that we need
+
+> not everything needs to be watched Needlessly or rather not every everything is already watched by default … we don't need a UI Selection for everything … yet
+
+> those are separate like triggers for events. … Are they non table? I don't know. I think they have tables … when we get to that point We'll cross that bridge … we shouldn't need to change a lot … of our systems
+
+> we're ready enough to like, go ahead and do something. … spin up. An implementation agent … both work on the u I and the system side of things when it comes to connecting. I actually want to spin up two agents. … First build the ui in the systems. Is that how it'll go?
+
+**Locked (do not re-ask):**
+
+1. Event = detectable table change. Objective = named completion (a kind). Not every write is an objective. Every objective is an event; not all events are objectives.
+2. Capability vs catalog: can hear every table. Catalog fills **when a workflow blocks**, by connecting UI to that table. Not in advance.
+3. Authorship Save picker = (2). Uncovered when needed.
+4. Schedule / manual / webhook = **separate trigger types**. Table-or-not later. Small systems change expected.
+
+**Watch law:** detectable ≠ watched. Not watched by default. No picker until a workflow needs that write.
+
+Parked on [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) § Confirmed 01:35.
+
+**Thoughts — ready or not:**
+
+Ready enough to **connect**. Not ready to “build Agents” and “build Automations.”
+
+Still moving / not this spin: Call vs Form; attempt-cycle params; waitlist → launch day; C2 Additional; 7a vs 7b; failure *does*; send; book-in; listing bind; C8 Every firm (cross-tenant); teaching walk (audit not an action type; If too thin; dual tenancy); Agents housing mint (campaign rows, drop `launch_day`) — that is **system time** on Story 7, and 22:41 said finish the moving face first. 22:50: nothing cemented until system time.
+
+What **is** ready: the boil-down, the pictures for A1 / A5 / A14 assign-existing, enroll + `dispatchEventToWorkflows` + completion tables already stood up. Ant Agents Save/Launch already hit the machine. Ant Automations Save is a **flash tag** (in-memory) — that is the honesty hole.
+
+**UI first or systems first?** Neither as a phase. Founder’s own #2: hit the need → connect UI to the table. Two agents on **one slice**, not one module each.
+
+**The slice:** listen to **one** existing completion write (`fact_writebacks` or `meeting_booked`) → assign **existing** agent (`call_agent` / enroll). Systems: persist + dispatch on that write. UI: pictured A1 Save real; A5 picker = only that completion; A14 radios. No catalog fill. No teaching walk. No housing mint.
+
+Brief: [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-SLICE-PACKAGE.md).
+
+**Ask:** Is that the first spin — one completion heard → existing agent assigned? If yes, paste the two blocks in that file. If you want C8 this-firm Add contact instead (or as well), say so — enroll is already there; Every firm is not.
+
+**Do not:** mint; fill the catalog; plant Hub; overwrite 15:43; treat this as system time on Story 7.
+
+---
+
+## 2026-08-16 01:44 UTC — Pictures are the spec. Enough. Connect is the middle once.
+
+**Why:** PM restated the middle. Founder: UI-first; if the images exist, the rest is a systems question; their job is to say what should happen — have they detailed that enough?
+
+**PM (alignment, not a flag):** Do not spin “build every event and every objective.” Starts stay open (connect UI to the table when a workflow needs it). **Middle = hear the write → run the graph → If on the previous result → assign / enroll.** The connect slice **is** that middle, once. Agents authorship middle is **named**; housing/Save not stood up; Call face-only; send known leftover. Automations more **unbuilt than unknown**. Build the machinery. First ticket still one completion heard, one existing agent assigned.
+
+**Founder excerpts**
+
+> that's why I always think from UI first … the UI and those images you've generated exist right now … then everything is just a system question
+
+> all I can do is describe what I want to happen. And then it knows what should happen
+
+> the save button should be what, like, pushes something to the back end. Like, I don't know a lot about that. Like, that's not my job. Right? My job is to say exactly what I want to happen.
+
+> have I not detailed that enough? Isn't that obvious enough from like, everything that I've done? Plus the images plus the specs of each thing.
+
+**Thoughts:**
+
+Yes. You have detailed **what should happen**. That is the job. You do not specify persist paths. 23:00 already: systems change so the pictured UI works **exactly**. Save means the picture is true — not a flash tag.
+
+The first ticket is not because you under-specified. It is so implementers do not build every plate and mint a catalog. PM is right: that ticket **is** the middle working, once.
+
+“If the UI exists, everything is a system question” — **yes** for: does Save persist, does the write fire the graph, can If read the last result, does assign enroll. **No** for inventing the still-open leftovers (Call live, Every firm as house-wide enroll, failure *does*, additional opt-in objectives, operations catalog). Those stay founder/PM when they show up. Same as events: connect when the workflow needs it.
+
+Agents: the sequence/campaign/Override/channel/content/Settings/enroll middle is **named**. Honest Save of every toggle still needs housing (campaign row, Override this, attempt-count). That is systems, from your pictures — not a new product question. Do not persist Override this into `overrides` jsonb (20:10 honesty).
+
+Automations: trigger · rule · If · action are named. Unbuilt: real Save, dispatch on completion, action only `call_agent`, rule still a TS pack, If thin. You pictured those. You do not owe a backend essay.
+
+**Do not:** treat “enough” as mint-everything; ask the founder for SQL; overwrite 15:43.
+
+---
+
+## 2026-08-16 01:47 UTC — Three seats. Who wires. Is SA done.
+
+**Why:** Founder: is SA the CTO / the one who specs the backend / only tables? Who connects pictured UI to the machine? Is there a third person for integration? Is SA fully done so they can begin?
+
+**Excerpts**
+
+> maybe I'm considering you a CTO, but the systems analyst
+
+> maybe all you do is create the tables … specify
+
+> who is doing this connection of like, okay We have the UI we have the specs … the nodes and systems that … need to exist on the back end for the front end to connect
+
+> maybe there's a third person that does the actual like Integration work that that would make the agents module actually work the automations module work Who is that person? And what do we need them to do? And is your job fully [done] for them to begin?
+
+**Seats (not a new flag):**
+
+| Seat | Job | Not |
+|------|-----|-----|
+| **You / PM** | What should happen. Pictures, FACE, flags. | Persist paths. SQL. |
+| **SA (this seat)** | What the machine **is**. Tables, relations, stood-up vs silent, what Save must write, what a write must fire. Story → Requirements → housing **when you say system time**. The implementation brief so they do not invent. Stay when the next workflow needs a table. | Ant chrome. Product flags. The PR that makes Save persist. Not CTO-as-company. Closest analog: machine architecture. |
+| **Implementer (the third)** | Integration. Ant Save → those rows. Completion INSERT → `dispatchEventToWorkflows` → walk → enroll. Look like the pictures. `npm run build` + a manual walk. | Invent event catalogs. Mint campaign housing. Overwrite 15:43. Ask you for SQL. |
+
+Identity already: “You **design the systems** … you say what the machine is, what it must be able to do, and what would have to change in the model.” I name the door. They cut the hole and hang the Save on it.
+
+Two implementers on one slice is still **one third seat**, split UI / persist. Not a fourth philosophy.
+
+**Is SA done so they can begin?**
+
+For the **connect slice: yes.** Brief is [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-SLICE-PACKAGE.md). Tables exist. Dispatch exists. Enroll exists. Honesty holes named. Do-nots named. Spin them.
+
+For **both modules, forever: no.** Housing is paper. Story 7 not promoted. I have not minted. I have not written the walker. I stay — next table when a workflow blocks, next housing when you say **system time**.
+
+**Do not:** I write the connect code in this seat; treat paper housing as CREATE TABLE; leave after the first ticket.
+
+---
+
+## 2026-08-16 02:03 UTC — Handback accepted. Don’t-mint was not law. Change packet.
+
+**Why:** Implementation specialist / CTO handback via founder. “Don’t mint” was treated as law. It isn’t. SA inventoried and named; did not write the change. Pictures are the spec. Ask: finish 22:41 + Automations ascribe in connect-package form for every plate. Accept / correct / replace their draft. Not “go write the SQL.” Not another stamp that says wait for Story.
+
+**Excerpts (theirs)**
+
+> What exists is the past. What we specified today is what must exist, exactly as the pictures, UI and tables.
+
+> I treated SA’s “don’t mint” as a law. It isn’t. That’s their job, and they didn’t finish it.
+
+> If a control is on the glass, it needs a row, a field, or a relationship.
+
+> They did the analysis of the machine. They did not finish the change-management deliverable.
+
+> the ask is not “go write the SQL.” The ask is: take 22:41 and the Automations ascribe and finish them in the same form as the connect package — for every plate
+
+**Done:** [`SYSTEMS-CHANGE-PACKET.md`](./SYSTEMS-CHANGE-PACKET.md). Accept their campaign / objective / channel / CHECK / dispatch / tag / rule_pack. Corrections against SQL: `action.agent_ref` must be nullable; no second `sequence` table (`template_id` is the sequence); class token `optin` not `optin_launch`; `enrollment.sequence_id` already exists; provisioned = `ct_firms` this pass; Every firm = loop `contact_records`; failure write = `campaign_failure`; call vs form tokens not collapsed; Hub in-app besides tag → `engagement_records` this pass.
+
+**Still open (only):** waitlist gate value; C2 Additional disabled; per-campaign attempt chrome (columns anyway); Hub list ≠ tag later.
+
+**Do not:** stuff `cells` / `overrides`; mint `goal` or an events log; reuse `campaign_states`; revive `sequence_definitions`; skip the packet because connect-slice said don’t mint.
+
+---
+
+## 2026-08-16 02:07 UTC — Seat lock. Packets. Founder only.
+
+**Why:** Founder: “don’t mint” was a stale PM law. Moving forward this is the job.
+
+**Excerpts**
+
+> that was a stale law, the don't mint from the PM.
+
+> this is why you exist. You're not just here to chime in. You're meant to create these packets. You're meant to change management, systems analysis, detail what needs to be detailed, make those hard decisions, and then document your in packets so that the implementer literally just only has to implement and do no analysis.
+
+> You're in charge of ensuring that the implementer succeeds, and that's ensuring that the system is well built
+
+> You don't take … Instructions from the PM or the implementer. You take instructions from me. You're talking with me.
+
+**Locked:** Packets are the deliverable. Hard decisions are this seat. Implementer cuts only. Instructions = founder. PM pictures/flags = spec on the glass, not job-law. Implementer drafts = input to correct, not orders. Identity updated in [`../README.md`](../README.md) § Systems Analyst.
+
+**Do not:** wait for PM “system time”; wait for an implementer to write the change list; chime only.
+
+---
+
+## 2026-08-16 02:23 UTC — Caption audit. Packet stripped of founder labels.
+
+**Why:** Founder: UI quirks we hoped SA had not baked in. PR #87 [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md). Audit the packet.
+
+**Excerpts / law**
+
+> There is no first objective. There is an **objective**. You string the next campaign when that objective is met. The C3 pill is a founder caption of that distance, not a node.
+
+> **Launch window** and **Launch day** are example campaign names … The operator can rename both. **“They opt in”** is a title at best, not an objective class. A green tick on “objective met” is allowed chrome. It must not become `qualify_gate`, a qualify node, or a systems question.
+
+> The 17:05 waitlist-vs-whole-book fork is **not on C3**. If that rule is still needed, it is a new ask.
+
+**What I had frozen (wrong):** `qualify_gate`, `qualify_next_campaign_id`, `source` CHECK `launch_window` \| `launch_day`. Waitlist left “open” off that caption.
+
+**Hard decision now:** next campaign = next `ord` when this campaign’s objective is met. No qualify object. `campaign.name` TEXT. `source` only `template` \| `scratch`. C2b `kind` radios stay (spec). `sequence_class` three tokens stay as **kind** (`seq_phase_order`), not as C1 label. Seed **may** use those example names. Waitlist is not in this packet.
+
+**Do not:** mint qualify; freeze example names; treat “If X” as a field (A16).
+
+---
+
+## 2026-08-16 02:25 UTC — Did the PM audit all the images?
+
+**Why:** Founder: just to make sure — did they actually audit all the images?
+
+**Looked at:** [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) · #87 commit `c7d2e37` · PHASE-TWO-LOG **02:19** · AGENTS-UI-BLUEPRINT / FACE diffs · AUTOMATIONS-UI-BLUEPRINT diff.
+
+**Answer:** They **named** every plate C1–C8 and A1–A17 in a table. They did **not** equally re-read every image.
+
+| What they did | Evidence |
+|---------------|----------|
+| Deep correction | C3 (the trigger). FACE laws 2, 3, 16 rewritten. C1–C4 “on the glass” reclassified as caption vs example name. |
+| Coverage table | One row per plate in the audit file. |
+| Thin / not confirmed | A3 / A6 / A7 caption columns are “—”. C5+C5b lumped (“teaching labels”). A10+A13 lumped. C4: “leftover qualify pill **if still** in the pixels” — they did not confirm the pixels. |
+| Automations blueprint | Caption commit: **+2 / −1** on `AUTOMATIONS-UI-BLUEPRINT.md` (a pointer). Per-plate Automations specs were not rewritten. |
+| Their own 02:19 | Founder asked to audit all plates. Their stamp is the C3 law, then “same is true for **a couple of other marks**.” Then they wrote the table. They said this pass **did not regenerate** the lineup. |
+
+**For this seat:** C3 / names / no `qualify_gate` is law (you said it). I already stripped the packet. I will not treat A3 “—” as “we opened that PNG and classified every mark.”
+
+**Do not:** accuse them of skipping the file; treat the table as a pixel walk.
+
+---
+
+## 2026-08-16 02:31 UTC — Pixel walk. Fuller packet. Ready for the cut.
+
+**Why:** Founder: 02:19 was a coverage table; this pass opened every canon PNG. Share the new audit. Do a fuller systems audit — last before the CTO. Be thorough.
+
+**Pixel facts I took (S/E/C):** qualify pill on **C3+C4+C5** (one caption, still zero columns; not on C5b, not on A). **C5 ≠ C5b.** **A10 ≠ A13.** A3/A6/A7 are not empty. A6 **Exit** vs A15 **If** — do not freeze one palette. A7 Branch = drift. A14 on-glass caption vs the sentence that is not on the PNG.
+
+**Packet:** [`SYSTEMS-CHANGE-PACKET.md`](./SYSTEMS-CHANGE-PACKET.md) plate tables split; `content` jsonb keys from C5b; graph kinds `exit` + `branch`; C4 Form pixel does not add a token; Publish/catalog drift ignored; A8 chevrons/blank form not implemented. Audit file replaced with the pixel walk.
+
+**Still not a product invent:** waitlist (new ask); C2 Additional disabled; Call port; send / book-in / lineage.
+
+**Do not:** mint qualify three times; freeze palettes; build A10/A13 as pages; implement A8.
+
+---
+
+## 2026-08-16 17:05 UTC — 010 ratified. #89 needs 011 variations. Rest maps.
+
+**Why:** Founder: go through the latest PR. Implementer already cut housing well. Did #89 / later commits add tables, fields, or system requirements that need a packet? Edit this PR or write an enrichment packet if they did.
+
+**Looked at:** main tip `4993a02` (`010_sequence_campaign_housing.sql` + `campaignHousing.ts`) · PR [#89](https://github.com/bywale-com/omcoda_tower/pull/89) `IMPLEMENTER-FACE-PASS.md` (C0, C9, C11, C13) · parent packet [`SYSTEMS-CHANGE-PACKET.md`](./SYSTEMS-CHANGE-PACKET.md).
+
+**Answer:** most of #89 was already specified. **One gap** needs a new table. That is the enrichment packet: [`SYSTEMS-CHANGE-PACKET-ENRICH.md`](./SYSTEMS-CHANGE-PACKET-ENRICH.md).
+
+### 010 extras vs 02:31 packet — accept, do not reopen
+
+| Extra | Decision |
+|-------|----------|
+| `action.type` **`run_audit`** | **Accept.** A15 audit. Write `audit_runs` then `dispatchEventToWorkflows('audit.completed')`. |
+| `seq_attempt_cycle` defaults 3 / 86400 | **Accept.** C6 examples. |
+| `campaign_failure.created_at` (no `failed_at`) | **Accept.** INSERT time is the event. |
+| Seed name “They opt in” | **E.** `kind=form` is spec. Do not CHECK the string. |
+| `enrollment.sequence_id` still nullable | Leftover. NOT NULL in 011 if nulls remain. |
+| `rule_attempt_criteria.campaign_channel_id` | Stood up. Channel-rules node uses this. **No second rules table.** |
+
+### #89 → machine (copy grain, extrapolate, no extra PNG)
+
+| Plate / writing | New table / field? | Persist |
+|-----------------|--------------------|---------|
+| **C0** gear | No | Opens C6. `sac-global`. |
+| **C9** attempt count + distance | No (columns already on `campaign`) | `attempt_count` · `wait_after_last_failed_seconds`. Ignore + Add channel on that PNG. |
+| **C11 + Add variation** | **Yes — `campaign_channel_variation`** | `apply_mode` `every` \| `only_this` \| `every_except` + `attempt_n`. Content jsonb same keys as channel. **Every** channel. Dead: three radios. |
+| Channel rules extra node | No | `rule_attempt_criteria` where `campaign_channel_id` set. Text/email/call toggle families. Shared by variations. Not per attempt. No Form rows on Call. |
+| **C13** Activity | No | Query `engagement_records` join `contact_records`. Time · Name · Firm · Channel · What happened. Not the chart. |
+| Contacts | No | Same chrome. Name · Firm · Enrolled date. C8 modal. |
+| + Add channel | No | INSERT remaining `campaign_channel.token` from `{text,email,call}`. No fourth medium. |
+| Open/closed channels | No | Canvas chrome. **No `is_open`.** |
+| Rename in place / override above modulators / modals scroll | No | Existing rows / UI. |
+
+**Hard decision:** variations are the only mint from this pass. Runtime reads `campaign_channel_variation`. Parent `campaign_channel.content` stays as leftover (like `cells`). Do not persist the dead radios.
+
+**Do not:** mint qualify from C9 leftover; mint a second channel-rules table; mint `is_open`; add a fourth channel token; overwrite 15:43.
+
+---
+
+## 2026-08-16 19:25 UTC — 011 ratified. #89 18:53 needs 012. Not pass-through.
+
+**Why:** Founder: go through the recent PR and commit. Anything to add, or all good to pass to the engineer?
+
+**Looked at:** main `db37fed` · merged [#90](https://github.com/bywale-com/omcoda_tower/pull/90) (`011_channel_variations.sql`) · merged [#91](https://github.com/bywale-com/omcoda_tower/pull/91) logout · open [#89](https://github.com/bywale-com/omcoda_tower/pull/89) commit `171e8f4` (18:53: A18 / A19 / C8b / C14 / C15 / seed).
+
+**Answer:** **011 is good.** Do not reopen. **#89’s new plates are not all good to pass.** They need hard decisions. Packet: [`SYSTEMS-CHANGE-PACKET-012.md`](./SYSTEMS-CHANGE-PACKET-012.md).
+
+### 011 extras — accept / correct in 012
+
+| Extra | Decision |
+|-------|----------|
+| `enrollment.sequence_id` NOT NULL | **Accept.** Leftover we named. |
+| `pickAuthoredContent` by attempt n | **Accept.** |
+| `within_time` as a **toggle** on the face | **Wrong vs C15.** Drop it. Within time is one field. |
+| `threshold` per criteria row | **Wrong vs one timer.** Timer lives on the group (`seq_channel_rules` / `campaign_channel.within_seconds`). |
+| Logout #91 | Chrome. Not this packet. |
+
+### #89 18:53 → machine
+
+| Plate | Mint? | Decision |
+|-------|-------|----------|
+| **C8b** | No | Query. All selected. Agents still INSERT `enrollment`. |
+| **C14** | `seq_channel_rules` + criteria `sequence_id` | Sequence Settings = C6 quality. Override = `binding.override_channel`. One timer per token. |
+| **C15** | `campaign_channel.rules_override` + `within_seconds` | One timer for every toggle that is on. Same at C6/C14. |
+| **A18** | `local_ref` (`grain` already exists) | All of that kind vs **this** one. Not Contacts. Audit = Global only. `meeting_booked` Local = not this pass (no type row). |
+| **A19** | `workflow.audience_scope` + `audience_contact_ids` | Same look as C8. **No enrollment.** Does not start a mission. |
+| **Seed** | No new tables | `contact_records` / `enrollment` / `engagement_records` / `workflow_run` for `firm-cedar`. |
+
+**Hard split:** 02:31 lumped `grain` with C8. A18 ≠ A19. Trigger `scope` leftover.
+
+**Do not:** collapse Global/Local with Contacts; timer per toggle; enroll from Automations Contacts; Local on audit; overwrite 15:43.
+
+---
+
+## 2026-08-16 21:22 UTC — How we know a flow worked
+
+**Why:** Founder: systems are events. To check they work, name the events a flow should create, connect (maybe email), see if they fire — monitor, don’t get stuck inside the systems.
+
+**Excerpts**
+
+> ultimately, systems are just events … Almost everything create the system event.
+
+> we identify all the system events that this flow should create. And then we see if … all those system events figure their requisite emails.
+
+> I don't want to be stuck in the systems, I want to be able to monitor.
+
+**Thoughts (locked in [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 21:22):** Yes on the unit. The check is **expected writes for this flow**, not “everything emailed.” Product CEM to a contact ≠ monitor mail to you. Monitor hangs off the same dispatch — no `events` table. If a write is not dispatched, email cannot see it.
+
+**Do not:** fill the catalog to monitor; make inbox the machine; skip 012 for this. Flag **15:43**.
+
+---
+
+## 2026-08-16 21:57 UTC — Confirm book is the import. Audit artifact is Book readiness.
+
+**Why:** Founder on Consultant Contacts: no upload. Confirm book for Tower should land the book. Automations: trigger contact import → audit the contacts. Every audit should appear in Operator Book readiness. Cannot remove a node on the canvas.
+
+**Excerpts**
+
+> the confirm book for tower is supposed to be … a button that allows you to upload your contacts
+
+> on a contact import … Action … audit the contacts
+
+> every single audit that's happening on tower … whenever I go to book readiness … I should be able to see all those audits
+
+> there's literally no way to remove a node on the freaking canvas
+
+**Hard decisions:** Confirm book = file land, not `crmOAuth.grant`. Table `import_batch` `kind=contact`. INSERT is `contact_import`. `run_audit` writes `audit_runs`. Book readiness **loads that table**. Delete node is chrome. No condition this pass. Two desks stay two desks.
+
+Packet: [`SYSTEMS-CHANGE-PACKET-013.md`](./SYSTEMS-CHANGE-PACKET-013.md).
+
+**Do not:** Hub `import.created`; events table; merge Consultant into Operator; skip 012. Flag **15:43**.
+
+---
+
+## 2026-08-16 22:17 UTC — This workflow, authored. Pieces exist; chain cannot run.
+
+**Why:** Founder: stop solving it as the specialist. They named the workflow. Any firm, contact file import → audit (a node) → tag + notes on each contact. No-code the app.
+
+**Can it exist today:** `contact_tag` and `run_audit` / `ascribe_tag` CHECKs are on main. Walker still **enrolls** every action. Confirm book does not land a file. Dispatch is one-firm. No `notes` column.
+
+**Hard decisions:** House `workflow.firm_id` NULL. Walker by type. If on this contact’s verdict. Tag on `contact_tag`. Notes on `contact_records.notes`. Do not hardcode audit on upload. Packet [`SYSTEMS-CHANGE-PACKET-014.md`](./SYSTEMS-CHANGE-PACKET-014.md). 013 still lands the file.
+
+**Do not:** enroll because an action exists; Hub `import.created`; skip 012/013. Flag **15:43**.
+
+---
+
+## 2026-08-16 22:26 UTC — It is a lot. Dual runtime + compiler, not three flags.
+
+**Why:** Founder: look how much is required just to make this work. Not as simple as why. Deeper reason, given where the app is going.
+
+**Hard:** Destination = the graph **is** the app. Today the app **is** TypeScript. 014 is the first path that must live in the graph instead of in a handler. The picture (file → audit → tag) is writes; the machine needs named events + action types; edges are not the machine. Dual-running handler + walker until the walker can do what `handleAuditRunCreate` already does is the load. Do not shrink it. Do not add tables to skip it. Hardcoding the path is backwards.
+
+Locked in [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 22:25 (deepened 22:26) and packet [`SYSTEMS-CHANGE-PACKET-014.md`](./SYSTEMS-CHANGE-PACKET-014.md).
+
+**Do not:** pretend 014 is a small flip; mint events table / LISTEN; skip 012/013. Flag **15:43**.
+
+---
+
+## 2026-08-16 22:31 UTC — Two things. Modules are faces. Fast = wrap the handler.
+
+**Why:** Founder: the app is two things; everything else is an alternate way in. Provision should exist — and what it does is recreatable on the graph (on this form, do X Y Z). Graph + automations + agents is most of the app. What are the other modules? Can the graph do what they do? How quickly? Why incomplete?
+
+**Hard:** Machine = store + event (objective ⊂ event). Product = **form** (human write) + **graph** (hear write, write more). Agents ⊂ graph. **Module = face + door, not a third primitive.** Not all of it: faces, ports, walls, privilege stay. Incomplete because interiors are trapped in TypeScript (uncompiled verbs), not because modules are missing. **Fast:** wrap `handleAuditRunCreate` as `run_audit` — do not generic-SQL, do not start with provision. Later `provision_firm` = `handleMachineProvision` on that form’s write.
+
+Locked in [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 22:31. 014 stays the first wrap.
+
+**Do not:** skip 012/013/014 for provision; melt Book readiness into the canvas; mint `form_submitted` with no row. Flag **15:43**.
+
+---
+
+## 2026-08-16 22:47 UTC — Canonical vs provision: same idea; mint is the extra
+
+**Why:** Founder: Automations should make provision possible; if it needs too much fixture maybe we are not building it. Then provision is a cascade across tables. Canonical: eligibility / firm-interior event → operation → agent. Is that really different?
+
+**Hard:** Not different as Automations. A verb **is** a cascade (eligibility already four tables; audit three; provision five). The feel is **minting `firm_id`** vs operating inside one. Dispatch today matches a firm that already exists. Canonical is the proof of the module. Provision is the same pattern after the mint. Eligibility today still enrolls if no graph hears — same trap as hardcoded audit. Invert: cascade in the verb, agent on the graph.
+
+Locked in [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 22:47.
+
+**Do not:** pass/fail Automations on provision; mint an events bus because many tables; keep fallback enroll as the product. Flag **15:43**.
+
+---
+
+## 2026-08-16 22:50 UTC — Basis. 22:47 was not a cut.
+
+**Why:** Founder: this chat’s problem is basis. What is the basis for canonical vs provision.
+
+**Hard:** 22:47 “same idea / mint is the extra / canonical is the proof” is **unlocked**. Observed: event=write (01:35); #87 names firm provisioned as a trigger; eligibility cascade dispatches then maybe enrolls; provision writes five tables and does not dispatch; dispatch matches `firm_id` + `event_name`. Not observed: that those facts make them the same operator move. Do not implement from 22:47.
+
+[`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 22:50.
+
+**Do not:** treat destination talk as SQL. Flag **15:43**.
+
+---
+
+## 2026-08-16 22:55 UTC — Automations works with the app. Handing to a module is still automations.
+
+**Why:** Founder: Automations is not replacing the app. It works with the app. Graph lives on detecting and using events/writes (same thing in practice). Walked off “provision as many nodes” because gargantuan. Cascade, as they mean it: you don’t need a node per table — put the data where something already knows how (even the Provision module). That is still an automation. Does interfacing that way break the principle?
+
+**Hard:**
+- Automations **works with** the app. It does not replace Provision, Book, Contacts. Earlier “graph is the app” talk overspoke.
+- “Cascade” here is not magic: one write does not fill every related store by itself. The **one place** is the module that already does the whole job. Graph does not need a node per table.
+- Handing the form to Provision, or hearing when Provision is done, **is** automations. The graph is the **when**. The module is the **how**.
+- Does not break events=writes **if** Provision still leaves the same trail it already leaves, and the graph can **use** that trail for the next step.
+- **Would** break: a second provision path that doesn’t leave that trail; or Provision finishes and the graph never hears it (then you cannot chain). Today the second hole is real — after a firm is created, automations is not offered that fact. Cost to fix: connect the existing finish to the graph, not rebuild Provision.
+
+Trade-off: hear-after (form stays on Provision; graph runs next) is cheaper. Ask-to-run (graph decides when to hand the form over) is the same principle, more wiring. Neither requires exploding tables into nodes.
+
+**Do not:** rebuild Provision as canvas nodes; a second provision trail; speak as if the graph replaces desks. Flag **15:43**.
+
+---
+
+## 2026-08-16 23:02 UTC — Provision-finished is the firm-row event already named. The canvas wire emits nothing.
+
+**Why:** Founder: is “provision finished” different from the event already in there for a new firm/row added? Second: when you connect a node to a trigger, what does that wire emit / do?
+
+**Hard:**
+- Not a second event. “Provision finished” **is** “a new firm row exists” (named A17 / 010). Not in the live picker today. Picker *does* have **Contact created** and **Import created** — those are a person row / an import row, not a firm. Same shape, different thing. When you actually provision, that firm-row fact is still **not offered** to Automations.
+- Drawing a wire **emits nothing**. It means **then this next**. Saved with the picture. Activate: the **trigger node** becomes the listen (“wake on this named event”). The wire is not the listen. Later, when the event happens, the engine starts at the trigger and **follows the lines**. No extra signal on the wire.
+
+**Do not:** mint a second “provision finished” name; treat Contact created as firm provisioned; treat drawing a line as firing the workflow. Flag **15:43**.
+
+---
+
+## 2026-08-16 23:06 UTC — n8n-shaped Input/Output is editor preview. Live walk does not pipe that packet.
+
+**Why:** Founder: then-this is not all n8n does — n8n shares information on the wire. Our rules node has Input / Data / Output. Explain that on the backend.
+
+**Hard:**
+- On the glass (Hub inspector): **Input** = previous node’s last result (shown). **Output** = this node’s result after you **Run** it in the editor. **Data/params** = how the node is set up; you can drag a field from Input into a param (n8n-shaped).
+- Connecting, in the editor: copies previous output onto next input **for that preview**. If-true / if-false pick which slice.
+- Live run: the wire is still **then next**. A shared bag (firm, people, the event that woke it) — not a JSON packet along the line. Rules in the live run do **not** consume that Input pane and do **not** write that Output pane. They peek a pathway row and continue. Action uses the bag, not the previous node’s output object.
+- So: n8n chrome in the editor. Then-next machine when it actually runs. The panes are not the pipe.
+
+**Do not:** treat Input/Output as the live contract; mint a packet table to look like n8n. Flag **15:43**.
+
+---
+
+## 2026-08-16 23:09 UTC — Why “bag not n8n pipe” was placed. Guard, not a big distinction.
+
+**Why:** Founder: why exactly that line? Because I might think we already have n8n’s pipe? What is actually different? Truth, not an excuse.
+
+**Hard:** The line was placed **because you had just pointed at Input/Output after n8n.** I was stopping you from taking those panes as the live machine. Yes — that was the reason.
+
+Bag vs pipe is **not** a large distinction. Walk-in-order while carrying facts forward is close to a pipe. I named “bag” because the live walk has one shared pile, not “this line carries this node’s result into the next.” That is a small code fact. It does not matter much as leverage.
+
+What **does** matter, and is why I said it: live run does **not** use those panes. Editor copies previous result into Input for show. Live does not. I overstated bag-vs-pipe as if it were the point. The point was: don’t trust the panes.
+
+**Do not:** treat bag vs pipe as law. Flag **15:43**.
+
+---
+
+## 2026-08-16 23:11 UTC — Preview is a real test on pulled sample data. It is not the live event.
+
+**Why:** Founder: then what is the preview for? Is it fake? Does it not carry trigger data, run the operation, and show the selected output?
+
+**Hard:** In the **editor**, for Manual → Rule: yes it does that. Pull the records you selected in parameters (Hub demo/seed clients/contacts in the browser, not a live write). Rule **really** evaluates that object against the pack. Output **really** is that result. Purpose: author/test without waiting for a real event.
+
+Not fake math. Not the live event either. Clicking Run on an **event** trigger does **not** fill Output from a real write. When a real event later wakes the workflow, this path is not used — live rules do not read that Input or write that Output.
+
+**Do not:** call the panes random; call the live path the same as Run in the inspector. Flag **15:43**.
+
+---
+
+## 2026-08-17 00:06 UTC — Then-this is order. Not enough alone. Result must be a write. That scales.
+
+**Why:** Founder: if the wire is then-this, is that enough to orchestrate all automations? If nothing rides the line, how is the rule output there in order? Not an epistemic question — a structure that stays consistent as more events and more actions land across desks.
+
+**Hard:**
+- **Then-this is enough for order.** Which step runs after which. That is the wire. Keep it.
+- **Then-this is not enough to use a result.** The next step (or another automation) can only use what **exists** after the step: a write, or facts of this run (which firm, which people, the event that woke it).
+- How the inspector shows ordered Output: the **editor test** ran the rule on the Input object and displayed that result. That is not the live line carrying it.
+- Structure that scales: **Trigger** = a write we can hear (add a picker row when a workflow needs that write — already 01:35). **Wire** = then this. **Action** = the module that already knows, and it **leaves a write**. Same graph: next node uses this run’s people/firm + that write. Other graph: listens to that write. Operator, consultant, same rule. No second pipe. No node-per-table.
+
+**Do not:** treat then-this as the whole orchestrator; invent a packet-on-the-wire as a third primitive; mint an events table. Flag **15:43**.
+
+---
+
+## 2026-08-17 00:10 UTC — The import → audit → tag-the-failures walk in then-this.
+
+**Why:** Founder: consultant uploads contact data → serve it to the Audit module → for each contact that failed, tag them where they live in Contacts. How does if-this-then-that orchestrate that? This is the scenario that made it feel incomplete.
+
+**Hard (the walk):**
+
+1. **If** a contact import happened **then** hand those people to **Audit** (the module, not a homemade operation). The import is a write. That write is the trigger. Audit does the job and **leaves** an audit plus a pass/fail on each person.
+2. **If** this person’s audit failed **then** add the tag on that person. The tag is a write on the contact. Contacts is the face — they already live there.
+3. Order is the wires. “For each” is: the import named the people; Audit wrote a result next to each; If reads **that person’s** result; tag lands on **that person**. Nothing has to ride the line. The results exist as writes.
+
+This is packet 014. Incomplete was the **connects** (import not offered, audit hardcoded on upload, tag not actually applied) — not a missing kind of wire.
+
+**Do not:** hardcode audit on upload; tag in a second place besides the contact. Flag **15:43**.
+
+---
+
+## 2026-08-17 00:15 UTC — Generated the import→audit→tag canvas. Walk the glass against it.
+
+**Why:** Founder copied the scenario + the then-this walk. Generate that UI. Walk whether the current Automations glass must change to match.
+
+**Picture:** trigger **Contact import** → action **Audit the contacts** (in the application) → **If this contact failed** → action **Add tag on the contact**. Else stop. Wires = then this.
+
+**Glass vs that picture (Ant Automations today):**
+
+| On the picture | On the glass now | Change? |
+|----------------|------------------|---------|
+| Trigger **Contact import** | Picker: Import created / Contact created / Eligibility / Audit completed… | **Yes.** Offer Contact import. Do not use Hub Import created as the name. |
+| Action **Audit the contacts** (in the application) | Actions: enroll sequence, lists, task, notify | **Yes.** In-app Audit action. Not enroll. |
+| If **this contact failed** | If exists; reads eligibility-ish, not this person’s audit result | **Yes.** If on the audit result for this person. |
+| Action **Add tag on the contact** | No tag action | **Yes.** Ascribe tag. |
+| Delete a node | No delete on Ant canvas | **Yes.** Chrome. |
+| Tag visible in Contacts | Contacts has no tag from this walk | **Yes.** Face on the contact. |
+| Audit appears in Book readiness | Start Audit is its own door; upload still glues audit | **Yes.** Any audit run shows there. Do not auto-audit on upload. |
+
+No new node kind. No packet-on-the-wire chrome required for this walk.
+
+**Do not:** freeze A15’s firm-provisioned chain as this picture; Hub Import created. Flag **15:43**.
+
+---
+
+## 2026-08-17 12:45 UTC — Output of any node = every write that run made.
+
+**Why:** Founder debating the natural primitive of the pipe. PM: yes — after a node, every write that run made, not a short list, not Audit-is-two-things. Import’s writes available; Audit picks which to run on. Same shape so new nodes don’t need new output code.
+
+**Hard:** Right idea. Naturally comes from modules already writing. Do not freeze Audit as run/verdict/sequence-ready (PR #89 still does — that is today’s writes, not the primitive). Next node **picks** from this run’s write-set. Available = the rows, not a copy table. Live does not pass that handle yet — connect, not a new shape. 014 If is a pick, not a specified Audit catalog.
+
+[`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 12:45. Packet 014 If line corrected.
+
+**Do not:** per-module output lists; events table; overwrite 15:43.
+
+---
+
+## 2026-08-17 12:50 UTC — 015: the handle. Engineer can cut. Ship 013+014+015.
+
+**Why:** Founder: live walk still lacks the set for the next node. Do we have what we need to reshape nodes/arrows this way? If so what is it doing? Go to the engineer.
+
+**Hard:** Yes. We have modules that write, a graph with arrows, a walker that already follows then-this. Missing: after a node, put **this run’s writes** on the walk; next node **picks**. Packet [`SYSTEMS-CHANGE-PACKET-015.md`](./SYSTEMS-CHANGE-PACKET-015.md). First graph is still 014. Import still 013. No new table. No events table.
+
+**Do not:** rebuild Audit; Hub preview as live; skip 013. Flag **15:43**.

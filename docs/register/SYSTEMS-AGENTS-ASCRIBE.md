@@ -222,3 +222,29 @@ Call / ElevenLabs. Attempt-cycle columns (count, wait after last node, nth-seque
 5. Automations still later. Triggers stay off this canvas.
 
 **Process (founder 22:41):** finish what is still moving on the face **before** SA mints or rewrites cascade. This grain lock is **determined** — housing is named so PM does not re-flatten `launch_day` into `sequence_class`. SA is witness + conflict-namer until Story promotion.
+
+---
+
+## Paper 2026-08-16 01:10 — C8 on main (not a rewrite of 20:10)
+
+**C8 —** Add contact in the sequence header. Two scopes: Every firm (default) · Select from (all selected, deselect to pick). Starts now.
+
+**A. Our system:** `enrollment` + `enrollAndActuate` (`cascade.ts`, halt-blocks new). Ant Contacts tab already lists `contact_id` / `agent_ref` / `enrolled_at`. No Add button. Enroll is **one firm**.
+
+**B. Externals:** none (book already in `contact_records`). Send after enroll is loop 3 (left).
+
+**Affordances:** enroll path stood-up **per firm**. **Every firm** is missing as a machine scope. **UI would change if** Add to sequence only called today’s enroll with session `firmId` — that is not Every firm. Select from as “everyone already selected” needs a house-wide contact read we do not have.
+
+---
+
+## Paper 2026-08-16 01:25 — C2b sits on the events substrate (not a rewrite)
+
+C2b (campaign objective) is a **named completion** — a kind of event. The event itself is the table change (`fact_writebacks`, `meeting_booked`, consent sign-up). C8 Add contact is **not** an event (01:10): it is an enroll write that **starts** the mission. Same substrate: [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md). Do not put `workflow_trigger` on this canvas.
+
+---
+
+## Change packet 2026-08-16 02:03 — 22:41 finished as implementer brief
+
+22:41 named the lie and stopped at “don’t mint.” That stop was wrong. Pictures are the spec. The change (columns, CHECKs, new tables, FKs, walk) is [`SYSTEMS-CHANGE-PACKET.md`](./SYSTEMS-CHANGE-PACKET.md). Do not treat the 22:41 “Not a migration” line as law.
+
+**02:23 / 02:31:** C3 “qualify — first objective met” is a **founder caption**, not a node. Same caption is on **C4 and C5** — still zero columns. C5 ≠ C5b. Packet: [`SYSTEMS-CHANGE-PACKET.md`](./SYSTEMS-CHANGE-PACKET.md). Reading: [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) (pixel walk; 02:19 table superseded).

@@ -234,3 +234,39 @@ Already named 22:41. For C3 to **run** as drawn: campaign children on a sequence
 ### Do not
 
 Mint tonight. Continue Hub. Treat A13 as a screen. Collapse C2b with A5. Put triggers on the Agents canvas. Build a campaign picker because A12’s caption slipped.
+
+---
+
+## Paper 2026-08-16 01:10 — A14 + event law on main
+
+**A14 —** Assign existing · or create from a template. Three sequence radios. No create-agent here.
+
+**A. Our system:** Assign existing ≈ `firm_sequence_binding` + `action.agent_ref` + `enrollAndActuate`. Create-from-template = **new sequence instance** then enroll — **silent**. UNIQUE `(firm_id, sequence_class)` fights more than one named copy.
+
+**B. Externals:** enroll → send via Agents ports (loop 3 still left as product).
+
+**Affordances:** assign-existing partial (one bound template per class). Create-from-template missing. **UI would change if** both cards called the same `agent_ref` enroll.
+
+**Objectives are events (23:16–23:35):** no return wire. Completions we already have must **dispatch** `workflow_trigger` (global = all of kind; local = this one). `form_submitted` is not in the Hub event catalog. Failure → ascribe a tag: first in-app action named; SQL still `call_agent` only. Lineage queryable: do not mint a table from the word.
+
+---
+
+## Paper 2026-08-16 01:25 — #87 blank-canvas chain + events = table changes
+
+**#87 —** Automations is a blank canvas. You can chain. Teaching walk: firm provisioned → audit contacts → if X → agents.
+
+**A. Our system:** Smallest walk already `workflow.graph` + `workflowWalk` (trigger + action). Chain of action → If → action is Hub `branch` / `lastOutput`; walker `evalBranch` is eligibility true/false — **too thin** for “if the audit output is X.” `action` CHECK is `call_agent` only — **audit the contacts** is not a type. Firm insert is `firms` and/or `ct_firms`; nothing dispatches a provisioned event. Completions still do not dispatch (01:10).
+
+**B. Externals:** none on the chain itself. Agents action → enroll → send (loop 3 still left).
+
+**Affordances:** smallest three-node **can** look like A1. The four-node teaching walk **cannot run**. **UI would change if** Save claimed audit-then-if-then-enroll against today’s walker.
+
+**Founder boil-down (same stamp):** a system event **is** a detectable change inside a table; all table changes should be detectable; those are the triggers. Objectives already defined. Two primitives. Full park: [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md).
+
+Do not mint an events table. Do not collapse If (read) with event (write). Do not put this chain on the Agents canvas.
+
+---
+
+## Change packet 2026-08-16 02:03 — holes become the change
+
+01:10 / 01:25 named Save-flash, no dispatch, `call_agent` only, listing unused, no tag row. That is now the brief: [`SYSTEMS-CHANGE-PACKET.md`](./SYSTEMS-CHANGE-PACKET.md). Implementer cuts. SA does not stop at “when Story bears it.”
