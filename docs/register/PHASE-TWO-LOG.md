@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **12:31:** A16 already locks the mechanism (If reads Audit output). A new image is only justified if we put the **field list** on the glass — A16’s row is `status = passed` (the run), so person-grain is invisible. Do not draw a pipe. Do not generate until asked. Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **12:34:** Audit output is the primitive — the **run**, each person’s **verdict**, **sequence-ready**. Checks are interior, not the pipe. Do not retrofit a field list. [`PRIMITIVES.md`](./PRIMITIVES.md). Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -1059,6 +1059,29 @@ Flag 15:43 untouched.
 - **Inside the Audit action** is still named not drawn. That is a different picture. Do not mix it with the If.
 
 **Do not:** generate until asked; draw radios for person vs artifact; treat A16 as already showing person-grain; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-17 12:34 UTC — Audit output is the primitive. Do not retrofit the pipe.
+
+**Why:** Founder: what are the possible outputs of the audit action? Are we the ones specifying what we wanted it to produce? No — they want the **primitive**. That’s how they know the pipe is not retrofitted. The wire has a shape. What is the output?
+
+**Correction:** the 00:50 field list (email valid, gate steps, meta…) mixed **interior checks** with **outputs**. That was specifying. Wrong.
+
+**The primitive (Story §5 + tables):** Audit answers only — can we reach them, can we start a sequence?
+
+**Out:**
+1. **The run** (`audit_runs`)
+2. **Each person’s verdict** (`reachability_verdicts`) — reachable / partial / unreachable
+3. **Each person’s sequence-ready** (`sequence_ready`) — yes / no
+
+**In, not the pipe:** the checks (email, phone, dedupe, …). Those make the verdict. They are not what the action emits.
+
+The pipe carries those three writes. Person vs artifact is those two grains. We did not invent a catalog.
+
+**Do not:** put checks on the If as fields we wanted; overwrite 15:43.
 
 Flag 15:43 untouched.
 

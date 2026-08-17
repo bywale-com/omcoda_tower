@@ -41,23 +41,29 @@ Live: `workflowWalk` does not call Audit. `createAuditRun` writes `audit_runs` +
 
 Grain is not a separate mode. Point the If at a **person field** → splits people. Point it at a **run field** → the artifact.
 
-## Audit output inventory (what the module actually produces)
+## Audit output inventory (the primitive — do not retrofit)
 
-Ascribe against this list. Do not invent If fields that are not here.
+We do **not** specify If fields. The pipe’s shape **is** what Audit emits.
 
-**Run (artifact)** — Book readiness Audits list + gate checks + `audit_runs`:
+Story §5: can we reach them, can we start a sequence?
 
-id · status (running / complete; wire also failed) · overall pass/fail/pending · meta (Clear / N open) · sequence-ready glance for the run · enabled checks · each batch check pass/fail (`email_valid` · `phone_valid` · `dedupe` · `typo_garbage` · `name_present`) · import ids · summary counts (contacts, ready) · started/finished.
+**Out (three writes, two grains):**
 
-**Person (Records rows)** — desk overlays + wire verdicts:
+| Write | Table | Values |
+|-------|--------|--------|
+| The run | `audit_runs` | this batch; status running/complete/failed; summary; import_ids; times |
+| Verdict | `reachability_verdicts` | per contact: **reachable / partial / unreachable** |
+| Sequence-ready | `sequence_ready` | per contact: yes / no. Enroll gate. |
 
-contact id, name, email, phone · email/phone valid on the row · reachability (desk: both/partial/none · wire: reachable/partial/unreachable) · `sequence_ready` for that person · `details.auditRunId` back to this run.
+`createAuditRun` already returns `{ id, status, summary, verdicts[] }` and writes those three. Automations does not consume it as the next node’s input.
 
-**Silent in this module today** (on `rule.reachability_checks`, not written by Audit desk / `createAuditRun`): consent/silenced verdict; “≥1 channel matching intended sequence” as its own stored result. Do not treat those as previous-result fields.
+**In (not the pipe):** `rule.reachability_checks` (email valid, phone, channel match, typo, dedupe, already-in-Tower, consent/silenced, name). Interior. Desk gate-steps are animation, not stored output.
 
-**Not the previous result:** trigger `audit.completed` / `audit.failed` — other door.
+**Must not:** pathway/CRS/sales PASS-FAIL.
 
-Honesty: desk **gate steps are batch** (the check is on the set). Records table is **per person**. Wire persist is thinner per person (has email / has phone → verdict). Do not pretend those three are the same row.
+**Not the previous result:** trigger `audit.completed` / `audit.failed`.
+
+Honesty: live derives verdict from has-email / has-phone. Same three writes. Thinner interior. Do not put checks on the pipe as a catalog we wanted.
 
 ---
 
