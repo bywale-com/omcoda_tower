@@ -67,6 +67,28 @@ If / condition is not an action. It is a fork after a result.
 
 ---
 
+## After an action: say what the next step is about
+
+It does **not** automatically know “per contact.”
+
+An audit leaves **two** things:
+
+- the **artifact** — the run that sits in Book readiness
+- a **result on each person** — pass / fail next to that contact
+
+The next step (the If, or the action after it) has to say which one it is about.
+
+| This step is about | Example |
+|--------------------|---------|
+| **This person** | If this contact failed → tag them in Contacts |
+| **This artifact** | Do something to that audit run in Book readiness |
+
+Same idea as Global / Local on a trigger: you pick the grain. You do not guess.
+
+This is not a UI-first question. If we say it in these words, the system already has two things to point at. The UI is how you pick. The pick is the product.
+
+---
+
 ## Same shape. Different seat.
 
 **Canonical (this is Automations):** something already happened **inside a firm that exists** — eligibility changed, a writeback, a form came back — **hear that** → run the operation → **then the agent**. A firm was created is the same pattern: the firm is already there; now do the inside (audit, agents).

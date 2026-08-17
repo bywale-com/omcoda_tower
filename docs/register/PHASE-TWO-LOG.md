@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **22:46:** provision-as-action vs eligibility→agent — same listen→do, different seat. Canonical Automations **hears** a world that exists. Creating the firm is the cascade. [`PRIMITIVES.md`](./PRIMITIVES.md). Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **00:20:** after Audit, next step says **person** or **artifact**. Does not guess per-contact. Not UI-first. [`PRIMITIVES.md`](./PRIMITIVES.md). Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -961,6 +961,20 @@ Flag 15:43 untouched.
 **What we wrote:** [`PRIMITIVES.md`](./PRIMITIVES.md). Events we can hear. Actions we can do. Webhook is a way in, not an action. Not any-table. Provision example = form + this-form-submitted + provision a firm.
 
 **Do not:** plant; mint; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 22:46 UTC — Same shape, different seat
+
+**Why:** Founder, before reading the primitives file: provisioning should be possible in Automations; if it needs so much fixture maybe we are not building the module. Then: wait — provision touches a cascade. The use that always comes to mind is: this system event (eligibility changed, a writeback inside a firm/contact) → run this operation → then this agent. How come that feels different? Is it really different from the first idea?
+
+**Answer (plain):** Same listen → do. Different seat. Canonical Automations **hears** something that already happened in a firm that exists, then runs an operation, then an agent. A firm was created is that pattern too (A17): the firm is already there; now do the inside. The first idea **creates** the firm. That is the cascade. That is why it felt like fixture.
+
+If eligibility → operation → agent is also fixture, the module is not built. If only creating the firm is fixture, that is expected. Do not start there.
+
+**Do not:** plant; start Automations at provision-as-action; overwrite 15:43.
 
 Flag 15:43 untouched.
 
