@@ -8,7 +8,7 @@
 **Why this cut is heavy (not 14 tables — a compiler):** Destination = the graph **is** the app. Today the app **is** TypeScript. This path cannot stay hardcoded in `handleAuditRunCreate` or the canvas stays theater. The lot is dual-running: keep the handler world, stand up a walker that executes **verbs** (`run_audit`, `ascribe_tag`), dispatch after the file write, house hear. The canvas picture must compile to named events + action types — edges are not the machine.
 
 **Fast (22:31):** `run_audit` **is** `handleAuditRunCreate`, named as `action.type`. Do not rewrite audit. Do not invent generic table-write nodes. File land is the door (a form-shaped write). Book readiness **stays the face** on `audit_runs`. Provision stays a module; wrapping `handleMachineProvision` is a **later** verb, not this cut.  
-**Join:** [`SYSTEMS-CHANGE-PACKET-013.md`](./SYSTEMS-CHANGE-PACKET-013.md) still lands the file (`import_batch` + `contact_import` dispatch). This packet is the walk after that write.  
+**Join:** [`SYSTEMS-CHANGE-PACKET-013.md`](./SYSTEMS-CHANGE-PACKET-013.md) still lands the file (`import_batch` + `contact_import` dispatch). [`SYSTEMS-CHANGE-PACKET-015.md`](./SYSTEMS-CHANGE-PACKET-015.md) is the handle (this run’s writes → next node). This packet is the first graph on that handle. Ship 013 + 014 + 015 together.  
 **Flag:** 15:43 untouched.  
 **Instructions:** founder only.
 
@@ -88,7 +88,7 @@ Stop treating every action as enroll.
 
 | `action.type` | Write |
 |---------------|--------|
-| `run_audit` | **Wrap** `handleAuditRunCreate` (same writes), for `ctx.contactIds`. Do not recode audit. Then `dispatchEventToWorkflows('audit.completed')`. Put verdicts on walk context **per contact**. |
+| `run_audit` | **Wrap** the existing Audit module for the **picked** writes on the previous handle (015). Do not recode audit. Then the handle **becomes this Audit run’s writes**. `dispatchEventToWorkflows('audit.completed')` for a **second** automation. Not a substitute for the handle on this canvas. |
 | `ascribe_tag` | INSERT `contact_tag` (`firm_id`, `contact_id`, `tag` from node data, `source_workflow_id`). UPDATE `contact_records.notes` when the node has a notes/rationale binding (from previous verdict). |
 | `call_agent` | Today’s enroll. Unchanged. |
 

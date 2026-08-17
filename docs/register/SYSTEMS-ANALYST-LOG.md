@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-17 12:45 UTC — **Node output = every write that run made. Not a short list. That is the pipe shape.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-17 12:50 UTC — **015 is the handle. Go to the engineer. Ship 013+014+015.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1267,3 +1267,13 @@ No new node kind. No packet-on-the-wire chrome required for this walk.
 [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 12:45. Packet 014 If line corrected.
 
 **Do not:** per-module output lists; events table; overwrite 15:43.
+
+---
+
+## 2026-08-17 12:50 UTC — 015: the handle. Engineer can cut. Ship 013+014+015.
+
+**Why:** Founder: live walk still lacks the set for the next node. Do we have what we need to reshape nodes/arrows this way? If so what is it doing? Go to the engineer.
+
+**Hard:** Yes. We have modules that write, a graph with arrows, a walker that already follows then-this. Missing: after a node, put **this run’s writes** on the walk; next node **picks**. Packet [`SYSTEMS-CHANGE-PACKET-015.md`](./SYSTEMS-CHANGE-PACKET-015.md). First graph is still 014. Import still 013. No new table. No events table.
+
+**Do not:** rebuild Audit; Hub preview as live; skip 013. Flag **15:43**.

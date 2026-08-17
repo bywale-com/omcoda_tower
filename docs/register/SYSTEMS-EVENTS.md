@@ -316,5 +316,5 @@ Those were analogy from two handlers that both INSERT more than one row, plus de
 
 **Available** = those rows, **this run**. Not a copy table. Next node **picks** which write(s). If reads a field of that pick. Then-this is still order.
 
-**Do not:** overwrite 15:43; mint an events table; specify per-module output lists; treat Hub preview as the live handle. Live still does not pass this run’s writes to the next node — that is the connect, not a new primitive.
+**Do not:** overwrite 15:43; mint an events table; specify per-module output lists; treat Hub preview as the live handle. Live still does not pass this run’s writes to the next node — that is the connect, not a new primitive. Cut: [`SYSTEMS-CHANGE-PACKET-015.md`](./SYSTEMS-CHANGE-PACKET-015.md).
 

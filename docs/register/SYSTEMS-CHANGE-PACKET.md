@@ -444,4 +444,4 @@ Cut [`SYSTEMS-CHANGE-PACKET-013.md`](./SYSTEMS-CHANGE-PACKET-013.md). Does not w
 
 ## 014 — 2026-08-16 22:17 — authored workflow: import → audit → tag + notes (any firm)
 
-Founder: not hardcoded. House canvas. Tag invalid data. Notes on the contact. Walker must run `run_audit` / `ascribe_tag` (today every action enrolls). House `workflow.firm_id` NULL. Cut [`SYSTEMS-CHANGE-PACKET-014.md`](./SYSTEMS-CHANGE-PACKET-014.md).
+Founder: not hardcoded. House canvas. Tag invalid data. Notes on the contact. Walker must run `run_audit` / `ascribe_tag` (today every action enrolls). House `workflow.firm_id` NULL. Handle = this run’s writes ([`SYSTEMS-CHANGE-PACKET-015.md`](./SYSTEMS-CHANGE-PACKET-015.md)). First graph [`SYSTEMS-CHANGE-PACKET-014.md`](./SYSTEMS-CHANGE-PACKET-014.md). Import land [`SYSTEMS-CHANGE-PACKET-013.md`](./SYSTEMS-CHANGE-PACKET-013.md). Ship 013+014+015.
