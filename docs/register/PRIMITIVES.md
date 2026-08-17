@@ -67,59 +67,21 @@ If / condition is not an action. It is a fork after a result.
 
 ---
 
-## After an action: say what the next step is about
+## After an action: the previous result is every write that run made
 
-It does **not** automatically know “per contact.”
+That is the primitive. It applies to every action. We do not specify a field list.
 
-An audit leaves **two** things because the **system** writes two grains — not because we specified a picker:
+The action **passes the work to the real module**. When that module finishes, **every write that run made** is available to the next node. The next node **picks** which of those writes it is about.
 
-- the **artifact** — the run (`audit_runs`)
-- a **result on each person** — verdict + sequence-ready
+Audit produces a lot of writes (the run, verdicts, sequence-ready, whatever else that run touched). All of that is available. Provision, given the form values, runs — every write from **that** run is available. Same shape.
 
-The next step (the If, or the action after it) has to say which one it is about. That pick is which of those writes you are pointing at.
+“Two things” on Audit was a bad restatement. Two grains showed up because that module writes a batch row **and** per-person rows. That is the write-set. It is not a law that every action has two outputs.
 
-| This step is about | Example |
-|--------------------|---------|
-| **This person** | If this contact is unreachable → tag them |
-| **This artifact** | If this run failed → do something to that run |
+**How you pick:** point the If at a write (or a field of a write) already on that handle. A person-row write splits people. A run-row write is the artifact.
 
-Same idea as Global / Local on a trigger. You do not guess.
+**Not the previous result:** hearing the completion as a **trigger** on a different automation. That is the other door.
 
-This is not a UI-first question. If we describe exactly what we’re saying, the system already has two things to point at.
-
-**How you pick:** you point the If at a **field of the previous result**. A person field (this contact’s verdict) splits the people. A run field (this audit’s status) is the artifact. The field **is** the grain.
-
-### Mechanism: the previous result is the wire
-
-The Audit **action** sends who we are auditing to the Audit module. Audit runs. When that node completes, its **output is those writes** — the previous result on the next edge. The If does not go find an audit. It reads **that**.
-
-We do **not** specify a field catalog for the pipe. The pipe’s shape **is** the module’s primitive. If we listed checks we wanted to condition on, that would be retrofitting.
-
-Hub smell: the edge copies `lastOutput` into `lastInput`. Live walk does **not** do this for Audit. Preview is not the live path.
-
-### What Audit produces (the primitive)
-
-Story §5: Audit answers only — **can we reach this contact, and can we start a sequence on them?**
-
-**Out (this is the pipe):**
-
-| Grain | What the system writes |
-|-------|-------------------------|
-| **The run** | `audit_runs` — this batch. Status running / complete / failed. Summary counts. Imports this run was about. Started / finished. |
-| **Each person** | `reachability_verdicts` — **reachable / partial / unreachable** |
-| **Each person** | `sequence_ready` — yes or no. Precondition for enrollment. |
-
-That is the output. Three writes. Two grains (run vs person). The If after Audit sees **that**.
-
-**In (not the output):** the checks that *make* the verdict — email valid, phone valid, channel match, typo/garbage, dedupe, already-in-Tower, consent/silenced, name present. Those are `rule.reachability_checks`. They run **inside** Audit. They are not what the action emits. Do not put them on the pipe as if we specified fields.
-
-**Must not emit:** pathway / CRS / sales PASS-FAIL. That is not Audit.
-
-**Also not the previous result:** hearing `audit.completed` as a **trigger**. That is the other door.
-
-Live wire today is the same three writes, thinner inside: it derives verdict from has-email / has-phone. The desk’s gate-step animation is not a stored output. The primitive is still run + verdict + sequence-ready.
-
-The If can only see this primitive. If a condition needs a check that was collapsed into the verdict, that check is not an output yet — it is still interior.
+Hub `lastOutput` → `lastInput` is the smell, not the live path. Live is SA **015** (engineer). Do not recut it here.
 
 ---
 
@@ -134,19 +96,21 @@ When that node **completes**, the next step has **everything that module produce
 Example: Audit action.
 
 1. The node hands Audit **who we are auditing**.
-2. Audit runs. It writes the **run**, each person’s **verdict**, and **sequence-ready**.
-3. After the node, you can use **those writes** — because that is what Audit produced. Not a field list we specified for the pipe.
+2. Audit runs. It writes whatever that module writes.
+3. After the node, **every write from that run** is the previous result. The next node picks. Not a short list we specified.
+
+Same for Provision: this form submitted → pass the values → every write from that provision run.
 
 ### Two layers. That is the whole shape.
 
 | Layer | What it is |
 |-------|------------|
-| **The writes** | Live in the module. Audit owns the run and the per-person results. Same records you would open on that desk. Not a shadow copy Automations invented. |
-| **The handle** | After this node, the next step is pointing at **those** writes — the run this node just made — not “go find some audit.” Person vs artifact is picking **which part** of that handle. |
+| **The writes** | Live in the module. **Every write that run made.** Same records you would open on that desk. Not a shadow copy Automations invented. |
+| **The handle** | After this node, the next step is pointing at **those** writes — not “go find some audit.” The next node **picks** which write. |
 
 A wire that looks like an n8n **pipe** is one way to see the handle. A then-this list where the next node reads **this node’s output id** is the same product. **Pipe vs this-then-that is not the question.** The question is: when the node completes, do we have the module’s output. If the next step has to guess (latest audit for this firm), it is not this node.
 
-“Everything it produces” means **those writes** — the run, each verdict, each sequence-ready. Not a catalog we invented. Not the entire database. The If after Audit is calling from **that**.
+“Everything it produces” means **every write that run made**. Not a short list. Not the entire database from other runs. The If is calling from **that**.
 
 ### Two doors. Do not collapse them.
 
@@ -188,7 +152,7 @@ That is Automations. That is why the module exists. If that path is hard, we did
 
 - If it is a **when** → it must be an event on the table, or schedule / manual / webhook.  
 - If it is a **do** → it must be Agents (assign / from template) or an in-app action on the table.  
-- If it is **after a node** → the next step uses what that **module already emits** (the primitive). Do not specify a field catalog for the pipe.  
+- If it is **after a node** → the next step uses **every write that run made**. Do not specify a field catalog.  
 - If it is neither → the shape does not support it. Don’t “consider it” as a maybe. Say no, or name a new primitive on purpose.
 
 Face: [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Visual: A7 (two kinds of action) · A14 (assign / template) · A18 (Global / Local) · A12 (form) · A17 (firm provisioned as an **event**). Provision as an **action** is this stamp.

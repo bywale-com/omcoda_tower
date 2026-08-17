@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **12:34:** Audit output is the primitive — the **run**, each person’s **verdict**, **sequence-ready**. Checks are interior, not the pipe. Do not retrofit a field list. [`PRIMITIVES.md`](./PRIMITIVES.md). Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **13:07:** After a node, the output is **every write that run made**. Same for Audit and Provision. Do not filter to “two things” or “a firm.” Engineer is cutting SA **013+014+015** (PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86)). Meantime was about to start. Do not plant. Do not recut the engineer’s packet.
 
 **How we maintain this log**
 
@@ -1082,6 +1082,22 @@ Flag 15:43 untouched.
 The pipe carries those three writes. Person vs artifact is those two grains. We did not invent a catalog.
 
 **Do not:** put checks on the If as fields we wanted; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-17 13:07 UTC — Handoff: every write that run made. Engineer has the cut.
+
+**Why:** Founder: do we have everything to spin up a new PM? Can they continue?
+
+**No, until this stamp.** Current still said Audit = run / verdict / sequence-ready. Founder already corrected that. A new chat would have continued the wrong idea.
+
+**Law (founder):** After a node, the output is **every write that run made**. Look at the tables that run touched. All of those writes are available after the node. Same shape for Provision: form submitted (this form) → pass the values to Provision → **every write from that provision run** is the previous result. Not “a firm.” Not “two things.” Two grains appeared on Audit because that module writes a run **and** per-person rows — that is the write-set, not a catalog we specified.
+
+**Engineer:** SA packets **013 + 014 + 015**, PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86). 015 is this handle. First graph is 014 (import → audit → if → tag). Provision is the same idea, not that cut. Do not recut from the PM seat. Meantime was about to start when this chat asked to go through the packet.
+
+**Do not:** plant; overwrite 15:43; treat 12:34 as current; answer a simple question by rewriting the corpus.
 
 Flag 15:43 untouched.
 
