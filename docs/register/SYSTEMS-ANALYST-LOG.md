@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-17 00:06 UTC — **Then-this = order, not the whole orchestrator. Result must be a write. That is what scales.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-17 00:10 UTC — **Import → Audit module → if failed, tag on the contact. Then-this + writes. That is 014.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1215,3 +1215,19 @@ Not fake math. Not the live event either. Clicking Run on an **event** trigger d
 - Structure that scales: **Trigger** = a write we can hear (add a picker row when a workflow needs that write — already 01:35). **Wire** = then this. **Action** = the module that already knows, and it **leaves a write**. Same graph: next node uses this run’s people/firm + that write. Other graph: listens to that write. Operator, consultant, same rule. No second pipe. No node-per-table.
 
 **Do not:** treat then-this as the whole orchestrator; invent a packet-on-the-wire as a third primitive; mint an events table. Flag **15:43**.
+
+---
+
+## 2026-08-17 00:10 UTC — The import → audit → tag-the-failures walk in then-this.
+
+**Why:** Founder: consultant uploads contact data → serve it to the Audit module → for each contact that failed, tag them where they live in Contacts. How does if-this-then-that orchestrate that? This is the scenario that made it feel incomplete.
+
+**Hard (the walk):**
+
+1. **If** a contact import happened **then** hand those people to **Audit** (the module, not a homemade operation). The import is a write. That write is the trigger. Audit does the job and **leaves** an audit plus a pass/fail on each person.
+2. **If** this person’s audit failed **then** add the tag on that person. The tag is a write on the contact. Contacts is the face — they already live there.
+3. Order is the wires. “For each” is: the import named the people; Audit wrote a result next to each; If reads **that person’s** result; tag lands on **that person**. Nothing has to ride the line. The results exist as writes.
+
+This is packet 014. Incomplete was the **connects** (import not offered, audit hardcoded on upload, tag not actually applied) — not a missing kind of wire.
+
+**Do not:** hardcode audit on upload; tag in a second place besides the contact. Flag **15:43**.

@@ -294,3 +294,11 @@ Those were analogy from two handlers that both INSERT more than one row, plus de
 
 **Do not:** overwrite 15:43.
 
+---
+
+## 2026-08-17 00:10 — Scenario: import → Audit module → tag failures on the contact
+
+**Founder:** consultant uploads contacts → serve to Audit (a module) → for each that failed, tag them in Contacts. How does if-this-then-that orchestrate that?
+
+**Walk:** Import write wakes the graph. Then Audit module; it leaves pass/fail on each person. Then If this person failed → tag write on that contact (Contacts is the face). For each = same people, result sitting on each person. Wires = order. 014. Incomplete = those writes not offered / audit still glued to upload — not a missing pipe.
+
