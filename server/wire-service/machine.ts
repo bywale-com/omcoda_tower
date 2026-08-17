@@ -5,6 +5,7 @@ import { resolveUserByEmail } from "../auth-service/db.ts";
 import { sendAccessLinkEmail } from "../auth-service/email.ts";
 import { isValidEmail, normalizeEmail } from "../auth-service/crypto.ts";
 import { getPool } from "./db.ts";
+import { executeAuditRun } from "./auditRun.ts";
 import { enrollAndActuate, tickOnce } from "./cascade.ts";
 import { sendGateSnapshot } from "./sendMode.ts";
 import { isPlatformAdminEmail } from "../auth-service/platformAdmin.ts";
@@ -15,6 +16,7 @@ import {
   walkValidatedWorkflow,
   type RfNode,
 } from "./workflowWalk.ts";
+import type { RunWrite } from "./runWrites.ts";
 import {
   loadHousing,
   saveHousing,
@@ -67,8 +69,13 @@ export async function handleWorkflowCreate(c: Context) {
      ON CONFLICT (workflow_id) DO UPDATE SET target=EXCLUDED.target`,
     [id, target],
   );
+  const existing = await pool.query<{ firm_id: string | null }>(
+    `SELECT firm_id FROM workflow WHERE id=$1`,
+    [id],
+  );
+  const triggerFirm = existing.rowCount ? existing.rows[0].firm_id : firm;
   const graph = (body.graph ?? { nodes: [], edges: [] }) as { nodes?: RfNode[]; edges?: unknown[] };
-  const triggersMaterialized = await materializeTriggersFromGraph(pool, id, firm, {
+  const triggersMaterialized = await materializeTriggersFromGraph(pool, id, triggerFirm, {
     nodes: graph.nodes ?? [],
     edges: (graph.edges ?? []) as never,
   });
@@ -123,7 +130,7 @@ export async function handleWorkflowActivate(c: Context) {
   );
   if (!cur.rowCount) return json(c, { error: "workflow_state missing" }, 404);
 
-  const wf = await pool.query<{ graph: { nodes: RfNode[]; edges: unknown[] }; firm_id: string }>(
+  const wf = await pool.query<{ graph: { nodes: RfNode[]; edges: unknown[] }; firm_id: string | null }>(
     `SELECT graph, firm_id FROM workflow WHERE id=$1`,
     [workflowId],
   );
@@ -136,7 +143,7 @@ export async function handleWorkflowActivate(c: Context) {
   const triggers = await materializeTriggersFromGraph(
     pool,
     workflowId,
-    wf.rows[0].firm_id || firm,
+    wf.rows[0].firm_id,
     wf.rows[0].graph ?? { nodes: [], edges: [] },
   );
   return json(c, {
@@ -154,7 +161,7 @@ export async function handleWorkflowList(c: Context) {
     `SELECT w.*, s.status
      FROM workflow w
      JOIN workflow_state s ON s.workflow_id = w.id
-     WHERE w.firm_id=$1
+     WHERE w.firm_id=$1 OR w.firm_id IS NULL
      ORDER BY w.updated_at DESC`,
     [firm],
   );
@@ -526,79 +533,140 @@ export async function handleAuditRunCreate(c: Context) {
     contactIds?: Array<{ id: string; email?: string; phone?: string; name?: string }>;
   }>();
   const pool = getPool();
-  const runId = `arun-${randomUUID()}`;
-  await pool.query(
-    `INSERT INTO audit_runs (id, firm_id, status, import_ids)
-     VALUES ($1,$2,'running',$3::jsonb)`,
-    [runId, firm, JSON.stringify(body.importIds ?? [])],
-  );
-
-  const contacts = body.contactIds ?? [];
-  const verdicts: Array<{
-    contactId: string;
-    verdict: string;
-    ready: boolean;
-    email?: string | null;
-    phone?: string | null;
-    name?: string | null;
-  }> = [];
-  for (const contact of contacts) {
-    await pool.query(
-      `INSERT INTO contact_records (id, firm_id, email, phone, name)
-       VALUES ($1,$2,$3,$4,$5)
-       ON CONFLICT (id) DO UPDATE SET email=EXCLUDED.email, phone=EXCLUDED.phone, name=EXCLUDED.name, updated_at=now()`,
-      [contact.id, firm, contact.email ?? null, contact.phone ?? null, contact.name ?? null],
-    );
-    const hasEmail = Boolean(contact.email);
-    const hasPhone = Boolean(contact.phone);
-    const verdict =
-      hasEmail && hasPhone ? "reachable" : hasEmail || hasPhone ? "partial" : "unreachable";
-    const ready = verdict === "reachable" || verdict === "partial";
-    await pool.query(
-      `INSERT INTO reachability_verdicts (contact_id, firm_id, verdict, details)
-       VALUES ($1,$2,$3,$4::jsonb)
-       ON CONFLICT (contact_id, firm_id) DO UPDATE SET verdict=EXCLUDED.verdict, details=EXCLUDED.details, updated_at=now()`,
-      [contact.id, firm, verdict, JSON.stringify({ auditRunId: runId })],
-    );
-    await pool.query(
-      `INSERT INTO sequence_ready (contact_id, firm_id, ready)
-       VALUES ($1,$2,$3)
-       ON CONFLICT (contact_id, firm_id) DO UPDATE SET ready=EXCLUDED.ready, updated_at=now()`,
-      [contact.id, firm, ready],
-    );
-    verdicts.push({
-      contactId: contact.id,
-      verdict,
-      ready,
-      email: contact.email ?? null,
-      phone: contact.phone ?? null,
-      name: contact.name ?? null,
-    });
-  }
-
-  await pool.query(
-    `UPDATE audit_runs SET status='complete', finished_at=now(),
-      summary=$2::jsonb WHERE id=$1`,
-    [runId, JSON.stringify({ contacts: contacts.length, ready: verdicts.filter((v) => v.ready).length })],
-  );
+  const result = await executeAuditRun(pool, {
+    firmId: firm,
+    importIds: body.importIds ?? [],
+    contacts: body.contactIds ?? [],
+  });
 
   const dispatched = await dispatchEventToWorkflows(pool, {
     firmId: firm,
     eventName: "audit.completed",
-    payload: { auditRunId: runId, contacts: contacts.length },
-    contactIds: contacts.map((c) => c.id),
+    payload: {
+      auditRunId: result.id,
+      contacts: result.summary.contacts,
+      writes: result.writes,
+      summary: result.summary,
+    },
+    contactIds: result.verdicts.map((v) => v.contactId),
   });
 
   return json(c, {
-    id: runId,
+    id: result.id,
     firm_id: firm,
     status: "complete",
     import_ids: body.importIds ?? [],
-    summary: { contacts: contacts.length, ready: verdicts.filter((v) => v.ready).length },
+    summary: result.summary,
     started_at: new Date().toISOString(),
     finished_at: new Date().toISOString(),
-    contacts: contacts.length,
-    verdicts,
+    contacts: result.summary.contacts,
+    verdicts: result.verdicts,
+    writes: result.writes,
+    workflowsFired: dispatched,
+  });
+}
+
+export async function handleAuditRunList(c: Context) {
+  const firm = await firmId(c);
+  const pool = getPool();
+  const rows = await pool.query(
+    `SELECT * FROM audit_runs WHERE firm_id=$1 ORDER BY started_at DESC LIMIT 50`,
+    [firm],
+  );
+  return json(c, { firmId: firm, runs: rows.rows });
+}
+
+export async function handleAuditRunGet(c: Context) {
+  const firm = await firmId(c);
+  const runId = c.req.param("id");
+  const pool = getPool();
+  const run = await pool.query(`SELECT * FROM audit_runs WHERE id=$1 AND firm_id=$2`, [runId, firm]);
+  if (!run.rowCount) return json(c, { error: "audit run missing" }, 404);
+  const verdicts = await pool.query<{
+    contact_id: string;
+    verdict: string;
+    details: Record<string, unknown>;
+    email: string | null;
+    phone: string | null;
+    name: string | null;
+    ready: boolean | null;
+  }>(
+    `SELECT rv.contact_id, rv.verdict, rv.details, cr.email, cr.phone, cr.name, sr.ready
+     FROM reachability_verdicts rv
+     LEFT JOIN contact_records cr ON cr.id = rv.contact_id
+     LEFT JOIN sequence_ready sr ON sr.contact_id = rv.contact_id AND sr.firm_id = rv.firm_id
+     WHERE rv.firm_id=$1 AND COALESCE(rv.details->>'auditRunId', '') = $2
+     ORDER BY cr.name ASC NULLS LAST, rv.contact_id ASC`,
+    [firm, runId],
+  );
+  return json(c, {
+    run: run.rows[0],
+    verdicts: verdicts.rows.map((row) => ({
+      contactId: row.contact_id,
+      verdict: row.verdict,
+      ready: row.ready ?? row.verdict !== "unreachable",
+      email: row.email,
+      phone: row.phone,
+      name: row.name,
+    })),
+  });
+}
+
+export async function handleContactImport(c: Context) {
+  const firm = await firmId(c);
+  const body = await c.req.json<{
+    filename?: string;
+    source?: string;
+    contacts?: Array<{ id?: string; email?: string; phone?: string; name?: string }>;
+  }>().catch(() => ({}));
+  const rows = Array.isArray(body.contacts) ? body.contacts : [];
+  const filename = String(body.filename ?? "upload.csv");
+  const source = ["file", "crm", "assisted"].includes(String(body.source))
+    ? String(body.source)
+    : "file";
+  const pool = getPool();
+  const batchId = `imp-${randomUUID()}`;
+  await pool.query(
+    `INSERT INTO import_batch (id, firm_id, kind, filename, row_count, source)
+     VALUES ($1, $2, 'contact', $3, $4, $5)`,
+    [batchId, firm, filename, rows.length, source],
+  );
+  const writes: RunWrite[] = [{ table: "import_batch", id: batchId }];
+  const contactIds: string[] = [];
+  for (const row of rows) {
+    const id = String(row.id ?? `cr-${randomUUID()}`);
+    await pool.query(
+      `INSERT INTO contact_records (id, firm_id, email, phone, name, import_batch_id)
+       VALUES ($1,$2,$3,$4,$5,$6)
+       ON CONFLICT (id) DO UPDATE SET
+         email=COALESCE(EXCLUDED.email, contact_records.email),
+         phone=COALESCE(EXCLUDED.phone, contact_records.phone),
+         name=COALESCE(EXCLUDED.name, contact_records.name),
+         import_batch_id=EXCLUDED.import_batch_id,
+         updated_at=now()`,
+      [id, firm, row.email ?? null, row.phone ?? null, row.name ?? null, batchId],
+    );
+    writes.push({ table: "contact_records", id, contact_id: id });
+    contactIds.push(id);
+  }
+
+  const dispatched = await dispatchEventToWorkflows(pool, {
+    firmId: firm,
+    eventName: "contact_import",
+    payload: {
+      import_batch_id: batchId,
+      writes,
+      filename,
+      source,
+      contact_ids: contactIds,
+    },
+    contactIds,
+  });
+
+  return json(c, {
+    import_batch_id: batchId,
+    imported: contactIds.length,
+    writes,
     workflowsFired: dispatched,
   });
 }
@@ -1692,15 +1760,25 @@ export async function handleContactRecordsList(c: Context) {
     email: string | null;
     phone: string | null;
     name: string | null;
+    notes: string | null;
     firm_name: string | null;
     created_at: string;
+    tags: unknown;
   }>(
     scope === "every_firm"
-      ? `SELECT c.id, c.firm_id, c.email, c.phone, c.name, f.name AS firm_name, c.created_at
+      ? `SELECT c.id, c.firm_id, c.email, c.phone, c.name, c.notes, f.name AS firm_name, c.created_at,
+            COALESCE((
+              SELECT json_agg(ct.tag ORDER BY ct.created_at)
+              FROM contact_tag ct WHERE ct.contact_id = c.id AND ct.firm_id = c.firm_id
+            ), '[]'::json) AS tags
          FROM contact_records c
          LEFT JOIN ct_firms f ON f.id = c.firm_id
          ORDER BY f.name ASC NULLS LAST, c.name ASC NULLS LAST, c.id ASC`
-      : `SELECT c.id, c.firm_id, c.email, c.phone, c.name, f.name AS firm_name, c.created_at
+      : `SELECT c.id, c.firm_id, c.email, c.phone, c.name, c.notes, f.name AS firm_name, c.created_at,
+            COALESCE((
+              SELECT json_agg(ct.tag ORDER BY ct.created_at)
+              FROM contact_tag ct WHERE ct.contact_id = c.id AND ct.firm_id = c.firm_id
+            ), '[]'::json) AS tags
          FROM contact_records c
          LEFT JOIN ct_firms f ON f.id = c.firm_id
          WHERE c.firm_id=$1 ORDER BY c.updated_at DESC NULLS LAST, c.id ASC`,
@@ -1714,6 +1792,8 @@ export async function handleContactRecordsList(c: Context) {
       email: r.email,
       phone: r.phone,
       name: r.name,
+      notes: r.notes,
+      tags: Array.isArray(r.tags) ? r.tags : [],
       firmName: r.firm_name,
       createdAt: r.created_at,
     })),

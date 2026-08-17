@@ -392,11 +392,15 @@ export function ActionInAppModal({
       : "run_audit";
   const [actionType, setActionType] = useState<WorkflowActionType>(current);
   const [tag, setTag] = useState(data.tag ?? "");
+  const [pickTable, setPickTable] = useState(data.pickTable ?? "import_batch");
+  const [notesFromVerdict, setNotesFromVerdict] = useState(data.notesFromVerdict === true);
 
   useEffect(() => {
     if (!open) return;
     setActionType(current);
     setTag(data.tag ?? "");
+    setPickTable(data.pickTable ?? (current === "run_audit" ? "import_batch" : data.pickTable ?? ""));
+    setNotesFromVerdict(data.notesFromVerdict === true);
   }, [open, current, data.tag]);
 
   return (
@@ -427,6 +431,8 @@ export function ActionInAppModal({
               onSave({
                 actionType,
                 tag: actionType === "ascribe_tag" ? tag : data.tag,
+                pickTable: actionType === "run_audit" ? pickTable : data.pickTable,
+                notesFromVerdict: actionType === "ascribe_tag" ? notesFromVerdict : data.notesFromVerdict,
                 configured: true,
                 actionSummary: ACTION_TYPE_DEFAULT_LABELS[actionType],
                 label: ACTION_TYPE_DEFAULT_LABELS[actionType],
@@ -453,13 +459,26 @@ export function ActionInAppModal({
           </Radio>
         ))}
       </Radio.Group>
-      {actionType === "ascribe_tag" ? (
+      {actionType === "run_audit" ? (
         <Input
-          value={tag}
-          onChange={(event) => setTag(event.target.value)}
-          placeholder="Tag"
+          value={pickTable}
+          onChange={(event) => setPickTable(event.target.value)}
+          placeholder="Pick write (import_batch)"
           style={{ marginTop: 12 }}
         />
+      ) : null}
+      {actionType === "ascribe_tag" ? (
+        <Space direction="vertical" style={{ width: "100%", marginTop: 12 }}>
+          <Input
+            value={tag}
+            onChange={(event) => setTag(event.target.value)}
+            placeholder="Tag"
+          />
+          <Space>
+            <Switch checked={notesFromVerdict} onChange={setNotesFromVerdict} />
+            <Typography.Text>Notes from verdict</Typography.Text>
+          </Space>
+        </Space>
       ) : null}
     </Modal>
   );

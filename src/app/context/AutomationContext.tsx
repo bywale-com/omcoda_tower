@@ -101,9 +101,8 @@ export function AutomationProvider({ children }: { children: ReactNode }) {
     savePersistedWorkflows(workflows);
   }, [workflows]);
 
-  // Hydrate workflows (including graph) from Postgres when real wire is on
+  // Hydrate workflows (including house graph) from machine list
   useEffect(() => {
-    if (!wireRealEnabled()) return;
     let cancelled = false;
     (async () => {
       try {

@@ -151,6 +151,36 @@ export const realMachineApi: MachineApiPort = {
     );
   },
 
+  async listAuditRuns() {
+    const res = await wireFetch<{ runs: AuditRunRow[] }>(
+      `/machine/audit-runs?firmId=${encodeURIComponent(firm())}`,
+      { headers: firmHeader() },
+    );
+    return res.runs;
+  },
+
+  async getAuditRun(id) {
+    return wireFetch<{
+      run: AuditRunRow;
+      verdicts: import("../machineTypes").AuditContactVerdict[];
+    }>(`/machine/audit-runs/${encodeURIComponent(id)}?firmId=${encodeURIComponent(firm())}`, {
+      headers: firmHeader(),
+    });
+  },
+
+  async importContactBook(input) {
+    return wireFetch<{
+      import_batch_id: string;
+      imported: number;
+      writes?: Array<{ table: string; id: string; contact_id?: string | null }>;
+      workflowsFired?: unknown[];
+    }>(`/machine/contact-import?firmId=${encodeURIComponent(firm())}`, {
+      method: "POST",
+      headers: firmHeader(),
+      body: JSON.stringify(input),
+    });
+  },
+
   async fireOnboarding() {
     return wireFetch<{ skipped?: boolean; enrollments?: number; agentRef?: string }>(
       `/machine/onboarding/fire?firmId=${encodeURIComponent(firm())}`,
@@ -587,6 +617,8 @@ export const realMachineApi: MachineApiPort = {
         email: string | null;
         phone: string | null;
         name: string | null;
+        notes?: string | null;
+        tags?: string[];
         firmName?: string | null;
         createdAt?: string | null;
       }>;

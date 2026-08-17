@@ -357,6 +357,21 @@ export type MachineApiPort = {
       verdicts?: import("./machineTypes").AuditContactVerdict[];
     }
   >;
+  listAuditRuns(): Promise<import("./machineTypes").AuditRunRow[]>;
+  getAuditRun(id: string): Promise<{
+    run: import("./machineTypes").AuditRunRow;
+    verdicts: import("./machineTypes").AuditContactVerdict[];
+  }>;
+  importContactBook(input: {
+    filename?: string;
+    source?: "file" | "crm" | "assisted";
+    contacts: Array<{ id?: string; email?: string; phone?: string; name?: string }>;
+  }): Promise<{
+    import_batch_id: string;
+    imported: number;
+    writes?: Array<{ table: string; id: string; contact_id?: string | null }>;
+    workflowsFired?: unknown[];
+  }>;
   fireOnboarding(): Promise<{
     skipped?: boolean;
     enrollments?: number;
@@ -584,6 +599,8 @@ export type MachineApiPort = {
       email: string | null;
       phone: string | null;
       name: string | null;
+      notes?: string | null;
+      tags?: string[];
       firmName?: string | null;
       createdAt?: string | null;
     }>

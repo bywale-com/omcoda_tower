@@ -4,13 +4,7 @@ import { wireFirmId, wirePorts } from "../../../wire";
 import type { ColumnsType } from "antd/es/table";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { ClientWorkspace } from "./ClientWorkspace";
-import {
-  PHASE_LABEL,
-  contactDisplayName,
-  phaseTagColor,
-  resolveWorkspacePhase,
-  type HaltRetention,
-} from "./shared";
+import { parseCsvFileToContacts } from "../../prototype/operator/operatorWireHelpers";
 
 const { Text } = Typography;
 
@@ -20,6 +14,8 @@ type ContactRow = {
   name: string;
   phone: string;
   email?: string;
+  notes?: string;
+  tags?: string[];
 };
 
 type ContactsModuleProps = {
@@ -76,6 +72,8 @@ export function ContactsModule({
             name: contactDisplayName(c),
             phone: c.phone ?? "",
             email: c.email ?? undefined,
+            notes: c.notes ?? undefined,
+            tags: c.tags ?? [],
           })),
         );
         setMeetingReadyIds(new Set(mtg.meetings.map((m) => m.contactId)));
@@ -128,6 +126,29 @@ export function ContactsModule({
       render: (phone: string) => phone || "—",
     },
     {
+      title: "Tag",
+      key: "tags",
+      width: 140,
+      render: (_: unknown, row: ContactRow) =>
+        row.tags?.length ? (
+          <Space size={4} wrap>
+            {row.tags.map((tag) => (
+              <Tag key={tag} color={tag === "invalid" ? "error" : tag === "valid" ? "success" : "default"}>
+                {tag}
+              </Tag>
+            ))}
+          </Space>
+        ) : (
+          "—"
+        ),
+    },
+    {
+      title: "Notes",
+      dataIndex: "notes",
+      ellipsis: true,
+      render: (notes: string | undefined) => notes || "—",
+    },
+    {
       title: "Phase",
       key: "phase",
       width: 120,
@@ -169,31 +190,64 @@ export function ContactsModule({
           </Surface>
           <Surface label="Imports">
             <Space direction="vertical" size="small" style={{ width: "100%" }}>
-              <Hint>Imports and unsequenced contacts — Confirm book for Tower from assisted path.</Hint>
+              <Hint>Confirm book for Tower uploads this firm’s contact file.</Hint>
               <Button
                 type="primary"
                 size="small"
                 loading={grantPending}
                 onClick={() => {
-                  setGrantPending(true);
-                  setGrantNote(null);
-                  void (async () => {
-                    try {
-                      const firmId = wireFirmId();
-                      await wirePorts.crmOAuth.grant(firmId);
-                      setGrantNote({
-                        type: "success",
-                        text: "Book handover confirmed — same grant as Prepared Authorize book.",
-                      });
-                    } catch (err: unknown) {
-                      setGrantNote({
-                        type: "error",
-                        text: err instanceof Error ? err.message : "Confirm book failed",
-                      });
-                    } finally {
-                      setGrantPending(false);
-                    }
-                  })();
+                  const input = document.createElement("input");
+                  input.type = "file";
+                  input.accept = ".csv,.tsv,text/csv,text/tab-separated-values";
+                  input.onchange = () => {
+                    const file = input.files?.[0];
+                    if (!file) return;
+                    setGrantPending(true);
+                    setGrantNote(null);
+                    void (async () => {
+                      try {
+                        const parsed = await parseCsvFileToContacts(file);
+                        const result = await wirePorts.machineApi.importContactBook({
+                          filename: file.name,
+                          source: "file",
+                          contacts: parsed.map((c) => ({
+                            id: c.id,
+                            name: c.name,
+                            email: c.email,
+                            phone: c.phone,
+                          })),
+                        });
+                        const contacts = await wirePorts.machineApi.listContactRecords();
+                        setBookRows(
+                          contacts.map((c) => ({
+                            key: c.id,
+                            id: c.id,
+                            name: contactDisplayName(c),
+                            phone: c.phone ?? "",
+                            email: c.email ?? undefined,
+                            notes: c.notes ?? undefined,
+                            tags: c.tags ?? [],
+                          })),
+                        );
+                        setGrantNote({
+                          type: "success",
+                          text: `Imported ${result.imported} contacts${
+                            result.workflowsFired && Array.isArray(result.workflowsFired) && result.workflowsFired.length
+                              ? " · house automation ran"
+                              : ""
+                          }.`,
+                        });
+                      } catch (err: unknown) {
+                        setGrantNote({
+                          type: "error",
+                          text: err instanceof Error ? err.message : "Confirm book failed",
+                        });
+                      } finally {
+                        setGrantPending(false);
+                      }
+                    })();
+                  };
+                  input.click();
                 }}
               >
                 Confirm book for Tower
@@ -207,8 +261,7 @@ export function ContactsModule({
             <Alert
               type="info"
               showIcon
-              message="This firm's book is empty"
-              description="Upload a contact list as operator (Book readiness) for this firm."
+              message="This firm's book is empty — Confirm book for Tower to upload."
             />
           ) : (
             <Table
