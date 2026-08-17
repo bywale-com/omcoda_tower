@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **00:50:** Audit → If: the previous result **is** the wire. Outputs are the run + each person (listed). The field you point at **is** the grain. Live does not pass it. [`PRIMITIVES.md`](./PRIMITIVES.md). Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **12:31:** A16 already locks the mechanism (If reads Audit output). A new image is only justified if we put the **field list** on the glass — A16’s row is `status = passed` (the run), so person-grain is invisible. Do not draw a pipe. Do not generate until asked. Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -1043,6 +1043,22 @@ Not produced today: consent/silenced as an Audit verdict. Not the previous resul
 **Wrote:** [`PRIMITIVES.md`](./PRIMITIVES.md) · [`SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md`](./SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md).
 
 **Do not:** plant; invent If fields Audit does not produce; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-17 12:31 UTC — Is an image justified?
+
+**Why:** Founder: just a question — is an image justified? (Audit output → If, the field list, how we pick person vs run.)
+
+**Verdict:**
+
+- **Mechanism — no new plate.** **A16** already is that picture: previous result = Audit the contacts · output. The If reads that. Do not draw a pipe. Do not redraw A16 for the wire.
+- **Field list / grain — only if we need it on the glass.** A16’s example row is `status = passed`. That is the **run**. The walk “if this contact failed → tag” cannot be seen. A new plate (or A16 revision) would be the If open with the previous-result fields **grouped**: this run / each person — you pick a field, not a per-contact mode. That is the only reason an image earns its keep.
+- **Inside the Audit action** is still named not drawn. That is a different picture. Do not mix it with the If.
+
+**Do not:** generate until asked; draw radios for person vs artifact; treat A16 as already showing person-grain; overwrite 15:43.
 
 Flag 15:43 untouched.
 
