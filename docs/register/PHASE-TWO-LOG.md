@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **13:07:** After a node, the output is **every write that run made**. Same for Audit and Provision. Do not filter to “two things” or “a firm.” Engineer is cutting SA **013+014+015** (PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86)). Meantime was about to start. Do not plant. Do not recut the engineer’s packet.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **13:07:** After a node, the output is **every write that run made**. Same for Audit and Provision. Next node **picks**. Engineer owns SA **013+014+015** (PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86)). Meantime had not started. New PM seated **13:16**. Do not plant. Do not recut the engineer’s packet.
 
 **How we maintain this log**
 
@@ -1098,6 +1098,26 @@ Flag 15:43 untouched.
 **Engineer:** SA packets **013 + 014 + 015**, PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86). 015 is this handle. First graph is 014 (import → audit → if → tag). Provision is the same idea, not that cut. Do not recut from the PM seat. Meantime was about to start when this chat asked to go through the packet.
 
 **Do not:** plant; overwrite 15:43; treat 12:34 as current; answer a simple question by rewriting the corpus.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-17 13:16 UTC — New PM seated
+
+**Why:** Founder: you are the new PM. Get up to speed. I have some work to do with you.
+
+**Read:** `docs/README.md` Product Manager paste. Current (**13:07**). This stamp’s predecessor. [`PRIMITIVES.md`](./PRIMITIVES.md). Flagship **15:43** stays. Did not recut the engineer’s packet. Did not open 015 to rewrite — that machine text lives on PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86).
+
+**Holding:**
+
+- After a node: **every write that run made**. Same for Provision. Next node **picks**. Not a short list. Not “two things.” Not “a firm.”
+- Engineer owns SA **013 + 014 + 015**. First graph is import → audit → if → tag. Meantime in the last chat had not started.
+- Do not plant. Hub is not the app.
+
+Ready. Waiting on you.
+
+**Do not:** plant; overwrite 15:43; recut 015; treat 12:34 as current.
 
 Flag 15:43 untouched.
 
