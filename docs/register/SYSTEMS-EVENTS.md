@@ -284,3 +284,13 @@ Those were analogy from two handlers that both INSERT more than one row, plus de
 
 **Do not:** overwrite 15:43; treat this as rebuild-Provision; mint an events table.
 
+---
+
+## 2026-08-17 00:06 — Then-this is order. Result is a write. That orchestrates as events and actions grow.
+
+**Founder:** is then-this enough for all automations? If the line carries no packet, how is rule output ordered? Want a structure that stays consistent as more triggers and more actions land across desks — not an epistemic argument.
+
+**Cut:** Wire = then this (order). Not enough alone. After a step, the result must **exist** (a write, plus this run’s firm/people). Inspector Output is the **editor test**, not proof the live line carried it. Scale: hear a write → then this → module that knows, leaving a write → next node or another graph uses that write. Same on Operator and Consultant. No packet-on-the-wire primitive. No events table.
+
+**Do not:** overwrite 15:43.
+

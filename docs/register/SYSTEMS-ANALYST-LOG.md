@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-16 23:11 UTC — **Preview = real test on pulled sample data in the editor. Not fake math. Not the live event path.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-17 00:06 UTC — **Then-this = order, not the whole orchestrator. Result must be a write. That is what scales.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1201,3 +1201,17 @@ What **does** matter, and is why I said it: live run does **not** use those pane
 Not fake math. Not the live event either. Clicking Run on an **event** trigger does **not** fill Output from a real write. When a real event later wakes the workflow, this path is not used — live rules do not read that Input or write that Output.
 
 **Do not:** call the panes random; call the live path the same as Run in the inspector. Flag **15:43**.
+
+---
+
+## 2026-08-17 00:06 UTC — Then-this is order. Not enough alone. Result must be a write. That scales.
+
+**Why:** Founder: if the wire is then-this, is that enough to orchestrate all automations? If nothing rides the line, how is the rule output there in order? Not an epistemic question — a structure that stays consistent as more events and more actions land across desks.
+
+**Hard:**
+- **Then-this is enough for order.** Which step runs after which. That is the wire. Keep it.
+- **Then-this is not enough to use a result.** The next step (or another automation) can only use what **exists** after the step: a write, or facts of this run (which firm, which people, the event that woke it).
+- How the inspector shows ordered Output: the **editor test** ran the rule on the Input object and displayed that result. That is not the live line carrying it.
+- Structure that scales: **Trigger** = a write we can hear (add a picker row when a workflow needs that write — already 01:35). **Wire** = then this. **Action** = the module that already knows, and it **leaves a write**. Same graph: next node uses this run’s people/firm + that write. Other graph: listens to that write. Operator, consultant, same rule. No second pipe. No node-per-table.
+
+**Do not:** treat then-this as the whole orchestrator; invent a packet-on-the-wire as a third primitive; mint an events table. Flag **15:43**.
