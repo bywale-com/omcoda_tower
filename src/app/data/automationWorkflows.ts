@@ -47,6 +47,7 @@ export type WorkflowTriggerEvent =
   | "consent_records.sequenced"
   | "contact.created"
   | "contact.updated"
+  | "contact_import"
   | "import.created";
 
 export type WorkflowActionType =
@@ -134,6 +135,12 @@ export type WorkflowNodeData = {
   copySequenceClass?: "optin" | "reengagement" | "reactivation";
   tag?: string;
   formQuestionIds?: string[];
+  /** Which write(s) from the previous handle this node uses. */
+  pickTable?: string;
+  pickField?: string;
+  pickOp?: string;
+  pickValue?: string;
+  notesFromVerdict?: boolean;
   /** A12 — objective declared on the Agents action. */
   objectiveName?: string;
   dataRequestOn?: boolean;
@@ -178,11 +185,15 @@ export const TRIGGER_EVENTS_BY_TARGET: Record<
     { id: "audit.failed", label: "Audit failed" },
   ],
   contact: [
+    { id: "contact_import", label: "Contact import" },
     { id: "fact_writebacks", label: "Fact writeback" },
     { id: "consent_records.opt_out", label: "Consent opt-out" },
     { id: "halt_records", label: "Halt" },
   ],
-  import: [{ id: "ct_firms", label: "Firm provisioned" }],
+  import: [
+    { id: "contact_import", label: "Contact import" },
+    { id: "ct_firms", label: "Firm provisioned" },
+  ],
   client: [
     { id: "eligibility.changed", label: "Eligibility changed" },
     { id: "meeting_booked", label: "Meeting booked" },
@@ -246,6 +257,7 @@ export const WORKFLOW_EVENTS_WITH_LOCAL = new Set<WorkflowTriggerEvent>([
   "consent_records.sequenced",
 ]);
 export const WORKFLOW_EVENT_CATALOG: { id: WorkflowTriggerEvent; label: string }[] = [
+  { id: "contact_import", label: "Contact import" },
   { id: "fact_writebacks", label: "Fact writeback" },
   { id: "meeting_booked", label: "Meeting booked" },
   { id: "campaign_failure", label: "Campaign failure" },
@@ -713,8 +725,84 @@ function createEmptyWorkflow(id: string, name: string, target: WorkflowTarget): 
   };
 }
 
-/** Three canonical workflows — drawable + runnable via validated-shape walk. */
+/** House + canonical workflows — drawable + runnable via validated-shape walk. */
 const SEED_WORKFLOWS: WorkflowDefinition[] = [
+  {
+    id: "wf-house-contact-import",
+    name: "Contact file → audit → tag",
+    status: "draft",
+    target: "contact",
+    updatedAt: "2026-08-17T00:00:00.000Z",
+    nodes: [
+      verticalNode("trigger-1", "trigger", 0, {
+        label: "Contact import",
+        configured: true,
+        triggerKind: "event",
+        triggerEvent: "contact_import",
+        grain: "global",
+      }),
+      verticalNode("action-audit", "action", 1, {
+        label: "Audit the contacts",
+        configured: true,
+        actionType: "run_audit",
+        pickTable: "import_batch",
+        actionSummary: "Audit the contacts",
+      }),
+      verticalNode("if-failed", "branch", 2, {
+        label: "If this contact failed",
+        configured: true,
+        branchKind: "if",
+        pickTable: "sequence_ready",
+        pickField: "ready",
+        pickOp: "eq",
+        pickValue: "false",
+        filterSummary: "sequence_ready.ready = false",
+      }),
+      {
+        id: "action-invalid",
+        type: "action",
+        position: { x: 0, y: 444 },
+        data: {
+          label: "Tag invalid",
+          configured: true,
+          actionType: "ascribe_tag",
+          tag: "invalid",
+          notesFromVerdict: true,
+          actionSummary: "Ascribe a tag",
+        },
+      },
+      {
+        id: "action-valid",
+        type: "action",
+        position: { x: 240, y: 444 },
+        data: {
+          label: "Tag valid",
+          configured: true,
+          actionType: "ascribe_tag",
+          tag: "valid",
+          actionSummary: "Ascribe a tag",
+        },
+      },
+    ],
+    edges: [
+      { id: "e-t-a", source: "trigger-1", target: "action-audit", type: AUTOMATION_EDGE_TYPE },
+      { id: "e-a-if", source: "action-audit", target: "if-failed", type: AUTOMATION_EDGE_TYPE },
+      {
+        id: "e-if-inv",
+        source: "if-failed",
+        target: "action-invalid",
+        sourceHandle: "true",
+        type: AUTOMATION_EDGE_TYPE,
+      },
+      {
+        id: "e-if-val",
+        source: "if-failed",
+        target: "action-valid",
+        sourceHandle: "false",
+        type: AUTOMATION_EDGE_TYPE,
+      },
+    ],
+  },
   {
     id: "wf-optin-launch",
     name: "New firm → opt-in launch",
@@ -861,7 +949,12 @@ export function savePersistedWorkflows(workflows: WorkflowDefinition[]): void {
 }
 
 export function getInitialWorkflows(): WorkflowDefinition[] {
-  return loadPersistedWorkflows() ?? structuredClone(SEED_WORKFLOWS);
+  const loaded = loadPersistedWorkflows() ?? structuredClone(SEED_WORKFLOWS);
+  const house = SEED_WORKFLOWS.find((w) => w.id === "wf-house-contact-import");
+  if (house && !loaded.some((w) => w.id === "wf-house-contact-import")) {
+    return [structuredClone(house), ...loaded];
+  }
+  return loaded;
 }
 
 export function getWorkflowDefinition(id: string): WorkflowDefinition | undefined {

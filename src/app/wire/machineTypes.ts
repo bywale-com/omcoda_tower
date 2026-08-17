@@ -14,7 +14,7 @@ export type ConsentStatus = "unsequenced" | "waitlisted" | "sequenced" | "silenc
 
 export type WorkflowRow = {
   id: string;
-  firm_id: string;
+  firm_id: string | null;
   name: string;
   target: WorkflowTarget;
   graph: { nodes: unknown[]; edges: unknown[] };

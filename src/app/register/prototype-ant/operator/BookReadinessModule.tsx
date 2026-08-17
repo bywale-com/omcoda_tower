@@ -3,7 +3,7 @@
  * Start Audit → machineApi.createAuditRun; verdicts + sequence_ready from response.
  * Audit list starts empty (no SEED_AUDITS); Upload / Start Audit write paths kept.
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Button,
   Card,
@@ -30,15 +30,13 @@ import type { ColumnsType } from "antd/es/table";
 import {
   AUDIT_CHECKS,
   buildConsolidatedRecords,
-  finalizeAudit,
-  resolveGateOutcome,
   type Audit,
   type AuditCheckId,
   type AuditGateStatus,
   type AuditRecord,
 } from "../../../data/audits";
 import { recordReachability, type RecordReachability } from "../../../data/auditRecordReachability";
-import type { AuditContactVerdict, ReachabilityVerdict } from "../../../wire/machineTypes";
+import type { AuditContactVerdict, AuditRunRow, ReachabilityVerdict } from "../../../wire/machineTypes";
 import { wirePorts } from "../../../wire/registry";
 import { parseCsvFileToContacts } from "../../prototype/operator/operatorWireHelpers";
 import { Hint, ModulePage, Surface } from "../chrome";
@@ -98,6 +96,28 @@ function recordsForAudit(audit: Audit): AuditRecord[] {
   return audit.records.length > 0 ? audit.records : buildConsolidatedRecords(audit.importIds);
 }
 
+function auditFromRun(run: AuditRunRow, records: AuditRecord[] = []): Audit {
+  const summary = run.summary ?? {};
+  const contacts = Number(summary.contacts ?? records.length ?? 0);
+  const ready = Number(summary.ready ?? 0);
+  const importIds = Array.isArray(run.import_ids) ? run.import_ids.map(String) : [];
+  const complete = run.status !== "running";
+  return {
+    id: run.id,
+    label: `Audit · ${run.id}`,
+    meta: `${run.status} · ${contacts} contacts · ${ready} ready`,
+    status: complete ? "complete" : "running",
+    importIds,
+    records,
+    enabledChecks: AUDIT_CHECKS.map((c) => c.id),
+    gateSteps: AUDIT_CHECKS.map((c) => ({
+      checkId: c.id,
+      label: c.label,
+      status: complete ? (ready > 0 || contacts === 0 ? "pass" : "fail") : "pending",
+    })),
+  };
+}
+
 function downloadRecordsCsv(audit: Audit) {
   const records = recordsForAudit(audit);
   const csv = [
@@ -128,6 +148,84 @@ export function BookReadinessModule() {
   const [lastAuditRunId, setLastAuditRunId] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
   const [uploading, setUploading] = useState(false);
+
+  const loadRuns = async (preferId?: string | null) => {
+    try {
+      const runs = await wirePorts.machineApi.listAuditRuns();
+      const mapped = runs.map((run) => auditFromRun(run));
+      setAudits(mapped);
+      const nextId = preferId && mapped.some((a) => a.id === preferId) ? preferId : mapped[0]?.id ?? null;
+      setSelectedId(nextId);
+      if (nextId) {
+        try {
+          const detail = await wirePorts.machineApi.getAuditRun(nextId);
+          const next: MachineVerdictByContact = {};
+          for (const row of detail.verdicts ?? []) {
+            next[row.contactId] = { verdict: row.verdict, ready: row.ready };
+          }
+          setMachineVerdicts(next);
+          setAudits((prev) =>
+            prev.map((audit) =>
+              audit.id === nextId
+                ? {
+                    ...audit,
+                    records: (detail.verdicts ?? []).map((v) => ({
+                      id: v.contactId,
+                      name: v.name ?? v.contactId,
+                      phone: v.phone ?? "",
+                      email: v.email ?? "",
+                    })),
+                  }
+                : audit,
+            ),
+          );
+        } catch {
+          /* list is enough */
+        }
+      }
+    } catch {
+      /* keep local list if machine is down */
+    }
+  };
+
+  useEffect(() => {
+    void loadRuns();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!selectedId) return;
+    let cancelled = false;
+    void wirePorts.machineApi
+      .getAuditRun(selectedId)
+      .then((detail) => {
+        if (cancelled) return;
+        const next: MachineVerdictByContact = {};
+        for (const row of detail.verdicts ?? []) {
+          next[row.contactId] = { verdict: row.verdict, ready: row.ready };
+        }
+        setMachineVerdicts(next);
+        setAudits((prev) =>
+          prev.map((audit) =>
+            audit.id === selectedId
+              ? {
+                  ...audit,
+                  records: (detail.verdicts ?? []).map((v) => ({
+                    id: v.contactId,
+                    name: v.name ?? v.contactId,
+                    phone: v.phone ?? "",
+                    email: v.email ?? "",
+                  })),
+                }
+              : audit,
+          ),
+        );
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedId]);
 
   const filtered = useMemo(() => {
     if (verdictFilter === "All") return audits;
@@ -194,32 +292,24 @@ export function BookReadinessModule() {
   };
 
   const startAuditRun = async () => {
-    if (!selected) {
-      message.warning("Upload a book CSV first — no audit runs yet.");
-      return;
-    }
-    const auditId = selected.id;
-    const records = recordsForAudit(selected);
     setStarting(true);
-    setAudits((prev) =>
-      prev.map((audit) =>
-        audit.id === auditId
-          ? {
-              ...audit,
-              status: "running",
-              meta: "Running · machine audit",
-              gateSteps: audit.gateSteps.map((step) =>
-                audit.enabledChecks.includes(step.checkId)
-                  ? { ...step, status: "pending", durationMs: undefined }
-                  : step,
-              ),
-            }
-          : audit,
-      ),
-    );
     try {
+      let records = selected ? recordsForAudit(selected) : [];
+      if (!records.length) {
+        const book = await wirePorts.machineApi.listContactRecords();
+        records = book.map((c) => ({
+          id: c.id,
+          name: c.name ?? c.id,
+          phone: c.phone ?? "",
+          email: c.email ?? "",
+        }));
+      }
+      if (!records.length) {
+        message.warning("No contacts in this firm’s book — Confirm book or upload a CSV first.");
+        return;
+      }
       const result = await wirePorts.machineApi.createAuditRun({
-        importIds: selected.importIds,
+        importIds: selected?.importIds,
         contactIds: records.map((record) => ({
           id: record.id,
           email: record.email || undefined,
@@ -228,57 +318,10 @@ export function BookReadinessModule() {
         })),
       });
       setLastAuditRunId(result.id);
-      if (result.verdicts?.length) {
-        applyMachineVerdicts(result.verdicts);
-      } else {
-        // Fallback: board detections do not carry reachability; derive from local channels.
-        applyMachineVerdicts(
-          records.map((record) => {
-            const reach = recordReachability(record);
-            const verdict: ReachabilityVerdict =
-              reach === "both" ? "reachable" : reach === "partial" ? "partial" : "unreachable";
-            return {
-              contactId: record.id,
-              verdict,
-              ready: verdict !== "unreachable",
-              email: record.email,
-              phone: record.phone,
-              name: record.name,
-            };
-          }),
-        );
-      }
-      setAudits((prev) =>
-        prev.map((audit) => {
-          if (audit.id !== auditId) return audit;
-          const gateSteps = audit.gateSteps.map((step, index) =>
-            audit.enabledChecks.includes(step.checkId)
-              ? {
-                  ...step,
-                  status: resolveGateOutcome(step.checkId, records),
-                  durationMs: 40 + index * 12,
-                }
-              : { ...step, status: "pending" as const, durationMs: undefined },
-          );
-          return finalizeAudit({
-            ...audit,
-            records,
-            gateSteps,
-            meta: `Machine · ${result.id} · ${result.contacts} contacts`,
-          });
-        }),
-      );
+      if (result.verdicts?.length) applyMachineVerdicts(result.verdicts);
+      await loadRuns(result.id);
       message.success(`Audit run ${result.id} · ${result.contacts} contacts`);
-      // Match plant AuditContext: after contacts land + sequence_ready, fire onboarding enroll.
-      if (result.contacts > 0) {
-        void wirePorts.machineApi.fireOnboarding().catch(() => undefined);
-      }
     } catch (err) {
-      setAudits((prev) =>
-        prev.map((audit) =>
-          audit.id === auditId ? { ...audit, status: "complete", meta: `Failed · ${String(err)}` } : audit,
-        ),
-      );
       message.error(`Start Audit failed: ${String(err)}`);
     } finally {
       setStarting(false);
@@ -297,66 +340,18 @@ export function BookReadinessModule() {
         message.warning("No mutable contacts parsed from upload");
         return;
       }
-      const importId = `imp-upload-${Date.now()}`;
-      const auditId = `audit-upload-${Date.now()}`;
-      const records = contacts.map((c) => ({
-        id: c.id,
-        name: c.name,
-        phone: c.phone,
-        email: c.email,
-      }));
-      setAudits((prev) => [
-        {
-          id: auditId,
-          label: `Upload · ${file.name}`,
-          meta: "Running · mutable contacts",
-          status: "running",
-          importIds: [importId],
-          records,
-          enabledChecks: AUDIT_CHECKS.map((c) => c.id),
-          gateSteps: AUDIT_CHECKS.map((c) => ({
-            checkId: c.id,
-            label: c.label,
-            status: "pending" as const,
-          })),
-        },
-        ...prev,
-      ]);
-      setSelectedId(auditId);
-      const result = await wirePorts.machineApi.createAuditRun({
-        importIds: [importId],
-        contactIds: contacts.map((c) => ({
+      const result = await wirePorts.machineApi.importContactBook({
+        filename: file.name,
+        source: "file",
+        contacts: contacts.map((c) => ({
           id: c.id,
-          email: c.email || undefined,
-          phone: c.phone || undefined,
-          name: c.name || undefined,
+          email: c.email,
+          phone: c.phone,
+          name: c.name,
         })),
       });
-      setLastAuditRunId(result.id);
-      if (result.verdicts?.length) {
-        applyMachineVerdicts(result.verdicts);
-      }
-      setAudits((prev) =>
-        prev.map((audit) => {
-          if (audit.id !== auditId) return audit;
-          const gateSteps = audit.gateSteps.map((step, index) => ({
-            ...step,
-            status: resolveGateOutcome(step.checkId, records),
-            durationMs: 40 + index * 12,
-          }));
-          return finalizeAudit({
-            ...audit,
-            records,
-            gateSteps,
-            meta: `Upload · ${result.id} · ${result.contacts} contacts`,
-          });
-        }),
-      );
-      message.success(`Uploaded ${contacts.length} contacts · audit run ${result.id}`);
-      // Match plant AuditContext: upload → sequence_ready → onboarding enroll when campaign running.
-      if (result.contacts > 0) {
-        void wirePorts.machineApi.fireOnboarding().catch(() => undefined);
-      }
+      await loadRuns();
+      message.success(`Imported ${result.imported} contacts`);
     } catch (err) {
       message.error(`Upload failed: ${String(err)}`);
     } finally {
@@ -411,7 +406,7 @@ export function BookReadinessModule() {
                 type="primary"
                 icon={<PlayCircleOutlined />}
                 loading={starting}
-                disabled={!selected}
+                disabled={starting}
                 onClick={() => void startAuditRun()}
                 data-register-surface="Start Audit run"
               >
@@ -421,7 +416,7 @@ export function BookReadinessModule() {
                 size="small"
                 onClick={reAudit}
                 style={{ marginLeft: 8 }}
-                disabled={starting || !selected}
+                disabled={starting}
               >
                 Re-audit remainder
               </Button>
@@ -471,7 +466,7 @@ export function BookReadinessModule() {
             <Surface label="Audits">
               <div style={{ padding: "10px 12px", borderBottom: "1px solid var(--ant-color-split)" }}>
                 <Typography.Text strong>Audits</Typography.Text>
-                <Hint>Empty until you upload a book or start an audit run.</Hint>
+                <Hint>Every audit_runs row for this firm. Upload lands the book; Start Audit is manual.</Hint>
               </div>
               {filtered.length === 0 ? (
                 <div style={{ padding: 16 }}>
@@ -522,7 +517,7 @@ export function BookReadinessModule() {
             {!selected ? (
               <div style={{ padding: 24 }}>
                 <Empty
-                  description="Upload a book CSV to create the first audit run."
+                  description="No audit_runs yet. Upload lands contacts. Start Audit run writes a row — or Activate the house automation so import audits."
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
                 />
               </div>

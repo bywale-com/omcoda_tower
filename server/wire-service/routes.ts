@@ -31,6 +31,8 @@ import { handleListEvents, handleResendWebhook } from "./webhooks.ts";
 import {
   handleActiveAttemptsList,
   handleAuditRunCreate,
+  handleAuditRunGet,
+  handleAuditRunList,
   handleAttemptCriteriaList,
   handleAttemptCriteriaUpsert,
   handleBoardDetections,
@@ -38,6 +40,7 @@ import {
   handleCampaignStateGet,
   handleCampaignStatePost,
   handleConsultantsList,
+  handleContactImport,
   handleContactRecordsList,
   handleChannelOrderList,
   handleChannelOrderUpsert,
@@ -159,6 +162,9 @@ export function createWireRoutes(): Hono {
   wire.post("/machine/enrollments", handleEnrollmentCreate);
   wire.post("/machine/reference", handleReferenceUpsert);
   wire.post("/machine/audit-runs", handleAuditRunCreate);
+  wire.get("/machine/audit-runs", handleAuditRunList);
+  wire.get("/machine/audit-runs/:id", handleAuditRunGet);
+  wire.post("/machine/contact-import", handleContactImport);
   wire.post("/machine/onboarding/fire", handleOnboardingFire);
   wire.get("/machine/board", handleBoardDetections);
   wire.get("/machine/templates", handleTemplatesList);

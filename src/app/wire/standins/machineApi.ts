@@ -376,6 +376,8 @@ const bookContacts = new Map<
     email: string | null;
     phone: string | null;
     name: string | null;
+    notes?: string | null;
+    tags?: string[];
     firmName?: string | null;
     createdAt?: string;
   }
@@ -666,6 +668,85 @@ function walkStandInGraph(
   return { nodeStatus, enrollments: enrIds, ok: order.length > 0 };
 }
 
+const HOUSE_CONTACT_IMPORT_GRAPH = {
+  nodes: [
+    {
+      id: "trigger-1",
+      type: "trigger",
+      position: { x: 120, y: 0 },
+      data: {
+        label: "Contact import",
+        configured: true,
+        triggerKind: "event",
+        triggerEvent: "contact_import",
+        grain: "global",
+      },
+    },
+    {
+      id: "action-audit",
+      type: "action",
+      position: { x: 120, y: 148 },
+      data: {
+        label: "Audit the contacts",
+        configured: true,
+        actionType: "run_audit",
+        pickTable: "import_batch",
+      },
+    },
+    {
+      id: "if-failed",
+      type: "branch",
+      position: { x: 120, y: 296 },
+      data: {
+        label: "If this contact failed",
+        configured: true,
+        branchKind: "if",
+        pickTable: "sequence_ready",
+        pickField: "ready",
+        pickOp: "eq",
+        pickValue: "false",
+      },
+    },
+    {
+      id: "action-invalid",
+      type: "action",
+      position: { x: 0, y: 444 },
+      data: {
+        label: "Tag invalid",
+        configured: true,
+        actionType: "ascribe_tag",
+        tag: "invalid",
+        notesFromVerdict: true,
+      },
+    },
+    {
+      id: "action-valid",
+      type: "action",
+      position: { x: 240, y: 444 },
+      data: { label: "Tag valid", configured: true, actionType: "ascribe_tag", tag: "valid" },
+    },
+  ],
+  edges: [
+    { id: "e-t-a", source: "trigger-1", target: "action-audit" },
+    { id: "e-a-if", source: "action-audit", target: "if-failed" },
+    { id: "e-if-inv", source: "if-failed", target: "action-invalid", sourceHandle: "true" },
+    { id: "e-if-val", source: "if-failed", target: "action-valid", sourceHandle: "false" },
+  ],
+};
+
+workflows.set("wf-house-contact-import", {
+  id: "wf-house-contact-import",
+  firm_id: null,
+  name: "Contact file → audit → tag",
+  target: "contact",
+  graph: HOUSE_CONTACT_IMPORT_GRAPH,
+  created_at: "2026-08-17T00:00:00.000Z",
+  updated_at: "2026-08-17T00:00:00.000Z",
+  status: "draft",
+  audience_scope: "every_firm",
+  audience_contact_ids: [],
+});
+
 
 function standInFirm(): string {
   try {
@@ -701,20 +782,21 @@ export const standInMachineApi: MachineApiPort = {
 
   async createWorkflow(input) {
     const id = input.id ?? `wf-local-${Date.now()}`;
+    const prev = workflows.get(id);
     const row = {
       id,
-      firm_id: standInFirm(),
+      firm_id: prev?.firm_id ?? standInFirm(),
       name: input.name,
       target: (input.target ?? "contact") as WorkflowRow["target"],
       graph: (input.graph as WorkflowRow["graph"]) ?? { nodes: [], edges: [] },
-      created_at: now(),
+      created_at: prev?.created_at ?? now(),
       updated_at: now(),
-      status: "draft" as const,
-      audience_scope: input.audienceScope === "select_from" ? "select_from" : (workflows.get(id)?.audience_scope ?? "every_firm"),
-      audience_contact_ids: input.audienceContactIds ?? workflows.get(id)?.audience_contact_ids ?? [],
+      status: prev?.status ?? ("draft" as const),
+      audience_scope: input.audienceScope === "select_from" ? "select_from" : (prev?.audience_scope ?? "every_firm"),
+      audience_contact_ids: input.audienceContactIds ?? prev?.audience_contact_ids ?? [],
     };
     workflows.set(id, row);
-    return { id, status: "draft", name: row.name, target: row.target };
+    return { id, status: row.status, name: row.name, target: row.target };
   },
 
   async activateWorkflow(workflowId) {
@@ -889,6 +971,8 @@ export const standInMachineApi: MachineApiPort = {
         email: contact.email ?? null,
         phone: contact.phone ?? null,
         name: contact.name ?? null,
+        notes: bookContacts.get(contact.id)?.notes ?? null,
+        tags: bookContacts.get(contact.id)?.tags ?? [],
       });
     }
     for (const v of verdicts) {
@@ -905,6 +989,110 @@ export const standInMachineApi: MachineApiPort = {
       finished_at: started,
       contacts: contacts.length,
       verdicts,
+    };
+  },
+
+  async listAuditRuns() {
+    return [...bookAuditRuns.values()]
+      .filter((row) => row.firm_id === standInFirm())
+      .sort((a, b) => b.started_at.localeCompare(a.started_at));
+  },
+
+  async getAuditRun(id) {
+    const run = bookAuditRuns.get(id);
+    if (!run) throw new Error("audit run missing");
+    const importIds = Array.isArray(run.import_ids) ? run.import_ids.map(String) : [];
+    const verdicts = [...bookContacts.values()]
+      .filter((c) => c.firmId === standInFirm())
+      .filter((c) => importIds.length === 0 || true)
+      .map((c) => {
+        const verdict = bookVerdicts.get(c.id) ?? "unreachable";
+        return {
+          contactId: c.id,
+          verdict,
+          ready: bookSequenceReady.get(c.id) ?? verdict !== "unreachable",
+          email: c.email,
+          phone: c.phone,
+          name: c.name,
+        };
+      })
+      .filter((v) => bookVerdicts.has(v.contactId));
+    return { run, verdicts };
+  },
+
+  async importContactBook(input) {
+    const contacts = input.contacts ?? [];
+    const batchId = `imp-local-${Date.now()}`;
+    const writes: Array<{ table: string; id: string; contact_id?: string | null }> = [
+      { table: "import_batch", id: batchId },
+    ];
+    for (const contact of contacts) {
+      const id = contact.id ?? `cr-local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      const prev = bookContacts.get(id);
+      bookContacts.set(id, {
+        id,
+        firmId: standInFirm(),
+        email: contact.email ?? prev?.email ?? null,
+        phone: contact.phone ?? prev?.phone ?? null,
+        name: contact.name ?? prev?.name ?? null,
+        notes: prev?.notes ?? null,
+        tags: prev?.tags ?? [],
+        createdAt: prev?.createdAt ?? now(),
+      });
+      writes.push({ table: "contact_records", id, contact_id: id });
+    }
+
+    const workflowsFired: unknown[] = [];
+    for (const w of workflows.values()) {
+      if (w.status !== "active") continue;
+      const nodes = (w.graph?.nodes ?? []) as Array<{
+        id: string;
+        type?: string;
+        data?: Record<string, unknown>;
+        sourceHandle?: string;
+      }>;
+      const trigger = nodes.find((n) => n.type === "trigger");
+      const event = String(trigger?.data?.triggerEvent ?? "");
+      if (event !== "contact_import") continue;
+      const audit = await standInMachineApi.createAuditRun({
+        importIds: [batchId],
+        contactIds: contacts.map((c, i) => ({
+          id: c.id ?? writes[i + 1]?.id ?? `cr-${i}`,
+          email: c.email,
+          phone: c.phone,
+          name: c.name,
+        })),
+      });
+      const ifNode = nodes.find((n) => n.type === "branch");
+      const pickValue = String(ifNode?.data?.pickValue ?? "false");
+      const pickOp = String(ifNode?.data?.pickOp ?? "eq");
+      const failedIsThen = pickOp === "eq" && (pickValue === "false" || pickValue === "0");
+      for (const v of audit.verdicts ?? []) {
+        const failed = !v.ready;
+        const thenSide = failedIsThen ? failed : !failed;
+        const tagNode = thenSide
+          ? nodes.find((n) => n.data?.actionType === "ascribe_tag" && n.data?.tag === "invalid") ??
+            nodes.find((n) => n.id === "action-invalid")
+          : nodes.find((n) => n.data?.actionType === "ascribe_tag" && n.data?.tag === "valid") ??
+            nodes.find((n) => n.id === "action-valid");
+        const tag = String(tagNode?.data?.tag ?? (thenSide ? "invalid" : "valid"));
+        const person = bookContacts.get(v.contactId);
+        if (!person) continue;
+        const tags = [...(person.tags ?? []).filter((t) => t !== tag), tag];
+        let notes = person.notes ?? null;
+        if (tagNode?.data?.notesFromVerdict === true) {
+          notes = v.verdict === "unreachable" ? "missing email and phone" : v.verdict;
+        }
+        bookContacts.set(v.contactId, { ...person, tags, notes });
+      }
+      workflowsFired.push({ workflowId: w.id, auditRunId: audit.id });
+    }
+
+    return {
+      import_batch_id: batchId,
+      imported: contacts.length,
+      writes,
+      workflowsFired,
     };
   },
 
@@ -1455,6 +1643,8 @@ export const standInMachineApi: MachineApiPort = {
         email: c.email ?? null,
         phone: c.phone ?? null,
         name: c.name ?? null,
+        notes: c.notes ?? null,
+        tags: c.tags ?? [],
         firmName: c.firmName ?? "Firm",
         createdAt: c.createdAt ?? now(),
       }));

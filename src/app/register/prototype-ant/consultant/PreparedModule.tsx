@@ -15,6 +15,7 @@ import {
 } from "antd";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { peekActiveFirmId, useWireTick, wireFirmId, wirePorts, type CrmGrantState } from "../../../wire";
+import { parseCsvFileToContacts } from "../../prototype/operator/operatorWireHelpers";
 import { LICENSEES } from "./shared";
 
 const { Text, Paragraph } = Typography;
@@ -73,9 +74,49 @@ export function PreparedModule({
   async function authorizeBook() {
     setGrantPending(true);
     try {
-      const next = await wirePorts.crmOAuth.grant(wireFirmId());
-      setGrant(next);
-      setModal(null);
+      if (connectPath === "crm") {
+        const next = await wirePorts.crmOAuth.grant(wireFirmId());
+        setGrant(next);
+        setModal(null);
+        return;
+      }
+      const source = connectPath === "upload" ? "assisted" : "file";
+      await new Promise<void>((resolve, reject) => {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".csv,.tsv,text/csv,text/tab-separated-values";
+        input.onchange = () => {
+          const file = input.files?.[0];
+          if (!file) {
+            resolve();
+            return;
+          }
+          void (async () => {
+            try {
+              const parsed = await parseCsvFileToContacts(file);
+              const result = await wirePorts.machineApi.importContactBook({
+                filename: file.name,
+                source,
+                contacts: parsed.map((c) => ({
+                  id: c.id,
+                  name: c.name,
+                  email: c.email,
+                  phone: c.phone,
+                })),
+              });
+              message.success(`Imported ${result.imported} contacts`);
+              setModal(null);
+              resolve();
+            } catch (err) {
+              reject(err);
+            }
+          })();
+        };
+        input.oncancel = () => resolve();
+        input.click();
+      });
+    } catch (err) {
+      message.error(err instanceof Error ? err.message : "Authorize book failed");
     } finally {
       setGrantPending(false);
     }
@@ -279,9 +320,8 @@ export function PreparedModule({
         }
       >
         <Paragraph>
-          Connect the private book Tower will mutate. Pick a path, then Authorize writes handover
-          state for Book readiness and Activation state — grants{" "}
-          <Text code>wirePorts.crmOAuth.grant(firmId)</Text>.
+          Connect the private book Tower will mutate. CRM grants permission. Upload / file export
+          lands the same contact import as Confirm book for Tower.
         </Paragraph>
         <Radio.Group
           value={connectPath}
@@ -293,8 +333,7 @@ export function PreparedModule({
           <Radio value="file">File export (authorized snapshot)</Radio>
         </Radio.Group>
         <Text type="secondary" style={{ display: "block", marginTop: 12 }}>
-          Assisted path: Contacts → Imports → Confirm book for Tower sets the same handover without
-          sequences.
+          Confirm book for Tower on Contacts is the same land path when the radio is Upload or File.
         </Text>
       </Modal>
 

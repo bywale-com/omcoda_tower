@@ -4,11 +4,13 @@
  */
 import { randomUUID } from "node:crypto";
 import type { Pool } from "pg";
+import { executeAuditRun } from "./auditRun.ts";
 import { enrollAndActuate, writeEngagement } from "./cascade.ts";
 import {
   copySequenceFromTemplate,
   platformTemplateIdForClass,
 } from "./campaignHousing.ts";
+import { writesFromPayload, type RunWrite } from "./runWrites.ts";
 
 export type RfNode = {
   id: string;
@@ -25,9 +27,13 @@ export type RfEdge = {
 
 export type WalkContext = {
   firmId: string;
+  workflowId?: string;
+  runId?: string;
   triggerPayload: Record<string, unknown>;
   constants: Record<string, unknown>;
   contactIds: string[];
+  /** This run’s writes — the next node picks from here. */
+  previousWrites: RunWrite[];
   eligibilityPass?: boolean;
   branchTaken?: string;
   lastOutput?: Record<string, unknown>;
@@ -54,6 +60,7 @@ export type NodeRunStatus = {
   status: "success" | "skipped" | "failed";
   detail?: string;
   at: string;
+  writes?: RunWrite[];
 };
 
 function now() {
@@ -153,10 +160,217 @@ function evalBranch(
   return "true";
 }
 
+const PERSON_WRITE_TABLES = new Set([
+  "sequence_ready",
+  "reachability_verdicts",
+  "contact_records",
+  "contact_tag",
+  "enrollment",
+]);
+
+function pickWrites(writes: RunWrite[], pickTable?: string, pickId?: string): RunWrite[] {
+  if (pickId) return writes.filter((w) => w.id === pickId);
+  if (pickTable) return writes.filter((w) => w.table === pickTable);
+  return writes;
+}
+
+function uniqueIds(ids: Array<string | null | undefined>): string[] {
+  return [...new Set(ids.filter((id): id is string => Boolean(id)))];
+}
+
+function fieldMatches(val: unknown, op: string, expected: unknown): boolean {
+  if (op === "exists") return val != null && val !== "";
+  const eq =
+    val === expected ||
+    String(val) === String(expected) ||
+    (val === false && (expected === "false" || expected === false)) ||
+    (val === true && (expected === "true" || expected === true));
+  if (op === "neq" || op === "not_equals") return !eq;
+  return eq;
+}
+
+function nestedField(row: Record<string, unknown> | null, field: string): unknown {
+  if (!row || !field) return undefined;
+  const parts = field.split(".");
+  let cur: unknown = row;
+  for (const part of parts) {
+    if (cur == null || typeof cur !== "object") return undefined;
+    cur = (cur as Record<string, unknown>)[part];
+  }
+  return cur;
+}
+
+async function loadWriteRow(
+  pool: Pool,
+  firmId: string,
+  w: RunWrite,
+): Promise<Record<string, unknown> | null> {
+  const contactId = w.contact_id ?? w.id;
+  if (w.table === "sequence_ready") {
+    const { rows } = await pool.query(
+      `SELECT * FROM sequence_ready WHERE contact_id=$1 AND firm_id=$2`,
+      [contactId, firmId],
+    );
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+  if (w.table === "reachability_verdicts") {
+    const { rows } = await pool.query(
+      `SELECT * FROM reachability_verdicts WHERE contact_id=$1 AND firm_id=$2`,
+      [contactId, firmId],
+    );
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+  if (w.table === "contact_records") {
+    const { rows } = await pool.query(`SELECT * FROM contact_records WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+  if (w.table === "contact_tag") {
+    const { rows } = await pool.query(`SELECT * FROM contact_tag WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+  if (w.table === "audit_runs") {
+    const { rows } = await pool.query(`SELECT * FROM audit_runs WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+  if (w.table === "import_batch") {
+    const { rows } = await pool.query(`SELECT * FROM import_batch WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+  if (w.table === "enrollment") {
+    const { rows } = await pool.query(`SELECT * FROM enrollment WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+  return null;
+}
+
+async function loadWriteField(
+  pool: Pool,
+  firmId: string,
+  w: RunWrite,
+  field: string,
+): Promise<unknown> {
+  const row = await loadWriteRow(pool, firmId, w);
+  return nestedField(row, field);
+}
+
+function outgoingHandle(edges: RfEdge[], sourceId: string, handle: string): RfEdge[] {
+  const exact = edges.filter((e) => e.source === sourceId && e.sourceHandle === handle);
+  if (exact.length) return exact;
+  if (handle === "true") {
+    return edges.filter(
+      (e) => e.source === sourceId && (e.sourceHandle == null || e.sourceHandle === ""),
+    );
+  }
+  return [];
+}
+
+async function contactsForAudit(
+  pool: Pool,
+  ctx: WalkContext,
+  picked: RunWrite[],
+): Promise<Array<{ id: string; email?: string | null; phone?: string | null; name?: string | null }>> {
+  const importIds = uniqueIds(picked.filter((w) => w.table === "import_batch").map((w) => w.id));
+  const pickedContactIds = uniqueIds(
+    picked.filter((w) => w.table === "contact_records").map((w) => w.contact_id ?? w.id),
+  );
+  const ids = ctx.contactIds.length ? ctx.contactIds : pickedContactIds;
+  if (ids.length) {
+    const { rows } = await pool.query<{
+      id: string;
+      email: string | null;
+      phone: string | null;
+      name: string | null;
+    }>(
+      `SELECT id, email, phone, name FROM contact_records WHERE firm_id=$1 AND id = ANY($2::text[])`,
+      [ctx.firmId, ids],
+    );
+    return rows;
+  }
+  if (importIds.length) {
+    const { rows } = await pool.query<{
+      id: string;
+      email: string | null;
+      phone: string | null;
+      name: string | null;
+    }>(
+      `SELECT id, email, phone, name FROM contact_records
+       WHERE firm_id=$1 AND import_batch_id = ANY($2::text[])`,
+      [ctx.firmId, importIds],
+    );
+    return rows;
+  }
+  return [];
+}
+
+async function noteFromVerdict(
+  pool: Pool,
+  ctx: WalkContext,
+  contactId: string,
+): Promise<string | null> {
+  const hit = ctx.previousWrites.find(
+    (w) =>
+      w.table === "reachability_verdicts" &&
+      (w.contact_id === contactId || w.id === contactId),
+  );
+  if (!hit) return null;
+  const row = await loadWriteRow(pool, ctx.firmId, hit);
+  if (!row) return null;
+  const details = row.details;
+  if (details && typeof details === "object") {
+    const rationale = (details as Record<string, unknown>).rationale;
+    if (typeof rationale === "string" && rationale.trim()) return rationale.trim();
+  }
+  return typeof row.verdict === "string" ? row.verdict : null;
+}
+
+async function evalIfPick(
+  pool: Pool,
+  ctx: WalkContext,
+  data: Record<string, unknown>,
+): Promise<{ thenIds: string[]; elseIds: string[]; pass: boolean; personSplit: boolean }> {
+  const pickTable = String(data.pickTable ?? "").trim();
+  const pickField = String(data.pickField ?? "").trim();
+  const pickOp = String(data.pickOp ?? "eq");
+  const pickValue = data.pickValue;
+  if (!pickTable || !pickField) {
+    const handle = evalBranch(data, ctx);
+    const pass = handle === "true";
+    return {
+      thenIds: pass ? ctx.contactIds : [],
+      elseIds: pass ? [] : ctx.contactIds,
+      pass,
+      personSplit: false,
+    };
+  }
+  const picked = pickWrites(ctx.previousWrites, pickTable);
+  if (PERSON_WRITE_TABLES.has(pickTable) && ctx.contactIds.length) {
+    const thenIds: string[] = [];
+    const elseIds: string[] = [];
+    for (const cid of ctx.contactIds) {
+      const w =
+        picked.find((row) => row.contact_id === cid || row.id === cid) ??
+        { table: pickTable, id: cid, contact_id: cid };
+      const val = await loadWriteField(pool, ctx.firmId, w, pickField);
+      if (fieldMatches(val, pickOp, pickValue)) thenIds.push(cid);
+      else elseIds.push(cid);
+    }
+    return { thenIds, elseIds, pass: thenIds.length > 0, personSplit: true };
+  }
+  const w = picked[0];
+  const val = w ? await loadWriteField(pool, ctx.firmId, w, pickField) : undefined;
+  const pass = fieldMatches(val, pickOp, pickValue);
+  return {
+    thenIds: pass ? ctx.contactIds : [],
+    elseIds: pass ? [] : ctx.contactIds,
+    pass,
+    personSplit: false,
+  };
+}
+
 export async function materializeTriggersFromGraph(
   pool: Pool,
   workflowId: string,
-  firmId: string,
+  firmId: string | null,
   graph: { nodes?: RfNode[]; edges?: RfEdge[] },
 ): Promise<number> {
   const nodes = graph.nodes ?? [];
@@ -253,7 +467,7 @@ export async function walkValidatedWorkflow(
   error?: string;
 }> {
   const wf = await pool.query<{ graph: { nodes: RfNode[]; edges: RfEdge[] } }>(
-    `SELECT graph FROM workflow WHERE id=$1 AND firm_id=$2`,
+    `SELECT graph FROM workflow WHERE id=$1 AND (firm_id=$2 OR firm_id IS NULL)`,
     [opts.workflowId, opts.firmId],
   );
   if (!wf.rowCount) {
@@ -290,9 +504,12 @@ export async function walkValidatedWorkflow(
 
   const ctx: WalkContext = {
     firmId: opts.firmId,
+    workflowId: opts.workflowId,
+    runId: opts.runId,
     triggerPayload: opts.triggerPayload ?? {},
     constants: {},
     contactIds,
+    previousWrites: writesFromPayload(opts.triggerPayload),
     eligibilityPass:
       opts.triggerPayload?.anyPass === true ||
       opts.triggerPayload?.eligibilityPass === true ||
@@ -318,6 +535,7 @@ export async function walkValidatedWorkflow(
           status: "success",
           detail: `trigger ${triggerKind(data)}`,
           at: now(),
+          writes: ctx.previousWrites,
         };
         for (const e of outgoing(edges, nodeId)) await visit(e.target);
         return;
@@ -340,14 +558,30 @@ export async function walkValidatedWorkflow(
       }
 
       if (type === "branch") {
-        const handle = evalBranch(data, ctx);
-        ctx.branchTaken = handle;
+        const picked = await evalIfPick(pool, ctx, data);
+        ctx.branchTaken = picked.pass ? "true" : "false";
         nodeStatus[nodeId] = {
           status: "success",
-          detail: `branch → ${handle}`,
+          detail: picked.personSplit
+            ? `if pick ${String(data.pickTable ?? "")}.${String(data.pickField ?? "")} then=${picked.thenIds.length} else=${picked.elseIds.length}`
+            : `branch → ${ctx.branchTaken}`,
           at: now(),
+          writes: ctx.previousWrites,
         };
-        const outs = outgoing(edges, nodeId, handle);
+        if (picked.personSplit) {
+          const savedIds = ctx.contactIds;
+          const savedWrites = ctx.previousWrites;
+          ctx.contactIds = picked.thenIds;
+          for (const e of outgoingHandle(edges, nodeId, "true")) await visit(e.target);
+          ctx.previousWrites = savedWrites;
+          ctx.contactIds = picked.elseIds;
+          for (const e of outgoingHandle(edges, nodeId, "false")) await visit(e.target);
+          ctx.contactIds = savedIds;
+          ctx.previousWrites = savedWrites;
+          return;
+        }
+        const handle = picked.pass ? "true" : "false";
+        const outs = outgoingHandle(edges, nodeId, handle);
         const fallback = outs.length ? outs : outgoing(edges, nodeId);
         for (const e of fallback) await visit(e.target);
         return;
@@ -417,6 +651,7 @@ export async function walkValidatedWorkflow(
           }
           const agentRef = await resolveAgentRef(pool, opts.firmId, preferred);
           let enrolled = 0;
+          const writes: RunWrite[] = [];
           for (const contactId of ctx.contactIds) {
             const result = await enrollAndActuate({
               firmId: opts.firmId,
@@ -436,6 +671,11 @@ export async function walkValidatedWorkflow(
             });
             if (result.blocked === "halt") continue;
             enrollments.push(result.enrollmentId);
+            writes.push({
+              table: "enrollment",
+              id: result.enrollmentId,
+              contact_id: contactId,
+            });
             enrolled += 1;
           }
           await persistAction(agentRef, {
@@ -443,11 +683,13 @@ export async function walkValidatedWorkflow(
             label: data.label ?? null,
             formQuestionIds: data.formQuestionIds ?? [],
           });
-          ctx.lastOutput = { ok: true, actionType, agentRef, enrollments: enrolled };
+          ctx.previousWrites = writes;
+          ctx.lastOutput = { ok: true, actionType, agentRef, enrollments: enrolled, writes };
           nodeStatus[nodeId] = {
             status: "success",
             detail: `action ${agentRef}; enrollments=${enrolled}`,
             at: now(),
+            writes,
           };
           for (const e of outgoing(edges, nodeId)) await visit(e.target);
           return;
@@ -455,57 +697,101 @@ export async function walkValidatedWorkflow(
 
         if (actionType === "ascribe_tag") {
           const tag = String(data.tag ?? data.actionSummary ?? data.label ?? "tagged");
-          let n = 0;
-          for (const contactId of ctx.contactIds) {
+          const notesFromVerdict = data.notesFromVerdict === true;
+          const pickTable = String(data.pickTable ?? "").trim();
+          const picked = pickWrites(ctx.previousWrites, pickTable || undefined);
+          const contactIds = uniqueIds(
+            (pickTable
+              ? picked.map((w) => w.contact_id ?? (PERSON_WRITE_TABLES.has(w.table) ? w.id : null))
+              : ctx.contactIds) as Array<string | null>,
+          );
+          const ids = contactIds.length ? contactIds : ctx.contactIds;
+          const writes: RunWrite[] = [];
+          for (const contactId of ids) {
+            const tagId = `tag-${randomUUID()}`;
             await pool.query(
               `INSERT INTO contact_tag (id, firm_id, contact_id, tag, source_workflow_id)
                VALUES ($1,$2,$3,$4,$5)`,
-              [`tag-${randomUUID()}`, opts.firmId, contactId, tag, opts.workflowId],
+              [tagId, opts.firmId, contactId, tag, opts.workflowId],
             );
-            n += 1;
+            writes.push({ table: "contact_tag", id: tagId, contact_id: contactId });
+            if (notesFromVerdict) {
+              const note = await noteFromVerdict(pool, ctx, contactId);
+              if (note) {
+                await pool.query(
+                  `UPDATE contact_records SET notes=$1, updated_at=now() WHERE id=$2 AND firm_id=$3`,
+                  [note, contactId, opts.firmId],
+                );
+                writes.push({ table: "contact_records", id: contactId, contact_id: contactId });
+              }
+            }
           }
-          await persistAction(null, { tag, contacts: n });
-          ctx.lastOutput = { ok: true, actionType, tag, contacts: n };
+          await persistAction(null, { tag, contacts: ids.length, notesFromVerdict });
+          ctx.previousWrites = writes;
+          ctx.lastOutput = { ok: true, actionType, tag, contacts: ids.length, writes };
           nodeStatus[nodeId] = {
             status: "success",
-            detail: `ascribe_tag ${tag}; contacts=${n}`,
+            detail: `ascribe_tag ${tag}; contacts=${ids.length}`,
             at: now(),
+            writes,
           };
           for (const e of outgoing(edges, nodeId)) await visit(e.target);
           return;
         }
 
         if (actionType === "run_audit") {
-          const runId = `arun-${randomUUID()}`;
-          await pool.query(
-            `INSERT INTO audit_runs (id, firm_id, status, import_ids, summary, finished_at)
-             VALUES ($1,$2,'complete','[]'::jsonb,$3::jsonb,now())`,
-            [
-              runId,
-              opts.firmId,
-              JSON.stringify({ contacts: ctx.contactIds.length, source: "run_audit" }),
-            ],
+          const pickTable = String(data.pickTable ?? "import_batch").trim();
+          const picked = pickWrites(ctx.previousWrites, pickTable || undefined);
+          const importIds = uniqueIds(
+            (pickTable === "import_batch" ? picked : ctx.previousWrites)
+              .filter((w) => w.table === "import_batch")
+              .map((w) => w.id),
           );
-          await persistAction(null, { auditRunId: runId, label: data.label ?? "Audit the contacts" });
-          ctx.lastOutput = { ok: true, actionType, auditRunId: runId };
+          const contacts = await contactsForAudit(pool, ctx, picked.length ? picked : ctx.previousWrites);
+          const result = await executeAuditRun(pool, {
+            firmId: opts.firmId,
+            importIds,
+            contacts,
+          });
+          await persistAction(null, {
+            auditRunId: result.id,
+            label: data.label ?? "Audit the contacts",
+            writes: result.writes,
+          });
+          ctx.previousWrites = result.writes;
+          ctx.contactIds = uniqueIds(contacts.map((c) => c.id));
+          ctx.lastOutput = {
+            ok: true,
+            actionType,
+            auditRunId: result.id,
+            summary: result.summary,
+            writes: result.writes,
+          };
           if (!String(opts.triggerLabel).includes("audit.completed")) {
             await dispatchEventToWorkflows(pool, {
               firmId: opts.firmId,
               eventName: "audit.completed",
-              payload: { auditRunId: runId, workflowId: opts.workflowId },
+              payload: {
+                auditRunId: result.id,
+                workflowId: opts.workflowId,
+                writes: result.writes,
+                summary: result.summary,
+              },
               contactIds: ctx.contactIds,
             });
           }
           nodeStatus[nodeId] = {
             status: "success",
-            detail: `run_audit ${runId}`,
+            detail: `run_audit ${result.id}`,
             at: now(),
+            writes: result.writes,
           };
           for (const e of outgoing(edges, nodeId)) await visit(e.target);
           return;
         }
 
         let n = 0;
+        const writes: RunWrite[] = [];
         for (const contactId of ctx.contactIds) {
           await writeEngagement(pool, opts.firmId, contactId, actionType, {
             workflowId: opts.workflowId,
@@ -513,14 +799,17 @@ export async function walkValidatedWorkflow(
             label: data.label ?? null,
             formQuestionIds: data.formQuestionIds ?? [],
           });
+          writes.push({ table: "engagement_records", id: contactId, contact_id: contactId });
           n += 1;
         }
         await persistAction(null, { contacts: n, formQuestionIds: data.formQuestionIds ?? [] });
-        ctx.lastOutput = { ok: true, actionType, contacts: n };
+        ctx.previousWrites = writes;
+        ctx.lastOutput = { ok: true, actionType, contacts: n, writes };
         nodeStatus[nodeId] = {
           status: "success",
           detail: `${actionType}; contacts=${n}`,
           at: now(),
+          writes,
         };
         for (const e of outgoing(edges, nodeId)) await visit(e.target);
         return;
@@ -572,11 +861,11 @@ export async function walkValidatedWorkflow(
 export async function dispatchScheduleTriggers(
   pool: Pool,
 ): Promise<Array<{ workflowId: string; runId: string; enrollments: number }>> {
-  const triggers = await pool.query<{ workflow_id: string; firm_id: string }>(
+  const triggers = await pool.query<{ workflow_id: string; firm_id: string | null }>(
     `SELECT DISTINCT t.workflow_id, t.firm_id
      FROM workflow_trigger t
      JOIN workflow_state s ON s.workflow_id = t.workflow_id
-     WHERE t.enabled=true AND t.type='schedule' AND s.status='active'`,
+     WHERE t.enabled=true AND t.type='schedule' AND s.status='active' AND t.firm_id IS NOT NULL`,
   );
   const out: Array<{ workflowId: string; runId: string; enrollments: number }> = [];
   for (const row of triggers.rows) {
@@ -588,7 +877,7 @@ export async function dispatchScheduleTriggers(
     );
     const walked = await walkValidatedWorkflow(pool, {
       workflowId: row.workflow_id,
-      firmId: row.firm_id,
+      firmId: row.firm_id as string,
       runId,
       triggerLabel: "schedule",
       triggerPayload: { schedule: true, anyPass: true },
@@ -649,7 +938,7 @@ export async function dispatchEventToWorkflows(
      FROM workflow_trigger t
      JOIN workflow_state s ON s.workflow_id = t.workflow_id
      JOIN workflow w ON w.id = t.workflow_id
-     WHERE t.firm_id=$1
+     WHERE (t.firm_id=$1 OR t.firm_id IS NULL)
        AND t.enabled=true
        AND t.type='event'
        AND t.event_name=$2

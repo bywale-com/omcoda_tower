@@ -37,6 +37,7 @@ import {
 import {
   ArrowDownOutlined,
   ArrowUpOutlined,
+  DeleteOutlined,
   ForkOutlined,
   LogoutOutlined,
   PlayCircleOutlined,
@@ -820,12 +821,43 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
                     onNodesChange={onNodesChange}
                     onEdgesChange={onEdgesChange}
                     onNodeClick={(_, node) => openNode(node)}
+                    deleteKeyCode={["Backspace", "Delete"]}
+                    onNodesDelete={(deleted) => {
+                      const ids = new Set(deleted.map((node) => node.id));
+                      setEdges((current) =>
+                        current.filter((edge) => !ids.has(edge.source) && !ids.has(edge.target)),
+                      );
+                      if (selectedNodeId && ids.has(selectedNodeId)) {
+                        setSelectedNodeId(null);
+                        setPlate(null);
+                      }
+                    }}
                     fitView
                   >
                     <Background />
                     <MiniMap pannable zoomable />
                     <Controls />
                   </ReactFlow>
+                  {selectedNodeId ? (
+                    <Button
+                      size="small"
+                      danger
+                      icon={<DeleteOutlined />}
+                      style={{ position: "absolute", right: 16, top: 12, zIndex: 5 }}
+                      onClick={() => {
+                        setNodes((current) => current.filter((node) => node.id !== selectedNodeId));
+                        setEdges((current) =>
+                          current.filter(
+                            (edge) => edge.source !== selectedNodeId && edge.target !== selectedNodeId,
+                          ),
+                        );
+                        setSelectedNodeId(null);
+                        setPlate(null);
+                      }}
+                    >
+                      Remove node
+                    </Button>
+                  ) : null}
                   <Typography.Text
                     type="secondary"
                     style={{
@@ -1083,7 +1115,6 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
         config={selectedNode?.data.ruleConfig}
         onCancel={() => {
           setPlate(null);
-          setSelectedNodeId(null);
         }}
         onSave={(ruleConfig) => {
           if (!selectedNode) return;
@@ -1100,7 +1131,6 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
         open={plate === "action-kind" && selectedNode?.type === "action"}
         onCancel={() => {
           setPlate(null);
-          setSelectedNodeId(null);
         }}
         onPickAgents={() => setPlate("action-agents")}
         onPickInApp={() => setPlate("action-inapp")}
@@ -1111,7 +1141,6 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
         listingIds={listingIds}
         onCancel={() => {
           setPlate(null);
-          setSelectedNodeId(null);
         }}
         onChangeKind={() => setPlate("action-kind")}
         onSave={(patch) => {
@@ -1126,7 +1155,6 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
         data={selectedNode?.data ?? { label: "Action", configured: false }}
         onCancel={() => {
           setPlate(null);
-          setSelectedNodeId(null);
         }}
         onChangeKind={() => setPlate("action-kind")}
         onSave={(patch) => {
@@ -1142,7 +1170,6 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
         previousOptions={previousOptions}
         onCancel={() => {
           setPlate(null);
-          setSelectedNodeId(null);
         }}
         onSave={(patch) => {
           if (!selectedNode) return;

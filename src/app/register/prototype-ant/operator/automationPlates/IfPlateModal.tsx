@@ -26,6 +26,10 @@ export function IfPlateModal({
   const [previousResultFrom, setPreviousResultFrom] = useState(
     data.previousResultFrom ?? previousOptions[0]?.id ?? "",
   );
+  const [pickTable, setPickTable] = useState(data.pickTable ?? "sequence_ready");
+  const [pickField, setPickField] = useState(data.pickField ?? "ready");
+  const [pickOp, setPickOp] = useState(data.pickOp ?? "eq");
+  const [pickValue, setPickValue] = useState(data.pickValue ?? "false");
   const [config, setConfig] = useState<IfConditionConfig>(data.conditionConfig ?? emptyIfConditionConfig());
   const [ifThen, setIfThen] = useState(data.ifThen ?? "Assign agent");
   const [ifElse, setIfElse] = useState(data.ifElse ?? "stop");
@@ -34,6 +38,10 @@ export function IfPlateModal({
     if (!open) return;
     setLabel(data.label || "If X — previous result");
     setPreviousResultFrom(data.previousResultFrom ?? previousOptions[0]?.id ?? "");
+    setPickTable(data.pickTable ?? "sequence_ready");
+    setPickField(data.pickField ?? "ready");
+    setPickOp(data.pickOp ?? "eq");
+    setPickValue(data.pickValue ?? "false");
     setConfig(data.conditionConfig ?? emptyIfConditionConfig());
     setIfThen(data.ifThen ?? "Assign agent");
     setIfElse(data.ifElse ?? "stop");
@@ -73,12 +81,16 @@ export function IfPlateModal({
                 onSave({
                   label,
                   previousResultFrom,
+                  pickTable,
+                  pickField,
+                  pickOp,
+                  pickValue,
                   conditionConfig: config,
                   ifThen,
                   ifElse,
                   branchKind: "if",
                   configured: true,
-                  filterSummary: "Calls from the previous result",
+                  filterSummary: `${pickTable}.${pickField} ${pickOp} ${pickValue}`,
                 })
               }
             >
@@ -89,8 +101,45 @@ export function IfPlateModal({
       }
     >
       <Typography.Paragraph type="secondary">
-        Calls from the previous result. Here: the {previousOptions.find((row) => row.id === previousResultFrom)?.label ?? "last node"}.
+        Picks a field of a write already on the handle (this run’s writes). Person fields split
+        people; run fields fire once.
       </Typography.Paragraph>
+      <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
+        Pick write
+      </Typography.Text>
+      <Select
+        value={pickTable}
+        style={{ width: "100%", marginBottom: 12 }}
+        options={[
+          { value: "sequence_ready", label: "sequence_ready" },
+          { value: "reachability_verdicts", label: "reachability_verdicts" },
+          { value: "audit_runs", label: "audit_runs" },
+          { value: "import_batch", label: "import_batch" },
+          { value: "contact_records", label: "contact_records" },
+          { value: "contact_tag", label: "contact_tag" },
+        ]}
+        onChange={setPickTable}
+      />
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 88px 1fr",
+          gap: 8,
+          marginBottom: 16,
+        }}
+      >
+        <Input value={pickField} placeholder="field" onChange={(e) => setPickField(e.target.value)} />
+        <Select
+          value={pickOp}
+          options={[
+            { value: "eq", label: "eq" },
+            { value: "neq", label: "neq" },
+            { value: "exists", label: "exists" },
+          ]}
+          onChange={setPickOp}
+        />
+        <Input value={pickValue} placeholder="value" onChange={(e) => setPickValue(e.target.value)} />
+      </div>
       <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
         Previous result
       </Typography.Text>
