@@ -87,6 +87,49 @@ Same idea as Global / Local on a trigger: you pick the grain. You do not guess.
 
 This is not a UI-first question. If we say it in these words, the system already has two things to point at. The UI is how you pick. The pick is the product.
 
+**How you pick:** you do not first turn on a “per contact” mode. You point the If at a **field of the previous result**. A person field (this contact’s verdict) splits the people. A run field (this audit’s email-valid check failed) is the artifact. The field **is** the grain.
+
+### Mechanism: the previous result is the wire
+
+The Audit **action** sends who we are auditing to the Audit module. Audit runs. When that node completes, its **output is the previous result** on the next edge. The If does not go find an audit. It reads **that**.
+
+Hub already has the smell: the edge copies `lastOutput` into the next node’s `lastInput`. If the payload has a **list of people**, the If can run once per person and fork true / false. If you point at a **run** field, it evaluates once. Live walk does **not** do this for Audit (Audit is not an Automations action there). Preview is not the live path.
+
+### What Audit actually produces (the previous result)
+
+This is the list. Not a wish list. What you would see if you opened Book readiness after **this** run.
+
+**On the run (the artifact)**
+
+| Output | What it is |
+|--------|------------|
+| Run id | This audit, in the Audits list |
+| Status | running / complete (wire also has failed) |
+| Overall | pass / fail / pending — from the checks |
+| Meta | Clear, or N open |
+| Sequence-ready glance | yes / blocked / pending **for the run** |
+| Which checks were on | the toggles |
+| Each check, pass or fail **for the batch** | Email valid · Phone valid · Dedupe · Typo / garbage · Name present |
+| Which imports this run was about | |
+| Counts | how many people, how many ready (what the wire writes on `audit_runs.summary`) |
+| Started / finished | |
+
+**On each person (the rows in Records)**
+
+| Output | What it is |
+|--------|------------|
+| Who | contact id, name, email, phone |
+| Email valid / phone valid | painted on the row |
+| Reachability | both / partial / none on the desk · reachable / partial / unreachable on the wire |
+| Sequence-ready | yes / no **for that person** |
+| This run | pointer back to the artifact (`auditRunId`) |
+
+**Not an output of this module today** (named on the reachability rule table, not written by the Audit desk / wire): consent / silenced as a verdict; “≥1 channel matching the intended sequence” as its own stored result. Do not condition the If on those as if Audit had produced them.
+
+**Also not the previous result:** hearing `audit.completed` as a **trigger**. That is the other door.
+
+The If after Audit can only see this list. If a field is not here, the shape does not support that condition yet.
+
 ---
 
 ## Shape: when a node finishes, you have what the module produced

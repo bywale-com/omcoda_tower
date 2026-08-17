@@ -23,11 +23,41 @@ Are we building that?
 Do not argue pipe vs this-then-that. Both are implementations. The product is this:
 
 1. **The writes live in the module.** Audit action calls the real Audit. Same `audit_runs` / per-person results you would see if the operator had pressed Run audit on that desk. Not an automation-only shadow JSON unless that JSON is only a pointer.
-2. **The next node has a handle to those writes.** Not “done.” Not “latest audit for this firm.” **This node’s run.** Person vs artifact is picking which part of that handle (already in primitives).
+2. **The next node has a handle to those writes.** Not “done.” Not “latest audit for this firm.” **This node’s run.** Person vs artifact is picking which **field** of that handle (already in primitives).
 
 A wire that looks like an n8n pipe makes the handle visible. A then-this list that reads **this node’s output id** is the same product. If the next step has to guess, it is not this node.
 
 “Everything it produces” = what **that run** produced (artifact + each person’s result + writes that exist because that completion happened). Not the entire database.
+
+---
+
+## Mechanism (founder 00:40): how the If sees it
+
+The Audit node’s **output is the previous result** on the next edge. The If reads fields of **that**. It does not look up “an audit.”
+
+Hub smell (preview only): `lastOutput` → `lastInput` along the edge. If the payload has `items[]`, the If splits people true/false (`splitInputByIfConditions`). A run-level field evaluates once.
+
+Live: `workflowWalk` does not call Audit. `createAuditRun` writes `audit_runs` + per-contact `reachability_verdicts` / `sequence_ready` / `contact_records` and returns `{ id, summary, verdicts }` — **nothing in Automations consumes that as the next node’s input.**
+
+Grain is not a separate mode. Point the If at a **person field** → splits people. Point it at a **run field** → the artifact.
+
+## Audit output inventory (what the module actually produces)
+
+Ascribe against this list. Do not invent If fields that are not here.
+
+**Run (artifact)** — Book readiness Audits list + gate checks + `audit_runs`:
+
+id · status (running / complete; wire also failed) · overall pass/fail/pending · meta (Clear / N open) · sequence-ready glance for the run · enabled checks · each batch check pass/fail (`email_valid` · `phone_valid` · `dedupe` · `typo_garbage` · `name_present`) · import ids · summary counts (contacts, ready) · started/finished.
+
+**Person (Records rows)** — desk overlays + wire verdicts:
+
+contact id, name, email, phone · email/phone valid on the row · reachability (desk: both/partial/none · wire: reachable/partial/unreachable) · `sequence_ready` for that person · `details.auditRunId` back to this run.
+
+**Silent in this module today** (on `rule.reachability_checks`, not written by Audit desk / `createAuditRun`): consent/silenced verdict; “≥1 channel matching intended sequence” as its own stored result. Do not treat those as previous-result fields.
+
+**Not the previous result:** trigger `audit.completed` / `audit.failed` — other door.
+
+Honesty: desk **gate steps are batch** (the check is on the set). Records table is **per person**. Wire persist is thinner per person (has email / has phone → verdict). Do not pretend those three are the same row.
 
 ---
 

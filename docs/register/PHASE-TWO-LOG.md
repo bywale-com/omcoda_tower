@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **00:40:** Automations works only if when a node finishes you have a **handle** to what that **module** wrote. Pipe vs then-this is not the question. Live is not that yet. [`PRIMITIVES.md`](./PRIMITIVES.md) · SA: [`SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md`](./SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md). Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **00:50:** Audit → If: the previous result **is** the wire. Outputs are the run + each person (listed). The field you point at **is** the grain. Live does not pass it. [`PRIMITIVES.md`](./PRIMITIVES.md). Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -1020,6 +1020,29 @@ n8n-style pipe = one way to see the handle. Then-this that reads this node’s o
 **Wrote:** [`PRIMITIVES.md`](./PRIMITIVES.md) · Automations face **law 33** · SA packet [`SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md`](./SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md).
 
 **Do not:** plant; circle pipe vs then-this; treat preview as live; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-17 00:50 UTC — Audit → If: previous result is the wire. The field is the grain.
+
+**Why:** Founder: what is the mechanism that makes Audit’s output available to the condition node? What are **all** the possible outputs? That also answers how we select per-contact.
+
+**Mechanism:** Audit action → real Audit module → when the node finishes, that output **is** the previous result on the next edge. The If reads fields of **that**. It does not look up an audit. Hub smell: `lastOutput` → `lastInput`; list of people can split true/false. Live does not pass Audit’s run to the If.
+
+**Outputs (this module, not a wish list):**
+
+- **Run:** id, status, overall pass/fail, meta, sequence-ready glance, which checks were on, each batch check (email / phone / dedupe / typo / name), imports, counts, times.
+- **Each person:** who, email/phone valid, reachability, sequence-ready for that person, pointer to this run.
+
+Not produced today: consent/silenced as an Audit verdict. Not the previous result: hearing audit-finished as a trigger.
+
+**Grain:** you do not flip a per-contact mode. You point the If at a person field or a run field. That pick is the grain.
+
+**Wrote:** [`PRIMITIVES.md`](./PRIMITIVES.md) · [`SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md`](./SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md).
+
+**Do not:** plant; invent If fields Audit does not produce; overwrite 15:43.
 
 Flag 15:43 untouched.
 
