@@ -82,8 +82,8 @@
 ## Law of the face (short)
 
 1. **Sequence is blank.** An agent sequence is a container. It can hold **multiple goals** (multiple campaigns). Not one-objective-or-nothing.
-2. **Two objectives → two campaigns.** If you want two things met, each requires its own campaign. The first campaign’s goal **qualifies** them for the second. That qualification **is** the objective criteria between the two.
-3. **Opt-in (the obvious two):** Launch window builds desire (why we don’t just start reactivating). Launch day **is opt-in day**. Window objective met → qualify for opt-in day.
+2. **Two objectives → two campaigns.** If you want two things met, each requires its own campaign. When a campaign’s **objective is met**, you may string the next campaign. There is **no “first objective”** object. The distance between campaigns is **not** a qualify node.
+3. **Opt-in (the teaching example):** **Launch window** and **Launch day** are **campaign names** we used so the first pictures had something in them. The operator can rename both. Window builds desire (why we don’t start at reactivation). Launch day, in that example, is opt-in day. That pair is **not** a frozen system type.
 4. **Campaigns have objectives. Channels do not.** Channels are the **medium**. **Channel rules = escalation on that medium** (not opened, not clicked, …). **Attempt rules are not at the channel.** An attempt is a **container / cycle** of the same sequence.
 5. **Sequencing lives at campaign level** (“how many channels here, in what order”) — not at the channel node.
 6. **Content lives inside the channel node** as an **Override content toggle**. On → the node **expands** to contain that medium’s content-creation block (SMS composer, email composer, call script). Not a wired sibling. Not a small button. Attempt-specific copy is a **variation on that same node**.
@@ -94,8 +94,9 @@
 11. **Objective ≠ sequence.** Objective = **one campaign**. Sequences have templates; objectives have templates. You do not put “opt-in” in the objective picker.
 12. **First thing on a campaign is the objective.** Hub Automations: trigger node → **Add configuration**. Same seat, not the same module — do not import Automations triggers onto this canvas.
 13. **Untemplated objective is a binary event** (word “event” may change). One yes/no: everyone enrolled is campaigned to do **this one thing**. Happened or it didn’t. Then you name it. Templated objective populates the rest of that campaign.
-14. **Enroll lives on this sequence’s Contacts.** That model **displays who is enrolled**. **Add contact** is the hand door, and it lives in the **sequence header** — same row as Save / Launch agent — always there, not inside the Contacts tab body. Same Add-contact grain also lives in **Automations and events**. Scope is **two**, not three: **Every firm** (top, default) or **Select from** (bottom — list opens with everyone selected; deselect to pick a specific contact). No separate “this firm” / “this contact” radios. **Not Publish.** Automations enroll is the other door (on an event). Agents enroll **starts the mission now** — it is not waiting on a current event.
+14. **Enroll lives on this sequence’s Contacts.** That model **displays who is enrolled**. **Add contact** is the hand door, and it lives in the **sequence header** — same row as Save / Launch agent — always there, not inside the Contacts tab body. Same Add-contact grain also lives in **Automations** (**A19** — same look). **Select from** opens the list (**C8b**). Scope is **two**, not three: **Every firm** (top, default) or **Select from** (bottom — list opens with everyone selected; deselect to pick a specific contact). No separate “this firm” / “this contact” radios. **Not Publish.** Automations enroll is the other door (on an event). Agents enroll **starts the mission now** — it is not waiting on a current event.
 15. **Activity / engagement chart ≠ lineage query.** The engagement chart is a **tree of outreach**. It does **not** connect left to the trigger or event that created the agent or assigned it to the objective. Keep that chart pristine. Who created / path / completion / time is **queryable** (Automations law 29) — a different thing.
+16. **Captions on the plates are not spec.** Teaching copy (“qualify — first objective met,” “they opt in,” “smallest workflow…”) was for the founder to read the picture. Audit: [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md). Do not mint nodes or fields from those sentences. A tick on “objective met” between campaigns is allowed chrome. It is still not a node.
 
 ---
 
@@ -134,18 +135,18 @@ SEQUENCE TEMPLATE  (blank canvas — opt-in / re-engagement / reactivation)
 │    same grain in Automations / events
 │    starts the mission now (not an event, not Publish)
 │
-└─ next Campaign  (only if prior campaign objective met → qualify)
+└─ next Campaign  (when the previous campaign’s objective is met — not a qualify node)
 ```
 
-**Opt-in — campaigns (objectives) on the sequence template:**
+**Opt-in — example campaigns on that sequence (names are ours; operator can rename):**
 
-| Campaign (objective template) | Binary event (from-scratch shape) | Why it exists |
+| Campaign name (example) | Binary (from-scratch shape in the example) | Why we used it in the picture |
 |----------|-----------|----------------|
-| **Launch window** | Spoken: probably **click this link**. Not “waitlist vs unnamed” as the important question. | Build desire. Why we don’t start at reactivation. |
-| **Launch day = opt-in day** | They opt in (yes/no) | Justified only because the first objective was met — they **qualify** |
-| **Additional** | Unnamed here | Founder: there are a couple more in this sequence |
+| **Launch window** | Spoken: probably **click this link** | Build desire. Why we don’t start at reactivation. **A name, not a type.** |
+| **Launch day** | They opt in — **a title at best**, not an objective class | In the example, opt-in day. Justified because the previous objective was met. |
+| **Additional** | Unnamed here | Founder: there are a couple more in this sequence. C2 row stays disabled. |
 
-Between campaigns: **goal accomplished → qualify for the next.** That is the edge on the canvas.
+Between campaigns: **objective met → you may string the next.** That distance may show a tick. It is **not** a qualify node and **not** “first objective.” See [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md).
 
 Picking a **templated** objective populates everything related to that template. From scratch: configure the binary event, then name it.
 
@@ -165,7 +166,7 @@ That is **not** four emails in one Timeline. Flattening it is the miss.
 | **Attempt rules** | Number of attempts; cycle; distance after the failed last node; optional nth-attempt exception | **Per campaign:** on that campaign. **Per sequence:** Sequence Settings. **Global:** Agents Settings. Never in the middle of the canvas. Never on the channel. |
 | **Content** | What goes out on that medium | **Button inside the channel node.** Editor opens in the node. Sequence / global possible via that sequence’s Settings / Agents Settings. Attempt = a variation on the same node. |
 | **Sequencing** | How many channels, order | Campaign |
-| **Campaign objective** | The one yes/no | The campaign itself → qualify-edge |
+| **Campaign objective** | The one yes/no | The campaign itself. When met, you may string the next campaign |
 
 `firm_sequence_binding` + `rule_*.firm_id` NULL remains firm vs platform. In-package override is this graph, not a second Settings list.
 
@@ -185,7 +186,7 @@ Fallback is CSS-like: no override → sequence → global.
 
 ## Canvas behaviour — Override this (the graph)
 
-Closed: campaign nodes on the sequence. Between campaigns: **qualify**.
+Closed: campaign nodes on the sequence. Between campaigns: previous **objective met** (tick / chrome allowed). That distance is **not** a qualify node.
 
 On each campaign, **one first toggle at the bottom: Override this.**
 
@@ -207,8 +208,8 @@ Not one picture. Five beats, one labeled mock. Objective is a **modal** on the c
 | Beat | What you said | Same mock or own |
 |------|----------------|------------------|
 | **1. Sequence templates** | Empty world; opt-in / re-engagement / reactivation are sequence templates, not objectives | Own beat (different picker) |
-| **2. Add objective** | First thing on a campaign. Template (launch window, launch day, additional) vs from scratch (click / calendar / form, then name it) | **Modal** on the canvas |
-| **3. Two campaigns** | Two objectives → two campaigns. Qualify. Launch day = opt-in day | Canvas |
+| **2. Add objective** | First thing on a campaign. Template (example names: launch window, launch day, additional) vs from scratch (click / calendar / form, then name it) | **Modal** on the canvas |
+| **3. Two campaigns** | Two objectives → two campaigns. Distance = previous objective met (not a qualify node). In the example, Launch day = opt-in day | Canvas |
 | **4. Override this** | First toggle. Reveals text / email / form as wires. Campaign toggles stay | Canvas |
 | **5. Open a channel** | Channel rules (escalation) hang off. Content = button inside. Attempt rules are not here | Canvas expand |
 
@@ -241,7 +242,7 @@ Founder: “I’m not circling, I’m enriching, and I think you can even furthe
 
 **The agent is a sequence, not a campaign.** The list item (Opt-in, Nudge, Reactivation) is a **blank sequence**. Campaigns live inside it. Opt-in is the teaching case because it already needs **two** objectives, therefore **two** campaigns.
 
-**Why a launch window exists (the meta-reason).** We do not start at reactivation. The window’s job is to **build desire** for opt-in. Launch day **is** opt-in day. Phase 2 is justified only because phase 1’s objective was met — they **qualify**. That qualify-edge is the 15:43 “goal is itself an escalation point,” drawn as a wire between campaigns, not as a Settings row and not as a fourth channel.
+**Why a launch window exists (the meta-reason).** We do not start at reactivation. In the teaching example, the window’s job is to **build desire** for opt-in, and Launch day **is** opt-in day. Those are **names**. The next campaign is justified because the previous campaign’s **objective was met**. That is the 15:43 “goal is itself an escalation point” — the distance between campaigns, not a Settings row, not a fourth channel, and **not** a qualify node. The C3 pill was a founder caption. See [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md).
 
 **One thing in the window.** Not the waitlist question. The window’s objective is still **one binary event** — everyone enrolled is campaigned to do that one yes/no. Spoken from-scratch for the window: probably **click this link**. Do not split the window into two campaigns unless there are two objectives.
 
@@ -303,6 +304,7 @@ Per-campaign attempt rules stay **on the campaign**. They do not appear as a str
 - Not minting tables in this file. Table-first extract is SA, after Story promotion where needed. Modularity law still: if it can be overridden, it must be a row.
 - Not creating **forms** here. A data-request form is Automations. Agents sends people to accomplish the goal. See [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md).
 - Not putting enroll on **Publish**. Enroll is **Contacts** on that sequence (C8).
+- Not treating C3’s “qualify — first objective met” as a node or a `qualify_gate`. Caption audit: [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md).
 - Not treating the **engagement chart** as the lineage query. Those are two surfaces.
 
 ---

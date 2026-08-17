@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **01:01:** Add contact scope is **Every firm** (default) or **Select from** (all selected; deselect to pick one). A14 sequence pick is a **radio** — no chevron, nothing further. Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **13:07:** After a node, the output is **every write that run made**. Same for Audit and Provision. Next node **picks**. Engineer owns SA **013+014+015** (PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86)). Meantime had not started. New PM seated **13:16**. Do not plant. Do not recut the engineer’s packet.
 
 **How we maintain this log**
 
@@ -732,6 +732,392 @@ Flag 15:43 untouched.
 **Plates rebuilt** (same filenames, same chrome). Do not regenerate C1–C7 or A1–A13.
 
 **Do not:** plant; invent a third scope; put a chevron on a radio; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 01:17 UTC — Automations is a blank canvas; you can chain
+
+**Why:** Founder: fascinating, perfect that we’re here. Provisioning a firm is not only creating the firm — things inside still have to happen. Automations can be so underbuilt. Then the walk: when a firm is **created / provisioned**, run an **audit on the contacts**. From the **output of that action**, if X conditions are met — a **condition node** — another action: **agents**. Realizing Automations is a **blank canvas the same way an agent is** — you can chain multiple campaigns on a sequence; you can also **chain** this way on Automations.
+
+**What this is (not a new module):**
+- Agents blank canvas = sequence. You can put one campaign, or **chain** campaigns (qualify).
+- Automations blank canvas = the workflow. Smallest is still **trigger · rule · action** (law 15). The canvas can hold **more**: event → action → condition on that output → action.
+- The If node we already named (law 26) is that middle. It **calls from the previous result**. That previous result can be an **action’s output**, not only a rule’s.
+- This is still the brain. It does **not** start a mission until the **agents** action fires (C8 / A14).
+
+**Named this stamp (do not fill the catalogs):**
+- Event: **firm created / provisioned**. Global / local still apply (all provisions vs this one).
+- In-app action: **run an audit on the contacts** (joins ascribe-a-tag as a named in-app action).
+- Then: condition on that output → **agents**.
+
+**Two ways the chain is real (do not collapse):**
+1. **On one canvas** — the walk they said. One automation, nodes down.
+2. **Because completion is an event** (law 28) — audit completed can also be listened to as its own event. Same recursive join. The canvas is how you author it in one place.
+
+**No plate this stamp.** The picture that would lock it is A1’s chrome with four nodes: provisioned → audit → if X → agents. That would also be the first Ant plate of the If node (open item 11). Do not generate until asked.
+
+**Do not:** plant; mint an audit or provision table; fill the event/action catalogs; put this chain on the Agents canvas; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 01:20 UTC — Chain plates: A15 canvas, A16 If, A17 trigger
+
+**Why:** Founder: yes, I want to see that image, or whatever other images it clearly generates.
+
+**Plates (from scratch, A1 chrome, not planted):**
+- **A15** — Blank canvas. Four nodes: firm created / provisioned → audit the contacts → if X (previous result) → assign agent. Palette now includes Condition (If). Caption: you can chain; smallest is still trigger · rule · action. A1 stays the smallest.
+- **A16** — First Ant plate of the **If** node. Calls from the previous result (the audit). Field · operator · constant. Then assign agent / else stop. This is **not** a rule.
+- **A17** — Inside the trigger. Event = **firm created / provisioned**. Things inside still have to happen.
+
+**Not drawn (do not invent):** inside of the audit action. Global/local picker on the trigger.
+
+**Do not:** plant; regenerate A1–A14; mint tables; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 01:35 UTC — What the Systems Analyst said (they did not say the face is not enough)
+
+**Why:** Founder: SA made PRs. I told them I’m ready to build Agents and Automations up to what we’ve identified. I don’t want PM and SA only guiding architecture while I spin a worker. I want **very specific tickets** so an agent builds what we architected. What did they say? Were they saying it’s not enough?
+
+**What they said** (PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86), stamp 01:35, brief [`CONNECT-SLICE-PACKAGE.md`](./CONNECT-SLICE-PACKAGE.md) — on their branch, not yet on main):
+
+Ready enough to **connect**. **Not** ready to “build Agents” and “build Automations” as whole modules.
+
+They already wrote the two tickets (paste-blocks) you asked for:
+
+| Agent | Does this only |
+|-------|----------------|
+| **Systems** | Ant Automations Save actually persists (`workflow` + graph + triggers). When `fact_writebacks` or `meeting_booked` is inserted, dispatch. Action stays today’s `call_agent` / enroll into the existing sequence. |
+| **UI** | A1 Save is real (not a flash tag). A5 picker = only those one or two completions. A14 = assign existing, three radios, no chevron. Look like the pictures. |
+
+**Order:** not UI first, not systems first. Two agents on **one slice**.
+
+**Not this spin (their list):** teaching walk (provision → audit → if); C8 Every firm; Agents housing mint; Call; Rule GUI; fill an event catalog; send; book-in; listing bind.
+
+They are not saying the pictures or the law are insufficient. They are saying: do not spin “build the modules.” Spin **listen to one completion write → assign an existing agent.** That is the first connect. Then the next ticket when the next workflow blocks.
+
+**Do not:** treat this as me answering for SA; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 01:40 UTC — Events and objectives; the middle is the machinery
+
+**Why:** Founder: talk in events and objectives. The middle has to support any new event or objective. Is SA saying we can’t build that middle yet? Maybe middle is still too large. Rules already built; conditions should be. Agents middle should be buildable all the way to the end — is anything in that middle still unknown? Automations has more node types — what in that middle isn’t built? As events come we add an event; as objectives come we add an objective. Those stay in a build state. Maybe even new classes of objectives.
+
+**What they are saying (not a flag):**
+
+They are **not** saying we cannot build the middle. They are saying do not spin “build every event, every objective, every node.” The connect slice **is** the first cut of that middle: hear a write → run the graph → assign an existing agent.
+
+**Two layers (do not collapse):**
+
+| Layer | What it is | Build state |
+|-------|------------|-------------|
+| **Starts** | **Event** = a detectable table change. **Objective** = a named completion (a kind of event). Starts of Automations and of a campaign. | Always open. Add when a workflow needs it. Do not fill a catalog first. |
+| **Middle** | The machinery that can hear **any** of those and run toward an objective: persist the graph, dispatch on the write, If on the previous result, assign / enroll. | This is what to build. One slice at a time. |
+
+**Agents middle — ideas are known.** Sequence, campaigns, Override this, channels, content, Settings fallback, enroll. Not unknown. What is not stood up is **housing / persist** (campaign is not a row; Override this is not a column; attempt-cycle count / nth-sequence silent) and **Call** (face only; machine is still form). **Send** is leftover 3 — the message leaving — known leftover, not a missing idea. So: yes, you can build that middle. You cannot honestly Save every toggle until those rows exist. That is SA’s “housing,” not “we don’t know the sequence.”
+
+**Automations middle — more unbuilt than unknown.** Node kinds already named (trigger · rule · if · action). What is not stood up: Ant Save is a flash; completions do not dispatch; `action` is `call_agent` only (audit / tag cannot run); rule GUI is a TypeScript pack, not rows the walker evaluates; If exists and is thin. Adding a new **event** or **objective** later is exactly “connect UI to that table.” Adding a new **class** of objective is rarer — name it when it appears; do not invent classes tonight.
+
+**Do not:** fill the event or objective catalog; mint housing tonight; treat Hub as the app; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 02:19 UTC — Captions on the plates are not spec
+
+**Why:** Founder: implementers are treating teaching copy on the images as if it were the UI. It is not. There is **no first objective** — there is an **objective**. You string as many campaigns as you want **when that objective is met**. Launch window vs Launch day was an **example** of multiple campaigns inside the same sequence — one of the first images. Those are **campaign names we created**. The operator can rename them. You *may* seed campaign templates or sequence templates because we already know what belongs inside — easy to mess up if the names freeze as types.
+
+**“qualify — first objective met”** is a founder caption of the **distance** between two campaigns. It communicates the system fact that the previous objective was met. It has nothing to do with qualify as a node. It is not a query. A green tick is allowed chrome. It must not cause a systems question unless the question is something else (it was not).
+
+**“They opt in”** on that second campaign is a **title at best**. Not an objective class.
+
+Same is true for a couple of other marks across the canon images: descriptions so the founder could read the picture. Not nodes. A bad description if we use the image as spec. Audit all plates that way. Share the audit with Systems Analysts so they have not ascribe those captions as the system.
+
+**What we wrote (02:19):** a coverage table in [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md). Deep work was C3. That table is **not** the pixel walk. Superseded 02:27.
+
+**Do not:** mint `qualify` / `first_objective`; freeze Launch window / Launch day as types; treat “they opt in” as a class; put founder captions into Postgres; plant; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 02:27 UTC — Pixel walk of every canon PNG
+
+**Why:** Founder: they listed every plate. They did not actually audit every image the same way. The 02:19 file was a coverage table. C3 was the correction. A3/A6/A7 caption columns were “—”. C5 and C5b lumped. A10 and A13 lumped. C4 said leftover qualify “if still in the pixels.” Do the full walk.
+
+**What we did:** Opened every PNG in `agents-blueprint/` and `automations-blueprint/`. Rewrote [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) as a per-mark walk (S / E / C). Blueprints C4/C5 and A3/A6/A7/A14 now match the pixels.
+
+**Confirmed in pixels:**
+- **qualify — first objective met** is on **C3, C4, and C5**. Not on C5b. Not on Automations.
+- A3 caption: **“When the GUI isn’t enough — same as JSON.”**
+- A6: palette helpers, insert-menu lines, **Exit** as a node kind on that plate.
+- A7 footer: **“At least two kinds of actions.”** Background Branch is generated drift.
+- A10 ≠ A13: dashed missing class vs filled listing + form fork.
+- A14: instructional line is on the glass; “Not a third option…” is **not** on that PNG.
+
+**Do not:** treat the 02:19 table as the walk; mint `qualify` three times because it is on three plates; freeze A6 Exit with A15 If as one palette; regenerate; plant; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 16:16 UTC — Plates must be our desk
+
+**Why:** Founder stopped the first C0/C9/C11/C13 pass. The ideas were right. The left columns were a different app. That confuses the implementer. Screenshot how the app looks. Recreate on **our** design system.
+
+**Rule:** [`PLATE-CHROME-RULE.md`](./PLATE-CHROME-RULE.md). Screenshot live `/prototype-ant` first. Lock House-global / Libraries / catalog / top bar. Paint the new idea only in the workspace.
+
+**What we did:** Screenshotted the live Agents catalog, editor, settings, Automations canvas. Regenerated **C0** (Agents settings gear next to New template), **C9** (attempt count + distance on the campaign, + Add channel, both channels can stay open), **C11** (this variation runs on), **C13** (Activity table like C8). Chrome matches the Operator desk, not Hub, not a made-up sidebar.
+
+**Do not:** hand drifted plates to an implementer; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 16:34 UTC — Copy only the purpose of each plate
+
+**Why:** Founder: C0 only the Agents settings button. C9 only the override-attempt modulators on the campaign. C11 radios do not work — it is **add a variation** (+ on the channel), then select how that variation applies in the attempt cycle. C13 Activity table is great. Contacts = same table, no extra PNG. Written spec must say exactly what to copy; the rest of those PNGs would confuse the implementer.
+
+**What we wrote:** [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md). Regenerated C11 (+ Add variation, stacked variations). Tightened C9 (campaign attempt count + distance). C0 and C13 kept; spec says ignore the rest of C0.
+
+**Do not:** copy Mock beats from C0; copy channel composers from C9; ship three radios as variation; plant; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 16:41 UTC — Written spec must be pristine; extrapolate; channel rules are parameters
+
+**Why:** Founder: implementation specialists are too literal. You do **not** generate an image for every channel. **+ Add variation** is per channel. **Channel rules** are per channel. The extra node on C5 / C11 is the right seat — keep it. Fill it with **actual toggleable parameters**, not the teaching caption. Grain is **that specific channel in that campaign** — regardless of variation, regardless of attempts. Some parameters are general (within time); some are medium-specific (text not delivered, email link not clicked). Still by channel. Image spec is great because it keeps the design system congruent. The written spec has to be pristine. Leave nothing big.
+
+**What we wrote:** [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md) — extrapolate table; channel-rules parameter table (Text / Email / Call / any added channel). No extra Email or Call PNGs.
+
+**Do not:** omit Email / Call / channel rules because C11 showed Text; put attempt settings on the channel-rules node; make channel rules per variation; plant; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 18:53 UTC — Misses into the packet: Contacts in Automations, Global/Local, C14, one timer, scroll, seed
+
+**Why:** Founder: some of the things talked about were not done. Implementers are too literal — generate the image or allude to the existing one. No ambiguity.
+
+**Capture (founder wording):**
+
+- **Contacts / Add contact** in **Automations** the **exact same way** it looks in Agents.
+- When selecting a **trigger** event: detail **Global** or **Local**. Global = all of that kind. Local = what events specifically (example: form submission — all forms vs this form). Who this applies to is **Contacts**. Some things maybe cannot be local; some maybe cannot be only-global. **Audit** is a one-time event — SA maps that. Log it. Do not miss it.
+- **Sequence Settings** (not global Agents settings) is not the same quality as Agents settings. Channel rules escalation is just Override — no stuff underneath. Look at it.
+- **Seed** the tables. Not a thick seed. A proper seed. Everything is already connected — it just appears. Want data in Contacts, in the Contacts modal, in Select from (and **fix that modal**), in Activity, in Automations — wherever you would see data. Do **not** seed data in the app. Seed the right tables.
+- Agents **canvas cannot scroll** — stiff; content underneath the fold; added channels you cannot reach. Automations canvas is fine. Across modules that have data going underneath the fold, you have to be able to scroll.
+- Channel rules: like the position. **Override this channel**, then **one timer**. Confirm: every rule you toggle on (not opened, not delivered) works on **that** timer (30 minutes or whatever). Same within every channel.
+
+**What we wrote / drew:** [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md). Plates: **C8b** Select from list · **C14** sequence Settings at C6 quality · **C15** channel-rules one timer + canvas scrollbar · **A18** trigger Global/Local (form submitted) · **A19** Automations Contacts. Seed named to existing `contact_records` / `enrollment` / `engagement_records` / `workflow_run` — do not mint.
+
+**Do not:** plant; collapse Global/Local with Contacts; put a timer per toggle; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 20:17 UTC — Specify with tests (UI, PM)
+
+**Why:** Founder: no ambiguity. Gap is **execution**, not planning, not specification. Point of giving instruction is that it gets built. We take engineering one level higher: not only write the spec — **specify with tests**. PM writes tests for the UI. Systems Analyst writes theirs (not this stamp; system side has not shown a depth-of-execution miss yet). Start on the UI side. If the app is underbuilt vs the mock, you cannot even use it — you don’t know what is what.
+
+**What we wrote:** [`IMPLEMENTER-UI-TESTS.md`](./IMPLEMENTER-UI-TESTS.md) — Add contact as the specimen. Fourteen pass/fail tests from the last printed spec (header, C8 modal not popover, two radios, Select from opens the list, everyone selected, deselect then pick, search, list scrolls, Contacts table, Automations same modal, start-now vs not, data from tables). More tests than the spec sentences is fair. Cannot ship the slice if any fail. Same format for the rest of the packet next.
+
+**Do not:** plant; write Playwright this stamp; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 20:26 UTC — The UI test is visual; the image is enough
+
+**Why:** Founder: stop intellectualizing. It is a **visual test**. We are not telling how to build it. Principles / standards stay in the spec. Click Add contact → the modal that shows **is** the test (C8). If the image were code there would be no problem — we are **not** pulling code out of the image; we are not generating the product from the picture. The image **is enough** to build properly. Reading a prose checklist does not make it obvious how the current look fails. Looking at the plate does.
+
+**What we wrote:** [`IMPLEMENTER-UI-TESTS.md`](./IMPLEMENTER-UI-TESTS.md) recast. Click Add contact → must look like C8. Click Select from → must look like C8b. Automations Contacts → A19. No T-AC-01…14. 20:17 prose tests were too much writing for a visual fail.
+
+**Do not:** plant; extract code from plates; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 22:43 UTC — Primitives: what we can hear, what we can do
+
+**Why:** Founder: Automations + Agents is most of the app. Adding something basic is too complicated — foundation isn’t stood up as a list. Provision is four fields on a form; Automations should do that too: make the form, listen to **this form** submitted (not global), then do the thing. “Do these things in the tables” is the wrong sentence. Do things **in the app**. That sometimes **is** the system. Need the primitives **from now** so a new idea either fits the shape or it doesn’t.
+
+**What we wrote:** [`PRIMITIVES.md`](./PRIMITIVES.md). Events we can hear. Actions we can do. Webhook is a way in, not an action. Not any-table. Provision example = form + this-form-submitted + provision a firm.
+
+**Do not:** plant; mint; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-16 22:46 UTC — Same shape, different seat
+
+**Why:** Founder, before reading the primitives file: provisioning should be possible in Automations; if it needs so much fixture maybe we are not building the module. Then: wait — provision touches a cascade. The use that always comes to mind is: this system event (eligibility changed, a writeback inside a firm/contact) → run this operation → then this agent. How come that feels different? Is it really different from the first idea?
+
+**Answer (plain):** Same listen → do. Different seat. Canonical Automations **hears** something that already happened in a firm that exists, then runs an operation, then an agent. A firm was created is that pattern too (A17): the firm is already there; now do the inside. The first idea **creates** the firm. That is the cascade. That is why it felt like fixture.
+
+If eligibility → operation → agent is also fixture, the module is not built. If only creating the firm is fixture, that is expected. Do not start there.
+
+**Do not:** plant; start Automations at provision-as-action; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-17 00:20 UTC — After Audit: person or artifact. Not automatic. Not UI-first.
+
+**Why:** Founder: SA’s canvas is a bit too simple. Current UI does not support that granularity. Tag-after-audit is not the only use. After the audit action (or a condition after it), the next step should not assume per-contact. The audit artifact sits in Book readiness. If you wanted to do something to **those artifacts**, how do you tell that apart from doing something to the people? Is it a UI question? Founder’s answer: does the system need to see the UI to think about this? If we describe exactly what we’re saying, no.
+
+**What we wrote:** [`PRIMITIVES.md`](./PRIMITIVES.md). Audit leaves two things: the run (artifact) and a result on each person. The next step **says** which. Same idea as Global / Local. UI is how you pick. The pick is the product. The two results are the system.
+
+**Do not:** guess per-contact; plant a grain picker this stamp; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-17 00:25 UTC — When a node finishes, you have what the module produced
+
+**Why:** Founder: four hours on one simple question. SA chat deprecated. What shape does Automations need so it works? If wires are a pipe, after a node you have the data that module produced. Example: Audit action sends the people to the Audit module; Audit does its job; when it is done, every write / result from that completion is available after the node, naturally, **as if you had done it in the module.** Are we building that?
+
+**Answer:** That is the requirement. **We are not building it that way yet.** Live does not hand you the module’s output when the node finishes. Pipe vs this-then-that is not the religion. The pipe is **for** that access.
+
+**Do not:** plant; treat editor preview as the live path; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-17 00:40 UTC — Handle after the node. Writes in the module. Do not circle the pipe.
+
+**Why:** Same question, stated so the next SA cannot spend four hours on the metaphor. Founder: this is not their job to pick pipe vs step. They want access after the node as if it were done in the module.
+
+**Shape (two layers):**
+
+1. The **writes** live in the module (Audit owns the run and the people results). Same as the desk.
+2. The graph holds a **handle** to **that** run. Next step picks person or artifact. If the next step guesses “latest audit,” it is not this node.
+
+n8n-style pipe = one way to see the handle. Then-this that reads this node’s output id = the same product. Hub editor `lastOutput` → `lastInput` is the smell, not live. `workflowWalk` enrolls / call_agent only; it does not call Audit; it does not pass module output.
+
+**Two doors:** chain on this canvas needs the handle. Hearing “audit finished” is a different automation. Do not collapse them.
+
+**Wrote:** [`PRIMITIVES.md`](./PRIMITIVES.md) · Automations face **law 33** · SA packet [`SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md`](./SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md).
+
+**Do not:** plant; circle pipe vs then-this; treat preview as live; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-17 00:50 UTC — Audit → If: previous result is the wire. The field is the grain.
+
+**Why:** Founder: what is the mechanism that makes Audit’s output available to the condition node? What are **all** the possible outputs? That also answers how we select per-contact.
+
+**Mechanism:** Audit action → real Audit module → when the node finishes, that output **is** the previous result on the next edge. The If reads fields of **that**. It does not look up an audit. Hub smell: `lastOutput` → `lastInput`; list of people can split true/false. Live does not pass Audit’s run to the If.
+
+**Outputs (this module, not a wish list):**
+
+- **Run:** id, status, overall pass/fail, meta, sequence-ready glance, which checks were on, each batch check (email / phone / dedupe / typo / name), imports, counts, times.
+- **Each person:** who, email/phone valid, reachability, sequence-ready for that person, pointer to this run.
+
+Not produced today: consent/silenced as an Audit verdict. Not the previous result: hearing audit-finished as a trigger.
+
+**Grain:** you do not flip a per-contact mode. You point the If at a person field or a run field. That pick is the grain.
+
+**Wrote:** [`PRIMITIVES.md`](./PRIMITIVES.md) · [`SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md`](./SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md).
+
+**Do not:** plant; invent If fields Audit does not produce; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-17 12:31 UTC — Is an image justified?
+
+**Why:** Founder: just a question — is an image justified? (Audit output → If, the field list, how we pick person vs run.)
+
+**Verdict:**
+
+- **Mechanism — no new plate.** **A16** already is that picture: previous result = Audit the contacts · output. The If reads that. Do not draw a pipe. Do not redraw A16 for the wire.
+- **Field list / grain — only if we need it on the glass.** A16’s example row is `status = passed`. That is the **run**. The walk “if this contact failed → tag” cannot be seen. A new plate (or A16 revision) would be the If open with the previous-result fields **grouped**: this run / each person — you pick a field, not a per-contact mode. That is the only reason an image earns its keep.
+- **Inside the Audit action** is still named not drawn. That is a different picture. Do not mix it with the If.
+
+**Do not:** generate until asked; draw radios for person vs artifact; treat A16 as already showing person-grain; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-17 12:34 UTC — Audit output is the primitive. Do not retrofit the pipe.
+
+**Why:** Founder: what are the possible outputs of the audit action? Are we the ones specifying what we wanted it to produce? No — they want the **primitive**. That’s how they know the pipe is not retrofitted. The wire has a shape. What is the output?
+
+**Correction:** the 00:50 field list (email valid, gate steps, meta…) mixed **interior checks** with **outputs**. That was specifying. Wrong.
+
+**The primitive (Story §5 + tables):** Audit answers only — can we reach them, can we start a sequence?
+
+**Out:**
+1. **The run** (`audit_runs`)
+2. **Each person’s verdict** (`reachability_verdicts`) — reachable / partial / unreachable
+3. **Each person’s sequence-ready** (`sequence_ready`) — yes / no
+
+**In, not the pipe:** the checks (email, phone, dedupe, …). Those make the verdict. They are not what the action emits.
+
+The pipe carries those three writes. Person vs artifact is those two grains. We did not invent a catalog.
+
+**Do not:** put checks on the If as fields we wanted; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-17 13:07 UTC — Handoff: every write that run made. Engineer has the cut.
+
+**Why:** Founder: do we have everything to spin up a new PM? Can they continue?
+
+**No, until this stamp.** Current still said Audit = run / verdict / sequence-ready. Founder already corrected that. A new chat would have continued the wrong idea.
+
+**Law (founder):** After a node, the output is **every write that run made**. Look at the tables that run touched. All of those writes are available after the node. Same shape for Provision: form submitted (this form) → pass the values to Provision → **every write from that provision run** is the previous result. Not “a firm.” Not “two things.” Two grains appeared on Audit because that module writes a run **and** per-person rows — that is the write-set, not a catalog we specified.
+
+**Engineer:** SA packets **013 + 014 + 015**, PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86). 015 is this handle. First graph is 014 (import → audit → if → tag). Provision is the same idea, not that cut. Do not recut from the PM seat. Meantime was about to start when this chat asked to go through the packet.
+
+**Do not:** plant; overwrite 15:43; treat 12:34 as current; answer a simple question by rewriting the corpus.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-17 13:16 UTC — New PM seated
+
+**Why:** Founder: you are the new PM. Get up to speed. I have some work to do with you.
+
+**Read:** `docs/README.md` Product Manager paste. Current (**13:07**). This stamp’s predecessor. [`PRIMITIVES.md`](./PRIMITIVES.md). Flagship **15:43** stays. Did not recut the engineer’s packet. Did not open 015 to rewrite — that machine text lives on PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86).
+
+**Holding:**
+
+- After a node: **every write that run made**. Same for Provision. Next node **picks**. Not a short list. Not “two things.” Not “a firm.”
+- Engineer owns SA **013 + 014 + 015**. First graph is import → audit → if → tag. Meantime in the last chat had not started.
+- Do not plant. Hub is not the app.
+
+Ready. Waiting on you.
+
+**Do not:** plant; overwrite 15:43; recut 015; treat 12:34 as current.
 
 Flag 15:43 untouched.
 

@@ -2,7 +2,9 @@
 
 **What this is:** a dated prompt. Paste into a Systems Analyst chat. Not Story. Not a second Automations flag. Not a rewrite of the Agents flagship.  
 **Seat that wrote it:** Product Manager.  
-**Law:** Agents [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite. Automations face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Chosen images + spec [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) (A1–A13; priors kept; revisions canonical). **Later plate (after this package was issued):** **A14** — assign existing vs from a template; no create-agent in Automations. Ascribe it the same two questions if you reach it.  
+**Later (2026-08-17):** the one epistemic question — when a node finishes, the next step has what that **module** produced. Do **not** circle pipe vs this-then-that. Read [`SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md`](./SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md) and [`PRIMITIVES.md`](./PRIMITIVES.md) **before** ascribing the teaching walk. Face **law 33**. Live `workflowWalk` is not that yet.
+
+**Law:** Agents [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite. Automations face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Chosen images + spec [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) (A1–A13; priors kept; revisions canonical). **Caption audit (read before ascribing pixels):** [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) — teaching copy on the plates is not a node. **Later plates (after this package was issued):** **A14** — assign existing vs from a template; no create-agent in Automations. **A15–A17** — chain, If, firm-provisioned trigger. Ascribe them the same two questions if you reach them. Do not mint nodes from banner sentences. Do not build A10/A13 as a page.  
 **Context you already have (do not re-ask the PM to restate it):** that FACE, that blueprint in **lineup order**, Hub Automations (`/hub`) as the **complete plant**, CT Ant Automations as a poorer **translation** (Rule GUI **does not exist** there). Logs in [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) from **20:24** through **22:17**. Transcripts are not accessible — if it is not in those files, it is not in this package.  
 **Your identity and walk:** [`../README.md`](../README.md) § Systems Analyst. Answer lands in [`SYSTEMS-ANALYST-LOG.md`](./SYSTEMS-ANALYST-LOG.md). If the Agents package is still unanswered, walk + first question still come first; this package is **next**, not a replacement.
 
@@ -15,7 +17,7 @@ You are Tower’s Systems Analyst. Identity: docs/README.md § Systems Analyst. 
 
 If you have not already walked the machine (Story → Requirements → migrations 001–009 → cascade/worker/workflowWalk → live vs stand-in ports) and inventoried tables/fields/relations, do that first. Then the Agents package if it is still waiting. Then open this package: docs/register/AUTOMATIONS-SA-PACKAGE.md.
 
-This is what we are thinking. These plates are the systems traversing. The images are the mock; the UI is going to look like this. Ascribe. Find a way — usually tables, workers, fields, relationships, live vs stand-in. Do not mint tables from pictures.
+This is what we are thinking. These plates are the systems traversing. The images are the mock; the UI is going to look like this. Ascribe. Find a way — usually tables, workers, fields, relationships, live vs stand-in. Do not mint tables from pictures. Read docs/register/IMAGE-CAPTION-AUDIT.md first — teaching copy on the plates (workflow titles, “smallest workflow…”, “If X”, “you do not create an agent here…”) is not a node and not a field.
 
 For each chosen plate in lineup order (A1 → A13, including priors; then later plate A14 if you reach it), answer two questions. Short. Quote SQL / cascade / workflowWalk / ports, not screens.
 
@@ -50,10 +52,13 @@ Hub node kinds already named in code (`WorkflowNodeType`): `trigger` | `constant
 | **A9** (prior) | Rule Output **today**: headline, pass, nudge signal, reactivation signal, services — one, the other, or both. Named gap: form / enrich / consume. Do not split the rule. |
 | **A11** (canon Output) | **Required data** as a **listing of field rows** on Output. Catalog fields only. Self-reportable → form. Document-dependent → never a form. 21:36: **not stood up**. |
 | **A10** (prior, **diagram**) | Output classes are a **lattice**. Missing class: required data. A condition on a class forks actions on the same data. **Not a screen.** |
-| **A13** (canon **diagram**) | Same lattice; required data is the **listing** class. If listing not empty → create form from those rows. **Not a screen.** Founder 22:17: different kind of picture. The DAG fork is the **If node after the rule**, which calls from previous results — Hub has it; **no Ant plate**. |
+| **A13** (canon **diagram**) | Same lattice; required data is the **listing** class. If listing not empty → create form from those rows. **Not a screen.** Founder 22:17: different kind of picture. The DAG fork is the **If node** — now on the glass as **A16**. |
 | **A14** (later, canon assign) | Assign to an **existing** sequence, or **create from a template**. You do **not** create an agent here. Sequence pick is a **radio** — nothing further, no chevron. A8 still holds select-agent = whole sequence. A12 still holds the form. |
+| **A15** (later) | Blank canvas. Chain: firm provisioned → audit contacts → if X → agents. A1 stays the smallest. |
+| **A16** (later) | First Ant If plate. Calls from previous result (the audit). Not a rule. |
+| **A17** (later) | Trigger event = firm created / provisioned. Companion to A5. |
 
-**Under-specified remainder** (blueprint § “Under-specified”): If/condition node after the rule (no Ant plate); constants as a canvas node; full operations catalog; full exit points; form-as-own-node vs embedded (lean embedded); remaining output classes; in-system actions besides the one named (**ascribe a tag** on campaign failure / unsubscribe); word “event”; Ant Rule GUI missing; required-data listing; form completion / campaign failure / opt-out as events; **global vs local** (not Settings); **lineage queryable** (who created the objective — agent vs hand — path, completion, time). Hub is the advanced **module plant**, not the app — do not ascribe Hub screens as the product. Name whether the machine already has a place, or Story is silent. Do not invent UI. Do not mint tables.
+**Under-specified remainder** (blueprint § “Under-specified”): If node is now A15/A16; inside of audit not drawn; constants as a canvas node; full operations catalog; full exit points; form-as-own-node vs embedded (lean embedded); remaining output classes; in-system actions besides the one named (**ascribe a tag** on campaign failure / unsubscribe); word “event”; Ant Rule GUI missing; required-data listing; form completion / campaign failure / opt-out as events; **global vs local** (not Settings); **lineage queryable** (who created the objective — agent vs hand — path, completion, time). Hub is the advanced **module plant**, not the app — do not ascribe Hub screens as the product. Name whether the machine already has a place, or Story is silent. Do not invent UI. Do not mint tables.
 
 ---
 
@@ -86,3 +91,4 @@ Then **Rollup** (not a new flag):
 - Not collapsing the two condition grains.
 - Not treating CT Ant Automations as the source plant.
 - Not a second Agents package. Agents package still stands.
+- Not ascribing founder captions as nodes. Read [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) first.

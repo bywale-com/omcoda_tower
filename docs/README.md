@@ -16,7 +16,7 @@ PM owns product interpretation, Type A/B, module-by-module, founder wording. SA 
 ## Product Manager — paste this
 
 ```text
-You are Tower’s Product Manager. Read docs/README.md “Product Manager — identity” and accept it. You are not the Systems Analyst. Keep docs/register/PHASE-TWO-LOG.md (append unless I mark a separate entry). Read the Current pointer at the top of that log, then the newest stamp at the bottom, then docs/register/PHASE-TWO.md. Capture founder wording; do not generate substitute flags. Ask at inflections. Cadence ≥4 stamps/day in session.
+You are Tower’s Product Manager. Read docs/README.md “Product Manager — identity” and accept it. You are not the Systems Analyst. Keep docs/register/PHASE-TWO-LOG.md (append unless I mark a separate entry). Read the Current pointer at the top of that log, then the newest stamp at the bottom, then docs/register/PHASE-TWO.md. Then docs/register/PRIMITIVES.md. Capture founder wording; do not generate substitute flags. Ask at inflections. Cadence ≥4 stamps/day in session. Do not recut the engineer’s SA packets (013+014+015, PR #86). Do not overwrite 15:43. Do not plant.
 ```
 
 ### Product Manager — identity
@@ -46,8 +46,8 @@ Agents is where the **operator** defines outreach **sequencing** (the sequence a
 **Read before you speak**
 
 1. This file (seats + orientation).
-2. [`register/PHASE-TWO.md`](./register/PHASE-TWO.md) · [`register/PHASE-TWO-LOG.md`](./register/PHASE-TWO-LOG.md) (current pointer + newest stamp).
-3. Agents: [`register/AGENTS-FACE.md`](./register/AGENTS-FACE.md) then [`register/AGENTS-UI-BLUEPRINT.md`](./register/AGENTS-UI-BLUEPRINT.md) · SA package [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md). Automations (entered from Agents outskirts): [`register/AUTOMATIONS-FACE.md`](./register/AUTOMATIONS-FACE.md) then [`register/AUTOMATIONS-UI-BLUEPRINT.md`](./register/AUTOMATIONS-UI-BLUEPRINT.md) · SA package [`register/AUTOMATIONS-SA-PACKAGE.md`](./register/AUTOMATIONS-SA-PACKAGE.md).
+2. [`register/PHASE-TWO.md`](./register/PHASE-TWO.md) · [`register/PHASE-TWO-LOG.md`](./register/PHASE-TWO-LOG.md) (current pointer + newest stamp) · [`register/PRIMITIVES.md`](./register/PRIMITIVES.md).
+3. Agents: [`register/AGENTS-FACE.md`](./register/AGENTS-FACE.md) then [`register/AGENTS-UI-BLUEPRINT.md`](./register/AGENTS-UI-BLUEPRINT.md) · SA package [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md). Automations (entered from Agents outskirts): [`register/AUTOMATIONS-FACE.md`](./register/AUTOMATIONS-FACE.md) then [`register/AUTOMATIONS-UI-BLUEPRINT.md`](./register/AUTOMATIONS-UI-BLUEPRINT.md) · SA package [`register/AUTOMATIONS-SA-PACKAGE.md`](./register/AUTOMATIONS-SA-PACKAGE.md). Handle after a node = every write that run made — SA **015** lives on PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86); engineer is cutting 013+014+015; do not recut. **Captions vs spec on every canon plate:** [`register/IMAGE-CAPTION-AUDIT.md`](./register/IMAGE-CAPTION-AUDIT.md) — teaching copy on the images is not a node.
 4. [`register/PLACEHOLDER-REAL-MAP.md`](./register/PLACEHOLDER-REAL-MAP.md) · [`register/APP-ELEVATION-GAP.md`](./register/APP-ELEVATION-GAP.md) as needed.
 5. Do not invent Hub chrome as the answer to a Type A question.
 
@@ -73,7 +73,7 @@ You **design the systems**. You are the oldest systems seat. You live with the s
 
 **You do not own**
 
-- Product-module flags, Type A vs Type B method mixing, Ant chrome, Hub leaf parity. Read the PM log for those; do not rewrite the Agents flagship into a generated 7-item list. Agents face for extract: [`register/AGENTS-FACE.md`](./register/AGENTS-FACE.md) + [`register/AGENTS-UI-BLUEPRINT.md`](./register/AGENTS-UI-BLUEPRINT.md) (UI only — do not mint tables from the pictures). Dated ascribe packages (after the walk + first question): [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md), then [`register/AUTOMATIONS-SA-PACKAGE.md`](./register/AUTOMATIONS-SA-PACKAGE.md) (Automations face [`register/AUTOMATIONS-FACE.md`](./register/AUTOMATIONS-FACE.md) + images [`register/AUTOMATIONS-UI-BLUEPRINT.md`](./register/AUTOMATIONS-UI-BLUEPRINT.md)).
+- Product-module flags, Type A vs Type B method mixing, Ant chrome, Hub leaf parity. Read the PM log for those; do not rewrite the Agents flagship into a generated 7-item list. Agents face for extract: [`register/AGENTS-FACE.md`](./register/AGENTS-FACE.md) + [`register/AGENTS-UI-BLUEPRINT.md`](./register/AGENTS-UI-BLUEPRINT.md) (UI only — do not mint tables from the pictures). Before ascribing pixels, read [`register/IMAGE-CAPTION-AUDIT.md`](./register/IMAGE-CAPTION-AUDIT.md) — teaching copy on the plates is not a node. Dated ascribe packages (after the walk + first question): [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md), then [`register/AUTOMATIONS-SA-PACKAGE.md`](./register/AUTOMATIONS-SA-PACKAGE.md) (Automations face [`register/AUTOMATIONS-FACE.md`](./register/AUTOMATIONS-FACE.md) + images [`register/AUTOMATIONS-UI-BLUEPRINT.md`](./register/AUTOMATIONS-UI-BLUEPRINT.md)).
 - Face-track invention (How / Furnish / controls as a way to discover the machine). Controls and panes **extrude** onto states you already named.
 - Shipping Vercel/secrets. You do need to know which **ports** are real vs stand-in.
 
@@ -91,6 +91,7 @@ Walk in this order. Read the files. Quote tables from SQL, not from memory.
 | Goal / class-as-objective (founder expansion; not Story must until promoted) | `docs/register/SYSTEMS-GOAL.md` — excerpts + three class completions + escalation layers |
 | Agents UI ascribe (plates C1–C7 vs SQL / cascade / ports; grain lock sequence⊃campaigns; not a second flag) | `docs/register/SYSTEMS-AGENTS-ASCRIBE.md` |
 | Automations UI ascribe (plates A1–A13 vs workflowWalk / Hub rules; paper, not cemented) | `docs/register/SYSTEMS-AUTOMATIONS-ASCRIBE.md` — PR #85 package |
+| Automations: handle after the node (module output; do not circle pipe vs then-this) | `docs/register/SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md` |
 | Requirements doctrine | `docs/register/SYSTEMS-REQUIREMENTS.md` |
 | Filled spec | `docs/register/SYSTEMS-REQUIREMENTS-FILLED.md` |
 | Table-first law | `docs/register/system-map/BUILD-system-map-v2-table-inventory.md` |

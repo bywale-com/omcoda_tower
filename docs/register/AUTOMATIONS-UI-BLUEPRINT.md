@@ -3,7 +3,8 @@
 **Seat:** Product Manager.  
 **What this is:** the **UI blueprint** for Automations, before Systems Analyst extract. Not a systems blueprint. Do not invent tables from this file.  
 **Flag:** Agents [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
-**Law and excerpts:** [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). This file is the **chosen image lineup + spec**. Rationale lives in the log stamps named on each plate. Transcripts are not accessible — if it is not in the log or this spec, it is not in the package.  
+**Law and excerpts:** [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). This file is the **chosen image lineup + spec**. Rationale lives in the log stamps named on each plate. **Captions vs spec:** [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md).  
+**Plate chrome:** [`PLATE-CHROME-RULE.md`](./PLATE-CHROME-RULE.md) — screenshot the live `/prototype-ant` desk first; do not invent a different left nav.  
 **Founder (2026-08-15 22:17):** terrain is enclosed enough. Line up **chosen images in order**. If a plate is a **revision**, keep the **prior** in the lineup and make the revision **canonical**. Spec why each thing does what we wanted. Then the SA package. Hub is the complete plant; Ant Automations is a poorer translation; Rule GUI **does not exist in Ant** — mocks are from scratch.
 
 **Mock = generate the image.** Do not plant `AntAutomationWorkbench`.
@@ -30,7 +31,7 @@ Hub’s “View code” can remain as under-the-hood. It must not be the only wa
 **Two grains of “condition” (do not collapse):**
 
 1. **Inside the rule** — outcome rows: field · operator · constant (or named code). That is A2 / A4.
-2. **After the rule, on the DAG** — a **condition / If node** that **calls from the previous result** (rule Output) and forks actions. Hub already has this (`branch` / `if`; `lastOutput` → next node). A10 / A13 are **diagrams of that idea**, not a screenshot of that node. There is **no Ant plate** of the If node. Named remainder.
+2. **After the previous result, on the DAG** — a **condition / If node** that **calls from the previous result** (rule Output **or** an action’s output) and forks actions. Hub already has this (`branch` / `if`; `lastOutput` → next node). A10 / A13 are **diagrams of the lattice idea**. **A16** is the Ant plate of opening that node. A15 is the chain on the canvas.
 
 **Constants** live in two places Hub already names: as the right-hand of a condition, and as their own **constant node** on the canvas. A4 shows them inside the rule. The canvas constant node is Hub-as-built; not drawn as its own Ant plate.
 
@@ -56,8 +57,13 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A10** | [`A10-output-classes-lattice.png`](./automations-blueprint/A10-output-classes-lattice.png) | **diagram** | Output classes as a **lattice**. Missing class: **required data**. A condition on a class forks actions. | 21:28 | **prior.** Listing class → **A13** |
 | **A13** | [`A13-lattice-required-data-listing.png`](./automations-blueprint/A13-lattice-required-data-listing.png) | **diagram** | Lattice with required data as a **listing class**. If listing not empty → create form from those rows. | 21:48 · founder 22:17: this is a **different kind of picture** | **revises A10.** Not a node screenshot. Not the If node |
 | **A14** | [`A14-action-assign-or-template.png`](./automations-blueprint/A14-action-assign-or-template.png) | chrome | Action · Agents: **assign to an existing sequence** or **create from a template**. You do **not** create an agent here. | 00:02 | **revises A8** (assign path only). Select-agent = sequence still A8. Form still **A12** |
+| **A15** | [`A15-blank-canvas-chain.png`](./automations-blueprint/A15-blank-canvas-chain.png) | chrome | Blank canvas. Chain: **firm provisioned → audit contacts → if X → agents**. Palette includes Condition (If). A1 stays the smallest. | 01:17 · 01:20 | — |
+| **A16** | [`A16-if-previous-result.png`](./automations-blueprint/A16-if-previous-result.png) | chrome | **First Ant If plate.** Calls from the previous result (the audit). Not a rule. | 01:20 | fills open item 11 |
+| **A17** | [`A17-trigger-firm-provisioned.png`](./automations-blueprint/A17-trigger-firm-provisioned.png) | chrome | Inside trigger. Event = **firm created / provisioned**. | 01:20 | companion to A5 |
+| **A18** | [`A18-trigger-global-local.png`](./automations-blueprint/A18-trigger-global-local.png) | chrome | Inside trigger. After the event: **Global** (all of that kind) or **Local** (this specific one). Example: form submitted. | 18:53 | fills law 27. A5 stays Event vs Schedule |
+| **A19** | [`A19-automations-contacts.png`](./automations-blueprint/A19-automations-contacts.png) | chrome | Automations **Contacts** = the same look as Agents C8. Same Add contact modal. Does not start a mission now. | 18:53 · 01:01 | companion to C8 / C8b |
 
-**Why A10 / A13 are in the lineup and still not chrome:** they are the **idea** of output classes as a lattice (a simple condition on a class forks actions on the **same data**). They are not Operator screens to rebuild as a “lattice page.” The DAG piece that does that fork is Hub’s **If / condition node after the rule**, which reads previous results. That node is **not drawn** as an Ant plate. Keep both diagrams so the evolution (hole → listing) is visible. Do not ascribe A13 as a screen.
+**Why A10 / A13 are in the lineup and still not chrome:** they are the **idea** of output classes as a lattice. They are not Operator screens. The DAG piece that does that fork is the **If / condition node**, now on the glass as **A16**. Keep both diagrams so the evolution (hole → listing) is visible. Do not ascribe A13 as a screen.
 
 ### Discarded (none this module)
 
@@ -71,8 +77,8 @@ In-app Ant Automations workbench is **not** this blueprint. Mock = generated ima
 - A8 still shows a blank “Field label / + Add field” form. **A12** is the form revision.
 - A9 still names the Output gap. **A11** is the listing on Output.
 - A10 still shows required data as a dashed hole. **A13** fills the hole **as a diagram**.
-- A1 smallest workflow is trigger · rule · action with **no If node** on the canvas. The If-after-rule is Hub-as-built and founder-named (22:17); it is not on A1.
-- **A14** nav chrome sometimes drifts (Home / Workspaces vs House-global). Trust the **modal contents**.
+- A1 smallest workflow is trigger · rule · action with **no If node** on the canvas. **A15** is the chain (If on the canvas). **A16** opens that If. A1 stays the smallest. A6’s palette includes **Exit**; A15’s includes **Condition (If)** — do not freeze one palette from the other.
+- **A14** nav chrome sometimes drifts (Home / Workspaces vs House-global). Trust the **modal contents**. A14 footer on the PNG is Cancel · Save; the “not a third option” sentence is not on that image.
 
 ---
 
@@ -84,7 +90,9 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 |------|----------|
 | Operator → Configuration libraries → Automations | Workflow list. Open **New firm → opt-in launch** (or equivalent). |
 | Open the workflow | Canvas: **trigger · rule · action** (A1). Smallest. |
-| Open the **Trigger** node | Event or schedule (A5). Perform on this event. |
+| Same desk, teaching walk | Canvas: provisioned → audit → if X → agents (**A15**). Blank canvas; you can chain. |
+| Open the **Trigger** node | Event or schedule (A5). Firm created / provisioned (**A17**). |
+| Open the **If / Condition** node | Calls from previous result (**A16**). Not a rule. |
 | Insert / add a node | Palette. Select **Action** (A6). |
 | Open the **Action** node | Kind: **Agents** vs **in the application** (A7). |
 | Action kind = Agents | First: **assign existing** or **from a template** (**A14**). Then select agent (whole sequence) · declare objective · if data request, create the form (A8 prior / **A12** canon). You do **not** author a new agent here. |
@@ -138,7 +146,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Rationale (20:54):** Two options. Custom when the GUI isn’t enough — same idea as JSON. Escape hatch, not the default.
 
-**On the glass:** Same modal, **Custom** on. JSON of the same rule.
+**On the glass:** Same modal, **Custom** on. JSON of the same rule. Caption under the switch: **“When the GUI isn’t enough — same as JSON.”** Founder caption — not a node.
 
 **Why this does what we wanted:** not limited to code; not forbidden from code.
 
@@ -183,11 +191,11 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Rationale (21:10):** See what it looks like to select a node, add a node, then select **Action** as a node.
 
-**On the glass:** Insert control. Select Action.
+**On the glass:** Build palette **Trigger · Rule · Action · Exit**. Insert **+** on the wire. Action selected. Insert-menu helper lines (Starts the workflow / Gate or branch logic / In the app, or an agent / End the workflow) are **founder captions**. Footer **“Select a node. Then configure it.”** is a caption.
 
 **Why this does what we wanted:** the DAG is authored. Action is a kind you pick, not a hidden enroll.
 
-**Not this plate:** The If / condition node in that same picker — Hub palette has it; this plate shows Action.
+**Not this plate:** The If / condition node in that same picker — Hub palette has it; **A15** is the plate that adds Condition (If). Do not freeze A6’s Exit and A15’s If as one palette.
 
 ---
 
@@ -197,7 +205,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Rationale (21:10, law 19):** At least two kinds: **in the application** (change something inside the system) and **agents** (send people to a goal). Actions are not only outreach.
 
-**On the glass:** Agents vs in the application.
+**On the glass:** Agents vs in the application. Card body copy + footer **“At least two kinds of actions.”** are **founder captions**. Background canvas showing a **Branch** “Reactivation-worthy?” is **generated drift** — A1’s smallest is still trigger · rule · action.
 
 **Why this does what we wanted:** Automations touches more of the app. Hub already names in-app kinds (`manage_lists`, `assign_task`, `notify_consultant`) and agent enroll (`enroll_sequence` + agent ref). Do not invent a longer catalog in the picture.
 
@@ -324,7 +332,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 - Line: “You do not create an agent here. Create the agent in Agents, then assign.”
 - Two cards: **Assign to an existing sequence** (put them on one you already authored) · **Create from a template** (new copy from a sequence template, then put them on that).
 - Same three names on both sides (Opt-in / Re-engagement / Reactivation) — left tagged Existing, right tagged Sequence template. Each row is a **radio**. One selected. **No chevron / arrow.** There is nothing further after you pick the sequence (select agent = the whole sequence).
-- Footer: “Not a third option: author a new agent in this module.”
+- Footer on this PNG: **Cancel · Save** only. The sentence “Not a third option: author a new agent in this module” is **not** on the pixels. Law still; do not require that sentence as UI.
 
 **Why this does what we wanted:** the copy-vs-assign choice is obvious on the glass. It is not a third authoring place.
 
@@ -332,11 +340,91 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 ---
 
+### A15 — Blank canvas; you can chain
+
+![A15 blank canvas chain](./automations-blueprint/A15-blank-canvas-chain.png)
+
+**Rationale (01:17, 01:20):** Automations is a blank canvas the same way an agent is. Smallest is still A1. This plate is the chain: firm created / provisioned → audit the contacts → if X (previous result) → assign agent. Palette includes **Condition (If)**. Provisioning a firm is not only creating the firm.
+
+**On the glass:**
+- Same Operator-desk chrome as A1.
+- Workflow: Firm provisioned → audit → agents.
+- Four nodes down, wired.
+- Caption: “Blank canvas. You can chain. Smallest is still trigger · rule · action.”
+
+**Why this does what we wanted:** one canvas, the walk. A1 is not discarded.
+
+**Not this plate:** Opening the If (A16). Opening the trigger (A17). Inside the audit.
+
+---
+
+### A16 — If reads the previous result (first Ant If)
+
+![A16 if previous result](./automations-blueprint/A16-if-previous-result.png)
+
+**Rationale (22:17, 01:17, 01:20):** The node after the previous result says “if this,” already calling from last output. That previous result can be an **action** (the audit), not only a rule. This is **not** a rule (A2). A13 is still a lattice diagram, not this screen.
+
+**On the glass:**
+- Modal: If X — previous result. Condition tag.
+- Previous result: Audit the contacts · output.
+- One row: field · operator · constant.
+- Then → Assign agent. Else → stop.
+- Caption: “This is not a rule. The rule is a different node.”
+
+**Not this plate:** Rule GUI (A2). Lattice (A13). Inventing the condition catalog. **12:31 / 12:34:** A16 already locks the mechanism. The previous result is Audit’s **primitive** (the run, each verdict, sequence-ready) — not a check catalog we specified. A16’s row `status = passed` is the run only. Do not draw a pipe. Do not generate until asked.
+
+---
+
+### A17 — Trigger: firm created / provisioned
+
+![A17 trigger firm provisioned](./automations-blueprint/A17-trigger-firm-provisioned.png)
+
+**Rationale (01:17, 01:20):** Named event. Same trigger modal as A5. Event, not schedule. “A firm was just created. Things inside still have to happen.”
+
+**On the glass:**
+- When this happens: **Event**.
+- Event: Firm created / provisioned.
+- Who this run is about: that line.
+
+**Not this plate:** Global vs local picker (**A18**). Audit completed (A5). Filling the event catalog.
+
+---
+
+### A18 — Trigger: Global or Local
+
+![A18 trigger global local](./automations-blueprint/A18-trigger-global-local.png)
+
+**Rationale (23:16 law 27, drawn 18:53):** When you select an event to trigger, you detail **Global** or **Local**. Not Settings. Who this applies to is **Contacts** (A19), not this modal.
+
+**On the glass:**
+- When this happens: **Event**.
+- Event: **Form submitted** (the clear example).
+- Grain: **Global** | **Local**. Global on: all form submissions.
+- **This form** picker **disabled** on Global; enables on Local.
+
+**SA idea (do not invent UI):** some events may not have Local (an **audit** is one-time). Map which events allow which grain. Do not fill the catalog.
+
+**Not this plate:** Contacts picker. A Settings modal. Firm provisioned (A17).
+
+---
+
+### A19 — Automations Contacts (same as Agents)
+
+![A19 automations contacts](./automations-blueprint/A19-automations-contacts.png)
+
+**Rationale (01:01, 18:53):** Add contact and Contacts exist in Automations **the exact same way** they look in Agents. Live Automations has no Contacts tab. Build it.
+
+**On the glass:** Workflow · **Contacts** · Runs · Settings. Table Name · Firm · Enrolled date. **Add contact** in the header. Same Every firm / Select from modal. Footer: who this automation applies to; it does **not** start a mission now.
+
+**Not this plate:** Trigger Global/Local (A18). Agents start-now (C8).
+
+---
+
 ## Under-specified (named, not filled)
 
 | Remainder | What we know | What is not drawn |
 |-----------|--------------|-------------------|
-| **If / condition node after the rule** | Hub: `branch` / `if`; reads previous `lastOutput`; true/false (or defined binaries). Founder 22:17: that node is already calling from previous results. A10/A13 diagram the idea. | No Ant plate of opening that node. |
+| **If / condition node after the previous result** | Hub: `branch` / `if`; reads previous `lastOutput`. **A15** chain · **A16** open. Can follow an action, not only a rule. | Drawn. Inside of audit still not drawn. |
 | **Constants as a canvas node** | Hub palette: constant node. Also the right-hand of A2/A4 rows. | No Ant plate of the constant node itself. |
 | **Full operations catalog** | Data request is one. Engagement spoken as a maybe. | Do not invent. |
 | **Full exit points** | Start/select agent is one. | Do not invent. |
@@ -344,7 +432,8 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 | **Remaining output classes besides required data** | Lattice classes named on A9–A13: pass, re-engagement signal, reactivation signal, recommended services, required-data listing. | Do not invent the rest. |
 | **In-system action kinds** | Hub names `manage_lists`, `assign_task`, `notify_consultant` plus agent enroll. A7 is the split. | Do not invent a longer catalog. |
 | **Word “event”** | Agents C2b vs Automations event-of-origin. Form completion **is** an Automations trigger (23:16). | Do not collapse C2b with this. |
-| **Event: global vs local** | **Global:** all of that kind. **Local:** this specific one. Named: form completion, campaign failure, opt-out / unsubscribe. Not “Settings.” | No plate. Do not fill the catalog. |
+| **Event: global vs local** | **Global:** all of that kind. **Local:** this specific one. Named: form completion, campaign failure, opt-out / unsubscribe. Not “Settings.” **A18** draws the picker. Some events may not have Local (audit as one-time) — SA maps. | Catalog still not filled. |
+| **Automations Contacts** | Same look as Agents C8 / C8b. **A19**. Who this applies to. Does not start now. | Drawn. |
 | **In-app action: ascribe a tag** | Campaign fails → record / tag. Subscription bell is that tag. | Named. Do not invent the rest. |
 | **Lineage queryable** | Who created the objective (agent vs hand), path to completion, completion event, time. | Queryable at minimum. Not a new screen. |
 | **Assign existing vs from template** | **Settled 00:02.** A14. No create-agent in Automations. | Drawn. |
