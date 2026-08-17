@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-17 00:15 UTC — **Generated import→audit→tag canvas. Glass must change: Contact import, Audit action, If on verdict, tag, delete node.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-17 12:45 UTC — **Node output = every write that run made. Not a short list. That is the pipe shape.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1255,3 +1255,15 @@ This is packet 014. Incomplete was the **connects** (import not offered, audit h
 No new node kind. No packet-on-the-wire chrome required for this walk.
 
 **Do not:** freeze A15’s firm-provisioned chain as this picture; Hub Import created. Flag **15:43**.
+
+---
+
+## 2026-08-17 12:45 UTC — Output of any node = every write that run made.
+
+**Why:** Founder debating the natural primitive of the pipe. PM: yes — after a node, every write that run made, not a short list, not Audit-is-two-things. Import’s writes available; Audit picks which to run on. Same shape so new nodes don’t need new output code.
+
+**Hard:** Right idea. Naturally comes from modules already writing. Do not freeze Audit as run/verdict/sequence-ready (PR #89 still does — that is today’s writes, not the primitive). Next node **picks** from this run’s write-set. Available = the rows, not a copy table. Live does not pass that handle yet — connect, not a new shape. 014 If is a pick, not a specified Audit catalog.
+
+[`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 12:45. Packet 014 If line corrected.
+
+**Do not:** per-module output lists; events table; overwrite 15:43.

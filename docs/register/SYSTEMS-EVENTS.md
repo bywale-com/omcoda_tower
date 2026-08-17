@@ -302,3 +302,19 @@ Those were analogy from two handlers that both INSERT more than one row, plus de
 
 **Walk:** Import write wakes the graph. Then Audit module; it leaves pass/fail on each person. Then If this person failed → tag write on that contact (Contacts is the face). For each = same people, result sitting on each person. Wires = order. 014. Incomplete = those writes not offered / audit still glued to upload — not a missing pipe.
 
+---
+
+## 2026-08-17 12:45 — Node output primitive: every write that run made. Not a short list.
+
+**Founder + PM (yes, that is the primitive):** After a node, the output is **every write that run made** — every table that module touched because it ran. Not a short list we picked. Not “Audit is two things.” Purpose is not the write-set. Same shape for trigger, action, whatever. Pass work to the module; previous result is everything it wrote. We do not specify outputs; the run already produced them.
+
+**Founder (import → audit):** Import produces a series of writes. Those are available. Audit **picks** which of them to run on (usually the import / those contacts). Then Audit’s own write-set is available to If / tag.
+
+**Cut:** This is the right idea. It **naturally comes** from: automations works with modules; a module without automations already writes; those writes **are** the output. New nodes do not need a new output format.
+
+**Not a catalog:** PR #89 still lists Audit pipe as run + verdict + sequence-ready. That list is what Audit writes **today**, plus it skipped `contact_records` which Audit also touches. Freezing the list is the retrofit. If Audit later writes notes, they are already in the write-set.
+
+**Available** = those rows, **this run**. Not a copy table. Next node **picks** which write(s). If reads a field of that pick. Then-this is still order.
+
+**Do not:** overwrite 15:43; mint an events table; specify per-module output lists; treat Hub preview as the live handle. Live still does not pass this run’s writes to the next node — that is the connect, not a new primitive.
+

@@ -47,7 +47,9 @@ Do **not** hardcode “upload always audits” in `createAuditRun` as the produc
 
 ## The canvas (this workflow)
 
-Trigger → Action (`run_audit`) → If (this contact not sequence-ready) → Action (`ascribe_tag` invalid + notes) ; else → Action (`ascribe_tag` valid).
+Trigger → Action (`run_audit`) → If (pick from **this Audit run’s write-set**, e.g. this contact failed) → Action (`ascribe_tag` invalid + notes) ; else → Action (`ascribe_tag` valid).
+
+Do **not** specify Audit’s outputs as two or three named things. After Audit, **every write that run made** is available. The If **picks** which of those writes it is about. Sequence-ready / verdict are picks, not a catalog we froze.
 
 No If is legal (A1 smallest). Then you cannot tag only the bad rows unless the ascribe node itself reads the verdict. **Prefer If on the canvas** — that is the contract they can edit. Do not hide the split in TypeScript.
 
