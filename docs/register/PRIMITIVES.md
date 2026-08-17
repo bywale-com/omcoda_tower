@@ -89,6 +89,26 @@ This is not a UI-first question. If we say it in these words, the system already
 
 ---
 
+## Shape: when a node finishes, you have what the module produced
+
+This is the whole question. Automations only works if this is true.
+
+An action is not a fake step. It **sends the work to the real module** (Audit, Contacts, Agents — whatever that action is). That module does its job, same as if you had pressed it on that desk.
+
+When that node **completes**, the next step has **everything that module produced** — every write, every result — **as if you had done it in the module.** Naturally. Not a special automation-only copy. Not a guess.
+
+Example: Audit action.
+
+1. The node hands Audit **who we are auditing**.
+2. Audit runs. Book readiness gets the artifact. People get pass/fail.
+3. After the node, you can use **that** — the artifact, and each person’s result — because that is what Audit produced.
+
+Pipe vs “this then that” is not the religion. What the pipe is **for**: after this node, you have what that node’s module made. If the live walk cannot see that, the module does not work.
+
+**Right now we are not building it that way.** Live Automations does not hand you the module’s output when the node finishes. The editor preview is not the live path.
+
+---
+
 ## Same shape. Different seat.
 
 **Canonical (this is Automations):** something already happened **inside a firm that exists** — eligibility changed, a writeback, a form came back — **hear that** → run the operation → **then the agent**. A firm was created is the same pattern: the firm is already there; now do the inside (audit, agents).

@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **00:20:** after Audit, next step says **person** or **artifact**. Does not guess per-contact. Not UI-first. [`PRIMITIVES.md`](./PRIMITIVES.md). Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **00:25:** Automations works only if when a node finishes you have what that **module** produced. Live is not that yet. [`PRIMITIVES.md`](./PRIMITIVES.md). Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -975,6 +975,18 @@ Flag 15:43 untouched.
 If eligibility → operation → agent is also fixture, the module is not built. If only creating the firm is fixture, that is expected. Do not start there.
 
 **Do not:** plant; start Automations at provision-as-action; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-17 00:20 UTC — After Audit: person or artifact. Not automatic. Not UI-first.
+
+**Why:** Founder: SA’s canvas is a bit too simple. Current UI does not support that granularity. Tag-after-audit is not the only use. After the audit action (or a condition after it), the next step should not assume per-contact. The audit artifact sits in Book readiness. If you wanted to do something to **those artifacts**, how do you tell that apart from doing something to the people? Is it a UI question? Founder’s answer: does the system need to see the UI to think about this? If we describe exactly what we’re saying, no.
+
+**What we wrote:** [`PRIMITIVES.md`](./PRIMITIVES.md). Audit leaves two things: the run (artifact) and a result on each person. The next step **says** which. Same idea as Global / Local. UI is how you pick. The pick is the product. The two results are the system.
+
+**Do not:** guess per-contact; plant a grain picker this stamp; overwrite 15:43.
 
 Flag 15:43 untouched.
 
