@@ -103,9 +103,30 @@ Example: Audit action.
 2. Audit runs. Book readiness gets the artifact. People get pass/fail.
 3. After the node, you can use **that** — the artifact, and each person’s result — because that is what Audit produced.
 
-Pipe vs “this then that” is not the religion. What the pipe is **for**: after this node, you have what that node’s module made. If the live walk cannot see that, the module does not work.
+### Two layers. That is the whole shape.
 
-**Right now we are not building it that way.** Live Automations does not hand you the module’s output when the node finishes. The editor preview is not the live path.
+| Layer | What it is |
+|-------|------------|
+| **The writes** | Live in the module. Audit owns the run and the per-person results. Same records you would open on that desk. Not a shadow copy Automations invented. |
+| **The handle** | After this node, the next step is pointing at **those** writes — the run this node just made — not “go find some audit.” Person vs artifact is picking **which part** of that handle. |
+
+A wire that looks like an n8n **pipe** is one way to see the handle. A then-this list where the next node reads **this node’s output id** is the same product. **Pipe vs this-then-that is not the question.** The question is: when the node completes, do we have the module’s output. If the next step has to guess (latest audit for this firm), it is not this node.
+
+“Everything it produces” means **what that run produced** — the artifact, each person’s result, the writes that exist because that completion happened. It does not mean the entire database. The If after Audit is calling from **that**.
+
+### Two doors. Do not collapse them.
+
+| Door | What it is |
+|------|------------|
+| **On this canvas** | Event → Audit action → If on that output → tag / agents. Needs the **handle**. |
+| **A different automation** | Hear **audit finished** as an event (Global / Local). That is a listen. It is not a substitute for the handle on this canvas. |
+
+### Right now we are not building it that way
+
+- **Live walk** (`workflowWalk`): Trigger → … → Action. Action is enroll / call_agent. It does not send work to Audit. It does not hand the next node Audit’s run. Context is trigger payload + contact ids — not “what this node’s module just wrote.”
+- **Hub editor** already passes `lastOutput` along the edge into `lastInput`. That is the **smell** of the handle. It is a preview. It does not call the Audit module. Do not treat it as the live path.
+
+If the live walk cannot see the module’s output after the node, Automations does not work.
 
 ---
 
@@ -133,6 +154,7 @@ That is Automations. That is why the module exists. If that path is hard, we did
 
 - If it is a **when** → it must be an event on the table, or schedule / manual / webhook.  
 - If it is a **do** → it must be Agents (assign / from template) or an in-app action on the table.  
+- If it is **after a node** → the next step must be able to use what that module produced (the handle). Pipe vs then-this is not a new primitive.  
 - If it is neither → the shape does not support it. Don’t “consider it” as a maybe. Say no, or name a new primitive on purpose.
 
 Face: [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Visual: A7 (two kinds of action) · A14 (assign / template) · A18 (Global / Local) · A12 (form) · A17 (firm provisioned as an **event**). Provision as an **action** is this stamp.

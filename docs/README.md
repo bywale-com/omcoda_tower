@@ -91,6 +91,7 @@ Walk in this order. Read the files. Quote tables from SQL, not from memory.
 | Goal / class-as-objective (founder expansion; not Story must until promoted) | `docs/register/SYSTEMS-GOAL.md` — excerpts + three class completions + escalation layers |
 | Agents UI ascribe (plates C1–C7 vs SQL / cascade / ports; grain lock sequence⊃campaigns; not a second flag) | `docs/register/SYSTEMS-AGENTS-ASCRIBE.md` |
 | Automations UI ascribe (plates A1–A13 vs workflowWalk / Hub rules; paper, not cemented) | `docs/register/SYSTEMS-AUTOMATIONS-ASCRIBE.md` — PR #85 package |
+| Automations: handle after the node (module output; do not circle pipe vs then-this) | `docs/register/SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md` |
 | Requirements doctrine | `docs/register/SYSTEMS-REQUIREMENTS.md` |
 | Filled spec | `docs/register/SYSTEMS-REQUIREMENTS-FILLED.md` |
 | Table-first law | `docs/register/system-map/BUILD-system-map-v2-table-inventory.md` |

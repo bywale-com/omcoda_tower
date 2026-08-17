@@ -3,7 +3,7 @@
 **Seat:** Product Manager.  
 **Why this file:** law and excerpts for Automations. Entered from the Agents outskirts — not a disconnected menu pick.  
 **Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub as **advanced plant for those modules** (not the app) **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC** · SA package **22:17 UTC** · loops **23:07** · global/local **23:16** · objectives are events; failure → tag **23:35** · list scored **23:38** · enroll + assign **00:02** (C8 · A14) · blank canvas / chain **01:17**.  
-**Status:** 23:07 list scored 23:38; **2** and **6** answered **00:02**. Automations is a **blank canvas** — you can chain (01:17). Left: send, book-in door, queryable lineage. Product face = CT Ant. Hub is not the app. Do not plant.
+**Status:** 23:07 list scored 23:38; **2** and **6** answered **00:02**. Automations is a **blank canvas** — you can chain (01:17). **Law 33 (00:40):** after a node you have a handle to what that module wrote. Live is not that yet. Left: send, book-in door, queryable lineage. Product face = CT Ant. Hub is not the app. Do not plant.
 
 ---
 
@@ -133,6 +133,7 @@
 30. **Campaign failure is an event.** Global and local apply (all campaign failures vs **this** campaign). Then an **in-app action**: create a record — even as simple as **ascribe a tag**. Named example: the subscription bell (subscribed / not) **is a tag** created in Automations. Opt-out / unsubscribe is also an event; it assigns that tag. Campaign fails → ascribes that tag. This is one of the first in-app actions named. Do not invent the rest of the action catalog.
 31. **Automations does not create agents.** Create the agent in **Agents**, then **assign**. On the Agents action there are two choices: **assign to an existing sequence**, or **create from a template**. No third choice: author a new agent here. Can evolve later — not now. Plate **A14**. A8 stays prior for select-agent = whole sequence. A12 stays the form. The sequence pick (Opt-in / Re-engagement / Reactivation) is a **radio**. There is **nothing further** — no chevron, no extra configuration. Add-contact scope is the same two as C8 (**Every firm** default, or **Select from**) and also lives on **events**. **A19** is Automations Contacts — same look. **Select from** opens the list (**C8b**). **A18** is Global vs Local on the **event**. Global/local of the event is also **dependent on which contacts are enrolled**. Automations still does **not** start a mission right now — that is Agents (C8).
 32. **Automations is a blank canvas, the same way an agent is.** Smallest workflow is still trigger · rule · action. The canvas can **chain**: event → action → condition on that output → another action. Teaching walk: **firm created / provisioned** → **audit the contacts** → **if X** (condition node, previous result) → **agents**. Provisioning a firm is not only creating the firm — things inside still have to happen; that is why this module exists. The If node already named (law 26) can read an **action’s** output, not only a rule’s. Completion of a step is also an event (law 28), so the same chain can be one canvas or two automations listening. Do not collapse those. Do not put this chain on the Agents canvas.
+33. **When a node finishes, you have what that module produced.** The action sends the work to the **real** module (Audit does Audit). The writes live there, as if you had run it on that desk. The next step has a **handle** to **those** writes — person or artifact, you pick — not a boolean “done,” not a guess at the latest run, not an automation-only copy. A pipe on the wire is one way to see the handle. Then-this that reads this node’s output is the same product. Pipe vs then-this is not the religion. Live walk is **not** this yet. Hub `lastOutput` → `lastInput` is the smell, not the live path. [`PRIMITIVES.md`](./PRIMITIVES.md).
 
 ---
 
@@ -190,6 +191,7 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 - Not treating Automations as a one-shot (trigger · rule · action only). That is the smallest. The canvas can chain (law 32).
 - Not inventing an Automations **Settings** modal. Global vs local is the divide (law 27). Not filling an event catalog.
 - Not **creating agents** inside Automations. Assign existing, or from a template (law 31 / A14).
+- Not circling **pipe vs this-then-that**. The product is the handle after the node (law 33). Live is not that yet. Do not treat Hub preview as the live path.
 
 ---
 
@@ -207,3 +209,4 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 11. **Ant plate of the If node** — **drawn 01:20:** A15 (chain) · A16 (open). Hub still has the plant. A13 is still not this screen.
 12. **Event catalog + global vs local** (law 27). **Drawn 18:53: A18.** **Shape list (22:43):** [`PRIMITIVES.md`](./PRIMITIVES.md). Form submitted (this form) · campaign failed · opt-out · firm created · audit finished · contact file imported · objective met. Not “any row changed.”
 13. **Queryable lineage** (law 29). Agent-created vs hand-created objective → path → completion → time. Minimum: queryable. Do not mint a table from this sentence.
+14. **Handle after the node** (law 33). Live walk does not hand the next node the module’s output. Do not treat editor preview as that. SA: do not circle pipe vs then-this — both are fine if the handle is real. Packet: [`SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md`](./SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md).

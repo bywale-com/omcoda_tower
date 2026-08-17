@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **00:25:** Automations works only if when a node finishes you have what that **module** produced. Live is not that yet. [`PRIMITIVES.md`](./PRIMITIVES.md). Still left: **3** send; lineage; book-in door. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **00:40:** Automations works only if when a node finishes you have a **handle** to what that **module** wrote. Pipe vs then-this is not the question. Live is not that yet. [`PRIMITIVES.md`](./PRIMITIVES.md) · SA: [`SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md`](./SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md). Still left: **3** send; lineage; book-in door. Do not plant.
 
 **How we maintain this log**
 
@@ -987,6 +987,39 @@ Flag 15:43 untouched.
 **What we wrote:** [`PRIMITIVES.md`](./PRIMITIVES.md). Audit leaves two things: the run (artifact) and a result on each person. The next step **says** which. Same idea as Global / Local. UI is how you pick. The pick is the product. The two results are the system.
 
 **Do not:** guess per-contact; plant a grain picker this stamp; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-17 00:25 UTC — When a node finishes, you have what the module produced
+
+**Why:** Founder: four hours on one simple question. SA chat deprecated. What shape does Automations need so it works? If wires are a pipe, after a node you have the data that module produced. Example: Audit action sends the people to the Audit module; Audit does its job; when it is done, every write / result from that completion is available after the node, naturally, **as if you had done it in the module.** Are we building that?
+
+**Answer:** That is the requirement. **We are not building it that way yet.** Live does not hand you the module’s output when the node finishes. Pipe vs this-then-that is not the religion. The pipe is **for** that access.
+
+**Do not:** plant; treat editor preview as the live path; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-17 00:40 UTC — Handle after the node. Writes in the module. Do not circle the pipe.
+
+**Why:** Same question, stated so the next SA cannot spend four hours on the metaphor. Founder: this is not their job to pick pipe vs step. They want access after the node as if it were done in the module.
+
+**Shape (two layers):**
+
+1. The **writes** live in the module (Audit owns the run and the people results). Same as the desk.
+2. The graph holds a **handle** to **that** run. Next step picks person or artifact. If the next step guesses “latest audit,” it is not this node.
+
+n8n-style pipe = one way to see the handle. Then-this that reads this node’s output id = the same product. Hub editor `lastOutput` → `lastInput` is the smell, not live. `workflowWalk` enrolls / call_agent only; it does not call Audit; it does not pass module output.
+
+**Two doors:** chain on this canvas needs the handle. Hearing “audit finished” is a different automation. Do not collapse them.
+
+**Wrote:** [`PRIMITIVES.md`](./PRIMITIVES.md) · Automations face **law 33** · SA packet [`SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md`](./SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md).
+
+**Do not:** plant; circle pipe vs then-this; treat preview as live; overwrite 15:43.
 
 Flag 15:43 untouched.
 
