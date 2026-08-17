@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-17 00:10 UTC — **Import → Audit module → if failed, tag on the contact. Then-this + writes. That is 014.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-17 00:15 UTC — **Generated import→audit→tag canvas. Glass must change: Contact import, Audit action, If on verdict, tag, delete node.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1231,3 +1231,27 @@ Not fake math. Not the live event either. Clicking Run on an **event** trigger d
 This is packet 014. Incomplete was the **connects** (import not offered, audit hardcoded on upload, tag not actually applied) — not a missing kind of wire.
 
 **Do not:** hardcode audit on upload; tag in a second place besides the contact. Flag **15:43**.
+
+---
+
+## 2026-08-17 00:15 UTC — Generated the import→audit→tag canvas. Walk the glass against it.
+
+**Why:** Founder copied the scenario + the then-this walk. Generate that UI. Walk whether the current Automations glass must change to match.
+
+**Picture:** trigger **Contact import** → action **Audit the contacts** (in the application) → **If this contact failed** → action **Add tag on the contact**. Else stop. Wires = then this.
+
+**Glass vs that picture (Ant Automations today):**
+
+| On the picture | On the glass now | Change? |
+|----------------|------------------|---------|
+| Trigger **Contact import** | Picker: Import created / Contact created / Eligibility / Audit completed… | **Yes.** Offer Contact import. Do not use Hub Import created as the name. |
+| Action **Audit the contacts** (in the application) | Actions: enroll sequence, lists, task, notify | **Yes.** In-app Audit action. Not enroll. |
+| If **this contact failed** | If exists; reads eligibility-ish, not this person’s audit result | **Yes.** If on the audit result for this person. |
+| Action **Add tag on the contact** | No tag action | **Yes.** Ascribe tag. |
+| Delete a node | No delete on Ant canvas | **Yes.** Chrome. |
+| Tag visible in Contacts | Contacts has no tag from this walk | **Yes.** Face on the contact. |
+| Audit appears in Book readiness | Start Audit is its own door; upload still glues audit | **Yes.** Any audit run shows there. Do not auto-audit on upload. |
+
+No new node kind. No packet-on-the-wire chrome required for this walk.
+
+**Do not:** freeze A15’s firm-provisioned chain as this picture; Hub Import created. Flag **15:43**.
