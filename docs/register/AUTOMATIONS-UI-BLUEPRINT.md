@@ -371,7 +371,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 - Then → Assign agent. Else → stop.
 - Caption: “This is not a rule. The rule is a different node.”
 
-**Not this plate:** Rule GUI (A2). Lattice (A13). Inventing the condition catalog.
+**Not this plate:** Rule GUI (A2). Lattice (A13). Inventing the condition catalog. **12:31:** A16 already locks the mechanism. It does **not** lock person-grain — the example row is `status = passed` (the run). A new image is only justified if we put the previous-result **fields grouped** (this run / each person) on the glass. Do not draw a pipe. Do not generate until asked.
 
 ---
 
