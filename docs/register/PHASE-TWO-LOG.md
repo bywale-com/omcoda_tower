@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Get** pocket locked (**A22** · **A23**). Packet [`GET-PACKET.md`](./GET-PACKET.md). Select firm → all contacts selected; deselect all to pick. Plate-read [`PLATE-READ.md`](./PLATE-READ.md). Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Three pockets this chat: **A20** [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md) · **A21** [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md) · **Get** [`GET-PACKET.md`](./GET-PACKET.md). Plate-read [`PLATE-READ.md`](./PLATE-READ.md). Do not plant.
 
 **How we maintain this log**
 

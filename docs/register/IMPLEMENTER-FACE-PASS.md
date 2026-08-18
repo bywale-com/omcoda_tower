@@ -177,8 +177,8 @@ These were asked. They are not “copy from C9/C11.”
 | **Scroll — canvas and modals** | Not only modals. **Agents canvas must scroll.** Override-this, added channels, Call, channel-rules hang below the fold — you have to reach them. Automations canvas is already fine. Sequence Settings body scrolls (C14). Select from list scrolls (C8b). Every panel that has content underneath the fold scrolls. Live Settings already cuts off channel ownership. Fix it. |
 | **Action · Agents** | Match [`A12`](./automations-blueprint/A12-form-from-required-data.png) — an actual form from the listing. Assign path [`A14`](./automations-blueprint/A14-action-assign-or-template.png). |
 | **Rename nodes** | Click the title, edit in place, same as renaming a campaign in Agents. Including the If / condition node. Same pattern everywhere a name is changed. |
-| **Rule Output** | Match [`A20`](./automations-blueprint/A20-rule-output-select-preview.png). A11 is prior. |
-| **Rule Outcomes** | Match [`A21`](./automations-blueprint/A21-rule-outcomes-pane.png). A2 / A3 / A4 are prior. Do not build giant GUI/Custom. Do not build teaching captions. |
+| **Rule Output** | Packet [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md). Match [`A20`](./automations-blueprint/A20-rule-output-select-preview.png). A11 is prior. |
+| **Rule Outcomes** | Packet [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md). Match [`A21`](./automations-blueprint/A21-rule-outcomes-pane.png). A2 / A3 / A4 are prior. Do not build giant GUI/Custom. Do not build teaching captions. |
 | **Get** | Packet [`GET-PACKET.md`](./GET-PACKET.md). Canvas [`A22`](./automations-blueprint/A22-get-canvas.png). Interior [`A23`](./automations-blueprint/A23-get-input-parameters.png). Kind, not Action, not Audit. |
 
 ---

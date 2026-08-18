@@ -201,6 +201,8 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Not this plate:** Input tab. Output tab (A20). Planting.
 
+**Packet:** [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md).
+
 ---
 
 ### A5 — Inside trigger
@@ -384,6 +386,8 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 **Why this does what we wanted:** Output is the writes. The top is the classes. The bottom is the selected write. Same pane shape for other node kinds later.
 
 **Not this plate:** Input or Outcomes (still not drawn). Inventing extra classes. Planting the editor.
+
+**Packet:** [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md).
 
 ---
 
