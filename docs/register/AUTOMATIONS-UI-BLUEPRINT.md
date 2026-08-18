@@ -97,6 +97,7 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | Operator → Configuration libraries → Automations | Workflow list. Open **New firm → opt-in launch** (or equivalent). |
 | Open the workflow | Canvas: **trigger · rule · action** (A1). Smallest. |
 | Same desk, teaching walk | Canvas: provisioned → audit → if X → agents (**A15**). Blank canvas; you can chain. |
+| Open the **Trigger** node | Event or schedule (A5). Firm created / provisioned (**A17**). |
 | Open the **Trigger** after **contact import** | **Output** tab. **A24.** Writes: import_batch · contact_records. |
 | Open the **Trigger** after **new contact** | **Output** tab. **A25.** Write: contact_records (that person). |
 | Open the **If / Condition** node | Calls from previous result (**A16**). Not a rule. |
