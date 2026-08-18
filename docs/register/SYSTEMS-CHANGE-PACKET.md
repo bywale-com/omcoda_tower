@@ -468,4 +468,10 @@ Grain: Global = unspecified full shape. Local = nested existing axes (not A18’
 
 ## 2026-08-18 23:10 — Test fill (A30 buttons) + Input look (A29)
 
-Source values on **Trigger Output** only, from the event’s **connected write-set**. Same DAG as Launch. Get is a node, not a fallback. [`SYSTEMS-TEST-ASCRIBE.md`](./SYSTEMS-TEST-ASCRIBE.md). 23:12 retracted the “Get is the seed” line. 23:18: Test shape = handler writes, named at connect. Does not recut 015.
+Source values on **Trigger Output** only, from the event’s **connected write-set**. Same DAG as Launch. Get is a node, not a fallback. [`SYSTEMS-TEST-ASCRIBE.md`](./SYSTEMS-TEST-ASCRIBE.md). 23:12 retracted the “Get is the seed” line. 23:18: Test shape = handler writes, named at connect. **016** — two versioned tables (`event_write_set` · `event_test_data`). Does not recut 015.
+
+---
+
+## 016 — 2026-08-18 23:22 — event contract (write-set + test data)
+
+Cut [`SYSTEMS-CHANGE-PACKET-016.md`](./SYSTEMS-CHANGE-PACKET-016.md). Two tables, versioned. Protocol: bump both, never UPDATE shipping, never log live fires. Seed v1 for events that already dispatch. Pack-update / `contact.created` have no v1.

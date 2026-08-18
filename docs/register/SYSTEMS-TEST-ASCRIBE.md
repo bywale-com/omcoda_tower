@@ -2,7 +2,7 @@
 
 **Seat:** Systems Analyst.  
 **When:** 2026-08-18 23:10 UTC.  
-**What this is:** plays for [`TEST-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/TEST-PACKET.md) and [`INPUT-LOOK-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/INPUT-LOOK-PACKET.md). How values get into Input/Output. **No new tables. Do not recut 015.** Flag **15:43**.  
+**What this is:** plays for [`TEST-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/TEST-PACKET.md) and [`INPUT-LOOK-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/INPUT-LOOK-PACKET.md). How values get into Input/Output. Cut: [`SYSTEMS-CHANGE-PACKET-016.md`](./SYSTEMS-CHANGE-PACKET-016.md) (**two tables**). **Do not recut 015.** Flag **15:43**.  
 **Look:** A29 supersedes A23 left. **A30 is only Save · Test · Launch.** Filling is this file, not another PNG.
 
 AI does **not** generate values.
@@ -29,20 +29,18 @@ Downstream Output (Audit / Rule / Tag / If / Get) is **from that Input**, uncomm
 
 Most Automations work from here is **a new event as a trigger**, not a new node kind. An event **is** the writes. If we connected it, we already know those tables. Therefore we already know what Test data **is**. We never add a trigger without that. We never paint fields in Ant.
 
-**Viable.** Not a second primitive. Not an `events` table. Not AI.
+**Viable.** Not an events log. Not AI. **Two tables** (016): which tables this event writes, and the specimen **values** under those classes. Both versioned. Handler still produces live `writes[]`. The tables are the **upkeep contract** so Test and A26 cannot drift.
 
 | Law | What |
 |-----|------|
-| **Connect-time** | When SA names an `event_name`, the packet **names the write-set** (which tables that fire INSERTs/UPDATEs). That list **is** the Test shape. If we cannot name it, the event is **silent** — it does not go on A26. Pack-update today: silent. |
-| **Source of truth** | The **handler** that already dispatches (`handleContactImport` → `writes`, `executeAuditRun` → `writes`). Test calls that path with **`commit: false`**, or loads rows those pointers name. When the module grows a write, Test grows. The client does **not** keep a field list. |
-| **Fields** | Columns of those tables (Postgres already has them). Not `COLLECTIBLE_FIELDS`. Not A24 copied into React. |
-| **Values, door 1** | An instance of that event already exists → load those rows (`import_batch` id + its `contact_records`). Pick which if many (Local cousin). |
-| **Values, door 2** | No instance yet → same **fields**, specimen/empty values of those columns. Still that write-set. Last similar event, if it exists, is door 1 — you left door 2. |
-| **Then-this** | Only Trigger Output is sourced this way. Every later node: Input = that handle; Output = **that** module on it, uncommitted. Get included. |
+| **Connect-time** | v1 of **both** tables or the event stays silent (pack-update). |
+| **Live run** | Handler `writes[]` (015). If live writes a table missing from the active contract → bump version. Do not freeze 015 to the list. |
+| **Test** | Door 1 = live instance. Door 2 = `event_test_data` at `max(version)`. Tree tables from `event_write_set`. Client has **no** field list. |
+| **Then-this** | Only Trigger Output is sourced. Every later node uses that handle. Get is a DAG node. |
 
-Do **not** mint `event_write_set` / a test-rows table. That would copy the handler and drift. The systems job when a new event lands: dispatch + `writes[]` + this named set in the packet. Test has nothing else to invent.
+Cut: [`SYSTEMS-CHANGE-PACKET-016.md`](./SYSTEMS-CHANGE-PACKET-016.md). 23:18 “don’t mint” is **superseded** — that was “don’t copy live fires.” The contract is a different fact.
 
-**Incomplete today:** `contact.created` is on the picker and does not dispatch. Pack-update is on the picker with no write-set. Those are **not** Test-ready. Do not stub them in the client.
+**Incomplete today:** `contact.created` / pack-update have no v1. Not Test-ready. Do not stub them in the client.
 
 ---
 
@@ -130,12 +128,12 @@ Do not invent a mapping table. Do not freeze extra import fields. Write-set = wh
 
 ## Engineer pickup
 
-1. A29 look on **every** Input. Get Parameters stay Get-only.
-2. Test button: Save · Test · Launch. No Test tab. No commit.
-3. Source values **once**, on **Trigger Output**, from that event’s **connected write-set** (handler `writes`, table columns). No trigger ships without that. Test walks the **same DAG** as Launch. Get is a node on that DAG, not a fallback.
-4. Door 1 = pick an existing instance of **that event**. Door 2 = specimen of those same columns if none has fired. Not AI. Not a field list in Ant.
-5. Every later node (including Get): Input = previous Output. Output = what **that** node does with it, uncommitted.
+1. Cut [`SYSTEMS-CHANGE-PACKET-016.md`](./SYSTEMS-CHANGE-PACKET-016.md): `event_write_set` + `event_test_data`, v1 seed, Test loads `max(version)`.
+2. A29 look on **every** Input. Get Parameters stay Get-only.
+3. Test button: Save · Test · Launch. No Test tab. No commit.
+4. Source values **once**, on **Trigger Output**. Door 1 = live instance. Door 2 = `event_test_data`. Tables in the tree from `event_write_set`. Same DAG as Launch. Get is a node, not a fallback.
+5. Every later node: Input = previous Output. Output = what **that** node does, uncommitted.
 6. Audit Test = `executeAuditRun` without persist. Rule Test does not fake an evaluation we cannot run.
-7. Chips = pointers into the handle. Graph `data`, not a table.
+7. Chips = pointers into the handle. Graph `data`, not a mapping table.
 
-**Do not:** recut 015; mint a test/results/mapping table; collapse door 1 and 2; generate values with a model; treat Get as the trigger’s substitute; overwrite 15:43.
+**Do not:** recut 015; mint an **events log**; UPDATE a shipping contract version; generate values with a model; treat Get as the trigger’s substitute; overwrite 15:43.

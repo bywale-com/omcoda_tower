@@ -350,3 +350,11 @@ Connecting a trigger **is** knowing the writes. Test fills from that — handler
 
 [`SYSTEMS-TEST-ASCRIBE.md`](./SYSTEMS-TEST-ASCRIBE.md). **Do not:** recut 015; overwrite 15:43.
 
+---
+
+## 2026-08-18 23:22 — Contract is two versioned tables, not “handler only”
+
+`event_write_set` + `event_test_data`. Not an events log. 016. Live handle still 015.
+
+**Do not:** recut 015; copy live fires into the contract; overwrite 15:43.
+

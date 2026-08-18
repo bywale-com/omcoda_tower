@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-18 23:18 UTC — **Test shape = the event’s writes, named at connect. Handler is truth. No hardcoded fields.** Do not recut 015. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-18 23:22 UTC — **016: two tables — `event_write_set` + `event_test_data`, versioned.** Not an events log. Do not recut 015. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1351,6 +1351,34 @@ Park: [`SYSTEMS-TEST-ASCRIBE.md`](./SYSTEMS-TEST-ASCRIBE.md).
 Park: [`SYSTEMS-TEST-ASCRIBE.md`](./SYSTEMS-TEST-ASCRIBE.md) (thesis line corrected).
 
 **Do not:** recut 015; treat Get as trigger-substitute; overwrite 15:43.
+
+---
+
+## 2026-08-18 23:18 UTC — Test values = the writes we named when we connected the event.
+
+**Why:** Founder (logic): we mostly add new **events as triggers**. We already know the writes that fire creates. So we always know what Test data looks like. Specify it. Never hardcode in the app. Never ship a trigger without that. If viable, make it the requirement.
+
+**Hard:** **Viable.** Not a new table. The connect packet names the write-set (tables). The **handler** that dispatches already returns `writes[]` (015). Test uses that path, `commit: false`, and the **columns of those tables**. Door 1 = existing rows. Door 2 = same fields, no instance yet. Client has **no** field list. New event without a named write-set stays **off** A26 (pack-update). `contact.created` on the picker without dispatch is incomplete.
+
+Do not mint `event_write_set`. That copies the handler.
+
+Park: [`SYSTEMS-TEST-ASCRIBE.md`](./SYSTEMS-TEST-ASCRIBE.md) “How Test gets the values.”
+
+**Do not:** recut 015; hardcode fields in Ant; overwrite 15:43.
+
+---
+
+## 2026-08-18 23:22 UTC — Two tables. Versioned contract. 23:18 “don’t mint” was incomplete.
+
+**Why:** Founder: not only which tables the trigger writes — the **data under those classes** too. Both need versioning and a protocol to update. At least two tables. SA has the final count.
+
+**Hard:** **Two tables.** `event_write_set` (impact: which tables, this version) · `event_test_data` (specimen `body` jsonb per class, same version). Active = `max(version)`. Never UPDATE a shipping version; bump both. Never copy a live fire into them (that would be an events log). Live 015 handle stays actual writes. Test door 2 reads the contract. No third header. jsonb on test data because classes don’t share columns.
+
+23:18 refused a shadow catalog. This is **upkeep**, not a copy of every INSERT. Packet [`SYSTEMS-CHANGE-PACKET-016.md`](./SYSTEMS-CHANGE-PACKET-016.md).
+
+**Do not:** recut 015; mint an events log; AI; hardcode Ant; overwrite 15:43.
+
+
 
 
 
