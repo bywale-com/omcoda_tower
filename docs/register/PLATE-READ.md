@@ -63,3 +63,5 @@ A22’s pocket is the canvas (palette + chain). A23’s pocket is the modal. Do 
 ## Packet rule
 
 When we lock a pocket, the packet fills buckets 1–5 **in that order**. Founder comments stay in the packet. Do not wait for a second chat to notice Search, Table, JSON, or the other value of a dropdown.
+
+**Shared vs kind:** [`NODE-INTERIOR.md`](./NODE-INTERIOR.md). A control drawn on Get’s left is still Input on Rule. A control drawn on Get’s right is Get Parameters.

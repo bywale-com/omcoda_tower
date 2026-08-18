@@ -65,7 +65,7 @@ Not on the list: “write whatever into whatever table.” Not on the list: webh
 
 If / condition is not an action. It is a fork after a result.
 
-**Get** is not an action. It is a **node kind**. It **reads** records that already exist in a module. The writes it produces are those records. Same handle: every write that run made. Not Audit. Input is n8n: prior nodes in canvas order, that node’s outputs underneath. Parameters: Every firm is still a choice (dropdown). Select opens the next dropdowns, which are also input boxes — that is where left-side writes apply.
+**Get** is not an action. It is a **node kind**. It **reads** records that already exist in a module. The writes it produces are those records. Same handle: every write that run made. Not Audit. **Input** (the left tree) is not Get-only — [`NODE-INTERIOR.md`](./NODE-INTERIOR.md). Get **Parameters**: Every firm is still a choice (dropdown). Select opens the next dropdowns, which are also input boxes — that is where left-side writes apply.
 
 ---
 

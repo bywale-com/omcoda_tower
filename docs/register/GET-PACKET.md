@@ -1,7 +1,7 @@
 # Get packet — A22 canvas · A23 interior
 
 **Seat:** Product Manager. For the **engineer** and the **Systems Analyst**. One pocket. Do not lose this in transition.  
-**When:** 2026-08-18 17:50 UTC; completed 17:56. Founder: A23 is good; we move forward; no new image. Select firm → all contacts selected; deselect all to pick. Plate-read: [`PLATE-READ.md`](./PLATE-READ.md).  
+**When:** 2026-08-18 17:50 UTC; completed 17:56. Input left on this plate is **every node’s Input** — [`NODE-INTERIOR.md`](./NODE-INTERIOR.md). Right column is Get Parameters only.  
 **Plates:** [`A22-get-canvas.png`](./automations-blueprint/A22-get-canvas.png) · [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png).  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite. Face **law 36**. [`PRIMITIVES.md`](./PRIMITIVES.md). Chrome: [`PLATE-CHROME-RULE.md`](./PLATE-CHROME-RULE.md).  
 **Does not:** plant the workbench; recut SA **015** / PR #86; mint tables from the picture; treat Hub as the app.
@@ -11,6 +11,8 @@
 ## Paste — engineer
 
 ```text
+Read docs/register/NODE-INTERIOR.md first. Input left on A23 is every node’s Input, not Get-only. The right column (Module / Every firm / Select firm / Firm / Contact) is Get Parameters only.
+
 You are building Get on CT Ant Automations. Product face = /prototype-ant. Hub is not the app.
 
 Read docs/register/GET-PACKET.md all the way through. Plates: docs/register/automations-blueprint/A22-get-canvas.png and A23-get-input-parameters.png.

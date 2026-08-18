@@ -11,6 +11,8 @@
 ## Paste — engineer
 
 ```text
+Read docs/register/NODE-INTERIOR.md first. Output on A20 is every node’s Output, not Rule-only. Get’s Output tab is this shape.
+
 You are building Rule Output on CT Ant Automations. Product face = /prototype-ant. Hub is not the app.
 
 Read docs/register/RULE-OUTPUT-PACKET.md. Plate: docs/register/automations-blueprint/A20-rule-output-select-preview.png. A11 is prior — do not build A11’s always-on listing as canon.

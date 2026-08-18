@@ -179,6 +179,7 @@ These were asked. They are not “copy from C9/C11.”
 | **Rename nodes** | Click the title, edit in place, same as renaming a campaign in Agents. Including the If / condition node. Same pattern everywhere a name is changed. |
 | **Rule Output** | Packet [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md). Match [`A20`](./automations-blueprint/A20-rule-output-select-preview.png). A11 is prior. |
 | **Rule Outcomes** | Packet [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md). Match [`A21`](./automations-blueprint/A21-rule-outcomes-pane.png). A2 / A3 / A4 are prior. Do not build giant GUI/Custom. Do not build teaching captions. |
+| **Node interior** | Shared vs kind: [`NODE-INTERIOR.md`](./NODE-INTERIOR.md). **Input** (A23 left) and **Output** (A20) on every node that has those panes. Get **Parameters** (A23 right) only on Get. Rule **Outcomes** (A21) only on Rule. |
 | **Get** | Packet [`GET-PACKET.md`](./GET-PACKET.md). Canvas [`A22`](./automations-blueprint/A22-get-canvas.png). Interior [`A23`](./automations-blueprint/A23-get-input-parameters.png). Kind, not Action, not Audit. |
 
 ---

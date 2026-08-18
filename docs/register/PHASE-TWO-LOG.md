@@ -1334,3 +1334,15 @@ Flag 15:43 untouched.
 
 Flag 15:43 untouched.
 
+---
+
+## 2026-08-18 18:17 UTC — A20 and A21 packets. Three pockets.
+
+**Why:** Founder: before moving on — did the three sections in this chat all have packets? Only Get did. Output and Outcomes had plates and law. Cut the packets now.
+
+**Packets:** [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md) · [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md) · [`GET-PACKET.md`](./GET-PACKET.md).
+
+**Do not:** plant; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+

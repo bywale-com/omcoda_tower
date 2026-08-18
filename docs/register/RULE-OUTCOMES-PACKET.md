@@ -11,6 +11,8 @@
 ## Paste — engineer
 
 ```text
+Read docs/register/NODE-INTERIOR.md first. Rule Input is the same left tree as A23, not a different Input. Do not put Get’s Firm/Contact cascade on the Rule. Outcomes are this packet. Output is A20.
+
 You are building Rule Outcomes on CT Ant Automations. Product face = /prototype-ant. Hub is not the app.
 
 Read docs/register/RULE-OUTCOMES-PACKET.md. Plate: docs/register/automations-blueprint/A21-rule-outcomes-pane.png. A2 / A3 / A4 are prior.
