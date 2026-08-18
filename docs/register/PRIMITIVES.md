@@ -98,13 +98,18 @@ Hub `lastOutput` → `lastInput` is the smell, not the live path. Live is SA **0
 
 The machine will run. Testing is not to prove that.
 
-You test so **Input and Output show the parameters** — every write that node would produce — so you can map those into boxes in the next nodes. It is less about the values than about the **shape**.
+You test so **Input and Output show the writes** — **fields and values** — so you can map them into boxes. Values are as important as the shape. You also need to know **where those values came from**.
 
-Test does **not** touch live data. It **simulates** that event/node’s writes **completely**, from what the module actually writes (the handle above), not a hardcoded list. A trigger that writes a lot (contact import: `import_batch` + `contact_records`) must show **all** of that. No gap. When the module grows a write, Test shows it.
+**Two doors. Do not collapse them.**
 
-A **variable** is not a string you type. It is its own **colored chip**, placed from the left into any open box.
+| Door | Values come from |
+|------|------------------|
+| **Already exists** | Records already in the app (book, past batch, past run). **Get** is a read. Honest empty if nothing is there. No write. |
+| **Does not exist yet** | The module’s **real write-set** (every write that run would make). Specimen of those fields. No INSERT. No hardcoded toy list. |
 
-Face **law 39 · 40**. Plates **A30** · **A29**. Do not bolt a Test module.
+Canvas: **Save · Test · Launch**. Launch is live. Packet: [`TEST-PACKET.md`](./TEST-PACKET.md).
+
+A **variable** is not a string you type. It is a **colored chip**. Look: [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · **A29**.
 
 ---
 

@@ -11,7 +11,7 @@
 ## Paste — engineer
 
 ```text
-Read docs/register/NODE-INTERIOR.md first. Input left on A23 is every node’s Input, not Get-only. The right column (Module / Every firm / Select firm / Firm / Contact) is Get Parameters only.
+Read docs/register/NODE-INTERIOR.md first. Input look is A29 (every node), not Get-only. The right column (Module / Every firm / Select firm / Firm / Contact) is Get Parameters only.
 
 You are building Get on CT Ant Automations. Product face = /prototype-ant. Hub is not the app.
 
@@ -19,7 +19,7 @@ Read docs/register/GET-PACKET.md all the way through. Plates: docs/register/auto
 
 Get is a node kind. Not Action. Not Audit. Not a Contacts-only node.
 
-Copy the interior of A23 and the canvas of A22. Read docs/register/PLATE-READ.md. Fill all five buckets in this file. Literal reading of the PNG will miss the product.
+Copy the interior of A23 **right** (Get Parameters) and A22 canvas. **Input look is A29** — docs/register/INPUT-LOOK-PACKET.md. A23 left is prior for stacking only.
 
 Do not freeze the left-side reference_versions tree as the schema of “reference pack updated.” That example is not a validated write-set. The preserved thing is the stacking shape. Fit write-sets we already know into that tree.
 
@@ -131,7 +131,7 @@ Operator → Configuration libraries → Automations → open **Reference pack u
 - Immigration eligibility fields on Get (hours, CLB, …). Those belong on the **rule**.
 - Audit inside Get. Get is not a people-pump.
 - A third Get-per-module kind.
-- Lightning bolt as a required icon system. The product is: the box holds a left-side write. A23 bolt is **prior**. Mapping look → **A29** chip (awaiting lock).
+- Lightning bolt as a required icon system. The product is: the box holds a left-side write. A23 bolt is **prior**. Mapping look → **A29** chip.
 - Green mapped pip as a required color. Same: shows which left field is in use.
 - Fake localhost URL chrome if a generator drew a browser frame.
 - Rule background title drift (“Eligibility change” vs Immigration · Service eligibility). Trust the chain on **A22**.

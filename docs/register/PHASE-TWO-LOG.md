@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Test simulates writes (not “does it work”). Variable = chip. Plates **A29** · **A30** awaiting lock. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. A29 Input look locked. Test = two doors (exists / not yet). Packets input-look + test. Do not plant.
 
 **How we maintain this log**
 
@@ -1455,6 +1455,20 @@ Flag 15:43 untouched.
 **Law 39 · 40.**
 
 **Do not:** plant; recut 015; overwrite 15:43; invent a Test tab; invent extra import fields.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 22:56 UTC — A29 locked. Test has two doors
+
+**Why:** Founder: A29 is the Input look on **every** node — icons, type control in front of the name, drag including top-level into any box as its own element. A30: only lock **where Test sits**. Filling is the question. Values are **as important** as parameters. How does it source them? Data that already exists vs data that **doesn’t exist yet**.
+
+**Two doors:** (1) already exists — use those records; Get is a read; no write. (2) not yet — project the module’s real write-set; specimen values; no INSERT; no hardcoded list.
+
+**Packets:** [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md).
+
+**Do not:** plant; recut 015; overwrite 15:43; collapse the two doors; treat the rest of A30 as canon.
 
 Flag 15:43 untouched.
 

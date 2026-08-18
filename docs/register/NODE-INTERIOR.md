@@ -3,7 +3,7 @@
 **Seat:** Product Manager. For the **engineer** and the **Systems Analyst**.  
 **Why:** Founder 2026-08-18 18:58. We drew Input on **Get**. It is not a Get-only pane. If the build only puts that tree on Get, the other nodes are unfinished.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
-**Read:** [`PLATE-READ.md`](./PLATE-READ.md). Packets: [`GET-PACKET.md`](./GET-PACKET.md) · [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md) · [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md) · [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) · [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md).
+**Read:** [`PLATE-READ.md`](./PLATE-READ.md). Packets: [`GET-PACKET.md`](./GET-PACKET.md) · [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md) · [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md) · [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) · [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md).
 
 ---
 
@@ -12,7 +12,7 @@
 ```text
 Read docs/register/NODE-INTERIOR.md before any Automations node interior.
 
-Input (left tree: prior nodes in canvas order, outputs nested, Schema / Table / JSON, Search) is every node that has Input. Specimen is A23 left. Do not build that tree only on Get.
+Input (left tree: prior nodes in canvas order, outputs nested, Schema / Table / JSON, Search) is every node that has Input. **Look is A29.** Stacking law from A23 left (prior). Do not build that tree only on Get.
 
 Output (top = this run’s writes, click, preview below) is every node that has Output. Specimen is A20. Get’s Output tab is this.
 
@@ -29,7 +29,7 @@ Kind-specific middle is that kind’s packet. Shared panes are this file. Do not
 
 | Pane | Whose | Specimen | What it is |
 |------|--------|----------|------------|
-| **Input** | **Every** node that has Input | A23 **left** | Prior nodes in **this** chain, canvas order, that node’s outputs nested. Schema / Table / JSON. Search. Fit known write-sets. Do not freeze the pack-update example tree. |
+| **Input** | **Every** node that has Input | **A29** (A23 left **prior**) | Prior nodes in **this** chain, canvas order, outputs nested. Type control in front of the name. Drag any row including top-level into a box as a **chip**. Schema / Table / JSON. Search. |
 | **Output** | **Every** node that has Output | **A20** | Top = every write **this run** made. Click one. Bottom = that write. |
 | **Parameters** | **That kind** | A23 **right** is **Get** | Get: Module + every/select + class cascade (Firm → Contact on Contacts). Action: A7 / A14. Trigger select: **A26** (grain + Local cascade). If: A16. |
 | **Outcomes** | **Rule** | **A21** | Stacked. Per-outcome GUI \| JS. On / off. Not a node-wide GUI/Custom tab. |
@@ -44,7 +44,7 @@ Do not copy Get’s three-level selector onto Rule. Do not copy Rule Outcomes on
 
 A23 is a Get plate. GET-PACKET says “you are building Get.” Literal: Input tree only on Get. Wrong.
 
-The Input shape was named as **how inputs appear inside nodes** — as they chain, they stack. We used Get as the example because that is the plate we locked. Rule Input, Action Input, If Input are the **same left**. No extra PNG.
+The Input shape was named as **how inputs appear inside nodes** — as they chain, they stack. We used Get as the example because that is the plate we locked. **A29 is the look** on every node. Rule Input, Action Input, If Input are the **same left**. No extra PNG.
 
 Trigger is the start of a chain: it may have **no** prior node. Empty Input is valid. Do not invent a fake ancestor. Do not put Firm / Contact dropdowns on the trigger.
 
@@ -52,7 +52,7 @@ Action / If interiors we already drew (A7, A14, A16) are **Parameters** (the mid
 
 **Click the node = configure.** Do not send click to Switch. Switch is **⋯** (A27). First pick / Switch opens the event picker (A26). Wire **+** is A28.
 
-**Test** fills these panes with a simulated write-set (law 39). A mapped write is a **chip** in the box (law 40 · A29).
+**Test** fills these panes without committing ([`TEST-PACKET.md`](./TEST-PACKET.md)). Two doors: already exists vs not yet. A mapped write is a **chip** ([`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md)).
 
 ---
 

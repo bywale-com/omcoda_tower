@@ -180,9 +180,9 @@ These were asked. They are not “copy from C9/C11.”
 | **Rule Output** | Packet [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md). Match [`A20`](./automations-blueprint/A20-rule-output-select-preview.png). A11 is prior. |
 | **Rule Outcomes** | Packet [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md). Match [`A21`](./automations-blueprint/A21-rule-outcomes-pane.png). A2 / A3 / A4 are prior. Do not build giant GUI/Custom. Do not build teaching captions. |
 | **Node interior** | Shared vs kind: [`NODE-INTERIOR.md`](./NODE-INTERIOR.md). **Input** (A23 left) and **Output** (A20) on every node that has those panes. Get **Parameters** (A23 right) only on Get. Rule **Outcomes** (A21) only on Rule. |
-| **Get** | Packet [`GET-PACKET.md`](./GET-PACKET.md). Canvas [`A22`](./automations-blueprint/A22-get-canvas.png). Interior [`A23`](./automations-blueprint/A23-get-input-parameters.png). Mapping look → **A29** (awaiting lock). Kind, not Action, not Audit. |
+| **Get** | Packet [`GET-PACKET.md`](./GET-PACKET.md). Canvas [`A22`](./automations-blueprint/A22-get-canvas.png). Parameters [`A23`](./automations-blueprint/A23-get-input-parameters.png) right. Input look [`A29`](./automations-blueprint/A29-variable-chip.png) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md). Kind, not Action, not Audit. |
 | **Click vs Switch** | Law 38. Click = configure. Packets [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) · [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md). **A26** · **A27** · **A28**. |
-| **Test / variables** | Law 39 · 40. [`A30-test-on-canvas.png`](./automations-blueprint/A30-test-on-canvas.png) · [`A29-variable-chip.png`](./automations-blueprint/A29-variable-chip.png). Packet after lock. |
+| **Test / variables** | Law 39 · 40. [`TEST-PACKET.md`](./TEST-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md). **A29** look. **A30** buttons only. |
 
 ---
 
