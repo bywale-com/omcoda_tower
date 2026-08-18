@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   BankOutlined,
   CheckCircleOutlined,
@@ -16,6 +16,7 @@ import {
   type TriggerSelectId,
 } from "../../../../data/automationTriggerSelect";
 import type { WorkflowNodeData } from "../../../../data/automationWorkflows";
+import { loadPickerDirectory } from "./pickerDirectory";
 
 type BookRow = {
   id: string;
@@ -42,6 +43,7 @@ export function TriggerSelectModal({
   open,
   data,
   book,
+  firms: firmOptions,
   instanceOptions,
   onClose,
   onPatch,
@@ -49,31 +51,50 @@ export function TriggerSelectModal({
   open: boolean;
   data: WorkflowNodeData;
   book: BookRow[];
+  firms?: Option[];
   instanceOptions: Option[];
   onClose: () => void;
   onPatch: (patch: Partial<WorkflowNodeData>) => void;
 }) {
   const [tab, setTab] = useState<"event" | "schedule">(data.triggerKind === "schedule" ? "schedule" : "event");
   const [query, setQuery] = useState("");
+  const [loadedFirms, setLoadedFirms] = useState<Option[]>([]);
+  const [loadedBook, setLoadedBook] = useState<BookRow[]>([]);
   const spec = triggerSelectEvent(undefined, data.triggerEvent);
   const selected = spec.id;
   const grain = data.grain === "local" ? "local" : "global";
   const firmLayer = data.localFirmSelect === "select" ? "select" : "every";
   const instanceLayer = data.localInstanceSelect === "select" ? "select" : "every";
 
+  useEffect(() => {
+    if (!open) return;
+    void loadPickerDirectory()
+      .then(({ contacts, firms: next }) => {
+        setLoadedFirms(next);
+        setLoadedBook(contacts);
+      })
+      .catch(() => undefined);
+  }, [open]);
+
   const firms = useMemo<Option[]>(() => {
     const map = new Map<string, string>();
-    for (const row of book) {
+    for (const row of [...(firmOptions ?? []), ...loadedFirms]) {
+      map.set(row.value, row.label);
+    }
+    for (const row of [...book, ...loadedBook]) {
       const id = row.firmId?.trim();
       if (!id) continue;
-      map.set(id, row.firmName?.trim() || id);
+      if (!map.has(id)) map.set(id, row.firmName?.trim() || id);
     }
     return [...map.entries()].map(([value, label]) => ({ value, label }));
-  }, [book]);
+  }, [firmOptions, loadedFirms, book, loadedBook]);
 
   const contacts = useMemo(
-    () => book.filter((row) => (data.localFirmId ? row.firmId === data.localFirmId : true)),
-    [book, data.localFirmId],
+    () =>
+      [...book, ...loadedBook].filter((row) =>
+        data.localFirmId ? row.firmId === data.localFirmId : true,
+      ),
+    [book, loadedBook, data.localFirmId],
   );
 
   const hay = query.trim().toLowerCase();

@@ -4,6 +4,7 @@ import { GET_MODULES, getModuleSpec } from "../../../../data/automationGet";
 import type { WorkflowNodeData } from "../../../../data/automationWorkflows";
 import { wirePorts } from "../../../../wire/registry";
 import { MODAL_SCROLL } from "../modalScroll";
+import { loadPickerDirectory } from "./pickerDirectory";
 
 type BookRow = {
   id: string;
@@ -19,11 +20,13 @@ export function GetParametersPane({
   data,
   onPatch,
   book,
+  firms: firmOptions,
   upstreamIds,
 }: {
   data: WorkflowNodeData;
   onPatch: (patch: Partial<WorkflowNodeData>) => void;
   book: BookRow[];
+  firms?: Option[];
   upstreamIds: string[];
 }) {
   const spec = getModuleSpec(data.getModule);
@@ -31,6 +34,8 @@ export function GetParametersPane({
   const [audits, setAudits] = useState<Option[]>([]);
   const [sequences, setSequences] = useState<Option[]>([]);
   const [campaigns, setCampaigns] = useState<Option[]>([]);
+  const [loadedFirms, setLoadedFirms] = useState<Option[]>([]);
+  const [loadedBook, setLoadedBook] = useState<BookRow[]>([]);
   const [class2Open, setClass2Open] = useState(false);
   const [picked, setPicked] = useState<string[]>(data.getClass2 ?? []);
   const [query, setQuery] = useState("");
@@ -42,6 +47,12 @@ export function GetParametersPane({
     void wirePorts.machineApi.listTemplates().then(({ templates }) => {
       setSequences(templates.map((row) => ({ value: row.id, label: row.label || row.id })));
     }).catch(() => undefined);
+    void loadPickerDirectory()
+      .then(({ firms: next, contacts }) => {
+        setLoadedFirms(next);
+        setLoadedBook(contacts);
+      })
+      .catch(() => undefined);
   }, []);
 
   useEffect(() => {
@@ -56,20 +67,23 @@ export function GetParametersPane({
 
   const firms = useMemo<Option[]>(() => {
     const map = new Map<string, string>();
-    for (const row of book) {
+    for (const row of [...(firmOptions ?? []), ...loadedFirms]) {
+      map.set(row.value, row.label);
+    }
+    for (const row of [...book, ...loadedBook]) {
       const id = row.firmId?.trim();
       if (!id) continue;
-      map.set(id, row.firmName?.trim() || id);
+      if (!map.has(id)) map.set(id, row.firmName?.trim() || id);
     }
     for (const id of upstreamIds) {
       if (!map.has(id)) map.set(id, id);
     }
     return [...map.entries()].map(([value, label]) => ({ value, label }));
-  }, [book, upstreamIds]);
+  }, [firmOptions, loadedFirms, book, loadedBook, upstreamIds]);
 
   const contactsOfFirm = useMemo(
-    () => book.filter((row) => row.firmId === data.getClass1),
-    [book, data.getClass1],
+    () => [...book, ...loadedBook].filter((row) => row.firmId === data.getClass1),
+    [book, loadedBook, data.getClass1],
   );
 
   const class2Options = useMemo<Option[]>(() => {
