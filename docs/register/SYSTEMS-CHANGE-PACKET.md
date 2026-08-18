@@ -463,3 +463,9 @@ After a node: every write that run made. Next node picks. [`SYSTEMS-CHANGE-PACKE
 ## 2026-08-18 20:12 — Trigger select A26 + node place A27 · A28
 
 Grain: Global = unspecified full shape. Local = nested existing axes (not A18’s leftover box). A19 stays off the trigger. Per-event cascade: [`SYSTEMS-TRIGGER-PLACE-ASCRIBE.md`](./SYSTEMS-TRIGGER-PLACE-ASCRIBE.md). Revises 012 CHECK / Local-only-four-names. Does not recut 015. Packets on PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96).
+
+---
+
+## 2026-08-18 23:10 — Test fill (A30 buttons) + Input look (A29)
+
+Source values at the first handle. Downstream projects, no commit. Not AI. [`SYSTEMS-TEST-ASCRIBE.md`](./SYSTEMS-TEST-ASCRIBE.md). Does not recut 015.

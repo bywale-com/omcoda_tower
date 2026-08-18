@@ -1,0 +1,120 @@
+# Systems — Test fill + Input look (A29 · A30)
+
+**Seat:** Systems Analyst.  
+**When:** 2026-08-18 23:10 UTC.  
+**What this is:** plays for [`TEST-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/TEST-PACKET.md) and [`INPUT-LOOK-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/INPUT-LOOK-PACKET.md). How values get into Input/Output. **No new tables. Do not recut 015.** Flag **15:43**.  
+**Look:** A29 supersedes A23 left. **A30 is only Save · Test · Launch.** Filling is this file, not another PNG.
+
+AI does **not** generate values.
+
+---
+
+## Founder thesis (locked)
+
+You do **not** need independently sourced values on every node.
+
+The chain is already the machine: previous Output **is** the next Input (015 handle). A node does not invent a second write-set and live on it. It **picks** from what came in, then its Output is what **that module** would write from that Input.
+
+So the only place you **source** values is the **first handle on the chain**. That is almost always **Trigger Output**.
+
+Get does not break this. Get **reads**. It does not generate a toy row. Test of Get is door 1 (SELECT). It may use a chip from the previous node (which firm) — that is a pick, not a second specimen form.
+
+**Not wrong.** One precision: if the trigger’s writes are not the records later nodes need (pack-update silent, schedule, trigger wrote no people), the first **door-1 read** (Get or Direct Input of the book) is the seed for those people. Still not Audit. Still not AI. Still not a values form on every node.
+
+Downstream Output (Audit / Rule / Tag / If) is **computed from that seed**, uncommitted. You do not fill those nodes with their own specimen lists.
+
+---
+
+## Test — A. Door 1: the write already exists
+
+No new store. Read the row.
+
+| Already there | What Test reads | Not this |
+|---------------|-----------------|----------|
+| Book | `contact_records` | Enrollment (Agents mission) |
+| Past import | `import_batch` + contacts with that `import_batch_id` | Hub `lastOutput` demo pull |
+| Past form | `fact_writebacks` (`form_ref`) | A18 leftover box |
+| Past audit | `audit_runs` + verdicts / `sequence_ready` for that run | Guess “latest audit for this firm” |
+| Past walk | `workflow_run.node_status.writes` (pointers) then load those rows | An events copy table |
+| Get | `SELECT` at the authored grain (Get B classes) | INSERT. Audit as people-pump |
+
+Pick which instance if many — **cousin of Local**, not a third grain kit on A30. Honest empty if none.
+
+Test of Get = this door. A read is not Launch.
+
+---
+
+## Test — B. Door 2: the write does not exist yet
+
+Must **not INSERT**. Must **not enroll / send**.
+
+**Trigger never fired:** source **one** specimen of **that event’s real write-set** (same fields live would write). Contact import = `import_batch` + `contact_records` (A24). New contact = one `contact_records`. Not a toy list. Not extra fields.
+
+Where specimen **values** come from (still not AI):
+
+| Prefer | What |
+|--------|------|
+| Last similar event exists | Door 1. Pick that instance. You are not in door 2. |
+| None exists | Project **shape** from the module (columns the handler writes). Values may be empty or labeled specimen of those columns. Operator can see it is not a commit. |
+
+**Later nodes, door 2 Output:** do **not** author a second specimen. Run the module as a **function of Input**, skip persist.
+
+| Module | Project honestly? | Silent |
+|--------|-------------------|--------|
+| Contact import (trigger) | Yes — batch + contact columns | |
+| New contact (trigger) | Yes — `contact_records` columns | Dispatch of `contact.created` still silent live; Test shape is still that row |
+| **`executeAuditRun`** | **Yes** — verdict / ready are a function of email+phone. Return `writes` **without** INSERT (or insert in a transaction and roll back — prefer **no write**). Do not fake a score. Do not skip projection. | |
+| `ascribe_tag` | Yes — tag string is authored; notes from projected verdict | |
+| If | No writes. Pass-through handle. Pick still runs on projected fields | |
+| Rule | **Partial.** Stub today `pass: true`. Do not paint lattice chips as if evaluated. `missing_fact_signals` only if the evaluator actually would emit them. Else Output honest-empty / silent | Do not mint a results table |
+| Get | Door 1 only | |
+| Pack-update trigger | **Silent** (no write-set) | Do not freeze `reference_versions` |
+| `call_agent` | Do not enroll on Test | Silent as live send |
+
+Chain: Trigger Output fills first → next Input = that handle → that Output = what **it** would write from that Input → repeat. Never “latest audit in the firm.”
+
+Launch = live walk (015). Test does not recut it. Test may share the same functions with `commit: false`.
+
+---
+
+## Input look — A. Where a mapped chip already lives
+
+Chips are **references** to a write (or a field of a write) already on the handle. Not a mapping table. Not `{{firm}}`.
+
+| Already | What a box holds | Ant |
+|---------|------------------|-----|
+| 015 handle | `{ table, id, contact_id? }` | Live walk uses `pickTable` / `pickField` on node `data`. `previousResultFrom` saved, **unread** |
+| Graph jsonb | `pickTable`, `pickField`, Get Firm box, If pick, action pick | Silent as **chip element** (A29). A23 lightning-on-text is dead |
+| Hub `lastOutput` → `lastInput` | Smell of the handle | Wrong data. Not the store |
+| `cells` jsonb | Sequence composers | Not Automations Input |
+
+Persist a chip as: which prior **node**, which **write** (`table`+`id` or whole table class), optional **field**. Same as pick, visible. Several chips in one box = several pointers. No new table.
+
+---
+
+## Input look — B. Top-level drag vs a leaf
+
+Same handle. Coarser pick.
+
+| Drag | What it is | Next node uses |
+|------|------------|----------------|
+| Whole **Contact import** (top-level) | That node’s entire write-set | Pick any of those writes |
+| Whole `import_batch` | All batch rows this run | Audit’s usual pick |
+| Leaf `firm` / `import_batch.firm` | One field of a write | Fills a Get/Local box |
+| Leaf `contact_records.email` | One field on person writes | If / Outcomes |
+
+Do not invent a mapping table. Do not freeze extra import fields. Write-set = what that node wrote (A24 for import).
+
+---
+
+## Engineer pickup
+
+1. A29 look on **every** Input. Get Parameters stay Get-only.
+2. Test button: Save · Test · Launch. No Test tab. No commit.
+3. Source values **once** at the first handle (trigger Output, or Get/Direct Input if the trigger has no people). Downstream = module(Input) uncommitted.
+4. Door 1 = SELECT / load existing. Pick instance = Local cousin.
+5. Door 2 trigger = specimen of **real** columns. Not AI. Not a hardcoded client list.
+6. Audit Test = `executeAuditRun` without persist. Rule Test does not fake an evaluation we cannot run.
+7. Chips = pointers into the handle. Graph `data`, not a table.
+
+**Do not:** recut 015; mint a test/results/mapping table; collapse door 1 and 2; generate values with a model; overwrite 15:43.

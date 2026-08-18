@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-18 20:20 UTC — **A26/A27/A28 ascribe. Local = nested existing axes. A19 off the trigger.** Do not recut 015. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-18 23:10 UTC — **Test: source values at the first handle (trigger). Downstream projects. Not AI.** A29 chips = pointers. Do not recut 015. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1325,5 +1325,20 @@ Park: [`SYSTEMS-CUT-ASSESSMENT.md`](./SYSTEMS-CUT-ASSESSMENT.md) · [`SYSTEMS-GE
 Park: [`SYSTEMS-TRIGGER-PLACE-ASCRIBE.md`](./SYSTEMS-TRIGGER-PLACE-ASCRIBE.md). 012 revised in place (housing not recut).
 
 **Do not:** recut 015; mint events table; put A19 on the trigger; invent a Local kit per event; overwrite 15:43.
+
+---
+
+## 2026-08-18 23:10 UTC — Test values: first handle only. Not every node. Not AI.
+
+**Why:** Founder: Test fills values; how? AI? Then: we do not need values in every node — only the trigger. Every later node uses the previous node’s data. Get reads, it does not generate. Prove me wrong or I am right.
+
+**Hard:** **Right.** Source values once, at the **first handle** (Trigger Output). Downstream Output is the module applied to that Input, **no commit**. No node authors its own specimen list. Get is door 1 (SELECT), not a second generator. Precision: if the trigger wrote no people, Get / Direct Input of the book is the seed for those people — still not Audit, still not AI.
+
+Door 1 = existing rows (`contact_records`, `import_batch`, `audit_runs`, `fact_writebacks`, `workflow_run.node_status`). Door 2 trigger = specimen of **real** write-set fields. Audit Test = `executeAuditRun` without INSERT (deterministic from email/phone — not silent). Rule stub: do not fake lattice. A29 chips = pointers into the handle, not a mapping table.
+
+Park: [`SYSTEMS-TEST-ASCRIBE.md`](./SYSTEMS-TEST-ASCRIBE.md).
+
+**Do not:** recut 015; mint a test table; generate values with a model; collapse door 1 and 2; overwrite 15:43.
+
 
 
