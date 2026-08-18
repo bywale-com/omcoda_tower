@@ -1360,3 +1360,17 @@ Flag 15:43 untouched.
 
 Flag 15:43 untouched.
 
+---
+
+## 2026-08-18 19:18 UTC — Contact import and new contact are two events
+
+**Why:** Founder, back at the start: contact import is the event that runs the audit automation. Are import and new contact two things? Yes.
+
+**Legible split:** **Contact import** = the batch (file / `import_batch` / often many people / more writes). **New contact** = that person (`contact_records`). Import usually also creates people — it is still not the same event. A person can be new with no import. Audit-on-import listens to **import**. Person-level first launch can listen to **new contact**.
+
+**Already named:** “A contact file was imported” on the face list. Live `contact_import`. House graph: Contact file → audit → tag. **New contact** was collapsed into Chain A’s justification. Hub already had both (`import.created` · `contact created`) — Hub is not the app; the split is still right.
+
+**Do not:** plant; fill the event catalog; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+

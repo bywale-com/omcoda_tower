@@ -41,7 +41,9 @@ These are the in-app events. If a new “when X happens” is not this list, the
 
 That is the list from the face we have already named. Not “any row changed.”
 
-**Contact import** and **new contact** are two events. Import is the batch (file, `import_batch`, often many people, more writes). New contact is the person (`contact_records` for that one). An import usually produces new-contact events as well — it is not the same event. A contact can also be new with no import (Add contact, provision, …). The audit-on-import chain listens to **import**. Person-level first launch can listen to **new contact**.
+**Contact import** and **new contact** are two events. Import is uploading a file into the book (`import_batch`). That is the event. Creating people is a path inside that process, not the identity of the event — rows upsert; existing contacts can be updated, not only created. **New contact** is that person (`contact_records` for that one), with or without an import.
+
+**What contact import writes (live, this run):** `import_batch` (the batch) + one `contact_records` write per row in the file. That is the handle. Next node picks. Audit / tags are **later nodes**, not this event. Live fires **one** event (`contact_import`). It does not also fire new-contact per row — that is the gap we just named, not proof they are the same event.
 
 ---
 
