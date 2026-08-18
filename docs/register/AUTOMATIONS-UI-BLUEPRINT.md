@@ -568,6 +568,8 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Not this plate:** Get Output pane. Rule Outcomes (A21). Every-firm default with no cascade showing.
 
+**Packet:** [`GET-PACKET.md`](./GET-PACKET.md) — engineer + SA. On the PNG / not on the PNG. Three-level shape. Do not freeze the left example tree.
+
 ---
 
 ## What this is not
