@@ -535,23 +535,30 @@ export async function materializeTriggersFromGraph(
         ? String(data.webhookId ?? `wh_${workflowId}_${node.id}`)
         : null;
     const id = `wtrig-${workflowId}-${node.id}`;
-    const grain = String(data.grain ?? "global") === "local" ? "local" : "global";
-    const eventNameForGrain = String(data.triggerEvent ?? data.eventName ?? "");
-    const localAllowed = ["fact_writebacks", "campaign_failure", "ct_firms", "consent_records.sequenced"].includes(
-      eventNameForGrain,
-    );
-    const requestedLocal = localAllowed && grain === "local";
-    const localRef = requestedLocal ? String(data.localRef ?? data.local_ref ?? "").trim() || null : null;
-    const grainFinal = requestedLocal && localRef ? "local" : "global";
-    const scope = String(data.scope ?? "every_firm") === "select_from" ? "select_from" : "every_firm";
-    const scopeIds = Array.isArray(data.scopeContactIds)
-      ? (data.scopeContactIds as unknown[]).map(String)
-      : [];
+    const grain =
+      kind === "schedule" || kind === "manual" || kind === "webhook"
+        ? "global"
+        : String(data.grain ?? "global") === "local"
+          ? "local"
+          : "global";
+    const localRef =
+      grain === "local" ? String(data.localRef ?? data.local_ref ?? "").trim() || null : null;
+    const localFirmId =
+      grain === "local" ? String(data.localFirmId ?? data.local_firm_id ?? "").trim() || null : null;
+    const localContactIds =
+      grain === "local"
+        ? (Array.isArray(data.localContactIds)
+            ? data.localContactIds
+            : Array.isArray(data.local_contact_ids)
+              ? data.local_contact_ids
+              : []
+          ).map(String)
+        : [];
     await pool.query(
       `INSERT INTO workflow_trigger
          (id, workflow_id, firm_id, node_id, type, event_name, condition, schedule, webhook_id,
-          enabled, grain, scope, scope_contact_ids, local_ref)
-       VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8::jsonb,$9,true,$10,$11,$12::text[],$13)
+          enabled, grain, scope, scope_contact_ids, local_ref, local_firm_id, local_contact_ids)
+       VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8::jsonb,$9,true,$10,'every_firm',ARRAY[]::text[],$11,$12,$13::text[])
        ON CONFLICT (workflow_id, node_id) DO UPDATE SET
          type=EXCLUDED.type,
          event_name=EXCLUDED.event_name,
@@ -562,6 +569,8 @@ export async function materializeTriggersFromGraph(
          scope=EXCLUDED.scope,
          scope_contact_ids=EXCLUDED.scope_contact_ids,
          local_ref=EXCLUDED.local_ref,
+         local_firm_id=EXCLUDED.local_firm_id,
+         local_contact_ids=EXCLUDED.local_contact_ids,
          enabled=true,
          updated_at=now()`,
       [
@@ -577,10 +586,10 @@ export async function materializeTriggersFromGraph(
           cron: data.scheduleCron ?? null,
         }),
         webhookId,
-        grainFinal,
-        scope,
-        scopeIds,
+        grain,
         localRef,
+        localFirmId,
+        localContactIds,
       ],
     );
     n += 1;
@@ -1043,28 +1052,60 @@ export async function dispatchScheduleTriggers(
   return out;
 }
 
+function payloadString(payload: Record<string, unknown> | undefined, keys: string[]): string | null {
+  if (!payload) return null;
+  for (const key of keys) {
+    const value = payload[key];
+    if (typeof value === "string" && value.trim()) return value.trim();
+  }
+  return null;
+}
+
 function localRefFromPayload(
   eventName: string,
   payload: Record<string, unknown> | undefined,
 ): string | null {
-  if (!payload) return null;
-  if (eventName === "fact_writebacks") {
-    const v = payload.form_ref ?? payload.formRef;
-    return typeof v === "string" && v.trim() ? v.trim() : null;
-  }
-  if (eventName === "campaign_failure") {
-    const v = payload.campaign_id ?? payload.campaignId;
-    return typeof v === "string" && v.trim() ? v.trim() : null;
-  }
-  if (eventName === "ct_firms") {
-    const v = payload.id ?? payload.firm_id ?? payload.firmId;
-    return typeof v === "string" && v.trim() ? v.trim() : null;
-  }
+  if (eventName === "fact_writebacks") return payloadString(payload, ["form_ref", "formRef"]);
+  if (eventName === "campaign_failure") return payloadString(payload, ["campaign_id", "campaignId"]);
+  if (eventName === "ct_firms") return payloadString(payload, ["id", "firm_id", "firmId"]);
+  if (eventName === "consent_records.opt_out") return payloadString(payload, ["contact_id", "contactId"]);
+  if (eventName === "contact_import") return payloadString(payload, ["import_batch_id", "importBatchId"]);
+  if (eventName === "contact.created") return payloadString(payload, ["contact_id", "contactId", "id"]);
   if (eventName === "consent_records.sequenced") {
-    const v = payload.sequence_id ?? payload.sequenceId;
-    return typeof v === "string" && v.trim() ? v.trim() : null;
+    return payloadString(payload, ["sequence_id", "sequenceId"]);
   }
   return null;
+}
+
+function localAxesMatch(
+  row: {
+    grain: string;
+    local_ref: string | null;
+    local_firm_id: string | null;
+    local_contact_ids: string[] | null;
+  },
+  opts: {
+    firmId: string;
+    eventName: string;
+    payload?: Record<string, unknown>;
+    contactIds?: string[];
+  },
+): boolean {
+  if (row.grain !== "local") return true;
+  if (row.local_firm_id) {
+    const writeFirm = payloadString(opts.payload, ["firm_id", "firmId"]) ?? opts.firmId;
+    if (writeFirm !== row.local_firm_id) return false;
+  }
+  const specified = (row.local_contact_ids ?? []).filter(Boolean);
+  if (specified.length) {
+    const cid = payloadString(opts.payload, ["contact_id", "contactId"]);
+    const incoming = cid ? [cid] : (opts.contactIds ?? []);
+    if (!incoming.some((id) => specified.includes(id))) return false;
+  }
+  if (row.local_ref) {
+    if (localRefFromPayload(opts.eventName, opts.payload) !== row.local_ref) return false;
+  }
+  return true;
 }
 
 /** Dispatch event to all active workflows subscribed via workflow_trigger. */
@@ -1081,11 +1122,13 @@ export async function dispatchEventToWorkflows(
     workflow_id: string;
     grain: string;
     local_ref: string | null;
+    local_firm_id: string | null;
+    local_contact_ids: string[] | null;
     audience_scope: string | null;
     audience_contact_ids: string[] | null;
   }>(
     `SELECT DISTINCT ON (t.workflow_id)
-            t.workflow_id, t.grain, t.local_ref,
+            t.workflow_id, t.grain, t.local_ref, t.local_firm_id, t.local_contact_ids,
             w.audience_scope, w.audience_contact_ids
      FROM workflow_trigger t
      JOIN workflow_state s ON s.workflow_id = t.workflow_id
@@ -1099,11 +1142,17 @@ export async function dispatchEventToWorkflows(
     [opts.firmId, opts.eventName],
   );
 
-  const writeRef = localRefFromPayload(opts.eventName, opts.payload);
   const out: Array<{ workflowId: string; runId: string; enrollments: number }> = [];
   for (const row of triggers.rows) {
-    if (row.grain === "local") {
-      if (!row.local_ref || writeRef !== row.local_ref) continue;
+    if (
+      !localAxesMatch(row, {
+        firmId: opts.firmId,
+        eventName: opts.eventName,
+        payload: opts.payload,
+        contactIds: opts.contactIds,
+      })
+    ) {
+      continue;
     }
     let contactIds = opts.contactIds;
     const scope = row.audience_scope === "select_from" ? "select_from" : "every_firm";

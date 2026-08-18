@@ -159,6 +159,11 @@ export type WorkflowNodeData = {
   ifElse?: string;
   grain?: "global" | "local";
   localRef?: string;
+  /** A26 Local cascade — not A19 audience. */
+  localFirmId?: string;
+  localContactIds?: string[];
+  localFirmSelect?: "every" | "select";
+  localInstanceSelect?: "every" | "select";
   scope?: "every_firm" | "select_from";
   scopeContactIds?: string[];
   delayLabel?: string;
@@ -1114,8 +1119,14 @@ export function createTriggerNode(
       ...(triggerKind === "event"
         ? {
             eventTriggerConfig: emptyEventTriggerConfig(),
-            triggerEvent: "eligibility.changed" as WorkflowTriggerEvent,
+            triggerEvent: "contact_import" as WorkflowTriggerEvent,
+            label: "Contact import",
+            configured: true,
             grain: "global" as const,
+            localFirmSelect: "every" as const,
+            localInstanceSelect: "every" as const,
+            localContactIds: [],
+            enrollmentHint: "Fires on contact_import",
           }
         : {}),
       ...(triggerKind === "manual" ? { manualTriggerConfig: emptyManualTriggerConfig() } : {}),
