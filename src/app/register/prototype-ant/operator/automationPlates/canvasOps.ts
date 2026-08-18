@@ -6,6 +6,7 @@ export type CanvasOps = {
   onDelete: (nodeId: string) => void;
   onAddAfter: (nodeId: string, blockId: string) => void;
   onSwitch: (nodeId: string) => void;
+  onInsertOnEdge: (edgeId: string, blockId: string) => void;
 };
 
 export const CanvasOpsContext = createContext<CanvasOps | null>(null);

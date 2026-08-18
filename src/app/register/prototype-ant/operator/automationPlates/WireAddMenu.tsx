@@ -21,6 +21,7 @@ export function WireAddMenu({
           setOpen((value) => !value);
         }}
         onMouseDown={(event) => event.stopPropagation()}
+        onPointerDown={(event) => event.stopPropagation()}
         style={{
           width: 22,
           height: 22,
@@ -62,7 +63,7 @@ export function WireAddList({
         borderRadius: 8,
         boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
         padding: 6,
-        zIndex: 20,
+        zIndex: 1000,
       }}
     >
       {WIRE_ADD_KINDS.map((choice) => {

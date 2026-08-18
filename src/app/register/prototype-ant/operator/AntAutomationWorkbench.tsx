@@ -146,6 +146,7 @@ function AntWorkflowNode({ id, data, type, selected }: NodeProps<WorkflowFlowNod
             {data.configured ? "configured" : "needs setup"}
           </Tag>
           {ops ? (
+            <span className="nodrag nopan" onClick={(event) => event.stopPropagation()} onPointerDown={(event) => event.stopPropagation()}>
             <Dropdown
               trigger={["click"]}
               menu={{
@@ -178,17 +179,21 @@ function AntWorkflowNode({ id, data, type, selected }: NodeProps<WorkflowFlowNod
                 className="nodrag nopan"
                 onClick={(event) => event.stopPropagation()}
                 onMouseDown={(event) => event.stopPropagation()}
+                onPointerDown={(event) => event.stopPropagation()}
                 style={{
                   border: "none",
                   background: "transparent",
                   cursor: "pointer",
-                  padding: 2,
+                  padding: 6,
                   color: "#8c8c8c",
+                  fontSize: 16,
+                  lineHeight: 1,
                 }}
               >
                 <MoreOutlined />
               </button>
             </Dropdown>
+            </span>
           ) : null}
         </Space>
       </div>
@@ -235,6 +240,11 @@ const nodeTypes: NodeTypes = {
   action: AntWorkflowNode,
   exit: AntWorkflowNode,
   get: AntWorkflowNode,
+};
+
+const edgeTypes: EdgeTypes = {
+  default: PlateInsertEdge,
+  automationInsert: PlateInsertEdge,
 };
 
 function cloneNodes(nodes: WorkflowDefinition["nodes"]): WorkflowFlowNode[] {
@@ -570,6 +580,20 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
       if (triggerSelectId === id) setTriggerSelectId(null);
     },
     onAddAfter: (id: string, blockId: string) => insertKindAfter(id, blockId),
+    onInsertOnEdge: (edgeId: string, blockId: string) => {
+      const block = WORKFLOW_PALETTE_BLOCKS.find((row) => row.id === blockId);
+      if (!block) return;
+      const created = createNodeFromBlock(
+        block,
+        nodes.map((node) => node.id),
+        { x: 320, y: 160 },
+      );
+      if (!created) return;
+      const next = insertNodeOnEdge(nodes, edges, edgeId, created);
+      setNodes(relayoutWorkflowNodes(next.nodes) as WorkflowFlowNode[]);
+      setEdges(next.edges);
+      openNode(created as WorkflowFlowNode);
+    },
     onSwitch: (id: string) => {
       const node = nodes.find((item) => item.id === id);
       if (!node) return;
@@ -778,49 +802,14 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
                     nodes={nodes}
                     edges={edges}
                     nodeTypes={nodeTypes}
-                    edgeTypes={
-                      {
-                        default: (props) => (
-                          <PlateInsertEdge
-                            {...props}
-                            blocks={WORKFLOW_PALETTE_BLOCKS}
-                            onInsert={(edgeId, block) => {
-                              const created = createNodeFromBlock(
-                                block,
-                                nodes.map((node) => node.id),
-                                { x: 320, y: 160 },
-                              );
-                              if (!created) return;
-                              const next = insertNodeOnEdge(nodes, edges, edgeId, created);
-                              setNodes(relayoutWorkflowNodes(next.nodes) as WorkflowFlowNode[]);
-                              setEdges(next.edges);
-                              openNode(created as WorkflowFlowNode);
-                            }}
-                          />
-                        ),
-                        automationInsert: (props) => (
-                          <PlateInsertEdge
-                            {...props}
-                            blocks={WORKFLOW_PALETTE_BLOCKS}
-                            onInsert={(edgeId, block) => {
-                              const created = createNodeFromBlock(
-                                block,
-                                nodes.map((node) => node.id),
-                                { x: 320, y: 160 },
-                              );
-                              if (!created) return;
-                              const next = insertNodeOnEdge(nodes, edges, edgeId, created);
-                              setNodes(relayoutWorkflowNodes(next.nodes) as WorkflowFlowNode[]);
-                              setEdges(next.edges);
-                              openNode(created as WorkflowFlowNode);
-                            }}
-                          />
-                        ),
-                      } satisfies EdgeTypes
-                    }
+                    edgeTypes={edgeTypes}
                     onNodesChange={onNodesChange}
                     onEdgesChange={onEdgesChange}
-                    onNodeClick={(_, node) => openNode(node)}
+                    onNodeClick={(event, node) => {
+                      const target = event.target as HTMLElement | null;
+                      if (target?.closest(".nodrag")) return;
+                      openNode(node);
+                    }}
                     deleteKeyCode={["Backspace", "Delete"]}
                     onNodesDelete={(deleted) => {
                       const ids = new Set(deleted.map((node) => node.id));

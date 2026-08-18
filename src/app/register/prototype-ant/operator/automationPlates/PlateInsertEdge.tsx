@@ -4,8 +4,8 @@ import {
   getStraightPath,
   type EdgeProps,
 } from "@xyflow/react";
-import { WORKFLOW_PALETTE_BLOCKS, type PaletteBlock } from "../../../../data/automationWorkflows";
 import { WireAddMenu } from "./WireAddMenu";
+import { useCanvasOps } from "./canvasOps";
 
 export function PlateInsertEdge({
   id,
@@ -13,15 +13,9 @@ export function PlateInsertEdge({
   sourceY,
   targetX,
   targetY,
-  blocks,
-  onInsert,
-}: EdgeProps & {
-  hasTrigger?: boolean;
-  blocks?: PaletteBlock[];
-  onInsert: (edgeId: string, block: PaletteBlock) => void;
-}) {
+}: EdgeProps) {
+  const ops = useCanvasOps();
   const [edgePath, labelX, labelY] = getStraightPath({ sourceX, sourceY, targetX, targetY });
-  const palette = blocks ?? WORKFLOW_PALETTE_BLOCKS;
 
   return (
     <>
@@ -36,12 +30,9 @@ export function PlateInsertEdge({
             zIndex: 12,
           }}
         >
-          <WireAddMenu
-            onPick={(block) => {
-              const resolved = palette.find((row) => row.id === block.id) ?? block;
-              onInsert(id, resolved);
-            }}
-          />
+          {ops ? (
+            <WireAddMenu onPick={(block) => ops.onInsertOnEdge(id, block.id)} />
+          ) : null}
         </div>
       </EdgeLabelRenderer>
     </>
