@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Three pockets this chat: **A20** [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md) · **A21** [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md) · **Get** [`GET-PACKET.md`](./GET-PACKET.md). Plate-read [`PLATE-READ.md`](./PLATE-READ.md). Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Input and Output are shared** ([`NODE-INTERIOR.md`](./NODE-INTERIOR.md)). **Contact import** and **new contact** are two events. Packets: A20 · A21 · Get. Do not plant.
 
 **How we maintain this log**
 
@@ -1341,6 +1341,20 @@ Flag 15:43 untouched.
 **Why:** Founder: before moving on — did the three sections in this chat all have packets? Only Get did. Output and Outcomes had plates and law. Cut the packets now.
 
 **Packets:** [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md) · [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md) · [`GET-PACKET.md`](./GET-PACKET.md).
+
+**Do not:** plant; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 18:58 UTC — Input is every node. Get Parameters are Get.
+
+**Why:** Founder: did we only work on one node? The Input/Parameters shape — does Rule (and the others) get that Input, or will the build only touch Get?
+
+**Answer:** We drew Input on Get. Packets said “build Get.” Literal engineer = Input only on Get. Wrong.
+
+**Law 37:** **Input** (A23 left) and **Output** (A20) are shared. **Get Parameters** (A23 right) are Get. **Outcomes** (A21) are Rule. [`NODE-INTERIOR.md`](./NODE-INTERIOR.md). Action/If still get Input + Output even if those plates did not open those tabs. Trigger may have empty Input (start of chain). Do not copy Firm/Contact onto Rule.
 
 **Do not:** plant; recut 015; overwrite 15:43.
 

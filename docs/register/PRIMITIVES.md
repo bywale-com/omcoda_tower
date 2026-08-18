@@ -35,10 +35,13 @@ These are the in-app events. If a new “when X happens” is not this list, the
 | **Someone opted out / unsubscribed** | All of those | — |
 | **A firm was created / provisioned** | All new firms | — |
 | **An audit finished** | All audits | (probably none — one-time) |
-| **A contact file was imported** | All contact-file imports | This batch / this firm — later if we need it |
+| **A contact file was imported** | All contact-file imports | **This batch** |
+| **A new contact** | All new contacts | **This firm** — later if we need it |
 | **A reference pack / eligibility criteria was updated** | All pack updates | **This pack** |
 
 That is the list from the face we have already named. Not “any row changed.”
+
+**Contact import** and **new contact** are two events. Import is the batch (file, `import_batch`, often many people, more writes). New contact is the person (`contact_records` for that one). An import usually produces new-contact events as well — it is not the same event. A contact can also be new with no import (Add contact, provision, …). The audit-on-import chain listens to **import**. Person-level first launch can listen to **new contact**.
 
 ---
 
