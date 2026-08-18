@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **13:07** writes handle. **A20** Output. **A21** Outcomes. **16:46:** Input + Outcomes are the **same view**. Output can be separate. Trigger writes are **who** (and the event’s rows) — not CEC hours. Outcomes read fields **on that person**. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **16:54:** A rule runs for **two reasons only** — re-engagement (data request / nudge) or **reactivation**. A trigger is a **justification** to run that. If the trigger does not write people, an **action** must, then the rule. Do not plant.
 
 **How we maintain this log**
 
@@ -1207,6 +1207,30 @@ So the Outcomes rows are **not** “fields the trigger emitted.” They are cond
 **Look:** Input = the previous node’s writes (for this rule: the trigger’s writes — the person). Outcomes = authored against fields **on those records**. Same view, because you are authoring the compare **on what Input just made available**. Output stays after the run (A20).
 
 **Do not:** plant; put CEC hours on the trigger as fake outputs; collapse Output into this view; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 16:54 UTC — A rule runs for two reasons. A trigger is a justification.
+
+**Why:** Founder restart. Do not confuse trigger-field-containment with **making the inputs**. When do we run a rule? Only two reasons. A trigger is a justification to run that. Two justified chains.
+
+**When a rule runs (only two):**
+1. Re-evaluate: are they eligible for **re-engagement** (nudge / **data request** needed).
+2. Re-evaluate: are they eligible for **reactivation**.
+
+Nothing else.
+
+**A trigger is a justification to run that.** It is not “the CEC hours arrived in the event.”
+
+**Chain A — we have no data on this person.** Justification = new contact. Trigger: **contact import**. Not siloed: **import → audit → if audit is good → run the operation (rule)**. The rule finds much missing → **agent** (first data request / first launch campaign). A condition before the agent (e.g. they are new) is available. One canvas.
+
+**Chain B — they are not new. The law changed.** Trigger: **eligibility criteria changed** (packs / reference packs — not a person). That event **writes no contact**. So the **next action** is whatever **produces the contacts / their data**. The **output of that action** is the writes the rule needs. Then the rule can run.
+
+Same architecture: if the trigger’s writes are not the inputs the rule needs, an action in the chain **makes** them.
+
+**Do not:** plant; invent a third reason to run a rule; put person-fields on a pack-change trigger; overwrite 15:43.
 
 Flag 15:43 untouched.
 
