@@ -3,7 +3,7 @@
 **Seat:** Product Manager.  
 **Why this file:** law and excerpts for Automations. Entered from the Agents outskirts — not a disconnected menu pick.  
 **Join:** Agents flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** (do not overwrite) · Agents face [`AGENTS-FACE.md`](./AGENTS-FACE.md) · UI blueprint [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · enter Automations **20:24 UTC** · Hub as **advanced plant for those modules** (not the app) **20:44 UTC** · from-scratch images [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) **20:54 UTC** · SA package **22:17 UTC** · loops **23:07** · global/local **23:16** · objectives are events; failure → tag **23:35** · list scored **23:38** · enroll + assign **00:02** (C8 · A14) · blank canvas / chain **01:17**.  
-**Status:** 23:07 list scored 23:38; **2** and **6** answered **00:02**. Automations is a **blank canvas** — you can chain (01:17). **Law 33:** after a node, every write that run made (on main, PR #94). **Law 34:** Output pane = top all outputs, click one, bottom that output (**A20**). Product face = CT Ant. Hub is not the app. Do not plant.
+**Status:** 23:07 list scored 23:38; **2** and **6** answered **00:02**. Automations is a **blank canvas** — you can chain (01:17). **Law 33:** writes handle on main. **Law 34:** Output **A20**. **Law 35:** Outcomes **A21** (stacked; per-outcome GUI \| JS; tabs Input / Outcomes / Output). Product face = CT Ant. Hub is not the app. Do not plant.
 
 ---
 
@@ -136,6 +136,7 @@
 33. **When a node finishes, you have every write that run made.** The action sends the work to the **real** module. The next step **picks** which of those writes it is about. Not a boolean “done.” Not a short list we specified. Not “Audit is two things” and “Provision is a firm.” Same shape for every action. Live is on **main** (PR #94). Hub preview is not the live path. [`PRIMITIVES.md`](./PRIMITIVES.md).
 34. **Output pane: top is every output this run made; bottom is a preview of the one you click.** Required data is one of those outputs, not a glued-on listing. Same Output shape across node kinds. Plate **A20** revises A11. Hub Output today dumps Analysis + JSON — it does not select. The rule evaluator does not yet emit a required-data listing as a write; `COLLECTIBLE_FIELDS` is a catalog; `missing_fact_signals` is the named write and is not produced by the rule node.
 35. **Outcomes pane is stacked outcome cards. Per-outcome GUI | JS. Tabs are Input / Outcomes / Output — not GUI / Custom.** On → interior (conditions, or the code editor). Off → empty. Code has language, rename, line numbers, color, copy. Plate **A21** revises A2 / A3 / A4. Do not build teaching captions. Do not plant.
+36. **Get is a node kind.** It reads records from a **module** and filters to a **grain**. Evergreen — Parameters change with the module; the kind does not. Do not use Audit to fetch people. Pack / criteria updated → Get → Rule. Input can see prior writes in the chain. Output of Get is its own pane (**A22** · **A23**; Output not drawn yet).
 
 ---
 

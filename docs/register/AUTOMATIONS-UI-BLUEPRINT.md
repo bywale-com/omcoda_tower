@@ -64,6 +64,8 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A17** | [`A17-trigger-firm-provisioned.png`](./automations-blueprint/A17-trigger-firm-provisioned.png) | chrome | Inside trigger. Event = **firm created / provisioned**. | 01:20 | companion to A5 |
 | **A18** | [`A18-trigger-global-local.png`](./automations-blueprint/A18-trigger-global-local.png) | chrome | Inside trigger. After the event: **Global** (all of that kind) or **Local** (this specific one). Example: form submitted. | 18:53 | fills law 27. A5 stays Event vs Schedule |
 | **A19** | [`A19-automations-contacts.png`](./automations-blueprint/A19-automations-contacts.png) | chrome | Automations **Contacts** = the same look as Agents C8. Same Add contact modal. Does not start a mission now. | 18:53 · 01:01 | companion to C8 / C8b |
+| **A22** | [`A22-get-canvas.png`](./automations-blueprint/A22-get-canvas.png) | chrome | Canvas. **Get** is a node kind. Chain: **Reference pack updated → Get → Rule**. Palette includes Get. | 17:06 | — |
+| **A23** | [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png) | chrome | Inside **Get**. n8n split: **Input** left (prior writes) · **Parameters** middle (Module + grain). **Output** is its own tab, not opened. Evergreen — not hardcoded. | 17:06 | — |
 
 **Why A10 / A13 are in the lineup and still not chrome:** they are the **idea** of output classes as a lattice. They are not Operator screens. The DAG piece that does that fork is the **If / condition node**, now on the glass as **A16**. Keep both diagrams so the evolution (hole → listing) is visible. Do not ascribe A13 as a screen.
 
@@ -533,6 +535,39 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 | **In-app action: ascribe a tag** | Campaign fails → record / tag. Subscription bell is that tag. | Named. Do not invent the rest. |
 | **Lineage queryable** | Who created the objective (agent vs hand), path to completion, completion event, time. | Queryable at minimum. Not a new screen. |
 | **Assign existing vs from template** | **Settled 00:02.** A14. No create-agent in Automations. | Drawn. |
+| **Get node** | New kind. Read records from a **module**, filter to a **grain**. Evergreen. Not Audit-as-people-pump. **A22** canvas · **A23** Input/Parameters. Output pane not drawn yet. | Drawn as plates. Not planted. |
+
+---
+
+### A22 — Get on the canvas
+
+![A22 get canvas](./automations-blueprint/A22-get-canvas.png)
+
+**Rationale (17:06):** Reference pack updated writes no people. **Get** makes the inputs. Then the rule can run. Get is a **kind**, same as Trigger / Rule / Action / If.
+
+**On the glass:** Palette includes **Get**. Chain: Reference pack updated → Get (Contacts · book) → Immigration · Service eligibility. No teaching captions.
+
+**Do not build:** extra catalog workflows if they drifted. Trust the three-node chain and the palette.
+
+**Not this plate:** Inside Get (A23). Output of Get.
+
+---
+
+### A23 — Get: Input left, Parameters middle
+
+![A23 get input parameters](./automations-blueprint/A23-get-input-parameters.png)
+
+**Rationale (17:06):** n8n split. Input = prior writes in this chain (here: the pack update). Parameters = **Module** then **grain** of that module. Same Get node for every module — do not hardcode a Contacts-Get vs Audits-Get. Output is its **own tab**, not opened this plate.
+
+**On the glass:** Title Get · Contacts. Tabs Input (selected, body is the split) · Output. Left: `reference_versions` write. Parameters: Module Contacts (Firms / Audits / Imports / Reference / Agents in the picker). Grain for Contacts is the **book** (A22 chip: Contacts · book). The plate’s radio copy drifted to “Every firm” — that is not the Contacts grain; do not ship that label.
+
+**Do not build:** teaching captions. Immigration fields on Get. Audit inside Get. “Every firm” as the Contacts grain.
+
+**Not this plate:** Get Output pane. Rule Outcomes (A21).
+
+---
+
+## What this is not
 | **Ant Rule GUI** | Does not exist. Hub does. | Pictures are the face until built. |
 | **Required-data listing in code** | 21:36: not stood up. Catalog unused. | SA: what would have to change — do not mint from the picture. |
 

@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **16:54** rule = two reasons; trigger = justification. **17:00:** Input can take people **directly** (book / who this applies to) — Audit is not a people-pump. Chain writes should be **referenceable**, not only the last node. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Get** is a node kind (**A22** canvas · **A23** Input/Parameters). Pack update → Get → Rule. Output of Get not drawn yet. Do not plant.
 
 **How we maintain this log**
 
@@ -1251,6 +1251,22 @@ Flag 15:43 untouched.
 - Input is not only the immediate previous node. **Every prior node’s writes in this chain** should be referenceable — like a real event. Live is not that yet. Name it. Do not recut 015 here.
 
 **Do not:** plant; mint; use Audit as “get me contacts”; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 17:06 UTC — Get is a node kind. Two plates.
+
+**Why:** Founder: new primitive — get data from a **module**, filter to a **grain**, evergreen. Trigger = reference pack updated (justification, no people). Next node makes the inputs. Canvas + inside (Input left / Parameters middle). Output of this node is its own pane — not drawn this stamp. No third image.
+
+**Name:** **Get.** Not Audit. Not Action. Not “who this applies to” as a special node — that is Get with Module = Contacts.
+
+**Plates:** [`A22-get-canvas.png`](./automations-blueprint/A22-get-canvas.png) · [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png).
+
+**Do not build:** teaching captions. Hardcoded immigration fields on Get. A third Get-per-module kind.
+
+**Do not:** plant; recut 015; overwrite 15:43.
 
 Flag 15:43 untouched.
 

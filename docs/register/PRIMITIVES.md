@@ -36,7 +36,7 @@ These are the in-app events. If a new “when X happens” is not this list, the
 | **A firm was created / provisioned** | All new firms | — |
 | **An audit finished** | All audits | (probably none — one-time) |
 | **A contact file was imported** | All contact-file imports | This batch / this firm — later if we need it |
-| **An objective was met** | Completions of that kind | **This** objective / campaign |
+| **A reference pack / eligibility criteria was updated** | All pack updates | **This pack** |
 
 That is the list from the face we have already named. Not “any row changed.”
 
@@ -64,6 +64,8 @@ Two kinds. That is the whole split.
 Not on the list: “write whatever into whatever table.” Not on the list: webhook-as-an-action.
 
 If / condition is not an action. It is a fork after a result.
+
+**Get** is not an action. It is a **node kind**. It **reads** records that already exist in a module and filters to a grain. The writes it produces are those records. Same handle: every write that run made. Not Audit. Not “who this applies to” as a Contacts-only special case — that grain lives **inside** Get when Module = Contacts.
 
 ---
 
