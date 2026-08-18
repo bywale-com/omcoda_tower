@@ -31,6 +31,7 @@ import {
   SaveOutlined,
   ThunderboltOutlined,
   UserAddOutlined,
+  ExperimentOutlined,
 } from "@ant-design/icons";
 import { PlayCircleOutlined as ActionGlyph } from "@ant-design/icons";
 import { useAutomations } from "../../../context/AutomationContext";
@@ -51,6 +52,7 @@ import {
   type WorkflowNodeType,
 } from "../../../data/automationWorkflows";
 import { formatGetSummary, previewGetWrites } from "../../../data/automationGet";
+import { walkTestGraph } from "../../../data/testWalk";
 import { emptyRuleNodeConfig } from "../../../data/automationRules";
 import { wirePorts } from "../../../wire/registry";
 import type { EligibilityPipelineRow } from "../../../wire/machineTypes";
@@ -318,6 +320,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
   } = useAutomations();
   const workflow = getWorkflowById(workflowId);
   const [savedFlash, setSavedFlash] = useState(false);
+  const [testedFlash, setTestedFlash] = useState(false);
   const [activeTab, setActiveTab] = useState("workflow");
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [plate, setPlate] = useState<null | "action-kind" | "action-agents" | "action-inapp">(null);
@@ -702,6 +705,28 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
     });
   };
 
+  const handleTest = async () => {
+    const eventName = String(triggerNode?.data.triggerEvent ?? "").trim();
+    const kind = String(triggerNode?.data.triggerKind ?? "event");
+    if (kind !== "event" || !eventName) {
+      message.info("Test fills from a table-change trigger");
+      return;
+    }
+    try {
+      const handle = await wirePorts.machineApi.getEventTestContract(eventName);
+      if (!handle || !handle.writes.length) {
+        message.info("This trigger has no Test contract");
+        return;
+      }
+      setNodes(walkTestGraph(nodes, edges, handle) as WorkflowFlowNode[]);
+      setTestedFlash(true);
+      window.setTimeout(() => setTestedFlash(false), 1400);
+      message.success(handle.door === 1 ? "Test filled from a live write" : "Test filled Input and Output");
+    } catch (err) {
+      message.error(`Test failed: ${String(err)}`);
+    }
+  };
+
   const patchTriggerSettings = (patch: Partial<WorkflowNodeData>) => {
     if (!triggerNode) return;
     patchNodeData(setNodes, triggerNode.id, patch);
@@ -728,6 +753,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
             />
             <Tag color={statusColor(workflow.status)}>{workflowStatusLabel(workflow.status)}</Tag>
             {savedFlash ? <Tag color="success">Saved</Tag> : null}
+            {testedFlash ? <Tag>Tested</Tag> : null}
           </Space>
           <Space>
             <Button
@@ -742,6 +768,9 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
             </Button>
             <Button icon={<SaveOutlined />} onClick={() => void handleSave()}>
               Save
+            </Button>
+            <Button icon={<ExperimentOutlined />} onClick={() => void handleTest()}>
+              Test
             </Button>
             <Button type="primary" icon={<PlayCircleOutlined />} onClick={handleLaunch}>
               {activeManualRunId ? "Stop run" : "Launch workflow"}

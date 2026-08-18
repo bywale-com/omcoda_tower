@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
-import { Button, Empty, Input, Modal, Select, Space, Table, Typography } from "antd";
+import { useEffect, useMemo, useState, type DragEvent, type ReactNode } from "react";
+import { Button, Empty, Input, Modal, Select, Space, Table, Tag, Typography } from "antd";
 import { GET_MODULES, getModuleSpec } from "../../../../data/automationGet";
-import type { WorkflowNodeData } from "../../../../data/automationWorkflows";
+import type { MappedChip, WorkflowNodeData } from "../../../../data/automationWorkflows";
 import { wirePorts } from "../../../../wire/registry";
 import { MODAL_SCROLL } from "../modalScroll";
 import { loadPickerDirectory } from "./pickerDirectory";
+import { HANDLE_CHIP_MIME } from "./InputPane";
 
 type BookRow = {
   id: string;
@@ -15,6 +16,70 @@ type BookRow = {
 };
 
 type Option = { value: string; label: string };
+
+function ChipBox({
+  chips,
+  onRemove,
+  onDropChip,
+  children,
+}: {
+  chips: MappedChip[];
+  onRemove: (index: number) => void;
+  onDropChip: (chip: MappedChip) => void;
+  children: ReactNode;
+}) {
+  const [over, setOver] = useState(false);
+  const accept = (event: DragEvent) => {
+    if ([...event.dataTransfer.types].includes(HANDLE_CHIP_MIME)) event.preventDefault();
+  };
+  return (
+    <div
+      onDragOver={(event) => {
+        accept(event);
+        setOver(true);
+      }}
+      onDragLeave={() => setOver(false)}
+      onDrop={(event) => {
+        event.preventDefault();
+        setOver(false);
+        const raw = event.dataTransfer.getData(HANDLE_CHIP_MIME);
+        if (!raw) return;
+        try {
+          onDropChip(JSON.parse(raw) as MappedChip);
+        } catch {
+          /* ignore */
+        }
+      }}
+      style={{
+        border: `1px dashed ${over ? "#1677ff" : "#d9d9d9"}`,
+        borderRadius: 6,
+        padding: chips.length ? 6 : 0,
+        minHeight: 32,
+        background: over ? "#e6f4ff" : undefined,
+      }}
+    >
+      {chips.length ? (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: children ? 6 : 0 }}>
+          {chips.map((chip, index) => (
+            <Tag
+              key={`${chip.label}-${index}`}
+              color="blue"
+              closable
+              onClose={(event) => {
+                event.preventDefault();
+                onRemove(index);
+              }}
+              style={{ marginInlineEnd: 0 }}
+            >
+              {chip.label}
+            </Tag>
+          ))}
+        </div>
+      ) : null}
+      {children}
+    </div>
+  );
+}
 
 export function GetParametersPane({
   data,
@@ -107,6 +172,13 @@ export function GetParametersPane({
     ? `All ${spec.class2Label?.toLowerCase() ?? "records"}`
     : `${data.getClass2?.length ?? 0} selected`;
 
+  const slotChips = (slot: string): MappedChip[] => data.mappedSlots?.[slot] ?? [];
+  const setSlot = (slot: string, chips: MappedChip[]) => {
+    onPatch({
+      mappedSlots: { ...(data.mappedSlots ?? {}), [slot]: chips },
+    });
+  };
+
   const restamp = (module: string) => {
     const next = getModuleSpec(module);
     onPatch({
@@ -176,40 +248,52 @@ export function GetParametersPane({
             <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
               {spec.class1Label}
             </Typography.Text>
-            <Select
-              showSearch
-              allowClear
-              placeholder={spec.class1Label}
-              style={{ width: "100%" }}
-              value={data.getClass1 || undefined}
-              options={spec.id === "agents" ? sequences : firms}
-              optionFilterProp="label"
-              onChange={(value) =>
-                onPatch({
-                  getClass1: value,
-                  getClass2: [],
-                  getClass2All: true,
-                  configured: Boolean(value),
-                })
-              }
-            />
+            <ChipBox
+              chips={slotChips("firm")}
+              onRemove={(index) => setSlot("firm", slotChips("firm").filter((_, i) => i !== index))}
+              onDropChip={(chip) => setSlot("firm", [...slotChips("firm"), chip])}
+            >
+              <Select
+                showSearch
+                allowClear
+                placeholder={spec.class1Label}
+                style={{ width: "100%" }}
+                value={data.getClass1 || undefined}
+                options={spec.id === "agents" ? sequences : firms}
+                optionFilterProp="label"
+                onChange={(value) =>
+                  onPatch({
+                    getClass1: value,
+                    getClass2: [],
+                    getClass2All: true,
+                    configured: Boolean(value) || Boolean(slotChips("firm").length),
+                  })
+                }
+              />
+            </ChipBox>
           </div>
           {spec.class2Label && !spec.silentClass2 && data.getClass1 ? (
             <div>
               <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
                 {spec.class2Label}
               </Typography.Text>
-              <Button
-                block
-                style={{ textAlign: "left", height: 32 }}
-                onClick={() => {
-                  setPicked(allSelected ? class2Options.map((row) => row.value) : (data.getClass2 ?? []));
-                  setQuery("");
-                  setClass2Open(true);
-                }}
+              <ChipBox
+                chips={slotChips("contact")}
+                onRemove={(index) => setSlot("contact", slotChips("contact").filter((_, i) => i !== index))}
+                onDropChip={(chip) => setSlot("contact", [...slotChips("contact"), chip])}
               >
-                {class2Label}
-              </Button>
+                <Button
+                  block
+                  style={{ textAlign: "left", height: 32 }}
+                  onClick={() => {
+                    setPicked(allSelected ? class2Options.map((row) => row.value) : (data.getClass2 ?? []));
+                    setQuery("");
+                    setClass2Open(true);
+                  }}
+                >
+                  {class2Label}
+                </Button>
+              </ChipBox>
             </div>
           ) : null}
         </>

@@ -1097,6 +1097,11 @@ export const standInMachineApi: MachineApiPort = {
     };
   },
 
+  async getEventTestContract(eventName) {
+    const { handleFromContract } = await import("../../data/eventTestContract");
+    return handleFromContract(eventName, 2);
+  },
+
   async fireOnboarding() {
     return { enrollments: 0, agentRef: "tpl.optin_launch.v1", skipped: false };
   },

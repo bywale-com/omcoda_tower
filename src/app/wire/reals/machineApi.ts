@@ -181,6 +181,18 @@ export const realMachineApi: MachineApiPort = {
     });
   },
 
+  async getEventTestContract(eventName) {
+    try {
+      return await wireFetch<import("../../data/eventTestContract").EventTestHandle>(
+        `/machine/event-test-contract?eventName=${encodeURIComponent(eventName)}&firmId=${encodeURIComponent(firm())}`,
+        { headers: firmHeader() },
+      );
+    } catch {
+      const { handleFromContract } = await import("../../data/eventTestContract");
+      return handleFromContract(eventName, 2);
+    }
+  },
+
   async fireOnboarding() {
     return wireFetch<{ skipped?: boolean; enrollments?: number; agentRef?: string }>(
       `/machine/onboarding/fire?firmId=${encodeURIComponent(firm())}`,
