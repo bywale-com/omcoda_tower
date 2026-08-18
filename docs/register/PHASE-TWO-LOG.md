@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Input and Output are shared** ([`NODE-INTERIOR.md`](./NODE-INTERIOR.md)). **Contact import** and **new contact** are two events. Packets: A20 · A21 · Get. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Event Output plates: **A24** contact import · **A25** new contact (A20 shape). Do not plant.
 
 **How we maintain this log**
 
@@ -1371,6 +1371,39 @@ Flag 15:43 untouched.
 **Already named:** “A contact file was imported” on the face list. Live `contact_import`. House graph: Contact file → audit → tag. **New contact** was collapsed into Chain A’s justification. Hub already had both (`import.created` · `contact created`) — Hub is not the app; the split is still right.
 
 **Do not:** plant; fill the event catalog; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 19:23 UTC — What contact import writes (this run)
+
+**Why:** Founder: they are not the same event. Import’s purpose is upload a file into the book. Creating people is a path, not the identity. What outputs does that event create — do we know?
+
+**Yes, live.** Handle of that run:
+
+1. **`import_batch`** — the batch (firm, filename, row_count, source file/crm/assisted).
+2. **`contact_records`** — one write per row. Insert or update (`ON CONFLICT`). Not “creates people” as the event. Upsert onto the book.
+
+That is the previous result. Next node **picks** (house graph picks `import_batch` and runs Audit). Audit writes, tags — **those nodes**, not import.
+
+**Backend:** only `contact_import` fires. No per-row new-contact event. Ontologically two events; live has not split the second yet.
+
+**Do not:** plant; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 19:34 UTC — A24 / A25: Output of two events
+
+**Why:** Founder: two photos. Outputs of **contact import** and **new contact**, in the current Output look (A20).
+
+**Plates:** [`A24-contact-import-output.png`](./automations-blueprint/A24-contact-import-output.png) · [`A25-new-contact-output.png`](./automations-blueprint/A25-new-contact-output.png).
+
+**Do not build:** teaching captions. Rule output chips on these events. Audit writes as import output. Catalog sentence “the real house workflow.”
+
+**Do not:** plant; recut 015; overwrite 15:43. Packet after they lock.
 
 Flag 15:43 untouched.
 

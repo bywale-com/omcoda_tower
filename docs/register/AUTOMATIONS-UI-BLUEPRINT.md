@@ -66,6 +66,8 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A19** | [`A19-automations-contacts.png`](./automations-blueprint/A19-automations-contacts.png) | chrome | Automations **Contacts** = the same look as Agents C8. Same Add contact modal. Does not start a mission now. | 18:53 · 01:01 | companion to C8 / C8b |
 | **A22** | [`A22-get-canvas.png`](./automations-blueprint/A22-get-canvas.png) | chrome | Canvas. **Get** is a node kind. Chain: **Reference pack updated → Get → Rule**. Palette includes Get. | 17:06 | — |
 | **A23** | [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png) | chrome | Inside **Get**. Left = n8n tree (keep). Parameters: **dropdown** Every firm / Select firm. Select → Firm then Contact **comboboxes** (dropdown + input). Left writes apply in those boxes. | 17:33 | revises 17:26 |
+| **A24** | [`A24-contact-import-output.png`](./automations-blueprint/A24-contact-import-output.png) | chrome | Trigger **Output** of **contact import**. A20 shape. This run: `import_batch` + `contact_records`. | 19:34 | — |
+| **A25** | [`A25-new-contact-output.png`](./automations-blueprint/A25-new-contact-output.png) | chrome | Trigger **Output** of **new contact**. A20 shape. This run: `contact_records` (that person). | 19:34 | — |
 
 **Why A10 / A13 are in the lineup and still not chrome:** they are the **idea** of output classes as a lattice. They are not Operator screens. The DAG piece that does that fork is the **If / condition node**, now on the glass as **A16**. Keep both diagrams so the evolution (hole → listing) is visible. Do not ascribe A13 as a screen.
 
@@ -95,7 +97,8 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | Operator → Configuration libraries → Automations | Workflow list. Open **New firm → opt-in launch** (or equivalent). |
 | Open the workflow | Canvas: **trigger · rule · action** (A1). Smallest. |
 | Same desk, teaching walk | Canvas: provisioned → audit → if X → agents (**A15**). Blank canvas; you can chain. |
-| Open the **Trigger** node | Event or schedule (A5). Firm created / provisioned (**A17**). |
+| Open the **Trigger** after **contact import** | **Output** tab. **A24.** Writes: import_batch · contact_records. |
+| Open the **Trigger** after **new contact** | **Output** tab. **A25.** Write: contact_records (that person). |
 | Open the **If / Condition** node | Calls from previous result (**A16**). Not a rule. |
 | Insert / add a node | Palette. Select **Action** (A6). |
 | Open the **Action** node | Kind: **Agents** vs **in the application** (A7). |
@@ -573,6 +576,34 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 **Not this plate:** Get Output pane. Rule Outcomes (A21). Every-firm default with no cascade showing.
 
 **Packet:** [`GET-PACKET.md`](./GET-PACKET.md) — engineer + SA. On the PNG / not on the PNG. Three-level shape. Do not freeze the left example tree.
+
+---
+
+### A24 — Contact import · Output (this run’s writes)
+
+![A24 contact import output](./automations-blueprint/A24-contact-import-output.png)
+
+**Rationale (19:34):** Same Output as **A20**. Trigger, not Rule. Contact import writes the **batch** and the **rows**. Click one; bottom is that write.
+
+**On the glass:** Tabs Input · Output. Output selected. No Outcomes. Chips: **import_batch** (selected) · **contact_records** (25). Preview: this batch (id, filename, row_count, source, firm).
+
+**Do not build:** teaching captions. Rule chips (nudge, required data, pass/fail) on this event. Catalog blurb “the real house workflow.” Audit/tag writes as if they were import’s output.
+
+**Not this plate:** New contact (A25). Inside Audit. Get.
+
+---
+
+### A25 — New contact · Output (this run’s writes)
+
+![A25 new contact output](./automations-blueprint/A25-new-contact-output.png)
+
+**Rationale (19:34):** Same Output as **A20**. This event wrote **one person**. No `import_batch`.
+
+**On the glass:** Tabs Input · Output. Chip: **contact_records** only. Preview: that contact (name, firm, email, id). Name is example furniture.
+
+**Do not build:** teaching captions. An import_batch chip on this event. Immigration fields.
+
+**Not this plate:** Contact import (A24). Add contact modal (C8).
 
 ---
 
