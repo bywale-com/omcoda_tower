@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **13:07:** After a node, **every write that run made**; next node **picks**. Handle is on **main** (PR [#94](https://github.com/bywale-com/omcoda_tower/pull/94)). **16:04:** Output pane — **top = all outputs this run made; click one; bottom = that output.** **A20** revises A11. Required data is one class. Does **not** work that way in Hub today. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **13:07** writes handle on main. **A20** Output. **A21** Outcomes: stacked; per-outcome GUI \| JS; tabs = Input / Outcomes / Output. A2 giant GUI/Custom is not the tab. Do not plant.
 
 **How we maintain this log**
 
@@ -1162,6 +1162,25 @@ Flag 15:43 untouched.
 **Look:** **A20** revises A11. Same chrome. Top = every output this run made (Required data is one chip, selected). Bottom = this run’s missing fields — not the whole catalog. Same Output shape is what we standardize across nodes. Input / Outcomes still not drawn.
 
 **Do not:** plant; mint a listing table; invent extra classes; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 16:33 UTC — Outcomes pane assembled (A21)
+
+**Why:** Founder: engineer is literal. A2/A3/A4 are the same pane arranged wrong. Fix the arrangement. Packet later: what not to build in the image / what to build that is not in the image.
+
+**Look (founder):**
+- Tabs = **Input / Outcomes / Output**. The giant **GUI / Custom** on A2 is **not** that slot.
+- Outcomes **stacked** (A2). Never side-by-side (A4 was wrong).
+- Each outcome: tiny **GUI | JS** beside the title (A4’s small GUI chip, plus JS). Not a page-level GUI/Custom.
+- On → interior shows. Off → nothing inside (A2 Draw competitiveness).
+- Code look from A4: language, rename, line numbers, color, copy. Same for every code interior.
+
+**Plate:** [`A21-rule-outcomes-pane.png`](./automations-blueprint/A21-rule-outcomes-pane.png). A2 · A3 · A4 stay prior. No teaching captions on the glass.
+
+**Do not:** plant; overwrite 15:43; reprint A2–A4 as canon.
 
 Flag 15:43 untouched.
 

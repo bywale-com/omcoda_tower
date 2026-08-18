@@ -44,9 +44,10 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | # | File | Kind | What it is | Born from (log) | Revises / canon |
 |---|------|------|------------|-----------------|-----------------|
 | **A1** | [`A1-smallest-workflow.png`](./automations-blueprint/A1-smallest-workflow.png) | chrome | Smallest workflow: **trigger · rule · action**. Fewer pieces. Then build those pieces. | 20:54 | — |
-| **A2** | [`A2-rule-gui.png`](./automations-blueprint/A2-rule-gui.png) | chrome | Open the rule. **GUI.** Toggles on families. Conditions as rows. | 20:54 | — |
-| **A3** | [`A3-rule-custom.png`](./automations-blueprint/A3-rule-custom.png) | chrome | Same rule. **Custom** — JSON when GUI isn’t enough. | 20:54 | companion to A2 |
-| **A4** | [`A4-gui-plus-named-code.png`](./automations-blueprint/A4-gui-plus-named-code.png) | chrome | Side-by-side: GUI outcome (constant) **plus** named code outcome, both **on/off**. | 21:10 | — |
+| **A2** | [`A2-rule-gui.png`](./automations-blueprint/A2-rule-gui.png) | chrome | Open the rule. Stacked families. Off = empty. **Wrong:** giant GUI/Custom where tabs belong. | 20:54 | **prior.** Outcomes pane → **A21** |
+| **A3** | [`A3-rule-custom.png`](./automations-blueprint/A3-rule-custom.png) | chrome | Whole-rule Custom JSON. Code color. | 20:54 | **prior.** Per-outcome JS is on **A21** |
+| **A4** | [`A4-gui-plus-named-code.png`](./automations-blueprint/A4-gui-plus-named-code.png) | chrome | GUI + named code. **Wrong:** side-by-side. Code editor look (line numbers, copy, rename) is kept. | 21:10 | **prior.** Outcomes pane → **A21** |
+| **A21** | [`A21-rule-outcomes-pane.png`](./automations-blueprint/A21-rule-outcomes-pane.png) | chrome | **Canonical Outcomes.** Tabs = Input / Outcomes / Output. Outcomes stacked. Per-outcome GUI \| JS. On → interior. Off → empty. | 16:33 | **revises A2 · A3 · A4** |
 | **A5** | [`A5-inside-trigger.png`](./automations-blueprint/A5-inside-trigger.png) | chrome | Inside the trigger. Event or schedule. | 21:10 | — |
 | **A6** | [`A6-add-node.png`](./automations-blueprint/A6-add-node.png) | chrome | Add a node. Select Action. | 21:10 | — |
 | **A7** | [`A7-action-two-kinds.png`](./automations-blueprint/A7-action-two-kinds.png) | chrome | Inside action: **Agents** vs **in the application**. | 21:10 | — |
@@ -97,7 +98,7 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | Insert / add a node | Palette. Select **Action** (A6). |
 | Open the **Action** node | Kind: **Agents** vs **in the application** (A7). |
 | Action kind = Agents | First: **assign existing** or **from a template** (**A14**). Then select agent (whole sequence) · declare objective · if data request, create the form (A8 prior / **A12** canon). You do **not** author a new agent here. |
-| Open the **Rule** node | Immigration · Service eligibility. GUI \| Custom (A2 / A3). Outcomes toggle on/off. GUI + named code (A4). |
+| Open the **Rule** node | Click the Rule node. Tabs: Input · Outcomes · Output. **Outcomes:** **A21**. GUI \| Custom on A2 is **not** the tab. |
 | Rule tab **Output** | Today’s signals (A9 prior) · listing always-on (**A11** prior) · **A20** canon: click a class, preview below. |
 | After the rule, on the DAG | **Condition / If node** that reads that Output and forks. **Hub has this. No Ant plate.** A10 / A13 diagram the idea. |
 
@@ -123,7 +124,83 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 ---
 
-### A2 — Rule, GUI
+### A2 — Rule, GUI (prior)
+
+![A2 rule GUI](./automations-blueprint/A2-rule-gui.png)
+
+**Rationale (20:44, 20:54):** Look at Rules to see the end goal. Toggles on outcome families. A rule is a **composite of conditions and constants**. Creatable. Industry-modular. Authored logic is simple enough for a GUI.
+
+**On the glass:**
+- Modal: Immigration · Service eligibility · Rule.
+- Segmented **GUI | Custom**, GUI on.
+- Families with switches (Pathway, Gaps, …). A family can be off.
+- Condition rows: field · operator · constant. Add condition.
+
+**Why this does what we wanted:** operator authors blocks, not code. Constants are referenced. Inside-the-rule **condition** grain. **Stack + off-empty is kept.** Giant GUI/Custom is not.
+
+**Canonical Outcomes:** **A21**.
+
+**Not this plate:** Custom JSON (A3). Named code beside GUI (A4). The If node **after** the rule.
+
+---
+
+### A3 — Rule, Custom (prior)
+
+![A3 rule Custom](./automations-blueprint/A3-rule-custom.png)
+
+**Rationale (20:54):** Two options. Custom when the GUI isn’t enough — same idea as JSON. Escape hatch, not the default.
+
+**On the glass:** Same modal, **Custom** on. JSON of the same rule. Caption under the switch: **“When the GUI isn’t enough — same as JSON.”** Founder caption — not a node.
+
+**Why this does what we wanted:** not limited to code; not forbidden from code. **Code color / indent is kept** on A21’s per-outcome JS.
+
+**Canonical Outcomes:** **A21**.
+
+**Not this plate:** Named-code **outcome** inside GUI (that is A4).
+
+---
+
+### A4 — GUI plus named code (prior)
+
+![A4 GUI plus named code](./automations-blueprint/A4-gui-plus-named-code.png)
+
+**Rationale (21:10):** Some outcomes have a constant (GUI). Some have no constant — especially across industries — and must be **named code** (JS or Python), **created in this rule**, still **on or off**, you **name it**. Prefer a constant when one exists.
+
+**On the glass:**
+- One outcome: field / operator / constant, toggle on, tag GUI.
+- One outcome: named JavaScript, toggle on, tag Named code.
+- Caption: created in this rule; not hard-coded.
+
+**Why this does what we wanted:** still the rules module. Still a toggle. Not a hard-coded special case. **Code editor look is kept.** Side-by-side is not.
+
+**Canonical Outcomes:** **A21**.
+
+**Not this plate:** Whole-rule Custom (A3). Inventing rule-output catalog.
+
+---
+
+### A21 — Rule Outcomes pane (canonical Outcomes)
+
+![A21 rule outcomes pane](./automations-blueprint/A21-rule-outcomes-pane.png)
+
+**Rationale (16:33):** Assemble A2/A3/A4. Engineer is literal. One arrangement.
+
+**On the glass:**
+- Tabs: **Input · Outcomes · Output**. Outcomes selected. **No** giant GUI/Custom.
+- Outcomes **stacked**. Never side-by-side.
+- Each outcome: title · tiny **GUI | JS** (same small look as A4’s GUI chip) · on/off.
+- On + GUI → conditions + Add condition (A2).
+- On + JS → code editor: language picker, rename, line numbers, syntax color, copy (A4).
+- Off → header only. Nothing inside (A2 Draw competitiveness).
+- Footer: Cancel · Save. **No teaching captions.**
+
+**Do not build from this plate:** any sentence that is not a control. There are none on purpose.
+
+**Not this plate:** Input tab. Output tab (A20). Planting.
+
+---
+
+### A5 — Inside trigger
 
 ![A2 rule GUI](./automations-blueprint/A2-rule-gui.png)
 
