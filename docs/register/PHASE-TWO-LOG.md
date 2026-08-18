@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **13:07** writes handle on main. **A20** Output. **A21** Outcomes: stacked; per-outcome GUI \| JS; tabs = Input / Outcomes / Output. A2 giant GUI/Custom is not the tab. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **13:07** writes handle. **A20** Output. **A21** Outcomes. **16:46:** Input + Outcomes are the **same view**. Output can be separate. Trigger writes are **who** (and the event’s rows) — not CEC hours. Outcomes read fields **on that person**. Do not plant.
 
 **How we maintain this log**
 
@@ -1181,6 +1181,32 @@ Flag 15:43 untouched.
 **Plate:** [`A21-rule-outcomes-pane.png`](./automations-blueprint/A21-rule-outcomes-pane.png). A2 · A3 · A4 stay prior. No teaching captions on the glass.
 
 **Do not:** plant; overwrite 15:43; reprint A2–A4 as canon.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 16:46 UTC — Trigger writes are who; Outcomes read the person. Input + Outcomes same view.
+
+**Why:** Founder: Outcomes like “CEC skilled hours met” assume that data is available — of the **person being evaluated**. That comes from Input. So Input and Outcomes should be the **same view**. Output does not have to be. Start at the trigger: what event would fire this rule, and what are **that trigger’s actual outputs** under the writes law — do they even contain these fields?
+
+**Answer:** They mostly **do not** contain CEC hours as trigger fields. They contain **who**.
+
+Under the handle: a trigger’s output is **every write that event made**. For this immigration rule, sensible events are ones that already have a **person** in hand:
+
+| Event | What that run actually writes | Has CEC hours / CLB / ECA as the event’s writes? |
+|-------|-------------------------------|--------------------------------------------------|
+| **Eligibility changed** | `eligibility_evaluations` · result · `signals` · `motion_decisions` · the **contact** | **No.** Hours live on the person, if they exist. |
+| **Fact writeback** | `fact_writebacks` (one `field_key`) · the contact | **Only that one field**, if it was hours. Not the whole compare set. |
+| **Contact import** | `import_batch` · `contact_records` | **No.** People exist. Those compare fields are usually empty. |
+| **Audit completed** | `audit_runs` · verdicts · sequence-ready | **No.** Reachability, not pathway hours. |
+| **Firm provisioned** | `ct_firms` | **No person.** This rule has nothing to compare. |
+
+So the Outcomes rows are **not** “fields the trigger emitted.” They are conditions on **the person those writes point at**. If the person does not have the field, the pack already says “missing from input” — that is required data. Hub **Run** stuffed a `client_data` blob by pulling. That is preview. It is not the handle.
+
+**Look:** Input = the previous node’s writes (for this rule: the trigger’s writes — the person). Outcomes = authored against fields **on those records**. Same view, because you are authoring the compare **on what Input just made available**. Output stays after the run (A20).
+
+**Do not:** plant; put CEC hours on the trigger as fake outputs; collapse Output into this view; overwrite 15:43.
 
 Flag 15:43 untouched.
 
