@@ -131,7 +131,7 @@ Operator → Configuration libraries → Automations → open **Reference pack u
 - Immigration eligibility fields on Get (hours, CLB, …). Those belong on the **rule**.
 - Audit inside Get. Get is not a people-pump.
 - A third Get-per-module kind.
-- Lightning bolt as a required icon system. The product is: the box holds a left-side write. The bolt is chrome.
+- Lightning bolt as a required icon system. The product is: the box holds a left-side write. A23 bolt is **prior**. Mapping look → **A29** chip (awaiting lock).
 - Green mapped pip as a required color. Same: shows which left field is in use.
 - Fake localhost URL chrome if a generator drew a browser frame.
 - Rule background title drift (“Eligibility change” vs Immigration · Service eligibility). Trust the chain on **A22**.

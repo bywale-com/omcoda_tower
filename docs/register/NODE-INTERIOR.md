@@ -52,6 +52,8 @@ Action / If interiors we already drew (A7, A14, A16) are **Parameters** (the mid
 
 **Click the node = configure.** Do not send click to Switch. Switch is **⋯** (A27). First pick / Switch opens the event picker (A26). Wire **+** is A28.
 
+**Test** fills these panes with a simulated write-set (law 39). A mapped write is a **chip** in the box (law 40 · A29).
+
 ---
 
 ## Direct Input vs Get

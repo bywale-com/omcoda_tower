@@ -94,6 +94,20 @@ Hub `lastOutput` → `lastInput` is the smell, not the live path. Live is SA **0
 
 ---
 
+## Test (why you press it)
+
+The machine will run. Testing is not to prove that.
+
+You test so **Input and Output show the parameters** — every write that node would produce — so you can map those into boxes in the next nodes. It is less about the values than about the **shape**.
+
+Test does **not** touch live data. It **simulates** that event/node’s writes **completely**, from what the module actually writes (the handle above), not a hardcoded list. A trigger that writes a lot (contact import: `import_batch` + `contact_records`) must show **all** of that. No gap. When the module grows a write, Test shows it.
+
+A **variable** is not a string you type. It is its own **colored chip**, placed from the left into any open box.
+
+Face **law 39 · 40**. Plates **A30** · **A29**. Do not bolt a Test module.
+
+---
+
 ## Shape: when a node finishes, you have what the module produced
 
 This is the whole question. Automations only works if this is true.

@@ -68,7 +68,9 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A18** | [`A18-trigger-global-local.png`](./automations-blueprint/A18-trigger-global-local.png) | chrome | Inside trigger. After the event: **Global** (all of that kind) or **Local** (this specific one). Example: form submitted. | 18:53 | **prior.** Grain as radios. Grain dropdown → **A26** |
 | **A19** | [`A19-automations-contacts.png`](./automations-blueprint/A19-automations-contacts.png) | chrome | Automations **Contacts** = the same look as Agents C8. Same Add contact modal. Does not start a mission now. | 18:53 · 01:01 | companion to C8 / C8b |
 | **A22** | [`A22-get-canvas.png`](./automations-blueprint/A22-get-canvas.png) | chrome | Canvas. **Get** is a node kind. Chain: **Reference pack updated → Get → Rule**. Palette includes Get. | 17:06 | — |
-| **A23** | [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png) | chrome | Inside **Get**. Left = n8n tree (keep). Parameters: **dropdown** Every firm / Select firm. Select → Firm then Contact **comboboxes** (dropdown + input). Left writes apply in those boxes. | 17:33 | revises 17:26 |
+| **A30** | [`A30-test-on-canvas.png`](./automations-blueprint/A30-test-on-canvas.png) | chrome | Canvas. **Save · Test · Launch**. Test simulates writes into Input/Output. Launch is the real run. Awaiting lock. | 22:45 | — |
+| **A23** | [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png) | chrome | Inside **Get**. Left = n8n tree (keep). Parameters: **dropdown** Every firm / Select firm. Select → Firm then Contact **comboboxes** (dropdown + input). Left writes apply in those boxes. | 17:33 | **prior** for mapping look → **A29** |
+| **A29** | [`A29-variable-chip.png`](./automations-blueprint/A29-variable-chip.png) | chrome | Mapped variable is a **colored chip** in the box, not typed text. Left tree = prior writes. Awaiting lock. | 22:45 | **revises A23** (mapping look) |
 | **A24** | [`A24-contact-import-output.png`](./automations-blueprint/A24-contact-import-output.png) | chrome | Trigger **Output** of **contact import**. A20 shape. This run: `import_batch` + `contact_records`. | 19:34 | — |
 | **A25** | [`A25-new-contact-output.png`](./automations-blueprint/A25-new-contact-output.png) | chrome | Trigger **Output** of **new contact**. A20 shape. This run: `contact_records` (that person). | 19:34 | — |
 
@@ -88,6 +90,7 @@ In-app Ant Automations workbench is **not** this blueprint. Mock = generated ima
 - A10 still shows required data as a dashed hole. **A13** fills the hole **as a diagram**.
 - A1 smallest workflow is trigger · rule · action with **no If node** on the canvas. **A15** is the chain (If on the canvas). **A16** opens that If. A1 stays the smallest. A6’s palette includes **Exit**; A15’s includes **Condition (If)** — do not freeze one palette from the other.
 - **A14** nav chrome sometimes drifts (Home / Workspaces vs House-global). Trust the **modal contents**. A14 footer on the PNG is Cancel · Save; the “not a third option” sentence is not on that image.
+- **A30** generated chrome drifted (Harbor / icon sider). Trust **Save · Test · Launch**, the chain, the palette. Desk = **A22**.
 
 ---
 
@@ -110,7 +113,8 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | Insert / add a node | Palette (A6 prior). Wire **+** (**A28**). Select **Action**. No Trigger on the wire. |
 | Open the **Action** node | Kind: **Agents** vs **in the application** (A7). |
 | Action kind = Agents | First: **assign existing** or **from a template** (**A14**). Then select agent (whole sequence) · declare objective · if data request, create the form (A8 prior / **A12** canon). You do **not** author a new agent here. |
-| Open the **Get** node | **A23.** Packet [`GET-PACKET.md`](./GET-PACKET.md). Input tree \| Parameters (three-level selector). Output tab exists, not opened. |
+| **Test** | Canvas **Test** (**A30**). Fills Input / Output with the simulated write-set. Not Launch. |
+| Open the **Get** node | **A23** prior. Mapping look → **A29** (chip). Packet [`GET-PACKET.md`](./GET-PACKET.md). |
 | Open the **Rule** node | Click the Rule node. Tabs: Input · Outcomes · Output. **Outcomes:** **A21**. GUI \| Custom on A2 is **not** the tab. |
 | Rule tab **Output** | Today’s signals (A9 prior) · listing always-on (**A11** prior) · **A20** canon: click a class, preview below. |
 | After the rule, on the DAG | **Condition / If node** that reads that Output and forks. **Hub has this. No Ant plate.** A10 / A13 diagram the idea. |
@@ -661,6 +665,40 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 **Not this plate:** Node **⋯** (A27). Event picker (A26).
 
 **Packet:** [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md).
+
+---
+
+### A29 — Variable is a chip
+
+![A29 variable chip](./automations-blueprint/A29-variable-chip.png)
+
+**Rationale (22:45):** Left writes go into **any** open box as their own element — color, not a string you type. Why you test: the left tree is the parameters you can map.
+
+**On the glass:** Get · Contacts. Input tree from **Contact import** (`import_batch` · `contact_records` — A24 write-set). Firm box holds a **chip** `firm` / `import_batch.firm` with remove. Not `{{firm}}`. Not A23’s lightning on plain Harbor RCIC.
+
+**Do not build:** teaching captions. Invented extra import fields. Lightning-as-the-mapping-look (A23 prior).
+
+**Not this plate:** Test control (**A30**). Output tab.
+
+**Packet after they lock.**
+
+---
+
+### A30 — Test on the canvas
+
+![A30 test on canvas](./automations-blueprint/A30-test-on-canvas.png)
+
+**Rationale (22:45):** Do not bolt a Test module. Test sits with Save / Launch. Test **simulates** the write-set into Input/Output. Launch is the real run. Does not touch live data.
+
+**On the glass:** Save · **Test** · Launch workflow. Chain Contact import → Get → Rule.
+
+**Do not build:** a Test tab on the node. Test as Launch. A hardcoded fake field list. Teaching captions.
+
+**Stale pixel:** generated chrome drifted (Harbor / icon sider). Trust **Save · Test · Launch**, the three-node chain, the palette. Desk chrome = A22.
+
+**Not this plate:** chip mapping (**A29**). Interior tree (A23 / A29).
+
+**Packet after they lock.**
 
 ---
 

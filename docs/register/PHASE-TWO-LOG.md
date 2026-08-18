@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. A26–A28 locked. Packets: trigger select + node place. Global = every firm + every permutation; Local = nested existing shape. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Test simulates writes (not “does it work”). Variable = chip. Plates **A29** · **A30** awaiting lock. Do not plant.
 
 **How we maintain this log**
 
@@ -1436,6 +1436,25 @@ Flag 15:43 untouched.
 **Packets:** [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) (A26) · [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) (A27 · A28).
 
 **Do not:** plant; recut 015; overwrite 15:43; collapse Local with A19; invent events.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 22:45 UTC — Test simulates the writes. A variable is a chip
+
+**Why:** Founder: automations now feels usable; gap closed. Natural next is testing. Do not bolt. Not “does it work” — bounded platform, it will work. Value of testing: see what **populates** in Input and Output so you can map the right **parameters** into boxes in other nodes. Less the values than the parameters. Do not pull live. Simulate **perfectly** — especially a trigger that writes a lot — no gap, no hardcoded subset, so it can update when the module does. Left into **any** open box. A variable is its **own element**, color, not a string you type correctly. Some images justified.
+
+**Thesis (plain):** Test fills Input/Output with that node’s real write-set, simulated. Then you place those as chips. Launch is the live run.
+
+**Plates (awaiting lock — no packets yet):**
+
+- [`A29-variable-chip.png`](./automations-blueprint/A29-variable-chip.png) — chip in the box. Revises A23 lightning-on-text.
+- [`A30-test-on-canvas.png`](./automations-blueprint/A30-test-on-canvas.png) — Save · Test · Launch. Chrome drifted; trust the three buttons.
+
+**Law 39 · 40.**
+
+**Do not:** plant; recut 015; overwrite 15:43; invent a Test tab; invent extra import fields.
 
 Flag 15:43 untouched.
 
