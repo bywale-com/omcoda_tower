@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **13:07:** After a node, **every write that run made**; next node **picks**. Handle is on **main** (PR [#94](https://github.com/bywale-com/omcoda_tower/pull/94)). **15:55:** Node interior — **Input / Output standardized** from **A11**. Kind-same look (all actions, all rules, all conditions). Middle pane by kind (Rules, not Parameters). Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **13:07:** After a node, **every write that run made**; next node **picks**. Handle is on **main** (PR [#94](https://github.com/bywale-com/omcoda_tower/pull/94)). **16:04:** Output pane — **top = all outputs this run made; click one; bottom = that output.** **A20** revises A11. Required data is one class. Does **not** work that way in Hub today. Do not plant.
 
 **How we maintain this log**
 
@@ -1138,6 +1138,30 @@ Flag 15:43 untouched.
 - **A11** is the current face for that (evolution of A9). That is the plate we walk from.
 
 **Do not:** plant; treat Hub as the app; recut the handle; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 16:04 UTC — Output: top = all writes; bottom = preview of the one you click
+
+**Why:** Founder on **A11**: we never drew Input or Outcomes — only Output. Top chips look like a quick look at **all potential outputs**. Required data is itself an output. Click a class; the bottom shows **that** result. Does it work that way now? Then: how does the traceability matrix identify required data — so we do not force A11 onto a fake model. Modify the plate to the real shape.
+
+**Does it work that way now? No.**
+
+- Hub Rule Output dumps **Analysis** (everything) + **JSON**. No click. No bottom that switches.
+- A11 painted class chips **and** the listing always on. Not select → preview.
+
+**Mechanism (looked; not invented):**
+
+- The matrix is **results** (`R-*`) in families (pathway, gaps, ops, category, draw). The rule pack is those families as **conditions**: field path · operator · constant.
+- A run **reads** those paths. Missing → “missing from input.” Fail a threshold → **assert a gap result**. Asserted `R-*` fire services and nudge / reactivation **signals**. That object is `RuleEvaluationSummary`. It is **not** a listing of required fields.
+- What would make required data a **write**: fields this pack needed that were absent, classified (`self_reportable` → form · `document_dependent` → never a form). Catalog `COLLECTIBLE_FIELDS` already maps path → capture kind → `signalHints` to `R-*`. **The evaluator does not read it.** Story already named the write: `missing_fact_signals` (`field_key`). The rule node does not write that table.
+- So required data does not “just appear.” It is attached to the **names the pack already reads**. It is not stood up as an output class today.
+
+**Look:** **A20** revises A11. Same chrome. Top = every output this run made (Required data is one chip, selected). Bottom = this run’s missing fields — not the whole catalog. Same Output shape is what we standardize across nodes. Input / Outcomes still not drawn.
+
+**Do not:** plant; mint a listing table; invent extra classes; overwrite 15:43.
 
 Flag 15:43 untouched.
 

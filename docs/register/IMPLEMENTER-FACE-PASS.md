@@ -177,7 +177,7 @@ These were asked. They are not “copy from C9/C11.”
 | **Scroll — canvas and modals** | Not only modals. **Agents canvas must scroll.** Override-this, added channels, Call, channel-rules hang below the fold — you have to reach them. Automations canvas is already fine. Sequence Settings body scrolls (C14). Select from list scrolls (C8b). Every panel that has content underneath the fold scrolls. Live Settings already cuts off channel ownership. Fix it. |
 | **Action · Agents** | Match [`A12`](./automations-blueprint/A12-form-from-required-data.png) — an actual form from the listing. Assign path [`A14`](./automations-blueprint/A14-action-assign-or-template.png). |
 | **Rename nodes** | Click the title, edit in place, same as renaming a campaign in Agents. Including the If / condition node. Same pattern everywhere a name is changed. |
-| **Rule Output** | Match [`A11`](./automations-blueprint/A11-rule-output-required-data-listing.png). |
+| **Rule Output** | Match [`A20`](./automations-blueprint/A20-rule-output-select-preview.png). A11 is prior. |
 
 ---
 

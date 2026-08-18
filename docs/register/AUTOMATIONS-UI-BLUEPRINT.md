@@ -53,7 +53,8 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A8** | [`A8-action-agents-objective.png`](./automations-blueprint/A8-action-agents-objective.png) | chrome | Agents as the action: select agent, or create the objective / form. Form here is still a **blank builder**. | 21:10 | **prior.** Form bind → **A12** |
 | **A12** | [`A12-form-from-required-data.png`](./automations-blueprint/A12-form-from-required-data.png) | chrome | **Canonical form.** Questions **are** the required-data rows. Bound from listing. | 21:36 then 21:48 | **revises A8** (form only). Select-agent law still A8 |
 | **A9** | [`A9-rule-output-gap.png`](./automations-blueprint/A9-rule-output-gap.png) | chrome | Rule Output **today** vs unnamed complete idea. Signals, not a field listing. | 21:10 | **prior.** Listing → **A11** |
-| **A11** | [`A11-rule-output-required-data-listing.png`](./automations-blueprint/A11-rule-output-required-data-listing.png) | chrome | **Canonical Output.** Required data as **field rows**. Not a flag. | 21:36 then 21:48 | **revises A9** |
+| **A11** | [`A11-rule-output-required-data-listing.png`](./automations-blueprint/A11-rule-output-required-data-listing.png) | chrome | Required data as **field rows**. Not a flag. Listing always on, under the class chips. | 21:36 then 21:48 | **prior.** Select / preview → **A20** |
+| **A20** | [`A20-rule-output-select-preview.png`](./automations-blueprint/A20-rule-output-select-preview.png) | chrome | **Canonical Output.** Top: every output this run made. Click one. Bottom: that output. Required data is one class, selected. | 16:04 | **revises A11** |
 | **A10** | [`A10-output-classes-lattice.png`](./automations-blueprint/A10-output-classes-lattice.png) | **diagram** | Output classes as a **lattice**. Missing class: **required data**. A condition on a class forks actions. | 21:28 | **prior.** Listing class → **A13** |
 | **A13** | [`A13-lattice-required-data-listing.png`](./automations-blueprint/A13-lattice-required-data-listing.png) | **diagram** | Lattice with required data as a **listing class**. If listing not empty → create form from those rows. | 21:48 · founder 22:17: this is a **different kind of picture** | **revises A10.** Not a node screenshot. Not the If node |
 | **A14** | [`A14-action-assign-or-template.png`](./automations-blueprint/A14-action-assign-or-template.png) | chrome | Action · Agents: **assign to an existing sequence** or **create from a template**. You do **not** create an agent here. | 00:02 | **revises A8** (assign path only). Select-agent = sequence still A8. Form still **A12** |
@@ -75,7 +76,7 @@ In-app Ant Automations workbench is **not** this blueprint. Mock = generated ima
 
 - Generated chrome sometimes mislabels the background workflow (opt-in vs reactivation agent). Trust the **modal contents**.
 - A8 still shows a blank “Field label / + Add field” form. **A12** is the form revision.
-- A9 still names the Output gap. **A11** is the listing on Output.
+- A9 still names the Output gap. **A11** is the listing always-on. **A20** is click a class, preview below.
 - A10 still shows required data as a dashed hole. **A13** fills the hole **as a diagram**.
 - A1 smallest workflow is trigger · rule · action with **no If node** on the canvas. **A15** is the chain (If on the canvas). **A16** opens that If. A1 stays the smallest. A6’s palette includes **Exit**; A15’s includes **Condition (If)** — do not freeze one palette from the other.
 - **A14** nav chrome sometimes drifts (Home / Workspaces vs House-global). Trust the **modal contents**. A14 footer on the PNG is Cancel · Save; the “not a third option” sentence is not on that image.
@@ -97,7 +98,7 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | Open the **Action** node | Kind: **Agents** vs **in the application** (A7). |
 | Action kind = Agents | First: **assign existing** or **from a template** (**A14**). Then select agent (whole sequence) · declare objective · if data request, create the form (A8 prior / **A12** canon). You do **not** author a new agent here. |
 | Open the **Rule** node | Immigration · Service eligibility. GUI \| Custom (A2 / A3). Outcomes toggle on/off. GUI + named code (A4). |
-| Rule tab **Output** | Today’s signals (A9 prior) · required-data **listing** (**A11** canon). |
+| Rule tab **Output** | Today’s signals (A9 prior) · listing always-on (**A11** prior) · **A20** canon: click a class, preview below. |
 | After the rule, on the DAG | **Condition / If node** that reads that Output and forks. **Hub has this. No Ant plate.** A10 / A13 diagram the idea. |
 
 Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. Hub is what is stood up for Rules.
@@ -266,11 +267,11 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Why this does what we wanted (and why it evolved):** named the hole without filling a fake catalog. **A11** fills **one** missing class as a listing. Keep A9 so SA can see Hub-today vs the listing.
 
-**Canonical for Output:** A11.
+**Canonical for Output:** A20 (A11 stays prior).
 
 ---
 
-### A11 — Rule Output: required data as a listing (canonical Output)
+### A11 — Rule Output: required data as a listing (prior)
 
 ![A11 rule output required-data listing](./automations-blueprint/A11-rule-output-required-data-listing.png)
 
@@ -284,7 +285,25 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Why this does what we wanted:** the next node (If / action / form) can **call from previous results**. A form can bind. A condition can ask “listing not empty.”
 
-**Not this plate:** Binding UI (A12). Inventing fields not in the catalog.
+**Not this plate:** Binding UI (A12). Inventing fields not in the catalog. Click-one / preview-below — that is **A20**.
+
+---
+
+### A20 — Rule Output: top = all outputs; bottom = preview of the selected (canonical Output)
+
+![A20 rule output select preview](./automations-blueprint/A20-rule-output-select-preview.png)
+
+**Rationale (16:04):** Founder on A11: the top chips are a **quick look at all the potential outputs**. Required data is itself an output. Click a class; the **bottom switches** to that output’s results. That is how Output should look on **every** node, not only Rules. A11 had the look and the listing, but it dumped the listing always-on. It did not select.
+
+**On the glass:**
+- Output tab. Same desk chrome as A11.
+- Top: Headline · Pass/fail · Nudge · Reactivation · Recommended services · **Required data** (selected).
+- Bottom: preview of the selected class. Required data selected → **this run’s missing fields** (not the whole catalog painted). Self-reportable → form. Document-dependent → never a form.
+- Caption: Top: every output this run made. Click one. Bottom: that output.
+
+**Why this does what we wanted:** Output is the writes. The top is the classes. The bottom is the selected write. Same pane shape for other node kinds later.
+
+**Not this plate:** Input or Outcomes (still not drawn). Inventing extra classes. Planting the editor.
 
 ---
 
