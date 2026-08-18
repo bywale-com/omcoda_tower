@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **13:07:** After a node, the output is **every write that run made**. Same for Audit and Provision. Next node **picks**. Engineer owns SA **013+014+015** (PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86)). Meantime had not started. New PM seated **13:16**. Do not plant. Do not recut the engineer’s packet.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **13:07:** After a node, **every write that run made**; next node **picks**. Handle is on **main** (PR [#94](https://github.com/bywale-com/omcoda_tower/pull/94)). **15:55:** Node interior — **Input / Output standardized** from **A11**. Kind-same look (all actions, all rules, all conditions). Middle pane by kind (Rules, not Parameters). Do not plant.
 
 **How we maintain this log**
 
@@ -1118,6 +1118,26 @@ Flag 15:43 untouched.
 Ready. Waiting on you.
 
 **Do not:** plant; overwrite 15:43; recut 015; treat 12:34 as current.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 15:55 UTC — Node interior: kind-same look; Input / Output from A11
+
+**Why:** Founder: reshape is on main. Walk the look inside a node. Confirm before moving.
+
+**Machine (already on main, PR [#94](https://github.com/bywale-com/omcoda_tower/pull/94)):** After a node, every write that run made. Next node picks. New nodes / triggers / events / objectives fit because they write. Not a catalog.
+
+**Look (founder, not planted):**
+
+- Inside a node there is a **general shape**.
+- **Kind-same:** all action nodes look the same. All rule nodes look the same. All condition nodes look the same. Even if the **middle pane** changes across kinds, everything that inhabits a kind looks the same.
+- Rules: the middle is **Rules** (its own thing) — not Parameters.
+- **Input** and **Output** still exist on those nodes. Those two we **standardize**.
+- **A11** is the current face for that (evolution of A9). That is the plate we walk from.
+
+**Do not:** plant; treat Hub as the app; recut the handle; overwrite 15:43.
 
 Flag 15:43 untouched.
 
