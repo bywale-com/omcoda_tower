@@ -4,7 +4,7 @@
 **Why this file exists:** Founder 2026-08-16 ~02:19, then 02:27: the first pass listed every plate in a coverage table. It did **not** open every PNG. This file is the walk. Share with SA.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
 **Law:** [`AGENTS-FACE.md`](./AGENTS-FACE.md) · [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Lineups: [`AGENTS-UI-BLUEPRINT.md`](./AGENTS-UI-BLUEPRINT.md) · [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md).  
-**Do not:** mint a `qualify` node, a `first_objective` field, or freeze “Launch window” / “Launch day” as system types. Do not regenerate the plates — pixels stay; **this audit is the spec of what the pixels mean**.
+**Do not:** mint a `qualify` node, a `first_objective` field, or freeze “Launch window” / “Launch day” as system types. Do not regenerate the plates — pixels stay; **this audit is the spec of what the pixels mean**. **When a pocket is locked for a build**, also read [`PLATE-READ.md`](./PLATE-READ.md).
 
 **Method:** Opened every canon PNG in `docs/register/agents-blueprint/` (C1–C8, C2b, C5b) and `docs/register/automations-blueprint/` (A1–A17). Classified **every visible mark**. A “—” in an earlier table is not a look. If a sentence is not listed here, it was not on that PNG.
 

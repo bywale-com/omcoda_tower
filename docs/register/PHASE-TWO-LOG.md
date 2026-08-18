@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Get** pocket locked (**A22** · **A23**). Packet [`GET-PACKET.md`](./GET-PACKET.md). No new image. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Get** pocket locked (**A22** · **A23**). Packet [`GET-PACKET.md`](./GET-PACKET.md). Select firm → all contacts selected; deselect all to pick. Plate-read [`PLATE-READ.md`](./PLATE-READ.md). Do not plant.
 
 **How we maintain this log**
 
@@ -1317,6 +1317,20 @@ Flag 15:43 untouched.
 **Shape:** every module has the equivalent of three dropdowns — every/select, then first class, then second class. Contacts on the plate is Firm then Contact. Left is a stacking shape; do not build the pack-update example tree as schema; fit known write-sets.
 
 **Do not:** plant; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 17:56 UTC — Select firm selects all contacts. Plate-read.
+
+**Why:** Founder: the three examples complete the module. Then: however you select a firm (left write or the dropdown), **all of its contacts are selected**. Deselect all to pick a few. Add contact should be the same; that plate later. A23: Schema / Table / JSON implied; Search works; everything outside this modal is out of scope for this build.
+
+**Law:** Select firm → all contacts of that firm selected. Closed Contact is that default, not none.
+
+**Framework:** [`PLATE-READ.md`](./PLATE-READ.md) — five buckets: copy / do not build / implied / completes / out of scope this build. Packet updated.
+
+**Do not:** plant; recut 015; overwrite 15:43. No new image.
 
 Flag 15:43 untouched.
 

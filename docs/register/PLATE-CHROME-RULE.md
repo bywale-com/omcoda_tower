@@ -16,3 +16,5 @@ Whenever you generate a plate for Agents or Automations:
 Canon chrome references that already match the desk: [`agents-blueprint/C4-override-this.png`](./agents-blueprint/C4-override-this.png), [`agents-blueprint/C8-sequence-contacts-enroll.png`](./agents-blueprint/C8-sequence-contacts-enroll.png), live `/prototype-ant`.
 
 Hub is not the app. Do not copy Hub chrome onto these plates.
+
+**When that plate is a locked build:** [`PLATE-READ.md`](./PLATE-READ.md). Chrome outside the modal is out of scope for that interior. Do not rebuild the desk from the packet.

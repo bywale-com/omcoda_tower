@@ -3,7 +3,7 @@
 **Seat:** Product Manager. Paste this. Product language. Do not invent backend. Do not mint tables.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
 **Desk:** CT Ant `/prototype-ant`, Light. Operator → Configuration libraries → Agents / Automations. Chrome rule: [`PLATE-CHROME-RULE.md`](./PLATE-CHROME-RULE.md).  
-**Captions:** [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md). Teaching copy on older plates is not a node.
+**Captions:** [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md). Teaching copy on older plates is not a node. **Locked pocket:** [`PLATE-READ.md`](./PLATE-READ.md) — copy / do not build / implied / completes / out of scope.
 
 Each new plate has **one purpose**. Copy that. Everything else on that PNG is not spec.
 
