@@ -55,6 +55,7 @@ import { emptyRuleNodeConfig } from "../../../data/automationRules";
 import { wirePorts } from "../../../wire/registry";
 import type { EligibilityPipelineRow } from "../../../wire/machineTypes";
 import { ActionAgentsModal, ActionInAppModal, ActionKindModal } from "./automationPlates/ActionPlateModals";
+import { ContactPickModal } from "./ContactPickModal";
 import { DirectInputPane } from "./automationPlates/DirectInputPane";
 import { GetParametersPane } from "./automationPlates/GetParametersPane";
 import { IfPlateModal } from "./automationPlates/IfPlateModal";
