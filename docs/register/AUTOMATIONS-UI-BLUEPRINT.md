@@ -100,6 +100,7 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | Insert / add a node | Palette. Select **Action** (A6). |
 | Open the **Action** node | Kind: **Agents** vs **in the application** (A7). |
 | Action kind = Agents | First: **assign existing** or **from a template** (**A14**). Then select agent (whole sequence) · declare objective · if data request, create the form (A8 prior / **A12** canon). You do **not** author a new agent here. |
+| Open the **Get** node | **A23.** Packet [`GET-PACKET.md`](./GET-PACKET.md). Input tree \| Parameters (three-level selector). Output tab exists, not opened. |
 | Open the **Rule** node | Click the Rule node. Tabs: Input · Outcomes · Output. **Outcomes:** **A21**. GUI \| Custom on A2 is **not** the tab. |
 | Rule tab **Output** | Today’s signals (A9 prior) · listing always-on (**A11** prior) · **A20** canon: click a class, preview below. |
 | After the rule, on the DAG | **Condition / If node** that reads that Output and forks. **Hub has this. No Ant plate.** A10 / A13 diagram the idea. |

@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Get** is a node kind (**A22** · **A23**). Left of A23 is n8n (keep). Parameters: **Every firm** stays; it is a **dropdown** not a radio. **Select firm** opens the next dropdowns (also input boxes) — that is where left-side writes apply. Output of Get not drawn. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Get** pocket locked (**A22** · **A23**). Packet [`GET-PACKET.md`](./GET-PACKET.md). No new image. Do not plant.
 
 **How we maintain this log**
 
@@ -1303,6 +1303,20 @@ Flag 15:43 untouched.
 **Plate:** [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png) replaced. Left unchanged in kind.
 
 **Do not:** plant; recut 015; overwrite 15:43. Do not update a pile of law before this is confirmed.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 17:50 UTC — Get pocket locked. Packet.
+
+**Why:** Founder: A23 is good; move forward; no new image. Create the packet now so nothing is lost. Engineer and SA. Every comment in this pocket preserved.
+
+**Packet:** [`GET-PACKET.md`](./GET-PACKET.md).
+
+**Shape:** every module has the equivalent of three dropdowns — every/select, then first class, then second class. Contacts on the plate is Firm then Contact. Left is a stacking shape; do not build the pack-update example tree as schema; fit known write-sets.
+
+**Do not:** plant; recut 015; overwrite 15:43.
 
 Flag 15:43 untouched.
 
