@@ -15,12 +15,12 @@ Webhook is a way **in** from outside. It is not an action.
 
 | Kind | What it is |
 |------|------------|
-| **Something happened in the app** | An event. You can say **all of that kind** (Global) or **this specific one** (Local). |
+| **Something happened in the app** | An event. **Global** = every firm + every permutation of this event. **Local** = nested dropdowns of that event’s existing shape (firm/contact primitive, plus this form / this campaign / this pack / this batch when the event has that identity). Sequential — not every dropdown at once. |
 | **Not an in-app event** | **Schedule** (time). **Manual** (you pressed it). **Webhook** (the outside told us). |
 
-Local example you just named: not “any form.” **This form we just created** was submitted.
+Local is not implicit. The form example (all forms vs **this form**) is one **layer**, not the whole of Local. Firm/contact Select firm is another layer already named. Face: [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) · **A26**.
 
-Some events have no Local (an audit is one-time). That is still an event.
+Some events have no instance axis (an audit is one-time). That is still an event. SA maps. Do not invent a fake instance.
 
 ---
 
@@ -28,8 +28,8 @@ Some events have no Local (an audit is one-time). That is still an event.
 
 These are the in-app events. If a new “when X happens” is not this list, the shape does not support it yet — and maybe it shouldn’t.
 
-| Event | Global | Local |
-|-------|--------|-------|
+| Event | Global | Local (instance layer) |
+|-------|--------|------------------------|
 | **A form was submitted** | All forms | **This form** |
 | **A campaign failed** | All campaign failures | **This campaign** |
 | **Someone opted out / unsubscribed** | All of those | — |
@@ -38,6 +38,8 @@ These are the in-app events. If a new “when X happens” is not this list, the
 | **A contact file was imported** | All contact-file imports | **This batch** |
 | **A new contact** | All new contacts | **This firm** — later if we need it |
 | **A reference pack / eligibility criteria was updated** | All pack updates | **This pack** |
+
+**Global** on every row also means **every firm**. The Local column is the **instance** layer only. Firm/contact Select firm is the other Local layer and is not restated per row. Nested; SA maps order. Do not treat a dash as “no Local at all” until SA says the firm axis is also empty.
 
 That is the list from the face we have already named. Not “any row changed.”
 

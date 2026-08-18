@@ -48,6 +48,8 @@ If the shape has two values and the PNG shows one, the other value is the rest o
 
 Get specimen: **Every firm** is in the open dropdown. The PNG is **Select firm**. Both states. **Module** is Contacts; changing it restamps the three levels. **Select a firm** (from the left or from the list) → all that firm’s contacts are selected; deselect all to pick a few.
 
+Trigger specimen (**A26**): PNG is **Global**. **Local** is nested dropdowns of that event’s existing shape. No extra plate. [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md).
+
 No extra plate. Completes the module.
 
 ---

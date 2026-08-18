@@ -49,10 +49,10 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A4** | [`A4-gui-plus-named-code.png`](./automations-blueprint/A4-gui-plus-named-code.png) | chrome | GUI + named code. **Wrong:** side-by-side. Code editor look (line numbers, copy, rename) is kept. | 21:10 | **prior.** Outcomes pane → **A21** |
 | **A21** | [`A21-rule-outcomes-pane.png`](./automations-blueprint/A21-rule-outcomes-pane.png) | chrome | **Canonical Outcomes.** Tabs = Input / Outcomes / Output. Outcomes stacked. Per-outcome GUI \| JS. On → interior. Off → empty. | 16:33 | **revises A2 · A3 · A4** |
 | **A5** | [`A5-inside-trigger.png`](./automations-blueprint/A5-inside-trigger.png) | chrome | Inside the trigger. Event or schedule. | 21:10 | **prior.** Select event → **A26** |
-| **A26** | [`A26-trigger-select-event.png`](./automations-blueprint/A26-trigger-select-event.png) | chrome | Trigger **select** (Assist middle modal). Event \| Schedule. Searchable **named events**. Grain is a **dropdown** (Global shown — no second picker). Awaiting lock. | 20:05 | **revises A5 · A18** (look). Packet after lock |
+| **A26** | [`A26-trigger-select-event.png`](./automations-blueprint/A26-trigger-select-event.png) | chrome | **Canonical trigger select.** Event \| Schedule. Searchable **named events**. Grain dropdown. Global = every firm + every permutation; Local = nested existing shape. | 20:05 · lock 20:09 | **revises A5 · A18**. Packet [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) |
 | **A6** | [`A6-add-node.png`](./automations-blueprint/A6-add-node.png) | chrome | Add a node. Select Action. | 21:10 | **prior.** Wire + → **A28** |
-| **A27** | [`A27-node-options-popover.png`](./automations-blueprint/A27-node-options-popover.png) | chrome | Placed-node **⋯**: Duplicate · Add node · **Switch** · Delete. Click the node is **configure**, not switch. | 20:05 | — |
-| **A28** | [`A28-add-node-on-wire.png`](./automations-blueprint/A28-add-node-on-wire.png) | chrome | Wire **+**. Add node: Get · Rule · Action · Condition (If) · Exit. **No Trigger** on insert-on-wire. | 20:05 | **revises A6** |
+| **A27** | [`A27-node-options-popover.png`](./automations-blueprint/A27-node-options-popover.png) | chrome | Placed-node **⋯**: Duplicate · Add node · **Switch** · Delete. Click the node is **configure**, not switch. | 20:05 · lock 20:09 | Packet [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) |
+| **A28** | [`A28-add-node-on-wire.png`](./automations-blueprint/A28-add-node-on-wire.png) | chrome | Wire **+**. Add node: Get · Rule · Action · Condition (If) · Exit. **No Trigger** on insert-on-wire. | 20:05 · lock 20:09 | **revises A6**. Packet [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) |
 | **A7** | [`A7-action-two-kinds.png`](./automations-blueprint/A7-action-two-kinds.png) | chrome | Inside action: **Agents** vs **in the application**. | 21:10 | — |
 | **A8** | [`A8-action-agents-objective.png`](./automations-blueprint/A8-action-agents-objective.png) | chrome | Agents as the action: select agent, or create the objective / form. Form here is still a **blank builder**. | 21:10 | **prior.** Form bind → **A12** |
 | **A12** | [`A12-form-from-required-data.png`](./automations-blueprint/A12-form-from-required-data.png) | chrome | **Canonical form.** Questions **are** the required-data rows. Bound from listing. | 21:36 then 21:48 | **revises A8** (form only). Select-agent law still A8 |
@@ -101,8 +101,8 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | Open the workflow | Canvas: **trigger · rule · action** (A1). Smallest. |
 | Same desk, teaching walk | Canvas: provisioned → audit → if X → agents (**A15**). Blank canvas; you can chain. |
 | **Click** a placed node | **Configure** that node. Trigger Output after contact import = **A24**. Not the event picker. |
-| Add a **Trigger** from the palette, or **⋯ → Switch** | Event picker (**A26**). Named events. Grain dropdown. |
-| Node **⋯** | Duplicate · Add node · Switch · Delete (**A27**). Switch lives here. |
+| Add a **Trigger** from the palette, or **⋯ → Switch** | Event picker (**A26**). Packet [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md). Named events. Grain dropdown. Local = nested shape. |
+| Node **⋯** | Duplicate · Add node · Switch · Delete (**A27**). Packet [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md). |
 | Open the **Trigger** node (configure) | **Not** the event picker. Output after contact import = **A24**. Event/Schedule + grain look is **A26** only when adding or **Switch**. A5 / A17 / A18 stay prior. |
 | Open the **Trigger** after **contact import** | **Output** tab. **A24.** Writes: import_batch · contact_records. |
 | Open the **Trigger** after **new contact** | **Output** tab. **A25.** Write: contact_records (that person). |
@@ -545,7 +545,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 | **Remaining output classes besides required data** | Lattice classes named on A9–A13: pass, re-engagement signal, reactivation signal, recommended services, required-data listing. | Do not invent the rest. |
 | **In-system action kinds** | Hub names `manage_lists`, `assign_task`, `notify_consultant` plus agent enroll. A7 is the split. | Do not invent a longer catalog. |
 | **Word “event”** | Agents C2b vs Automations event-of-origin. Form completion **is** an Automations trigger (23:16). | Do not collapse C2b with this. |
-| **Event: global vs local** | **Global:** all of that kind. **Local:** this specific one. Named: form completion, campaign failure, opt-out / unsubscribe. Not “Settings.” **A18** draws the picker. Some events may not have Local (audit as one-time) — SA maps. | Catalog still not filled. |
+| **Event: global vs local** | **Global:** every firm + every permutation of this event. **Local:** nested dropdowns of that event’s existing shape (firm/contact primitive + instance). **A26**. A18 radios prior. Some events may have no instance axis — SA maps. Not A19. | Catalog still not filled. Do not invent events. |
 | **Automations Contacts** | Same look as Agents C8 / C8b. **A19**. Who this applies to. Does not start now. | Drawn. |
 | **In-app action: ascribe a tag** | Campaign fails → record / tag. Subscription bell is that tag. | Named. Do not invent the rest. |
 | **Lineage queryable** | Who created the objective (agent vs hand), path to completion, completion event, time. | Queryable at minimum. Not a new screen. |
@@ -620,15 +620,15 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Rationale (20:05):** Translate selecting a trigger into the Assist middle-modal. Canvas add-trigger already looks good. Click into a placed node is **configure**, not this picker. This plate is add-from-palette and **⋯ → Switch**.
 
-**On the glass:** Event \| Schedule. Search events. Named events only (Form submitted, Campaign failed, Opted out, Firm created / provisioned, Audit finished, **Contact import** selected, **New contact** own row, Reference pack updated). Grain = **dropdown**, value **Global**. Global → no second combobox.
+**On the glass:** Event \| Schedule. Search events. Named events only (Form submitted, Campaign failed, Opted out, Firm created / provisioned, Audit finished, **Contact import** selected, **New contact** own row, Reference pack updated). **Icons are spec.** Grain = **dropdown**, value **Global**. Global → no second combobox.
 
-**Do not build:** teaching captions. Grain as radios (A18 prior). Footer Cancel/Save — pick is live like A23. Mixing grain into the event list.
+**Do not build:** teaching captions. Grain as radios (A18 prior). Footer Cancel/Save — pick is live like A23. Mixing grain into the event list. Empty Select under Global.
 
 **Stale pixel:** catalog blurb behind the modal if it drifted. Trust the modal.
 
-**Not this plate:** Configure after click (A24 / A25 Output). Node **⋯** (A27). Wire **+** (A28).
+**Not this plate:** Configure after click (A24 / A25 Output). Node **⋯** (A27). Wire **+** (A28). Local cascade (not this PNG — packet completes).
 
-**Packet after they lock.**
+**Packet:** [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md).
 
 ---
 
@@ -644,7 +644,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Not this plate:** The event list after Switch (A26). Wire add-node menu (A28).
 
-**Packet after they lock.**
+**Packet:** [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md).
 
 ---
 
@@ -660,7 +660,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Not this plate:** Node **⋯** (A27). Event picker (A26).
 
-**Packet after they lock.**
+**Packet:** [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md).
 
 ---
 

@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Click a placed node = configure; Switch is **⋯**. Plates **A26** event picker · **A27** node options · **A28** wire +. Packet after lock. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. A26–A28 locked. Packets: trigger select + node place. Global = every firm + every permutation; Local = nested existing shape. Do not plant.
 
 **How we maintain this log**
 
@@ -1422,6 +1422,20 @@ Flag 15:43 untouched.
 **Law 38.** Click = configure (Output of a trigger is still A24 / A25). Switch is not click.
 
 **Do not:** plant; recut 015; overwrite 15:43. Packet after they lock.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 20:12 UTC — A26–A28 locked. Packets. Global / Local is a shape
+
+**Why:** Founder: A26 is great; icons exactly to spec. Packets now. Engineer + SA. SA still reads the packet and names system modifications; those two go to the engineer.
+
+**Global / Local (law 27, this stamp):** Global = **every firm** and **every permutation of this event**. Local is not implicit. Axes: firm/contact **Select firm** (already a primitive) and the event’s instance (this form, this campaign, …). Global **is** that shape with every layer unspecified. Local **displays nested dropdowns** — not every dropdown at once; sequence because layers depend. Do not hardcode a new control per event. The event already maps. No extra PNG.
+
+**Packets:** [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) (A26) · [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) (A27 · A28).
+
+**Do not:** plant; recut 015; overwrite 15:43; collapse Local with A19; invent events.
 
 Flag 15:43 untouched.
 
