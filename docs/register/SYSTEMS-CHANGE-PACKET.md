@@ -468,4 +468,4 @@ Grain: Global = unspecified full shape. Local = nested existing axes (not A18’
 
 ## 2026-08-18 23:10 — Test fill (A30 buttons) + Input look (A29)
 
-Source values at the first handle. Downstream projects, no commit. Not AI. [`SYSTEMS-TEST-ASCRIBE.md`](./SYSTEMS-TEST-ASCRIBE.md). Does not recut 015.
+Source values on **Trigger Output** only. Same DAG as Launch. Get is a node, not a fallback. [`SYSTEMS-TEST-ASCRIBE.md`](./SYSTEMS-TEST-ASCRIBE.md). 23:12 retracted the “Get is the seed” line. Does not recut 015.

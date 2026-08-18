@@ -15,13 +15,13 @@ You do **not** need independently sourced values on every node.
 
 The chain is already the machine: previous Output **is** the next Input (015 handle). A node does not invent a second write-set and live on it. It **picks** from what came in, then its Output is what **that module** would write from that Input.
 
-So the only place you **source** values is the **first handle on the chain**. That is almost always **Trigger Output**.
+The only place you **source** values is **Trigger Output**. Test walks the same DAG as Launch. It is not a different machine.
 
-Get does not break this. Get **reads**. It does not generate a toy row. Test of Get is door 1 (SELECT). It may use a chip from the previous node (which firm) — that is a pick, not a second specimen form.
+Get is **a node on that DAG**. It is not a fallback when the trigger is “empty.” If the trigger fired, there was a write — that write **is** the event. Get’s Input is that handle (chip into Firm, etc.). Get’s Output is the records it **reads**. Same then-this as Audit.
 
-**Not wrong.** One precision: if the trigger’s writes are not the records later nodes need (pack-update silent, schedule, trigger wrote no people), the first **door-1 read** (Get or Direct Input of the book) is the seed for those people. Still not Audit. Still not AI. Still not a values form on every node.
+**Retracted (23:07):** “if the trigger wrote no people, Get / Direct Input is the seed.” Wrong. That treated Get as a substitute for the trigger. It is not. Why would a trigger fire with no data? An event is a write. Schedule / silent pack-update does not make Get the source. If those are on the canvas, the trigger still has an Output; Get still consumes it.
 
-Downstream Output (Audit / Rule / Tag / If) is **computed from that seed**, uncommitted. You do not fill those nodes with their own specimen lists.
+Downstream Output (Audit / Rule / Tag / If / Get) is **from that Input**, uncommitted. You do not fill those nodes with their own specimen lists.
 
 ---
 
@@ -36,7 +36,7 @@ No new store. Read the row.
 | Past form | `fact_writebacks` (`form_ref`) | A18 leftover box |
 | Past audit | `audit_runs` + verdicts / `sequence_ready` for that run | Guess “latest audit for this firm” |
 | Past walk | `workflow_run.node_status.writes` (pointers) then load those rows | An events copy table |
-| Get | `SELECT` at the authored grain (Get B classes) | INSERT. Audit as people-pump |
+| Get | `SELECT` at the grain **this Get node** authored, using the **previous handle** (chips). Records that already exist. | INSERT. A fallback for the trigger. Audit as people-pump |
 
 Pick which instance if many — **cousin of Local**, not a third grain kit on A30. Honest empty if none.
 
@@ -67,7 +67,7 @@ Where specimen **values** come from (still not AI):
 | `ascribe_tag` | Yes — tag string is authored; notes from projected verdict | |
 | If | No writes. Pass-through handle. Pick still runs on projected fields | |
 | Rule | **Partial.** Stub today `pass: true`. Do not paint lattice chips as if evaluated. `missing_fact_signals` only if the evaluator actually would emit them. Else Output honest-empty / silent | Do not mint a results table |
-| Get | Door 1 only | |
+| Get | Yes as a **read from Input** (door 1 on the records it points at). Not a second specimen. | Not a trigger substitute |
 | Pack-update trigger | **Silent** (no write-set) | Do not freeze `reference_versions` |
 | `call_agent` | Do not enroll on Test | Silent as live send |
 
@@ -111,10 +111,10 @@ Do not invent a mapping table. Do not freeze extra import fields. Write-set = wh
 
 1. A29 look on **every** Input. Get Parameters stay Get-only.
 2. Test button: Save · Test · Launch. No Test tab. No commit.
-3. Source values **once** at the first handle (trigger Output, or Get/Direct Input if the trigger has no people). Downstream = module(Input) uncommitted.
-4. Door 1 = SELECT / load existing. Pick instance = Local cousin.
-5. Door 2 trigger = specimen of **real** columns. Not AI. Not a hardcoded client list.
+3. Source values **once**, on **Trigger Output**. Test walks the **same DAG** as Launch. Get is a node on that DAG, not a fallback.
+4. Door 1 = pick an existing instance of **that event** (which batch / form / run). Door 2 = specimen of that event’s real columns if none has fired. Not AI.
+5. Every later node (including Get): Input = previous Output. Output = what **that** node does with it, uncommitted.
 6. Audit Test = `executeAuditRun` without persist. Rule Test does not fake an evaluation we cannot run.
 7. Chips = pointers into the handle. Graph `data`, not a table.
 
-**Do not:** recut 015; mint a test/results/mapping table; collapse door 1 and 2; generate values with a model; overwrite 15:43.
+**Do not:** recut 015; mint a test/results/mapping table; collapse door 1 and 2; generate values with a model; treat Get as the trigger’s substitute; overwrite 15:43.

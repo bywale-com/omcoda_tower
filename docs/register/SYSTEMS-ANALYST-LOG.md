@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-18 23:10 UTC — **Test: source values at the first handle (trigger). Downstream projects. Not AI.** A29 chips = pointers. Do not recut 015. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-18 23:12 UTC — **Only trigger is sourced. Get is a DAG node, not a fallback.** Test = same walk. Not AI. Do not recut 015. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1339,6 +1339,19 @@ Door 1 = existing rows (`contact_records`, `import_batch`, `audit_runs`, `fact_w
 Park: [`SYSTEMS-TEST-ASCRIBE.md`](./SYSTEMS-TEST-ASCRIBE.md).
 
 **Do not:** recut 015; mint a test table; generate values with a model; collapse door 1 and 2; overwrite 15:43.
+
+---
+
+## 2026-08-18 23:12 UTC — Correction. Get is not a fallback. There was no precision.
+
+**Why:** Founder: the “precision” (trigger wrote no people → Get / Direct Input is the seed) is not a precision. If there is no data, why does the trigger fire? Test tests the workflow. Get is not a fallback of the trigger. Get is a node on **that** DAG.
+
+**Hard:** Retract 23:10 “precision.” An event is a write. Trigger Output is the source, always. Test is the same then-this as Launch, `commit: false`. Get consumes the previous handle and **reads**. It does not replace an empty trigger. Do not explain schedule / silent pack as a second seed.
+
+Park: [`SYSTEMS-TEST-ASCRIBE.md`](./SYSTEMS-TEST-ASCRIBE.md) (thesis line corrected).
+
+**Do not:** recut 015; treat Get as trigger-substitute; overwrite 15:43.
+
 
 
 
