@@ -25,6 +25,8 @@ import type { NodeDataPayload, WorkflowNodeRunStatus } from "./automationNodeRun
 import { countPullItems } from "./automationNodeRuntime";
 
 import type { AutomationBuildModule } from "./automationBuildModules";
+import type { GetModuleId, GetSelect } from "./automationGet";
+import { formatGetSummary } from "./automationGet";
 
 export type WorkflowTarget = "audit" | "contact" | "import" | "client";
 
@@ -32,7 +34,14 @@ export type WorkflowStatus = "draft" | "active" | "paused";
 
 export type WorkflowEditorTab = "workflow" | "runs" | "settings" | "enrollment";
 
-export type WorkflowNodeType = "trigger" | "constant" | "branch" | "rule" | "action" | "exit";
+export type WorkflowNodeType =
+  | "trigger"
+  | "constant"
+  | "branch"
+  | "rule"
+  | "action"
+  | "exit"
+  | "get";
 
 export type WorkflowTriggerEvent =
   | "fact_writebacks"
@@ -150,10 +159,25 @@ export type WorkflowNodeData = {
   ifElse?: string;
   grain?: "global" | "local";
   localRef?: string;
+  /** A26 Local cascade — not A19 audience. */
+  localFirmId?: string;
+  localContactIds?: string[];
+  localFirmSelect?: "every" | "select";
+  localInstanceSelect?: "every" | "select";
   scope?: "every_firm" | "select_from";
   scopeContactIds?: string[];
   delayLabel?: string;
   conditionConfig?: IfConditionConfig;
+  /** Get — module + every/select + class cascade. Not copied onto other kinds. */
+  getModule?: GetModuleId;
+  getSelect?: GetSelect;
+  getClass1?: string;
+  getClass2?: string[];
+  /** Firm filled + Contact closed = all children. False after deselect-all + pick. */
+  getClass2All?: boolean;
+  /** Rule Direct Input — who already exists in the book. */
+  directFirmId?: string;
+  directContactIds?: string[];
   runStatus?: WorkflowNodeRunStatus;
   lastInput?: NodeDataPayload | null;
   lastOutput?: NodeDataPayload | null;
@@ -271,6 +295,20 @@ export const WORKFLOW_EVENT_CATALOG: { id: WorkflowTriggerEvent; label: string }
 ];
 
 export const WORKFLOW_PALETTE_BLOCKS: PaletteBlock[] = [
+  {
+    id: "get-records",
+    label: "Get",
+    description: "Read records in a module at a grain",
+    module: "gets",
+    nodeType: "get",
+    defaultData: {
+      label: "Get",
+      getModule: "contacts",
+      getSelect: "select",
+      getClass2All: true,
+      configured: false,
+    },
+  },
   {
     id: "constant-data-ref",
     label: "Data reference",
@@ -649,6 +687,7 @@ export function resolveUpstreamInput(
 export type UpstreamDataSource = {
   nodeId: string;
   label: string;
+  nodeType: WorkflowNodeType;
   role: "direct" | "ancestor";
   data: unknown | null;
 };
@@ -672,15 +711,64 @@ export function listUpstreamDataSources(
       sources.push({
         nodeId: source.id,
         label: source.data.label || source.id,
+        nodeType: (source.type ?? "action") as WorkflowNodeType,
         role: depth === 0 ? "direct" : "ancestor",
-        data: resolveOutputFromSourceNode(source, edge.sourceHandle),
+        data: resolveOutputFromSourceNode(source, edge.sourceHandle) ?? source.data.lastOutput ?? authoredNodeOutputs(source),
       });
       walk(source.id, depth + 1);
     }
   }
 
   walk(nodeId, 0);
+  sources.reverse();
   return sources;
+}
+
+/** Known write-sets nested under a node when no run has filled lastOutput. */
+export function authoredNodeOutputs(node: Node<WorkflowNodeData>): Record<string, unknown> {
+  const data = node.data;
+  const type = node.type ?? "action";
+  if (type === "trigger") {
+    return {
+      event: data.triggerEvent ?? data.triggerKind ?? null,
+      grain: data.grain ?? null,
+      writes: data.lastOutput ?? null,
+    };
+  }
+  if (type === "get") {
+    return {
+      module: data.getModule ?? "contacts",
+      select: data.getSelect ?? "every",
+      class1: data.getClass1 ?? null,
+      class2: data.getClass2All !== false && !(data.getClass2?.length) ? "all" : (data.getClass2 ?? []),
+      summary: formatGetSummary(data),
+    };
+  }
+  if (type === "rule") {
+    return {
+      pack: data.ruleConfig?.packId ?? data.ruleId ?? null,
+      outcomes: data.ruleConfig?.enabledOutcomeIds ?? [],
+      direct: data.directContactIds ?? [],
+    };
+  }
+  if (type === "action") {
+    return {
+      actionType: data.actionType ?? null,
+      agentRef: data.agentRef ?? null,
+      tag: data.tag ?? null,
+    };
+  }
+  if (type === "branch") {
+    return {
+      pickTable: data.pickTable ?? null,
+      pickField: data.pickField ?? null,
+      previousResultFrom: data.previousResultFrom ?? null,
+    };
+  }
+  if (type === "constant") {
+    return { pack: data.constantsPackId ?? data.constantSummary ?? null };
+  }
+  return { label: data.label };
 }
 
 export function withResolvedNodeInput(
@@ -1031,8 +1119,14 @@ export function createTriggerNode(
       ...(triggerKind === "event"
         ? {
             eventTriggerConfig: emptyEventTriggerConfig(),
-            triggerEvent: "eligibility.changed" as WorkflowTriggerEvent,
+            triggerEvent: "contact_import" as WorkflowTriggerEvent,
+            label: "Contact import",
+            configured: true,
             grain: "global" as const,
+            localFirmSelect: "every" as const,
+            localInstanceSelect: "every" as const,
+            localContactIds: [],
+            enrollmentHint: "Fires on contact_import",
           }
         : {}),
       ...(triggerKind === "manual" ? { manualTriggerConfig: emptyManualTriggerConfig() } : {}),
@@ -1117,11 +1211,25 @@ export function createNodeFromBlock(
       scheduleCron: block.defaultData.scheduleCron,
       delayLabel: block.defaultData.delayLabel,
       conditionConfig: block.defaultData.conditionConfig,
+      getModule: block.defaultData.getModule,
+      getSelect: block.defaultData.getSelect,
+      getClass1: block.defaultData.getClass1,
+      getClass2: block.defaultData.getClass2,
+      getClass2All: block.defaultData.getClass2All,
+      directFirmId: block.defaultData.directFirmId,
+      directContactIds: block.defaultData.directContactIds,
       runStatus: "idle",
       lastInput: null,
       lastOutput: null,
     },
   };
+}
+
+export function isGetConfigured(data: WorkflowNodeData): boolean {
+  const module = data.getModule ?? "contacts";
+  if (module === "reference") return data.configured;
+  if ((data.getSelect ?? "every") === "every") return true;
+  return Boolean(data.getClass1);
 }
 
 /** Place a palette block on the canvas without connecting it to the workflow. */

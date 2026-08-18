@@ -25,6 +25,7 @@ import type {
   WorkflowRunRow,
 } from "../machineTypes";
 import { standInHaltStore } from "./haltStore";
+import { triggerLocalAxesMatch } from "../../data/automationTriggerSelect";
 
 /** Mirrors supabase/seeds/002_machine_tables.sql seq_eligibility_pipeline. */
 const eligibilityPipeline = new Map<string, EligibilityPipelineRow>(
@@ -1372,16 +1373,28 @@ export const standInMachineApi: MachineApiPort = {
       );
       if (!trig) continue;
       const grain = String(trig.data?.grain ?? "global") === "local" ? "local" : "global";
-      if (grain === "local") {
-        const localRef = String(trig.data?.localRef ?? trig.data?.local_ref ?? "");
-        const writeRef = String(
-          input.payload?.form_ref ??
-            input.payload?.campaign_id ??
-            input.payload?.sequence_id ??
-            input.payload?.id ??
-            "",
-        );
-        if (!localRef || writeRef !== localRef) continue;
+      const localContactIds = Array.isArray(trig.data?.localContactIds)
+        ? (trig.data.localContactIds as unknown[]).map(String)
+        : Array.isArray(trig.data?.local_contact_ids)
+          ? (trig.data.local_contact_ids as unknown[]).map(String)
+          : [];
+      if (
+        !triggerLocalAxesMatch(
+          {
+            grain,
+            localRef: String(trig.data?.localRef ?? trig.data?.local_ref ?? "") || null,
+            localFirmId: String(trig.data?.localFirmId ?? trig.data?.local_firm_id ?? "") || null,
+            localContactIds,
+          },
+          {
+            firmId: standInFirm(),
+            eventName: input.eventName,
+            payload: input.payload as Record<string, unknown> | undefined,
+            contactIds: input.contactIds,
+          },
+        )
+      ) {
+        continue;
       }
       const audienceScope = w.audience_scope === "select_from" ? "select_from" : "every_firm";
       if (audienceScope === "select_from") {

@@ -9,6 +9,7 @@ import {
   useEdgesState,
   useNodesState,
   useReactFlow,
+  useStore,
   type Edge,
   type EdgeTypes,
   type Node,
@@ -16,45 +17,31 @@ import {
   type NodeTypes,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import {
-  Button,
-  Descriptions,
-  Drawer,
-  Empty,
-  Form,
-  Input,
-  List,
-  Radio,
-  Select,
-  Space,
-  Table,
-  Tabs,
-  Tag,
-  Typography,
-  message,
-  theme,
-} from "antd";
+import { Button, Dropdown, Empty, Form, Input, List, Select, Space, Table, Tabs, Tag, Typography, message, theme } from "antd";
 import {
   ArrowDownOutlined,
   ArrowUpOutlined,
+  DatabaseOutlined,
   DeleteOutlined,
+  FilterOutlined,
   ForkOutlined,
   LogoutOutlined,
+  MoreOutlined,
   PlayCircleOutlined,
   SaveOutlined,
   ThunderboltOutlined,
   UserAddOutlined,
 } from "@ant-design/icons";
-import { FilterOutlined, PlayCircleOutlined as ActionGlyph } from "@ant-design/icons";
+import { PlayCircleOutlined as ActionGlyph } from "@ant-design/icons";
 import { useAutomations } from "../../../context/AutomationContext";
 import {
   WORKFLOW_CONSTANT_PACK_OPTIONS,
-  WORKFLOW_EVENT_CATALOG,
-  WORKFLOW_EVENTS_WITH_LOCAL,
   WORKFLOW_PALETTE_BLOCKS,
   appendNodeAfter,
   createNodeFromBlock,
+  createNodeId,
   createTriggerNode,
+  deleteWorkflowNode,
   insertNodeOnEdge,
   relayoutWorkflowNodes,
   workflowStatusLabel,
@@ -62,16 +49,24 @@ import {
   type WorkflowDefinition,
   type WorkflowNodeData,
   type WorkflowNodeType,
-  type WorkflowTriggerEvent,
 } from "../../../data/automationWorkflows";
+import { formatGetSummary, previewGetWrites } from "../../../data/automationGet";
+import { emptyRuleNodeConfig } from "../../../data/automationRules";
 import { wirePorts } from "../../../wire/registry";
 import type { EligibilityPipelineRow } from "../../../wire/machineTypes";
 import { ActionAgentsModal, ActionInAppModal, ActionKindModal } from "./automationPlates/ActionPlateModals";
+import { ContactPickModal } from "./ContactPickModal";
+import { DirectInputPane } from "./automationPlates/DirectInputPane";
+import { GetParametersPane } from "./automationPlates/GetParametersPane";
 import { IfPlateModal } from "./automationPlates/IfPlateModal";
+import { NodeInteriorModal } from "./automationPlates/NodeInteriorModal";
 import { PlateInsertEdge } from "./automationPlates/PlateInsertEdge";
 import { PLATE_NODE_TAG } from "./automationPlates/plateChrome";
-import { ContactPickModal } from "./ContactPickModal";
-import { RulePlateModal } from "./automationPlates/RulePlateModal";
+import { RuleOutcomesPane } from "./automationPlates/RuleOutcomesPane";
+import { CanvasOpsContext, switchableKind, useCanvasOps } from "./automationPlates/canvasOps";
+import { TriggerSelectModal } from "./automationPlates/TriggerSelectModal";
+import { triggerSelectEvent, WIRE_ADD_KINDS } from "../../../data/automationTriggerSelect";
+import { WireAddMenu } from "./automationPlates/WireAddMenu";
 
 type WorkflowFlowNode = Node<WorkflowNodeData, WorkflowNodeType>;
 
@@ -87,24 +82,6 @@ function reorderOrdRows<T extends { ord: number }>(
   return next.map((row, index) => ({ ...row, ord: index }));
 }
 
-const NODE_TYPE_LABELS: Record<WorkflowNodeType, string> = {
-  trigger: "Trigger",
-  constant: "Constant",
-  branch: "Branch",
-  rule: "Rule",
-  action: "Action",
-  exit: "Exit",
-};
-
-const NODE_TONE: Record<WorkflowNodeType, string> = {
-  trigger: "processing",
-  constant: "purple",
-  branch: "warning",
-  rule: "cyan",
-  action: "success",
-  exit: "default",
-};
-
 function statusColor(status: WorkflowDefinition["status"]) {
   if (status === "active") return "success";
   if (status === "paused") return "warning";
@@ -113,6 +90,7 @@ function statusColor(status: WorkflowDefinition["status"]) {
 
 function nodeSummary(data: WorkflowNodeData) {
   return (
+    (data.triggerKind === "event" ? triggerSelectEvent(undefined, data.triggerEvent).label : null) ??
     data.triggerEvent ??
     data.scheduleSummary ??
     data.scheduleCron ??
@@ -125,6 +103,7 @@ function nodeSummary(data: WorkflowNodeData) {
     data.actionSummary ??
     data.delayLabel ??
     data.enrollmentHint ??
+    (data.getModule ? formatGetSummary(data) : null) ??
     "No summary yet"
   );
 }
@@ -133,6 +112,9 @@ function AntWorkflowNode({ id, data, type, selected }: NodeProps<WorkflowFlowNod
   const workflowType = (type ?? "action") as WorkflowNodeType;
   const chip = PLATE_NODE_TAG[workflowType];
   const { setNodes } = useReactFlow();
+  const ops = useCanvasOps();
+  const canSwitch = switchableKind(workflowType);
+  const hasOutgoing = useStore((state) => state.edges.some((edge) => edge.source === id));
   return (
     <div
       style={{
@@ -142,6 +124,7 @@ function AntWorkflowNode({ id, data, type, selected }: NodeProps<WorkflowFlowNod
         border: selected ? "2px solid #1677ff" : "1px solid #e5e7eb",
         boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
         padding: 12,
+        position: "relative",
       }}
     >
       <Handle type="target" position={Position.Top} />
@@ -158,9 +141,61 @@ function AntWorkflowNode({ id, data, type, selected }: NodeProps<WorkflowFlowNod
         >
           {chip.label}
         </span>
-        <Tag color={data.configured ? "success" : "warning"} style={{ marginInlineEnd: 0 }}>
-          {data.configured ? "configured" : "needs setup"}
-        </Tag>
+        <Space size={4}>
+          <Tag color={data.configured ? "success" : "warning"} style={{ marginInlineEnd: 0 }}>
+            {data.configured ? "configured" : "needs setup"}
+          </Tag>
+          {ops ? (
+            <span className="nodrag nopan" onClick={(event) => event.stopPropagation()} onPointerDown={(event) => event.stopPropagation()}>
+            <Dropdown
+              trigger={["click"]}
+              menu={{
+                triggerSubMenuAction: "click",
+                items: [
+                  { key: "dup", label: "Duplicate" },
+                  {
+                    key: "add",
+                    label: "Add node",
+                    children: WIRE_ADD_KINDS.map((choice) => ({
+                      key: `add:${choice.blockId}`,
+                      label: choice.title,
+                    })),
+                  },
+                  ...(canSwitch ? [{ key: "switch", label: "Switch" }] : []),
+                  { key: "del", label: "Delete", danger: true },
+                ],
+                onClick: ({ key, domEvent }) => {
+                  domEvent.stopPropagation();
+                  if (key === "dup") ops.onDuplicate(id);
+                  if (key === "switch") ops.onSwitch(id);
+                  if (key === "del") ops.onDelete(id);
+                  if (key.startsWith("add:")) ops.onAddAfter(id, key.slice(4));
+                },
+              }}
+            >
+              <button
+                type="button"
+                aria-label="Node options"
+                className="nodrag nopan"
+                onClick={(event) => event.stopPropagation()}
+                onMouseDown={(event) => event.stopPropagation()}
+                onPointerDown={(event) => event.stopPropagation()}
+                style={{
+                  border: "none",
+                  background: "transparent",
+                  cursor: "pointer",
+                  padding: 6,
+                  color: "#8c8c8c",
+                  fontSize: 16,
+                  lineHeight: 1,
+                }}
+              >
+                <MoreOutlined />
+              </button>
+            </Dropdown>
+            </span>
+          ) : null}
+        </Space>
       </div>
       <Input
         value={data.label}
@@ -180,6 +215,19 @@ function AntWorkflowNode({ id, data, type, selected }: NodeProps<WorkflowFlowNod
         {nodeSummary(data)}
       </Typography.Text>
       <Handle type="source" position={Position.Bottom} />
+      {ops && !hasOutgoing ? (
+        <div
+          style={{
+            position: "absolute",
+            left: "50%",
+            bottom: -14,
+            transform: "translateX(-50%)",
+            zIndex: 8,
+          }}
+        >
+          <WireAddMenu onPick={(block) => ops.onAddAfter(id, block.id)} />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -191,6 +239,12 @@ const nodeTypes: NodeTypes = {
   rule: AntWorkflowNode,
   action: AntWorkflowNode,
   exit: AntWorkflowNode,
+  get: AntWorkflowNode,
+};
+
+const edgeTypes: EdgeTypes = {
+  default: PlateInsertEdge,
+  automationInsert: PlateInsertEdge,
 };
 
 function cloneNodes(nodes: WorkflowDefinition["nodes"]): WorkflowFlowNode[] {
@@ -216,136 +270,12 @@ function patchNodeData(
 function NodeConfigFields({
   node,
   onPatch,
-  localOptions,
 }: {
   node: WorkflowFlowNode;
   onPatch: (patch: Partial<WorkflowNodeData>) => void;
-  localOptions?: Array<{ value: string; label: string }>;
 }) {
   const kind = node.type ?? "action";
   const data = node.data;
-
-  if (kind === "trigger") {
-    if (data.triggerKind === "event") {
-      const event = (data.triggerEvent ?? "eligibility.changed") as WorkflowTriggerEvent;
-      const allowsLocal = WORKFLOW_EVENTS_WITH_LOCAL.has(event);
-      const grain = allowsLocal && data.grain === "local" ? "local" : "global";
-      return (
-        <>
-          <Form.Item label="Machine event (workflow_trigger.event_name)">
-            <Select
-              value={event}
-              options={WORKFLOW_EVENT_CATALOG.map((row) => ({
-                value: row.id,
-                label: `${row.label} · ${row.id}`,
-              }))}
-              onChange={(value: WorkflowTriggerEvent) =>
-                onPatch({
-                  triggerEvent: value,
-                  configured: true,
-                  enrollmentHint: `Fires on ${value}`,
-                  grain: WORKFLOW_EVENTS_WITH_LOCAL.has(value) ? data.grain ?? "global" : "global",
-                  localRef: WORKFLOW_EVENTS_WITH_LOCAL.has(value) ? data.localRef : undefined,
-                })
-              }
-            />
-          </Form.Item>
-          {allowsLocal ? (
-            <>
-              <Form.Item label="Grain">
-                <Radio.Group
-                  value={grain}
-                  onChange={(eventChange) =>
-                    onPatch({
-                      grain: eventChange.target.value,
-                      localRef: eventChange.target.value === "global" ? undefined : data.localRef,
-                    })
-                  }
-                >
-                  <Radio.Button value="global">Global</Radio.Button>
-                  <Radio.Button value="local">Local</Radio.Button>
-                </Radio.Group>
-              </Form.Item>
-              <Form.Item
-                label={
-                  event === "fact_writebacks"
-                    ? "This form"
-                    : event === "campaign_failure"
-                      ? "This campaign"
-                      : event === "ct_firms"
-                        ? "This firm"
-                        : "This sequence"
-                }
-              >
-                <Select
-                  disabled={grain !== "local"}
-                  placeholder={grain === "local" ? "Pick this instance" : "Disabled on Global"}
-                  value={grain === "local" ? data.localRef : undefined}
-                  options={localOptions ?? []}
-                  onChange={(localRef) => onPatch({ localRef, grain: "local" })}
-                  allowClear
-                />
-              </Form.Item>
-            </>
-          ) : (
-            <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-              This event is Global only.
-            </Typography.Text>
-          )}
-        </>
-      );
-    }
-    if (data.triggerKind === "webhook") {
-      return (
-        <Form.Item
-          label="Webhook id (workflow_trigger.webhook_id)"
-          extra={
-            <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-              Inbound URL: /wire/hook/{data.webhookId || "…"}
-            </Typography.Text>
-          }
-        >
-          <Input
-            value={data.webhookId ?? ""}
-            placeholder="wh_external"
-            onChange={(event) => {
-              const webhookId = event.target.value.trim();
-              onPatch({
-                webhookId,
-                configured: Boolean(webhookId),
-                enrollmentHint: webhookId ? `POST /wire/hook/${webhookId}` : data.enrollmentHint,
-              });
-            }}
-          />
-        </Form.Item>
-      );
-    }
-    if (data.triggerKind === "schedule") {
-      return (
-        <Form.Item label="Cron (workflow_trigger.schedule)">
-          <Input
-            value={data.scheduleCron ?? data.scheduleSummary ?? ""}
-            placeholder="0 * * * *"
-            onChange={(event) => {
-              const scheduleCron = event.target.value;
-              onPatch({
-                scheduleCron,
-                scheduleSummary: scheduleCron,
-                configured: Boolean(scheduleCron.trim()),
-              });
-            }}
-          />
-        </Form.Item>
-      );
-    }
-    return (
-      <Typography.Text type="secondary">
-        {data.triggerKind === "manual"
-          ? "Manual trigger — launch from the header."
-          : "Configure this trigger kind on the canvas fields above."}
-      </Typography.Text>
-    );
-  }
 
   if (kind === "constant") {
     return (
@@ -390,7 +320,9 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
   const [savedFlash, setSavedFlash] = useState(false);
   const [activeTab, setActiveTab] = useState("workflow");
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const [plate, setPlate] = useState<null | "rule" | "action-kind" | "action-agents" | "action-inapp" | "if">(null);
+  const [plate, setPlate] = useState<null | "action-kind" | "action-agents" | "action-inapp">(null);
+  const [interiorOpen, setInteriorOpen] = useState(false);
+  const saveRef = useRef<(() => void) | null>(null);
   const [pipeline, setPipeline] = useState<EligibilityPipelineRow[]>([]);
   const [pipelineError, setPipelineError] = useState<string | null>(null);
   const skipPersistRef = useRef(true);
@@ -419,6 +351,11 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
   const [pickIds, setPickIds] = useState<string[]>([]);
   const [contactQuery, setContactQuery] = useState("");
   const [localOptions, setLocalOptions] = useState<Array<{ value: string; label: string }>>([]);
+  const [triggerSelectId, setTriggerSelectId] = useState<string | null>(null);
+  const listingIds = nodes.find((node) => node.type === "rule")?.data.ruleConfig?.listingFieldIds ?? [];
+  const triggerSelectNode = triggerSelectId
+    ? nodes.find((node) => node.id === triggerSelectId)
+    : undefined;
 
   useEffect(() => {
     skipPersistRef.current = true;
@@ -426,6 +363,8 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
     setEdges(workflow ? cloneEdges(workflow.edges) : []);
     setSelectedNodeId(null);
     setPlate(null);
+    setInteriorOpen(false);
+    setTriggerSelectId(null);
     setActiveTab("workflow");
   }, [workflow?.id, setEdges, setNodes]);
 
@@ -484,6 +423,46 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
     };
   }, [activeTab]);
 
+  useEffect(() => {
+    const event = triggerSelectNode?.data.triggerEvent;
+    if (!event) {
+      setLocalOptions([]);
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      try {
+        if (event === "fact_writebacks") {
+          if (!cancelled) setLocalOptions(listingIds.map((id) => ({ value: id, label: id })));
+          return;
+        }
+        if (event === "campaign_failure") {
+          const { templates } = await wirePorts.machineApi.listTemplates();
+          const camps: Array<{ value: string; label: string }> = [];
+          for (const tpl of templates) {
+            const { campaigns } = await wirePorts.machineApi.listSequenceHousing(tpl.id);
+            for (const camp of campaigns) camps.push({ value: camp.id, label: camp.name });
+          }
+          if (!cancelled) setLocalOptions(camps);
+          return;
+        }
+        if (event === "contact_import") {
+          if (!cancelled) setLocalOptions([]);
+          return;
+        }
+        const { templates } = await wirePorts.machineApi.listTemplates();
+        if (!cancelled) {
+          setLocalOptions(templates.map((tpl) => ({ value: tpl.id, label: tpl.label })));
+        }
+      } catch {
+        if (!cancelled) setLocalOptions([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [triggerSelectNode?.data.triggerEvent, listingIds.join("|")]);
+
   const movePipelineStage = async (fromIndex: number, toIndex: number) => {
     if (toIndex < 0 || toIndex >= pipeline.length) return;
     const next = reorderOrdRows(pipeline, fromIndex, toIndex);
@@ -515,64 +494,31 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
   }
 
   const hasTrigger = nodes.some((node) => node.type === "trigger");
-  const ruleNode = nodes.find((node) => node.type === "rule");
-  const listingIds = ruleNode?.data.ruleConfig?.listingFieldIds ?? [];
   const previousOptions = nodes
     .filter((node) => node.type !== "branch" && node.type !== "exit")
     .map((node) => ({ id: node.id, label: node.data.label }));
 
-  useEffect(() => {
-    const event = triggerNode?.data.triggerEvent;
-    if (!event || !WORKFLOW_EVENTS_WITH_LOCAL.has(event) || triggerNode?.data.grain !== "local") {
-      setLocalOptions([]);
-      return;
-    }
-    let cancelled = false;
-    void (async () => {
-      try {
-        if (event === "fact_writebacks") {
-          const opts = listingIds.map((id) => ({ value: id, label: id }));
-          if (!cancelled) setLocalOptions(opts);
-          return;
-        }
-        if (event === "campaign_failure") {
-          const { templates } = await wirePorts.machineApi.listTemplates();
-          const camps: Array<{ value: string; label: string }> = [];
-          for (const tpl of templates) {
-            const { campaigns } = await wirePorts.machineApi.listSequenceHousing(tpl.id);
-            for (const camp of campaigns) camps.push({ value: camp.id, label: camp.name });
-          }
-          if (!cancelled) setLocalOptions(camps);
-          return;
-        }
-        if (event === "ct_firms") {
-          const consultants = await wirePorts.machineApi.listConsultants();
-          const seen = new Map<string, string>();
-          for (const row of consultants) seen.set(row.firmId, row.firmName);
-          if (!cancelled) {
-            setLocalOptions([...seen.entries()].map(([value, label]) => ({ value, label })));
-          }
-          return;
-        }
-        const { templates } = await wirePorts.machineApi.listTemplates();
-        if (!cancelled) {
-          setLocalOptions(templates.map((tpl) => ({ value: tpl.id, label: tpl.label })));
-        }
-      } catch {
-        if (!cancelled) setLocalOptions([]);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [triggerNode?.data.triggerEvent, triggerNode?.data.grain, listingIds.join("|")]);
+  const closeInterior = () => {
+    setInteriorOpen(false);
+    setPlate(null);
+    setSelectedNodeId(null);
+    saveRef.current = null;
+  };
 
   const openNode = (node: WorkflowFlowNode) => {
     setSelectedNodeId(node.id);
-    if (node.type === "rule") setPlate("rule");
-    else if (node.type === "action") setPlate("action-kind");
-    else if (node.type === "branch") setPlate("if");
-    else setPlate(null);
+    setInteriorOpen(true);
+    if (node.type === "action") {
+      if (node.data.actionType === "call_agent" || node.data.actionType === "enroll_sequence") {
+        setPlate("action-agents");
+      } else if (node.data.actionType) {
+        setPlate("action-inapp");
+      } else {
+        setPlate("action-kind");
+      }
+    } else {
+      setPlate(null);
+    }
   };
 
   const addBlock = (block: PaletteBlock) => {
@@ -593,6 +539,76 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
     openNode(created);
   };
 
+  const insertKindAfter = (sourceId: string, blockId: string) => {
+    const block = WORKFLOW_PALETTE_BLOCKS.find((row) => row.id === blockId);
+    if (!block) return;
+    const created = createNodeFromBlock(
+      block,
+      nodes.map((node) => node.id),
+      { x: 320, y: 160 },
+    );
+    if (!created) return;
+    const outgoing = edges.find((edge) => edge.source === sourceId);
+    const next = outgoing
+      ? insertNodeOnEdge(nodes, edges, outgoing.id, created)
+      : appendNodeAfter(nodes, edges, sourceId, created);
+    setNodes(relayoutWorkflowNodes(next.nodes) as WorkflowFlowNode[]);
+    setEdges(next.edges);
+    openNode(created as WorkflowFlowNode);
+  };
+
+  const canvasOps = {
+    onDuplicate: (id: string) => {
+      const node = nodes.find((item) => item.id === id);
+      if (!node) return;
+      const nid = createNodeId((node.type ?? "action") as WorkflowNodeType, nodes.map((item) => item.id));
+      setNodes((current) => [
+        ...current,
+        {
+          ...node,
+          id: nid,
+          selected: false,
+          position: { x: node.position.x + 48, y: node.position.y + 72 },
+        },
+      ]);
+    },
+    onDelete: (id: string) => {
+      const next = deleteWorkflowNode(nodes, edges, id);
+      setNodes(next.nodes as WorkflowFlowNode[]);
+      setEdges(next.edges);
+      if (selectedNodeId === id) closeInterior();
+      if (triggerSelectId === id) setTriggerSelectId(null);
+    },
+    onAddAfter: (id: string, blockId: string) => insertKindAfter(id, blockId),
+    onInsertOnEdge: (edgeId: string, blockId: string) => {
+      const block = WORKFLOW_PALETTE_BLOCKS.find((row) => row.id === blockId);
+      if (!block) return;
+      const created = createNodeFromBlock(
+        block,
+        nodes.map((node) => node.id),
+        { x: 320, y: 160 },
+      );
+      if (!created) return;
+      const next = insertNodeOnEdge(nodes, edges, edgeId, created);
+      setNodes(relayoutWorkflowNodes(next.nodes) as WorkflowFlowNode[]);
+      setEdges(next.edges);
+      openNode(created as WorkflowFlowNode);
+    },
+    onSwitch: (id: string) => {
+      const node = nodes.find((item) => item.id === id);
+      if (!node) return;
+      if (node.type === "trigger") {
+        setTriggerSelectId(id);
+        return;
+      }
+      if (node.type === "action") {
+        setSelectedNodeId(id);
+        setInteriorOpen(true);
+        setPlate("action-kind");
+      }
+    },
+  };
+
   const plateKinds: { id: string; title: string; body: string; icon: ReactNode; disabled?: boolean; onClick: () => void }[] = [
     {
       id: "trigger",
@@ -603,8 +619,17 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
       onClick: () => {
         const next = createTriggerNode("event", nodes.map((node) => node.id)) as WorkflowFlowNode;
         setNodes(relayoutWorkflowNodes([next, ...nodes]) as WorkflowFlowNode[]);
-        setSelectedNodeId(next.id);
-        setPlate(null);
+        setTriggerSelectId(next.id);
+      },
+    },
+    {
+      id: "get",
+      title: "Get",
+      body: "Read records in a module at a grain.",
+      icon: <DatabaseOutlined />,
+      onClick: () => {
+        const block = WORKFLOW_PALETTE_BLOCKS.find((row) => row.id === "get-records");
+        if (block) addBlock(block);
       },
     },
     {
@@ -772,55 +797,19 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
                   data-register-surface="Workflow canvas"
                   style={{ flex: 1, minWidth: 0, minHeight: 0, background: token.colorBgContainer, position: "relative" }}
                 >
+                  <CanvasOpsContext.Provider value={canvasOps}>
                   <ReactFlow
                     nodes={nodes}
                     edges={edges}
                     nodeTypes={nodeTypes}
-                    edgeTypes={
-                      {
-                        default: (props) => (
-                          <PlateInsertEdge
-                            {...props}
-                            hasTrigger={hasTrigger}
-                            blocks={WORKFLOW_PALETTE_BLOCKS}
-                            onInsert={(edgeId, block) => {
-                              const created = createNodeFromBlock(
-                                block,
-                                nodes.map((node) => node.id),
-                                { x: 320, y: 160 },
-                              );
-                              if (!created) return;
-                              const next = insertNodeOnEdge(nodes, edges, edgeId, created);
-                              setNodes(relayoutWorkflowNodes(next.nodes) as WorkflowFlowNode[]);
-                              setEdges(next.edges);
-                              openNode(created as WorkflowFlowNode);
-                            }}
-                          />
-                        ),
-                        automationInsert: (props) => (
-                          <PlateInsertEdge
-                            {...props}
-                            hasTrigger={hasTrigger}
-                            blocks={WORKFLOW_PALETTE_BLOCKS}
-                            onInsert={(edgeId, block) => {
-                              const created = createNodeFromBlock(
-                                block,
-                                nodes.map((node) => node.id),
-                                { x: 320, y: 160 },
-                              );
-                              if (!created) return;
-                              const next = insertNodeOnEdge(nodes, edges, edgeId, created);
-                              setNodes(relayoutWorkflowNodes(next.nodes) as WorkflowFlowNode[]);
-                              setEdges(next.edges);
-                              openNode(created as WorkflowFlowNode);
-                            }}
-                          />
-                        ),
-                      } satisfies EdgeTypes
-                    }
+                    edgeTypes={edgeTypes}
                     onNodesChange={onNodesChange}
                     onEdgesChange={onEdgesChange}
-                    onNodeClick={(_, node) => openNode(node)}
+                    onNodeClick={(event, node) => {
+                      const target = event.target as HTMLElement | null;
+                      if (target?.closest(".nodrag")) return;
+                      openNode(node);
+                    }}
                     deleteKeyCode={["Backspace", "Delete"]}
                     onNodesDelete={(deleted) => {
                       const ids = new Set(deleted.map((node) => node.id));
@@ -828,8 +817,10 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
                         current.filter((edge) => !ids.has(edge.source) && !ids.has(edge.target)),
                       );
                       if (selectedNodeId && ids.has(selectedNodeId)) {
-                        setSelectedNodeId(null);
-                        setPlate(null);
+                        closeInterior();
+                      }
+                      if (triggerSelectId && ids.has(triggerSelectId)) {
+                        setTriggerSelectId(null);
                       }
                     }}
                     fitView
@@ -838,6 +829,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
                     <MiniMap pannable zoomable />
                     <Controls />
                   </ReactFlow>
+                  </CanvasOpsContext.Provider>
                   {selectedNodeId ? (
                     <Button
                       size="small"
@@ -851,8 +843,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
                             (edge) => edge.source !== selectedNodeId && edge.target !== selectedNodeId,
                           ),
                         );
-                        setSelectedNodeId(null);
-                        setPlate(null);
+                        closeInterior();
                       }}
                     >
                       Remove node
@@ -1066,116 +1057,130 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
         tabBarStyle={{ margin: 0, paddingInline: 16, flexShrink: 0 }}
       />
 
-      <Drawer
-        title="Node details"
-        open={Boolean(selectedNode) && (selectedNode?.type === "trigger" || selectedNode?.type === "constant" || selectedNode?.type === "exit")}
-        onClose={() => setSelectedNodeId(null)}
-        width={420}
-      >
-        {selectedNode ? (
-          <Space direction="vertical" size={16} style={{ width: "100%" }}>
+      <NodeInteriorModal
+        open={interiorOpen && Boolean(selectedNode)}
+        node={selectedNode}
+        nodes={nodes}
+        edges={edges}
+        parameters={
+          selectedNode?.type === "get" ? (
+            <GetParametersPane
+              data={selectedNode.data}
+              book={book}
+              upstreamIds={nodes.flatMap((node) =>
+                node.id === selectedNode.id
+                  ? []
+                  : [node.data.getClass1, ...(node.data.directContactIds ?? [])].filter(Boolean) as string[],
+              )}
+              onPatch={(patch) => {
+                const next = { ...selectedNode.data, ...patch };
+                patchNodeData(setNodes, selectedNode.id, {
+                  ...patch,
+                  lastOutput: { writes: previewGetWrites(next, book) } as WorkflowNodeData["lastOutput"],
+                });
+              }}
+            />
+          ) : selectedNode?.type === "rule" ? (
+            <DirectInputPane
+              data={selectedNode.data}
+              book={book}
+              onPatch={(patch) => patchNodeData(setNodes, selectedNode.id, patch)}
+            />
+          ) : selectedNode?.type === "constant" ? (
             <Form layout="vertical">
-              <Form.Item label="Label">
-                <Input
-                  value={selectedNode.data.label}
-                  onChange={(event) => {
-                    patchNodeData(setNodes, selectedNode.id, { label: event.target.value });
-                  }}
-                />
-              </Form.Item>
               <NodeConfigFields
                 node={selectedNode}
-                localOptions={localOptions}
                 onPatch={(patch) => patchNodeData(setNodes, selectedNode.id, patch)}
               />
             </Form>
-            <Descriptions column={1} size="small" bordered>
-              <Descriptions.Item label="Type">
-                {NODE_TYPE_LABELS[(selectedNode.type ?? "action") as WorkflowNodeType]}
-              </Descriptions.Item>
-              <Descriptions.Item label="Configured">
-                <Tag color={selectedNode.data.configured ? "success" : "warning"}>
-                  {selectedNode.data.configured ? "Configured" : "Needs setup"}
-                </Tag>
-              </Descriptions.Item>
-              <Descriptions.Item label="Summary">{nodeSummary(selectedNode.data)}</Descriptions.Item>
-              {selectedNode.data.target ? (
-                <Descriptions.Item label="Target">{selectedNode.data.target}</Descriptions.Item>
-              ) : null}
-              {selectedNode.data.triggerKind ? (
-                <Descriptions.Item label="Trigger kind">{selectedNode.data.triggerKind}</Descriptions.Item>
-              ) : null}
-            </Descriptions>
-          </Space>
-        ) : null}
-      </Drawer>
-      <RulePlateModal
-        open={plate === "rule" && selectedNode?.type === "rule"}
-        title={selectedNode?.data.label ?? "Rule"}
-        config={selectedNode?.data.ruleConfig}
-        onCancel={() => {
-          setPlate(null);
-        }}
-        onSave={(ruleConfig) => {
+          ) : selectedNode?.type === "branch" ? (
+            <IfPlateModal
+              embed
+              open={interiorOpen}
+              data={selectedNode.data}
+              previousOptions={previousOptions}
+              onCancel={closeInterior}
+              onRegisterSave={(fn) => {
+                saveRef.current = fn;
+              }}
+              onSave={(patch) => {
+                patchNodeData(setNodes, selectedNode.id, patch);
+                closeInterior();
+              }}
+            />
+          ) : selectedNode?.type === "action" && plate === "action-kind" ? (
+            <ActionKindModal
+              embed
+              open
+              onCancel={closeInterior}
+              onPickAgents={() => setPlate("action-agents")}
+              onPickInApp={() => setPlate("action-inapp")}
+              onRegisterSave={(fn) => {
+                saveRef.current = fn;
+              }}
+            />
+          ) : selectedNode?.type === "action" && plate === "action-agents" ? (
+            <ActionAgentsModal
+              embed
+              open
+              data={selectedNode.data}
+              listingIds={listingIds}
+              onCancel={closeInterior}
+              onChangeKind={() => setPlate("action-kind")}
+              onRegisterSave={(fn) => {
+                saveRef.current = fn;
+              }}
+              onSave={(patch) => {
+                patchNodeData(setNodes, selectedNode.id, patch);
+                closeInterior();
+              }}
+            />
+          ) : selectedNode?.type === "action" && plate === "action-inapp" ? (
+            <ActionInAppModal
+              embed
+              open
+              data={selectedNode.data}
+              onCancel={closeInterior}
+              onChangeKind={() => setPlate("action-kind")}
+              onRegisterSave={(fn) => {
+                saveRef.current = fn;
+              }}
+              onSave={(patch) => {
+                patchNodeData(setNodes, selectedNode.id, patch);
+                closeInterior();
+              }}
+            />
+          ) : null
+        }
+        outcomes={
+          selectedNode?.type === "rule" ? (
+            <RuleOutcomesPane
+              config={selectedNode.data.ruleConfig ?? emptyRuleNodeConfig()}
+              onChange={(ruleConfig) =>
+                patchNodeData(setNodes, selectedNode.id, {
+                  ruleConfig,
+                  configured: true,
+                  ruleSummary: selectedNode.data.label,
+                })
+              }
+            />
+          ) : undefined
+        }
+        onCancel={closeInterior}
+        onSave={(label) => {
           if (!selectedNode) return;
-          patchNodeData(setNodes, selectedNode.id, {
-            ruleConfig,
-            configured: true,
-            ruleSummary: selectedNode.data.label,
-          });
-          setPlate(null);
-          setSelectedNodeId(null);
-        }}
-      />
-      <ActionKindModal
-        open={plate === "action-kind" && selectedNode?.type === "action"}
-        onCancel={() => {
-          setPlate(null);
-        }}
-        onPickAgents={() => setPlate("action-agents")}
-        onPickInApp={() => setPlate("action-inapp")}
-      />
-      <ActionAgentsModal
-        open={plate === "action-agents" && selectedNode?.type === "action"}
-        data={selectedNode?.data ?? { label: "Call agent", configured: false }}
-        listingIds={listingIds}
-        onCancel={() => {
-          setPlate(null);
-        }}
-        onChangeKind={() => setPlate("action-kind")}
-        onSave={(patch) => {
-          if (!selectedNode) return;
-          patchNodeData(setNodes, selectedNode.id, patch);
-          setPlate(null);
-          setSelectedNodeId(null);
-        }}
-      />
-      <ActionInAppModal
-        open={plate === "action-inapp" && selectedNode?.type === "action"}
-        data={selectedNode?.data ?? { label: "Action", configured: false }}
-        onCancel={() => {
-          setPlate(null);
-        }}
-        onChangeKind={() => setPlate("action-kind")}
-        onSave={(patch) => {
-          if (!selectedNode) return;
-          patchNodeData(setNodes, selectedNode.id, patch);
-          setPlate(null);
-          setSelectedNodeId(null);
-        }}
-      />
-      <IfPlateModal
-        open={plate === "if" && selectedNode?.type === "branch"}
-        data={selectedNode?.data ?? { label: "If X — previous result", configured: false }}
-        previousOptions={previousOptions}
-        onCancel={() => {
-          setPlate(null);
-        }}
-        onSave={(patch) => {
-          if (!selectedNode) return;
-          patchNodeData(setNodes, selectedNode.id, patch);
-          setPlate(null);
-          setSelectedNodeId(null);
+          if (label !== selectedNode.data.label) {
+            patchNodeData(setNodes, selectedNode.id, { label });
+          }
+          if (selectedNode.type === "action" && plate === "action-kind") {
+            saveRef.current?.();
+            return;
+          }
+          if (selectedNode.type === "action" || selectedNode.type === "branch") {
+            saveRef.current?.();
+            return;
+          }
+          closeInterior();
         }}
       />
       <ContactPickModal
@@ -1208,6 +1213,16 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
             .catch((err) => message.error(`Audience save failed: ${String(err)}`));
         }}
       />
+      {triggerSelectNode ? (
+        <TriggerSelectModal
+          open
+          data={triggerSelectNode.data}
+          book={book}
+          instanceOptions={localOptions}
+          onClose={() => setTriggerSelectId(null)}
+          onPatch={(patch) => patchNodeData(setNodes, triggerSelectNode.id, patch)}
+        />
+      ) : null}
     </div>
   );
 }

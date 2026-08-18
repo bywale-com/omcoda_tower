@@ -69,8 +69,10 @@ function now() {
 
 function isValidatedPipeline(nodes: RfNode[]): boolean {
   const types = new Set(nodes.map((n) => n.type).filter(Boolean));
-  // Must have trigger + action (or at least trigger); allow missing constant/branch/rule
-  return types.has("trigger") && (types.has("action") || types.has("exit"));
+  return (
+    types.has("trigger") &&
+    (types.has("action") || types.has("exit") || types.has("get") || types.has("rule"))
+  );
 }
 
 function outgoing(edges: RfEdge[], sourceId: string, handle?: string | null): RfEdge[] {
@@ -176,6 +178,151 @@ function pickWrites(writes: RunWrite[], pickTable?: string, pickId?: string): Ru
 
 function uniqueIds(ids: Array<string | null | undefined>): string[] {
   return [...new Set(ids.filter((id): id is string => Boolean(id)))];
+}
+
+async function executeGet(
+  pool: Pool,
+  data: Record<string, unknown>,
+): Promise<{ writes: RunWrite[]; contactIds?: string[] }> {
+  const module = String(data.getModule ?? "contacts");
+  const select = String(data.getSelect ?? "every");
+  const class1 = String(data.getClass1 ?? "");
+  const class2 = Array.isArray(data.getClass2) ? data.getClass2.map(String) : [];
+  const class2All = data.getClass2All !== false && class2.length === 0;
+
+  if (module === "reference") return { writes: [] };
+
+  if (module === "contacts") {
+    let q = `SELECT id, firm_id FROM contact_records`;
+    const params: unknown[] = [];
+    if (select !== "every") {
+      if (!class1) return { writes: [] };
+      q += ` WHERE firm_id=$1`;
+      params.push(class1);
+      if (!class2All) {
+        q += ` AND id = ANY($2::text[])`;
+        params.push(class2);
+      }
+    }
+    const { rows } = await pool.query<{ id: string }>(q, params);
+    const ids = rows.map((r) => r.id);
+    return {
+      writes: ids.map((id) => ({ table: "contact_records", id, contact_id: id })),
+      contactIds: ids,
+    };
+  }
+
+  if (module === "firms") {
+    if (select === "every") {
+      const { rows } = await pool.query<{ id: string }>(`SELECT id FROM ct_firms`);
+      return { writes: rows.map((r) => ({ table: "ct_firms", id: r.id })) };
+    }
+    return class1 ? { writes: [{ table: "ct_firms", id: class1 }] } : { writes: [] };
+  }
+
+  if (module === "audits") {
+    let q = `SELECT id FROM audit_runs`;
+    const params: unknown[] = [];
+    if (select !== "every") {
+      if (!class1) return { writes: [] };
+      q += ` WHERE firm_id=$1`;
+      params.push(class1);
+      if (!class2All) {
+        q += ` AND id = ANY($2::text[])`;
+        params.push(class2);
+      }
+    }
+    const { rows } = await pool.query<{ id: string }>(q, params);
+    return { writes: rows.map((r) => ({ table: "audit_runs", id: r.id })) };
+  }
+
+  if (module === "imports") {
+    let q = `SELECT id FROM import_batch WHERE kind='contact'`;
+    const params: unknown[] = [];
+    if (select !== "every") {
+      if (!class1) return { writes: [] };
+      q += ` AND firm_id=$1`;
+      params.push(class1);
+      if (!class2All) {
+        q += ` AND id = ANY($2::text[])`;
+        params.push(class2);
+      }
+    }
+    const { rows } = await pool.query<{ id: string }>(q, params);
+    return { writes: rows.map((r) => ({ table: "import_batch", id: r.id })) };
+  }
+
+  if (module === "agents") {
+    if (select === "every") {
+      const { rows } = await pool.query<{ id: string }>(`SELECT id FROM campaign`);
+      return { writes: rows.map((r) => ({ table: "campaign", id: r.id })) };
+    }
+    if (!class1) return { writes: [] };
+    if (class2All) {
+      const { rows } = await pool.query<{ id: string }>(
+        `SELECT id FROM campaign WHERE sequence_id=$1`,
+        [class1],
+      );
+      return { writes: rows.map((r) => ({ table: "campaign", id: r.id })) };
+    }
+    return { writes: class2.map((id) => ({ table: "campaign", id })) };
+  }
+
+  return { writes: [] };
+}
+
+async function executeRuleWrites(
+  pool: Pool,
+  ctx: WalkContext,
+  data: Record<string, unknown>,
+): Promise<{ writes: RunWrite[]; lastOutput: Record<string, unknown> }> {
+  const ruleConfig =
+    data.ruleConfig && typeof data.ruleConfig === "object"
+      ? (data.ruleConfig as Record<string, unknown>)
+      : {};
+  const listingFieldIds = Array.isArray(ruleConfig.listingFieldIds)
+    ? (ruleConfig.listingFieldIds as unknown[]).map(String)
+    : Array.isArray(data.listingFieldIds)
+      ? (data.listingFieldIds as unknown[]).map(String)
+      : [];
+  const direct = Array.isArray(data.directContactIds)
+    ? (data.directContactIds as unknown[]).map(String)
+    : [];
+  const contactIds = uniqueIds(direct.length ? direct : ctx.contactIds);
+  const writes: RunWrite[] = [];
+  for (const contactId of contactIds) {
+    const rec = await pool.query<{ email: string | null; phone: string | null }>(
+      `SELECT email, phone FROM contact_records WHERE id=$1`,
+      [contactId],
+    );
+    const keys = listingFieldIds.length ? listingFieldIds : ["email", "phone"];
+    for (const fieldKey of keys) {
+      const missing =
+        fieldKey === "email"
+          ? !rec.rows[0]?.email
+          : fieldKey === "phone"
+            ? !rec.rows[0]?.phone
+            : true;
+      if (!missing) continue;
+      const id = `mfs-${randomUUID()}`;
+      await pool.query(
+        `INSERT INTO missing_fact_signals (id, firm_id, contact_id, field_key)
+         VALUES ($1,$2,$3,$4)`,
+        [id, ctx.firmId, contactId, fieldKey],
+      );
+      writes.push({ table: "missing_fact_signals", id, contact_id: contactId });
+    }
+  }
+  const lastOutput = {
+    headline: writes.length ? "Required data" : "Pass",
+    pass: writes.length === 0,
+    requiredData: listingFieldIds,
+    listing: listingFieldIds,
+    writes,
+    nudge: Boolean(ruleConfig.nudgeSignalOn ?? true),
+    reactivation: Boolean(ruleConfig.reactivationSignalOn ?? true),
+  };
+  return { writes, lastOutput };
 }
 
 function fieldMatches(val: unknown, op: string, expected: unknown): boolean {
@@ -388,23 +535,30 @@ export async function materializeTriggersFromGraph(
         ? String(data.webhookId ?? `wh_${workflowId}_${node.id}`)
         : null;
     const id = `wtrig-${workflowId}-${node.id}`;
-    const grain = String(data.grain ?? "global") === "local" ? "local" : "global";
-    const eventNameForGrain = String(data.triggerEvent ?? data.eventName ?? "");
-    const localAllowed = ["fact_writebacks", "campaign_failure", "ct_firms", "consent_records.sequenced"].includes(
-      eventNameForGrain,
-    );
-    const requestedLocal = localAllowed && grain === "local";
-    const localRef = requestedLocal ? String(data.localRef ?? data.local_ref ?? "").trim() || null : null;
-    const grainFinal = requestedLocal && localRef ? "local" : "global";
-    const scope = String(data.scope ?? "every_firm") === "select_from" ? "select_from" : "every_firm";
-    const scopeIds = Array.isArray(data.scopeContactIds)
-      ? (data.scopeContactIds as unknown[]).map(String)
-      : [];
+    const grain =
+      kind === "schedule" || kind === "manual" || kind === "webhook"
+        ? "global"
+        : String(data.grain ?? "global") === "local"
+          ? "local"
+          : "global";
+    const localRef =
+      grain === "local" ? String(data.localRef ?? data.local_ref ?? "").trim() || null : null;
+    const localFirmId =
+      grain === "local" ? String(data.localFirmId ?? data.local_firm_id ?? "").trim() || null : null;
+    const localContactIds =
+      grain === "local"
+        ? (Array.isArray(data.localContactIds)
+            ? data.localContactIds
+            : Array.isArray(data.local_contact_ids)
+              ? data.local_contact_ids
+              : []
+          ).map(String)
+        : [];
     await pool.query(
       `INSERT INTO workflow_trigger
          (id, workflow_id, firm_id, node_id, type, event_name, condition, schedule, webhook_id,
-          enabled, grain, scope, scope_contact_ids, local_ref)
-       VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8::jsonb,$9,true,$10,$11,$12::text[],$13)
+          enabled, grain, scope, scope_contact_ids, local_ref, local_firm_id, local_contact_ids)
+       VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8::jsonb,$9,true,$10,'every_firm',ARRAY[]::text[],$11,$12,$13::text[])
        ON CONFLICT (workflow_id, node_id) DO UPDATE SET
          type=EXCLUDED.type,
          event_name=EXCLUDED.event_name,
@@ -415,6 +569,8 @@ export async function materializeTriggersFromGraph(
          scope=EXCLUDED.scope,
          scope_contact_ids=EXCLUDED.scope_contact_ids,
          local_ref=EXCLUDED.local_ref,
+         local_firm_id=EXCLUDED.local_firm_id,
+         local_contact_ids=EXCLUDED.local_contact_ids,
          enabled=true,
          updated_at=now()`,
       [
@@ -430,10 +586,10 @@ export async function materializeTriggersFromGraph(
           cron: data.scheduleCron ?? null,
         }),
         webhookId,
-        grainFinal,
-        scope,
-        scopeIds,
+        grain,
         localRef,
+        localFirmId,
+        localContactIds,
       ],
     );
     n += 1;
@@ -587,34 +743,39 @@ export async function walkValidatedWorkflow(
         return;
       }
 
-      if (type === "rule") {
-        const ruleId = String(data.ruleId ?? "eligibility");
-        const ruleConfig =
-          data.ruleConfig && typeof data.ruleConfig === "object"
-            ? (data.ruleConfig as Record<string, unknown>)
-            : {};
-        const listingFieldIds = Array.isArray(ruleConfig.listingFieldIds)
-          ? (ruleConfig.listingFieldIds as unknown[]).map(String)
-          : Array.isArray(data.listingFieldIds)
-            ? (data.listingFieldIds as unknown[]).map(String)
-            : [];
-        ctx.listingFieldIds = listingFieldIds;
-        const pathway = await pool.query(
-          `SELECT id FROM rule_eligibility_pathway WHERE enabled=true LIMIT 1`,
-        );
-        ctx.lastOutput = {
-          ruleId,
-          pass: true,
-          listingFieldIds,
-          listingNotEmpty: listingFieldIds.length > 0,
-          listingCount: listingFieldIds.length,
-        };
+      if (type === "get") {
+        const result = await executeGet(pool, data);
+        ctx.previousWrites = result.writes;
+        if (result.contactIds?.length) ctx.contactIds = result.contactIds;
+        ctx.lastOutput = { writes: result.writes, module: data.getModule ?? "contacts" };
         nodeStatus[nodeId] = {
           status: "success",
-          detail: `rule ${ruleId}; listing=${listingFieldIds.length}; pathways=${pathway.rowCount ?? 0}`,
+          detail: `get ${String(data.getModule ?? "contacts")}; writes=${result.writes.length}`,
           at: now(),
+          writes: result.writes,
         };
-        if (ctx.eligibilityPass === undefined) ctx.eligibilityPass = true;
+        for (const e of outgoing(edges, nodeId)) await visit(e.target);
+        return;
+      }
+
+      if (type === "rule") {
+        const ruleId = String(data.ruleId ?? "eligibility");
+        const result = await executeRuleWrites(pool, ctx, data);
+        ctx.listingFieldIds = Array.isArray(result.lastOutput.listing)
+          ? (result.lastOutput.listing as string[])
+          : [];
+        ctx.previousWrites = result.writes.length ? result.writes : ctx.previousWrites;
+        ctx.lastOutput = result.lastOutput;
+        if (Array.isArray(data.directContactIds) && (data.directContactIds as unknown[]).length) {
+          ctx.contactIds = uniqueIds((data.directContactIds as unknown[]).map(String));
+        }
+        nodeStatus[nodeId] = {
+          status: "success",
+          detail: `rule ${ruleId}; missing=${result.writes.length}`,
+          at: now(),
+          writes: result.writes,
+        };
+        if (ctx.eligibilityPass === undefined) ctx.eligibilityPass = result.writes.length === 0;
         for (const e of outgoing(edges, nodeId)) await visit(e.target);
         return;
       }
@@ -891,28 +1052,60 @@ export async function dispatchScheduleTriggers(
   return out;
 }
 
+function payloadString(payload: Record<string, unknown> | undefined, keys: string[]): string | null {
+  if (!payload) return null;
+  for (const key of keys) {
+    const value = payload[key];
+    if (typeof value === "string" && value.trim()) return value.trim();
+  }
+  return null;
+}
+
 function localRefFromPayload(
   eventName: string,
   payload: Record<string, unknown> | undefined,
 ): string | null {
-  if (!payload) return null;
-  if (eventName === "fact_writebacks") {
-    const v = payload.form_ref ?? payload.formRef;
-    return typeof v === "string" && v.trim() ? v.trim() : null;
-  }
-  if (eventName === "campaign_failure") {
-    const v = payload.campaign_id ?? payload.campaignId;
-    return typeof v === "string" && v.trim() ? v.trim() : null;
-  }
-  if (eventName === "ct_firms") {
-    const v = payload.id ?? payload.firm_id ?? payload.firmId;
-    return typeof v === "string" && v.trim() ? v.trim() : null;
-  }
+  if (eventName === "fact_writebacks") return payloadString(payload, ["form_ref", "formRef"]);
+  if (eventName === "campaign_failure") return payloadString(payload, ["campaign_id", "campaignId"]);
+  if (eventName === "ct_firms") return payloadString(payload, ["id", "firm_id", "firmId"]);
+  if (eventName === "consent_records.opt_out") return payloadString(payload, ["contact_id", "contactId"]);
+  if (eventName === "contact_import") return payloadString(payload, ["import_batch_id", "importBatchId"]);
+  if (eventName === "contact.created") return payloadString(payload, ["contact_id", "contactId", "id"]);
   if (eventName === "consent_records.sequenced") {
-    const v = payload.sequence_id ?? payload.sequenceId;
-    return typeof v === "string" && v.trim() ? v.trim() : null;
+    return payloadString(payload, ["sequence_id", "sequenceId"]);
   }
   return null;
+}
+
+function localAxesMatch(
+  row: {
+    grain: string;
+    local_ref: string | null;
+    local_firm_id: string | null;
+    local_contact_ids: string[] | null;
+  },
+  opts: {
+    firmId: string;
+    eventName: string;
+    payload?: Record<string, unknown>;
+    contactIds?: string[];
+  },
+): boolean {
+  if (row.grain !== "local") return true;
+  if (row.local_firm_id) {
+    const writeFirm = payloadString(opts.payload, ["firm_id", "firmId"]) ?? opts.firmId;
+    if (writeFirm !== row.local_firm_id) return false;
+  }
+  const specified = (row.local_contact_ids ?? []).filter(Boolean);
+  if (specified.length) {
+    const cid = payloadString(opts.payload, ["contact_id", "contactId"]);
+    const incoming = cid ? [cid] : (opts.contactIds ?? []);
+    if (!incoming.some((id) => specified.includes(id))) return false;
+  }
+  if (row.local_ref) {
+    if (localRefFromPayload(opts.eventName, opts.payload) !== row.local_ref) return false;
+  }
+  return true;
 }
 
 /** Dispatch event to all active workflows subscribed via workflow_trigger. */
@@ -929,11 +1122,13 @@ export async function dispatchEventToWorkflows(
     workflow_id: string;
     grain: string;
     local_ref: string | null;
+    local_firm_id: string | null;
+    local_contact_ids: string[] | null;
     audience_scope: string | null;
     audience_contact_ids: string[] | null;
   }>(
     `SELECT DISTINCT ON (t.workflow_id)
-            t.workflow_id, t.grain, t.local_ref,
+            t.workflow_id, t.grain, t.local_ref, t.local_firm_id, t.local_contact_ids,
             w.audience_scope, w.audience_contact_ids
      FROM workflow_trigger t
      JOIN workflow_state s ON s.workflow_id = t.workflow_id
@@ -947,11 +1142,17 @@ export async function dispatchEventToWorkflows(
     [opts.firmId, opts.eventName],
   );
 
-  const writeRef = localRefFromPayload(opts.eventName, opts.payload);
   const out: Array<{ workflowId: string; runId: string; enrollments: number }> = [];
   for (const row of triggers.rows) {
-    if (row.grain === "local") {
-      if (!row.local_ref || writeRef !== row.local_ref) continue;
+    if (
+      !localAxesMatch(row, {
+        firmId: opts.firmId,
+        eventName: opts.eventName,
+        payload: opts.payload,
+        contactIds: opts.contactIds,
+      })
+    ) {
+      continue;
     }
     let contactIds = opts.contactIds;
     const scope = row.audience_scope === "select_from" ? "select_from" : "every_firm";

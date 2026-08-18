@@ -69,16 +69,46 @@ export function ActionKindModal({
   onCancel,
   onPickAgents,
   onPickInApp,
+  embed,
+  onRegisterSave,
 }: {
   open: boolean;
   onCancel: () => void;
   onPickAgents: () => void;
   onPickInApp: () => void;
+  embed?: boolean;
+  onRegisterSave?: (fn: () => void) => void;
 }) {
   const [kind, setKind] = useState<"agents" | "in_app">("agents");
   useEffect(() => {
     if (open) setKind("agents");
   }, [open]);
+
+  const commit = () => (kind === "agents" ? onPickAgents() : onPickInApp());
+  useEffect(() => {
+    if (embed && open) onRegisterSave?.(commit);
+  });
+
+  const body = (
+      <div style={{ display: "flex", gap: 12 }}>
+        <KindCard
+          selected={kind === "agents"}
+          icon={<TeamOutlined />}
+          title="Agents"
+          body="Send people to accomplish a goal. Select an agent, or create the objective."
+          onClick={() => setKind("agents")}
+        />
+        <KindCard
+          selected={kind === "in_app"}
+          icon={<AppstoreOutlined />}
+          title="In the application"
+          body="Change something inside the system from this operation (lists, tasks, records — not outreach)."
+          onClick={() => setKind("in_app")}
+        />
+      </div>
+  );
+
+  if (embed) return body;
 
   return (
     <Modal
@@ -101,29 +131,14 @@ export function ActionKindModal({
           </Typography.Text>
           <Space>
             <Button onClick={onCancel}>Cancel</Button>
-            <Button type="primary" onClick={() => (kind === "agents" ? onPickAgents() : onPickInApp())}>
+            <Button type="primary" onClick={commit}>
               Save
             </Button>
           </Space>
         </div>
       }
     >
-      <div style={{ display: "flex", gap: 12 }}>
-        <KindCard
-          selected={kind === "agents"}
-          icon={<TeamOutlined />}
-          title="Agents"
-          body="Send people to accomplish a goal. Select an agent, or create the objective."
-          onClick={() => setKind("agents")}
-        />
-        <KindCard
-          selected={kind === "in_app"}
-          icon={<AppstoreOutlined />}
-          title="In the application"
-          body="Change something inside the system from this operation (lists, tasks, records — not outreach)."
-          onClick={() => setKind("in_app")}
-        />
-      </div>
+      {body}
     </Modal>
   );
 }
@@ -192,6 +207,8 @@ export function ActionAgentsModal({
   onCancel,
   onSave,
   onChangeKind,
+  embed,
+  onRegisterSave,
 }: {
   open: boolean;
   data: WorkflowNodeData;
@@ -199,6 +216,8 @@ export function ActionAgentsModal({
   onCancel: () => void;
   onSave: (patch: Partial<WorkflowNodeData>) => void;
   onChangeKind: () => void;
+  embed?: boolean;
+  onRegisterSave?: (fn: () => void) => void;
 }) {
   const [assignMode, setAssignMode] = useState<"existing" | "from_template">(data.assignMode ?? "existing");
   const [sequenceClass, setSequenceClass] = useState<"optin" | "reengagement" | "reactivation">(
@@ -236,53 +255,36 @@ export function ActionAgentsModal({
     return "Short text";
   };
 
-  return (
-    <Modal
-      open={open}
-      onCancel={onCancel}
-      {...MODAL_SCROLL}
-      title={
-        <div>
-          <Typography.Title level={4} style={{ margin: 0 }}>
-            Action · Agents
-          </Typography.Title>
-          <Space size={6} style={{ marginTop: 6 }}>
-            <Tag color="blue" style={{ cursor: "pointer" }} onClick={onChangeKind}>
-              Kind
-            </Tag>
-            <Tag color="blue">Agents</Tag>
-          </Space>
-        </div>
-      }
-      width={860}
-      footer={
-        <Space>
-          <Button onClick={onCancel}>Cancel</Button>
-          <Button
-            type="primary"
-            onClick={() =>
-              onSave({
-                actionType: "call_agent",
-                assignMode,
-                copySequenceClass: sequenceClass,
-                agentRef,
-                objectiveName,
-                dataRequestOn,
-                formQuestionIds: formRows.map((row) => row.id),
-                configured: true,
-                actionSummary:
-                  assignMode === "existing"
-                    ? `Call agent · ${agentRef}`
-                    : `Copy ${sequenceClass} template`,
-                label: data.label?.startsWith("Call") || !data.label ? `Call ${SEQUENCE_RADIOS.find((row) => row.classId === sequenceClass)?.label ?? "agent"}` : data.label,
-              })
-            }
-          >
-            Save
-          </Button>
-        </Space>
-      }
-    >
+  const commit = () =>
+    onSave({
+      actionType: "call_agent",
+      assignMode,
+      copySequenceClass: sequenceClass,
+      agentRef,
+      objectiveName,
+      dataRequestOn,
+      formQuestionIds: formRows.map((row) => row.id),
+      configured: true,
+      actionSummary:
+        assignMode === "existing" ? `Call agent · ${agentRef}` : `Copy ${sequenceClass} template`,
+      label:
+        data.label?.startsWith("Call") || !data.label
+          ? `Call ${SEQUENCE_RADIOS.find((row) => row.classId === sequenceClass)?.label ?? "agent"}`
+          : data.label,
+    });
+
+  useEffect(() => {
+    if (embed && open) onRegisterSave?.(commit);
+  });
+
+  const body = (
+      <>
+      <Space size={6} style={{ marginBottom: 12 }}>
+        <Tag color="blue" style={{ cursor: "pointer" }} onClick={onChangeKind}>
+          Kind
+        </Tag>
+        <Tag color="blue">Agents</Tag>
+      </Space>
       <Typography.Paragraph type="secondary" style={{ marginTop: 0 }}>
         You do not create an agent here. Create the agent in Agents, then assign.
       </Typography.Paragraph>
@@ -369,6 +371,34 @@ export function ActionAgentsModal({
           </div>
         ) : null}
       </div>
+      </>
+  );
+
+  if (embed) return body;
+
+  return (
+    <Modal
+      open={open}
+      onCancel={onCancel}
+      {...MODAL_SCROLL}
+      title={
+        <div>
+          <Typography.Title level={4} style={{ margin: 0 }}>
+            Action · Agents
+          </Typography.Title>
+        </div>
+      }
+      width={860}
+      footer={
+        <Space>
+          <Button onClick={onCancel}>Cancel</Button>
+          <Button type="primary" onClick={commit}>
+            Save
+          </Button>
+        </Space>
+      }
+    >
+      {body}
     </Modal>
   );
 }
@@ -379,12 +409,16 @@ export function ActionInAppModal({
   onCancel,
   onSave,
   onChangeKind,
+  embed,
+  onRegisterSave,
 }: {
   open: boolean;
   data: WorkflowNodeData;
   onCancel: () => void;
   onSave: (patch: Partial<WorkflowNodeData>) => void;
   onChangeKind: () => void;
+  embed?: boolean;
+  onRegisterSave?: (fn: () => void) => void;
 }) {
   const current =
     data.actionType && data.actionType !== "call_agent" && data.actionType !== "enroll_sequence"
@@ -403,48 +437,30 @@ export function ActionInAppModal({
     setNotesFromVerdict(data.notesFromVerdict === true);
   }, [open, current, data.tag]);
 
-  return (
-    <Modal
-      open={open}
-      onCancel={onCancel}
-      {...MODAL_SCROLL}
-      title={
-        <div>
-          <Typography.Title level={4} style={{ margin: 0 }}>
-            Action · In the application
-          </Typography.Title>
-          <Space size={6} style={{ marginTop: 6 }}>
-            <Tag color="blue" style={{ cursor: "pointer" }} onClick={onChangeKind}>
-              Kind
-            </Tag>
-            <Tag>In the application</Tag>
-          </Space>
-        </div>
-      }
-      width={520}
-      footer={
-        <Space>
-          <Button onClick={onCancel}>Cancel</Button>
-          <Button
-            type="primary"
-            onClick={() =>
-              onSave({
-                actionType,
-                tag: actionType === "ascribe_tag" ? tag : data.tag,
-                pickTable: actionType === "run_audit" ? pickTable : data.pickTable,
-                notesFromVerdict: actionType === "ascribe_tag" ? notesFromVerdict : data.notesFromVerdict,
-                configured: true,
-                actionSummary: ACTION_TYPE_DEFAULT_LABELS[actionType],
-                label: ACTION_TYPE_DEFAULT_LABELS[actionType],
-                agentRef: undefined,
-              })
-            }
-          >
-            Save
-          </Button>
-        </Space>
-      }
-    >
+  const commit = () =>
+    onSave({
+      actionType,
+      tag: actionType === "ascribe_tag" ? tag : data.tag,
+      pickTable: actionType === "run_audit" ? pickTable : data.pickTable,
+      notesFromVerdict: actionType === "ascribe_tag" ? notesFromVerdict : data.notesFromVerdict,
+      configured: true,
+      actionSummary: ACTION_TYPE_DEFAULT_LABELS[actionType],
+      label: ACTION_TYPE_DEFAULT_LABELS[actionType],
+      agentRef: undefined,
+    });
+
+  useEffect(() => {
+    if (embed && open) onRegisterSave?.(commit);
+  });
+
+  const body = (
+      <>
+      <Space size={6} style={{ marginBottom: 12 }}>
+        <Tag color="blue" style={{ cursor: "pointer" }} onClick={onChangeKind}>
+          Kind
+        </Tag>
+        <Tag>In the application</Tag>
+      </Space>
       <Typography.Paragraph type="secondary">
         Change something inside the system from this operation (lists, tasks, records — not outreach).
       </Typography.Paragraph>
@@ -480,6 +496,34 @@ export function ActionInAppModal({
           </Space>
         </Space>
       ) : null}
+      </>
+  );
+
+  if (embed) return body;
+
+  return (
+    <Modal
+      open={open}
+      onCancel={onCancel}
+      {...MODAL_SCROLL}
+      title={
+        <div>
+          <Typography.Title level={4} style={{ margin: 0 }}>
+            Action · In the application
+          </Typography.Title>
+        </div>
+      }
+      width={520}
+      footer={
+        <Space>
+          <Button onClick={onCancel}>Cancel</Button>
+          <Button type="primary" onClick={commit}>
+            Save
+          </Button>
+        </Space>
+      }
+    >
+      {body}
     </Modal>
   );
 }
