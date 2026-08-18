@@ -48,8 +48,11 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A3** | [`A3-rule-custom.png`](./automations-blueprint/A3-rule-custom.png) | chrome | Whole-rule Custom JSON. Code color. | 20:54 | **prior.** Per-outcome JS is on **A21** |
 | **A4** | [`A4-gui-plus-named-code.png`](./automations-blueprint/A4-gui-plus-named-code.png) | chrome | GUI + named code. **Wrong:** side-by-side. Code editor look (line numbers, copy, rename) is kept. | 21:10 | **prior.** Outcomes pane → **A21** |
 | **A21** | [`A21-rule-outcomes-pane.png`](./automations-blueprint/A21-rule-outcomes-pane.png) | chrome | **Canonical Outcomes.** Tabs = Input / Outcomes / Output. Outcomes stacked. Per-outcome GUI \| JS. On → interior. Off → empty. | 16:33 | **revises A2 · A3 · A4** |
-| **A5** | [`A5-inside-trigger.png`](./automations-blueprint/A5-inside-trigger.png) | chrome | Inside the trigger. Event or schedule. | 21:10 | — |
-| **A6** | [`A6-add-node.png`](./automations-blueprint/A6-add-node.png) | chrome | Add a node. Select Action. | 21:10 | — |
+| **A5** | [`A5-inside-trigger.png`](./automations-blueprint/A5-inside-trigger.png) | chrome | Inside the trigger. Event or schedule. | 21:10 | **prior.** Select event → **A26** |
+| **A26** | [`A26-trigger-select-event.png`](./automations-blueprint/A26-trigger-select-event.png) | chrome | Trigger **select** (Assist middle modal). Event \| Schedule. Searchable **named events**. Grain is a **dropdown** (Global shown — no second picker). Awaiting lock. | 20:05 | **revises A5 · A18** (look). Packet after lock |
+| **A6** | [`A6-add-node.png`](./automations-blueprint/A6-add-node.png) | chrome | Add a node. Select Action. | 21:10 | **prior.** Wire + → **A28** |
+| **A27** | [`A27-node-options-popover.png`](./automations-blueprint/A27-node-options-popover.png) | chrome | Placed-node **⋯**: Duplicate · Add node · **Switch** · Delete. Click the node is **configure**, not switch. | 20:05 | — |
+| **A28** | [`A28-add-node-on-wire.png`](./automations-blueprint/A28-add-node-on-wire.png) | chrome | Wire **+**. Add node: Get · Rule · Action · Condition (If) · Exit. **No Trigger** on insert-on-wire. | 20:05 | **revises A6** |
 | **A7** | [`A7-action-two-kinds.png`](./automations-blueprint/A7-action-two-kinds.png) | chrome | Inside action: **Agents** vs **in the application**. | 21:10 | — |
 | **A8** | [`A8-action-agents-objective.png`](./automations-blueprint/A8-action-agents-objective.png) | chrome | Agents as the action: select agent, or create the objective / form. Form here is still a **blank builder**. | 21:10 | **prior.** Form bind → **A12** |
 | **A12** | [`A12-form-from-required-data.png`](./automations-blueprint/A12-form-from-required-data.png) | chrome | **Canonical form.** Questions **are** the required-data rows. Bound from listing. | 21:36 then 21:48 | **revises A8** (form only). Select-agent law still A8 |
@@ -62,7 +65,7 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A15** | [`A15-blank-canvas-chain.png`](./automations-blueprint/A15-blank-canvas-chain.png) | chrome | Blank canvas. Chain: **firm provisioned → audit contacts → if X → agents**. Palette includes Condition (If). A1 stays the smallest. | 01:17 · 01:20 | — |
 | **A16** | [`A16-if-previous-result.png`](./automations-blueprint/A16-if-previous-result.png) | chrome | **First Ant If plate.** Calls from the previous result (the audit). Not a rule. | 01:20 | fills open item 11 |
 | **A17** | [`A17-trigger-firm-provisioned.png`](./automations-blueprint/A17-trigger-firm-provisioned.png) | chrome | Inside trigger. Event = **firm created / provisioned**. | 01:20 | companion to A5 |
-| **A18** | [`A18-trigger-global-local.png`](./automations-blueprint/A18-trigger-global-local.png) | chrome | Inside trigger. After the event: **Global** (all of that kind) or **Local** (this specific one). Example: form submitted. | 18:53 | fills law 27. A5 stays Event vs Schedule |
+| **A18** | [`A18-trigger-global-local.png`](./automations-blueprint/A18-trigger-global-local.png) | chrome | Inside trigger. After the event: **Global** (all of that kind) or **Local** (this specific one). Example: form submitted. | 18:53 | **prior.** Grain as radios. Grain dropdown → **A26** |
 | **A19** | [`A19-automations-contacts.png`](./automations-blueprint/A19-automations-contacts.png) | chrome | Automations **Contacts** = the same look as Agents C8. Same Add contact modal. Does not start a mission now. | 18:53 · 01:01 | companion to C8 / C8b |
 | **A22** | [`A22-get-canvas.png`](./automations-blueprint/A22-get-canvas.png) | chrome | Canvas. **Get** is a node kind. Chain: **Reference pack updated → Get → Rule**. Palette includes Get. | 17:06 | — |
 | **A23** | [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png) | chrome | Inside **Get**. Left = n8n tree (keep). Parameters: **dropdown** Every firm / Select firm. Select → Firm then Contact **comboboxes** (dropdown + input). Left writes apply in those boxes. | 17:33 | revises 17:26 |
@@ -97,11 +100,14 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | Operator → Configuration libraries → Automations | Workflow list. Open **New firm → opt-in launch** (or equivalent). |
 | Open the workflow | Canvas: **trigger · rule · action** (A1). Smallest. |
 | Same desk, teaching walk | Canvas: provisioned → audit → if X → agents (**A15**). Blank canvas; you can chain. |
-| Open the **Trigger** node | Event or schedule (A5). Firm created / provisioned (**A17**). |
+| **Click** a placed node | **Configure** that node. Trigger Output after contact import = **A24**. Not the event picker. |
+| Add a **Trigger** from the palette, or **⋯ → Switch** | Event picker (**A26**). Named events. Grain dropdown. |
+| Node **⋯** | Duplicate · Add node · Switch · Delete (**A27**). Switch lives here. |
+| Open the **Trigger** node (configure) | **Not** the event picker. Output after contact import = **A24**. Event/Schedule + grain look is **A26** only when adding or **Switch**. A5 / A17 / A18 stay prior. |
 | Open the **Trigger** after **contact import** | **Output** tab. **A24.** Writes: import_batch · contact_records. |
 | Open the **Trigger** after **new contact** | **Output** tab. **A25.** Write: contact_records (that person). |
 | Open the **If / Condition** node | Calls from previous result (**A16**). Not a rule. |
-| Insert / add a node | Palette. Select **Action** (A6). |
+| Insert / add a node | Palette (A6 prior). Wire **+** (**A28**). Select **Action**. No Trigger on the wire. |
 | Open the **Action** node | Kind: **Agents** vs **in the application** (A7). |
 | Action kind = Agents | First: **assign existing** or **from a template** (**A14**). Then select agent (whole sequence) · declare objective · if data request, create the form (A8 prior / **A12** canon). You do **not** author a new agent here. |
 | Open the **Get** node | **A23.** Packet [`GET-PACKET.md`](./GET-PACKET.md). Input tree \| Parameters (three-level selector). Output tab exists, not opened. |
@@ -268,7 +274,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Why this does what we wanted:** Automations’ event-of-origin is schedule | trigger — not Agents’ “event” on C2b. Do not collapse those words.
 
-**Not this plate:** Constant-change trigger / webhook as a full catalog. Named remainder.
+**Not this plate:** Constant-change trigger / webhook as a full catalog. Named remainder. Look of the picker → **A26**.
 
 ---
 
@@ -282,7 +288,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Why this does what we wanted:** the DAG is authored. Action is a kind you pick, not a hidden enroll.
 
-**Not this plate:** The If / condition node in that same picker — Hub palette has it; **A15** is the plate that adds Condition (If). Do not freeze A6’s Exit and A15’s If as one palette.
+**Not this plate:** The If / condition node in that same picker — Hub palette has it; **A15** is the plate that adds Condition (If). Do not freeze A6’s Exit and A15’s If as one palette. Wire **+** look → **A28**. Node **⋯** → **A27**.
 
 ---
 
@@ -511,7 +517,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **SA idea (do not invent UI):** some events may not have Local (an **audit** is one-time). Map which events allow which grain. Do not fill the catalog.
 
-**Not this plate:** Contacts picker. A Settings modal. Firm provisioned (A17).
+**Not this plate:** Contacts picker. A Settings modal. Firm provisioned (A17). Grain as a **dropdown** on the event picker → **A26**. Radios stay prior.
 
 ---
 
@@ -605,6 +611,56 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 **Do not build:** teaching captions. An import_batch chip on this event. Immigration fields.
 
 **Not this plate:** Contact import (A24). Add contact modal (C8).
+
+---
+
+### A26 — Trigger: select the event (middle modal)
+
+![A26 trigger select event](./automations-blueprint/A26-trigger-select-event.png)
+
+**Rationale (20:05):** Translate selecting a trigger into the Assist middle-modal. Canvas add-trigger already looks good. Click into a placed node is **configure**, not this picker. This plate is add-from-palette and **⋯ → Switch**.
+
+**On the glass:** Event \| Schedule. Search events. Named events only (Form submitted, Campaign failed, Opted out, Firm created / provisioned, Audit finished, **Contact import** selected, **New contact** own row, Reference pack updated). Grain = **dropdown**, value **Global**. Global → no second combobox.
+
+**Do not build:** teaching captions. Grain as radios (A18 prior). Footer Cancel/Save — pick is live like A23. Mixing grain into the event list.
+
+**Stale pixel:** catalog blurb behind the modal if it drifted. Trust the modal.
+
+**Not this plate:** Configure after click (A24 / A25 Output). Node **⋯** (A27). Wire **+** (A28).
+
+**Packet after they lock.**
+
+---
+
+### A27 — Node options popover
+
+![A27 node options popover](./automations-blueprint/A27-node-options-popover.png)
+
+**Rationale (20:05):** Click oscillates today between configure and switch. Click = configure. Switch lives with Duplicate / Add node / Delete — the Hub options idea, on the Assist canvas.
+
+**On the glass:** Trigger **Contact import** selected. **⋯** open: **Duplicate · Add node · Switch · Delete**. Wire **+** still on the connection (that is A28). Palette includes Get.
+
+**Do not build:** Switch as the destination of a body click. Teaching captions.
+
+**Not this plate:** The event list after Switch (A26). Wire add-node menu (A28).
+
+**Packet after they lock.**
+
+---
+
+### A28 — Add a node on the wire
+
+![A28 add node on wire](./automations-blueprint/A28-add-node-on-wire.png)
+
+**Rationale (20:05):** Hover the wire → **+**. Same idea as A6, Assist look. Insert between nodes. Palette on the left still has Trigger (starts the graph). The wire menu does not.
+
+**On the glass:** **Add node**: Get · Rule · Action · Condition (If) · Exit. **No Trigger.**
+
+**Do not build:** teaching captions. Trigger on insert-on-wire. Freezing A6 Exit without If.
+
+**Not this plate:** Node **⋯** (A27). Event picker (A26).
+
+**Packet after they lock.**
 
 ---
 

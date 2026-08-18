@@ -31,7 +31,7 @@ Kind-specific middle is that kind’s packet. Shared panes are this file. Do not
 |------|--------|----------|------------|
 | **Input** | **Every** node that has Input | A23 **left** | Prior nodes in **this** chain, canvas order, that node’s outputs nested. Schema / Table / JSON. Search. Fit known write-sets. Do not freeze the pack-update example tree. |
 | **Output** | **Every** node that has Output | **A20** | Top = every write **this run** made. Click one. Bottom = that write. |
-| **Parameters** | **That kind** | A23 **right** is **Get** | Get: Module + every/select + class cascade (Firm → Contact on Contacts). Action: A7 / A14. Trigger: A5 / A18. If: A16. |
+| **Parameters** | **That kind** | A23 **right** is **Get** | Get: Module + every/select + class cascade (Firm → Contact on Contacts). Action: A7 / A14. Trigger select: **A26** (A5 / A18 prior). If: A16. |
 | **Outcomes** | **Rule** | **A21** | Stacked. Per-outcome GUI \| JS. On / off. Not a node-wide GUI/Custom tab. |
 
 Get tabs: **Input | Output**. Parameters sit in the Input tab as the right column.  
@@ -49,6 +49,8 @@ The Input shape was named as **how inputs appear inside nodes** — as they chai
 Trigger is the start of a chain: it may have **no** prior node. Empty Input is valid. Do not invent a fake ancestor. Do not put Firm / Contact dropdowns on the trigger.
 
 Action / If interiors we already drew (A7, A14, A16) are **Parameters** (the middle). They still get **Input** (stack) and **Output** (A20) even though those plates did not open those tabs. Completes the module. No extra PNG.
+
+**Click the node = configure.** Do not send click to Switch. Switch is **⋯** (A27). First pick / Switch opens the event picker (A26). Wire **+** is A28.
 
 ---
 

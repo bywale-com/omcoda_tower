@@ -181,6 +181,7 @@ These were asked. They are not “copy from C9/C11.”
 | **Rule Outcomes** | Packet [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md). Match [`A21`](./automations-blueprint/A21-rule-outcomes-pane.png). A2 / A3 / A4 are prior. Do not build giant GUI/Custom. Do not build teaching captions. |
 | **Node interior** | Shared vs kind: [`NODE-INTERIOR.md`](./NODE-INTERIOR.md). **Input** (A23 left) and **Output** (A20) on every node that has those panes. Get **Parameters** (A23 right) only on Get. Rule **Outcomes** (A21) only on Rule. |
 | **Get** | Packet [`GET-PACKET.md`](./GET-PACKET.md). Canvas [`A22`](./automations-blueprint/A22-get-canvas.png). Interior [`A23`](./automations-blueprint/A23-get-input-parameters.png). Kind, not Action, not Audit. |
+| **Click vs Switch** | Law 38. Click = configure. **⋯** **A27**. Event picker **A26**. Wire **+** **A28**. Packet after lock. |
 
 ---
 
@@ -199,7 +200,9 @@ Same divide elsewhere (campaign failure: all campaigns vs **this** campaign). Do
 
 **Ignore:** The rest of A18 (which workflow is selected in the catalog). Copy the **modal**.
 
-Allude: [`A5-inside-trigger.png`](./automations-blueprint/A5-inside-trigger.png) is inside-trigger Event vs Schedule. **A18 adds the grain.** A5 is prior for Event/Schedule. A17 is firm provisioned. Do not skip A18 because A5 exists.
+Allude: [`A5-inside-trigger.png`](./automations-blueprint/A5-inside-trigger.png) is inside-trigger Event vs Schedule. **A18 adds the grain** as radios. **A26** is the Assist look: named-event list + grain **dropdown**. A5 / A18 stay prior until A26 locks.
+
+**Click vs Switch (law 38):** body click = configure. **⋯** = Duplicate · Add node · Switch · Delete (**A27**). Wire **+** = **A28** (no Trigger on the wire).
 
 ---
 

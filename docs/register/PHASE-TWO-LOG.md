@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Event Output plates: **A24** contact import · **A25** new contact (A20 shape). Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Click a placed node = configure; Switch is **⋯**. Plates **A26** event picker · **A27** node options · **A28** wire +. Packet after lock. Do not plant.
 
 **How we maintain this log**
 
@@ -1402,6 +1402,24 @@ Flag 15:43 untouched.
 **Plates:** [`A24-contact-import-output.png`](./automations-blueprint/A24-contact-import-output.png) · [`A25-new-contact-output.png`](./automations-blueprint/A25-new-contact-output.png).
 
 **Do not build:** teaching captions. Rule output chips on these events. Audit writes as import output. Catalog sentence “the real house workflow.”
+
+**Do not:** plant; recut 015; overwrite 15:43. Packet after they lock.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 20:05 UTC — Click = configure; Switch is ⋯; event picker is a middle modal
+
+**Why:** Founder: do not screenshot live first. Translate selecting a trigger into the middle-modal Assist look. Canvas add-trigger already looks good. Clicking a placed node oscillates between configure and switch — that is the problem. Title-rename on click is fine. If you want to switch, you do not click into the node. Hub had an options popover (duplicate, add node, reposition). Wire hover already has **+**. Switch belongs on that options popover.
+
+**Plates (awaiting lock — no packets yet):**
+
+- [`A26-trigger-select-event.png`](./automations-blueprint/A26-trigger-select-event.png) — add Trigger / **Switch**. Event \| Schedule. Searchable **named** events. **Contact import** ≠ **New contact**. Grain = dropdown **Global**; no second picker on Global. Revises A5 / A18 look.
+- [`A27-node-options-popover.png`](./automations-blueprint/A27-node-options-popover.png) — **⋯**: Duplicate · Add node · Switch · Delete.
+- [`A28-add-node-on-wire.png`](./automations-blueprint/A28-add-node-on-wire.png) — wire **+**: Get · Rule · Action · Condition (If) · Exit. No Trigger. Revises A6.
+
+**Law 38.** Click = configure (Output of a trigger is still A24 / A25). Switch is not click.
 
 **Do not:** plant; recut 015; overwrite 15:43. Packet after they lock.
 
