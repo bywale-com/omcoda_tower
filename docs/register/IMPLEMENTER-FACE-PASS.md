@@ -179,7 +179,7 @@ These were asked. They are not “copy from C9/C11.”
 | **Rename nodes** | Click the title, edit in place, same as renaming a campaign in Agents. Including the If / condition node. Same pattern everywhere a name is changed. |
 | **Rule Output** | Match [`A20`](./automations-blueprint/A20-rule-output-select-preview.png). A11 is prior. |
 | **Rule Outcomes** | Match [`A21`](./automations-blueprint/A21-rule-outcomes-pane.png). A2 / A3 / A4 are prior. Do not build giant GUI/Custom. Do not build teaching captions. |
-| **Get** | New node kind. Canvas [`A22`](./automations-blueprint/A22-get-canvas.png). Interior [`A23`](./automations-blueprint/A23-get-input-parameters.png) — Input left / Parameters middle. Output is its own tab; pane not drawn yet. Not Audit. Not Action. Do not hardcode a Contacts-Get. |
+| **Get** | New node kind. Canvas [`A22`](./automations-blueprint/A22-get-canvas.png). Interior [`A23`](./automations-blueprint/A23-get-input-parameters.png) — keep the Input tree. Parameters: dropdown Every firm / Select firm; Select opens Firm then Contact comboboxes (dropdown + input). Left writes apply in those boxes. Output tab not drawn. Not Audit. |
 
 ---
 

@@ -65,7 +65,7 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A18** | [`A18-trigger-global-local.png`](./automations-blueprint/A18-trigger-global-local.png) | chrome | Inside trigger. After the event: **Global** (all of that kind) or **Local** (this specific one). Example: form submitted. | 18:53 | fills law 27. A5 stays Event vs Schedule |
 | **A19** | [`A19-automations-contacts.png`](./automations-blueprint/A19-automations-contacts.png) | chrome | Automations **Contacts** = the same look as Agents C8. Same Add contact modal. Does not start a mission now. | 18:53 · 01:01 | companion to C8 / C8b |
 | **A22** | [`A22-get-canvas.png`](./automations-blueprint/A22-get-canvas.png) | chrome | Canvas. **Get** is a node kind. Chain: **Reference pack updated → Get → Rule**. Palette includes Get. | 17:06 | — |
-| **A23** | [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png) | chrome | Inside **Get**. n8n split: **Input** left (prior writes) · **Parameters** middle (Module + grain). **Output** is its own tab, not opened. Evergreen — not hardcoded. | 17:06 | — |
+| **A23** | [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png) | chrome | Inside **Get**. Left = n8n tree (keep). Parameters: **dropdown** Every firm / Select firm. Select → Firm then Contact **comboboxes** (dropdown + input). Left writes apply in those boxes. | 17:33 | revises 17:26 |
 
 **Why A10 / A13 are in the lineup and still not chrome:** they are the **idea** of output classes as a lattice. They are not Operator screens. The DAG piece that does that fork is the **If / condition node**, now on the glass as **A16**. Keep both diagrams so the evolution (hole → listing) is visible. Do not ascribe A13 as a screen.
 
@@ -535,7 +535,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 | **In-app action: ascribe a tag** | Campaign fails → record / tag. Subscription bell is that tag. | Named. Do not invent the rest. |
 | **Lineage queryable** | Who created the objective (agent vs hand), path to completion, completion event, time. | Queryable at minimum. Not a new screen. |
 | **Assign existing vs from template** | **Settled 00:02.** A14. No create-agent in Automations. | Drawn. |
-| **Get node** | New kind. Read records from a **module**, filter to a **grain**. Evergreen. Not Audit-as-people-pump. **A22** canvas · **A23** Input/Parameters. Output pane not drawn yet. | Drawn as plates. Not planted. |
+| **Get node** | New kind. Read records from a **module**. Input is n8n. Parameters: Every firm stays as a dropdown option; Select opens cascading comboboxes. Left writes apply in those boxes. **A22** · **A23**. Output not drawn. | Drawn as plates. Not planted. |
 
 ---
 
@@ -557,13 +557,15 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 ![A23 get input parameters](./automations-blueprint/A23-get-input-parameters.png)
 
-**Rationale (17:06):** n8n split. Input = prior writes in this chain (here: the pack update). Parameters = **Module** then **grain** of that module. Same Get node for every module — do not hardcode a Contacts-Get vs Audits-Get. Output is its **own tab**, not opened this plate.
+**Rationale (17:33):** Left stays n8n. Parameters go back toward Add contact’s Every firm / Select — but the selector is a **dropdown**, not radios, and it is not only firm. Select firm produces the next dropdown. Those dropdowns are also **input boxes**. That is where a left-side write (this firm, this contact) gets applied. Same choice will exist across modules given the classes that apply. Cascade until you have to pick.
 
-**On the glass:** Title Get · Contacts. Tabs Input (selected, body is the split) · Output. Left: `reference_versions` write. Parameters: Module Contacts (Firms / Audits / Imports / Reference / Agents in the picker). Grain for Contacts is the **book** (A22 chip: Contacts · book). The plate’s radio copy drifted to “Every firm” — that is not the Contacts grain; do not ship that label.
+**On the glass:** Module Contacts. First dropdown open: **Every firm** · **Select firm** (selected). Then **Firm** combobox with Harbor RCIC (lightning — left `firm` applied). Then **Contact** combobox empty: Select contact. No radios. No “Of” pill.
 
-**Do not build:** teaching captions. Immigration fields on Get. Audit inside Get. “Every firm” as the Contacts grain.
+**Do not build:** teaching captions. Flat Key/ID Input. Replacing Every firm with a mapped-only slot. Immigration fields on Get.
 
-**Not this plate:** Get Output pane. Rule Outcomes (A21).
+**Stale pixel:** `received_at` may sit under `reference_versions`. Sibling write, not child.
+
+**Not this plate:** Get Output pane. Rule Outcomes (A21). Every-firm default with no cascade showing.
 
 ---
 

@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Get** is a node kind (**A22** canvas · **A23** Input/Parameters). Pack update → Get → Rule. Output of Get not drawn yet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Get** is a node kind (**A22** · **A23**). Left of A23 is n8n (keep). Parameters: **Every firm** stays; it is a **dropdown** not a radio. **Select firm** opens the next dropdowns (also input boxes) — that is where left-side writes apply. Output of Get not drawn. Do not plant.
 
 **How we maintain this log**
 
@@ -1267,6 +1267,42 @@ Flag 15:43 untouched.
 **Do not build:** teaching captions. Hardcoded immigration fields on Get. A third Get-per-module kind.
 
 **Do not:** plant; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 17:26 UTC — A23 is n8n. Do not reinvent Input.
+
+**Why:** Founder on A23: ridiculous. Do not reinvent the wheel. n8n already has this.
+
+**1. Input (left).** Prior nodes in **canvas order**. Everything in **this** DAG chain / fork is available to this node. Each node’s **outputs sit underneath that node** — not a flat Key/ID table.
+
+**2. Why the left exists.** Those writes are always available to Parameters. You **reference** them. Get’s grain is not a new radio. For Contacts it is still a **contact**, a **specific contact**, or a **specific firm**. Interchangeable. Same slot.
+
+**Plate:** [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png) replaced. A22 stays.
+
+**On the glass:** Schema tree under **Reference pack updated**. `firm` mapped. Parameters: Module Contacts · **Of** = that firm. No Every firm. No Select from.
+
+**Stale pixel:** `received_at` may have nested under `reference_versions`. It is a write of the trigger, not a child of the version row. Trust the tree shape, not that nest. Do not ship a teaching caption.
+
+**Do not build:** Every firm / Select from on Get. Flat Key/ID Input. Teaching captions.
+
+**Do not:** plant; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 17:33 UTC — Parameters: dropdown, then dropdowns that are also input boxes
+
+**Why:** Founder: left of A23 is good — keep it. Right side, the previous Every firm was right. Do not replace it with a mapped-only slot. The change is one thing.
+
+**Selector** is a **dropdown**, not a radio. **Every firm** is one option. Next option is **Select firm** — not firm-only as law; classes that apply for that module. Select produces the next dropdown. Those dropdowns are also **input boxes**. Left-side writes apply **in those boxes** when you are picking a specific one. Cascade: firm, then contact, until you have to select. Cousin of Add contact Every firm / Select from — not a new pattern.
+
+**Plate:** [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png) replaced. Left unchanged in kind.
+
+**Do not:** plant; recut 015; overwrite 15:43. Do not update a pile of law before this is confirmed.
 
 Flag 15:43 untouched.
 
