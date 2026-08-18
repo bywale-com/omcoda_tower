@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **16:54:** A rule runs for **two reasons only** — re-engagement (data request / nudge) or **reactivation**. A trigger is a **justification** to run that. If the trigger does not write people, an **action** must, then the rule. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **16:54** rule = two reasons; trigger = justification. **17:00:** Input can take people **directly** (book / who this applies to) — Audit is not a people-pump. Chain writes should be **referenceable**, not only the last node. Do not plant.
 
 **How we maintain this log**
 
@@ -1231,6 +1231,26 @@ Nothing else.
 Same architecture: if the trigger’s writes are not the inputs the rule needs, an action in the chain **makes** them.
 
 **Do not:** plant; invent a third reason to run a rule; put person-fields on a pack-change trigger; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 17:00 UTC — Direct inputs. Do not use Audit as a people-pump.
+
+**Why:** Founder: pack / reference change is a justification. What goes in the middle to provide the data? Do not over-rely on action nodes (Audit) to get inputs. What if it could get them **directly**? Also: Input should be able to reference **everything earlier in this chain**, not only the last node. No image this stamp.
+
+**Stood up today (honest):** Live handle is **the previous node’s writes**. An action **replaces** the handle with what that module wrote. If **passes through**. Hub preview is lastOutput → next lastInput only. The rule node on the walk does not yet evaluate against those writes. If an event arrives with **no contact ids**, dispatch currently loads **the whole firm book** — that is a blunt “direct,” not an authored Input.
+
+**Product (founder):**
+
+- Same goal: run the operation. The middle can change. Even the trigger can change. Two chains can be valid.
+- Pack / criteria updated writes **the pack**, not people. You do **not** need Audit in the middle just to have a person. Audit is Audit. People **already exist**.
+- **Direct** looks like: on the rule’s **Input**, pick who / what is already in the system — **who this applies to** (Automations Contacts) or the **book**. Those records are referenceable. No fake action to “fetch” them.
+- You still put something in the middle when you need a **write that does not exist yet** (import, audit, a form coming back).
+- Input is not only the immediate previous node. **Every prior node’s writes in this chain** should be referenceable — like a real event. Live is not that yet. Name it. Do not recut 015 here.
+
+**Do not:** plant; mint; use Audit as “get me contacts”; overwrite 15:43.
 
 Flag 15:43 untouched.
 
