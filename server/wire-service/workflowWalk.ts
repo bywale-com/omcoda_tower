@@ -69,8 +69,10 @@ function now() {
 
 function isValidatedPipeline(nodes: RfNode[]): boolean {
   const types = new Set(nodes.map((n) => n.type).filter(Boolean));
-  // Must have trigger + action (or at least trigger); allow missing constant/branch/rule
-  return types.has("trigger") && (types.has("action") || types.has("exit"));
+  return (
+    types.has("trigger") &&
+    (types.has("action") || types.has("exit") || types.has("get") || types.has("rule"))
+  );
 }
 
 function outgoing(edges: RfEdge[], sourceId: string, handle?: string | null): RfEdge[] {
@@ -176,6 +178,151 @@ function pickWrites(writes: RunWrite[], pickTable?: string, pickId?: string): Ru
 
 function uniqueIds(ids: Array<string | null | undefined>): string[] {
   return [...new Set(ids.filter((id): id is string => Boolean(id)))];
+}
+
+async function executeGet(
+  pool: Pool,
+  data: Record<string, unknown>,
+): Promise<{ writes: RunWrite[]; contactIds?: string[] }> {
+  const module = String(data.getModule ?? "contacts");
+  const select = String(data.getSelect ?? "every");
+  const class1 = String(data.getClass1 ?? "");
+  const class2 = Array.isArray(data.getClass2) ? data.getClass2.map(String) : [];
+  const class2All = data.getClass2All !== false && class2.length === 0;
+
+  if (module === "reference") return { writes: [] };
+
+  if (module === "contacts") {
+    let q = `SELECT id, firm_id FROM contact_records`;
+    const params: unknown[] = [];
+    if (select !== "every") {
+      if (!class1) return { writes: [] };
+      q += ` WHERE firm_id=$1`;
+      params.push(class1);
+      if (!class2All) {
+        q += ` AND id = ANY($2::text[])`;
+        params.push(class2);
+      }
+    }
+    const { rows } = await pool.query<{ id: string }>(q, params);
+    const ids = rows.map((r) => r.id);
+    return {
+      writes: ids.map((id) => ({ table: "contact_records", id, contact_id: id })),
+      contactIds: ids,
+    };
+  }
+
+  if (module === "firms") {
+    if (select === "every") {
+      const { rows } = await pool.query<{ id: string }>(`SELECT id FROM ct_firms`);
+      return { writes: rows.map((r) => ({ table: "ct_firms", id: r.id })) };
+    }
+    return class1 ? { writes: [{ table: "ct_firms", id: class1 }] } : { writes: [] };
+  }
+
+  if (module === "audits") {
+    let q = `SELECT id FROM audit_runs`;
+    const params: unknown[] = [];
+    if (select !== "every") {
+      if (!class1) return { writes: [] };
+      q += ` WHERE firm_id=$1`;
+      params.push(class1);
+      if (!class2All) {
+        q += ` AND id = ANY($2::text[])`;
+        params.push(class2);
+      }
+    }
+    const { rows } = await pool.query<{ id: string }>(q, params);
+    return { writes: rows.map((r) => ({ table: "audit_runs", id: r.id })) };
+  }
+
+  if (module === "imports") {
+    let q = `SELECT id FROM import_batch WHERE kind='contact'`;
+    const params: unknown[] = [];
+    if (select !== "every") {
+      if (!class1) return { writes: [] };
+      q += ` AND firm_id=$1`;
+      params.push(class1);
+      if (!class2All) {
+        q += ` AND id = ANY($2::text[])`;
+        params.push(class2);
+      }
+    }
+    const { rows } = await pool.query<{ id: string }>(q, params);
+    return { writes: rows.map((r) => ({ table: "import_batch", id: r.id })) };
+  }
+
+  if (module === "agents") {
+    if (select === "every") {
+      const { rows } = await pool.query<{ id: string }>(`SELECT id FROM campaign`);
+      return { writes: rows.map((r) => ({ table: "campaign", id: r.id })) };
+    }
+    if (!class1) return { writes: [] };
+    if (class2All) {
+      const { rows } = await pool.query<{ id: string }>(
+        `SELECT id FROM campaign WHERE sequence_id=$1`,
+        [class1],
+      );
+      return { writes: rows.map((r) => ({ table: "campaign", id: r.id })) };
+    }
+    return { writes: class2.map((id) => ({ table: "campaign", id })) };
+  }
+
+  return { writes: [] };
+}
+
+async function executeRuleWrites(
+  pool: Pool,
+  ctx: WalkContext,
+  data: Record<string, unknown>,
+): Promise<{ writes: RunWrite[]; lastOutput: Record<string, unknown> }> {
+  const ruleConfig =
+    data.ruleConfig && typeof data.ruleConfig === "object"
+      ? (data.ruleConfig as Record<string, unknown>)
+      : {};
+  const listingFieldIds = Array.isArray(ruleConfig.listingFieldIds)
+    ? (ruleConfig.listingFieldIds as unknown[]).map(String)
+    : Array.isArray(data.listingFieldIds)
+      ? (data.listingFieldIds as unknown[]).map(String)
+      : [];
+  const direct = Array.isArray(data.directContactIds)
+    ? (data.directContactIds as unknown[]).map(String)
+    : [];
+  const contactIds = uniqueIds(direct.length ? direct : ctx.contactIds);
+  const writes: RunWrite[] = [];
+  for (const contactId of contactIds) {
+    const rec = await pool.query<{ email: string | null; phone: string | null }>(
+      `SELECT email, phone FROM contact_records WHERE id=$1`,
+      [contactId],
+    );
+    const keys = listingFieldIds.length ? listingFieldIds : ["email", "phone"];
+    for (const fieldKey of keys) {
+      const missing =
+        fieldKey === "email"
+          ? !rec.rows[0]?.email
+          : fieldKey === "phone"
+            ? !rec.rows[0]?.phone
+            : true;
+      if (!missing) continue;
+      const id = `mfs-${randomUUID()}`;
+      await pool.query(
+        `INSERT INTO missing_fact_signals (id, firm_id, contact_id, field_key)
+         VALUES ($1,$2,$3,$4)`,
+        [id, ctx.firmId, contactId, fieldKey],
+      );
+      writes.push({ table: "missing_fact_signals", id, contact_id: contactId });
+    }
+  }
+  const lastOutput = {
+    headline: writes.length ? "Required data" : "Pass",
+    pass: writes.length === 0,
+    requiredData: listingFieldIds,
+    listing: listingFieldIds,
+    writes,
+    nudge: Boolean(ruleConfig.nudgeSignalOn ?? true),
+    reactivation: Boolean(ruleConfig.reactivationSignalOn ?? true),
+  };
+  return { writes, lastOutput };
 }
 
 function fieldMatches(val: unknown, op: string, expected: unknown): boolean {
@@ -587,34 +734,39 @@ export async function walkValidatedWorkflow(
         return;
       }
 
-      if (type === "rule") {
-        const ruleId = String(data.ruleId ?? "eligibility");
-        const ruleConfig =
-          data.ruleConfig && typeof data.ruleConfig === "object"
-            ? (data.ruleConfig as Record<string, unknown>)
-            : {};
-        const listingFieldIds = Array.isArray(ruleConfig.listingFieldIds)
-          ? (ruleConfig.listingFieldIds as unknown[]).map(String)
-          : Array.isArray(data.listingFieldIds)
-            ? (data.listingFieldIds as unknown[]).map(String)
-            : [];
-        ctx.listingFieldIds = listingFieldIds;
-        const pathway = await pool.query(
-          `SELECT id FROM rule_eligibility_pathway WHERE enabled=true LIMIT 1`,
-        );
-        ctx.lastOutput = {
-          ruleId,
-          pass: true,
-          listingFieldIds,
-          listingNotEmpty: listingFieldIds.length > 0,
-          listingCount: listingFieldIds.length,
-        };
+      if (type === "get") {
+        const result = await executeGet(pool, data);
+        ctx.previousWrites = result.writes;
+        if (result.contactIds?.length) ctx.contactIds = result.contactIds;
+        ctx.lastOutput = { writes: result.writes, module: data.getModule ?? "contacts" };
         nodeStatus[nodeId] = {
           status: "success",
-          detail: `rule ${ruleId}; listing=${listingFieldIds.length}; pathways=${pathway.rowCount ?? 0}`,
+          detail: `get ${String(data.getModule ?? "contacts")}; writes=${result.writes.length}`,
           at: now(),
+          writes: result.writes,
         };
-        if (ctx.eligibilityPass === undefined) ctx.eligibilityPass = true;
+        for (const e of outgoing(edges, nodeId)) await visit(e.target);
+        return;
+      }
+
+      if (type === "rule") {
+        const ruleId = String(data.ruleId ?? "eligibility");
+        const result = await executeRuleWrites(pool, ctx, data);
+        ctx.listingFieldIds = Array.isArray(result.lastOutput.listing)
+          ? (result.lastOutput.listing as string[])
+          : [];
+        ctx.previousWrites = result.writes.length ? result.writes : ctx.previousWrites;
+        ctx.lastOutput = result.lastOutput;
+        if (Array.isArray(data.directContactIds) && (data.directContactIds as unknown[]).length) {
+          ctx.contactIds = uniqueIds((data.directContactIds as unknown[]).map(String));
+        }
+        nodeStatus[nodeId] = {
+          status: "success",
+          detail: `rule ${ruleId}; missing=${result.writes.length}`,
+          at: now(),
+          writes: result.writes,
+        };
+        if (ctx.eligibilityPass === undefined) ctx.eligibilityPass = result.writes.length === 0;
         for (const e of outgoing(edges, nodeId)) await visit(e.target);
         return;
       }

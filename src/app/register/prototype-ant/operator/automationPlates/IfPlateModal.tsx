@@ -15,12 +15,16 @@ export function IfPlateModal({
   previousOptions,
   onCancel,
   onSave,
+  embed,
+  onRegisterSave,
 }: {
   open: boolean;
   data: WorkflowNodeData;
   previousOptions: { id: string; label: string }[];
   onCancel: () => void;
   onSave: (patch: Partial<WorkflowNodeData>) => void;
+  embed?: boolean;
+  onRegisterSave?: (fn: () => void) => void;
 }) {
   const [label, setLabel] = useState(data.label || "If X — previous result");
   const [previousResultFrom, setPreviousResultFrom] = useState(
@@ -49,57 +53,28 @@ export function IfPlateModal({
 
   const rows = config.conditions.length ? config.conditions : [emptyIfConditionRow()];
 
-  return (
-    <Modal
-      open={open}
-      onCancel={onCancel}
-      {...MODAL_SCROLL}
-      title={
-        <div>
-          <Input
-            value={label}
-            variant="borderless"
-            onChange={(event) => setLabel(event.target.value)}
-            style={{ fontSize: 20, fontWeight: 600, paddingInline: 0 }}
-          />
-          <Tag color="orange" style={{ marginTop: 6 }}>
-            Condition
-          </Tag>
-        </div>
-      }
-      width={640}
-      footer={
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Typography.Text type="secondary" style={{ fontSize: 12, maxWidth: 360 }}>
-            This is not a rule. The rule is a different node. This If reads the last output.
-          </Typography.Text>
-          <Space>
-            <Button onClick={onCancel}>Cancel</Button>
-            <Button
-              type="primary"
-              onClick={() =>
-                onSave({
-                  label,
-                  previousResultFrom,
-                  pickTable,
-                  pickField,
-                  pickOp,
-                  pickValue,
-                  conditionConfig: config,
-                  ifThen,
-                  ifElse,
-                  branchKind: "if",
-                  configured: true,
-                  filterSummary: `${pickTable}.${pickField} ${pickOp} ${pickValue}`,
-                })
-              }
-            >
-              Save
-            </Button>
-          </Space>
-        </div>
-      }
-    >
+  const commit = () =>
+    onSave({
+      label,
+      previousResultFrom,
+      pickTable,
+      pickField,
+      pickOp,
+      pickValue,
+      conditionConfig: config,
+      ifThen,
+      ifElse,
+      branchKind: "if",
+      configured: true,
+      filterSummary: `${pickTable}.${pickField} ${pickOp} ${pickValue}`,
+    });
+
+  useEffect(() => {
+    if (embed && open) onRegisterSave?.(commit);
+  });
+
+  const body = (
+    <>
       <Typography.Paragraph type="secondary">
         Picks a field of a write already on the handle (this run’s writes). Person fields split
         people; run fields fire once.
@@ -217,6 +192,45 @@ export function IfPlateModal({
           </Radio.Group>
         </Space>
       </Space>
+    </>
+  );
+
+  if (embed) return body;
+
+  return (
+    <Modal
+      open={open}
+      onCancel={onCancel}
+      {...MODAL_SCROLL}
+      title={
+        <div>
+          <Input
+            value={label}
+            variant="borderless"
+            onChange={(event) => setLabel(event.target.value)}
+            style={{ fontSize: 20, fontWeight: 600, paddingInline: 0 }}
+          />
+          <Tag color="orange" style={{ marginTop: 6 }}>
+            Condition
+          </Tag>
+        </div>
+      }
+      width={640}
+      footer={
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Typography.Text type="secondary" style={{ fontSize: 12, maxWidth: 360 }}>
+            This is not a rule. The rule is a different node. This If reads the last output.
+          </Typography.Text>
+          <Space>
+            <Button onClick={onCancel}>Cancel</Button>
+            <Button type="primary" onClick={commit}>
+              Save
+            </Button>
+          </Space>
+        </div>
+      }
+    >
+      {body}
     </Modal>
   );
 }

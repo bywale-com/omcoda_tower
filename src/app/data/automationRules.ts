@@ -63,6 +63,11 @@ export type RuleNodeConfig = {
   namedCodeTitle?: string;
   nudgeSignalOn?: boolean;
   reactivationSignalOn?: boolean;
+  /** A21 — per-outcome GUI | JS. Not a page-level GUI/Custom tab. */
+  outcomeAuthorMode?: Record<string, "gui" | "js">;
+  outcomeCode?: Record<string, string>;
+  outcomeCodeTitle?: Record<string, string>;
+  outcomeConditions?: Record<string, RuleConditionDefinition[]>;
 };
 
 export type RuleCheckResult = {

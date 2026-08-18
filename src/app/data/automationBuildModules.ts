@@ -3,6 +3,7 @@ import type { PaletteBlock } from "./automationWorkflows";
 
 /** Peer build modules in the automations editor — triggers are separate. */
 export const AUTOMATION_BUILD_MODULES = [
+  "gets",
   "constants",
   "conditions",
   "operations",
@@ -13,6 +14,7 @@ export const AUTOMATION_BUILD_MODULES = [
 export type AutomationBuildModule = (typeof AUTOMATION_BUILD_MODULES)[number];
 
 export const AUTOMATION_BUILD_MODULE_LABELS: Record<AutomationBuildModule, string> = {
+  gets: "Get",
   constants: "Constants",
   conditions: "Conditions",
   operations: "Operations",
@@ -21,6 +23,7 @@ export const AUTOMATION_BUILD_MODULE_LABELS: Record<AutomationBuildModule, strin
 };
 
 export const AUTOMATION_BUILD_MODULE_HINTS: Record<AutomationBuildModule, string> = {
+  gets: "Read records in a module at a grain",
   constants: "Constants — values, references, and environment variables",
   conditions: "Branching, filters, and predicates",
   operations: "Transforms, waits, and flow control",
@@ -30,6 +33,7 @@ export const AUTOMATION_BUILD_MODULE_HINTS: Record<AutomationBuildModule, string
 
 export function paletteBlocksByModule(blocks: PaletteBlock[]): Record<AutomationBuildModule, PaletteBlock[]> {
   const grouped: Record<AutomationBuildModule, PaletteBlock[]> = {
+    gets: [],
     constants: [],
     conditions: [],
     operations: [],
@@ -44,6 +48,8 @@ export function paletteBlocksByModule(blocks: PaletteBlock[]): Record<Automation
 
 export function paletteBlockIcon(block: PaletteBlock): NotionIconName {
   switch (block.module) {
+    case "gets":
+      return "magnifying-glass";
     case "constants":
       return "gear";
     case "conditions":

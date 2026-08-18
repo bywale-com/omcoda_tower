@@ -5,6 +5,7 @@ export const PLATE_NODE_TAG: Record<
   WorkflowNodeType,
   { label: string; bg: string; color: string }
 > = {
+  get: { label: "Get", bg: "#722ed1", color: "#fff" },
   trigger: { label: "Trigger", bg: "#1677ff", color: "#fff" },
   rule: { label: "Rule", bg: "#d46b08", color: "#fff" },
   action: { label: "Action", bg: "#389e0d", color: "#fff" },

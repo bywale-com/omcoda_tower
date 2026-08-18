@@ -16,28 +16,12 @@ import {
   type NodeTypes,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import {
-  Button,
-  Descriptions,
-  Drawer,
-  Empty,
-  Form,
-  Input,
-  List,
-  Radio,
-  Select,
-  Space,
-  Table,
-  Tabs,
-  Tag,
-  Typography,
-  message,
-  theme,
-} from "antd";
+import { Button, Empty, Form, Input, List, Radio, Select, Space, Table, Tabs, Tag, Typography, message, theme } from "antd";
 import {
   ArrowDownOutlined,
   ArrowUpOutlined,
   DeleteOutlined,
+  DatabaseOutlined,
   ForkOutlined,
   LogoutOutlined,
   PlayCircleOutlined,
@@ -64,14 +48,19 @@ import {
   type WorkflowNodeType,
   type WorkflowTriggerEvent,
 } from "../../../data/automationWorkflows";
+import { formatGetSummary, previewGetWrites } from "../../../data/automationGet";
+import { emptyRuleNodeConfig } from "../../../data/automationRules";
 import { wirePorts } from "../../../wire/registry";
 import type { EligibilityPipelineRow } from "../../../wire/machineTypes";
 import { ActionAgentsModal, ActionInAppModal, ActionKindModal } from "./automationPlates/ActionPlateModals";
+import { DirectInputPane } from "./automationPlates/DirectInputPane";
+import { GetParametersPane } from "./automationPlates/GetParametersPane";
 import { IfPlateModal } from "./automationPlates/IfPlateModal";
+import { NodeInteriorModal } from "./automationPlates/NodeInteriorModal";
 import { PlateInsertEdge } from "./automationPlates/PlateInsertEdge";
 import { PLATE_NODE_TAG } from "./automationPlates/plateChrome";
+import { RuleOutcomesPane } from "./automationPlates/RuleOutcomesPane";
 import { ContactPickModal } from "./ContactPickModal";
-import { RulePlateModal } from "./automationPlates/RulePlateModal";
 
 type WorkflowFlowNode = Node<WorkflowNodeData, WorkflowNodeType>;
 
@@ -86,24 +75,6 @@ function reorderOrdRows<T extends { ord: number }>(
   next.splice(toIndex, 0, moved);
   return next.map((row, index) => ({ ...row, ord: index }));
 }
-
-const NODE_TYPE_LABELS: Record<WorkflowNodeType, string> = {
-  trigger: "Trigger",
-  constant: "Constant",
-  branch: "Branch",
-  rule: "Rule",
-  action: "Action",
-  exit: "Exit",
-};
-
-const NODE_TONE: Record<WorkflowNodeType, string> = {
-  trigger: "processing",
-  constant: "purple",
-  branch: "warning",
-  rule: "cyan",
-  action: "success",
-  exit: "default",
-};
 
 function statusColor(status: WorkflowDefinition["status"]) {
   if (status === "active") return "success";
@@ -125,6 +96,7 @@ function nodeSummary(data: WorkflowNodeData) {
     data.actionSummary ??
     data.delayLabel ??
     data.enrollmentHint ??
+    (data.getModule ? formatGetSummary(data) : null) ??
     "No summary yet"
   );
 }
@@ -191,6 +163,7 @@ const nodeTypes: NodeTypes = {
   rule: AntWorkflowNode,
   action: AntWorkflowNode,
   exit: AntWorkflowNode,
+  get: AntWorkflowNode,
 };
 
 function cloneNodes(nodes: WorkflowDefinition["nodes"]): WorkflowFlowNode[] {
@@ -390,7 +363,9 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
   const [savedFlash, setSavedFlash] = useState(false);
   const [activeTab, setActiveTab] = useState("workflow");
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const [plate, setPlate] = useState<null | "rule" | "action-kind" | "action-agents" | "action-inapp" | "if">(null);
+  const [plate, setPlate] = useState<null | "action-kind" | "action-agents" | "action-inapp">(null);
+  const [interiorOpen, setInteriorOpen] = useState(false);
+  const saveRef = useRef<(() => void) | null>(null);
   const [pipeline, setPipeline] = useState<EligibilityPipelineRow[]>([]);
   const [pipelineError, setPipelineError] = useState<string | null>(null);
   const skipPersistRef = useRef(true);
@@ -426,6 +401,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
     setEdges(workflow ? cloneEdges(workflow.edges) : []);
     setSelectedNodeId(null);
     setPlate(null);
+    setInteriorOpen(false);
     setActiveTab("workflow");
   }, [workflow?.id, setEdges, setNodes]);
 
@@ -567,12 +543,27 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
     };
   }, [triggerNode?.data.triggerEvent, triggerNode?.data.grain, listingIds.join("|")]);
 
+  const closeInterior = () => {
+    setInteriorOpen(false);
+    setPlate(null);
+    setSelectedNodeId(null);
+    saveRef.current = null;
+  };
+
   const openNode = (node: WorkflowFlowNode) => {
     setSelectedNodeId(node.id);
-    if (node.type === "rule") setPlate("rule");
-    else if (node.type === "action") setPlate("action-kind");
-    else if (node.type === "branch") setPlate("if");
-    else setPlate(null);
+    setInteriorOpen(true);
+    if (node.type === "action") {
+      if (node.data.actionType === "call_agent" || node.data.actionType === "enroll_sequence") {
+        setPlate("action-agents");
+      } else if (node.data.actionType) {
+        setPlate("action-inapp");
+      } else {
+        setPlate("action-kind");
+      }
+    } else {
+      setPlate(null);
+    }
   };
 
   const addBlock = (block: PaletteBlock) => {
@@ -603,8 +594,17 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
       onClick: () => {
         const next = createTriggerNode("event", nodes.map((node) => node.id)) as WorkflowFlowNode;
         setNodes(relayoutWorkflowNodes([next, ...nodes]) as WorkflowFlowNode[]);
-        setSelectedNodeId(next.id);
-        setPlate(null);
+        openNode(next);
+      },
+    },
+    {
+      id: "get",
+      title: "Get",
+      body: "Read records in a module at a grain.",
+      icon: <DatabaseOutlined />,
+      onClick: () => {
+        const block = WORKFLOW_PALETTE_BLOCKS.find((row) => row.id === "get-records");
+        if (block) addBlock(block);
       },
     },
     {
@@ -828,8 +828,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
                         current.filter((edge) => !ids.has(edge.source) && !ids.has(edge.target)),
                       );
                       if (selectedNodeId && ids.has(selectedNodeId)) {
-                        setSelectedNodeId(null);
-                        setPlate(null);
+                        closeInterior();
                       }
                     }}
                     fitView
@@ -851,8 +850,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
                             (edge) => edge.source !== selectedNodeId && edge.target !== selectedNodeId,
                           ),
                         );
-                        setSelectedNodeId(null);
-                        setPlate(null);
+                        closeInterior();
                       }}
                     >
                       Remove node
@@ -1066,116 +1064,131 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
         tabBarStyle={{ margin: 0, paddingInline: 16, flexShrink: 0 }}
       />
 
-      <Drawer
-        title="Node details"
-        open={Boolean(selectedNode) && (selectedNode?.type === "trigger" || selectedNode?.type === "constant" || selectedNode?.type === "exit")}
-        onClose={() => setSelectedNodeId(null)}
-        width={420}
-      >
-        {selectedNode ? (
-          <Space direction="vertical" size={16} style={{ width: "100%" }}>
+      <NodeInteriorModal
+        open={interiorOpen && Boolean(selectedNode)}
+        node={selectedNode}
+        nodes={nodes}
+        edges={edges}
+        parameters={
+          selectedNode?.type === "get" ? (
+            <GetParametersPane
+              data={selectedNode.data}
+              book={book}
+              upstreamIds={nodes.flatMap((node) =>
+                node.id === selectedNode.id
+                  ? []
+                  : [node.data.getClass1, ...(node.data.directContactIds ?? [])].filter(Boolean) as string[],
+              )}
+              onPatch={(patch) => {
+                const next = { ...selectedNode.data, ...patch };
+                patchNodeData(setNodes, selectedNode.id, {
+                  ...patch,
+                  lastOutput: { writes: previewGetWrites(next, book) } as WorkflowNodeData["lastOutput"],
+                });
+              }}
+            />
+          ) : selectedNode?.type === "rule" ? (
+            <DirectInputPane
+              data={selectedNode.data}
+              book={book}
+              onPatch={(patch) => patchNodeData(setNodes, selectedNode.id, patch)}
+            />
+          ) : selectedNode?.type === "trigger" || selectedNode?.type === "constant" ? (
             <Form layout="vertical">
-              <Form.Item label="Label">
-                <Input
-                  value={selectedNode.data.label}
-                  onChange={(event) => {
-                    patchNodeData(setNodes, selectedNode.id, { label: event.target.value });
-                  }}
-                />
-              </Form.Item>
               <NodeConfigFields
                 node={selectedNode}
                 localOptions={localOptions}
                 onPatch={(patch) => patchNodeData(setNodes, selectedNode.id, patch)}
               />
             </Form>
-            <Descriptions column={1} size="small" bordered>
-              <Descriptions.Item label="Type">
-                {NODE_TYPE_LABELS[(selectedNode.type ?? "action") as WorkflowNodeType]}
-              </Descriptions.Item>
-              <Descriptions.Item label="Configured">
-                <Tag color={selectedNode.data.configured ? "success" : "warning"}>
-                  {selectedNode.data.configured ? "Configured" : "Needs setup"}
-                </Tag>
-              </Descriptions.Item>
-              <Descriptions.Item label="Summary">{nodeSummary(selectedNode.data)}</Descriptions.Item>
-              {selectedNode.data.target ? (
-                <Descriptions.Item label="Target">{selectedNode.data.target}</Descriptions.Item>
-              ) : null}
-              {selectedNode.data.triggerKind ? (
-                <Descriptions.Item label="Trigger kind">{selectedNode.data.triggerKind}</Descriptions.Item>
-              ) : null}
-            </Descriptions>
-          </Space>
-        ) : null}
-      </Drawer>
-      <RulePlateModal
-        open={plate === "rule" && selectedNode?.type === "rule"}
-        title={selectedNode?.data.label ?? "Rule"}
-        config={selectedNode?.data.ruleConfig}
-        onCancel={() => {
-          setPlate(null);
-        }}
-        onSave={(ruleConfig) => {
+          ) : selectedNode?.type === "branch" ? (
+            <IfPlateModal
+              embed
+              open={interiorOpen}
+              data={selectedNode.data}
+              previousOptions={previousOptions}
+              onCancel={closeInterior}
+              onRegisterSave={(fn) => {
+                saveRef.current = fn;
+              }}
+              onSave={(patch) => {
+                patchNodeData(setNodes, selectedNode.id, patch);
+                closeInterior();
+              }}
+            />
+          ) : selectedNode?.type === "action" && plate === "action-kind" ? (
+            <ActionKindModal
+              embed
+              open
+              onCancel={closeInterior}
+              onPickAgents={() => setPlate("action-agents")}
+              onPickInApp={() => setPlate("action-inapp")}
+              onRegisterSave={(fn) => {
+                saveRef.current = fn;
+              }}
+            />
+          ) : selectedNode?.type === "action" && plate === "action-agents" ? (
+            <ActionAgentsModal
+              embed
+              open
+              data={selectedNode.data}
+              listingIds={listingIds}
+              onCancel={closeInterior}
+              onChangeKind={() => setPlate("action-kind")}
+              onRegisterSave={(fn) => {
+                saveRef.current = fn;
+              }}
+              onSave={(patch) => {
+                patchNodeData(setNodes, selectedNode.id, patch);
+                closeInterior();
+              }}
+            />
+          ) : selectedNode?.type === "action" && plate === "action-inapp" ? (
+            <ActionInAppModal
+              embed
+              open
+              data={selectedNode.data}
+              onCancel={closeInterior}
+              onChangeKind={() => setPlate("action-kind")}
+              onRegisterSave={(fn) => {
+                saveRef.current = fn;
+              }}
+              onSave={(patch) => {
+                patchNodeData(setNodes, selectedNode.id, patch);
+                closeInterior();
+              }}
+            />
+          ) : null
+        }
+        outcomes={
+          selectedNode?.type === "rule" ? (
+            <RuleOutcomesPane
+              config={selectedNode.data.ruleConfig ?? emptyRuleNodeConfig()}
+              onChange={(ruleConfig) =>
+                patchNodeData(setNodes, selectedNode.id, {
+                  ruleConfig,
+                  configured: true,
+                  ruleSummary: selectedNode.data.label,
+                })
+              }
+            />
+          ) : undefined
+        }
+        onCancel={closeInterior}
+        onSave={(label) => {
           if (!selectedNode) return;
-          patchNodeData(setNodes, selectedNode.id, {
-            ruleConfig,
-            configured: true,
-            ruleSummary: selectedNode.data.label,
-          });
-          setPlate(null);
-          setSelectedNodeId(null);
-        }}
-      />
-      <ActionKindModal
-        open={plate === "action-kind" && selectedNode?.type === "action"}
-        onCancel={() => {
-          setPlate(null);
-        }}
-        onPickAgents={() => setPlate("action-agents")}
-        onPickInApp={() => setPlate("action-inapp")}
-      />
-      <ActionAgentsModal
-        open={plate === "action-agents" && selectedNode?.type === "action"}
-        data={selectedNode?.data ?? { label: "Call agent", configured: false }}
-        listingIds={listingIds}
-        onCancel={() => {
-          setPlate(null);
-        }}
-        onChangeKind={() => setPlate("action-kind")}
-        onSave={(patch) => {
-          if (!selectedNode) return;
-          patchNodeData(setNodes, selectedNode.id, patch);
-          setPlate(null);
-          setSelectedNodeId(null);
-        }}
-      />
-      <ActionInAppModal
-        open={plate === "action-inapp" && selectedNode?.type === "action"}
-        data={selectedNode?.data ?? { label: "Action", configured: false }}
-        onCancel={() => {
-          setPlate(null);
-        }}
-        onChangeKind={() => setPlate("action-kind")}
-        onSave={(patch) => {
-          if (!selectedNode) return;
-          patchNodeData(setNodes, selectedNode.id, patch);
-          setPlate(null);
-          setSelectedNodeId(null);
-        }}
-      />
-      <IfPlateModal
-        open={plate === "if" && selectedNode?.type === "branch"}
-        data={selectedNode?.data ?? { label: "If X — previous result", configured: false }}
-        previousOptions={previousOptions}
-        onCancel={() => {
-          setPlate(null);
-        }}
-        onSave={(patch) => {
-          if (!selectedNode) return;
-          patchNodeData(setNodes, selectedNode.id, patch);
-          setPlate(null);
-          setSelectedNodeId(null);
+          if (label !== selectedNode.data.label) {
+            patchNodeData(setNodes, selectedNode.id, { label });
+          }
+          if (selectedNode.type === "action" && plate === "action-kind") {
+            saveRef.current?.();
+            return;
+          }
+          if (selectedNode.type === "action" || selectedNode.type === "branch") {
+            saveRef.current?.();
+            return;
+          }
+          closeInterior();
         }}
       />
       <ContactPickModal
