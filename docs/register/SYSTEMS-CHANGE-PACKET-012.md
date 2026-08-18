@@ -11,6 +11,21 @@ Do not reopen 010 or 011. Logout PR [#91](https://github.com/bywale-com/omcoda_t
 
 ---
 
+## Landed — PR [#92](https://github.com/bywale-com/omcoda_tower/pull/92) + [#93](https://github.com/bywale-com/omcoda_tower/pull/93)
+
+**Do not recut 012.** Assessment: [`SYSTEMS-CUT-ASSESSMENT.md`](./SYSTEMS-CUT-ASSESSMENT.md).
+
+| Cut | Where |
+|-----|--------|
+| One timer · `rules_override` · `seq_channel_rules` · A18 `local_ref` · A19 `audience_*` · seed people | `012_grain_audience_one_timer.sql` + walker dispatch |
+| Operator book across firms | `013_operator_book_people.sql` — **this consumed the 013 filename** before SA-013 |
+| C8b on #92 | **Stub** (radios + search + checkboxes). Not the plate. |
+| C8b for real | **#93** firm-first Add contact. Agents enroll starts the mission; Automations audience does not. |
+
+Leftover: Get packet later wants **Deselect all** on Select-from — fix on C8b when that interior ships; not 012 SQL.
+
+---
+
 ## 011 on main — ratify / leftover
 
 Cut matched the 17:05 enrichment. `campaign_channel_variation` CHECK and migrate-one-`every` are correct. Runtime reads variations. `campaign_channel.content` leftover.

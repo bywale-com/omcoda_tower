@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-17 12:50 UTC — **015 is the handle. Go to the engineer. Ship 013+014+015.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-18 18:50 UTC — **013+014+015 landed PR #94. Do not recut 015.** Leftovers named. Get/Rule #96 ascribe. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1277,3 +1277,32 @@ No new node kind. No packet-on-the-wire chrome required for this walk.
 **Hard:** Yes. We have modules that write, a graph with arrows, a walker that already follows then-this. Missing: after a node, put **this run’s writes** on the walk; next node **picks**. Packet [`SYSTEMS-CHANGE-PACKET-015.md`](./SYSTEMS-CHANGE-PACKET-015.md). First graph is still 014. Import still 013. No new table. No events table.
 
 **Do not:** rebuild Audit; Hub preview as live; skip 013. Flag **15:43**.
+
+---
+
+## 2026-08-18 18:50 UTC — Packets vs PRs. 013–015 landed. Do not recut 015. Get/Rule ascribe.
+
+**Why:** Founder: go through recent packets in PRs. Thorough systems evaluation, assessment, revisions.
+
+**Walked:** PRs #88–#96. `origin/main` through #95 (`7dffeef`). Walker / `executeAuditRun` / `runWrites` / migrations `014_contact_import.sql` + `015_house_notes_handle.sql`. PM Get + Rule packets on open #96.
+
+**Hard:**
+
+- **010 #88 · 011 #90 · 012 #92 landed.** C8b on #92 was a stub; **#93** is the firm-first plate. #91 logout = chrome. Do not reopen.
+- **013+014+015 shipped together as #94.** Confirm book lands `import_batch` + dispatch `contact_import` with writes. No auto-audit. House `firm_id` NULL. Walker runs `run_audit` / `ascribe_tag`. Handle = `previousWrites`. Wrap language: **`executeAuditRun`**.
+- **Filename remap:** SA-013 SQL is `014_contact_import.sql` (`013_operator_book_people.sql` already existed). SA-014/015 DDL is `015_house_notes_handle.sql`.
+- **Do not recut 015.** Last-node replace is the handle. Full-chain Input / Get kind / rule emit listing are **#96** — they use the handle.
+- **#89 / #95:** PM walked off Audit=three named writes. Hold 13:07. Not a recut.
+
+**Leftovers (not a new primitive):** house seed **draft** (Activate); If “failed” = `sequence_ready.ready=false` (unreachable only; partial tagged valid); `previousResultFrom` chrome unread; pick UI enum not live write-list; empty walk `LIMIT 50`; `import.created` type ghost; `fireOnboarding` dead door.
+
+**Get (short):** new kind. Reads existing records at a grain. Writes = those records. Module-read already lives as book / import_batch / audit_runs / ct_firms queries — not a Get node. Silent: kind `get`, left-write into boxes, ancestor stack. Three classes from stood-up writes: Contacts firm→contact; Firms firm (second class silent); Audits firm→`audit_runs`; Imports firm→`import_batch`; Reference **silent** (do not freeze `reference_versions`); Agents sequence→campaign.
+
+**Rule Output (short):** required data honest only if the rule **INSERT `missing_fact_signals`** (table exists). Do not mint a listing table. Rule stub does not emit writes today.
+
+**Rule Outcomes (short):** Hub has families/GUI; Ant does not. Direct Input = A19/book. Get when the write does not exist yet. Full-chain Input named; housed as `node_status` pointers + walk — not a recut of 015. Rule runs for re-engagement or reactivation only.
+
+Park: [`SYSTEMS-CUT-ASSESSMENT.md`](./SYSTEMS-CUT-ASSESSMENT.md) · [`SYSTEMS-GET-RULE-ASCRIBE.md`](./SYSTEMS-GET-RULE-ASCRIBE.md). Packets 012–015 ratify sections. [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 18:50.
+
+**Do not:** recut 015; mint events/listing/`reference_versions`; Audit as people-pump; overwrite 15:43; skip Activate on the house seed.
+

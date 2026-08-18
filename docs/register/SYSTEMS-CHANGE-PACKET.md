@@ -440,8 +440,20 @@ Founder: Confirm book for Tower **is** the upload. Trigger **contact import**. A
 
 Cut [`SYSTEMS-CHANGE-PACKET-013.md`](./SYSTEMS-CHANGE-PACKET-013.md). Does not wait on 012. Does not merge desks. Does not use Hub `import.created`.
 
+**Landed PR [#94](https://github.com/bywale-com/omcoda_tower/pull/94)** as `014_contact_import.sql`. Do not recut.
+
 ---
 
 ## 014 — 2026-08-16 22:17 — authored workflow: import → audit → tag + notes (any firm)
 
 Founder: not hardcoded. House canvas. Tag invalid data. Notes on the contact. Walker must run `run_audit` / `ascribe_tag` (today every action enrolls). House `workflow.firm_id` NULL. Handle = this run’s writes ([`SYSTEMS-CHANGE-PACKET-015.md`](./SYSTEMS-CHANGE-PACKET-015.md)). First graph [`SYSTEMS-CHANGE-PACKET-014.md`](./SYSTEMS-CHANGE-PACKET-014.md). Import land [`SYSTEMS-CHANGE-PACKET-013.md`](./SYSTEMS-CHANGE-PACKET-013.md). Ship 013+014+015.
+
+**Landed PR #94** as `015_house_notes_handle.sql` + walker. House seed **draft**. Wrap = `executeAuditRun`. Do not recut.
+
+---
+
+## 015 — 2026-08-17 12:50 — the handle
+
+After a node: every write that run made. Next node picks. [`SYSTEMS-CHANGE-PACKET-015.md`](./SYSTEMS-CHANGE-PACKET-015.md).
+
+**Landed PR #94.** Last-node replace. Do not recut. Full-chain Input / Get / Rule listing = PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96) — ascribe [`SYSTEMS-GET-RULE-ASCRIBE.md`](./SYSTEMS-GET-RULE-ASCRIBE.md). Assessment [`SYSTEMS-CUT-ASSESSMENT.md`](./SYSTEMS-CUT-ASSESSMENT.md).

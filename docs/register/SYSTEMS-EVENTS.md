@@ -318,3 +318,17 @@ Those were analogy from two handlers that both INSERT more than one row, plus de
 
 **Do not:** overwrite 15:43; mint an events table; specify per-module output lists; treat Hub preview as the live handle. Live still does not pass this run’s writes to the next node — that is the connect, not a new primitive. Cut: [`SYSTEMS-CHANGE-PACKET-015.md`](./SYSTEMS-CHANGE-PACKET-015.md).
 
+---
+
+## 2026-08-18 18:50 — 015 handle landed. Do not recut. #96 extends it.
+
+PR [#94](https://github.com/bywale-com/omcoda_tower/pull/94) cut 013+014+015. `WalkContext.previousWrites` is this run’s rows. Trigger fills from the import write-set. Action **replaces** with that module’s writes. If pass-through for children. Wrap is **`executeAuditRun`**.
+
+The 12:45 line “live still does not pass this run’s writes” is **stale**. Last-node handle is live. Full-chain Input (every prior node) is **not** 015 — it is PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96). Do not mint an events table to stack. Per-node pointers already sit on `workflow_run.node_status`.
+
+House seed is **draft**. Activate before import walks. If “failed” on the seed is `sequence_ready.ready=false` (unreachable only; partial is tagged valid).
+
+Assessment: [`SYSTEMS-CUT-ASSESSMENT.md`](./SYSTEMS-CUT-ASSESSMENT.md). Get/Rule ascribe: [`SYSTEMS-GET-RULE-ASCRIBE.md`](./SYSTEMS-GET-RULE-ASCRIBE.md).
+
+**Do not:** recut 015; freeze Audit as three named writes; overwrite 15:43.
+

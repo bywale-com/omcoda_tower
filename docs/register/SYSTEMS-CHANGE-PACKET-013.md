@@ -9,6 +9,25 @@
 
 ---
 
+## Landed — PR [#94](https://github.com/bywale-com/omcoda_tower/pull/94) (with 014+015)
+
+**Do not recut 013.** Ratify: [`SYSTEMS-CUT-ASSESSMENT.md`](./SYSTEMS-CUT-ASSESSMENT.md).
+
+| Spec | On main |
+|------|---------|
+| `import_batch` + `contact_records.import_batch_id` | **`supabase/migrations/014_contact_import.sql`** — not `013_…`. `013_operator_book_people.sql` already existed (#92). |
+| Confirm book / Prepared upload\|file | `handleContactImport`. CRM radio stays grant. **No auto-audit.** |
+| Dispatch | `contact_import` with `writes` (batch + contact rows). |
+| Book readiness | Loads `audit_runs` (`listAuditRuns` / `getAuditRun`). Start Audit stays manual. |
+| Delete node | Backspace / Delete + Remove. |
+| Picker | **Contact import**. Type union still has Hub `import.created` (ghost). |
+
+**`run_audit` wrap:** call **`executeAuditRun`**. `handleAuditRunCreate` is the HTTP door around that function. Do not keep saying the walker calls the HTTP handler.
+
+Leftovers that are **not** a new import table: house seed is draft (014); `import.created` union ghost; empty-walk `LIMIT 50` (015).
+
+---
+
 ## What is wrong on the glass today
 
 | Glass | Today | Law |
@@ -77,7 +96,7 @@ Picker lists `contact_import` as **Contact import**. Do not list a generic “im
 
 **A18:** Global = every contact import (all firms this automation’s audience covers). Local = **this** `import_batch` / this firm’s imports. Audience is still A19 (who). No condition required to ship this chain.
 
-**`run_audit` walker:** INSERT `audit_runs` for that `firm_id`, `status='complete'`, `import_ids` includes the `import_batch_id`. Write `reachability_verdicts` + `sequence_ready` for those `contact_records` (same grain as today’s `handleAuditRunCreate`). Then `dispatchEventToWorkflows('audit.completed')`. The audit **row** is the artifact. Do not skip the INSERT.
+**`run_audit` walker:** call **`executeAuditRun`** for that `firm_id`, `import_ids` includes the `import_batch_id`. Same grain as Operator Start Audit (`handleAuditRunCreate` is the HTTP wrapper). Then `dispatchEventToWorkflows('audit.completed')`. The audit **row** is the artifact. Do not skip the INSERT.
 
 ---
 
@@ -107,15 +126,16 @@ Same pattern on Agents canvas if a node can be added — if you can add it, you 
 
 | File | Why |
 |------|-----|
-| `supabase/migrations/013_contact_import.sql` | `import_batch` + `contact_records.import_batch_id` |
+| `supabase/migrations/014_contact_import.sql` | **Landed name.** Packet originally said `013_contact_import.sql` — that number was taken by Operator book people. `import_batch` + `contact_records.import_batch_id` |
 | `server/wire-service/machine.ts` | Confirm-book / upload lands batch + contacts + dispatch `contact_import` |
+| `server/wire-service/auditRun.ts` | **`executeAuditRun`** — Audit module writes. Walker and HTTP both call this. |
 | `server/wire-service/workflowWalk.ts` | `run_audit` writes `audit_runs`; dispatch `audit.completed` |
 | Ant Consultant Contacts | Confirm book = file picker. Same land path. |
 | Ant Prepared Authorize | Upload/file radios call that path. CRM radio stays grant. |
 | Ant Automations | Event **Contact import**. Delete node. |
 | Ant Book readiness | Load `audit_runs`. Stop using empty React state as the list. |
 
-`npm run build`. Manual: Consultant Confirm book → CSV → `import_batch` + contacts. Automation contact_import → run_audit → row in Book readiness. Delete a node → Save → gone.
+`npm run build`. Manual: Consultant Confirm book → CSV → `import_batch` + contacts. **Activate** house automation → next import runs `run_audit` → row in Book readiness. Delete a node → Save → gone.
 
 ---
 
