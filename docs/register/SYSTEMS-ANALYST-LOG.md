@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-18 23:12 UTC — **Only trigger is sourced. Get is a DAG node, not a fallback.** Test = same walk. Not AI. Do not recut 015. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-18 23:18 UTC — **Test shape = the event’s writes, named at connect. Handler is truth. No hardcoded fields.** Do not recut 015. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 

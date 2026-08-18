@@ -342,3 +342,11 @@ Play: [`SYSTEMS-TRIGGER-PLACE-ASCRIBE.md`](./SYSTEMS-TRIGGER-PLACE-ASCRIBE.md). 
 
 **Do not:** mint an events table; invent a Local catalog; freeze `reference_versions`; overwrite 15:43.
 
+---
+
+## 2026-08-18 23:18 — New event ⇒ named write-set. That is Test. No hardcoded fields.
+
+Connecting a trigger **is** knowing the writes. Test fills from that — handler `writes[]`, table columns — not a list in Ant. If the write-set cannot be named, the event stays off the picker (pack-update). Do not mint a copy catalog.
+
+[`SYSTEMS-TEST-ASCRIBE.md`](./SYSTEMS-TEST-ASCRIBE.md). **Do not:** recut 015; overwrite 15:43.
+

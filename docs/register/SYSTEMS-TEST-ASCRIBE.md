@@ -25,6 +25,27 @@ Downstream Output (Audit / Rule / Tag / If / Get) is **from that Input**, uncomm
 
 ---
 
+## How Test gets the values (the system — not a hardcoded list)
+
+Most Automations work from here is **a new event as a trigger**, not a new node kind. An event **is** the writes. If we connected it, we already know those tables. Therefore we already know what Test data **is**. We never add a trigger without that. We never paint fields in Ant.
+
+**Viable.** Not a second primitive. Not an `events` table. Not AI.
+
+| Law | What |
+|-----|------|
+| **Connect-time** | When SA names an `event_name`, the packet **names the write-set** (which tables that fire INSERTs/UPDATEs). That list **is** the Test shape. If we cannot name it, the event is **silent** — it does not go on A26. Pack-update today: silent. |
+| **Source of truth** | The **handler** that already dispatches (`handleContactImport` → `writes`, `executeAuditRun` → `writes`). Test calls that path with **`commit: false`**, or loads rows those pointers name. When the module grows a write, Test grows. The client does **not** keep a field list. |
+| **Fields** | Columns of those tables (Postgres already has them). Not `COLLECTIBLE_FIELDS`. Not A24 copied into React. |
+| **Values, door 1** | An instance of that event already exists → load those rows (`import_batch` id + its `contact_records`). Pick which if many (Local cousin). |
+| **Values, door 2** | No instance yet → same **fields**, specimen/empty values of those columns. Still that write-set. Last similar event, if it exists, is door 1 — you left door 2. |
+| **Then-this** | Only Trigger Output is sourced this way. Every later node: Input = that handle; Output = **that** module on it, uncommitted. Get included. |
+
+Do **not** mint `event_write_set` / a test-rows table. That would copy the handler and drift. The systems job when a new event lands: dispatch + `writes[]` + this named set in the packet. Test has nothing else to invent.
+
+**Incomplete today:** `contact.created` is on the picker and does not dispatch. Pack-update is on the picker with no write-set. Those are **not** Test-ready. Do not stub them in the client.
+
+---
+
 ## Test — A. Door 1: the write already exists
 
 No new store. Read the row.
@@ -48,7 +69,7 @@ Test of Get = this door. A read is not Launch.
 
 Must **not INSERT**. Must **not enroll / send**.
 
-**Trigger never fired:** source **one** specimen of **that event’s real write-set** (same fields live would write). Contact import = `import_batch` + `contact_records` (A24). New contact = one `contact_records`. Not a toy list. Not extra fields.
+**Trigger never fired:** same write-set as connect-time (above). Contact import = `import_batch` + `contact_records`. Not a toy list. Not extra fields. Shape from the **handler**, not from a PNG.
 
 Where specimen **values** come from (still not AI):
 
@@ -111,8 +132,8 @@ Do not invent a mapping table. Do not freeze extra import fields. Write-set = wh
 
 1. A29 look on **every** Input. Get Parameters stay Get-only.
 2. Test button: Save · Test · Launch. No Test tab. No commit.
-3. Source values **once**, on **Trigger Output**. Test walks the **same DAG** as Launch. Get is a node on that DAG, not a fallback.
-4. Door 1 = pick an existing instance of **that event** (which batch / form / run). Door 2 = specimen of that event’s real columns if none has fired. Not AI.
+3. Source values **once**, on **Trigger Output**, from that event’s **connected write-set** (handler `writes`, table columns). No trigger ships without that. Test walks the **same DAG** as Launch. Get is a node on that DAG, not a fallback.
+4. Door 1 = pick an existing instance of **that event**. Door 2 = specimen of those same columns if none has fired. Not AI. Not a field list in Ant.
 5. Every later node (including Get): Input = previous Output. Output = what **that** node does with it, uncommitted.
 6. Audit Test = `executeAuditRun` without persist. Rule Test does not fake an evaluation we cannot run.
 7. Chips = pointers into the handle. Graph `data`, not a table.
