@@ -56,7 +56,6 @@ import { wirePorts } from "../../../wire/registry";
 import type { EligibilityPipelineRow } from "../../../wire/machineTypes";
 import { ActionAgentsModal, ActionInAppModal, ActionKindModal } from "./automationPlates/ActionPlateModals";
 import { ContactPickModal } from "./ContactPickModal";
-import { DirectInputPane } from "./automationPlates/DirectInputPane";
 import { GetParametersPane } from "./automationPlates/GetParametersPane";
 import { IfPlateModal } from "./automationPlates/IfPlateModal";
 import { NodeInteriorModal } from "./automationPlates/NodeInteriorModal";
@@ -67,6 +66,7 @@ import { CanvasOpsContext, switchableKind, useCanvasOps } from "./automationPlat
 import { TriggerSelectModal } from "./automationPlates/TriggerSelectModal";
 import { triggerSelectEvent, WIRE_ADD_KINDS } from "../../../data/automationTriggerSelect";
 import { WireAddMenu } from "./automationPlates/WireAddMenu";
+import { loadPickerDirectory, type PickerFirm } from "./automationPlates/pickerDirectory";
 
 type WorkflowFlowNode = Node<WorkflowNodeData, WorkflowNodeType>;
 
@@ -351,6 +351,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
   const [pickIds, setPickIds] = useState<string[]>([]);
   const [contactQuery, setContactQuery] = useState("");
   const [localOptions, setLocalOptions] = useState<Array<{ value: string; label: string }>>([]);
+  const [firms, setFirms] = useState<PickerFirm[]>([]);
   const [triggerSelectId, setTriggerSelectId] = useState<string | null>(null);
   const listingIds = nodes.find((node) => node.type === "rule")?.data.ruleConfig?.listingFieldIds ?? [];
   const triggerSelectNode = triggerSelectId
@@ -375,18 +376,15 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
       setAudienceScope(row?.audience_scope === "select_from" ? "select_from" : "every_firm");
       setAudienceIds(row?.audience_contact_ids ?? []);
     }).catch(() => undefined);
-    void wirePorts.machineApi.listContactRecords({ scope: "every_firm" }).then((rows) => {
-      setBook(
-        rows.map((r) => ({
-          id: r.id,
-          name: r.name,
-          email: r.email,
-          firmId: r.firmId,
-          firmName: r.firmName,
-          createdAt: r.createdAt,
-        })),
-      );
-    }).catch(() => setBook([]));
+    void loadPickerDirectory()
+      .then(({ contacts, firms: nextFirms }) => {
+        setBook(contacts);
+        setFirms(nextFirms);
+      })
+      .catch(() => {
+        setBook([]);
+        setFirms([]);
+      });
   }, [workflow?.id]);
 
   useEffect(() => {
@@ -1067,6 +1065,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
             <GetParametersPane
               data={selectedNode.data}
               book={book}
+              firms={firms}
               upstreamIds={nodes.flatMap((node) =>
                 node.id === selectedNode.id
                   ? []
@@ -1081,10 +1080,15 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
               }}
             />
           ) : selectedNode?.type === "rule" ? (
-            <DirectInputPane
-              data={selectedNode.data}
-              book={book}
-              onPatch={(patch) => patchNodeData(setNodes, selectedNode.id, patch)}
+            <RuleOutcomesPane
+              config={selectedNode.data.ruleConfig ?? emptyRuleNodeConfig()}
+              onChange={(ruleConfig) =>
+                patchNodeData(setNodes, selectedNode.id, {
+                  ruleConfig,
+                  configured: true,
+                  ruleSummary: selectedNode.data.label,
+                })
+              }
             />
           ) : selectedNode?.type === "constant" ? (
             <Form layout="vertical">
@@ -1152,20 +1156,6 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
             />
           ) : null
         }
-        outcomes={
-          selectedNode?.type === "rule" ? (
-            <RuleOutcomesPane
-              config={selectedNode.data.ruleConfig ?? emptyRuleNodeConfig()}
-              onChange={(ruleConfig) =>
-                patchNodeData(setNodes, selectedNode.id, {
-                  ruleConfig,
-                  configured: true,
-                  ruleSummary: selectedNode.data.label,
-                })
-              }
-            />
-          ) : undefined
-        }
         onCancel={closeInterior}
         onSave={(label) => {
           if (!selectedNode) return;
@@ -1218,6 +1208,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
           open
           data={triggerSelectNode.data}
           book={book}
+          firms={firms}
           instanceOptions={localOptions}
           onClose={() => setTriggerSelectId(null)}
           onPatch={(patch) => patchNodeData(setNodes, triggerSelectNode.id, patch)}

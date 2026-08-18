@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Button, Input, Modal, Space, Tabs, Tag, Typography } from "antd";
+import { Button, Input, Modal, Space, Tabs, Tag } from "antd";
 import type { Edge, Node } from "@xyflow/react";
 import type { WorkflowNodeData, WorkflowNodeType } from "../../../../data/automationWorkflows";
 import { MODAL_SCROLL } from "../modalScroll";
@@ -13,7 +13,6 @@ export function NodeInteriorModal({
   nodes,
   edges,
   parameters,
-  outcomes,
   onCancel,
   onSave,
   extraFooter,
@@ -23,21 +22,20 @@ export function NodeInteriorModal({
   nodes: Node<WorkflowNodeData>[];
   edges: Edge[];
   parameters?: ReactNode;
-  outcomes?: ReactNode;
   onCancel: () => void;
   onSave: (label: string) => void;
   extraFooter?: ReactNode;
 }) {
   const kind = (node?.type ?? "action") as WorkflowNodeType;
   const chip = PLATE_NODE_TAG[kind] ?? PLATE_NODE_TAG.action;
-  const [tab, setTab] = useState(kind === "rule" ? "outcomes" : "input");
+  const [tab, setTab] = useState("input");
   const [label, setLabel] = useState(node?.data.label ?? "");
 
   useEffect(() => {
     if (!open) return;
     setLabel(node?.data.label ?? "");
-    setTab(kind === "rule" ? "outcomes" : "input");
-  }, [open, node?.id, kind]);
+    setTab("input");
+  }, [open, node?.id]);
 
   const items = [
     {
@@ -47,27 +45,20 @@ export function NodeInteriorModal({
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: parameters ? "1fr 320px" : "1fr",
+            gridTemplateColumns: parameters ? "1fr 380px" : "1fr",
             gap: 16,
             minHeight: 280,
           }}
         >
           <InputPane nodeId={node?.id ?? ""} nodes={nodes} edges={edges} />
           {parameters ? (
-            <div style={{ borderLeft: "1px solid #f0f0f0", paddingLeft: 16 }}>{parameters}</div>
+            <div style={{ borderLeft: "1px solid #f0f0f0", paddingLeft: 16, overflow: "auto", maxHeight: 520 }}>
+              {parameters}
+            </div>
           ) : null}
         </div>
       ),
     },
-    ...(outcomes
-      ? [
-          {
-            key: "outcomes",
-            label: "Outcomes",
-            children: outcomes,
-          },
-        ]
-      : []),
     {
       key: "output",
       label: "Output",
