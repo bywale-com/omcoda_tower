@@ -332,3 +332,13 @@ Assessment: [`SYSTEMS-CUT-ASSESSMENT.md`](./SYSTEMS-CUT-ASSESSMENT.md). Get/Rule
 
 **Do not:** recut 015; freeze Audit as three named writes; overwrite 15:43.
 
+---
+
+## 2026-08-18 20:20 — Trigger Local is nested shape, not a leftover box
+
+Face A26 / law 27 (20:12). Global = every firm this graph can hear + every permutation of this event. Local = sequential dropdowns of axes that event **already has**. A19 does not sit on the trigger.
+
+Play: [`SYSTEMS-TRIGGER-PLACE-ASCRIBE.md`](./SYSTEMS-TRIGGER-PLACE-ASCRIBE.md). Drop 012 `local_ref` required CHECK. `local_ref` is the instance layer only.
+
+**Do not:** mint an events table; invent a Local catalog; freeze `reference_versions`; overwrite 15:43.
+

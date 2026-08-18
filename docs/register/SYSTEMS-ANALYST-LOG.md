@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-18 18:50 UTC — **013+014+015 landed PR #94. Do not recut 015.** Leftovers named. Get/Rule #96 ascribe. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-18 20:20 UTC — **A26/A27/A28 ascribe. Local = nested existing axes. A19 off the trigger.** Do not recut 015. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1305,4 +1305,25 @@ No new node kind. No packet-on-the-wire chrome required for this walk.
 Park: [`SYSTEMS-CUT-ASSESSMENT.md`](./SYSTEMS-CUT-ASSESSMENT.md) · [`SYSTEMS-GET-RULE-ASCRIBE.md`](./SYSTEMS-GET-RULE-ASCRIBE.md). Packets 012–015 ratify sections. [`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md) 18:50.
 
 **Do not:** recut 015; mint events/listing/`reference_versions`; Audit as people-pump; overwrite 15:43; skip Activate on the house seed.
+
+---
+
+## 2026-08-18 20:20 UTC — A26 grain cascade + A27/A28 place. 012 Local CHECK is wrong.
+
+**Why:** Founder locked trigger select + node place. Packets cut (engineer paste + SA paste in each). Icons on A26 are spec. Global = every firm and every permutation of this event (full shape, unspecified). Local is not “this form” as a leftover box — it opens **that event’s existing shape** as nested dropdowns, sequential. Select firm is already a primitive; this form / campaign / pack / batch is the instance layer the event already has. Event change restamps, same family as Get’s Module. Contacts A19 stays who is enrolled — **that table does not sit on the trigger.** SA names per event which layers exist and in what order, or silent. Those two packets go together.
+
+**Hard:**
+
+- **No new tables.** Drop 012 CHECK `grain=local → local_ref NOT NULL`. Local may stop mid-cascade. `local_ref` = instance only. Add `local_firm_id` + `local_contact_ids` on `workflow_trigger` (fields, not a catalog).
+- **Global** does not bypass tenancy. House = every firm. Firm-bound Global = every permutation **in that firm**.
+- **A19 off A26.** Leftover `scope` / `scope_contact_ids` on the trigger stay leftover — do not reuse for Local.
+- **Per A26 event:** Form `fact_writebacks` Firm→form; Campaign fail Firm→campaign; Opt-out Firm→Contact; Firm provisioned = the firm (no Contact); Audit Firm only, **no** “this audit”; Import Firm→`import_batch`; New contact Firm→Contact, token `contact.created`, **does not dispatch yet**; Pack **silent** (do not freeze `reference_versions`).
+- **Do not merge** Contact import and New contact.
+- **A27/A28:** `workflow.graph` only. Click = configure. Switch Trigger = A26. Switch Action = existing action types. Switch Get/Rule/If = silent (no plate). Wire + has Get, **no Trigger**.
+- Materialize today forces global when `local_ref` empty and only four Local names — **stop.** Dispatch: add import batch + opt-out keys.
+
+Park: [`SYSTEMS-TRIGGER-PLACE-ASCRIBE.md`](./SYSTEMS-TRIGGER-PLACE-ASCRIBE.md). 012 revised in place (housing not recut).
+
+**Do not:** recut 015; mint events table; put A19 on the trigger; invent a Local kit per event; overwrite 15:43.
+
 

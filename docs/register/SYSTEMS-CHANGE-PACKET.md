@@ -457,3 +457,9 @@ Founder: not hardcoded. House canvas. Tag invalid data. Notes on the contact. Wa
 After a node: every write that run made. Next node picks. [`SYSTEMS-CHANGE-PACKET-015.md`](./SYSTEMS-CHANGE-PACKET-015.md).
 
 **Landed PR #94.** Last-node replace. Do not recut. Full-chain Input / Get / Rule listing = PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96) — ascribe [`SYSTEMS-GET-RULE-ASCRIBE.md`](./SYSTEMS-GET-RULE-ASCRIBE.md). Assessment [`SYSTEMS-CUT-ASSESSMENT.md`](./SYSTEMS-CUT-ASSESSMENT.md).
+
+---
+
+## 2026-08-18 20:12 — Trigger select A26 + node place A27 · A28
+
+Grain: Global = unspecified full shape. Local = nested existing axes (not A18’s leftover box). A19 stays off the trigger. Per-event cascade: [`SYSTEMS-TRIGGER-PLACE-ASCRIBE.md`](./SYSTEMS-TRIGGER-PLACE-ASCRIBE.md). Revises 012 CHECK / Local-only-four-names. Does not recut 015. Packets on PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96).

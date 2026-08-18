@@ -26,6 +26,27 @@ Leftover: Get packet later wants **Deselect all** on Select-from — fix on C8b 
 
 ---
 
+## Revised 2026-08-18 20:12 — A18 Local is a cascade, not `local_ref` as the only box
+
+Face: [`TRIGGER-SELECT-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/TRIGGER-SELECT-PACKET.md) **A26**. Plays: [`SYSTEMS-TRIGGER-PLACE-ASCRIBE.md`](./SYSTEMS-TRIGGER-PLACE-ASCRIBE.md).
+
+**012 housing stays** (timer, `seq_channel_rules`, A19 audience, seed). **Do not recut those.**
+
+What 012 got wrong for Grain:
+
+| 012 said | Now |
+|----------|-----|
+| Global = all of that `event_name` | Global = **every firm this row can hear** + **every permutation** of this event. Unspecified shape. No extra picker. |
+| Local = `local_ref` required (CHECK) | Local = nested dropdowns of that event’s **existing** axes. Instance unspecified is valid. **Drop `workflow_trigger_local_ref` CHECK.** |
+| Local UI = “this form” box | Dead as the only control. Firm/contact primitive + instance layer. Event change restamps. |
+| Audit: hide Local | Audit: **no instance**. Firm axis may exist (house). Do not invent “this audit.” |
+| “This contact” is only A19 | A19 is **who is enrolled** (stays). Local Contact is **which person-event** (opt-out, new contact). Do not put A19 on the trigger. |
+| Materialize Local only for four names | Map is the A26 table in the ascribe. `contact_import` this batch is Local. |
+
+Persist added (not a table): `local_firm_id` · `local_contact_ids`. `local_ref` remains the **instance** id only.
+
+---
+
 ## 011 on main — ratify / leftover
 
 Cut matched the 17:05 enrichment. `campaign_channel_variation` CHECK and migrate-one-`every` are correct. Runtime reads variations. `campaign_channel.content` leftover.
