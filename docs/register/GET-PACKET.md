@@ -27,6 +27,8 @@ Schema / Table / JSON and Search are on the glass — they have to work. Everyth
 
 When a firm is selected (from the left or from the dropdown), all of that firm’s contacts are selected. Deselect all if you want only a few.
 
+Mapped Firm/Contact occupancy (chip IS the box, no leftover Select) is docs/register/MAPPED-BOX-PACKET.md. Do not keep ChipBox tags-plus-dropdown.
+
 Do not plant a fake Hub Get. Do not recut 015. Do not overwrite 15:43.
 ```
 

@@ -17,7 +17,7 @@ You are building Input + mapping chips on CT Ant Automations. Product face = /pr
 
 Read docs/register/INPUT-LOOK-PACKET.md. Plate: docs/register/automations-blueprint/A29-variable-chip.png. A23 left is prior.
 
-Copy A29 exactly for the tree and the chips: type control in front of the field name, icons as drawn, drag any row including the top-level node into any open box as its own colored chip (not typed text). A box may hold more than one chip.
+Copy A29 exactly for the tree: type control in front of the field name, icons as drawn. Drag any row including the top-level node into any open box. Chip *look* (color, origin, x) is A29. **How the box occupies** when mapped is docs/register/MAPPED-BOX-PACKET.md — empty = picker, mapped = chip fills the box, no leftover Select. Do not ship tags above a still-open dropdown.
 
 Read docs/register/PLATE-READ.md. Do not recut 015. Do not overwrite 15:43.
 ```
