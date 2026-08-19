@@ -98,7 +98,7 @@ Launch = live walk (015). Test does not recut it. Test may share the same functi
 
 ## Input look — A. Where a mapped chip already lives
 
-Chips are **references** to a write (or a field of a write) already on the handle. Not a mapping table. Not `{{firm}}`.
+The mapped item is its **own element** **inside the box** — that **is** the value. Empty box = picker. Mapped = no leftover dropdown. **A31**. A pointer at a **table write** (law 42), not an n8n in-memory item. Not `{{firm}}`.
 
 | Already | What a box holds | Ant |
 |---------|------------------|-----|

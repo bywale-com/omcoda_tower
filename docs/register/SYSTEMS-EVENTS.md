@@ -380,3 +380,11 @@ Mapped chip (A31) is a pointer into `chainWrites` (017), occupying the box. Clos
 
 **Do not:** recut 015; mint an events table; overwrite 15:43.
 
+---
+
+## 2026-08-19 10:50 — Law 42 / A34. Still the write.
+
+Left of Input is **this run’s table writes**, not an events log and not n8n memory. The audit mark on the contact **is** `reachability_verdicts` + `sequence_ready` from `executeAuditRun`. Detectable. If picks. Do not mint a tag that copies those rows.
+
+**Do not:** recut 015; mint an events table; overwrite 15:43.
+

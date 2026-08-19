@@ -1,8 +1,8 @@
 # Systems — in-app Action + mapped box (PR #96). 017 stands.
 
 **Seat:** Systems Analyst.  
-**When:** 2026-08-19 08:40 UTC. **Corrected 09:35** — 08:40 “three YES” was a filter, not a desk walk. Evidence below.  
-**What this is:** answers to PM [`IN-APP-ACTION-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/IN-APP-ACTION-PACKET.md) (law 41) and [`MAPPED-BOX-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/MAPPED-BOX-PACKET.md) (law 40 / A31 · A32). Shape ascribe. **No new tables.** **017 is not recut.** **Do not recut 015.** Flag **15:43**.  
+**When:** 2026-08-19 08:40 UTC. **Corrected 09:35** — three YES was a filter. **Blessed 10:50** — PR #96 A33 / A34 / law 42. Evidence below.  
+**What this is:** answers to PM [`IN-APP-ACTION-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/IN-APP-ACTION-PACKET.md) (law 41 · **A33** · **A34**) · [`MAPPED-BOX-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/MAPPED-BOX-PACKET.md) (A31 · A32) · law **42** (Input left = table writes). Shape ascribe. **No new tables.** **017 is not recut.** **Do not recut 015.** Flag **15:43**.  
 **Join:** grain [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017.md) · Get/Rule [`SYSTEMS-GET-RULE-ASCRIBE.md`](./SYSTEMS-GET-RULE-ASCRIBE.md). Face on open PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96).
 
 Do not spec the picker. Do not block the face.
@@ -123,6 +123,24 @@ Revision on the packet: Action **consumers** of 017 are **desk write-buttons**, 
 
 ---
 
+## Bless — PR #96 A33 / A34 / law 42 (2026-08-19 10:50)
+
+This is the same architecture. Face named it. Do not recut 015 or 017.
+
+| Face | Machine (already) |
+|------|-------------------|
+| **A33** grouped persist list | 09:35 table in this file. Kill main **#100** three-row picker as the product. Search/scroll. Same worker, several doors stay. Agents Launch stays the other A7 card. |
+| **Law 42** — left is table writes, not n8n memory | 015 `previousWrites` + 017 `chainWrites`. Chip = pointer at `{ table, id, contact_id? }`. No in-memory item. Get is a read of rows already in a table. Test shows the **same write-shape** and still does not INSERT (law 39 · 016 door 2). |
+| **A34** audit mark on the contact, no button | `executeAuditRun` already INSERT `reachability_verdicts` + `sequence_ready` keyed by `contact_id`. Those rows **are** the mark. On the handle after `run_audit`. If **picks** them (`pickTable`/`pickField`). Not `ascribe_tag`. Not an A33 row. Consultant multi-tag later. |
+| New contact already wrote the person | Trigger Output **A25** = that `contact_records` write. This canvas does not INSERT the person. Tag (later) is `contact_tag` on the same id. |
+| If-tagged after you just tagged them | Tautological on **this** canvas. If on the **audit** mark. Tag is so the system has the mark. Agents hang off that If, or hear the write as an event on another automation. |
+
+**A34 glass gap (chrome, not a new write):** live Contacts shows `contact_tag` (house valid/invalid) + notes. It does **not** yet pane `reachability_verdicts` / `sequence_ready`. Book readiness does. Smallest: show those two writes on the person. Do not mint a tag. Do not route A34 through `ascribe_tag`.
+
+PRIMITIVES still says live walk “does not send work to Audit.” **Stale glass.** Main walker already runs `run_audit`. Do not overwrite 15:43. Do not recut 015 from that paragraph.
+
+---
+
 ## Do not
 
 - Recut 015 or 017’s two facts.
@@ -133,3 +151,5 @@ Revision on the packet: Action **consumers** of 017 are **desk write-buttons**, 
 - Treat Get as a trigger substitute.
 - Overwrite 15:43.
 - Block the face until every desk button has a walker case.
+- Pad A33 with the audit mark. That is A34 = Audit’s person writes.
+- Treat tag as creating a `contact_records` row.

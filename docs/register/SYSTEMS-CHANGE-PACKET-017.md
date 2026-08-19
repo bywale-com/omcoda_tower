@@ -121,3 +121,9 @@ Agents stays A14. No HolonBoundary table. No SQL in this packet.
 ## Revision 2026-08-19 09:35 — 08:40 inventory was three rows. That was a filter.
 
 Law 41 is still the desk. The **list** is the persist table in [`SYSTEMS-IN-APP-ACTION-ASCRIBE.md`](./SYSTEMS-IN-APP-ACTION-ASCRIBE.md) (Contacts import, Audit, halt, Provision, Bind, Reference publish, library upserts, Agents Save/settings, Automations Save/Launch, sending allocate, contact book/consent, …). Not Start Audit + Confirm book + Provision only. Paint (Commercial, Acquisition Save, tag chips) is still not inventory. Grain (two facts, `N`) is unchanged.
+
+---
+
+## Revision 2026-08-19 10:50 — bless A33 / A34 / law 42
+
+Face of this packet. **A33** = persist list. **Law 42** = left is `chainWrites` / last handle, not n8n items. **A34** = Audit already wrote `reachability_verdicts` + `sequence_ready` on the person; If picks; not a new action.type. Two facts unchanged.
