@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type MouseEvent, type ReactNode } from "react";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
-import { Button, Input, Modal, Space, Tabs, Tag } from "antd";
+import { Button, Input, Modal, Space, Tabs } from "antd";
 import type { Edge, Node } from "@xyflow/react";
 import type { WorkflowNodeData, WorkflowNodeType } from "../../../../data/automationWorkflows";
 import { MODAL_SCROLL } from "../modalScroll";
@@ -150,9 +150,21 @@ export function NodeInteriorModal({
             onChange={(event) => setLabel(event.target.value)}
             style={{ fontSize: 20, fontWeight: 600, paddingInline: 0 }}
           />
-          <Tag color={undefined} style={{ background: chip.bg, color: chip.color, border: 0, marginTop: 4 }}>
+          <span
+            style={{
+              display: "inline-block",
+              background: chip.bg,
+              color: chip.color,
+              fontSize: 12,
+              fontWeight: 600,
+              lineHeight: "22px",
+              padding: "0 10px",
+              borderRadius: 4,
+              marginTop: 6,
+            }}
+          >
             {chip.label}
-          </Tag>
+          </span>
         </div>
       }
       footer={

@@ -26,9 +26,14 @@ export function MappedSlot({
         accept(event);
         setOver(true);
       }}
+      onDragEnter={(event) => {
+        accept(event);
+        setOver(true);
+      }}
       onDragLeave={() => setOver(false)}
       onDrop={(event) => {
         event.preventDefault();
+        event.stopPropagation();
         setOver(false);
         const raw = event.dataTransfer.getData(HANDLE_CHIP_MIME);
         if (!raw) return;
@@ -49,7 +54,7 @@ export function MappedSlot({
               flexWrap: "wrap",
               alignItems: "center",
               gap: 6,
-              background: over ? "#e6f4ff" : "#fff",
+              background: over ? "#ede9fe" : "#f3e8ff",
             }
           : over
             ? { outline: "1px solid #1677ff", borderRadius: 6 }
@@ -64,7 +69,7 @@ export function MappedSlot({
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 6,
-                background: "#722ed1",
+                background: "#7c3aed",
                 color: "#fff",
                 borderRadius: 4,
                 padding: "1px 8px",
@@ -74,7 +79,7 @@ export function MappedSlot({
               }}
             >
               <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                {chip.label}
+                {chip.origin ? `${chip.label} ${chip.origin}` : chip.label}
               </span>
               <button
                 type="button"

@@ -93,7 +93,7 @@ export const WORKFLOW_AGENT_OPTIONS: { id: WorkflowAgentRef; label: string; sequ
 export const ACTION_TYPE_DEFAULT_LABELS: Record<WorkflowActionType, string> = {
   enroll_sequence: "Call agent",
   call_agent: "Call agent",
-  ascribe_tag: "Ascribe a tag",
+  ascribe_tag: "Add tag",
   manage_lists: "Manage lists",
   assign_task: "Assign a task",
   notify_consultant: "Notify consultant",
@@ -121,6 +121,8 @@ export type MappedChip = {
   field?: string | null;
   id?: string | null;
   label: string;
+  /** Upstream node title, shown on the occupied chip (A35). */
+  origin?: string;
 };
 
 export type WorkflowNodeData = {
@@ -533,14 +535,14 @@ export const WORKFLOW_PALETTE_BLOCKS: PaletteBlock[] = [
   },
   {
     id: "action-tag",
-    label: "Ascribe a tag",
+    label: "Add tag",
     description: "Write contact_tag",
     module: "actions",
     nodeType: "action",
     defaultData: {
-      label: "Ascribe a tag",
+      label: "Add tag",
       actionType: "ascribe_tag",
-      actionSummary: "Ascribe a tag",
+      actionSummary: "Add tag",
       configured: false,
     },
   },
@@ -866,7 +868,17 @@ const SEED_WORKFLOWS: WorkflowDefinition[] = [
           actionType: "ascribe_tag",
           tag: "invalid",
           notesFromVerdict: true,
-          actionSummary: "Ascribe a tag",
+          actionSummary: "Add tag",
+          mappedSlots: {
+            contact: [
+              {
+                fromNodeId: "trigger-1",
+                table: "contact_records",
+                label: "contact_records",
+                origin: "Contact import",
+              },
+            ],
+          },
         },
       },
       {
@@ -878,7 +890,17 @@ const SEED_WORKFLOWS: WorkflowDefinition[] = [
           configured: true,
           actionType: "ascribe_tag",
           tag: "valid",
-          actionSummary: "Ascribe a tag",
+          actionSummary: "Add tag",
+          mappedSlots: {
+            contact: [
+              {
+                fromNodeId: "trigger-1",
+                table: "contact_records",
+                label: "contact_records",
+                origin: "Contact import",
+              },
+            ],
+          },
         },
       },
     ],
