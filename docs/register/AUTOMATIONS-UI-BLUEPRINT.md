@@ -75,6 +75,7 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A32** | [`A32-close-input-resize-modal.png`](./automations-blueprint/A32-close-input-resize-modal.png) | chrome | Close Input (rail to reopen). Interior modal **resizable**. Not the canvas node. | 07:55 | Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) |
 | **A33** | [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app-action-inventory.png) | chrome | In-app Action list **by module**. SA persist walk, not three rows. Search. Kind = in the application. | 09:51 | revises live `02-in-app-by-module.png`. Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) |
 | **A34** | [`A34-audit-tag-on-contact.png`](./automations-blueprint/A34-audit-tag-on-contact.png) | chrome | Audit-specific mark **on the contact** (reachable / sequence-ready). No ascribe button. Consultant tags later. | 10:39 | Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) |
+| **A35** | [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png) | chrome | **Add tag** Action interior. Prior = contact import only. Parameters = mapped boxes: **Contact** occupied, **Tag** empty picker. | 12:12 | Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md) |
 | **A24** | [`A24-contact-import-output.png`](./automations-blueprint/A24-contact-import-output.png) | chrome | Trigger **Output** of **contact import**. A20 shape. This run: `import_batch` + `contact_records`. | 19:34 | — |
 | **A25** | [`A25-new-contact-output.png`](./automations-blueprint/A25-new-contact-output.png) | chrome | Trigger **Output** of **new contact**. A20 shape. This run: `contact_records` (that person). | 19:34 | — |
 
@@ -97,7 +98,7 @@ In-app Ant Automations workbench is **not** this blueprint. Mock = generated ima
 - **A30** generated chrome drifted (Harbor / icon sider). Canvas **Test** is **prior**. Trust the chain / palette as furniture only. Header is **Save · Run · Launch**. Test data is **on the trigger**. Desk = **A22**. Packets [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md).
 - **A31 / A32** interiors are **strong** (occupancy; Input rail + resize grip). Background / sider / extra chrome on those files is far off the current design system. **Do not copy the background. Do not skip the interiors.** Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
 - **A33** chrome may drift. Trust the **grouped list**. Desk = live `/prototype-ant` + **A22**. Live three-row `02-in-app-by-module.png` is the first pass, not the inventory.
-- **A34** chrome may drift. Trust the **Audit chips on the contact row**. Consultant sider (Board / Contacts / …). No + add tag. Consultant-authored tags are later.
+- **A35** chrome may drift. Trust **Contact occupancy + Tag picker**. Same interior as live Action (Input \| Output, Kind tags, Close Input). Not Get’s cascade. Desk = live `/prototype-ant` + **A22**.
 
 ---
 
@@ -121,6 +122,7 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | Insert / add a node | Palette (A6 prior). Wire **+** (**A28**). Select **Action**. No Trigger on the wire. |
 | Open the **Action** node | Kind: **Agents** vs **in the application** (A7). |
 | Action kind = **in the application** | Module write-buttons, grouped by module. **A33.** Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). Live first pass `in-app-action-pass/` is three rows — not the inventory. |
+| Open **Add tag** after **contact import** | Parameters **A35**. Contact occupied from `contact_records`. Tag = empty picker. Same interior. |
 | Consultant → Contacts | Audit-specific mark **on the person** (**A34**). No ascribe button. Not the live Tag column (valid / invalid). Consultant tags later. |
 | Action kind = Agents | First: **assign existing** or **from a template** (**A14**). Then select agent (whole sequence) · declare objective · if data request, create the form (A8 prior / **A12** canon). You do **not** author a new agent here. |
 | Open the **Get** node | Parameters **A23** right. Input look **A29**. Packets [`GET-PACKET.md`](./GET-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md). |
@@ -785,7 +787,23 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 ---
 
-## What this is not
+### A35 — Add tag Parameters (contact import prior)
+
+![A35 add tag parameters](./automations-blueprint/A35-add-tag-parameters.png)
+
+**Rationale (12:12):** Founder: see the inside of Add tag, elected, only prior is contact import. The parameter primitive: mapped box. Contact occupied from the left. Tag empty picker.
+
+**On the glass:** Action interior (Input \| Output). Left = Contact import tree (`import_batch` · `contact_records`). Right = Kind · in the application. **Contact** = purple chip filling the box, no chevron. **Tag** = empty Select with chevron.
+
+**Do not build:** Get Module / Every / Select cascade. Notes from verdict. Chip sitting on a still-open dropdown. Teaching captions.
+
+**Stale pixel:** generated sider / Kind control placement. Trust the **two boxes**. Desk = live Action interior (`03`) + A29 tree.
+
+**Not this plate:** A33 inventory (do not pad Add tag onto that list from this PNG). A34 on the contact. Output tab.
+
+**Packets:** [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md).
+
+---
 
 - Not overwriting 15:43.
 - Not a table inventory. Not Story. Not “where it touches Postgres” — that is the SA package.

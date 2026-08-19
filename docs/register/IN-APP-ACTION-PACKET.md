@@ -3,7 +3,7 @@
 **Seat:** Product Manager. For the **engineer** and the **Systems Analyst**. One pocket. Do not lose this.  
 **When:** Locked 2026-08-19 08:29. UI pass. Founder does **not** spec the picker — you see the inventory, lay it out, they redesign after screenshots.  
 **Redesign plate:** [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app-action-inventory.png) — grouped list from the SA **persist** walk, not the three-row first pass.  
-**Audit mark on the contact:** [`A34-audit-tag-on-contact.png`](./automations-blueprint/A34-audit-tag-on-contact.png) — no button; system chips on the person. Consultant tags later.  
+**Add tag Parameters:** [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png) — contact import prior. Contact occupied; Tag empty picker. Same interior.  
 **Live first pass (engineer, merged main #100):** [`in-app-action-pass/`](./automations-blueprint/in-app-action-pass/). Three modules only — **not** the inventory.  
 **Kind split (already locked):** [`A7-action-two-kinds.png`](./automations-blueprint/A7-action-two-kinds.png) — **Agents** vs **in the application**. This packet is **only** the in-app path after that pick. Agents stays [`A14`](./automations-blueprint/A14-action-assign-or-template.png) / law 31.  
 **Shared panes:** [`NODE-INTERIOR.md`](./NODE-INTERIOR.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md). Retrofit these onto Action. Do not invent a fourth interior.  
@@ -86,7 +86,7 @@ Stamp SYSTEMS-ANALYST-LOG.
 - **Screenshots:** from click into the Action node, select **in the application**, then **every distinct screen** from that point.
 - Enough of a packet to also **complete the last couple of packets** (A31 / A32 mapped box).
 - 09:51: engineer built; SA enriched the list; they merged the engineer to **main**. Check both. Work on images.
-- 10:39: every **critical interaction with a button** must be an Automations action. Not every critical interaction needs a button. This tag is **audit-specific**, no button, still the automation. Consultant tags (many, forever) later. Show where it is visible on the contact.
+- 12:12: see the inside of **Add tag**, elected. Only prior is contact import. Keep the design structure. That’s the parameter interior.
 
 ---
 
@@ -119,11 +119,12 @@ Desk chrome = live `/prototype-ant` + A22. Not Hub.
 - The list = real module write-buttons. **By module.** SA persist table, not three rows. Look **A33**.
 - Shared panes on that Action: Input · Parameters · Output, already specified elsewhere.
 - **A31 / A32** on those interiors (and on Get, same pass).
+- **Add tag** Parameters specimen: **A35**. Contact = occupied chip from the prior. Tag = empty picker. Not Get’s cascade.
 
 ## 2. Do not build
 
 - Teaching captions. “At least two kinds of actions” footer (A7 caption).
-- Three-row picker as the product. Hub leftovers: `manage_lists` · `assign_task` · `notify_consultant`. `ascribe_tag` until Contacts has the button.
+- Three-row picker as the product. Hub leftovers: `manage_lists` · `assign_task` · `notify_consultant`. Do not pad Add tag onto **A33** because **A35** exists — A35 is Parameters, not the inventory.
 - Get’s Module / Every firm / Select firm cascade on Action.
 - Rule Outcomes on Action.
 - Invented writes (“write any table”). Webhook-as-an-action.
@@ -184,6 +185,8 @@ Desk chrome = live `/prototype-ant` + A22. Not Hub.
 Live first pass (engineer): [`automations-blueprint/in-app-action-pass/`](./automations-blueprint/in-app-action-pass/) `01`–`07`. **02 is three rows — not the inventory.**
 
 Redesign: [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app-action-inventory.png). Grouping + length. Chrome may drift — desk = live + A22.
+
+**Add tag interior:** [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png). Prior = contact import. Trust Contact occupancy + Tag picker.
 
 ---
 

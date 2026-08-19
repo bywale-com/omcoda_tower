@@ -92,15 +92,16 @@ Smallest canvas for this talk. Trigger = **contact import**. Next = **Action · 
 
 **Trigger test data** = A24 write-set: `import_batch` + `contact_records`. Provide that on the trigger. Then Run can go.
 
-**Tag parameters (the feel, from the live desk):**
+**Tag parameters (the feel, then A35):**
 
-You could not find them. That is the hole.
+You could not find them. That was the hole. Specimen now: [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png).
 
-- New in-app Action list (**A33**) has **no Tag**. Law 41 / **A34**: the audit mark has **no desk button**, so it is not a picker row. Consultant tags are later. The house workflow still has leftover `ascribe_tag` nodes (Tag invalid / Tag valid) — a typed **Tag** string + **Notes from verdict** switch. **Who** is not a mapped box. The walker takes people from previous writes / `contactIds` implicitly.
-- Actions that **are** on the list **do** parameter from the left when the button needs a record: Start Audit → **Book** mapped slot. Halt → **Firm** + **Contact** mapped. That is the correct shape (A31). Filename / some typed fields still do not take a chip. `params: none` is honest **—**.
-- So: Tag is not parametering from the import. The people from `contact_records` never occupy a box. If this specimen is **ascribe** (a mark you choose), Parameters are **Contact** (chip from the left) + **which tag**. If this specimen is the **A34 audit mark**, Audit writes it — there is no Tag node, and contact import → tag with no audit has nothing to ascribe yet.
+- Left: only prior = **contact import** (`import_batch` · `contact_records`).
+- **Contact** = mapped box, occupied. Chip from `contact_records`. No leftover Select.
+- **Tag** = empty picker (the value you choose). Not a record from the left.
+- Not Get’s Module / Every / Select. Not Notes from verdict. Not implicit who.
 
-Do not pad Tag onto A33 to make the specimen. The hole is the feel.
+Do not pad Tag onto A33 from this plate. This is Parameters, not the inventory.
 
 ---
 
