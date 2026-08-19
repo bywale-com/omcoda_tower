@@ -44,24 +44,37 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | # | File | Kind | What it is | Born from (log) | Revises / canon |
 |---|------|------|------------|-----------------|-----------------|
 | **A1** | [`A1-smallest-workflow.png`](./automations-blueprint/A1-smallest-workflow.png) | chrome | Smallest workflow: **trigger · rule · action**. Fewer pieces. Then build those pieces. | 20:54 | — |
-| **A2** | [`A2-rule-gui.png`](./automations-blueprint/A2-rule-gui.png) | chrome | Open the rule. **GUI.** Toggles on families. Conditions as rows. | 20:54 | — |
-| **A3** | [`A3-rule-custom.png`](./automations-blueprint/A3-rule-custom.png) | chrome | Same rule. **Custom** — JSON when GUI isn’t enough. | 20:54 | companion to A2 |
-| **A4** | [`A4-gui-plus-named-code.png`](./automations-blueprint/A4-gui-plus-named-code.png) | chrome | Side-by-side: GUI outcome (constant) **plus** named code outcome, both **on/off**. | 21:10 | — |
-| **A5** | [`A5-inside-trigger.png`](./automations-blueprint/A5-inside-trigger.png) | chrome | Inside the trigger. Event or schedule. | 21:10 | — |
-| **A6** | [`A6-add-node.png`](./automations-blueprint/A6-add-node.png) | chrome | Add a node. Select Action. | 21:10 | — |
+| **A2** | [`A2-rule-gui.png`](./automations-blueprint/A2-rule-gui.png) | chrome | Open the rule. Stacked families. Off = empty. **Wrong:** giant GUI/Custom where tabs belong. | 20:54 | **prior.** Outcomes pane → **A21** |
+| **A3** | [`A3-rule-custom.png`](./automations-blueprint/A3-rule-custom.png) | chrome | Whole-rule Custom JSON. Code color. | 20:54 | **prior.** Per-outcome JS is on **A21** |
+| **A4** | [`A4-gui-plus-named-code.png`](./automations-blueprint/A4-gui-plus-named-code.png) | chrome | GUI + named code. **Wrong:** side-by-side. Code editor look (line numbers, copy, rename) is kept. | 21:10 | **prior.** Outcomes pane → **A21** |
+| **A21** | [`A21-rule-outcomes-pane.png`](./automations-blueprint/A21-rule-outcomes-pane.png) | chrome | **Canonical Outcomes.** Tabs = Input / Outcomes / Output. Outcomes stacked. Per-outcome GUI \| JS. On → interior. Off → empty. | 16:33 | **revises A2 · A3 · A4** |
+| **A5** | [`A5-inside-trigger.png`](./automations-blueprint/A5-inside-trigger.png) | chrome | Inside the trigger. Event or schedule. | 21:10 | **prior.** Select event → **A26** |
+| **A26** | [`A26-trigger-select-event.png`](./automations-blueprint/A26-trigger-select-event.png) | chrome | **Canonical trigger select.** Event \| Schedule. Searchable **named events**. Grain dropdown. Global = every firm + every permutation; Local = nested existing shape. | 20:05 · lock 20:09 | **revises A5 · A18**. Packet [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) |
+| **A6** | [`A6-add-node.png`](./automations-blueprint/A6-add-node.png) | chrome | Add a node. Select Action. | 21:10 | **prior.** Wire + → **A28** |
+| **A27** | [`A27-node-options-popover.png`](./automations-blueprint/A27-node-options-popover.png) | chrome | Placed-node **⋯**: Duplicate · Add node · **Switch** · Delete. Click the node is **configure**, not switch. | 20:05 · lock 20:09 | Packet [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) |
+| **A28** | [`A28-add-node-on-wire.png`](./automations-blueprint/A28-add-node-on-wire.png) | chrome | Wire **+**. Add node: Get · Rule · Action · Condition (If) · Exit. **No Trigger** on insert-on-wire. | 20:05 · lock 20:09 | **revises A6**. Packet [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) |
 | **A7** | [`A7-action-two-kinds.png`](./automations-blueprint/A7-action-two-kinds.png) | chrome | Inside action: **Agents** vs **in the application**. | 21:10 | — |
 | **A8** | [`A8-action-agents-objective.png`](./automations-blueprint/A8-action-agents-objective.png) | chrome | Agents as the action: select agent, or create the objective / form. Form here is still a **blank builder**. | 21:10 | **prior.** Form bind → **A12** |
 | **A12** | [`A12-form-from-required-data.png`](./automations-blueprint/A12-form-from-required-data.png) | chrome | **Canonical form.** Questions **are** the required-data rows. Bound from listing. | 21:36 then 21:48 | **revises A8** (form only). Select-agent law still A8 |
 | **A9** | [`A9-rule-output-gap.png`](./automations-blueprint/A9-rule-output-gap.png) | chrome | Rule Output **today** vs unnamed complete idea. Signals, not a field listing. | 21:10 | **prior.** Listing → **A11** |
-| **A11** | [`A11-rule-output-required-data-listing.png`](./automations-blueprint/A11-rule-output-required-data-listing.png) | chrome | **Canonical Output.** Required data as **field rows**. Not a flag. | 21:36 then 21:48 | **revises A9** |
+| **A11** | [`A11-rule-output-required-data-listing.png`](./automations-blueprint/A11-rule-output-required-data-listing.png) | chrome | Required data as **field rows**. Not a flag. Listing always on, under the class chips. | 21:36 then 21:48 | **prior.** Select / preview → **A20** |
+| **A20** | [`A20-rule-output-select-preview.png`](./automations-blueprint/A20-rule-output-select-preview.png) | chrome | **Canonical Output.** Top: every output this run made. Click one. Bottom: that output. Required data is one class, selected. | 16:04 | **revises A11** |
 | **A10** | [`A10-output-classes-lattice.png`](./automations-blueprint/A10-output-classes-lattice.png) | **diagram** | Output classes as a **lattice**. Missing class: **required data**. A condition on a class forks actions. | 21:28 | **prior.** Listing class → **A13** |
 | **A13** | [`A13-lattice-required-data-listing.png`](./automations-blueprint/A13-lattice-required-data-listing.png) | **diagram** | Lattice with required data as a **listing class**. If listing not empty → create form from those rows. | 21:48 · founder 22:17: this is a **different kind of picture** | **revises A10.** Not a node screenshot. Not the If node |
 | **A14** | [`A14-action-assign-or-template.png`](./automations-blueprint/A14-action-assign-or-template.png) | chrome | Action · Agents: **assign to an existing sequence** or **create from a template**. You do **not** create an agent here. | 00:02 | **revises A8** (assign path only). Select-agent = sequence still A8. Form still **A12** |
 | **A15** | [`A15-blank-canvas-chain.png`](./automations-blueprint/A15-blank-canvas-chain.png) | chrome | Blank canvas. Chain: **firm provisioned → audit contacts → if X → agents**. Palette includes Condition (If). A1 stays the smallest. | 01:17 · 01:20 | — |
 | **A16** | [`A16-if-previous-result.png`](./automations-blueprint/A16-if-previous-result.png) | chrome | **First Ant If plate.** Calls from the previous result (the audit). Not a rule. | 01:20 | fills open item 11 |
 | **A17** | [`A17-trigger-firm-provisioned.png`](./automations-blueprint/A17-trigger-firm-provisioned.png) | chrome | Inside trigger. Event = **firm created / provisioned**. | 01:20 | companion to A5 |
-| **A18** | [`A18-trigger-global-local.png`](./automations-blueprint/A18-trigger-global-local.png) | chrome | Inside trigger. After the event: **Global** (all of that kind) or **Local** (this specific one). Example: form submitted. | 18:53 | fills law 27. A5 stays Event vs Schedule |
+| **A18** | [`A18-trigger-global-local.png`](./automations-blueprint/A18-trigger-global-local.png) | chrome | Inside trigger. After the event: **Global** (all of that kind) or **Local** (this specific one). Example: form submitted. | 18:53 | **prior.** Grain as radios. Grain dropdown → **A26** |
 | **A19** | [`A19-automations-contacts.png`](./automations-blueprint/A19-automations-contacts.png) | chrome | Automations **Contacts** = the same look as Agents C8. Same Add contact modal. Does not start a mission now. | 18:53 · 01:01 | companion to C8 / C8b |
+| **A22** | [`A22-get-canvas.png`](./automations-blueprint/A22-get-canvas.png) | chrome | Canvas. **Get** is a node kind. Chain: **Reference pack updated → Get → Rule**. Palette includes Get. | 17:06 | — |
+| **A30** | [`A30-test-on-canvas.png`](./automations-blueprint/A30-test-on-canvas.png) | chrome | **Save · Test · Launch** only. Test fills Input/Output without commit. Rest of PNG not canon. | 22:45 · lock 22:53 (buttons) | Packet [`TEST-PACKET.md`](./TEST-PACKET.md) |
+| **A23** | [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png) | chrome | Inside **Get**. Left = n8n tree (keep). Parameters: **dropdown** Every firm / Select firm. Select → Firm then Contact **comboboxes** (dropdown + input). Left writes apply in those boxes. | 17:33 | **prior** for mapping look → **A29** |
+| **A29** | [`A29-variable-chip.png`](./automations-blueprint/A29-variable-chip.png) | chrome | **Canonical Input look** (every node). Type control in front of the name. Drag any row including top-level into a box as a **chip**. | 22:45 · lock 22:53 | **revises A23** (mapping + Input look). Packet [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) |
+| **A31** | [`A31-mapped-box-is-the-value.png`](./automations-blueprint/A31-mapped-box-is-the-value.png) | chrome | Mapped chip **is** the box’s value. No leftover dropdown. Empty Contact still a picker (contrast). | 07:55 | revises live ChipBox. Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) |
+| **A32** | [`A32-close-input-resize-modal.png`](./automations-blueprint/A32-close-input-resize-modal.png) | chrome | Close Input (rail to reopen). Interior modal **resizable**. Not the canvas node. | 07:55 | Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) |
+| **A24** | [`A24-contact-import-output.png`](./automations-blueprint/A24-contact-import-output.png) | chrome | Trigger **Output** of **contact import**. A20 shape. This run: `import_batch` + `contact_records`. | 19:34 | — |
+| **A25** | [`A25-new-contact-output.png`](./automations-blueprint/A25-new-contact-output.png) | chrome | Trigger **Output** of **new contact**. A20 shape. This run: `contact_records` (that person). | 19:34 | — |
 
 **Why A10 / A13 are in the lineup and still not chrome:** they are the **idea** of output classes as a lattice. They are not Operator screens. The DAG piece that does that fork is the **If / condition node**, now on the glass as **A16**. Keep both diagrams so the evolution (hole → listing) is visible. Do not ascribe A13 as a screen.
 
@@ -75,10 +88,12 @@ In-app Ant Automations workbench is **not** this blueprint. Mock = generated ima
 
 - Generated chrome sometimes mislabels the background workflow (opt-in vs reactivation agent). Trust the **modal contents**.
 - A8 still shows a blank “Field label / + Add field” form. **A12** is the form revision.
-- A9 still names the Output gap. **A11** is the listing on Output.
+- A9 still names the Output gap. **A11** is the listing always-on. **A20** is click a class, preview below.
 - A10 still shows required data as a dashed hole. **A13** fills the hole **as a diagram**.
 - A1 smallest workflow is trigger · rule · action with **no If node** on the canvas. **A15** is the chain (If on the canvas). **A16** opens that If. A1 stays the smallest. A6’s palette includes **Exit**; A15’s includes **Condition (If)** — do not freeze one palette from the other.
 - **A14** nav chrome sometimes drifts (Home / Workspaces vs House-global). Trust the **modal contents**. A14 footer on the PNG is Cancel · Save; the “not a third option” sentence is not on that image.
+- **A30** generated chrome drifted (Harbor / icon sider). Trust **Save · Test · Launch**, the chain, the palette. Desk = **A22**.
+- **A31 / A32** interiors are **strong** (occupancy; Input rail + resize grip). Background / sider / extra chrome on those files is far off the current design system. **Do not copy the background. Do not skip the interiors.** Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
 
 ---
 
@@ -91,13 +106,21 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | Operator → Configuration libraries → Automations | Workflow list. Open **New firm → opt-in launch** (or equivalent). |
 | Open the workflow | Canvas: **trigger · rule · action** (A1). Smallest. |
 | Same desk, teaching walk | Canvas: provisioned → audit → if X → agents (**A15**). Blank canvas; you can chain. |
-| Open the **Trigger** node | Event or schedule (A5). Firm created / provisioned (**A17**). |
+| **Click** a placed node | **Configure** that node. Trigger Output after contact import = **A24**. Not the event picker. |
+| Add a **Trigger** from the palette, or **⋯ → Switch** | Event picker (**A26**). Packet [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md). Named events. Grain dropdown. Local = nested shape. |
+| Node **⋯** | Duplicate · Add node · Switch · Delete (**A27**). Packet [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md). |
+| Open the **Trigger** node (configure) | **Not** the event picker. Output after contact import = **A24**. Event/Schedule + grain look is **A26** only when adding or **Switch**. A5 / A17 / A18 stay prior. |
+| Open the **Trigger** after **contact import** | **Output** tab. **A24.** Writes: import_batch · contact_records. |
+| Open the **Trigger** after **new contact** | **Output** tab. **A25.** Write: contact_records (that person). |
 | Open the **If / Condition** node | Calls from previous result (**A16**). Not a rule. |
-| Insert / add a node | Palette. Select **Action** (A6). |
+| Insert / add a node | Palette (A6 prior). Wire **+** (**A28**). Select **Action**. No Trigger on the wire. |
 | Open the **Action** node | Kind: **Agents** vs **in the application** (A7). |
+| Action kind = **in the application** | Module write-buttons, grouped by module. Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). Screenshots in `in-app-action-pass/`. |
 | Action kind = Agents | First: **assign existing** or **from a template** (**A14**). Then select agent (whole sequence) · declare objective · if data request, create the form (A8 prior / **A12** canon). You do **not** author a new agent here. |
-| Open the **Rule** node | Immigration · Service eligibility. GUI \| Custom (A2 / A3). Outcomes toggle on/off. GUI + named code (A4). |
-| Rule tab **Output** | Today’s signals (A9 prior) · required-data **listing** (**A11** canon). |
+| **Test** | Canvas **Test** (**A30** buttons). Packet [`TEST-PACKET.md`](./TEST-PACKET.md). Two doors. |
+| Open the **Get** node | Parameters **A23** right. Input look **A29**. Packets [`GET-PACKET.md`](./GET-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md). |
+| Open the **Rule** node | Click the Rule node. Tabs: Input · Outcomes · Output. **Outcomes:** **A21**. GUI \| Custom on A2 is **not** the tab. |
+| Rule tab **Output** | Today’s signals (A9 prior) · listing always-on (**A11** prior) · **A20** canon: click a class, preview below. |
 | After the rule, on the DAG | **Condition / If node** that reads that Output and forks. **Hub has this. No Ant plate.** A10 / A13 diagram the idea. |
 
 Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. Hub is what is stood up for Rules.
@@ -122,7 +145,85 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 ---
 
-### A2 — Rule, GUI
+### A2 — Rule, GUI (prior)
+
+![A2 rule GUI](./automations-blueprint/A2-rule-gui.png)
+
+**Rationale (20:44, 20:54):** Look at Rules to see the end goal. Toggles on outcome families. A rule is a **composite of conditions and constants**. Creatable. Industry-modular. Authored logic is simple enough for a GUI.
+
+**On the glass:**
+- Modal: Immigration · Service eligibility · Rule.
+- Segmented **GUI | Custom**, GUI on.
+- Families with switches (Pathway, Gaps, …). A family can be off.
+- Condition rows: field · operator · constant. Add condition.
+
+**Why this does what we wanted:** operator authors blocks, not code. Constants are referenced. Inside-the-rule **condition** grain. **Stack + off-empty is kept.** Giant GUI/Custom is not.
+
+**Canonical Outcomes:** **A21**.
+
+**Not this plate:** Custom JSON (A3). Named code beside GUI (A4). The If node **after** the rule.
+
+---
+
+### A3 — Rule, Custom (prior)
+
+![A3 rule Custom](./automations-blueprint/A3-rule-custom.png)
+
+**Rationale (20:54):** Two options. Custom when the GUI isn’t enough — same idea as JSON. Escape hatch, not the default.
+
+**On the glass:** Same modal, **Custom** on. JSON of the same rule. Caption under the switch: **“When the GUI isn’t enough — same as JSON.”** Founder caption — not a node.
+
+**Why this does what we wanted:** not limited to code; not forbidden from code. **Code color / indent is kept** on A21’s per-outcome JS.
+
+**Canonical Outcomes:** **A21**.
+
+**Not this plate:** Named-code **outcome** inside GUI (that is A4).
+
+---
+
+### A4 — GUI plus named code (prior)
+
+![A4 GUI plus named code](./automations-blueprint/A4-gui-plus-named-code.png)
+
+**Rationale (21:10):** Some outcomes have a constant (GUI). Some have no constant — especially across industries — and must be **named code** (JS or Python), **created in this rule**, still **on or off**, you **name it**. Prefer a constant when one exists.
+
+**On the glass:**
+- One outcome: field / operator / constant, toggle on, tag GUI.
+- One outcome: named JavaScript, toggle on, tag Named code.
+- Caption: created in this rule; not hard-coded.
+
+**Why this does what we wanted:** still the rules module. Still a toggle. Not a hard-coded special case. **Code editor look is kept.** Side-by-side is not.
+
+**Canonical Outcomes:** **A21**.
+
+**Not this plate:** Whole-rule Custom (A3). Inventing rule-output catalog.
+
+---
+
+### A21 — Rule Outcomes pane (canonical Outcomes)
+
+![A21 rule outcomes pane](./automations-blueprint/A21-rule-outcomes-pane.png)
+
+**Rationale (16:33):** Assemble A2/A3/A4. Engineer is literal. One arrangement.
+
+**On the glass:**
+- Tabs: **Input · Outcomes · Output**. Outcomes selected. **No** giant GUI/Custom.
+- Outcomes **stacked**. Never side-by-side.
+- Each outcome: title · tiny **GUI | JS** (same small look as A4’s GUI chip) · on/off.
+- On + GUI → conditions + Add condition (A2).
+- On + JS → code editor: language picker, rename, line numbers, syntax color, copy (A4).
+- Off → header only. Nothing inside (A2 Draw competitiveness).
+- Footer: Cancel · Save. **No teaching captions.**
+
+**Do not build from this plate:** any sentence that is not a control. There are none on purpose.
+
+**Not this plate:** Input tab. Output tab (A20). Planting.
+
+**Packet:** [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md).
+
+---
+
+### A5 — Inside trigger
 
 ![A2 rule GUI](./automations-blueprint/A2-rule-gui.png)
 
@@ -181,7 +282,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Why this does what we wanted:** Automations’ event-of-origin is schedule | trigger — not Agents’ “event” on C2b. Do not collapse those words.
 
-**Not this plate:** Constant-change trigger / webhook as a full catalog. Named remainder.
+**Not this plate:** Constant-change trigger / webhook as a full catalog. Named remainder. Look of the picker → **A26**.
 
 ---
 
@@ -195,7 +296,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Why this does what we wanted:** the DAG is authored. Action is a kind you pick, not a hidden enroll.
 
-**Not this plate:** The If / condition node in that same picker — Hub palette has it; **A15** is the plate that adds Condition (If). Do not freeze A6’s Exit and A15’s If as one palette.
+**Not this plate:** The If / condition node in that same picker — Hub palette has it; **A15** is the plate that adds Condition (If). Do not freeze A6’s Exit and A15’s If as one palette. Wire **+** look → **A28**. Node **⋯** → **A27**.
 
 ---
 
@@ -209,7 +310,9 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Why this does what we wanted:** Automations touches more of the app. Hub already names in-app kinds (`manage_lists`, `assign_task`, `notify_consultant`) and agent enroll (`enroll_sequence` + agent ref). Do not invent a longer catalog in the picture.
 
-**Not this plate:** Form builder. Objective picker.
+**Later (08:29):** in-app after this pick is **not** Hub’s radio list. Inventory = module write-buttons, grouped by module. Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). A7 stays the **kind split** only.
+
+**Not this plate:** Form builder. Objective picker. The in-app inventory (no PM PNG — implementer screenshots, then redesign).
 
 ---
 
@@ -266,11 +369,11 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Why this does what we wanted (and why it evolved):** named the hole without filling a fake catalog. **A11** fills **one** missing class as a listing. Keep A9 so SA can see Hub-today vs the listing.
 
-**Canonical for Output:** A11.
+**Canonical for Output:** A20 (A11 stays prior).
 
 ---
 
-### A11 — Rule Output: required data as a listing (canonical Output)
+### A11 — Rule Output: required data as a listing (prior)
 
 ![A11 rule output required-data listing](./automations-blueprint/A11-rule-output-required-data-listing.png)
 
@@ -284,7 +387,27 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Why this does what we wanted:** the next node (If / action / form) can **call from previous results**. A form can bind. A condition can ask “listing not empty.”
 
-**Not this plate:** Binding UI (A12). Inventing fields not in the catalog.
+**Not this plate:** Binding UI (A12). Inventing fields not in the catalog. Click-one / preview-below — that is **A20**.
+
+---
+
+### A20 — Rule Output: top = all outputs; bottom = preview of the selected (canonical Output)
+
+![A20 rule output select preview](./automations-blueprint/A20-rule-output-select-preview.png)
+
+**Rationale (16:04):** Founder on A11: the top chips are a **quick look at all the potential outputs**. Required data is itself an output. Click a class; the **bottom switches** to that output’s results. That is how Output should look on **every** node, not only Rules. A11 had the look and the listing, but it dumped the listing always-on. It did not select.
+
+**On the glass:**
+- Output tab. Same desk chrome as A11.
+- Top: Headline · Pass/fail · Nudge · Reactivation · Recommended services · **Required data** (selected).
+- Bottom: preview of the selected class. Required data selected → **this run’s missing fields** (not the whole catalog painted). Self-reportable → form. Document-dependent → never a form.
+- Caption: Top: every output this run made. Click one. Bottom: that output.
+
+**Why this does what we wanted:** Output is the writes. The top is the classes. The bottom is the selected write. Same pane shape for other node kinds later.
+
+**Not this plate:** Input or Outcomes (still not drawn). Inventing extra classes. Planting the editor.
+
+**Packet:** [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md).
 
 ---
 
@@ -404,7 +527,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **SA idea (do not invent UI):** some events may not have Local (an **audit** is one-time). Map which events allow which grain. Do not fill the catalog.
 
-**Not this plate:** Contacts picker. A Settings modal. Firm provisioned (A17).
+**Not this plate:** Contacts picker. A Settings modal. Firm provisioned (A17). Grain as a **dropdown** on the event picker → **A26**. Radios stay prior.
 
 ---
 
@@ -432,11 +555,196 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 | **Remaining output classes besides required data** | Lattice classes named on A9–A13: pass, re-engagement signal, reactivation signal, recommended services, required-data listing. | Do not invent the rest. |
 | **In-system action kinds** | Hub names `manage_lists`, `assign_task`, `notify_consultant` plus agent enroll. A7 is the split. | Do not invent a longer catalog. |
 | **Word “event”** | Agents C2b vs Automations event-of-origin. Form completion **is** an Automations trigger (23:16). | Do not collapse C2b with this. |
-| **Event: global vs local** | **Global:** all of that kind. **Local:** this specific one. Named: form completion, campaign failure, opt-out / unsubscribe. Not “Settings.” **A18** draws the picker. Some events may not have Local (audit as one-time) — SA maps. | Catalog still not filled. |
+| **Event: global vs local** | **Global:** every firm + every permutation of this event. **Local:** nested dropdowns of that event’s existing shape (firm/contact primitive + instance). **A26**. A18 radios prior. Some events may have no instance axis — SA maps. Not A19. | Catalog still not filled. Do not invent events. |
 | **Automations Contacts** | Same look as Agents C8 / C8b. **A19**. Who this applies to. Does not start now. | Drawn. |
 | **In-app action: ascribe a tag** | Campaign fails → record / tag. Subscription bell is that tag. | Named. Do not invent the rest. |
 | **Lineage queryable** | Who created the objective (agent vs hand), path to completion, completion event, time. | Queryable at minimum. Not a new screen. |
 | **Assign existing vs from template** | **Settled 00:02.** A14. No create-agent in Automations. | Drawn. |
+| **Get node** | New kind. Read records from a **module**. Input is n8n. Parameters: Every firm stays as a dropdown option; Select opens cascading comboboxes. Left writes apply in those boxes. **A22** · **A23**. Output not drawn. | Drawn as plates. Not planted. |
+
+---
+
+### A22 — Get on the canvas
+
+![A22 get canvas](./automations-blueprint/A22-get-canvas.png)
+
+**Rationale (17:06):** Reference pack updated writes no people. **Get** makes the inputs. Then the rule can run. Get is a **kind**, same as Trigger / Rule / Action / If.
+
+**On the glass:** Palette includes **Get**. Chain: Reference pack updated → Get (Contacts · book) → Immigration · Service eligibility. No teaching captions.
+
+**Do not build:** extra catalog workflows if they drifted. Trust the three-node chain and the palette.
+
+**Not this plate:** Inside Get (A23). Output of Get.
+
+---
+
+### A23 — Get: Input left, Parameters middle
+
+![A23 get input parameters](./automations-blueprint/A23-get-input-parameters.png)
+
+**Rationale (17:33):** Left stays n8n. Parameters go back toward Add contact’s Every firm / Select — but the selector is a **dropdown**, not radios, and it is not only firm. Select firm produces the next dropdown. Those dropdowns are also **input boxes**. That is where a left-side write (this firm, this contact) gets applied. Same choice will exist across modules given the classes that apply. Cascade until you have to pick.
+
+**On the glass:** Module Contacts. First dropdown open: **Every firm** · **Select firm** (selected). Then **Firm** combobox with Harbor RCIC (lightning — left `firm` applied). Then **Contact** combobox empty: Select contact. No radios. No “Of” pill.
+
+**Do not build:** teaching captions. Flat Key/ID Input. Replacing Every firm with a mapped-only slot. Immigration fields on Get.
+
+**Stale pixel:** `received_at` may sit under `reference_versions`. Sibling write, not child.
+
+**Not this plate:** Get Output pane. Rule Outcomes (A21). Every-firm default with no cascade showing.
+
+**Packet:** [`GET-PACKET.md`](./GET-PACKET.md) — engineer + SA. On the PNG / not on the PNG. Three-level shape. Do not freeze the left example tree.
+
+---
+
+### A24 — Contact import · Output (this run’s writes)
+
+![A24 contact import output](./automations-blueprint/A24-contact-import-output.png)
+
+**Rationale (19:34):** Same Output as **A20**. Trigger, not Rule. Contact import writes the **batch** and the **rows**. Click one; bottom is that write.
+
+**On the glass:** Tabs Input · Output. Output selected. No Outcomes. Chips: **import_batch** (selected) · **contact_records** (25). Preview: this batch (id, filename, row_count, source, firm).
+
+**Do not build:** teaching captions. Rule chips (nudge, required data, pass/fail) on this event. Catalog blurb “the real house workflow.” Audit/tag writes as if they were import’s output.
+
+**Not this plate:** New contact (A25). Inside Audit. Get.
+
+---
+
+### A25 — New contact · Output (this run’s writes)
+
+![A25 new contact output](./automations-blueprint/A25-new-contact-output.png)
+
+**Rationale (19:34):** Same Output as **A20**. This event wrote **one person**. No `import_batch`.
+
+**On the glass:** Tabs Input · Output. Chip: **contact_records** only. Preview: that contact (name, firm, email, id). Name is example furniture.
+
+**Do not build:** teaching captions. An import_batch chip on this event. Immigration fields.
+
+**Not this plate:** Contact import (A24). Add contact modal (C8).
+
+---
+
+### A26 — Trigger: select the event (middle modal)
+
+![A26 trigger select event](./automations-blueprint/A26-trigger-select-event.png)
+
+**Rationale (20:05):** Translate selecting a trigger into the Assist middle-modal. Canvas add-trigger already looks good. Click into a placed node is **configure**, not this picker. This plate is add-from-palette and **⋯ → Switch**.
+
+**On the glass:** Event \| Schedule. Search events. Named events only (Form submitted, Campaign failed, Opted out, Firm created / provisioned, Audit finished, **Contact import** selected, **New contact** own row, Reference pack updated). **Icons are spec.** Grain = **dropdown**, value **Global**. Global → no second combobox.
+
+**Do not build:** teaching captions. Grain as radios (A18 prior). Footer Cancel/Save — pick is live like A23. Mixing grain into the event list. Empty Select under Global.
+
+**Stale pixel:** catalog blurb behind the modal if it drifted. Trust the modal.
+
+**Not this plate:** Configure after click (A24 / A25 Output). Node **⋯** (A27). Wire **+** (A28). Local cascade (not this PNG — packet completes).
+
+**Packet:** [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md).
+
+---
+
+### A27 — Node options popover
+
+![A27 node options popover](./automations-blueprint/A27-node-options-popover.png)
+
+**Rationale (20:05):** Click oscillates today between configure and switch. Click = configure. Switch lives with Duplicate / Add node / Delete — the Hub options idea, on the Assist canvas.
+
+**On the glass:** Trigger **Contact import** selected. **⋯** open: **Duplicate · Add node · Switch · Delete**. Wire **+** still on the connection (that is A28). Palette includes Get.
+
+**Do not build:** Switch as the destination of a body click. Teaching captions.
+
+**Not this plate:** The event list after Switch (A26). Wire add-node menu (A28).
+
+**Packet:** [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md).
+
+---
+
+### A28 — Add a node on the wire
+
+![A28 add node on wire](./automations-blueprint/A28-add-node-on-wire.png)
+
+**Rationale (20:05):** Hover the wire → **+**. Same idea as A6, Assist look. Insert between nodes. Palette on the left still has Trigger (starts the graph). The wire menu does not.
+
+**On the glass:** **Add node**: Get · Rule · Action · Condition (If) · Exit. **No Trigger.**
+
+**Do not build:** teaching captions. Trigger on insert-on-wire. Freezing A6 Exit without If.
+
+**Not this plate:** Node **⋯** (A27). Event picker (A26).
+
+**Packet:** [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md).
+
+---
+
+### A29 — Variable is a chip (canonical Input look)
+
+![A29 variable chip](./automations-blueprint/A29-variable-chip.png)
+
+**Rationale (22:45, lock 22:53):** This **supersedes** the Input side on every node. Icons, type control **in front of** the name. Drag any row — **including the top-level item** — into any box as its own element.
+
+**On the glass:** Get · Contacts (example). Input tree from **Contact import** (`import_batch` · `contact_records` — A24). Firm box holds a **chip**. Not `{{firm}}`. Not A23 lightning on plain text.
+
+**Do not build:** teaching captions. Invented extra import fields. Lightning-as-the-mapping-look (A23 prior).
+
+**Not this plate:** How Test sources values ([`TEST-PACKET.md`](./TEST-PACKET.md)). Output tab.
+
+**Packet:** [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md).
+
+---
+
+### A30 — Test on the canvas (buttons only)
+
+![A30 test on canvas](./automations-blueprint/A30-test-on-canvas.png)
+
+**Rationale (22:45, lock 22:53):** Founder: purpose of this picture was only **where Test sits**. Agreed. **Save · Test · Launch**. How it fills is [`TEST-PACKET.md`](./TEST-PACKET.md), not this PNG.
+
+**On the glass (canon):** Save · **Test** · Launch workflow.
+
+**Do not build:** a Test tab. Test as Launch. The rest of this PNG (chrome drifted).
+
+**Stale pixel:** Harbor / icon sider. Trust the **three buttons**. Desk = **A22**.
+
+**Not this plate:** chip mapping (**A29**). Two doors (exists / not yet).
+
+**Packet:** [`TEST-PACKET.md`](./TEST-PACKET.md).
+
+---
+
+### A31 — Mapped chip is the value of the box
+
+![A31 mapped box is the value](./automations-blueprint/A31-mapped-box-is-the-value.png)
+
+**Rationale (07:55):** Pull from the left **is** that box’s value. Not a suggestion. Live ChipBox paints tags above a still-open Select.
+
+**On the glass:** Firm = chip inside the field, **no chevron**. Contact = empty dropdown (contrast).
+
+**Do not build:** tags-plus-dropdown. Dashed wrapper as the face.
+
+**Stale pixel:** sider / catalog / extra fields. **Chrome is not canon.** The **interior is.** Trust Firm chip vs Contact dropdown. Desk = A22 / A29. Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) — do not miss occupancy.
+
+**Not this plate:** Close Input / resize (**A32**).
+
+**Packet:** [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
+
+---
+
+### A32 — Close Input · resize the interior modal
+
+![A32 close input resize modal](./automations-blueprint/A32-close-input-resize-modal.png)
+
+**Rationale (07:55):** Close the Input column. Resize the **interior** modal, not the canvas node.
+
+**On the glass:** Slim **Input** rail + chevron to reopen. Resize grip bottom-right.
+
+**Do not build:** deleting Input. Resizing the canvas node.
+
+**Stale pixel:** sider / catalog. **Chrome is not canon.** The **interior is.** Trust Input rail + reopen chevron + resize grip. Desk = A22 / A29.
+
+**Not this plate:** Chip fill (**A31**).
+
+**Packet:** [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
+
+---
+
+## What this is not
 | **Ant Rule GUI** | Does not exist. Hub does. | Pictures are the face until built. |
 | **Required-data listing in code** | 21:36: not stood up. Catalog unused. | SA: what would have to change — do not mint from the picture. |
 

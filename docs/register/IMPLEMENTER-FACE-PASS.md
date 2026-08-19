@@ -3,7 +3,7 @@
 **Seat:** Product Manager. Paste this. Product language. Do not invent backend. Do not mint tables.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
 **Desk:** CT Ant `/prototype-ant`, Light. Operator → Configuration libraries → Agents / Automations. Chrome rule: [`PLATE-CHROME-RULE.md`](./PLATE-CHROME-RULE.md).  
-**Captions:** [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md). Teaching copy on older plates is not a node.
+**Captions:** [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md). Teaching copy on older plates is not a node. **Locked pocket:** [`PLATE-READ.md`](./PLATE-READ.md) — copy / do not build / implied / completes / out of scope.
 
 Each new plate has **one purpose**. Copy that. Everything else on that PNG is not spec.
 
@@ -177,7 +177,13 @@ These were asked. They are not “copy from C9/C11.”
 | **Scroll — canvas and modals** | Not only modals. **Agents canvas must scroll.** Override-this, added channels, Call, channel-rules hang below the fold — you have to reach them. Automations canvas is already fine. Sequence Settings body scrolls (C14). Select from list scrolls (C8b). Every panel that has content underneath the fold scrolls. Live Settings already cuts off channel ownership. Fix it. |
 | **Action · Agents** | Match [`A12`](./automations-blueprint/A12-form-from-required-data.png) — an actual form from the listing. Assign path [`A14`](./automations-blueprint/A14-action-assign-or-template.png). |
 | **Rename nodes** | Click the title, edit in place, same as renaming a campaign in Agents. Including the If / condition node. Same pattern everywhere a name is changed. |
-| **Rule Output** | Match [`A11`](./automations-blueprint/A11-rule-output-required-data-listing.png). |
+| **Rule Output** | Packet [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md). Match [`A20`](./automations-blueprint/A20-rule-output-select-preview.png). A11 is prior. |
+| **Rule Outcomes** | Packet [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md). Match [`A21`](./automations-blueprint/A21-rule-outcomes-pane.png). A2 / A3 / A4 are prior. Do not build giant GUI/Custom. Do not build teaching captions. |
+| **Node interior** | Shared vs kind: [`NODE-INTERIOR.md`](./NODE-INTERIOR.md). **Input** (A23 left) and **Output** (A20) on every node that has those panes. Get **Parameters** (A23 right) only on Get. Rule **Outcomes** (A21) only on Rule. |
+| **Get** | Packet [`GET-PACKET.md`](./GET-PACKET.md). Canvas [`A22`](./automations-blueprint/A22-get-canvas.png). Parameters [`A23`](./automations-blueprint/A23-get-input-parameters.png) right. Input look [`A29`](./automations-blueprint/A29-variable-chip.png) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md). Kind, not Action, not Audit. |
+| **Click vs Switch** | Law 38. Click = configure. Packets [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) · [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md). **A26** · **A27** · **A28**. |
+| **Test / variables** | Law 39 · 40. [`TEST-PACKET.md`](./TEST-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md). **A29** tree. **A31** chip **is** the box. **A32** close Input / resize. |
+| **In-app Action** | Law 41. [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). After **A7** in-app: module write-buttons, grouped by module. Do not spec the picker. Screenshot from in-app onward. Same pass completes **A31 / A32**. |
 
 ---
 
@@ -187,16 +193,18 @@ Plate: [`A18-trigger-global-local.png`](./automations-blueprint/A18-trigger-glob
 
 **Copy:** When you select a **trigger event**, you set **Global** or **Local**. Not Settings. Not “who this applies to” (that is Contacts / A19).
 
-- **Global** = all of that kind. Example: **all form submissions** — whoever submitted, run this.
-- **Local** = this specific one. Example: **this form** — every time this form is submitted, run this. The “this form” picker is **disabled on Global**; it **enables on Local**.
+- **Global** = **every firm** + **every permutation** of this event. No extra boxes (A26).
+- **Local** = nested dropdowns of **that event’s existing shape**. Firm/contact Select-firm primitive is one layer. Event instance (this form, this campaign, this pack, this batch) is another. Sequential — not a dump. Stopping mid-cascade = all of the next class when that default exists.
 
-Same divide elsewhere (campaign failure: all campaigns vs **this** campaign). Do not fill the event catalog.
+A18 radios + disabled “this form” are **prior**. Canon look + shape: **A26** · [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md).
 
-**Idea for SA (do not invent UI this stamp):** some events may **not** have Local. An **audit** is a one-time event — maybe it cannot be local, or cannot be only-global. Map which events allow which grain. Do not drop the idea.
+**Idea for SA (do not invent UI):** some events may have **no instance axis**. An **audit** is a one-time event. Map which events have which layers. Do not drop the idea. Do not invent events.
 
 **Ignore:** The rest of A18 (which workflow is selected in the catalog). Copy the **modal**.
 
-Allude: [`A5-inside-trigger.png`](./automations-blueprint/A5-inside-trigger.png) is inside-trigger Event vs Schedule. **A18 adds the grain.** A5 is prior for Event/Schedule. A17 is firm provisioned. Do not skip A18 because A5 exists.
+Allude: [`A5-inside-trigger.png`](./automations-blueprint/A5-inside-trigger.png) is inside-trigger Event vs Schedule. **A18 adds the grain** as radios — **prior**. **A26** is canon: named-event list + grain **dropdown** + Local nested shape. Packet [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md).
+
+**Click vs Switch (law 38):** body click = configure. **⋯** = Duplicate · Add node · Switch · Delete (**A27**). Wire **+** = **A28** (no Trigger on the wire). Packet [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md).
 
 ---
 

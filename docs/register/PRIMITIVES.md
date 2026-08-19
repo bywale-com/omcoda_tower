@@ -15,12 +15,12 @@ Webhook is a way **in** from outside. It is not an action.
 
 | Kind | What it is |
 |------|------------|
-| **Something happened in the app** | An event. You can say **all of that kind** (Global) or **this specific one** (Local). |
+| **Something happened in the app** | An event. **Global** = every firm + every permutation of this event. **Local** = nested dropdowns of that event’s existing shape (firm/contact primitive, plus this form / this campaign / this pack / this batch when the event has that identity). Sequential — not every dropdown at once. |
 | **Not an in-app event** | **Schedule** (time). **Manual** (you pressed it). **Webhook** (the outside told us). |
 
-Local example you just named: not “any form.” **This form we just created** was submitted.
+Local is not implicit. The form example (all forms vs **this form**) is one **layer**, not the whole of Local. Firm/contact Select firm is another layer already named. Face: [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) · **A26**.
 
-Some events have no Local (an audit is one-time). That is still an event.
+Some events have no instance axis (an audit is one-time). That is still an event. SA maps. Do not invent a fake instance.
 
 ---
 
@@ -28,17 +28,24 @@ Some events have no Local (an audit is one-time). That is still an event.
 
 These are the in-app events. If a new “when X happens” is not this list, the shape does not support it yet — and maybe it shouldn’t.
 
-| Event | Global | Local |
-|-------|--------|-------|
+| Event | Global | Local (instance layer) |
+|-------|--------|------------------------|
 | **A form was submitted** | All forms | **This form** |
 | **A campaign failed** | All campaign failures | **This campaign** |
 | **Someone opted out / unsubscribed** | All of those | — |
 | **A firm was created / provisioned** | All new firms | — |
 | **An audit finished** | All audits | (probably none — one-time) |
-| **A contact file was imported** | All contact-file imports | This batch / this firm — later if we need it |
-| **An objective was met** | Completions of that kind | **This** objective / campaign |
+| **A contact file was imported** | All contact-file imports | **This batch** |
+| **A new contact** | All new contacts | **This firm** — later if we need it |
+| **A reference pack / eligibility criteria was updated** | All pack updates | **This pack** |
+
+**Global** on every row also means **every firm**. The Local column is the **instance** layer only. Firm/contact Select firm is the other Local layer and is not restated per row. Nested; SA maps order. Do not treat a dash as “no Local at all” until SA says the firm axis is also empty.
 
 That is the list from the face we have already named. Not “any row changed.”
+
+**Contact import** and **new contact** are two events. Import is uploading a file into the book (`import_batch`). That is the event. Creating people is a path inside that process, not the identity of the event — rows upsert; existing contacts can be updated, not only created. **New contact** is that person (`contact_records` for that one), with or without an import.
+
+**What contact import writes (live, this run):** `import_batch` (the batch) + one `contact_records` write per row in the file. That is the handle. Next node picks. Audit / tags are **later nodes**, not this event. Live fires **one** event (`contact_import`). It does not also fire new-contact per row — that is the gap we just named, not proof they are the same event.
 
 ---
 
@@ -51,19 +58,26 @@ Two kinds. That is the whole split.
 - Create **from a template**  
 - You do **not** author a new agent in Automations  
 
-**2. In the application** — do a thing the app already does  
+**2. In the application** — press a write-button the module already has  
+
+**Law 41:** can we automate X = does that module already afford X. The inventory is those affordances, grouped by module — not this table as a catalog. Automations consumes; it does not author a second button. Packet: [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md).
+
+Named so far (examples, not the list):
 
 | Action | Plain |
 |--------|--------|
 | **Ascribe a tag** | Put a tag on the person (subscribed / not, valid / not, …) |
 | **Run an audit** | Same audit the desk already runs. A node. Not hardcoded on upload. |
-| **Who this applies to** | Contacts on the automation. Does **not** start a mission now. |
 | **Make a form** | Automations owns the form. Questions are the required data. |
 | **Provision a firm** | Later idea — see below. Canonical Automations **hears** that a firm was created (event). It does not have to **be** the desk that creates it. |
+
+**Who this applies to** is **Get**, not an Action.
 
 Not on the list: “write whatever into whatever table.” Not on the list: webhook-as-an-action.
 
 If / condition is not an action. It is a fork after a result.
+
+**Get** is not an action. It is a **node kind**. It **reads** records that already exist in a module. The writes it produces are those records. Same handle: every write that run made. Not Audit. **Input** (the left tree) is not Get-only — [`NODE-INTERIOR.md`](./NODE-INTERIOR.md). Get **Parameters**: Every firm is still a choice (dropdown). Select opens the next dropdowns, which are also input boxes — that is where left-side writes apply.
 
 ---
 
@@ -82,6 +96,25 @@ Audit produces a lot of writes (the run, verdicts, sequence-ready, whatever else
 **Not the previous result:** hearing the completion as a **trigger** on a different automation. That is the other door.
 
 Hub `lastOutput` → `lastInput` is the smell, not the live path. Live is SA **015** (engineer). Do not recut it here.
+
+---
+
+## Test (why you press it)
+
+The machine will run. Testing is not to prove that.
+
+You test so **Input and Output show the writes** — **fields and values** — so you can map them into boxes. Values are as important as the shape. You also need to know **where those values came from**.
+
+**Two doors. Do not collapse them.**
+
+| Door | Values come from |
+|------|------------------|
+| **Already exists** | Records already in the app (book, past batch, past run). **Get** is a read. Honest empty if nothing is there. No write. |
+| **Does not exist yet** | The module’s **real write-set** (every write that run would make). Specimen of those fields. No INSERT. No hardcoded toy list. |
+
+Canvas: **Save · Test · Launch**. Launch is live. Packet: [`TEST-PACKET.md`](./TEST-PACKET.md).
+
+A **variable** is not a string you type. It is a **colored chip**. Look: [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · **A29**.
 
 ---
 
@@ -151,8 +184,8 @@ That is Automations. That is why the module exists. If that path is hard, we did
 ## How to use this when a new idea shows up
 
 - If it is a **when** → it must be an event on the table, or schedule / manual / webhook.  
-- If it is a **do** → it must be Agents (assign / from template) or an in-app action on the table.  
+- If it is a **do** → it must be Agents (assign / from template) or an in-app action that is already a **module write-affordance** (law 41).  
 - If it is **after a node** → the next step uses **every write that run made**. Do not specify a field catalog.  
 - If it is neither → the shape does not support it. Don’t “consider it” as a maybe. Say no, or name a new primitive on purpose.
 
-Face: [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Visual: A7 (two kinds of action) · A14 (assign / template) · A18 (Global / Local) · A12 (form) · A17 (firm provisioned as an **event**). Provision as an **action** is this stamp.
+Face: [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Visual: A7 (two kinds of action) · A14 (assign / template) · A18 (Global / Local) · A12 (form) · A17 (firm provisioned as an **event**). In-app inventory: [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). Provision as an **action** is this stamp.

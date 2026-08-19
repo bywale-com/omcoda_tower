@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **13:07:** After a node, the output is **every write that run made**. Same for Audit and Provision. Next node **picks**. Engineer owns SA **013+014+015** (PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86)). Meantime had not started. New PM seated **13:16**. Do not plant. Do not recut the engineer’s packet.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Law 41:** in-app Action = module write-affordance. Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). UI pass + screenshots; same pass completes A31/A32. Do not plant.
 
 **How we maintain this log**
 
@@ -1118,6 +1118,433 @@ Flag 15:43 untouched.
 Ready. Waiting on you.
 
 **Do not:** plant; overwrite 15:43; recut 015; treat 12:34 as current.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 15:55 UTC — Node interior: kind-same look; Input / Output from A11
+
+**Why:** Founder: reshape is on main. Walk the look inside a node. Confirm before moving.
+
+**Machine (already on main, PR [#94](https://github.com/bywale-com/omcoda_tower/pull/94)):** After a node, every write that run made. Next node picks. New nodes / triggers / events / objectives fit because they write. Not a catalog.
+
+**Look (founder, not planted):**
+
+- Inside a node there is a **general shape**.
+- **Kind-same:** all action nodes look the same. All rule nodes look the same. All condition nodes look the same. Even if the **middle pane** changes across kinds, everything that inhabits a kind looks the same.
+- Rules: the middle is **Rules** (its own thing) — not Parameters.
+- **Input** and **Output** still exist on those nodes. Those two we **standardize**.
+- **A11** is the current face for that (evolution of A9). That is the plate we walk from.
+
+**Do not:** plant; treat Hub as the app; recut the handle; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 16:04 UTC — Output: top = all writes; bottom = preview of the one you click
+
+**Why:** Founder on **A11**: we never drew Input or Outcomes — only Output. Top chips look like a quick look at **all potential outputs**. Required data is itself an output. Click a class; the bottom shows **that** result. Does it work that way now? Then: how does the traceability matrix identify required data — so we do not force A11 onto a fake model. Modify the plate to the real shape.
+
+**Does it work that way now? No.**
+
+- Hub Rule Output dumps **Analysis** (everything) + **JSON**. No click. No bottom that switches.
+- A11 painted class chips **and** the listing always on. Not select → preview.
+
+**Mechanism (looked; not invented):**
+
+- The matrix is **results** (`R-*`) in families (pathway, gaps, ops, category, draw). The rule pack is those families as **conditions**: field path · operator · constant.
+- A run **reads** those paths. Missing → “missing from input.” Fail a threshold → **assert a gap result**. Asserted `R-*` fire services and nudge / reactivation **signals**. That object is `RuleEvaluationSummary`. It is **not** a listing of required fields.
+- What would make required data a **write**: fields this pack needed that were absent, classified (`self_reportable` → form · `document_dependent` → never a form). Catalog `COLLECTIBLE_FIELDS` already maps path → capture kind → `signalHints` to `R-*`. **The evaluator does not read it.** Story already named the write: `missing_fact_signals` (`field_key`). The rule node does not write that table.
+- So required data does not “just appear.” It is attached to the **names the pack already reads**. It is not stood up as an output class today.
+
+**Look:** **A20** revises A11. Same chrome. Top = every output this run made (Required data is one chip, selected). Bottom = this run’s missing fields — not the whole catalog. Same Output shape is what we standardize across nodes. Input / Outcomes still not drawn.
+
+**Do not:** plant; mint a listing table; invent extra classes; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 16:33 UTC — Outcomes pane assembled (A21)
+
+**Why:** Founder: engineer is literal. A2/A3/A4 are the same pane arranged wrong. Fix the arrangement. Packet later: what not to build in the image / what to build that is not in the image.
+
+**Look (founder):**
+- Tabs = **Input / Outcomes / Output**. The giant **GUI / Custom** on A2 is **not** that slot.
+- Outcomes **stacked** (A2). Never side-by-side (A4 was wrong).
+- Each outcome: tiny **GUI | JS** beside the title (A4’s small GUI chip, plus JS). Not a page-level GUI/Custom.
+- On → interior shows. Off → nothing inside (A2 Draw competitiveness).
+- Code look from A4: language, rename, line numbers, color, copy. Same for every code interior.
+
+**Plate:** [`A21-rule-outcomes-pane.png`](./automations-blueprint/A21-rule-outcomes-pane.png). A2 · A3 · A4 stay prior. No teaching captions on the glass.
+
+**Do not:** plant; overwrite 15:43; reprint A2–A4 as canon.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 16:46 UTC — Trigger writes are who; Outcomes read the person. Input + Outcomes same view.
+
+**Why:** Founder: Outcomes like “CEC skilled hours met” assume that data is available — of the **person being evaluated**. That comes from Input. So Input and Outcomes should be the **same view**. Output does not have to be. Start at the trigger: what event would fire this rule, and what are **that trigger’s actual outputs** under the writes law — do they even contain these fields?
+
+**Answer:** They mostly **do not** contain CEC hours as trigger fields. They contain **who**.
+
+Under the handle: a trigger’s output is **every write that event made**. For this immigration rule, sensible events are ones that already have a **person** in hand:
+
+| Event | What that run actually writes | Has CEC hours / CLB / ECA as the event’s writes? |
+|-------|-------------------------------|--------------------------------------------------|
+| **Eligibility changed** | `eligibility_evaluations` · result · `signals` · `motion_decisions` · the **contact** | **No.** Hours live on the person, if they exist. |
+| **Fact writeback** | `fact_writebacks` (one `field_key`) · the contact | **Only that one field**, if it was hours. Not the whole compare set. |
+| **Contact import** | `import_batch` · `contact_records` | **No.** People exist. Those compare fields are usually empty. |
+| **Audit completed** | `audit_runs` · verdicts · sequence-ready | **No.** Reachability, not pathway hours. |
+| **Firm provisioned** | `ct_firms` | **No person.** This rule has nothing to compare. |
+
+So the Outcomes rows are **not** “fields the trigger emitted.” They are conditions on **the person those writes point at**. If the person does not have the field, the pack already says “missing from input” — that is required data. Hub **Run** stuffed a `client_data` blob by pulling. That is preview. It is not the handle.
+
+**Look:** Input = the previous node’s writes (for this rule: the trigger’s writes — the person). Outcomes = authored against fields **on those records**. Same view, because you are authoring the compare **on what Input just made available**. Output stays after the run (A20).
+
+**Do not:** plant; put CEC hours on the trigger as fake outputs; collapse Output into this view; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 16:54 UTC — A rule runs for two reasons. A trigger is a justification.
+
+**Why:** Founder restart. Do not confuse trigger-field-containment with **making the inputs**. When do we run a rule? Only two reasons. A trigger is a justification to run that. Two justified chains.
+
+**When a rule runs (only two):**
+1. Re-evaluate: are they eligible for **re-engagement** (nudge / **data request** needed).
+2. Re-evaluate: are they eligible for **reactivation**.
+
+Nothing else.
+
+**A trigger is a justification to run that.** It is not “the CEC hours arrived in the event.”
+
+**Chain A — we have no data on this person.** Justification = new contact. Trigger: **contact import**. Not siloed: **import → audit → if audit is good → run the operation (rule)**. The rule finds much missing → **agent** (first data request / first launch campaign). A condition before the agent (e.g. they are new) is available. One canvas.
+
+**Chain B — they are not new. The law changed.** Trigger: **eligibility criteria changed** (packs / reference packs — not a person). That event **writes no contact**. So the **next action** is whatever **produces the contacts / their data**. The **output of that action** is the writes the rule needs. Then the rule can run.
+
+Same architecture: if the trigger’s writes are not the inputs the rule needs, an action in the chain **makes** them.
+
+**Do not:** plant; invent a third reason to run a rule; put person-fields on a pack-change trigger; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 17:00 UTC — Direct inputs. Do not use Audit as a people-pump.
+
+**Why:** Founder: pack / reference change is a justification. What goes in the middle to provide the data? Do not over-rely on action nodes (Audit) to get inputs. What if it could get them **directly**? Also: Input should be able to reference **everything earlier in this chain**, not only the last node. No image this stamp.
+
+**Stood up today (honest):** Live handle is **the previous node’s writes**. An action **replaces** the handle with what that module wrote. If **passes through**. Hub preview is lastOutput → next lastInput only. The rule node on the walk does not yet evaluate against those writes. If an event arrives with **no contact ids**, dispatch currently loads **the whole firm book** — that is a blunt “direct,” not an authored Input.
+
+**Product (founder):**
+
+- Same goal: run the operation. The middle can change. Even the trigger can change. Two chains can be valid.
+- Pack / criteria updated writes **the pack**, not people. You do **not** need Audit in the middle just to have a person. Audit is Audit. People **already exist**.
+- **Direct** looks like: on the rule’s **Input**, pick who / what is already in the system — **who this applies to** (Automations Contacts) or the **book**. Those records are referenceable. No fake action to “fetch” them.
+- You still put something in the middle when you need a **write that does not exist yet** (import, audit, a form coming back).
+- Input is not only the immediate previous node. **Every prior node’s writes in this chain** should be referenceable — like a real event. Live is not that yet. Name it. Do not recut 015 here.
+
+**Do not:** plant; mint; use Audit as “get me contacts”; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 17:06 UTC — Get is a node kind. Two plates.
+
+**Why:** Founder: new primitive — get data from a **module**, filter to a **grain**, evergreen. Trigger = reference pack updated (justification, no people). Next node makes the inputs. Canvas + inside (Input left / Parameters middle). Output of this node is its own pane — not drawn this stamp. No third image.
+
+**Name:** **Get.** Not Audit. Not Action. Not “who this applies to” as a special node — that is Get with Module = Contacts.
+
+**Plates:** [`A22-get-canvas.png`](./automations-blueprint/A22-get-canvas.png) · [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png).
+
+**Do not build:** teaching captions. Hardcoded immigration fields on Get. A third Get-per-module kind.
+
+**Do not:** plant; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 17:26 UTC — A23 is n8n. Do not reinvent Input.
+
+**Why:** Founder on A23: ridiculous. Do not reinvent the wheel. n8n already has this.
+
+**1. Input (left).** Prior nodes in **canvas order**. Everything in **this** DAG chain / fork is available to this node. Each node’s **outputs sit underneath that node** — not a flat Key/ID table.
+
+**2. Why the left exists.** Those writes are always available to Parameters. You **reference** them. Get’s grain is not a new radio. For Contacts it is still a **contact**, a **specific contact**, or a **specific firm**. Interchangeable. Same slot.
+
+**Plate:** [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png) replaced. A22 stays.
+
+**On the glass:** Schema tree under **Reference pack updated**. `firm` mapped. Parameters: Module Contacts · **Of** = that firm. No Every firm. No Select from.
+
+**Stale pixel:** `received_at` may have nested under `reference_versions`. It is a write of the trigger, not a child of the version row. Trust the tree shape, not that nest. Do not ship a teaching caption.
+
+**Do not build:** Every firm / Select from on Get. Flat Key/ID Input. Teaching captions.
+
+**Do not:** plant; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 17:33 UTC — Parameters: dropdown, then dropdowns that are also input boxes
+
+**Why:** Founder: left of A23 is good — keep it. Right side, the previous Every firm was right. Do not replace it with a mapped-only slot. The change is one thing.
+
+**Selector** is a **dropdown**, not a radio. **Every firm** is one option. Next option is **Select firm** — not firm-only as law; classes that apply for that module. Select produces the next dropdown. Those dropdowns are also **input boxes**. Left-side writes apply **in those boxes** when you are picking a specific one. Cascade: firm, then contact, until you have to select. Cousin of Add contact Every firm / Select from — not a new pattern.
+
+**Plate:** [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png) replaced. Left unchanged in kind.
+
+**Do not:** plant; recut 015; overwrite 15:43. Do not update a pile of law before this is confirmed.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 17:50 UTC — Get pocket locked. Packet.
+
+**Why:** Founder: A23 is good; move forward; no new image. Create the packet now so nothing is lost. Engineer and SA. Every comment in this pocket preserved.
+
+**Packet:** [`GET-PACKET.md`](./GET-PACKET.md).
+
+**Shape:** every module has the equivalent of three dropdowns — every/select, then first class, then second class. Contacts on the plate is Firm then Contact. Left is a stacking shape; do not build the pack-update example tree as schema; fit known write-sets.
+
+**Do not:** plant; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 17:56 UTC — Select firm selects all contacts. Plate-read.
+
+**Why:** Founder: the three examples complete the module. Then: however you select a firm (left write or the dropdown), **all of its contacts are selected**. Deselect all to pick a few. Add contact should be the same; that plate later. A23: Schema / Table / JSON implied; Search works; everything outside this modal is out of scope for this build.
+
+**Law:** Select firm → all contacts of that firm selected. Closed Contact is that default, not none.
+
+**Framework:** [`PLATE-READ.md`](./PLATE-READ.md) — five buckets: copy / do not build / implied / completes / out of scope this build. Packet updated.
+
+**Do not:** plant; recut 015; overwrite 15:43. No new image.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 18:17 UTC — A20 and A21 packets. Three pockets.
+
+**Why:** Founder: before moving on — did the three sections in this chat all have packets? Only Get did. Output and Outcomes had plates and law. Cut the packets now.
+
+**Packets:** [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md) · [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md) · [`GET-PACKET.md`](./GET-PACKET.md).
+
+**Do not:** plant; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 18:58 UTC — Input is every node. Get Parameters are Get.
+
+**Why:** Founder: did we only work on one node? The Input/Parameters shape — does Rule (and the others) get that Input, or will the build only touch Get?
+
+**Answer:** We drew Input on Get. Packets said “build Get.” Literal engineer = Input only on Get. Wrong.
+
+**Law 37:** **Input** (A23 left) and **Output** (A20) are shared. **Get Parameters** (A23 right) are Get. **Outcomes** (A21) are Rule. [`NODE-INTERIOR.md`](./NODE-INTERIOR.md). Action/If still get Input + Output even if those plates did not open those tabs. Trigger may have empty Input (start of chain). Do not copy Firm/Contact onto Rule.
+
+**Do not:** plant; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 19:18 UTC — Contact import and new contact are two events
+
+**Why:** Founder, back at the start: contact import is the event that runs the audit automation. Are import and new contact two things? Yes.
+
+**Legible split:** **Contact import** = the batch (file / `import_batch` / often many people / more writes). **New contact** = that person (`contact_records`). Import usually also creates people — it is still not the same event. A person can be new with no import. Audit-on-import listens to **import**. Person-level first launch can listen to **new contact**.
+
+**Already named:** “A contact file was imported” on the face list. Live `contact_import`. House graph: Contact file → audit → tag. **New contact** was collapsed into Chain A’s justification. Hub already had both (`import.created` · `contact created`) — Hub is not the app; the split is still right.
+
+**Do not:** plant; fill the event catalog; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 19:23 UTC — What contact import writes (this run)
+
+**Why:** Founder: they are not the same event. Import’s purpose is upload a file into the book. Creating people is a path, not the identity. What outputs does that event create — do we know?
+
+**Yes, live.** Handle of that run:
+
+1. **`import_batch`** — the batch (firm, filename, row_count, source file/crm/assisted).
+2. **`contact_records`** — one write per row. Insert or update (`ON CONFLICT`). Not “creates people” as the event. Upsert onto the book.
+
+That is the previous result. Next node **picks** (house graph picks `import_batch` and runs Audit). Audit writes, tags — **those nodes**, not import.
+
+**Backend:** only `contact_import` fires. No per-row new-contact event. Ontologically two events; live has not split the second yet.
+
+**Do not:** plant; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 19:34 UTC — A24 / A25: Output of two events
+
+**Why:** Founder: two photos. Outputs of **contact import** and **new contact**, in the current Output look (A20).
+
+**Plates:** [`A24-contact-import-output.png`](./automations-blueprint/A24-contact-import-output.png) · [`A25-new-contact-output.png`](./automations-blueprint/A25-new-contact-output.png).
+
+**Do not build:** teaching captions. Rule output chips on these events. Audit writes as import output. Catalog sentence “the real house workflow.”
+
+**Do not:** plant; recut 015; overwrite 15:43. Packet after they lock.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 20:05 UTC — Click = configure; Switch is ⋯; event picker is a middle modal
+
+**Why:** Founder: do not screenshot live first. Translate selecting a trigger into the middle-modal Assist look. Canvas add-trigger already looks good. Clicking a placed node oscillates between configure and switch — that is the problem. Title-rename on click is fine. If you want to switch, you do not click into the node. Hub had an options popover (duplicate, add node, reposition). Wire hover already has **+**. Switch belongs on that options popover.
+
+**Plates (awaiting lock — no packets yet):**
+
+- [`A26-trigger-select-event.png`](./automations-blueprint/A26-trigger-select-event.png) — add Trigger / **Switch**. Event \| Schedule. Searchable **named** events. **Contact import** ≠ **New contact**. Grain = dropdown **Global**; no second picker on Global. Revises A5 / A18 look.
+- [`A27-node-options-popover.png`](./automations-blueprint/A27-node-options-popover.png) — **⋯**: Duplicate · Add node · Switch · Delete.
+- [`A28-add-node-on-wire.png`](./automations-blueprint/A28-add-node-on-wire.png) — wire **+**: Get · Rule · Action · Condition (If) · Exit. No Trigger. Revises A6.
+
+**Law 38.** Click = configure (Output of a trigger is still A24 / A25). Switch is not click.
+
+**Do not:** plant; recut 015; overwrite 15:43. Packet after they lock.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 20:12 UTC — A26–A28 locked. Packets. Global / Local is a shape
+
+**Why:** Founder: A26 is great; icons exactly to spec. Packets now. Engineer + SA. SA still reads the packet and names system modifications; those two go to the engineer.
+
+**Global / Local (law 27, this stamp):** Global = **every firm** and **every permutation of this event**. Local is not implicit. Axes: firm/contact **Select firm** (already a primitive) and the event’s instance (this form, this campaign, …). Global **is** that shape with every layer unspecified. Local **displays nested dropdowns** — not every dropdown at once; sequence because layers depend. Do not hardcode a new control per event. The event already maps. No extra PNG.
+
+**Packets:** [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) (A26) · [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) (A27 · A28).
+
+**Do not:** plant; recut 015; overwrite 15:43; collapse Local with A19; invent events.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 22:45 UTC — Test simulates the writes. A variable is a chip
+
+**Why:** Founder: automations now feels usable; gap closed. Natural next is testing. Do not bolt. Not “does it work” — bounded platform, it will work. Value of testing: see what **populates** in Input and Output so you can map the right **parameters** into boxes in other nodes. Less the values than the parameters. Do not pull live. Simulate **perfectly** — especially a trigger that writes a lot — no gap, no hardcoded subset, so it can update when the module does. Left into **any** open box. A variable is its **own element**, color, not a string you type correctly. Some images justified.
+
+**Thesis (plain):** Test fills Input/Output with that node’s real write-set, simulated. Then you place those as chips. Launch is the live run.
+
+**Plates (awaiting lock — no packets yet):**
+
+- [`A29-variable-chip.png`](./automations-blueprint/A29-variable-chip.png) — chip in the box. Revises A23 lightning-on-text.
+- [`A30-test-on-canvas.png`](./automations-blueprint/A30-test-on-canvas.png) — Save · Test · Launch. Chrome drifted; trust the three buttons.
+
+**Law 39 · 40.**
+
+**Do not:** plant; recut 015; overwrite 15:43; invent a Test tab; invent extra import fields.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-18 22:56 UTC — A29 locked. Test has two doors
+
+**Why:** Founder: A29 is the Input look on **every** node — icons, type control in front of the name, drag including top-level into any box as its own element. A30: only lock **where Test sits**. Filling is the question. Values are **as important** as parameters. How does it source them? Data that already exists vs data that **doesn’t exist yet**.
+
+**Two doors:** (1) already exists — use those records; Get is a read; no write. (2) not yet — project the module’s real write-set; specimen values; no INSERT; no hardcoded list.
+
+**Packets:** [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md).
+
+**Do not:** plant; recut 015; overwrite 15:43; collapse the two doors; treat the rest of A30 as canon.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 07:55 UTC — Mapped chip is the box. Close Input. Resize the interior.
+
+**Why:** Founder: last build looked good. Then: pull from the left should **be** the value, not a suggestion. Live: tag with X, not inside the box; dropdown still there. Close Input. Resize the click-into modal, not the canvas node.
+
+**Live:** `GetParametersPane` `ChipBox` paints Tags then still renders the Select.
+
+**Plates:** [`A31-mapped-box-is-the-value.png`](./automations-blueprint/A31-mapped-box-is-the-value.png) · [`A32-close-input-resize-modal.png`](./automations-blueprint/A32-close-input-resize-modal.png).
+
+**Packet:** [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
+
+**Do not:** plant; recut 015; overwrite 15:43; ship tags-plus-dropdown.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 07:58 UTC — Strengthen A31/A32 packet: chrome is not the desk
+
+**Why:** Founder: packet must be strong. Background and other things on those two images are pretty far off the design system. The two ideas are strong — should not miss them.
+
+**What we did:** Rewrote [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md). “Do not miss” first. Desk = live / A22 / A23 / A29. Copy only: (1) mapped chip **is** the box (2) close Input (3) resize interior modal. Live ChipBox named. GET-PACKET and INPUT-LOOK allude.
+
+**Do not:** copy A31/A32 sider; plant; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 08:00 UTC — A31/A32 packet locked strong: images are the ideas
+
+**Why:** Founder: those two images are **very strong** — should not miss them. Background and other things are pretty far off the current design system. Write the packet, add it to the PR, then they will talk about the next thing.
+
+**What we did:** Recast [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) so it opens on **look at the interiors / ignore the chrome**. A31 contrast (Firm chip, no chevron / Contact still a picker) and A32 (Input rail + modal resize grip) named as the specimen. Engineer paste tells them to open the PNGs first. Blueprint stale-pixel lines match.
+
+**Do not:** skip the images because backgrounds drifted; copy those backgrounds; plant; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 08:11 UTC — In-app Action: the write-button is the layer (thinking, not locked)
+
+**Why:** Founder: Actions needs a primitive on the **in-app** side (not Agents). Workflows they keep imagining should already be possible; they aren’t because the simple architecture isn’t named. Everything you can do in the app can be automated; the shape may differ across nodes. Current in-app action that exists: **Audit**. Audit is not its own kind — it is a **layer / type of action**: passing data into a module without the **direct door**. Every module theoretically has that shape (“do the main thing in that module”). Not every module is one function. Some modules: automation replaces going in and clicking the buttons; even there the buttons lead into one type of action. Book readiness: import, then run the audit — the purpose of the module is the audit; everything before enables that action. Then: **Run audit is the core function.** It is a **button** in that module (often only after the import). **Anything that is a button that writes into the system is an action.** That is the layer. Actions live in modules. A module is a container / label.
+
+**What we did:** Stamp only. Thinking. No packet. No new law. Face still: two kinds of Action (in-app vs Agents). Get is a read, not an Action. Law 33 still: send the work to the real module; every write that run made. Named in-app so far stay named; do not fill the catalog.
+
+**Do not:** collapse Agents into this; invent an Action catalog; treat Audit as a unique node kind; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 08:20 UTC — Can we automate X = does the module already have that affordance
+
+**Why:** Founder: the question is whether X already exists in the system — is it already an **affordance of that module**. That’s literally it. Meta: Actions are primitives that exist **beyond Automations**. They are affordances of a module. Every time we create one, it should be available as an Action in Automations. Analog: **HolonBoundary** (speech: “hold on boundaries”) — wrap a component so it registers. Is there an equivalent here.
+
+**What we did:** Stamp. Thinking. No wrapper spec. No packet. Live today: SQL `action` is `call_agent` only; Hub names extra kinds the walker ignores. Do not invent a HolonBoundary-for-writes.
+
+**Do not:** invent an Action catalog; spec the wrap; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 08:29 UTC — Lock in-app Action packet (law 41). Screenshots, then redesign.
+
+**Why:** Founder: next UI pass should have a lot of in-app actions, **by module**. Don’t spec the picker — the implementer sees the potential actions, lays them out, we redesign. Retrofit Input / Parameters / Output; if it breaks, fix the UI later. Screenshots from click Action → **in the application** → every distinct screen. Same pass completes the last packets (**A31 / A32**). SA inspects the walker; don’t block the face.
+
+**What we did:** [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). Law **41**. FACE open item 6 points at the packet (not a list to fill). PRIMITIVES: who-this-applies-to is Get. Screenshot folder `automations-blueprint/in-app-action-pass/`.
+
+**Do not:** spec the picker; invent writes; freeze Hub radios as the catalog; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 
