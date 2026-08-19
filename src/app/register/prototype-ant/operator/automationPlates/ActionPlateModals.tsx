@@ -461,7 +461,7 @@ export function ActionInAppModal({
       actionType: row.actionType ?? undefined,
       configured: true,
       label: row.label,
-      actionSummary: row.label,
+      actionSummary: row.id === "confirm_book" ? filename || row.label : row.label,
       agentRef: undefined,
       pickTable: row.id === "start_audit" ? "import_batch" : data.pickTable,
     });
