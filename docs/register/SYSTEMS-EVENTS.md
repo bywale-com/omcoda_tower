@@ -368,3 +368,15 @@ Cut: [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017.md).
 
 **Do not:** recut 015; mint an events table; overwrite 15:43.
 
+---
+
+## 2026-08-19 08:40 — In-app Action is the desk button. 017 still names N.
+
+Law 41: automate only what the module already writes. That write **is** the event when detectable. Automations does not invent a second button. `action.type` = wrap the existing handler. No events table. No affordance registry.
+
+Mapped chip (A31) is a pointer into `chainWrites` (017), occupying the box. Close-Input (A32) is not a write.
+
+[`SYSTEMS-IN-APP-ACTION-ASCRIBE.md`](./SYSTEMS-IN-APP-ACTION-ASCRIBE.md).
+
+**Do not:** recut 015; mint an events table; overwrite 15:43.
+

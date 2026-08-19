@@ -92,7 +92,7 @@ PM packets on `cursor/node-interior-a11-4b9f`. **Do not recut 015.** They name g
 - Rule Output = this run’s writes, click → preview. Required data is a **write** (`missing_fact_signals` named; rule node does not emit it). Do not mint a listing table.
 - Rule Outcomes: Input / Outcomes / Output. Rule runs for re-engagement or reactivation only.
 
-Ascribe answers: [`SYSTEMS-GET-RULE-ASCRIBE.md`](./SYSTEMS-GET-RULE-ASCRIBE.md).
+Ascribe answers: [`SYSTEMS-GET-RULE-ASCRIBE.md`](./SYSTEMS-GET-RULE-ASCRIBE.md). In-app Action / A31 (08:40): [`SYSTEMS-IN-APP-ACTION-ASCRIBE.md`](./SYSTEMS-IN-APP-ACTION-ASCRIBE.md). 017 grain stands.
 
 ---
 

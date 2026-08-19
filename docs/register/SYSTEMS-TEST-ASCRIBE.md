@@ -135,6 +135,6 @@ Do not invent a mapping table. Do not freeze extra import fields. Write-set = wh
 5. Source values **once**, on **Trigger Output**. Door 1 = live instance. Door 2 = `event_test_data`. Tables in the tree from `event_write_set`. Same DAG as Launch. Get is a node, not a fallback.
 6. Every later node: Input = previous Output. Output = what **that** node does, uncommitted. Tree on Input = full `chainWrites` (017). Run count = last handle / chip `N`.
 7. Audit Test = `executeAuditRun` without persist. Rule Test does not fake an evaluation we cannot run.
-8. Chips = pointers into `chainWrites`. Graph `data`, not a mapping table. A chip sets `N` to that set.
+8. Chips = pointers into `chainWrites`. Graph `data` `mappedSlots` / `MappedChip`, not a mapping table. A chip sets `N` to that set. **A31:** when the slot has chips, ignore `getClass1` for that slot. Occupancy is chrome.
 
 **Do not:** recut 015; mint an **events log**; UPDATE a shipping contract version; generate values with a model; treat Get as the trigger’s substitute; overwrite 15:43.

@@ -4,7 +4,7 @@
 **When:** 2026-08-19 08:10 UTC.  
 **What this is:** the grain for every later action. Implementer **only implements**. No analysis.  
 **Why:** Founder: along the DAG **all outputs are available**. The **run count** is still the **last** output’s records (n8n). Every firm / one firm / a chip from the left = as many records as that set. Actions are next; this has to be stood up first.  
-**Join:** 015 handle (last node **produces** `previousWrites`) · A29 Input tree · Test same walk. **Do not recut 015** into a stack of handles.  
+**Join:** 015 handle (last node **produces** `previousWrites`) · A29 Input tree · Test same walk. In-app inventory / A31: [`SYSTEMS-IN-APP-ACTION-ASCRIBE.md`](./SYSTEMS-IN-APP-ACTION-ASCRIBE.md). **Do not recut 015** into a stack of handles.  
 **Flag:** 15:43 untouched.  
 **Instructions:** founder only.
 
@@ -96,3 +96,21 @@ No SQL. 016 stays the event Test contract. This is the walk.
 - Not N Audit runs for N people.
 - Not `LIMIT 50`.
 - Not a new table.
+
+---
+
+## Revision 2026-08-19 08:40 — enable PR #96. Do not nullify 08:10.
+
+PM locked in-app Action (law 41) and mapped-box (A31 / A32). **Two facts above stay.** This names the consumers.
+
+**Inventory is the desk, not this packet.** Can we automate X = that module already has the write-button. Automations consumes. Person-verb / set-verb **classifies** the button they picked. Do not author a second Start Audit. Do not freeze `ActionInAppModal`’s five radios (`run_audit` / `ascribe_tag` / Hub leftovers).
+
+**Walker is not `call_agent` only** (PM paste was stale). Main already runs `run_audit` · `ascribe_tag` · `call_agent`. Hub leftovers write `engagement_records` — **no desk button; drop from the face.** Confirm book / Provision are desk buttons with **no** `action.type` yet: face may list; walk silent until the wrap (014 pattern). Do not block the UI pass.
+
+**A31 = 017’s chip, occupying the box.** Live store is already `mappedSlots` / `MappedChip` (`fromNodeId`, `table`, `field`, `id`). When that slot has chips, **that is the source** — ignore `getClass1` / list pick for the slot. One source. `N` from that mapped set. Occupancy (chip fills the field, no leftover Select) is chrome.
+
+**A32** (close Input, resize the interior): chrome. Silent.
+
+Action **Parameters** = that button’s inputs, not Get’s Module / Every / Select cascade. Action **Output** = 015 produce of that button. Input tree = `chainWrites` (A29).
+
+Agents stays A14. No HolonBoundary table. No SQL in this packet.

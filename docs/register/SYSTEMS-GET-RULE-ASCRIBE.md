@@ -110,3 +110,13 @@ A rule runs for **two reasons only**: re-engagement (nudge / data request) or re
 - Use Audit to fetch people.
 - Overwrite 15:43.
 - Plant a Hub Get.
+
+---
+
+## 2026-08-19 08:40 — 017 cut the Input stack. Get is still not a fallback.
+
+Full-chain Input is [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017.md) (`chainWrites`). Not a recut of 015. Direct Input blunt `LIMIT 50` is **dropped** there (`N = 0` if empty).
+
+Retract the 18:50 line “if the trigger wrote no people, Get makes the records available.” Get is a **node on the DAG**. Trigger Output is the first last-handle. Same retraction as Test 23:12.
+
+Mapped Firm/Contact (A31): chip in `mappedSlots` **is** the slot. [`SYSTEMS-IN-APP-ACTION-ASCRIBE.md`](./SYSTEMS-IN-APP-ACTION-ASCRIBE.md).

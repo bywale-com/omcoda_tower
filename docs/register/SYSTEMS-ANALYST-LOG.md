@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-19 08:10 UTC — **017: all outputs available; N = last handle’s records.** Actions sit on this. Do not recut 015. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-19 08:40 UTC — **017 stands.** PR #96 in-app Action / A31 ascribed. Desk buttons = inventory. Mapped chip = one source. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1396,6 +1396,25 @@ Park: [`SYSTEMS-TEST-ASCRIBE.md`](./SYSTEMS-TEST-ASCRIBE.md) “How Test gets th
 Packet [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017.md).
 
 **Do not:** recut 015; Get as trigger substitute; A19 on the trigger; N Audits for N people; `LIMIT 50`; overwrite 15:43.
+
+---
+
+## 2026-08-19 08:40 UTC — PR #96 in-app Action + A31. 017 not nullified.
+
+**Why:** Founder: check the PM PR; revise 017 if needed; enable its ideas; do not undo the packet we just stood up. PM locked [`IN-APP-ACTION-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/IN-APP-ACTION-PACKET.md) (law 41) and [`MAPPED-BOX-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/MAPPED-BOX-PACKET.md) (A31 / A32).
+
+**Hard:**
+
+1. **017 two facts stay.** Available = `chainWrites`. `N` = last handle / chip. Person-verb loops; set-verb once.
+2. **Inventory = desk write-buttons.** Automations consumes. Do not author a second Start Audit. Kill `ActionInAppModal` radios as the catalog. Hub `manage_lists` / `assign_task` / `notify_consultant` have **no** desk button — drop.
+3. **PM “walker is `call_agent` only” is stale.** Main already runs `run_audit` / `ascribe_tag` / `call_agent`. Real gap: Confirm book / Provision are desk writes with no `action.type`. Face may list; walk silent until wrap. Do not block the UI.
+4. **A31:** `mappedSlots` **is** the slot when chips exist. Ignore `getClass1` for that slot. One source. Occupancy is chrome. **A32** close/resize is chrome. Silent.
+5. **HolonBoundary analog: silent.** Do not mint a registry. `action.type` = wrap the handler (014). Face walks desks, not the CHECK.
+
+Park: [`SYSTEMS-IN-APP-ACTION-ASCRIBE.md`](./SYSTEMS-IN-APP-ACTION-ASCRIBE.md). Revision on [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017.md).
+
+**Do not:** recut 015; nullify 017; mint a wrapper table; pad Hub leftovers; overwrite 15:43.
+
 
 
 
