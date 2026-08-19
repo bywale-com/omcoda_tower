@@ -58,7 +58,7 @@ This is **Input on every node that has Input.** Specimen **A29 left**. Get’s r
 | **Row** | Type control **in front of** the name. Icons as drawn. |
 | **Schema / Table / JSON** | Same writes, other looks. Search searches. |
 | **Drag** | Any row, including the **top-level** node, into **any** open box (Parameters, Outcomes, any variable slot). |
-| **Chip** | The mapped item is its **own element** **inside the box** — that **is** the value. Empty box = picker. Mapped = no leftover dropdown. **A31**. Not tags above a Select (live ChipBox). Not `{{firm}}`. Not A23 lightning. A box may hold several chips. |
+| **Chip** | The mapped item is its **own element** **inside the box** — that **is** the value. Empty box = picker. Mapped = no leftover dropdown. **A31**. A pointer at a **table write**, not an n8n in-memory item (law 42). Not tags above a Select. Not `{{firm}}`. Not A23 lightning. A box may hold several chips. |
 
 ---
 

@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Thinking: new contact already wrote `contact_records`. Tag marks that person. Agents pick them from the left. This canvas does not create the contact. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Law 42:** left is a log of table writes, not n8n in-memory. Direct to table. Do not plant.
 
 **How we maintain this log**
 
@@ -1585,6 +1585,18 @@ Flag 15:43 untouched.
 **What we did:** Stamp. Thinking. **The contact row already exists when the trigger fires.** New contact Output (**A25**) is that `contact_records` write. This canvas does not create the person. Audit writes the run / verdicts / sequence-ready (about that person). Tag is a **mark on that person**, not a new contact. Agents maps the same person from Input (left) — a pick, not an INSERT. Live tag (walker) is `contact_tag` + optional notes on the same row; there is still no desk button.
 
 **Do not:** lock; treat tag as creating a contact; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 10:29 UTC — Law 42: left is table writes, not n8n memory
+
+**Why:** Founder: the real problem is n8n as the example. Great visual reference; what it looks like isn’t always the case. On the left it looks like all the data is there — in n8n that’s in memory, write later. **For us it is table writes.** Everything on the left is a display of records that were touched. Direct to table. No in-memory-then-write-later. Mapping on the right is: do this with that record already in the table. No data loss on the left. That’s how they understand it.
+
+**What we did:** Lock **law 42**. FACE · [`PRIMITIVES.md`](./PRIMITIVES.md) · [`NODE-INTERIOR.md`](./NODE-INTERIOR.md) · Input look. Test still does not INSERT (law 39). Do not recut 015 — this is the face of the handle.
+
+**Do not:** treat n8n JSON as the machine; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 

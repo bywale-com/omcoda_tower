@@ -143,6 +143,8 @@ Same for Provision: this form submitted → pass the values → every write from
 
 A wire that looks like an n8n **pipe** is one way to see the handle. A then-this list where the next node reads **this node’s output id** is the same product. **Pipe vs this-then-that is not the question.** The question is: when the node completes, do we have the module’s output. If the next step has to guess (latest audit for this firm), it is not this node.
 
+**n8n is a visual reference. It is not the machine.** In n8n the left looks like all the data is sitting there — items in memory, write later. **Ours is not that.** Everything on the left is a **display of records this run wrote** (or a Get of records already in a table). Direct to table. Mapping a chip is: go do this **with that record**. There is no in-memory copy that can be lost. Test still does not INSERT (law 39) — it shows the same write-shape without committing.
+
 “Everything it produces” means **every write that run made**. Not a short list. Not the entire database from other runs. The If is calling from **that**.
 
 ### Two doors. Do not collapse them.
@@ -185,7 +187,7 @@ That is Automations. That is why the module exists. If that path is hard, we did
 
 - If it is a **when** → it must be an event on the table, or schedule / manual / webhook.  
 - If it is a **do** → it must be Agents (assign / from template) or an in-app action that is already a **module write-affordance** (law 41).  
-- If it is **after a node** → the next step uses **every write that run made**. Do not specify a field catalog.  
+- If it is **after a node** → the next step uses **every write that run made**. Do not specify a field catalog. The left is those writes (law 42), not n8n memory.  
 - If it is neither → the shape does not support it. Don’t “consider it” as a maybe. Say no, or name a new primitive on purpose.
 
 Face: [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Visual: A7 (two kinds of action) · A14 (assign / template) · A18 (Global / Local) · A12 (form) · A17 (firm provisioned as an **event**). In-app inventory: [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). Provision as an **action** is this stamp.

@@ -12,7 +12,7 @@
 ```text
 Read docs/register/NODE-INTERIOR.md before any Automations node interior.
 
-Input (left tree: prior nodes in canvas order, outputs nested, Schema / Table / JSON, Search) is every node that has Input. **Look is A29.** Stacking law from A23 left (prior). Do not build that tree only on Get.
+Input (left tree: prior nodes in canvas order, outputs nested, Schema / Table / JSON, Search) is every node that has Input. **Look is A29.** Stacking law from A23 left (prior). Do not build that tree only on Get. The left is a log of table writes (law 42), not n8n in-memory. Mapping a chip is pointing at a record already in a table.
 
 Output (top = this run’s writes, click, preview below) is every node that has Output. Specimen is A20. Get’s Output tab is this.
 
@@ -53,6 +53,8 @@ Action / If interiors we already drew (A7, A14, A16) are **Parameters** (the mid
 **Click the node = configure.** Do not send click to Switch. Switch is **⋯** (A27). First pick / Switch opens the event picker (A26). Wire **+** is A28.
 
 **Test** fills these panes without committing ([`TEST-PACKET.md`](./TEST-PACKET.md)). Two doors: already exists vs not yet. A mapped write **is the box** ([`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · **A31**). Input can close; interior modal resizes (**A32**).
+
+**The left is a log of table writes (law 42).** Not n8n in-memory items. What you see was written (or, on Test, the same write-shape without INSERT). Mapping a chip = do this with that record.
 
 ---
 
