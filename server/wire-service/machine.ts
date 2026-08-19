@@ -176,6 +176,7 @@ export async function handleWorkflowRunStart(c: Context) {
       triggerLabel?: string;
       contactIds?: string[];
       payload?: Record<string, unknown>;
+      untilNodeId?: string;
     }>()
     .catch(() => ({}));
   const id = `run-${randomUUID()}`;
@@ -193,6 +194,7 @@ export async function handleWorkflowRunStart(c: Context) {
     triggerLabel: body.triggerLabel ?? "Manual run",
     triggerPayload: body.payload ?? { manual: true },
     contactIds: body.contactIds,
+    untilNodeId: body.untilNodeId,
   });
   return json(c, {
     id,

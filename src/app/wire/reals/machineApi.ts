@@ -94,6 +94,7 @@ export const realMachineApi: MachineApiPort = {
           triggerLabel: triggerLabel ?? "Manual run",
           contactIds: opts?.contactIds,
           payload: opts?.payload,
+          untilNodeId: opts?.untilNodeId,
         }),
       },
     );

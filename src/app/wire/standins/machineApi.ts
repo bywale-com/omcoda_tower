@@ -613,10 +613,30 @@ const engagementRecordsLocal: import("../machineTypes").EngagementRecordRow[] = 
   },
 ];
 
+function writesFromRunPayload(
+  payload?: Record<string, unknown>,
+): Array<{ table: string; id: string; contact_id?: string | null }> {
+  const raw = payload?.writes;
+  if (!Array.isArray(raw)) return [];
+  const out: Array<{ table: string; id: string; contact_id?: string | null }> = [];
+  for (const row of raw) {
+    if (!row || typeof row !== "object") continue;
+    const rec = row as Record<string, unknown>;
+    if (typeof rec.table !== "string" || typeof rec.id !== "string") continue;
+    out.push({
+      table: rec.table,
+      id: rec.id,
+      contact_id: typeof rec.contact_id === "string" ? rec.contact_id : null,
+    });
+  }
+  return out;
+}
+
 function walkStandInGraph(
   workflowId: string,
   runId: string,
   triggerLabel: string,
+  opts?: { payload?: Record<string, unknown>; untilNodeId?: string },
 ): { nodeStatus: Record<string, unknown>; enrollments: string[]; ok: boolean } {
   const w = workflows.get(workflowId);
   const nodes = (w?.graph?.nodes ?? []) as Array<{
@@ -630,6 +650,7 @@ function walkStandInGraph(
   const order: string[] = [];
   const start = nodes.find((n) => n.type === "trigger");
   if (!start) return { nodeStatus, enrollments: enrIds, ok: false };
+  const writes = writesFromRunPayload(opts?.payload);
 
   const bySource = new Map<string, string[]>();
   for (const e of edges) {
@@ -640,11 +661,17 @@ function walkStandInGraph(
 
   let cur: string | undefined = start.id;
   const seen = new Set<string>();
+  let ok = true;
   while (cur && !seen.has(cur)) {
     seen.add(cur);
     order.push(cur);
     const node = nodes.find((n) => n.id === cur);
     if (!node) break;
+    if (node.type !== "trigger" && node.data?.configured === false) {
+      nodeStatus[cur] = { status: "failed", detail: "not configured", at: now() };
+      ok = false;
+      break;
+    }
     if (node.type === "action") {
       const agentRef =
         (typeof node.data?.agentRef === "string" && node.data.agentRef) ||
@@ -662,11 +689,17 @@ function walkStandInGraph(
       });
       enrIds.push(id);
     }
-    nodeStatus[cur] = { status: "success", detail: node.type, at: now() };
+    nodeStatus[cur] = {
+      status: "success",
+      detail: node.type,
+      at: now(),
+      writes,
+    };
+    if (opts?.untilNodeId === cur) break;
     cur = bySource.get(cur)?.[0];
   }
   void triggerLabel;
-  return { nodeStatus, enrollments: enrIds, ok: order.length > 0 };
+  return { nodeStatus, enrollments: enrIds, ok: ok && order.length > 0 };
 }
 
 const HOUSE_CONTACT_IMPORT_GRAPH = {
@@ -840,9 +873,9 @@ export const standInMachineApi: MachineApiPort = {
     return { workflowId, status: "paused" };
   },
 
-  async startRun(workflowId, triggerLabel) {
+  async startRun(workflowId, triggerLabel, opts) {
     const id = `run-local-${Date.now()}`;
-    const walked = walkStandInGraph(workflowId, id, triggerLabel ?? "Manual run");
+    const walked = walkStandInGraph(workflowId, id, triggerLabel ?? "Manual run", opts);
     const row: WorkflowRunRow = {
       id,
       workflow_id: workflowId,

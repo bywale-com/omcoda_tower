@@ -40,7 +40,17 @@ type AutomationContextValue = {
   activateWorkflow: (id: string) => Promise<void>;
   getWorkflowById: (id: string) => WorkflowDefinition | undefined;
   getRunsForWorkflow: (workflowId: string) => AutomationRun[];
-  startManualRun: (workflowId: string) => AutomationRun;
+  startManualRun: (
+    workflowId: string,
+    opts?: { payload?: Record<string, unknown>; untilNodeId?: string },
+  ) => Promise<{
+    id: string;
+    workflowId: string;
+    status: string;
+    nodeStatus?: Record<string, unknown>;
+    enrollments?: string[];
+    error?: string;
+  } | null>;
   stopManualRun: (runId: string) => void;
   getActiveManualRunId: (workflowId: string) => string | null;
   /** Refresh Runs tab from workflow_run (real wire) / stand-in. */
@@ -276,59 +286,59 @@ export function AutomationProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const startManualRun = useCallback((workflowId: string) => {
+  const startManualRun = useCallback(async (workflowId: string, opts?: { payload?: Record<string, unknown>; untilNodeId?: string }) => {
     const run = createManualAutomationRun(workflowId);
     setSessionRuns((prev) => [run, ...prev]);
 
-    void (async () => {
-      try {
-        const started = await wirePorts.machineApi.startRun(workflowId, "Manual run", {
-          payload: { manual: true },
-        });
-        const finalStatus =
-          started.status === "failed" || started.status === "success"
-            ? started.status
-            : "success";
-        const enrollmentCount = started.enrollments?.length ?? 0;
-        setSessionRuns((prev) =>
-          prev.map((item) =>
-            item.id === run.id
-              ? completeAutomationRun(
-                  {
-                    ...item,
-                    id: started.id,
-                    entityLabel:
-                      enrollmentCount > 0
-                        ? `Machine run · ${enrollmentCount} enrolled`
-                        : item.entityLabel,
-                  },
-                  finalStatus === "failed" ? "failed" : "success",
-                )
-              : item,
-          ),
-        );
-        // Server already finished the walk — do not fake-complete with a timer
-        if (started.status === "running") {
-          void wirePorts.machineApi
-            .completeRun(started.id, {
-              status: "success",
-              nodeStatus: started.nodeStatus,
-              counts: { processed: 1, success: 1, enrollments: enrollmentCount },
-            })
-            .catch(() => undefined);
-        }
-        await refreshRemoteRuns(workflowId);
-      } catch {
-        setSessionRuns((prev) =>
-          prev.map((item) =>
-            item.id === run.id && item.status === "running"
-              ? completeAutomationRun(item, "failed")
-              : item,
-          ),
-        );
+    try {
+      const started = await wirePorts.machineApi.startRun(workflowId, opts?.payload ? "Run" : "Manual run", {
+        payload: opts?.payload ?? { manual: true },
+        untilNodeId: opts?.untilNodeId,
+      });
+      const finalStatus =
+        started.status === "failed" || started.status === "success"
+          ? started.status
+          : "success";
+      const enrollmentCount = started.enrollments?.length ?? 0;
+      setSessionRuns((prev) =>
+        prev.map((item) =>
+          item.id === run.id
+            ? completeAutomationRun(
+                {
+                  ...item,
+                  id: started.id,
+                  entityLabel:
+                    enrollmentCount > 0
+                      ? `Machine run · ${enrollmentCount} enrolled`
+                      : item.entityLabel,
+                },
+                finalStatus === "failed" ? "failed" : "success",
+              )
+            : item,
+        ),
+      );
+      // Server already finished the walk — do not fake-complete with a timer
+      if (started.status === "running") {
+        void wirePorts.machineApi
+          .completeRun(started.id, {
+            status: "success",
+            nodeStatus: started.nodeStatus,
+            counts: { processed: 1, success: 1, enrollments: enrollmentCount },
+          })
+          .catch(() => undefined);
       }
-    })();
-    return run;
+      await refreshRemoteRuns(workflowId);
+      return started;
+    } catch {
+      setSessionRuns((prev) =>
+        prev.map((item) =>
+          item.id === run.id && item.status === "running"
+            ? completeAutomationRun(item, "failed")
+            : item,
+        ),
+      );
+      return null;
+    }
   }, [refreshRemoteRuns]);
 
   const stopManualRun = useCallback((runId: string) => {

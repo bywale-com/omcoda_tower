@@ -31,7 +31,6 @@ import {
   SaveOutlined,
   ThunderboltOutlined,
   UserAddOutlined,
-  ExperimentOutlined,
 } from "@ant-design/icons";
 import { PlayCircleOutlined as ActionGlyph } from "@ant-design/icons";
 import { useAutomations } from "../../../context/AutomationContext";
@@ -52,7 +51,7 @@ import {
   type WorkflowNodeType,
 } from "../../../data/automationWorkflows";
 import { formatGetSummary, previewGetWrites } from "../../../data/automationGet";
-import { walkTestGraph } from "../../../data/testWalk";
+import { writesFromHandle } from "../../../data/eventTestContract";
 import { emptyRuleNodeConfig } from "../../../data/automationRules";
 import { wirePorts } from "../../../wire/registry";
 import type { EligibilityPipelineRow } from "../../../wire/machineTypes";
@@ -66,6 +65,7 @@ import { PLATE_NODE_TAG } from "./automationPlates/plateChrome";
 import { RuleOutcomesPane } from "./automationPlates/RuleOutcomesPane";
 import { CanvasOpsContext, switchableKind, useCanvasOps } from "./automationPlates/canvasOps";
 import { TriggerSelectModal } from "./automationPlates/TriggerSelectModal";
+import { TriggerTestDataPane } from "./automationPlates/TriggerTestDataPane";
 import { triggerSelectEvent, WIRE_ADD_KINDS } from "../../../data/automationTriggerSelect";
 import { WireAddMenu } from "./automationPlates/WireAddMenu";
 import { loadPickerDirectory, type PickerFirm } from "./automationPlates/pickerDirectory";
@@ -269,6 +269,37 @@ function patchNodeData(
   );
 }
 
+function paintRunOntoNodes(
+  prev: WorkflowFlowNode[],
+  currentEdges: Edge[],
+  nodeStatus: Record<string, unknown>,
+): WorkflowFlowNode[] {
+  return prev.map((node) => {
+    const st = nodeStatus[node.id];
+    if (!st || typeof st !== "object") return node;
+    const rec = st as { status?: string };
+    const writes = writesFromHandle(st);
+    const incoming = currentEdges.filter((edge) => edge.target === node.id);
+    const inputWrites = incoming.flatMap((edge) => writesFromHandle(nodeStatus[edge.source]));
+    const prevOut = (node.data.lastOutput ?? {}) as Record<string, unknown>;
+    const lastOutput = {
+      ...(node.type === "trigger" ? prevOut : {}),
+      writes: writes.length ? writes : prevOut.writes,
+    };
+    const runStatus =
+      rec.status === "failed" ? "failed" : rec.status === "success" ? "success" : node.data.runStatus;
+    return {
+      ...node,
+      data: {
+        ...node.data,
+        lastInput: incoming.length ? ({ writes: inputWrites } as WorkflowNodeData["lastInput"]) : node.data.lastInput,
+        lastOutput: lastOutput as WorkflowNodeData["lastOutput"],
+        runStatus,
+      },
+    };
+  });
+}
+
 function NodeConfigFields({
   node,
   onPatch,
@@ -311,16 +342,12 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
     getWorkflowById,
     renameAutomation,
     updateWorkflow,
-    activateWorkflow,
     startManualRun,
-    stopManualRun,
-    getActiveManualRunId,
     getRunsForWorkflow,
     refreshRuns,
   } = useAutomations();
   const workflow = getWorkflowById(workflowId);
   const [savedFlash, setSavedFlash] = useState(false);
-  const [testedFlash, setTestedFlash] = useState(false);
   const [activeTab, setActiveTab] = useState("workflow");
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [plate, setPlate] = useState<null | "action-kind" | "action-agents" | "action-inapp">(null);
@@ -333,7 +360,6 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
     workflow ? cloneNodes(workflow.nodes) : [],
   );
   const [edges, setEdges, onEdgesChange] = useEdgesState(workflow ? cloneEdges(workflow.edges) : []);
-  const activeManualRunId = workflow ? getActiveManualRunId(workflow.id) : null;
   const runs = workflow ? getRunsForWorkflow(workflow.id) : [];
   const selectedNode = selectedNodeId ? nodes.find((node) => node.id === selectedNodeId) : undefined;
   const triggerNode = useMemo(() => nodes.find((node) => node.type === "trigger"), [nodes]);
@@ -675,7 +701,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
     },
   ];
 
-  const handleSave = async () => {
+  const handleSave = async (opts?: { quiet?: boolean }) => {
     updateWorkflow(workflow.id, { nodes, edges });
     try {
       await wirePorts.machineApi.createWorkflow({
@@ -686,44 +712,87 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
         audienceScope,
         audienceContactIds: audienceScope === "select_from" ? audienceIds : [],
       });
-      setSavedFlash(true);
-      window.setTimeout(() => setSavedFlash(false), 1200);
-      message.success("Saved workflow + triggers");
+      if (!opts?.quiet) {
+        setSavedFlash(true);
+        window.setTimeout(() => setSavedFlash(false), 1200);
+        message.success("Saved workflow + triggers");
+      }
+      return true;
     } catch (err) {
       message.error(`Save failed: ${String(err)}`);
+      return false;
     }
   };
 
-  const handleLaunch = () => {
-    if (activeManualRunId) {
-      stopManualRun(activeManualRunId);
-      return;
-    }
-    // Launch = Activate (draft → active) then start a workflow_run
-    void activateWorkflow(workflow.id).then(() => {
-      startManualRun(workflow.id);
-    });
-  };
-
-  const handleTest = async () => {
-    const eventName = String(triggerNode?.data.triggerEvent ?? "").trim();
-    const kind = String(triggerNode?.data.triggerKind ?? "event");
+  const handleProvideTriggerTestData = async () => {
+    const target = selectedNode?.type === "trigger" ? selectedNode : triggerNode;
+    if (!target) return;
+    const eventName = String(target.data.triggerEvent ?? "").trim();
+    const kind = String(target.data.triggerKind ?? "event");
     if (kind !== "event" || !eventName) {
-      message.info("Test fills from a table-change trigger");
+      message.info("Provide test data on a table-change trigger");
       return;
     }
     try {
       const handle = await wirePorts.machineApi.getEventTestContract(eventName);
       if (!handle || !handle.writes.length) {
-        message.info("This trigger has no Test contract");
+        message.info("This trigger has no test contract");
         return;
       }
-      setNodes(walkTestGraph(nodes, edges, handle) as WorkflowFlowNode[]);
-      setTestedFlash(true);
-      window.setTimeout(() => setTestedFlash(false), 1400);
-      message.success(handle.door === 1 ? "Test filled from a live write" : "Test filled Input and Output");
+      patchNodeData(setNodes, target.id, {
+        lastOutput: {
+          writes: handle.writes,
+          door: handle.door,
+          version: handle.version,
+          eventName: handle.eventName,
+          writeSet: handle.writeSet,
+        } as WorkflowNodeData["lastOutput"],
+      });
+      message.success(handle.door === 1 ? "Filled from a live write" : "Filled Output with specimen writes");
     } catch (err) {
-      message.error(`Test failed: ${String(err)}`);
+      message.error(`Provide test data failed: ${String(err)}`);
+    }
+  };
+
+  const handleRun = async (untilNodeId?: string) => {
+    const writes = writesFromHandle(triggerNode?.data.lastOutput);
+    if (!writes.length) {
+      message.info("Provide test data on the trigger first.");
+      return;
+    }
+    try {
+      const saved = await handleSave({ quiet: true });
+      if (!saved) return;
+      const started = await startManualRun(workflow.id, {
+        payload: { writes },
+        untilNodeId,
+      });
+      if (!started) {
+        message.error("Run failed");
+        return;
+      }
+      if (started.nodeStatus) {
+        setNodes((prev) => paintRunOntoNodes(prev, edges, started.nodeStatus as Record<string, unknown>));
+      }
+      if (started.status === "failed") {
+        message.error(started.error ?? "Run stopped");
+        return;
+      }
+      message.success(untilNodeId ? "Ran to here" : "Run finished");
+    } catch (err) {
+      message.error(`Run failed: ${String(err)}`);
+    }
+  };
+
+  const handleLaunch = async () => {
+    try {
+      const saved = await handleSave({ quiet: true });
+      if (!saved) return;
+      await wirePorts.machineApi.activateWorkflow(workflow.id);
+      updateWorkflow(workflow.id, { status: "active" });
+      message.success("Armed — this event will run the workflow");
+    } catch (err) {
+      message.error(`Launch failed: ${String(err)}`);
     }
   };
 
@@ -753,7 +822,6 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
             />
             <Tag color={statusColor(workflow.status)}>{workflowStatusLabel(workflow.status)}</Tag>
             {savedFlash ? <Tag color="success">Saved</Tag> : null}
-            {testedFlash ? <Tag>Tested</Tag> : null}
           </Space>
           <Space>
             <Button
@@ -769,11 +837,11 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
             <Button icon={<SaveOutlined />} onClick={() => void handleSave()}>
               Save
             </Button>
-            <Button icon={<ExperimentOutlined />} onClick={() => void handleTest()}>
-              Test
+            <Button icon={<PlayCircleOutlined />} onClick={() => void handleRun()}>
+              Run
             </Button>
-            <Button type="primary" icon={<PlayCircleOutlined />} onClick={handleLaunch}>
-              {activeManualRunId ? "Stop run" : "Launch workflow"}
+            <Button type="primary" icon={<ThunderboltOutlined />} onClick={() => void handleLaunch()}>
+              Launch
             </Button>
           </Space>
         </Space>
@@ -1090,7 +1158,13 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
         nodes={nodes}
         edges={edges}
         parameters={
-          selectedNode?.type === "get" ? (
+          selectedNode?.type === "trigger" ? (
+            <TriggerTestDataPane
+              disabled={!String(selectedNode.data.triggerEvent ?? "").trim()}
+              filledCount={writesFromHandle(selectedNode.data.lastOutput).length}
+              onProvide={() => void handleProvideTriggerTestData()}
+            />
+          ) : selectedNode?.type === "get" ? (
             <GetParametersPane
               data={selectedNode.data}
               book={book}
@@ -1183,6 +1257,11 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
           ) : null
         }
         onCancel={closeInterior}
+        extraFooter={
+          selectedNode ? (
+            <Button onClick={() => void handleRun(selectedNode.id)}>Run to here</Button>
+          ) : null
+        }
         onSave={(label) => {
           if (!selectedNode) return;
           if (label !== selectedNode.data.label) {
