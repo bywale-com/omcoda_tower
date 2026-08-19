@@ -241,7 +241,8 @@ function projectNode(
   }
   if (type === "action") {
     const inApp = data.inAppAffordance;
-    if (inApp === "confirm_book" || inApp === "provision") {
+    const actionType = String(data.actionType ?? "call_agent");
+    if (inApp && actionType !== "run_audit" && actionType !== "ascribe_tag") {
       return { writes: [], extra: { silent: true, inApp } };
     }
     const setSource = chipsFor(data, "set").length
@@ -249,8 +250,7 @@ function projectNode(
           chipsFor(data, "set").some((chip) => !chip.table || row.table === chip.table),
         )
       : input;
-    const actionType = String(data.actionType ?? "call_agent");
-    if (actionType === "run_audit" || inApp === "start_audit") {
+    if (actionType === "run_audit" || inApp === "start_audit" || inApp === "reaudit") {
       const result = projectAudit(setSource);
       return { writes: result.writes, extra: { ok: true, actionType: "run_audit", summary: result.summary } };
     }

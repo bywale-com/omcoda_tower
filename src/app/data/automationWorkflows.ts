@@ -27,6 +27,7 @@ import { countPullItems } from "./automationNodeRuntime";
 import type { AutomationBuildModule } from "./automationBuildModules";
 import type { GetModuleId, GetSelect } from "./automationGet";
 import { formatGetSummary } from "./automationGet";
+import type { InAppAffordanceId } from "./inAppAffordances";
 
 export type WorkflowTarget = "audit" | "contact" | "import" | "client";
 
@@ -186,7 +187,7 @@ export type WorkflowNodeData = {
   /** A29 chips — when present, this slot’s value. Ignore getClass1/getClass2 for that slot. */
   mappedSlots?: Record<string, MappedChip[]>;
   /** Desk write-button for in-app Action. Not the Hub radio. */
-  inAppAffordance?: "start_audit" | "confirm_book" | "provision";
+  inAppAffordance?: InAppAffordanceId;
   /** Rule Direct Input — who already exists in the book. */
   directFirmId?: string;
   directContactIds?: string[];
