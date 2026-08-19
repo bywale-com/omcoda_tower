@@ -3,7 +3,7 @@
 **Seat:** Product Manager. For the **engineer** and the **Systems Analyst**.  
 **Why:** Founder 2026-08-18 18:58. We drew Input on **Get**. It is not a Get-only pane. If the build only puts that tree on Get, the other nodes are unfinished.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
-**Read:** [`PLATE-READ.md`](./PLATE-READ.md). Packets: [`GET-PACKET.md`](./GET-PACKET.md) · [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md) · [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md) · [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) · [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md).
+**Read:** [`PLATE-READ.md`](./PLATE-READ.md). Packets: [`GET-PACKET.md`](./GET-PACKET.md) · [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md) · [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md) · [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) · [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md).
 
 ---
 
@@ -16,7 +16,7 @@ Input (left tree: prior nodes in canvas order, outputs nested, Schema / Table / 
 
 Output (top = this run’s writes, click, preview below) is every node that has Output. Specimen is A20. Get’s Output tab is this.
 
-Parameters on A23 right (Module, Every firm / Select firm, Firm, Contact) are Get only. Do not put that cascade on Rule, Action, If, or Trigger.
+Parameters on A23 right (Module, Every firm / Select firm, Firm, Contact) are Get only. Do not put that cascade on Rule, Action, If, or Trigger. Action in-app Parameters are docs/register/IN-APP-ACTION-PACKET.md.
 
 Outcomes (stacked cards, per-outcome GUI | JS) are Rule only. Specimen is A21. Do not put Outcomes on Get.
 
@@ -31,7 +31,7 @@ Kind-specific middle is that kind’s packet. Shared panes are this file. Do not
 |------|--------|----------|------------|
 | **Input** | **Every** node that has Input | **A29** (A23 left **prior**) | Prior nodes in **this** chain, canvas order, outputs nested. Type control in front of the name. Drag any row including top-level into a box as a **chip**. Schema / Table / JSON. Search. |
 | **Output** | **Every** node that has Output | **A20** | Top = every write **this run** made. Click one. Bottom = that write. |
-| **Parameters** | **That kind** | A23 **right** is **Get** | Get: Module + every/select + class cascade (Firm → Contact on Contacts). Action: A7 / A14. Trigger select: **A26** (grain + Local cascade). If: A16. |
+| **Parameters** | **That kind** | A23 **right** is **Get** | Get: Module + every/select + class cascade (Firm → Contact on Contacts). Action **Agents:** A14. Action **in-app:** [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) (module write-buttons). Trigger select: **A26** (grain + Local cascade). If: A16. |
 | **Outcomes** | **Rule** | **A21** | Stacked. Per-outcome GUI \| JS. On / off. Not a node-wide GUI/Custom tab. |
 
 Get tabs: **Input | Output**. Parameters sit in the Input tab as the right column.  
@@ -48,7 +48,7 @@ The Input shape was named as **how inputs appear inside nodes** — as they chai
 
 Trigger is the start of a chain: it may have **no** prior node. Empty Input is valid. Do not invent a fake ancestor. Do not put Firm / Contact dropdowns on the trigger.
 
-Action / If interiors we already drew (A7, A14, A16) are **Parameters** (the middle). They still get **Input** (stack) and **Output** (A20) even though those plates did not open those tabs. Completes the module. No extra PNG.
+Action / If interiors we already drew (A7, A14, A16) are **Parameters** (the middle). They still get **Input** (stack) and **Output** (A20) even though those plates did not open those tabs. Completes the module. No extra PNG. **In-app Action** after A7 is [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) — inventory of module write-buttons, grouped by module; do not spec the picker.
 
 **Click the node = configure.** Do not send click to Switch. Switch is **⋯** (A27). First pick / Switch opens the event picker (A26). Wire **+** is A28.
 

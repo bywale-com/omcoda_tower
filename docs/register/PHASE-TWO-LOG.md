@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. In-app Action (thinking): can we automate X = does X already exist as a **module affordance**. Actions live on the module; Automations consumes them. HolonBoundary is the analog, not the spec. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Law 41:** in-app Action = module write-affordance. Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). UI pass + screenshots; same pass completes A31/A32. Do not plant.
 
 **How we maintain this log**
 
@@ -1533,6 +1533,18 @@ Flag 15:43 untouched.
 **What we did:** Stamp. Thinking. No wrapper spec. No packet. Live today: SQL `action` is `call_agent` only; Hub names extra kinds the walker ignores. Do not invent a HolonBoundary-for-writes.
 
 **Do not:** invent an Action catalog; spec the wrap; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 08:29 UTC — Lock in-app Action packet (law 41). Screenshots, then redesign.
+
+**Why:** Founder: next UI pass should have a lot of in-app actions, **by module**. Don’t spec the picker — the implementer sees the potential actions, lays them out, we redesign. Retrofit Input / Parameters / Output; if it breaks, fix the UI later. Screenshots from click Action → **in the application** → every distinct screen. Same pass completes the last packets (**A31 / A32**). SA inspects the walker; don’t block the face.
+
+**What we did:** [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). Law **41**. FACE open item 6 points at the packet (not a list to fill). PRIMITIVES: who-this-applies-to is Get. Screenshot folder `automations-blueprint/in-app-action-pass/`.
+
+**Do not:** spec the picker; invent writes; freeze Hub radios as the catalog; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 

@@ -115,6 +115,7 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | Open the **If / Condition** node | Calls from previous result (**A16**). Not a rule. |
 | Insert / add a node | Palette (A6 prior). Wire **+** (**A28**). Select **Action**. No Trigger on the wire. |
 | Open the **Action** node | Kind: **Agents** vs **in the application** (A7). |
+| Action kind = **in the application** | Module write-buttons, grouped by module. Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). Screenshots in `in-app-action-pass/`. |
 | Action kind = Agents | First: **assign existing** or **from a template** (**A14**). Then select agent (whole sequence) · declare objective · if data request, create the form (A8 prior / **A12** canon). You do **not** author a new agent here. |
 | **Test** | Canvas **Test** (**A30** buttons). Packet [`TEST-PACKET.md`](./TEST-PACKET.md). Two doors. |
 | Open the **Get** node | Parameters **A23** right. Input look **A29**. Packets [`GET-PACKET.md`](./GET-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md). |
@@ -309,7 +310,9 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Why this does what we wanted:** Automations touches more of the app. Hub already names in-app kinds (`manage_lists`, `assign_task`, `notify_consultant`) and agent enroll (`enroll_sequence` + agent ref). Do not invent a longer catalog in the picture.
 
-**Not this plate:** Form builder. Objective picker.
+**Later (08:29):** in-app after this pick is **not** Hub’s radio list. Inventory = module write-buttons, grouped by module. Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). A7 stays the **kind split** only.
+
+**Not this plate:** Form builder. Objective picker. The in-app inventory (no PM PNG — implementer screenshots, then redesign).
 
 ---
 

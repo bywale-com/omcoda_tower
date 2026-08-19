@@ -58,15 +58,20 @@ Two kinds. That is the whole split.
 - Create **from a template**  
 - You do **not** author a new agent in Automations  
 
-**2. In the application** — do a thing the app already does  
+**2. In the application** — press a write-button the module already has  
+
+**Law 41:** can we automate X = does that module already afford X. The inventory is those affordances, grouped by module — not this table as a catalog. Automations consumes; it does not author a second button. Packet: [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md).
+
+Named so far (examples, not the list):
 
 | Action | Plain |
 |--------|--------|
 | **Ascribe a tag** | Put a tag on the person (subscribed / not, valid / not, …) |
 | **Run an audit** | Same audit the desk already runs. A node. Not hardcoded on upload. |
-| **Who this applies to** | Contacts on the automation. Does **not** start a mission now. |
 | **Make a form** | Automations owns the form. Questions are the required data. |
 | **Provision a firm** | Later idea — see below. Canonical Automations **hears** that a firm was created (event). It does not have to **be** the desk that creates it. |
+
+**Who this applies to** is **Get**, not an Action.
 
 Not on the list: “write whatever into whatever table.” Not on the list: webhook-as-an-action.
 
@@ -179,8 +184,8 @@ That is Automations. That is why the module exists. If that path is hard, we did
 ## How to use this when a new idea shows up
 
 - If it is a **when** → it must be an event on the table, or schedule / manual / webhook.  
-- If it is a **do** → it must be Agents (assign / from template) or an in-app action on the table.  
+- If it is a **do** → it must be Agents (assign / from template) or an in-app action that is already a **module write-affordance** (law 41).  
 - If it is **after a node** → the next step uses **every write that run made**. Do not specify a field catalog.  
 - If it is neither → the shape does not support it. Don’t “consider it” as a maybe. Say no, or name a new primitive on purpose.
 
-Face: [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Visual: A7 (two kinds of action) · A14 (assign / template) · A18 (Global / Local) · A12 (form) · A17 (firm provisioned as an **event**). Provision as an **action** is this stamp.
+Face: [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Visual: A7 (two kinds of action) · A14 (assign / template) · A18 (Global / Local) · A12 (form) · A17 (firm provisioned as an **event**). In-app inventory: [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). Provision as an **action** is this stamp.
