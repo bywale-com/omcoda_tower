@@ -32,8 +32,10 @@ export type WalkContext = {
   triggerPayload: Record<string, unknown>;
   constants: Record<string, unknown>;
   contactIds: string[];
-  /** This run’s writes — the next node picks from here. */
+  /** Last node only. Cardinality default. 015. */
   previousWrites: RunWrite[];
+  /** Every completed node’s writes this run. Input / chips. 017. */
+  chainWrites: Record<string, RunWrite[]>;
   eligibilityPass?: boolean;
   branchTaken?: string;
   lastOutput?: Record<string, unknown>;
@@ -178,6 +180,42 @@ function pickWrites(writes: RunWrite[], pickTable?: string, pickId?: string): Ru
 
 function uniqueIds(ids: Array<string | null | undefined>): string[] {
   return [...new Set(ids.filter((id): id is string => Boolean(id)))];
+}
+
+function personIdsFromWrites(writes: RunWrite[]): string[] {
+  return uniqueIds(
+    writes.map((w) => w.contact_id ?? (PERSON_WRITE_TABLES.has(w.table) ? w.id : null)),
+  );
+}
+
+function mappedWrites(
+  data: Record<string, unknown>,
+  ctx: WalkContext,
+): RunWrite[] | null {
+  const slots = data.mappedSlots;
+  if (!slots || typeof slots !== "object") return null;
+  const chips = Object.values(slots as Record<string, unknown>).flatMap((row) =>
+    Array.isArray(row) ? row : [],
+  );
+  if (!chips.length) return null;
+  const out: RunWrite[] = [];
+  for (const chip of chips) {
+    if (!chip || typeof chip !== "object") continue;
+    const rec = chip as Record<string, unknown>;
+    const fromNode = typeof rec.fromNodeId === "string" ? rec.fromNodeId : "";
+    const source = (fromNode && ctx.chainWrites[fromNode]) || ctx.previousWrites;
+    const table = typeof rec.table === "string" ? rec.table : "";
+    const id = typeof rec.id === "string" ? rec.id : "";
+    let rows = table ? source.filter((w) => w.table === table) : source;
+    if (id) rows = rows.filter((w) => w.id === id || w.contact_id === id);
+    out.push(...rows);
+  }
+  return out;
+}
+
+function commitWrites(ctx: WalkContext, nodeId: string, writes: RunWrite[]): void {
+  ctx.chainWrites[nodeId] = writes;
+  ctx.previousWrites = writes;
 }
 
 async function executeGet(
@@ -650,12 +688,9 @@ export async function walkValidatedWorkflow(
   }
 
   let contactIds = opts.contactIds ?? [];
+  const triggerWrites = writesFromPayload(opts.triggerPayload);
   if (!contactIds.length) {
-    const ready = await pool.query<{ contact_id: string }>(
-      `SELECT contact_id FROM sequence_ready WHERE firm_id=$1 AND ready=true LIMIT 50`,
-      [opts.firmId],
-    );
-    contactIds = ready.rows.map((r) => r.contact_id);
+    contactIds = personIdsFromWrites(triggerWrites);
   }
 
   const ctx: WalkContext = {
@@ -665,7 +700,8 @@ export async function walkValidatedWorkflow(
     triggerPayload: opts.triggerPayload ?? {},
     constants: {},
     contactIds,
-    previousWrites: writesFromPayload(opts.triggerPayload),
+    previousWrites: triggerWrites,
+    chainWrites: {},
     eligibilityPass:
       opts.triggerPayload?.anyPass === true ||
       opts.triggerPayload?.eligibilityPass === true ||
@@ -687,6 +723,7 @@ export async function walkValidatedWorkflow(
 
     try {
       if (type === "trigger") {
+        commitWrites(ctx, nodeId, ctx.previousWrites);
         nodeStatus[nodeId] = {
           status: "success",
           detail: `trigger ${triggerKind(data)}`,
@@ -716,6 +753,7 @@ export async function walkValidatedWorkflow(
       if (type === "branch") {
         const picked = await evalIfPick(pool, ctx, data);
         ctx.branchTaken = picked.pass ? "true" : "false";
+        ctx.chainWrites[nodeId] = ctx.previousWrites;
         nodeStatus[nodeId] = {
           status: "success",
           detail: picked.personSplit
@@ -744,8 +782,11 @@ export async function walkValidatedWorkflow(
       }
 
       if (type === "get") {
-        const result = await executeGet(pool, data);
-        ctx.previousWrites = result.writes;
+        const mapped = mappedWrites(data, ctx);
+        const result = mapped
+          ? { writes: mapped, contactIds: personIdsFromWrites(mapped) }
+          : await executeGet(pool, data);
+        commitWrites(ctx, nodeId, result.writes);
         if (result.contactIds?.length) ctx.contactIds = result.contactIds;
         ctx.lastOutput = { writes: result.writes, module: data.getModule ?? "contacts" };
         nodeStatus[nodeId] = {
@@ -764,7 +805,7 @@ export async function walkValidatedWorkflow(
         ctx.listingFieldIds = Array.isArray(result.lastOutput.listing)
           ? (result.lastOutput.listing as string[])
           : [];
-        ctx.previousWrites = result.writes.length ? result.writes : ctx.previousWrites;
+        commitWrites(ctx, nodeId, result.writes.length ? result.writes : ctx.previousWrites);
         ctx.lastOutput = result.lastOutput;
         if (Array.isArray(data.directContactIds) && (data.directContactIds as unknown[]).length) {
           ctx.contactIds = uniqueIds((data.directContactIds as unknown[]).map(String));
@@ -782,6 +823,24 @@ export async function walkValidatedWorkflow(
 
       if (type === "action") {
         const actionType = normalizeActionType(data);
+        const inApp = String(data.inAppAffordance ?? "");
+        const mapped = mappedWrites(data, ctx);
+        if (mapped) {
+          const people = personIdsFromWrites(mapped);
+          if (people.length) ctx.contactIds = people;
+        }
+        if (inApp === "confirm_book" || inApp === "provision") {
+          commitWrites(ctx, nodeId, []);
+          ctx.lastOutput = { silent: true, inApp };
+          nodeStatus[nodeId] = {
+            status: "success",
+            detail: `${inApp} silent until wrap`,
+            at: now(),
+            writes: [],
+          };
+          for (const e of outgoing(edges, nodeId)) await visit(e.target);
+          return;
+        }
         const actionId = `act-${opts.workflowId}-${nodeId}`;
         const persistAction = async (
           agentRef: string | null,
@@ -844,7 +903,7 @@ export async function walkValidatedWorkflow(
             label: data.label ?? null,
             formQuestionIds: data.formQuestionIds ?? [],
           });
-          ctx.previousWrites = writes;
+          commitWrites(ctx, nodeId, writes);
           ctx.lastOutput = { ok: true, actionType, agentRef, enrollments: enrolled, writes };
           nodeStatus[nodeId] = {
             status: "success",
@@ -888,7 +947,7 @@ export async function walkValidatedWorkflow(
             }
           }
           await persistAction(null, { tag, contacts: ids.length, notesFromVerdict });
-          ctx.previousWrites = writes;
+          commitWrites(ctx, nodeId, writes);
           ctx.lastOutput = { ok: true, actionType, tag, contacts: ids.length, writes };
           nodeStatus[nodeId] = {
             status: "success",
@@ -901,14 +960,15 @@ export async function walkValidatedWorkflow(
         }
 
         if (actionType === "run_audit") {
+          const handle = mapped ?? ctx.previousWrites;
           const pickTable = String(data.pickTable ?? "import_batch").trim();
-          const picked = pickWrites(ctx.previousWrites, pickTable || undefined);
+          const picked = pickWrites(handle, pickTable || undefined);
           const importIds = uniqueIds(
-            (pickTable === "import_batch" ? picked : ctx.previousWrites)
+            (pickTable === "import_batch" ? picked : handle)
               .filter((w) => w.table === "import_batch")
               .map((w) => w.id),
           );
-          const contacts = await contactsForAudit(pool, ctx, picked.length ? picked : ctx.previousWrites);
+          const contacts = await contactsForAudit(pool, ctx, picked.length ? picked : handle);
           const result = await executeAuditRun(pool, {
             firmId: opts.firmId,
             importIds,
@@ -919,7 +979,7 @@ export async function walkValidatedWorkflow(
             label: data.label ?? "Audit the contacts",
             writes: result.writes,
           });
-          ctx.previousWrites = result.writes;
+          commitWrites(ctx, nodeId, result.writes);
           ctx.contactIds = uniqueIds(contacts.map((c) => c.id));
           ctx.lastOutput = {
             ok: true,
@@ -964,7 +1024,7 @@ export async function walkValidatedWorkflow(
           n += 1;
         }
         await persistAction(null, { contacts: n, formQuestionIds: data.formQuestionIds ?? [] });
-        ctx.previousWrites = writes;
+        commitWrites(ctx, nodeId, writes);
         ctx.lastOutput = { ok: true, actionType, contacts: n, writes };
         nodeStatus[nodeId] = {
           status: "success",

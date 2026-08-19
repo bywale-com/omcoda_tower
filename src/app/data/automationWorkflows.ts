@@ -183,8 +183,10 @@ export type WorkflowNodeData = {
   getClass2?: string[];
   /** Firm filled + Contact closed = all children. False after deselect-all + pick. */
   getClass2All?: boolean;
-  /** A29 chips — pointers into the previous handle, not a mapping table. */
+  /** A29 chips — when present, this slot’s value. Ignore getClass1/getClass2 for that slot. */
   mappedSlots?: Record<string, MappedChip[]>;
+  /** Desk write-button for in-app Action. Not the Hub radio. */
+  inAppAffordance?: "start_audit" | "confirm_book" | "provision";
   /** Rule Direct Input — who already exists in the book. */
   directFirmId?: string;
   directContactIds?: string[];
@@ -506,15 +508,12 @@ export const WORKFLOW_PALETTE_BLOCKS: PaletteBlock[] = [
   },
   {
     id: "action-sequence",
-    label: "Call agent",
-    description: "Assign an existing sequence or copy from a template",
+    label: "Action",
+    description: "In the app, or an agent",
     module: "actions",
     nodeType: "action",
     defaultData: {
-      label: "Call agent",
-      actionType: "call_agent",
-      assignMode: "existing",
-      actionSummary: "Assign existing sequence…",
+      label: "Action",
       configured: false,
     },
   },
@@ -1239,6 +1238,8 @@ export function isGetConfigured(data: WorkflowNodeData): boolean {
   const module = data.getModule ?? "contacts";
   if (module === "reference") return data.configured;
   if ((data.getSelect ?? "every") === "every") return true;
+  if ((data.mappedSlots?.firm?.length ?? 0) > 0) return true;
+  if ((data.mappedSlots?.contact?.length ?? 0) > 0) return true;
   return Boolean(data.getClass1);
 }
 
