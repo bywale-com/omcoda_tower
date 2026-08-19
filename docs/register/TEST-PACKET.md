@@ -57,7 +57,7 @@ Do not recut 015. Stamp SYSTEMS-ANALYST-LOG.
 
 The machine will run. Test is not to prove that.
 
-**Test fills Input and Output with that node’s writes — the fields and the values — so you can map them.** It does not Launch. It does not enroll, import, audit-for-real, or send.
+**Test fills Input and Output with that node’s writes — the fields and the values — so you can map them.** It does not Launch. It does not enroll, import, audit-for-real, or send. The left is still that write-shape (law 42), not n8n in-memory. Test does not INSERT.
 
 Where the values come from is two doors. Do not collapse them.
 
