@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A33** in-app inventory (SA persist list, not three rows). Law 41. Engineer #100 merged main. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Thinking (not locked): new contact → audit → tag → if tagged → agent. The If on the tag after you just tagged them is the hit. Do not plant.
 
 **How we maintain this log**
 
@@ -1561,6 +1561,18 @@ Flag 15:43 untouched.
 **What we did:** Plate [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app-action-inventory.png). Grouped list from that persist walk. Chrome may drift — trust the list. Packet + blueprint updated. First-pass shots kept as live, not canon inventory.
 
 **Do not:** freeze three rows; pad Hub leftovers or ascribe_tag; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 10:12 UTC — New contact → audit → tag → if tagged → agent (thinking)
+
+**Why:** Founder: picture the canvas. On new contact → run audit on that contact → given the result, tag XYZ → if tagged XYZ, run this agent. Tagging isn’t built yet. Then: think about “tag this contact” for a second — the agents — if I was to say if. See if you run into what I just realized.
+
+**What we did:** Stamp only. Thinking. Nodes you’d draw: Trigger (new contact) · Action (audit) · If (audit result) · Action (tag) · If (is tagged) · Action (agents). The hit: the second If is tautological on this canvas. You just tagged them. The If that matters is on the **audit**. Tag is a write onto the contact so the system has it. Agents hang off that same If, or hear the tag as a fact elsewhere — not “if tagged” after the tag node.
+
+**Do not:** lock; mint a tag table; pad ascribe onto A33 until Contacts has the button; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 
