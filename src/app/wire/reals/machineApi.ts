@@ -633,6 +633,8 @@ export const realMachineApi: MachineApiPort = {
         tags?: string[];
         firmName?: string | null;
         createdAt?: string | null;
+        reachability?: "reachable" | "partial" | "unreachable" | null;
+        sequenceReady?: boolean | null;
       }>;
     }>(`/machine/contact-records?scope=${encodeURIComponent(scope)}&firmId=${encodeURIComponent(firm())}`, {
       headers: firmHeader(),

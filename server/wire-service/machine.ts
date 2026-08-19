@@ -1764,23 +1764,33 @@ export async function handleContactRecordsList(c: Context) {
     firm_name: string | null;
     created_at: string;
     tags: unknown;
+    reachability: "reachable" | "partial" | "unreachable" | null;
+    sequence_ready: boolean | null;
   }>(
     scope === "every_firm"
       ? `SELECT c.id, c.firm_id, c.email, c.phone, c.name, c.notes, f.name AS firm_name, c.created_at,
             COALESCE((
               SELECT json_agg(ct.tag ORDER BY ct.created_at)
               FROM contact_tag ct WHERE ct.contact_id = c.id AND ct.firm_id = c.firm_id
-            ), '[]'::json) AS tags
+            ), '[]'::json) AS tags,
+            rv.verdict AS reachability,
+            sr.ready AS sequence_ready
          FROM contact_records c
          LEFT JOIN ct_firms f ON f.id = c.firm_id
+         LEFT JOIN reachability_verdicts rv ON rv.contact_id = c.id AND rv.firm_id = c.firm_id
+         LEFT JOIN sequence_ready sr ON sr.contact_id = c.id AND sr.firm_id = c.firm_id
          ORDER BY f.name ASC NULLS LAST, c.name ASC NULLS LAST, c.id ASC`
       : `SELECT c.id, c.firm_id, c.email, c.phone, c.name, c.notes, f.name AS firm_name, c.created_at,
             COALESCE((
               SELECT json_agg(ct.tag ORDER BY ct.created_at)
               FROM contact_tag ct WHERE ct.contact_id = c.id AND ct.firm_id = c.firm_id
-            ), '[]'::json) AS tags
+            ), '[]'::json) AS tags,
+            rv.verdict AS reachability,
+            sr.ready AS sequence_ready
          FROM contact_records c
          LEFT JOIN ct_firms f ON f.id = c.firm_id
+         LEFT JOIN reachability_verdicts rv ON rv.contact_id = c.id AND rv.firm_id = c.firm_id
+         LEFT JOIN sequence_ready sr ON sr.contact_id = c.id AND sr.firm_id = c.firm_id
          WHERE c.firm_id=$1 ORDER BY c.updated_at DESC NULLS LAST, c.id ASC`,
     scope === "every_firm" ? [] : [firm],
   );
@@ -1796,6 +1806,8 @@ export async function handleContactRecordsList(c: Context) {
       tags: Array.isArray(r.tags) ? r.tags : [],
       firmName: r.firm_name,
       createdAt: r.created_at,
+      reachability: r.reachability ?? null,
+      sequenceReady: r.sequence_ready == null ? null : Boolean(r.sequence_ready),
     })),
   });
 }

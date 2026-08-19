@@ -1665,6 +1665,8 @@ export const standInMachineApi: MachineApiPort = {
         tags: c.tags ?? [],
         firmName: c.firmName ?? "Firm",
         createdAt: c.createdAt ?? now(),
+        reachability: (bookVerdicts.get(c.id) as "reachable" | "partial" | "unreachable" | undefined) ?? null,
+        sequenceReady: bookSequenceReady.has(c.id) ? Boolean(bookSequenceReady.get(c.id)) : null,
       }));
   },
 

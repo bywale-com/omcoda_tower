@@ -5,6 +5,14 @@ import type { ColumnsType } from "antd/es/table";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { ClientWorkspace } from "./ClientWorkspace";
 import { parseCsvFileToContacts } from "../../prototype/operator/operatorWireHelpers";
+import type { ReachabilityVerdict } from "../../../wire/machineTypes";
+import {
+  contactDisplayName,
+  PHASE_LABEL,
+  phaseTagColor,
+  resolveWorkspacePhase,
+  type HaltRetention,
+} from "./shared";
 
 const { Text } = Typography;
 
@@ -16,7 +24,53 @@ type ContactRow = {
   email?: string;
   notes?: string;
   tags?: string[];
+  reachability?: ReachabilityVerdict | null;
+  sequenceReady?: boolean | null;
 };
+
+function toContactRow(c: {
+  id: string;
+  name?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  notes?: string | null;
+  tags?: string[];
+  reachability?: ReachabilityVerdict | null;
+  sequenceReady?: boolean | null;
+}): ContactRow {
+  return {
+    key: c.id,
+    id: c.id,
+    name: contactDisplayName(c),
+    phone: c.phone ?? "",
+    email: c.email ?? undefined,
+    notes: c.notes ?? undefined,
+    tags: c.tags ?? [],
+    reachability: c.reachability ?? null,
+    sequenceReady: c.sequenceReady ?? null,
+  };
+}
+
+function auditMark(row: ContactRow) {
+  if (!row.reachability && row.sequenceReady == null) return null;
+  return (
+    <Space size={4} wrap>
+      {row.reachability ? (
+        <Tag
+          color={
+            row.reachability === "reachable" ? "success" : row.reachability === "partial" ? "warning" : "error"
+          }
+        >
+          {row.reachability}
+        </Tag>
+      ) : null}
+      {row.sequenceReady === true ? <Tag color="success">sequence-ready</Tag> : null}
+      {row.sequenceReady === false && row.reachability !== "unreachable" ? (
+        <Tag>sequence-ready · no</Tag>
+      ) : null}
+    </Space>
+  );
+}
 
 type ContactsModuleProps = {
   activeContactId: string | null;
@@ -65,17 +119,7 @@ export function ContactsModule({
         if (cancelled) return;
         setBookFirmId(firmId);
         setBookError(null);
-        setBookRows(
-          contacts.map((c) => ({
-            key: c.id,
-            id: c.id,
-            name: contactDisplayName(c),
-            phone: c.phone ?? "",
-            email: c.email ?? undefined,
-            notes: c.notes ?? undefined,
-            tags: c.tags ?? [],
-          })),
-        );
+        setBookRows(contacts.map(toContactRow));
         setMeetingReadyIds(new Set(mtg.meetings.map((m) => m.contactId)));
       } catch (err) {
         if (cancelled) return;
@@ -124,6 +168,12 @@ export function ContactsModule({
       dataIndex: "phone",
       width: 140,
       render: (phone: string) => phone || "—",
+    },
+    {
+      title: "Audit",
+      key: "audit",
+      width: 220,
+      render: (_: unknown, row: ContactRow) => auditMark(row),
     },
     {
       title: "Tag",
@@ -218,17 +268,7 @@ export function ContactsModule({
                           })),
                         });
                         const contacts = await wirePorts.machineApi.listContactRecords();
-                        setBookRows(
-                          contacts.map((c) => ({
-                            key: c.id,
-                            id: c.id,
-                            name: contactDisplayName(c),
-                            phone: c.phone ?? "",
-                            email: c.email ?? undefined,
-                            notes: c.notes ?? undefined,
-                            tags: c.tags ?? [],
-                          })),
-                        );
+                        setBookRows(contacts.map(toContactRow));
                         setGrantNote({
                           type: "success",
                           text: `Imported ${result.imported} contacts${
