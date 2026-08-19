@@ -41,7 +41,8 @@ Do not recut 015. Stamp SYSTEMS-ANALYST-LOG.
 ## Founder comments (preserve)
 
 - A29 is the look. It **supersedes** the current Input side inside **every** node. Perfect down to the icons, down to the dropdown **in front of the text**.
-- 12:17: A35 is great. Prioritize Input **field icons** (more appropriate than live). Generated **color profile ≠ the app**. **Kind · In the application** chips — if no purpose, teaching labels. Green **Action** chip under the title looks great; they do not see it on the app.
+- 12:17: A35 is great. Prioritize Input **field icons** (more appropriate than live). **Kind · In the application** chips — if no purpose, teaching labels. Green **Action** chip under the title looks great; they do not see it on the app.
+- 12:30: they **like** the color in the image. More lively than live. Opposite of “desk color = live.”
 - Drag **each** entry — **up to the top-level item** — into any box. It looks like its **own separate element** in the box, not text.
 - That is A29, those facets. Locked.
 - A30: only agree Test **sits** (Save · Test · Launch). Purpose of the rest of A30 was unclear. Filling is [`TEST-PACKET.md`](./TEST-PACKET.md), not another field PNG.

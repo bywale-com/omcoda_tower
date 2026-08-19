@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A35** revisions: type glyphs, live color, Kind chips teaching, green Action chip. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A35** color: the image is more lively — that is the product. Type glyphs. Kind chips teaching. Green Action chip. Do not plant.
 
 **How we maintain this log**
 
@@ -1620,6 +1620,8 @@ Flag 15:43 untouched.
 
 **What we did:** Law **39** revised: test data **on the trigger**, not a canvas run. Law **43**: **Run** = execute now (writes); **Launch** = arm. Live Launch today does both — split. Packets [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md). A30 Test is prior. Header **Save · Run · Launch**. Feel: Tag is not on A33 (no button). Legacy ascribe is a typed string + notes switch — **who** is not a mapped box. Start Audit / Halt **do** map from the left. That is the hole. Do not pad Tag onto A33.
 
+**Do not:** keep canvas Test; let Launch fire a run; recut 015; overwrite 15:43; plant.
+
 Flag 15:43 untouched.
 
 ---
@@ -1629,6 +1631,8 @@ Flag 15:43 untouched.
 **Why:** Founder: image of the inside of Add tag, elected. Only prior is contact import (that event). Keep the design structure. See the parameter interior.
 
 **What we did:** Plate [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png). Same Action interior (Input \| Output, Kind, Close Input). Left = Contact import tree. **Contact** = chip filling the box. **Tag** = empty picker. Chrome may drift — trust those two boxes. Do not pad A33 from this PNG.
+
+**Do not:** Get cascade on Action; Notes from verdict; leftover Select under the chip; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 
@@ -1641,6 +1645,18 @@ Flag 15:43 untouched.
 **What we did:** Packet. **Type glyphs = A35** (every Input). **Color = live app**, not the PNG grade. **Kind · In the application** = teaching — kill (kind change is ⋯ Switch). Green **Action** chip under the title = spec.
 
 **Do not:** restyle the desk to A35’s palette; keep the Kind chip strip; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 12:30 UTC — Color was the opposite. A35 is more lively. That is the product.
+
+**Why:** Founder: we misunderstood. They **like** the color in the image. More lively than what exists. Opposite of “desk color = live.” Everything else (glyphs, teaching Kind chips, green Action chip) was right.
+
+**What we did:** Reverse the color lock. **A35 color is the product.** Move the app toward it.
+
+**Do not:** keep “PNG color ≠ desk”; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 

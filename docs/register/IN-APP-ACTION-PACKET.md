@@ -22,7 +22,7 @@
 5. **Input / Parameters / Output are already designed.** Retrofit. Mapped occupancy is **A31**. Close Input / resize is **A32**.
 6. **Deliverable:** screenshots of **every distinct screen** from **click the Action node → select in the application → onward.** Not Agents. Not hover states. Distinct screens only.
 7. **This is UI.** SA inspects whether the walk can actually run those writes (`action` is still `call_agent` only). Do not block the face on that.
-8. **A35 revisions (12:17).** Input **type glyphs** on that PNG are more proper than live — build those (every Input tree). Generated **color ≠ the app** — desk color is live. **Kind · In the application** chips are teaching — kill. Green **Action** chip under the title is spec.
+8. **A35 revisions (12:17, color corrected 12:30).** Input **type glyphs** on that PNG are more proper than live — build those (every Input tree). **Color of A35 is the product** — more lively than live; move the app toward that. **Kind · In the application** chips are teaching — kill. Green **Action** chip under the title is spec.
 
 Live today: `ActionInAppModal` / `IN_APP_AFFORDANCES` on main (#100) is **three rows** (Start Audit · Confirm book · Provision). That followed SA 08:40’s filter. SA **09:35** walked the desks: persist-bound controls are the list. **A33** is that list. Kill three-rows as the face. Hub leftovers stay dead. `ascribe_tag` still has no desk button — do not pad.
 
@@ -41,7 +41,7 @@ After in-app: the list is every write-button that already exists on a module. Gr
 
 Look: docs/register/automations-blueprint/A33-in-app-action-inventory.png — grouped list. Chrome may drift; desk = live /prototype-ant + A22.
 
-Look: docs/register/automations-blueprint/A35-add-tag-parameters.png — Add tag Parameters after contact import. Trust: type glyphs on Input, green Action chip under the title, Contact occupied / Tag picker. Do NOT build the Kind · In the application chips (teaching). Do NOT copy the PNG’s color grade — desk color is live /prototype-ant.
+Look: docs/register/automations-blueprint/A35-add-tag-parameters.png — Add tag Parameters after contact import. Trust: type glyphs on Input, green Action chip under the title, Contact occupied / Tag picker. Color on that PNG is more lively than live — that is the product, move the app toward it. Do NOT build the Kind · In the application chips (teaching).
 
 Retrofit the primitives you already have:
 - Input = A29 tree (every node). Close Input / resize = A32.
@@ -90,7 +90,8 @@ Stamp SYSTEMS-ANALYST-LOG.
 - Enough of a packet to also **complete the last couple of packets** (A31 / A32 mapped box).
 - 09:51: engineer built; SA enriched the list; they merged the engineer to **main**. Check both. Work on images.
 - 12:12: see the inside of **Add tag**, elected. Only prior is contact import. Keep the design structure. That’s the parameter interior.
-- 12:17: A35 is great. Prioritize Input **field icons** (more appropriate than live). Generated **color profile ≠ the app**. **Kind · In the application** chips — if no purpose, teaching labels. Green **Action** chip under the title looks great; they do not see it on the app.
+- 12:17: A35 is great. Prioritize Input **field icons** (more appropriate than live). **Kind · In the application** chips — if no purpose, teaching labels. Green **Action** chip under the title looks great; they do not see it on the app.
+- 12:30: color was the opposite of what we wrote. They **like** the color in the image. More lively than live. That is the product.
 
 ---
 
@@ -126,6 +127,7 @@ Desk chrome = live `/prototype-ant` + A22. Not Hub.
 - **Add tag** Parameters specimen: **A35**. Contact = occupied chip from the prior. Tag = empty picker. Not Get’s cascade.
 - Green **Action** chip under the node title (**A35**). Spec.
 - Input type glyphs as **A35** (more proper than live). Every Input tree.
+- **Color as A35** — more lively than live. Move the app toward that.
 
 ## 2. Do not build
 
@@ -193,7 +195,7 @@ Live first pass (engineer): [`automations-blueprint/in-app-action-pass/`](./auto
 
 Redesign: [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app-action-inventory.png). Grouping + length. Chrome may drift — desk = live + A22.
 
-**Add tag interior:** [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png). Prior = contact import. Trust type glyphs, green Action chip, Contact occupancy + Tag picker. Kind chips on that PNG are teaching. Color of the PNG is not the desk.
+**Add tag interior:** [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png). Prior = contact import. Trust type glyphs, **color (more lively)**, green Action chip, Contact occupancy + Tag picker. Kind chips on that PNG are teaching.
 
 ---
 

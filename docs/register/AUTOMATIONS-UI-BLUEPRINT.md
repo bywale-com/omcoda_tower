@@ -98,7 +98,7 @@ In-app Ant Automations workbench is **not** this blueprint. Mock = generated ima
 - **A30** generated chrome drifted (Harbor / icon sider). Canvas **Test** is **prior**. Trust the chain / palette as furniture only. Header is **Save · Run · Launch**. Test data is **on the trigger**. Desk = **A22**. Packets [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md).
 - **A31 / A32** interiors are **strong** (occupancy; Input rail + resize grip). Background / sider / extra chrome on those files is far off the current design system. **Do not copy the background. Do not skip the interiors.** Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
 - **A33** chrome may drift. Trust the **grouped list**. Desk = live `/prototype-ant` + **A22**. Live three-row `02-in-app-by-module.png` is the first pass, not the inventory.
-- **A35** chrome / **color grade** may drift. Desk color = live `/prototype-ant`. Trust: Input **type glyphs**, green **Action** chip under the title, **Contact occupancy + Tag picker**. **Kind · In the application** chips on that PNG are teaching — do not build.
+- **A35** chrome may drift (sider). Trust: Input **type glyphs**, **color (more lively than live — that is the product)**, green **Action** chip under the title, **Contact occupancy + Tag picker**. **Kind · In the application** chips on that PNG are teaching — do not build.
 
 ---
 
@@ -791,16 +791,17 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 ![A35 add tag parameters](./automations-blueprint/A35-add-tag-parameters.png)
 
-**Rationale (12:12, revise 12:17):** Founder: image is great. Prioritize what the PNG got right that live did not: Input **type glyphs**. Color of generated plates is **not** the app. **Kind · In the application** chips — teaching if they have no purpose. Kill them. Green **Action** chip under the title — spec; they do not see that on the app.
+**Rationale (12:12, revise 12:17, color corrected 12:30):** Founder: image is great. Prioritize Input **type glyphs**. They **like the color in the image** — more lively than live; that is the product. **Kind · In the application** chips — teaching. Kill them. Green **Action** chip under the title — spec.
 
 **On the glass (canon):**
 - Input type glyphs beside each field as **A35** (Aa / 123 / phone …). More proper than live TypeControl. Priority.
+- **Color as A35** — more lively than the live app. Move the app toward it.
 - Green **Action** chip under the node title.
 - **Contact** occupied chip. **Tag** empty picker.
 
-**Do not build:** Get cascade. Notes from verdict. Leftover Select under the chip. **Kind** + **In the application** chip strip (teaching). The PNG’s color grade / sider as the desk.
+**Do not build:** Get cascade. Notes from verdict. Leftover Select under the chip. **Kind** + **In the application** chip strip (teaching).
 
-**Stale pixel:** generated color profile. Desk color = live `/prototype-ant`. Trust glyphs, Action chip, two boxes.
+**Stale pixel:** generated sider. Trust glyphs, **color**, Action chip, two boxes.
 
 **Not this plate:** A33 inventory. A34 on the contact. Output tab. Changing kind (that is **⋯ Switch**, law 38).
 
