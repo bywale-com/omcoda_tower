@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-19 08:40 UTC — **017 stands.** PR #96 in-app Action / A31 ascribed. Desk buttons = inventory. Mapped chip = one source. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-19 09:35 UTC — **08:40 three-row inventory was a filter.** Persist-bound controls on main are the list. 017 grain stands. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1414,6 +1414,19 @@ Packet [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017.md).
 Park: [`SYSTEMS-IN-APP-ACTION-ASCRIBE.md`](./SYSTEMS-IN-APP-ACTION-ASCRIBE.md). Revision on [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017.md).
 
 **Do not:** recut 015; nullify 017; mint a wrapper table; pad Hub leftovers; overwrite 15:43.
+
+---
+
+## 2026-08-19 09:35 UTC — Three in-app rows was not the desks. Evidence.
+
+**Why:** Founder looking at the first in-app list: basically three. “Are you serious. Evidence for what is true.”
+
+**Hard:** 08:40 YES column (Start Audit · Confirm book · Provision) was **SA filter**, not a walk. Law 41 = every control that **writes**. Walked `origin/main` `/prototype-ant`. Persist-bound: import (three doors), audit, halt, provision, invite, bind/campaign state, reference publish, library upserts + eval pin, Agents Save + house settings, Automations Save/audience/Launch/pipeline, sending allocate, contact book + consent. Agents Launch / enroll still writes — **A7 other card**, not missing. Paint: Commercial DEMO `setState`, Acquisition `message.success`, tag chips display-only, Hub radios with no desk button.
+
+Park: [`SYSTEMS-IN-APP-ACTION-ASCRIBE.md`](./SYSTEMS-IN-APP-ACTION-ASCRIBE.md) section A replaced.
+
+**Do not:** recut 015; nullify 017 grain; pad Hub leftovers or ascribe_tag until Contacts has the button; overwrite 15:43.
+
 
 
 

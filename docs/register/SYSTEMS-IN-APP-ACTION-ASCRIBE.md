@@ -1,7 +1,7 @@
 # Systems — in-app Action + mapped box (PR #96). 017 stands.
 
 **Seat:** Systems Analyst.  
-**When:** 2026-08-19 08:40 UTC.  
+**When:** 2026-08-19 08:40 UTC. **Corrected 09:35** — 08:40 “three YES” was a filter, not a desk walk. Evidence below.  
 **What this is:** answers to PM [`IN-APP-ACTION-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/IN-APP-ACTION-PACKET.md) (law 41) and [`MAPPED-BOX-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/MAPPED-BOX-PACKET.md) (law 40 / A31 · A32). Shape ascribe. **No new tables.** **017 is not recut.** **Do not recut 015.** Flag **15:43**.  
 **Join:** grain [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017.md) · Get/Rule [`SYSTEMS-GET-RULE-ASCRIBE.md`](./SYSTEMS-GET-RULE-ASCRIBE.md). Face on open PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96).
 
@@ -23,34 +23,63 @@ Agents stays A14 / `call_agent`. Do not collapse into in-app.
 
 ---
 
-## A. Write-buttons we already have (quote the desk)
+## A. Evidence — persist-bound controls on `origin/main`
 
-Walked live `/prototype-ant` on `origin/main` + walker `workflowWalk.ts`. Hub leftovers are not desks.
+**08:40 was wrong as an inventory.** I kept three YES rows (Start Audit, Confirm book, Provision) and marked the rest “not in-app / authorship / meta / later.” That was taste. Law 41 is **the desk**. If it is a control that writes, it is on the list. Implementer lays it out by module. Founder redesigns after screenshots.
 
-| Module | Desk control | Worker / table | In-app inventory | 017 verb |
-|--------|--------------|----------------|------------------|----------|
-| **Book readiness** | **Start Audit run** | `machineApi.createAuditRun` → `executeAuditRun` → `audit_runs` (+ verdicts / `sequence_ready`) | **Yes.** Walker `run_audit` already. | **Set.** Once over the set. |
-| Book readiness | Upload book CSV | parse CSV then **the same** `createAuditRun` (auto-audit) | **No.** Confirm book is the import door (013). Do not list a second Audit. | — |
-| **Contacts** | **Confirm book for Tower** (file) | `machineApi.importContactBook` → `import_batch` + `contact_records` | **Yes** as that write-button. **No** `action.type` yet. Same wrap pattern as 014 (`run_audit` = `executeAuditRun`). | **Set** (the batch). People land on the handle. |
-| Contacts | Tag chips on the table | Display of `contact_tag` | **No button.** Walker `ascribe_tag` stays for graphs that already use it (house). Do **not** pad the picker. | Person, when that type runs |
-| **Automations** | Add contact | C8b audience (`workflow.audience_*`) | **No.** Audience is who is enrolled, not a write-action. A19 stays off this pocket. | — |
-| **Agents** | Add contact | `createEnrollment` → `enrollment` | **No.** That is **Agents** Action (A14 / `call_agent`). | Person (Agents path) |
-| **Firms / Provision** | Provision | `provisionFirm` → `ct_firms` | Desk **yes.** `action.type` **silent.** 014 already named wrap-later. Face may show it; walk is silent until the wrap. | Set. `N = 1` artifact |
-| **Reference** | Publish / upsert | `upsertReference` | Config write. Pack-update still **silent** as an event (016: no v1). Do not freeze as in-app this pass. | — |
-| **Agents** | Save template / bind | `upsertTemplate` · `upsertBinding` | Authorship. Not an in-app Action. Enroll is Agents. | — |
-| **Automations** | Save · Activate | graph jsonb + `activateWorkflow` | Meta. Do not automate Save-this-graph. Honest empty on this module. | — |
-| Hub radio | `manage_lists` · `assign_task` · `notify_consultant` | Walker fallback → `engagement_records.event_kind` | **Kill on the face.** No desk write-button. 010 parked them. Do not lengthen the inventory from Hub. | — |
+Walked `/prototype-ant` on `origin/main` (not Hub). **Persist** = a port that writes. **Paint** = React `setState` / `message.success` / DEMO rows — looks like a button, does not write. Duplicate doors = same worker, two desks; both are true.
 
-**PM paste “`action` is still `call_agent` only” is stale.** On main the walker already runs:
+**A7 pocket:** **in-app** = in-the-application Action list. **Agents** = A14 / enroll / Launch agent (still a write; other card). Not “doesn’t exist.”
 
-- `call_agent` → enroll
-- `run_audit` → `executeAuditRun`
-- `ascribe_tag` → `contact_tag` (+ optional notes)
-- anything else in the CHECK → `engagement_records` (the Hub leftovers)
+### Persist (these are the list)
 
-Do not block the UI pass on a gap that is not the gap. The real gap: **desk buttons with no `action.type`** (Confirm book, Provision). Face may list them. Walk stays silent until named as a wrap. Do not invent generic “write any table.”
+| Module | Control (label on glass) | Call | Writes | A7 |
+|--------|--------------------------|------|--------|----|
+| **Contacts** | Confirm book for Tower | `importContactBook` | `import_batch` + `contact_records` | in-app |
+| **Prepared** | Authorize book (file path) | `importContactBook` | same as Confirm book | in-app |
+| **Prepared** | Authorize book (CRM) | `crmOAuth.grant` | grant / book handover | in-app |
+| **Prepared** | Revoke | `crmOAuth.revoke` | grant | in-app |
+| **Book readiness** | Upload book CSV | `importContactBook` | same import door | in-app |
+| **Book readiness** | Start Audit run | `createAuditRun` → `executeAuditRun` | `audit_runs` + verdicts / `sequence_ready` | in-app. Walker `run_audit` already |
+| **Book readiness** | Re-audit remainder | **same** `startAuditRun` / `createAuditRun` | same | in-app (same button, second label) |
+| **Consultant workspace** | Halt outreach / Halt book | `haltStore.commit` | halt | in-app |
+| **Consultant workspace** | Lift / Resume | `haltStore.lift` | halt | in-app |
+| **Provision** | Provision | `provisionFirm` | `ct_firms` (+ auth user when present) | in-app |
+| **Provision** | Issue / send invite | `issueAccessInvite` | access token / invite | in-app |
+| **Firm operations bind** | Active | `activateWorkflow` + `upsertBinding` + `putEvaluationPin` + `setCampaignState("running")` | workflow + binding + pin + `campaign_states` | in-app |
+| **Firm operations bind** | Armed | `setCampaignState("armed-for-activation")` | `campaign_states` | in-app |
+| **Reference data** | Publish version | `upsertReference` | `reference_versions` | in-app |
+| **Configuration libraries** | Pathway / motion / field-class / reachability switches + reorder | `upsertEligibilityPathway` · `upsertMotionPrecedence` · `upsertFieldClassRouting` · `upsertReachabilityCheck` | those rule tables | in-app |
+| **Configuration libraries** | Publish version (evaluation pack) | `putEvaluationPin` | evaluation pin | in-app |
+| **Agents** (sequence) | Save | `saveSequenceHousing` + `upsertBinding` (+ `saveAttemptCycle` / `saveSeqChannelRules` / `upsertAttemptCriteria` when override) | `campaign` / sequence + binding + rules | in-app |
+| **Agents** (house settings) | Attempt / channel / cohort / metrics / phase order | `upsertAttemptCriteria` · `upsertChannelOrder` · `upsertCohortScoring` · `upsertMetricsThreshold` · `upsertPhaseOrder` · `saveAttemptCycle` · `saveSeqChannelRules` | those tables | in-app |
+| **Agents** | Add contact (ok) | `enrollSequenceContacts` | `enrollment` | **Agents** |
+| **Agents** | Launch agent | `createEnrollment` | `enrollment` | **Agents** |
+| **Automations** | Save | `createWorkflow` (graph + audience) | `workflow` + trigger materialize | in-app |
+| **Automations** | Add contact (ok) | `createWorkflow` with `audienceScope` / `audienceContactIds` | same workflow row (A19) | in-app |
+| **Automations** | Launch workflow | `activateWorkflow` then start run | `workflow_state` + `workflow_run` | in-app |
+| **Automations** Settings | Eligibility pipeline reorder | `upsertEligibilityPipeline` | `seq_eligibility_pipeline` | in-app |
+| **Sending infrastructure** | Allocate subdomain | `onAllocate` / pool-send port | pool subdomain (wire, not `action.type`) | in-app |
+| **Contact portal** | Confirm booking | `bookMeeting` | `meeting_booked` | in-app (contact module) |
+| **Contact portal** | Agree / Silence | `consentSilence.setConsent` / `.silence` | consent / silenced | in-app (contact module) |
 
-Live face `ActionInAppModal` radios the five hardcoded kinds. That is **not** the inventory. Kill it as the catalog.
+Same worker, several doors: **`importContactBook`** = Contacts Confirm book · Prepared file · Book Upload. **`createAuditRun`** = Start Audit · Re-audit remainder.
+
+### Paint / read — not inventory (so the list is not “every button in Ant”)
+
+| Module | What you see | Evidence it does **not** write |
+|--------|----------------|--------------------------------|
+| **Commercial** | Save terms · Release · Return · Dispute | `setStatuses` / `setTermsDraft` on `DEMO_FIRMS`. No `machineApi` |
+| **Acquisition & ads** | Save | `message.success("Saved draft · …")` — no port |
+| **Configuration libraries** | Publish (automation / engagement pack) | `publishPackInCatalog` only — Bind dropdowns, no `machineApi` |
+| **Contacts** | Tag chips | render `c.tags`. No ascribe control |
+| **Meetings** | Copy brief | clipboard |
+| **Audit trail / Oversight / Firm health / Register & evolution / Customer support / Activation state** | panes / jumps | list/get only (Activation state reads `getCampaignState`) |
+| **ActionInAppModal** | five radios | Hub leftovers `manage_lists` / `assign_task` / `notify_consultant` have **no** desk control. Walker dumps `engagement_records`. **Kill as catalog.** `ascribe_tag` has **no** desk button either — walker exists for house graphs; do not pad a Tag row until Contacts has the button |
+
+**Walker (stale PM line stays corrected):** `call_agent` · `run_audit` · `ascribe_tag` already run. Face list = **persist table above**, not those three CHECK tokens and not the five radios.
+
+Do not block the UI. Walk stays silent until a listed persist has an `action.type` wrap (014). Do not invent generic “write any table.”
 
 ---
 

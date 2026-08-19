@@ -480,4 +480,4 @@ Cut [`SYSTEMS-CHANGE-PACKET-016.md`](./SYSTEMS-CHANGE-PACKET-016.md). Two tables
 
 ## 017 — 2026-08-19 08:10 — available vs run count
 
-Along the DAG every node’s writes are **available**. How many times this node runs = **last** output’s records (people if any, else 1 artifact). Chip from the left sets `N` to that set. Audit once over the set; tag per person. [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017.md). **08:40 revision:** inventory = desk write-buttons (law 41); A31 chip **is** the slot (`mappedSlots`). Does not nullify 08:10. Ascribe: [`SYSTEMS-IN-APP-ACTION-ASCRIBE.md`](./SYSTEMS-IN-APP-ACTION-ASCRIBE.md). No SQL. Do not recut 015.
+Along the DAG every node’s writes are **available**. How many times this node runs = **last** output’s records (people if any, else 1 artifact). Chip from the left sets `N` to that set. Audit once over the set; tag per person. [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017.md). **08:40:** law 41 + A31. **09:35:** inventory is the persist table in [`SYSTEMS-IN-APP-ACTION-ASCRIBE.md`](./SYSTEMS-IN-APP-ACTION-ASCRIBE.md), not three YES rows. Grain unchanged. No SQL. Do not recut 015.
