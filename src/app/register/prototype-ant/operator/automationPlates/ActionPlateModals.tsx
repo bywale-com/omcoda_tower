@@ -1,28 +1,27 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { AppstoreOutlined, TeamOutlined } from "@ant-design/icons";
 import { Button, Input, Modal, Radio, Space, Switch, Tag, Typography } from "antd";
 import { COLLECTIBLE_FIELDS } from "../../../../data/collectibleFields";
+import {
+  IN_APP_AFFORDANCES,
+  inAppAffordance,
+  inAppModules,
+} from "../../../../data/inAppAffordances";
 import { MODAL_SCROLL } from "../modalScroll";
 import {
   ACTION_TYPE_DEFAULT_LABELS,
   WORKFLOW_AGENT_OPTIONS,
+  type MappedChip,
   type WorkflowActionType,
   type WorkflowAgentRef,
   type WorkflowNodeData,
 } from "../../../../data/automationWorkflows";
+import { MappedSlot } from "./MappedSlot";
 
 const SEQUENCE_RADIOS: { id: WorkflowAgentRef; classId: "optin" | "reengagement" | "reactivation"; label: string }[] = [
   { id: "tpl.optin_launch.v1", classId: "optin", label: "Opt-in" },
   { id: "tpl.reengagement.v1", classId: "reengagement", label: "Re-engagement" },
   { id: "tpl.reactivation.v1", classId: "reactivation", label: "Reactivation" },
-];
-
-const IN_APP_KINDS: { id: WorkflowActionType; label: string }[] = [
-  { id: "run_audit", label: ACTION_TYPE_DEFAULT_LABELS.run_audit },
-  { id: "ascribe_tag", label: ACTION_TYPE_DEFAULT_LABELS.ascribe_tag },
-  { id: "manage_lists", label: ACTION_TYPE_DEFAULT_LABELS.manage_lists },
-  { id: "assign_task", label: ACTION_TYPE_DEFAULT_LABELS.assign_task },
-  { id: "notify_consultant", label: ACTION_TYPE_DEFAULT_LABELS.notify_consultant },
 ];
 
 function KindCard({
@@ -102,7 +101,7 @@ export function ActionKindModal({
           selected={kind === "in_app"}
           icon={<AppstoreOutlined />}
           title="In the application"
-          body="Change something inside the system from this operation (lists, tasks, records — not outreach)."
+          body="Press a write-button that already exists on a module."
           onClick={() => setKind("in_app")}
         />
       </div>
@@ -420,83 +419,226 @@ export function ActionInAppModal({
   embed?: boolean;
   onRegisterSave?: (fn: () => void) => void;
 }) {
-  const current =
-    data.actionType && data.actionType !== "call_agent" && data.actionType !== "enroll_sequence"
-      ? data.actionType
-      : "run_audit";
-  const [actionType, setActionType] = useState<WorkflowActionType>(current);
+  const picked = inAppAffordance(data.inAppAffordance) ?? (data.actionType === "run_audit" ? inAppAffordance("start_audit") : undefined);
+  const legacyTag = data.actionType === "ascribe_tag" && !data.inAppAffordance;
+  const [query, setQuery] = useState("");
+  const [filename, setFilename] = useState(typeof data.actionSummary === "string" ? data.actionSummary : "");
+  const [firmName, setFirmName] = useState("");
+  const [website, setWebsite] = useState("");
+  const [email, setEmail] = useState("");
   const [tag, setTag] = useState(data.tag ?? "");
-  const [pickTable, setPickTable] = useState(data.pickTable ?? "import_batch");
   const [notesFromVerdict, setNotesFromVerdict] = useState(data.notesFromVerdict === true);
 
   useEffect(() => {
     if (!open) return;
-    setActionType(current);
-    setTag(data.tag ?? "");
-    setPickTable(data.pickTable ?? (current === "run_audit" ? "import_batch" : data.pickTable ?? ""));
-    setNotesFromVerdict(data.notesFromVerdict === true);
-  }, [open, current, data.tag]);
+    setQuery("");
+  }, [open, data.inAppAffordance]);
 
-  const commit = () =>
+  const hay = query.trim().toLowerCase();
+  const grouped = useMemo(() => {
+    return inAppModules()
+      .map((module) => ({
+        module,
+        rows: IN_APP_AFFORDANCES.filter(
+          (row) =>
+            row.module === module &&
+            (!hay ||
+              row.label.toLowerCase().includes(hay) ||
+              row.module.toLowerCase().includes(hay)),
+        ),
+      }))
+      .filter((group) => group.rows.length > 0);
+  }, [hay]);
+
+  const slotChips = (slot: string): MappedChip[] => data.mappedSlots?.[slot] ?? [];
+  const setSlot = (slot: string, chips: MappedChip[]) => {
     onSave({
-      actionType,
-      tag: actionType === "ascribe_tag" ? tag : data.tag,
-      pickTable: actionType === "run_audit" ? pickTable : data.pickTable,
-      notesFromVerdict: actionType === "ascribe_tag" ? notesFromVerdict : data.notesFromVerdict,
+      mappedSlots: { ...(data.mappedSlots ?? {}), [slot]: chips },
       configured: true,
-      actionSummary: ACTION_TYPE_DEFAULT_LABELS[actionType],
-      label: ACTION_TYPE_DEFAULT_LABELS[actionType],
+    });
+  };
+
+  const pick = (id: (typeof IN_APP_AFFORDANCES)[number]["id"]) => {
+    const row = inAppAffordance(id);
+    if (!row) return;
+    onSave({
+      inAppAffordance: row.id,
+      actionType: row.actionType ?? undefined,
+      configured: true,
+      label: row.label,
+      actionSummary: row.label,
+      agentRef: undefined,
+      pickTable: row.id === "start_audit" ? "import_batch" : data.pickTable,
+    });
+  };
+
+  const commit = () => {
+    if (legacyTag) {
+      onSave({
+        actionType: "ascribe_tag",
+        tag,
+        notesFromVerdict,
+        configured: true,
+        label: data.label || "Ascribe a tag",
+      });
+      return;
+    }
+    if (!picked) return;
+    onSave({
+      inAppAffordance: picked.id,
+      actionType: picked.actionType ?? undefined,
+      configured: true,
+      label: picked.label,
+      actionSummary: picked.id === "confirm_book" ? filename || picked.label : picked.label,
       agentRef: undefined,
     });
+  };
 
   useEffect(() => {
     if (embed && open) onRegisterSave?.(commit);
   });
 
+  const parameters = picked ? (
+    <Space direction="vertical" size={12} style={{ width: "100%" }}>
+      {picked.id === "start_audit" ? (
+        <div>
+          <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
+            Book
+          </Typography.Text>
+          <MappedSlot
+            chips={slotChips("set")}
+            onRemove={(index) => setSlot("set", slotChips("set").filter((_, i) => i !== index))}
+            onDropChip={(chip) => setSlot("set", [...slotChips("set"), chip])}
+          >
+            <Input placeholder="Drop import_batch or contacts" disabled />
+          </MappedSlot>
+        </div>
+      ) : null}
+      {picked.id === "confirm_book" ? (
+        <div>
+          <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
+            Filename
+          </Typography.Text>
+          <Input value={filename} onChange={(event) => setFilename(event.target.value)} placeholder="book.csv" />
+        </div>
+      ) : null}
+      {picked.id === "provision" ? (
+        <>
+          <div>
+            <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
+              Firm name
+            </Typography.Text>
+            <MappedSlot
+              chips={slotChips("name")}
+              onRemove={(index) => setSlot("name", slotChips("name").filter((_, i) => i !== index))}
+              onDropChip={(chip) => setSlot("name", [...slotChips("name"), chip])}
+            >
+              <Input value={firmName} onChange={(event) => setFirmName(event.target.value)} placeholder="Firm name" />
+            </MappedSlot>
+          </div>
+          <div>
+            <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
+              Website
+            </Typography.Text>
+            <Input value={website} onChange={(event) => setWebsite(event.target.value)} placeholder="https://" />
+          </div>
+          <div>
+            <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
+              Email
+            </Typography.Text>
+            <MappedSlot
+              chips={slotChips("email")}
+              onRemove={(index) => setSlot("email", slotChips("email").filter((_, i) => i !== index))}
+              onDropChip={(chip) => setSlot("email", [...slotChips("email"), chip])}
+            >
+              <Input value={email} onChange={(event) => setEmail(event.target.value)} placeholder="consultant@firm.example" />
+            </MappedSlot>
+          </div>
+        </>
+      ) : null}
+    </Space>
+  ) : null;
+
+  const inventory = (
+    <div>
+      <Input.Search
+        placeholder="Search"
+        allowClear
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
+        style={{ marginBottom: 12 }}
+      />
+      {grouped.length === 0 ? (
+        <Typography.Text type="secondary">—</Typography.Text>
+      ) : (
+        grouped.map((group) => (
+          <div key={group.module} style={{ marginBottom: 14 }}>
+            <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 6 }}>
+              {group.module}
+            </Typography.Text>
+            {group.rows.map((row) => (
+              <button
+                key={row.id}
+                type="button"
+                onClick={() => pick(row.id)}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  textAlign: "left",
+                  padding: "8px 10px",
+                  marginBottom: 4,
+                  borderRadius: 6,
+                  border: picked?.id === row.id ? "1px solid #1677ff" : "1px solid #f0f0f0",
+                  background: picked?.id === row.id ? "#e6f4ff" : "#fff",
+                  cursor: "pointer",
+                }}
+              >
+                {row.label}
+              </button>
+            ))}
+          </div>
+        ))
+      )}
+    </div>
+  );
+
   const body = (
-      <>
+    <>
       <Space size={6} style={{ marginBottom: 12 }}>
         <Tag color="blue" style={{ cursor: "pointer" }} onClick={onChangeKind}>
           Kind
         </Tag>
         <Tag>In the application</Tag>
+        {picked ? (
+          <Tag
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+              onSave({
+                inAppAffordance: undefined,
+                actionType: undefined,
+                configured: false,
+                label: "Action",
+              })
+            }
+          >
+            {picked.module}
+          </Tag>
+        ) : null}
       </Space>
-      <Typography.Paragraph type="secondary">
-        Change something inside the system from this operation (lists, tasks, records — not outreach).
-      </Typography.Paragraph>
-      <Radio.Group
-        value={actionType}
-        onChange={(event) => setActionType(event.target.value)}
-        style={{ display: "flex", flexDirection: "column", gap: 10 }}
-      >
-        {IN_APP_KINDS.map((row) => (
-          <Radio key={row.id} value={row.id}>
-            {row.label}
-          </Radio>
-        ))}
-      </Radio.Group>
-      {actionType === "run_audit" ? (
-        <Input
-          value={pickTable}
-          onChange={(event) => setPickTable(event.target.value)}
-          placeholder="Pick write (import_batch)"
-          style={{ marginTop: 12 }}
-        />
-      ) : null}
-      {actionType === "ascribe_tag" ? (
-        <Space direction="vertical" style={{ width: "100%", marginTop: 12 }}>
-          <Input
-            value={tag}
-            onChange={(event) => setTag(event.target.value)}
-            placeholder="Tag"
-          />
+      {legacyTag ? (
+        <Space direction="vertical" style={{ width: "100%" }}>
+          <Input value={tag} onChange={(event) => setTag(event.target.value)} placeholder="Tag" />
           <Space>
             <Switch checked={notesFromVerdict} onChange={setNotesFromVerdict} />
             <Typography.Text>Notes from verdict</Typography.Text>
           </Space>
         </Space>
-      ) : null}
-      </>
+      ) : picked ? (
+        parameters
+      ) : (
+        inventory
+      )}
+    </>
   );
 
   if (embed) return body;
@@ -517,7 +659,7 @@ export function ActionInAppModal({
       footer={
         <Space>
           <Button onClick={onCancel}>Cancel</Button>
-          <Button type="primary" onClick={commit}>
+          <Button type="primary" onClick={commit} disabled={!picked}>
             Save
           </Button>
         </Space>

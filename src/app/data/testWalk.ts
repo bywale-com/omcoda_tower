@@ -240,10 +240,19 @@ function projectNode(
     };
   }
   if (type === "action") {
+    const inApp = data.inAppAffordance;
+    if (inApp === "confirm_book" || inApp === "provision") {
+      return { writes: [], extra: { silent: true, inApp } };
+    }
+    const setSource = chipsFor(data, "set").length
+      ? input.filter((row) =>
+          chipsFor(data, "set").some((chip) => !chip.table || row.table === chip.table),
+        )
+      : input;
     const actionType = String(data.actionType ?? "call_agent");
-    if (actionType === "run_audit") {
-      const result = projectAudit(input);
-      return { writes: result.writes, extra: { ok: true, actionType, summary: result.summary } };
+    if (actionType === "run_audit" || inApp === "start_audit") {
+      const result = projectAudit(setSource);
+      return { writes: result.writes, extra: { ok: true, actionType: "run_audit", summary: result.summary } };
     }
     if (actionType === "ascribe_tag") {
       return { writes: projectAscribe(data, input), extra: { ok: true, actionType, tag: data.tag ?? null } };

@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState, type DragEvent, type ReactNode } from "react";
-import { Button, Empty, Input, Modal, Select, Space, Table, Tag, Typography } from "antd";
+import { useEffect, useMemo, useState } from "react";
+import { Button, Empty, Input, Modal, Select, Space, Table, Typography } from "antd";
 import { GET_MODULES, getModuleSpec } from "../../../../data/automationGet";
 import type { MappedChip, WorkflowNodeData } from "../../../../data/automationWorkflows";
 import { wirePorts } from "../../../../wire/registry";
 import { MODAL_SCROLL } from "../modalScroll";
 import { loadPickerDirectory } from "./pickerDirectory";
-import { HANDLE_CHIP_MIME } from "./InputPane";
+import { MappedSlot } from "./MappedSlot";
 
 type BookRow = {
   id: string;
@@ -16,70 +16,6 @@ type BookRow = {
 };
 
 type Option = { value: string; label: string };
-
-function ChipBox({
-  chips,
-  onRemove,
-  onDropChip,
-  children,
-}: {
-  chips: MappedChip[];
-  onRemove: (index: number) => void;
-  onDropChip: (chip: MappedChip) => void;
-  children: ReactNode;
-}) {
-  const [over, setOver] = useState(false);
-  const accept = (event: DragEvent) => {
-    if ([...event.dataTransfer.types].includes(HANDLE_CHIP_MIME)) event.preventDefault();
-  };
-  return (
-    <div
-      onDragOver={(event) => {
-        accept(event);
-        setOver(true);
-      }}
-      onDragLeave={() => setOver(false)}
-      onDrop={(event) => {
-        event.preventDefault();
-        setOver(false);
-        const raw = event.dataTransfer.getData(HANDLE_CHIP_MIME);
-        if (!raw) return;
-        try {
-          onDropChip(JSON.parse(raw) as MappedChip);
-        } catch {
-          /* ignore */
-        }
-      }}
-      style={{
-        border: `1px dashed ${over ? "#1677ff" : "#d9d9d9"}`,
-        borderRadius: 6,
-        padding: chips.length ? 6 : 0,
-        minHeight: 32,
-        background: over ? "#e6f4ff" : undefined,
-      }}
-    >
-      {chips.length ? (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: children ? 6 : 0 }}>
-          {chips.map((chip, index) => (
-            <Tag
-              key={`${chip.label}-${index}`}
-              color="blue"
-              closable
-              onClose={(event) => {
-                event.preventDefault();
-                onRemove(index);
-              }}
-              style={{ marginInlineEnd: 0 }}
-            >
-              {chip.label}
-            </Tag>
-          ))}
-        </div>
-      ) : null}
-      {children}
-    </div>
-  );
-}
 
 export function GetParametersPane({
   data,
@@ -146,10 +82,26 @@ export function GetParametersPane({
     return [...map.entries()].map(([value, label]) => ({ value, label }));
   }, [firmOptions, loadedFirms, book, loadedBook, upstreamIds]);
 
-  const contactsOfFirm = useMemo(
-    () => [...book, ...loadedBook].filter((row) => row.firmId === data.getClass1),
-    [book, loadedBook, data.getClass1],
-  );
+  const slotChips = (slot: string): MappedChip[] => data.mappedSlots?.[slot] ?? [];
+  const setSlot = (slot: string, chips: MappedChip[]) => {
+    onPatch({
+      mappedSlots: { ...(data.mappedSlots ?? {}), [slot]: chips },
+    });
+  };
+
+  const contactsOfFirm = useMemo(() => {
+    const people = [...book, ...loadedBook];
+    const firmChip = slotChips("firm")[0];
+    if (firmChip) {
+      return people.filter(
+        (row) =>
+          row.firmId === firmChip.id ||
+          row.firmName === firmChip.label ||
+          (typeof firmChip.label === "string" && row.firmName && firmChip.label.includes(row.firmName)),
+      );
+    }
+    return people.filter((row) => row.firmId === data.getClass1);
+  }, [book, loadedBook, data.getClass1, data.mappedSlots]);
 
   const class2Options = useMemo<Option[]>(() => {
     if (spec.id === "contacts") {
@@ -171,13 +123,6 @@ export function GetParametersPane({
   const class2Label = allSelected
     ? `All ${spec.class2Label?.toLowerCase() ?? "records"}`
     : `${data.getClass2?.length ?? 0} selected`;
-
-  const slotChips = (slot: string): MappedChip[] => data.mappedSlots?.[slot] ?? [];
-  const setSlot = (slot: string, chips: MappedChip[]) => {
-    onPatch({
-      mappedSlots: { ...(data.mappedSlots ?? {}), [slot]: chips },
-    });
-  };
 
   const restamp = (module: string) => {
     const next = getModuleSpec(module);
@@ -248,7 +193,7 @@ export function GetParametersPane({
             <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
               {spec.class1Label}
             </Typography.Text>
-            <ChipBox
+            <MappedSlot
               chips={slotChips("firm")}
               onRemove={(index) => setSlot("firm", slotChips("firm").filter((_, i) => i !== index))}
               onDropChip={(chip) => setSlot("firm", [...slotChips("firm"), chip])}
@@ -270,14 +215,14 @@ export function GetParametersPane({
                   })
                 }
               />
-            </ChipBox>
+            </MappedSlot>
           </div>
-          {spec.class2Label && !spec.silentClass2 && data.getClass1 ? (
+          {spec.class2Label && !spec.silentClass2 && (data.getClass1 || slotChips("firm").length) ? (
             <div>
               <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
                 {spec.class2Label}
               </Typography.Text>
-              <ChipBox
+              <MappedSlot
                 chips={slotChips("contact")}
                 onRemove={(index) => setSlot("contact", slotChips("contact").filter((_, i) => i !== index))}
                 onDropChip={(chip) => setSlot("contact", [...slotChips("contact"), chip])}
@@ -293,7 +238,7 @@ export function GetParametersPane({
                 >
                   {class2Label}
                 </Button>
-              </ChipBox>
+              </MappedSlot>
             </div>
           ) : null}
         </>

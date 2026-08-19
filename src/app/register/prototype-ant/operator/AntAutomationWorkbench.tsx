@@ -512,7 +512,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
     if (node.type === "action") {
       if (node.data.actionType === "call_agent" || node.data.actionType === "enroll_sequence") {
         setPlate("action-agents");
-      } else if (node.data.actionType) {
+      } else if (node.data.inAppAffordance || (node.data.actionType && node.data.actionType !== "call_agent")) {
         setPlate("action-inapp");
       } else {
         setPlate("action-kind");
@@ -1180,7 +1180,6 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
               }}
               onSave={(patch) => {
                 patchNodeData(setNodes, selectedNode.id, patch);
-                closeInterior();
               }}
             />
           ) : null
@@ -1193,6 +1192,11 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
           }
           if (selectedNode.type === "action" && plate === "action-kind") {
             saveRef.current?.();
+            return;
+          }
+          if (selectedNode.type === "action" && plate === "action-inapp") {
+            saveRef.current?.();
+            closeInterior();
             return;
           }
           if (selectedNode.type === "action" || selectedNode.type === "branch") {
