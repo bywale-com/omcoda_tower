@@ -92,16 +92,7 @@ Smallest canvas for this talk. Trigger = **contact import**. Next = **Action · 
 
 **Trigger test data** = A24 write-set: `import_batch` + `contact_records`. Provide that on the trigger. Then Run can go.
 
-**Tag parameters (the feel, then A35):**
-
-You could not find them. That was the hole. Specimen now: [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png).
-
-- Left: only prior = **contact import** (`import_batch` · `contact_records`).
-- **Contact** = mapped box, occupied. Chip from `contact_records`. No leftover Select.
-- **Tag** = empty picker (the value you choose). Not a record from the left.
-- Not Get’s Module / Every / Select. Not Notes from verdict. Not implicit who.
-
-Do not pad Tag onto A33 from this plate. This is Parameters, not the inventory.
+**Tag parameters:** [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md) · [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png). Contact occupied. Tag picker. Do not pad onto A33.
 
 ---
 

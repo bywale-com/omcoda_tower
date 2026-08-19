@@ -3,7 +3,7 @@
 **Seat:** Product Manager. For the **engineer** and the **Systems Analyst**.  
 **Why:** Founder 2026-08-18 18:58. We drew Input on **Get**. It is not a Get-only pane. If the build only puts that tree on Get, the other nodes are unfinished.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
-**Read:** [`PLATE-READ.md`](./PLATE-READ.md). Packets: [`GET-PACKET.md`](./GET-PACKET.md) · [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md) · [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md) · [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) · [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md).
+**Read:** [`PLATE-READ.md`](./PLATE-READ.md). Packets: [`GET-PACKET.md`](./GET-PACKET.md) · [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md) · [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md) · [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) · [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) · [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md).
 
 ---
 
@@ -16,7 +16,7 @@ Input (left tree: prior nodes in canvas order, outputs nested, Schema / Table / 
 
 Output (top = this run’s writes, click, preview below) is every node that has Output. Specimen is A20. Get’s Output tab is this.
 
-Parameters on A23 right (Module, Every firm / Select firm, Firm, Contact) are Get only. Do not put that cascade on Rule, Action, If, or Trigger. Action in-app Parameters are docs/register/IN-APP-ACTION-PACKET.md.
+Parameters on A23 right (Module, Every firm / Select firm, Firm, Contact) are Get only. Do not put that cascade on Rule, Action, If, or Trigger. Action in-app Parameters are docs/register/IN-APP-ACTION-PACKET.md. Add tag interior is docs/register/ADD-TAG-PACKET.md.
 
 Outcomes (stacked cards, per-outcome GUI | JS) are Rule only. Specimen is A21. Do not put Outcomes on Get.
 

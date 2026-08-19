@@ -184,7 +184,8 @@ These were asked. They are not “copy from C9/C11.”
 | **Click vs Switch** | Law 38. Click = configure. Packets [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) · [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md). **A26** · **A27** · **A28**. |
 | **Test / Run / Launch** | Law 39 · 43. Test data **on the trigger** ([`TEST-PACKET.md`](./TEST-PACKET.md)). Canvas **Save · Run · Launch**. Run = execute now. Launch = arm. Packet [`RUN-PACKET.md`](./RUN-PACKET.md). **A30** Test is prior. |
 | **Variables / mapped box** | Law 40. [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md). **A29** tree. **A31** chip **is** the box. **A32** close Input / resize. |
-| **In-app Action** | Law 41. [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). After **A7** in-app: module write-buttons, grouped by module. Look **A33**. **Add tag** Parameters: **A35**. Trust type glyphs, **A35 color (more lively)**, green Action chip, Contact occupancy + Tag picker. **Kind · In the application** chips on A35 are teaching — do not build. |
+| **In-app Action** | Law 41. [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). After **A7** in-app: module write-buttons, grouped by module. Look **A33**. |
+| **Add tag** | Packet [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md). Plate **A35**. Contact occupied. Tag picker. Type glyphs. Color more lively. Green Action chip. Kind chips teaching — do not build. |
 
 ---
 

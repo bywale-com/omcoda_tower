@@ -3,7 +3,7 @@
 **Seat:** Product Manager. For the **engineer** and the **Systems Analyst**.  
 **When:** Look locked 2026-08-18 22:53. Packet cut 22:56.  
 **Plate:** [`A29-variable-chip.png`](./automations-blueprint/A29-variable-chip.png). A23 **left** stays **prior** for stacking law; **A29 is the look**.  
-**Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite. Face **law 37 · 40**. Shared pane: [`NODE-INTERIOR.md`](./NODE-INTERIOR.md). Trigger data that lets you map before Run: [`TEST-PACKET.md`](./TEST-PACKET.md). Run: [`RUN-PACKET.md`](./RUN-PACKET.md).  
+**Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite. Face **law 37 · 40**. Shared pane: [`NODE-INTERIOR.md`](./NODE-INTERIOR.md). Trigger data that lets you map before Run: [`TEST-PACKET.md`](./TEST-PACKET.md). Run: [`RUN-PACKET.md`](./RUN-PACKET.md). Type glyphs / A35 color: [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md).  
 **Does not:** plant; recut 015; put Get Parameters on every node; treat A23 lightning-on-text as canon.
 
 ---
@@ -17,7 +17,7 @@ You are building Input + mapping chips on CT Ant Automations. Product face = /pr
 
 Read docs/register/INPUT-LOOK-PACKET.md. Plate: docs/register/automations-blueprint/A29-variable-chip.png. A23 left is prior.
 
-Copy A29 for the tree: type control in front of the field name. **Glyphs: A35** (more appropriate than live). Drag any row including the top-level node into any open box. Chip *look* (color, origin, x) is A29. **How the box occupies** when mapped is docs/register/MAPPED-BOX-PACKET.md — empty = picker, mapped = chip fills the box, no leftover Select. Do not ship tags above a still-open dropdown.
+Copy A29 for the tree: type control in front of the field name. **Glyphs: A35** ([`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md)). Drag any row including the top-level node into any open box. Chip *look* (color, origin, x) is A29. **How the box occupies** when mapped is docs/register/MAPPED-BOX-PACKET.md — empty = picker, mapped = chip fills the box, no leftover Select. Do not ship tags above a still-open dropdown.
 
 Read docs/register/PLATE-READ.md. Do not recut 015. Do not overwrite 15:43.
 ```
@@ -57,7 +57,7 @@ This is **Input on every node that has Input.** Specimen **A29 left**. Get’s r
 | Facet | What it is |
 |-------|------------|
 | **Tree** | Prior nodes in this chain, canvas order, that node’s outputs nested. Contact import example: `import_batch` · `contact_records` (A24 write-set). Fit known writes. Do not freeze extra invented fields. |
-| **Row** | Type control **in front of** the name. **Glyphs as A35** (Aa / 123 / phone …) — more proper than live TypeControl. Still a control, not a caption. |
+| **Row** | Type control **in front of** the name. **Glyphs as A35** ([`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md)). Still a control, not a caption. |
 | **Schema / Table / JSON** | Same writes, other looks. Search searches. |
 | **Drag** | Any row, including the **top-level** node, into **any** open box (Parameters, Outcomes, any variable slot). |
 | **Chip** | The mapped item is its **own element** **inside the box** — that **is** the value. Empty box = picker. Mapped = no leftover dropdown. **A31**. A pointer at a **table write**, not an n8n in-memory item (law 42). Not tags above a Select. Not `{{firm}}`. Not A23 lightning. A box may hold several chips. |

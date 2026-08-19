@@ -75,7 +75,7 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A32** | [`A32-close-input-resize-modal.png`](./automations-blueprint/A32-close-input-resize-modal.png) | chrome | Close Input (rail to reopen). Interior modal **resizable**. Not the canvas node. | 07:55 | Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) |
 | **A33** | [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app-action-inventory.png) | chrome | In-app Action list **by module**. SA persist walk, not three rows. Search. Kind = in the application. | 09:51 | revises live `02-in-app-by-module.png`. Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) |
 | **A34** | [`A34-audit-tag-on-contact.png`](./automations-blueprint/A34-audit-tag-on-contact.png) | chrome | Audit-specific mark **on the contact** (reachable / sequence-ready). No ascribe button. Consultant tags later. | 10:39 | Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) |
-| **A35** | [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png) | chrome | **Add tag** Action interior. Prior = contact import only. Parameters = mapped boxes: **Contact** occupied, **Tag** empty picker. | 12:12 | Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md) |
+| **A35** | [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png) | chrome | **Add tag** Action interior. Prior = contact import. Contact occupied, Tag picker. Type glyphs. Color more lively. Green Action chip. Kind chips teaching. | 12:12 · 12:17 · 12:30 | Packet [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md) |
 | **A24** | [`A24-contact-import-output.png`](./automations-blueprint/A24-contact-import-output.png) | chrome | Trigger **Output** of **contact import**. A20 shape. This run: `import_batch` + `contact_records`. | 19:34 | — |
 | **A25** | [`A25-new-contact-output.png`](./automations-blueprint/A25-new-contact-output.png) | chrome | Trigger **Output** of **new contact**. A20 shape. This run: `contact_records` (that person). | 19:34 | — |
 
@@ -805,7 +805,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Not this plate:** A33 inventory. A34 on the contact. Output tab. Changing kind (that is **⋯ Switch**, law 38).
 
-**Packets:** [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md).
+**Packets:** [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md) · [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md).
 
 ---
 

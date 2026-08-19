@@ -3,10 +3,10 @@
 **Seat:** Product Manager. For the **engineer** and the **Systems Analyst**. One pocket. Do not lose this.  
 **When:** Locked 2026-08-19 08:29. UI pass. Founder does **not** spec the picker — you see the inventory, lay it out, they redesign after screenshots.  
 **Redesign plate:** [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app-action-inventory.png) — grouped list from the SA **persist** walk, not the three-row first pass.  
-**Add tag Parameters:** [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png) — contact import prior. Contact occupied; Tag empty picker. Same interior.  
+**Add tag Parameters:** [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md) · [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png).  
 **Live first pass (engineer, merged main #100):** [`in-app-action-pass/`](./automations-blueprint/in-app-action-pass/). Three modules only — **not** the inventory.  
 **Kind split (already locked):** [`A7-action-two-kinds.png`](./automations-blueprint/A7-action-two-kinds.png) — **Agents** vs **in the application**. This packet is **only** the in-app path after that pick. Agents stays [`A14`](./automations-blueprint/A14-action-assign-or-template.png) / law 31.  
-**Shared panes:** [`NODE-INTERIOR.md`](./NODE-INTERIOR.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md). Retrofit these onto Action. Do not invent a fourth interior.  
+**Shared panes:** [`NODE-INTERIOR.md`](./NODE-INTERIOR.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md) · [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md). Retrofit these onto Action. Do not invent a fourth interior.  
 **Same pass also completes:** [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) **A31 / A32** (chip **is** the box; close Input; resize the interior).  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite. Face **law 41**. [`PRIMITIVES.md`](./PRIMITIVES.md).  
 **Does not:** plant; recut 015; invent a write that is not already a module affordance; spec the in-app picker layout; wire the walker; collapse Agents into this; freeze Hub `manage_lists` / `assign_task` / `notify_consultant` as the catalog.
@@ -22,7 +22,7 @@
 5. **Input / Parameters / Output are already designed.** Retrofit. Mapped occupancy is **A31**. Close Input / resize is **A32**.
 6. **Deliverable:** screenshots of **every distinct screen** from **click the Action node → select in the application → onward.** Not Agents. Not hover states. Distinct screens only.
 7. **This is UI.** SA inspects whether the walk can actually run those writes (`action` is still `call_agent` only). Do not block the face on that.
-8. **A35 revisions (12:17, color corrected 12:30).** Input **type glyphs** on that PNG are more proper than live — build those (every Input tree). **Color of A35 is the product** — more lively than live; move the app toward that. **Kind · In the application** chips are teaching — kill. Green **Action** chip under the title is spec.
+8. **Add tag interior** is [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md) **A35**. Do not lose that pocket.
 
 Live today: `ActionInAppModal` / `IN_APP_AFFORDANCES` on main (#100) is **three rows** (Start Audit · Confirm book · Provision). That followed SA 08:40’s filter. SA **09:35** walked the desks: persist-bound controls are the list. **A33** is that list. Kill three-rows as the face. Hub leftovers stay dead. `ascribe_tag` still has no desk button — do not pad.
 
@@ -31,7 +31,7 @@ Live today: `ActionInAppModal` / `IN_APP_AFFORDANCES` on main (#100) is **three 
 ## Paste — engineer
 
 ```text
-Read docs/register/IN-APP-ACTION-PACKET.md ALL THE WAY THROUGH. Then NODE-INTERIOR.md, INPUT-LOOK-PACKET.md, MAPPED-BOX-PACKET.md.
+Read docs/register/IN-APP-ACTION-PACKET.md ALL THE WAY THROUGH. Then NODE-INTERIOR.md, INPUT-LOOK-PACKET.md, MAPPED-BOX-PACKET.md. Add tag interior is docs/register/ADD-TAG-PACKET.md — read that before touching Action Parameters.
 
 You are building in-app Action on CT Ant Automations. Product face = /prototype-ant. Hub is not the app. This is a UI pass. Do not recut 015. Do not overwrite 15:43. Do not plant.
 
@@ -41,7 +41,7 @@ After in-app: the list is every write-button that already exists on a module. Gr
 
 Look: docs/register/automations-blueprint/A33-in-app-action-inventory.png — grouped list. Chrome may drift; desk = live /prototype-ant + A22.
 
-Look: docs/register/automations-blueprint/A35-add-tag-parameters.png — Add tag Parameters after contact import. Trust: type glyphs on Input, green Action chip under the title, Contact occupied / Tag picker. Color on that PNG is more lively than live — that is the product, move the app toward it. Do NOT build the Kind · In the application chips (teaching).
+Add tag Parameters: docs/register/ADD-TAG-PACKET.md and A35-add-tag-parameters.png.
 
 Retrofit the primitives you already have:
 - Input = A29 tree (every node). Close Input / resize = A32.
@@ -124,15 +124,12 @@ Desk chrome = live `/prototype-ant` + A22. Not Hub.
 - The list = real module write-buttons. **By module.** SA persist table, not three rows. Look **A33**.
 - Shared panes on that Action: Input · Parameters · Output, already specified elsewhere.
 - **A31 / A32** on those interiors (and on Get, same pass).
-- **Add tag** Parameters specimen: **A35**. Contact = occupied chip from the prior. Tag = empty picker. Not Get’s cascade.
-- Green **Action** chip under the node title (**A35**). Spec.
-- Input type glyphs as **A35** (more proper than live). Every Input tree.
-- **Color as A35** — more lively than live. Move the app toward that.
+- **Add tag** interior: [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md) **A35**. Contact occupied. Tag picker. Type glyphs. Color more lively. Green Action chip. Kind chips teaching — kill.
 
 ## 2. Do not build
 
 - Teaching captions. “At least two kinds of actions” footer (A7 caption).
-- **Kind** + **In the application** chip strip on the Action interior (**A35**). Teaching. Changing kind is **⋯ Switch** (law 38). Going back to the in-app list is the list, not those chips.
+- **Kind** + **In the application** chip strip — teaching. Packet [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md).
 - Three-row picker as the product. Hub leftovers: `manage_lists` · `assign_task` · `notify_consultant`. Do not pad Add tag onto **A33** because **A35** exists — A35 is Parameters, not the inventory.
 - Get’s Module / Every firm / Select firm cascade on Action.
 - Rule Outcomes on Action.
@@ -186,6 +183,7 @@ Desk chrome = live `/prototype-ant` + A22. Not Hub.
 | **INPUT-LOOK / MAPPED-BOX** | Tree, chip look, occupancy, close Input, resize. | — |
 | **TEST-PACKET** | Provide data on the trigger. Two doors. | A Test tab. Canvas Test. |
 | **RUN-PACKET** | Execute now vs arm. | Recut 015. |
+| **ADD-TAG** | A35 interior + four revisions | Onto A33 as a picker row |
 
 ---
 
@@ -195,7 +193,7 @@ Live first pass (engineer): [`automations-blueprint/in-app-action-pass/`](./auto
 
 Redesign: [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app-action-inventory.png). Grouping + length. Chrome may drift — desk = live + A22.
 
-**Add tag interior:** [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png). Prior = contact import. Trust type glyphs, **color (more lively)**, green Action chip, Contact occupancy + Tag picker. Kind chips on that PNG are teaching.
+**Add tag interior:** [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md) · [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png).
 
 ---
 

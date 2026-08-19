@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A35** color: the image is more lively — that is the product. Type glyphs. Kind chips teaching. Green Action chip. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **ADD-TAG-PACKET** (A35). Color more lively. Type glyphs. Kind chips teaching. Green Action chip. Do not plant.
 
 **How we maintain this log**
 
@@ -1656,7 +1656,17 @@ Flag 15:43 untouched.
 
 **What we did:** Reverse the color lock. **A35 color is the product.** Move the app toward it.
 
-**Do not:** keep “PNG color ≠ desk”; recut 015; overwrite 15:43; plant.
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 16:26 UTC — Packet for A35 / Add tag.
+
+**Why:** Founder: write packet for these (type glyphs, color more lively, Kind chips teaching, green Action chip, Contact / Tag parameters).
+
+**What we did:** [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md). One pocket. A33 stays the inventory.
+
+**Do not:** pad A33; invert color again; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 
