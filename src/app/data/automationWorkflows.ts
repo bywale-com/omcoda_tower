@@ -508,15 +508,12 @@ export const WORKFLOW_PALETTE_BLOCKS: PaletteBlock[] = [
   },
   {
     id: "action-sequence",
-    label: "Call agent",
-    description: "Assign an existing sequence or copy from a template",
+    label: "Action",
+    description: "In the app, or an agent",
     module: "actions",
     nodeType: "action",
     defaultData: {
-      label: "Call agent",
-      actionType: "call_agent",
-      assignMode: "existing",
-      actionSummary: "Assign existing sequence…",
+      label: "Action",
       configured: false,
     },
   },

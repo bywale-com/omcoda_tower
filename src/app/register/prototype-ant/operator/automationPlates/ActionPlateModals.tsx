@@ -124,17 +124,12 @@ export function ActionKindModal({
       }
       width={640}
       footer={
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-            At least two kinds of actions.
-          </Typography.Text>
-          <Space>
-            <Button onClick={onCancel}>Cancel</Button>
-            <Button type="primary" onClick={commit}>
-              Save
-            </Button>
-          </Space>
-        </div>
+        <Space>
+          <Button onClick={onCancel}>Cancel</Button>
+          <Button type="primary" onClick={commit}>
+            Save
+          </Button>
+        </Space>
       }
     >
       {body}
