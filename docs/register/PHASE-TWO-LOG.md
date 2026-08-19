@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. A31/A32 packet: two interiors are the specimen — do not miss them; backgrounds are not the desk. Chip **is** the box. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. In-app Action talk (not locked): the layer is the **write-button** in a module; module is the container. Audit is the specimen of that layer, not a special kind. Do not plant.
 
 **How we maintain this log**
 
@@ -1509,6 +1509,18 @@ Flag 15:43 untouched.
 **What we did:** Recast [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) so it opens on **look at the interiors / ignore the chrome**. A31 contrast (Firm chip, no chevron / Contact still a picker) and A32 (Input rail + modal resize grip) named as the specimen. Engineer paste tells them to open the PNGs first. Blueprint stale-pixel lines match.
 
 **Do not:** skip the images because backgrounds drifted; copy those backgrounds; plant; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 08:11 UTC — In-app Action: the write-button is the layer (thinking, not locked)
+
+**Why:** Founder: Actions needs a primitive on the **in-app** side (not Agents). Workflows they keep imagining should already be possible; they aren’t because the simple architecture isn’t named. Everything you can do in the app can be automated; the shape may differ across nodes. Current in-app action that exists: **Audit**. Audit is not its own kind — it is a **layer / type of action**: passing data into a module without the **direct door**. Every module theoretically has that shape (“do the main thing in that module”). Not every module is one function. Some modules: automation replaces going in and clicking the buttons; even there the buttons lead into one type of action. Book readiness: import, then run the audit — the purpose of the module is the audit; everything before enables that action. Then: **Run audit is the core function.** It is a **button** in that module (often only after the import). **Anything that is a button that writes into the system is an action.** That is the layer. Actions live in modules. A module is a container / label.
+
+**What we did:** Stamp only. Thinking. No packet. No new law. Face still: two kinds of Action (in-app vs Agents). Get is a read, not an Action. Law 33 still: send the work to the real module; every write that run made. Named in-app so far stay named; do not fill the catalog.
+
+**Do not:** collapse Agents into this; invent an Action catalog; treat Audit as a unique node kind; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 
