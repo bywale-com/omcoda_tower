@@ -101,20 +101,15 @@ Hub `lastOutput` → `lastInput` is the smell, not the live path. Live is SA **0
 
 ---
 
-## Test (why you press it)
+## Test data (on the trigger)
 
-The machine will run. Testing is not to prove that.
+Providing data is not a run.
 
-You test so **Input and Output show the writes** — **fields and values** — so you can map them into boxes. Values are as important as the shape. You also need to know **where those values came from**.
+**On the trigger:** fill Output with that event’s writes — **fields and values** — so you can map them, and so **Run** has a handle. Two doors (already exists vs specimen). This fill does not INSERT.
 
-**Two doors. Do not collapse them.**
+**Run** walks the chain **now** with that data and **writes** (this app is the sandbox). **Launch** arms the event. Packet: [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md).
 
-| Door | Values come from |
-|------|------------------|
-| **Already exists** | Records already in the app (book, past batch, past run). **Get** is a read. Honest empty if nothing is there. No write. |
-| **Does not exist yet** | The module’s **real write-set** (every write that run would make). Specimen of those fields. No INSERT. No hardcoded toy list. |
-
-Canvas: **Save · Test · Launch**. Launch is live. Packet: [`TEST-PACKET.md`](./TEST-PACKET.md).
+Canvas: **Save · Run · Launch**. A30 Test is prior.
 
 A **variable** is not a string you type. It is a **colored chip**. Look: [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · **A29**.
 
@@ -145,7 +140,7 @@ Same for Provision: this form submitted → pass the values → every write from
 
 A wire that looks like an n8n **pipe** is one way to see the handle. A then-this list where the next node reads **this node’s output id** is the same product. **Pipe vs this-then-that is not the question.** The question is: when the node completes, do we have the module’s output. If the next step has to guess (latest audit for this firm), it is not this node.
 
-**n8n is a visual reference. It is not the machine.** In n8n the left looks like all the data is sitting there — items in memory, write later. **Ours is not that.** Everything on the left is a **display of records this run wrote** (or a Get of records already in a table). Direct to table. Mapping a chip is: go do this **with that record**. There is no in-memory copy that can be lost. Test still does not INSERT (law 39) — it shows the same write-shape without committing.
+**n8n is a visual reference. It is not the machine.** In n8n the left looks like all the data is sitting there — items in memory, write later. **Ours is not that.** Everything on the left is a **display of records this run wrote** (or a Get of records already in a table). Direct to table. Mapping a chip is: go do this **with that record**. There is no in-memory copy that can be lost. Trigger test-data still does not INSERT (law 39). **Run** is what writes. n8n’s two grains of execute (up to this node · until break) are the visual for **Run**, not for the data model.
 
 “Everything it produces” means **every write that run made**. Not a short list. Not the entire database from other runs. The If is calling from **that**.
 

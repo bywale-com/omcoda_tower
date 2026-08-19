@@ -3,7 +3,7 @@
 **Seat:** Product Manager. For the **engineer** and the **Systems Analyst**.  
 **When:** Look locked 2026-08-18 22:53. Packet cut 22:56.  
 **Plate:** [`A29-variable-chip.png`](./automations-blueprint/A29-variable-chip.png). A23 **left** stays **prior** for stacking law; **A29 is the look**.  
-**Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite. Face **law 37 · 40**. Shared pane: [`NODE-INTERIOR.md`](./NODE-INTERIOR.md). How Test *fills* this tree: [`TEST-PACKET.md`](./TEST-PACKET.md).  
+**Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite. Face **law 37 · 40**. Shared pane: [`NODE-INTERIOR.md`](./NODE-INTERIOR.md). Trigger data that lets you map before Run: [`TEST-PACKET.md`](./TEST-PACKET.md). Run: [`RUN-PACKET.md`](./RUN-PACKET.md).  
 **Does not:** plant; recut 015; put Get Parameters on every node; treat A23 lightning-on-text as canon.
 
 ---
@@ -106,7 +106,7 @@ Operator → Configuration libraries → Automations → open a workflow with a 
 
 ## 5. Out of scope this build
 
-Outside the modal. Canvas Test button is [`TEST-PACKET.md`](./TEST-PACKET.md) / **A30** (buttons only). Get Parameters law remains [`GET-PACKET.md`](./GET-PACKET.md).
+Outside the modal. Canvas **Run / Launch** are [`RUN-PACKET.md`](./RUN-PACKET.md). Trigger test-data is [`TEST-PACKET.md`](./TEST-PACKET.md). **A30** Test is prior. Get Parameters law remains [`GET-PACKET.md`](./GET-PACKET.md).
 
 ---
 

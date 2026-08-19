@@ -182,7 +182,8 @@ These were asked. They are not “copy from C9/C11.”
 | **Node interior** | Shared vs kind: [`NODE-INTERIOR.md`](./NODE-INTERIOR.md). **Input** (A23 left) and **Output** (A20) on every node that has those panes. Get **Parameters** (A23 right) only on Get. Rule **Outcomes** (A21) only on Rule. |
 | **Get** | Packet [`GET-PACKET.md`](./GET-PACKET.md). Canvas [`A22`](./automations-blueprint/A22-get-canvas.png). Parameters [`A23`](./automations-blueprint/A23-get-input-parameters.png) right. Input look [`A29`](./automations-blueprint/A29-variable-chip.png) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md). Kind, not Action, not Audit. |
 | **Click vs Switch** | Law 38. Click = configure. Packets [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) · [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md). **A26** · **A27** · **A28**. |
-| **Test / variables** | Law 39 · 40. [`TEST-PACKET.md`](./TEST-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md). **A29** tree. **A31** chip **is** the box. **A32** close Input / resize. |
+| **Test / Run / Launch** | Law 39 · 43. Test data **on the trigger** ([`TEST-PACKET.md`](./TEST-PACKET.md)). Canvas **Save · Run · Launch**. Run = execute now. Launch = arm. Packet [`RUN-PACKET.md`](./RUN-PACKET.md). **A30** Test is prior. |
+| **Variables / mapped box** | Law 40. [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md). **A29** tree. **A31** chip **is** the box. **A32** close Input / resize. |
 | **In-app Action** | Law 41. [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). After **A7** in-app: module write-buttons, grouped by module. Look **A33**. Live three-row picker is the first pass, not the inventory. Same pass completes **A31 / A32**. Tail: not every CI needs a button. Audit mark on the contact is **A34** — no ascribe control, do not pad A33. |
 
 ---

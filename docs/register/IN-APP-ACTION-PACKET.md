@@ -6,7 +6,7 @@
 **Audit mark on the contact:** [`A34-audit-tag-on-contact.png`](./automations-blueprint/A34-audit-tag-on-contact.png) — no button; system chips on the person. Consultant tags later.  
 **Live first pass (engineer, merged main #100):** [`in-app-action-pass/`](./automations-blueprint/in-app-action-pass/). Three modules only — **not** the inventory.  
 **Kind split (already locked):** [`A7-action-two-kinds.png`](./automations-blueprint/A7-action-two-kinds.png) — **Agents** vs **in the application**. This packet is **only** the in-app path after that pick. Agents stays [`A14`](./automations-blueprint/A14-action-assign-or-template.png) / law 31.  
-**Shared panes:** [`NODE-INTERIOR.md`](./NODE-INTERIOR.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md). Retrofit these onto Action. Do not invent a fourth interior.  
+**Shared panes:** [`NODE-INTERIOR.md`](./NODE-INTERIOR.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md). Retrofit these onto Action. Do not invent a fourth interior.  
 **Same pass also completes:** [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) **A31 / A32** (chip **is** the box; close Input; resize the interior).  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite. Face **law 41**. [`PRIMITIVES.md`](./PRIMITIVES.md).  
 **Does not:** plant; recut 015; invent a write that is not already a module affordance; spec the in-app picker layout; wire the walker; collapse Agents into this; freeze Hub `manage_lists` / `assign_task` / `notify_consultant` as the catalog.
@@ -137,7 +137,7 @@ Desk chrome = live `/prototype-ant` + A22. Not Hub.
 - Same worker, several doors (Confirm book · Prepared file · Book Upload) — all stay on the list.
 - Switching kind (in-app ↔ Agents) stays the Kind control.
 - Several chips in a mapped Parameter box = A31.
-- Test fills without commit (**TEST-PACKET**). Door 2 on an Action that has not run = that module’s real write-set.
+- After **Run**, Input / Output are the writes (**RUN-PACKET**). Mapping before Run uses the trigger’s provided data (**TEST-PACKET**).
 
 ## 4. Completes
 
@@ -174,7 +174,8 @@ Desk chrome = live `/prototype-ant` + A22. Not Hub.
 | **A14 / A12** | Agents path. | Into in-app. |
 | **GET-PACKET** | Module as a dropdown grain. Opposite door (read). | That cascade on Action Parameters. |
 | **INPUT-LOOK / MAPPED-BOX** | Tree, chip look, occupancy, close Input, resize. | — |
-| **TEST-PACKET** | Fill without commit. Two doors. | A Test tab. |
+| **TEST-PACKET** | Provide data on the trigger. Two doors. | A Test tab. Canvas Test. |
+| **RUN-PACKET** | Execute now vs arm. | Recut 015. |
 
 ---
 

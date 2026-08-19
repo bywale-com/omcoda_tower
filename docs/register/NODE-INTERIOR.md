@@ -3,7 +3,7 @@
 **Seat:** Product Manager. For the **engineer** and the **Systems Analyst**.  
 **Why:** Founder 2026-08-18 18:58. We drew Input on **Get**. It is not a Get-only pane. If the build only puts that tree on Get, the other nodes are unfinished.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
-**Read:** [`PLATE-READ.md`](./PLATE-READ.md). Packets: [`GET-PACKET.md`](./GET-PACKET.md) · [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md) · [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md) · [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) · [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md).
+**Read:** [`PLATE-READ.md`](./PLATE-READ.md). Packets: [`GET-PACKET.md`](./GET-PACKET.md) · [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md) · [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md) · [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) · [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md).
 
 ---
 
@@ -52,7 +52,7 @@ Action / If interiors we already drew (A7, A14, A16) are **Parameters** (the mid
 
 **Click the node = configure.** Do not send click to Switch. Switch is **⋯** (A27). First pick / Switch opens the event picker (A26). Wire **+** is A28.
 
-**Test** fills these panes without committing ([`TEST-PACKET.md`](./TEST-PACKET.md)). Two doors: already exists vs not yet. A mapped write **is the box** ([`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · **A31**). Input can close; interior modal resizes (**A32**).
+**Test data** fills the **trigger** without executing the canvas ([`TEST-PACKET.md`](./TEST-PACKET.md)). Two doors: already exists vs not yet. **Run** is the walk ([`RUN-PACKET.md`](./RUN-PACKET.md)). A mapped write **is the box** ([`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · **A31**). Input can close; interior modal resizes (**A32**).
 
 **The left is a log of table writes (law 42).** Not n8n in-memory items. What you see was written (or, on Test, the same write-shape without INSERT). Mapping a chip = do this with that record.
 

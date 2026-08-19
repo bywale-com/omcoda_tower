@@ -68,7 +68,7 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A18** | [`A18-trigger-global-local.png`](./automations-blueprint/A18-trigger-global-local.png) | chrome | Inside trigger. After the event: **Global** (all of that kind) or **Local** (this specific one). Example: form submitted. | 18:53 | **prior.** Grain as radios. Grain dropdown → **A26** |
 | **A19** | [`A19-automations-contacts.png`](./automations-blueprint/A19-automations-contacts.png) | chrome | Automations **Contacts** = the same look as Agents C8. Same Add contact modal. Does not start a mission now. | 18:53 · 01:01 | companion to C8 / C8b |
 | **A22** | [`A22-get-canvas.png`](./automations-blueprint/A22-get-canvas.png) | chrome | Canvas. **Get** is a node kind. Chain: **Reference pack updated → Get → Rule**. Palette includes Get. | 17:06 | — |
-| **A30** | [`A30-test-on-canvas.png`](./automations-blueprint/A30-test-on-canvas.png) | chrome | **Save · Test · Launch** only. Test fills Input/Output without commit. Rest of PNG not canon. | 22:45 · lock 22:53 (buttons) | Packet [`TEST-PACKET.md`](./TEST-PACKET.md) |
+| **A30** | [`A30-test-on-canvas.png`](./automations-blueprint/A30-test-on-canvas.png) | chrome | **Prior** for canvas **Test**. Header is now **Save · Run · Launch**. Test data lives **on the trigger**. | 22:45 · lock 22:53 (buttons) · **12:04** move | Packet [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md) |
 | **A23** | [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png) | chrome | Inside **Get**. Left = n8n tree (keep). Parameters: **dropdown** Every firm / Select firm. Select → Firm then Contact **comboboxes** (dropdown + input). Left writes apply in those boxes. | 17:33 | **prior** for mapping look → **A29** |
 | **A29** | [`A29-variable-chip.png`](./automations-blueprint/A29-variable-chip.png) | chrome | **Canonical Input look** (every node). Type control in front of the name. Drag any row including top-level into a box as a **chip**. | 22:45 · lock 22:53 | **revises A23** (mapping + Input look). Packet [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) |
 | **A31** | [`A31-mapped-box-is-the-value.png`](./automations-blueprint/A31-mapped-box-is-the-value.png) | chrome | Mapped chip **is** the box’s value. No leftover dropdown. Empty Contact still a picker (contrast). | 07:55 | revises live ChipBox. Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) |
@@ -94,7 +94,7 @@ In-app Ant Automations workbench is **not** this blueprint. Mock = generated ima
 - A10 still shows required data as a dashed hole. **A13** fills the hole **as a diagram**.
 - A1 smallest workflow is trigger · rule · action with **no If node** on the canvas. **A15** is the chain (If on the canvas). **A16** opens that If. A1 stays the smallest. A6’s palette includes **Exit**; A15’s includes **Condition (If)** — do not freeze one palette from the other.
 - **A14** nav chrome sometimes drifts (Home / Workspaces vs House-global). Trust the **modal contents**. A14 footer on the PNG is Cancel · Save; the “not a third option” sentence is not on that image.
-- **A30** generated chrome drifted (Harbor / icon sider). Trust **Save · Test · Launch**, the chain, the palette. Desk = **A22**.
+- **A30** generated chrome drifted (Harbor / icon sider). Canvas **Test** is **prior**. Trust the chain / palette as furniture only. Header is **Save · Run · Launch**. Test data is **on the trigger**. Desk = **A22**. Packets [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md).
 - **A31 / A32** interiors are **strong** (occupancy; Input rail + resize grip). Background / sider / extra chrome on those files is far off the current design system. **Do not copy the background. Do not skip the interiors.** Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
 - **A33** chrome may drift. Trust the **grouped list**. Desk = live `/prototype-ant` + **A22**. Live three-row `02-in-app-by-module.png` is the first pass, not the inventory.
 - **A34** chrome may drift. Trust the **Audit chips on the contact row**. Consultant sider (Board / Contacts / …). No + add tag. Consultant-authored tags are later.
@@ -113,7 +113,8 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | **Click** a placed node | **Configure** that node. Trigger Output after contact import = **A24**. Not the event picker. |
 | Add a **Trigger** from the palette, or **⋯ → Switch** | Event picker (**A26**). Packet [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md). Named events. Grain dropdown. Local = nested shape. |
 | Node **⋯** | Duplicate · Add node · Switch · Delete (**A27**). Packet [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md). |
-| Open the **Trigger** node (configure) | **Not** the event picker. Output after contact import = **A24**. Event/Schedule + grain look is **A26** only when adding or **Switch**. A5 / A17 / A18 stay prior. |
+| Open the **Trigger** (configure) | **Not** the event picker. **Provide test data** for this event ([`TEST-PACKET.md`](./TEST-PACKET.md)). Output after contact import = **A24**. Event/Schedule + grain look is **A26** only when adding or **Switch**. |
+| **Run / Launch** | Canvas **Save · Run · Launch**. Run = execute now with the trigger data. Launch = arm the event. Packet [`RUN-PACKET.md`](./RUN-PACKET.md). **A30** Test is prior. |
 | Open the **Trigger** after **contact import** | **Output** tab. **A24.** Writes: import_batch · contact_records. |
 | Open the **Trigger** after **new contact** | **Output** tab. **A25.** Write: contact_records (that person). |
 | Open the **If / Condition** node | Calls from previous result (**A16**). Not a rule. |
@@ -122,7 +123,6 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | Action kind = **in the application** | Module write-buttons, grouped by module. **A33.** Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). Live first pass `in-app-action-pass/` is three rows — not the inventory. |
 | Consultant → Contacts | Audit-specific mark **on the person** (**A34**). No ascribe button. Not the live Tag column (valid / invalid). Consultant tags later. |
 | Action kind = Agents | First: **assign existing** or **from a template** (**A14**). Then select agent (whole sequence) · declare objective · if data request, create the form (A8 prior / **A12** canon). You do **not** author a new agent here. |
-| **Test** | Canvas **Test** (**A30** buttons). Packet [`TEST-PACKET.md`](./TEST-PACKET.md). Two doors. |
 | Open the **Get** node | Parameters **A23** right. Input look **A29**. Packets [`GET-PACKET.md`](./GET-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md). |
 | Open the **Rule** node | Click the Rule node. Tabs: Input · Outcomes · Output. **Outcomes:** **A21**. GUI \| Custom on A2 is **not** the tab. |
 | Rule tab **Output** | Today’s signals (A9 prior) · listing always-on (**A11** prior) · **A20** canon: click a class, preview below. |
@@ -695,21 +695,21 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 ---
 
-### A30 — Test on the canvas (buttons only)
+### A30 — Test on the canvas (prior)
 
 ![A30 test on canvas](./automations-blueprint/A30-test-on-canvas.png)
 
-**Rationale (22:45, lock 22:53):** Founder: purpose of this picture was only **where Test sits**. Agreed. **Save · Test · Launch**. How it fills is [`TEST-PACKET.md`](./TEST-PACKET.md), not this PNG.
+**Rationale (22:45, lock 22:53):** Founder: purpose of this picture was only **where Test sits**. Agreed then. **12:04:** that Test is **not a run**. It populates the trigger. Move it **into the trigger**. Header is **Save · Run · Launch**.
 
-**On the glass (canon):** Save · **Test** · Launch workflow.
+**On the glass (canon now):** Save · **Run** · Launch. Test data on the Trigger interior.
 
-**Do not build:** a Test tab. Test as Launch. The rest of this PNG (chrome drifted).
+**Do not build:** canvas Test. A Test tab. Launch that also fires a run. The rest of this PNG (chrome drifted).
 
-**Stale pixel:** Harbor / icon sider. Trust the **three buttons**. Desk = **A22**.
+**Stale pixel:** Harbor / icon sider. **Test button is prior.** Desk = **A22**.
 
-**Not this plate:** chip mapping (**A29**). Two doors (exists / not yet).
+**Not this plate:** chip mapping (**A29**). Two doors. Per-node run.
 
-**Packet:** [`TEST-PACKET.md`](./TEST-PACKET.md).
+**Packets:** [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md).
 
 ---
 

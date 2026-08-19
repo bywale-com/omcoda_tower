@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A34** audit mark on the contact (no button). Law 41 tail: buttoned CI → Automations action. Law 42. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Law 43** Run vs Launch. Test data on the trigger (law 39). **A34** audit mark. Do not plant.
 
 **How we maintain this log**
 
@@ -1609,6 +1609,18 @@ Flag 15:43 untouched.
 **What we did:** Tail on law **41**. Plate [`A34-audit-tag-on-contact.png`](./automations-blueprint/A34-audit-tag-on-contact.png) — Consultant Contacts, Audit column, reachable / sequence-ready, no X, no + add. Packet + primitives: this is not ascribe-a-tag.
 
 **Do not:** build consultant multi-tag; pad A33 with ascribe; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 12:04 UTC — Canvas Test is trigger fill. Run vs Launch. Law 43.
+
+**Why:** Founder using the desk. What is called Test is not testing. It populates the trigger with test data. Move that **into the trigger**, rename it to what it does. Need a **Run** button. Launch = when this event happens, do this. Run = given this data, execute (everything after, using it). n8n: per-node run **up to** that node; canvas run until it breaks. Sandbox = this app. Specimen: contact import → just tag. What are Tag parameters? Could not find them. Get a feel whether Action nodes parameter correctly.
+
+**What we did:** Law **39** revised: test data **on the trigger**, not a canvas run. Law **43**: **Run** = execute now (writes); **Launch** = arm. Live Launch today does both — split. Packets [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md). A30 Test is prior. Header **Save · Run · Launch**. Feel: Tag is not on A33 (no button). Legacy ascribe is a typed string + notes switch — **who** is not a mapped box. Start Audit / Halt **do** map from the left. That is the hole. Do not pad Tag onto A33.
+
+**Do not:** keep canvas Test; let Launch fire a run; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 
