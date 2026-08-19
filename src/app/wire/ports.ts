@@ -604,6 +604,10 @@ export type MachineApiPort = {
       tags?: string[];
       firmName?: string | null;
       createdAt?: string | null;
+      /** Latest reachability_verdicts.verdict. Null if Audit has not written. A34. */
+      reachability?: "reachable" | "partial" | "unreachable" | null;
+      /** sequence_ready.ready. Null if Audit has not written. A34. */
+      sequenceReady?: boolean | null;
     }>
   >;
   /** Platform admin: consultants for Consultant ▾ view-as dropdown. */
