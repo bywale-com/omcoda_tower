@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A35** Add tag Parameters. Law 43 Run vs Launch. **A34** audit mark. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A35** revisions: type glyphs, live color, Kind chips teaching, green Action chip. Do not plant.
 
 **How we maintain this log**
 
@@ -1630,7 +1630,17 @@ Flag 15:43 untouched.
 
 **What we did:** Plate [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png). Same Action interior (Input \| Output, Kind, Close Input). Left = Contact import tree. **Contact** = chip filling the box. **Tag** = empty picker. Chrome may drift — trust those two boxes. Do not pad A33 from this PNG.
 
-**Do not:** Get cascade on Action; Notes from verdict; leftover Select under the chip; recut 015; overwrite 15:43; plant.
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 12:17 UTC — A35 revisions: type glyphs, color, Kind chips, Action chip.
+
+**Why:** Founder: A35 is a great image. Prioritize things on it that were not prioritized. Input pane **icons** next to fields are more appropriate than live. **Color profile** of these images is so different from the app. **Kind · In the application** chips at the top — teaching labels, or a purpose? If no purpose, they are teaching. Green **Action** chip under Add tag looks really great; they do not see that on the actual app. Put those revisions in the packet.
+
+**What we did:** Packet. **Type glyphs = A35** (every Input). **Color = live app**, not the PNG grade. **Kind · In the application** = teaching — kill (kind change is ⋯ Switch). Green **Action** chip under the title = spec.
+
+**Do not:** restyle the desk to A35’s palette; keep the Kind chip strip; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 

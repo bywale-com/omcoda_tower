@@ -98,7 +98,7 @@ In-app Ant Automations workbench is **not** this blueprint. Mock = generated ima
 - **A30** generated chrome drifted (Harbor / icon sider). Canvas **Test** is **prior**. Trust the chain / palette as furniture only. Header is **Save · Run · Launch**. Test data is **on the trigger**. Desk = **A22**. Packets [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md).
 - **A31 / A32** interiors are **strong** (occupancy; Input rail + resize grip). Background / sider / extra chrome on those files is far off the current design system. **Do not copy the background. Do not skip the interiors.** Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
 - **A33** chrome may drift. Trust the **grouped list**. Desk = live `/prototype-ant` + **A22**. Live three-row `02-in-app-by-module.png` is the first pass, not the inventory.
-- **A35** chrome may drift. Trust **Contact occupancy + Tag picker**. Same interior as live Action (Input \| Output, Kind tags, Close Input). Not Get’s cascade. Desk = live `/prototype-ant` + **A22**.
+- **A35** chrome / **color grade** may drift. Desk color = live `/prototype-ant`. Trust: Input **type glyphs**, green **Action** chip under the title, **Contact occupancy + Tag picker**. **Kind · In the application** chips on that PNG are teaching — do not build.
 
 ---
 
@@ -791,19 +791,24 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 ![A35 add tag parameters](./automations-blueprint/A35-add-tag-parameters.png)
 
-**Rationale (12:12):** Founder: see the inside of Add tag, elected, only prior is contact import. The parameter primitive: mapped box. Contact occupied from the left. Tag empty picker.
+**Rationale (12:12, revise 12:17):** Founder: image is great. Prioritize what the PNG got right that live did not: Input **type glyphs**. Color of generated plates is **not** the app. **Kind · In the application** chips — teaching if they have no purpose. Kill them. Green **Action** chip under the title — spec; they do not see that on the app.
 
-**On the glass:** Action interior (Input \| Output). Left = Contact import tree (`import_batch` · `contact_records`). Right = Kind · in the application. **Contact** = purple chip filling the box, no chevron. **Tag** = empty Select with chevron.
+**On the glass (canon):**
+- Input type glyphs beside each field as **A35** (Aa / 123 / phone …). More proper than live TypeControl. Priority.
+- Green **Action** chip under the node title.
+- **Contact** occupied chip. **Tag** empty picker.
 
-**Do not build:** Get Module / Every / Select cascade. Notes from verdict. Chip sitting on a still-open dropdown. Teaching captions.
+**Do not build:** Get cascade. Notes from verdict. Leftover Select under the chip. **Kind** + **In the application** chip strip (teaching). The PNG’s color grade / sider as the desk.
 
-**Stale pixel:** generated sider / Kind control placement. Trust the **two boxes**. Desk = live Action interior (`03`) + A29 tree.
+**Stale pixel:** generated color profile. Desk color = live `/prototype-ant`. Trust glyphs, Action chip, two boxes.
 
-**Not this plate:** A33 inventory (do not pad Add tag onto that list from this PNG). A34 on the contact. Output tab.
+**Not this plate:** A33 inventory. A34 on the contact. Output tab. Changing kind (that is **⋯ Switch**, law 38).
 
-**Packets:** [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md).
+**Packets:** [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md).
 
 ---
+
+## What this is not
 
 - Not overwriting 15:43.
 - Not a table inventory. Not Story. Not “where it touches Postgres” — that is the SA package.

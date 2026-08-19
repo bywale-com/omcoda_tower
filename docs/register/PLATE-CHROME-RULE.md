@@ -8,7 +8,7 @@
 Whenever you generate a plate for Agents or Automations:
 
 1. **Screenshot the live app first.** Product face = CT Ant at `/prototype-ant`, Light mode. Operator → Configuration libraries → Agents or Automations.
-2. **Lock that chrome.** House-global / Per-tenancy / Support sider. Libraries column. Catalog column. Top bar: Tower · Prototype - Ant Design · Harbor RCIC · Operator / Contact · Light · Hub · Source plant. Editor header and tabs as they actually are.
+2. **Lock that chrome.** House-global / Per-tenancy / Support sider. Libraries column. Catalog column. Top bar: Tower · Prototype - Ant Design · Harbor RCIC · Operator / Contact · Light · Hub · Source plant. Editor header and tabs as they actually are. **Color = the live app.** Generated plates grade differently (A35). Do not restyle the desk to the PNG. Named interiors (type glyphs, Action chip, occupancy) still copy.
 3. **Paint the new idea only in the workspace** that already exists. Do not invent Home / Inbox / Sequences / BUILD / OPERATE. Do not redraw the columns.
 4. If the live canvas is still the Mock beats plant, still keep the **desk**. Put the new canvas idea where Editor is — same header, same tabs — like C3–C5 already did.
 5. After generating, compare left columns to the screenshot. If they do not match, the plate is trash. Regenerate. Do not hand a drifted plate to an implementer.

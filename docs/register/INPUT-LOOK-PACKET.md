@@ -17,7 +17,7 @@ You are building Input + mapping chips on CT Ant Automations. Product face = /pr
 
 Read docs/register/INPUT-LOOK-PACKET.md. Plate: docs/register/automations-blueprint/A29-variable-chip.png. A23 left is prior.
 
-Copy A29 exactly for the tree: type control in front of the field name, icons as drawn. Drag any row including the top-level node into any open box. Chip *look* (color, origin, x) is A29. **How the box occupies** when mapped is docs/register/MAPPED-BOX-PACKET.md — empty = picker, mapped = chip fills the box, no leftover Select. Do not ship tags above a still-open dropdown.
+Copy A29 for the tree: type control in front of the field name. **Glyphs: A35** (more appropriate than live). Drag any row including the top-level node into any open box. Chip *look* (color, origin, x) is A29. **How the box occupies** when mapped is docs/register/MAPPED-BOX-PACKET.md — empty = picker, mapped = chip fills the box, no leftover Select. Do not ship tags above a still-open dropdown.
 
 Read docs/register/PLATE-READ.md. Do not recut 015. Do not overwrite 15:43.
 ```
@@ -41,6 +41,7 @@ Do not recut 015. Stamp SYSTEMS-ANALYST-LOG.
 ## Founder comments (preserve)
 
 - A29 is the look. It **supersedes** the current Input side inside **every** node. Perfect down to the icons, down to the dropdown **in front of the text**.
+- 12:17: A35 is great. Prioritize Input **field icons** (more appropriate than live). Generated **color profile ≠ the app**. **Kind · In the application** chips — if no purpose, teaching labels. Green **Action** chip under the title looks great; they do not see it on the app.
 - Drag **each** entry — **up to the top-level item** — into any box. It looks like its **own separate element** in the box, not text.
 - That is A29, those facets. Locked.
 - A30: only agree Test **sits** (Save · Test · Launch). Purpose of the rest of A30 was unclear. Filling is [`TEST-PACKET.md`](./TEST-PACKET.md), not another field PNG.
@@ -55,7 +56,7 @@ This is **Input on every node that has Input.** Specimen **A29 left**. Get’s r
 | Facet | What it is |
 |-------|------------|
 | **Tree** | Prior nodes in this chain, canvas order, that node’s outputs nested. Contact import example: `import_batch` · `contact_records` (A24 write-set). Fit known writes. Do not freeze extra invented fields. |
-| **Row** | Type control **in front of** the name. Icons as drawn. |
+| **Row** | Type control **in front of** the name. **Glyphs as A35** (Aa / 123 / phone …) — more proper than live TypeControl. Still a control, not a caption. |
 | **Schema / Table / JSON** | Same writes, other looks. Search searches. |
 | **Drag** | Any row, including the **top-level** node, into **any** open box (Parameters, Outcomes, any variable slot). |
 | **Chip** | The mapped item is its **own element** **inside the box** — that **is** the value. Empty box = picker. Mapped = no leftover dropdown. **A31**. A pointer at a **table write**, not an n8n in-memory item (law 42). Not tags above a Select. Not `{{firm}}`. Not A23 lightning. A box may hold several chips. |
@@ -75,7 +76,7 @@ Operator → Configuration libraries → Automations → open a workflow with a 
 ## 1. Copy
 
 - Modal Get · Contacts as **example**. Tabs Input \| Output. Input on.
-- Left: Schema \| Table \| JSON. Search. Nested **Contact import** → `import_batch` (id, filename, row_count, source, firm) · `contact_records` (name, email, firm, id). Type glyph/control **before** each name.
+- Left: Schema \| Table \| JSON. Search. Nested **Contact import** → `import_batch` (id, filename, row_count, source, firm) · `contact_records` (name, email, firm, id). Type glyph/control **before** each name. **Glyph look = A35** (priority over live).
 - `firm` highlighted as the row in use.
 - Right (this PNG is Get): Module Contacts. Select firm. **Firm** box contains chip `firm` / `import_batch.firm` with x. Contact empty.
 

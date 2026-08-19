@@ -19,9 +19,10 @@
 2. **An in-app action is a button that writes** — when there is a button. **Every critical interaction with a button** must be referenceable in Automations. **Not every critical interaction needs a button.** Tail: the **audit-specific mark** on the contact (reachable / sequence-ready). No ascribe control. Audit writes it. Visible on the person: [`A34-audit-tag-on-contact.png`](./automations-blueprint/A34-audit-tag-on-contact.png). Consultant-authored tags (many, forever) are later — not this.
 3. **Actions live on the module, not in Automations.** Automations consumes them. Creating the affordance on the desk is what makes it available here. Analog: **HolonBoundary** (wrap so Console can see it). Do not spec a wrapper. One affordance, two seats.
 4. **Do not spec the picker.** You will see the potential actions. Lay them out. Founder redesigns after looking. That is smarter than PM drawing a fake inventory.
-5. **Input / Parameters / Output are already designed.** Retrofit. If the retrofit fights the Action chrome, ship it; they will fix the UI. Mapped occupancy is **A31**. Close Input / resize is **A32**.
+5. **Input / Parameters / Output are already designed.** Retrofit. Mapped occupancy is **A31**. Close Input / resize is **A32**.
 6. **Deliverable:** screenshots of **every distinct screen** from **click the Action node → select in the application → onward.** Not Agents. Not hover states. Distinct screens only.
 7. **This is UI.** SA inspects whether the walk can actually run those writes (`action` is still `call_agent` only). Do not block the face on that.
+8. **A35 revisions (12:17).** Input **type glyphs** on that PNG are more proper than live — build those (every Input tree). Generated **color ≠ the app** — desk color is live. **Kind · In the application** chips are teaching — kill. Green **Action** chip under the title is spec.
 
 Live today: `ActionInAppModal` / `IN_APP_AFFORDANCES` on main (#100) is **three rows** (Start Audit · Confirm book · Provision). That followed SA 08:40’s filter. SA **09:35** walked the desks: persist-bound controls are the list. **A33** is that list. Kill three-rows as the face. Hub leftovers stay dead. `ascribe_tag` still has no desk button — do not pad.
 
@@ -38,7 +39,9 @@ Click a placed Action node = configure (law 38). First: two kinds (A7) — Agent
 
 After in-app: the list is every write-button that already exists on a module. Group by module. SA persist walk (09:35, SYSTEMS-IN-APP-ACTION-ASCRIBE.md on PR #86) is the inventory. Do not freeze the three-row live picker (Start Audit / Confirm book / Provision). Do not freeze ActionInAppModal’s old radios. Walk the desks. If it is not a control that writes on a module, it is not an in-app Action.
 
-Look: docs/register/automations-blueprint/A33-in-app-action-inventory.png — grouped list, search, Kind = in the application. Chrome on that PNG may drift; desk = live /prototype-ant + A22. Live first-pass shots: docs/register/automations-blueprint/in-app-action-pass/.
+Look: docs/register/automations-blueprint/A33-in-app-action-inventory.png — grouped list. Chrome may drift; desk = live /prototype-ant + A22.
+
+Look: docs/register/automations-blueprint/A35-add-tag-parameters.png — Add tag Parameters after contact import. Trust: type glyphs on Input, green Action chip under the title, Contact occupied / Tag picker. Do NOT build the Kind · In the application chips (teaching). Do NOT copy the PNG’s color grade — desk color is live /prototype-ant.
 
 Retrofit the primitives you already have:
 - Input = A29 tree (every node). Close Input / resize = A32.
@@ -87,6 +90,7 @@ Stamp SYSTEMS-ANALYST-LOG.
 - Enough of a packet to also **complete the last couple of packets** (A31 / A32 mapped box).
 - 09:51: engineer built; SA enriched the list; they merged the engineer to **main**. Check both. Work on images.
 - 12:12: see the inside of **Add tag**, elected. Only prior is contact import. Keep the design structure. That’s the parameter interior.
+- 12:17: A35 is great. Prioritize Input **field icons** (more appropriate than live). Generated **color profile ≠ the app**. **Kind · In the application** chips — if no purpose, teaching labels. Green **Action** chip under the title looks great; they do not see it on the app.
 
 ---
 
@@ -120,10 +124,13 @@ Desk chrome = live `/prototype-ant` + A22. Not Hub.
 - Shared panes on that Action: Input · Parameters · Output, already specified elsewhere.
 - **A31 / A32** on those interiors (and on Get, same pass).
 - **Add tag** Parameters specimen: **A35**. Contact = occupied chip from the prior. Tag = empty picker. Not Get’s cascade.
+- Green **Action** chip under the node title (**A35**). Spec.
+- Input type glyphs as **A35** (more proper than live). Every Input tree.
 
 ## 2. Do not build
 
 - Teaching captions. “At least two kinds of actions” footer (A7 caption).
+- **Kind** + **In the application** chip strip on the Action interior (**A35**). Teaching. Changing kind is **⋯ Switch** (law 38). Going back to the in-app list is the list, not those chips.
 - Three-row picker as the product. Hub leftovers: `manage_lists` · `assign_task` · `notify_consultant`. Do not pad Add tag onto **A33** because **A35** exists — A35 is Parameters, not the inventory.
 - Get’s Module / Every firm / Select firm cascade on Action.
 - Rule Outcomes on Action.
@@ -136,7 +143,7 @@ Desk chrome = live `/prototype-ant` + A22. Not Hub.
 
 - Search / scroll — the list is long. A33 clips later modules on purpose.
 - Same worker, several doors (Confirm book · Prepared file · Book Upload) — all stay on the list.
-- Switching kind (in-app ↔ Agents) stays the Kind control.
+- Switching kind (in-app ↔ Agents) is **⋯ Switch**, not a Kind chip strip.
 - Several chips in a mapped Parameter box = A31.
 - After **Run**, Input / Output are the writes (**RUN-PACKET**). Mapping before Run uses the trigger’s provided data (**TEST-PACKET**).
 
@@ -186,7 +193,7 @@ Live first pass (engineer): [`automations-blueprint/in-app-action-pass/`](./auto
 
 Redesign: [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app-action-inventory.png). Grouping + length. Chrome may drift — desk = live + A22.
 
-**Add tag interior:** [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png). Prior = contact import. Trust Contact occupancy + Tag picker.
+**Add tag interior:** [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png). Prior = contact import. Trust type glyphs, green Action chip, Contact occupancy + Tag picker. Kind chips on that PNG are teaching. Color of the PNG is not the desk.
 
 ---
 

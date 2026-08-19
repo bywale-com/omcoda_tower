@@ -12,7 +12,7 @@
 ```text
 Read docs/register/NODE-INTERIOR.md before any Automations node interior.
 
-Input (left tree: prior nodes in canvas order, outputs nested, Schema / Table / JSON, Search) is every node that has Input. **Look is A29.** Stacking law from A23 left (prior). Do not build that tree only on Get. The left is a log of table writes (law 42), not n8n in-memory. Mapping a chip is pointing at a record already in a table.
+Input (left tree: prior nodes in canvas order, outputs nested, Schema / Table / JSON, Search) is every node that has Input. **Look is A29.** Type glyphs as **A35** (priority over live icons). Stacking law from A23 left (prior). Do not build that tree only on Get. The left is a log of table writes (law 42), not n8n in-memory. Mapping a chip is pointing at a record already in a table.
 
 Output (top = this run’s writes, click, preview below) is every node that has Output. Specimen is A20. Get’s Output tab is this.
 
