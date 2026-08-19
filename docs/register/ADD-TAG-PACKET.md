@@ -85,6 +85,8 @@ Stamp SYSTEMS-ANALYST-LOG.
 
 **A parameter is a mapped box for one input that button needs.** Contact = who (chip from the left). Tag = which (picker). Not implicit `previousWrites`. Not Get’s cascade.
 
+**The visual of Tag is the Tag column on Contacts** (pills in the cell). Live values: valid / invalid. **A34** is a different column (**Audit**: reachable / sequence-ready). Do not spec this picker from A34. Law **44**.
+
 **Type glyphs, color, Action chip** are the look of that interior — and of Input everywhere (glyphs) and of every node title (kind chip). **Kind · In the application** is not a control. Teaching. Kill.
 
 ---
@@ -161,3 +163,4 @@ A33 inventory. A34 on the contact. Consultant multi-tag. Recut 015. Desk sider.
 
 - Pad A33. Recut 015. Overwrite 15:43. Plant.
 - Invert color again.
+- Spec this Tag picker from **A34** (Audit chips). Visual of Tag = Contacts **Tag** column.

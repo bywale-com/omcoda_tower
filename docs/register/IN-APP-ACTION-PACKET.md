@@ -8,7 +8,7 @@
 **Kind split (already locked):** [`A7-action-two-kinds.png`](./automations-blueprint/A7-action-two-kinds.png) — **Agents** vs **in the application**. This packet is **only** the in-app path after that pick. Agents stays [`A14`](./automations-blueprint/A14-action-assign-or-template.png) / law 31.  
 **Shared panes:** [`NODE-INTERIOR.md`](./NODE-INTERIOR.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md) · [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md). Retrofit these onto Action. Do not invent a fourth interior.  
 **Same pass also completes:** [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) **A31 / A32** (chip **is** the box; close Input; resize the interior).  
-**Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite. Face **law 41**. [`PRIMITIVES.md`](./PRIMITIVES.md).  
+**Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite. Face **law 41 · 44**. [`PRIMITIVES.md`](./PRIMITIVES.md).  
 **Does not:** plant; recut 015; invent a write that is not already a module affordance; spec the in-app picker layout; wire the walker; collapse Agents into this; freeze Hub `manage_lists` / `assign_task` / `notify_consultant` as the catalog.
 
 ---
@@ -16,7 +16,7 @@
 ## Do not miss
 
 1. **Can we automate X = does that module already have that affordance.** If it does not, you are inventing. If it does, it belongs on the in-app Action list.
-2. **An in-app action is a button that writes** — when there is a button. **Every critical interaction with a button** must be referenceable in Automations. **Not every critical interaction needs a button.** Tail: the **audit-specific mark** on the contact (reachable / sequence-ready). No ascribe control. Audit writes it. Visible on the person: [`A34-audit-tag-on-contact.png`](./automations-blueprint/A34-audit-tag-on-contact.png). Consultant-authored tags (many, forever) are later — not this.
+2. **An in-app action is a button that writes** — when there is a button. **Every critical interaction with a button** must be referenceable in Automations. **Not every critical interaction needs a button.** Tail: the **audit-specific mark** on the contact (reachable / sequence-ready). No ascribe control. Audit writes it. Visible on the person: [`A34-audit-tag-on-contact.png`](./automations-blueprint/A34-audit-tag-on-contact.png). Those chips are **Audit**, not Tag. Live Tag is valid / invalid. Law **44**. Consultant-authored tags (many, forever) are later — not this.
 3. **Actions live on the module, not in Automations.** Automations consumes them. Creating the affordance on the desk is what makes it available here. Analog: **HolonBoundary** (wrap so Console can see it). Do not spec a wrapper. One affordance, two seats.
 4. **Do not spec the picker.** You will see the potential actions. Lay them out. Founder redesigns after looking. That is smarter than PM drawing a fake inventory.
 5. **Input / Parameters / Output are already designed.** Retrofit. Mapped occupancy is **A31**. Close Input / resize is **A32**.

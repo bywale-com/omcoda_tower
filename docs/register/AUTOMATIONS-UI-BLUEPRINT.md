@@ -74,7 +74,7 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A31** | [`A31-mapped-box-is-the-value.png`](./automations-blueprint/A31-mapped-box-is-the-value.png) | chrome | Mapped chip **is** the box’s value. No leftover dropdown. Empty Contact still a picker (contrast). | 07:55 | revises live ChipBox. Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) |
 | **A32** | [`A32-close-input-resize-modal.png`](./automations-blueprint/A32-close-input-resize-modal.png) | chrome | Close Input (rail to reopen). Interior modal **resizable**. Not the canvas node. | 07:55 | Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) |
 | **A33** | [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app-action-inventory.png) | chrome | In-app Action list **by module**. SA persist walk, not three rows. Search. Kind = in the application. | 09:51 | revises live `02-in-app-by-module.png`. Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) |
-| **A34** | [`A34-audit-tag-on-contact.png`](./automations-blueprint/A34-audit-tag-on-contact.png) | chrome | Audit-specific mark **on the contact** (reachable / sequence-ready). No ascribe button. Consultant tags later. | 10:39 | Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) |
+| **A34** | [`A34-audit-tag-on-contact.png`](./automations-blueprint/A34-audit-tag-on-contact.png) | chrome | **Audit** column on Contacts (reachable / sequence-ready). Not the **Tag** column (valid / invalid). No ascribe button. | 10:39 · **18:40** | Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). Law **44**. |
 | **A35** | [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png) | chrome | **Add tag** Action interior. Prior = contact import. Contact occupied, Tag picker. Type glyphs. Color more lively. Green Action chip. Kind chips teaching. | 12:12 · 12:17 · 12:30 | Packet [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md) |
 | **A24** | [`A24-contact-import-output.png`](./automations-blueprint/A24-contact-import-output.png) | chrome | Trigger **Output** of **contact import**. A20 shape. This run: `import_batch` + `contact_records`. | 19:34 | — |
 | **A25** | [`A25-new-contact-output.png`](./automations-blueprint/A25-new-contact-output.png) | chrome | Trigger **Output** of **new contact**. A20 shape. This run: `contact_records` (that person). | 19:34 | — |
@@ -122,8 +122,8 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | Insert / add a node | Palette (A6 prior). Wire **+** (**A28**). Select **Action**. No Trigger on the wire. |
 | Open the **Action** node | Kind: **Agents** vs **in the application** (A7). |
 | Action kind = **in the application** | Module write-buttons, grouped by module. **A33.** Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). Live first pass `in-app-action-pass/` is three rows — not the inventory. |
-| Open **Add tag** after **contact import** | Parameters **A35**. Contact occupied from `contact_records`. Tag = empty picker. Same interior. |
-| Consultant → Contacts | Audit-specific mark **on the person** (**A34**). No ascribe button. Not the live Tag column (valid / invalid). Consultant tags later. |
+| Open **Add tag** after **contact import** | Parameters **A35**. Packet [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md). Contact occupied. Tag picker. Type glyphs. Color more lively. Green Action chip. Kind chips teaching. |
+| Consultant → Contacts | **A34** = **Audit** column (reachable / sequence-ready). Live **Tag** column = valid / invalid. Same field Actions write (law **44**). Do not spec Tag from A34. |
 | Action kind = Agents | First: **assign existing** or **from a template** (**A14**). Then select agent (whole sequence) · declare objective · if data request, create the form (A8 prior / **A12** canon). You do **not** author a new agent here. |
 | Open the **Get** node | Parameters **A23** right. Input look **A29**. Packets [`GET-PACKET.md`](./GET-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md). |
 | Open the **Rule** node | Click the Rule node. Tabs: Input · Outcomes · Output. **Outcomes:** **A21**. GUI \| Custom on A2 is **not** the tab. |
@@ -773,11 +773,11 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 ![A34 audit tag on contact](./automations-blueprint/A34-audit-tag-on-contact.png)
 
-**Rationale (10:39):** The “tag” in new-contact → audit → if is an **audit-specific mark**, not consultant-authored tags. No button. Critical interactions with a button must be Automations actions; this one has no button and still writes. Visible on the person, where it applies.
+**Rationale (10:39, unmixed 18:40):** The mark in new-contact → audit → if is an **audit-specific mark**, not Tag. No button. Critical interactions with a button must be Automations actions; this one has no button and still writes. Visible on the person, where it applies. Founder 18:35: this is the image that had different chips on the Contacts table — **reachable / sequence-ready**, not valid / invalid. That is why live Tag looked like it failed parity. It did not. Different column.
 
-**On the glass:** Consultant · Contacts. Audit column: reachable / partial / unreachable · sequence-ready. No X. No + add tag.
+**On the glass:** Consultant · Contacts. **Audit** column: reachable / partial / unreachable · sequence-ready. No X. No + add tag. Live **Tag** column (valid / invalid) is **not this plate**.
 
-**Do not build:** consultant multi-tag. Ascribe control. Mixing this into a freeform Tag column.
+**Do not build:** consultant multi-tag. Ascribe control. Mixing this into the Tag column. Speccing Tag from these chips.
 
 **Stale pixel:** generated chrome. Trust the chips on the row. Desk = live consultant Contacts.
 

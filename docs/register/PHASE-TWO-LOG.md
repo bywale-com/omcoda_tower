@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **ADD-TAG-PACKET** (A35). Color more lively. Type glyphs. Kind chips teaching. Green Action chip. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Law **44**: field on the contact **is** the field Actions write. Visual = that column. **A34** is Audit, not Tag. Do not plant.
 
 **How we maintain this log**
 
@@ -1667,6 +1667,18 @@ Flag 15:43 untouched.
 **What we did:** [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md). One pocket. A33 stays the inventory.
 
 **Do not:** pad A33; invert color again; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 18:40 UTC — Tag is one field. A34 was Audit. Parity = the plate’s chips.
+
+**Why:** Founder: my bad. Thought the Add tag packet was about the image with tags on Contacts that were **not** valid / invalid. That is why they were stressing **parity** — what is in the images has to be precise, or it confuses them, then SA, then everyone else. Now they like it better understood. Ultimately it is just a tag. Visual = the **column** in that table. Beautiful: whenever we add a field like that, it shows on the contact and it is available in Actions.
+
+**What we did:** That image is **A34**. Column **Audit**. Chips: reachable / partial / unreachable · sequence-ready. Live **Tag** is valid / invalid — a different column, one field. Unmixed the stale PRIMITIVES row that had called A34 “ascribe a tag.” Law **44**. [`PLATE-READ.md`](./PLATE-READ.md) field-chips line.
+
+**Do not:** spec Tag from A34; invent an Automations-only field beside the contact column; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 

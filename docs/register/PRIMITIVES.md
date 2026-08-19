@@ -62,14 +62,16 @@ Two kinds. That is the whole split.
 
 **Law 41:** can we automate X = does that module already afford X. The inventory is those affordances, grouped by module — not this table as a catalog. Automations consumes; it does not author a second button. Packet: [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md).
 
-**Tail:** not every critical interaction has a button. An **audit-specific mark** on the contact (reachable / sequence-ready) has no ascribe control. Audit writes it. It is visible on the person (**A34**). Consultant-authored tags (many, forever) are later — not this.
+**Tail:** not every critical interaction has a button. An **audit-specific mark** on the contact (reachable / sequence-ready) has no ascribe control. Audit writes it. It is visible on the person (**A34**). That is **not** Tag.
+
+**Law 44:** a field on the contact **is** the field an Action writes. Visual = that column (pills in the cell). Add another field the same way — it shows on the person and it is available in Actions.
 
 Named so far (examples, not the list):
 
 | Action | Plain |
 |--------|--------|
-| **Ascribe a tag** | Later: consultant-authored tags (many, forever). **This walk:** the audit mark on the person (**A34**) — no button. |
-| **Run an audit** | Same audit the desk already runs. A node. Not hardcoded on upload. |
+| **Ascribe a tag** | Writes the contact **Tag** field. Visual = the **Tag** column on Contacts (pills). Live values: valid / invalid. Parameters **A35**. Consultant many-tags later. **Not A34.** |
+| **Run an audit** | Same audit the desk already runs. A node. Not hardcoded on upload. Writes the **Audit** mark on the person (**A34**): reachable / sequence-ready. No ascribe button. |
 | **Make a form** | Automations owns the form. Questions are the required data. |
 | **Provision a firm** | Later idea — see below. Canonical Automations **hears** that a firm was created (event). It does not have to **be** the desk that creates it. |
 
