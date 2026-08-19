@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Mapped chip **is** the box (A31). Close Input + resize interior (A32). Packet mapped-box. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. A31/A32 packet: two interiors are the specimen — do not miss them; backgrounds are not the desk. Chip **is** the box. Do not plant.
 
 **How we maintain this log**
 
@@ -1485,6 +1485,30 @@ Flag 15:43 untouched.
 **Packet:** [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
 
 **Do not:** plant; recut 015; overwrite 15:43; ship tags-plus-dropdown.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 07:58 UTC — Strengthen A31/A32 packet: chrome is not the desk
+
+**Why:** Founder: packet must be strong. Background and other things on those two images are pretty far off the design system. The two ideas are strong — should not miss them.
+
+**What we did:** Rewrote [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md). “Do not miss” first. Desk = live / A22 / A23 / A29. Copy only: (1) mapped chip **is** the box (2) close Input (3) resize interior modal. Live ChipBox named. GET-PACKET and INPUT-LOOK allude.
+
+**Do not:** copy A31/A32 sider; plant; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 08:00 UTC — A31/A32 packet locked strong: images are the ideas
+
+**Why:** Founder: those two images are **very strong** — should not miss them. Background and other things are pretty far off the current design system. Write the packet, add it to the PR, then they will talk about the next thing.
+
+**What we did:** Recast [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) so it opens on **look at the interiors / ignore the chrome**. A31 contrast (Firm chip, no chevron / Contact still a picker) and A32 (Input rail + modal resize grip) named as the specimen. Engineer paste tells them to open the PNGs first. Blueprint stale-pixel lines match.
+
+**Do not:** skip the images because backgrounds drifted; copy those backgrounds; plant; recut 015; overwrite 15:43.
 
 Flag 15:43 untouched.
 

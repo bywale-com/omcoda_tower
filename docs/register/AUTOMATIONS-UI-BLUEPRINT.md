@@ -93,7 +93,7 @@ In-app Ant Automations workbench is **not** this blueprint. Mock = generated ima
 - A1 smallest workflow is trigger · rule · action with **no If node** on the canvas. **A15** is the chain (If on the canvas). **A16** opens that If. A1 stays the smallest. A6’s palette includes **Exit**; A15’s includes **Condition (If)** — do not freeze one palette from the other.
 - **A14** nav chrome sometimes drifts (Home / Workspaces vs House-global). Trust the **modal contents**. A14 footer on the PNG is Cancel · Save; the “not a third option” sentence is not on that image.
 - **A30** generated chrome drifted (Harbor / icon sider). Trust **Save · Test · Launch**, the chain, the palette. Desk = **A22**.
-- **A31 / A32** chrome is far off the desk. **Do not copy the background.** Trust occupancy (A31) and rail + grip (A32). Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
+- **A31 / A32** interiors are **strong** (occupancy; Input rail + resize grip). Background / sider / extra chrome on those files is far off the current design system. **Do not copy the background. Do not skip the interiors.** Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
 
 ---
 
@@ -715,7 +715,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Do not build:** tags-plus-dropdown. Dashed wrapper as the face.
 
-**Stale pixel:** sider labels / extra fields. **Chrome is not canon.** Trust Firm chip vs Contact dropdown. Desk = A22 / A29. Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) — do not miss occupancy.
+**Stale pixel:** sider / catalog / extra fields. **Chrome is not canon.** The **interior is.** Trust Firm chip vs Contact dropdown. Desk = A22 / A29. Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) — do not miss occupancy.
 
 **Not this plate:** Close Input / resize (**A32**).
 
@@ -733,7 +733,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Do not build:** deleting Input. Resizing the canvas node.
 
-**Stale pixel:** sider copy. **Chrome is not canon.** Trust Input rail + reopen chevron + resize grip. Desk = A22 / A29.
+**Stale pixel:** sider / catalog. **Chrome is not canon.** The **interior is.** Trust Input rail + reopen chevron + resize grip. Desk = A22 / A29.
 
 **Not this plate:** Chip fill (**A31**).
 

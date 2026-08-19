@@ -1,26 +1,27 @@
 # Mapped box packet — A31 value in the box · A32 close Input / resize
 
 **Seat:** Product Manager. For the **engineer** and the **Systems Analyst**. One pocket. Do not lose this.  
-**When:** Cut 2026-08-19 07:55. Strengthened 07:49-session (same morning): plates are **strong on the two ideas**; **chrome on those PNGs is not the desk.**  
-**Plates:** [`A31-mapped-box-is-the-value.png`](./automations-blueprint/A31-mapped-box-is-the-value.png) · [`A32-close-input-resize-modal.png`](./automations-blueprint/A32-close-input-resize-modal.png).  
-**Desk chrome (not those PNGs):** live `/prototype-ant` · [`A22-get-canvas.png`](./automations-blueprint/A22-get-canvas.png) · [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png) · [`A29-variable-chip.png`](./automations-blueprint/A29-variable-chip.png). Rule: [`PLATE-CHROME-RULE.md`](./PLATE-CHROME-RULE.md).  
+**When:** Cut 2026-08-19 07:55. Strengthened twice the same morning: the **two images are the specimen for the ideas**; **background / sider / extra chrome on those PNGs is not the desk.**  
+**Plates (open these; the interiors are strong):** [`A31-mapped-box-is-the-value.png`](./automations-blueprint/A31-mapped-box-is-the-value.png) · [`A32-close-input-resize-modal.png`](./automations-blueprint/A32-close-input-resize-modal.png).  
+**Desk (the current design system — not those PNG backgrounds):** live `/prototype-ant` · [`A22-get-canvas.png`](./automations-blueprint/A22-get-canvas.png) · [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png) · [`A29-variable-chip.png`](./automations-blueprint/A29-variable-chip.png). Rule: [`PLATE-CHROME-RULE.md`](./PLATE-CHROME-RULE.md).  
 **Input tree look:** [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) **A29**. This packet is **what the parameter box does** when you drop, plus **close Input** and **resize the interior**.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite. Face **law 40**.  
 **Does not:** plant; recut 015; mint tables; rebuild House-global from A31/A32.
 
 ---
 
-## Do not miss (read this before the PNGs)
+## Do not miss
 
-The A31 / A32 files **drifted**. Background, sider, labels, extra fields, “bug” icons — **out**. Do not copy the desk from those images. Do not “fix” Automations to look like those backgrounds.
+**These two images are strong. The ideas on them must not be missed.** Open the PNGs. Copy the interiors named below. The rest of each file is far off the current design system — ignore it.
 
-**Copy only these three product facts:**
+| File | Look at this (the product) | Do not look at this (not the desk) |
+|------|----------------------------|------------------------------------|
+| **A31** | Inside the modal: **Firm** is a purple chip filling the field, **no chevron**. **Contact** is still an empty dropdown **with** a chevron. That contrast **is** the packet. | Everything behind the modal: sider, catalog, top bar, invented labels. Extra Input fields (`created_at`, `updated_at`, …). Chip origin copy is furniture; A29 + A24 own the tree. |
+| **A32** | Inside the modal: **Input closed** to a slim vertical **Input** rail with a chevron to reopen. Parameters take the width. **Resize grip** on the **bottom-right of that modal**. | Same: sider / catalog / top bar. A “bug” icon. A wire from a tiny canvas card into the modal. Extra tabs. Resizing anything on the canvas. |
 
-1. **A drop from the left is the value of that box.** Not a suggestion. Not a tag sitting on a still-open dropdown. Empty = picker (chevron). Mapped = chip **fills the same box**; chevron gone. X → picker again.
-2. **Input can close.** Slim rail. Reopen. Parameters take the width. Input is not deleted.
-3. **The interior modal (click into the node) is resizable.** Grip on that modal. **Not** the canvas node.
+If you ship tags sitting on a still-open dropdown, you missed A31. If Input cannot close, or the canvas node resizes instead of the interior, you missed A32. If you rebuild Automations to look like those backgrounds, you missed the packet.
 
-Live already missed (1). `GetParametersPane` `ChipBox` paints `Tag closable` **then still renders the Select**. Tags above, dropdown still there. That is the bug. Kill that pattern on **every** box that accepts a left-side write, not Get Firm only.
+Live already missed A31. `GetParametersPane` `ChipBox` paints `Tag closable` **then still renders the Select**. Tags above, dropdown still there. Kill that pattern on **every** box that accepts a left-side write, not Get Firm only.
 
 ---
 
@@ -29,7 +30,16 @@ Live already missed (1). `GetParametersPane` `ChipBox` paints `Tag closable` **t
 ```text
 Read docs/register/MAPPED-BOX-PACKET.md ALL THE WAY THROUGH before touching ChipBox, GetParametersPane, NodeInteriorModal, or any parameter box that accepts a drag from Input.
 
-Product face = /prototype-ant. Hub is not the app. Desk chrome = live Ant + A22 / A23 / A29. Do NOT copy A31/A32 background, sider, catalog, or invented fields.
+Open the two plates. They are the specimen for the ideas. Do not miss them:
+
+  docs/register/automations-blueprint/A31-mapped-box-is-the-value.png
+  docs/register/automations-blueprint/A32-close-input-resize-modal.png
+
+A31 — look ONLY at the modal interior: Firm = chip filling the field, NO chevron. Contact = empty picker WITH chevron. That contrast is the product.
+
+A32 — look ONLY at the modal interior: Input collapsed to a slim “Input” rail + chevron to reopen. Resize grip on that modal (bottom-right). Not the canvas node.
+
+Do NOT copy A31/A32 background, sider, catalog, top bar, invented fields, or any chrome outside the modal. Product face = /prototype-ant. Hub is not the app. Desk chrome = live Ant + A22 / A23 / A29.
 
 Three facts. Do not miss them:
 
@@ -51,7 +61,9 @@ Read docs/register/PLATE-READ.md. Do not recut 015. Do not overwrite 15:43.
 ## Paste — Systems Analyst
 
 ```text
-You are Tower’s Systems Analyst. Identity: docs/README.md § Systems Analyst. Log: docs/register/SYSTEMS-ANALYST-LOG.md. 15:43 stands. Mapped-box face is docs/register/MAPPED-BOX-PACKET.md plus law 40. Chrome on A31/A32 is not a system. Do not ascribe sider labels.
+You are Tower’s Systems Analyst. Identity: docs/README.md § Systems Analyst. Log: docs/register/SYSTEMS-ANALYST-LOG.md. 15:43 stands. Mapped-box face is docs/register/MAPPED-BOX-PACKET.md plus law 40.
+
+A31 and A32 interiors are the specimen. Chrome behind those modals is not a system. Do not ascribe sider labels or invented fields.
 
 Do not mint tables. mappedSlots already sits beside getClass1 on Get. That split is the live smell: chip AND select at once.
 
@@ -71,23 +83,23 @@ Do not recut 015. Stamp SYSTEMS-ANALYST-LOG.
 - Close the **Input** side. Some nodes need the width.
 - The interior modal (click into the node) should be **resizable**. Not the canvas node.
 - Packet this, then move on.
-- 07:49: write a **strong** packet. Background and other things on these two images are **pretty far off** the design system. Trust the packet for what matters. The two images are **strong on those ideas** — should not miss them.
+- 07:49: write a **strong** packet. Background and other things on these two images are **pretty far off** the current design system. Trust the packet for what matters. The **two images are very strong** on those ideas — **should not miss them.**
 
 ---
 
-## Chrome rule for these two files (bucket 2 + 5)
+## Chrome: current design system vs these two files
 
-[`PLATE-CHROME-RULE.md`](./PLATE-CHROME-RULE.md) still stands. A31 / A32 **failed it**.
+[`PLATE-CHROME-RULE.md`](./PLATE-CHROME-RULE.md) still stands. A31 / A32 **failed the chrome rule**. They did **not** fail as idea plates.
 
 | On A31 / A32 | What you do |
 |--------------|-------------|
 | House-global / Libraries / catalog / top bar / canvas behind | **Ignore.** Build the live `/prototype-ant` desk. Specimen: **A22 · A23 · A29**. |
 | Invented sider copy, “bug” icons, wires from a canvas card into the modal | **Do not build.** |
 | Extra import fields a generator added (`created_at`, `updated_at`, …) | **Do not freeze.** Write-set is **A24**: `import_batch` (id, filename, row_count, source, firm) · `contact_records` (name, email, firm, id). Tree look is **A29**. |
-| A31 **Firm chip inside the field, no chevron** vs **Contact still a dropdown** | **Copy.** That contrast is the product. |
-| A32 **Input rail + reopen chevron** and **resize grip on the modal** | **Copy.** |
+| A31 **Firm chip inside the field, no chevron** vs **Contact still a dropdown** | **Copy. Do not miss.** |
+| A32 **Input rail + reopen chevron** and **resize grip on the modal** | **Copy. Do not miss.** |
 
-If an implementer “matches the screenshot” and rebuilds the shell, they failed this packet.
+If an implementer “matches the screenshot” and rebuilds the shell, they failed this packet. If they skip the interiors because the backgrounds look wrong, they also failed this packet.
 
 ---
 
@@ -207,7 +219,7 @@ Desk. A31 chip occupancy. Output tab.
 
 | Plate | Take | Do not take onto this pocket |
 |-------|------|------------------------------|
-| **A29** | Tree. Type control in front of the name. Chip *look*. | Occupancy of the box if it still reads as tag-on-select. That’s **A31**. |
+| **A29** | Tree. Type control in front of the field name. Chip *look*. | Occupancy of the box if it still reads as tag-on-select. That’s **A31**. |
 | **A23** | Get Parameters cascade. Combobox + input. | Lightning mapping. |
 | **A22** | Desk + canvas chrome. | — |
 | **A30** | Save · Test · Launch **buttons only**. | The rest of that PNG. |
@@ -227,6 +239,7 @@ Desk. A31 chip occupancy. Output tab.
 
 ## Do not
 
+- Skip the two images because the backgrounds look wrong. The interiors are the specimen.
 - Plant `AntAutomationWorkbench` from A31/A32 chrome.
 - Recut 015. Overwrite 15:43.
 - Ship tags-plus-dropdown because “the PNG had a pill.” The pill **replaces** the picker.
