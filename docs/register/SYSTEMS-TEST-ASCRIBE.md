@@ -2,7 +2,7 @@
 
 **Seat:** Systems Analyst.  
 **When:** 2026-08-18 23:10 UTC.  
-**What this is:** plays for [`TEST-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/TEST-PACKET.md) and [`INPUT-LOOK-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/INPUT-LOOK-PACKET.md). How values get into Input/Output. Cut: [`SYSTEMS-CHANGE-PACKET-016.md`](./SYSTEMS-CHANGE-PACKET-016.md) (**two tables**). **Do not recut 015.** Flag **15:43**.  
+**What this is:** plays for [`TEST-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/TEST-PACKET.md) and [`INPUT-LOOK-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/INPUT-LOOK-PACKET.md). How values get into Input/Output. Cuts: [`SYSTEMS-CHANGE-PACKET-016.md`](./SYSTEMS-CHANGE-PACKET-016.md) (**two tables**) · [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017.md) (**available vs `N`**). **Do not recut 015.** Flag **15:43**.  
 **Look:** A29 supersedes A23 left. **A30 is only Save · Test · Launch.** Filling is this file, not another PNG.
 
 AI does **not** generate values.
@@ -129,11 +129,12 @@ Do not invent a mapping table. Do not freeze extra import fields. Write-set = wh
 ## Engineer pickup
 
 1. Cut [`SYSTEMS-CHANGE-PACKET-016.md`](./SYSTEMS-CHANGE-PACKET-016.md): `event_write_set` + `event_test_data`, v1 seed, Test loads `max(version)`.
-2. A29 look on **every** Input. Get Parameters stay Get-only.
-3. Test button: Save · Test · Launch. No Test tab. No commit.
-4. Source values **once**, on **Trigger Output**. Door 1 = live instance. Door 2 = `event_test_data`. Tables in the tree from `event_write_set`. Same DAG as Launch. Get is a node, not a fallback.
-5. Every later node: Input = previous Output. Output = what **that** node does, uncommitted.
-6. Audit Test = `executeAuditRun` without persist. Rule Test does not fake an evaluation we cannot run.
-7. Chips = pointers into the handle. Graph `data`, not a mapping table.
+2. Cut [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017.md): `chainWrites` for Input/chips; `N` from last handle (or chip). Person-verb loops `N`; set-verb once. Drop `LIMIT 50`. A29 tree = `chainWrites`. **Available ≠ N.**
+3. A29 look on **every** Input. Get Parameters stay Get-only.
+4. Test button: Save · Test · Launch. No Test tab. No commit.
+5. Source values **once**, on **Trigger Output**. Door 1 = live instance. Door 2 = `event_test_data`. Tables in the tree from `event_write_set`. Same DAG as Launch. Get is a node, not a fallback.
+6. Every later node: Input = previous Output. Output = what **that** node does, uncommitted. Tree on Input = full `chainWrites` (017). Run count = last handle / chip `N`.
+7. Audit Test = `executeAuditRun` without persist. Rule Test does not fake an evaluation we cannot run.
+8. Chips = pointers into `chainWrites`. Graph `data`, not a mapping table. A chip sets `N` to that set.
 
 **Do not:** recut 015; mint an **events log**; UPDATE a shipping contract version; generate values with a model; treat Get as the trigger’s substitute; overwrite 15:43.

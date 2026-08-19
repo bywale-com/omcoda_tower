@@ -98,16 +98,16 @@ Ascribe answers: [`SYSTEMS-GET-RULE-ASCRIBE.md`](./SYSTEMS-GET-RULE-ASCRIBE.md).
 
 ## Leftovers vs 013–015 (honesty holes)
 
-None of these mean “015 failed.” They are the next small cuts or chrome. **Do not** invent a 016 handle.
+None of these mean “015 failed.” They are the next small cuts or chrome. **016 is the event Test contract, not a handle.** **017** is available vs run count (`chainWrites` + `N`) — still not a recut of 015.
 
 | # | Leftover | Kind | What to do |
 |---|----------|------|------------|
 | 1 | House seed **`draft`** | Product path | Packet manual said one house automation **active**. Dispatch requires `active`. Operator must **Activate** (Activate already `materializeTriggersFromGraph`). Optional: seed `active` if founder wants it live without a click. |
 | 2 | House If = `sequence_ready.ready eq false` | Proxy | `executeAuditRun` sets `ready=true` for **reachable and partial**. “Failed” on the canvas is **unreachable only**. Partial gets the **valid** tag. Founder said failed contacts. Prefer If on `reachability_verdicts.verdict` if they meant not-reachable. Do not freeze Audit’s output list to get there — it is a **pick**. |
-| 3 | Handle is **last-node replace**, not a stack | 015 boundary | Enough for import → audit → If → tag. If children see Audit’s writes (pass-through). **Not** PR #96 “Input sees every prior node.” That is Get/Rule Input, not a recut of the handle type. |
+| 3 | Handle is **last-node replace**, not a stack | 015 boundary · **017 cut** | Last-node `previousWrites` stays. Full-chain Input is `chainWrites` on the same walk — [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017.md). Do not recut 015 into a stack. |
 | 4 | `previousResultFrom` on If UI | Chrome | Saved on the node. Walker **does not read it**. Live pick is `pickTable`+`pickField`. |
 | 5 | Pick UI is an enum + text | Chrome | If: `sequence_ready` \| `reachability_verdicts`. Audit `pickTable` defaults `import_batch`. Not a live list of **this run’s** writes. |
-| 6 | Empty `contactIds` → `sequence_ready ready=true LIMIT 50` | Risk | `walkValidatedWorkflow` fallback. Import dispatch **does** pass ids. Manual run / a graph with no people can audit the **wrong 50**. Do not leave as the Get. |
+| 6 | Empty `contactIds` → `sequence_ready ready=true LIMIT 50` | Risk · **017 cut** | Stop using LIMIT 50 as grain. Empty last handle → `N = 0`. Honest empty. Get is a DAG node, not this fallback. [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017.md). |
 | 7 | Wrap language | Docs | Say **`executeAuditRun`**. `handleAuditRunCreate` is the HTTP wrapper. Packets that only name the handler are stale wrap-talk. |
 | 8 | `import.created` | Ghost | Still on the TypeScript event union. Picker lists `contact_import`. Drop the Hub name from the union when touching that file. |
 | 9 | `fireOnboarding` | Dead door | Not on Book readiness. Still on `AuditContext` / `ports`. Do not revive as the product path after audit. |
@@ -119,7 +119,7 @@ None of these mean “015 failed.” They are the next small cuts or chrome. **D
 
 **015 is:** on the walk, after a node, `previousWrites` = the rows **that module wrote this run**. Next node **picks**. No copy table. No frozen Audit catalog.
 
-**015 is not:** n8n Input of every ancestor; Get as a kind; Rule emitting `missing_fact_signals`; Output chips. Those **use** the handle. They do not replace it.
+**015 is not:** n8n Input of every ancestor; Get as a kind; Rule emitting `missing_fact_signals`; Output chips. Those **use** the handle. They do not replace it. Full-chain Input + run-count `N` is **017**, not a recut of this produce.
 
 ---
 

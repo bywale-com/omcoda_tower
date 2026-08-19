@@ -358,3 +358,13 @@ Connecting a trigger **is** knowing the writes. Test fills from that — handler
 
 **Do not:** recut 015; copy live fires into the contract; overwrite 15:43.
 
+---
+
+## 2026-08-19 08:10 — Available is the chain. N is the last handle. 017.
+
+015 still **produces** last-node `previousWrites`. That is cardinality default, not Input. Along the DAG every node’s writes are **available** (`chainWrites`). How many times the next node runs = last handle’s **record count** (people if any, else 1 artifact). Chip from the left sets `N` to that set. Person-verb loops `N`; set-verb (Audit, Get) runs once. Empty handle → `N = 0`. Not `LIMIT 50`. Not a recut of 015. Not an events table.
+
+Cut: [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017.md).
+
+**Do not:** recut 015; mint an events table; overwrite 15:43.
+

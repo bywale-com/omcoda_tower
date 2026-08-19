@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-18 23:22 UTC — **016: two tables — `event_write_set` + `event_test_data`, versioned.** Not an events log. Do not recut 015. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-19 08:10 UTC — **017: all outputs available; N = last handle’s records.** Actions sit on this. Do not recut 015. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1377,6 +1377,25 @@ Park: [`SYSTEMS-TEST-ASCRIBE.md`](./SYSTEMS-TEST-ASCRIBE.md) “How Test gets th
 23:18 refused a shadow catalog. This is **upkeep**, not a copy of every INSERT. Packet [`SYSTEMS-CHANGE-PACKET-016.md`](./SYSTEMS-CHANGE-PACKET-016.md).
 
 **Do not:** recut 015; mint an events log; AI; hardcode Ant; overwrite 15:43.
+
+---
+
+## 2026-08-19 08:10 UTC — 017: available is the chain; N is the last handle’s records.
+
+**Why:** Founder: along the DAG **all outputs are available**. The **run count** is still the **last** output’s records (n8n). Every firm / one firm / a chip from the left = as many records as that set. Actions are next at a fundamental level — stand this up first.
+
+**Hard:** Two facts. Do not collapse them.
+
+1. **Available** = every completed node’s writes, this run. Input tree / chips. Walker keeps `chainWrites[nodeId]` from the same lists already on `node_status`. Do not recut 015 into a stack.
+2. **How many times this node runs** = last output’s **record count** `N`. `N` is not `writes.length`. People on the handle → unique `contact_id`s. Artifacts only → `N = 1`. Chip from the left sets `N` to **that** mapped set.
+
+**Person-verb** (tag, enroll, If on a person field): loop `N`. **Set-verb** (Audit, Get): **once** over the set. Do not run Audit N times. Do not run Tag once for the whole set when N people are on the handle.
+
+`previousWrites` stays last-node replace (015). Empty last handle → `N = 0`. Stop using `sequence_ready LIMIT 50` as grain. No SQL. No new table. Same for Test and Launch.
+
+Packet [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017.md).
+
+**Do not:** recut 015; Get as trigger substitute; A19 on the trigger; N Audits for N people; `LIMIT 50`; overwrite 15:43.
 
 
 

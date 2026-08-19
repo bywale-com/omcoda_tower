@@ -475,3 +475,9 @@ Source values on **Trigger Output** only, from the event’s **connected write-s
 ## 016 — 2026-08-18 23:22 — event contract (write-set + test data)
 
 Cut [`SYSTEMS-CHANGE-PACKET-016.md`](./SYSTEMS-CHANGE-PACKET-016.md). Two tables, versioned. Protocol: bump both, never UPDATE shipping, never log live fires. Seed v1 for events that already dispatch. Pack-update / `contact.created` have no v1.
+
+---
+
+## 017 — 2026-08-19 08:10 — available vs run count
+
+Along the DAG every node’s writes are **available**. How many times this node runs = **last** output’s records (people if any, else 1 artifact). Chip from the left sets `N` to that set. Audit once over the set; tag per person. [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017.md). No SQL. Do not recut 015.
