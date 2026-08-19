@@ -131,11 +131,11 @@ This is the same architecture. Face named it. Do not recut 015 or 017.
 |------|-------------------|
 | **A33** grouped persist list | 09:35 table in this file. Kill main **#100** three-row picker as the product. Search/scroll. Same worker, several doors stay. Agents Launch stays the other A7 card. |
 | **Law 42** — left is table writes, not n8n memory | 015 `previousWrites` + 017 `chainWrites`. Chip = pointer at `{ table, id, contact_id? }`. No in-memory item. Get is a read of rows already in a table. Test shows the **same write-shape** and still does not INSERT (law 39 · 016 door 2). |
-| **A34** audit mark on the contact, no button | `executeAuditRun` already INSERT `reachability_verdicts` + `sequence_ready` keyed by `contact_id`. Those rows **are** the mark. On the handle after `run_audit`. If **picks** them (`pickTable`/`pickField`). Not `ascribe_tag`. Not an A33 row. Consultant multi-tag later. |
+| **A34** audit mark on the contact, no button | **Cut [`SYSTEMS-CHANGE-PACKET-018.md`](./SYSTEMS-CHANGE-PACKET-018.md).** `reachability_verdicts` + `sequence_ready` on the person. Contacts **paints those writes**. Not `ascribe_tag`. Not an A33 row. |
 | New contact already wrote the person | Trigger Output **A25** = that `contact_records` write. This canvas does not INSERT the person. Tag (later) is `contact_tag` on the same id. |
 | If-tagged after you just tagged them | Tautological on **this** canvas. If on the **audit** mark. Tag is so the system has the mark. Agents hang off that If, or hear the write as an event on another automation. |
 
-**A34 glass gap (chrome, not a new write):** live Contacts shows `contact_tag` (house valid/invalid) + notes. It does **not** yet pane `reachability_verdicts` / `sequence_ready`. Book readiness does. Smallest: show those two writes on the person. Do not mint a tag. Do not route A34 through `ascribe_tag`.
+**A34 is the cut, not a leftover.** Contacts shows `reachability_verdicts` + `sequence_ready` on the person. Book readiness already has them. Tag column stays `contact_tag`. Packet [`SYSTEMS-CHANGE-PACKET-018.md`](./SYSTEMS-CHANGE-PACKET-018.md). Do not mint a tag. Do not route A34 through `ascribe_tag`.
 
 PRIMITIVES still says live walk “does not send work to Audit.” **Stale glass.** Main walker already runs `run_audit`. Do not overwrite 15:43. Do not recut 015 from that paragraph.
 

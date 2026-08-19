@@ -481,3 +481,9 @@ Cut [`SYSTEMS-CHANGE-PACKET-016.md`](./SYSTEMS-CHANGE-PACKET-016.md). Two tables
 ## 017 — 2026-08-19 08:10 — available vs run count
 
 Along the DAG every node’s writes are **available**. How many times this node runs = **last** output’s records (people if any, else 1 artifact). Chip from the left sets `N` to that set. Audit once over the set; tag per person. [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017.md). **08:40:** law 41 + A31. **09:35:** persist table, not three YES. **10:50:** bless A33 / A34 / law 42. Grain unchanged. No SQL. Do not recut 015.
+
+---
+
+## 018 — 2026-08-19 10:55 — A34 audit mark on the contact
+
+Contacts shows `reachability_verdicts` + `sequence_ready` on the person. Same writes Audit already makes. Not `contact_tag`. No button. [`SYSTEMS-CHANGE-PACKET-018.md`](./SYSTEMS-CHANGE-PACKET-018.md).

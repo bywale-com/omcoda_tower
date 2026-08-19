@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-19 10:50 UTC — **Bless PR #96 A33 / A34 / law 42.** Same architecture as 015+017+law 41. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-19 10:55 UTC — **018: A34 audit mark on the contact is a cut.** Contacts paints `reachability_verdicts` + `sequence_ready`. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1443,6 +1443,17 @@ Park: [`SYSTEMS-IN-APP-ACTION-ASCRIBE.md`](./SYSTEMS-IN-APP-ACTION-ASCRIBE.md) s
 Park: [`SYSTEMS-IN-APP-ACTION-ASCRIBE.md`](./SYSTEMS-IN-APP-ACTION-ASCRIBE.md) bless section.
 
 **Do not:** recut 015/017; pad A33 with A34; mint a tag for the audit mark; overwrite 15:43.
+
+---
+
+## 2026-08-19 10:55 UTC — A34 is the cut. 018. Not a question.
+
+**Why:** Founder: A34 is the spec (picture + packet + law). They want that audit mark on the person. SA had parked it as “chrome / later” and asked. Wrong. That was the job.
+
+**Hard:** Packet [`SYSTEMS-CHANGE-PACKET-018.md`](./SYSTEMS-CHANGE-PACKET-018.md). Contacts list returns and paints `reachability_verdicts.verdict` + `sequence_ready.ready` for that contact. No new table. No button. Tag column stays `contact_tag`. Do not copy the mark into a tag.
+
+**Do not:** recut 015; ascribe_tag for this; overwrite 15:43.
+
 
 
 
