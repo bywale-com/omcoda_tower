@@ -114,6 +114,14 @@ export const WORKFLOW_CONSTANT_PACK_OPTIONS: { id: string; label: string }[] = [
   { id: "pack.firm.cedar", label: "Firm Cedar constants" },
 ];
 
+export type MappedChip = {
+  fromNodeId: string;
+  table?: string;
+  field?: string | null;
+  id?: string | null;
+  label: string;
+};
+
 export type WorkflowNodeData = {
   label: string;
   configured: boolean;
@@ -175,6 +183,8 @@ export type WorkflowNodeData = {
   getClass2?: string[];
   /** Firm filled + Contact closed = all children. False after deselect-all + pick. */
   getClass2All?: boolean;
+  /** A29 chips — pointers into the previous handle, not a mapping table. */
+  mappedSlots?: Record<string, MappedChip[]>;
   /** Rule Direct Input — who already exists in the book. */
   directFirmId?: string;
   directContactIds?: string[];

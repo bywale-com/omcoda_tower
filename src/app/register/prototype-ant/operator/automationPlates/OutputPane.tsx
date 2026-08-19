@@ -2,18 +2,16 @@ import { useMemo, useState } from "react";
 import { Empty, Table, Tag, Typography } from "antd";
 import type { WorkflowNodeData } from "../../../../data/automationWorkflows";
 import { COLLECTIBLE_FIELDS } from "../../../../data/collectibleFields";
+import { handleTreeTables, writesFromHandle } from "../../../../data/eventTestContract";
 
-type WriteRow = { table: string; id: string; contact_id?: string | null; [key: string]: unknown };
-
-function writesFromNode(data: WorkflowNodeData): WriteRow[] {
-  const out = data.lastOutput as Record<string, unknown> | null | undefined;
-  if (!out) return [];
-  const raw = out.writes;
-  if (Array.isArray(raw)) {
-    return raw.filter((row): row is WriteRow => Boolean(row && typeof row === "object" && "table" in row && "id" in row));
-  }
-  return [];
+function displayValue(value: unknown): string {
+  if (value == null) return "—";
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  return JSON.stringify(value);
 }
+
+const SKIP = new Set(["table"]);
 
 function latticeClasses(data: WorkflowNodeData): { key: string; label: string; rows: unknown }[] {
   const out = (data.lastOutput ?? {}) as Record<string, unknown>;
@@ -31,17 +29,10 @@ function latticeClasses(data: WorkflowNodeData): { key: string; label: string; r
 }
 
 export function OutputPane({ data }: { data: WorkflowNodeData }) {
-  const writes = writesFromNode(data);
-  const grouped = useMemo(() => {
-    const map = new Map<string, WriteRow[]>();
-    for (const row of writes) {
-      const list = map.get(row.table) ?? [];
-      list.push(row);
-      map.set(row.table, list);
-    }
-    return [...map.entries()].map(([table, rows]) => ({ table, rows }));
-  }, [writes]);
+  const writes = writesFromHandle(data.lastOutput);
+  const grouped = handleTreeTables(data.lastOutput);
   const lattice = latticeClasses(data);
+  const door = (data.lastOutput as { door?: number } | null | undefined)?.door;
   const chips = [
     ...grouped.map((row) => ({ key: `write:${row.table}`, label: row.table, kind: "write" as const, rows: row.rows })),
     ...lattice.map((row) => ({ key: `class:${row.key}`, label: row.label, kind: "class" as const, rows: row.rows })),
@@ -49,21 +40,28 @@ export function OutputPane({ data }: { data: WorkflowNodeData }) {
   const [selected, setSelected] = useState<string | null>(chips[0]?.key ?? null);
   const active = chips.find((row) => row.key === (selected ?? chips[0]?.key));
 
-  if (chips.length === 0) {
+  const fieldRows = useMemo(() => {
+    if (!active || active.kind !== "write" || !Array.isArray(active.rows)) return [];
+    return (active.rows as Array<Record<string, unknown>>).flatMap((item, index) =>
+      Object.entries(item)
+        .filter(([key]) => !SKIP.has(key))
+        .map(([field, value]) => ({
+          key: `${index}-${field}`,
+          row: index + 1,
+          field,
+          value: displayValue(value),
+        })),
+    );
+  }, [active]);
+
+  if (chips.length === 0 && writes.length === 0) {
     return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={null} />;
   }
 
-  const requiredRows = Array.isArray(active?.rows)
-    ? (active?.rows as unknown[])
-    : typeof active?.rows === "object" && active?.rows != null
-      ? [active.rows]
-      : active?.rows != null
-        ? [{ value: active.rows }]
-        : [];
-
   return (
     <div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 14 }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 14, alignItems: "center" }}>
+        {door === 2 ? <Tag>Specimen</Tag> : null}
         {chips.map((chip) => (
           <Tag
             key={chip.key}
@@ -99,6 +97,20 @@ export function OutputPane({ data }: { data: WorkflowNodeData }) {
             },
           ]}
         />
+      ) : active?.kind === "write" ? (
+        <Table
+          size="small"
+          pagination={false}
+          rowKey="key"
+          dataSource={fieldRows}
+          columns={[
+            ...(grouped.find((row) => `write:${row.table}` === active.key)?.rows.length ?? 0) > 1
+              ? [{ title: "#", dataIndex: "row", width: 48 }]
+              : [],
+            { title: "Field", dataIndex: "field", width: 180 },
+            { title: "Value", dataIndex: "value", ellipsis: true },
+          ]}
+        />
       ) : (
         <pre
           style={{
@@ -112,7 +124,7 @@ export function OutputPane({ data }: { data: WorkflowNodeData }) {
             maxHeight: 360,
           }}
         >
-          {JSON.stringify(requiredRows, null, 2)}
+          {JSON.stringify(active?.rows ?? null, null, 2)}
         </pre>
       )}
     </div>

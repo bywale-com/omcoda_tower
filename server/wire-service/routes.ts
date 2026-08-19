@@ -99,6 +99,7 @@ import {
   handleWorkflowRunStart,
   handleWorkflowRunsList,
 } from "./machine.ts";
+import { handleEventTestContract } from "./eventTest.ts";
 
 export function createWireRoutes(): Hono {
   const wire = new Hono();
@@ -165,6 +166,7 @@ export function createWireRoutes(): Hono {
   wire.get("/machine/audit-runs", handleAuditRunList);
   wire.get("/machine/audit-runs/:id", handleAuditRunGet);
   wire.post("/machine/contact-import", handleContactImport);
+  wire.get("/machine/event-test-contract", handleEventTestContract);
   wire.post("/machine/onboarding/fire", handleOnboardingFire);
   wire.get("/machine/board", handleBoardDetections);
   wire.get("/machine/templates", handleTemplatesList);

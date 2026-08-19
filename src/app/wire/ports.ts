@@ -372,6 +372,7 @@ export type MachineApiPort = {
     writes?: Array<{ table: string; id: string; contact_id?: string | null }>;
     workflowsFired?: unknown[];
   }>;
+  getEventTestContract(eventName: string): Promise<import("../data/eventTestContract").EventTestHandle | null>;
   fireOnboarding(): Promise<{
     skipped?: boolean;
     enrollments?: number;
