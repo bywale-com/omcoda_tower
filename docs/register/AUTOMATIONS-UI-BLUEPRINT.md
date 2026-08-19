@@ -74,6 +74,7 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A31** | [`A31-mapped-box-is-the-value.png`](./automations-blueprint/A31-mapped-box-is-the-value.png) | chrome | Mapped chip **is** the box’s value. No leftover dropdown. Empty Contact still a picker (contrast). | 07:55 | revises live ChipBox. Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) |
 | **A32** | [`A32-close-input-resize-modal.png`](./automations-blueprint/A32-close-input-resize-modal.png) | chrome | Close Input (rail to reopen). Interior modal **resizable**. Not the canvas node. | 07:55 | Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) |
 | **A33** | [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app-action-inventory.png) | chrome | In-app Action list **by module**. SA persist walk, not three rows. Search. Kind = in the application. | 09:51 | revises live `02-in-app-by-module.png`. Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) |
+| **A34** | [`A34-audit-tag-on-contact.png`](./automations-blueprint/A34-audit-tag-on-contact.png) | chrome | Audit-specific mark **on the contact** (reachable / sequence-ready). No ascribe button. Consultant tags later. | 10:39 | Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) |
 | **A24** | [`A24-contact-import-output.png`](./automations-blueprint/A24-contact-import-output.png) | chrome | Trigger **Output** of **contact import**. A20 shape. This run: `import_batch` + `contact_records`. | 19:34 | — |
 | **A25** | [`A25-new-contact-output.png`](./automations-blueprint/A25-new-contact-output.png) | chrome | Trigger **Output** of **new contact**. A20 shape. This run: `contact_records` (that person). | 19:34 | — |
 
@@ -96,6 +97,7 @@ In-app Ant Automations workbench is **not** this blueprint. Mock = generated ima
 - **A30** generated chrome drifted (Harbor / icon sider). Trust **Save · Test · Launch**, the chain, the palette. Desk = **A22**.
 - **A31 / A32** interiors are **strong** (occupancy; Input rail + resize grip). Background / sider / extra chrome on those files is far off the current design system. **Do not copy the background. Do not skip the interiors.** Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
 - **A33** chrome may drift. Trust the **grouped list**. Desk = live `/prototype-ant` + **A22**. Live three-row `02-in-app-by-module.png` is the first pass, not the inventory.
+- **A34** chrome may drift. Trust the **Audit chips on the contact row**. Consultant sider (Board / Contacts / …). No + add tag. Consultant-authored tags are later.
 
 ---
 
@@ -118,6 +120,7 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | Insert / add a node | Palette (A6 prior). Wire **+** (**A28**). Select **Action**. No Trigger on the wire. |
 | Open the **Action** node | Kind: **Agents** vs **in the application** (A7). |
 | Action kind = **in the application** | Module write-buttons, grouped by module. **A33.** Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). Live first pass `in-app-action-pass/` is three rows — not the inventory. |
+| Consultant → Contacts | Audit-specific mark **on the person** (**A34**). No ascribe button. Not the live Tag column (valid / invalid). Consultant tags later. |
 | Action kind = Agents | First: **assign existing** or **from a template** (**A14**). Then select agent (whole sequence) · declare objective · if data request, create the form (A8 prior / **A12** canon). You do **not** author a new agent here. |
 | **Test** | Canvas **Test** (**A30** buttons). Packet [`TEST-PACKET.md`](./TEST-PACKET.md). Two doors. |
 | Open the **Get** node | Parameters **A23** right. Input look **A29**. Packets [`GET-PACKET.md`](./GET-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md). |
@@ -754,7 +757,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **On the glass:** Kind = in the application. Search. Module headers, then the buttons. Start Audit selected as example. List continues below the fold.
 
-**Do not build:** three rows as the product. Hub leftovers. ascribe tag until Contacts has the button. Agents Launch on this card.
+**Do not build:** three rows as the product. Hub leftovers. Pad ascribe / audit-mark onto this list — that write has no button (**A34**). Agents Launch on this card.
 
 **Stale pixel:** sider / catalog if generated. **Chrome is not canon.** Trust the grouped list. Desk = A22. Live `02-in-app-by-module.png` is the first pass.
 
@@ -764,9 +767,21 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 ---
 
-## What this is not
-| **Ant Rule GUI** | Does not exist. Hub does. | Pictures are the face until built. |
-| **Required-data listing in code** | 21:36: not stood up. Catalog unused. | SA: what would have to change — do not mint from the picture. |
+### A34 — Audit mark on the contact
+
+![A34 audit tag on contact](./automations-blueprint/A34-audit-tag-on-contact.png)
+
+**Rationale (10:39):** The “tag” in new-contact → audit → if is an **audit-specific mark**, not consultant-authored tags. No button. Critical interactions with a button must be Automations actions; this one has no button and still writes. Visible on the person, where it applies.
+
+**On the glass:** Consultant · Contacts. Audit column: reachable / partial / unreachable · sequence-ready. No X. No + add tag.
+
+**Do not build:** consultant multi-tag. Ascribe control. Mixing this into a freeform Tag column.
+
+**Stale pixel:** generated chrome. Trust the chips on the row. Desk = live consultant Contacts.
+
+**Not this plate:** A33 buttoned inventory. Book readiness verdict list (already has these writes on the audit desk).
+
+**Packet:** [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md).
 
 ---
 
@@ -781,5 +796,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 - Not filling a complete output-class catalog.
 - Not restoring a blank form builder as canon (A8 stays as prior).
 - Not creating agents inside Automations (A14).
+- Ant Rule GUI does not exist in Ant (Hub does). Pictures are the face until built.
+- Required-data listing in code: 21:36, not stood up. Catalog unused. SA: what would have to change — do not mint from the picture.
 
 **SA:** read 15:43 (do not overwrite), then [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md), then **this file in lineup order**. Dated prompt: [`AUTOMATIONS-SA-PACKAGE.md`](./AUTOMATIONS-SA-PACKAGE.md). Extract the machine from the law + these plates. Do not design a different Automations module from Ant’s poor translation. Hub is the source plant.

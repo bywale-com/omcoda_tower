@@ -3,6 +3,7 @@
 **Seat:** Product Manager. For the **engineer** and the **Systems Analyst**. One pocket. Do not lose this.  
 **When:** Locked 2026-08-19 08:29. UI pass. Founder does **not** spec the picker — you see the inventory, lay it out, they redesign after screenshots.  
 **Redesign plate:** [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app-action-inventory.png) — grouped list from the SA **persist** walk, not the three-row first pass.  
+**Audit mark on the contact:** [`A34-audit-tag-on-contact.png`](./automations-blueprint/A34-audit-tag-on-contact.png) — no button; system chips on the person. Consultant tags later.  
 **Live first pass (engineer, merged main #100):** [`in-app-action-pass/`](./automations-blueprint/in-app-action-pass/). Three modules only — **not** the inventory.  
 **Kind split (already locked):** [`A7-action-two-kinds.png`](./automations-blueprint/A7-action-two-kinds.png) — **Agents** vs **in the application**. This packet is **only** the in-app path after that pick. Agents stays [`A14`](./automations-blueprint/A14-action-assign-or-template.png) / law 31.  
 **Shared panes:** [`NODE-INTERIOR.md`](./NODE-INTERIOR.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md). Retrofit these onto Action. Do not invent a fourth interior.  
@@ -15,7 +16,7 @@
 ## Do not miss
 
 1. **Can we automate X = does that module already have that affordance.** If it does not, you are inventing. If it does, it belongs on the in-app Action list.
-2. **An in-app action is a button that writes.** The module is the container / label. Group the list **by module**. Why not.
+2. **An in-app action is a button that writes** — when there is a button. **Every critical interaction with a button** must be referenceable in Automations. **Not every critical interaction needs a button.** Tail: the **audit-specific mark** on the contact (reachable / sequence-ready). No ascribe control. Audit writes it. Visible on the person: [`A34-audit-tag-on-contact.png`](./automations-blueprint/A34-audit-tag-on-contact.png). Consultant-authored tags (many, forever) are later — not this.
 3. **Actions live on the module, not in Automations.** Automations consumes them. Creating the affordance on the desk is what makes it available here. Analog: **HolonBoundary** (wrap so Console can see it). Do not spec a wrapper. One affordance, two seats.
 4. **Do not spec the picker.** You will see the potential actions. Lay them out. Founder redesigns after looking. That is smarter than PM drawing a fake inventory.
 5. **Input / Parameters / Output are already designed.** Retrofit. If the retrofit fights the Action chrome, ship it; they will fix the UI. Mapped occupancy is **A31**. Close Input / resize is **A32**.
@@ -85,12 +86,13 @@ Stamp SYSTEMS-ANALYST-LOG.
 - **Screenshots:** from click into the Action node, select **in the application**, then **every distinct screen** from that point.
 - Enough of a packet to also **complete the last couple of packets** (A31 / A32 mapped box).
 - 09:51: engineer built; SA enriched the list; they merged the engineer to **main**. Check both. Work on images.
+- 10:39: every **critical interaction with a button** must be an Automations action. Not every critical interaction needs a button. This tag is **audit-specific**, no button, still the automation. Consultant tags (many, forever) later. Show where it is visible on the contact.
 
 ---
 
 ## Law (plain)
 
-**Automate only what the module already affords.** Creating that write-button on the desk is what makes it an in-app Action. Automations does not author a second Start Audit.
+**Automate only what the module already affords.** Creating that write-button on the desk is what makes it an in-app Action. Automations does not author a second Start Audit. **Every critical interaction with a button** is referenceable here. **Not every critical interaction needs a button** — the audit mark on the contact (**A34**) has none.
 
 Two kinds of Action still (law 19 / **A7**): **in the application** (this file) · **Agents** (A14). Do not collapse them.
 
@@ -188,5 +190,6 @@ Redesign: [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app
 
 - Freeze three rows because that is what shipped.
 - Invent actions so the list looks full. The persist walk is already long.
+- Pad **A33** with the audit mark — that has no button. It lives on the contact (**A34**).
 - Collapse Agents into in-app.
 - Recut 015. Overwrite 15:43. Plant.

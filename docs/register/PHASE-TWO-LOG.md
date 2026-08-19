@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Law 42:** left is a log of table writes, not n8n in-memory. Direct to table. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A34** audit mark on the contact (no button). Law 41 tail: buttoned CI → Automations action. Law 42. Do not plant.
 
 **How we maintain this log**
 
@@ -1597,6 +1597,18 @@ Flag 15:43 untouched.
 **What we did:** Lock **law 42**. FACE · [`PRIMITIVES.md`](./PRIMITIVES.md) · [`NODE-INTERIOR.md`](./NODE-INTERIOR.md) · Input look. Test still does not INSERT (law 39). Do not recut 015 — this is the face of the handle.
 
 **Do not:** treat n8n JSON as the machine; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 10:39 UTC — Audit mark on the contact. Buttoned CI → action. A34.
+
+**Why:** Founder: tail of the action law. Every **critical interaction with a button** must be referenceable in Automations. Not every critical interaction needs a button. This “tag” is **audit-specific** — no button — but the automation can do it. Consultant tags (many, forever) later, not now. Want an image: where that mark is visible on the contact, where it applies.
+
+**What we did:** Tail on law **41**. Plate [`A34-audit-tag-on-contact.png`](./automations-blueprint/A34-audit-tag-on-contact.png) — Consultant Contacts, Audit column, reachable / sequence-ready, no X, no + add. Packet + primitives: this is not ascribe-a-tag.
+
+**Do not:** build consultant multi-tag; pad A33 with ascribe; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 
