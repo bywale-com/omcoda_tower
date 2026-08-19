@@ -4,6 +4,16 @@
 
 Tower is a single-product Vite + React 18 + TypeScript SPA (the "board → client → engagement chart" prototype). It has an optional Hono backend (auth + "wire" services) that only matters for the real-data path. Standard commands live in `package.json` `scripts` and `README.md`; don't duplicate them here.
 
+### Law — data in tables (do not violate)
+
+Records that show inside a module come from **tables**. When a table or field is minted — and as we go, where that store is already stood up — populate `supabase/seeds/` with a **reasonable row count** so the module is not empty. Not a thick fake world.
+
+**Never hard-code data into the app.** Not in React. Not a painted empty-state. The desk shows what the query returns.
+
+If the table or field is **missing or unspecified**, that is a **Systems Analyst** problem. Name it. Do not build until SA ascribes the row. PM chrome is chrome — it is not a license to invent the store or bake demo rows into the SPA.
+
+Canon: [`docs/register/DATA-IN-TABLES.md`](docs/register/DATA-IN-TABLES.md). Do not overwrite 15:43. Do not recut 015. Do not plant.
+
 ### Running the product (frontend only — the default, no secrets needed)
 
 - The dependency install runs automatically on startup (see update script). Then start the SPA with `npm run dev` (Vite, port `5173`). This serves the entire product with mock data / in-browser "stand-ins".

@@ -202,9 +202,11 @@ Allude: [`A5-inside-trigger.png`](./automations-blueprint/A5-inside-trigger.png)
 
 ## Seed the connected tables (SA + implementer)
 
+**Law:** [`DATA-IN-TABLES.md`](./DATA-IN-TABLES.md). Records that show inside a module come from tables. **Never hard-code data into the app.** If the table or field is missing or unspecified — SA. Do not build until that row is ascribed. PM chrome is not a store.
+
 Not a thick seed. Not fake rows painted into an empty-state component.
 
-**SA:** seed the tables that **already exist** and are **already connected**. Then Save. The desk shows people.
+**SA:** seed the tables that **already exist** and are **already connected**. Then Save. The desk shows people. When a table is minted, the seed ships a reasonable count so the module is not empty.
 
 Named (do not mint new tables from this sentence):
 

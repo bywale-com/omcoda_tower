@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **13:07:** After a node, the output is **every write that run made**. Same for Audit and Provision. Next node **picks**. Engineer owns SA **013+014+015** (PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86)). Meantime had not started. New PM seated **13:16**. Do not plant. Do not recut the engineer’s packet.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **13:07:** After a node, the output is **every write that run made**. Same for Audit and Provision. Next node **picks**. Engineer owns SA **013+014+015** (PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86)). **18:44:** data in tables — never hard-code into the app; missing table/field is SA; seed a reasonable count. [`DATA-IN-TABLES.md`](./DATA-IN-TABLES.md). Do not plant. Do not recut the engineer’s packet.
 
 **How we maintain this log**
 
@@ -1118,6 +1118,25 @@ Flag 15:43 untouched.
 Ready. Waiting on you.
 
 **Do not:** plant; overwrite 15:43; recut 015; treat 12:34 as current.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 18:44 UTC — Data in tables. Never hard-code into the app.
+
+**Why:** Founder, to the implementer: as a rule, for fields and tables that were minting — and as we go, where applicable — populate the requisite tables with a reasonable count of data so records show inside those modules. Mint that into the system message / the repo. No hard-coding into the app.
+
+**Capture (founder wording):**
+
+- Populate the requisite tables with a reasonable amount of data so records show inside the modules. When it is applicable. Moving forward.
+- No hard-coding into the app. Data. No hard-coding data into the app.
+- If the table or field is missing, or unspecified — that is a Systems Analyst problem. Mention it. We do not build until those are ready, so you know what to do.
+- Chrome can be clearly specified because PM specified it. That is chrome. Still: we never build the app by hard-coding data into the app.
+
+**What we wrote:** [`DATA-IN-TABLES.md`](./DATA-IN-TABLES.md). Cloud agents: repo-root `AGENTS.md`. Implementer face seed section points here. 18:53 seed sentence stands (seed the tables, not the SPA).
+
+**Do not:** hard-code rows into React; mint a table from a picture; overwrite 15:43; recut 015; plant.
 
 Flag 15:43 untouched.
 
