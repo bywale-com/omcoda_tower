@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-19 10:55 UTC — **018: A34 audit mark on the contact is a cut.** Contacts paints `reachability_verdicts` + `sequence_ready`. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-19 11:00 UTC — **A34 miss: no spec gap. Pane of existing writes is a systems cut.** 018. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1453,6 +1453,21 @@ Park: [`SYSTEMS-IN-APP-ACTION-ASCRIBE.md`](./SYSTEMS-IN-APP-ACTION-ASCRIBE.md) b
 **Hard:** Packet [`SYSTEMS-CHANGE-PACKET-018.md`](./SYSTEMS-CHANGE-PACKET-018.md). Contacts list returns and paints `reachability_verdicts.verdict` + `sequence_ready.ready` for that contact. No new table. No button. Tag column stays `contact_tag`. Do not copy the mark into a tag.
 
 **Do not:** recut 015; ascribe_tag for this; overwrite 15:43.
+
+---
+
+## 2026-08-19 11:00 UTC — There was no spec gap. I misclassified a pane.
+
+**Why:** Founder: they will not tell SA the job (they would do it insufficiently). If a required input is missing, **state the gap**. The written spec extends the image. Why did evaluation treat A34 as unknown / optional? Unless it has **no** systems impact.
+
+**Hard:** **No gap in the PM spec.** A34 + law 41 tail already said: audit-specific mark, no button, Audit writes it, **visible on the person**, Consultant Contacts, not ascribe, not A33. That is a **pane of existing writes**. UI law: pane displays existing state. Contacts list did not return `reachability_verdicts` / `sequence_ready` — that **is** systems impact (018). “I don’t own Ant chrome” does not apply when the glass is the only honest view of those rows on that desk.
+
+I invented a leftover (“chrome later”) and asked. Wrong seat of the question.
+
+Legitimate gap I **would** state, if it existed: none here. The only split already named: A34 = audit writes on the person; consultant `contact_tag` later. Two columns. Do not merge.
+
+**Do not:** ask the founder whether a named desk pane of existing writes is in scope; recut 015; overwrite 15:43.
+
 
 
 

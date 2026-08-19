@@ -137,6 +137,8 @@ This is the same architecture. Face named it. Do not recut 015 or 017.
 
 **A34 is the cut, not a leftover.** Contacts shows `reachability_verdicts` + `sequence_ready` on the person. Book readiness already has them. Tag column stays `contact_tag`. Packet [`SYSTEMS-CHANGE-PACKET-018.md`](./SYSTEMS-CHANGE-PACKET-018.md). Do not mint a tag. Do not route A34 through `ascribe_tag`.
 
+A named desk pane of existing writes is **in** this seat. Not a question to the founder.
+
 PRIMITIVES still says live walk “does not send work to Audit.” **Stale glass.** Main walker already runs `run_audit`. Do not overwrite 15:43. Do not recut 015 from that paragraph.
 
 ---
