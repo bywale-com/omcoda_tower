@@ -199,9 +199,24 @@ function projectAscribe(data: WorkflowNodeData, input: EventTestWrite[]): EventT
   });
 }
 
+function originWrites(
+  data: WorkflowNodeData,
+  slot: string,
+  input: EventTestWrite[],
+  filled?: Map<string, EventTestWrite[]>,
+): EventTestWrite[] {
+  const chips = chipsFor(data, slot);
+  if (!chips.length || !filled) return input;
+  const fromOrigins = chips.flatMap((chip) =>
+    chip.fromNodeId ? (filled.get(chip.fromNodeId) ?? []) : [],
+  );
+  return fromOrigins.length ? fromOrigins : input;
+}
+
 function projectNode(
   node: Node<WorkflowNodeData>,
   input: EventTestWrite[],
+  filled?: Map<string, EventTestWrite[]>,
 ): { writes: EventTestWrite[]; extra?: Record<string, unknown> } {
   const type = node.type ?? "action";
   const data = node.data;
@@ -258,7 +273,8 @@ function projectNode(
       return { writes: result.writes, extra: { ok: true, actionType: "run_audit", summary: result.summary } };
     }
     if (actionType === "ascribe_tag") {
-      return { writes: projectAscribe(data, input), extra: { ok: true, actionType, tag: data.tag ?? null } };
+      const hay = originWrites(data, "contact", input, filled);
+      return { writes: projectAscribe(data, hay), extra: { ok: true, actionType, tag: data.tag ?? null } };
     }
     if (actionType === "call_agent" || actionType === "enroll_sequence") {
       return {
@@ -328,7 +344,7 @@ export function walkTestGraph(
       const src = filled.get(edge.source);
       if (src) inputWrites.push(...src);
     }
-    const projected = projectNode(node, inputWrites);
+    const projected = projectNode(node, inputWrites, filled);
     filled.set(id, projected.writes);
     extras.set(id, projected.extra ?? {});
   }

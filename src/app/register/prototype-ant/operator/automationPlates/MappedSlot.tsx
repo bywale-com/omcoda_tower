@@ -26,9 +26,14 @@ export function MappedSlot({
         accept(event);
         setOver(true);
       }}
+      onDragEnter={(event) => {
+        accept(event);
+        setOver(true);
+      }}
       onDragLeave={() => setOver(false)}
       onDrop={(event) => {
         event.preventDefault();
+        event.stopPropagation();
         setOver(false);
         const raw = event.dataTransfer.getData(HANDLE_CHIP_MIME);
         if (!raw) return;
