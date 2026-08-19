@@ -1159,7 +1159,6 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
               data={selectedNode.data}
               listingIds={listingIds}
               onCancel={closeInterior}
-              onChangeKind={() => setPlate("action-kind")}
               onRegisterSave={(fn) => {
                 saveRef.current = fn;
               }}
@@ -1174,7 +1173,6 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
               open
               data={selectedNode.data}
               onCancel={closeInterior}
-              onChangeKind={() => setPlate("action-kind")}
               onRegisterSave={(fn) => {
                 saveRef.current = fn;
               }}

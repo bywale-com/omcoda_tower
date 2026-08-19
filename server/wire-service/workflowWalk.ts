@@ -188,6 +188,18 @@ function personIdsFromWrites(writes: RunWrite[]): string[] {
   );
 }
 
+function mappedSlotWrites(
+  data: Record<string, unknown>,
+  ctx: WalkContext,
+  slot: string,
+): RunWrite[] | null {
+  const slots = data.mappedSlots;
+  if (!slots || typeof slots !== "object") return null;
+  const chips = (slots as Record<string, unknown>)[slot];
+  if (!Array.isArray(chips) || !chips.length) return null;
+  return mappedWrites({ mappedSlots: { [slot]: chips } }, ctx);
+}
+
 function mappedWrites(
   data: Record<string, unknown>,
   ctx: WalkContext,
@@ -919,6 +931,8 @@ export async function walkValidatedWorkflow(
         if (actionType === "ascribe_tag") {
           const tag = String(data.tag ?? data.actionSummary ?? data.label ?? "tagged");
           const notesFromVerdict = data.notesFromVerdict === true;
+          const fromContact = mappedSlotWrites(data, ctx, "contact");
+          const chipPeople = fromContact ? personIdsFromWrites(fromContact) : [];
           const pickTable = String(data.pickTable ?? "").trim();
           const picked = pickWrites(ctx.previousWrites, pickTable || undefined);
           const contactIds = uniqueIds(
@@ -926,7 +940,7 @@ export async function walkValidatedWorkflow(
               ? picked.map((w) => w.contact_id ?? (PERSON_WRITE_TABLES.has(w.table) ? w.id : null))
               : ctx.contactIds) as Array<string | null>,
           );
-          const ids = contactIds.length ? contactIds : ctx.contactIds;
+          const ids = chipPeople.length ? chipPeople : contactIds.length ? contactIds : ctx.contactIds;
           const writes: RunWrite[] = [];
           for (const contactId of ids) {
             const tagId = `tag-${randomUUID()}`;

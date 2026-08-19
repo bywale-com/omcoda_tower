@@ -1,12 +1,6 @@
-import { useMemo, useState, type DragEvent, type ReactNode } from "react";
+import { useMemo, useState, type CSSProperties, type DragEvent, type ReactNode } from "react";
 import { Empty, Input, Segmented, Select, Table, Tag, Typography } from "antd";
-import {
-  CheckSquareOutlined,
-  FontSizeOutlined,
-  NumberOutlined,
-  TableOutlined,
-  UnorderedListOutlined,
-} from "@ant-design/icons";
+import type { Edge, Node } from "@xyflow/react";
 import {
   authoredNodeOutputs,
   listUpstreamDataSources,
@@ -15,7 +9,6 @@ import {
   type WorkflowNodeType,
 } from "../../../../data/automationWorkflows";
 import { handleTreeTables } from "../../../../data/eventTestContract";
-import type { Edge, Node } from "@xyflow/react";
 import { PLATE_NODE_TAG } from "./plateChrome";
 
 export const HANDLE_CHIP_MIME = "application/x-tower-handle-chip";
@@ -38,15 +31,38 @@ function displayValue(value: unknown): string {
   return JSON.stringify(value);
 }
 
-const KIND_OPTIONS: { value: FieldKind; label: ReactNode }[] = [
-  { value: "string", label: <FontSizeOutlined /> },
-  { value: "number", label: <NumberOutlined /> },
-  { value: "boolean", label: <CheckSquareOutlined /> },
-  { value: "object", label: <TableOutlined /> },
-  { value: "array", label: <UnorderedListOutlined /> },
-];
+const GLYPH: Record<FieldKind, string> = {
+  string: "Aa",
+  number: "123",
+  boolean: "☐",
+  object: "▣",
+  array: "☰",
+};
 
-function TypeControl({ kind }: { kind: FieldKind }) {
+const GLYPH_STYLE: CSSProperties = {
+  fontSize: 11,
+  fontWeight: 700,
+  fontFamily: "ui-sans-serif, system-ui, sans-serif",
+  letterSpacing: 0,
+  color: "#434343",
+  lineHeight: "18px",
+};
+
+function fieldGlyph(kind: FieldKind, name: string): string {
+  const key = name.toLowerCase();
+  if (key === "phone" || key === "tel" || key.endsWith("_phone") || key.includes("phone")) return "☎";
+  if (key === "id" || key.endsWith("_id") || key === "row_count") return "123";
+  return GLYPH[kind];
+}
+
+const KIND_OPTIONS: { value: FieldKind; label: ReactNode }[] = (
+  ["string", "number", "boolean", "object", "array"] as FieldKind[]
+).map((value) => ({
+  value,
+  label: <span style={GLYPH_STYLE}>{GLYPH[value]}</span>,
+}));
+
+function TypeControl({ kind, name }: { kind: FieldKind; name: string }) {
   const [value, setValue] = useState<FieldKind>(kind);
   return (
     <Select
@@ -56,8 +72,9 @@ function TypeControl({ kind }: { kind: FieldKind }) {
       variant="borderless"
       popupMatchSelectWidth={false}
       options={KIND_OPTIONS}
-      style={{ width: 28, padding: 0 }}
+      style={{ width: 36, padding: 0 }}
       suffixIcon={null}
+      labelRender={() => <span style={GLYPH_STYLE}>{fieldGlyph(value, name)}</span>}
     />
   );
 }
@@ -94,7 +111,7 @@ function TreeRow({
         cursor: "grab",
       }}
     >
-      <TypeControl kind={kind} />
+      <TypeControl kind={kind} name={name} />
       <Typography.Text style={{ fontFamily: "ui-monospace, Menlo, monospace" }}>{name}</Typography.Text>
       <Tag style={{ marginInlineEnd: 0, maxWidth: 240 }} title={preview}>
         {preview}

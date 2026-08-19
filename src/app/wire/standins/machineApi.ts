@@ -718,13 +718,38 @@ const HOUSE_CONTACT_IMPORT_GRAPH = {
         actionType: "ascribe_tag",
         tag: "invalid",
         notesFromVerdict: true,
+        mappedSlots: {
+          contact: [
+            {
+              fromNodeId: "trigger-1",
+              table: "contact_records",
+              label: "contact_records",
+              origin: "Contact import",
+            },
+          ],
+        },
       },
     },
     {
       id: "action-valid",
       type: "action",
       position: { x: 240, y: 444 },
-      data: { label: "Tag valid", configured: true, actionType: "ascribe_tag", tag: "valid" },
+      data: {
+        label: "Tag valid",
+        configured: true,
+        actionType: "ascribe_tag",
+        tag: "valid",
+        mappedSlots: {
+          contact: [
+            {
+              fromNodeId: "trigger-1",
+              table: "contact_records",
+              label: "contact_records",
+              origin: "Contact import",
+            },
+          ],
+        },
+      },
     },
   ],
   edges: [

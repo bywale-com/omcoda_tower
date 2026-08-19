@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { AppstoreOutlined, TeamOutlined } from "@ant-design/icons";
-import { Button, Input, Modal, Radio, Space, Switch, Tag, Typography } from "antd";
+import { Button, Input, Modal, Radio, Select, Space, Switch, Tag, Typography } from "antd";
 import { COLLECTIBLE_FIELDS } from "../../../../data/collectibleFields";
 import {
   IN_APP_AFFORDANCES,
@@ -202,7 +202,6 @@ export function ActionAgentsModal({
   listingIds,
   onCancel,
   onSave,
-  onChangeKind,
   embed,
   onRegisterSave,
 }: {
@@ -211,7 +210,6 @@ export function ActionAgentsModal({
   listingIds: string[];
   onCancel: () => void;
   onSave: (patch: Partial<WorkflowNodeData>) => void;
-  onChangeKind: () => void;
   embed?: boolean;
   onRegisterSave?: (fn: () => void) => void;
 }) {
@@ -275,12 +273,6 @@ export function ActionAgentsModal({
 
   const body = (
       <>
-      <Space size={6} style={{ marginBottom: 12 }}>
-        <Tag color="blue" style={{ cursor: "pointer" }} onClick={onChangeKind}>
-          Kind
-        </Tag>
-        <Tag color="blue">Agents</Tag>
-      </Space>
       <Typography.Paragraph type="secondary" style={{ marginTop: 0 }}>
         You do not create an agent here. Create the agent in Agents, then assign.
       </Typography.Paragraph>
@@ -404,7 +396,6 @@ export function ActionInAppModal({
   data,
   onCancel,
   onSave,
-  onChangeKind,
   embed,
   onRegisterSave,
 }: {
@@ -412,24 +403,25 @@ export function ActionInAppModal({
   data: WorkflowNodeData;
   onCancel: () => void;
   onSave: (patch: Partial<WorkflowNodeData>) => void;
-  onChangeKind: () => void;
   embed?: boolean;
   onRegisterSave?: (fn: () => void) => void;
 }) {
   const picked = inAppAffordance(data.inAppAffordance) ?? (data.actionType === "run_audit" ? inAppAffordance("start_audit") : undefined);
-  const legacyTag = data.actionType === "ascribe_tag" && !data.inAppAffordance;
+  const addTag = data.actionType === "ascribe_tag" && !data.inAppAffordance;
   const [query, setQuery] = useState("");
   const [filename, setFilename] = useState(typeof data.actionSummary === "string" ? data.actionSummary : "");
   const [firmName, setFirmName] = useState("");
   const [website, setWebsite] = useState("");
   const [email, setEmail] = useState("");
   const [tag, setTag] = useState(data.tag ?? "");
-  const [notesFromVerdict, setNotesFromVerdict] = useState(data.notesFromVerdict === true);
+  const [tagQuery, setTagQuery] = useState("");
 
   useEffect(() => {
     if (!open) return;
     setQuery("");
-  }, [open, data.inAppAffordance]);
+    setTag(data.tag ?? "");
+    setTagQuery("");
+  }, [open, data.inAppAffordance, data.tag]);
 
   const hay = query.trim().toLowerCase();
   const grouped = useMemo(() => {
@@ -470,13 +462,14 @@ export function ActionInAppModal({
   };
 
   const commit = () => {
-    if (legacyTag) {
+    if (addTag) {
+      const stock = !data.label || data.label === "Action" || data.label === "Ascribe a tag";
       onSave({
         actionType: "ascribe_tag",
         tag,
-        notesFromVerdict,
         configured: true,
-        label: data.label || "Ascribe a tag",
+        label: stock ? ACTION_TYPE_DEFAULT_LABELS.ascribe_tag : data.label,
+        actionSummary: ACTION_TYPE_DEFAULT_LABELS.ascribe_tag,
       });
       return;
     }
@@ -615,42 +608,63 @@ export function ActionInAppModal({
     </div>
   );
 
+  const tagOptions = useMemo(() => {
+    const known = ["invalid", "valid", tag, tagQuery].filter((value) => Boolean(value));
+    return [...new Set(known)].map((value) => ({ value, label: value }));
+  }, [tag, tagQuery]);
+
+  const addTagParameters = (
+    <Space direction="vertical" size={12} style={{ width: "100%" }}>
+      {labeled(
+        "Contact",
+        <MappedSlot
+          chips={slotChips("contact")}
+          onRemove={(index) => setSlot("contact", slotChips("contact").filter((_, i) => i !== index))}
+          onDropChip={(chip) => setSlot("contact", [...slotChips("contact"), chip])}
+        >
+          <Select showSearch placeholder="Contact" style={{ width: "100%" }} options={[]} />
+        </MappedSlot>,
+      )}
+      {labeled(
+        "Tag",
+        <Select
+          showSearch
+          allowClear
+          placeholder="Tag"
+          style={{ width: "100%" }}
+          value={tag || undefined}
+          options={tagOptions}
+          onSearch={setTagQuery}
+          onChange={(value) => {
+            setTag(value ?? "");
+            setTagQuery("");
+          }}
+          onInputKeyDown={(event) => {
+            if (event.key === "Enter" && tagQuery) setTag(tagQuery);
+          }}
+        />,
+      )}
+    </Space>
+  );
+
   const body = (
     <>
-      <Space size={6} style={{ marginBottom: 12 }}>
-        <Tag color="blue" style={{ cursor: "pointer" }} onClick={onChangeKind}>
-          Kind
+      {picked && !addTag ? (
+        <Tag
+          style={{ cursor: "pointer", marginBottom: 12 }}
+          onClick={() =>
+            onSave({
+              inAppAffordance: undefined,
+              actionType: undefined,
+              configured: false,
+              label: "Action",
+            })
+          }
+        >
+          {picked.module}
         </Tag>
-        <Tag>In the application</Tag>
-        {picked ? (
-          <Tag
-            style={{ cursor: "pointer" }}
-            onClick={() =>
-              onSave({
-                inAppAffordance: undefined,
-                actionType: undefined,
-                configured: false,
-                label: "Action",
-              })
-            }
-          >
-            {picked.module}
-          </Tag>
-        ) : null}
-      </Space>
-      {legacyTag ? (
-        <Space direction="vertical" style={{ width: "100%" }}>
-          <Input value={tag} onChange={(event) => setTag(event.target.value)} placeholder="Tag" />
-          <Space>
-            <Switch checked={notesFromVerdict} onChange={setNotesFromVerdict} />
-            <Typography.Text>Notes from verdict</Typography.Text>
-          </Space>
-        </Space>
-      ) : picked ? (
-        parameters
-      ) : (
-        inventory
-      )}
+      ) : null}
+      {addTag ? addTagParameters : picked ? parameters : inventory}
     </>
   );
 
@@ -672,7 +686,7 @@ export function ActionInAppModal({
       footer={
         <Space>
           <Button onClick={onCancel}>Cancel</Button>
-          <Button type="primary" onClick={commit} disabled={!picked}>
+          <Button type="primary" onClick={commit} disabled={!picked && !addTag}>
             Save
           </Button>
         </Space>

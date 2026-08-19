@@ -167,10 +167,13 @@ function projectAudit(input: EventTestWrite[]): { writes: EventTestWrite[]; summ
 
 function projectAscribe(data: WorkflowNodeData, input: EventTestWrite[]): EventTestWrite[] {
   const tag = String(data.tag ?? data.actionSummary ?? data.label ?? "tagged");
+  const contactChips = chipsFor(data, "contact");
   const pickTable = String(data.pickTable ?? "").trim();
-  const people = pickTable
-    ? input.filter((row) => row.table === pickTable)
-    : contactsFrom(input);
+  const people = contactChips.length
+    ? filterByChips(contactsFrom(input).length ? contactsFrom(input) : input, data)
+    : pickTable
+      ? input.filter((row) => row.table === pickTable)
+      : contactsFrom(input);
   const ids = uniqueIds(people.map((row) => String(row.contact_id ?? (row.table === "contact_records" ? row.id : ""))));
   return ids.map((contactId, index) => {
     const src = people.find((row) => String(row.contact_id ?? row.id) === contactId);
