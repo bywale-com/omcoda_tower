@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. A29 Input look locked. Test = two doors (exists / not yet). Packets input-look + test. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Mapped chip **is** the box (A31). Close Input + resize interior (A32). Packet mapped-box. Do not plant.
 
 **How we maintain this log**
 
@@ -1469,6 +1469,22 @@ Flag 15:43 untouched.
 **Packets:** [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md).
 
 **Do not:** plant; recut 015; overwrite 15:43; collapse the two doors; treat the rest of A30 as canon.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 07:55 UTC — Mapped chip is the box. Close Input. Resize the interior.
+
+**Why:** Founder: last build looked good. Then: pull from the left should **be** the value, not a suggestion. Live: tag with X, not inside the box; dropdown still there. Close Input. Resize the click-into modal, not the canvas node.
+
+**Live:** `GetParametersPane` `ChipBox` paints Tags then still renders the Select.
+
+**Plates:** [`A31-mapped-box-is-the-value.png`](./automations-blueprint/A31-mapped-box-is-the-value.png) · [`A32-close-input-resize-modal.png`](./automations-blueprint/A32-close-input-resize-modal.png).
+
+**Packet:** [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
+
+**Do not:** plant; recut 015; overwrite 15:43; ship tags-plus-dropdown.
 
 Flag 15:43 untouched.
 

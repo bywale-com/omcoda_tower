@@ -71,6 +71,8 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A30** | [`A30-test-on-canvas.png`](./automations-blueprint/A30-test-on-canvas.png) | chrome | **Save · Test · Launch** only. Test fills Input/Output without commit. Rest of PNG not canon. | 22:45 · lock 22:53 (buttons) | Packet [`TEST-PACKET.md`](./TEST-PACKET.md) |
 | **A23** | [`A23-get-input-parameters.png`](./automations-blueprint/A23-get-input-parameters.png) | chrome | Inside **Get**. Left = n8n tree (keep). Parameters: **dropdown** Every firm / Select firm. Select → Firm then Contact **comboboxes** (dropdown + input). Left writes apply in those boxes. | 17:33 | **prior** for mapping look → **A29** |
 | **A29** | [`A29-variable-chip.png`](./automations-blueprint/A29-variable-chip.png) | chrome | **Canonical Input look** (every node). Type control in front of the name. Drag any row including top-level into a box as a **chip**. | 22:45 · lock 22:53 | **revises A23** (mapping + Input look). Packet [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) |
+| **A31** | [`A31-mapped-box-is-the-value.png`](./automations-blueprint/A31-mapped-box-is-the-value.png) | chrome | Mapped chip **is** the box’s value. No leftover dropdown. Empty Contact still a picker (contrast). | 07:55 | revises live ChipBox. Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) |
+| **A32** | [`A32-close-input-resize-modal.png`](./automations-blueprint/A32-close-input-resize-modal.png) | chrome | Close Input (rail to reopen). Interior modal **resizable**. Not the canvas node. | 07:55 | Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) |
 | **A24** | [`A24-contact-import-output.png`](./automations-blueprint/A24-contact-import-output.png) | chrome | Trigger **Output** of **contact import**. A20 shape. This run: `import_batch` + `contact_records`. | 19:34 | — |
 | **A25** | [`A25-new-contact-output.png`](./automations-blueprint/A25-new-contact-output.png) | chrome | Trigger **Output** of **new contact**. A20 shape. This run: `contact_records` (that person). | 19:34 | — |
 
@@ -91,6 +93,7 @@ In-app Ant Automations workbench is **not** this blueprint. Mock = generated ima
 - A1 smallest workflow is trigger · rule · action with **no If node** on the canvas. **A15** is the chain (If on the canvas). **A16** opens that If. A1 stays the smallest. A6’s palette includes **Exit**; A15’s includes **Condition (If)** — do not freeze one palette from the other.
 - **A14** nav chrome sometimes drifts (Home / Workspaces vs House-global). Trust the **modal contents**. A14 footer on the PNG is Cancel · Save; the “not a third option” sentence is not on that image.
 - **A30** generated chrome drifted (Harbor / icon sider). Trust **Save · Test · Launch**, the chain, the palette. Desk = **A22**.
+- **A31 / A32** sider copy may drift. Trust Firm-chip-vs-Contact-dropdown (**A31**) and Input rail + resize grip (**A32**).
 
 ---
 
@@ -699,6 +702,42 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 **Not this plate:** chip mapping (**A29**). Two doors (exists / not yet).
 
 **Packet:** [`TEST-PACKET.md`](./TEST-PACKET.md).
+
+---
+
+### A31 — Mapped chip is the value of the box
+
+![A31 mapped box is the value](./automations-blueprint/A31-mapped-box-is-the-value.png)
+
+**Rationale (07:55):** Pull from the left **is** that box’s value. Not a suggestion. Live ChipBox paints tags above a still-open Select.
+
+**On the glass:** Firm = chip inside the field, **no chevron**. Contact = empty dropdown (contrast).
+
+**Do not build:** tags-plus-dropdown. Dashed wrapper as the face.
+
+**Stale pixel:** sider labels. Trust Firm vs Contact.
+
+**Not this plate:** Close Input / resize (**A32**).
+
+**Packet:** [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
+
+---
+
+### A32 — Close Input · resize the interior modal
+
+![A32 close input resize modal](./automations-blueprint/A32-close-input-resize-modal.png)
+
+**Rationale (07:55):** Close the Input column. Resize the **interior** modal, not the canvas node.
+
+**On the glass:** Slim **Input** rail + chevron to reopen. Resize grip bottom-right.
+
+**Do not build:** deleting Input. Resizing the canvas node.
+
+**Stale pixel:** sider copy. Trust rail + grip.
+
+**Not this plate:** Chip fill (**A31**).
+
+**Packet:** [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
 
 ---
 

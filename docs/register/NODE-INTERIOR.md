@@ -52,7 +52,7 @@ Action / If interiors we already drew (A7, A14, A16) are **Parameters** (the mid
 
 **Click the node = configure.** Do not send click to Switch. Switch is **⋯** (A27). First pick / Switch opens the event picker (A26). Wire **+** is A28.
 
-**Test** fills these panes without committing ([`TEST-PACKET.md`](./TEST-PACKET.md)). Two doors: already exists vs not yet. A mapped write is a **chip** ([`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md)).
+**Test** fills these panes without committing ([`TEST-PACKET.md`](./TEST-PACKET.md)). Two doors: already exists vs not yet. A mapped write **is the box** ([`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · **A31**). Input can close; interior modal resizes (**A32**).
 
 ---
 

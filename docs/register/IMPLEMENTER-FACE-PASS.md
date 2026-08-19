@@ -182,7 +182,7 @@ These were asked. They are not “copy from C9/C11.”
 | **Node interior** | Shared vs kind: [`NODE-INTERIOR.md`](./NODE-INTERIOR.md). **Input** (A23 left) and **Output** (A20) on every node that has those panes. Get **Parameters** (A23 right) only on Get. Rule **Outcomes** (A21) only on Rule. |
 | **Get** | Packet [`GET-PACKET.md`](./GET-PACKET.md). Canvas [`A22`](./automations-blueprint/A22-get-canvas.png). Parameters [`A23`](./automations-blueprint/A23-get-input-parameters.png) right. Input look [`A29`](./automations-blueprint/A29-variable-chip.png) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md). Kind, not Action, not Audit. |
 | **Click vs Switch** | Law 38. Click = configure. Packets [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) · [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md). **A26** · **A27** · **A28**. |
-| **Test / variables** | Law 39 · 40. [`TEST-PACKET.md`](./TEST-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md). **A29** look. **A30** buttons only. |
+| **Test / variables** | Law 39 · 40. [`TEST-PACKET.md`](./TEST-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md). **A29** tree. **A31** chip **is** the box. **A32** close Input / resize. |
 
 ---
 

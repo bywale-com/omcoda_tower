@@ -44,6 +44,7 @@ Do not recut 015. Stamp SYSTEMS-ANALYST-LOG.
 - Drag **each** entry — **up to the top-level item** — into any box. It looks like its **own separate element** in the box, not text.
 - That is A29, those facets. Locked.
 - A30: only agree Test **sits** (Save · Test · Launch). Purpose of the rest of A30 was unclear. Filling is [`TEST-PACKET.md`](./TEST-PACKET.md), not another field PNG.
+- 2026-08-19: pull from the left **is the value**, not a suggestion. Live tags-plus-dropdown is wrong. Close Input. Resize the interior modal. [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
 
 ---
 
@@ -57,7 +58,7 @@ This is **Input on every node that has Input.** Specimen **A29 left**. Get’s r
 | **Row** | Type control **in front of** the name. Icons as drawn. |
 | **Schema / Table / JSON** | Same writes, other looks. Search searches. |
 | **Drag** | Any row, including the **top-level** node, into **any** open box (Parameters, Outcomes, any variable slot). |
-| **Chip** | The mapped item is its **own element**: color, label, origin, remove-x. Not `{{firm}}`. Not A23 lightning on plain text. A box may hold **several** chips. |
+| **Chip** | The mapped item is its **own element** **inside the box** — that **is** the value. Empty box = picker. Mapped = no leftover dropdown. **A31**. Not tags above a Select (live ChipBox). Not `{{firm}}`. Not A23 lightning. A box may hold several chips. |
 
 ---
 
