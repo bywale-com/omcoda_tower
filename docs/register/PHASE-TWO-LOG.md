@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Thinking (not locked): new contact → audit → tag → if tagged → agent. The If on the tag after you just tagged them is the hit. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Thinking: new contact already wrote `contact_records`. Tag marks that person. Agents pick them from the left. This canvas does not create the contact. Do not plant.
 
 **How we maintain this log**
 
@@ -1573,6 +1573,18 @@ Flag 15:43 untouched.
 **What we did:** Stamp only. Thinking. Nodes you’d draw: Trigger (new contact) · Action (audit) · If (audit result) · Action (tag) · If (is tagged) · Action (agents). The hit: the second If is tautological on this canvas. You just tagged them. The If that matters is on the **audit**. Tag is a write onto the contact so the system has it. Agents hang off that same If, or hear the tag as a fact elsewhere — not “if tagged” after the tag node.
 
 **Do not:** lock; mint a tag table; pad ascribe onto A33 until Contacts has the button; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 10:17 UTC — When does this canvas write contact_records?
+
+**Why:** Founder: what is tagging, exactly? When does it write to the contacts table? New contact — the contact is new, it exists. Audit the contact. At what point does it write to contacts? Unclear view of the system, maybe. Forget if the action is Agents: you select the contact on the node from the left panel (existing data). The question still matters.
+
+**What we did:** Stamp. Thinking. **The contact row already exists when the trigger fires.** New contact Output (**A25**) is that `contact_records` write. This canvas does not create the person. Audit writes the run / verdicts / sequence-ready (about that person). Tag is a **mark on that person**, not a new contact. Agents maps the same person from Input (left) — a pick, not an INSERT. Live tag (walker) is `contact_tag` + optional notes on the same row; there is still no desk button.
+
+**Do not:** lock; treat tag as creating a contact; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 
