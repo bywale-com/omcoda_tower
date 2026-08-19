@@ -829,7 +829,8 @@ export async function walkValidatedWorkflow(
           const people = personIdsFromWrites(mapped);
           if (people.length) ctx.contactIds = people;
         }
-        if (inApp === "confirm_book" || inApp === "provision") {
+        const rawAction = String(data.actionType ?? "");
+        if (inApp && rawAction !== "run_audit" && rawAction !== "ascribe_tag") {
           commitWrites(ctx, nodeId, []);
           ctx.lastOutput = { silent: true, inApp };
           nodeStatus[nodeId] = {

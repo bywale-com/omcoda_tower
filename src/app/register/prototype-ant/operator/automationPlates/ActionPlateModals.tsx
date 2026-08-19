@@ -6,6 +6,8 @@ import {
   IN_APP_AFFORDANCES,
   inAppAffordance,
   inAppModules,
+  type InAppAffordance,
+  type InAppAffordanceId,
 } from "../../../../data/inAppAffordances";
 import { MODAL_SCROLL } from "../modalScroll";
 import {
@@ -453,7 +455,7 @@ export function ActionInAppModal({
     });
   };
 
-  const pick = (id: (typeof IN_APP_AFFORDANCES)[number]["id"]) => {
+  const pick = (id: InAppAffordanceId) => {
     const row = inAppAffordance(id);
     if (!row) return;
     onSave({
@@ -461,9 +463,9 @@ export function ActionInAppModal({
       actionType: row.actionType ?? undefined,
       configured: true,
       label: row.label,
-      actionSummary: row.id === "confirm_book" ? filename || row.label : row.label,
+      actionSummary: row.params === "filename" ? filename || row.label : row.label,
       agentRef: undefined,
-      pickTable: row.id === "start_audit" ? "import_batch" : data.pickTable,
+      pickTable: row.params === "book" ? "import_batch" : data.pickTable,
     });
   };
 
@@ -484,7 +486,7 @@ export function ActionInAppModal({
       actionType: picked.actionType ?? undefined,
       configured: true,
       label: picked.label,
-      actionSummary: picked.id === "confirm_book" ? filename || picked.label : picked.label,
+      actionSummary: picked.params === "filename" ? filename || picked.label : picked.label,
       agentRef: undefined,
     });
   };
@@ -493,71 +495,85 @@ export function ActionInAppModal({
     if (embed && open) onRegisterSave?.(commit);
   });
 
+  const mappedField = (slot: string, placeholder: string, value?: string, onChange?: (next: string) => void) => (
+    <MappedSlot
+      chips={slotChips(slot)}
+      onRemove={(index) => setSlot(slot, slotChips(slot).filter((_, i) => i !== index))}
+      onDropChip={(chip) => setSlot(slot, [...slotChips(slot), chip])}
+    >
+      <Input
+        value={value}
+        onChange={onChange ? (event) => onChange(event.target.value) : undefined}
+        placeholder={placeholder}
+        disabled={!onChange}
+      />
+    </MappedSlot>
+  );
+
+  const labeled = (caption: string, body: ReactNode) => (
+    <div>
+      <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
+        {caption}
+      </Typography.Text>
+      {body}
+    </div>
+  );
+
+  const parametersFor = (row: InAppAffordance): ReactNode => {
+    if (row.params === "book") {
+      return labeled("Book", mappedField("set", "Drop import_batch or contacts"));
+    }
+    if (row.params === "filename") {
+      return labeled(
+        "Filename",
+        <Input value={filename} onChange={(event) => setFilename(event.target.value)} placeholder="book.csv" />,
+      );
+    }
+    if (row.params === "provision") {
+      return (
+        <>
+          {labeled("Firm name", mappedField("name", "Firm name", firmName, setFirmName))}
+          {labeled("Website", <Input value={website} onChange={(event) => setWebsite(event.target.value)} placeholder="https://" />)}
+          {labeled("Email", mappedField("email", "consultant@firm.example", email, setEmail))}
+        </>
+      );
+    }
+    if (row.params === "invite") {
+      return (
+        <>
+          {labeled("Firm", mappedField("firm", "Drop firm"))}
+          {labeled("Email", mappedField("email", "consultant@firm.example", email, setEmail))}
+        </>
+      );
+    }
+    if (row.params === "firm") {
+      return labeled("Firm", mappedField("firm", "Drop firm"));
+    }
+    if (row.params === "firm_contact") {
+      return (
+        <>
+          {labeled("Firm", mappedField("firm", "Drop firm"))}
+          {labeled("Contact", mappedField("contact", "Drop contact"))}
+        </>
+      );
+    }
+    return (
+      <Typography.Text type="secondary" style={{ fontSize: 13 }}>
+        —
+      </Typography.Text>
+    );
+  };
+
   const parameters = picked ? (
     <Space direction="vertical" size={12} style={{ width: "100%" }}>
-      {picked.id === "start_audit" ? (
-        <div>
-          <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
-            Book
-          </Typography.Text>
-          <MappedSlot
-            chips={slotChips("set")}
-            onRemove={(index) => setSlot("set", slotChips("set").filter((_, i) => i !== index))}
-            onDropChip={(chip) => setSlot("set", [...slotChips("set"), chip])}
-          >
-            <Input placeholder="Drop import_batch or contacts" disabled />
-          </MappedSlot>
-        </div>
-      ) : null}
-      {picked.id === "confirm_book" ? (
-        <div>
-          <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
-            Filename
-          </Typography.Text>
-          <Input value={filename} onChange={(event) => setFilename(event.target.value)} placeholder="book.csv" />
-        </div>
-      ) : null}
-      {picked.id === "provision" ? (
-        <>
-          <div>
-            <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
-              Firm name
-            </Typography.Text>
-            <MappedSlot
-              chips={slotChips("name")}
-              onRemove={(index) => setSlot("name", slotChips("name").filter((_, i) => i !== index))}
-              onDropChip={(chip) => setSlot("name", [...slotChips("name"), chip])}
-            >
-              <Input value={firmName} onChange={(event) => setFirmName(event.target.value)} placeholder="Firm name" />
-            </MappedSlot>
-          </div>
-          <div>
-            <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
-              Website
-            </Typography.Text>
-            <Input value={website} onChange={(event) => setWebsite(event.target.value)} placeholder="https://" />
-          </div>
-          <div>
-            <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
-              Email
-            </Typography.Text>
-            <MappedSlot
-              chips={slotChips("email")}
-              onRemove={(index) => setSlot("email", slotChips("email").filter((_, i) => i !== index))}
-              onDropChip={(chip) => setSlot("email", [...slotChips("email"), chip])}
-            >
-              <Input value={email} onChange={(event) => setEmail(event.target.value)} placeholder="consultant@firm.example" />
-            </MappedSlot>
-          </div>
-        </>
-      ) : null}
+      {parametersFor(picked)}
     </Space>
   ) : null;
 
   const inventory = (
     <div>
       <Input.Search
-        placeholder="Search"
+        placeholder="Search actions"
         allowClear
         value={query}
         onChange={(event) => setQuery(event.target.value)}
@@ -566,33 +582,35 @@ export function ActionInAppModal({
       {grouped.length === 0 ? (
         <Typography.Text type="secondary">—</Typography.Text>
       ) : (
-        grouped.map((group) => (
-          <div key={group.module} style={{ marginBottom: 14 }}>
-            <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 6 }}>
-              {group.module}
-            </Typography.Text>
-            {group.rows.map((row) => (
-              <button
-                key={row.id}
-                type="button"
-                onClick={() => pick(row.id)}
-                style={{
-                  display: "block",
-                  width: "100%",
-                  textAlign: "left",
-                  padding: "8px 10px",
-                  marginBottom: 4,
-                  borderRadius: 6,
-                  border: picked?.id === row.id ? "1px solid #1677ff" : "1px solid #f0f0f0",
-                  background: picked?.id === row.id ? "#e6f4ff" : "#fff",
-                  cursor: "pointer",
-                }}
-              >
-                {row.label}
-              </button>
-            ))}
-          </div>
-        ))
+        <div style={{ maxHeight: 420, overflow: "auto" }}>
+          {grouped.map((group) => (
+            <div key={group.module} style={{ marginBottom: 14 }}>
+              <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 6 }}>
+                {group.module}
+              </Typography.Text>
+              {group.rows.map((row) => (
+                <button
+                  key={row.id}
+                  type="button"
+                  onClick={() => pick(row.id)}
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    textAlign: "left",
+                    padding: "8px 10px",
+                    marginBottom: 4,
+                    borderRadius: 6,
+                    border: picked?.id === row.id ? "1px solid #1677ff" : "1px solid #f0f0f0",
+                    background: picked?.id === row.id ? "#e6f4ff" : "#fff",
+                    cursor: "pointer",
+                  }}
+                >
+                  {row.label}
+                </button>
+              ))}
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
