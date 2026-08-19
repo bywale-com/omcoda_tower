@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. In-app Action talk (not locked): the layer is the **write-button** in a module; module is the container. Audit is the specimen of that layer, not a special kind. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. In-app Action (thinking): can we automate X = does X already exist as a **module affordance**. Actions live on the module; Automations consumes them. HolonBoundary is the analog, not the spec. Do not plant.
 
 **How we maintain this log**
 
@@ -1521,6 +1521,18 @@ Flag 15:43 untouched.
 **What we did:** Stamp only. Thinking. No packet. No new law. Face still: two kinds of Action (in-app vs Agents). Get is a read, not an Action. Law 33 still: send the work to the real module; every write that run made. Named in-app so far stay named; do not fill the catalog.
 
 **Do not:** collapse Agents into this; invent an Action catalog; treat Audit as a unique node kind; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 08:20 UTC — Can we automate X = does the module already have that affordance
+
+**Why:** Founder: the question is whether X already exists in the system — is it already an **affordance of that module**. That’s literally it. Meta: Actions are primitives that exist **beyond Automations**. They are affordances of a module. Every time we create one, it should be available as an Action in Automations. Analog: **HolonBoundary** (speech: “hold on boundaries”) — wrap a component so it registers. Is there an equivalent here.
+
+**What we did:** Stamp. Thinking. No wrapper spec. No packet. Live today: SQL `action` is `call_agent` only; Hub names extra kinds the walker ignores. Do not invent a HolonBoundary-for-writes.
+
+**Do not:** invent an Action catalog; spec the wrap; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 
