@@ -73,6 +73,7 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A29** | [`A29-variable-chip.png`](./automations-blueprint/A29-variable-chip.png) | chrome | **Canonical Input look** (every node). Type control in front of the name. Drag any row including top-level into a box as a **chip**. | 22:45 · lock 22:53 | **revises A23** (mapping + Input look). Packet [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) |
 | **A31** | [`A31-mapped-box-is-the-value.png`](./automations-blueprint/A31-mapped-box-is-the-value.png) | chrome | Mapped chip **is** the box’s value. No leftover dropdown. Empty Contact still a picker (contrast). | 07:55 | revises live ChipBox. Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) |
 | **A32** | [`A32-close-input-resize-modal.png`](./automations-blueprint/A32-close-input-resize-modal.png) | chrome | Close Input (rail to reopen). Interior modal **resizable**. Not the canvas node. | 07:55 | Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) |
+| **A33** | [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app-action-inventory.png) | chrome | In-app Action list **by module**. SA persist walk, not three rows. Search. Kind = in the application. | 09:51 | revises live `02-in-app-by-module.png`. Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) |
 | **A24** | [`A24-contact-import-output.png`](./automations-blueprint/A24-contact-import-output.png) | chrome | Trigger **Output** of **contact import**. A20 shape. This run: `import_batch` + `contact_records`. | 19:34 | — |
 | **A25** | [`A25-new-contact-output.png`](./automations-blueprint/A25-new-contact-output.png) | chrome | Trigger **Output** of **new contact**. A20 shape. This run: `contact_records` (that person). | 19:34 | — |
 
@@ -94,6 +95,7 @@ In-app Ant Automations workbench is **not** this blueprint. Mock = generated ima
 - **A14** nav chrome sometimes drifts (Home / Workspaces vs House-global). Trust the **modal contents**. A14 footer on the PNG is Cancel · Save; the “not a third option” sentence is not on that image.
 - **A30** generated chrome drifted (Harbor / icon sider). Trust **Save · Test · Launch**, the chain, the palette. Desk = **A22**.
 - **A31 / A32** interiors are **strong** (occupancy; Input rail + resize grip). Background / sider / extra chrome on those files is far off the current design system. **Do not copy the background. Do not skip the interiors.** Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
+- **A33** chrome may drift. Trust the **grouped list**. Desk = live `/prototype-ant` + **A22**. Live three-row `02-in-app-by-module.png` is the first pass, not the inventory.
 
 ---
 
@@ -115,7 +117,7 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | Open the **If / Condition** node | Calls from previous result (**A16**). Not a rule. |
 | Insert / add a node | Palette (A6 prior). Wire **+** (**A28**). Select **Action**. No Trigger on the wire. |
 | Open the **Action** node | Kind: **Agents** vs **in the application** (A7). |
-| Action kind = **in the application** | Module write-buttons, grouped by module. Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). Screenshots in `in-app-action-pass/`. |
+| Action kind = **in the application** | Module write-buttons, grouped by module. **A33.** Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). Live first pass `in-app-action-pass/` is three rows — not the inventory. |
 | Action kind = Agents | First: **assign existing** or **from a template** (**A14**). Then select agent (whole sequence) · declare objective · if data request, create the form (A8 prior / **A12** canon). You do **not** author a new agent here. |
 | **Test** | Canvas **Test** (**A30** buttons). Packet [`TEST-PACKET.md`](./TEST-PACKET.md). Two doors. |
 | Open the **Get** node | Parameters **A23** right. Input look **A29**. Packets [`GET-PACKET.md`](./GET-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md). |
@@ -741,6 +743,24 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 **Not this plate:** Chip fill (**A31**).
 
 **Packet:** [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
+
+---
+
+### A33 — In-app Action inventory (by module)
+
+![A33 in-app action inventory](./automations-blueprint/A33-in-app-action-inventory.png)
+
+**Rationale (09:51):** Engineer first pass (main #100) listed three write-buttons. SA 09:35 walked the desks: persist-bound controls are the list. This plate is that list, grouped by module, with search.
+
+**On the glass:** Kind = in the application. Search. Module headers, then the buttons. Start Audit selected as example. List continues below the fold.
+
+**Do not build:** three rows as the product. Hub leftovers. ascribe tag until Contacts has the button. Agents Launch on this card.
+
+**Stale pixel:** sider / catalog if generated. **Chrome is not canon.** Trust the grouped list. Desk = A22. Live `02-in-app-by-module.png` is the first pass.
+
+**Not this plate:** Agents Action (**A14**). Parameters of one button (live `03`–`05`).
+
+**Packet:** [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md).
 
 ---
 

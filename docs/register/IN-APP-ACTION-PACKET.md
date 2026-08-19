@@ -2,6 +2,8 @@
 
 **Seat:** Product Manager. For the **engineer** and the **Systems Analyst**. One pocket. Do not lose this.  
 **When:** Locked 2026-08-19 08:29. UI pass. Founder does **not** spec the picker — you see the inventory, lay it out, they redesign after screenshots.  
+**Redesign plate:** [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app-action-inventory.png) — grouped list from the SA **persist** walk, not the three-row first pass.  
+**Live first pass (engineer, merged main #100):** [`in-app-action-pass/`](./automations-blueprint/in-app-action-pass/). Three modules only — **not** the inventory.  
 **Kind split (already locked):** [`A7-action-two-kinds.png`](./automations-blueprint/A7-action-two-kinds.png) — **Agents** vs **in the application**. This packet is **only** the in-app path after that pick. Agents stays [`A14`](./automations-blueprint/A14-action-assign-or-template.png) / law 31.  
 **Shared panes:** [`NODE-INTERIOR.md`](./NODE-INTERIOR.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md). Retrofit these onto Action. Do not invent a fourth interior.  
 **Same pass also completes:** [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) **A31 / A32** (chip **is** the box; close Input; resize the interior).  
@@ -20,7 +22,7 @@
 6. **Deliverable:** screenshots of **every distinct screen** from **click the Action node → select in the application → onward.** Not Agents. Not hover states. Distinct screens only.
 7. **This is UI.** SA inspects whether the walk can actually run those writes (`action` is still `call_agent` only). Do not block the face on that.
 
-Live today: `ActionInAppModal` is a radio of five hardcoded kinds (`run_audit`, `ascribe_tag`, plus Hub leftovers). That is **not** the inventory. Kill that as the face.
+Live today: `ActionInAppModal` / `IN_APP_AFFORDANCES` on main (#100) is **three rows** (Start Audit · Confirm book · Provision). That followed SA 08:40’s filter. SA **09:35** walked the desks: persist-bound controls are the list. **A33** is that list. Kill three-rows as the face. Hub leftovers stay dead. `ascribe_tag` still has no desk button — do not pad.
 
 ---
 
@@ -33,9 +35,9 @@ You are building in-app Action on CT Ant Automations. Product face = /prototype-
 
 Click a placed Action node = configure (law 38). First: two kinds (A7) — Agents vs in the application. Agents is A14. This packet is in-app only.
 
-After in-app: the list is every write-button that already exists on a module. Group by module. Do not invent. Do not freeze ActionInAppModal’s radio list (run_audit / ascribe_tag / manage_lists / assign_task / notify_consultant) as the catalog. Walk the desks. If it is not a button that writes on a module, it is not an in-app Action.
+After in-app: the list is every write-button that already exists on a module. Group by module. SA persist walk (09:35, SYSTEMS-IN-APP-ACTION-ASCRIBE.md on PR #86) is the inventory. Do not freeze the three-row live picker (Start Audit / Confirm book / Provision). Do not freeze ActionInAppModal’s old radios. Walk the desks. If it is not a control that writes on a module, it is not an in-app Action.
 
-Do not spec a pretty picker. You will see the inventory. Put it on the glass (by module). Founder redesigns after screenshots.
+Look: docs/register/automations-blueprint/A33-in-app-action-inventory.png — grouped list, search, Kind = in the application. Chrome on that PNG may drift; desk = live /prototype-ant + A22. Live first-pass shots: docs/register/automations-blueprint/in-app-action-pass/.
 
 Retrofit the primitives you already have:
 - Input = A29 tree (every node). Close Input / resize = A32.
@@ -82,6 +84,7 @@ Stamp SYSTEMS-ANALYST-LOG.
 - Do **not** spec the in-app picker. The implementer is the one who will **see all the potential actions**, lay them out, then we redesign. That’s smarter.
 - **Screenshots:** from click into the Action node, select **in the application**, then **every distinct screen** from that point.
 - Enough of a packet to also **complete the last couple of packets** (A31 / A32 mapped box).
+- 09:51: engineer built; SA enriched the list; they merged the engineer to **main**. Check both. Work on images.
 
 ---
 
@@ -111,41 +114,39 @@ Desk chrome = live `/prototype-ant` + A22. Not Hub.
 ## 1. Copy
 
 - Two kinds (**A7**). This pocket = in-app.
-- The list = real module write-buttons. **By module.**
+- The list = real module write-buttons. **By module.** SA persist table, not three rows. Look **A33**.
 - Shared panes on that Action: Input · Parameters · Output, already specified elsewhere.
 - **A31 / A32** on those interiors (and on Get, same pass).
-- Screenshots as named above.
 
 ## 2. Do not build
 
-- A PM-drawn picker. Teaching captions. “At least two kinds of actions” footer (A7 caption).
-- Hub leftovers as the catalog: `manage_lists` · `assign_task` · `notify_consultant` unless you can point at that write-button on a desk.
+- Teaching captions. “At least two kinds of actions” footer (A7 caption).
+- Three-row picker as the product. Hub leftovers: `manage_lists` · `assign_task` · `notify_consultant`. `ascribe_tag` until Contacts has the button.
 - Get’s Module / Every firm / Select firm cascade on Action.
 - Rule Outcomes on Action.
 - Invented writes (“write any table”). Webhook-as-an-action.
-- Wiring `workflowWalk` to actually run Audit this packet. SA names the gap.
 - Agents assign / template / form (**A14 / A12**) inside this in-app path.
-- Rebuilding the desk from A7’s drifted background.
+- Rebuilding the desk from A33’s background if it drifted. Desk = live `/prototype-ant` + **A22**.
+- Agents Launch / Add contact on the **in-app** list (those are the **Agents** card).
 
 ## 3. Implied
 
-- Search / scroll if the list is long.
-- Empty in-app list is honest if a module has no write-button — do not pad.
-- Switching kind (in-app ↔ Agents) stays the Kind control you already have.
+- Search / scroll — the list is long. A33 clips later modules on purpose.
+- Same worker, several doors (Confirm book · Prepared file · Book Upload) — all stay on the list.
+- Switching kind (in-app ↔ Agents) stays the Kind control.
 - Several chips in a mapped Parameter box = A31.
 - Test fills without commit (**TEST-PACKET**). Door 2 on an Action that has not run = that module’s real write-set.
 
 ## 4. Completes
 
-- Every in-app affordance you found, not only Audit and tag. No extra PNG per module.
-- Input / Output on Action even though A7 / the live in-app modal never opened those tabs.
+- Every persist-bound affordance SA named, not only Audit. No extra PNG per module.
+- Input / Output on Action.
 - **A31 / A32** everywhere a left write occupies a box.
 
 ## 5. Out of scope this build
 
-- Making the walker execute those writes (SA). Recutting 015.
+- Making the walker execute every listed write (SA). Recutting 015.
 - Spec of a HolonBoundary-for-writes API.
-- Redesign of the picker (founder, after screenshots).
 - Agents Action interior.
 - Filling Open item 6 as a numbered catalog in FACE.
 
@@ -153,12 +154,13 @@ Desk chrome = live `/prototype-ant` + A22. Not Hub.
 
 ## Live vs this packet
 
-| Live today | This packet |
-|------------|-------------|
-| `ActionInAppModal` radios: run_audit, ascribe_tag, manage_lists, assign_task, notify_consultant | Inventory of **module write-buttons**, grouped by module |
-| No Input / Output on that modal | Shared panes. Parameters = that button |
-| `ChipBox` tags + leftover Select (Get) | **A31** occupancy, including Action mapped slots |
-| SQL `action` `call_agent` only | Face still shows the inventory. Walker gap is SA. Do not fake execution |
+| Live today (main #100) | This packet |
+|------------------------|-------------|
+| `IN_APP_AFFORDANCES` = three rows | SA persist walk, grouped by module. Look **A33** |
+| Hub radios gone (good) | Stay gone |
+| Input / Output tabs exist; Output empty until Test | Shared panes. Parameters = that button |
+| A31 occupancy shipped on Get | Keep. Mapped slots on Action too |
+| Walker: `run_audit` / `ascribe_tag` / `call_agent` | Face lists persist. Walk silent until wrap. Do not fake execution |
 
 ---
 
@@ -174,17 +176,17 @@ Desk chrome = live `/prototype-ant` + A22. Not Hub.
 
 ---
 
-## Screenshots (required)
+## Screenshots
 
-Folder: [`automations-blueprint/in-app-action-pass/`](./automations-blueprint/in-app-action-pass/). Create it when you drop files.
+Live first pass (engineer): [`automations-blueprint/in-app-action-pass/`](./automations-blueprint/in-app-action-pass/) `01`–`07`. **02 is three rows — not the inventory.**
 
-From **click Action node** → **in the application** → stop when the operator would Save. One PNG per distinct screen. Names like `01-kind.png` · `02-in-app-by-module.png` · `03-book-readiness-start-audit.png`. No teaching banners on the shots.
+Redesign: [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app-action-inventory.png). Grouping + length. Chrome may drift — desk = live + A22.
 
 ---
 
 ## Do not
 
-- Ask the PM to draw the picker. They will redesign after your screens.
-- Invent actions so the list looks full.
+- Freeze three rows because that is what shipped.
+- Invent actions so the list looks full. The persist walk is already long.
 - Collapse Agents into in-app.
 - Recut 015. Overwrite 15:43. Plant.

@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Law 41:** in-app Action = module write-affordance. Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). UI pass + screenshots; same pass completes A31/A32. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A33** in-app inventory (SA persist list, not three rows). Law 41. Engineer #100 merged main. Do not plant.
 
 **How we maintain this log**
 
@@ -1545,6 +1545,22 @@ Flag 15:43 untouched.
 **What we did:** [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). Law **41**. FACE open item 6 points at the packet (not a list to fill). PRIMITIVES: who-this-applies-to is Get. Screenshot folder `automations-blueprint/in-app-action-pass/`.
 
 **Do not:** spec the picker; invent writes; freeze Hub radios as the catalog; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-19 09:51 UTC — Check engineer + SA. A33 is the in-app list.
+
+**Why:** Founder: engineer built; SA enriched the list; they merged the engineer to main. Check both. Work on images.
+
+**Engineer (main #100):** Kind → in-app → three modules (Start Audit · Confirm book · Provision). Input/Output tabs. A31 occupancy. A32 close Input. Live shots `in-app-action-pass/01`–`07`. Followed SA 08:40’s three YES rows.
+
+**SA (PR #86, 09:35):** those three were a **filter**, not a desk walk. Persist-bound controls on `/prototype-ant` are the inventory. Paint is not. Agents Launch stays the other A7 card. No registry table.
+
+**What we did:** Plate [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app-action-inventory.png). Grouped list from that persist walk. Chrome may drift — trust the list. Packet + blueprint updated. First-pass shots kept as live, not canon inventory.
+
+**Do not:** freeze three rows; pad Hub leftovers or ascribe_tag; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 
