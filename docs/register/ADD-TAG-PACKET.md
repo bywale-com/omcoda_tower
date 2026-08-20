@@ -154,7 +154,7 @@ A33 inventory. A34 on the contact. Consultant multi-tag. Recut 015. Desk sider.
 | **IN-APP-ACTION** | Inventory A33. Law 41. | This interior as a picker row |
 | **MAPPED-BOX** | Occupancy | Get Firm/Contact labels on Add tag |
 | **INPUT-LOOK** | Tree, drag, chip element | Live glyphs over A35 |
-| **A34** | Audit mark on the person | Mixing that into this Tag picker |
+| **A34** | Audit field on the person. Packet [`AUDIT-FIELD-PACKET.md`](./AUDIT-FIELD-PACKET.md) | Mixing that into this Tag picker |
 | **RUN** | Execute now with trigger data | Canvas Test |
 
 ---

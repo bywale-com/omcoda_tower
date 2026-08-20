@@ -186,6 +186,7 @@ These were asked. They are not “copy from C9/C11.”
 | **Variables / mapped box** | Law 40. [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md). **A29** tree. **A31** chip **is** the box. **A32** close Input / resize. |
 | **In-app Action** | Law 41. [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). After **A7** in-app: module write-buttons, grouped by module. Look **A33**. |
 | **Add tag** | Packet [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md). Plate **A35**. Contact occupied. Tag picker. Type glyphs. Color more lively. Green Action chip. Kind chips teaching — do not build. |
+| **Audit field** | Packet [`AUDIT-FIELD-PACKET.md`](./AUDIT-FIELD-PACKET.md). Plate **A34**. Contacts column. Composite chips. Hardcoded when audit runs. Not an Action. Leave live Tag. |
 
 ---
 

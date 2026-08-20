@@ -3,6 +3,7 @@
 **Seat:** Product Manager. For the **engineer** and the **Systems Analyst**. One pocket. Do not lose this.  
 **When:** Locked 2026-08-19 08:29. UI pass. Founder does **not** spec the picker — you see the inventory, lay it out, they redesign after screenshots.  
 **Redesign plate:** [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app-action-inventory.png) — grouped list from the SA **persist** walk, not the three-row first pass.  
+**Audit field:** [`AUDIT-FIELD-PACKET.md`](./AUDIT-FIELD-PACKET.md) · [`A34-audit-tag-on-contact.png`](./automations-blueprint/A34-audit-tag-on-contact.png).  
 **Add tag Parameters:** [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md) · [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png).  
 **Live first pass (engineer, merged main #100):** [`in-app-action-pass/`](./automations-blueprint/in-app-action-pass/). Three modules only — **not** the inventory.  
 **Kind split (already locked):** [`A7-action-two-kinds.png`](./automations-blueprint/A7-action-two-kinds.png) — **Agents** vs **in the application**. This packet is **only** the in-app path after that pick. Agents stays [`A14`](./automations-blueprint/A14-action-assign-or-template.png) / law 31.  
@@ -23,6 +24,7 @@
 6. **Deliverable:** screenshots of **every distinct screen** from **click the Action node → select in the application → onward.** Not Agents. Not hover states. Distinct screens only.
 7. **This is UI.** SA inspects whether the walk can actually run those writes (`action` is still `call_agent` only). Do not block the face on that.
 8. **Add tag interior** is [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md) **A35**. Do not lose that pocket.
+9. **Audit field** is [`AUDIT-FIELD-PACKET.md`](./AUDIT-FIELD-PACKET.md) **A34**. Not an Action. Do not lose that pocket.
 
 Live today: `ActionInAppModal` / `IN_APP_AFFORDANCES` on main (#100) is **three rows** (Start Audit · Confirm book · Provision). That followed SA 08:40’s filter. SA **09:35** walked the desks: persist-bound controls are the list. **A33** is that list. Kill three-rows as the face. Hub leftovers stay dead. `ascribe_tag` still has no desk button — do not pad.
 
@@ -31,7 +33,7 @@ Live today: `ActionInAppModal` / `IN_APP_AFFORDANCES` on main (#100) is **three 
 ## Paste — engineer
 
 ```text
-Read docs/register/IN-APP-ACTION-PACKET.md ALL THE WAY THROUGH. Then NODE-INTERIOR.md, INPUT-LOOK-PACKET.md, MAPPED-BOX-PACKET.md. Add tag interior is docs/register/ADD-TAG-PACKET.md — read that before touching Action Parameters.
+Read docs/register/IN-APP-ACTION-PACKET.md ALL THE WAY THROUGH. Then NODE-INTERIOR.md, INPUT-LOOK-PACKET.md, MAPPED-BOX-PACKET.md. Add tag interior is docs/register/ADD-TAG-PACKET.md — read that before touching Action Parameters. Audit field is docs/register/AUDIT-FIELD-PACKET.md — not an Action; do not put it on A33.
 
 You are building in-app Action on CT Ant Automations. Product face = /prototype-ant. Hub is not the app. This is a UI pass. Do not recut 015. Do not overwrite 15:43. Do not plant.
 
@@ -125,6 +127,7 @@ Desk chrome = live `/prototype-ant` + A22. Not Hub.
 - Shared panes on that Action: Input · Parameters · Output, already specified elsewhere.
 - **A31 / A32** on those interiors (and on Get, same pass).
 - **Add tag** interior: [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md) **A35**. Contact occupied. Tag picker. Type glyphs. Color more lively. Green Action chip. Kind chips teaching — kill.
+- **Audit field:** [`AUDIT-FIELD-PACKET.md`](./AUDIT-FIELD-PACKET.md) **A34**. Not a row on this list.
 
 ## 2. Do not build
 
@@ -195,12 +198,14 @@ Redesign: [`A33-in-app-action-inventory.png`](./automations-blueprint/A33-in-app
 
 **Add tag interior:** [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md) · [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png).
 
+**Audit field:** [`AUDIT-FIELD-PACKET.md`](./AUDIT-FIELD-PACKET.md) · [`A34-audit-tag-on-contact.png`](./automations-blueprint/A34-audit-tag-on-contact.png).
+
 ---
 
 ## Do not
 
 - Freeze three rows because that is what shipped.
 - Invent actions so the list looks full. The persist walk is already long.
-- Pad **A33** with “set audit field.” That write is hardcoded on **Run audit**. The field lives on the contact (**A34**). Not Tag. Leave live Tag.
+- Pad **A33** with “set audit field.” Packet [`AUDIT-FIELD-PACKET.md`](./AUDIT-FIELD-PACKET.md). Hardcoded on **Run audit**. **A34**. Leave live Tag.
 - Collapse Agents into in-app.
 - Recut 015. Overwrite 15:43. Plant.

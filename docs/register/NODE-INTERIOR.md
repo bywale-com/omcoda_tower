@@ -3,7 +3,7 @@
 **Seat:** Product Manager. For the **engineer** and the **Systems Analyst**.  
 **Why:** Founder 2026-08-18 18:58. We drew Input on **Get**. It is not a Get-only pane. If the build only puts that tree on Get, the other nodes are unfinished.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
-**Read:** [`PLATE-READ.md`](./PLATE-READ.md). Packets: [`GET-PACKET.md`](./GET-PACKET.md) · [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md) · [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md) · [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) · [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) · [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md).
+**Read:** [`PLATE-READ.md`](./PLATE-READ.md). Packets: [`GET-PACKET.md`](./GET-PACKET.md) · [`RULE-OUTCOMES-PACKET.md`](./RULE-OUTCOMES-PACKET.md) · [`RULE-OUTPUT-PACKET.md`](./RULE-OUTPUT-PACKET.md) · [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) · [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`TEST-PACKET.md`](./TEST-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) · [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md) · [`AUDIT-FIELD-PACKET.md`](./AUDIT-FIELD-PACKET.md).
 
 ---
 

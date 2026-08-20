@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Law **45**: Audit field on Contacts is a **system control** — hardcoded when audit runs, composite, not Tag, not an Action. Leave live Tag. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **AUDIT-FIELD-PACKET** (A34). Law **45**. Hardcoded when audit runs. Leave live Tag. Do not plant.
 
 **How we maintain this log**
 
@@ -1691,6 +1691,18 @@ Flag 15:43 untouched.
 **What we did:** Law **45**. **A34** is that field. **Run audit** stays the action (desk + A33). Filling the Audit field is not an Action. Leave live Tag. Do not recut 015.
 
 **Do not:** put “set audit field” on A33; mix this into Tag; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-20 10:29 UTC — Packet for the Audit field.
+
+**Why:** Founder: did you create a package for that? How else would it be built?
+
+**What we did:** [`AUDIT-FIELD-PACKET.md`](./AUDIT-FIELD-PACKET.md). Engineer + SA paste. Plate **A34**. Law **45**.
+
+**Do not:** recut 015; overwrite 15:43; plant; put this on A33.
 
 Flag 15:43 untouched.
 

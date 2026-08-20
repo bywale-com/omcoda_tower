@@ -62,7 +62,7 @@ Two kinds. That is the whole split.
 
 **Law 41:** can we automate X = does that module already afford X. The inventory is those affordances, grouped by module — not this table as a catalog. Automations consumes; it does not author a second button. Packet: [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md).
 
-**Tail:** not every critical interaction has a button. **Law 45:** some writes you **do not** automate as their own action. First: the **Audit** field on the contact. When audit runs, it populates. Hardcoded. Composite chips (**A34**). Not Tag. **Run audit** stays the action. The field is a consequence. A condition can reference it because it is a field.
+**Tail:** not every critical interaction has a button. **Law 45:** some writes you **do not** automate as their own action. First: the **Audit** field on the contact. When audit runs, it populates. Hardcoded. Composite chips (**A34**). Packet [`AUDIT-FIELD-PACKET.md`](./AUDIT-FIELD-PACKET.md). Not Tag. **Run audit** stays the action. The field is a consequence. A condition can reference it because it is a field.
 
 **Law 44:** a field on the contact **is** the field an Action writes — for fields you add that way. Visual = that column. Live **Tag** left as-is. Do not talk about it.
 
