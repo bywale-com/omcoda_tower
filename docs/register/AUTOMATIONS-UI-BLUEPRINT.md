@@ -55,7 +55,8 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A28** | [`A28-add-node-on-wire.png`](./automations-blueprint/A28-add-node-on-wire.png) | chrome | Wire **+**. Add node: Get · Rule · Action · **If** · **Switch** · Exit. **No Trigger** on insert-on-wire. Condition (If) only is **prior**. | 20:05 · lock 20:09 · **10:52** | **revises A6**. Packet [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) · [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md) |
 | **A7** | [`A7-action-two-kinds.png`](./automations-blueprint/A7-action-two-kinds.png) | chrome | Inside action: **Agents** vs **in the application**. | 21:10 | — |
 | **A8** | [`A8-action-agents-objective.png`](./automations-blueprint/A8-action-agents-objective.png) | chrome | Agents as the action: select agent, or create the objective / form. Form here is still a **blank builder**. | 21:10 | **prior.** Form bind → **A12** |
-| **A12** | [`A12-form-from-required-data.png`](./automations-blueprint/A12-form-from-required-data.png) | chrome | **Canonical form.** Questions **are** the required-data rows. Bound from listing. | 21:36 then 21:48 | **revises A8** (form only). Select-agent law still A8 |
+| **A12** | [`A12-form-from-required-data.png`](./automations-blueprint/A12-form-from-required-data.png) | chrome | Questions **are** the required-data rows. Bound from listing. | 21:36 then 21:48 | **prior for occupancy.** How the listing gets in → **A40** |
+| **A40** | [`A40-form-class-occupies.png`](./automations-blueprint/A40-form-class-occupies.png) | chrome | **Form objective.** Radios click · form · meeting. Form selected: drop **Required data** (the class). Chip is the box. Questions unfold. | 15:30 | **revises A12** (occupancy). Assign still **A14**. Packet [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md) |
 | **A9** | [`A9-rule-output-gap.png`](./automations-blueprint/A9-rule-output-gap.png) | chrome | Rule Output **today** vs unnamed complete idea. Signals, not a field listing. | 21:10 | **prior.** Listing → **A11** |
 | **A11** | [`A11-rule-output-required-data-listing.png`](./automations-blueprint/A11-rule-output-required-data-listing.png) | chrome | Required data as **field rows**. Not a flag. Listing always on, under the class chips. | 21:36 then 21:48 | **prior.** Select / preview → **A20** |
 | **A20** | [`A20-rule-output-select-preview.png`](./automations-blueprint/A20-rule-output-select-preview.png) | chrome | **Canonical Output.** Top: every output this run made. Click one. Bottom: that output. Required data is one class, selected. | 16:04 | **revises A11** |
@@ -341,7 +342,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Why this does what we wanted (and why it evolved):** this plate locked **select agent = sequence** and **form lives in Automations**. The form itself was still a blank builder — that is why **A12** exists. Keep A8 so the agent/objective law is visible without pretending the blank builder is canon.
 
-**Canonical for the form:** A12. **Canonical for select-agent / sequence templates:** still this plate. **Canonical for assign-existing vs from-template (no create-agent here):** **A14**.
+**Canonical for the form:** A40 occupancy (drop the class). **A12** still: questions are those rows. **Canonical for select-agent / sequence templates:** still this plate. **Canonical for assign-existing vs from-template (no create-agent here):** **A14**.
 
 **Not this plate:** Binding questions to rule Output (A12). In-app action kinds (A7). The 00:02 assign choice (A14).
 
@@ -363,7 +364,26 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 **Why this does what we wanted:** the form is not invented in Agents and not typed from scratch in Automations. It is the listing, as questions.
 
-**Not this plate:** Inventing extra questions. Locking this objective to “re-engagement signal only.”
+**Not this plate:** Inventing extra questions. Locking this objective to “re-engagement signal only.” **Occupancy (drop the class):** **A40**.
+
+---
+
+### A40 — Form is the required-data class (canonical form occupancy)
+
+![A40 form class occupies](./automations-blueprint/A40-form-class-occupies.png)
+
+**Rationale (15:27):** You cannot know how many questions. You do not drag into empty boxes. Drop the **whole class**. The form unfolds. That is the form objective. If that class exists → this Agents action.
+
+**On the glass:**
+- Action · Agents. Input \| Output. Left: Required data as a folder (the class).
+- Objective radios: Click this link · **Submit this form** · Book a meeting.
+- Form box occupied by **Required data** chip. Questions listed under it. No + Add.
+
+**Why this does what we wanted:** A12 named that questions are the listing. This plate is the occupancy. Same drag as A35 Contact ← `contact_records`.
+
+**Not this plate:** A14 assign cards. Click / meeting interiors. Opt-in artifact form. Empty question slots.
+
+**Packet:** [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md).
 
 ---
 

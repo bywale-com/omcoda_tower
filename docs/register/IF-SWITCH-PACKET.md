@@ -23,6 +23,7 @@
 | **A38 / A39:** drag from the left **into** the box. Chip **is** the box. Operator. Value. **A38: True is the mode.** Craft the argument. Anything else is false. | Then / Else radios. A False form. “This is not a rule.” Kind chip strip |
 | Orange **If** / **Switch** chip **under the title** (A35 placement) | Teaching captions |
 | **Compare (If and Switch):** both sides of the comparison are **text boxes**. Drop a variable from the left **or** type. Same box. Always text — a literal, or a variable that holds that text. **Any** input box works this way. | Left locked as chip-only, right locked as type-only. Two kinds of box. |
+| **Exists (If):** the argument can be a **class** (required data). Operator exists = listing not empty. Same If. A38 still: true is the mode. | A new If kind. Then/Else. |
 
 If the If node is still one wire down, you missed A36. If Switch cannot add a path that becomes a wire, you missed A37. If the interior still has Then/Else radios, you missed A38. If left→right drag is missing, you missed law 40. If a compare side cannot take a chip **or** typed text, you missed 11:03.
 

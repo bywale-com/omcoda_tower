@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Gap is objectives** — both sides. Three cores: opt-in · form (data capture) · meeting. Send: new contact → audit → if → actions. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A40** form = drop the required-data **class**. If that class exists → Agents. Do not plant.
 
 **How we maintain this log**
 
@@ -1846,6 +1846,18 @@ No `goal` column on `sequence_template`. Do not mint one this stamp. Law 28 alre
 **What “work the types” means:** sit in each from-scratch interior until we can see what’s left. Not a new node kind. Not recut 015.
 
 **Do not:** plant; overwrite 15:43; put opt-in in the objective picker; mint a goal table; lock form-objective to re-engagement signal.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-20 15:30 UTC — Form is the required-data class. Drop it. Questions unfold.
+
+**Why:** Founder: Rule already emits missing. If that class exists → Agents. Gap is you cannot know how many questions, so you cannot fill empty boxes. Drop the **entire class** into the form. That is the objective. Agents action → radios → form selected → drag the class. Two kinds of forms; this is this form. Backend is SA. Want to see the UI. Honor current look.
+
+**What we did:** Plate **A40**. Packet [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md). Law **47**. Occupancy is A31 (same as Contact ← `contact_records` on A35). A12 still: questions are the listing. A14 still assign. If **exists** on that class (listing not empty) — same If, A38. This form ≠ opt-in/consent ≠ loop-closer.
+
+**Do not:** empty question boxes; plant; recut 015; overwrite 15:43; lock to re-engagement; paint COLLECTIBLE_FIELDS as the form.
 
 Flag 15:43 untouched.
 
