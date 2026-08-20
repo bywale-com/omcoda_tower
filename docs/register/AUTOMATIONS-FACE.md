@@ -204,7 +204,7 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 - Not treating Automations as a one-shot (trigger · rule · action only). That is the smallest. The canvas can chain (law 32).
 - Not inventing an Automations **Settings** modal. Global vs local is the divide (law 27). Not filling an event catalog.
 - Not **creating agents** inside Automations. Assign existing, or from a template (law 31 / A14).
-- Not circling **pipe vs this-then-that**. The product is the handle after the node (law 33). Live is not that yet. Do not treat Hub preview as the live path.
+- Not circling **pipe vs this-then-that**. The product is the handle after the node (law 33). Live walker commits that run’s writes. Do not treat Hub preview as the live path.
 
 ---
 
@@ -222,4 +222,4 @@ Automations owns: the event, the operation (rules / constants / conditions as Hu
 11. **Ant plate of the If node** — **drawn 01:20:** A15 (chain) · A16 (open). Hub still has the plant. A13 is still not this screen.
 12. **Event catalog + global vs local** (law 27). **Drawn 18:53: A18.** **Shape list (22:43):** [`PRIMITIVES.md`](./PRIMITIVES.md). Form submitted (this form) · campaign failed · opt-out · firm created · audit finished · contact file imported · objective met. Not “any row changed.”
 13. **Queryable lineage** (law 29). Agent-created vs hand-created objective → path → completion → time. Minimum: queryable. Do not mint a table from this sentence.
-14. **Handle after the node** (law 33). Live walk does not hand the next node the module’s output. Do not treat editor preview as that. SA: do not circle pipe vs then-this — both are fine if the handle is real. Packet: [`SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md`](./SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md).
+14. **Handle after the node** (law 33). Live walk **does** hand the next node that run’s writes (`run_audit` → `executeAuditRun` → `commitWrites` / `previousWrites`). Hub preview is still not the live path. Do not recut 015. Packet: [`SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md`](./SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md) is the prior requirement.

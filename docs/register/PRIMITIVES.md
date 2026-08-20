@@ -37,6 +37,7 @@ These are the in-app events. If a new “when X happens” is not this list, the
 | **An audit finished** | All audits | (probably none — one-time) |
 | **A contact file was imported** | All contact-file imports | **This batch** |
 | **A new contact** | All new contacts | **This firm** — later if we need it |
+| **An objective was met** | All of that kind | **This** objective — nested shape of that event (this campaign, this form, this instance). Same Global / Local as every other event. Law **27 · 28**. |
 | **A reference pack / eligibility criteria was updated** | All pack updates | **This pack** |
 
 **Global** on every row also means **every firm**. The Local column is the **instance** layer only. Firm/contact Select firm is the other Local layer and is not restated per row. Nested; SA maps order. Do not treat a dash as “no Local at all” until SA says the firm axis is also empty.
@@ -153,12 +154,11 @@ A wire that looks like an n8n **pipe** is one way to see the handle. A then-this
 | **On this canvas** | Event → Audit action → If on that output → tag / agents. Needs the **handle**. |
 | **A different automation** | Hear **audit finished** as an event (Global / Local). That is a listen. It is not a substitute for the handle on this canvas. |
 
-### Right now we are not building it that way
+### Live handle (do not quote the Aug 17 prior as current)
 
-- **Live walk** (`workflowWalk`): Trigger → … → Action. Action is enroll / call_agent. It does not send work to Audit. It does not hand the next node Audit’s run. Context is trigger payload + contact ids — not “what this node’s module just wrote.”
-- **Hub editor** already passes `lastOutput` along the edge into `lastInput`. That is the **smell** of the handle. It is a preview. It does not call the Audit module. Do not treat it as the live path.
+**Live walk** (`workflowWalk`, main): `run_audit` calls `executeAuditRun` (same writes as Operator Start Audit). It **commits that run’s writes** onto `previousWrites`. The next node **picks** (`pickWrites` / If `pickTable`+`pickField`). `call_agent` and `ascribe_tag` do the same with *their* writes. Hub `lastOutput` → `lastInput` is still preview only. Do not recut **015**.
 
-If the live walk cannot see the module’s output after the node, Automations does not work.
+[`SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md`](./SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md) is the **prior** requirement (“we are not building it that way yet”). Law **33** already named live on main (PR #94).
 
 ---
 

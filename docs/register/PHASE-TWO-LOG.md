@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Provision → send → detection** walk: send hangs on **people**, not firm-created. **IF-SWITCH-PACKET.** Law **40 · 46**. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Send canvas: **new contact → audit → if → actions.** Goal met = that event, Local. Live `run_audit` **does** hand writes. **IF-SWITCH-PACKET.** Law **40 · 46**. Do not plant.
 
 **How we maintain this log**
 
@@ -1798,6 +1798,23 @@ Then Agents sends. Not an Automations node.
 **Live:** walk still does not hand Audit’s writes. Face is specified. Do not recut 015 here.
 
 **Do not:** plant; overwrite 15:43; a new node kind; hang send on firm-created; qualify-gate.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-20 15:02 UTC — Contact created is the send trigger. Rule is an event. Goal met is Local. Live audit handle is real.
+
+**Why:** Founder reading the 14:52 walk. Not firm-created → audit. **New contact → audit → if → actions.** Rule is not “day one.” Goal met is a Local trigger, already identified. Verify the live walk sentence.
+
+**What we verified**
+
+- **Send trigger.** Founder lock: **contact created**, then Run audit, then If, then Agents / other actions. Same conclusion as 14:52 on “not firm provisioned.” Import still does not fire new-contact per row (named earlier). Live picker fires `contact_import`, not `contact.created`. Face named new contact (**A25**). Do not hang send on firm-created.
+- **Rule.** Retract “not on day one.” Rule lives in Automations. It sits on a **write** — form submitted / data capture / pack updated — not on a calendar day. Same canvas language as everything else: an event.
+- **Goal → workflow.** Not underspecified as a missing primitive. **Law 28:** all objectives are events; no special return. **Law 27:** Global / Local — Local is **that exact event’s shape** (this campaign, this form, that instance). **23:38:** escalate to a workflow = an automation listening (global or local); it ends = nothing listening. FACE catalog already lists **objective met**. `PRIMITIVES.md` table had dropped the row — restored. Live catalog is **named writes** (`meeting_booked`, `fact_writebacks`, `campaign_failure`) not a type called `objective_met`. Agents already advances campaign on objective met (`cascade.ts`). Same shape; granular as that IP / that event.
+- **Live Audit handle.** The 14:52 sentence was **wrong**. It quoted Aug 17 prior. Main `workflowWalk`: `run_audit` → `executeAuditRun` → `commitWrites` / `previousWrites`. Next node picks. Hub preview is still not live. Do not recut 015. Corrected [`PRIMITIVES.md`](./PRIMITIVES.md) and FACE open 14.
+
+**Do not:** plant; overwrite 15:43; recut 015; color Rule as day-one; call goal-met a missing listen.
 
 Flag 15:43 untouched.
 
