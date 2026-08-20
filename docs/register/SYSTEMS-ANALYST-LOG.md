@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-20 13:20 UTC — **One fact, one write. `firm_readiness` is the events-copy bug.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-20 14:40 UTC — **Get is a table SELECT. Module name is a label. Activation is not Get-able.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1569,6 +1569,22 @@ Engineer still cuts **019** (If/Switch) unless founder pivots pickup to 020 firs
 Parked on [`SYSTEMS-CHANGE-PACKET-020.md`](./SYSTEMS-CHANGE-PACKET-020.md) “The argument.” Decision is **not** open.
 
 **Do not:** recut 015; mint `firm_readiness`; overwrite 15:43.
+
+---
+
+## 2026-08-20 14:40 UTC — Get is not the module. Activation has no Get.
+
+**Why:** Founder: the app feels built at module-understanding. Get looks module-based. Activation state is a projection. “When a firm reaches X / get firms at a stage” feels like looking at that module. Tell the truth of the system; do not align the machine to that feeling.
+
+**Hard:** Park [`SYSTEMS-GET-IS-TABLE-ASCRIBE.md`](./SYSTEMS-GET-IS-TABLE-ASCRIBE.md).
+
+Get’s picker uses six **labels** (Contacts, Firms, Audits, Imports, Agents, Reference). The walker is a hardcoded `SELECT` of **one table** per label (`contact_records`, `ct_firms`, `audit_runs`, `import_batch`, `campaign`; Reference empty). It is not “read that module.” It is not the Operator sider. Activation state is **not** a Get source. Get Firms does not filter stage / posture / gates.
+
+“Firms at stage X” = Get or If on the **table that is X** (`campaign_states`, grant, …). The composite (all gates) is **never written**, so it is not an event and not a Get module. “When a firm reaches X” = trigger on that write. Nothing fires when the Activation percent hits 100%.
+
+The module-name catalog is a skin. 1:1 only where the module owns the table. Projection modules would make that skin a lie. Do not mint `firm_readiness` so Get can look like Activation.
+
+**Do not:** recut 015; add Activation to `GET_MODULES` without a table on the handle; overwrite 15:43.
 
 
 
