@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **IF-SWITCH-PACKET.** Compare: both sides chip **or** type. Any input box. Law **40 · 46**. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **PM seat** inhabitable: [`docs/README.md`](../README.md) + [`AGENTS.md`](../../AGENTS.md). **IF-SWITCH-PACKET.** Compare: both sides chip **or** type. Any input box. Law **40 · 46**. Do not plant.
 
 **How we maintain this log**
 
@@ -1751,6 +1751,18 @@ Flag 15:43 untouched.
 **What we did:** [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md). Law **40** tail. [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md). No new PNG.
 
 **Do not:** chip-only left / type-only right; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-20 11:20 UTC — PM seat inhabitable from the repo.
+
+**Why:** Founder: do the Engineer seating for the PM seat. Any new Product Manager browsing the repo and prompted to become the PM must inhabit the role and its routine practices.
+
+**What we did:** Short paste + identity in [`docs/README.md`](../README.md). Always-on [`AGENTS.md`](../../AGENTS.md) (Cursor Cloud injects it). Root README + [`PHASE-TWO.md`](./PHASE-TWO.md) point here. Packets remain how Automations gets built. Engineer paste stays on PR [#106](https://github.com/bywale-com/omcoda_tower/pull/106) until merged — this file is PM always-on. Do not recut 015.
+
+**Do not:** plant; overwrite 15:43; mint tables; generate plates unasked; swap with SA or Engineer.
 
 Flag 15:43 untouched.
 
