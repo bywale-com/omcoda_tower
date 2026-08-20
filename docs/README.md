@@ -86,7 +86,8 @@ If a control is on the glass, it needs a row, a field, or a relationship. Specif
 | [`SYSTEMS-CHANGE-PACKET-018.md`](./register/SYSTEMS-CHANGE-PACKET-018.md) | A34 audit mark on the person | Contacts list join + chips (PR #102). No SQL. Not `contact_tag`. |
 
 7. Also on main: A33 persist-bound in-app inventory (PR #101) · A35 Add tag (PR #103). Engineer PRs **#104** (data in tables) and **#105** (Test on trigger / Run vs Launch) may still be open — check, do not assume.
-8. Confirm-or-refute leftovers from SQL, not from this identity: house seed **draft**; `import.created` type ghost; If proxy on `sequence_ready.ready=false`. **Get is a node.** Empty last handle → `N = 0`. Do not restore `LIMIT 50` as grain.
+8. **Waiting cut:** [`register/SYSTEMS-CHANGE-PACKET-019.md`](./register/SYSTEMS-CHANGE-PACKET-019.md) — If + Switch (A36–A39). No SQL. Ascribes: [`register/SYSTEMS-AUDIT-FIELD-ASCRIBE.md`](./register/SYSTEMS-AUDIT-FIELD-ASCRIBE.md) · [`register/SYSTEMS-ADD-TAG-ASCRIBE.md`](./register/SYSTEMS-ADD-TAG-ASCRIBE.md) · [`register/SYSTEMS-RUN-ASCRIBE.md`](./register/SYSTEMS-RUN-ASCRIBE.md).
+9. Confirm-or-refute leftovers from SQL, not from this identity: house seed **draft**; `import.created` type ghost. **Get is a node.** Empty last handle → `N = 0`. Do not restore `LIMIT 50` as grain.
 
 **You own**
 
@@ -209,7 +210,7 @@ Do not call a stand-in “the system.” Deferred is a product choice unless Sto
 
 **First question** (Agents flagship → inventory / fit / change / perimeter) was answered **2026-08-15 16:28 UTC** in the SA log. Do not generate a second Agents flag.
 
-Dated onboarding packages [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md) and [`register/AUTOMATIONS-SA-PACKAGE.md`](./register/AUTOMATIONS-SA-PACKAGE.md) are the 08-15 plate ascribe. Later ascribes (Get/Rule, Trigger/place, Test, in-app Action, packets 016–018) supersede them where they conflict. Same two questions still apply on a **new** canon plate: **our** system (tables / workers / runtime) vs **external** systems the mock is calling. Do not mint tables from pictures. Teaching copy is not a node.
+Dated onboarding packages [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md) and [`register/AUTOMATIONS-SA-PACKAGE.md`](./register/AUTOMATIONS-SA-PACKAGE.md) are the 08-15 plate ascribe. Later ascribes (Get/Rule, Trigger/place, Test, in-app Action, packets 016–019) supersede them where they conflict. Same two questions still apply on a **new** canon plate: **our** system (tables / workers / runtime) vs **external** systems the mock is calling. Do not mint tables from pictures. Teaching copy is not a node.
 
 ---
 

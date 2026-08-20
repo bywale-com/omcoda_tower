@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-20 11:30 UTC — **Seat identity rewritten so a greenfield SA inhabits from the repo.** Packets 016/017/018 already on `origin/main` (filename remap). Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-20 11:45 UTC — **019 If/Switch. Audit field / Add tag / Run ascribed.** Engineer cuts 019. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1490,6 +1490,21 @@ Legitimate gap I **would** state, if it existed: none here. The only split alrea
 **Routines locked in the identity:** founder-only instructions; packets so the implementer only cuts; quote SQL not memory; pull-ref for PM #96; pane of existing writes is a cut; state gaps, do not ask the job; data-in-tables ascribe when the store is missing; face `/prototype-ant`.
 
 **Do not:** recut 015; treat 016/017/018 as uncut; overwrite 15:43; mint an events log; ask whether A34-class panes are in scope.
+
+---
+
+## 2026-08-20 11:45 UTC — PM new pockets: 019 If/Switch cut. Three ascribes. Skip PM system message.
+
+**Why:** Founder: new packets from the PM. Skip their system message. Systems side so the engineer can build.
+
+**Hard:**
+
+1. **[`SYSTEMS-CHANGE-PACKET-019.md`](./SYSTEMS-CHANGE-PACKET-019.md)** — If + Switch. No SQL. Keep `branch` as If; add graph type `switch`. Paths = `sourceHandle` wires. Compare = chip or typed text on graph `data` (017 `mappedSlots`). If invents no writes. Legacy `pickTable` still walks the house seed. **⋯ Switch** ≠ Switch node.
+2. **[`SYSTEMS-AUDIT-FIELD-ASCRIBE.md`](./SYSTEMS-AUDIT-FIELD-ASCRIBE.md)** — law 45. 018/#102 already paints Contacts. Leftover: Get `contacts` must also emit current `reachability_verdicts` + `sequence_ready`. No `audit_field` column. Not A33.
+3. **[`SYSTEMS-ADD-TAG-ASCRIBE.md`](./SYSTEMS-ADD-TAG-ASCRIBE.md)** — Contact slot already. Tag = `contact_tag` DISTINCT + typed string. No tags table. A35 chrome silent. Do not pad A33.
+4. **[`SYSTEMS-RUN-ASCRIBE.md`](./SYSTEMS-RUN-ASCRIBE.md)** — Bless PR #105. Launch = arm only. Run = `payload.writes` from the trigger. Two grains (`untilNodeId`). Silent in-app success on main is **not** a Run.
+
+**Do not:** recut 015; mint compare/path/run/tag-catalog tables; mix ⋯ Switch with Switch; overwrite 15:43.
 
 
 
