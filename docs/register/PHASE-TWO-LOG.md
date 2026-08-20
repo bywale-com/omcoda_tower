@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A40** liked. Build now = that interior on live Action · Agents + the listing on rule output. Sequences **not** filtered. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A40** liked. Packet [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md) — founder tells engineer / SA that file. Do not re-list the build at the founder. Do not plant.
 
 **How we maintain this log**
 
@@ -1924,6 +1924,16 @@ Flag 15:43 untouched.
 **Named later, not now:** click as a completion write; meeting booked → authored escalate; consent cascade writes.
 
 **Do not:** plant from this stamp; overwrite 15:43; mint a goal column.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-20 19:04 UTC — Packet already exists. Tell them that file.
+
+**Why:** Founder: did you create the packets? Can I just tell them? Why are you telling me?
+
+**Yes.** Packet is [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md). Engineer paste and SA paste are in it. Plate **A40**. 16:14 was restating that packet at the founder — don’t. They hand that file. They do not need the build listed back.
 
 Flag 15:43 untouched.
 
