@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **AUDIT-FIELD-PACKET** (A34). Law **45**. Hardcoded when audit runs. Leave live Tag. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Entered **If / Condition**. Holding If vs Switch (n8n). They do not like the live If look. Do not plant.
 
 **How we maintain this log**
 
