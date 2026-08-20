@@ -101,7 +101,8 @@ export const WIRE_ADD_KINDS: { blockId: string; title: string; hint: string }[] 
   { blockId: "get-records", title: "Get", hint: "Retrieve data" },
   { blockId: "rule-immigration-service-eligibility", title: "Rule", hint: "Branch logic" },
   { blockId: "action-sequence", title: "Action", hint: "Run a task or update" },
-  { blockId: "condition-if", title: "Condition (If)", hint: "Evaluate a condition" },
+  { blockId: "condition-if", title: "If", hint: "Two wires — true / false" },
+  { blockId: "condition-switch", title: "Switch", hint: "Many paths plus fallback" },
   { blockId: "operation-exit", title: "Exit", hint: "End the workflow" },
 ];
 

@@ -28,6 +28,8 @@ import type { AutomationBuildModule } from "./automationBuildModules";
 import type { GetModuleId, GetSelect } from "./automationGet";
 import { formatGetSummary } from "./automationGet";
 import type { InAppAffordanceId } from "./inAppAffordances";
+import type { Compare, SwitchPath } from "./automationCompare";
+import { emptyCompare } from "./automationCompare";
 
 export type WorkflowTarget = "audit" | "contact" | "import" | "client";
 
@@ -39,6 +41,7 @@ export type WorkflowNodeType =
   | "trigger"
   | "constant"
   | "branch"
+  | "switch"
   | "rule"
   | "action"
   | "exit"
@@ -164,10 +167,15 @@ export type WorkflowNodeData = {
   /** A12 — objective declared on the Agents action. */
   objectiveName?: string;
   dataRequestOn?: boolean;
-  /** A16 — If reads the previous node's output. */
+  /** A16 — unread. Do not make this the compare. */
   previousResultFrom?: string;
   ifThen?: string;
   ifElse?: string;
+  /** If: true-mode argument. Switch: per path. SA 019. */
+  compare?: Compare;
+  and?: Compare[];
+  paths?: SwitchPath[];
+  fallbackHandle?: string;
   grain?: "global" | "local";
   localRef?: string;
   /** A26 Local cascade — not A19 audience. */
@@ -370,13 +378,26 @@ export const WORKFLOW_PALETTE_BLOCKS: PaletteBlock[] = [
     module: "conditions",
     nodeType: "branch",
     defaultData: {
-      label: "If X — previous result",
+      label: "If",
       branchKind: "if",
-      conditionConfig: emptyIfConditionConfig(),
-      filterSummary: "Calls from the previous result",
-      ifThen: "Assign agent",
-      ifElse: "stop",
-      configured: true,
+      compare: emptyCompare(),
+      and: [],
+      filterSummary: "True",
+      configured: false,
+    },
+  },
+  {
+    id: "condition-switch",
+    label: "Switch",
+    description: "Many paths plus fallback",
+    module: "conditions",
+    nodeType: "switch",
+    defaultData: {
+      label: "Switch",
+      paths: [],
+      fallbackHandle: "fallback",
+      filterSummary: "Paths",
+      configured: false,
     },
   },
   {
@@ -1243,6 +1264,11 @@ export function createNodeFromBlock(
       scheduleCron: block.defaultData.scheduleCron,
       delayLabel: block.defaultData.delayLabel,
       conditionConfig: block.defaultData.conditionConfig,
+      compare: block.defaultData.compare,
+      and: block.defaultData.and,
+      paths: block.defaultData.paths,
+      fallbackHandle: block.defaultData.fallbackHandle,
+      mappedSlots: block.defaultData.mappedSlots,
       getModule: block.defaultData.getModule,
       getSelect: block.defaultData.getSelect,
       getClass1: block.defaultData.getClass1,
@@ -1324,11 +1350,22 @@ export function insertNodeOnEdge(
 }
 
 export function relayoutWorkflowNodes(nodes: Node<WorkflowNodeData>[]): Node<WorkflowNodeData>[] {
-  const sorted = [...nodes].sort((a, b) => a.position.y - b.position.y);
-  return sorted.map((node, index) => ({
-    ...node,
-    position: { x: CANVAS_CENTER_X, y: index * 148 },
-  }));
+  const sorted = [...nodes].sort((a, b) => a.position.y - b.position.y || a.position.x - b.position.x);
+  const rows: Node<WorkflowNodeData>[][] = [];
+  for (const node of sorted) {
+    const last = rows[rows.length - 1];
+    if (last && Math.abs(node.position.y - last[0]!.position.y) < 80) {
+      last.push(node);
+    } else {
+      rows.push([node]);
+    }
+  }
+  return rows.flatMap((row, rowIndex) =>
+    row.map((node) => ({
+      ...node,
+      position: { x: node.position.x, y: rowIndex * 148 },
+    })),
+  );
 }
 
 export function rebuildChainEdges(nodeIds: string[]): Edge[] {
@@ -1348,10 +1385,19 @@ export function appendNodeAfter(
     return { nodes, edges };
   }
 
+  const siblingCount = edges.filter((edge) => edge.source === sourceNodeId).length;
+  const xOffset =
+    sourceHandle === "false"
+      ? 160
+      : sourceHandle === "true"
+        ? -160
+        : sourceHandle
+          ? siblingCount * 140 - 140
+          : 0;
   const positioned: Node<WorkflowNodeData> = {
     ...newNode,
     position: {
-      x: source.position.x,
+      x: source.position.x + xOffset,
       y: source.position.y + 160,
     },
   };

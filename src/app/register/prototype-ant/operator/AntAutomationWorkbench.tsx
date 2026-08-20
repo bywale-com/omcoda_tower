@@ -29,6 +29,7 @@ import {
   MoreOutlined,
   PlayCircleOutlined,
   SaveOutlined,
+  SisternodeOutlined,
   ThunderboltOutlined,
   UserAddOutlined,
 } from "@ant-design/icons";
@@ -50,6 +51,7 @@ import {
   type WorkflowNodeData,
   type WorkflowNodeType,
 } from "../../../data/automationWorkflows";
+import { newSwitchPath } from "../../../data/automationCompare";
 import { formatGetSummary, previewGetWrites } from "../../../data/automationGet";
 import { writesFromHandle } from "../../../data/eventTestContract";
 import { emptyRuleNodeConfig } from "../../../data/automationRules";
@@ -59,6 +61,7 @@ import { ActionAgentsModal, ActionInAppModal, ActionKindModal } from "./automati
 import { ContactPickModal } from "./ContactPickModal";
 import { GetParametersPane } from "./automationPlates/GetParametersPane";
 import { IfPlateModal } from "./automationPlates/IfPlateModal";
+import { SwitchPlateModal } from "./automationPlates/SwitchPlateModal";
 import { NodeInteriorModal } from "./automationPlates/NodeInteriorModal";
 import { PlateInsertEdge } from "./automationPlates/PlateInsertEdge";
 import { PLATE_NODE_TAG } from "./automationPlates/plateChrome";
@@ -116,7 +119,13 @@ function AntWorkflowNode({ id, data, type, selected }: NodeProps<WorkflowFlowNod
   const { setNodes } = useReactFlow();
   const ops = useCanvasOps();
   const canSwitch = switchableKind(workflowType);
-  const hasOutgoing = useStore((state) => state.edges.some((edge) => edge.source === id));
+  const outgoing = useStore((state) => state.edges.filter((edge) => edge.source === id));
+  const handleTaken = (handle: string) =>
+    outgoing.some((edge) => edge.sourceHandle === handle || (!edge.sourceHandle && handle === "true"));
+  const isIf = workflowType === "branch";
+  const isSwitch = workflowType === "switch";
+  const switchPaths = data.paths ?? [];
+  const fallbackHandle = data.fallbackHandle ?? "fallback";
   return (
     <div
       style={{
@@ -126,6 +135,7 @@ function AntWorkflowNode({ id, data, type, selected }: NodeProps<WorkflowFlowNod
         border: selected ? "2px solid #1677ff" : "1px solid #e5e7eb",
         boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
         padding: 12,
+        paddingBottom: isIf || isSwitch ? 36 : 12,
         position: "relative",
       }}
     >
@@ -154,15 +164,22 @@ function AntWorkflowNode({ id, data, type, selected }: NodeProps<WorkflowFlowNod
               menu={{
                 triggerSubMenuAction: "click",
                 items: [
-                  { key: "dup", label: "Duplicate" },
                   {
-                    key: "add",
-                    label: "Add node",
-                    children: WIRE_ADD_KINDS.map((choice) => ({
-                      key: `add:${choice.blockId}`,
-                      label: choice.title,
-                    })),
+                    key: "dup",
+                    label: "Duplicate",
                   },
+                  ...(isIf || isSwitch
+                    ? []
+                    : [
+                        {
+                          key: "add",
+                          label: "Add node",
+                          children: WIRE_ADD_KINDS.map((choice) => ({
+                            key: `add:${choice.blockId}`,
+                            label: choice.title,
+                          })),
+                        },
+                      ]),
                   ...(canSwitch ? [{ key: "switch", label: "Switch" }] : []),
                   { key: "del", label: "Delete", danger: true },
                 ],
@@ -216,20 +233,118 @@ function AntWorkflowNode({ id, data, type, selected }: NodeProps<WorkflowFlowNod
       <Typography.Text type="secondary" style={{ fontSize: 12 }}>
         {nodeSummary(data)}
       </Typography.Text>
-      <Handle type="source" position={Position.Bottom} />
-      {ops && !hasOutgoing ? (
-        <div
-          style={{
-            position: "absolute",
-            left: "50%",
-            bottom: -14,
-            transform: "translateX(-50%)",
-            zIndex: 8,
-          }}
-        >
-          <WireAddMenu onPick={(block) => ops.onAddAfter(id, block.id)} />
-        </div>
-      ) : null}
+      {isIf ? (
+        <>
+          <Handle type="source" position={Position.Bottom} id="true" style={{ left: "32%" }} />
+          <Handle type="source" position={Position.Bottom} id="false" style={{ left: "68%" }} />
+          <span style={{ position: "absolute", bottom: 6, left: "32%", transform: "translateX(-50%)", fontSize: 11, color: "#8c8c8c" }}>
+            true
+          </span>
+          <span style={{ position: "absolute", bottom: 6, left: "68%", transform: "translateX(-50%)", fontSize: 11, color: "#8c8c8c" }}>
+            false
+          </span>
+          {ops && !handleTaken("true") ? (
+            <div style={{ position: "absolute", left: "32%", bottom: -14, transform: "translateX(-50%)", zIndex: 8 }}>
+              <WireAddMenu onPick={(block) => ops.onAddAfter(id, block.id, "true")} />
+            </div>
+          ) : null}
+          {ops && !handleTaken("false") ? (
+            <div style={{ position: "absolute", left: "68%", bottom: -14, transform: "translateX(-50%)", zIndex: 8 }}>
+              <WireAddMenu onPick={(block) => ops.onAddAfter(id, block.id, "false")} />
+            </div>
+          ) : null}
+        </>
+      ) : isSwitch ? (
+        <>
+          {[
+            ...switchPaths.map((path) => ({
+              id: path.sourceHandle,
+              label: path.label || path.sourceHandle,
+            })),
+            { id: fallbackHandle, label: "fallback" },
+          ].map((handle, index, list) => {
+            const left = `${((index + 1) / (list.length + 1)) * 100}%`;
+            return (
+              <span key={handle.id}>
+                <Handle type="source" position={Position.Bottom} id={handle.id} style={{ left }} />
+                <span
+                  style={{
+                    position: "absolute",
+                    bottom: 6,
+                    left,
+                    transform: "translateX(-50%)",
+                    fontSize: 11,
+                    color: "#8c8c8c",
+                    maxWidth: 72,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {handle.label}
+                </span>
+                {ops && !handleTaken(handle.id) ? (
+                  <div style={{ position: "absolute", left, bottom: -14, transform: "translateX(-50%)", zIndex: 8 }}>
+                    <WireAddMenu onPick={(block) => ops.onAddAfter(id, block.id, handle.id)} />
+                  </div>
+                ) : null}
+              </span>
+            );
+          })}
+          <button
+            type="button"
+            className="nodrag nopan"
+            onClick={(event) => {
+              event.stopPropagation();
+              const path = newSwitchPath();
+              setNodes((current) =>
+                current.map((node) =>
+                  node.id === id
+                    ? {
+                        ...node,
+                        data: {
+                          ...node.data,
+                          paths: [...(node.data.paths ?? []), path],
+                          fallbackHandle: node.data.fallbackHandle ?? "fallback",
+                        },
+                      }
+                    : node,
+                ),
+              );
+            }}
+            style={{
+              marginTop: 10,
+              border: "1px dashed #d9d9d9",
+              background: "#fff",
+              borderRadius: 4,
+              fontSize: 12,
+              cursor: "pointer",
+              width: "100%",
+              padding: "4px 0",
+              color: "#8c8c8c",
+            }}
+          >
+            + Add path
+          </button>
+        </>
+      ) : (
+        <>
+          <Handle type="source" position={Position.Bottom} />
+          {ops && outgoing.length === 0 ? (
+            <div
+              style={{
+                position: "absolute",
+                left: "50%",
+                bottom: -14,
+                transform: "translateX(-50%)",
+                zIndex: 8,
+              }}
+            >
+              <WireAddMenu onPick={(block) => ops.onAddAfter(id, block.id)} />
+            </div>
+          ) : null}
+        </>
+      )}
     </div>
   );
 }
@@ -238,6 +353,7 @@ const nodeTypes: NodeTypes = {
   trigger: AntWorkflowNode,
   constant: AntWorkflowNode,
   branch: AntWorkflowNode,
+  switch: AntWorkflowNode,
   rule: AntWorkflowNode,
   action: AntWorkflowNode,
   exit: AntWorkflowNode,
@@ -521,9 +637,6 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
   }
 
   const hasTrigger = nodes.some((node) => node.type === "trigger");
-  const previousOptions = nodes
-    .filter((node) => node.type !== "branch" && node.type !== "exit")
-    .map((node) => ({ id: node.id, label: node.data.label }));
 
   const closeInterior = () => {
     setInteriorOpen(false);
@@ -566,7 +679,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
     openNode(created);
   };
 
-  const insertKindAfter = (sourceId: string, blockId: string) => {
+  const insertKindAfter = (sourceId: string, blockId: string, sourceHandle?: string) => {
     const block = WORKFLOW_PALETTE_BLOCKS.find((row) => row.id === blockId);
     if (!block) return;
     const created = createNodeFromBlock(
@@ -575,10 +688,12 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
       { x: 320, y: 160 },
     );
     if (!created) return;
-    const outgoing = edges.find((edge) => edge.source === sourceId);
+    const outgoing = sourceHandle
+      ? edges.find((edge) => edge.source === sourceId && edge.sourceHandle === sourceHandle)
+      : edges.find((edge) => edge.source === sourceId);
     const next = outgoing
       ? insertNodeOnEdge(nodes, edges, outgoing.id, created)
-      : appendNodeAfter(nodes, edges, sourceId, created);
+      : appendNodeAfter(nodes, edges, sourceId, created, sourceHandle);
     setNodes(relayoutWorkflowNodes(next.nodes) as WorkflowFlowNode[]);
     setEdges(next.edges);
     openNode(created as WorkflowFlowNode);
@@ -606,7 +721,8 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
       if (selectedNodeId === id) closeInterior();
       if (triggerSelectId === id) setTriggerSelectId(null);
     },
-    onAddAfter: (id: string, blockId: string) => insertKindAfter(id, blockId),
+    onAddAfter: (id: string, blockId: string, sourceHandle?: string) =>
+      insertKindAfter(id, blockId, sourceHandle),
     onInsertOnEdge: (edgeId: string, blockId: string) => {
       const block = WORKFLOW_PALETTE_BLOCKS.find((row) => row.id === blockId);
       if (!block) return;
@@ -681,11 +797,21 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
     },
     {
       id: "if",
-      title: "Condition (If)",
-      body: "Calls from the previous result.",
+      title: "If",
+      body: "Two wires — true / false.",
       icon: <ForkOutlined />,
       onClick: () => {
         const block = WORKFLOW_PALETTE_BLOCKS.find((row) => row.id === "condition-if");
+        if (block) addBlock(block);
+      },
+    },
+    {
+      id: "switch",
+      title: "Switch",
+      body: "Many paths plus fallback.",
+      icon: <SisternodeOutlined />,
+      onClick: () => {
+        const block = WORKFLOW_PALETTE_BLOCKS.find((row) => row.id === "condition-switch");
         if (block) addBlock(block);
       },
     },
@@ -1203,16 +1329,35 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
           ) : selectedNode?.type === "branch" ? (
             <IfPlateModal
               embed
-              open={interiorOpen}
               data={selectedNode.data}
-              previousOptions={previousOptions}
-              onCancel={closeInterior}
               onRegisterSave={(fn) => {
                 saveRef.current = fn;
               }}
               onSave={(patch) => {
                 patchNodeData(setNodes, selectedNode.id, patch);
-                closeInterior();
+              }}
+            />
+          ) : selectedNode?.type === "switch" ? (
+            <SwitchPlateModal
+              embed
+              data={selectedNode.data}
+              onRegisterSave={(fn) => {
+                saveRef.current = fn;
+              }}
+              onSave={(patch) => {
+                patchNodeData(setNodes, selectedNode.id, patch);
+                const keep = new Set(
+                  (patch.paths ?? selectedNode.data.paths ?? []).map((path) => path.sourceHandle),
+                );
+                keep.add(String(patch.fallbackHandle ?? selectedNode.data.fallbackHandle ?? "fallback"));
+                setEdges((current) =>
+                  current.filter(
+                    (edge) =>
+                      edge.source !== selectedNode.id ||
+                      !edge.sourceHandle ||
+                      keep.has(edge.sourceHandle),
+                  ),
+                );
               }}
             />
           ) : selectedNode?.type === "action" && plate === "action-kind" ? (
@@ -1276,7 +1421,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
             closeInterior();
             return;
           }
-          if (selectedNode.type === "action" || selectedNode.type === "branch") {
+          if (selectedNode.type === "action" || selectedNode.type === "branch" || selectedNode.type === "switch") {
             saveRef.current?.();
             return;
           }

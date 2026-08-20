@@ -4,7 +4,7 @@ import type { WorkflowNodeType } from "../../../../data/automationWorkflows";
 export type CanvasOps = {
   onDuplicate: (nodeId: string) => void;
   onDelete: (nodeId: string) => void;
-  onAddAfter: (nodeId: string, blockId: string) => void;
+  onAddAfter: (nodeId: string, blockId: string, sourceHandle?: string) => void;
   onSwitch: (nodeId: string) => void;
   onInsertOnEdge: (edgeId: string, blockId: string) => void;
 };

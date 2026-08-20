@@ -73,7 +73,13 @@ function isValidatedPipeline(nodes: RfNode[]): boolean {
   const types = new Set(nodes.map((n) => n.type).filter(Boolean));
   return (
     types.has("trigger") &&
-    (types.has("action") || types.has("exit") || types.has("get") || types.has("rule"))
+    (types.has("action") ||
+      types.has("exit") ||
+      types.has("get") ||
+      types.has("rule") ||
+      types.has("branch") ||
+      types.has("if") ||
+      types.has("switch"))
   );
 }
 
@@ -451,14 +457,7 @@ async function loadWriteField(
 }
 
 function outgoingHandle(edges: RfEdge[], sourceId: string, handle: string): RfEdge[] {
-  const exact = edges.filter((e) => e.source === sourceId && e.sourceHandle === handle);
-  if (exact.length) return exact;
-  if (handle === "true") {
-    return edges.filter(
-      (e) => e.source === sourceId && (e.sourceHandle == null || e.sourceHandle === ""),
-    );
-  }
-  return [];
+  return edges.filter((e) => e.source === sourceId && e.sourceHandle === handle);
 }
 
 async function contactsForAudit(
@@ -520,48 +519,166 @@ async function noteFromVerdict(
   return typeof row.verdict === "string" ? row.verdict : null;
 }
 
+function chipTable(data: Record<string, unknown>, slot: string): string {
+  const slots = data.mappedSlots;
+  if (!slots || typeof slots !== "object") return "";
+  const chips = (slots as Record<string, unknown>)[slot];
+  if (!Array.isArray(chips) || !chips[0] || typeof chips[0] !== "object") return "";
+  const table = (chips[0] as Record<string, unknown>).table;
+  return typeof table === "string" ? table : "";
+}
+
+function chipField(data: Record<string, unknown>, slot: string): string {
+  const slots = data.mappedSlots;
+  if (!slots || typeof slots !== "object") return "";
+  const chips = (slots as Record<string, unknown>)[slot];
+  if (!Array.isArray(chips) || !chips[0] || typeof chips[0] !== "object") return "";
+  const field = (chips[0] as Record<string, unknown>).field;
+  return typeof field === "string" ? field : "";
+}
+
+type WalkOperand = { mode: "chip"; slot: string } | { mode: "text"; value: string };
+type WalkCompare = { left: WalkOperand; op: string; right: WalkOperand };
+
+function parseOperand(raw: unknown): WalkOperand | null {
+  if (!raw || typeof raw !== "object") return null;
+  const rec = raw as Record<string, unknown>;
+  if (rec.mode === "chip" && typeof rec.slot === "string") return { mode: "chip", slot: rec.slot };
+  if (rec.mode === "text") return { mode: "text", value: String(rec.value ?? "") };
+  return null;
+}
+
+function parseCompare(raw: unknown): WalkCompare | null {
+  if (!raw || typeof raw !== "object") return null;
+  const rec = raw as Record<string, unknown>;
+  const left = parseOperand(rec.left);
+  if (!left) return null;
+  const right = parseOperand(rec.right) ?? { mode: "text" as const, value: "" };
+  return { left, op: typeof rec.op === "string" ? rec.op : "eq", right };
+}
+
+function comparesForIf(data: Record<string, unknown>): WalkCompare[] {
+  const main = parseCompare(data.compare);
+  const extra = Array.isArray(data.and)
+    ? (data.and.map(parseCompare).filter(Boolean) as WalkCompare[])
+    : [];
+  if (main) return [main, ...extra];
+  const pickTable = String(data.pickTable ?? "").trim();
+  const pickField = String(data.pickField ?? "").trim();
+  if (pickTable && pickField) {
+    return [
+      {
+        left: { mode: "chip", slot: "__legacy" },
+        op: String(data.pickOp ?? "eq"),
+        right: { mode: "text", value: String(data.pickValue ?? "") },
+      },
+    ];
+  }
+  return [];
+}
+
+function personTableOf(data: Record<string, unknown>, compares: WalkCompare[]): string | null {
+  for (const cmp of compares) {
+    if (cmp.left.mode !== "chip") continue;
+    const table =
+      cmp.left.slot === "__legacy" ? String(data.pickTable ?? "") : chipTable(data, cmp.left.slot);
+    if (PERSON_WRITE_TABLES.has(table)) return table;
+  }
+  return null;
+}
+
+async function resolveOperandText(
+  pool: Pool,
+  ctx: WalkContext,
+  data: Record<string, unknown>,
+  operand: WalkOperand,
+  contactId?: string,
+): Promise<string | undefined> {
+  if (operand.mode === "text") return operand.value;
+  if (operand.slot === "__legacy") {
+    const pickTable = String(data.pickTable ?? "").trim();
+    const pickField = String(data.pickField ?? "").trim();
+    const picked = pickWrites(ctx.previousWrites, pickTable);
+    const w = contactId
+      ? picked.find((row) => row.contact_id === contactId || row.id === contactId) ?? picked[0]
+      : picked[0];
+    if (!w) return undefined;
+    const val = await loadWriteField(pool, ctx.firmId, w, pickField);
+    return val == null ? undefined : String(val);
+  }
+  const writes = mappedSlotWrites(data, ctx, operand.slot) ?? [];
+  const w = contactId
+    ? writes.find((row) => row.contact_id === contactId || row.id === contactId) ?? writes[0]
+    : writes[0];
+  if (!w) return undefined;
+  const field = chipField(data, operand.slot);
+  if (!field) return writes.length ? String(w.id) : undefined;
+  const val = await loadWriteField(pool, ctx.firmId, w, field);
+  return val == null ? undefined : String(val);
+}
+
+async function comparePasses(
+  pool: Pool,
+  ctx: WalkContext,
+  data: Record<string, unknown>,
+  cmp: WalkCompare,
+  contactId?: string,
+): Promise<boolean> {
+  const left = await resolveOperandText(pool, ctx, data, cmp.left, contactId);
+  if (cmp.op === "exists") return left != null && left !== "";
+  if (left == null || left === "") return false;
+  const right = await resolveOperandText(pool, ctx, data, cmp.right, contactId);
+  if (right == null || right === "") return false;
+  return fieldMatches(left, cmp.op, right);
+}
+
+async function allComparesPass(
+  pool: Pool,
+  ctx: WalkContext,
+  data: Record<string, unknown>,
+  compares: WalkCompare[],
+  contactId?: string,
+): Promise<boolean> {
+  if (!compares.length) return false;
+  for (const cmp of compares) {
+    if (!(await comparePasses(pool, ctx, data, cmp, contactId))) return false;
+  }
+  return true;
+}
+
 async function evalIfPick(
   pool: Pool,
   ctx: WalkContext,
   data: Record<string, unknown>,
 ): Promise<{ thenIds: string[]; elseIds: string[]; pass: boolean; personSplit: boolean }> {
-  const pickTable = String(data.pickTable ?? "").trim();
-  const pickField = String(data.pickField ?? "").trim();
-  const pickOp = String(data.pickOp ?? "eq");
-  const pickValue = data.pickValue;
-  if (!pickTable || !pickField) {
-    const handle = evalBranch(data, ctx);
-    const pass = handle === "true";
-    return {
-      thenIds: pass ? ctx.contactIds : [],
-      elseIds: pass ? [] : ctx.contactIds,
-      pass,
-      personSplit: false,
-    };
-  }
-  const picked = pickWrites(ctx.previousWrites, pickTable);
-  if (PERSON_WRITE_TABLES.has(pickTable) && ctx.contactIds.length) {
+  const compares = comparesForIf(data);
+  const personTable = personTableOf(data, compares);
+  if (personTable && ctx.contactIds.length) {
     const thenIds: string[] = [];
     const elseIds: string[] = [];
     for (const cid of ctx.contactIds) {
-      const w =
-        picked.find((row) => row.contact_id === cid || row.id === cid) ??
-        { table: pickTable, id: cid, contact_id: cid };
-      const val = await loadWriteField(pool, ctx.firmId, w, pickField);
-      if (fieldMatches(val, pickOp, pickValue)) thenIds.push(cid);
+      if (await allComparesPass(pool, ctx, data, compares, cid)) thenIds.push(cid);
       else elseIds.push(cid);
     }
     return { thenIds, elseIds, pass: thenIds.length > 0, personSplit: true };
   }
-  const w = picked[0];
-  const val = w ? await loadWriteField(pool, ctx.firmId, w, pickField) : undefined;
-  const pass = fieldMatches(val, pickOp, pickValue);
+  const pass = await allComparesPass(pool, ctx, data, compares);
   return {
     thenIds: pass ? ctx.contactIds : [],
     elseIds: pass ? [] : ctx.contactIds,
     pass,
     personSplit: false,
   };
+}
+
+function switchPathsOf(data: Record<string, unknown>): Array<{ sourceHandle: string; compare: WalkCompare | null }> {
+  const raw = Array.isArray(data.paths) ? data.paths : [];
+  return raw.map((row) => {
+    if (!row || typeof row !== "object") return { sourceHandle: "", compare: null };
+    const rec = row as Record<string, unknown>;
+    const sourceHandle = String(rec.sourceHandle ?? rec.id ?? "");
+    return { sourceHandle, compare: parseCompare(rec.compare) };
+  }).filter((row) => row.sourceHandle);
 }
 
 export async function materializeTriggersFromGraph(
@@ -776,7 +893,7 @@ export async function walkValidatedWorkflow(
         return;
       }
 
-      if (type === "branch") {
+      if (type === "branch" || type === "if") {
         const picked = await evalIfPick(pool, ctx, data);
         ctx.branchTaken = picked.pass ? "true" : "false";
         ctx.chainWrites[nodeId] = ctx.previousWrites;
@@ -801,9 +918,62 @@ export async function walkValidatedWorkflow(
           return;
         }
         const handle = picked.pass ? "true" : "false";
-        const outs = outgoingHandle(edges, nodeId, handle);
-        const fallback = outs.length ? outs : outgoing(edges, nodeId);
-        await goOn(nodeId, fallback);
+        await goOn(nodeId, outgoingHandle(edges, nodeId, handle));
+        return;
+      }
+
+      if (type === "switch") {
+        const paths = switchPathsOf(data);
+        const fallbackHandle =
+          typeof data.fallbackHandle === "string" && data.fallbackHandle.trim()
+            ? data.fallbackHandle.trim()
+            : "fallback";
+        ctx.chainWrites[nodeId] = ctx.previousWrites;
+        const personSplit = paths.some(
+          (path) => path.compare != null && personTableOf(data, [path.compare]),
+        );
+        nodeStatus[nodeId] = {
+          status: "success",
+          detail: personSplit ? `switch person-split paths=${paths.length}` : "switch",
+          at: now(),
+          writes: ctx.previousWrites,
+        };
+
+        const firstMatchHandle = async (contactId?: string): Promise<string> => {
+          for (const path of paths) {
+            const compares = path.compare ? [path.compare] : [];
+            if (await allComparesPass(pool, ctx, data, compares, contactId)) {
+              return path.sourceHandle;
+            }
+          }
+          return fallbackHandle;
+        };
+
+        if (personSplit && ctx.contactIds.length) {
+          const buckets = new Map<string, string[]>();
+          for (const cid of ctx.contactIds) {
+            const taken = await firstMatchHandle(cid);
+            const list = buckets.get(taken) ?? [];
+            list.push(cid);
+            buckets.set(taken, list);
+          }
+          const savedIds = ctx.contactIds;
+          const savedWrites = ctx.previousWrites;
+          const order = [...paths.map((path) => path.sourceHandle), fallbackHandle];
+          for (const taken of order) {
+            const ids = buckets.get(taken);
+            if (!ids?.length) continue;
+            ctx.contactIds = ids;
+            ctx.previousWrites = savedWrites;
+            await goOn(nodeId, outgoingHandle(edges, nodeId, taken));
+          }
+          ctx.contactIds = savedIds;
+          ctx.previousWrites = savedWrites;
+          return;
+        }
+
+        const taken = await firstMatchHandle();
+        await goOn(nodeId, outgoingHandle(edges, nodeId, taken));
         return;
       }
 
