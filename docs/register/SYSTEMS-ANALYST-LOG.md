@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-20 11:45 UTC — **019 If/Switch. Audit field / Add tag / Run ascribed.** Engineer cuts 019. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-20 12:32 UTC — **No firm-readiness journey table.** First level = provision writes. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
