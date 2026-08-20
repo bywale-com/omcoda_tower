@@ -1,5 +1,7 @@
 # Systems — change packet 019 (If + Switch: two kinds, paths are wires)
 
+**Landed:** PR [#107](https://github.com/bywale-com/omcoda_tower/pull/107) on `origin/main` (2026-08-20). **Do not recut.** If `exists` is live. Switch paths + fallback are live.
+
 **Seat:** Systems Analyst.  
 **When:** 2026-08-20 11:45 UTC.  
 **What this is:** the cut for PM [`IF-SWITCH-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/IF-SWITCH-PACKET.md) (A36–A39, law 46). Implementer **only implements**. No analysis.  

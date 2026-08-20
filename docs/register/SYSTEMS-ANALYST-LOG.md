@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-20 14:50 UTC — **Get glass = the module you can see. Founder does not name tables. 020 first.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-20 19:20 UTC — **Packet 021 Form occupancy. Pickup first. 019 landed #107. 020 still waiting.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1597,6 +1597,20 @@ The module-name catalog is a skin. 1:1 only where the module owns the table. Pro
 Walker today is still six hardcoded SELECTs. That is not the interface law. Prerequisite is **020** (module is a pane of real rows). Then Get can offer that module. Composite panes map to a query over those writes, not `firm_readiness`. Do not expand `GET_MODULES` in this packet.
 
 **Do not:** recut 015; mint `firm_readiness`; ask the founder to name tables; overwrite 15:43.
+
+---
+
+## 2026-08-20 19:20 UTC — Packet 021 so the engineer can cut Form occupancy. 019 landed.
+
+**Why:** Founder: hurry the new packets for engineer pickup. PM handed [`FORM-CLASS-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/FORM-CLASS-PACKET.md) (A40). If/Switch already merged PR #107.
+
+**Hard:**
+
+1. **[`SYSTEMS-CHANGE-PACKET-021.md`](./SYSTEMS-CHANGE-PACKET-021.md)** — pickup **first**. Form box = `mappedSlots.form` on this run’s `missing_fact_signals`. Unfold = those `field_key`s. Objective radios first. A14 unfiltered. If exists already 019. Mint `collectible_fields` only to kill the SPA `COLLECTIBLE_FIELDS` catalog (data in tables), not a form/class table. Do not INSERT `campaign_objective` from Automations. Same walk: Get contacts also emit current audit writes (018 leftover).
+2. **019** landed PR #107. Do not recut.
+3. **020** still waiting (Operator panes). Not this PM pocket.
+
+**Do not:** recut 015 / 019; mint `form_class` / validator / `sequence_template.goal`; paint `COLLECTIBLE_FIELDS` as the form; lock form to re-engagement; overwrite 15:43.
 
 
 
