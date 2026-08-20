@@ -2,7 +2,7 @@
 
 Tower is an intelligent client engagement system for immigration consultants. It watches each client’s file, runs scheduled nudges driven by their data, and arms fixed reactivation sequences when eligibility appears.
 
-**Agent seats** (paste-prompts + identity): [`docs/README.md`](docs/README.md) — Product Manager and Systems Analyst. Logs: [`docs/register/PHASE-TWO-LOG.md`](docs/register/PHASE-TWO-LOG.md) (PM/founder) · [`docs/register/SYSTEMS-ANALYST-LOG.md`](docs/register/SYSTEMS-ANALYST-LOG.md) (SA).
+**Agent seats** (paste-prompts + identity): [`docs/README.md`](docs/README.md) — Product Manager, Systems Analyst, and Engineer. Always-on for the Engineer: [`AGENTS.md`](AGENTS.md). Trails: [`docs/register/PHASE-TWO-LOG.md`](docs/register/PHASE-TWO-LOG.md) (PM/founder) · [`docs/register/SYSTEMS-ANALYST-LOG.md`](docs/register/SYSTEMS-ANALYST-LOG.md) (SA) · git + PRs (Engineer — do not append those logs).
 
 This repository is a **UI prototype** — mock data, no backend — focused on how operators see and navigate a client’s engagement over time.
 
