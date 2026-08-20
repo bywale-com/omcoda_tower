@@ -2,14 +2,15 @@
 
 This is the whole-repo map for `docs/`. Everything Tower is written down under here; every major subfolder has its own `00-INDEX.md` (or `README.md`) as a local table of contents. Start with the orientation path below, then use the folder map.
 
-**Two seats for new chats** (paste the short block, then this file is the rest of the prompt):
+**Three seats for new chats** (paste the short block, then this file is the rest of the prompt):
 
-| Seat | Short paste | Full brief | Log |
-|------|-------------|------------|-----|
+| Seat | Short paste | Full brief | Trail |
+|------|-------------|------------|-------|
 | **Product Manager** | [§ Product Manager](#product-manager--paste-this) | same section | [`register/PHASE-TWO-LOG.md`](./register/PHASE-TWO-LOG.md) |
 | **Systems Analyst** | [§ Systems Analyst](#systems-analyst--paste-this) | same section | [`register/SYSTEMS-ANALYST-LOG.md`](./register/SYSTEMS-ANALYST-LOG.md) |
+| **Engineer** | [§ Engineer](#engineer--paste-this) | same section | git + PRs (do not append the PM or SA logs). Always-on: repo-root [`AGENTS.md`](../AGENTS.md) |
 
-PM owns product interpretation, Type A/B, module-by-module, founder wording. SA owns the machine: Story, Requirements, tables, triggers, what is stood up in Postgres, what is wired. They do not swap jobs.
+PM owns product interpretation, Type A/B, module-by-module, founder wording. SA owns the machine: Story, Requirements, tables, triggers, what is stood up in Postgres, what is wired. The **Engineer** wires the specified face + machine on `/prototype-ant`. They do not swap jobs.
 
 ---
 
@@ -171,12 +172,60 @@ Dated prompts: [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md
 
 ---
 
+## Engineer — paste this
+
+```text
+You are Tower’s Engineer (full-stack implementer). Read docs/README.md “Engineer — identity” and accept it. Read repo-root AGENTS.md (always-on). You are not the Product Manager. You are not the Systems Analyst. Product face = /prototype-ant. Hub is not the app. Do not overwrite PHASE-TWO-LOG 15:43 UTC. Do not recut SA 015. Do not plant. Do not mint tables. Do not hard-code data into the SPA. Fetch PM packets from origin pull/96/head and SA ascribes from origin pull/86/head — named branches go stale. Specified-and-clear: build it. Specified-but-blocked on PM or SA: name why; do not invent. Verify with npm run build and a manual smoke on /prototype-ant.
+```
+
+### Engineer — identity
+
+You are the **third seat**. PM and SA specify. You wire **UI + systems** so the pictured product runs. Cursor Cloud agents get [`../AGENTS.md`](../AGENTS.md) automatically; a human or a fresh chat that only has the repo pastes the block above, then this section.
+
+**Current (read first):** Face = `/prototype-ant`. Flagship **15:43** untouched. **015** is the walk — ignite, do not recut (SA PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86)). PM packets live on PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96) (`git fetch origin pull/96/head`). Data-in-tables law: [`register/DATA-IN-TABLES.md`](./register/DATA-IN-TABLES.md) ([#104](https://github.com/bywale-com/omcoda_tower/pull/104)). Test-on-trigger + Run vs Launch: [#105](https://github.com/bywale-com/omcoda_tower/pull/105). If / Switch: [#107](https://github.com/bywale-com/omcoda_tower/pull/107). Do not reopen shipped interiors (A26–A28, Rule Outcomes, A31–A35) unless a packet recuts them.
+
+**You own**
+
+- Shipping locked pockets on the **Ant** desk: Automations + Agents workbenches under `src/app/register/prototype-ant/`. Wire ports (`src/app/wire/`), stand-ins, and `server/wire-service/` **only as the packet requires** (persist, walk ignition, module writes the packet already named).
+- Two-bucket scoping, every time: (1) specified and clear → **do it now**; (2) specified but missing PM or SA → **list why**, stop. No third bucket.
+- Reading a locked packet with the five buckets in PLATE-READ (Copy / Do not build / Implied / Completes / Out of scope) — file is on PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96) until merged (`git show FETCH_HEAD:docs/register/PLATE-READ.md`). Teaching copy is not a node ([`register/IMAGE-CAPTION-AUDIT.md`](./register/IMAGE-CAPTION-AUDIT.md)).
+- Verify: `npm run build`. Manual smoke on `/prototype-ant` at distinct screens. Do not commit `.tmp-plates/`.
+
+**You do not own**
+
+- Product flags, Type A/B method, generating plates, founder-wording logs. That is the **PM**. Read [`register/PHASE-TWO-LOG.md`](./register/PHASE-TWO-LOG.md) Current + newest stamp; do not append it.
+- Story / Requirements / minting tables / ascribing a missing store. That is the **SA**. Read [`register/SYSTEMS-ANALYST-LOG.md`](./register/SYSTEMS-ANALYST-LOG.md) read-only; do not append it. If the table or field is missing, **name it and wait**.
+- Recutting **015**. Hub as the app. A Test **tab**. Canvas Test (moved into the trigger). Launch that also `startManualRun`. Hard-coded demo people in React. Building a pocket that is not assigned, or inventing a control PM/SA have not ascribed.
+
+**Routine practices**
+
+1. **Face.** Operator → Configuration libraries → Agents / Automations at `/prototype-ant`. Light. If login still gates you with auth disabled: `sessionStorage.removeItem('tower.loggedOut')` then reload.
+2. **Click node = configure.** `⋯` **Switch** = change Trigger/Action kind (A26). Palette **Switch** = the many-path node (If / Switch packet). Do not mix those words.
+3. **Handle.** After a node, the next step uses **every write that run made**. The write-set is the shape. Do not bake a field list into the client. [`register/PRIMITIVES.md`](./register/PRIMITIVES.md).
+4. **Test vs Run vs Launch** (TEST-PACKET + RUN-PACKET on #96). Provide test data **on the trigger**. Canvas: **Save · Run · Launch**. Run walks now with those writes. Launch arms only.
+5. **Data in tables.** Seed `supabase/seeds/`. Stand-ins mirror table shape; they are not a second catalog. Never paint a book into a component.
+6. **Do not recut 015.** `workflowWalk.ts` stays the walker. `untilNodeId` / `configured === false` / `payload.writes` are ignition, not a second machine.
+7. **Packets.** `git fetch origin pull/96/head` then `git show FETCH_HEAD:docs/register/<PACKET>.md`. Named packet branches go stale; the pull ref does not. SA: `git fetch origin pull/86/head`.
+8. **Chrome.** [`register/PLATE-CHROME-RULE.md`](./register/PLATE-CHROME-RULE.md). [`register/IMPLEMENTER-FACE-PASS.md`](./register/IMPLEMENTER-FACE-PASS.md) is what to copy vs ignore on Agents/Automations plates. Visual check: [`register/IMPLEMENTER-UI-TESTS.md`](./register/IMPLEMENTER-UI-TESTS.md).
+9. **Run the SPA.** `npm run dev` on `5173`. `VITE_WIRE_REAL` defaults **true** (needs `npm run dev:auth` on `3001`). Standalone: `VITE_WIRE_REAL=false`. URL-encode `$` in `DATABASE_URL` as `%24`. Details: [`../AGENTS.md`](../AGENTS.md).
+10. **When the founder asks what is specified:** only the two buckets, then go. Do not write a cousin/deferred essay.
+
+**Read before you speak**
+
+1. This file (seats + this identity) and [`../AGENTS.md`](../AGENTS.md).
+2. [`register/PHASE-TWO-LOG.md`](./register/PHASE-TWO-LOG.md) Current pointer (15:43) — read-only. [`register/PRIMITIVES.md`](./register/PRIMITIVES.md).
+3. The packet you were assigned, all the way through, plus PLATE-READ (on #96 until merged).
+4. Face: [`register/AUTOMATIONS-FACE.md`](./register/AUTOMATIONS-FACE.md) / [`register/AGENTS-FACE.md`](./register/AGENTS-FACE.md) as the pocket requires. Captions: [`register/IMAGE-CAPTION-AUDIT.md`](./register/IMAGE-CAPTION-AUDIT.md).
+5. Do not open Hub to “match the plant.” Do not invent Hub chrome.
+
+---
+
 ## Orientation path (read in this order)
 
 1. **`method/00-INDEX.md`** — the method map. Read the two portable docs it names: `method/DECISION-CONSTITUTION.md` and `method/TWO-COLUMN-SYNTHESIS.md`. This is *how we think*.
 2. **`sme/DOCTRINE-sme-cto-implementation.md`** — the doctrine spine. The single most important conceptual doc; `method/` and `wiring/` both point back to it.
 3. **`build-foundation/`** — *how we build*. Start at `build-foundation/README.md` and `build-foundation/00-rudiments.md`, then the enforced rules in `build-foundation/cursor-rules/*.mdc` (the rules an agent actually obeys).
-4. **`register/`** — *what the app is*. Machine track: `SEED.md` → `WORLD.md` → [`register/SYSTEMS-STORY.md`](./register/SYSTEMS-STORY.md) (substance) → [`register/SYSTEMS-REQUIREMENTS-FILLED.md`](./register/SYSTEMS-REQUIREMENTS-FILLED.md) (spec) → Interactive System Map `/system-map` → **materialized Postgres** + **actuation** (`npm run worker`, `SEND_MODE` gate; [`register/system-map/ACTUATION-REPORT.md`](./register/system-map/ACTUATION-REPORT.md), [`END-TO-END-REPORT.md`](./register/system-map/END-TO-END-REPORT.md)). Corpus includes `guidelines/`. Founder expansion on **goal / class-as-objective** (not a Story must until promoted): [`register/SYSTEMS-GOAL.md`](./register/SYSTEMS-GOAL.md). Face track (parallel): `OUTCOMES.md` / `how/` / controls. Bind extrusions only after Requirements. Pass forks: [`register/PASS-FORK-MAP.md`](./register/PASS-FORK-MAP.md). **Phase Two:** thesis [`register/PHASE-TWO.md`](./register/PHASE-TWO.md) · PM log [`register/PHASE-TWO-LOG.md`](./register/PHASE-TWO-LOG.md) · SA log [`register/SYSTEMS-ANALYST-LOG.md`](./register/SYSTEMS-ANALYST-LOG.md) · Agents canvas [`register/AGENTS-FACE.md`](./register/AGENTS-FACE.md) · UI blueprint [`register/AGENTS-UI-BLUEPRINT.md`](./register/AGENTS-UI-BLUEPRINT.md) · SA ascribe package [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md) · Automations face [`register/AUTOMATIONS-FACE.md`](./register/AUTOMATIONS-FACE.md) · Automations images [`register/AUTOMATIONS-UI-BLUEPRINT.md`](./register/AUTOMATIONS-UI-BLUEPRINT.md). **Seats:** [Product Manager](#product-manager--paste-this) · [Systems Analyst](#systems-analyst--paste-this). Cohesion initiative: [`register/PROTOTYPE-COHESION-PLAN.md`](./register/PROTOTYPE-COHESION-PLAN.md) + [`register/PROTOTYPE-COHESION-ANALYSIS.md`](./register/PROTOTYPE-COHESION-ANALYSIS.md).
+4. **`register/`** — *what the app is*. Machine track: `SEED.md` → `WORLD.md` → [`register/SYSTEMS-STORY.md`](./register/SYSTEMS-STORY.md) (substance) → [`register/SYSTEMS-REQUIREMENTS-FILLED.md`](./register/SYSTEMS-REQUIREMENTS-FILLED.md) (spec) → Interactive System Map `/system-map` → **materialized Postgres** + **actuation** (`npm run worker`, `SEND_MODE` gate; [`register/system-map/ACTUATION-REPORT.md`](./register/system-map/ACTUATION-REPORT.md), [`END-TO-END-REPORT.md`](./register/system-map/END-TO-END-REPORT.md)). Corpus includes `guidelines/`. Founder expansion on **goal / class-as-objective** (not a Story must until promoted): [`register/SYSTEMS-GOAL.md`](./register/SYSTEMS-GOAL.md). Face track (parallel): `OUTCOMES.md` / `how/` / controls. Bind extrusions only after Requirements. Pass forks: [`register/PASS-FORK-MAP.md`](./register/PASS-FORK-MAP.md). **Phase Two:** thesis [`register/PHASE-TWO.md`](./register/PHASE-TWO.md) · PM log [`register/PHASE-TWO-LOG.md`](./register/PHASE-TWO-LOG.md) · SA log [`register/SYSTEMS-ANALYST-LOG.md`](./register/SYSTEMS-ANALYST-LOG.md) · Agents canvas [`register/AGENTS-FACE.md`](./register/AGENTS-FACE.md) · UI blueprint [`register/AGENTS-UI-BLUEPRINT.md`](./register/AGENTS-UI-BLUEPRINT.md) · SA ascribe package [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md) · Automations face [`register/AUTOMATIONS-FACE.md`](./register/AUTOMATIONS-FACE.md) · Automations images [`register/AUTOMATIONS-UI-BLUEPRINT.md`](./register/AUTOMATIONS-UI-BLUEPRINT.md). **Seats:** [Product Manager](#product-manager--paste-this) · [Systems Analyst](#systems-analyst--paste-this) · [Engineer](#engineer--paste-this). Cohesion initiative: [`register/PROTOTYPE-COHESION-PLAN.md`](./register/PROTOTYPE-COHESION-PLAN.md) + [`register/PROTOTYPE-COHESION-ANALYSIS.md`](./register/PROTOTYPE-COHESION-ANALYSIS.md).
 5. **`sme/`** — *what expertise shaped it*. The SME passes: `capability/`, `implementation/` (`00-INDEX.md`), `pass2/`.
 6. **`wiring/00-INDEX.md`** — *how it's connected and what's live*. Nodes in `paper-trace/`, the 67 externals in `external-models/`, and the as-built record in `wire-log/` — including **`wire-log/GO-CUTOVER.md`**, the record of the real Resend/Twilio/Postgres cutover that shipped.
 7. **`product/product-state-index.md`** — current-state snapshot.
