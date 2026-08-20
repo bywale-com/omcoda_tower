@@ -320,7 +320,7 @@ export type MachineApiPort = {
   startRun(
     workflowId: string,
     triggerLabel?: string,
-    opts?: { contactIds?: string[]; payload?: Record<string, unknown> },
+    opts?: { contactIds?: string[]; payload?: Record<string, unknown>; untilNodeId?: string },
   ): Promise<{
     id: string;
     workflowId: string;

@@ -665,6 +665,7 @@ export async function walkValidatedWorkflow(
     triggerLabel: string;
     triggerPayload?: Record<string, unknown>;
     contactIds?: string[];
+    untilNodeId?: string;
   },
 ): Promise<{
   ok: boolean;
@@ -725,6 +726,11 @@ export async function walkValidatedWorkflow(
   const enrollments: string[] = [];
   const visited = new Set<string>();
 
+  const goOn = async (fromId: string, list: RfEdge[]) => {
+    if (opts.untilNodeId === fromId) return;
+    for (const e of list) await visit(e.target);
+  };
+
   async function visit(nodeId: string): Promise<void> {
     if (visited.has(nodeId)) return;
     visited.add(nodeId);
@@ -734,6 +740,14 @@ export async function walkValidatedWorkflow(
     const type = node.type ?? "";
 
     try {
+      if (type !== "trigger" && data.configured === false) {
+        nodeStatus[nodeId] = {
+          status: "failed",
+          detail: "not configured",
+          at: now(),
+        };
+        return;
+      }
       if (type === "trigger") {
         commitWrites(ctx, nodeId, ctx.previousWrites);
         nodeStatus[nodeId] = {
@@ -742,7 +756,7 @@ export async function walkValidatedWorkflow(
           at: now(),
           writes: ctx.previousWrites,
         };
-        for (const e of outgoing(edges, nodeId)) await visit(e.target);
+        await goOn(nodeId, outgoing(edges, nodeId));
         return;
       }
 
@@ -758,7 +772,7 @@ export async function walkValidatedWorkflow(
           ctx.constants = { ...ctx.constants, [packId]: true };
         }
         nodeStatus[nodeId] = { status: "success", detail: `constants ${packId}`, at: now() };
-        for (const e of outgoing(edges, nodeId)) await visit(e.target);
+        await goOn(nodeId, outgoing(edges, nodeId));
         return;
       }
 
@@ -778,10 +792,10 @@ export async function walkValidatedWorkflow(
           const savedIds = ctx.contactIds;
           const savedWrites = ctx.previousWrites;
           ctx.contactIds = picked.thenIds;
-          for (const e of outgoingHandle(edges, nodeId, "true")) await visit(e.target);
+          await goOn(nodeId, outgoingHandle(edges, nodeId, "true"));
           ctx.previousWrites = savedWrites;
           ctx.contactIds = picked.elseIds;
-          for (const e of outgoingHandle(edges, nodeId, "false")) await visit(e.target);
+          await goOn(nodeId, outgoingHandle(edges, nodeId, "false"));
           ctx.contactIds = savedIds;
           ctx.previousWrites = savedWrites;
           return;
@@ -789,7 +803,7 @@ export async function walkValidatedWorkflow(
         const handle = picked.pass ? "true" : "false";
         const outs = outgoingHandle(edges, nodeId, handle);
         const fallback = outs.length ? outs : outgoing(edges, nodeId);
-        for (const e of fallback) await visit(e.target);
+        await goOn(nodeId, fallback);
         return;
       }
 
@@ -807,7 +821,7 @@ export async function walkValidatedWorkflow(
           at: now(),
           writes: result.writes,
         };
-        for (const e of outgoing(edges, nodeId)) await visit(e.target);
+        await goOn(nodeId, outgoing(edges, nodeId));
         return;
       }
 
@@ -829,7 +843,7 @@ export async function walkValidatedWorkflow(
           writes: result.writes,
         };
         if (ctx.eligibilityPass === undefined) ctx.eligibilityPass = result.writes.length === 0;
-        for (const e of outgoing(edges, nodeId)) await visit(e.target);
+        await goOn(nodeId, outgoing(edges, nodeId));
         return;
       }
 
@@ -851,7 +865,7 @@ export async function walkValidatedWorkflow(
             at: now(),
             writes: [],
           };
-          for (const e of outgoing(edges, nodeId)) await visit(e.target);
+          await goOn(nodeId, outgoing(edges, nodeId));
           return;
         }
         const actionId = `act-${opts.workflowId}-${nodeId}`;
@@ -924,7 +938,7 @@ export async function walkValidatedWorkflow(
             at: now(),
             writes,
           };
-          for (const e of outgoing(edges, nodeId)) await visit(e.target);
+          await goOn(nodeId, outgoing(edges, nodeId));
           return;
         }
 
@@ -970,7 +984,7 @@ export async function walkValidatedWorkflow(
             at: now(),
             writes,
           };
-          for (const e of outgoing(edges, nodeId)) await visit(e.target);
+          await goOn(nodeId, outgoing(edges, nodeId));
           return;
         }
 
@@ -1022,7 +1036,7 @@ export async function walkValidatedWorkflow(
             at: now(),
             writes: result.writes,
           };
-          for (const e of outgoing(edges, nodeId)) await visit(e.target);
+          await goOn(nodeId, outgoing(edges, nodeId));
           return;
         }
 
@@ -1047,7 +1061,7 @@ export async function walkValidatedWorkflow(
           at: now(),
           writes,
         };
-        for (const e of outgoing(edges, nodeId)) await visit(e.target);
+        await goOn(nodeId, outgoing(edges, nodeId));
         return;
       }
 
@@ -1061,7 +1075,7 @@ export async function walkValidatedWorkflow(
         detail: `unknown type ${type}`,
         at: now(),
       };
-      for (const e of outgoing(edges, nodeId)) await visit(e.target);
+      await goOn(nodeId, outgoing(edges, nodeId));
     } catch (err) {
       nodeStatus[nodeId] = {
         status: "failed",
