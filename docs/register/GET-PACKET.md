@@ -89,7 +89,7 @@ Every firm (level 1) = no level 2 or 3 on the glass. That state is **not** the P
 
 Left-side writes apply **in** level 2 / 3 boxes when you are picking a specific one. Type, pick from the list, or apply a write that is already on the left. Same box.
 
-**The box is typed to that class.** Firm occupies only with a **firm** write. Contact occupies only with a **contact** write. That is why A31 can show Firm filled and Contact still empty. The Agents **Form** box is the same occupancy family (required-data listing) — [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md) law **49**. Not a second mapping system.
+**The box is typed to that class.** Firm occupies only with a **firm** write. Contact occupies only with a **contact** write. That is why A31 can show Firm filled and Contact still empty. Do **not** copy this cascade onto the Agents Form box — that occupancy is form-shaped ([`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md) law **49**).
 
 **Module** sits above the three. Changing Module restamps the three to that module’s classes. One Get kind. Do not ship Contacts-Get, Audits-Get, …
 

@@ -248,7 +248,7 @@ Founder: “I’m not circling, I’m enriching, and I think you can even furthe
 
 **Two template layers.** Sequence templates = the full canvas (opt-in, re-engagement, reactivation). Objective templates = a single campaign (launch window, launch day, plus additional unnamed in opt-in). Empty world: no templates until authored. Keep that in the open.
 
-**First thing on a campaign is the objective.** Same *seat* as Hub Automations (`/hub`): you add a trigger, then on that node **Add configuration**. Here you add a campaign, then the first thing on it is the objective. Do **not** put Automations triggers on this canvas. The Automations **Agents action** is that same seat at the other end of the join (face law 7 · **48**): objective first, then which sequence you may assign is filtered. Not agent first.
+**First thing on a campaign is the objective.** Same *seat* as Hub Automations (`/hub`): you add a trigger, then on that node **Add configuration**. Here you add a campaign, then the first thing on it is the objective. Do **not** put Automations triggers on this canvas. The Automations **Agents action** is that same seat at the other end of the join (face law 7 · **48**): objective first, then assign (A14). Do **not** filter which sequences appear from that objective — agents are agnostic of Automations; they have a flow (law 9 recut).
 
 **Untemplated objective = binary event** (the word “event” may change). Click this link · book this calendar · submit this form. Happened or it didn’t. Then you name it. Webhook / table lookup (name in a list → completed) is down the line; the system should not be so complicated that it is impossible. Do not mint that now.
 

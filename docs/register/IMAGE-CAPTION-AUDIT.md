@@ -264,7 +264,7 @@ Do not re-ascribe this on every plate.
 
 **E:** Sequences **Opt-in · Re-engagement · Reactivation**, each tagged **Sequence template**. Placeholder **Enter objective name**. Toggle **Binary (fill this form)** off.
 
-**C:** **“The objective limits which agents you can select.”** Step 1: **“Selecting an agent is the whole sequence. Campaigns live inside.”** Step 2: **“If you create the objective, you create the form. Automations owns the form.”**
+**C:** **“The objective limits which agents you can select.”** Step 1: **“Selecting an agent is the whole sequence. Campaigns live inside.”** Step 2: **“If you create the objective, you create the form. Automations owns the form.”** **15:50:** that first line is caption and **not law** — do not plant a sequence filter.
 
 ---
 
@@ -274,7 +274,7 @@ Do not re-ascribe this on every plate.
 
 **E:** **Re-engagement** selected (sequence name). Objective name **Close outstanding facts**. Rows: Canadian skilled hours · Language CLB · Foreign work years · EE profile last updated (types Number / Short text / Date).
 
-**C:** **“The objective limits which agents you can select.”** **“Selecting an agent is the whole sequence. Campaigns live inside. Re-engagement is a campaign, not an objective.”** **“Objective is a data request.”** Banner **“Questions from required data (rule output).”** **“Document-dependent fields (ECA status, job offer) never enter this form.”** **“The form references the listing. Questions are the required fields.”**
+**C:** **“The objective limits which agents you can select.”** **“Selecting an agent is the whole sequence. Campaigns live inside. Re-engagement is a campaign, not an objective.”** **“Objective is a data request.”** Banner **“Questions from required data (rule output).”** **“Document-dependent fields (ECA status, job offer) never enter this form.”** **“The form references the listing. Questions are the required fields.”** **15:50:** “limits which agents” is caption — not law.
 
 ---
 

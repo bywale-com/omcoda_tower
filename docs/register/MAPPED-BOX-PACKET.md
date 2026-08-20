@@ -131,7 +131,7 @@ Same occupancy on **every** parameter / outcome / condition box that accepts `HA
 
 | State | What the box is |
 |-------|-----------------|
-| **Empty** | Combobox / text: you can **type** a literal, or **drop** from the left, or pick from a list. Chevron if it is still a picker. **Typed slots** (Firm, Contact, Form): empty is a drop / pick for **that write class** — Form does not take typed questions. |
+| **Empty** | Combobox / text: you can **type** a literal, or **drop** from the left, or pick from a list. Chevron if it is still a picker. Get **Firm / Contact**: empty is a drop / pick for that grain. Agents **Form**: empty is a drop for this run’s required-data listing — not a text box, not Get’s cascade. |
 | **Mapped from the left** | The chip **is** the value. **Same** outer box as the Select (height, border, radius — Ant field, not a tag in the margin). Chip inside (color, label, origin, x — **A29** chip language). **No chevron. No leftover Select.** |
 | **Typed literal** | The box holds text you typed. Same box. Always text — typed, or a variable that contains that text. **Both sides** of an If / Switch compare. Every input box. |
 | **Several chips** | All **inside** that box. Still no picker until the box is empty. |
@@ -139,9 +139,9 @@ Same occupancy on **every** parameter / outcome / condition box that accepts `HA
 
 **Still pickers (not mapped slots):** Module. Every firm / Select firm. Those stay dropdowns.
 
-**Mapped slots (this packet):** Firm. Contact. Any other box that accepts a left-side write (Rule Outcomes fields, If left/right, Action parameters, Form on the Agents action, …).
+**Mapped slots (this packet):** Firm. Contact. Any other box that accepts a left-side write (Rule Outcomes fields, If left/right, Action parameters, …).
 
-**Typed occupancy — the box already has a write class.** A31’s contrast (Firm chip, Contact still empty) is not decoration. Firm takes a **firm** write. Contact takes a **contact** write. Dropping the other class does not occupy that box — same family as Get, not a toast we invented. Mapping a chip is: do this **with that record** (face law 42). The Agents **Form** box is the same primitive: type = this run’s **required-data listing** write. It is **not** a text box (no typed-literal questions). Packet [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md) law **49**.
+**Typed occupancy on Get** is Firm vs Contact — A31’s contrast. Mapping a chip is: do this **with that record** (face law 42). The Agents **Form** box is **not** this family. That shape is specific to the form objective. Occupancy look is still A31 (chip is the box); what occupies it is this run’s required-data listing. Packet [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md) law **49**. Do not copy Get’s cascade onto Form.
 
 Get cascade law is unchanged ([`GET-PACKET.md`](./GET-PACKET.md)): Every firm hides Firm/Contact. Select firm shows them. Select a firm (from the **list** or from a **drop**) → all that firm’s contacts selected; deselect all to pick a few. The drop does not invent a new cascade. It **fills** the cascade box.
 

@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A40** form = drop the required-data **class**. **Objective first** (law 48). Form box typed to that listing write (law 49). If that class exists → Agents. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A40** form = drop this run’s required-data listing. **Objective first** (law 48). Sequences **not** filtered — agents are agnostic of Automations (law 9 recut). Form box is form-shaped (law 49). Do not plant.
 
 **How we maintain this log**
 
@@ -1882,6 +1882,20 @@ Same family as Get. Firm takes a **firm** write. Contact takes a **contact** wri
 Law **48** (order) · **49** (typed slot). Packet [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md). No new PNG.
 
 **Do not:** plant; recut 015; overwrite 15:43; mint a goal column; mint a validator table; put sequence names in the radios.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-20 15:50 UTC — Do not filter sequences. Form box is form-shaped. We handle the rest.
+
+**Why:** Founder 15:50. Recut of the 15:45 plant.
+
+**Sequences.** Do **not** plant a law that limits which sequences Automations offers given an objective. Thought about it earlier; chose not to. **Agents are agnostic of Automations. They have a flow.** Law **9** recut. The 20:24 “can be enforced” is not taken. Live teaching line “The objective limits which agents you can select” is caption — kill it. Objective first still (law 48). A14 still the full three radios, after the radios.
+
+**Form box.** The Get Firm/Contact “typed class” story was not honest. The form **shape is specific to form**. Occupancy: drop **this run’s required data** (the whole listing — “class” on A40 meant all of it as one piece, not a catalog type); chip is the box; questions unfold. Other things on the left are not those questions. How the drop-target is stood up: SA / engineer. Founder stopped before backend. Law **49** recut.
+
+**Do not:** plant the sequence filter; copy Get’s cascade onto Form; ask the founder for a reject primitive; recut 015; overwrite 15:43.
 
 Flag 15:43 untouched.
 
