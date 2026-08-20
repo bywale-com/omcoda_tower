@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **PM seat** inhabitable: [`docs/README.md`](../README.md) + [`AGENTS.md`](../../AGENTS.md). **IF-SWITCH-PACKET.** Compare: both sides chip **or** type. Any input box. Law **40 · 46**. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Provision → send → detection** walk: send hangs on **people**, not firm-created. **IF-SWITCH-PACKET.** Law **40 · 46**. Do not plant.
 
 **How we maintain this log**
 
@@ -1763,6 +1763,41 @@ Flag 15:43 untouched.
 **What we did:** Short paste + identity in [`docs/README.md`](../README.md). Always-on [`AGENTS.md`](../../AGENTS.md) (Cursor Cloud injects it). Root README + [`PHASE-TWO.md`](./PHASE-TWO.md) point here. Packets remain how Automations gets built. Engineer paste stays on PR [#106](https://github.com/bywale-com/omcoda_tower/pull/106) until merged — this file is PM always-on. Do not recut 015.
 
 **Do not:** plant; overwrite 15:43; mint tables; generate plates unasked; swap with SA or Engineer.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-20 14:52 UTC — Firm provisioned → sequence out → detection. Walked with the nodes we have.
+
+**Why:** Founder: we’ve built enough nodes and affordances to think. Provision a firm (created in the app) all the way to a sequence going out to its contacts, and detection. Build it with the nodes. Is it ready. Soundboard.
+
+**What we did:** Talk. Not a new packet. Not a new node. The teaching walk (firm created → audit → if → agents) is the **shape**. The **send** canvas hangs on the event that wrote the **people**.
+
+**Canvas — send (people arrived)**
+
+Trigger: **contact file imported** (this batch / this firm).  
+→ **Run audit** (in-app). Who = those contact writes. No Get.  
+→ **If** — one split: sequence-ready (Audit field). Not Switch.  
+→ true: **Agents** assign existing / from template (opt-in). Who = the people on that wire.  
+→ false: stop.  
+Then Agents sends. Not an Automations node.
+
+**Not the send trigger:** firm created. The house exists; the book may be empty. Import (or new contact) is people. Do not collapse those events. Import still does not fire new-contact per row — hang bulk send on import.
+
+**After they are in motion**
+
+- Objective met → next campaign is **Agents canvas**. Not an Automations If. Not a qualify node.
+- Automations hears **campaign failed**, **form submitted**, **opt-out**.
+- Eligibility **detection**: pack updated → **Get** → **Rule** → If/Switch on outcomes → Agents. Different canvas. Not day-one.
+
+**Hole that is real:** 15:43 goal as escalation **to a workflow**. That is Automations hearing the goal was met. That event is not on the primitives list. Form submitted covers a data-request objective. Campaign failed covers failure. Meeting booked / opted-in / objective-met-as-listen: not named. Do not mint a Detect node to cover it.
+
+**Not missing:** Wait. Enroll (Agents action is enroll). A Detection node (Rule + events are detection). Get on the import canvas.
+
+**Live:** walk still does not hand Audit’s writes. Face is specified. Do not recut 015 here.
+
+**Do not:** plant; overwrite 15:43; a new node kind; hang send on firm-created; qualify-gate.
 
 Flag 15:43 untouched.
 
