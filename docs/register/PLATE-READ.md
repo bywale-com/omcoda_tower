@@ -23,7 +23,7 @@ The plate is one state of one example. Literal reading misses the product.
 
 Caption audit **C** (teaching sentence) is always bucket 2. Caption audit **E** (example name) is bucket 2 unless the packet says the name is the product. Caption audit **S** still splits across 1 / 3 / 5 — a real control outside the modal is 5 for *this* build.
 
-**Field chips (law 44):** pills on a Contacts row **are that column**. **A34** is **Audit** (reachable / partial / unreachable · sequence-ready). Live **Tag** is valid / invalid. Do not spec Tag from A34. If the plate’s values are not the field it claims, it confuses the founder, then SA, then everyone else. That is parity.
+**Field chips (law 44 · 45):** pills on a Contacts row **are that column**. **A34** is the **Audit** field — composite, hardcoded when audit runs, not an Action. Live **Tag** is a different column. Leave it. Do not spec Tag from A34.
 
 ---
 

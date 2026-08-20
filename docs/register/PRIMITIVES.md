@@ -62,16 +62,16 @@ Two kinds. That is the whole split.
 
 **Law 41:** can we automate X = does that module already afford X. The inventory is those affordances, grouped by module — not this table as a catalog. Automations consumes; it does not author a second button. Packet: [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md).
 
-**Tail:** not every critical interaction has a button. An **audit-specific mark** on the contact (reachable / sequence-ready) has no ascribe control. Audit writes it. It is visible on the person (**A34**). That is **not** Tag.
+**Tail:** not every critical interaction has a button. **Law 45:** some writes you **do not** automate as their own action. First: the **Audit** field on the contact. When audit runs, it populates. Hardcoded. Composite chips (**A34**). Not Tag. **Run audit** stays the action. The field is a consequence. A condition can reference it because it is a field.
 
-**Law 44:** a field on the contact **is** the field an Action writes. Visual = that column (pills in the cell). Add another field the same way — it shows on the person and it is available in Actions.
+**Law 44:** a field on the contact **is** the field an Action writes — for fields you add that way. Visual = that column. Live **Tag** left as-is. Do not talk about it.
 
 Named so far (examples, not the list):
 
 | Action | Plain |
 |--------|--------|
-| **Ascribe a tag** | Writes the contact **Tag** field. Visual = the **Tag** column on Contacts (pills). Live values: valid / invalid. Parameters **A35**. Consultant many-tags later. **Not A34.** |
-| **Run an audit** | Same audit the desk already runs. A node. Not hardcoded on upload. Writes the **Audit** mark on the person (**A34**): reachable / sequence-ready. No ascribe button. |
+| **Ascribe a tag** | Live Tag. Leave it. Do not talk about it. |
+| **Run an audit** | Same audit the desk already runs. A node. Writes the run / verdicts / sequence-ready. The **Audit** field on Contacts (**A34**) populates from that run — hardcoded, not a second Action. |
 | **Make a form** | Automations owns the form. Questions are the required data. |
 | **Provision a firm** | Later idea — see below. Canonical Automations **hears** that a firm was created (event). It does not have to **be** the desk that creates it. |
 

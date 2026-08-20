@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Law **44**: field on the contact **is** the field Actions write. Visual = that column. **A34** is Audit, not Tag. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Law **45**: Audit field on Contacts is a **system control** — hardcoded when audit runs, composite, not Tag, not an Action. Leave live Tag. Do not plant.
 
 **How we maintain this log**
 
@@ -1679,6 +1679,18 @@ Flag 15:43 untouched.
 **What we did:** That image is **A34**. Column **Audit**. Chips: reachable / partial / unreachable · sequence-ready. Live **Tag** is valid / invalid — a different column, one field. Unmixed the stale PRIMITIVES row that had called A34 “ascribe a tag.” Law **44**. [`PLATE-READ.md`](./PLATE-READ.md) field-chips line.
 
 **Do not:** spec Tag from A34; invent an Automations-only field beside the contact column; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-20 10:26 UTC — Audit field is a system control. Hardcoded. Not Tag. Law 45.
+
+**Why:** Founder: not going to make that audit-centric Tag. Better to **hardcode** it than make it an automation. When an audit runs we already know what we are trying to achieve — populate it with those items. **Audit field should exist, different from Tag.** Run an audit on a contact → that field populates. **Composite** of tags, not one tag. Sequence-ready, reachability verdicts — everything that can be true about a contact after a verdict lives inside **one Audit field** on Contacts. Lots of fields we will add; this one is a **system control**. First critical interaction they **do not want to automate**. Can still be **referenced** in a condition, because it is a field — every field can, and they show up whenever you Get contact. Will not touch live Tag if it exists. Do not talk about it. Move forward. Hardcode this.
+
+**What we did:** Law **45**. **A34** is that field. **Run audit** stays the action (desk + A33). Filling the Audit field is not an Action. Leave live Tag. Do not recut 015.
+
+**Do not:** put “set audit field” on A33; mix this into Tag; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 
