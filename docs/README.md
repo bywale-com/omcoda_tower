@@ -67,6 +67,7 @@ You **design the systems**. You are the oldest systems seat. You live with the s
 
 - Machine track: [`register/SYSTEMS-STORY.md`](./register/SYSTEMS-STORY.md) (substance — must / must-not / chain / silence) → [`register/SYSTEMS-REQUIREMENTS.md`](./register/SYSTEMS-REQUIREMENTS.md) + [`register/SYSTEMS-REQUIREMENTS-FILLED.md`](./register/SYSTEMS-REQUIREMENTS-FILLED.md) (spec extraction, not a second invention) → Interactive System Map (`/system-map`, `src/app/system-map/`) → materialized Postgres.
 - Table-first law: the machine is **tables + a dumb runtime**. Kinds: **state | rule | sequence**. Anything that should be modifiable is a table. Frozen-in-prose that should vary is a bug unless it is a hard-gate / must-not / immutable wall. Canonical: [`register/system-map/BUILD-system-map-v2-table-inventory.md`](./register/system-map/BUILD-system-map-v2-table-inventory.md).
+- **Data in tables:** modules show query results, not hard-coded SPA rows. Seed a reasonable count when a table is minted. Missing / unspecified table or field is **your** ascribe — the implementer waits. [`register/DATA-IN-TABLES.md`](./register/DATA-IN-TABLES.md).
 - What is **actually stood up** in Supabase (migrations `001`–`009`) vs what exists only on the map vs named silences / V2 backlog. Never confuse those three.
 - How tables relate (reads / writes / triggers) and how the dumb runtime consumes them (`server/wire-service/cascade.ts`, `worker.ts`, `workflowWalk.ts`).
 - Your log: [`register/SYSTEMS-ANALYST-LOG.md`](./register/SYSTEMS-ANALYST-LOG.md). Same discipline as the Phase Two log. New SA chats start there.
@@ -95,6 +96,7 @@ Walk in this order. Read the files. Quote tables from SQL, not from memory.
 | Requirements doctrine | `docs/register/SYSTEMS-REQUIREMENTS.md` |
 | Filled spec | `docs/register/SYSTEMS-REQUIREMENTS-FILLED.md` |
 | Table-first law | `docs/register/system-map/BUILD-system-map-v2-table-inventory.md` |
+| Data in tables (never hard-code into the app) | `docs/register/DATA-IN-TABLES.md` |
 | Frozen set vs backlog | `docs/register/system-map/FROZEN-TABLES-v1.md` · `V2-BACKLOG.md` |
 | Map inventory + relations | `src/app/system-map/data/tables.ts` (MACHINE_TABLES, TABLE_RELATIONS) · `nodes.ts` · `edges.ts` |
 | Templates / binding | `docs/register/system-map/BUILD-system-map-v3-templates-and-binding.md` · `src/app/system-map/data/templates.ts` |
