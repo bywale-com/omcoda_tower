@@ -131,8 +131,9 @@ Same occupancy on **every** parameter / outcome / condition box that accepts `HA
 
 | State | What the box is |
 |-------|-----------------|
-| **Empty** | The picker. Dropdown / combobox. Chevron. Placeholder (Select firm, Select contact). |
+| **Empty** | You can **type** a literal, or **drop** from the left, or pick from a list. Chevron if it is still a picker. |
 | **Mapped from the left** | The chip **is** the value. **Same** outer box as the Select (height, border, radius — Ant field, not a tag in the margin). Chip inside (color, label, origin, x — **A29** chip language). **No chevron. No leftover Select.** |
+| **Typed literal** | The box holds text you typed. Same box. Always text — typed, or a variable that contains that text. **Both sides** of an If / Switch compare. Every input box. |
 | **Several chips** | All **inside** that box. Still no picker until the box is empty. |
 | **Picked from the list, no drag** | Still valid. Then it looks like a **filled Select** (the record’s name), not a chip — unless they dropped. Two ways to fill; **one** value-surface. Never tags riding on a still-open dropdown. |
 

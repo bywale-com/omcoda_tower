@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **IF-SWITCH-PACKET** A36–A39. If interior: **true is the default mode.** Law **46**. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **IF-SWITCH-PACKET.** Compare: both sides chip **or** type. Any input box. Law **40 · 46**. Do not plant.
 
 **How we maintain this log**
 
@@ -1739,6 +1739,18 @@ Flag 15:43 untouched.
 **What we did:** Revise **A38**. Law **46** tail. Packet. Canvas **A36** still two wires. Do not configure False in the node.
 
 **Do not:** a False form; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-20 11:03 UTC — Compare: both sides are text. Chip or type. Any box.
+
+**Why:** Founder: looking at Switch. Should be able to take something from the left and add it as the comparative — either side. Also type. Always text: typed, or a variable that contains that text. Applies to those comparison boxes and **any text / input box**. Do not regenerate. Put it in the packet so the engineer is not confused.
+
+**What we did:** [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md). Law **40** tail. [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md). No new PNG.
+
+**Do not:** chip-only left / type-only right; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 
