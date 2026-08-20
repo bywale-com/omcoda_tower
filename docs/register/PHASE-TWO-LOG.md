@@ -1706,3 +1706,15 @@ Flag 15:43 untouched.
 
 Flag 15:43 untouched.
 
+---
+
+## 2026-08-20 10:34 UTC — Entered If / Condition. If vs Switch. Look.
+
+**Why:** Founder: next node is If / Condition. Is the condition node only If? n8n also has condition-like nodes. There is also Switch — basically an If, but it gives you… Talk about those two. Not a huge fan of how our If looks right now.
+
+**What we did:** Stamp. Holding. We have named **one** DAG kind: **Condition (If)**. Palette **A28**. Plate **A16**. Two doors (Then / Else). We have **not** named Switch as a node kind. n8n If = true/false. n8n Switch = many exits. **⋯ Switch** is change-kind (law 38) — different word. Law **26**: this node is not the conditions inside a Rule. Do not generate until they lock. Do not recut 015.
+
+**Do not:** freeze live IfPlateModal as the face; collapse with Rule; mix ⋯ Switch with n8n Switch; plant.
+
+Flag 15:43 untouched.
+
