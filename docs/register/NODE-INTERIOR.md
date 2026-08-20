@@ -31,7 +31,7 @@ Kind-specific middle is that kind’s packet. Shared panes are this file. Do not
 |------|--------|----------|------------|
 | **Input** | **Every** node that has Input | **A29** (A23 left **prior**) | Prior nodes in **this** chain, canvas order, outputs nested. Type control in front of the name. Drag any row including top-level into a box as a **chip**. Schema / Table / JSON. Search. |
 | **Output** | **Every** node that has Output | **A20** | Top = every write **this run** made. Click one. Bottom = that write. |
-| **Parameters** | **That kind** | A23 **right** is **Get** | Get: Module + every/select + class cascade (Firm → Contact on Contacts). Action **Agents:** A14. Action **in-app:** [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) (module write-buttons). Trigger select: **A26** (grain + Local cascade). If / Switch: [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md) **A36–A39** (A16 prior). |
+| **Parameters** | **That kind** | A23 **right** is **Get** | Get: Module + every/select + class cascade (Firm → Contact on Contacts). Action **Agents:** objective radios first (law 48), then A14 filtered; form occupancy **A40**. Action **in-app:** [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) (module write-buttons). Trigger select: **A26** (grain + Local cascade). If / Switch: [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md) **A36–A39** (A16 prior). |
 | **Outcomes** | **Rule** | **A21** | Stacked. Per-outcome GUI \| JS. On / off. Not a node-wide GUI/Custom tab. |
 
 Get tabs: **Input | Output**. Parameters sit in the Input tab as the right column.  

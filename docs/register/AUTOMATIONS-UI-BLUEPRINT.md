@@ -130,7 +130,7 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | Action kind = **in the application** | Module write-buttons, grouped by module. **A33.** Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). Live first pass `in-app-action-pass/` is three rows — not the inventory. |
 | Open **Add tag** after **contact import** | Parameters **A35**. Packet [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md). Contact occupied. Tag picker. Type glyphs. Color more lively. Green Action chip. Kind chips teaching. |
 | Consultant → Contacts | **A34** = **Audit** field. Packet [`AUDIT-FIELD-PACKET.md`](./AUDIT-FIELD-PACKET.md). Composite chips. Hardcoded when audit runs (law **45**). Not Tag. Leave live Tag. |
-| Action kind = Agents | First: **assign existing** or **from a template** (**A14**). Then select agent (whole sequence) · declare objective · if data request, create the form (A8 prior / **A12** canon). You do **not** author a new agent here. |
+| Action kind = Agents | **Objective first** (click · form · meeting). Then **assign existing** or **from a template** (**A14**), filtered by that objective. Select agent = whole sequence. If form: drop the required-data class (**A40**). You do **not** author a new agent here. Live assign-then-“2 · Create the objective” is the stack to correct. |
 | Open the **Get** node | Parameters **A23** right. Input look **A29**. Packets [`GET-PACKET.md`](./GET-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md). |
 | Open the **Rule** node | Click the Rule node. Tabs: Input · Outcomes · Output. **Outcomes:** **A21**. GUI \| Custom on A2 is **not** the tab. |
 | Rule tab **Output** | Today’s signals (A9 prior) · listing always-on (**A11** prior) · **A20** canon: click a class, preview below. |
@@ -379,9 +379,9 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 - Objective radios: Click this link · **Submit this form** · Book a meeting.
 - Form box occupied by **Required data** chip. Questions listed under it. No + Add.
 
-**Why this does what we wanted:** A12 named that questions are the listing. This plate is the occupancy. Same drag as A35 Contact ← `contact_records`.
+**Why this does what we wanted:** A12 named that questions are the listing. This plate is the occupancy. Same drag as A35 Contact ← `contact_records`. Radios sit **before** assign: objective first (law 48). The Form box’s type is that listing write (law 49) — same typed occupancy as Get Firm vs Contact.
 
-**Not this plate:** A14 assign cards. Click / meeting interiors. Opt-in artifact form. Empty question slots.
+**Not this plate:** A14 assign cards (those come **after**, filtered). Click / meeting interiors. Opt-in artifact form. Empty question slots. A validator chrome for the wrong chip.
 
 **Packet:** [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md).
 
@@ -486,7 +486,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 - Kind: Agents.
 - Line: “You do not create an agent here. Create the agent in Agents, then assign.”
 - Two cards: **Assign to an existing sequence** (put them on one you already authored) · **Create from a template** (new copy from a sequence template, then put them on that).
-- Same three names on both sides (Opt-in / Re-engagement / Reactivation) — left tagged Existing, right tagged Sequence template. Each row is a **radio**. One selected. **No chevron / arrow.** There is nothing further after you pick the sequence (select agent = the whole sequence).
+- Same three names on both sides (Opt-in / Re-engagement / Reactivation) — left tagged Existing, right tagged Sequence template. Each row is a **radio**. One selected. **No chevron / arrow.** There is nothing further after you pick the sequence (select agent = the whole sequence). **When this plate appears:** after the objective is declared (law 48). The rows are **filtered** by that objective (law 9). “Nothing further” is not assign-first.
 - Footer on this PNG: **Cancel · Save** only. The sentence “Not a third option: author a new agent in this module” is **not** on the pixels. Law still; do not require that sentence as UI.
 
 **Why this does what we wanted:** the copy-vs-assign choice is obvious on the glass. It is not a third authoring place.

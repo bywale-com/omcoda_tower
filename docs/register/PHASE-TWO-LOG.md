@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A40** form = drop the required-data **class**. If that class exists → Agents. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A40** form = drop the required-data **class**. **Objective first** (law 48). Form box typed to that listing write (law 49). If that class exists → Agents. Do not plant.
 
 **How we maintain this log**
 
@@ -1858,6 +1858,30 @@ Flag 15:43 untouched.
 **What we did:** Plate **A40**. Packet [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md). Law **47**. Occupancy is A31 (same as Contact ← `contact_records` on A35). A12 still: questions are the listing. A14 still assign. If **exists** on that class (listing not empty) — same If, A38. This form ≠ opt-in/consent ≠ loop-closer.
 
 **Do not:** empty question boxes; plant; recut 015; overwrite 15:43; lock to re-engagement; paint COLLECTIBLE_FIELDS as the form.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-20 15:45 UTC — Objective first. Form box is typed to the listing write.
+
+**Why:** Founder 15:40. Two questions. Not a vote. Align with the module’s shape and the data model.
+
+**1. Objective first — not agent first.**
+
+The Automations Agents end node **mirrors** Agents beginning (law 7). First thing on a campaign is the **objective** (18:40 / [`AGENTS-FACE.md`](./AGENTS-FACE.md)). **Depending on the objective, that determines the agent you can select … that can be enforced** (law 9 / 20:24). One-way filter.
+
+Sequence templates (opt-in / re-engagement / reactivation) already have a **core** campaign objective. Those names are **A14**, not the radios. Pick the agent first and you inherit that core. **Law 23** forbids locking the objective to the signal: a reactivation sequence can still carry a form; a re-engagement sequence can still carry a meeting. A14 after the objective = the eligible sequences. “Nothing further” on A14 is still no chevron on the row — not assign-is-step-1.
+
+Live `ActionPlateModals` still draws assign cards, then “2 · Create the objective.” That is the stack to correct. A40 already draws radios then Form.
+
+**2. Invalid occupancy is typed occupancy — not a validator we add.**
+
+Same family as Get. Firm takes a **firm** write. Contact takes a **contact** write. A31’s contrast **is** the type. Mapping a chip = do this **with that record** (law 42). The form **is** the required-data class (law 47). The Form box’s type **is** this run’s listing write on the handle (A20). A person, a batch, pass/fail, the Rule, a painted catalog, document-dependent — other writes. They cannot occupy Form because they are not that record. Empty Form is a drop target for that class, not a text box.
+
+Law **48** (order) · **49** (typed slot). Packet [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md). No new PNG.
+
+**Do not:** plant; recut 015; overwrite 15:43; mint a goal column; mint a validator table; put sequence names in the radios.
 
 Flag 15:43 untouched.
 
