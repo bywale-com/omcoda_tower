@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-20 14:40 UTC — **Get is a table SELECT. Module name is a label. Activation is not Get-able.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-20 14:50 UTC — **Get glass = the module you can see. Founder does not name tables. 020 first.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1585,6 +1585,18 @@ Get’s picker uses six **labels** (Contacts, Firms, Audits, Imports, Agents, Re
 The module-name catalog is a skin. 1:1 only where the module owns the table. Projection modules would make that skin a lie. Do not mint `firm_readiness` so Get can look like Activation.
 
 **Do not:** recut 015; add Activation to `GET_MODULES` without a table on the handle; overwrite 15:43.
+
+---
+
+## 2026-08-20 14:50 UTC — Get glass is the module. Founder will not name tables.
+
+**Why:** Founder: they will not wear the backend. Get should feel like “I see it in that module, so I Get it from there” — contacts in Contacts, same for every module. Make the back fit existing practice. Not priority to expand the picker now.
+
+**Hard:** Interface locked in [`SYSTEMS-GET-IS-TABLE-ASCRIBE.md`](./SYSTEMS-GET-IS-TABLE-ASCRIBE.md). Get is authored in **module language**. Fields = what that pane shows. SA maps module → existing writes. Do not ask the founder for table names.
+
+Walker today is still six hardcoded SELECTs. That is not the interface law. Prerequisite is **020** (module is a pane of real rows). Then Get can offer that module. Composite panes map to a query over those writes, not `firm_readiness`. Do not expand `GET_MODULES` in this packet.
+
+**Do not:** recut 015; mint `firm_readiness`; ask the founder to name tables; overwrite 15:43.
 
 
 
