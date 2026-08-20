@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **IF-SWITCH-PACKET** A36–A39. Law **46**. Both kinds. Paths are wires. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **IF-SWITCH-PACKET** A36–A39. If interior: **true is the default mode.** Law **46**. Do not plant.
 
 **How we maintain this log**
 
@@ -1727,6 +1727,18 @@ Flag 15:43 untouched.
 **What we did:** Law **46**. Plates **A36–A39**. Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md). A16 Then/Else radios are **prior**. **⋯ Switch** ≠ Switch node. Parked: forgotten first item; Run check (they will look); notification system.
 
 **Do not:** recut 015; overwrite 15:43; plant; one kind only; Then/Else in the modal.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-20 11:00 UTC — If interior: true is the default mode.
+
+**Why:** Founder: one revision to If interior because it matters. **Truth is the default mode** so it gives space to craft the argument. Look at n8n If. **Anything other than the argument stated in the node is false.**
+
+**What we did:** Revise **A38**. Law **46** tail. Packet. Canvas **A36** still two wires. Do not configure False in the node.
+
+**Do not:** a False form; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 

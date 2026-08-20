@@ -1,7 +1,7 @@
 # If / Switch packet — two kinds. Four plates. Paths are wires.
 
 **Seat:** Product Manager. For the **engineer** and the **Systems Analyst**. One pocket.  
-**When:** Founder 2026-08-20 10:46. Plates 10:52. Packet same stamp.  
+**When:** Founder 2026-08-20 10:46. Plates 10:52. If interior revise 11:00. Packet same.  
 **Plates:**  
 - Canvas **If** (two doors): [`A36-if-canvas-true-false.png`](./automations-blueprint/A36-if-canvas-true-false.png)  
 - Canvas **Switch** (many paths): [`A37-switch-canvas-paths.png`](./automations-blueprint/A37-switch-canvas-paths.png)  
@@ -20,7 +20,7 @@
 |----------------------------|---------------------|
 | **A36:** If has **two wires** — true / false | A15 / A16 linear chain. Live IfPlateModal |
 | **A37:** Switch has **many wires**. **+ Add path** adds a wire | Next-node titles on A37 (“Mark as reachable”) — examples |
-| **A38 / A39:** drag from the left **into** the box. Chip **is** the box. Operator. Value. | Then / Else radios. “This is not a rule.” Kind chip strip |
+| **A38 / A39:** drag from the left **into** the box. Chip **is** the box. Operator. Value. **A38: True is the mode.** Craft the argument. Anything else is false. | Then / Else radios. A False form. “This is not a rule.” Kind chip strip |
 | Orange **If** / **Switch** chip **under the title** (A35 placement) | Teaching captions |
 | Paths live on the **canvas** | Picking the next Action inside the modal |
 
@@ -47,7 +47,7 @@ Open:
 
 Canvas: wires ARE the paths. If: true and false leaving the node. Switch: multiple paths extending away; + Add path adds a wire underneath. A16 Then/Else radios inside the modal — do not build.
 
-Interior: same as every node (Input | Output). Drag from the left into the right. That primitive is universal. Chip fills the box (A31). Then an operator and a value. Simplest node. Kind chip under the title (orange If / Switch). No Kind · In the application strip. Color as A35 — more lively. Type glyphs as A35.
+Interior If (A38): **True is the default mode.** Space to craft the argument (chip · operator · value, AND, add condition). Do not configure False in the node. Anything other than that argument is the false wire on the canvas. Interior Switch (A39): rows of paths. Kind chip under the title (orange If / Switch). No Kind · In the application strip. Color as A35. Type glyphs as A35.
 
 Palette and wire +: If and Switch are both kinds (with Get · Rule · Action · Exit). No Trigger on the wire. ⋯ Switch still means change kind — different word from the Switch node.
 
@@ -65,7 +65,7 @@ Do not mint a new graph store from the PNGs. Hub already has branch / if.
 
 A. Two kinds vs one branchKind: if. Name the gap. Switch = N exits + fallback. If = two exits. Smallest existing walk. Silent if silent.
 
-B. Paths are wires, not modal radios. Walk today: pickTable / pickField / pickOp / pickValue plus ifThen / ifElse strings. Name that vs canvas true/false and Switch paths. Do not invent tables from example Action titles on A37.
+B. Paths are wires, not modal radios. If interior: true is the default mode; the argument is what you write; anything else is the false wire. Do not ascribe a False form. Walk today: pickTable / pickField / pickOp / pickValue plus ifThen / ifElse strings. Name that gap.
 
 C. Drag-from-left is law 40 — already the handle. Condition reads a write already on the left. Name how If/Switch pick that write. Stamp SYSTEMS-ANALYST-LOG.
 ```
@@ -79,12 +79,15 @@ C. Drag-from-left is law 40 — already the handle. Condition reads a write alre
 - Live If / Switch do not work like this yet. Primitive: drag left → right is **universal**. Then a figure, then it runs. Simplest node. Not that difficult.
 - Switch: **add more paths** = wires showing underneath.
 - Four mocks: If canvas (true/false), Switch canvas (multiple paths extending away), If interior, Switch interior.
+- **11:00:** one revision to If interior. **Truth is the default mode** so there is space to craft the argument. Anything other than the argument stated in the node is false. (n8n If Parameters.)
 
 ---
 
 ## Law (plain)
 
-**If and Switch are two node kinds.** Same interior primitive as every node: drag from the left into the box. If = two wires (true / false). Switch = many wires; **+ Add path** adds one. The paths are on the canvas, not radios in the modal.
+**If and Switch are two node kinds.** Same interior primitive: drag from the left into the box. If = two wires (true / false). Switch = many wires; **+ Add path** adds one. The paths are on the canvas, not radios in the modal.
+
+**If interior:** **True is the default mode.** Space to craft the argument. Anything other than that argument is false. Do not configure False in the node.
 
 ---
 
@@ -100,12 +103,15 @@ Operator → Configuration libraries → Automations → open a workflow → pal
 
 **Canvas Switch (A37):** several outputs. **+ Add path**. Each path is a wire extending away.
 
-**Interior both (A38 / A39):** Input \| Output. Left tree. Right: mapped chip (occupied box) · operator · value. Switch: one row per path + fallback + Add path. Orange If / Switch chip under the title. Glyphs and color as A35.
+**Interior If (A38):** True is the mode. Craft the argument. Occupied chip · operator · value. AND. Add condition. No False form.
+
+**Interior Switch (A39):** one row per path + fallback + Add path. Orange If / Switch chip under the title. Glyphs and color as A35.
 
 **Palette / A28:** If and Switch both listed.
 
 ## 2. Do not build
 
+- A False form / False tab / configuring the other wire inside If.
 - Then / Else radios that pick the next Action (**A16**).
 - Teaching: “This is not a rule.” Kind · In the application strip.
 - Live IfPlateModal table-name picker as the face.
@@ -140,7 +146,7 @@ Rule interior conditions (law 26). A33. Audit field packet (A34) except as write
 | Live today | This packet |
 |------------|-------------|
 | One kind: Condition (If). Linear chain on A15 | **If** and **Switch**. Forks are wires (**A36** / **A37**) |
-| A16 Then / Else radios. Teaching footer | Interior is the condition only (**A38** / **A39**) |
+| A16 Then / Else radios. Teaching footer | **A38:** True is the mode. Craft the argument. False is everything else |
 | IfPlateModal: SQL table names, eq, duplicate rows | Chip from the left · operator · value |
 | Palette: Condition (If) | Palette: **If** · **Switch** |
 

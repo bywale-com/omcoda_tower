@@ -66,7 +66,7 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A16** | [`A16-if-previous-result.png`](./automations-blueprint/A16-if-previous-result.png) | chrome | **Prior** If interior. Then/Else radios. Teaching captions. | 01:20 | **prior.** Canon → **A36** canvas · **A38** interior. Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md) |
 | **A36** | [`A36-if-canvas-true-false.png`](./automations-blueprint/A36-if-canvas-true-false.png) | chrome | **If** on the canvas. Two wires: true / false. | 10:52 | Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md). Law **46**. |
 | **A37** | [`A37-switch-canvas-paths.png`](./automations-blueprint/A37-switch-canvas-paths.png) | chrome | **Switch** on the canvas. Many paths. **+ Add path** = a wire. | 10:52 | Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md). Law **46**. |
-| **A38** | [`A38-if-interior.png`](./automations-blueprint/A38-if-interior.png) | chrome | **If** interior. Chip · operator · value. No Then/Else radios. | 10:52 | Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md) |
+| **A38** | [`A38-if-interior.png`](./automations-blueprint/A38-if-interior.png) | chrome | **If** interior. **True is the mode.** Craft the argument. No False form. | 10:52 · **11:00** | Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md) |
 | **A39** | [`A39-switch-interior.png`](./automations-blueprint/A39-switch-interior.png) | chrome | **Switch** interior. One row per path. **+ Add path.** | 10:52 | Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md) |
 | **A17** | [`A17-trigger-firm-provisioned.png`](./automations-blueprint/A17-trigger-firm-provisioned.png) | chrome | Inside trigger. Event = **firm created / provisioned**. | 01:20 | companion to A5 |
 | **A18** | [`A18-trigger-global-local.png`](./automations-blueprint/A18-trigger-global-local.png) | chrome | Inside trigger. After the event: **Global** (all of that kind) or **Local** (this specific one). Example: form submitted. | 18:53 | **prior.** Grain as radios. Grain dropdown → **A26** |
@@ -847,15 +847,15 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 ![A38 If interior](./automations-blueprint/A38-if-interior.png)
 
-**Rationale (10:46, 10:52):** Simplest node. Drag left into the box. Operator. Value. Orange **If** chip under the title. No Then/Else radios.
+**Rationale (10:46, 10:52, revise 11:00):** **True is the default mode.** Space to craft the argument. Anything other than that argument is false. Do not configure False in the node. Orange **If** chip under the title.
 
-**On the glass:** Input \| Output. Occupied chip. = true.
+**On the glass:** Header **True**. Chip · is equal to · value. AND. Add condition. No False form.
 
-**Do not build:** teaching captions. Kind strip. A16 radios.
+**Do not build:** a False tab. Then/Else radios. Teaching captions.
 
-**Stale pixel:** extra tree fields (`position`, `channel`). Trust chip · operator · value. Kind chip under title is spec even if a PNG missed it.
+**Stale pixel:** extra tree fields. Trust **True** as the mode and the argument rows.
 
-**Not this plate:** Switch interior. Canvas fork (A36).
+**Not this plate:** Switch interior. Canvas fork (A36) still has two wires.
 
 ---
 
