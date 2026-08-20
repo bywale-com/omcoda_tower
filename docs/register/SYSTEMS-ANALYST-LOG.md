@@ -1506,6 +1506,30 @@ Legitimate gap I **would** state, if it existed: none here. The only split alrea
 
 **Do not:** recut 015; mint compare/path/run/tag-catalog tables; mix ⋯ Switch with Switch; overwrite 15:43.
 
+---
+
+## 2026-08-20 12:32 UTC — Firm readiness: no journey table. Provision is the first write.
+
+**Why:** Founder: is there a table that stores firm readiness from provision (name / email / person) through whatever last stage exists now?
+
+**Hard:** **No.** There is no `firm_readiness` / activation-journey table. Provision is the first **existence** write. Current snapshots live on **two** firm-keyed columns, not a history of stages.
+
+| First write (that form) | Table | What it stores |
+|-------------------------|-------|----------------|
+| Firm exists (auth) | `firms` | `id`, `name` |
+| Firm exists (machine) | `ct_firms` | `id`, `name`, **`posture` Idle→Armed→Active** |
+| Campaign bind snapshot | `campaign_states` | **`state` armed-for-activation \| running** |
+| Consultant email | `users` | `email` on that firm |
+| Invite token | `access_links` | one-time path |
+
+`ct_firms.posture` default **Idle** on that INSERT. `campaign_states` default **armed-for-activation**. Website / role on the form are **not** columns.
+
+Last **firm** snapshots today: `ct_firms.posture = Active` (send gate) and `campaign_states.state = running` (Bind). Activation state on the desk is a **computed checklist** (CRM grant, sending identity, escrow, forward-deploy, campaign running) — not a table.
+
+`sequence_ready` is **per contact**, not the firm.
+
+**Do not:** mint a journey table in this stamp; confuse contact readiness with firm; overwrite 15:43.
+
 
 
 
