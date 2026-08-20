@@ -86,7 +86,7 @@ If a control is on the glass, it needs a row, a field, or a relationship. Specif
 | [`SYSTEMS-CHANGE-PACKET-018.md`](./register/SYSTEMS-CHANGE-PACKET-018.md) | A34 audit mark on the person | Contacts list join + chips (PR #102). No SQL. Not `contact_tag`. |
 
 7. Also on main: A33 persist-bound in-app inventory (PR #101) · A35 Add tag (PR #103). Engineer PRs **#104** (data in tables) and **#105** (Test on trigger / Run vs Launch) may still be open — check, do not assume.
-8. **Waiting cut:** [`register/SYSTEMS-CHANGE-PACKET-019.md`](./register/SYSTEMS-CHANGE-PACKET-019.md) — If + Switch (A36–A39). No SQL. Ascribes: [`register/SYSTEMS-AUDIT-FIELD-ASCRIBE.md`](./register/SYSTEMS-AUDIT-FIELD-ASCRIBE.md) · [`register/SYSTEMS-ADD-TAG-ASCRIBE.md`](./register/SYSTEMS-ADD-TAG-ASCRIBE.md) · [`register/SYSTEMS-RUN-ASCRIBE.md`](./register/SYSTEMS-RUN-ASCRIBE.md).
+8. **Waiting cut:** [`register/SYSTEMS-CHANGE-PACKET-019.md`](./register/SYSTEMS-CHANGE-PACKET-019.md) — If + Switch (A36–A39). No SQL. Ascribes: [`register/SYSTEMS-AUDIT-FIELD-ASCRIBE.md`](./register/SYSTEMS-AUDIT-FIELD-ASCRIBE.md) · [`register/SYSTEMS-ADD-TAG-ASCRIBE.md`](./register/SYSTEMS-ADD-TAG-ASCRIBE.md) · [`register/SYSTEMS-RUN-ASCRIBE.md`](./register/SYSTEMS-RUN-ASCRIBE.md). Operator desk vs tables: [`register/SYSTEMS-OPERATOR-MODULES-ASCRIBE.md`](./register/SYSTEMS-OPERATOR-MODULES-ASCRIBE.md).
 9. Confirm-or-refute leftovers from SQL, not from this identity: house seed **draft**; `import.created` type ghost. **Get is a node.** Empty last handle → `N = 0`. Do not restore `LIMIT 50` as grain.
 
 **You own**

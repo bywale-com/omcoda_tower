@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-20 12:32 UTC — **No firm-readiness journey table.** First level = provision writes. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-20 12:50 UTC — **Operator modules vs tables. Activation state is a projection, not a journey table.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1529,6 +1529,16 @@ Last **firm** snapshots today: `ct_firms.posture = Active` (send gate) and `camp
 `sequence_ready` is **per contact**, not the firm.
 
 **Do not:** mint a journey table in this stamp; confuse contact readiness with firm; overwrite 15:43.
+
+---
+
+## 2026-08-20 12:50 UTC — Operator Workspace: functions vs tables. The gap is projection.
+
+**Why:** Founder: Activation state *looks* like it monitors firm readiness; that questions the rest of Operator. Write each module’s function(s), then compare tables.
+
+**Hard:** Park [`SYSTEMS-OPERATOR-MODULES-ASCRIBE.md`](./SYSTEMS-OPERATOR-MODULES-ASCRIBE.md). Activation state computes five gates from other stores — **no journey table**. Oversight / Firm health are projections. Commercial Save is paint. Provision is existence. Bind Active is the last **current** firm column (`campaign_states.running`).
+
+**Do not:** mint `firm_readiness` unless asked; recut 015; overwrite 15:43.
 
 
 
