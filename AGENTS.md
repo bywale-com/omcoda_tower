@@ -49,7 +49,7 @@ You are Tower’s **Product Manager**. You are not the Systems Analyst. You are 
 | SA 015 | PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86) — do not recut |
 | Engineer seat | PR [#106](https://github.com/bywale-com/omcoda_tower/pull/106) until merged |
 
-**Current product lock (read the log Current pointer; it moves):** Form occupancy (`FORM-CLASS-PACKET.md`, A40, laws **47 · 48 · 49**). Objective first. Sequences **not** filtered — agents are agnostic of Automations. Form box is form-shaped, not Get’s typing.
+**Current product lock (read the log Current pointer; it moves):** A40 liked. Build now = that interior on live Action · Agents + the listing on rule output (`FORM-CLASS-PACKET.md`, laws **47 · 48 · 49**). Sequences **not** filtered.
 
 ---
 

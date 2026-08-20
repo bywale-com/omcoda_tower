@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A40** form = drop this run’s required-data listing. **Objective first** (law 48). Sequences **not** filtered — agents are agnostic of Automations (law 9 recut). Form box is form-shaped (law 49). Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A40** liked. Build now = that interior on live Action · Agents + the listing on rule output. Sequences **not** filtered. Do not plant.
 
 **How we maintain this log**
 
@@ -1896,6 +1896,34 @@ Flag 15:43 untouched.
 **Form box.** The Get Firm/Contact “typed class” story was not honest. The form **shape is specific to form**. Occupancy: drop **this run’s required data** (the whole listing — “class” on A40 meant all of it as one piece, not a catalog type); chip is the box; questions unfold. Other things on the left are not those questions. How the drop-target is stood up: SA / engineer. Founder stopped before backend. Law **49** recut.
 
 **Do not:** plant the sequence filter; copy Get’s cascade onto Form; ask the founder for a reject primitive; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-20 16:14 UTC — A40 liked. What is to be built now.
+
+**Why:** Founder: likes that UI. What is to be built now.
+
+**This pocket — the form objective on Action · Agents.** Plate **A40**. Packet [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md). Live still is assign-first, a data-request toggle, and painted `COLLECTIBLE_FIELDS`. That is what gets replaced.
+
+**Engineer (face, `/prototype-ant`):**
+1. Objective radios first: **Click this link · Submit this form · Book a meeting.**
+2. Form selected: one **Form** box. Drop **Required data** from Input. Chip **is** the box. Questions unfold. No empty slots. No + Add. No “from listing” tags. No teaching banners.
+3. Input left: Required data as a folder you can drag (A29 / A35 chrome).
+4. Then **A14** — assign existing or from a template, all three radios, **not** filtered.
+5. Kill: assign cards above the radios; “The objective limits which agents you can select”; “2 · Create the objective”; painting `COLLECTIBLE_FIELDS` as the form.
+
+**Systems Analyst (the listing, not a new table):**
+1. Required-data **listing** on rule output (law 25) — that is what occupies Form. Do not invent the catalog in the SPA.
+2. **Exists** on If = that listing not empty. Same If (A38).
+3. This form ≠ opt-in/consent ≠ loop-closer. Silent if Story already splits them.
+
+**Not this build:** click interior · meeting interior · C2b on the Agents canvas (same radios, different seat) · opt-in artifact form · sequence filter · recut 015 · plant.
+
+**Named later, not now:** click as a completion write; meeting booked → authored escalate; consent cascade writes.
+
+**Do not:** plant from this stamp; overwrite 15:43; mint a goal column.
 
 Flag 15:43 untouched.
 
