@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Send canvas: **new contact → audit → if → actions.** Goal met = that event, Local. Live `run_audit` **does** hand writes. **IF-SWITCH-PACKET.** Law **40 · 46**. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Gap is objectives** — both sides. Three cores: opt-in · form (data capture) · meeting. Send: new contact → audit → if → actions. Do not plant.
 
 **How we maintain this log**
 
@@ -1815,6 +1815,37 @@ Flag 15:43 untouched.
 - **Live Audit handle.** The 14:52 sentence was **wrong**. It quoted Aug 17 prior. Main `workflowWalk`: `run_audit` → `executeAuditRun` → `commitWrites` / `previousWrites`. Next node picks. Hub preview is still not live. Do not recut 015. Corrected [`PRIMITIVES.md`](./PRIMITIVES.md) and FACE open 14.
 
 **Do not:** plant; overwrite 15:43; recut 015; color Rule as day-one; call goal-met a missing listen.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-20 15:15 UTC — The gap is objectives. Both sides. Time to sit in the types.
+
+**Why:** Founder: current gap is the objective. When Agents is the action you specify it. We have a form — that’s where it gels (event → operation). Three real cores: **opt-in** everyone that comes in (an automation enrolls them into a sequence); **re-engagement** core = **data capture / form**; **reactivation** core = **book a meeting**. Opt-in itself has chained campaign objectives (spoke at length with the first PM). Agents canvas chains campaigns delineated by objectives met. Automations is the same idea, different lattice. Agents is far enough. What’s left is system + UI of **objectives** — when met it is an event; specifying it is a thing. Check systems exist. Work the UI of each current type so we know what is actually left. “I think it’s time.”
+
+**Capture (founder wording).** Not a second flag. 15:43 stands. Objective ≠ sequence (law 11) still: opt-in / re-engagement / reactivation are **sequence templates**. The **core** of each is a campaign objective: click / form / meeting. Do not put “opt-in” in the objective picker.
+
+**Check — systems (exist, not complete)**
+
+| Core | Completion write | Stood up | Hole |
+|------|------------------|----------|------|
+| **Meeting** | `meeting_booked` | Table `007`. Live dispatch. | Book does not fire goal-met → escalate as authored destinations |
+| **Form** | `fact_writebacks` | Dispatch. A12 is the face. | Required-data **listing** not on rule output. Form cannot bind questions (law 25) |
+| **Click this link** | Channel “clicked” criteria | Attempt/channel rules | Not a first-class objective-completion write |
+| **Opt-in sign-up** | `consent_records` waitlisted \| sequenced | CHECK exists | Cascade **does not write** those statuses |
+
+No `goal` column on `sequence_template`. Do not mint one this stamp. Law 28 already: the objective **is** the event.
+
+**Check — UI**
+
+- **C2 / C2b** drawn. Live `/prototype-ant` Add objective: template tab + from-scratch radios (click / meeting / form) + a **name**. Then it stops. No interior: which link, which calendar, which form / bind.
+- **A14** assign sequence. **A12** form from listing (canonical). **A8** prior (blank builder). Embedded lean not locked.
+- Specifying the objective on the Agents **action** and on the **campaign** are the same seat (end node mirrors beginning).
+
+**What “work the types” means:** sit in each from-scratch interior until we can see what’s left. Not a new node kind. Not recut 015.
+
+**Do not:** plant; overwrite 15:43; put opt-in in the objective picker; mint a goal table; lock form-objective to re-engagement signal.
 
 Flag 15:43 untouched.
 
