@@ -129,13 +129,13 @@ function AntWorkflowNode({ id, data, type, selected }: NodeProps<WorkflowFlowNod
   return (
     <div
       style={{
-        width: 248,
+        width: isSwitch ? Math.max(248, (switchPaths.length + 1) * 88) : 248,
         background: "#fff",
         borderRadius: 8,
         border: selected ? "2px solid #1677ff" : "1px solid #e5e7eb",
         boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
         padding: 12,
-        paddingBottom: isIf || isSwitch ? 36 : 12,
+        paddingBottom: isIf || isSwitch ? 44 : 12,
         position: "relative",
       }}
     >
@@ -306,12 +306,15 @@ function AntWorkflowNode({ id, data, type, selected }: NodeProps<WorkflowFlowNod
                           ...node.data,
                           paths: [...(node.data.paths ?? []), path],
                           fallbackHandle: node.data.fallbackHandle ?? "fallback",
+                          filterSummary: `${(node.data.paths ?? []).length + 1} paths`,
                         },
                       }
                     : node,
                 ),
               );
             }}
+            onMouseDown={(event) => event.stopPropagation()}
+            onPointerDown={(event) => event.stopPropagation()}
             style={{
               marginTop: 10,
               border: "1px dashed #d9d9d9",
