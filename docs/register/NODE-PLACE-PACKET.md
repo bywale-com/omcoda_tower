@@ -20,7 +20,7 @@ Read docs/register/NODE-PLACE-PACKET.md. Plates: docs/register/automations-bluep
 
 ⋯ on a placed node: Duplicate · Add node · Switch · Delete. Switch is not click. Switch on a Trigger opens A26 (TRIGGER-SELECT-PACKET.md).
 
-Wire hover +: Add node — Get · Rule · Action · Condition (If) · Exit. No Trigger on the wire. Palette still has Trigger for starting the graph.
+Wire hover +: Add node — Get · Rule · Action · **If** · **Switch** · Exit. No Trigger on the wire. Palette still has Trigger for starting the graph. Condition (If) only is prior. Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md). **⋯ Switch** = change kind. **Switch** on the palette = the many-path node.
 
 Read docs/register/PLATE-READ.md. Do not recut 015. Do not overwrite 15:43.
 ```
@@ -57,7 +57,7 @@ Operator → Configuration libraries → Automations → open a workflow with no
 1. **Click the body** of a placed node → **configure** (kind interior). Not A26. Not Switch.
 2. **⋯** on that node → **A27**: Duplicate · Add node · Switch · Delete.
 3. **Switch** (Trigger) → **A26**. Switch on other kinds: change that kind / retarget — SA ascribes; do not invent a picker we have not drawn.
-4. Hover the **wire** → **+** → **A28**: Get · Rule · Action · Condition (If) · Exit. Inserts **between**. No Trigger.
+4. Hover the **wire** → **+** → **A28**: Get · Rule · Action · **If** · **Switch** · Exit. Inserts **between**. No Trigger.
 5. **Add node** on ⋯ is the same add-kind idea as the wire, from the node. Palette **Trigger** still starts a graph; it is not on the wire menu.
 
 ---
@@ -96,7 +96,7 @@ Desk chrome, catalog, Launch. Wire **+** menu is A28. Event list is A26.
 ## A28 — 1. Copy
 
 - Wire between Trigger and the next node. **+** on the wire.
-- Popover **Add node**: **Get** · **Rule** · **Action** · **Condition (If)** · **Exit**. Helper lines under names as drawn are **captions if they read as teaching** — copy the **kinds and icons**, not a new law from a subtitle.
+- Popover **Add node**: **Get** · **Rule** · **Action** · **If** · **Switch** · **Exit**. Condition (If) only is prior.
 - **No Trigger** in this list.
 - Palette on the left still includes **Trigger**.
 

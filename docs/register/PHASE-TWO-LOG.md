@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Entered **If / Condition**. Holding If vs Switch (n8n). They do not like the live If look. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **IF-SWITCH-PACKET** A36–A39. Law **46**. Both kinds. Paths are wires. Do not plant.
 
 **How we maintain this log**
 
@@ -1715,6 +1715,18 @@ Flag 15:43 untouched.
 **What we did:** Stamp. Holding. We have named **one** DAG kind: **Condition (If)**. Palette **A28**. Plate **A16**. Two doors (Then / Else). We have **not** named Switch as a node kind. n8n If = true/false. n8n Switch = many exits. **⋯ Switch** is change-kind (law 38) — different word. Law **26**: this node is not the conditions inside a Rule. Do not generate until they lock. Do not recut 015.
 
 **Do not:** freeze live IfPlateModal as the face; collapse with Rule; mix ⋯ Switch with n8n Switch; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-20 10:46 UTC — Today’s list. If and Switch both. Four plates.
+
+**Why:** Founder: list everything for today so nothing is forgotten. First issue: forgotten. Second: Test and Run — they will check Run; **Run literally means the automation runs**. Also talked with SA: a way to see if it worked (backend, that person’s workspace). Feel a **notification / login system** when table writes happen — not a replacement for the writes. Think later. Then If / Switch: uses for **both**. One Switch = at least two Ifs. One separation → If is the choice; both are the choice. Both well built. Drag left → right is universal. Simplest node. Switch: add paths = wires underneath. Four mocks: If canvas true/false, Switch canvas many paths, both interiors.
+
+**What we did:** Law **46**. Plates **A36–A39**. Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md). A16 Then/Else radios are **prior**. **⋯ Switch** ≠ Switch node. Parked: forgotten first item; Run check (they will look); notification system.
+
+**Do not:** recut 015; overwrite 15:43; plant; one kind only; Then/Else in the modal.
 
 Flag 15:43 untouched.
 

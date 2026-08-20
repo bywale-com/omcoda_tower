@@ -187,6 +187,7 @@ These were asked. They are not “copy from C9/C11.”
 | **In-app Action** | Law 41. [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). After **A7** in-app: module write-buttons, grouped by module. Look **A33**. |
 | **Add tag** | Packet [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md). Plate **A35**. Contact occupied. Tag picker. Type glyphs. Color more lively. Green Action chip. Kind chips teaching — do not build. |
 | **Audit field** | Packet [`AUDIT-FIELD-PACKET.md`](./AUDIT-FIELD-PACKET.md). Plate **A34**. Contacts column. Composite chips. Hardcoded when audit runs. Not an Action. Leave live Tag. |
+| **If / Switch** | Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md). **A36–A39**. Two kinds. Paths are wires. |
 
 ---
 

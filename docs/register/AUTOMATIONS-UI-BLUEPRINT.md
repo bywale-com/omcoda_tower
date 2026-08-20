@@ -52,7 +52,7 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A26** | [`A26-trigger-select-event.png`](./automations-blueprint/A26-trigger-select-event.png) | chrome | **Canonical trigger select.** Event \| Schedule. Searchable **named events**. Grain dropdown. Global = every firm + every permutation; Local = nested existing shape. | 20:05 · lock 20:09 | **revises A5 · A18**. Packet [`TRIGGER-SELECT-PACKET.md`](./TRIGGER-SELECT-PACKET.md) |
 | **A6** | [`A6-add-node.png`](./automations-blueprint/A6-add-node.png) | chrome | Add a node. Select Action. | 21:10 | **prior.** Wire + → **A28** |
 | **A27** | [`A27-node-options-popover.png`](./automations-blueprint/A27-node-options-popover.png) | chrome | Placed-node **⋯**: Duplicate · Add node · **Switch** · Delete. Click the node is **configure**, not switch. | 20:05 · lock 20:09 | Packet [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) |
-| **A28** | [`A28-add-node-on-wire.png`](./automations-blueprint/A28-add-node-on-wire.png) | chrome | Wire **+**. Add node: Get · Rule · Action · Condition (If) · Exit. **No Trigger** on insert-on-wire. | 20:05 · lock 20:09 | **revises A6**. Packet [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) |
+| **A28** | [`A28-add-node-on-wire.png`](./automations-blueprint/A28-add-node-on-wire.png) | chrome | Wire **+**. Add node: Get · Rule · Action · **If** · **Switch** · Exit. **No Trigger** on insert-on-wire. Condition (If) only is **prior**. | 20:05 · lock 20:09 · **10:52** | **revises A6**. Packet [`NODE-PLACE-PACKET.md`](./NODE-PLACE-PACKET.md) · [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md) |
 | **A7** | [`A7-action-two-kinds.png`](./automations-blueprint/A7-action-two-kinds.png) | chrome | Inside action: **Agents** vs **in the application**. | 21:10 | — |
 | **A8** | [`A8-action-agents-objective.png`](./automations-blueprint/A8-action-agents-objective.png) | chrome | Agents as the action: select agent, or create the objective / form. Form here is still a **blank builder**. | 21:10 | **prior.** Form bind → **A12** |
 | **A12** | [`A12-form-from-required-data.png`](./automations-blueprint/A12-form-from-required-data.png) | chrome | **Canonical form.** Questions **are** the required-data rows. Bound from listing. | 21:36 then 21:48 | **revises A8** (form only). Select-agent law still A8 |
@@ -63,7 +63,11 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A13** | [`A13-lattice-required-data-listing.png`](./automations-blueprint/A13-lattice-required-data-listing.png) | **diagram** | Lattice with required data as a **listing class**. If listing not empty → create form from those rows. | 21:48 · founder 22:17: this is a **different kind of picture** | **revises A10.** Not a node screenshot. Not the If node |
 | **A14** | [`A14-action-assign-or-template.png`](./automations-blueprint/A14-action-assign-or-template.png) | chrome | Action · Agents: **assign to an existing sequence** or **create from a template**. You do **not** create an agent here. | 00:02 | **revises A8** (assign path only). Select-agent = sequence still A8. Form still **A12** |
 | **A15** | [`A15-blank-canvas-chain.png`](./automations-blueprint/A15-blank-canvas-chain.png) | chrome | Blank canvas. Chain: **firm provisioned → audit contacts → if X → agents**. Palette includes Condition (If). A1 stays the smallest. | 01:17 · 01:20 | — |
-| **A16** | [`A16-if-previous-result.png`](./automations-blueprint/A16-if-previous-result.png) | chrome | **First Ant If plate.** Calls from the previous result (the audit). Not a rule. | 01:20 | fills open item 11 |
+| **A16** | [`A16-if-previous-result.png`](./automations-blueprint/A16-if-previous-result.png) | chrome | **Prior** If interior. Then/Else radios. Teaching captions. | 01:20 | **prior.** Canon → **A36** canvas · **A38** interior. Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md) |
+| **A36** | [`A36-if-canvas-true-false.png`](./automations-blueprint/A36-if-canvas-true-false.png) | chrome | **If** on the canvas. Two wires: true / false. | 10:52 | Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md). Law **46**. |
+| **A37** | [`A37-switch-canvas-paths.png`](./automations-blueprint/A37-switch-canvas-paths.png) | chrome | **Switch** on the canvas. Many paths. **+ Add path** = a wire. | 10:52 | Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md). Law **46**. |
+| **A38** | [`A38-if-interior.png`](./automations-blueprint/A38-if-interior.png) | chrome | **If** interior. Chip · operator · value. No Then/Else radios. | 10:52 | Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md) |
+| **A39** | [`A39-switch-interior.png`](./automations-blueprint/A39-switch-interior.png) | chrome | **Switch** interior. One row per path. **+ Add path.** | 10:52 | Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md) |
 | **A17** | [`A17-trigger-firm-provisioned.png`](./automations-blueprint/A17-trigger-firm-provisioned.png) | chrome | Inside trigger. Event = **firm created / provisioned**. | 01:20 | companion to A5 |
 | **A18** | [`A18-trigger-global-local.png`](./automations-blueprint/A18-trigger-global-local.png) | chrome | Inside trigger. After the event: **Global** (all of that kind) or **Local** (this specific one). Example: form submitted. | 18:53 | **prior.** Grain as radios. Grain dropdown → **A26** |
 | **A19** | [`A19-automations-contacts.png`](./automations-blueprint/A19-automations-contacts.png) | chrome | Automations **Contacts** = the same look as Agents C8. Same Add contact modal. Does not start a mission now. | 18:53 · 01:01 | companion to C8 / C8b |
@@ -118,7 +122,8 @@ Not a test script. The path that produces each chrome plate. Hub `/hub` Automati
 | **Run / Launch** | Canvas **Save · Run · Launch**. Run = execute now with the trigger data. Launch = arm the event. Packet [`RUN-PACKET.md`](./RUN-PACKET.md). **A30** Test is prior. |
 | Open the **Trigger** after **contact import** | **Output** tab. **A24.** Writes: import_batch · contact_records. |
 | Open the **Trigger** after **new contact** | **Output** tab. **A25.** Write: contact_records (that person). |
-| Open the **If / Condition** node | Calls from previous result (**A16**). Not a rule. |
+| Open the **If** node | Canvas two wires **A36**. Interior **A38**. Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md). Not a rule. |
+| Open the **Switch** node | Canvas many paths **A37**. Interior **A39**. **+ Add path** = a wire. Same packet. |
 | Insert / add a node | Palette (A6 prior). Wire **+** (**A28**). Select **Action**. No Trigger on the wire. |
 | Open the **Action** node | Kind: **Agents** vs **in the application** (A7). |
 | Action kind = **in the application** | Module write-buttons, grouped by module. **A33.** Packet [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md). Live first pass `in-app-action-pass/` is three rows — not the inventory. |
@@ -492,16 +497,13 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 ![A16 if previous result](./automations-blueprint/A16-if-previous-result.png)
 
-**Rationale (22:17, 01:17, 01:20):** The node after the previous result says “if this,” already calling from last output. That previous result can be an **action** (the audit), not only a rule. This is **not** a rule (A2). A13 is still a lattice diagram, not this screen.
+**Rationale (22:17, 01:17, 01:20):** The node after the previous result says “if this,” already calling from last output. That previous result can be an **action** (the audit), not only a rule. This is **not** a rule (A2).
 
-**On the glass:**
-- Modal: If X — previous result. Condition tag.
-- Previous result: Audit the contacts · output.
-- One row: field · operator · constant.
-- Then → Assign agent. Else → stop.
-- Caption: “This is not a rule. The rule is a different node.”
+**Prior (10:52):** Then/Else radios and teaching captions are **not** the product. Canon canvas **A36**. Canon interior **A38**. Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md).
 
-**Not this plate:** Rule GUI (A2). Lattice (A13). Inventing the condition catalog. **12:31 / 12:34:** A16 already locks the mechanism. The previous result is Audit’s **primitive** (the run, each verdict, sequence-ready) — not a check catalog we specified. A16’s row `status = passed` is the run only. Do not draw a pipe. Do not generate until asked.
+**On the glass (this PNG, prior):** Then → Assign agent. Else → stop. Caption: “This is not a rule.”
+
+**Not this plate:** Rule GUI. Building Then/Else radios. **A36–A39**.
 
 ---
 
@@ -806,6 +808,70 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 **Not this plate:** A33 inventory. A34 on the contact. Output tab. Changing kind (that is **⋯ Switch**, law 38).
 
 **Packets:** [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md) · [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) · [`INPUT-LOOK-PACKET.md`](./INPUT-LOOK-PACKET.md) · [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md) · [`RUN-PACKET.md`](./RUN-PACKET.md).
+
+---
+
+### A36 — If on the canvas (true / false)
+
+![A36 If canvas true false](./automations-blueprint/A36-if-canvas-true-false.png)
+
+**Rationale (10:46, 10:52):** Founder: If is two options, true or false, on the canvas. Paths are wires. Both If and Switch. Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md).
+
+**On the glass:** Palette includes **If** and **Switch**. If node, two wires: true · false. Header Save · Run · Launch.
+
+**Do not build:** linear If (A15). Then/Else inside the modal.
+
+**Stale pixel:** generated sider. Trust the **fork**.
+
+**Not this plate:** interior (**A38**). Switch canvas (**A37**).
+
+---
+
+### A37 — Switch on the canvas (many paths)
+
+![A37 Switch canvas paths](./automations-blueprint/A37-switch-canvas-paths.png)
+
+**Rationale (10:46, 10:52):** Switch: add more paths, wires underneath. One Switch = at least two Ifs.
+
+**On the glass:** Switch node. Several wires leaving it. **+ Add path**. Labels on the wires.
+
+**Do not build:** freezing the example Action titles on those paths. Fallback as a tagged ascribe.
+
+**Stale pixel:** generated sider. Trust the **fan of wires** and **+ Add path**.
+
+**Not this plate:** interior (**A39**). If canvas (**A36**).
+
+---
+
+### A38 — If interior
+
+![A38 If interior](./automations-blueprint/A38-if-interior.png)
+
+**Rationale (10:46, 10:52):** Simplest node. Drag left into the box. Operator. Value. Orange **If** chip under the title. No Then/Else radios.
+
+**On the glass:** Input \| Output. Occupied chip. = true.
+
+**Do not build:** teaching captions. Kind strip. A16 radios.
+
+**Stale pixel:** extra tree fields (`position`, `channel`). Trust chip · operator · value. Kind chip under title is spec even if a PNG missed it.
+
+**Not this plate:** Switch interior. Canvas fork (A36).
+
+---
+
+### A39 — Switch interior
+
+![A39 Switch interior](./automations-blueprint/A39-switch-interior.png)
+
+**Rationale (10:46, 10:52):** One row per path. **+ Add path**. Same drag primitive.
+
+**On the glass:** Paths: reachable / partial / unreachable / fallback. Add path.
+
+**Do not build:** inventing `audit_result` as the store — left is the real audit writes. Fallback as `= fallback`.
+
+**Stale pixel:** left-tree folder names. Trust **rows + Add path**.
+
+**Not this plate:** If interior. Canvas fan (A37).
 
 ---
 
