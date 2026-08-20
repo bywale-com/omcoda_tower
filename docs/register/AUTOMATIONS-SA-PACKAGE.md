@@ -1,5 +1,7 @@
 # Automations — Systems Analyst package (2026-08-15)
 
+**History — do not paste as the SA inhabit prompt.** Inhabit pack is [`../README.md`](../README.md) § Systems Analyst. Start at [`SYSTEMS-ANALYST-LOG.md`](./SYSTEMS-ANALYST-LOG.md) Current. This file is the 08-15 plate ascribe. Later packets (016–018, Get/Rule, Test, in-app Action) supersede it where they conflict.
+
 **What this is:** a dated prompt. Paste into a Systems Analyst chat. Not Story. Not a second Automations flag. Not a rewrite of the Agents flagship.  
 **Seat that wrote it:** Product Manager.  
 **Law:** Agents [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite. Automations face [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). Chosen images + spec [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) (A1–A13; priors kept; revisions canonical). **Later plate (after this package was issued):** **A14** — assign existing vs from a template; no create-agent in Automations. Ascribe it the same two questions if you reach it.  

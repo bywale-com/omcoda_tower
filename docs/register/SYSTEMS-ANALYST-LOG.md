@@ -1,10 +1,10 @@
 # Systems Analyst — log
 
-**Seat:** Systems Analyst (machine). Packets + hard decisions so the implementer only cuts. Instructions from the **founder** only. Identity: [`../README.md`](../README.md) § Systems Analyst. PM flags: [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) (read for the glass, not for job-law).
+**Seat:** Systems Analyst (machine). Packets + hard decisions so the implementer only cuts. Inhabit pack: [`../README.md`](../README.md) § Systems Analyst (paste + identity + routines). Instructions from the **founder** only. PM flags: [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) (read for the glass, not for job-law). Engineer always-on: repo-root `AGENTS.md`.
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-19 11:00 UTC — **A34 miss: no spec gap. Pane of existing writes is a systems cut.** 018. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-20 11:30 UTC — **Seat identity rewritten so a greenfield SA inhabits from the repo.** Packets 016/017/018 already on `origin/main` (filename remap). Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -12,8 +12,9 @@
 - **Do not edit a past stamp.** Corrections are a **new** stamp. The only line that moves in place is **Current** at the top (an index, so a new chat does not hunt).
 - Do not overwrite product flags. Align the model to [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) Current pointer.
 - Cadence floor while in session: **at least four times a day**; denser conversation → denser stamps.
-- Notice inflection (Story/Requirements delta, table mint or refusal, map-vs-Postgres split, founder correction) and **ask**.
+- Notice inflection (Story/Requirements delta, table mint or refusal, map-vs-Postgres split, founder correction) and **stamp**. If a required input is actually missing, **state the gap**. Do not ask the founder whether a named desk pane of existing writes is in scope.
 - Area: this file + machine docs under `docs/register/` and `docs/register/system-map/`. Do not scatter one-offs.
+- Stood-up SQL is **`origin/main`**, not this docs branch’s working tree.
 - **Durable founder expansions** (they are expanding the idea; they will not take it back): stamp **here with specific excerpts**, and park a register markdown so the detail is not only in the log. Same grade as OPERATOR-REVISIONS until Story is promoted. Do not leave critical wording in the background.
 
 ---
@@ -1467,6 +1468,28 @@ I invented a leftover (“chrome later”) and asked. Wrong seat of the question
 Legitimate gap I **would** state, if it existed: none here. The only split already named: A34 = audit writes on the person; consultant `contact_tag` later. Two columns. Do not merge.
 
 **Do not:** ask the founder whether a named desk pane of existing writes is in scope; recut 015; overwrite 15:43.
+
+---
+
+## 2026-08-20 11:30 UTC — Seat identity: inhabit from the repo. Same job as the Engineer ask.
+
+**Why:** Founder: immediately make the SA system message current so any new Systems Analyst, browsing the repo and prompted into the seat, inhabits it and its routine practices. Same ask already sent to the Engineer.
+
+**Hard:** Rewrote [`docs/README.md`](../README.md) § Systems Analyst — short paste, identity, **Current**, standing laws, routines, read-before-speak. Dropped the 08-15 “walk then first question then AGENTS-SA-PACKAGE” as the start ritual (that inventory is 16:28 in this log). A new SA starts at **this Current line**, then `origin/main` SQL.
+
+**Remap a new occupant must not miss:** packet numbers ≠ migration numbers after 012.
+
+| Packet / ascribe | On main as |
+|------------------|------------|
+| SA 013+014+015 (handle) | `014`/`015` SQL · PR #94. **Do not recut 015.** |
+| Trigger Local | `016_trigger_local_cascade.sql` |
+| Packet **016** (event write-set + test data) | `017_event_test_contract.sql` (PR #99) |
+| Packet **017** (available vs `N`) | walker `chainWrites` + Get + `mappedSlots` |
+| Packet **018** (A34) | Contacts join + chips · PR #102. No SQL. Not `contact_tag`. |
+
+**Routines locked in the identity:** founder-only instructions; packets so the implementer only cuts; quote SQL not memory; pull-ref for PM #96; pane of existing writes is a cut; state gaps, do not ask the job; data-in-tables ascribe when the store is missing; face `/prototype-ant`.
+
+**Do not:** recut 015; treat 016/017/018 as uncut; overwrite 15:43; mint an events log; ask whether A34-class panes are in scope.
 
 
 

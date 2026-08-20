@@ -1,5 +1,7 @@
 # Agents — Systems Analyst package (2026-08-15)
 
+**History — do not paste as the SA inhabit prompt.** Inhabit pack is [`../README.md`](../README.md) § Systems Analyst. Start at [`SYSTEMS-ANALYST-LOG.md`](./SYSTEMS-ANALYST-LOG.md) Current. This file is the 08-15 plate ascribe. Later packets (016–018, Get/Rule, Test, in-app Action) supersede it where they conflict.
+
 **What this is:** a dated prompt. Paste into a Systems Analyst chat. Not Story. Not a second Agents flag.  
 **Seat that wrote it:** Product Manager.  
 **Law:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
