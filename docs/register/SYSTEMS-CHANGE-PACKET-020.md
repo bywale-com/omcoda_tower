@@ -45,6 +45,8 @@ Split the opportunities:
 | **Composite pane** (Activation state) | Same as A34. Show the **existing** gate rows. Percent / “next” is chrome on that list. |
 | **Trace / journey over time** | The operation **appends** `audit_events` (table already exists). Audit trail is the history. Do not mint a second log. |
 
+**Get (later, not this packet):** the operator Gets **from the module**. 020 is the prerequisite — a module that is not a pane of real rows cannot be a Get source. Map is [`SYSTEMS-GET-IS-TABLE-ASCRIBE.md`](./SYSTEMS-GET-IS-TABLE-ASCRIBE.md). Do not expand `GET_MODULES` here.
+
 ---
 
 ## Activation state — pane, not a new ledger
