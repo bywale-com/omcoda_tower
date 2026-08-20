@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-20 13:10 UTC — **Packet 020: operation writes; module is a pane. Do not mint `firm_readiness`.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-20 13:20 UTC — **One fact, one write. `firm_readiness` is the events-copy bug.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1557,6 +1557,18 @@ Last **firm** snapshots today: `ct_firms.posture = Active` (send gate) and `camp
 Engineer still cuts **019** (If/Switch) unless founder pivots pickup to 020 first.
 
 **Do not:** recut 015; mint `firm_readiness` / `activation_pct`; copy `crm_oauth_grants` into a boolean column; overwrite 15:43.
+
+---
+
+## 2026-08-20 13:20 UTC — Why the copy is rejected (one fact, one write)
+
+**Why:** Founder: the “journey table that copies other writes” rejection looked like opinion / still-weighing. State the fundamental argument simply.
+
+**Hard:** Not taste. Same law as events. **One fact, one write.** The grant row is authorize-book. A `firm_readiness.authorized` that restates that grant is a second copy. Two answers to one question; miss the second write and the copy lies. Events: do not insert a row that says the INSERT happened — the INSERT is the event. `firm_readiness` would be that second row. Append `audit_events` is a **new** fact (happened at T), not a second current boolean.
+
+Parked on [`SYSTEMS-CHANGE-PACKET-020.md`](./SYSTEMS-CHANGE-PACKET-020.md) “The argument.” Decision is **not** open.
+
+**Do not:** recut 015; mint `firm_readiness`; overwrite 15:43.
 
 
 

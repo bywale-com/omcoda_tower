@@ -10,6 +10,18 @@
 
 ---
 
+## The argument (not taste)
+
+**One fact, one write.** The grant row **is** “book authorized.” `campaign_states.running` **is** “running.”
+
+A `firm_readiness` row that stores `authorized = true` because the grant exists is a **second copy of the same fact**. Then the machine has two answers to one question. The second write can be skipped; the copy is then a lie.
+
+That is the events law already locked: the INSERT **is** the event. Do not also insert a row that says the INSERT happened ([`SYSTEMS-EVENTS.md`](./SYSTEMS-EVENTS.md)). `firm_readiness` would be that second row, for Operator.
+
+History is different: an **append** (`audit_events` at time T) is a new fact (“this happened then”), not a second current boolean. Current truth stays on the gate table.
+
+---
+
 ## Judgment (locked)
 
 **Yes — an operation writes a table; the module displays those rows.** Not a calculator in the SPA. Same law as control vs pane, and as A34.
