@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-20 12:50 UTC — **Operator modules vs tables. Activation state is a projection, not a journey table.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-20 13:10 UTC — **Packet 020: operation writes; module is a pane. Do not mint `firm_readiness`.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1539,6 +1539,24 @@ Last **firm** snapshots today: `ct_firms.posture = Active` (send gate) and `camp
 **Hard:** Park [`SYSTEMS-OPERATOR-MODULES-ASCRIBE.md`](./SYSTEMS-OPERATOR-MODULES-ASCRIBE.md). Activation state computes five gates from other stores — **no journey table**. Oversight / Firm health are projections. Commercial Save is paint. Provision is existence. Bind Active is the last **current** firm column (`campaign_states.running`).
 
 **Do not:** mint `firm_readiness` unless asked; recut 015; overwrite 15:43.
+
+---
+
+## 2026-08-20 13:10 UTC — Packet 020 locked. Operation writes; module displays.
+
+**Why:** Founder: Activation (and cousins) should be an operation that writes a table, then the module displays those rows — more organized, as traceable. Defer to SA judgment on the other spots already listed.
+
+**Hard:** That model is **correct**. Grain is **per operation**, not per module. Locked in [`SYSTEMS-CHANGE-PACKET-020.md`](./SYSTEMS-CHANGE-PACKET-020.md).
+
+- **Activation state:** pane of existing gate rows (`ct_firms`, `prepared_workspaces`, `crm_oauth_grants`, `sending_domains`, `escrow_acceptances`, `campaign_states`). Percent is chrome. **No** `firm_readiness` copy.
+- **Paint that is an operation:** Commercial Save → `escrow_acceptances` (add `status`). Register Gap modal → mint `register_gaps` (nowhere to write today).
+- **Projections stay SELECT:** Firm health, Oversight. No `firm_health` table.
+- **Journey over time:** append `audit_events` on those operations. Do not mint a second log.
+- **Not this packet:** Acquisition Meta, support tickets, Founder policy bounds (stand-in / paint).
+
+Engineer still cuts **019** (If/Switch) unless founder pivots pickup to 020 first.
+
+**Do not:** recut 015; mint `firm_readiness` / `activation_pct`; copy `crm_oauth_grants` into a boolean column; overwrite 15:43.
 
 
 
