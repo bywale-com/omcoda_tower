@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-21 10:10 UTC — **022** objective met is a Local event (+ §2.6 **binding**: campaign owns the objective, Action must agree, `form_ref` derived) · **023** failure = stop spending, keep listening. Billable unit: [`SYSTEMS-OBJECTIVE-ESCROW.md`](./SYSTEMS-OBJECTIVE-ESCROW.md) (direction). Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-21 10:35 UTC — **022** objective met is a Local event; §2.6 binding = **the first objective only, no gate** (10:10 Decision 1 **retracted**) · **023** failure = stop spending, keep listening. Billable unit: [`SYSTEMS-OBJECTIVE-ESCROW.md`](./SYSTEMS-OBJECTIVE-ESCROW.md) (direction). Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -913,3 +913,41 @@ So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WH
 **Did not:** mint a form/binding table; let the Action author the objective; filter sequences by the radio; recut 015 / 019 / #108; overwrite 15:43.
 
 **Do not:** stamp a `campaign_objective_id` the Action's kind contradicts; store `form_ref` as an allocated id; bind a calendar or link instance without a packet.
+
+---
+
+## 2026-08-21 10:35 UTC — Founder correction. **It is the first objective.** 10:10 Decision 1 retracted. Campaigns are objective-agnostic.
+
+**Why:** Founder had to sit with 10:10 and found the one thing they could not agree with. They are right, and the record already said so before I wrote it.
+
+**Founder wording:**
+
+> first of all, sequence and campaign are different things — a sequence is gonna have five different campaigns, meaning five different objectives
+
+> imagine an agent sequence … it can have five different campaigns chained together. So where does this — the objective is simply **the first objective**. That's it. It's just the first objective I was getting at
+
+> I don't build the system like that, because it's not a must
+
+> **campaigns are objective agnostic** … even when you're selecting, campaigns are objective agnostic. I've said that a couple times now — in previous generations
+
+> that's just why I stressed what this whole thing does: it just **binds**, and you agree. But that doesn't do a lot with the sequencing itself, or how that objective is referenced inside of the agent sequence
+
+**Retracted (10:10 Decision 1):** “the campaign owns the objective; the Action **must agree**; disagree → `configured=false`, honest block.” **Wrong.** That is a validation gate, and a gate is the exact coupling that was already **recut**: 021 / law 48 — *A14 unfiltered; do not limit sequences from the objective.* I quoted the recut in the same paragraph and then rebuilt the thing it killed.
+
+**The record already carried it** (this was not new information, which is why it is my error and not a spec gap): SA 22:41 grain lock *“Agent = sequence. Sequence is blank / **agnostic**. Campaigns live inside it.”* · `SYSTEMS-AGENTS-ASCRIBE` *“a blank agent sequence is agnostic”* · PM 11:45 *“**Law 9 recut:** do not limit sequences from the objective. Agents are agnostic of Automations.”* Note `AUTOMATIONS-FACE.md` law 9 still reads *“which agents you may select is limited by the objective — can be enforced,”* and the caption audit still carries *“the objective limits which agents you can select.”* **Both are superseded.** Flagged in 022 §2.6 and § “does not do” so an implementer does not revive them from the face.
+
+**Corrected law:** the objective bound on the Automations Action is **the entry objective — the first one**, because that is where the hand-in lands. It is not “the objective of the sequence”: a sequence has as many objectives as it has campaigns, chained, authored in Agents. The binding **binds**; it does not govern the sequencing, and it does not govern how the objective is referenced inside the sequence.
+
+**Hard, revised (022 §2.6):**
+
+1. **No gate.** Disagreement between the Action’s `objectiveKind` and any `campaign_objective.kind` is **not** an error, does **not** set `configured=false`, and does **not** filter the A14 list. `configured` still needs *a* pick (#105), never agreement.
+2. **Runtime authority is the cursor** — §2.2 matches `enrollment.campaign_id`’s objective. At enroll that *is* the first campaign; later it is whichever is current. The radio never overrides it.
+3. **Decision 2 survives, re-anchored:** `form_ref = form.<enrollment_id>.<campaign_objective_id>` where that objective is **the one the form actually goes out under** (the cursor’s), not the radio. So it holds when the radio disagreed, and holds for a form campaign reached later. A bound listing with no form objective yet just sits unused — not an error, no warning.
+
+**Also fixed my blur:** Automations selects a **sequence** (A8 / A14 radio, whole agent). There is **no campaign picker** in Automations, and even selecting one would not set the interior chain.
+
+**Independent argument the gate was wrong** (beyond the recut): at **authorship there is no enrollment**, so “the current campaign objective” does not exist. A gate could only ever check campaign `ord 0` — and would wrongly block a sequence whose *later* campaigns carry exactly the kind the operator picked.
+
+**Did not:** edit the 10:10 stamp (append-only; this is the correction); change §2.1 / §2.2 / §2.3 / §2.4 / §2.5; touch 023; mint; overwrite 15:43.
+
+**Do not:** re-derive a gate from `AUTOMATIONS-FACE` law 9 or the caption; filter A14 by the radio; treat the Action’s objective as the sequence’s objective; call a kind mismatch invalid.

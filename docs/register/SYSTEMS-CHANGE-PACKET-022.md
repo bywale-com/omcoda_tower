@@ -192,25 +192,30 @@ So the answer to “what would have to change in the model” — open since 16:
 
 ### 2.6 What the objective is bound to (the authorship half)
 
+**Grain first, because it is easy to blur:** a **sequence** is the agent. A sequence chains **campaigns** — five campaigns is five objectives. Automations selects a **sequence** (A8 / A14 radio, whole agent, no campaign picker). It does not select a campaign, and it does not reach inside the chain.
+
 Picking the objective on Automations Action · Agents binds **three** things. Only one of them is resolved today.
 
 | Bound to | Where it lives | State |
 |---|---|---|
 | **The agent** — which sequence pursues it | `action.agent_ref` → `enrollment.sequence_id` | **Resolved.** Works today |
-| **The objective row** — what counts as done | `campaign_objective` on the campaign the enrollment lands on (`010`) | **Not resolved.** The Action's `objectiveKind` is never checked against it |
-| **The instance** — *which* form / link / calendar is put in front of this contact | form: `mappedSlots.form` → `payload_binding.fieldKeys` (after #108) | **Bound, but has no id**, so nothing can be stamped |
+| **The entry objective** — what this hand-in is aimed at | Action `objectiveKind` → `payload_binding` | Recorded (after #108). **Declarative only** — see Decision 1 |
+| **The instance** — *which* form is put in front of this contact | form: `mappedSlots.form` → `payload_binding.fieldKeys` (after #108) | **Bound, but has no id**, so nothing can be stamped |
 
-**Decision 1 — the campaign owns the objective; the Action must agree.**
+**Decision 1 — the binding names the *first* objective. It does not govern the sequence. No gate.**
 
-`campaign_objective.kind` is the authority on what completes a campaign. Agents authored it, and Agents stays agnostic of Automations (law 9 recut — do not filter sequences by the radio). The Action does **not** override it and does **not** INSERT it (021 stands).
+The objective bound in Automations is **the entry objective** — the first one, at the head of the chain, because that is where the hand-in lands. It is **not** "the objective of the sequence." The sequence has as many objectives as it has campaigns, chained, authored in Agents.
 
-So the Action's `objectiveKind` is a **declaration that must match**. At Save / walk, resolve the assigned sequence's current campaign objective and compare:
+**Campaigns are objective-agnostic.** The binding has nothing to do with the sequencing itself, or with how the objective is referenced *inside* the agent sequence. That interior is Agents' business.
 
-- kinds agree → configured; carry `campaign_objective_id` on `payload_binding`.
-- kinds disagree → `configured = false`, honest block (#105: do not silent-success). The operator picked "Submit this form" against a campaign whose objective is a click.
-- sequence has no campaign objective → `configured = false`. You cannot pursue what was never named.
+So:
 
-Without this, the same enroll can claim two different objectives and §2.2 has no single id to match on.
+- **No validation gate.** A disagreement between the Action's `objectiveKind` and any `campaign_objective.kind` is **not** an error and must **not** set `configured = false`. This is law 9 **recut** (021 / law 48): A14 is unfiltered; do not limit sequences from the objective. `AUTOMATIONS-FACE.md` law 9 still carries the pre-recut sentence *"which agents you may select is limited by the objective — can be enforced"* and the caption *"the objective limits which agents you can select"* — **both are superseded.** Do not enforce them.
+- **Runtime authority is the cursor.** §2.2 matches against `enrollment.campaign_id`'s `campaign_objective`. At enroll that is the first campaign; as the chain advances it is whichever campaign is current. The radio never overrides it.
+- **The radio is recorded, not adjudicated.** Keep `objectiveKind` on `payload_binding` as the operator's stated entry intent. `configured` still requires *a* pick (#105 — do not silent-success on an unset radio); it does not require agreement.
+- Automations still does **not** INSERT `campaign_objective` (021 stands).
+
+The gate was also incoherent on its own terms: **at authorship there is no enrollment**, so "the current campaign objective" does not exist yet. The only objective knowable at Save is campaign `ord 0`. A gate could therefore only ever check the first campaign — and would wrongly block a sequence whose *later* campaigns carry exactly the kind the operator picked.
 
 **Decision 2 — the form instance is the binding, and its id is derived.**
 
@@ -220,11 +225,14 @@ For a `form` objective, Automations supplies the instance (the face law has alwa
 form_ref = `form.${enrollment_id}.${campaign_objective_id}`
 ```
 
-- Minted at enroll, written onto `payload_binding.form_ref`, and stamped on what goes out (§2.1).
+- The `campaign_objective_id` is **the one the form actually goes out under** — the cursor's campaign at that moment (Decision 1), not the radio. So this holds even if the radio said something else, and it holds for a form campaign reached later in the chain.
+- Written onto `payload_binding.form_ref` and stamped on what goes out (§2.1).
 - The contact's submission returns it; `fact_writebacks.form_ref` persists it (§2.1); §2.2 matches on it.
 - Anyone can recompute it, so it needs no store and cannot drift.
 
 That is the founder's sentence end to end: *this* form, bound to *this* objective for *this* person, submitted, detected, matched back to the sequence. It is also exactly the Local axis `triggerLocalRefFromPayload("fact_writebacks")` already reads (`form_ref`) and that `TRIGGER_SELECT_EVENTS` already offers as **Form submitted → Select form** — a face that works only once this is persisted.
+
+If the bound listing has no form objective to go out under yet, it simply sits on `payload_binding` unused. That is not an error state and needs no warning.
 
 `click` and `meeting` instances stay unbound in this packet: the link is campaign content (Agents), and there is no calendar port. Their objective-level stamp (§2.1) is enough to match. Do not invent a link id or a calendar binding here.
 
@@ -254,7 +262,8 @@ One `event_test_data` specimen per kind (form / meeting / click) using existing 
 - Does **not** mint `campaign_objective_met`, `goal`, `goal_destination`, `finishing_event`, or an `events` table.
 - Does **not** add a column to `messaging_events` (the join answers it).
 - Does **not** recut 015, 019, or #108. Does not touch `campaign_objective` DDL (010 stands).
-- Does **not** INSERT `campaign_objective` from Automations (021 stands). The Action **binds and must agree**; it does not author (§2.6).
+- Does **not** INSERT `campaign_objective` from Automations (021 stands). The Action **binds the entry objective**; it does not author it, validate against it, or govern the chain (§2.6).
+- Does **not** filter or block on objective↔sequence agreement. Law 9's *"limited by the objective — can be enforced"* is superseded by the recut. Do not enforce it here or on the face.
 - Does **not** mint a form table, a `form_ref` column on the action, or a link/calendar instance id. `form_ref` is derived (§2.6 decision 2).
 - Does **not** require new UI. If the founder later wants **“An objective was met”** on the A26 trigger list (PRIMITIVES already promises it, with Local = this objective / campaign), that is one row in `TRIGGER_SELECT_EVENTS` with an `instance` layer — a line in an existing named list, not a plate. The machine works without it.
 - Does **not** decide **failure** (objective never met after the whole campaign). Founder answered that on 2026-08-21 and it is cut separately: [`SYSTEMS-CHANGE-PACKET-023.md`](./SYSTEMS-CHANGE-PACKET-023.md) — failure stops the **outbound** only; the objective stays claimable. **023 depends on this packet**, because detect-on-the-write is what lets attempts close without going deaf. Cut 022 first.
@@ -269,7 +278,7 @@ Next free on `origin/main`. `017` is taken. **#108 lands `018_collectible_fields
 
 1. Enroll a contact on the opt-in sequence. Confirm the send row carries `enrollment_id` / `campaign_id` / `campaign_objective_id`.
 2. Submit the form for that contact with that `form_ref`. Confirm: `fact_writebacks` stamped → `engagement_records` `objective_met` appended → `enrollment.campaign_id` moved to `camp.optin.day` → open attempts closed.
-2b. On the Action, pick **Submit this form** against a sequence whose current campaign objective is `click`. Confirm the node is **not configured** and says so (§2.6 decision 1).
+2b. On the Action, pick **Submit this form** and assign a sequence whose **first** campaign objective is `click`. Confirm the node **is configured**, saves, and walks — no block, no warning, no filtered sequence list (§2.6 decision 1). The run pursues the click objective the campaign authored; the listing binding waits for a form campaign.
 3. Submit a **second** form for the same contact. Confirm it does **not** re-advance (cursor already moved).
 4. Book a meeting for a contact whose current objective is `click`. Confirm **no** advance (wrong completion table).
 5. Point a workflow trigger at `objective_met` Local to `obj.optin.day`, Launch it, repeat (2). Confirm that workflow runs — that is the flagship escalation, with no destination column.
