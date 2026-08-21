@@ -432,6 +432,26 @@ Do not re-ascribe this on every plate.
 
 ---
 
+### P0 — [`P0-contact-ct-portal-built.png`](./contact-blueprint/P0-contact-ct-portal-built.png)
+
+**S:** What CT **built**: Client portal aside with the **10** `CONTACT_SURFACES` labels. Scene flipper. Not contact-facing.
+
+**E:** Cedar Pathways, Walk chrome, Consultant / Operator / Contact segmented.
+
+**C:** The **Consent interior on this PNG drifted** (message editor / reply routing). **Do not spec from that body.** Copy the sider list only. Real Consent is Agree / Ignore before deeper collection.
+
+---
+
+### P2 — [`P2-contact-needs-vs-built.png`](./contact-blueprint/P2-contact-needs-vs-built.png)
+
+**S:** Diagram: four Function outcomes → channel vs page vs chrome → CT 10 vs P1 (Now = current objective; History / Files not outcome-born).
+
+**E:** Harbor mini-nav.
+
+**C:** Column headers so the founder can read the picture. Not a node.
+
+---
+
 ### A18 — [`A18-trigger-global-local.png`](./automations-blueprint/A18-trigger-global-local.png)
 
 **S:** Trigger modal. Event. Event = Form submitted. Grain **Global | Local**. Global on. This-form picker disabled.

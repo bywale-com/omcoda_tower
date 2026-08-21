@@ -22,26 +22,50 @@
 
 > Portal it's a portal … see What that would look like given our system Especially since we want to keep it light … dashboard can look like … I don't want even just calling a dashboard makes it seem heavy But like there's a left panel, of course like in every workspace And … I want to see what those entries are What they could be?
 
+> I really do like the look of this I don't like how now now always has the Now will always contain The objective … It will always contain What we need from them now even meeting books will show in that Right to always be the first thing they see clear instruction of what we need
+
+> I Want to see how this compares to what we initially built for the contact seat? Right because it's a persona right … it's a natural persona and it has outcomes and usually our core modules are birthed from those outcomes So I want to see what Modules needs … that came out first before we even go into Wants and furnish
+
 ---
 
 ## Law of the seat (short)
 
 1. **The contact has a workspace.** It is a **seat**. No login. Access is the link (same family as `/a/<token>`). Firm-branded. Not Tower. Not the Operator desk. Not the Consultant desk.
 2. **The 10 CT surfaces are not the nav.** Live `/prototype-ant` Contact aside (Opt-in message · Consent request · Nudge form · … · Link state) is a **scene flipper** for us. Priors already: not contact-facing. Do not ship that list as modules.
-3. **Not too many modules.** Light. Do not say Dashboard on the glass. Left panel like every workspace — three entries this stamp:
+3. **Now always contains the objective.** The first thing they see. Clear instruction of **what we need from them now**. Consent, the data-request form, **meeting book** — those are **states of Now**, not extra nav. Whatever the current Agents objective is, it shows here.
+4. **Not too many modules.** Light. Do not say Dashboard on the glass. Left panel like every workspace:
 
-| Entry | What it is | From |
-|-------|------------|------|
-| **Now** | What is asked of them **right now**. Consent, the data-request form, booking — those are **states of Now**, not extra nav. C17’s form **lives here**. | Founder: “it’s where they…” · How: consent / refresh / book |
-| **History** | What happened. Light chronology. Not the consultant engagement chart. Not a UUID dump. | Founder named |
-| **Files** | Upload and store. A place. **Not** the data-request form (that stays self-reportable; no document upload on Now). | Founder named (“maybe”) |
+| Entry | Need or want | What it is |
+|-------|--------------|------------|
+| **Now** | **Need** — houses the four Function outcomes’ current ask | Always the objective |
+| **History** | Named. **Not outcome-born** yet | What happened |
+| **Files** | Named (“maybe”). **Not outcome-born** yet | Upload and store. Not the form |
 
-4. **Opt out** is chrome (sider foot / every Now footer) — How Silence. Not a fourth module.
-5. **On behalf of the firm.** Harbor in the pictures is **example**. Same grain as C16.
-6. **Touchpoints still exist.** Email still goes out (C16). The link **lands in this workspace**, on Now, with that ask open. Do not invent a second naked form page.
-7. **Do not build everything now.** Spec the place. Draw the entries. Files interior and History density wait.
+5. **Opt out** is chrome — How Silence. Not a fourth module.
+6. **On behalf of the firm.** Harbor in the pictures is **example**. Same grain as C16.
+7. **Touchpoints still exist.** Email still goes out (C16). The link **lands in this workspace**, on Now, with that ask open. Channel messages are **not** nav.
+8. **Do not build everything now.** Do not open Furnish (20 contact-cants) until needs/modules are housed.
 
-**Old paper (honest):** Personas / World craft said contact is referenced, touchpoint-only, do not plant a client console that mirrors the consultant IA. This stamp **seats the workspace**. It does not copy the consultant desk. It does not overwrite 15:43.
+**Old paper (honest):** [`personas.md`](./personas.md) said contact is referenced, not a persona, touchpoint-only. [`OUTCOMES.md`](./OUTCOMES.md) still has four **Engagement contact** outcomes (all secondary). Founder: it is a **natural persona**. This seat uses those four outcomes to birth modules. Approach still does not acquire them (World). Do not copy the consultant desk. Do not overwrite 15:43.
+
+---
+
+## Needs first (Function) — what the outcomes birthed
+
+| Outcome | What it birthed (How) | Kind | P1 housing |
+|---------|----------------------|------|------------|
+| **Consent** | Opt-in message → **Consent request** (Agree / Ignore) | Channel + page | Channel = C16. Page = **Now** |
+| **Refresh facts** | Nudge message → **Nudge form** / **Update facts** (one consolidated self-reportable form) | Channel + page | Channel = C16. Page = **Now** |
+| **Silence** | Silence / Opt out on every foot | **Chrome**, not a module | Sider foot |
+| **Book** | Meeting invitation → **Booking** (+ loop-closer fields, still the form family) | Channel + page | Channel = C16. Page = **Now** (meeting book shows here) |
+
+**Not modules:** Nudge form vs Update facts vs Loop-closer form are **one form family** (outstanding self-reportables). They are not three nav items. Opt-in / Nudge / Meeting invitation are **channel** surfaces — outbound, not left-panel entries.
+
+**What CT built:** one **Client portal** module with **10** aside items (`CONTACT_SURFACES`). Priors: scene flipper, **not contact-facing**. That list mixed needs + furnish (Link state) + channels as if they were modules.
+
+**Furnish / Enrichment:** 20 contact-cants + 20 furnish, planted on that flipper. **Wait.** Needs/modules first.
+
+Compare plates: [`P0`](./contact-blueprint/P0-contact-ct-portal-built.png) (CT as built — **copy the 10-item sider only**; interior drifted) · [`P2`](./contact-blueprint/P2-contact-needs-vs-built.png) (needs vs built vs P1).
 
 **Not this workspace:** Prepared workspace (consultant activation). Consultant Board / Client Data. Operator libraries.
 

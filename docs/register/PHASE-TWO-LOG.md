@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Contact workspace** seated: [`CONTACT-FACE.md`](./CONTACT-FACE.md) · **P1** Now · **P1b** History. Three entries: **Now · History · Files**. No login. C17’s form lives in **Now**. C16 still the email. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Contact workspace: **Now always contains the objective** (consent · form · meeting book). Needs first: four Function outcomes. History / Files named, not outcome-born. Compare **P0 / P2**. Do not open Furnish yet. Do not plant.
 
 **How we maintain this log**
 
@@ -1990,6 +1990,39 @@ Flag 15:43 untouched.
 **Do not:** ship the 10 CT labels as modules; plant; mint a files table; overwrite 15:43; mix with consultant Prepared workspace.
 
 **Ask:** are **Now · History · Files** the entries, or cut / rename before we go deeper (Files interior, Now states)?
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-21 10:38 UTC — Now = the objective. Needs vs what we built. Furnish waits.
+
+**Why:** Founder likes the look. Now **always contains the objective** — what we need from them now; **meeting books show there**; first thing they see; clear instruction. Then: compare to what we initially built for the contact seat. It is a **natural persona** with outcomes; core modules are birthed from those. See **needs** first — before wants and Furnish.
+
+**Now (lock):** Always the current objective. States, not extra nav: consent · data-request form · **meeting book**.
+
+**Paper vs founder (persona):** [`personas.md`](./personas.md) said referenced, not a persona. [`OUTCOMES.md`](./OUTCOMES.md) already has four Engagement contact outcomes (all secondary). Founder: natural persona. Seat uses those four to birth modules. Approach still does not acquire them.
+
+**Needs (Function) — four outcomes, what they birthed:**
+
+| Outcome | Birthed | Not a nav item |
+|---------|---------|----------------|
+| Consent | Opt-in message (channel) · Consent request (page) | Channel |
+| Refresh | Nudge message (channel) · Nudge form / Update facts (one form family) | Channel; three form names ≠ three modules |
+| Silence | Opt out on every foot | Chrome |
+| Book | Meeting invitation (channel) · Booking (page) · loop-closer still the form family | Channel |
+
+**What we built:** Ant Contact = **Client portal** + **10** aside labels (`CONTACT_SURFACES`). Scene flipper. Mixed needs + channels + furnish (Link state). Priors already: not contact-facing.
+
+**Wants (not outcome-born):** History · Files. Founder named them. They stay on the panel only if we keep them as wants — they did **not** come out of Function.
+
+**Furnish:** 20 contact-cants / 20 furnish, planted on the flipper. **Do not open that pass** until needs are housed.
+
+**Plates:** **P0** (CT sider — copy the 10 items; interior drifted, not spec) · **P2** (needs vs built vs P1). [`CONTACT-FACE.md`](./CONTACT-FACE.md).
+
+**Do not:** ship the 10; treat P0 body as Consent; start Furnish; mint Files; overwrite 15:43; plant.
+
+**Ask:** History and Files stay as wants on the panel, or they wait until they have outcomes?
 
 Flag 15:43 untouched.
 
