@@ -1,10 +1,10 @@
 # Systems Analyst — log
 
-**Seat:** Systems Analyst (machine). PM / founder product talk stays in [`PHASE-TWO.md`](./PHASE-TWO.md) / [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md). Identity: [`../README.md`](../README.md) § Systems Analyst.
+**Seat:** Systems Analyst (machine). Packets + hard decisions so the implementer only cuts. Identity: [`../README.md`](../README.md) § Systems Analyst. Instructions from the **founder** only. PM flags: [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) (read for the glass, not for job-law). Engineer always-on: repo-root `AGENTS.md`.
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-15 23:00 UTC — **Hub is reference only. Ant is the product. Systems for the pictured UI.** Looked at the plates. No mint. 22:55 “stay on Hub” discarded. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-21 08:20 UTC — **New SA inhabited from the repo.** This file on `main` froze 2026-08-15 23:00. Live trail is PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86) Current **2026-08-20 19:20** (packet **021** pickup). Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -13,7 +13,7 @@
 - Do not overwrite product flags. Align the model to [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) Current pointer.
 - Cadence floor while in session: **at least four times a day**; denser conversation → denser stamps.
 - Notice inflection (Story/Requirements delta, table mint or refusal, map-vs-Postgres split, founder correction) and **ask**.
-- Area: this file + machine docs under `docs/register/` and `docs/register/system-map/`. Do not scatter one-offs.
+- Stood-up SQL is **`origin/main`**. Stamps **2026-08-16 through 2026-08-20** (packets 010–021, inhabit rewrite) live on PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86) until that docs PR merges — fetch that pull ref; do not treat the gap in this file as unanswered work.
 - **Durable founder expansions** (they are expanding the idea; they will not take it back): stamp **here with specific excerpts**, and park a register markdown so the detail is not only in the log. Same grade as OPERATOR-REVISIONS until Story is promoted. Do not leave critical wording in the background.
 
 ---
@@ -659,3 +659,43 @@ Not cemented.
 Full table appended on [`SYSTEMS-AUTOMATIONS-ASCRIBE.md`](./SYSTEMS-AUTOMATIONS-ASCRIBE.md) § Correction 23:00.
 
 **Do not:** mint; continue Hub; build a lattice page; campaign picker from the slipped caption.
+
+---
+
+## 2026-08-21 08:20 UTC — New SA seated from the repo. This is the job.
+
+**Why:** Founder: you are the new SA. Find out what this means by going through the repo. Cloud always-on (`AGENTS.md`) still seats Engineer; this chat overrode it.
+
+**Accepted:** Systems Analyst. Not PM. Not Engineer. Instructions from the **founder** only. Product flag **15:43** read-only. Face `/prototype-ant`. Hub is not the app.
+
+**What this seat is (from the repo — not a generated flag):**
+
+- You **design the machine**: Story (must / must-not / chain / silence) → Requirements extract → map → Postgres + a **dumb runtime**.
+- Kinds: **state | rule | sequence**. Anything operator-modifiable is a table. UI is only **control** (writes an existing state) or **pane** (displays an existing state).
+- **Event = the INSERT/UPDATE.** Do not mint an `events` table that copies the write.
+- Missing / unspecified store is **this seat**. Data in tables; the implementer waits. Founder speaks **modules**; you map to tables. Do not ask them to name tables.
+- Deliverable = **change packets + hard decisions** (columns, CHECKs, FKs, which INSERT fires dispatch, walker cases) so the Engineer **only cuts**. You are in charge of them succeeding.
+
+**What a new occupant on `main` would miss (this is the inhabit gap):**
+
+- This file on `main` **froze 2026-08-15 23:00**. Live Current is PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86) **2026-08-20 19:20 UTC** — packet **021** pickup first; **019** landed [#107](https://github.com/bywale-com/omcoda_tower/pull/107); **020** waiting. Identity rewrite (11:30 on that PR) already dropped the “walk 001–009 then first question then AGENTS-SA-PACKAGE” start ritual. Inventory is **16:28** in this log. Do not redo it.
+- Packet numbers **≠** migration numbers after `012`. SA **016** landed as `017_event_test_contract.sql`. Migration `016` is Trigger Local. Migration `013` is operator book people, not packet 013.
+- `AGENTS.md` is Engineer always-on (correct default). If the chat seats SA, stop implementing and fetch #86.
+
+**Walked `origin/main` SQL (confirm-or-refute leftovers named on #86):**
+
+| Leftover | On main |
+|----------|---------|
+| House seed **draft** | **Yes.** `015_house_notes_handle.sql` inserts `wf-house-contact-import`; `workflow_state` = `draft`. |
+| `import.created` type ghost | **Yes.** `src/app/data/automationWorkflows.ts` still unions `"import.created"`. Live event is `contact_import` (`017` contract + house graph trigger). |
+| Get is a node | **Yes.** `GET_MODULES` in `automationGet.ts`. Walker has Get. Empty last handle → `N = 0` (packet 017 / `chainWrites`). |
+| `COLLECTIBLE_FIELDS` SPA catalog | **Yes.** `src/app/data/collectibleFields.ts` still the product list. Packet **021** mints `collectible_fields` and kills that constant. |
+| `action.type` `call_agent` only | **Stale (16:28).** `010` widened to `call_agent` \| `ascribe_tag` \| `manage_lists` \| `assign_task` \| `notify_consultant` \| `run_audit`. |
+| sequence⊃campaigns | **SQL.** `010`: `campaign`, `campaign_objective` (click/form/meeting → completion tables), `campaign_channel`. `launch_day` class dropped. |
+| 015 handle | **Live.** `workflowWalk.ts` `previousWrites` = last node; `chainWrites` = available. |
+
+**Waiting (do not recut landed):** **021** first — Form occupancy is this run’s `missing_fact_signals` (A40). Then **020** — Operator panes; no `firm_readiness`. Do not recut 015 / 019.
+
+**Did not:** generate a second Agents flag; mint; recut 015; copy #86’s docs tree onto this stamp; overwrite 15:43.
+
+**Do not:** treat this `main` copy as live Current after 23:00 without fetching #86; start AGENTS-SA-PACKAGE as if unanswered; ask the founder to name tables.
