@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-21 08:55 UTC — **Correction: founder meant open Engineer PR #108 (A40), not merged #107.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-21 09:30 UTC — **Packet 022: objective met is a Local event. Stamp the ask, match the answer. No mint. Flagship closes as a subscription.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -783,3 +783,59 @@ So: #108 furthered objectives **on the Automations Action** — the operator mus
 **Did not:** recut 015 / 019; treat #107 as this answer; overwrite 15:43.
 
 **Do not:** INSERT `campaign_objective` from this Action; lock form to re-engagement; filter A14 from the radio.
+
+---
+
+## 2026-08-21 09:30 UTC — Objective met **is** a Local event. Packet 022. The gap was the axis on the row.
+
+**Why:** Founder: events/triggers have a solid mechanism underneath — writes we designated as triggers. Objectives must have that same underneath. The sequence runs, the objective is met — **what does that mean systematically?** It is akin to a Local event: *this* form filled and submitted by *this* user, back into the system, system detects it and says “they submitted this form — what’s that sequence?” That mapping/matching is the SA job to finish. Production level, no waiting. UI already built; this is systems only.
+
+**Founder wording (durable):**
+
+> events, triggers in automations — the mechanism underneath it is very solid … it's just writes … that we've designated as triggers
+
+> now objectives — has that kind of underlying?
+
+> the essential idea is that this agent sequence runs, and this objective is met. What does that mean systematically?
+
+> it's akin to a local event … basically this specific form is filled and submitted by this user … back into the system, so the system is able to detect that and say oh, they've submitted this form. Okay, what's that sequence?
+
+> that's the mapping and the matching that we're talking about here … that's what I'm asking you to finish
+
+> as far as UI is concerned, that's all the UI … that exists right now … it's really all just systems so that the engineer can build the backend
+
+> there's no waiting anymore … everything is getting built at the production level
+
+**Accepted. The analogy is exact, and it is not a metaphor — it is the same mechanism.** Cut parked: [`SYSTEMS-CHANGE-PACKET-022.md`](./SYSTEMS-CHANGE-PACKET-022.md).
+
+### The finding (quote SQL)
+
+A Local event = **the write** + **an instance axis on that row**. `contact_import` is Local because `contact_records.import_batch_id` is a column. `campaign_failure` is Local because `campaign_failure.campaign_id` is a column.
+
+Completions have the write. **Two of three have no axis:**
+
+| Kind | Completion | Axis on the row today |
+|---|---|---|
+| `meeting` | `meeting_booked` | `enrollment_id` — nearly there |
+| `form` | `fact_writebacks` | **none.** `form_ref` is in the dispatch payload and **never persisted** (`004` has no column) |
+| `click` | `messaging_events` → `outbound_messages` | **none.** No enrollment / campaign / objective / attempt on the send |
+
+So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WHERE firm_id AND contact_id`. **Any** past meeting satisfies **any** objective. A meeting from last quarter completes today’s launch window. Also accepts `accepted`/`delivered` as a “click.” That is the bug under the founder’s question. Not a Story silence — a missing column.
+
+### The cut (no mint)
+
+1. **Stamp the ask.** `outbound_messages` += `enrollment_id`, `campaign_id`, `campaign_objective_id`, `attempt_id`. `fact_writebacks` += `form_ref`, `campaign_objective_id`. `meeting_booked` += `campaign_objective_id`. `messaging_events` gets **nothing** — it joins the send (one fact, one write).
+2. **Match Local.** Completion must carry this objective’s id (click resolves through the send join; `clicked` only). **No stamp → no match, fail closed.**
+3. **Latch is the cursor.** `enrollment.campaign_id` already advances (010). The flip is once by construction. NULL = the sequence ended. History = `engagement_records` `objective_met` append — which finally gives map-only `state.finishing_event` a runtime write. **No `campaign_objective_met` table** (that would be the 13:20 copy).
+4. **Detect on the write, not only the tick.** `advanceEnrollmentCampaign` is called only inside the tick’s `active_attempts` loop — so an objective met **after** attempts close advances nothing. That is the **16:55 walk-break**, and this closes it: reverse lookup on every completion INSERT (facts handler, meetings handler, click webhook), tick kept as catch-up.
+5. **`objective_met` dispatches.** `local_ref = campaign_objective_id`. `workflow_trigger` needs **no** schema change.
+
+### Flagship consequence (open since 16:28 — now closed)
+
+15:43 “the goal is itself an escalation point: other agent · other workflow · or it ends” needs **no destination column and no `goal` table**. Escalation is a **subscription**: another workflow = a workflow triggered on `objective_met` Local to that objective; another agent = that workflow’s `call_agent`; ends = no listener + cursor NULL. Story §7 promotion is a **wording** must, not structural, and is **not** required to ship this.
+
+**Still open (named, not filled):** what **failure** does after the whole campaign (16:58). `campaign_failure` exists; what it *does* is a founder call. Out of 022.
+
+**Did not:** mint; recut 015 / 019 / #108; add UI; touch 010 DDL; promote Story myself; INSERT `campaign_objective` from Automations.
+
+**Do not:** match a completion by bare `contact_id`; treat `accepted`/`delivered` as a click; copy the objective onto `messaging_events`; mint a met/latch table; renumber a landed migration (022 cuts as `019_objective_local_axis.sql` if #108 took `018`).

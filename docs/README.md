@@ -74,7 +74,7 @@ You **design the systems**. You are the oldest systems seat. You live with the s
 4. PM glass / plates / packets: `git fetch origin pull/96/head` (PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96)). Named PM branches go stale. SA packets 016–021 live on [#86](https://github.com/bywale-com/omcoda_tower/pull/86) until that docs PR merges.
 5. **Do not recut 015.** `workflowWalk.ts` is the walk. Handle = last-node `previousWrites`.
 6. **Do not redo the first question.** Inventory + flagship fit is the 2026-08-15 **16:28** stamp. Dated 08-15 packages (`AGENTS-SA-PACKAGE.md`, `AUTOMATIONS-SA-PACKAGE.md`) are history.
-7. Waiting cuts (on #86): [`SYSTEMS-CHANGE-PACKET-021.md`](https://github.com/bywale-com/omcoda_tower/blob/5f29d4f/docs/register/SYSTEMS-CHANGE-PACKET-021.md) Form occupancy — pickup first. Then [`SYSTEMS-CHANGE-PACKET-020.md`](https://github.com/bywale-com/omcoda_tower/blob/5f29d4f/docs/register/SYSTEMS-CHANGE-PACKET-020.md) Operator panes (not `firm_readiness`).
+7. Waiting cuts: [`register/SYSTEMS-CHANGE-PACKET-022.md`](./register/SYSTEMS-CHANGE-PACKET-022.md) — **objective met is a Local event** (stamp the ask, match the answer; no mint). **021** Form occupancy is in flight on PR [#108](https://github.com/bywale-com/omcoda_tower/pull/108). [`SYSTEMS-CHANGE-PACKET-020.md`](https://github.com/bywale-com/omcoda_tower/blob/5f29d4f/docs/register/SYSTEMS-CHANGE-PACKET-020.md) Operator panes (not `firm_readiness`) still waiting on #86.
 
 **Remap a new occupant must not miss** (packet ≠ migration after 012):
 
@@ -166,7 +166,7 @@ Types mirror: `src/app/wire/machineTypes.ts`. Seeds: `supabase/seeds/` + `manife
 | `server/wire-service/dispatchSend.ts` | Live send gates (consent / halt / silence / SEND_MODE) |
 | `server/auth-service/` | OTP, sessions, `POST /auth/access/redeem` |
 
-Causal ring: Automations (when / motion) → Agents (sequence / attempt law / goal) → worker applies bind → desks record → `meeting_booked`. Dual entry: `call_agent` **and** Agent-native enroll. Campaign completion pointers live on `campaign_objective` (`010`). Flagship goal-as-escalation (→ other agent · other workflow · or end) is still not a destination row — confirm from SQL + [`SYSTEMS-GOAL.md`](./register/SYSTEMS-GOAL.md), do not assume the PM log.
+Causal ring: Automations (when / motion) → Agents (sequence / attempt law / goal) → worker applies bind → desks record → `meeting_booked`. Dual entry: `call_agent` **and** Agent-native enroll. Campaign completion pointers live on `campaign_objective` (`010`); the cursor is `enrollment.campaign_id`. Flagship goal-as-escalation needs **no** destination row — objective-met is a Local event and escalation is a subscription: [`register/SYSTEMS-CHANGE-PACKET-022.md`](./register/SYSTEMS-CHANGE-PACKET-022.md).
 
 **4. Integrations — live vs stand-in**
 
