@@ -4,6 +4,7 @@
 **Why:** Founder 2026-08-21: light recut of the top Consultant / Operator / Contact control. Not an extensive redesign.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
 **Contact seat:** [`CONTACT-FACE.md`](./CONTACT-FACE.md).  
+**Packet:** [`SHELL-CHROME-PACKET.md`](./SHELL-CHROME-PACKET.md). Marks **T1–T4**.  
 **Does not:** plant; mint tables; recut 015; give Consultant users a Contact picker of the book; give a real contact the Operator switcher.
 
 ---

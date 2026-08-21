@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Contact workspace packets. Shell mark: Operator **Consultant ▾ | Operator | Contact ▾** (opted-in workspaces). Consultant person / contact person do not get that switcher. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Contact workspace packets. Shell packet: Operator **Consultant ▾ | Operator | Contact ▾**. Do not plant.
 
 **How we maintain this log**
 
@@ -2103,4 +2103,28 @@ Flag 15:43 untouched.
 | [`CONTACT-UPLOADED-EVENT-PACKET.md`](./CONTACT-UPLOADED-EVENT-PACKET.md) | A41–A44. Additive on A26. Does not recut trigger-select |
 
 Engineer + SA paste in each. Five buckets. Do not mint tables. Do not recut 015. Do not plant. Flag 15:43 untouched.
+
+---
+
+## 2026-08-21 12:05 UTC — Shell mark: Consultant ▾ is the dropdown again. Contact ▾ is that firm’s opted-in workspaces. Operator only.
+
+**Why:** Founder: light recut, not extensive. Live put a **selector to the left** of Consultant / Operator / Contact. Previously the **Consultant toggle itself was the dropdown** — want that again. When a consultant workspace is selected, **Contact** is also a dropdown: that firm’s contacts who **opted in** and **have a workspace**. **Only Operator** has this. Consultant person: only consultants. Contact person: only themselves / their workspace. Easy UI mark.
+
+**Marks:** [`SHELL-CHROME.md`](./SHELL-CHROME.md) · **T1** closed (no extra picker) · **T2** Consultant ▾ · **T3** Contact ▾ · **T4** who sees the switcher.
+
+**Do not:** give consultants the contact picker; give a contact the Operator switcher; list the whole book in Contact ▾; plant; mint tables; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-21 12:10 UTC — Shell packet.
+
+**Why:** Founder: if the packet isn’t already created, create it.
+
+**Packet:** [`SHELL-CHROME-PACKET.md`](./SHELL-CHROME-PACKET.md) — engineer paste + SA paste + five buckets. Marks already T1–T4. Does not recut the contact workspace interiors.
+
+**Do not:** plant; mint tables; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
 

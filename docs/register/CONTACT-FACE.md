@@ -58,7 +58,7 @@
 
 5. **Opt out** is chrome — How Silence. Not a module.
 6. **On behalf of the firm.** Harbor in the pictures is **example**. Same grain as C16.
-7. **Touchpoints still exist.** Email still goes out (C16). The link **lands in this workspace**, on Now, with that ask open. Channel messages are **not** nav. Operator **view-as** is Contact ▾ on the shell ([`SHELL-CHROME.md`](./SHELL-CHROME.md)) — that is not the contact’s own chrome.
+7. **Touchpoints still exist.** Email still goes out (C16). The link **lands in this workspace**, on Now, with that ask open. Channel messages are **not** nav. Operator **view-as** is Contact ▾ on the shell ([`SHELL-CHROME-PACKET.md`](./SHELL-CHROME-PACKET.md)) — that is not the contact’s own chrome.
 8. **Do not build everything now.** Do not open Furnish. Do not regenerate plates for design-system match until asked. Module interiors **are** drawn (P3–P11, A41–A44).
 9. **Three doors. Do not collapse them.**
 
