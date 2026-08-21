@@ -16,6 +16,11 @@ import { dispatchEventToWorkflows } from "./workflowWalk.ts";
 export const SEED_CONTACT_TOKENS = {
   okonkwo: "c-harbor-okonkwo",
   cole: "c-harbor-cole",
+  wei: "c-harbor-wei",
+  haddad: "c-harbor-haddad",
+  ana: "c-cedar-ana",
+  jon: "c-cedar-jon",
+  priya: "c-cedar-priya",
 } as const;
 
 type HistoryRow = {

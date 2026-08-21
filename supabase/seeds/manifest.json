@@ -93,6 +93,29 @@
           "name": "skilled hours note"
         }
       ]
+    },
+    {
+      "id": "005_contact_workspace_fill",
+      "file": "005_contact_workspace_fill.sql",
+      "environments": ["development", "staging"],
+      "description": "Fill Now / History / Upload for the Harbor and Cedar book",
+      "records": [
+        {
+          "table": "contact_uploads",
+          "id": "cup-cedar-1-letter",
+          "name": "Ana employer letter"
+        },
+        {
+          "table": "enrollment",
+          "id": "enr-harbor-3",
+          "name": "Wei Chen meeting Now"
+        },
+        {
+          "table": "contact_access_links",
+          "id": "cal-cedar-1",
+          "name": "/c/c-cedar-ana"
+        }
+      ]
     }
   ]
 }

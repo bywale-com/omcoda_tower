@@ -56,10 +56,19 @@ const contacts: Record<string, string> = {
 const links: Link[] = [
   { token: "c-harbor-okonkwo", firmId: "firm-harbor", contactId: "cr-harbor-1", campaignId: "camp.optin.day" },
   { token: "c-harbor-cole", firmId: "firm-harbor", contactId: "cr-harbor-2", campaignId: "camp.optin.day" },
+  { token: "c-harbor-wei", firmId: "firm-harbor", contactId: "cr-harbor-3", campaignId: "camp.react.meeting" },
+  { token: "c-harbor-haddad", firmId: "firm-harbor", contactId: "cr-harbor-4", campaignId: "camp.optin.day" },
+  { token: "c-cedar-ana", firmId: "firm-cedar", contactId: "cr-cedar-1", campaignId: "camp.optin.day" },
+  { token: "c-cedar-jon", firmId: "firm-cedar", contactId: "cr-cedar-2", campaignId: "camp.react.meeting" },
+  { token: "c-cedar-priya", firmId: "firm-cedar", contactId: "cr-cedar-3", campaignId: "camp.optin.day" },
 ];
 
 const consent = new Map<string, ConsentRow>([
   ["cr-harbor-1", { basis: "express", silenced: false, source: "contact_workspace", workspaceOptedOut: false }],
+  ["cr-harbor-3", { basis: "express", silenced: false, source: "contact_workspace", workspaceOptedOut: false }],
+  ["cr-harbor-4", { basis: "none", silenced: false, source: "ignored", workspaceOptedOut: false }],
+  ["cr-cedar-1", { basis: "express", silenced: false, source: "contact_workspace", workspaceOptedOut: false }],
+  ["cr-cedar-2", { basis: "express", silenced: false, source: "contact_workspace", workspaceOptedOut: false }],
 ]);
 
 const missing = new Map<string, Array<{ fieldKey: string; label: string }>>([
@@ -70,67 +79,89 @@ const missing = new Map<string, Array<{ fieldKey: string; label: string }>>([
       { fieldKey: "language_clb", label: "Language CLB" },
       { fieldKey: "foreign_work_years", label: "Foreign work years" },
       { fieldKey: "ee_profile_last_updated", label: "EE profile last updated" },
+      { fieldKey: "crs_score", label: "CRS score" },
+      { fieldKey: "noc", label: "NOC" },
     ],
   ],
-  ["cr-harbor-2", [{ fieldKey: "canadian_skilled_hours", label: "Canadian skilled hours" }]],
+  [
+    "cr-harbor-2",
+    [
+      { fieldKey: "canadian_skilled_hours", label: "Canadian skilled hours" },
+      { fieldKey: "language_clb", label: "Language CLB" },
+      { fieldKey: "ee_profile_exists", label: "Express Entry profile exists" },
+    ],
+  ],
+  [
+    "cr-harbor-4",
+    [
+      { fieldKey: "canadian_skilled_hours", label: "Canadian skilled hours" },
+      { fieldKey: "language_clb", label: "Language CLB" },
+      { fieldKey: "foreign_work_years", label: "Foreign work years" },
+    ],
+  ],
+  [
+    "cr-cedar-1",
+    [
+      { fieldKey: "canadian_skilled_hours", label: "Canadian skilled hours" },
+      { fieldKey: "language_clb", label: "Language CLB" },
+      { fieldKey: "crs_score", label: "CRS score" },
+      { fieldKey: "noc", label: "NOC" },
+    ],
+  ],
+  [
+    "cr-cedar-3",
+    [
+      { fieldKey: "canadian_skilled_hours", label: "Canadian skilled hours" },
+      { fieldKey: "language_clb", label: "Language CLB" },
+      { fieldKey: "ee_profile_last_updated", label: "EE profile last updated" },
+    ],
+  ],
 ]);
 
+function cup(
+  id: string,
+  firmId: string,
+  contactId: string,
+  kind: string | null,
+  origin: Upload["origin"],
+  fieldKey: string | null,
+  bodyText: string | null,
+  fileName: string | null,
+  createdAt: string,
+): Upload {
+  return { id, firmId, contactId, kind, origin, fieldKey, bodyText, fileName, createdAt };
+}
+
 export const standInContactUploads: Upload[] = [
-  {
-    id: "cup-harbor-1-hours",
-    firmId: "firm-harbor",
-    contactId: "cr-harbor-1",
-    kind: "skilled hours note",
-    origin: "custom",
-    fieldKey: null,
-    bodyText: "1680 hours on the current permit.",
-    fileName: null,
-    createdAt: "2026-08-20T15:10:00.000Z",
-  },
-  {
-    id: "cup-harbor-1-letter",
-    firmId: "firm-harbor",
-    contactId: "cr-harbor-1",
-    kind: "employer letter",
-    origin: "kind",
-    fieldKey: null,
-    bodyText: null,
-    fileName: "employer-letter.pdf",
-    createdAt: "2026-08-18T11:02:00.000Z",
-  },
-  {
-    id: "cup-harbor-2-clb",
-    firmId: "firm-harbor",
-    contactId: "cr-harbor-2",
-    kind: "language_clb",
-    origin: "question",
-    fieldKey: "language_clb",
-    bodyText: "CLB 9 from the last IELTS.",
-    fileName: null,
-    createdAt: "2026-08-19T09:40:00.000Z",
-  },
-  {
-    id: "cup-harbor-3-any",
-    firmId: "firm-harbor",
-    contactId: "cr-harbor-3",
-    kind: null,
-    origin: "any",
-    fieldKey: null,
-    bodyText: "Unspecified extra note.",
-    fileName: "note.txt",
-    createdAt: "2026-08-17T16:22:00.000Z",
-  },
-  {
-    id: "cup-harbor-4-pay",
-    firmId: "firm-harbor",
-    contactId: "cr-harbor-4",
-    kind: "pay stub",
-    origin: "kind",
-    fieldKey: null,
-    bodyText: null,
-    fileName: "july-pay.pdf",
-    createdAt: "2026-08-16T08:11:00.000Z",
-  },
+  cup("cup-harbor-1-hours", "firm-harbor", "cr-harbor-1", "skilled hours note", "custom", null, "1680 hours on the current permit.", null, "2026-08-20T15:10:00.000Z"),
+  cup("cup-harbor-1-letter", "firm-harbor", "cr-harbor-1", "employer letter", "kind", null, null, "employer-letter.pdf", "2026-08-18T11:02:00.000Z"),
+  cup("cup-harbor-1-pay", "firm-harbor", "cr-harbor-1", "pay stub", "kind", null, null, "june-pay.pdf", "2026-08-14T09:18:00.000Z"),
+  cup("cup-harbor-1-passport", "firm-harbor", "cr-harbor-1", "passport", "kind", null, null, "passport-bio.pdf", "2026-08-12T16:40:00.000Z"),
+  cup("cup-harbor-1-clb-q", "firm-harbor", "cr-harbor-1", "language_clb", "question", "language_clb", "CLB 9 from the last IELTS.", null, "2026-08-11T13:05:00.000Z"),
+  cup("cup-harbor-2-clb", "firm-harbor", "cr-harbor-2", "language_clb", "question", "language_clb", "CLB 9 from the last IELTS.", null, "2026-08-19T09:40:00.000Z"),
+  cup("cup-harbor-2-any", "firm-harbor", "cr-harbor-2", null, "any", null, "Extra note from the last consult.", "cole-note.txt", "2026-08-18T10:12:00.000Z"),
+  cup("cup-harbor-2-letter", "firm-harbor", "cr-harbor-2", "employer letter", "kind", null, null, "cole-employer.pdf", "2026-08-16T15:33:00.000Z"),
+  cup("cup-harbor-2-hours", "firm-harbor", "cr-harbor-2", "skilled hours note", "custom", null, "920 hours so far this year.", null, "2026-08-15T11:08:00.000Z"),
+  cup("cup-harbor-3-any", "firm-harbor", "cr-harbor-3", null, "any", null, "Unspecified extra note.", "note.txt", "2026-08-17T16:22:00.000Z"),
+  cup("cup-harbor-3-pay", "firm-harbor", "cr-harbor-3", "pay stub", "kind", null, null, "wei-july-pay.pdf", "2026-08-15T08:44:00.000Z"),
+  cup("cup-harbor-3-eca", "firm-harbor", "cr-harbor-3", "ECA", "kind", null, null, "wei-eca.pdf", "2026-08-10T19:01:00.000Z"),
+  cup("cup-harbor-3-offer", "firm-harbor", "cr-harbor-3", "job offer", "custom", null, "Offer letter is with the employer still.", null, "2026-08-09T12:20:00.000Z"),
+  cup("cup-harbor-4-pay", "firm-harbor", "cr-harbor-4", "pay stub", "kind", null, null, "july-pay.pdf", "2026-08-16T08:11:00.000Z"),
+  cup("cup-harbor-4-passport", "firm-harbor", "cr-harbor-4", "passport", "kind", null, null, "haddad-passport.pdf", "2026-08-13T17:55:00.000Z"),
+  cup("cup-harbor-4-any", "firm-harbor", "cr-harbor-4", null, "any", null, "Called in; asked to hold the file.", null, "2026-08-12T14:02:00.000Z"),
+  cup("cup-harbor-4-clb", "firm-harbor", "cr-harbor-4", "language_clb", "question", "language_clb", "Retaking IELTS in September.", null, "2026-08-08T10:30:00.000Z"),
+  cup("cup-cedar-1-letter", "firm-cedar", "cr-cedar-1", "employer letter", "kind", null, null, "ana-employer.pdf", "2026-08-19T14:10:00.000Z"),
+  cup("cup-cedar-1-pay", "firm-cedar", "cr-cedar-1", "pay stub", "kind", null, null, "ana-june-pay.pdf", "2026-08-17T09:00:00.000Z"),
+  cup("cup-cedar-1-hours", "firm-cedar", "cr-cedar-1", "skilled hours note", "custom", null, "1440 hours on the open work permit.", null, "2026-08-16T11:45:00.000Z"),
+  cup("cup-cedar-1-clb", "firm-cedar", "cr-cedar-1", "language_clb", "question", "language_clb", "CLB 8.", null, "2026-08-14T18:22:00.000Z"),
+  cup("cup-cedar-2-any", "firm-cedar", "cr-cedar-2", null, "any", null, "Prefers a late-afternoon slot.", "jon-note.txt", "2026-08-18T13:40:00.000Z"),
+  cup("cup-cedar-2-passport", "firm-cedar", "cr-cedar-2", "passport", "kind", null, null, "jon-passport.pdf", "2026-08-15T07:19:00.000Z"),
+  cup("cup-cedar-2-letter", "firm-cedar", "cr-cedar-2", "employer letter", "kind", null, null, "jon-employer.pdf", "2026-08-13T16:05:00.000Z"),
+  cup("cup-cedar-2-noc", "firm-cedar", "cr-cedar-2", "noc", "question", "noc", "NOC 21231 on the last NOA.", null, "2026-08-11T12:12:00.000Z"),
+  cup("cup-cedar-3-pay", "firm-cedar", "cr-cedar-3", "pay stub", "kind", null, null, "priya-july-pay.pdf", "2026-08-19T08:50:00.000Z"),
+  cup("cup-cedar-3-eca", "firm-cedar", "cr-cedar-3", "ECA", "kind", null, null, "priya-eca.pdf", "2026-08-17T15:27:00.000Z"),
+  cup("cup-cedar-3-any", "firm-cedar", "cr-cedar-3", null, "any", null, "Has not Agreed yet; sent the docs ahead.", null, "2026-08-16T09:33:00.000Z"),
+  cup("cup-cedar-3-hours", "firm-cedar", "cr-cedar-3", "skilled hours note", "custom", null, "1100 hours; still accumulating.", null, "2026-08-12T20:14:00.000Z"),
 ];
 
 function linkOf(token: string): Link | undefined {
@@ -222,14 +253,48 @@ function project(link: Link, campaignId?: string): ContactSeatPayload {
     state = "consent";
     title = `${firmName} would like to stay in touch`;
     instruction = "Agree or ignore before we ask for anything else.";
-  } else if (link.campaignId === "camp.optin.day") {
+  } else if (link.campaignId === "camp.optin.day" || link.campaignId === "camp.reeng.nudge") {
     state = "form";
     title = "A few facts so we can continue";
     instruction = `${firmName} asked for these so we can keep going.`;
+  } else if (link.campaignId === "camp.react.meeting") {
+    state = "meeting";
+    title = "Book a time";
+    instruction = `${firmName} is ready when you are.`;
   }
   const files = standInContactUploads.filter((u) => u.contactId === link.contactId);
   const kinds = [...new Set(files.map((u) => u.kind).filter((k): k is string => Boolean(k)))];
   const questions = missing.get(link.contactId) ?? [];
+  const history: ContactSeatPayload["history"] = [
+    {
+      id: "ask-consent",
+      kind: "consent",
+      title: "Consent",
+      outstanding: needsConsent,
+      campaignId: null,
+      body: `${firmName} would like to send you updates about your file when something is needed. You can opt out later.`,
+    },
+  ];
+  if (link.campaignId === "camp.optin.day" || link.campaignId === "camp.reeng.nudge") {
+    history.push({
+      id: "ask-form",
+      kind: "form",
+      title: "Launch day",
+      outstanding: true,
+      campaignId: link.campaignId,
+      body: `${firmName} asked for facts so the file can continue.`,
+    });
+  }
+  if (link.campaignId === "camp.react.meeting") {
+    history.push({
+      id: "ask-meeting",
+      kind: "meeting",
+      title: "Book a meeting",
+      outstanding: true,
+      campaignId: "camp.react.meeting",
+      body: `${firmName} asked you to book a meeting.`,
+    });
+  }
   return {
     ok: true,
     tokenValid: true,
@@ -242,26 +307,12 @@ function project(link: Link, campaignId?: string): ContactSeatPayload {
       instruction,
       consentCopy: `${firmName} would like to send you updates about your file when something is needed. You can opt out later.`,
       formFields: state === "form" ? questions : undefined,
-      meetingSlots: state === "meeting" ? [new Date(Date.now() + 86400000).toISOString()] : undefined,
+      meetingSlots:
+        state === "meeting"
+          ? [1, 2, 3].map((i) => new Date(Date.now() + i * 86400000).toISOString())
+          : undefined,
     },
-    history: [
-      {
-        id: "ask-consent",
-        kind: "consent",
-        title: "Consent",
-        outstanding: needsConsent,
-        campaignId: null,
-        body: `${firmName} would like to send you updates about your file when something is needed. You can opt out later.`,
-      },
-      {
-        id: "ask-form",
-        kind: "form",
-        title: "Launch day",
-        outstanding: !needsConsent && link.campaignId === "camp.optin.day",
-        campaignId: "camp.optin.day",
-        body: `${firmName} asked for facts so the file can continue.`,
-      },
-    ],
+    history,
     files: files.map((u) => ({
       id: u.id,
       kind: u.kind,

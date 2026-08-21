@@ -1878,10 +1878,12 @@ export const standInMachineApi: MachineApiPort = {
 
   async listContactUploadKinds(firmId) {
     const id = firmId || standInFirm();
+    const harbor = id === "firm-standin-harbor" || id === "firm-harbor";
     const kinds = [
       ...new Set(
         standInContactUploads
-          .filter((row) => row.firmId === id && row.kind)
+          .filter((row) => row.firmId === id || (harbor && (row.firmId === "firm-harbor" || row.firmId === "firm-standin-harbor")))
+          .filter((row) => row.kind)
           .map((row) => row.kind as string),
       ),
     ];
