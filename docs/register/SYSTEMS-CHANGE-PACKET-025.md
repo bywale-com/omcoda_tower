@@ -3,9 +3,9 @@
 **Seat:** Systems Analyst.
 **When:** 2026-08-21 12:03 UTC.
 **What this is:** the cut for PM [`SHELL-CHROME-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/SHELL-CHROME-PACKET.md) · [`SHELL-CHROME.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/SHELL-CHROME.md) on PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96). Implementer **only implements**. No analysis left.
-**Why:** Live drifted a firm chip **to the left** of Segmented Consultant | Operator | Contact. Founder: the Consultant **slot** is the dropdown again. Contact ▾ is that firm’s opted-in workspaces. **Only Operator** has this.
-**Join:** `PrototypeAntApp.tsx` Header · `viewAsContext.tsx` · `isPlatformAdminEmail` · `listConsultants` (`users`⋈`firms`) · `consent_records` · 024 `contact_access_links` (has-workspace). Face: `git fetch origin pull/96/head` · T1–T4.
-**Flag:** 15:43 untouched. **Do not recut 015 / 024 interiors / A26.**
+**Why:** Live drifted a firm chip **to the left** of Segmented Consultant | Operator | Contact. Founder: the Consultant **slot** is the dropdown again. Contact ▾ is that firm’s people who still have a workspace — **everyone until they opt out of the workspace**, not “opted in.” **Only Operator** has this.
+**Join:** `PrototypeAntApp.tsx` Header · `viewAsContext.tsx` · `isPlatformAdminEmail` · `listConsultants` (`users`⋈`firms`) · `consent_records.workspace_opted_out` (024). Face: `git fetch origin pull/96/head` · T1–T4.
+**Flag:** 15:43 untouched. **Do not recut 015 / 024 Now-History-Upload interiors / A26.**
 **Instructions:** founder only.
 
 ---
@@ -16,7 +16,7 @@
 |------|----------|
 | One header control: **Consultant ▾ \| Operator \| Contact ▾** | Extra `Dropdown` to the left of Segmented |
 | Consultant ▾ = existing `listConsultants` + `setActiveFirmId` | A view-as table. A second firm picker |
-| Contact ▾ = that **selected** firm’s contacts who **opted in** and **have a workspace** | `listContactRecords` (whole book). `listConsultants`. Consultant person gets this list |
+| Contact ▾ = that **selected** firm’s contacts who **have not opted out of the workspace** | “Opted in.” Token-required. Consultant person gets this list |
 | Who sees it: Operator both dropdowns; consultant person Consultant only; contact person **no** this switcher | Contact token land keeps Tower Segmented. Consultant sees Operator |
 
 ---
@@ -29,11 +29,11 @@
 | **Consultant person:** authenticated, not admin. Header already Segmented **Consultant only**. `setActiveFirmId(user.firmId)`. | Do not add Operator or Contact ▾. |
 | **Consultant ▾ list:** `GET /machine/consultants` — `users` ⋈ `firms`, skip the admin email. `selectConsultant` → `setActiveFirmId`. | Wired. The list is a **separate** `Dropdown` to the **left** of Segmented. That is the drift. |
 | **Contact desk:** `ContactAntScene` 10-item flipper. Header still shows when `desk==='contact'` (no Log out). | Interior is **024**. This packet only **who** opens it and **whether** the Tower switcher is on. |
-| **Opted in:** `consent_records.basis IN ('express','implied')` and `silenced = false`. Ignore (`source='ignored'`, basis still `none`) is **not** opted in. | Correct filter. |
-| **Has a workspace:** **silent** until 024. `contact_access_links` (uninvalidated) **is** that. | Do **not** treat “in the book” as a workspace. Empty Contact ▾ is honest if 024 has not minted tokens yet. |
-| `listContactRecords` | Whole book. **Forbidden** as Contact ▾. |
+| **Opted in:** `consent_records.basis IN ('express','implied')`. | **Wrong filter for this list.** The opt-in **is** a Now state on the workspace. Requiring it here pollutes the idea. |
+| **Has a workspace:** every `contact_records` row at that firm, until `workspace_opted_out`. Token (`contact_access_links`) is how **they** arrive from C16, not whether the seat exists. | 025 first cut required the token + express consent. **Retracted.** |
+| `silenced` / `handleConsentSilence` | Send halt (email opt-out, **not designed**). Do not use for Contact ▾. |
 
-No new table. Session firm + consent + 024 token already cover it.
+No new table. Session firm + `workspace_opted_out` cover it.
 
 ---
 
@@ -52,23 +52,18 @@ New read (admin only), same grain as the consultant book — **session / selecte
 ```
 SELECT cr.id, cr.name, cr.email
   FROM contact_records cr
-  JOIN consent_records cons
+  LEFT JOIN consent_records cons
     ON cons.contact_id = cr.id AND cons.firm_id = cr.firm_id
  WHERE cr.firm_id = $1
-   AND cons.basis IN ('express', 'implied')
-   AND cons.silenced = false
-   AND EXISTS (
-         SELECT 1 FROM contact_access_links l
-          WHERE l.firm_id = cr.firm_id
-            AND l.contact_id = cr.id
-            AND l.invalidated_at IS NULL
-       )
+   AND COALESCE(cons.workspace_opted_out, false) = false
  ORDER BY cr.name
 ```
 
-Wire: `GET /machine/contact-workspaces` (name it that). 403 unless admin (same gate as `handleConsultantsList`). Auth-bypass standin: **that filter**, never the whole book. Empty list → still the Contact slot, no fake person.
+No consent row → they **have** a workspace (Agree has not happened yet; that is the point). Ignore (`source='ignored'`) still listed. Token not required.
 
-**024 not landed:** `contact_access_links` missing → query returns **[]**. Do not fall back to `listContactRecords`.
+Wire: `GET /machine/contact-workspaces`. 403 unless admin (same gate as `handleConsultantsList`). Auth-bypass standin: **that filter**. Empty only when the book is empty or everyone has foot-opted-out — still the slot, no fake person.
+
+**024 column not landed yet:** list the firm’s `contact_records` (same as “no one has opted out”). Do **not** filter to `basis IN ('express','implied')`. Do not require `contact_access_links`.
 
 Client: `selectContact(contactId)` on view-as (React state, not a table). Pass into the **024** workspace. Do not recut Now / History / Upload here.
 
@@ -86,7 +81,7 @@ Do **not** send a contact through `/a/<token>` (consultant). Do not show Hub / S
 
 ### 4. No SQL file if 024 already created `contact_access_links`
 
-This packet is Header + one SELECT. If 024 has not merged, still ship the chrome; Contact ▾ stays empty until 024’s table exists. **Do not mint** `view_as` / `shell_state`.
+This packet is Header + one SELECT. The `workspace_opted_out` column is **024**. **Do not mint** `view_as` / `shell_state`.
 
 ---
 
@@ -94,7 +89,7 @@ This packet is Header + one SELECT. If 024 has not merged, still ship the chrome
 
 `npm run build`. `/prototype-ant`:
 
-1. Admin / auth-bypass: **no** firm chip to the left of the segment. Consultant ▾ opens firms. Operator has no chevron. Contact ▾ lists only opted-in + workspace people of the **selected** firm — not the book.
+1. Admin / auth-bypass: **no** firm chip to the left of the segment. Consultant ▾ opens firms. Operator has no chevron. Contact ▾ lists that firm’s book **minus** `workspace_opted_out` — including people who have not Agreed yet. Not “opted in.” Not token-only.
 2. Pick another consultant → Contact ▾ restamps. Empty firm → empty Contact ▾, still the slot.
 3. Signed-in consultant (not admin): Consultant only. No Operator. No Contact ▾.
 4. `/c/<token>`: workspace, **no** Tower Consultant/Operator/Contact switcher.
@@ -104,9 +99,10 @@ This packet is Header + one SELECT. If 024 has not merged, still ship the chrome
 
 ## What this packet does not do
 
-- Recut 015, 024 (seat / upload / event), 022, A26.
+- Recut 015, 024 Now/History/Upload modules, 022, A26.
 - Mint tables.
-- List the whole book.
+- Filter Contact ▾ to express consent or to tokens.
 - Give consultants Contact ▾ or contacts the Operator switcher.
 - Freeze Harbor / Alex.
+- Build the email unsubscribe button.
 - Unify UUID `firms` vs TEXT `contact_records.firm_id` (session firm already used by the consultant book — reuse it).

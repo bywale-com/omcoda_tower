@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-21 12:03 UTC — **025** shell chrome (Consultant ▾ \| Operator \| Contact ▾). Engineer cuts **025** for this lock. **024** still waiting (workspace). **022** waiting. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-21 12:20 UTC — workspace = until they opt **out of the seat**, not “opted in.” **024 / 025 recut.** Engineer still cuts those. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1996,5 +1996,39 @@ So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WH
 **Did not:** mint; recut 024 interiors; recut 015; overwrite 15:43.
 
 **Do not:** give consultants Contact ▾; list the book; reuse `/a/` as the contact land.
+
+---
+
+## 2026-08-21 12:20 UTC — Founder correction. Everyone has a workspace until they opt out of it. “Opted in” pollutes.
+
+**Why:** Founder: Contact ▾ as “opted in” seeds the wrong idea. The opt-in **is** a Now state on the seat we just designed. Two opt-out places are **not** the same thing.
+
+**Founder wording:**
+
+> everyone has a workspace until or unless they opt out
+
+> the opt-in action itself takes by what we've just design
+
+> if they opt out from receiving any emails from the firm … that would that would opt them out of the workspace
+
+> if they opt out of the workspace it doesn't mean they've opted out of receiving emails
+
+> we've not even started designing the email opt-out button just yet
+
+> the hierarchy I would say … will take place inside the workspace so that they would have a workspace unless they opt out which is that … at the bottom
+
+**Was it implicit?** **024’s Now — yes.** Consent is a state of Now; you enter the seat to Agree. **025’s picker and 024’s foot — no.** 025 required express consent + a token. 024 wired the foot to `silenced` / `consent_records.opt_out` (the send halt). That glued the two doors.
+
+**Hard (024 §2b · 025 §2 recut):**
+
+1. Seat exists for every `contact_records` row until `workspace_opted_out`. Token = no-login door, not existence.
+2. Foot of the workspace → `workspace_opted_out = true` only. Do **not** set `silenced`. Do **not** dispatch `consent_records.opt_out`. Emails still go. `/c/` refuses. Contact ▾ drops them.
+3. Email unsubscribe **not built**. When it is: `silenced` **and** `workspace_opted_out` (email-out ⇒ seat-out). Seat-out never implies email-out.
+4. Contact ▾ = that firm’s book minus `workspace_opted_out`. Not “opted in.” Ignore still listed.
+
+**Did not:** edit the 12:03 stamp; build the email button; recut 015; overwrite 15:43.
+
+**Do not:** filter Contact ▾ to `basis IN ('express','implied')`; wire the foot to `handleConsentSilence`.
+
 
 
