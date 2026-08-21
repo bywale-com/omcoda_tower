@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **13:07:** After a node, the output is **every write that run made**. Same for Audit and Provision. Next node **picks**. Engineer owns SA **013+014+015** (PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86)). **18:44:** data in tables — never hard-code into the app; missing table/field is SA; seed a reasonable count. [`DATA-IN-TABLES.md`](./DATA-IN-TABLES.md). Do not plant. Do not recut the engineer’s packet.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **13:07:** After a node, the output is **every write that run made**. Next node **picks**. **18:44:** data in tables — never hard-code into the app. **Living packet Current is PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96)** (`git fetch origin pull/96/head`): **A40** liked; packet `FORM-CLASS-PACKET.md` on that PR — founder hands that file. Engineer cutting it on PR [#108](https://github.com/bywale-com/omcoda_tower/pull/108). SA **021** on PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86). Do not plant. Do not recut **015**. Do not re-list the build at the founder.
 
 **How we maintain this log**
 
@@ -1137,6 +1137,40 @@ Flag 15:43 untouched.
 **What we wrote:** [`DATA-IN-TABLES.md`](./DATA-IN-TABLES.md). Cloud agents: repo-root `AGENTS.md`. Implementer face seed section points here. 18:53 seed sentence stands (seed the tables, not the SPA).
 
 **Do not:** hard-code rows into React; mint a table from a picture; overwrite 15:43; recut 015; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-21 07:50 UTC — New PM seated. Walked the repo.
+
+**Why:** Founder: you are the new PM. Find out what this means by going through the repo.
+
+**Read:** `docs/README.md` Product Manager identity. This log (Current, then newest on **main**, then newest on PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96)). [`PHASE-TWO.md`](./PHASE-TWO.md). [`PRIMITIVES.md`](./PRIMITIVES.md). [`AGENTS-FACE.md`](./AGENTS-FACE.md). [`AUTOMATIONS-FACE.md`](./AUTOMATIONS-FACE.md). [`DATA-IN-TABLES.md`](./DATA-IN-TABLES.md). [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md). SA log read-only. Packets on #96. SA ascribes on [#86](https://github.com/bywale-com/omcoda_tower/pull/86). Did not recut **015**. Did not plant. Did not overwrite **15:43**.
+
+**What the seat is**
+
+The founder talks product here. PM owns interpretation, Type A vs Type B (do not mix methods), module-by-module with perimeter, founder wording on flags, this log, and **packets** (one locked pocket; engineer paste + SA paste in the same file). SA owns the machine. Engineer wires `/prototype-ant`. Do not swap jobs.
+
+**Holding (not a second flag)**
+
+- **15:43** is the Agents flag. Operator authors sequencing, firm/default/overrides, attempt/retry/escalation, and a **goal / goal criteria that is itself an escalation point** (other agent · other workflow · or it ends). Once met, met. Middle is modular. The 14:58 numbered list is not the flag.
+- After a node: **every write that run made**. Next node **picks**. Same shape for Audit and Provision. Live walk is **015** — do not recut it from this seat. 15:02 on #96: `run_audit` already commits writes; Hub preview is still not live.
+- **Automations** = on this event → definite operation → binary exits. Blank canvas; you can chain. Agents = send people to a goal. Dual entry: Contacts on the sequence (mission now) and Automations on an event.
+- Captions on plates are not spec. Teaching copy is not a node. Hub is not the app. Product face = CT Ant.
+- Data in tables. Missing table/field is SA. Chrome is not a store.
+
+**Where the trail actually is**
+
+Main’s last stamp was **18:44** (data in tables). The living PM Current is **#96**: A40 liked; `FORM-CLASS-PACKET.md` on that PR; founder tells engineer / SA that file. Do not re-list the build. Engineer PR [#108](https://github.com/bywale-com/omcoda_tower/pull/108) is that pocket. SA **021** (form occupancy = this run’s listing) + **020** (Operator panes) on #86.
+
+On main since the last seating: A26–A28, Rule Outcomes, in-app Action, Add tag, data-in-tables, Test-on-trigger / Run vs Launch, If/Switch. Do not reopen those interiors unless a packet recuts them.
+
+**Open, not filled from this stamp:** click / meeting interiors; C2b on the Agents canvas; send leftover (the message leaving); book-in door; queryable lineage; required-data listing on live rule output (the A40 bind).
+
+Ready. Waiting on you.
+
+**Do not:** plant; overwrite 15:43; recut 015; treat 12:34 as current; answer a simple question by rewriting the corpus; re-list A40 at the founder.
 
 Flag 15:43 untouched.
 
