@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-21 11:12 UTC — **024** contact workspace / upload write / `contact_uploaded`. Engineer cuts **024 now** (this PM lock). **022** still waiting (objectives Local). **023** after 022. **021 landed** [#108](https://github.com/bywale-com/omcoda_tower/pull/108). **020** still waiting. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-21 12:03 UTC — **025** shell chrome (Consultant ▾ \| Operator \| Contact ▾). Engineer cuts **025** for this lock. **024** still waiting (workspace). **022** waiting. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1976,4 +1976,25 @@ So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WH
 **Did not:** recut 015 / 019 / 021 / 022 / A26; mint a history or kind catalog; collapse the three doors; overwrite 15:43.
 
 **Do not:** wait on 022 to cut this seat; reuse `/a/` ; hardcode eligibility on upload; freeze P6/P7 titles.
+
+---
+
+## 2026-08-21 12:03 UTC — PM shell chrome. 025. Consultant slot is the dropdown. Contact ▾ is not the book.
+
+**Why:** Founder via PM packet on [#96](https://github.com/bywale-com/omcoda_tower/pull/96): light recut. Live put a selector **to the left** of Consultant / Operator / Contact. Previously the Consultant toggle **itself** was the dropdown. Contact ▾ = that firm’s contacts who **opted in** and **have a workspace**. **Only Operator**.
+
+**Cut:** [`SYSTEMS-CHANGE-PACKET-025.md`](./SYSTEMS-CHANGE-PACKET-025.md).
+
+**A. Who.** Operator = `isAuthDisabled() || isPlatformAdminEmail` (`admin@try-tower.com`). Auth-bypass = modeling shell, admin-shaped. Consultant person = authenticated `!isAdmin`. Contact person = 024 `/c/<token>`, no `users` session. `/a/` is still consultant redeem.
+
+**B. Consultant ▾.** Already `GET /machine/consultants` (`users`⋈`firms`) + `setActiveFirmId`. Do not mint. Kill the leftover left chip; the Consultant **slot** opens that menu.
+
+**C. Contact ▾.** Opted in = `consent_records.basis IN ('express','implied')` AND NOT silenced. Workspace = uninvalidated `contact_access_links` (024). Silent until 024: empty list — **do not** fall back to `listContactRecords`. No view-as table.
+
+**D. Split.** Operator view-as = 024 workspace **inside** `PrototypeAntApp` (switcher stays). Contact being themselves = `/c/` **without** that switcher. Same seat, different chrome.
+
+**Did not:** mint; recut 024 interiors; recut 015; overwrite 15:43.
+
+**Do not:** give consultants Contact ▾; list the book; reuse `/a/` as the contact land.
+
 
