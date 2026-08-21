@@ -151,9 +151,30 @@ function workspaceOutRefuse(): ContactSeatRefuse {
 
 const STORAGE_KEY = "tower.standin.workspaceOptedOut";
 
+function storageGet(): string | null {
+  try {
+    return localStorage.getItem(STORAGE_KEY) ?? sessionStorage.getItem(STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function storageSet(value: string) {
+  try {
+    localStorage.setItem(STORAGE_KEY, value);
+  } catch {
+    /* private mode */
+  }
+  try {
+    sessionStorage.setItem(STORAGE_KEY, value);
+  } catch {
+    /* private mode */
+  }
+}
+
 function readPersistedOut(): Set<string> {
   try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
+    const raw = storageGet();
     const ids = raw ? JSON.parse(raw) : [];
     return new Set(Array.isArray(ids) ? ids.filter((id) => typeof id === "string") : []);
   } catch {
@@ -164,11 +185,7 @@ function readPersistedOut(): Set<string> {
 function persistOut(contactId: string) {
   const ids = readPersistedOut();
   ids.add(contactId);
-  try {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify([...ids]));
-  } catch {
-    /* private mode */
-  }
+  storageSet(JSON.stringify([...ids]));
 }
 
 function isOut(contactId: string): boolean {
