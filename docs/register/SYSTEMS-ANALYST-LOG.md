@@ -1,10 +1,10 @@
 # Systems Analyst — log
 
-**Seat:** Systems Analyst (machine). PM / founder product talk stays in [`PHASE-TWO.md`](./PHASE-TWO.md) / [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md). Identity: [`../README.md`](../README.md) § Systems Analyst.
+**Seat:** Systems Analyst (machine). Packets + hard decisions so the implementer only cuts. Identity: [`../README.md`](../README.md) § Systems Analyst. Instructions from the **founder** only. PM flags: [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) (read for the glass, not for job-law). Engineer always-on: repo-root `AGENTS.md`.
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-15 23:00 UTC — **Hub is reference only. Ant is the product. Systems for the pictured UI.** Looked at the plates. No mint. 22:55 “stay on Hub” discarded. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-21 09:56 UTC — **nothing waiting on spec.** Engineer cuts **022 now** (then 023). **021 landed** [#108](https://github.com/bywale-com/omcoda_tower/pull/108) as `018`. Packets on [#110](https://github.com/bywale-com/omcoda_tower/pull/110). SA does not land the SQL. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -13,7 +13,7 @@
 - Do not overwrite product flags. Align the model to [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) Current pointer.
 - Cadence floor while in session: **at least four times a day**; denser conversation → denser stamps.
 - Notice inflection (Story/Requirements delta, table mint or refusal, map-vs-Postgres split, founder correction) and **ask**.
-- Area: this file + machine docs under `docs/register/` and `docs/register/system-map/`. Do not scatter one-offs.
+- Stood-up SQL is **`origin/main`**. Stamps **2026-08-16 through 2026-08-20** (packets 010–021, inhabit rewrite) live on PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86) until that docs PR merges — fetch that pull ref; do not treat the gap in this file as unanswered work.
 - **Durable founder expansions** (they are expanding the idea; they will not take it back): stamp **here with specific excerpts**, and park a register markdown so the detail is not only in the log. Same grade as OPERATOR-REVISIONS until Story is promoted. Do not leave critical wording in the background.
 
 ---
@@ -659,3 +659,309 @@ Not cemented.
 Full table appended on [`SYSTEMS-AUTOMATIONS-ASCRIBE.md`](./SYSTEMS-AUTOMATIONS-ASCRIBE.md) § Correction 23:00.
 
 **Do not:** mint; continue Hub; build a lattice page; campaign picker from the slipped caption.
+
+---
+
+## 2026-08-21 08:20 UTC — New SA seated from the repo. This is the job.
+
+**Why:** Founder: you are the new SA. Find out what this means by going through the repo. Cloud always-on (`AGENTS.md`) still seats Engineer; this chat overrode it.
+
+**Accepted:** Systems Analyst. Not PM. Not Engineer. Instructions from the **founder** only. Product flag **15:43** read-only. Face `/prototype-ant`. Hub is not the app.
+
+**What this seat is (from the repo — not a generated flag):**
+
+- You **design the machine**: Story (must / must-not / chain / silence) → Requirements extract → map → Postgres + a **dumb runtime**.
+- Kinds: **state | rule | sequence**. Anything operator-modifiable is a table. UI is only **control** (writes an existing state) or **pane** (displays an existing state).
+- **Event = the INSERT/UPDATE.** Do not mint an `events` table that copies the write.
+- Missing / unspecified store is **this seat**. Data in tables; the implementer waits. Founder speaks **modules**; you map to tables. Do not ask them to name tables.
+- Deliverable = **change packets + hard decisions** (columns, CHECKs, FKs, which INSERT fires dispatch, walker cases) so the Engineer **only cuts**. You are in charge of them succeeding.
+
+**What a new occupant on `main` would miss (this is the inhabit gap):**
+
+- This file on `main` **froze 2026-08-15 23:00**. Live Current is PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86) **2026-08-20 19:20 UTC** — packet **021** pickup first; **019** landed [#107](https://github.com/bywale-com/omcoda_tower/pull/107); **020** waiting. Identity rewrite (11:30 on that PR) already dropped the “walk 001–009 then first question then AGENTS-SA-PACKAGE” start ritual. Inventory is **16:28** in this log. Do not redo it.
+- Packet numbers **≠** migration numbers after `012`. SA **016** landed as `017_event_test_contract.sql`. Migration `016` is Trigger Local. Migration `013` is operator book people, not packet 013.
+- `AGENTS.md` is Engineer always-on (correct default). If the chat seats SA, stop implementing and fetch #86.
+
+**Walked `origin/main` SQL (confirm-or-refute leftovers named on #86):**
+
+| Leftover | On main |
+|----------|---------|
+| House seed **draft** | **Yes.** `015_house_notes_handle.sql` inserts `wf-house-contact-import`; `workflow_state` = `draft`. |
+| `import.created` type ghost | **Yes.** `src/app/data/automationWorkflows.ts` still unions `"import.created"`. Live event is `contact_import` (`017` contract + house graph trigger). |
+| Get is a node | **Yes.** `GET_MODULES` in `automationGet.ts`. Walker has Get. Empty last handle → `N = 0` (packet 017 / `chainWrites`). |
+| `COLLECTIBLE_FIELDS` SPA catalog | **Yes.** `src/app/data/collectibleFields.ts` still the product list. Packet **021** mints `collectible_fields` and kills that constant. |
+| `action.type` `call_agent` only | **Stale (16:28).** `010` widened to `call_agent` \| `ascribe_tag` \| `manage_lists` \| `assign_task` \| `notify_consultant` \| `run_audit`. |
+| sequence⊃campaigns | **SQL.** `010`: `campaign`, `campaign_objective` (click/form/meeting → completion tables), `campaign_channel`. `launch_day` class dropped. |
+| 015 handle | **Live.** `workflowWalk.ts` `previousWrites` = last node; `chainWrites` = available. |
+
+**Waiting (do not recut landed):** **021** first — Form occupancy is this run’s `missing_fact_signals` (A40). Then **020** — Operator panes; no `firm_readiness`. Do not recut 015 / 019.
+
+**Did not:** generate a second Agents flag; mint; recut 015; copy #86’s docs tree onto this stamp; overwrite 15:43.
+
+**Do not:** treat this `main` copy as live Current after 23:00 without fetching #86; start AGENTS-SA-PACKAGE as if unanswered; ask the founder to name tables.
+
+---
+
+## 2026-08-21 08:40 UTC — How far objectives got. Last Engineer PR did not move them.
+
+**Why:** Founder: most recent completed Engineer PR + most recent packets — how far did that go in establishing **objectives as a thing**; where was it prior; what if anything furthered it.
+
+**Hard (quote SQL / walker, not screens):**
+
+There are **two grains**. Do not wash them.
+
+| Grain | What it is | Housed? |
+|-------|------------|---------|
+| **Campaign objective** (C2 / C2b) | Named completion **on a campaign**: click · form · meeting, pointing at an existing completion table | **Yes, 010.** Table `campaign_objective`. UNIQUE one per campaign. |
+| **Class / flagship goal** (15:43 · SYSTEMS-GOAL) | Sequence class = objective (opt-in / re-engagement / reactivation). Goal = that completion. That completion **escalates** to other agent · other workflow · or end | **Paper.** No destination row. Story §7 still not promoted. |
+
+### Prior (before 010 / PR #88)
+
+No `campaign` table. No `campaign_objective`. Completions already existed as **other** tables: `messaging_events`, `fact_writebacks`, `meeting_booked`. 16:28 said goal-as-escalation was not housed. 16:40 correction: meeting booked **is** the reactivation goal — the hole was “not a type on the package.” 22:41 named the housing (sequence⊃campaigns; objective on the campaign pointing at those completions). No mint that night.
+
+### What established it as a thing (not last week)
+
+**PR [#88](https://github.com/bywale-com/omcoda_tower/pull/88) / `010_sequence_campaign_housing.sql`.** Engineer cut the 22:41 housing.
+
+- Table: `id`, `campaign_id` FK, `kind` CHECK `click|form|meeting`, `name`, `completion_table` CHECK `messaging_events|fact_writebacks|meeting_booked`, `source` template|scratch. UNIQUE `(campaign_id)`.
+- Seed: Launch window = click → `messaging_events`; Launch day = form → `fact_writebacks`; Nudge = form; Book a meeting = meeting → `meeting_booked`.
+- Ant **Add objective / Set objective** persists via `saveSequenceHousing` → `campaignHousing.saveHousing`.
+- Worker tick (`cascade.ts`): **campaign cursor first** — `campaignObjectiveMet` then `advanceEnrollmentCampaign` (next `ord` in the same sequence). Last campaign met → `enrollment.campaign_id` NULL. That is **end of this sequence’s campaigns**, not flagship destination.
+
+`campaignObjectiveMet` is coarse: **any** row in that completion table for `(firm_id, contact_id)`. Not “this link,” not “this form,” not this campaign’s objective id.
+
+### Last completed Engineer PR — did not further it
+
+Merged **[#107](https://github.com/bywale-com/omcoda_tower/pull/107)** (2026-08-20) — If two wires + Switch paths (packet **019**). Automations fork. No `campaign_objective`. No objective-met trigger. Same for the Automations stack before it: #106 seat, #105 Test/Run/Launch, #104 data-in-tables, #103 tag, #102 A34, #101/#100 in-app Action, #99 Test contract, #97 A26–A28.
+
+PRIMITIVES still lists **“An objective was met”** as an Automations event (Global = that kind; Local = this objective / campaign). **A26 does not.** `TRIGGER_SELECT_EVENTS` has Form submitted / Campaign failed / meeting is not even on the named list (`meeting_booked` is in the **017** test contract, excluded from A26 by comment “Do not add … meeting”). There is **no** `objective_met` event. Completions can be heard as their **own** writes (`fact_writebacks`, `meeting_booked`). The objective **row** is not dispatched.
+
+### Most recent packets
+
+**021** (uncut, pickup on #86): Automations Action — objective radios **first** (click · form · meeting), then A14 unfiltered. Graph `data.objectiveKind`. **Must not INSERT `campaign_objective`.** Completions stay on the **agent**. Click / meeting interiors out of that packet. This would let Automations **name the kind** when assigning; it would not mint a second objective store.
+
+**020** waiting: Operator panes. Not objectives.
+
+**Did not:** mint; recut 015 / 019; treat #107 as the objective cut; overwrite 15:43.
+
+**Do not:** collapse campaign-objective with class-goal; call any-row-in-`messaging_events` “this objective was met” as if it were Local; put objective-met on A26 without a packet.
+
+---
+
+## 2026-08-21 08:55 UTC — Correction: the open Engineer PR is #108. That is the A40 cut.
+
+**Why:** Founder: not the last *merged* PR. The current one, not merged yet.
+
+**That PR:** [#108](https://github.com/bywale-com/omcoda_tower/pull/108) — *Occupy Form with this run's required-data listing (A40)*. Packet **021**. Draft. One commit on `cursor/form-class-a40-279b`.
+
+08:40 answered #107. Wrong object. #107 is If/Switch, already on main. #108 is the live Engineer cut.
+
+### Prior (Automations Action · Agents, on main today)
+
+Assign cards first. Then “2 · Create the objective”: typed name + Data-request switch. Questions painted from `COLLECTIBLE_FIELDS`. Teaching: “The objective limits which agents you can select.” `formQuestionIds` on the node. No `objectiveKind`. `campaign_objective` is **Agents** housing (010), not this node.
+
+### What #108 actually does (quote the branch)
+
+**Face.** Three radios **first**: Click this link · Submit this form · Book a meeting. Form selected → one Form box. Occupancy = drop Required data (`missing_fact_signals` folder, A31). Unfold = those `field_key`s. Then A14, **all three** sequence classes, unfiltered. Teaching line / assign-first / Create-the-objective block **killed**. Unset radio → `configured === false`.
+
+**Store.** Graph `data.objectiveKind` (`click|form|meeting`). Walker `call_agent` copies that plus `fieldKeys` (from the occupied writes) onto `action.payload_binding`. **No `INSERT` into `campaign_objective`.** Completions stay on the **agent**. Click / meeting interiors are radios only — no boxes in this packet.
+
+**Also in the same PR (not the objective grain):** `018_collectible_fields.sql` (kill SPA catalog as the product list); Rule INSERT of self-reportable `missing_fact_signals` only; Get contacts also emit current audit writes.
+
+### How far that goes as “objectives as a thing”
+
+| Established on #108 | Not this PR |
+|---------------------|-------------|
+| Automations can **name the kind** (the three cores) before assigning a sequence | A new objective **row**. Still `campaign_objective` on the campaign, written from **Agents** |
+| Form-objective **occupies** this run’s required-data listing | Click / meeting interiors |
+| Kind is required to configure the Action | Flagship destinations (other agent · workflow · end) |
+| Sequences stay agnostic (law 9 recut) | “An objective was met” as an A26 trigger |
+| | Filtering agents by the radio |
+
+So: #108 furthered objectives **on the Automations Action** — the operator must pick click / form / meeting. It did **not** mint a second objective store, and it did **not** move the Agents campaign cursor. That cursor is still 010.
+
+**Did not:** recut 015 / 019; treat #107 as this answer; overwrite 15:43.
+
+**Do not:** INSERT `campaign_objective` from this Action; lock form to re-engagement; filter A14 from the radio.
+
+---
+
+## 2026-08-21 09:30 UTC — Objective met **is** a Local event. Packet 022. The gap was the axis on the row.
+
+**Why:** Founder: events/triggers have a solid mechanism underneath — writes we designated as triggers. Objectives must have that same underneath. The sequence runs, the objective is met — **what does that mean systematically?** It is akin to a Local event: *this* form filled and submitted by *this* user, back into the system, system detects it and says “they submitted this form — what’s that sequence?” That mapping/matching is the SA job to finish. Production level, no waiting. UI already built; this is systems only.
+
+**Founder wording (durable):**
+
+> events, triggers in automations — the mechanism underneath it is very solid … it's just writes … that we've designated as triggers
+
+> now objectives — has that kind of underlying?
+
+> the essential idea is that this agent sequence runs, and this objective is met. What does that mean systematically?
+
+> it's akin to a local event … basically this specific form is filled and submitted by this user … back into the system, so the system is able to detect that and say oh, they've submitted this form. Okay, what's that sequence?
+
+> that's the mapping and the matching that we're talking about here … that's what I'm asking you to finish
+
+> as far as UI is concerned, that's all the UI … that exists right now … it's really all just systems so that the engineer can build the backend
+
+> there's no waiting anymore … everything is getting built at the production level
+
+**Accepted. The analogy is exact, and it is not a metaphor — it is the same mechanism.** Cut parked: [`SYSTEMS-CHANGE-PACKET-022.md`](./SYSTEMS-CHANGE-PACKET-022.md).
+
+### The finding (quote SQL)
+
+A Local event = **the write** + **an instance axis on that row**. `contact_import` is Local because `contact_records.import_batch_id` is a column. `campaign_failure` is Local because `campaign_failure.campaign_id` is a column.
+
+Completions have the write. **Two of three have no axis:**
+
+| Kind | Completion | Axis on the row today |
+|---|---|---|
+| `meeting` | `meeting_booked` | `enrollment_id` — nearly there |
+| `form` | `fact_writebacks` | **none.** `form_ref` is in the dispatch payload and **never persisted** (`004` has no column) |
+| `click` | `messaging_events` → `outbound_messages` | **none.** No enrollment / campaign / objective / attempt on the send |
+
+So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WHERE firm_id AND contact_id`. **Any** past meeting satisfies **any** objective. A meeting from last quarter completes today’s launch window. Also accepts `accepted`/`delivered` as a “click.” That is the bug under the founder’s question. Not a Story silence — a missing column.
+
+### The cut (no mint)
+
+1. **Stamp the ask.** `outbound_messages` += `enrollment_id`, `campaign_id`, `campaign_objective_id`, `attempt_id`. `fact_writebacks` += `form_ref`, `campaign_objective_id`. `meeting_booked` += `campaign_objective_id`. `messaging_events` gets **nothing** — it joins the send (one fact, one write).
+2. **Match Local.** Completion must carry this objective’s id (click resolves through the send join; `clicked` only). **No stamp → no match, fail closed.**
+3. **Latch is the cursor.** `enrollment.campaign_id` already advances (010). The flip is once by construction. NULL = the sequence ended. History = `engagement_records` `objective_met` append — which finally gives map-only `state.finishing_event` a runtime write. **No `campaign_objective_met` table** (that would be the 13:20 copy).
+4. **Detect on the write, not only the tick.** `advanceEnrollmentCampaign` is called only inside the tick’s `active_attempts` loop — so an objective met **after** attempts close advances nothing. That is the **16:55 walk-break**, and this closes it: reverse lookup on every completion INSERT (facts handler, meetings handler, click webhook), tick kept as catch-up.
+5. **`objective_met` dispatches.** `local_ref = campaign_objective_id`. `workflow_trigger` needs **no** schema change.
+
+### Flagship consequence (open since 16:28 — now closed)
+
+15:43 “the goal is itself an escalation point: other agent · other workflow · or it ends” needs **no destination column and no `goal` table**. Escalation is a **subscription**: another workflow = a workflow triggered on `objective_met` Local to that objective; another agent = that workflow’s `call_agent`; ends = no listener + cursor NULL. Story §7 promotion is a **wording** must, not structural, and is **not** required to ship this.
+
+**Still open (named, not filled):** what **failure** does after the whole campaign (16:58). `campaign_failure` exists; what it *does* is a founder call. Out of 022.
+
+**Did not:** mint; recut 015 / 019 / #108; add UI; touch 010 DDL; promote Story myself; INSERT `campaign_objective` from Automations.
+
+**Do not:** match a completion by bare `contact_id`; treat `accepted`/`delivered` as a click; copy the objective onto `messaging_events`; mint a met/latch table; renumber a landed migration (022 cuts as `019_objective_local_axis.sql` if #108 took `018`).
+
+---
+
+## 2026-08-21 09:50 UTC — Failure = stop spending, keep listening. Packet 023. Objectives are the billable unit.
+
+**Why:** Founder answered the one thing I said was theirs (open since 16:58): what failure **does**. It is not an ending — it is a **spending decision**. And the reason it matters is commercial: objectives are what we get paid on.
+
+**Founder wording (durable — parked so it is not only here):**
+
+> the failure mode is simple — it just means we're not gonna waste resources on trying to make that objective happen. But if it happens, if it clears, then of course it's still a win.
+
+> this just matters because once we build the escrow … contingent pricing … that's the angle ultimately, is that we get paid on objectives met.
+
+> reactivation is like an objective that we get paid on … as long as there's money in the system, when that objective is met, that objective is counted and we get paid.
+
+> while that sequence is running, the person can't take their money out, and that objective can't be retracted.
+
+> if we couldn't meet the objective in their attempts … whenever the objective is met it still counts and we get paid. However, they cannot take out their money.
+
+> once they do that, then that whole objective is nullified totally. So even if they submit afterwards, even if they book a meeting afterwards — they can't … that link for the meeting is done. Nullified.
+
+> that's where we're going. I'm not saying building right now.
+
+**The distinction (this is the whole law):** failure closes the **outbound** only. **Exhaustion is ours; nullification is theirs.** We stop spending; only the firm pulling their money stops the listening — and then the **door refuses**, not merely the tally.
+
+| | Outbound | Inbound | Money |
+|---|---|---|---|
+| Pursuing | spending | listening | held; cannot withdraw; objective cannot be retracted |
+| **Exhausted** | **stops** | **still listening** | still claimable — “it still counts” |
+| Nullified (escrow era) | stopped | **refused** | withdrawn; void even if they act after |
+
+**Cut:** [`SYSTEMS-CHANGE-PACKET-023.md`](./SYSTEMS-CHANGE-PACKET-023.md). Depends on 022 — before 022, “stop spending” and “stop listening” were the **same switch**, because `advanceEnrollmentCampaign` only ran inside the tick’s open-attempt loop. 022 split them.
+
+**Bug the law fixes (quote `cascade.ts` ~533):** on `!toChannel` the ladder records `campaign_failure`, dispatches it, and leaves `active_attempts.status='open'`. The tick re-picks it, so **every** later due window writes **another** `campaign_failure` and **re-dispatches** the event. That is the resource waste the founder is naming, plus a duplicate-event bug on any subscribed workflow.
+
+**Decided:** attempt → `status='exhausted'` in the same transaction as the failure INSERT (tick already filters `open`, so spending stops with no query change). `enrollment` += `pursuit_state` (`pursuing|exhausted`) + `exhausted_at`, reset on cursor advance. Cursor is **not** nulled. Forbidden on exhaustion: nulling `campaign_id`, invalidating any link/door, unstamping 022 evidence, or gating `onCompletionWrite` on `pursuit_state` — **a completion on an exhausted pursuit is a normal win.** No forced next campaign (16:58 stands).
+
+**Name collision flagged:** `active_attempts.status='nullified'` already means *“they responded — a win”* (inbound override, meeting booked). A nullified **objective** is money-pulled. Do not overload that word or column.
+
+**Parked direction:** [`SYSTEMS-OBJECTIVE-ESCROW.md`](./SYSTEMS-OBJECTIVE-ESCROW.md) — objectives are the billable unit; three states money reads; what it will still demand (a **claim ledger** as the one future mint, because “was this claimable at the instant it completed?” cannot be recomputed — withdrawal-vs-completion ordering *is* the payment question); escrow as stood up is thin (`escrow_acceptances` = firm-level acceptance, no balance/price/withdrawal/release; port is a **stand-in**); withdrawal has no write today; nullification must be enforced at ingress (`access_links.invalidated_at` is that mechanism already).
+
+**Story:** this **partially fills** the §3 silence *“Escrow release trigger / outcome definition.”* Founder gave the **trigger** — release is on **objective met**. The **outcome** half (pricing, which objectives bill, withdrawal terms) is still silent. Naming a trigger is **not** promotion; Requirements must not extract a claim state yet. Story §3 musts still bind: terms are firm↔Om Coda, Tower holds no immigrant funds, the contact pays nothing — the escrowed money is the **firm’s**.
+
+**Did not:** build escrow / pricing / a claim ledger; mint anything for the direction; promote Story myself; recut 015 / 019 / #108; overwrite 15:43.
+
+**Do not:** treat exhaustion as an ending; gate 022 detection on `pursuit_state`; reuse `nullified`; let a nullified objective be merely uncounted; force another campaign on failure.
+
+---
+
+## 2026-08-21 10:10 UTC — Selecting the objective **is a binding**. 022 §2.6. Two decisions.
+
+**Why:** Founder: when you select that objective on the Automations Action assigning an agent, **you are binding that objective to something.** Correct, and the column is literally `action.payload_binding`.
+
+**Founder wording:**
+
+> when you select that objective, when you're assigning agents' action in automations, you are binding that objective to something
+
+**Hard:** authorship **binds**; runtime **carries** that binding out (022 §2.1 stamp) so the return leg matches. The stamp is not new information — it is the binding made physical. Three things are bound; only one was resolved:
+
+| Bound to | Where | Was |
+|---|---|---|
+| the **agent** (which sequence pursues it) | `action.agent_ref` → `enrollment.sequence_id` | resolved |
+| the **objective row** (what counts as done) | `campaign_objective` on the landed campaign (010) | **not resolved** — `objectiveKind` never checked against it |
+| the **instance** (which form / link / calendar) | form: `mappedSlots.form` → `payload_binding.fieldKeys` (#108) | bound but **had no id**, so nothing could be stamped |
+
+**Decision 1 — the campaign owns the objective; the Action must agree.** `campaign_objective.kind` is authority (Agents authored it; Agents stays agnostic — law 9 recut). The Action **declares and must match**: agree → configured + carry `campaign_objective_id`; disagree → `configured=false`, honest block (#105 no silent success); no campaign objective → `configured=false`. Without this, one enroll can claim two objectives and §2.2 has no single id to match. 021 still stands: Automations does **not** INSERT `campaign_objective`.
+
+**Decision 2 — the form instance is the binding; its id is derived.** Automations owns the form (existing face law), so the bound listing **is** the form. `form_ref = form.<enrollment_id>.<campaign_objective_id>` — minted at enroll, stamped outbound, persisted on `fact_writebacks` (§2.1), matched in §2.2. Recomputable, so **no table, no id column, cannot drift.** This is exactly the axis `triggerLocalRefFromPayload("fact_writebacks")` already reads and that A26 already offers as **Form submitted → Select form** — a face that only works once `form_ref` is persisted.
+
+`click` / `meeting` instances stay unbound here: the link is campaign content (Agents), and there is no calendar port. Objective-level stamp is enough to match. Do not invent a link id.
+
+**Did not:** mint a form/binding table; let the Action author the objective; filter sequences by the radio; recut 015 / 019 / #108; overwrite 15:43.
+
+**Do not:** stamp a `campaign_objective_id` the Action's kind contradicts; store `form_ref` as an allocated id; bind a calendar or link instance without a packet.
+
+---
+
+## 2026-08-21 10:35 UTC — Founder correction. **It is the first objective.** 10:10 Decision 1 retracted. Campaigns are objective-agnostic.
+
+**Why:** Founder had to sit with 10:10 and found the one thing they could not agree with. They are right, and the record already said so before I wrote it.
+
+**Founder wording:**
+
+> first of all, sequence and campaign are different things — a sequence is gonna have five different campaigns, meaning five different objectives
+
+> imagine an agent sequence … it can have five different campaigns chained together. So where does this — the objective is simply **the first objective**. That's it. It's just the first objective I was getting at
+
+> I don't build the system like that, because it's not a must
+
+> **campaigns are objective agnostic** … even when you're selecting, campaigns are objective agnostic. I've said that a couple times now — in previous generations
+
+> that's just why I stressed what this whole thing does: it just **binds**, and you agree. But that doesn't do a lot with the sequencing itself, or how that objective is referenced inside of the agent sequence
+
+**Retracted (10:10 Decision 1):** “the campaign owns the objective; the Action **must agree**; disagree → `configured=false`, honest block.” **Wrong.** That is a validation gate, and a gate is the exact coupling that was already **recut**: 021 / law 48 — *A14 unfiltered; do not limit sequences from the objective.* I quoted the recut in the same paragraph and then rebuilt the thing it killed.
+
+**The record already carried it** (this was not new information, which is why it is my error and not a spec gap): SA 22:41 grain lock *“Agent = sequence. Sequence is blank / **agnostic**. Campaigns live inside it.”* · `SYSTEMS-AGENTS-ASCRIBE` *“a blank agent sequence is agnostic”* · PM 11:45 *“**Law 9 recut:** do not limit sequences from the objective. Agents are agnostic of Automations.”* Note `AUTOMATIONS-FACE.md` law 9 still reads *“which agents you may select is limited by the objective — can be enforced,”* and the caption audit still carries *“the objective limits which agents you can select.”* **Both are superseded.** Flagged in 022 §2.6 and § “does not do” so an implementer does not revive them from the face.
+
+**Corrected law:** the objective bound on the Automations Action is **the entry objective — the first one**, because that is where the hand-in lands. It is not “the objective of the sequence”: a sequence has as many objectives as it has campaigns, chained, authored in Agents. The binding **binds**; it does not govern the sequencing, and it does not govern how the objective is referenced inside the sequence.
+
+**Hard, revised (022 §2.6):**
+
+1. **No gate.** Disagreement between the Action’s `objectiveKind` and any `campaign_objective.kind` is **not** an error, does **not** set `configured=false`, and does **not** filter the A14 list. `configured` still needs *a* pick (#105), never agreement.
+2. **Runtime authority is the cursor** — §2.2 matches `enrollment.campaign_id`’s objective. At enroll that *is* the first campaign; later it is whichever is current. The radio never overrides it.
+3. **Decision 2 survives, re-anchored:** `form_ref = form.<enrollment_id>.<campaign_objective_id>` where that objective is **the one the form actually goes out under** (the cursor’s), not the radio. So it holds when the radio disagreed, and holds for a form campaign reached later. A bound listing with no form objective yet just sits unused — not an error, no warning.
+
+**Also fixed my blur:** Automations selects a **sequence** (A8 / A14 radio, whole agent). There is **no campaign picker** in Automations, and even selecting one would not set the interior chain.
+
+**Independent argument the gate was wrong** (beyond the recut): at **authorship there is no enrollment**, so “the current campaign objective” does not exist. A gate could only ever check campaign `ord 0` — and would wrongly block a sequence whose *later* campaigns carry exactly the kind the operator picked.
+
+**Did not:** edit the 10:10 stamp (append-only; this is the correction); change §2.1 / §2.2 / §2.3 / §2.4 / §2.5; touch 023; mint; overwrite 15:43.
+
+**Do not:** re-derive a gate from `AUTOMATIONS-FACE` law 9 or the caption; filter A14 by the radio; treat the Action’s objective as the sequence’s objective; call a kind mismatch invalid.
+
+---
+
+## 2026-08-21 09:56 UTC — Nothing waiting. Engineer cuts 022 now.
+
+**Why:** Founder: *you’ve just been documenting … doesn’t the engineer need to do something right now? … is there something else you’re waiting for?*
+
+**Answer:** No. Spec is closed on this pocket. **021 landed** [#108](https://github.com/bywale-com/omcoda_tower/pull/108) (`018_collectible_fields.sql`, merged 09:13). The production cut is already written: **022** then **023** on [#110](https://github.com/bywale-com/omcoda_tower/pull/110). I am SA — I do not land the SQL. I am not waiting for Story, PM, or another packet.
+
+**Engineer does now:** `019_objective_local_axis.sql` + stamp the ask + Local match fail-closed + detect on the completion INSERT + dispatch `objective_met`. Then 023 (`exhausted`, do not go deaf).
+
+**Did not:** implement from this seat; write a third packet; recut 015 / 019; mint.
+
+**Do not:** wait on #108 (it is merged); wait on 020 (Operator panes, different pocket); treat 022 as analysis still open.

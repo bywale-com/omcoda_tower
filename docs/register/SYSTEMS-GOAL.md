@@ -7,6 +7,8 @@
 
 Requirements must **not** extract a `goal` state from this file until Story §7 carries a promoted **must**. Until then this file is the substance so the detail is not background.
 
+**2026-08-21 — the mechanism is settled (does not change the wording above).** Founder: objective met is *akin to a Local event* — this form filled and submitted by this user, detected, matched back to the sequence. Housing is therefore the event mechanism Tower already has: the completion write **is** the event; what was missing is the **instance axis on that row** (`fact_writebacks` had no persisted `form_ref`; sends carried no enrollment / campaign / objective). Cut: [`SYSTEMS-CHANGE-PACKET-022.md`](./SYSTEMS-CHANGE-PACKET-022.md). Consequence: the 15:43 escalation point (**other agent · other workflow · or it ends**) needs **no destination column and no `goal` table** — escalation is a **subscription** to `objective_met`. Story §7 promotion remains a wording must, not a structural one.
+
 ---
 
 ## Founder excerpts (do not paraphrase away)

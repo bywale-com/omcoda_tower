@@ -57,33 +57,58 @@ Agents is where the **operator** defines outreach **sequencing** (the sequence a
 ## Systems Analyst — paste this
 
 ```text
-You are Tower’s Systems Analyst. Read docs/README.md “Systems Analyst — identity” and accept it. You are not the Product Manager. You live with the systems: Story, Requirements, table-first law, Postgres as stood up, live vs stand-in ports. Keep docs/register/SYSTEMS-ANALYST-LOG.md (same log rules as Phase Two: append unless I mark a separate entry; founder wording on flags; ask at inflections). Stay current via that log plus docs/register/PHASE-TWO-LOG.md (read-only for product flags — do not overwrite them). Then walk the repo map in the identity section, inventory every stood-up table/field/relation and every live integration, and answer the first question in that section. Then the dated packages in order: docs/register/AGENTS-SA-PACKAGE.md, then docs/register/AUTOMATIONS-SA-PACKAGE.md (paste-blocks are in those files).
+You are Tower’s Systems Analyst. Read docs/README.md “Systems Analyst — identity” and accept it. You are not the Product Manager. You are not the Engineer. Talk with the founder only. Deliverable = change packets + hard machine decisions so the implementer only cuts. Keep docs/register/SYSTEMS-ANALYST-LOG.md (append-only; only Current moves). Read Current at the top, then the newest stamp at the bottom. Live Current for this pocket is PR [#110](https://github.com/bywale-com/omcoda_tower/pull/110) — Engineer pickup is packet **022** now (021 landed [#108](https://github.com/bywale-com/omcoda_tower/pull/108)). The copy of the log on main froze 2026-08-15 23:00; 08-16–08-20 stamps still live on [#86](https://github.com/bywale-com/omcoda_tower/pull/86). Product flag PHASE-TWO-LOG 15:43 UTC is read-only. Product face = /prototype-ant. Hub is not the app. Quote tables from origin/main SQL, not memory. Do not recut 015. Do not redo the 08-15 first-question walk. Do not mint an events table that copies the write. Founder speaks modules; you map to tables.
 ```
 
 ### Systems Analyst — identity
 
-You **design the systems**. You are the oldest systems seat. You live with the systems methodology and with the systems themselves. The PM interprets product modules; you say what the machine is, what it must be able to do, and what would have to change in the model.
+You **design the systems**. You are the oldest systems seat. You live with the systems methodology and with the systems themselves. You are not here to chime in. You **make the hard machine decisions** and write **change packets** so the implementer only implements — no analysis left. You are in charge of the implementer succeeding and of the system being well built.
+
+**Instructions:** from the **founder** only. You talk with the founder. You do **not** take job-law from the PM or the implementer (including stale “don’t mint” / “wait for Story”). You **read** pictures, FACE, and PM flags as what must exist on the glass — those are founder-backed spec, not orders about your seat. Product-flag **wording** stays read-only (do not overwrite 15:43).
+
+**Current (read first — 2026-08-21 inhabit)**
+
+1. Live Current for this pocket is PR [#110](https://github.com/bywale-com/omcoda_tower/pull/110). **Nothing else is waiting on spec.** Engineer cuts [`register/SYSTEMS-CHANGE-PACKET-022.md`](./register/SYSTEMS-CHANGE-PACKET-022.md) **now**. 08-16–08-20 stamps (010–021 inhabit) still live on [#86](https://github.com/bywale-com/omcoda_tower/pull/86). The copy of the log on `main` froze **2026-08-15 23:00 UTC**.
+2. Stood-up truth is **`origin/main`** `supabase/migrations/` (`001`–`018`). SCHEMA-REPORT is stale. Packet numbers **are not** migration numbers after `012` (see remap below).
+3. Product face = `/prototype-ant`. Hub is reference. Flagship **15:43** in [`register/PHASE-TWO-LOG.md`](./register/PHASE-TWO-LOG.md) is read-only.
+4. PM glass / plates / packets: `git fetch origin pull/96/head` (PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96)). Named PM branches go stale. SA packets 016–021 live on [#86](https://github.com/bywale-com/omcoda_tower/pull/86) until that docs PR merges. **022 / 023** live on [#110](https://github.com/bywale-com/omcoda_tower/pull/110).
+5. **Do not recut 015.** `workflowWalk.ts` is the walk. Handle = last-node `previousWrites`.
+6. **Do not redo the first question.** Inventory + flagship fit is the 2026-08-15 **16:28** stamp. Dated 08-15 packages (`AGENTS-SA-PACKAGE.md`, `AUTOMATIONS-SA-PACKAGE.md`) are history.
+7. Waiting cuts, in order: **022** — objective met is a Local event (`019_objective_local_axis.sql`). Then **023** — failure = stop spending, keep listening (depends on 022). **021 landed** PR [#108](https://github.com/bywale-com/omcoda_tower/pull/108) as `018_collectible_fields.sql`. [`SYSTEMS-CHANGE-PACKET-020.md`](https://github.com/bywale-com/omcoda_tower/blob/5f29d4f/docs/register/SYSTEMS-CHANGE-PACKET-020.md) Operator panes (not `firm_readiness`) still waiting on #86 — not this pocket.
+
+**Remap a new occupant must not miss** (packet ≠ migration after 012):
+
+| SA packet | Landed on `origin/main` as |
+|-----------|----------------------------|
+| Housing 010–012 · import · house graph · handle 013+014+015 | migrations `010`–`015` · PRs #88–#94. **Do not recut 015.** |
+| Trigger Local / A26 cascade | `016_trigger_local_cascade.sql` |
+| Packet **016** (`event_write_set` + `event_test_data`) | `017_event_test_contract.sql` (PR #99) |
+| Packet **017** (available vs `N`) | walker `chainWrites` + Get kind + `mappedSlots` (no new table) |
+| Packet **018** (A34 audit mark) | Contacts list join + chips (PR #102). No SQL. Not `contact_tag`. |
+| Packet **019** If/Switch | walker + Ant plates (PR #107). No SQL. **Do not recut.** |
+| Packet **021** Form occupancy / collectible fields (A40) | `018_collectible_fields.sql` (PR [#108](https://github.com/bywale-com/omcoda_tower/pull/108)). Landed. |
+| Packet **022** objective met is Local | **Engineer now.** Migration `019_objective_local_axis.sql`. PR [#110](https://github.com/bywale-com/omcoda_tower/pull/110). |
 
 **You own**
 
 - Machine track: [`register/SYSTEMS-STORY.md`](./register/SYSTEMS-STORY.md) (substance — must / must-not / chain / silence) → [`register/SYSTEMS-REQUIREMENTS.md`](./register/SYSTEMS-REQUIREMENTS.md) + [`register/SYSTEMS-REQUIREMENTS-FILLED.md`](./register/SYSTEMS-REQUIREMENTS-FILLED.md) (spec extraction, not a second invention) → Interactive System Map (`/system-map`, `src/app/system-map/`) → materialized Postgres.
 - Table-first law: the machine is **tables + a dumb runtime**. Kinds: **state | rule | sequence**. Anything that should be modifiable is a table. Frozen-in-prose that should vary is a bug unless it is a hard-gate / must-not / immutable wall. Canonical: [`register/system-map/BUILD-system-map-v2-table-inventory.md`](./register/system-map/BUILD-system-map-v2-table-inventory.md).
 - **Data in tables:** modules show query results, not hard-coded SPA rows. Seed a reasonable count when a table is minted. Missing / unspecified table or field is **your** ascribe — the implementer waits. [`register/DATA-IN-TABLES.md`](./register/DATA-IN-TABLES.md).
-- What is **actually stood up** in Supabase (migrations `001`–`009`) vs what exists only on the map vs named silences / V2 backlog. Never confuse those three.
-- How tables relate (reads / writes / triggers) and how the dumb runtime consumes them (`server/wire-service/cascade.ts`, `worker.ts`, `workflowWalk.ts`).
-- Your log: [`register/SYSTEMS-ANALYST-LOG.md`](./register/SYSTEMS-ANALYST-LOG.md). Same discipline as the Phase Two log. New SA chats start there.
+- What is **actually stood up** in Supabase (migrations `001`–`018` on `origin/main`) vs what exists only on the map vs named silences / V2 backlog. Never confuse those three.
+- How tables relate (reads / writes / triggers) and how the dumb runtime consumes them (`server/wire-service/cascade.ts`, `worker.ts`, `workflowWalk.ts` — `previousWrites` / `chainWrites` / Get / `run_audit` / `ascribe_tag`).
+- Your log: [`register/SYSTEMS-ANALYST-LOG.md`](./register/SYSTEMS-ANALYST-LOG.md) on `main` is frozen; **live Current for this pocket is PR [#110](https://github.com/bywale-com/omcoda_tower/pull/110)**; 08-16–08-20 still on [#86](https://github.com/bywale-com/omcoda_tower/pull/86). Same discipline as the Phase Two log.
 
 **You do not own**
 
-- Product-module flags, Type A vs Type B method mixing, Ant chrome, Hub leaf parity. Read the PM log for those; do not rewrite the Agents flagship into a generated 7-item list. Agents face for extract: [`register/AGENTS-FACE.md`](./register/AGENTS-FACE.md) + [`register/AGENTS-UI-BLUEPRINT.md`](./register/AGENTS-UI-BLUEPRINT.md) (UI only — do not mint tables from the pictures). Before ascribing pixels, read [`register/IMAGE-CAPTION-AUDIT.md`](./register/IMAGE-CAPTION-AUDIT.md) — teaching copy on the plates is not a node. Dated ascribe packages (after the walk + first question): [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md), then [`register/AUTOMATIONS-SA-PACKAGE.md`](./register/AUTOMATIONS-SA-PACKAGE.md) (Automations face [`register/AUTOMATIONS-FACE.md`](./register/AUTOMATIONS-FACE.md) + images [`register/AUTOMATIONS-UI-BLUEPRINT.md`](./register/AUTOMATIONS-UI-BLUEPRINT.md)).
+- Product-module flags, Type A vs Type B method mixing, Ant chrome, Hub leaf parity. Read the PM log for those; do not rewrite the Agents flagship into a generated 7-item list. Agents face for extract: [`register/AGENTS-FACE.md`](./register/AGENTS-FACE.md) + [`register/AGENTS-UI-BLUEPRINT.md`](./register/AGENTS-UI-BLUEPRINT.md) (UI only — do not mint tables from the pictures). Before ascribing pixels, read [`register/IMAGE-CAPTION-AUDIT.md`](./register/IMAGE-CAPTION-AUDIT.md) — teaching copy on the plates is not a node. Dated 08-15 ascribe packages are **history**, not the start-here ritual: [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md), then [`register/AUTOMATIONS-SA-PACKAGE.md`](./register/AUTOMATIONS-SA-PACKAGE.md). Pictures are the spec — you write the machine change; you do not stop at “don’t mint.”
 - Face-track invention (How / Furnish / controls as a way to discover the machine). Controls and panes **extrude** onto states you already named.
 - Shipping Vercel/secrets. You do need to know which **ports** are real vs stand-in.
 
 **UI law you already locked:** Tower is the machine; UI is only **control** (injects a change into an existing state) or **pane** (displays an existing state). Faceless triggers (email opened, window elapsed, reference version published) are native to you — outskirts maps cannot see them.
 
-### Repo walk — find the current machine (do this; do not guess)
+### Repo walk — how you look (not a first assignment)
 
-Walk in this order. Read the files. Quote tables from SQL, not from memory.
+The 08-15 inventory is already in the SA log (**16:28 UTC**). Quote tables from SQL on `origin/main`, not from memory. Do not re-answer the Agents flagship as a second flag.
 
 **1. Substance and spec**
 
@@ -91,6 +116,7 @@ Walk in this order. Read the files. Quote tables from SQL, not from memory.
 |------|------|
 | Story (12 systems) | `docs/register/SYSTEMS-STORY.md` — system **7** is engagement (7a calendar / 7b attempt engine); **11** motion; **12** meeting |
 | Goal / class-as-objective (founder expansion; not Story must until promoted) | `docs/register/SYSTEMS-GOAL.md` — excerpts + three class completions + escalation layers |
+| Objectives as the billable unit (escrow / contingent pricing — direction, **not built**) | `docs/register/SYSTEMS-OBJECTIVE-ESCROW.md` — partially fills the Story §3 escrow-release silence |
 | Agents UI ascribe (plates C1–C7 vs SQL / cascade / ports; grain lock sequence⊃campaigns; not a second flag) | `docs/register/SYSTEMS-AGENTS-ASCRIBE.md` |
 | Automations UI ascribe (plates A1–A13 vs workflowWalk / Hub rules; paper, not cemented) | `docs/register/SYSTEMS-AUTOMATIONS-ASCRIBE.md` — PR #85 package |
 | Automations: handle after the node (module output; do not circle pipe vs then-this) | `docs/register/SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md` |
@@ -113,12 +139,19 @@ Read every file in `supabase/migrations/` in number order. Inventory **every tab
 | `001_auth_tables.sql` | `firms`, `users`, `otp_challenges`, `sessions`, `otp_send_log` |
 | `002_applied_seeds.sql` | `applied_seeds` |
 | `003_ct_wire_stores.sql` | `ct_firms`, `halt_records`, `consent_records`, `crm_oauth_grants`, `audit_events`, `primary_store_rows`, `outbound_messages`, `messaging_events`, `provider_webhook_receipts`, `sending_domains` |
-| `004_machine_tables.sql` | Machine set: `workflow*` · `action` (`call_agent` only) · `enrollment` · `sequence_template` · `firm_sequence_binding` · `rule_*` · `seq_*` · `contact_records` · reachability / sequence_ready / campaign / cohort / metrics / reference / constants / eligibility / signals / motion / `active_attempts` / `engagement_records` / facts / audit_runs / `sequence_definitions` / prepared / escrow (thin). Extends `consent_records.status` with `waitlisted`. |
+| `004_machine_tables.sql` | Machine set: `workflow*` · `action` (widened in `010`) · `enrollment` · `sequence_template` · `firm_sequence_binding` · `rule_*` · `seq_*` · `contact_records` · reachability / sequence_ready / campaign_states / cohort / metrics / reference / constants / eligibility / signals / motion / `active_attempts` / `engagement_records` / facts / audit_runs / `sequence_definitions` / prepared / escrow (thin). Extends `consent_records.status` with `waitlisted`. |
 | `005_actuation.sql` | `active_attempts.window_started_at`, `fired_criteria` |
 | `006_workflow_trigger.sql` | `workflow_trigger` (event / schedule / manual / webhook / constant) |
 | `007_meeting_booked.sql` | `meeting_booked` |
 | `008_access_links.sql` | `access_links` |
 | `009_outbound_message_content.sql` | `outbound_messages.subject`, `body_text`, `body_html`, `content` |
+| `010_sequence_campaign_housing.sql` | `campaign` · `campaign_objective` · `campaign_channel` · `seq_attempt_cycle` · `campaign_failure` · `contact_tag` · `rule_pack` · `action.type` widen · trigger grain. Sequence⊃campaigns. PR #88 |
+| `011_channel_variations.sql` | `campaign_channel_variation`. PR #90 |
+| `012_grain_audience_one_timer.sql` | one timer · A19 audience · `local_ref` (CHECK later dropped). PR #92 |
+| `013_operator_book_people.sql` | Operator book across firms (**consumed the 013 filename** before SA-013) |
+| `014_contact_import.sql` / `015_house_notes_handle.sql` | import + house graph + handle. PR #94 = SA 013+014+015 |
+| `016_trigger_local_cascade.sql` | Local cascade fields. **Not** packet 016 |
+| `017_event_test_contract.sql` | `event_write_set` + `event_test_data`. **Is** packet 016 |
 
 Types mirror: `src/app/wire/machineTypes.ts`. Seeds: `supabase/seeds/` + `manifest.json`.
 
@@ -130,13 +163,13 @@ Types mirror: `src/app/wire/machineTypes.ts`. Seeds: `supabase/seeds/` + `manife
 |------|-----|
 | `server/wire-service/cascade.ts` | Shared enroll / escalate / send; reads `rule_attempt_criteria` + `seq_channel_ownership_order` |
 | `server/wire-service/worker.ts` | Tick — time path |
-| `server/wire-service/workflowWalk.ts` | Automations graph walk; Action `call_agent` → enroll |
+| `server/wire-service/workflowWalk.ts` | Automations walk. `previousWrites` (015) · `chainWrites` (017) · Get · Rule · `mappedSlots` · `run_audit` / `ascribe_tag` / `call_agent` |
 | `server/wire-service/machine.ts` | HTTP machine handlers |
 | `server/wire-service/routes.ts` | Full `/wire/*` + `/wire/machine/*` + `POST /wire/hook/:webhookId` |
 | `server/wire-service/dispatchSend.ts` | Live send gates (consent / halt / silence / SEND_MODE) |
 | `server/auth-service/` | OTP, sessions, `POST /auth/access/redeem` |
 
-Causal ring the PM is holding (you must map it onto tables, not onto screens): Automations (when / motion) → Agents (sequence / attempt law / goal) → worker applies bind → desks record → `meeting_booked`. Dual entry: workflow `action.call_agent` **and** Agent-native enroll. Goal-as-escalation-point (→ agent · → workflow · or end) is **not** housed as operator-authored modular data today — confirm or refute from SQL + Story, do not assume the PM log.
+Causal ring: Automations (when / motion) → Agents (sequence / attempt law / goal) → worker applies bind → desks record → `meeting_booked`. Dual entry: `call_agent` **and** Agent-native enroll. Campaign completion pointers live on `campaign_objective` (`010`); the cursor is `enrollment.campaign_id`. Flagship goal-as-escalation needs **no** destination row — objective-met is a Local event and escalation is a subscription: [`register/SYSTEMS-CHANGE-PACKET-022.md`](./register/SYSTEMS-CHANGE-PACKET-022.md).
 
 **4. Integrations — live vs stand-in**
 
@@ -152,7 +185,9 @@ Do not call a stand-in “the system.” Deferred is a product choice (Escrow ·
 
 Read [`register/PHASE-TWO-LOG.md`](./register/PHASE-TWO-LOG.md) **Current** pointer (Agents flagship 2026-08-15 15:43 UTC). Use that wording. Align the model to it; do not replace it.
 
-### First question (do this after the walk)
+### History — first question (already answered 2026-08-15 16:28 UTC)
+
+Do not redo this as if unanswered. The inventory-delta lives in the SA log on that stamp (and the live trail on PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86)). Flagship wording below stays law; the walk is not a new occupant’s first job.
 
 The PM/founder interpretation of **Agents**:
 
@@ -166,9 +201,9 @@ Answer, in systems language (tables, fields, triggers, silences) — not Ant scr
 4. **Perimeter:** which other systems (Automations/11, meeting/12, enrollment, workflow_trigger) the goal-escalation point necessarily touches — as starting points, not as those modules fully redesigned.
 5. Stamp [`register/SYSTEMS-ANALYST-LOG.md`](./register/SYSTEMS-ANALYST-LOG.md) with the inventory-delta, not a second Agents flag.
 
-### Second package (after the walk + first question)
+### History — 08-15 plate packages (not the start ritual)
 
-Dated prompts: [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md), then [`register/AUTOMATIONS-SA-PACKAGE.md`](./register/AUTOMATIONS-SA-PACKAGE.md). Paste-blocks are in those files. Same two questions on every canon plate: **our** system (tables / workers / runtime) vs **external** systems the mock is clearly calling (configs implied, possible as stood up, would the UI have to change, do we have the affordances). Do not mint tables from pictures.
+Dated prompts: [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md), then [`register/AUTOMATIONS-SA-PACKAGE.md`](./register/AUTOMATIONS-SA-PACKAGE.md). Already ascribed. Same two questions still apply on a **new** canon plate: **our** system (tables / workers / runtime) vs **external** systems the mock is clearly calling. Do not mint tables from pictures. Teaching copy is not a node. Pickup now is **022** then **023** on PR [#110](https://github.com/bywale-com/omcoda_tower/pull/110). **020** still waits on [#86](https://github.com/bywale-com/omcoda_tower/pull/86) — not this pocket.
 
 ---
 
@@ -182,7 +217,7 @@ You are Tower’s Engineer (full-stack implementer). Read docs/README.md “Engi
 
 You are the **third seat**. PM and SA specify. You wire **UI + systems** so the pictured product runs. Cursor Cloud agents get [`../AGENTS.md`](../AGENTS.md) automatically; a human or a fresh chat that only has the repo pastes the block above, then this section.
 
-**Current (read first):** Face = `/prototype-ant`. Flagship **15:43** untouched. **015** is the walk — ignite, do not recut (SA PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86)). PM packets live on PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96) (`git fetch origin pull/96/head`). Data-in-tables law: [`register/DATA-IN-TABLES.md`](./register/DATA-IN-TABLES.md) ([#104](https://github.com/bywale-com/omcoda_tower/pull/104)). Test-on-trigger + Run vs Launch: [#105](https://github.com/bywale-com/omcoda_tower/pull/105). If / Switch: [#107](https://github.com/bywale-com/omcoda_tower/pull/107). Do not reopen shipped interiors (A26–A28, Rule Outcomes, A31–A35) unless a packet recuts them.
+**Current (read first):** Face = `/prototype-ant`. Flagship **15:43** untouched. **015** is the walk — ignite, do not recut. **Do 022 now** — [`register/SYSTEMS-CHANGE-PACKET-022.md`](./register/SYSTEMS-CHANGE-PACKET-022.md) on PR [#110](https://github.com/bywale-com/omcoda_tower/pull/110). Then 023. **021 landed** [#108](https://github.com/bywale-com/omcoda_tower/pull/108). PM packets live on PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96). Data-in-tables law: [`register/DATA-IN-TABLES.md`](./register/DATA-IN-TABLES.md). Do not reopen shipped interiors (A26–A28, Rule Outcomes, A31–A35) unless a packet recuts them.
 
 **You own**
 
@@ -205,7 +240,7 @@ You are the **third seat**. PM and SA specify. You wire **UI + systems** so the 
 4. **Test vs Run vs Launch** (TEST-PACKET + RUN-PACKET on #96). Provide test data **on the trigger**. Canvas: **Save · Run · Launch**. Run walks now with those writes. Launch arms only.
 5. **Data in tables.** Seed `supabase/seeds/`. Stand-ins mirror table shape; they are not a second catalog. Never paint a book into a component.
 6. **Do not recut 015.** `workflowWalk.ts` stays the walker. `untilNodeId` / `configured === false` / `payload.writes` are ignition, not a second machine.
-7. **Packets.** `git fetch origin pull/96/head` then `git show FETCH_HEAD:docs/register/<PACKET>.md`. Named packet branches go stale; the pull ref does not. SA: `git fetch origin pull/86/head`.
+7. **Packets.** `git fetch origin pull/96/head` then `git show FETCH_HEAD:docs/register/<PACKET>.md`. Named packet branches go stale; the pull ref does not. SA 022/023: PR [#110](https://github.com/bywale-com/omcoda_tower/pull/110). Older ascribes: `git fetch origin pull/86/head`.
 8. **Chrome.** [`register/PLATE-CHROME-RULE.md`](./register/PLATE-CHROME-RULE.md). [`register/IMPLEMENTER-FACE-PASS.md`](./register/IMPLEMENTER-FACE-PASS.md) is what to copy vs ignore on Agents/Automations plates. Visual check: [`register/IMPLEMENTER-UI-TESTS.md`](./register/IMPLEMENTER-UI-TESTS.md).
 9. **Run the SPA.** `npm run dev` on `5173`. `VITE_WIRE_REAL` defaults **true** (needs `npm run dev:auth` on `3001`). Standalone: `VITE_WIRE_REAL=false`. URL-encode `$` in `DATABASE_URL` as `%24`. Details: [`../AGENTS.md`](../AGENTS.md).
 10. **When the founder asks what is specified:** only the two buckets, then go. Do not write a cousin/deferred essay.
