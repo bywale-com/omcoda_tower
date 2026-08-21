@@ -188,6 +188,7 @@ These were asked. They are not “copy from C9/C11.”
 | **Add tag** | Packet [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md). Plate **A35**. Contact occupied. Tag picker. Type glyphs. Color more lively. Green Action chip. Kind chips teaching — do not build. |
 | **Audit field** | Packet [`AUDIT-FIELD-PACKET.md`](./AUDIT-FIELD-PACKET.md). Plate **A34**. Contacts column. Composite chips. Hardcoded when audit runs. Not an Action. Leave live Tag. |
 | **If / Switch** | Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md). **A36–A39**. Two kinds. Paths are wires. |
+| **Contact workspace** | Packets [`CONTACT-WORKSPACE-PACKET.md`](./CONTACT-WORKSPACE-PACKET.md) · [`CONTACT-UPLOAD-PACKET.md`](./CONTACT-UPLOAD-PACKET.md) · [`CONTACT-UPLOADED-EVENT-PACKET.md`](./CONTACT-UPLOADED-EVENT-PACKET.md). Face [`CONTACT-FACE.md`](./CONTACT-FACE.md). Lineup [`CONTACT-UI-BLUEPRINT.md`](./CONTACT-UI-BLUEPRINT.md). Kill the 10-item Contact flipper as nav. Files inside Upload. P7 completes: search / custom / answer-that-question (no extra PNG). A41–A44 additive on A26. |
 
 ---
 

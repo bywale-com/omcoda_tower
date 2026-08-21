@@ -92,7 +92,7 @@ Layers that already exist (not a catalog to invent):
 
 ### Named events (the list on A26)
 
-The list is the events already named in [`PRIMITIVES.md`](./PRIMITIVES.md). **Contact import** and **New contact** are two rows. Do not merge them. Do not add “any row changed.” Search searches **this** list.
+The list is the events already named in [`PRIMITIVES.md`](./PRIMITIVES.md). **Contact import** and **New contact** are two rows. Do not merge them. **Contact uploaded information** is a third, different seat — additive row, packet [`CONTACT-UPLOADED-EVENT-PACKET.md`](./CONTACT-UPLOADED-EVENT-PACKET.md) (**A41–A44**). Do not recut this packet as a replacement. Do not add “any row changed.” Search searches **this** list.
 
 ---
 

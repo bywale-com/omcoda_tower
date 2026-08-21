@@ -5,6 +5,8 @@
 **Chrome:** firm workspace. **Not** Operator House-global. **Not** the Ant Contact 10-item flipper. Screenshot live Contact only to know what **not** to copy.  
 **Design system:** founder likes this workspace and will ask for a recut to the live Ant desk later. **Do not regenerate for match until asked.** These plates spec **what the modules are**, not the final paint.
 
+**Packets:** [`CONTACT-WORKSPACE-PACKET.md`](./CONTACT-WORKSPACE-PACKET.md) · [`CONTACT-UPLOAD-PACKET.md`](./CONTACT-UPLOAD-PACKET.md) · [`CONTACT-UPLOADED-EVENT-PACKET.md`](./CONTACT-UPLOADED-EVENT-PACKET.md).
+
 Harbor / Alex / `harbor.co/a/…` / the four fields / kind names = **example**.
 
 ---
@@ -33,7 +35,7 @@ Read in this order.
 
 **Operator Automations (same lock, other folder):** [`A41`](./automations-blueprint/A41-trigger-contact-uploaded.png) · [`A42`](./automations-blueprint/A42-trigger-uploaded-global.png) · [`A43`](./automations-blueprint/A43-trigger-uploaded-local-kind.png) · [`A44`](./automations-blueprint/A44-canvas-uploaded-reevaluate.png). Lineup: [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md).
 
-**PM lean drawn:** left panel stays **three** entries. Files is a tab under Upload. If browse-without-put must stand alone, Files becomes a fourth sibling — that ask is still open; these plates show the lean.
+**Files inside Upload is locked.** Founder: the consolidation is the product. Left panel is **three** entries.
 
 ---
 
@@ -115,6 +117,8 @@ Read in this order.
 
 **Copy:** Upload can be **any** type or a **specific kind**. That kind is what Automations Local hears. Modal / submodule — not a Rule on this canvas.
 
+**Completes (no extra PNG):** **Search** on this picker. **Add custom** (text box). Search includes **questions already asked** → **Answer that question** (text box, context). Not AI. Packet [`CONTACT-UPLOAD-PACKET.md`](./CONTACT-UPLOAD-PACKET.md).
+
 **Ignore:** The listed kinds (Passport / Proof of hours / Language test / Other) = **example**. Not the catalog.
 
 ---
@@ -176,5 +180,5 @@ Read in this order.
 - Not a design-system recut of Harbor paint.
 - Not minting an upload / files table from the pictures.
 - Not a frozen kind catalog from P6 / P7.
-- Not Files as a fourth left-nav item on the canonical plates (lean; ask still open).
+- Not Files as a fourth left-nav item (locked inside Upload).
 - Not a Rule / Automations canvas on the contact seat — that is **A41–A44**.

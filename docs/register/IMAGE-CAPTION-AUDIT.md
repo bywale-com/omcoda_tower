@@ -533,6 +533,8 @@ Harbor / Alex / `harbor.co/a/…` / four listing fields = **E** on every plate. 
 | **P5** request open | Opened row = the ask. Open in Now | Metadata labels | “The email is not here.” / “Not the send.” |
 | **P6** Upload | Module. Put in vs Files tabs. Kinds as submodules | Card titles “Documents / Facts they weren’t asked for now / Other” | “Upload is the act…” |
 | **P7** kind | Any vs this kind. Modal. Automations Local = this kind | Passport / Proof of hours / Language test / Other | “Kinds are submodules…” |
+
+**P7 completes (not on the PNG, still build):** Search. Add custom (text box). Questions already asked are in that search → Answer that question (text box, context). Not AI. Packet [`CONTACT-UPLOAD-PACKET.md`](./CONTACT-UPLOAD-PACKET.md).
 | **P8** Files | Store inside Upload. Not an event | Filenames | “Sitting here is not an event.” |
 | **P9** diagram | Three doors + History law | Card paint | Footer commands |
 | **P11** diagram | Three events stay distinct | Icons | Title |

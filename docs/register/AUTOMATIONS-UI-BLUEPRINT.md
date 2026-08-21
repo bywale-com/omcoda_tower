@@ -83,7 +83,7 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A35** | [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png) | chrome | **Add tag** Action interior. Prior = contact import. Contact occupied, Tag picker. Type glyphs. Color more lively. Green Action chip. Kind chips teaching. | 12:12 · 12:17 · 12:30 | Packet [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md) |
 | **A24** | [`A24-contact-import-output.png`](./automations-blueprint/A24-contact-import-output.png) | chrome | Trigger **Output** of **contact import**. A20 shape. This run: `import_batch` + `contact_records`. | 19:34 | — |
 | **A25** | [`A25-new-contact-output.png`](./automations-blueprint/A25-new-contact-output.png) | chrome | Trigger **Output** of **new contact**. A20 shape. This run: `contact_records` (that person). | 19:34 | — |
-| **A41** | [`A41-trigger-contact-uploaded.png`](./automations-blueprint/A41-trigger-contact-uploaded.png) | chrome | Trigger select. **Contact uploaded information** in the named-event list. Distinct from **Contact import**. Grain Global. | 2026-08-21 | companion to **A26**. Does not recut the select packet. |
+| **A41** | [`A41-trigger-contact-uploaded.png`](./automations-blueprint/A41-trigger-contact-uploaded.png) | chrome | Trigger select. **Contact uploaded information** in the named-event list. Distinct from **Contact import**. Grain Global. | 2026-08-21 | companion to **A26**. Packet [`CONTACT-UPLOADED-EVENT-PACKET.md`](./CONTACT-UPLOADED-EVENT-PACKET.md). Does not recut the select packet. |
 | **A42** | [`A42-trigger-uploaded-global.png`](./automations-blueprint/A42-trigger-uploaded-global.png) | chrome | Trigger configured. Event = **Contact uploaded information**. Grain **Global** = every firm, every upload, any kind. | 2026-08-21 | companion to **A17** |
 | **A43** | [`A43-trigger-uploaded-local-kind.png`](./automations-blueprint/A43-trigger-uploaded-local-kind.png) | chrome | Same event. Grain **Local**. Nested shape: Firm, then **Kind** (this kind). | 2026-08-21 | Local completes A26; this plate is **this event’s** instance axis |
 | **A44** | [`A44-canvas-uploaded-reevaluate.png`](./automations-blueprint/A44-canvas-uploaded-reevaluate.png) | chrome | Canvas. Hear upload → Rule (re-evaluate) → Action. Same Automations middle. Not a Rule on the contact canvas. | 2026-08-21 | companion to **A15** / **A22** |
@@ -904,7 +904,7 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 
 ![A41 Contact uploaded in the event list](./automations-blueprint/A41-trigger-contact-uploaded.png)
 
-**Rationale (2026-08-21):** Founder: whenever a contact uploads information — any type, or a **certain kind** — Automations can hear it. Named **Contact uploaded information** on purpose. Same A26 picker. **Contact import** stays a different row.
+**Rationale (2026-08-21):** Founder: whenever a contact uploads information — any type, or a **certain kind** — Automations can hear it. Named **Contact uploaded information** on purpose. Same A26 picker. **Contact import** stays a different row. Packet [`CONTACT-UPLOADED-EVENT-PACKET.md`](./CONTACT-UPLOADED-EVENT-PACKET.md).
 
 **On the glass:** Event list. **Contact uploaded information** selected. Contact import still visible, not selected. Grain = Global.
 

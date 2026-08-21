@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Contact workspace drawn: **Now** (form / consent / book) · **History** = requests · **Upload** (put in + Files store) · three doors · Automations **Contact uploaded information** (A41–A44). Design-system recut later. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Contact workspace **packets**. Now · History = requests · Upload (search / custom / answer-that-question; Files inside). Automations **Contact uploaded information**. No extra search PNG. Do not plant.
 
 **How we maintain this log**
 
@@ -2083,4 +2083,24 @@ Flag 15:43 untouched.
 **Ask (still):** Files a sibling, or inside Upload as drawn?
 
 Flag 15:43 untouched.
+
+---
+
+## 2026-08-21 11:15 UTC — Packets. Files inside Upload locked. Kind picker completes: search / custom / answer-that-question.
+
+**Why:** Founder: plates from start to finish are beautiful; consolidation of Files into Upload is the product. One addition, no extra image: on the type picker, **search**, **add custom** (text box), and search **questions already asked** → **Answer that question** (text box, context). Questions stored so they can be found. AI later — **not now at all**. Then: build the packets.
+
+**Locked:** Files is **inside** Upload. Left panel stays **Now · History · Upload**.
+
+**P7 completes (no PNG):** Search (literal, not AI) over **kinds** and **questions**. Custom = text box names the kind. Question hit = Answer that question → text box for context. Still the Upload door.
+
+**Packets:**
+
+| Packet | Pocket |
+|--------|--------|
+| [`CONTACT-WORKSPACE-PACKET.md`](./CONTACT-WORKSPACE-PACKET.md) | Seat · Now states · History as requests · C16 lands in Now |
+| [`CONTACT-UPLOAD-PACKET.md`](./CONTACT-UPLOAD-PACKET.md) | Put in · kind · Files tab · search / custom / answer-that-question |
+| [`CONTACT-UPLOADED-EVENT-PACKET.md`](./CONTACT-UPLOADED-EVENT-PACKET.md) | A41–A44. Additive on A26. Does not recut trigger-select |
+
+Engineer + SA paste in each. Five buckets. Do not mint tables. Do not recut 015. Do not plant. Flag 15:43 untouched.
 

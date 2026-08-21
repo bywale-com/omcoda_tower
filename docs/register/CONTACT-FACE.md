@@ -3,6 +3,7 @@
 **Seat:** Product Manager.  
 **Why:** Founder 2026-08-21: the contact has a **seat**. It is a workspace. No login. Portal. We specified (and even built) the **touchpoints** — we did not house them as a place. C17 as a naked form page was the miss. Entered from Agents outbound (C16).  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
+**Packets:** [`CONTACT-WORKSPACE-PACKET.md`](./CONTACT-WORKSPACE-PACKET.md) (seat · Now · History) · [`CONTACT-UPLOAD-PACKET.md`](./CONTACT-UPLOAD-PACKET.md) (put in · kind · Files · search) · [`CONTACT-UPLOADED-EVENT-PACKET.md`](./CONTACT-UPLOADED-EVENT-PACKET.md) (A41–A44).  
 **Plates:** [`CONTACT-UI-BLUEPRINT.md`](./CONTACT-UI-BLUEPRINT.md).  
 **Do not:** plant; mint tables; copy Operator / Consultant nav; freeze the 10 CT touchpoint names as modules; call it a dashboard on the glass.
 
@@ -34,6 +35,12 @@
 
 > files is good … they should also be able to … upload information into the system … the automation possibility there … whenever a contact uploads information or of even a certain kind … I think upload can be a module itself … modal submodal submodules … trigger this … trigger a reevaluation operation
 
+> This is simply beautiful … even the consolidation of files and to upload
+
+> in the upload image where they are asked to select, like what type give them the option to also search. And add a custom thing … If it's custom, then then it's like a text box … give them the ability to search … once we get into AI like doing stuff later not, in not now. In fact, like not now at all
+
+> you can search for a question that we already ask … they might only be able to recollect, like, oh, what exactly it is … they want to upload or by a question … they click on answer that question. And it's like a textbook, it just gives context … the questions are also stored in that ability to search … you don't have to create an image for it … enough to go ahead and build packets
+
 ---
 
 ## Law of the seat (short)
@@ -61,11 +68,11 @@
 | **Upload** | The contact | They **put information in** (any / this kind) | **Contact uploaded information** — named on purpose. Not import. Not form-submitted |
 | **Files** | — | Store. Browse what is already there | Not an event by sitting there |
 
-Upload can have kinds (modals / submodules). Global = all uploads. Local = **this kind**. Then Automations: hear that → operation (re-evaluate is one) → exits. Same definite middle. Do not put a Rule on the contact canvas.
+Upload can have kinds (modals / submodules). Kind picker **completes** (no extra PNG): **search**, **add custom** (text box), search **questions already asked** → **Answer that question** (text box, context). Not AI. Global = all uploads. Local = **this kind** (including custom). Then Automations: hear that → operation (re-evaluate is one) → exits. Same definite middle. Do not put a Rule on the contact canvas.
 
 **Now’s form stays self-reportable-only** (Refresh How). Document-dependent never enter that form. Upload is the other door for information that is not that form.
 
-**PM on Files vs Upload (drawn):** Upload is the **function** (and the event). Files is the **store**. Canonical plates: left panel **Now · History · Upload**; Files is a tab inside Upload (**P6 · P8**). If browse-without-put must stand alone, Files becomes a fourth sibling — still the ask. Prior P1 with Files in the nav is kept as [`P1-prior-files-nav.png`](./contact-blueprint/P1-prior-files-nav.png).
+**PM on Files vs Upload (locked):** Upload is the **function** (and the event). Files is the **store**. Left panel **Now · History · Upload**. Files is a tab inside Upload (**P6 · P8**). Founder: the consolidation is the product. Prior Files-in-nav kept as [`P1-prior-files-nav.png`](./contact-blueprint/P1-prior-files-nav.png).
 
 **Old paper (honest):** [`personas.md`](./personas.md) said contact is referenced, not a persona, touchpoint-only. [`OUTCOMES.md`](./OUTCOMES.md) still has four **Engagement contact** outcomes (all secondary). Founder: it is a **natural persona**. This seat uses those four outcomes to birth modules. Approach still does not acquire them (World). Do not copy the consultant desk. Do not overwrite 15:43.
 
@@ -103,3 +110,4 @@ Compare plates: [`P0`](./contact-blueprint/P0-contact-ct-portal-built.png) (CT a
 - Not collapsing **Upload** with **Now’s form submitted**, or with **operator contact-file import**.
 - Not regenerating P1 for design-system match until asked.
 - Not freezing P6/P7 kind titles as the kind catalog.
+- Not skipping search / custom / answer-that-question because they are not on P7.
