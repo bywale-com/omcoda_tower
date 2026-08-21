@@ -5,7 +5,7 @@
 **What this is:** the cut that makes **“this sequence ran, the objective is met”** the same mechanism as a Local trigger. Implementer **only implements**. No analysis left.
 **Why:** Founder: events/triggers already have a solid mechanism underneath — a write we designated as a trigger. Objective met must have that same underneath. *“This specific form is filled and submitted by this user… back into the system, so the system can detect it and say: oh, they submitted this form — what’s that sequence?”* That mapping-and-matching is this packet.
 **Join:** 010 housing (`campaign`, `campaign_objective`) · 017 `event_write_set` / `event_test_data` · A26 Local axes (`triggerLocalRefFromPayload` / `triggerLocalAxesMatch`) · [`PRIMITIVES.md`](./PRIMITIVES.md) row **“An objective was met”** · [`SYSTEMS-GOAL.md`](./SYSTEMS-GOAL.md) · flagship [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43**.
-**Flag:** 15:43 untouched. **Do not recut 015 / 019.** Do not reopen #108 — this stacks after it.
+**Flag:** 15:43 untouched. **Do not recut 015 / 019.** **#108 merged** (`018_collectible_fields.sql`). This is the next cut.
 **UI:** none required. Founder: the UI that exists is all the UI this needs. This is backend.
 **Instructions:** founder only.
 
@@ -270,7 +270,7 @@ One `event_test_data` specimen per kind (form / meeting / click) using existing 
 
 ## 4. Migration filename
 
-Next free on `origin/main`. `017` is taken. **#108 lands `018_collectible_fields.sql`** — so this is **`019_objective_local_axis.sql`**. If #108 has not merged when this is cut, this is `018` and #108 rebases. Do not renumber a landed file.
+Next free on `origin/main`. `018_collectible_fields.sql` is landed (PR #108). This is **`019_objective_local_axis.sql`**. Do not renumber a landed file.
 
 ## 5. Verify
 

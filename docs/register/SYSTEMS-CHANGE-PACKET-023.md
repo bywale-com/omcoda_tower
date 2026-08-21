@@ -5,7 +5,7 @@
 **What this is:** the cut for the failure mode that has been open since 2026-08-15 16:58. Implementer **only implements**.
 **Why:** Founder: *“the failure mode is simple — it just means we're not gonna waste resources trying to make that objective happen. But if it happens, if it clears, then of course it's still a win… the objective is met.”*
 **Join:** 022 (objective met is a Local event) — **read 022 first; this packet depends on its detect-on-the-write path.** 010 `campaign_failure` · `cascade.ts` ladder · [`SYSTEMS-OBJECTIVE-ESCROW.md`](./SYSTEMS-OBJECTIVE-ESCROW.md) (direction; not built).
-**Flag:** 15:43 untouched. Do not recut 015 / 019 / #108.
+**Flag:** 15:43 untouched. Do not recut 015 / 019. **#108 merged.** Cut 022 first.
 **UI:** none required.
 **Instructions:** founder only.
 
