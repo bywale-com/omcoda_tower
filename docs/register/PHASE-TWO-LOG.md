@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Contact workspace **packets**. Now · History = requests · Upload (search / custom / answer-that-question; Files inside). Automations **Contact uploaded information**. No extra search PNG. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Contact workspace packets. Shell mark: Operator **Consultant ▾ | Operator | Contact ▾** (opted-in workspaces). Consultant person / contact person do not get that switcher. Do not plant.
 
 **How we maintain this log**
 
