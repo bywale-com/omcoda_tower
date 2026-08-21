@@ -686,6 +686,20 @@ export function handleTreeTables(payload: unknown): Array<{ table: string; rows:
   return groupedWrites(writesFromHandle(payload));
 }
 
+/** Input / Output folder name. Chip table stays missing_fact_signals. */
+export function writeFolderLabel(table: string): string {
+  return table === "missing_fact_signals" ? "Required data" : table;
+}
+
+/** Rule listing keys on the handle — not COLLECTIBLE_FIELDS. */
+export function requiredDataKeys(payload: unknown): string[] {
+  if (!payload || typeof payload !== "object") return [];
+  const rec = payload as Record<string, unknown>;
+  const listing = rec.listing ?? rec.requiredData;
+  if (!Array.isArray(listing)) return [];
+  return [...new Set(listing.map((row) => String(row).trim()).filter(Boolean))];
+}
+
 function sqlString(value: string): string {
   return `'${value.replace(/'/g, "''")}'`;
 }

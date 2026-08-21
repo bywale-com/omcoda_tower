@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { AppstoreOutlined, TeamOutlined } from "@ant-design/icons";
-import { Button, Input, Modal, Radio, Select, Space, Switch, Tag, Typography } from "antd";
-import { COLLECTIBLE_FIELDS } from "../../../../data/collectibleFields";
+import { Button, Input, Modal, Radio, Select, Space, Tag, Typography } from "antd";
+import { collectibleLabel } from "../../../../data/collectibleFields";
 import {
   IN_APP_AFFORDANCES,
   inAppAffordance,
@@ -199,7 +199,7 @@ function AssignCard({
 export function ActionAgentsModal({
   open,
   data,
-  listingIds,
+  listingKeys,
   onCancel,
   onSave,
   embed,
@@ -207,7 +207,7 @@ export function ActionAgentsModal({
 }: {
   open: boolean;
   data: WorkflowNodeData;
-  listingIds: string[];
+  listingKeys?: string[];
   onCancel: () => void;
   onSave: (patch: Partial<WorkflowNodeData>) => void;
   embed?: boolean;
@@ -219,8 +219,10 @@ export function ActionAgentsModal({
       WORKFLOW_AGENT_OPTIONS.find((row) => row.id === data.agentRef)?.sequenceClass ??
       "optin",
   );
-  const [objectiveName, setObjectiveName] = useState(data.objectiveName ?? "");
-  const [dataRequestOn, setDataRequestOn] = useState(data.dataRequestOn ?? true);
+  const [objectiveKind, setObjectiveKind] = useState<"click" | "form" | "meeting" | undefined>(
+    data.objectiveKind,
+  );
+  const [slots, setSlots] = useState<Record<string, MappedChip[]>>(data.mappedSlots ?? {});
 
   useEffect(() => {
     if (!open) return;
@@ -234,20 +236,16 @@ export function ActionAgentsModal({
           | undefined) ??
         "optin",
     );
-    setObjectiveName(data.objectiveName ?? "");
-    setDataRequestOn(data.dataRequestOn ?? true);
+    setObjectiveKind(data.objectiveKind);
+    setSlots(data.mappedSlots ?? {});
   }, [open, data]);
 
   const agentRef = SEQUENCE_RADIOS.find((row) => row.classId === sequenceClass)?.id ?? "tpl.optin_launch.v1";
-  const listing = COLLECTIBLE_FIELDS.filter((field) =>
-    listingIds.length ? listingIds.includes(field.id) : field.capture === "self_reportable",
+  const formChips = (slots.form ?? []).filter(
+    (chip) => chip.table === "missing_fact_signals" && !chip.field,
   );
-  const formRows = listing.filter((field) => field.capture === "self_reportable");
-  const typeFor = (id: string) => {
-    if (id.includes("hours") || id.includes("years") || id.includes("score")) return "Number";
-    if (id.includes("updated") || id.includes("date")) return "Date";
-    return "Short text";
-  };
+  const occupied = formChips.length > 0;
+  const questions = occupied ? (listingKeys ?? []) : [];
 
   const commit = () =>
     onSave({
@@ -255,10 +253,9 @@ export function ActionAgentsModal({
       assignMode,
       copySequenceClass: sequenceClass,
       agentRef,
-      objectiveName,
-      dataRequestOn,
-      formQuestionIds: formRows.map((row) => row.id),
-      configured: true,
+      objectiveKind,
+      mappedSlots: slots,
+      configured: Boolean(objectiveKind),
       actionSummary:
         assignMode === "existing" ? `Call agent · ${agentRef}` : `Copy ${sequenceClass} template`,
       label:
@@ -276,6 +273,62 @@ export function ActionAgentsModal({
       <Typography.Paragraph type="secondary" style={{ marginTop: 0 }}>
         You do not create an agent here. Create the agent in Agents, then assign.
       </Typography.Paragraph>
+      <Radio.Group
+        value={objectiveKind}
+        onChange={(event) => setObjectiveKind(event.target.value)}
+        style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}
+      >
+        <Radio value="click">Click this link</Radio>
+        <Radio value="form">Submit this form</Radio>
+        <Radio value="meeting">Book a meeting</Radio>
+      </Radio.Group>
+      {objectiveKind === "form" ? (
+        <div style={{ marginBottom: 16 }}>
+          <Typography.Text style={{ display: "block", marginBottom: 6 }}>Form</Typography.Text>
+          <MappedSlot
+            chips={formChips}
+            onRemove={() => {
+              const next = { ...slots };
+              delete next.form;
+              setSlots(next);
+            }}
+            onDropChip={(chip) => {
+              if (chip.table !== "missing_fact_signals" || chip.field) return;
+              setSlots({
+                ...slots,
+                form: [
+                  {
+                    fromNodeId: chip.fromNodeId,
+                    table: "missing_fact_signals",
+                    label: "Required data",
+                    origin: chip.origin,
+                  },
+                ],
+              });
+            }}
+          >
+            <Input placeholder="Drop Required data" disabled />
+          </MappedSlot>
+          {occupied ? (
+            <Space direction="vertical" size={8} style={{ width: "100%", marginTop: 10 }}>
+              {questions.map((key, index) => (
+                <div
+                  key={`${key}-${index}`}
+                  style={{
+                    padding: "8px 10px",
+                    border: "1px solid #f0f0f0",
+                    borderRadius: 6,
+                  }}
+                >
+                  <Typography.Text>
+                    {index + 1}. {collectibleLabel(key)}
+                  </Typography.Text>
+                </div>
+              ))}
+            </Space>
+          ) : null}
+        </div>
+      ) : null}
       <div style={{ display: "flex", gap: 12, marginBottom: 18 }}>
         <AssignCard
           selected={assignMode === "existing"}
@@ -295,69 +348,6 @@ export function ActionAgentsModal({
           onSelectCard={() => setAssignMode("from_template")}
           onSelectClass={setSequenceClass}
         />
-      </div>
-      <div style={{ borderTop: "1px solid #f0f0f0", paddingTop: 16 }}>
-        <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-          The objective limits which agents you can select.
-        </Typography.Text>
-        <Typography.Title level={5} style={{ marginTop: 8 }}>
-          2 · Create the objective
-        </Typography.Title>
-        <Typography.Paragraph type="secondary" style={{ fontSize: 12 }}>
-          If you create the objective, you create the form. Automations owns the form. Objective is a data request.
-        </Typography.Paragraph>
-        <Typography.Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
-          Objective name
-        </Typography.Text>
-        <Input
-          value={objectiveName}
-          onChange={(event) => setObjectiveName(event.target.value)}
-          placeholder="Enter objective name"
-          style={{ marginBottom: 12, maxWidth: 420 }}
-        />
-        <Space style={{ marginBottom: 12 }}>
-          <Typography.Text>Data request — fill this form</Typography.Text>
-          <Switch checked={dataRequestOn} onChange={setDataRequestOn} />
-        </Space>
-        {dataRequestOn ? (
-          <div style={{ border: "1px solid #e5e7eb", borderRadius: 8, padding: 12 }}>
-            <div
-              style={{
-                background: "#e6f4ff",
-                borderRadius: 6,
-                padding: "8px 10px",
-                marginBottom: 10,
-                fontSize: 13,
-              }}
-            >
-              Questions from required data (rule output).
-            </div>
-            <Space direction="vertical" size={8} style={{ width: "100%" }}>
-              {formRows.map((field, index) => (
-                <div
-                  key={field.id}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: "8px 10px",
-                    border: "1px solid #f0f0f0",
-                    borderRadius: 6,
-                  }}
-                >
-                  <Typography.Text>
-                    {index + 1}. {field.label} · {typeFor(field.id)}
-                  </Typography.Text>
-                  <Tag color="blue">from listing</Tag>
-                </div>
-              ))}
-            </Space>
-            <Typography.Paragraph type="secondary" style={{ fontSize: 12, margin: "10px 0 0" }}>
-              Document-dependent fields (ECA status, job offer) never enter this form. The form references the listing.
-              Questions are the required fields.
-            </Typography.Paragraph>
-          </div>
-        ) : null}
       </div>
       </>
   );

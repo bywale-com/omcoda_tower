@@ -262,10 +262,24 @@ async function executeGet(
     }
     const { rows } = await pool.query<{ id: string }>(q, params);
     const ids = rows.map((r) => r.id);
-    return {
-      writes: ids.map((id) => ({ table: "contact_records", id, contact_id: id })),
-      contactIds: ids,
-    };
+    const writes: RunWrite[] = ids.map((id) => ({ table: "contact_records", id, contact_id: id }));
+    if (ids.length) {
+      const verdicts = await pool.query<{ contact_id: string }>(
+        `SELECT contact_id FROM reachability_verdicts WHERE contact_id = ANY($1::text[])`,
+        [ids],
+      );
+      for (const row of verdicts.rows) {
+        writes.push({ table: "reachability_verdicts", id: row.contact_id, contact_id: row.contact_id });
+      }
+      const ready = await pool.query<{ contact_id: string }>(
+        `SELECT contact_id FROM sequence_ready WHERE contact_id = ANY($1::text[])`,
+        [ids],
+      );
+      for (const row of ready.rows) {
+        writes.push({ table: "sequence_ready", id: row.contact_id, contact_id: row.contact_id });
+      }
+    }
+    return { writes, contactIds: ids };
   }
 
   if (module === "firms") {
@@ -345,21 +359,31 @@ async function executeRuleWrites(
     ? (data.directContactIds as unknown[]).map(String)
     : [];
   const contactIds = uniqueIds(direct.length ? direct : ctx.contactIds);
+  const catalog = await pool.query<{ field_key: string; capture: string }>(
+    `SELECT field_key, capture FROM collectible_fields ORDER BY ord`,
+  );
+  const selfReportable = new Set(
+    catalog.rows.filter((row) => row.capture === "self_reportable").map((row) => row.field_key),
+  );
+  let keys = listingFieldIds.length
+    ? listingFieldIds
+    : catalog.rows.filter((row) => row.capture === "self_reportable").map((row) => row.field_key);
+  if (selfReportable.size) keys = keys.filter((key) => selfReportable.has(key));
   const writes: RunWrite[] = [];
+  const listingKeys = new Set<string>();
   for (const contactId of contactIds) {
     const rec = await pool.query<{ email: string | null; phone: string | null }>(
       `SELECT email, phone FROM contact_records WHERE id=$1`,
       [contactId],
     );
-    const keys = listingFieldIds.length ? listingFieldIds : ["email", "phone"];
     for (const fieldKey of keys) {
-      const missing =
-        fieldKey === "email"
-          ? !rec.rows[0]?.email
-          : fieldKey === "phone"
-            ? !rec.rows[0]?.phone
-            : true;
-      if (!missing) continue;
+      const filled = await pool.query(
+        `SELECT 1 FROM fact_writebacks WHERE contact_id=$1 AND field_key=$2 LIMIT 1`,
+        [contactId, fieldKey],
+      );
+      if (filled.rowCount) continue;
+      if (fieldKey === "email" && rec.rows[0]?.email) continue;
+      if (fieldKey === "phone" && rec.rows[0]?.phone) continue;
       const id = `mfs-${randomUUID()}`;
       await pool.query(
         `INSERT INTO missing_fact_signals (id, firm_id, contact_id, field_key)
@@ -367,13 +391,15 @@ async function executeRuleWrites(
         [id, ctx.firmId, contactId, fieldKey],
       );
       writes.push({ table: "missing_fact_signals", id, contact_id: contactId });
+      listingKeys.add(fieldKey);
     }
   }
+  const listing = [...listingKeys];
   const lastOutput = {
     headline: writes.length ? "Required data" : "Pass",
     pass: writes.length === 0,
-    requiredData: listingFieldIds,
-    listing: listingFieldIds,
+    requiredData: listing,
+    listing,
     writes,
     nudge: Boolean(ruleConfig.nudgeSignalOn ?? true),
     reactivation: Boolean(ruleConfig.reactivationSignalOn ?? true),
@@ -443,6 +469,10 @@ async function loadWriteRow(
     const { rows } = await pool.query(`SELECT * FROM enrollment WHERE id=$1`, [w.id]);
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
+  if (w.table === "missing_fact_signals") {
+    const { rows } = await pool.query(`SELECT * FROM missing_fact_signals WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
   return null;
 }
 
@@ -454,6 +484,21 @@ async function loadWriteField(
 ): Promise<unknown> {
   const row = await loadWriteRow(pool, firmId, w);
   return nestedField(row, field);
+}
+
+async function formFieldKeys(
+  pool: Pool,
+  ctx: WalkContext,
+  data: Record<string, unknown>,
+): Promise<string[]> {
+  const slot = mappedSlotWrites(data, ctx, "form") ?? [];
+  const keys: string[] = [];
+  for (const w of slot.filter((row) => row.table === "missing_fact_signals")) {
+    const rec = await loadWriteRow(pool, ctx.firmId, w);
+    const key = rec && typeof rec.field_key === "string" ? rec.field_key.trim() : "";
+    if (key) keys.push(key);
+  }
+  return uniqueIds(keys);
 }
 
 function outgoingHandle(edges: RfEdge[], sourceId: string, handle: string): RfEdge[] {
@@ -1011,6 +1056,12 @@ export async function walkValidatedWorkflow(
           detail: `rule ${ruleId}; missing=${result.writes.length}`,
           at: now(),
           writes: result.writes,
+          listing: result.lastOutput.listing,
+          requiredData: result.lastOutput.requiredData,
+          headline: result.lastOutput.headline,
+          pass: result.lastOutput.pass,
+          nudge: result.lastOutput.nudge,
+          reactivation: result.lastOutput.reactivation,
         };
         if (ctx.eligibilityPass === undefined) ctx.eligibilityPass = result.writes.length === 0;
         await goOn(nodeId, outgoing(edges, nodeId));
@@ -1095,9 +1146,15 @@ export async function walkValidatedWorkflow(
             });
             enrolled += 1;
           }
+          const fieldKeys =
+            String(data.objectiveKind ?? "") === "form"
+              ? await formFieldKeys(pool, ctx, data)
+              : [];
           await persistAction(agentRef, {
             enrollments,
             label: data.label ?? null,
+            objectiveKind: data.objectiveKind ?? null,
+            fieldKeys,
             formQuestionIds: data.formQuestionIds ?? [],
           });
           commitWrites(ctx, nodeId, writes);

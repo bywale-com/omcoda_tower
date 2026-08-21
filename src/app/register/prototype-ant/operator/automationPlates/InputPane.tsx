@@ -8,7 +8,7 @@ import {
   type WorkflowNodeData,
   type WorkflowNodeType,
 } from "../../../../data/automationWorkflows";
-import { handleTreeTables } from "../../../../data/eventTestContract";
+import { handleTreeTables, writeFolderLabel } from "../../../../data/eventTestContract";
 import { PLATE_NODE_TAG } from "./plateChrome";
 
 export const HANDLE_CHIP_MIME = "application/x-tower-handle-chip";
@@ -207,7 +207,7 @@ export function InputPane({
                     .filter(([key]) => !HIDDEN_KEYS.has(key))
                     .map(([path, value]) => ({
                       node: row.source.label,
-                      table: table.table,
+                      table: writeFolderLabel(table.table),
                       path: table.rows.length > 1 ? `${index}.${path}` : path,
                       value: displayValue(value),
                     })),
@@ -269,16 +269,17 @@ export function InputPane({
                     {tables.map((table) => {
                       const sample = table.rows[0] ?? { table: table.table, id: table.table };
                       const fields = Object.entries(sample).filter(([key]) => !HIDDEN_KEYS.has(key));
+                      const folder = writeFolderLabel(table.table);
                       return (
                         <div key={table.table} style={{ marginBottom: 8 }}>
                           <TreeRow
-                            name={table.table}
+                            name={folder}
                             value={table.rows}
                             kind="object"
                             chip={{
                               fromNodeId: source.nodeId,
                               table: table.table,
-                              label: table.table,
+                              label: folder,
                               origin,
                             }}
                           />
