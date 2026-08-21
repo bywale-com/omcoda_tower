@@ -108,7 +108,6 @@ export function ViewAsProvider({ children }: { children: ReactNode }) {
         .then((rows) => {
           if (cancelled) return;
           setContactWorkspaces(rows);
-          setSelectedContactId((prev) => prev);
         })
         .catch(() => {
           if (cancelled) return;
