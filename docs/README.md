@@ -74,7 +74,7 @@ You **design the systems**. You are the oldest systems seat. You live with the s
 4. PM glass / plates / packets: `git fetch origin pull/96/head` (PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96)). Named PM branches go stale. SA packets 016–021 live on [#86](https://github.com/bywale-com/omcoda_tower/pull/86) until that docs PR merges.
 5. **Do not recut 015.** `workflowWalk.ts` is the walk. Handle = last-node `previousWrites`.
 6. **Do not redo the first question.** Inventory + flagship fit is the 2026-08-15 **16:28** stamp. Dated 08-15 packages (`AGENTS-SA-PACKAGE.md`, `AUTOMATIONS-SA-PACKAGE.md`) are history.
-7. Waiting cuts: [`register/SYSTEMS-CHANGE-PACKET-022.md`](./register/SYSTEMS-CHANGE-PACKET-022.md) — **objective met is a Local event** (stamp the ask, match the answer; no mint). **021** Form occupancy is in flight on PR [#108](https://github.com/bywale-com/omcoda_tower/pull/108). [`SYSTEMS-CHANGE-PACKET-020.md`](https://github.com/bywale-com/omcoda_tower/blob/5f29d4f/docs/register/SYSTEMS-CHANGE-PACKET-020.md) Operator panes (not `firm_readiness`) still waiting on #86.
+7. Waiting cuts, in order: [`register/SYSTEMS-CHANGE-PACKET-022.md`](./register/SYSTEMS-CHANGE-PACKET-022.md) — **objective met is a Local event** (stamp the ask, match the answer; no mint). Then [`register/SYSTEMS-CHANGE-PACKET-023.md`](./register/SYSTEMS-CHANGE-PACKET-023.md) — **failure = stop spending, keep listening** (depends on 022). **021** Form occupancy is in flight on PR [#108](https://github.com/bywale-com/omcoda_tower/pull/108). [`SYSTEMS-CHANGE-PACKET-020.md`](https://github.com/bywale-com/omcoda_tower/blob/5f29d4f/docs/register/SYSTEMS-CHANGE-PACKET-020.md) Operator panes (not `firm_readiness`) still waiting on #86.
 
 **Remap a new occupant must not miss** (packet ≠ migration after 012):
 
@@ -114,6 +114,7 @@ The 08-15 inventory is already in the SA log (**16:28 UTC**). Quote tables from 
 |------|------|
 | Story (12 systems) | `docs/register/SYSTEMS-STORY.md` — system **7** is engagement (7a calendar / 7b attempt engine); **11** motion; **12** meeting |
 | Goal / class-as-objective (founder expansion; not Story must until promoted) | `docs/register/SYSTEMS-GOAL.md` — excerpts + three class completions + escalation layers |
+| Objectives as the billable unit (escrow / contingent pricing — direction, **not built**) | `docs/register/SYSTEMS-OBJECTIVE-ESCROW.md` — partially fills the Story §3 escrow-release silence |
 | Agents UI ascribe (plates C1–C7 vs SQL / cascade / ports; grain lock sequence⊃campaigns; not a second flag) | `docs/register/SYSTEMS-AGENTS-ASCRIBE.md` |
 | Automations UI ascribe (plates A1–A13 vs workflowWalk / Hub rules; paper, not cemented) | `docs/register/SYSTEMS-AUTOMATIONS-ASCRIBE.md` — PR #85 package |
 | Automations: handle after the node (module output; do not circle pipe vs then-this) | `docs/register/SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md` |

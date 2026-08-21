@@ -152,6 +152,8 @@ onCompletionWrite(firmId, contactId, table, rowId):
   dispatchEventToWorkflows('objective_met', { ... })    -- 2.5
 ```
 
+Note the enrollment lookup does **not** filter on how the pursuit is going. An objective met after we stopped spending is a normal win — see 023 §3.3.
+
 Call sites (all already exist, all already dispatch their own event first):
 
 | Where | Existing dispatch | Add |
@@ -214,7 +216,7 @@ One `event_test_data` specimen per kind (form / meeting / click) using existing 
 - Does **not** recut 015, 019, or #108. Does not touch `campaign_objective` DDL (010 stands).
 - Does **not** INSERT `campaign_objective` from Automations (021 stands).
 - Does **not** require new UI. If the founder later wants **“An objective was met”** on the A26 trigger list (PRIMITIVES already promises it, with Local = this objective / campaign), that is one row in `TRIGGER_SELECT_EVENTS` with an `instance` layer — a line in an existing named list, not a plate. The machine works without it.
-- Does **not** decide **failure** (objective never met after the whole campaign). Still open from 16:58. `campaign_failure` exists; what it *does* is a founder call. Out of scope here.
+- Does **not** decide **failure** (objective never met after the whole campaign). Founder answered that on 2026-08-21 and it is cut separately: [`SYSTEMS-CHANGE-PACKET-023.md`](./SYSTEMS-CHANGE-PACKET-023.md) — failure stops the **outbound** only; the objective stays claimable. **023 depends on this packet**, because detect-on-the-write is what lets attempts close without going deaf. Cut 022 first.
 
 ## 4. Migration filename
 

@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-21 09:30 UTC — **Packet 022: objective met is a Local event. Stamp the ask, match the answer. No mint. Flagship closes as a subscription.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-21 09:50 UTC — **022** objective met is a Local event · **023** failure = stop spending, keep listening. Objectives are the billable unit ([`SYSTEMS-OBJECTIVE-ESCROW.md`](./SYSTEMS-OBJECTIVE-ESCROW.md), direction). Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -839,3 +839,49 @@ So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WH
 **Did not:** mint; recut 015 / 019 / #108; add UI; touch 010 DDL; promote Story myself; INSERT `campaign_objective` from Automations.
 
 **Do not:** match a completion by bare `contact_id`; treat `accepted`/`delivered` as a click; copy the objective onto `messaging_events`; mint a met/latch table; renumber a landed migration (022 cuts as `019_objective_local_axis.sql` if #108 took `018`).
+
+---
+
+## 2026-08-21 09:50 UTC — Failure = stop spending, keep listening. Packet 023. Objectives are the billable unit.
+
+**Why:** Founder answered the one thing I said was theirs (open since 16:58): what failure **does**. It is not an ending — it is a **spending decision**. And the reason it matters is commercial: objectives are what we get paid on.
+
+**Founder wording (durable — parked so it is not only here):**
+
+> the failure mode is simple — it just means we're not gonna waste resources on trying to make that objective happen. But if it happens, if it clears, then of course it's still a win.
+
+> this just matters because once we build the escrow … contingent pricing … that's the angle ultimately, is that we get paid on objectives met.
+
+> reactivation is like an objective that we get paid on … as long as there's money in the system, when that objective is met, that objective is counted and we get paid.
+
+> while that sequence is running, the person can't take their money out, and that objective can't be retracted.
+
+> if we couldn't meet the objective in their attempts … whenever the objective is met it still counts and we get paid. However, they cannot take out their money.
+
+> once they do that, then that whole objective is nullified totally. So even if they submit afterwards, even if they book a meeting afterwards — they can't … that link for the meeting is done. Nullified.
+
+> that's where we're going. I'm not saying building right now.
+
+**The distinction (this is the whole law):** failure closes the **outbound** only. **Exhaustion is ours; nullification is theirs.** We stop spending; only the firm pulling their money stops the listening — and then the **door refuses**, not merely the tally.
+
+| | Outbound | Inbound | Money |
+|---|---|---|---|
+| Pursuing | spending | listening | held; cannot withdraw; objective cannot be retracted |
+| **Exhausted** | **stops** | **still listening** | still claimable — “it still counts” |
+| Nullified (escrow era) | stopped | **refused** | withdrawn; void even if they act after |
+
+**Cut:** [`SYSTEMS-CHANGE-PACKET-023.md`](./SYSTEMS-CHANGE-PACKET-023.md). Depends on 022 — before 022, “stop spending” and “stop listening” were the **same switch**, because `advanceEnrollmentCampaign` only ran inside the tick’s open-attempt loop. 022 split them.
+
+**Bug the law fixes (quote `cascade.ts` ~533):** on `!toChannel` the ladder records `campaign_failure`, dispatches it, and leaves `active_attempts.status='open'`. The tick re-picks it, so **every** later due window writes **another** `campaign_failure` and **re-dispatches** the event. That is the resource waste the founder is naming, plus a duplicate-event bug on any subscribed workflow.
+
+**Decided:** attempt → `status='exhausted'` in the same transaction as the failure INSERT (tick already filters `open`, so spending stops with no query change). `enrollment` += `pursuit_state` (`pursuing|exhausted`) + `exhausted_at`, reset on cursor advance. Cursor is **not** nulled. Forbidden on exhaustion: nulling `campaign_id`, invalidating any link/door, unstamping 022 evidence, or gating `onCompletionWrite` on `pursuit_state` — **a completion on an exhausted pursuit is a normal win.** No forced next campaign (16:58 stands).
+
+**Name collision flagged:** `active_attempts.status='nullified'` already means *“they responded — a win”* (inbound override, meeting booked). A nullified **objective** is money-pulled. Do not overload that word or column.
+
+**Parked direction:** [`SYSTEMS-OBJECTIVE-ESCROW.md`](./SYSTEMS-OBJECTIVE-ESCROW.md) — objectives are the billable unit; three states money reads; what it will still demand (a **claim ledger** as the one future mint, because “was this claimable at the instant it completed?” cannot be recomputed — withdrawal-vs-completion ordering *is* the payment question); escrow as stood up is thin (`escrow_acceptances` = firm-level acceptance, no balance/price/withdrawal/release; port is a **stand-in**); withdrawal has no write today; nullification must be enforced at ingress (`access_links.invalidated_at` is that mechanism already).
+
+**Story:** this **partially fills** the §3 silence *“Escrow release trigger / outcome definition.”* Founder gave the **trigger** — release is on **objective met**. The **outcome** half (pricing, which objectives bill, withdrawal terms) is still silent. Naming a trigger is **not** promotion; Requirements must not extract a claim state yet. Story §3 musts still bind: terms are firm↔Om Coda, Tower holds no immigrant funds, the contact pays nothing — the escrowed money is the **firm’s**.
+
+**Did not:** build escrow / pricing / a claim ledger; mint anything for the direction; promote Story myself; recut 015 / 019 / #108; overwrite 15:43.
+
+**Do not:** treat exhaustion as an ending; gate 022 detection on `pursuit_state`; reuse `nullified`; let a nullified objective be merely uncounted; force another campaign on failure.
