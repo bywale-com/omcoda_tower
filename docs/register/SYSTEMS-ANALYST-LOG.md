@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-21 08:20 UTC — **New SA inhabited from the repo.** This file on `main` froze 2026-08-15 23:00. Live trail is PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86) Current **2026-08-20 19:20** (packet **021** pickup). Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-21 08:40 UTC — **Objectives as a thing: housed in 010/#88; last Engineer PRs did not further it.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -699,3 +699,49 @@ Full table appended on [`SYSTEMS-AUTOMATIONS-ASCRIBE.md`](./SYSTEMS-AUTOMATIONS-
 **Did not:** generate a second Agents flag; mint; recut 015; copy #86’s docs tree onto this stamp; overwrite 15:43.
 
 **Do not:** treat this `main` copy as live Current after 23:00 without fetching #86; start AGENTS-SA-PACKAGE as if unanswered; ask the founder to name tables.
+
+---
+
+## 2026-08-21 08:40 UTC — How far objectives got. Last Engineer PR did not move them.
+
+**Why:** Founder: most recent completed Engineer PR + most recent packets — how far did that go in establishing **objectives as a thing**; where was it prior; what if anything furthered it.
+
+**Hard (quote SQL / walker, not screens):**
+
+There are **two grains**. Do not wash them.
+
+| Grain | What it is | Housed? |
+|-------|------------|---------|
+| **Campaign objective** (C2 / C2b) | Named completion **on a campaign**: click · form · meeting, pointing at an existing completion table | **Yes, 010.** Table `campaign_objective`. UNIQUE one per campaign. |
+| **Class / flagship goal** (15:43 · SYSTEMS-GOAL) | Sequence class = objective (opt-in / re-engagement / reactivation). Goal = that completion. That completion **escalates** to other agent · other workflow · or end | **Paper.** No destination row. Story §7 still not promoted. |
+
+### Prior (before 010 / PR #88)
+
+No `campaign` table. No `campaign_objective`. Completions already existed as **other** tables: `messaging_events`, `fact_writebacks`, `meeting_booked`. 16:28 said goal-as-escalation was not housed. 16:40 correction: meeting booked **is** the reactivation goal — the hole was “not a type on the package.” 22:41 named the housing (sequence⊃campaigns; objective on the campaign pointing at those completions). No mint that night.
+
+### What established it as a thing (not last week)
+
+**PR [#88](https://github.com/bywale-com/omcoda_tower/pull/88) / `010_sequence_campaign_housing.sql`.** Engineer cut the 22:41 housing.
+
+- Table: `id`, `campaign_id` FK, `kind` CHECK `click|form|meeting`, `name`, `completion_table` CHECK `messaging_events|fact_writebacks|meeting_booked`, `source` template|scratch. UNIQUE `(campaign_id)`.
+- Seed: Launch window = click → `messaging_events`; Launch day = form → `fact_writebacks`; Nudge = form; Book a meeting = meeting → `meeting_booked`.
+- Ant **Add objective / Set objective** persists via `saveSequenceHousing` → `campaignHousing.saveHousing`.
+- Worker tick (`cascade.ts`): **campaign cursor first** — `campaignObjectiveMet` then `advanceEnrollmentCampaign` (next `ord` in the same sequence). Last campaign met → `enrollment.campaign_id` NULL. That is **end of this sequence’s campaigns**, not flagship destination.
+
+`campaignObjectiveMet` is coarse: **any** row in that completion table for `(firm_id, contact_id)`. Not “this link,” not “this form,” not this campaign’s objective id.
+
+### Last completed Engineer PR — did not further it
+
+Merged **[#107](https://github.com/bywale-com/omcoda_tower/pull/107)** (2026-08-20) — If two wires + Switch paths (packet **019**). Automations fork. No `campaign_objective`. No objective-met trigger. Same for the Automations stack before it: #106 seat, #105 Test/Run/Launch, #104 data-in-tables, #103 tag, #102 A34, #101/#100 in-app Action, #99 Test contract, #97 A26–A28.
+
+PRIMITIVES still lists **“An objective was met”** as an Automations event (Global = that kind; Local = this objective / campaign). **A26 does not.** `TRIGGER_SELECT_EVENTS` has Form submitted / Campaign failed / meeting is not even on the named list (`meeting_booked` is in the **017** test contract, excluded from A26 by comment “Do not add … meeting”). There is **no** `objective_met` event. Completions can be heard as their **own** writes (`fact_writebacks`, `meeting_booked`). The objective **row** is not dispatched.
+
+### Most recent packets
+
+**021** (uncut, pickup on #86): Automations Action — objective radios **first** (click · form · meeting), then A14 unfiltered. Graph `data.objectiveKind`. **Must not INSERT `campaign_objective`.** Completions stay on the **agent**. Click / meeting interiors out of that packet. This would let Automations **name the kind** when assigning; it would not mint a second objective store.
+
+**020** waiting: Operator panes. Not objectives.
+
+**Did not:** mint; recut 015 / 019; treat #107 as the objective cut; overwrite 15:43.
+
+**Do not:** collapse campaign-objective with class-goal; call any-row-in-`messaging_events` “this objective was met” as if it were Local; put objective-met on A26 without a packet.
