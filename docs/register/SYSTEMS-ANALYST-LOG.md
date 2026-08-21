@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-21 09:50 UTC — **022** objective met is a Local event · **023** failure = stop spending, keep listening. Objectives are the billable unit ([`SYSTEMS-OBJECTIVE-ESCROW.md`](./SYSTEMS-OBJECTIVE-ESCROW.md), direction). Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-21 10:10 UTC — **022** objective met is a Local event (+ §2.6 **binding**: campaign owns the objective, Action must agree, `form_ref` derived) · **023** failure = stop spending, keep listening. Billable unit: [`SYSTEMS-OBJECTIVE-ESCROW.md`](./SYSTEMS-OBJECTIVE-ESCROW.md) (direction). Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -885,3 +885,31 @@ So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WH
 **Did not:** build escrow / pricing / a claim ledger; mint anything for the direction; promote Story myself; recut 015 / 019 / #108; overwrite 15:43.
 
 **Do not:** treat exhaustion as an ending; gate 022 detection on `pursuit_state`; reuse `nullified`; let a nullified objective be merely uncounted; force another campaign on failure.
+
+---
+
+## 2026-08-21 10:10 UTC — Selecting the objective **is a binding**. 022 §2.6. Two decisions.
+
+**Why:** Founder: when you select that objective on the Automations Action assigning an agent, **you are binding that objective to something.** Correct, and the column is literally `action.payload_binding`.
+
+**Founder wording:**
+
+> when you select that objective, when you're assigning agents' action in automations, you are binding that objective to something
+
+**Hard:** authorship **binds**; runtime **carries** that binding out (022 §2.1 stamp) so the return leg matches. The stamp is not new information — it is the binding made physical. Three things are bound; only one was resolved:
+
+| Bound to | Where | Was |
+|---|---|---|
+| the **agent** (which sequence pursues it) | `action.agent_ref` → `enrollment.sequence_id` | resolved |
+| the **objective row** (what counts as done) | `campaign_objective` on the landed campaign (010) | **not resolved** — `objectiveKind` never checked against it |
+| the **instance** (which form / link / calendar) | form: `mappedSlots.form` → `payload_binding.fieldKeys` (#108) | bound but **had no id**, so nothing could be stamped |
+
+**Decision 1 — the campaign owns the objective; the Action must agree.** `campaign_objective.kind` is authority (Agents authored it; Agents stays agnostic — law 9 recut). The Action **declares and must match**: agree → configured + carry `campaign_objective_id`; disagree → `configured=false`, honest block (#105 no silent success); no campaign objective → `configured=false`. Without this, one enroll can claim two objectives and §2.2 has no single id to match. 021 still stands: Automations does **not** INSERT `campaign_objective`.
+
+**Decision 2 — the form instance is the binding; its id is derived.** Automations owns the form (existing face law), so the bound listing **is** the form. `form_ref = form.<enrollment_id>.<campaign_objective_id>` — minted at enroll, stamped outbound, persisted on `fact_writebacks` (§2.1), matched in §2.2. Recomputable, so **no table, no id column, cannot drift.** This is exactly the axis `triggerLocalRefFromPayload("fact_writebacks")` already reads and that A26 already offers as **Form submitted → Select form** — a face that only works once `form_ref` is persisted.
+
+`click` / `meeting` instances stay unbound here: the link is campaign content (Agents), and there is no calendar port. Objective-level stamp is enough to match. Do not invent a link id.
+
+**Did not:** mint a form/binding table; let the Action author the objective; filter sequences by the radio; recut 015 / 019 / #108; overwrite 15:43.
+
+**Do not:** stamp a `campaign_objective_id` the Action's kind contradicts; store `form_ref` as an allocated id; bind a calendar or link instance without a packet.

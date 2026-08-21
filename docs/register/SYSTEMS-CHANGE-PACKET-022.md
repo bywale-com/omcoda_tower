@@ -22,6 +22,8 @@ A Local event today is **two** things, and Tower already has both:
 
 **Objective met is exactly that shape.** The completion write **is** the event. Nothing new is needed conceptually.
 
+**And the axis comes from a binding.** When the operator picks the objective on the Automations Action, they are **binding** that objective to something concrete — the column is already called `action.payload_binding`. Authorship binds; the runtime carries that binding out on the wire (§2.1) so the return leg can be matched. The stamp is not new information — it is the binding, made physical. §2.6 decides what it binds to.
+
 What is missing is only (2) — **the completion rows do not carry which campaign asked for them:**
 
 | Objective kind | Completion write (010) | Instance axis on the row today | Local possible? |
@@ -188,7 +190,45 @@ contactIds: [contact_id]
 
 So the answer to “what would have to change in the model” — open since 16:28 — is **no destination column and no `goal` table.** Escalation is a subscription. Story §7 does not need promotion to *house* this; the housing is the event mechanism it already has. What Story would gain is a **must** naming objective-met as a first-class finishing event. That is a wording promotion, not a structural one — and it is not required for this cut to ship.
 
-### 2.6 Test contract (017) — same two tables, versioned
+### 2.6 What the objective is bound to (the authorship half)
+
+Picking the objective on Automations Action · Agents binds **three** things. Only one of them is resolved today.
+
+| Bound to | Where it lives | State |
+|---|---|---|
+| **The agent** — which sequence pursues it | `action.agent_ref` → `enrollment.sequence_id` | **Resolved.** Works today |
+| **The objective row** — what counts as done | `campaign_objective` on the campaign the enrollment lands on (`010`) | **Not resolved.** The Action's `objectiveKind` is never checked against it |
+| **The instance** — *which* form / link / calendar is put in front of this contact | form: `mappedSlots.form` → `payload_binding.fieldKeys` (after #108) | **Bound, but has no id**, so nothing can be stamped |
+
+**Decision 1 — the campaign owns the objective; the Action must agree.**
+
+`campaign_objective.kind` is the authority on what completes a campaign. Agents authored it, and Agents stays agnostic of Automations (law 9 recut — do not filter sequences by the radio). The Action does **not** override it and does **not** INSERT it (021 stands).
+
+So the Action's `objectiveKind` is a **declaration that must match**. At Save / walk, resolve the assigned sequence's current campaign objective and compare:
+
+- kinds agree → configured; carry `campaign_objective_id` on `payload_binding`.
+- kinds disagree → `configured = false`, honest block (#105: do not silent-success). The operator picked "Submit this form" against a campaign whose objective is a click.
+- sequence has no campaign objective → `configured = false`. You cannot pursue what was never named.
+
+Without this, the same enroll can claim two different objectives and §2.2 has no single id to match on.
+
+**Decision 2 — the form instance is the binding, and its id is derived.**
+
+For a `form` objective, Automations supplies the instance (the face law has always been *Automations owns the form*): the bound listing **is** the form. Give it the id A26 already expects — `form_ref` — and derive it. No table, no id column to allocate:
+
+```
+form_ref = `form.${enrollment_id}.${campaign_objective_id}`
+```
+
+- Minted at enroll, written onto `payload_binding.form_ref`, and stamped on what goes out (§2.1).
+- The contact's submission returns it; `fact_writebacks.form_ref` persists it (§2.1); §2.2 matches on it.
+- Anyone can recompute it, so it needs no store and cannot drift.
+
+That is the founder's sentence end to end: *this* form, bound to *this* objective for *this* person, submitted, detected, matched back to the sequence. It is also exactly the Local axis `triggerLocalRefFromPayload("fact_writebacks")` already reads (`form_ref`) and that `TRIGGER_SELECT_EVENTS` already offers as **Form submitted → Select form** — a face that works only once this is persisted.
+
+`click` and `meeting` instances stay unbound in this packet: the link is campaign content (Agents), and there is no calendar port. Their objective-level stamp (§2.1) is enough to match. Do not invent a link id or a calendar binding here.
+
+### 2.7 Test contract (017) — same two tables, versioned
 
 Add to `event_write_set` / `event_test_data` (never UPDATE a shipping version; these are new rows at `version = 1`):
 
@@ -200,7 +240,7 @@ INSERT INTO event_write_set (event_name, version, table_name, ord) VALUES
 
 One `event_test_data` specimen per kind (form / meeting / click) using existing Harbor practice values — `campaign_objective_id` from the seeded objectives (`obj.optin.day`, `obj.react.meeting`, `obj.optin.window`). Mirror in `src/app/data/eventTestContract.ts`. Do not INSERT from a live fire.
 
-### 2.7 Seeds (data in tables)
+### 2.8 Seeds (data in tables)
 
 `supabase/seeds/` — stamp the existing seeded people so the walk is not empty and so a query returns rows:
 
@@ -214,7 +254,8 @@ One `event_test_data` specimen per kind (form / meeting / click) using existing 
 - Does **not** mint `campaign_objective_met`, `goal`, `goal_destination`, `finishing_event`, or an `events` table.
 - Does **not** add a column to `messaging_events` (the join answers it).
 - Does **not** recut 015, 019, or #108. Does not touch `campaign_objective` DDL (010 stands).
-- Does **not** INSERT `campaign_objective` from Automations (021 stands).
+- Does **not** INSERT `campaign_objective` from Automations (021 stands). The Action **binds and must agree**; it does not author (§2.6).
+- Does **not** mint a form table, a `form_ref` column on the action, or a link/calendar instance id. `form_ref` is derived (§2.6 decision 2).
 - Does **not** require new UI. If the founder later wants **“An objective was met”** on the A26 trigger list (PRIMITIVES already promises it, with Local = this objective / campaign), that is one row in `TRIGGER_SELECT_EVENTS` with an `instance` layer — a line in an existing named list, not a plate. The machine works without it.
 - Does **not** decide **failure** (objective never met after the whole campaign). Founder answered that on 2026-08-21 and it is cut separately: [`SYSTEMS-CHANGE-PACKET-023.md`](./SYSTEMS-CHANGE-PACKET-023.md) — failure stops the **outbound** only; the objective stays claimable. **023 depends on this packet**, because detect-on-the-write is what lets attempts close without going deaf. Cut 022 first.
 
@@ -228,6 +269,7 @@ Next free on `origin/main`. `017` is taken. **#108 lands `018_collectible_fields
 
 1. Enroll a contact on the opt-in sequence. Confirm the send row carries `enrollment_id` / `campaign_id` / `campaign_objective_id`.
 2. Submit the form for that contact with that `form_ref`. Confirm: `fact_writebacks` stamped → `engagement_records` `objective_met` appended → `enrollment.campaign_id` moved to `camp.optin.day` → open attempts closed.
+2b. On the Action, pick **Submit this form** against a sequence whose current campaign objective is `click`. Confirm the node is **not configured** and says so (§2.6 decision 1).
 3. Submit a **second** form for the same contact. Confirm it does **not** re-advance (cursor already moved).
 4. Book a meeting for a contact whose current objective is `click`. Confirm **no** advance (wrong completion table).
 5. Point a workflow trigger at `objective_met` Local to `obj.optin.day`, Launch it, repeat (2). Confirm that workflow runs — that is the flagship escalation, with no destination column.
