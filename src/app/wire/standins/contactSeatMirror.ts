@@ -33,7 +33,9 @@ const links: Link[] = [
   { token: "c-harbor-cole", firmId: "firm-harbor", contactId: "cr-harbor-2", campaignId: "camp.optin.day" },
 ];
 
-const consent = new Map<string, { basis: "express" | "implied" | "none"; silenced: boolean; source: string | null }>();
+const consent = new Map<string, { basis: "express" | "implied" | "none"; silenced: boolean; source: string | null }>([
+  ["cr-harbor-1", { basis: "express", silenced: false, source: "contact_workspace" }],
+]);
 
 const missing = new Map<string, Array<{ fieldKey: string; label: string }>>([
   [
@@ -108,6 +110,38 @@ export const standInContactUploads: Upload[] = [
 
 function linkOf(token: string): Link | undefined {
   return links.find((row) => row.token === token);
+}
+
+function linkByContact(contactId: string): Link | undefined {
+  return links.find((row) => row.contactId === contactId);
+}
+
+export function listStandInContactWorkspaces(firmId: string): Array<{
+  id: string;
+  name: string | null;
+  email: string | null;
+}> {
+  const emails: Record<string, string> = {
+    "cr-harbor-1": "daniel.okonkwo@example.com",
+    "cr-harbor-2": "amina.cole@example.com",
+  };
+  const bookFirm: Record<string, string> = {
+    "cr-harbor-1": "firm-standin-harbor",
+    "cr-harbor-2": "firm-standin-harbor",
+  };
+  return links
+    .filter((link) => link.firmId === firmId || bookFirm[link.contactId] === firmId)
+    .filter((link) => {
+      const row = consent.get(link.contactId);
+      return Boolean(
+        row && (row.basis === "express" || row.basis === "implied") && !row.silenced,
+      );
+    })
+    .map((link) => ({
+      id: link.contactId,
+      name: contacts[link.contactId] ?? null,
+      email: emails[link.contactId] ?? null,
+    }));
 }
 
 function refuse(token: string): ContactSeatRefuse | null {
@@ -197,6 +231,12 @@ function asSeat(token: string, campaignId?: string): ContactSeatPayload | Contac
 }
 
 export const standInContactSeat = {
+  listWorkspaces(firmId: string) {
+    return listStandInContactWorkspaces(firmId);
+  },
+  tokenForContact(contactId: string) {
+    return linkByContact(contactId)?.token ?? null;
+  },
   load(token: string, campaignId?: string) {
     return Promise.resolve(asSeat(token, campaignId));
   },

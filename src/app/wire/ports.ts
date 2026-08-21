@@ -619,6 +619,39 @@ export type MachineApiPort = {
       firmName: string;
     }>
   >;
+  /** Platform admin: opted-in contacts who have a workspace for the selected firm. */
+  listContactWorkspaces(firmId?: string): Promise<
+    Array<{ id: string; name: string | null; email: string | null }>
+  >;
+  loadContactWorkspace: (
+    contactId: string,
+    opts?: { campaignId?: string },
+  ) => Promise<import("./contactSeatTypes").ContactSeatPayload | import("./contactSeatTypes").ContactSeatRefuse>;
+  consentContactWorkspace: (
+    contactId: string,
+    action: "agree" | "ignore",
+  ) => Promise<import("./contactSeatTypes").ContactSeatPayload | import("./contactSeatTypes").ContactSeatRefuse>;
+  silenceContactWorkspace: (
+    contactId: string,
+  ) => Promise<import("./contactSeatTypes").ContactSeatPayload | import("./contactSeatTypes").ContactSeatRefuse>;
+  submitContactWorkspaceFacts: (
+    contactId: string,
+    answers: Array<{ fieldKey: string; value: unknown }>,
+  ) => Promise<import("./contactSeatTypes").ContactSeatPayload | import("./contactSeatTypes").ContactSeatRefuse>;
+  bookContactWorkspace: (
+    contactId: string,
+    slot: string,
+  ) => Promise<import("./contactSeatTypes").ContactSeatPayload | import("./contactSeatTypes").ContactSeatRefuse>;
+  putContactWorkspaceUpload: (
+    contactId: string,
+    input: {
+      origin: "kind" | "custom" | "question" | "any";
+      kind?: string | null;
+      fieldKey?: string | null;
+      bodyText?: string | null;
+      fileName?: string | null;
+    },
+  ) => Promise<import("./contactSeatTypes").ContactSeatPayload | import("./contactSeatTypes").ContactSeatRefuse>;
   bookMeeting(input: {
     contactId: string;
     slot?: string;

@@ -41,6 +41,11 @@ VALUES
   )
 ON CONFLICT (id) DO NOTHING;
 
+-- Opted in + workspace so Contact ▾ has a real row (Cole stays not opted in).
+INSERT INTO consent_records (contact_id, firm_id, basis, silenced, source, updated_at)
+VALUES ('cr-harbor-1', 'firm-harbor', 'express', false, 'contact_workspace', now())
+ON CONFLICT (contact_id, firm_id) DO NOTHING;
+
 INSERT INTO contact_uploads
   (id, firm_id, contact_id, kind, origin, field_key, body_text, file_name, file_ref, created_at)
 VALUES

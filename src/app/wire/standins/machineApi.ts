@@ -1768,6 +1768,78 @@ export const standInMachineApi: MachineApiPort = {
     ];
   },
 
+  async listContactWorkspaces(firmId) {
+    return standInContactSeat.listWorkspaces(firmId || standInFirm());
+  },
+
+  loadContactWorkspace(contactId, opts) {
+    const token = standInContactSeat.tokenForContact(contactId);
+    if (!token) {
+      return Promise.resolve({
+        ok: false,
+        refuse: "missing",
+        message: "This link could not be opened. Ask the firm for a new one.",
+      });
+    }
+    return standInContactSeat.load(token, opts?.campaignId);
+  },
+  consentContactWorkspace(contactId, action) {
+    const token = standInContactSeat.tokenForContact(contactId);
+    if (!token) {
+      return Promise.resolve({
+        ok: false,
+        refuse: "missing",
+        message: "This link could not be opened. Ask the firm for a new one.",
+      });
+    }
+    return standInContactSeat.consent(token, action);
+  },
+  silenceContactWorkspace(contactId) {
+    const token = standInContactSeat.tokenForContact(contactId);
+    if (!token) {
+      return Promise.resolve({
+        ok: false,
+        refuse: "missing",
+        message: "This link could not be opened. Ask the firm for a new one.",
+      });
+    }
+    return standInContactSeat.silence(token);
+  },
+  submitContactWorkspaceFacts(contactId, answers) {
+    const token = standInContactSeat.tokenForContact(contactId);
+    if (!token) {
+      return Promise.resolve({
+        ok: false,
+        refuse: "missing",
+        message: "This link could not be opened. Ask the firm for a new one.",
+      });
+    }
+    return standInContactSeat.facts(token, answers);
+  },
+  bookContactWorkspace(contactId, slot) {
+    void slot;
+    const token = standInContactSeat.tokenForContact(contactId);
+    if (!token) {
+      return Promise.resolve({
+        ok: false,
+        refuse: "missing",
+        message: "This link could not be opened. Ask the firm for a new one.",
+      });
+    }
+    return standInContactSeat.book(token);
+  },
+  putContactWorkspaceUpload(contactId, input) {
+    const token = standInContactSeat.tokenForContact(contactId);
+    if (!token) {
+      return Promise.resolve({
+        ok: false,
+        refuse: "missing",
+        message: "This link could not be opened. Ask the firm for a new one.",
+      });
+    }
+    return standInContactSeat.upload(token, input);
+  },
+
   async issueAccessInvite(input) {
     const email = input.email.trim().toLowerCase();
     const accessPath = `/a/standin-invite-${email.split("@")[0] || "user"}`;

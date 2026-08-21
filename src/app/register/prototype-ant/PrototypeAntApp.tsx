@@ -1,17 +1,16 @@
 /**
  * Tower CT Ant shell — product face.
- * Admin (admin@try-tower.com): Consultant ▾ | Operator | Contact
- * Everyone else: consultant workspace only (no switcher).
- * Prototype (auth bypass) keeps the full admin-shaped shell for modeling.
+ * Operator / modeling: Consultant ▾ | Operator | Contact ▾. No leftover firm chip.
+ * Consultant person: Consultant only. Contact person (/c/<token>): no this switcher.
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import {
   App,
   Button,
   ConfigProvider,
   Dropdown,
+  Empty,
   Layout,
-  Segmented,
   Space,
   Switch,
   Typography,
@@ -20,7 +19,6 @@ import {
 import {
   BankOutlined,
   BulbOutlined,
-  ControlOutlined,
   DownOutlined,
   LinkOutlined,
   LogoutOutlined,
@@ -47,6 +45,38 @@ function contactTokenFromPath(): string | null {
   if (typeof window === "undefined") return null;
   const match = window.location.pathname.match(/^\/c\/([^/]+)/);
   return match ? decodeURIComponent(match[1]) : null;
+}
+
+function Slot({
+  active,
+  children,
+  onClick,
+}: {
+  active: boolean;
+  children: ReactNode;
+  onClick?: () => void;
+}) {
+  const { token } = antTheme.useToken();
+  const style: CSSProperties = {
+    appearance: "none",
+    border: "none",
+    background: active ? token.colorBgContainer : "transparent",
+    boxShadow: active ? token.boxShadowTertiary : undefined,
+    borderRadius: token.borderRadiusSM,
+    padding: "4px 11px",
+    cursor: "pointer",
+    fontWeight: 500,
+    color: token.colorText,
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    lineHeight: "22px",
+  };
+  return (
+    <button type="button" style={style} onClick={onClick}>
+      {children}
+    </button>
+  );
 }
 
 export function PrototypeAntApp() {
@@ -90,23 +120,24 @@ function AntShell({
 }) {
   const { token } = antTheme.useToken();
   const { user, isLoading, isAuthenticated, logout } = useAuth();
-  const { isAdmin, consultants, selected, selectConsultant, loading: consultantsLoading } =
-    useViewAs();
+  const {
+    isAdmin,
+    consultants,
+    selected,
+    selectConsultant,
+    contactWorkspaces,
+    selectedContact,
+    selectContact,
+    loading: consultantsLoading,
+  } = useViewAs();
   const [desk, setDesk] = useState<AntDesk>("consultant");
 
-  // Non-admin never leaves consultant desk.
   useEffect(() => {
     if (!isAdmin && desk !== "consultant") setDesk("consultant");
   }, [isAdmin, desk]);
 
   const authOff = isAuthDisabled();
   const needsLogin = !isLoading && !isAuthenticated;
-
-  const consultantLabel = selected
-    ? `${selected.firmName}`
-    : consultantsLoading
-      ? "Consultants…"
-      : "Consultant";
 
   const consultantMenuItems = consultants.map((c) => ({
     key: c.firmId,
@@ -121,16 +152,37 @@ function AntShell({
     ),
     onClick: () => {
       selectConsultant(c.firmId);
+      setDesk("consultant");
     },
   }));
 
-  const segmentedOptions = isAdmin
-    ? [
-        { label: "Consultant", value: "consultant", icon: <UserOutlined /> },
-        { label: "Operator", value: "operator", icon: <ControlOutlined /> },
-        { label: "Contact", value: "contact", icon: <TeamOutlined /> },
-      ]
-    : [{ label: "Consultant", value: "consultant", icon: <UserOutlined /> }];
+  const contactMenuItems = contactWorkspaces.map((row) => ({
+    key: row.id,
+    icon: <TeamOutlined />,
+    label: (
+      <div>
+        <div>{row.name || row.id}</div>
+        {row.email ? (
+          <Text type="secondary" style={{ fontSize: 11 }}>
+            {row.email}
+          </Text>
+        ) : null}
+      </div>
+    ),
+    onClick: () => {
+      selectContact(row.id);
+      setDesk("contact");
+    },
+  }));
+
+  const track: CSSProperties = {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 2,
+    padding: 2,
+    background: token.colorFillTertiary,
+    borderRadius: token.borderRadius,
+  };
 
   return (
     <Layout style={{ height: "100%", minHeight: "100vh" }}>
@@ -163,47 +215,56 @@ function AntShell({
             </Text>
           ) : null}
           {!needsLogin && isAdmin ? (
-            <Dropdown
-              menu={{
-                items: consultantMenuItems,
-                selectable: true,
-                selectedKeys: selected ? [selected.firmId] : [],
-              }}
-              trigger={["click"]}
-              disabled={!consultants.length}
-            >
-              <span
-                role="button"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  padding: "4px 11px",
-                  border: `1px solid ${token.colorBorder}`,
-                  borderRadius: token.borderRadius,
-                  background: token.colorBgContainer,
-                  cursor: consultants.length ? "pointer" : "default",
-                  maxWidth: 240,
+            <div style={track} role="tablist" aria-label="Desk">
+              <Dropdown
+                menu={{
+                  items: consultantMenuItems,
+                  selectable: true,
+                  selectedKeys: selected ? [selected.firmId] : [],
                 }}
+                trigger={["click"]}
+                disabled={!consultants.length && !consultantsLoading}
               >
-                <BankOutlined />
-                <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {consultantLabel}
+                <span>
+                  <Slot active={desk === "consultant"} onClick={() => setDesk("consultant")}>
+                    <UserOutlined />
+                    Consultant
+                    <DownOutlined style={{ fontSize: 10 }} />
+                  </Slot>
                 </span>
-                <DownOutlined style={{ fontSize: 10 }} />
-              </span>
-            </Dropdown>
-          ) : null}
-          {!needsLogin ? (
-            <Segmented
-              value={desk}
-              onChange={(v) => {
-                const next = v as AntDesk;
-                if (!isAdmin && next !== "consultant") return;
-                setDesk(next);
-              }}
-              options={segmentedOptions}
-            />
+              </Dropdown>
+              <Slot active={desk === "operator"} onClick={() => setDesk("operator")}>
+                Operator
+              </Slot>
+              <Dropdown
+                menu={{
+                  items: contactMenuItems.length
+                    ? contactMenuItems
+                    : [{ key: "empty", label: "No opted-in workspaces", disabled: true }],
+                  selectable: true,
+                  selectedKeys: selectedContact ? [selectedContact.id] : [],
+                }}
+                trigger={["click"]}
+              >
+                <span>
+                  <Slot
+                    active={desk === "contact"}
+                    onClick={() => {
+                      if (selectedContact) setDesk("contact");
+                    }}
+                  >
+                    Contact
+                    <DownOutlined style={{ fontSize: 10 }} />
+                  </Slot>
+                </span>
+              </Dropdown>
+            </div>
+          ) : !needsLogin ? (
+            <div style={track}>
+              <Slot active onClick={() => setDesk("consultant")}>
+                Consultant
+              </Slot>
+            </div>
           ) : null}
         </Space>
         <Space size="middle">
@@ -217,12 +278,8 @@ function AntShell({
               unCheckedChildren="Light"
             />
           </Space>
-          {!needsLogin && desk !== "contact" ? (
-            <Button
-              type="text"
-              icon={<LogoutOutlined />}
-              onClick={() => void logout()}
-            >
+          {!needsLogin ? (
+            <Button type="text" icon={<LogoutOutlined />} onClick={() => void logout()}>
               Log out
             </Button>
           ) : null}
@@ -244,7 +301,13 @@ function AntShell({
         ) : desk === "operator" && isAdmin ? (
           <OperatorAntScene />
         ) : desk === "contact" && isAdmin ? (
-          <ContactAntScene />
+          selectedContact ? (
+            <ContactAntScene contactId={selectedContact.id} />
+          ) : (
+            <div style={{ height: "100%", display: "grid", placeItems: "center" }}>
+              <Empty description="No contact workspace selected." />
+            </div>
+          )
         ) : (
           <ConsultantAntScene key={selected?.firmId ?? user?.firmId ?? "self"} />
         )}

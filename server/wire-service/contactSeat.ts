@@ -7,8 +7,10 @@ import type { Context } from "hono";
 import { randomUUID } from "node:crypto";
 import type { Pool } from "pg";
 import { sha256 } from "../auth-service/crypto.ts";
+import { isPlatformAdminEmail } from "../auth-service/platformAdmin.ts";
 import { getPool } from "./db.ts";
 import { runContactEligibilityCascade } from "./machine.ts";
+import { FirmScopeError, requireSessionActor, requireSessionFirm } from "./sessionFirm.ts";
 import { dispatchEventToWorkflows } from "./workflowWalk.ts";
 
 export const SEED_CONTACT_TOKENS = {
@@ -359,8 +361,80 @@ async function seatFromToken(c: Context): Promise<{ pool: Pool; link: LinkRow } 
   return { pool, link };
 }
 
+async function seatFromAdminContact(c: Context): Promise<{ pool: Pool; link: LinkRow } | SeatRefuse> {
+  const actor = await requireSessionActor(c);
+  if (!isPlatformAdminEmail(actor.email)) {
+    throw new FirmScopeError(403, "platform admin only");
+  }
+  const firmId = await requireSessionFirm(c);
+  const contactId = decodeURIComponent(c.req.param("contactId") ?? "").trim();
+  if (!contactId) {
+    return {
+      ok: false,
+      refuse: "missing",
+      message: "This link could not be opened. Ask the firm for a new one.",
+    };
+  }
+  const pool = getPool();
+  try {
+    const found = await pool.query<LinkRow>(
+      `SELECT id, firm_id, contact_id, enrollment_id, campaign_id, expires_at, invalidated_at
+       FROM contact_access_links
+       WHERE firm_id=$1 AND contact_id=$2 AND invalidated_at IS NULL
+       ORDER BY created_at DESC LIMIT 1`,
+      [firmId, contactId],
+    );
+    const link = found.rows[0] ?? null;
+    const refused = refuseOf(link);
+    if (refused || !link) return refused ?? refuseOf(null)!;
+    return { pool, link };
+  } catch (err) {
+    const code = (err as { code?: string }).code;
+    if (code === "42P01") return refuseOf(null)!;
+    throw err;
+  }
+}
+
+async function seatFromContext(c: Context): Promise<{ pool: Pool; link: LinkRow } | SeatRefuse> {
+  if (c.req.param("contactId")) return seatFromAdminContact(c);
+  return seatFromToken(c);
+}
+
+export async function handleContactWorkspacesList(c: Context) {
+  const actor = await requireSessionActor(c);
+  if (!isPlatformAdminEmail(actor.email)) {
+    throw new FirmScopeError(403, "platform admin only");
+  }
+  const firmId = (c.req.query("firmId") ?? "").trim() || (await requireSessionFirm(c));
+  const pool = getPool();
+  try {
+    const rows = await pool.query<{ id: string; name: string | null; email: string | null }>(
+      `SELECT cr.id, cr.name, cr.email
+         FROM contact_records cr
+         JOIN consent_records cons
+           ON cons.contact_id = cr.id AND cons.firm_id = cr.firm_id
+        WHERE cr.firm_id = $1
+          AND cons.basis IN ('express', 'implied')
+          AND cons.silenced = false
+          AND EXISTS (
+                SELECT 1 FROM contact_access_links l
+                 WHERE l.firm_id = cr.firm_id
+                   AND l.contact_id = cr.id
+                   AND l.invalidated_at IS NULL
+              )
+        ORDER BY cr.name`,
+      [firmId],
+    );
+    return json(c, { workspaces: rows.rows });
+  } catch (err) {
+    const code = (err as { code?: string }).code;
+    if (code === "42P01") return json(c, { workspaces: [] });
+    throw err;
+  }
+}
+
 export async function handleContactSeatGet(c: Context) {
-  const resolved = await seatFromToken(c);
+  const resolved = await seatFromContext(c);
   if ("refuse" in resolved) return json(c, resolved, 404);
   const openAsk = c.req.query("campaignId")?.trim() || null;
   if (openAsk) {
@@ -379,7 +453,7 @@ export async function handleContactSeatGet(c: Context) {
 }
 
 export async function handleContactSeatConsent(c: Context) {
-  const resolved = await seatFromToken(c);
+  const resolved = await seatFromContext(c);
   if ("refuse" in resolved) return json(c, resolved, 404);
   const body = await c.req.json<{ action?: "agree" | "ignore" }>().catch(() => ({}));
   const action = body.action === "ignore" ? "ignore" : "agree";
@@ -396,7 +470,7 @@ export async function handleContactSeatConsent(c: Context) {
 }
 
 export async function handleContactSeatSilence(c: Context) {
-  const resolved = await seatFromToken(c);
+  const resolved = await seatFromContext(c);
   if ("refuse" in resolved) return json(c, resolved, 404);
   await resolved.pool.query(
     `INSERT INTO consent_records (contact_id, firm_id, basis, silenced, source, updated_at)
@@ -419,7 +493,7 @@ export async function handleContactSeatSilence(c: Context) {
 }
 
 export async function handleContactSeatFacts(c: Context) {
-  const resolved = await seatFromToken(c);
+  const resolved = await seatFromContext(c);
   if ("refuse" in resolved) return json(c, resolved, 404);
   const body = await c.req.json<{ answers?: Array<{ fieldKey: string; value: unknown }> }>().catch(() => ({}));
   const answers = Array.isArray(body.answers) ? body.answers : [];
@@ -478,7 +552,7 @@ export async function handleContactSeatFacts(c: Context) {
 }
 
 export async function handleContactSeatMeeting(c: Context) {
-  const resolved = await seatFromToken(c);
+  const resolved = await seatFromContext(c);
   if ("refuse" in resolved) return json(c, resolved, 404);
   const body = await c.req.json<{ slot?: string }>().catch(() => ({}));
   const slot = String(body.slot ?? "").trim();
@@ -519,7 +593,7 @@ export async function handleContactSeatMeeting(c: Context) {
 }
 
 export async function handleContactSeatUpload(c: Context) {
-  const resolved = await seatFromToken(c);
+  const resolved = await seatFromContext(c);
   if ("refuse" in resolved) return json(c, resolved, 404);
   const body = await c.req.json<{
     origin?: "kind" | "custom" | "question" | "any";

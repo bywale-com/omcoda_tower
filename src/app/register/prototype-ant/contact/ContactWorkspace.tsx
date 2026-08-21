@@ -23,12 +23,40 @@ import {
 } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import { wirePorts } from "../../../wire";
-import { SEED_CONTACT_TOKEN, type ContactSeatPayload } from "../../../wire/contactSeatTypes";
+import { type ContactSeatPayload } from "../../../wire/contactSeatTypes";
 
 const { Sider, Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
 
 type Nav = "now" | "history" | "upload";
+type SeatKey = { token: string } | { contactId: string };
+
+function seatApi(key: SeatKey) {
+  const api = wirePorts.machineApi;
+  if ("token" in key) {
+    return {
+      load: (campaignId?: string) => api.loadContactSeat(key.token, campaignId ? { campaignId } : undefined),
+      consent: (action: "agree" | "ignore") => api.consentContactSeat(key.token, action),
+      silence: () => api.silenceContactSeat(key.token),
+      facts: (answers: Array<{ fieldKey: string; value: unknown }>) =>
+        api.submitContactSeatFacts(key.token, answers),
+      book: (slot: string) => api.bookContactSeat(key.token, slot),
+      upload: (input: Parameters<typeof api.putContactSeatUpload>[1]) =>
+        api.putContactSeatUpload(key.token, input),
+    };
+  }
+  return {
+    load: (campaignId?: string) =>
+      api.loadContactWorkspace(key.contactId, campaignId ? { campaignId } : undefined),
+    consent: (action: "agree" | "ignore") => api.consentContactWorkspace(key.contactId, action),
+    silence: () => api.silenceContactWorkspace(key.contactId),
+    facts: (answers: Array<{ fieldKey: string; value: unknown }>) =>
+      api.submitContactWorkspaceFacts(key.contactId, answers),
+    book: (slot: string) => api.bookContactWorkspace(key.contactId, slot),
+    upload: (input: Parameters<typeof api.putContactWorkspaceUpload>[1]) =>
+      api.putContactWorkspaceUpload(key.contactId, input),
+  };
+}
 
 function MeetingBook({
   slots,
@@ -62,11 +90,15 @@ function MeetingBook({
 
 export function ContactWorkspace({
   token,
+  contactId,
   embedded = false,
 }: {
-  token: string;
+  token?: string;
+  contactId?: string;
   embedded?: boolean;
 }) {
+  const key: SeatKey | null = token ? { token } : contactId ? { contactId } : null;
+  const calls = key ? seatApi(key) : null;
   const { token: themeToken } = theme.useToken();
   const [nav, setNav] = useState<Nav>("now");
   const [seat, setSeat] = useState<ContactSeatPayload | null>(null);
@@ -87,7 +119,12 @@ export function ContactWorkspace({
 
   const load = useCallback(
     async (campaignId?: string) => {
-      const next = await wirePorts.machineApi.loadContactSeat(token, campaignId ? { campaignId } : undefined);
+      if (!calls) {
+        setRefuse("This link could not be opened.");
+        setSeat(null);
+        return;
+      }
+      const next = await calls.load(campaignId);
       if (!next.ok) {
         setRefuse(next.message);
         setSeat(null);
@@ -96,7 +133,7 @@ export function ContactWorkspace({
       setRefuse(null);
       setSeat(next);
     },
-    [token],
+    [token, contactId],
   );
 
   useEffect(() => {
@@ -148,7 +185,7 @@ export function ContactWorkspace({
       return;
     }
     await run(() =>
-      wirePorts.machineApi.putContactSeatUpload(token, {
+      calls!.upload({
         origin: picked.origin,
         kind: picked.origin === "custom" ? customKind.trim() : picked.kind,
         fieldKey: picked.fieldKey,
@@ -191,7 +228,7 @@ export function ContactWorkspace({
             type="link"
             style={{ paddingInline: 0, marginTop: "auto", textAlign: "left" }}
             disabled={busy || seat.silenced}
-            onClick={() => void run(() => wirePorts.machineApi.silenceContactSeat(token))}
+            onClick={() => void run(() => calls!.silence())}
           >
             Opt out
           </Button>
@@ -218,13 +255,13 @@ export function ContactWorkspace({
                   <Button
                     type="primary"
                     loading={busy}
-                    onClick={() => void run(() => wirePorts.machineApi.consentContactSeat(token, "agree"))}
+                    onClick={() => void run(() => calls!.consent("agree"))}
                   >
                     Agree
                   </Button>
                   <Button
                     loading={busy}
-                    onClick={() => void run(() => wirePorts.machineApi.consentContactSeat(token, "ignore"))}
+                    onClick={() => void run(() => calls!.consent("ignore"))}
                   >
                     Ignore
                   </Button>
@@ -239,7 +276,7 @@ export function ContactWorkspace({
                   const answers = (seat.now.formFields ?? [])
                     .map((field) => ({ fieldKey: field.fieldKey, value: formValues[field.fieldKey] }))
                     .filter((row) => String(row.value ?? "").trim());
-                  void run(() => wirePorts.machineApi.submitContactSeatFacts(token, answers));
+                  void run(() => calls!.facts(answers));
                 }}
               >
                 {(seat.now.formFields ?? []).map((field) => (
@@ -261,7 +298,7 @@ export function ContactWorkspace({
               <MeetingBook
                 slots={seat.now.meetingSlots ?? []}
                 busy={busy}
-                onConfirm={(slot) => void run(() => wirePorts.machineApi.bookContactSeat(token, slot))}
+                onConfirm={(slot) => void run(() => calls!.book(slot))}
               />
             ) : null}
           </div>
@@ -448,6 +485,13 @@ export function ContactWorkspace({
   );
 }
 
-export function ContactAntScene() {
-  return <ContactWorkspace token={SEED_CONTACT_TOKEN} embedded />;
+export function ContactAntScene({ contactId }: { contactId?: string }) {
+  if (!contactId) {
+    return (
+      <div style={{ height: "100%", display: "grid", placeItems: "center" }}>
+        <Empty description="No contact workspace selected." />
+      </div>
+    );
+  }
+  return <ContactWorkspace contactId={contactId} embedded />;
 }

@@ -662,6 +662,67 @@ export const realMachineApi: MachineApiPort = {
     return res.consultants;
   },
 
+  async listContactWorkspaces(firmId) {
+    const headers: HeadersInit = {};
+    try {
+      headers["x-firm-id"] = firmId || firm();
+    } catch {
+      /* session firm not set yet */
+    }
+    const q = firmId ? `?firmId=${encodeURIComponent(firmId)}` : "";
+    const res = await wireFetch<{
+      workspaces: Array<{ id: string; name: string | null; email: string | null }>;
+    }>(`/machine/contact-workspaces${q}`, { headers });
+    return res.workspaces;
+  },
+
+  async loadContactWorkspace(contactId, opts) {
+    const q = opts?.campaignId ? `?campaignId=${encodeURIComponent(opts.campaignId)}` : "";
+    return wireFetch(`/machine/contact-workspaces/${encodeURIComponent(contactId)}${q}`, {
+      headers: firmHeader(),
+    });
+  },
+
+  async consentContactWorkspace(contactId, action) {
+    return wireFetch(`/machine/contact-workspaces/${encodeURIComponent(contactId)}/consent`, {
+      method: "POST",
+      headers: firmHeader(),
+      body: JSON.stringify({ action }),
+    });
+  },
+
+  async silenceContactWorkspace(contactId) {
+    return wireFetch(`/machine/contact-workspaces/${encodeURIComponent(contactId)}/silence`, {
+      method: "POST",
+      headers: firmHeader(),
+      body: "{}",
+    });
+  },
+
+  async submitContactWorkspaceFacts(contactId, answers) {
+    return wireFetch(`/machine/contact-workspaces/${encodeURIComponent(contactId)}/facts`, {
+      method: "POST",
+      headers: firmHeader(),
+      body: JSON.stringify({ answers }),
+    });
+  },
+
+  async bookContactWorkspace(contactId, slot) {
+    return wireFetch(`/machine/contact-workspaces/${encodeURIComponent(contactId)}/meeting`, {
+      method: "POST",
+      headers: firmHeader(),
+      body: JSON.stringify({ slot }),
+    });
+  },
+
+  async putContactWorkspaceUpload(contactId, input) {
+    return wireFetch(`/machine/contact-workspaces/${encodeURIComponent(contactId)}/uploads`, {
+      method: "POST",
+      headers: firmHeader(),
+      body: JSON.stringify(input),
+    });
+  },
+
   async bookMeeting(input) {
     return wireFetch<{
       id: string;
