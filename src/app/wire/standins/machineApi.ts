@@ -817,6 +817,26 @@ function standInFirm(): string {
   }
 }
 
+function bookPerson(contactId: string) {
+  const c = bookContacts.get(contactId);
+  if (!c) return null;
+  return {
+    id: c.id,
+    firmId: c.firmId,
+    name: c.name,
+    email: c.email,
+    firmName: c.firmName ?? null,
+  };
+}
+
+function missingSeat() {
+  return Promise.resolve({
+    ok: false as const,
+    refuse: "missing" as const,
+    message: "This link could not be opened. Ask the firm for a new one.",
+  });
+}
+
 runs.set("run-cedar-1", {
   id: "run-cedar-1",
   workflow_id: "wf-optin-launch",
@@ -1769,75 +1789,44 @@ export const standInMachineApi: MachineApiPort = {
   },
 
   async listContactWorkspaces(firmId) {
-    return standInContactSeat.listWorkspaces(firmId || standInFirm());
+    const id = firmId || standInFirm();
+    return [...bookContacts.values()]
+      .filter((c) => c.firmId === id)
+      .filter((c) => !standInContactSeat.isWorkspaceOut(c.id))
+      .sort((a, b) => (a.name ?? a.id).localeCompare(b.name ?? b.id))
+      .map((c) => ({ id: c.id, name: c.name, email: c.email }));
   },
 
   loadContactWorkspace(contactId, opts) {
-    const token = standInContactSeat.tokenForContact(contactId);
-    if (!token) {
-      return Promise.resolve({
-        ok: false,
-        refuse: "missing",
-        message: "This link could not be opened. Ask the firm for a new one.",
-      });
-    }
-    return standInContactSeat.load(token, opts?.campaignId);
+    const person = bookPerson(contactId);
+    if (!person) return missingSeat();
+    return standInContactSeat.loadContact(person, opts?.campaignId);
   },
   consentContactWorkspace(contactId, action) {
-    const token = standInContactSeat.tokenForContact(contactId);
-    if (!token) {
-      return Promise.resolve({
-        ok: false,
-        refuse: "missing",
-        message: "This link could not be opened. Ask the firm for a new one.",
-      });
-    }
-    return standInContactSeat.consent(token, action);
+    const person = bookPerson(contactId);
+    if (!person) return missingSeat();
+    return standInContactSeat.consentContact(person, action);
   },
   silenceContactWorkspace(contactId) {
-    const token = standInContactSeat.tokenForContact(contactId);
-    if (!token) {
-      return Promise.resolve({
-        ok: false,
-        refuse: "missing",
-        message: "This link could not be opened. Ask the firm for a new one.",
-      });
-    }
-    return standInContactSeat.silence(token);
+    const person = bookPerson(contactId);
+    if (!person) return missingSeat();
+    return standInContactSeat.silenceContact(person);
   },
   submitContactWorkspaceFacts(contactId, answers) {
-    const token = standInContactSeat.tokenForContact(contactId);
-    if (!token) {
-      return Promise.resolve({
-        ok: false,
-        refuse: "missing",
-        message: "This link could not be opened. Ask the firm for a new one.",
-      });
-    }
-    return standInContactSeat.facts(token, answers);
+    const person = bookPerson(contactId);
+    if (!person) return missingSeat();
+    return standInContactSeat.factsContact(person, answers);
   },
   bookContactWorkspace(contactId, slot) {
     void slot;
-    const token = standInContactSeat.tokenForContact(contactId);
-    if (!token) {
-      return Promise.resolve({
-        ok: false,
-        refuse: "missing",
-        message: "This link could not be opened. Ask the firm for a new one.",
-      });
-    }
-    return standInContactSeat.book(token);
+    const person = bookPerson(contactId);
+    if (!person) return missingSeat();
+    return standInContactSeat.bookContact(person);
   },
   putContactWorkspaceUpload(contactId, input) {
-    const token = standInContactSeat.tokenForContact(contactId);
-    if (!token) {
-      return Promise.resolve({
-        ok: false,
-        refuse: "missing",
-        message: "This link could not be opened. Ask the firm for a new one.",
-      });
-    }
-    return standInContactSeat.upload(token, input);
+    const person = bookPerson(contactId);
+    if (!person) return missingSeat();
+    return standInContactSeat.uploadContact(person, input);
   },
 
   async issueAccessInvite(input) {

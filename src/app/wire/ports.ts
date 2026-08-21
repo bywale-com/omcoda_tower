@@ -619,7 +619,7 @@ export type MachineApiPort = {
       firmName: string;
     }>
   >;
-  /** Platform admin: opted-in contacts who have a workspace for the selected firm. */
+  /** Platform admin: this firm's book minus workspace opt-out. Token is not required. */
   listContactWorkspaces(firmId?: string): Promise<
     Array<{ id: string; name: string | null; email: string | null }>
   >;

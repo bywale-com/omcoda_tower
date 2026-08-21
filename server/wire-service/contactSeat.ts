@@ -70,7 +70,7 @@ export type ContactSeatPayload = {
 
 type SeatRefuse = {
   ok: false;
-  refuse: "missing" | "expired" | "invalidated";
+  refuse: "missing" | "expired" | "invalidated" | "workspace_opted_out";
   message: string;
 };
 
@@ -86,6 +86,11 @@ type LinkRow = {
 
 function json(c: Context, body: unknown, status = 200) {
   return c.json(body, status);
+}
+
+function jsonRefuse(c: Context, refused: SeatRefuse) {
+  const status = refused.refuse === "workspace_opted_out" ? 200 : 404;
+  return json(c, refused, status);
 }
 
 async function lookupLink(pool: Pool, raw: string): Promise<LinkRow | null> {
@@ -123,6 +128,29 @@ function refuseOf(link: LinkRow | null): SeatRefuse | null {
   return null;
 }
 
+function workspaceOutRefuse(): SeatRefuse {
+  return {
+    ok: false,
+    refuse: "workspace_opted_out",
+    message: "This workspace is no longer available.",
+  };
+}
+
+async function isWorkspaceOut(pool: Pool, firmId: string, contactId: string): Promise<boolean> {
+  try {
+    const row = await pool.query<{ workspace_opted_out: boolean }>(
+      `SELECT workspace_opted_out FROM consent_records
+       WHERE contact_id=$1 AND firm_id=$2 LIMIT 1`,
+      [contactId, firmId],
+    );
+    return Boolean(row.rows[0]?.workspace_opted_out);
+  } catch (err) {
+    const code = (err as { code?: string }).code;
+    if (code === "42703") return false;
+    throw err;
+  }
+}
+
 function meetingSlots(): string[] {
   const out: string[] = [];
   const start = new Date();
@@ -146,7 +174,11 @@ async function projectSeat(pool: Pool, link: LinkRow): Promise<ContactSeatPayloa
     `SELECT id, name FROM contact_records WHERE id=$1 LIMIT 1`,
     [link.contact_id],
   );
-  const consent = await pool.query<{ basis: string; silenced: boolean; source: string | null }>(
+  const consent = await pool.query<{
+    basis: string;
+    silenced: boolean;
+    source: string | null;
+  }>(
     `SELECT basis, silenced, source FROM consent_records
      WHERE contact_id=$1 AND firm_id=$2 LIMIT 1`,
     [link.contact_id, link.firm_id],
@@ -199,11 +231,7 @@ async function projectSeat(pool: Pool, link: LinkRow): Promise<ContactSeatPayloa
   let nowState: ContactSeatPayload["now"]["state"] = "empty";
   let title = "Nothing needed right now";
   let instruction = `${firmName} will put the next ask here.`;
-  if (silenced) {
-    nowState = "silenced";
-    title = "You opted out";
-    instruction = `${firmName} will not send automatic messages.`;
-  } else if (!consentRow || (consentRow.basis === "none" && consentRow.source !== "ignored")) {
+  if (!consentRow || (consentRow.basis === "none" && consentRow.source !== "ignored")) {
     nowState = "consent";
     title = `${firmName} would like to stay in touch`;
     instruction = "Agree or ignore before we ask for anything else.";
@@ -358,6 +386,7 @@ async function seatFromToken(c: Context): Promise<{ pool: Pool; link: LinkRow } 
   const link = await lookupLink(pool, raw);
   const refused = refuseOf(link);
   if (refused || !link) return refused ?? refuseOf(null)!;
+  if (await isWorkspaceOut(pool, link.firm_id, link.contact_id)) return workspaceOutRefuse();
   return { pool, link };
 }
 
@@ -376,6 +405,12 @@ async function seatFromAdminContact(c: Context): Promise<{ pool: Pool; link: Lin
     };
   }
   const pool = getPool();
+  const person = await pool.query<{ id: string; firm_id: string }>(
+    `SELECT id, firm_id FROM contact_records WHERE id=$1 AND firm_id=$2 LIMIT 1`,
+    [contactId, firmId],
+  );
+  if (!person.rows[0]) return refuseOf(null)!;
+  if (await isWorkspaceOut(pool, firmId, contactId)) return workspaceOutRefuse();
   try {
     const found = await pool.query<LinkRow>(
       `SELECT id, firm_id, contact_id, enrollment_id, campaign_id, expires_at, invalidated_at
@@ -384,15 +419,29 @@ async function seatFromAdminContact(c: Context): Promise<{ pool: Pool; link: Lin
        ORDER BY created_at DESC LIMIT 1`,
       [firmId, contactId],
     );
-    const link = found.rows[0] ?? null;
-    const refused = refuseOf(link);
-    if (refused || !link) return refused ?? refuseOf(null)!;
-    return { pool, link };
+    if (found.rows[0]) return { pool, link: found.rows[0] };
   } catch (err) {
     const code = (err as { code?: string }).code;
-    if (code === "42P01") return refuseOf(null)!;
-    throw err;
+    if (code !== "42P01") throw err;
   }
+  const enr = await pool.query<{ id: string; campaign_id: string | null }>(
+    `SELECT id, campaign_id FROM enrollment
+     WHERE firm_id=$1 AND contact_id=$2
+     ORDER BY enrolled_at DESC LIMIT 1`,
+    [firmId, contactId],
+  );
+  return {
+    pool,
+    link: {
+      id: `cal-view-${contactId}`,
+      firm_id: firmId,
+      contact_id: contactId,
+      enrollment_id: enr.rows[0]?.id ?? null,
+      campaign_id: enr.rows[0]?.campaign_id ?? null,
+      expires_at: null,
+      invalidated_at: null,
+    },
+  };
 }
 
 async function seatFromContext(c: Context): Promise<{ pool: Pool; link: LinkRow } | SeatRefuse> {
@@ -411,31 +460,30 @@ export async function handleContactWorkspacesList(c: Context) {
     const rows = await pool.query<{ id: string; name: string | null; email: string | null }>(
       `SELECT cr.id, cr.name, cr.email
          FROM contact_records cr
-         JOIN consent_records cons
+         LEFT JOIN consent_records cons
            ON cons.contact_id = cr.id AND cons.firm_id = cr.firm_id
         WHERE cr.firm_id = $1
-          AND cons.basis IN ('express', 'implied')
-          AND cons.silenced = false
-          AND EXISTS (
-                SELECT 1 FROM contact_access_links l
-                 WHERE l.firm_id = cr.firm_id
-                   AND l.contact_id = cr.id
-                   AND l.invalidated_at IS NULL
-              )
+          AND COALESCE(cons.workspace_opted_out, false) = false
         ORDER BY cr.name`,
       [firmId],
     );
     return json(c, { workspaces: rows.rows });
   } catch (err) {
     const code = (err as { code?: string }).code;
-    if (code === "42P01") return json(c, { workspaces: [] });
+    if (code === "42P01" || code === "42703") {
+      const rows = await pool.query<{ id: string; name: string | null; email: string | null }>(
+        `SELECT id, name, email FROM contact_records WHERE firm_id=$1 ORDER BY name`,
+        [firmId],
+      );
+      return json(c, { workspaces: rows.rows });
+    }
     throw err;
   }
 }
 
 export async function handleContactSeatGet(c: Context) {
   const resolved = await seatFromContext(c);
-  if ("refuse" in resolved) return json(c, resolved, 404);
+  if ("refuse" in resolved) return jsonRefuse(c, resolved);
   const openAsk = c.req.query("campaignId")?.trim() || null;
   if (openAsk) {
     await resolved.pool.query(
@@ -454,7 +502,7 @@ export async function handleContactSeatGet(c: Context) {
 
 export async function handleContactSeatConsent(c: Context) {
   const resolved = await seatFromContext(c);
-  if ("refuse" in resolved) return json(c, resolved, 404);
+  if ("refuse" in resolved) return jsonRefuse(c, resolved);
   const body = await c.req.json<{ action?: "agree" | "ignore" }>().catch(() => ({}));
   const action = body.action === "ignore" ? "ignore" : "agree";
   const basis = action === "agree" ? "express" : "none";
@@ -471,30 +519,20 @@ export async function handleContactSeatConsent(c: Context) {
 
 export async function handleContactSeatSilence(c: Context) {
   const resolved = await seatFromContext(c);
-  if ("refuse" in resolved) return json(c, resolved, 404);
+  if ("refuse" in resolved) return jsonRefuse(c, resolved);
   await resolved.pool.query(
-    `INSERT INTO consent_records (contact_id, firm_id, basis, silenced, source, updated_at)
-     VALUES ($1,$2,'none',true,'contact_workspace.opt_out',now())
+    `INSERT INTO consent_records (contact_id, firm_id, basis, silenced, source, workspace_opted_out, updated_at)
+     VALUES ($1,$2,'none',false,'contact_workspace.workspace_opt_out',true,now())
      ON CONFLICT (contact_id, firm_id) DO UPDATE
-       SET silenced = true, source = EXCLUDED.source, updated_at = now()`,
+       SET workspace_opted_out = true, updated_at = now()`,
     [resolved.link.contact_id, resolved.link.firm_id],
   );
-  await dispatchEventToWorkflows(resolved.pool, {
-    firmId: resolved.link.firm_id,
-    eventName: "consent_records.opt_out",
-    payload: {
-      contact_id: resolved.link.contact_id,
-      firm_id: resolved.link.firm_id,
-      source: "contact_workspace.opt_out",
-    },
-    contactIds: [resolved.link.contact_id],
-  });
-  return json(c, await projectSeat(resolved.pool, resolved.link));
+  return json(c, workspaceOutRefuse());
 }
 
 export async function handleContactSeatFacts(c: Context) {
   const resolved = await seatFromContext(c);
-  if ("refuse" in resolved) return json(c, resolved, 404);
+  if ("refuse" in resolved) return jsonRefuse(c, resolved);
   const body = await c.req.json<{ answers?: Array<{ fieldKey: string; value: unknown }> }>().catch(() => ({}));
   const answers = Array.isArray(body.answers) ? body.answers : [];
   const cursor = await resolved.pool.query<{ campaign_id: string | null }>(
@@ -553,7 +591,7 @@ export async function handleContactSeatFacts(c: Context) {
 
 export async function handleContactSeatMeeting(c: Context) {
   const resolved = await seatFromContext(c);
-  if ("refuse" in resolved) return json(c, resolved, 404);
+  if ("refuse" in resolved) return jsonRefuse(c, resolved);
   const body = await c.req.json<{ slot?: string }>().catch(() => ({}));
   const slot = String(body.slot ?? "").trim();
   if (!slot) return json(c, { error: "slot required" }, 400);
@@ -594,7 +632,7 @@ export async function handleContactSeatMeeting(c: Context) {
 
 export async function handleContactSeatUpload(c: Context) {
   const resolved = await seatFromContext(c);
-  if ("refuse" in resolved) return json(c, resolved, 404);
+  if ("refuse" in resolved) return jsonRefuse(c, resolved);
   const body = await c.req.json<{
     origin?: "kind" | "custom" | "question" | "any";
     kind?: string | null;

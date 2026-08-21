@@ -43,7 +43,7 @@ export type ContactSeatPayload = {
 
 export type ContactSeatRefuse = {
   ok: false;
-  refuse: "missing" | "expired" | "invalidated";
+  refuse: "missing" | "expired" | "invalidated" | "workspace_opted_out";
   message: string;
 };
 

@@ -41,7 +41,7 @@ VALUES
   )
 ON CONFLICT (id) DO NOTHING;
 
--- Opted in + workspace so Contact ▾ has a real row (Cole stays not opted in).
+-- Okonkwo has Agreed. Cole has not — 026 still lists Cole until workspace opt-out.
 INSERT INTO consent_records (contact_id, firm_id, basis, silenced, source, updated_at)
 VALUES ('cr-harbor-1', 'firm-harbor', 'express', false, 'contact_workspace', now())
 ON CONFLICT (contact_id, firm_id) DO NOTHING;

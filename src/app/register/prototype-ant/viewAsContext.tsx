@@ -1,7 +1,7 @@
 /**
  * Admin view-as: which consultant workspace the Operator shell is looking through.
  * Non-admins never see the dropdown; their firm is always the session firm.
- * Contact ▾ is that firm's opted-in workspaces — not the book.
+ * Contact ▾ is that firm's book minus workspace opt-out. Token is not required.
  */
 import {
   createContext,
@@ -102,20 +102,27 @@ export function ViewAsProvider({ children }: { children: ReactNode }) {
       return;
     }
     let cancelled = false;
-    void wirePorts.machineApi
-      .listContactWorkspaces(selectedFirmId)
-      .then((rows) => {
-        if (cancelled) return;
-        setContactWorkspaces(rows);
-        setSelectedContactId((prev) => (prev && rows.some((row) => row.id === prev) ? prev : null));
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setContactWorkspaces([]);
-        setSelectedContactId(null);
-      });
+    const load = () =>
+      wirePorts.machineApi
+        .listContactWorkspaces(selectedFirmId)
+        .then((rows) => {
+          if (cancelled) return;
+          setContactWorkspaces(rows);
+          setSelectedContactId((prev) => (prev && rows.some((row) => row.id === prev) ? prev : null));
+        })
+        .catch(() => {
+          if (cancelled) return;
+          setContactWorkspaces([]);
+          setSelectedContactId(null);
+        });
+    void load();
+    const onChange = () => {
+      void load();
+    };
+    window.addEventListener("tower-contact-workspaces-changed", onChange);
     return () => {
       cancelled = true;
+      window.removeEventListener("tower-contact-workspaces-changed", onChange);
     };
   }, [isAdmin, selectedFirmId]);
 

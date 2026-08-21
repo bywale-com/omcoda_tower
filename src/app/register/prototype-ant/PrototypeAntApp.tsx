@@ -136,6 +136,10 @@ function AntShell({
     if (!isAdmin && desk !== "consultant") setDesk("consultant");
   }, [isAdmin, desk]);
 
+  useEffect(() => {
+    if (desk === "contact" && !selectedContact) setDesk("operator");
+  }, [desk, selectedContact]);
+
   const authOff = isAuthDisabled();
   const needsLogin = !isLoading && !isAuthenticated;
 
@@ -240,7 +244,7 @@ function AntShell({
                 menu={{
                   items: contactMenuItems.length
                     ? contactMenuItems
-                    : [{ key: "empty", label: "No opted-in workspaces", disabled: true }],
+                    : [{ key: "empty", label: "No contact workspaces", disabled: true }],
                   selectable: true,
                   selectedKeys: selectedContact ? [selectedContact.id] : [],
                 }}

@@ -23,13 +23,32 @@ import {
 } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import { wirePorts } from "../../../wire";
-import { type ContactSeatPayload } from "../../../wire/contactSeatTypes";
+import { type ContactSeatPayload, type ContactSeatRefuse } from "../../../wire/contactSeatTypes";
 
 const { Sider, Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
 
 type Nav = "now" | "history" | "upload";
 type SeatKey = { token: string } | { contactId: string };
+
+const WORKSPACES_CHANGED = "tower-contact-workspaces-changed";
+
+function refuseView(res: ContactSeatRefuse): { title: string; body: string } {
+  if (res.refuse === "workspace_opted_out") {
+    return {
+      title: "This workspace is no longer available.",
+      body: "You opted out of this workspace.",
+    };
+  }
+  return { title: "This link cannot be used", body: res.message };
+}
+
+function applyRefuse(res: ContactSeatRefuse, setRefuse: (view: { title: string; body: string }) => void) {
+  setRefuse(refuseView(res));
+  if (res.refuse === "workspace_opted_out") {
+    window.dispatchEvent(new Event(WORKSPACES_CHANGED));
+  }
+}
 
 function seatApi(key: SeatKey) {
   const api = wirePorts.machineApi;
@@ -102,7 +121,7 @@ export function ContactWorkspace({
   const { token: themeToken } = theme.useToken();
   const [nav, setNav] = useState<Nav>("now");
   const [seat, setSeat] = useState<ContactSeatPayload | null>(null);
-  const [refuse, setRefuse] = useState<string | null>(null);
+  const [refuse, setRefuse] = useState<{ title: string; body: string } | null>(null);
   const [busy, setBusy] = useState(false);
   const [openAsk, setOpenAsk] = useState<ContactSeatPayload["history"][number] | null>(null);
   const [kindOpen, setKindOpen] = useState(false);
@@ -120,13 +139,13 @@ export function ContactWorkspace({
   const load = useCallback(
     async (campaignId?: string) => {
       if (!calls) {
-        setRefuse("This link could not be opened.");
+        setRefuse({ title: "This link cannot be used", body: "This link could not be opened." });
         setSeat(null);
         return;
       }
       const next = await calls.load(campaignId);
       if (!next.ok) {
-        setRefuse(next.message);
+        applyRefuse(next, setRefuse);
         setSeat(null);
         return;
       }
@@ -138,7 +157,10 @@ export function ContactWorkspace({
 
   useEffect(() => {
     void load().catch((err: unknown) => {
-      setRefuse(err instanceof Error ? err.message : "This link could not be opened.");
+      setRefuse({
+        title: "This link cannot be used",
+        body: err instanceof Error ? err.message : "This link could not be opened.",
+      });
     });
   }, [load]);
 
@@ -154,7 +176,7 @@ export function ContactWorkspace({
   if (refuse) {
     return (
       <div style={{ minHeight: embedded ? "100%" : "100vh", display: "grid", placeItems: "center", padding: 24 }}>
-        <Result status="warning" title="This link cannot be used" subTitle={refuse} />
+        <Result status="warning" title={refuse.title} subTitle={refuse.body} />
       </div>
     );
   }
@@ -168,6 +190,11 @@ export function ContactWorkspace({
     try {
       const next = await fn();
       if (!next.ok) {
+        if ("refuse" in next) {
+          applyRefuse(next as ContactSeatRefuse, setRefuse);
+          setSeat(null);
+          return;
+        }
         message.error(next.message);
         return;
       }
@@ -227,7 +254,7 @@ export function ContactWorkspace({
           <Button
             type="link"
             style={{ paddingInline: 0, marginTop: "auto", textAlign: "left" }}
-            disabled={busy || seat.silenced}
+            disabled={busy}
             onClick={() => void run(() => calls!.silence())}
           >
             Opt out
