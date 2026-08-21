@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **C16** Gmail opened email (rich, on behalf of the firm). **C17** the data-request form the contact fills. Continue Agents from the outbound — email first. A40 / [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md) still stands; do not re-list that build. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Contact workspace** seated: [`CONTACT-FACE.md`](./CONTACT-FACE.md) · **P1** Now · **P1b** History. Three entries: **Now · History · Files**. No login. C17’s form lives in **Now**. C16 still the email. Do not plant.
 
 **How we maintain this log**
 
@@ -1961,6 +1961,35 @@ Harbor / Alex / the four field names are **example**. Same grain as C5b. Do not 
 **Not this stamp:** text channel · call · click-this-link interior · meeting interior · packet for engineer · plant.
 
 **Ask:** is C16/C17 the grain, or change the email / the form before we name channel-node requirements?
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-21 10:32 UTC — Contact workspace. A seat. No login. Now · History · Files.
+
+**Why:** Founder, on C17: no. What we specked there is something else. The contact has a **seat**. A genuine workspace. No login. Portal. We documented and even built the touchpoints — we have not housed them as a **place**. Not too many modules. Mostly **history**, and **where they** (the current ask), and maybe **upload / store**. Keep it light. Do not call it a dashboard. Left panel like every workspace. See what the entries could be — given our system.
+
+**Inflection:** Personas / World craft said contact is referenced, touchpoint-only. This stamp **seats the workspace**. It does not copy the consultant desk. 15:43 untouched.
+
+**What already existed (looked):** How: Consent · Refresh · Silence · Book. Furnish 01–20. Ant Contact = **10-item CT flipper** (`CONTACT_SURFACES`) — priors already: **not contact-facing**. Prepared workspace ≠ this. Access links exist.
+
+**What we drew** (not planted):
+
+- **P1** — [`P1-contact-workspace-now.png`](./contact-blueprint/P1-contact-workspace-now.png). Left: **Now · History · Files**. Now = the data-request form **in** the workspace. Opt out at the foot. Firm-branded. No login.
+- **P1b** — [`P1b-contact-workspace-history.png`](./contact-blueprint/P1b-contact-workspace-history.png). Same chrome. History.
+
+**Law:** [`CONTACT-FACE.md`](./CONTACT-FACE.md) · lineup [`CONTACT-UI-BLUEPRINT.md`](./CONTACT-UI-BLUEPRINT.md).
+
+**Entries (this stamp):**
+
+| Now | History | Files |
+|-----|---------|-------|
+| Current ask. Consent / form / booking are **states**, not extra nav. C17 lives here. | What happened. Light. | Upload and store. Named, not drawn. Not the form. |
+
+**Do not:** ship the 10 CT labels as modules; plant; mint a files table; overwrite 15:43; mix with consultant Prepared workspace.
+
+**Ask:** are **Now · History · Files** the entries, or cut / rename before we go deeper (Files interior, Now states)?
 
 Flag 15:43 untouched.
 

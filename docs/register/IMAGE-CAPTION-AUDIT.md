@@ -412,6 +412,26 @@ Do not re-ascribe this on every plate.
 
 ---
 
+### P1 — [`P1-contact-workspace-now.png`](./contact-blueprint/P1-contact-workspace-now.png)
+
+**S:** Contact **workspace**. No login. Left panel **Now · History · Files**. Now selected. Current ask = the data-request form **in** the workspace. Opt out at the foot. Firm-branded.
+
+**E:** Harbor / RCIC / Alex / `harbor.co/a/…` / the four field labels.
+
+**C:** none. Do not copy the Ant Contact 10-item sider. Do not label Dashboard.
+
+---
+
+### P1b — [`P1b-contact-workspace-history.png`](./contact-blueprint/P1b-contact-workspace-history.png)
+
+**S:** Same three entries. **History** selected. Light chronology of what happened with the firm.
+
+**E:** Row copy (opted in / agreed / emails / submitted). Search. Icon / maple-leaf drift vs P1.
+
+**C:** none. Do not freeze those events as a catalog. Do not copy consultant engagement chart.
+
+---
+
 ### A18 — [`A18-trigger-global-local.png`](./automations-blueprint/A18-trigger-global-local.png)
 
 **S:** Trigger modal. Event. Event = Form submitted. Grain **Global | Local**. Global on. This-form picker disabled.

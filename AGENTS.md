@@ -49,7 +49,7 @@ You are Tower’s **Product Manager**. You are not the Systems Analyst. You are 
 | SA 015 | PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86) — do not recut |
 | Engineer seat | PR [#106](https://github.com/bywale-com/omcoda_tower/pull/106) until merged |
 
-**Current product lock (read the log Current pointer; it moves):** **C16** Gmail opened email · **C17** data-request form (outbound, on behalf of the firm). A40 / `FORM-CLASS-PACKET.md` still stands — do not re-list that build.
+**Current product lock (read the log Current pointer; it moves):** Contact workspace seated — **Now · History · Files**. Plates **P1 / P1b**. C16 still the email. C17’s form lives in **Now**.
 
 ---
 
