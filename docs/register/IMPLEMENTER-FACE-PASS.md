@@ -250,3 +250,27 @@ Today Contacts is empty (“No contacts enrolled…”) because those rows are n
 - Not seeding fake UI strings. Seed the tables.
 
 **Reports** may stay empty.
+
+---
+
+## C16 — only what went out (Gmail)
+
+Plate: [`agents-blueprint/C16-gmail-opened-email.png`](./agents-blueprint/C16-gmail-opened-email.png)
+
+**Copy:** The **email as received**. Desktop inbox, opened. **Rich** HTML. **On behalf of the firm** (From, header, sign-off, footer). A **form in the picture** + **Complete this form**. That is the email channel’s outbound — not C5’s composer.
+
+**Ignore:** Gmail chrome (nav, search, other inbox rows). Do not build Gmail. Harbor / Alex / `harbor.co` are **example**. Do not freeze Gmail as the ESP.
+
+**Not this plate:** text · call · Ant desk.
+
+---
+
+## C17 — only the form the contact fills
+
+Plate: [`agents-blueprint/C17-data-request-form.png`](./agents-blueprint/C17-data-request-form.png)
+
+**Copy:** The **data-request form** after the email button. Firm-branded. Questions **are** the listing (count = listing). Submit. Completing it **for** the firm. No + Add. No document upload.
+
+**Ignore:** Browser chrome. Example host. A40 / A12 are **operator** authoring — do not copy those modals onto this page.
+
+**This form ≠** opt-in / consent ≠ loop-closer.

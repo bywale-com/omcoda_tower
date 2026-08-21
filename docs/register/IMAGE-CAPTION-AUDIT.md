@@ -392,6 +392,26 @@ Do not re-ascribe this on every plate.
 
 ---
 
+### C16 — [`C16-gmail-opened-email.png`](./agents-blueprint/C16-gmail-opened-email.png)
+
+**S:** Desktop Gmail opened. Rich HTML email. From the **firm**. Form **in** the body. Button Complete this form. Footer sent on behalf of the firm · Unsubscribe. This is **what went out**, not the Agents composer.
+
+**E:** Harbor / Harbor RCIC / `hello@harbor.co` / Alex / subject “A few facts so we can continue” / the four field labels (same listing as A40). Inbox neighbors (Google, Slack). Gmail chrome is the **provider picture**, not a Tower module.
+
+**C:** none on the glass. Do not freeze Gmail as the only ESP. Do not copy Gmail into `/prototype-ant`.
+
+---
+
+### C17 — [`C17-data-request-form.png`](./agents-blueprint/C17-data-request-form.png)
+
+**S:** Contact-facing data-request form. Firm-branded. Questions = the listing. Submit. Completing it **for** the firm. Not Tower. Not the operator Form box (A40).
+
+**E:** Harbor / RCIC / `harbor.co/f/facts` / the four field labels / title matching C16.
+
+**C:** none. Do not treat this URL host as a product. Do not add + Add question from a missing control.
+
+---
+
 ### A18 — [`A18-trigger-global-local.png`](./automations-blueprint/A18-trigger-global-local.png)
 
 **S:** Trigger modal. Event. Event = Form submitted. Grain **Global | Local**. Global on. This-form picker disabled.

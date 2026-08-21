@@ -306,6 +306,7 @@ Per-campaign attempt rules stay **on the campaign**. They do not appear as a str
 - Not putting enroll on **Publish**. Enroll is **Contacts** on that sequence (C8).
 - Not treating C3’s “qualify — first objective met” as a node or a `qualify_gate`. Caption audit: [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md).
 - Not treating the **engagement chart** as the lineage query. Those are two surfaces.
+- Not putting **Gmail** (or any inbox) on the Agents canvas. **C16** is the outbound email as received — rich, on behalf of the firm, form in the picture. **C5 / C5b** remain the composer. **C17** is the data-request form the contact fills (Automations owns creating it). Harbor / Alex / field names are example.
 
 ---
 

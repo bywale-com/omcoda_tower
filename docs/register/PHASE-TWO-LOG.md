@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **A40** liked. Packet [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md) — founder tells engineer / SA that file. Do not re-list the build at the founder. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **C16** Gmail opened email (rich, on behalf of the firm). **C17** the data-request form the contact fills. Continue Agents from the outbound — email first. A40 / [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md) still stands; do not re-list that build. Do not plant.
 
 **How we maintain this log**
 
@@ -1934,6 +1934,33 @@ Flag 15:43 untouched.
 **Why:** Founder: did you create the packets? Can I just tell them? Why are you telling me?
 
 **Yes.** Packet is [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md). Engineer paste and SA paste are in it. Plate **A40**. 16:14 was restating that packet at the founder — don’t. They hand that file. They do not need the build listed back.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-21 10:22 UTC — Outbound: Gmail email, then the form. On behalf of the firm.
+
+**Why:** Founder: continue Agents. Mock an email — Gmail as the provider; a line in the inbox, opened on desktop. Emails are **rich**. That starts to show what each **channel node** actually has to send. Start with email. Also mock the **form** — there is a form in the picture. It is a **data request**. It is **re-engagement**. Do not forget: we are emailing **on behalf of a firm**.
+
+**What we drew** (not Ant chrome. Not planted.):
+
+- **C16** — [`C16-gmail-opened-email.png`](./agents-blueprint/C16-gmail-opened-email.png). Desktop Gmail. Inbox line selected. Message opened. Rich HTML. From **Harbor** (example firm). Form **in** the email. Button: Complete this form. Footer: sent on behalf of Harbor RCIC.
+- **C17** — [`C17-data-request-form.png`](./agents-blueprint/C17-data-request-form.png). The page after that button. Harbor-branded. Questions = this run’s listing (same four as A40). Submit. Not Tower. Not a blank intake.
+
+**Capture (founder wording):** Gmail provider · inbox line · open on desktop · rich · form in the picture · data request · re-engagement · on behalf of a firm.
+
+**What this is (not a second flag):**
+
+- **Email** is the channel. Content is rich HTML. From / brand / the ask are the **firm**, not Tower.
+- **Form** is the objective artifact (submit this form). Automations owns creating it. Agents sends people to it. Questions **are** the listing. C17 is that form as the contact sees it — not A12 / A40 (those are operator authoring).
+- C5 / C5b remain the **composer** on the Agents canvas. C16 is **what went out**. Do not copy Gmail into `/prototype-ant`.
+
+Harbor / Alex / the four field names are **example**. Same grain as C5b. Do not freeze.
+
+**Not this stamp:** text channel · call · click-this-link interior · meeting interior · packet for engineer · plant.
+
+**Ask:** is C16/C17 the grain, or change the email / the form before we name channel-node requirements?
 
 Flag 15:43 untouched.
 

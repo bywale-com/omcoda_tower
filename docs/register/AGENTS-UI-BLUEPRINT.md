@@ -8,7 +8,7 @@
 **Implementer copy-filter:** [`IMPLEMENTER-FACE-PASS.md`](./IMPLEMENTER-FACE-PASS.md) — each new plate has one purpose; ignore the rest of the PNG. Plates are one grain on one example; **extrapolate** (variation and channel-rules parameters on every channel). Images keep the desk congruent. The written spec is the product. **UI tests:** [`IMPLEMENTER-UI-TESTS.md`](./IMPLEMENTER-UI-TESTS.md) — visual. Click. Match the plate.  
 **Founder (2026-08-15 19:47):** Settings images are canonical. This pass = lineup of canon vs revision, map each plate to the rationale that birthed it, then spec the plates. Click paths / what is on the glass. If anything is under-specified, that is the point of this pass.
 
-Chrome for every plate unless noted: Operator desk → Configuration libraries → Agents.
+Chrome for every plate unless noted: Operator desk → Configuration libraries → Agents. **Exception:** **C16** and **C17** are **outbound** (Gmail / the contact’s form). Not the desk. Do not put Tower chrome on them.
 
 ---
 
@@ -35,6 +35,8 @@ These ten files are **canon**. Later plates revise earlier ones only where the t
 | **C11** | [`C11-channel-attempt-variation.png`](./agents-blueprint/C11-channel-attempt-variation.png) | **+ Add variation** at the top of the channel. Each variation then selects how it applies in the attempt cycle. Not three radios. **On every channel** (plate is Text). | 16:34 · 16:41 | — |
 | **C13** | [`C13-sequence-activity.png`](./agents-blueprint/C13-sequence-activity.png) | **Activity** table: Time · Name · Firm · Channel · What happened. Contacts uses the same table chrome (Name · Firm · Enrolled date). | 16:10 · 16:34 | — |
 | **C15** | [`C15-channel-rules-one-timer.png`](./agents-blueprint/C15-channel-rules-one-timer.png) | Channel-rules extra node **filled**: Override this channel + toggles + **one** Within time. Agents canvas **scrolls**. | 18:53 | fills C5/C11 seat |
+| **C16** | [`C16-gmail-opened-email.png`](./agents-blueprint/C16-gmail-opened-email.png) | **Outbound.** Desktop Gmail, inbox line opened. Rich email **on behalf of the firm**. Form in the picture. Not Ant chrome. | 2026-08-21 10:22 | — |
+| **C17** | [`C17-data-request-form.png`](./agents-blueprint/C17-data-request-form.png) | **Outbound.** The data-request form the contact fills. Firm-branded. Questions = the listing. Not A40 (operator). Not Tower. | 2026-08-21 10:22 | companion to C16 |
 
 ### Discarded (do not spec, do not hand to SA as face)
 
@@ -281,6 +283,37 @@ Fallback if a control is not overridden: campaign → sequence Settings → Agen
 **On the glass:** Override this **on**. Channel rules extra node: **Override this channel** on · not opened · not delivered · **one** Within time (30 minutes). Workspace **scrollbar** visible.
 
 **On every channel.** Plate is Text.
+
+---
+
+### C16 — Gmail opened email (outbound)
+
+![C16 Gmail opened email](./agents-blueprint/C16-gmail-opened-email.png)
+
+**Rationale:** Founder 2026-08-21: see the email as a line in the inbox, opened on **desktop**. **Gmail** is the provider in the picture. Emails are **rich**. On behalf of a **firm**. There is a **form in the picture**. Start of channel-node requirements — email first. Not the Agents composer (that is C5 / C5b).
+
+**On the glass:**
+- Desktop Gmail. Inbox row selected. Message opened.
+- From the **firm** (example: Harbor `<hello@harbor.co>`). Not Tower.
+- Rich HTML: firm header, greeting, short ask, **form card in the body**, button **Complete this form**, sign-off, footer **Sent on behalf of** the firm · Unsubscribe.
+- Form fields in the card = this run’s listing (same four as A40 / C17). Preview, not a working Gmail form.
+
+**Not in this plate:** Ant desk · text / call · operator composer · A40 modal.
+
+---
+
+### C17 — Data-request form (outbound)
+
+![C17 data-request form](./agents-blueprint/C17-data-request-form.png)
+
+**Rationale:** Companion. The page after **Complete this form**. Data request. Re-engagement. Questions **are** the listing. Firm-branded. Automations owns creating this form; Agents sends people to it.
+
+**On the glass:**
+- Browser at a firm URL (example `harbor.co/f/facts`). No Tower chrome.
+- Firm wordmark. Title matches the email. Four fields, empty. **Submit**. Footer: completing this **for** the firm.
+- No + Add question. No document upload. No “from listing” tags.
+
+**Not in this plate:** A12 / A40 (operator). Opt-in / consent form. Loop-closer. Gmail.
 
 ---
 
