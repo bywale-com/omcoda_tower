@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-21 12:20 UTC — workspace = until they opt **out of the seat**, not “opted in.” **024 / 025 recut.** Engineer still cuts those. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-21 12:32 UTC — **026** evolves 024/025 (workspace until they opt out). Do not mutate a numbered packet. Engineer cuts **026**. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -2029,6 +2029,19 @@ So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WH
 **Did not:** edit the 12:03 stamp; build the email button; recut 015; overwrite 15:43.
 
 **Do not:** filter Contact ▾ to `basis IN ('express','implied')`; wire the foot to `handleConsentSilence`.
+
+---
+
+## 2026-08-21 12:32 UTC — Do not mutate a numbered packet. Evolution is the next number.
+
+**Why:** Founder: if 025 is already being built and you change 025 in place, they will not know to re-read it — and you cannot ask them to re-read everything. New packet as evolution. Common sense.
+
+**Hard (method):** A packet on the pickup list is frozen as a cut. Recut = **next packet**. Pointer on the old file; body stays. Engineer reads **Current** — they pick up the new number, not a silent edit.
+
+**This instance:** restored 024 / 025 bodies. The 12:20 in-place recut is now [`SYSTEMS-CHANGE-PACKET-026.md`](./SYSTEMS-CHANGE-PACKET-026.md). Pickup is **026**.
+
+**Did not:** leave the 12:20 edits in 024/025 as the live cut; recut 015; overwrite 15:43.
+
 
 
 

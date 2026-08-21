@@ -7,6 +7,7 @@
 **Join:** `008` `access_links` (consultant — **wrong table**) · `consent_records` · `fact_writebacks` · `missing_fact_signals` · `collectible_fields` (021 / `018`) · `meeting_booked` · `enrollment.campaign_id` (010) · A26 `TRIGGER_SELECT_EVENTS` · 017 `event_write_set`. Face: `git fetch origin pull/96/head`.
 **Flag:** 15:43 untouched. **Do not recut 015 / 019 / 021 / 022 / A26 as a replacement.** Additive row on A26.
 **Instructions:** founder only.
+**Evolved by [`SYSTEMS-CHANGE-PACKET-026.md`](./SYSTEMS-CHANGE-PACKET-026.md)** — do not cut the foot as `silenced` / `consent_records.opt_out`. 026 replaces that write. Token is not “has a workspace.”
 
 ---
 
@@ -29,7 +30,7 @@
 |------|-----|
 | `access_links` (`008`): `user_id` FK → `users`. Redeem `/a/<token>` → session → consultant desk. | **No contact token.** Opening `/a/` logs a *user* in. Silent for a no-login contact seat. |
 | Contact Ant = `CONTACT_SURFACES` (10 names). Demo id `sarah`. Priors: scene flipper. | That list is **not** the nav. Replace it as the contact-facing seat. |
-| `consent_records`: `basis` express\|implied\|none, `silenced`, `source`. Agree already `handleConsentSet`. Opt out already `handleConsentSilence` → `consent_records.opt_out` (**that write also blocks sends**). | **Two different opt-outs.** Foot of the workspace is **not** `silenced`. Ignore is valid and **has no distinct write** (basis stays `none`, same as never answered). |
+| `consent_records`: `basis` express\|implied\|none, `silenced`, `source`. Agree already `handleConsentSet`. Opt out already `handleConsentSilence` → `consent_records.opt_out`. | Ignore is valid and **has no distinct write** (basis stays `none`, same as never answered). |
 | Now form listing: `missing_fact_signals` + `collectible_fields.capture = 'self_reportable'` (021). Submit: `handleFactWriteback` → `fact_writebacks` → dispatch `fact_writebacks` **and** faceless `eligibility.changed`. | Document-dependent never on this form (already). Contact Now must **query those tables**, not paint the old SPA catalog. |
 | Meeting: `meeting_booked` (`007`), `source` default `contact_portal`. Confirm already inserts + dispatches `meeting_booked`. | Show as a **state of Now**, not a nav item. |
 | Current ask: `enrollment.campaign_id` → `campaign_objective.kind` `click\|form\|meeting`. | Consent is **not** a campaign kind (010 stands). Click has no Now interior. |
@@ -70,11 +71,10 @@ CREATE INDEX IF NOT EXISTS contact_access_links_lookup_idx
   ON contact_access_links (firm_id, contact_id, created_at DESC);
 ```
 
-- SPA: **`/c/:token`** opens the workspace **without** a session cookie. Lookup by hash. Invalidated, expired, or **`workspace_opted_out`** → Link-state refuse. Do not send this token through `AccessEntry`.
+- SPA: **`/c/:token`** opens the workspace **without** a session cookie. Lookup by hash. Invalidated or expired → Link-state refuse (existing purpose copy). Do not send this token through `AccessEntry`.
 - **Not single-use.** They come back for History and Upload. `invalidated_at` is the later nullification door (023 escrow — not this packet).
 - C16 still sends. On send, **mint** a row (or reuse the current uninvalidated one for that enrollment) and put `https://…/c/<raw>` in the body. Channel is not nav. Landing = **Now**, current ask.
 - Do not FK `enrollment_id` / `campaign_id` if those ids are TEXT without a guarantee on every send; columns anyway, nullable.
-- **The token is the no-login door. It is not “they have a workspace.”** Everyone in the book has a workspace until they opt out of **the workspace** (decision 2b). Operator Contact ▾ (025) lists that set — not “opted in,” not “has a token.”
 
 ### 2. Now is a projection. No `now` table.
 
@@ -82,31 +82,13 @@ Load the token → `contact_id` + `firm_id` + optional `campaign_id`. Then **one
 
 | Priority | Condition | State | Writes |
 |----------|-----------|-------|--------|
-| 1 | `consent_records.workspace_opted_out` | **No seat.** Refuse the land. | none (already out) |
-| 2 | no row, or `basis = 'none'` and `source` IS DISTINCT FROM `'ignored'` | **Consent** (P3) | Agree → `handleConsentSet` `basis='express'`, `source='contact_workspace'`. **Ignore** → `basis='none'`, `source='ignored'` (extend `handleConsentSet` to persist `source`). Neither sets `silenced`. Neither sets `workspace_opted_out`. |
+| 1 | `consent_records.silenced` | Not Now. Opt-out already happened. Foot still there. | none |
+| 2 | no row, or `basis = 'none'` and `source` IS DISTINCT FROM `'ignored'` | **Consent** (P3) | Agree → `handleConsentSet` `basis='express'`, `source='contact_workspace'`. **Ignore** → `basis='none'`, `source='ignored'` (extend `handleConsentSet` to persist `source`). Neither sets `silenced`. |
 | 3 | `enrollment.campaign_id` → `kind = 'form'` | **Data-request form** (P1) | SELECT `missing_fact_signals` ⋈ `collectible_fields` `capture='self_reportable'` for this contact. Submit → existing `handleFactWriteback`. Never show `document_dependent`. |
 | 4 | `kind = 'meeting'` | **Book** (P4) | Existing meeting confirm → `meeting_booked`. |
 | 5 | `kind = 'click'`, or no enrollment / no current campaign | **Empty Now** | Still Now. No dashboard. Do not invent a click interior. Arrival does **not** fake a `messaging_events` clicked row here — that is 022 if the href is the tracked send. |
 
 Firm wordmark = bound firm (`ct_firms` / live brand), not hardcoded Harbor.
-
-**The opt-in happens on this seat.** Agree is a Now state. So the workspace **cannot** require “already opted in.” Ignore is still in the workspace.
-
-### 2b. Two opt-outs. Do not glue them.
-
-```sql
-ALTER TABLE consent_records
-  ADD COLUMN IF NOT EXISTS workspace_opted_out BOOLEAN NOT NULL DEFAULT false;
-```
-
-| Door | Where | Write | Emails still go? | Seat remains? |
-|------|-------|-------|------------------|---------------|
-| **Workspace opt-out** | Foot of the workspace (Silence chrome — not a module) | UPSERT `workspace_opted_out = true`. **Do not** set `silenced`. **Do not** dispatch `consent_records.opt_out`. | **Yes.** `dispatchSend` still only checks `silenced`. | **No.** `/c/` refuses. 025 Contact ▾ drops them. |
-| **Email opt-out** | In the email that carries the workspace link | **Not designed.** Do not build the button. | When it exists: `silenced = true` (today’s `handleConsentSilence`) **and** `workspace_opted_out = true` — email out **implies** seat gone. | Gone, by that implication. |
-
-They do **not** mean the same thing. Workspace-out does not email-out. Email-out (later) does workspace-out.
-
-Do **not** wire the foot to `handleConsentSilence`. That is the send halt.
 
 ### 3. History is a pane of existing asks. No history table. No email log.
 
@@ -198,7 +180,7 @@ One specimen: Harbor contact, `origin='custom'`, `kind` a custom string (not a P
 
 Kill as the product seat: `CONTACT_SURFACES` ten names, demo `sarah` as the book, Operator/Consultant sider copy.
 
-Ship: firm wordmark; left **Now · History · Upload**; Opt out at the foot (**workspace** opt-out, not `silenced`); Now interiors above; History list + opened ask + Open in Now; Upload tabs **Put in | Files** + kind modal with search / custom / answer-that-question.
+Ship: firm wordmark; left **Now · History · Upload**; Opt out at the foot (existing silence); Now interiors above; History list + opened ask + Open in Now; Upload tabs **Put in | Files** + kind modal with search / custom / answer-that-question.
 
 Do not put Automations on this canvas. Do not copy House-global. Design-system recut of Harbor paint is **out of scope** (PM).
 
@@ -219,7 +201,7 @@ This packet **does not wait on 022.** Now’s cursor is 010. Upload is a new wri
 `npm run build`. Then `/prototype-ant` Contact with the wire up:
 
 1. Open a minted `/c/<token>`. Lands **Now**, firm-branded, no login, three nav items. Ten flipper names are gone.
-2. No consent → Agree writes `express`. A second token: Ignore writes `source='ignored'`, still `basis='none'`, not silenced, **still in the workspace**. Foot opt-out sets `workspace_opted_out` only — emails still send; `/c/` refuses; they disappear from Contact ▾. Do **not** dispatch `consent_records.opt_out` from the foot.
+2. No consent → Agree writes `express`. A second token: Ignore writes `source='ignored'`, still `basis='none'`, not silenced. Opt out at the foot still silences and dispatches `consent_records.opt_out`.
 3. Form campaign current → Now shows **this contact’s** self-reportable `missing_fact_signals` (not four Harbor fields). Submit → `fact_writebacks` **only**. `contact_uploads` unchanged.
 4. History lists consent + form/meeting asks, **not** emails. Outstanding Open in Now.
 5. Upload → custom kind + file or text → one `contact_uploads` row → `contact_uploaded` fires. Files tab lists it; browsing does not re-fire.
@@ -241,4 +223,3 @@ This packet **does not wait on 022.** Now’s cursor is 010. Upload is a new wri
 - Operator CSV import from this seat.
 - Design-system recut of paint.
 - Escrow nullification (023 / parked).
-- The email unsubscribe button (not designed). When it exists it will set `silenced` **and** `workspace_opted_out`.
