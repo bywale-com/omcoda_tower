@@ -4,7 +4,7 @@
 **Why:** Founder 2026-08-21: light recut of the top Consultant / Operator / Contact control. Not an extensive redesign.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
 **Contact seat:** [`CONTACT-FACE.md`](./CONTACT-FACE.md).  
-**Packet:** [`SHELL-CHROME-PACKET.md`](./SHELL-CHROME-PACKET.md). Marks **T1–T4**.  
+**Packets:** chrome layout [`SHELL-CHROME-PACKET.md`](./SHELL-CHROME-PACKET.md) (frozen). Contact ▾ list [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) (pickup). Marks **T1–T4**.  
 **Does not:** plant; mint tables; recut 015; give Consultant users a Contact picker of the book; give a real contact the Operator switcher.
 
 ---
@@ -29,7 +29,7 @@ Live today drifted: a **firm picker to the left** of Segmented **Consultant | Op
 
 | Who is signed in | What they see |
 |------------------|---------------|
-| **Operator** (admin) | **Consultant ▾** (pick a consultant workspace / firm) · **Operator** · **Contact ▾** (that firm’s contacts who **opted in** and **have a workspace**). Both dropdowns. **T1 · T2 · T3** |
+| **Operator** (admin) | **Consultant ▾** (pick a consultant workspace / firm) · **Operator** · **Contact ▾** (that firm’s book until they opt out of the workspace). Both dropdowns. **T1 · T2 · T3** |
 | **Consultant** (the person) | **Consultant** only. Their workspace. No Operator. No Contact picker. **T4** |
 | **Contact** (the person) | Themselves. Their workspace (Now · History · Upload). No Tower switcher. **T4** / **P1** |
 
@@ -45,7 +45,7 @@ Harbor / Alex / other names = **example**.
 |---|------|------------|
 | **T1** | [`T1-shell-operator-toggles-closed.png`](./shell-blueprint/T1-shell-operator-toggles-closed.png) | Closed. One control. Consultant ▾ · Operator (selected) · Contact ▾. No extra picker to the left. |
 | **T2** | [`T2-shell-consultant-dropdown.png`](./shell-blueprint/T2-shell-consultant-dropdown.png) | Consultant toggle **is** the dropdown. Pick a firm. |
-| **T3** | [`T3-shell-contact-dropdown.png`](./shell-blueprint/T3-shell-contact-dropdown.png) | Contact ▾ = that firm’s opted-in workspaces. Operator viewing the contact seat. |
+| **T3** | [`T3-shell-contact-dropdown.png`](./shell-blueprint/T3-shell-contact-dropdown.png) | Contact ▾ = that firm’s book (until workspace opt-out). Operator viewing the contact seat. Teaching “opted in” = do not build. |
 | **T4** | [`T4-shell-who-sees-switcher.png`](./shell-blueprint/T4-shell-who-sees-switcher.png) | Who sees what. Operator vs consultant person vs contact person. |
 
 ### T1 — closed
@@ -68,7 +68,7 @@ Harbor / Alex / other names = **example**.
 
 ![T3 Contact dropdown](./shell-blueprint/T3-shell-contact-dropdown.png)
 
-**Copy:** After a consultant workspace is selected, Contact ▾ lists **opted-in contacts who have a workspace**. Pick one = that seat (Now · History · Upload). Operator chrome stays on top (view-as).
+**Copy:** After a consultant workspace is selected, Contact ▾ lists that firm’s contacts who have **not** opted out of the workspace. Pick one = that seat (Now · History · Upload). Operator chrome stays on top (view-as). Teaching “opted in” on the PNG = ignore.
 
 **Ignore:** Example people. Teaching caption.
 
@@ -84,6 +84,6 @@ Harbor / Alex / other names = **example**.
 
 - Not giving consultants a dropdown of all contacts.
 - Not the contact seeing Operator / other contacts.
-- Not the whole book in Contact ▾ — opted in + has a workspace.
+- Not filtering Contact ▾ to “opted in.” Ignore still listed. People who have not Agreed yet still listed. Foot-opted-out of the workspace are gone.
 - Not a design-system recut of Harbor paint.
 - Not minting a view-as table from the picture.
