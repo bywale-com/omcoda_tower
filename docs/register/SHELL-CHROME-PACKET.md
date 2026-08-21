@@ -1,5 +1,7 @@
 # Shell chrome packet — Consultant ▾ · Operator · Contact ▾
 
+**Frozen cut.** Contact ▾ filter recut: [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md). **Do not edit this body.** Pickup is that file.
+
 **Seat:** Product Manager. For the **engineer** and the **Systems Analyst**. One pocket. Do not lose this.  
 **When:** Locked 2026-08-21. Light recut. Marks first, packet now.  
 **Law / marks:** [`SHELL-CHROME.md`](./SHELL-CHROME.md). Plates **T1–T4** in `docs/register/shell-blueprint/`.  

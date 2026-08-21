@@ -189,7 +189,8 @@ These were asked. They are not “copy from C9/C11.”
 | **Audit field** | Packet [`AUDIT-FIELD-PACKET.md`](./AUDIT-FIELD-PACKET.md). Plate **A34**. Contacts column. Composite chips. Hardcoded when audit runs. Not an Action. Leave live Tag. |
 | **If / Switch** | Packet [`IF-SWITCH-PACKET.md`](./IF-SWITCH-PACKET.md). **A36–A39**. Two kinds. Paths are wires. |
 | **Contact workspace** | Packets [`CONTACT-WORKSPACE-PACKET.md`](./CONTACT-WORKSPACE-PACKET.md) · [`CONTACT-UPLOAD-PACKET.md`](./CONTACT-UPLOAD-PACKET.md) · [`CONTACT-UPLOADED-EVENT-PACKET.md`](./CONTACT-UPLOADED-EVENT-PACKET.md). Face [`CONTACT-FACE.md`](./CONTACT-FACE.md). Lineup [`CONTACT-UI-BLUEPRINT.md`](./CONTACT-UI-BLUEPRINT.md). Kill the 10-item Contact flipper as nav. Files inside Upload. P7 completes: search / custom / answer-that-question (no extra PNG). A41–A44 additive on A26. |
-| **Shell chrome** | Packet [`SHELL-CHROME-PACKET.md`](./SHELL-CHROME-PACKET.md). Face [`SHELL-CHROME.md`](./SHELL-CHROME.md). **T1–T4**. Kill the leftover firm picker to the left of the segment. Operator: **Consultant ▾ \| Operator \| Contact ▾**. Contact ▾ = opted in + has a workspace, that firm only. Consultant person / contact person do not get that switcher. |
+| **Shell chrome** | Packet [`SHELL-CHROME-PACKET.md`](./SHELL-CHROME-PACKET.md). Face [`SHELL-CHROME.md`](./SHELL-CHROME.md). **T1–T4**. Kill the leftover firm picker to the left of the segment. Operator: **Consultant ▾ \| Operator \| Contact ▾**. Consultant person / contact person do not get that switcher. |
+| **Workspace until opt-out** | Packet [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md). Evolution of shell Contact ▾ + workspace foot. **Pickup this file.** Seat exists until they opt out of the workspace. Contact ▾ is not “opted in.” Email unsubscribe not designed. SA **026** on #86 is the same delta. |
 
 ---
 

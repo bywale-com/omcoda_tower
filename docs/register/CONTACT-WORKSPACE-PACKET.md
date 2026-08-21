@@ -1,5 +1,7 @@
 # Contact workspace packet — the seat · Now · History
 
+**Frozen cut.** Foot / who has a seat recut: [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md). **Do not edit this body.** Pickup is that file.
+
 **Seat:** Product Manager. For the **engineer** and the **Systems Analyst**. One pocket. Do not lose this.  
 **When:** Locked 2026-08-21. Founder: plates from start to finish are the build. Design-system recut of Harbor paint later — **do not wait on paint**.  
 **Law:** [`CONTACT-FACE.md`](./CONTACT-FACE.md). Lineup: [`CONTACT-UI-BLUEPRINT.md`](./CONTACT-UI-BLUEPRINT.md).  

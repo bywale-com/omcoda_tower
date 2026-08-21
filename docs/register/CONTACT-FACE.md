@@ -29,6 +29,16 @@
 
 > yeah I'm definitely more of a fan of this new … I will ask for a redesign because I don't feel like it matches our current design system … that's fine we'll talk about that
 
+> Only I think i'm gonna, i'm gonna opt for that. Only. The operator has this ability. So in consultants, there is only consultants and in contact. Of course, there's only themselves and they're only their workspace, how it looks.
+
+> everyone has a workspace until or unless they opt out
+
+> if they opt out of the workspace it doesn't mean they've opted out of receiving emails
+
+> we've not even started designing the email opt-out button just yet
+
+> A recut is a new packet. They see a new number. If they already built 025, they only cut this delta.
+
 > the idea of that now module is clear
 
 > history clear reason why we need history as a module because it contains history of outreach or requests not necessarily the outreach but their requests right basically the thing that prompted need for outreach
@@ -56,9 +66,9 @@
 | **History** | **Need** (reason named) | History of **requests** — the asks that prompted outreach. Not the outreach log |
 | **Upload** | **Need** (function named) | Contact **puts information into the system**. Any type, or a specific kind. Submodules / kinds. This is what Automations **hears**. **Files** is the store **inside** this module (tab), not a fourth left-panel item on the canonical plates |
 
-5. **Opt out** is chrome — How Silence. Not a module.
+5. **Opt out at the foot leaves the workspace** — not email Silence. Two doors; do not glue them. Recut: [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) (SA **026**). Email unsubscribe is **not designed**.
 6. **On behalf of the firm.** Harbor in the pictures is **example**. Same grain as C16.
-7. **Touchpoints still exist.** Email still goes out (C16). The link **lands in this workspace**, on Now, with that ask open. Channel messages are **not** nav. Operator **view-as** is Contact ▾ on the shell ([`SHELL-CHROME-PACKET.md`](./SHELL-CHROME-PACKET.md)) — that is not the contact’s own chrome.
+7. **Touchpoints still exist.** Email still goes out (C16). The link **lands in this workspace**, on Now, with that ask open. Channel messages are **not** nav. Operator **view-as** chrome is [`SHELL-CHROME-PACKET.md`](./SHELL-CHROME-PACKET.md); who appears in Contact ▾ is [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md). That is not the contact’s own chrome.
 8. **Do not build everything now.** Do not open Furnish. Do not regenerate plates for design-system match until asked. Module interiors **are** drawn (P3–P11, A41–A44).
 9. **Three doors. Do not collapse them.**
 

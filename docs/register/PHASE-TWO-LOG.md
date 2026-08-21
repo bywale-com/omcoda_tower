@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Contact workspace packets. Shell packet: Operator **Consultant ▾ | Operator | Contact ▾**. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Pickup [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md). Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2125,6 +2125,22 @@ Flag 15:43 untouched.
 **Packet:** [`SHELL-CHROME-PACKET.md`](./SHELL-CHROME-PACKET.md) — engineer paste + SA paste + five buckets. Marks already T1–T4. Does not recut the contact workspace interiors.
 
 **Do not:** plant; mint tables; recut 015; overwrite 15:43.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-21 12:40 UTC — Recut is a new packet. Pickup WORKSPACE-UNTIL-OPT-OUT.
+
+**Why:** Founder: changing 025 in place is invisible. They look for 026. A recut is a new packet. Same PR. Allude to the prior. Stop mutating locked packets.
+
+**Honest:** this seat had been editing packet bodies (SHELL-CHROME Contact ▾ as opted-in; workspace foot as Silence). Stopped.
+
+**Pickup:** [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md). Frozen priors: [`SHELL-CHROME-PACKET.md`](./SHELL-CHROME-PACKET.md) · [`CONTACT-WORKSPACE-PACKET.md`](./CONTACT-WORKSPACE-PACKET.md) (pointer only). Same delta as SA **026** on #86.
+
+**Product:** everyone has a workspace until they opt out **of the workspace**. Opt-in is a Now state. Foot ≠ email unsubscribe (not designed). Contact ▾ is not “opted in.”
+
+**Do not:** mutate those prior packet bodies; glue the two opt-outs; build the email button; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 

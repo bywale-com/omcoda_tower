@@ -33,7 +33,7 @@ Live today drifted: a **firm picker to the left** of Segmented **Consultant | Op
 | **Consultant** (the person) | **Consultant** only. Their workspace. No Operator. No Contact picker. **T4** |
 | **Contact** (the person) | Themselves. Their workspace (Now · History · Upload). No Tower switcher. **T4** / **P1** |
 
-Picking Consultant ▾ shows that firm’s consultant desk. Picking Contact ▾ shows that contact’s workspace (the seat we specified). The Contact list is **not** the whole book — opted in + has a workspace.
+Picking Consultant ▾ shows that firm’s consultant desk. Picking Contact ▾ shows that contact’s workspace (the seat we specified). **Recut:** Contact ▾ is that firm’s book until they opt out of the workspace — not “opted in.” Packet [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md). T3 helper “opted in” is prior / do not build.
 
 Harbor / Alex / other names = **example**.
 
