@@ -1,8 +1,13 @@
 import { useMemo, useState } from "react";
-import { Empty, Table, Tag, Typography } from "antd";
+import { Empty, Table, Tag } from "antd";
 import type { WorkflowNodeData } from "../../../../data/automationWorkflows";
-import { COLLECTIBLE_FIELDS } from "../../../../data/collectibleFields";
-import { handleTreeTables, writesFromHandle } from "../../../../data/eventTestContract";
+import { collectibleLabel } from "../../../../data/collectibleFields";
+import {
+  handleTreeTables,
+  requiredDataKeys,
+  writeFolderLabel,
+  writesFromHandle,
+} from "../../../../data/eventTestContract";
 
 function displayValue(value: unknown): string {
   if (value == null) return "—";
@@ -24,7 +29,12 @@ function latticeClasses(data: WorkflowNodeData): { key: string; label: string; r
     classes.push({ key: "services", label: "Recommended services", rows: out.recommendedServices });
   }
   const required = out.requiredData ?? out.listing;
-  if (required) classes.push({ key: "required", label: "Required data", rows: required });
+  const hasListingWrites = writesFromHandle(data.lastOutput).some(
+    (row) => row.table === "missing_fact_signals",
+  );
+  if (required && !hasListingWrites) {
+    classes.push({ key: "required", label: "Required data", rows: required });
+  }
   return classes;
 }
 
@@ -33,9 +43,22 @@ export function OutputPane({ data }: { data: WorkflowNodeData }) {
   const grouped = handleTreeTables(data.lastOutput);
   const lattice = latticeClasses(data);
   const door = (data.lastOutput as { door?: number } | null | undefined)?.door;
+  const listing = requiredDataKeys(data.lastOutput);
   const chips = [
-    ...grouped.map((row) => ({ key: `write:${row.table}`, label: row.table, kind: "write" as const, rows: row.rows })),
-    ...lattice.map((row) => ({ key: `class:${row.key}`, label: row.label, kind: "class" as const, rows: row.rows })),
+    ...grouped.map((row) => ({
+      key: `write:${row.table}`,
+      label: writeFolderLabel(row.table),
+      kind: "write" as const,
+      table: row.table,
+      rows: row.rows,
+    })),
+    ...lattice.map((row) => ({
+      key: `class:${row.key}`,
+      label: row.label,
+      kind: "class" as const,
+      table: undefined as string | undefined,
+      rows: row.rows,
+    })),
   ];
   const [selected, setSelected] = useState<string | null>(chips[0]?.key ?? null);
   const active = chips.find((row) => row.key === (selected ?? chips[0]?.key));
@@ -58,6 +81,9 @@ export function OutputPane({ data }: { data: WorkflowNodeData }) {
     return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={null} />;
   }
 
+  const showListing =
+    (active?.table === "missing_fact_signals" || active?.key === "class:required") && listing.length > 0;
+
   return (
     <div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 14, alignItems: "center" }}>
@@ -73,29 +99,16 @@ export function OutputPane({ data }: { data: WorkflowNodeData }) {
           </Tag>
         ))}
       </div>
-      {active?.key === "class:required" && Array.isArray(active.rows) ? (
+      {showListing ? (
         <Table
           size="small"
           pagination={false}
           rowKey={(_, index) => String(index)}
-          dataSource={(active.rows as string[]).map((id) => {
-            const field = COLLECTIBLE_FIELDS.find((row) => row.id === id || row.path === id);
-            return {
-              id,
-              label: field?.label ?? id,
-              capture: field?.capture === "self_reportable" ? "form" : "never a form",
-            };
-          })}
-          columns={[
-            { title: "Field", dataIndex: "label" },
-            {
-              title: "",
-              dataIndex: "capture",
-              width: 140,
-              render: (value: string) =>
-                value === "form" ? <Tag color="blue">form</Tag> : <Typography.Text type="secondary">never a form</Typography.Text>,
-            },
-          ]}
+          dataSource={listing.map((key) => ({
+            id: key,
+            label: collectibleLabel(key),
+          }))}
+          columns={[{ title: "Field", dataIndex: "label" }]}
         />
       ) : active?.kind === "write" ? (
         <Table

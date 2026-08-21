@@ -53,7 +53,7 @@ import {
 } from "../../../data/automationWorkflows";
 import { newSwitchPath } from "../../../data/automationCompare";
 import { formatGetSummary, previewGetWrites } from "../../../data/automationGet";
-import { writesFromHandle } from "../../../data/eventTestContract";
+import { requiredDataKeys, writesFromHandle } from "../../../data/eventTestContract";
 import { emptyRuleNodeConfig } from "../../../data/automationRules";
 import { wirePorts } from "../../../wire/registry";
 import type { EligibilityPipelineRow } from "../../../wire/machineTypes";
@@ -388,6 +388,25 @@ function patchNodeData(
   );
 }
 
+const HANDLE_LATTICE_KEYS = [
+  "listing",
+  "requiredData",
+  "headline",
+  "pass",
+  "nudge",
+  "reactivation",
+  "ok",
+] as const;
+
+function latticeFromStatus(st: object): Record<string, unknown> {
+  const rec = st as Record<string, unknown>;
+  const out: Record<string, unknown> = {};
+  for (const key of HANDLE_LATTICE_KEYS) {
+    if (rec[key] != null) out[key] = rec[key];
+  }
+  return out;
+}
+
 function paintRunOntoNodes(
   prev: WorkflowFlowNode[],
   currentEdges: Edge[],
@@ -404,6 +423,7 @@ function paintRunOntoNodes(
     const lastOutput = {
       ...(node.type === "trigger" ? prevOut : {}),
       writes: writes.length ? writes : prevOut.writes,
+      ...latticeFromStatus(st),
     };
     const runStatus =
       rec.status === "failed" ? "failed" : rec.status === "success" ? "success" : node.data.runStatus;
@@ -502,6 +522,15 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
   const [firms, setFirms] = useState<PickerFirm[]>([]);
   const [triggerSelectId, setTriggerSelectId] = useState<string | null>(null);
   const listingIds = nodes.find((node) => node.type === "rule")?.data.ruleConfig?.listingFieldIds ?? [];
+  const listingKeys = useMemo(() => {
+    if (!selectedNode || selectedNode.type !== "action") return [];
+    const chip = (selectedNode.data.mappedSlots?.form ?? []).find(
+      (row) => row.table === "missing_fact_signals" && !row.field,
+    );
+    if (!chip?.fromNodeId) return [];
+    const source = nodes.find((node) => node.id === chip.fromNodeId);
+    return requiredDataKeys(source?.data.lastOutput);
+  }, [selectedNode, nodes]);
   const triggerSelectNode = triggerSelectId
     ? nodes.find((node) => node.id === triggerSelectId)
     : undefined;
@@ -1379,7 +1408,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
               embed
               open
               data={selectedNode.data}
-              listingIds={listingIds}
+              listingKeys={listingKeys}
               onCancel={closeInterior}
               onRegisterSave={(fn) => {
                 saveRef.current = fn;

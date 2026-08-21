@@ -1,8 +1,6 @@
 /**
- * Collectible field classification (Engine 2 prerequisite).
- * Self-reportable → eligible for pre-meeting form.
- * Document-dependent → never enter a form; exit meetings as Manage items.
- * Employer-directed asks target the firm, not the client.
+ * Seed / stand-in of collectible_fields (018). The form unfolds a listing write,
+ * not this array. Labels keyed by missing_fact_signals.field_key.
  */
 
 export type CollectibleCaptureKind = "self_reportable" | "document_dependent";
@@ -128,6 +126,10 @@ export const COLLECTIBLE_FIELDS: CollectibleFieldDefinition[] = [
     employerDirected: true,
   },
 ];
+
+export function collectibleLabel(fieldKey: string): string {
+  return COLLECTIBLE_FIELDS.find((field) => field.id === fieldKey || field.path === fieldKey)?.label ?? fieldKey;
+}
 
 export function collectibleFieldsByCapture(
   capture: CollectibleCaptureKind,

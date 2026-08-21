@@ -164,9 +164,11 @@ export type WorkflowNodeData = {
   pickOp?: string;
   pickValue?: string;
   notesFromVerdict?: boolean;
-  /** A12 — objective declared on the Agents action. */
+  /** A12 — unread leftover. Radio is the objective (A40). */
   objectiveName?: string;
   dataRequestOn?: boolean;
+  /** A40 — click | form | meeting. Unset → not configured. */
+  objectiveKind?: "click" | "form" | "meeting";
   /** A16 — unread. Do not make this the compare. */
   previousResultFrom?: string;
   ifThen?: string;
@@ -1254,6 +1256,7 @@ export function createNodeFromBlock(
       copySequenceClass: block.defaultData.copySequenceClass,
       tag: block.defaultData.tag,
       formQuestionIds: block.defaultData.formQuestionIds,
+      objectiveKind: block.defaultData.objectiveKind,
       objectiveName: block.defaultData.objectiveName,
       dataRequestOn: block.defaultData.dataRequestOn,
       previousResultFrom: block.defaultData.previousResultFrom,
