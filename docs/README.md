@@ -96,7 +96,7 @@ You **design the systems**. You are the oldest systems seat. You live with the s
 - **Data in tables:** modules show query results, not hard-coded SPA rows. Seed a reasonable count when a table is minted. Missing / unspecified table or field is **your** ascribe — the implementer waits. [`register/DATA-IN-TABLES.md`](./register/DATA-IN-TABLES.md).
 - What is **actually stood up** in Supabase (migrations `001`–`018` on `origin/main`) vs what exists only on the map vs named silences / V2 backlog. Never confuse those three.
 - How tables relate (reads / writes / triggers) and how the dumb runtime consumes them (`server/wire-service/cascade.ts`, `worker.ts`, `workflowWalk.ts` — `previousWrites` / `chainWrites` / Get / `run_audit` / `ascribe_tag`).
-- Your log: [`register/SYSTEMS-ANALYST-LOG.md`](./register/SYSTEMS-ANALYST-LOG.md) on `main` is frozen; **live Current is PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86)**. Same discipline as the Phase Two log.
+- Your log: [`register/SYSTEMS-ANALYST-LOG.md`](./register/SYSTEMS-ANALYST-LOG.md) on `main` is frozen; **live Current for this pocket is PR [#110](https://github.com/bywale-com/omcoda_tower/pull/110)**; 08-16–08-20 still on [#86](https://github.com/bywale-com/omcoda_tower/pull/86). Same discipline as the Phase Two log.
 
 **You do not own**
 
