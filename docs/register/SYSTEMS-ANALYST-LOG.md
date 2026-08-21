@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-21 08:40 UTC — **Objectives as a thing: housed in 010/#88; last Engineer PRs did not further it.** Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-21 08:55 UTC — **Correction: founder meant open Engineer PR #108 (A40), not merged #107.** Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -745,3 +745,41 @@ PRIMITIVES still lists **“An objective was met”** as an Automations event (G
 **Did not:** mint; recut 015 / 019; treat #107 as the objective cut; overwrite 15:43.
 
 **Do not:** collapse campaign-objective with class-goal; call any-row-in-`messaging_events` “this objective was met” as if it were Local; put objective-met on A26 without a packet.
+
+---
+
+## 2026-08-21 08:55 UTC — Correction: the open Engineer PR is #108. That is the A40 cut.
+
+**Why:** Founder: not the last *merged* PR. The current one, not merged yet.
+
+**That PR:** [#108](https://github.com/bywale-com/omcoda_tower/pull/108) — *Occupy Form with this run's required-data listing (A40)*. Packet **021**. Draft. One commit on `cursor/form-class-a40-279b`.
+
+08:40 answered #107. Wrong object. #107 is If/Switch, already on main. #108 is the live Engineer cut.
+
+### Prior (Automations Action · Agents, on main today)
+
+Assign cards first. Then “2 · Create the objective”: typed name + Data-request switch. Questions painted from `COLLECTIBLE_FIELDS`. Teaching: “The objective limits which agents you can select.” `formQuestionIds` on the node. No `objectiveKind`. `campaign_objective` is **Agents** housing (010), not this node.
+
+### What #108 actually does (quote the branch)
+
+**Face.** Three radios **first**: Click this link · Submit this form · Book a meeting. Form selected → one Form box. Occupancy = drop Required data (`missing_fact_signals` folder, A31). Unfold = those `field_key`s. Then A14, **all three** sequence classes, unfiltered. Teaching line / assign-first / Create-the-objective block **killed**. Unset radio → `configured === false`.
+
+**Store.** Graph `data.objectiveKind` (`click|form|meeting`). Walker `call_agent` copies that plus `fieldKeys` (from the occupied writes) onto `action.payload_binding`. **No `INSERT` into `campaign_objective`.** Completions stay on the **agent**. Click / meeting interiors are radios only — no boxes in this packet.
+
+**Also in the same PR (not the objective grain):** `018_collectible_fields.sql` (kill SPA catalog as the product list); Rule INSERT of self-reportable `missing_fact_signals` only; Get contacts also emit current audit writes.
+
+### How far that goes as “objectives as a thing”
+
+| Established on #108 | Not this PR |
+|---------------------|-------------|
+| Automations can **name the kind** (the three cores) before assigning a sequence | A new objective **row**. Still `campaign_objective` on the campaign, written from **Agents** |
+| Form-objective **occupies** this run’s required-data listing | Click / meeting interiors |
+| Kind is required to configure the Action | Flagship destinations (other agent · workflow · end) |
+| Sequences stay agnostic (law 9 recut) | “An objective was met” as an A26 trigger |
+| | Filtering agents by the radio |
+
+So: #108 furthered objectives **on the Automations Action** — the operator must pick click / form / meeting. It did **not** mint a second objective store, and it did **not** move the Agents campaign cursor. That cursor is still 010.
+
+**Did not:** recut 015 / 019; treat #107 as this answer; overwrite 15:43.
+
+**Do not:** INSERT `campaign_objective` from this Action; lock form to re-engagement; filter A14 from the radio.
