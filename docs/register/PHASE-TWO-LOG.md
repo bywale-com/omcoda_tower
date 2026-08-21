@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Contact: **Now** = objective. **History** = **requests** (not the outreach log). **Upload** = contact puts information in (event Automations hears; this kind). **Files** = the store (with Upload). Do not regenerate plates. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Contact workspace drawn: **Now** (form / consent / book) · **History** = requests · **Upload** (put in + Files store) · three doors · Automations **Contact uploaded information** (A41–A44). Design-system recut later. Do not plant.
 
 **How we maintain this log**
 
@@ -2053,6 +2053,34 @@ Same Automations shape: hear that → operation (re-evaluate is one) → exits. 
 **Do not:** collapse the three doors; mint an upload table this stamp; start Furnish; recut 015; overwrite 15:43; plant; regenerate P1.
 
 **Ask:** Files a sibling on the left, or inside Upload?
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-21 11:05 UTC — Contact plates drawn. Upload + listen specified in pictures.
+
+**Why:** Founder: generate the justified images; you can never generate too many; spec as much as is justified. Design-system recut still later — these plates are **what the modules are**, not the final paint.
+
+**Drawn (contact):**
+
+| Plate | Lock |
+|-------|------|
+| **P1** recut | Nav **Now · History · Upload**. Form still in Now. Prior Files-nav kept. |
+| **P3 · P4** | Now states: Consent (Agree/Ignore) · Meeting book |
+| **P10** | C16 click **lands in Now**. Channel is not nav. |
+| **P1b** recut | History = **requests**, not the email log. Prior activity-log kept (wrong). |
+| **P5** | A request opened = the **ask**. Email is not here. |
+| **P6 · P7 · P8** | Upload = put in. Kinds (any / this kind). Files = store **inside** Upload. |
+| **P9 · P11** | Three doors. Form submitted ≠ uploaded ≠ import. |
+
+**Drawn (Automations):** **A41** event in the A26 list · **A42** Global · **A43** Local = this kind · **A44** hear upload → Rule (re-evaluate) → Action. Same middle. Not a Rule on the contact canvas. A26 packet **not** recut. A33 **not** given a new Re-evaluate row (law 41).
+
+**Wrote:** [`CONTACT-UI-BLUEPRINT.md`](./CONTACT-UI-BLUEPRINT.md) (full lineup) · [`CONTACT-FACE.md`](./CONTACT-FACE.md) · [`AUTOMATIONS-UI-BLUEPRINT.md`](./AUTOMATIONS-UI-BLUEPRINT.md) A41–A44 · [`IMAGE-CAPTION-AUDIT.md`](./IMAGE-CAPTION-AUDIT.md) (P + A41–A44). Kind titles on P6/P7/A43 = **example**.
+
+**Do not:** plant; mint upload/files tables; freeze kinds; collapse the three events; recut 015; overwrite 15:43; regenerate for Ant match until asked.
+
+**Ask (still):** Files a sibling, or inside Upload as drawn?
 
 Flag 15:43 untouched.
 

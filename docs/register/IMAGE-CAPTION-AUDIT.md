@@ -513,6 +513,44 @@ You mess it up if you:
 - Put founder captions into Postgres
 - Treat A7’s background **Branch** as the smallest workflow
 - Treat A8’s blank form builder or chevrons as canon (A12 / A14)
+- Freeze P6/P7 kind titles (Documents / Passport / Language test) as the Upload kind catalog
+- Collapse Contact uploaded information with Contact import or Form submitted
+- Put a Rule on the contact workspace because A44 shows one on Automations
+
+---
+
+## Contact workspace plates (P1–P11) — 2026-08-21
+
+Harbor / Alex / `harbor.co/a/…` / four listing fields = **E** on every plate. Teaching italic captions = **C**. Opt out at the sider foot = **S** (Silence chrome). Left panel **Now · History · Upload** = **S**. Browser chrome = ignore.
+
+| Plate | S | E | C |
+|-------|---|---|---|
+| **P1** Now form | Now holds the current ask (form). Three nav. Submit. | Harbor, field labels | — |
+| **P3** Now consent | Agree / Ignore. Consent is a Now state | Harbor stay-in-touch copy | “Consent is a state of Now…” |
+| **P4** Now book | Slot pick + Confirm booking. Book is a Now state | Slot times | “Meeting books show in Now…” |
+| **P10** lands | Link from C16 opens workspace Now | Gmail crop, Harbor email copy | “Channel is not nav…” |
+| **P1b** History | Rows are **requests**, not emails. Outstanding vs done | Row titles | “History is the requests. Not the outreach.” |
+| **P5** request open | Opened row = the ask. Open in Now | Metadata labels | “The email is not here.” / “Not the send.” |
+| **P6** Upload | Module. Put in vs Files tabs. Kinds as submodules | Card titles “Documents / Facts they weren’t asked for now / Other” | “Upload is the act…” |
+| **P7** kind | Any vs this kind. Modal. Automations Local = this kind | Passport / Proof of hours / Language test / Other | “Kinds are submodules…” |
+| **P8** Files | Store inside Upload. Not an event | Filenames | “Sitting here is not an event.” |
+| **P9** diagram | Three doors + History law | Card paint | Footer commands |
+| **P11** diagram | Three events stay distinct | Icons | Title |
+
+**Priors (do not build):** [`P1-prior-files-nav.png`](./contact-blueprint/P1-prior-files-nav.png) (Files as sibling nav) · [`P1b-prior-activity-log.png`](./contact-blueprint/P1b-prior-activity-log.png) (email log).
+
+## Automations A41–A44 — 2026-08-21
+
+Shared Operator chrome = same **S** as the rest of this file. Catalog workflow titles = **E** / drift.
+
+| Plate | S | E | C |
+|-------|---|---|---|
+| **A41** | Named event **Contact uploaded information** in the A26 list. Distinct from Contact import. Grain Global | Workflow title Contact uploaded → re-evaluate | “Not contact import. Different seat.” |
+| **A42** | Event configured. Grain Global = every firm / every upload / any kind | Helper sentences | “Named on purpose…” |
+| **A43** | Grain Local. Nested Firm then Kind | Kind value Language test | “Local maps the event’s existing shape…” |
+| **A44** | Canvas: that trigger → Rule (re-evaluate) → Action. Not on the contact canvas | Action title Assign sequence | “Same Automations middle…” |
+
+Do not mint a Re-evaluate row on A33 from A44. Law 41.
 
 ---
 

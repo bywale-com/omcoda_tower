@@ -83,6 +83,10 @@ These files are **chosen**. Later plates revise earlier ones only where the tabl
 | **A35** | [`A35-add-tag-parameters.png`](./automations-blueprint/A35-add-tag-parameters.png) | chrome | **Add tag** Action interior. Prior = contact import. Contact occupied, Tag picker. Type glyphs. Color more lively. Green Action chip. Kind chips teaching. | 12:12 · 12:17 · 12:30 | Packet [`ADD-TAG-PACKET.md`](./ADD-TAG-PACKET.md) |
 | **A24** | [`A24-contact-import-output.png`](./automations-blueprint/A24-contact-import-output.png) | chrome | Trigger **Output** of **contact import**. A20 shape. This run: `import_batch` + `contact_records`. | 19:34 | — |
 | **A25** | [`A25-new-contact-output.png`](./automations-blueprint/A25-new-contact-output.png) | chrome | Trigger **Output** of **new contact**. A20 shape. This run: `contact_records` (that person). | 19:34 | — |
+| **A41** | [`A41-trigger-contact-uploaded.png`](./automations-blueprint/A41-trigger-contact-uploaded.png) | chrome | Trigger select. **Contact uploaded information** in the named-event list. Distinct from **Contact import**. Grain Global. | 2026-08-21 | companion to **A26**. Does not recut the select packet. |
+| **A42** | [`A42-trigger-uploaded-global.png`](./automations-blueprint/A42-trigger-uploaded-global.png) | chrome | Trigger configured. Event = **Contact uploaded information**. Grain **Global** = every firm, every upload, any kind. | 2026-08-21 | companion to **A17** |
+| **A43** | [`A43-trigger-uploaded-local-kind.png`](./automations-blueprint/A43-trigger-uploaded-local-kind.png) | chrome | Same event. Grain **Local**. Nested shape: Firm, then **Kind** (this kind). | 2026-08-21 | Local completes A26; this plate is **this event’s** instance axis |
+| **A44** | [`A44-canvas-uploaded-reevaluate.png`](./automations-blueprint/A44-canvas-uploaded-reevaluate.png) | chrome | Canvas. Hear upload → Rule (re-evaluate) → Action. Same Automations middle. Not a Rule on the contact canvas. | 2026-08-21 | companion to **A15** / **A22** |
 
 **Why A10 / A13 are in the lineup and still not chrome:** they are the **idea** of output classes as a lattice. They are not Operator screens. The DAG piece that does that fork is the **If / condition node**, now on the glass as **A16**. Keep both diagrams so the evolution (hole → listing) is visible. Do not ascribe A13 as a screen.
 
@@ -104,6 +108,7 @@ In-app Ant Automations workbench is **not** this blueprint. Mock = generated ima
 - **A31 / A32** interiors are **strong** (occupancy; Input rail + resize grip). Background / sider / extra chrome on those files is far off the current design system. **Do not copy the background. Do not skip the interiors.** Packet [`MAPPED-BOX-PACKET.md`](./MAPPED-BOX-PACKET.md).
 - **A33** chrome may drift. Trust the **grouped list**. Desk = live `/prototype-ant` + **A22**. Live three-row `02-in-app-by-module.png` is the first pass, not the inventory.
 - **A35** chrome may drift (sider). Trust: Input **type glyphs**, **color (more lively than live — that is the product)**, green **Action** chip under the title, **Contact occupancy + Tag picker**. **Kind · In the application** chips on that PNG are teaching — do not build.
+- **A41–A44** catalog titles / selected-row mismatch are generated drift. Trust the **event name**, Grain, and the canvas chain. Desk chrome = **A22**. Kind labels on A43 (Language test) are **example**. Rule on A44 is the named re-evaluate operation — not a new in-app Action row on **A33**. Do not invent a Re-evaluate button.
 
 ---
 
@@ -892,6 +897,60 @@ Fallback: if Ant has no Rule GUI (it does not), the picture is still the face. H
 **Stale pixel:** left-tree folder names. Trust **rows + Add path**.
 
 **Not this plate:** If interior. Canvas fan (A37).
+
+---
+
+### A41 — Trigger select includes Contact uploaded information
+
+![A41 Contact uploaded in the event list](./automations-blueprint/A41-trigger-contact-uploaded.png)
+
+**Rationale (2026-08-21):** Founder: whenever a contact uploads information — any type, or a **certain kind** — Automations can hear it. Named **Contact uploaded information** on purpose. Same A26 picker. **Contact import** stays a different row.
+
+**On the glass:** Event list. **Contact uploaded information** selected. Contact import still visible, not selected. Grain = Global.
+
+**Do not build:** collapsing this row with Contact import. Recutting A26’s packet. Filling a giant event catalog beyond named listens.
+
+**Stale pixel:** workflow title in the catalog. Teaching caption “Not contact import. Different seat.” = bucket 2.
+
+**Not this plate:** Local (**A43**). Canvas chain (**A44**). Contact workspace Upload (**P6**).
+
+---
+
+### A42 — Grain Global (all uploads)
+
+![A42 Global](./automations-blueprint/A42-trigger-uploaded-global.png)
+
+**On the glass:** Event = Contact uploaded information. Grain **Global**. Helper: every firm, every upload, any kind. Who this run is about = the contact who put information in.
+
+**Do not build:** treating “Who this run is about” copy as a new control family.
+
+**Stale pixel:** catalog still highlighting another workflow. Trust the **modal**.
+
+---
+
+### A43 — Grain Local (this kind)
+
+![A43 Local this kind](./automations-blueprint/A43-trigger-uploaded-local-kind.png)
+
+**On the glass:** Grain **Local**. Nested dropdowns of that event’s existing shape: Firm (Select-firm primitive) then **Kind**. Local = this kind.
+
+**Do not build:** a new picker family per event. Dumping every possible dropdown at once as the product (nested; next appears after this layer). Freezing “Language test” as a system kind.
+
+**Not this plate:** Global (**A42**). Contact kind modal (**P7**) is the **contact** putting a kind in — same grain, other seat.
+
+---
+
+### A44 — Hear upload → re-evaluate
+
+![A44 Canvas](./automations-blueprint/A44-canvas-uploaded-reevaluate.png)
+
+**On the glass:** Trigger **Contact uploaded information** → Rule (eligibility / re-evaluate) → Action. Same Automations definite middle.
+
+**Do not build:** a Rule on the contact workspace. A new A33 row named Re-evaluate (law 41: only if that module already has the button). Teaching caption.
+
+**Stale pixel:** Action title “Assign sequence - or Agents”. Trust the **chain**, not the example Action.
+
+**Not this plate:** Trigger interior (A41–A43). Contact Upload (P6).
 
 ---
 

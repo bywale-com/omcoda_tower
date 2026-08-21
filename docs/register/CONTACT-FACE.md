@@ -47,13 +47,12 @@
 |-------|--------------|------------|
 | **Now** | **Need** | Always the **objective** — what we need from them now |
 | **History** | **Need** (reason named) | History of **requests** — the asks that prompted outreach. Not the outreach log |
-| **Upload** | **Need** (function named) | Contact **puts information into the system**. Any type, or a specific kind. Submodules later. This is what Automations **hears** |
-| **Files** | Store | Where that information **lives** after. Not the act. Not Now’s form |
+| **Upload** | **Need** (function named) | Contact **puts information into the system**. Any type, or a specific kind. Submodules / kinds. This is what Automations **hears**. **Files** is the store **inside** this module (tab), not a fourth left-panel item on the canonical plates |
 
 5. **Opt out** is chrome — How Silence. Not a module.
 6. **On behalf of the firm.** Harbor in the pictures is **example**. Same grain as C16.
 7. **Touchpoints still exist.** Email still goes out (C16). The link **lands in this workspace**, on Now, with that ask open. Channel messages are **not** nav.
-8. **Do not build everything now.** Do not open Furnish. Do not regenerate plates for design-system match until asked.
+8. **Do not build everything now.** Do not open Furnish. Do not regenerate plates for design-system match until asked. Module interiors **are** drawn (P3–P11, A41–A44).
 9. **Three doors. Do not collapse them.**
 
 | Door | Who starts | What it is | Event Automations hears |
@@ -66,7 +65,7 @@ Upload can have kinds (modals / submodules). Global = all uploads. Local = **thi
 
 **Now’s form stays self-reportable-only** (Refresh How). Document-dependent never enter that form. Upload is the other door for information that is not that form.
 
-**PM on Files vs Upload:** Upload is the **function** (and the event). Files is the **store**. Same family. Not a fourth unrelated module — Files sits with Upload (submodule / second view) unless we later need browse-without-put as its own entry. History stays. Now stays. Left panel stays light: **Now · History · Upload** (Files inside Upload). Ask if Files must stay a sibling.
+**PM on Files vs Upload (drawn):** Upload is the **function** (and the event). Files is the **store**. Canonical plates: left panel **Now · History · Upload**; Files is a tab inside Upload (**P6 · P8**). If browse-without-put must stand alone, Files becomes a fourth sibling — still the ask. Prior P1 with Files in the nav is kept as [`P1-prior-files-nav.png`](./contact-blueprint/P1-prior-files-nav.png).
 
 **Old paper (honest):** [`personas.md`](./personas.md) said contact is referenced, not a persona, touchpoint-only. [`OUTCOMES.md`](./OUTCOMES.md) still has four **Engagement contact** outcomes (all secondary). Founder: it is a **natural persona**. This seat uses those four outcomes to birth modules. Approach still does not acquire them (World). Do not copy the consultant desk. Do not overwrite 15:43.
 
@@ -87,7 +86,7 @@ Upload can have kinds (modals / submodules). Global = all uploads. Local = **thi
 
 **Furnish / Enrichment:** 20 contact-cants + 20 furnish, planted on that flipper. **Wait.** Needs/modules first.
 
-Compare plates: [`P0`](./contact-blueprint/P0-contact-ct-portal-built.png) (CT as built — **copy the 10-item sider only**; interior drifted) · [`P2`](./contact-blueprint/P2-contact-needs-vs-built.png) (needs vs built vs P1).
+Compare plates: [`P0`](./contact-blueprint/P0-contact-ct-portal-built.png) (CT as built — **copy the 10-item sider only**; interior drifted) · [`P2`](./contact-blueprint/P2-contact-needs-vs-built.png) (needs vs built — **prior**; Upload/doors → **P9**). Lineup: [`CONTACT-UI-BLUEPRINT.md`](./CONTACT-UI-BLUEPRINT.md).
 
 **Not this workspace:** Prepared workspace (consultant activation). Consultant Board / Client Data. Operator libraries.
 
@@ -103,3 +102,4 @@ Compare plates: [`P0`](./contact-blueprint/P0-contact-ct-portal-built.png) (CT a
 - Not Gmail. C16 stays the email. This is after they click.
 - Not collapsing **Upload** with **Now’s form submitted**, or with **operator contact-file import**.
 - Not regenerating P1 for design-system match until asked.
+- Not freezing P6/P7 kind titles as the kind catalog.
