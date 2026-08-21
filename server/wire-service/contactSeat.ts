@@ -181,13 +181,12 @@ async function projectSeat(pool: Pool, link: LinkRow): Promise<ContactSeatPayloa
   const formFields: FormField[] = [];
   if (!silenced) {
     const missing = await pool.query<{ field_key: string; label: string }>(
-      `SELECT m.field_key, COALESCE(c.label, m.field_key) AS label
+      `SELECT m.field_key, c.label
        FROM missing_fact_signals m
-       LEFT JOIN collectible_fields c ON c.field_key = m.field_key
+       JOIN collectible_fields c ON c.field_key = m.field_key
        WHERE m.firm_id=$1 AND m.contact_id=$2
-         AND (c.capture IS NULL OR c.capture = 'self_reportable')
-         AND (c.capture IS DISTINCT FROM 'document_dependent')
-       ORDER BY COALESCE(c.ord, 99), m.field_key`,
+         AND c.capture = 'self_reportable'
+       ORDER BY c.ord, m.field_key`,
       [link.firm_id, link.contact_id],
     );
     for (const row of missing.rows) {
@@ -256,7 +255,8 @@ async function projectSeat(pool: Pool, link: LinkRow): Promise<ContactSeatPayloa
 
   for (const camp of campaigns.rows) {
     const outstanding = campaignId != null && camp.id === campaignId;
-    const done = cursorOrd != null && camp.ord < cursorOrd;
+    const past = cursorOrd != null && camp.ord < cursorOrd;
+    if (!outstanding && !past) continue;
     history.push({
       id: `ask-${camp.id}`,
       kind: camp.kind === "meeting" ? "meeting" : "form",
@@ -268,9 +268,6 @@ async function projectSeat(pool: Pool, link: LinkRow): Promise<ContactSeatPayloa
           ? `${firmName} asked you to book a meeting.`
           : `${firmName} asked for facts so the file can continue.`,
     });
-    if (!outstanding && !done && cursorOrd == null) {
-      /* cursor NULL and a completion exists → treated done in packet; leave as not outstanding */
-    }
   }
 
   const files = await pool.query<{
@@ -369,7 +366,12 @@ export async function handleContactSeatGet(c: Context) {
   if (openAsk) {
     await resolved.pool.query(
       `UPDATE enrollment SET campaign_id=$3
-       WHERE firm_id=$1 AND contact_id=$2`,
+       WHERE id = (
+         SELECT id FROM enrollment
+         WHERE firm_id=$1 AND contact_id=$2
+         ORDER BY enrolled_at DESC
+         LIMIT 1
+       )`,
       [resolved.link.firm_id, resolved.link.contact_id, openAsk],
     );
   }
@@ -421,6 +423,13 @@ export async function handleContactSeatFacts(c: Context) {
   if ("refuse" in resolved) return json(c, resolved, 404);
   const body = await c.req.json<{ answers?: Array<{ fieldKey: string; value: unknown }> }>().catch(() => ({}));
   const answers = Array.isArray(body.answers) ? body.answers : [];
+  const cursor = await resolved.pool.query<{ campaign_id: string | null }>(
+    `SELECT campaign_id FROM enrollment
+     WHERE firm_id=$1 AND contact_id=$2
+     ORDER BY enrolled_at DESC LIMIT 1`,
+    [resolved.link.firm_id, resolved.link.contact_id],
+  );
+  const formRef = cursor.rows[0]?.campaign_id ?? resolved.link.campaign_id;
   for (const answer of answers) {
     const fieldKey = String(answer.fieldKey ?? "").trim();
     if (!fieldKey) continue;
@@ -445,7 +454,12 @@ export async function handleContactSeatFacts(c: Context) {
       contactIds: [resolved.link.contact_id],
       triggerKind: "fact_writeback",
       resultPayload: { writebackId: writeId, fieldKey, source: "contact_workspace" },
-      eventPayload: { writebackId: writeId, fieldKey, contactId: resolved.link.contact_id },
+      eventPayload: {
+        writebackId: writeId,
+        fieldKey,
+        contactId: resolved.link.contact_id,
+        form_ref: formRef,
+      },
     });
     await dispatchEventToWorkflows(resolved.pool, {
       firmId: resolved.link.firm_id,
@@ -455,6 +469,7 @@ export async function handleContactSeatFacts(c: Context) {
         fieldKey,
         contactId: resolved.link.contact_id,
         firm_id: resolved.link.firm_id,
+        form_ref: formRef,
       },
       contactIds: [resolved.link.contact_id],
     });
@@ -553,7 +568,7 @@ export async function handleContactSeatUpload(c: Context) {
       firm_id: resolved.link.firm_id,
       contact_id: resolved.link.contact_id,
       kind,
-      writes: [{ table: "contact_uploads", id, contact_id: resolved.link.contact_id }],
+      writes: [{ table: "contact_uploads", id, contact_id: resolved.link.contact_id, kind }],
     },
     contactIds: [resolved.link.contact_id],
   });

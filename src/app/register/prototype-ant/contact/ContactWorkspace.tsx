@@ -76,7 +76,7 @@ export function ContactWorkspace({
   const [kindOpen, setKindOpen] = useState(false);
   const [kindQuery, setKindQuery] = useState("");
   const [customKind, setCustomKind] = useState("");
-  const [questionText, setQuestionText] = useState("");
+  const [infoText, setInfoText] = useState("");
   const [picked, setPicked] = useState<{
     origin: "kind" | "custom" | "question" | "any";
     kind?: string | null;
@@ -152,14 +152,14 @@ export function ContactWorkspace({
         origin: picked.origin,
         kind: picked.origin === "custom" ? customKind.trim() : picked.kind,
         fieldKey: picked.fieldKey,
-        bodyText: picked.origin === "question" ? questionText.trim() : null,
+        bodyText: infoText.trim() || null,
         fileName,
       }),
     );
     setKindOpen(false);
     setPicked(null);
     setCustomKind("");
-    setQuestionText("");
+    setInfoText("");
     setFileName(null);
     setNav("upload");
   };
@@ -169,36 +169,33 @@ export function ContactWorkspace({
       <Sider
         width={220}
         theme="light"
-        style={{
-          borderRight: `1px solid ${themeToken.colorSplit}`,
-          display: "flex",
-          flexDirection: "column",
-          padding: 20,
-        }}
+        style={{ borderRight: `1px solid ${themeToken.colorSplit}` }}
       >
-        <div style={{ marginBottom: 28 }}>
-          <Title level={3} style={{ margin: 0 }}>
-            {seat.firm.name}
-          </Title>
+        <div style={{ display: "flex", flexDirection: "column", height: "100%", padding: 20 }}>
+          <div style={{ marginBottom: 28 }}>
+            <Title level={3} style={{ margin: 0 }}>
+              {seat.firm.name}
+            </Title>
+          </div>
+          <Menu
+            selectedKeys={[nav]}
+            onClick={({ key }) => setNav(key as Nav)}
+            items={[
+              { key: "now", label: "Now" },
+              { key: "history", label: "History" },
+              { key: "upload", label: "Upload" },
+            ]}
+            style={{ border: "none", flex: 1 }}
+          />
+          <Button
+            type="link"
+            style={{ paddingInline: 0, marginTop: "auto", textAlign: "left" }}
+            disabled={busy || seat.silenced}
+            onClick={() => void run(() => wirePorts.machineApi.silenceContactSeat(token))}
+          >
+            Opt out
+          </Button>
         </div>
-        <Menu
-          selectedKeys={[nav]}
-          onClick={({ key }) => setNav(key as Nav)}
-          items={[
-            { key: "now", label: "Now" },
-            { key: "history", label: "History" },
-            { key: "upload", label: "Upload" },
-          ]}
-          style={{ border: "none", flex: 1 }}
-        />
-        <Button
-          type="link"
-          style={{ paddingInline: 0, marginTop: "auto", textAlign: "left" }}
-          disabled={busy || seat.silenced}
-          onClick={() => void run(() => wirePorts.machineApi.silenceContactSeat(token))}
-        >
-          Opt out
-        </Button>
       </Sider>
       <Content style={{ padding: 48, overflow: "auto" }}>
         {nav === "now" ? (
@@ -420,12 +417,16 @@ export function ContactWorkspace({
                     {hit.kind === "question" ? `Answer that question · ${hit.label}` : hit.label}
                   </Button>
                 ))}
-                {picked?.origin === "question" ? (
+                {picked ? (
                   <Input.TextArea
                     rows={3}
-                    placeholder="Context for that question"
-                    value={questionText}
-                    onChange={(event) => setQuestionText(event.target.value)}
+                    placeholder={
+                      picked.origin === "question"
+                        ? "Context for that question"
+                        : "Information to put in (optional if you attached a file)"
+                    }
+                    value={infoText}
+                    onChange={(event) => setInfoText(event.target.value)}
                   />
                 ) : null}
                 <Text type="secondary">Add custom</Text>
