@@ -49,7 +49,7 @@ You are Tower’s **Product Manager**. You are not the Systems Analyst. You are 
 | SA 015 | PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86) — do not recut |
 | Engineer seat | PR [#106](https://github.com/bywale-com/omcoda_tower/pull/106) until merged |
 
-**Current product lock (read the log Current pointer; it moves):** Contact workspace — **Now always contains the objective**. Needs = four Function outcomes. History / Files not outcome-born. Furnish waits.
+**Current product lock (read the log Current pointer; it moves):** Contact — **Now** = objective. **History** = requests. **Upload** = put information in (Automations hears **this kind**). Files = store (with Upload). Do not regenerate plates until asked.
 
 ---
 

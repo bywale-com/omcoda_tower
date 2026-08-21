@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Contact workspace: **Now always contains the objective** (consent · form · meeting book). Needs first: four Function outcomes. History / Files named, not outcome-born. Compare **P0 / P2**. Do not open Furnish yet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Contact: **Now** = objective. **History** = **requests** (not the outreach log). **Upload** = contact puts information in (event Automations hears; this kind). **Files** = the store (with Upload). Do not regenerate plates. Do not plant.
 
 **How we maintain this log**
 
@@ -2023,6 +2023,36 @@ Flag 15:43 untouched.
 **Do not:** ship the 10; treat P0 body as Consent; start Furnish; mint Files; overwrite 15:43; plant.
 
 **Ask:** History and Files stay as wants on the panel, or they wait until they have outcomes?
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-21 10:50 UTC — History = requests. Upload is a module. Automations hears it.
+
+**Why:** Founder likes the new workspace. Redesign to the live design system later — do not regenerate this stamp. Now is clear. History: not the outreach log — **their requests**, the thing that **prompted need for outreach**. Files is good. Also: they should **upload information into the system**. Whenever a contact uploads — any type, or a **certain kind** — that can **trigger** an automation (re-evaluate is the named operation). Upload can be a **module** (modals / submodules).
+
+**Now:** locked. Always the objective.
+
+**History (reason):** module because it holds the **requests** — not necessarily the outreach. The ask that made outreach necessary.
+
+**Upload vs Files vs Now — do not collapse:**
+
+| | Now | Upload | Files |
+|--|-----|--------|-------|
+| Who | Firm asks | Contact **puts information in** | Store |
+| Event | Form submitted / objective met (already) | **Contact uploaded information** (this kind) — named on purpose | Sitting there is not an event |
+| Not | — | Not operator **import**. Not Now’s form | Not the act |
+
+Same Automations shape: hear that → operation (re-evaluate is one) → exits. Global / Local = all uploads vs **this kind**. Do not put a Rule on the contact canvas. Now’s form stays self-reportable-only; Upload is the other door.
+
+**PM:** Upload is the function (and the event). Files is the store — same family, inside Upload, not a fourth sibling unless browse-without-put must stand alone. Left panel stays light: **Now · History · Upload**.
+
+**Wrote:** [`CONTACT-FACE.md`](./CONTACT-FACE.md) · [`PRIMITIVES.md`](./PRIMITIVES.md) (new listen). No new PNG. Design system later.
+
+**Do not:** collapse the three doors; mint an upload table this stamp; start Furnish; recut 015; overwrite 15:43; plant; regenerate P1.
+
+**Ask:** Files a sibling on the left, or inside Upload?
 
 Flag 15:43 untouched.
 

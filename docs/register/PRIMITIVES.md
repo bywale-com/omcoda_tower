@@ -39,12 +39,15 @@ These are the in-app events. If a new “when X happens” is not this list, the
 | **A new contact** | All new contacts | **This firm** — later if we need it |
 | **An objective was met** | All of that kind | **This** objective — nested shape of that event (this campaign, this form, this instance). Same Global / Local as every other event. Law **27 · 28**. |
 | **A reference pack / eligibility criteria was updated** | All pack updates | **This pack** |
+| **A contact uploaded information** | All uploads | **This kind** — the upload module’s type (any / a specific kind). Not “any row changed.” |
 
 **Global** on every row also means **every firm**. The Local column is the **instance** layer only. Firm/contact Select firm is the other Local layer and is not restated per row. Nested; SA maps order. Do not treat a dash as “no Local at all” until SA says the firm axis is also empty.
 
 That is the list from the face we have already named. Not “any row changed.”
 
 **Contact import** and **new contact** are two events. Import is uploading a file into the book (`import_batch`). That is the event. Creating people is a path inside that process, not the identity of the event — rows upsert; existing contacts can be updated, not only created. **New contact** is that person (`contact_records` for that one), with or without an import.
+
+**Contact uploaded information** is a **different event** and a **different seat.** Operator import ≠ the contact putting information into the system from their workspace. **Form submitted** is answering **Now** (the current objective). Upload is the contact **putting information in** — any type, or a specific kind. Global / Local: all uploads vs **this kind**. Named on purpose 2026-08-21. Do not collapse with import or with form-submitted.
 
 **What contact import writes (live, this run):** `import_batch` (the batch) + one `contact_records` write per row in the file. That is the handle. Next node picks. Audit / tags are **later nodes**, not this event. Live fires **one** event (`contact_import`). It does not also fire new-contact per row — that is the gap we just named, not proof they are the same event.
 
