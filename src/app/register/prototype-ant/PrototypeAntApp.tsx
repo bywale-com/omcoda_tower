@@ -136,10 +136,6 @@ function AntShell({
     if (!isAdmin && desk !== "consultant") setDesk("consultant");
   }, [isAdmin, desk]);
 
-  useEffect(() => {
-    if (desk === "contact" && !selectedContact) setDesk("operator");
-  }, [desk, selectedContact]);
-
   const authOff = isAuthDisabled();
   const needsLogin = !isLoading && !isAuthenticated;
 

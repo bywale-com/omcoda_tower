@@ -108,7 +108,7 @@ export function ViewAsProvider({ children }: { children: ReactNode }) {
         .then((rows) => {
           if (cancelled) return;
           setContactWorkspaces(rows);
-          setSelectedContactId((prev) => (prev && rows.some((row) => row.id === prev) ? prev : null));
+          setSelectedContactId((prev) => prev);
         })
         .catch(() => {
           if (cancelled) return;
@@ -131,13 +131,16 @@ export function ViewAsProvider({ children }: { children: ReactNode }) {
     [consultants, selectedFirmId],
   );
 
-  const selectedContact = useMemo(
-    () => contactWorkspaces.find((row) => row.id === selectedContactId) ?? null,
-    [contactWorkspaces, selectedContactId],
-  );
+  const selectedContact = useMemo(() => {
+    const found = contactWorkspaces.find((row) => row.id === selectedContactId) ?? null;
+    if (found) return found;
+    if (selectedContactId) return { id: selectedContactId, name: null, email: null };
+    return null;
+  }, [contactWorkspaces, selectedContactId]);
 
   const selectConsultant = useCallback((firmId: string) => {
     setSelectedFirmId(firmId);
+    setSelectedContactId(null);
   }, []);
 
   const selectContact = useCallback((contactId: string | null) => {

@@ -149,8 +149,30 @@ function workspaceOutRefuse(): ContactSeatRefuse {
   return { ok: false, refuse: "workspace_opted_out", message: "This workspace is no longer available." };
 }
 
+const STORAGE_KEY = "tower.standin.workspaceOptedOut";
+
+function readPersistedOut(): Set<string> {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    const ids = raw ? JSON.parse(raw) : [];
+    return new Set(Array.isArray(ids) ? ids.filter((id) => typeof id === "string") : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function persistOut(contactId: string) {
+  const ids = readPersistedOut();
+  ids.add(contactId);
+  try {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify([...ids]));
+  } catch {
+    /* private mode */
+  }
+}
+
 function isOut(contactId: string): boolean {
-  return Boolean(consent.get(contactId)?.workspaceOptedOut);
+  return Boolean(consent.get(contactId)?.workspaceOptedOut) || readPersistedOut().has(contactId);
 }
 
 function rememberPerson(person: StandInBookPerson) {
@@ -254,6 +276,7 @@ function markWorkspaceOut(contactId: string): ContactSeatRefuse {
     source: "contact_workspace.workspace_opt_out",
     workspaceOptedOut: true,
   });
+  persistOut(contactId);
   return workspaceOutRefuse();
 }
 
