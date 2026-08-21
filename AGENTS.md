@@ -49,7 +49,7 @@ You are Tower’s **Product Manager**. You are not the Systems Analyst. You are 
 | SA 015 | PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86) — do not recut |
 | Engineer seat | PR [#106](https://github.com/bywale-com/omcoda_tower/pull/106) until merged |
 
-**Current product lock (read the log Current pointer; it moves):** Contact workspace packets. **Now** = objective. **History** = requests. **Upload** = put in (search / custom / answer-that-question). Files inside Upload. Automations **Contact uploaded information**. Do not regenerate plates until asked.
+**Current product lock (read the log Current pointer; it moves):** Contact workspace packets. Shell mark: Operator **Consultant ▾ | Operator | Contact ▾**. Do not regenerate contact plates until asked.
 
 ---
 
