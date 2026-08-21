@@ -694,4 +694,55 @@ export const realMachineApi: MachineApiPort = {
       headers: firmHeader(),
     });
   },
+
+  async listContactUploadKinds(firmId) {
+    const headers: HeadersInit = {};
+    try {
+      headers["x-firm-id"] = firm();
+    } catch {
+      /* optional */
+    }
+    const q = firmId ? `?firmId=${encodeURIComponent(firmId)}` : "";
+    return wireFetch<{ kinds: string[] }>(`/machine/contact-upload-kinds${q}`, { headers });
+  },
+
+  async loadContactSeat(token, opts) {
+    const q = opts?.campaignId ? `?campaignId=${encodeURIComponent(opts.campaignId)}` : "";
+    return wireFetch(`/contact-seat/${encodeURIComponent(token)}${q}`);
+  },
+
+  async consentContactSeat(token, action) {
+    return wireFetch(`/contact-seat/${encodeURIComponent(token)}/consent`, {
+      method: "POST",
+      body: JSON.stringify({ action }),
+    });
+  },
+
+  async silenceContactSeat(token) {
+    return wireFetch(`/contact-seat/${encodeURIComponent(token)}/silence`, {
+      method: "POST",
+      body: "{}",
+    });
+  },
+
+  async submitContactSeatFacts(token, answers) {
+    return wireFetch(`/contact-seat/${encodeURIComponent(token)}/facts`, {
+      method: "POST",
+      body: JSON.stringify({ answers }),
+    });
+  },
+
+  async bookContactSeat(token, slot) {
+    return wireFetch(`/contact-seat/${encodeURIComponent(token)}/meeting`, {
+      method: "POST",
+      body: JSON.stringify({ slot }),
+    });
+  },
+
+  async putContactSeatUpload(token, input) {
+    return wireFetch(`/contact-seat/${encodeURIComponent(token)}/uploads`, {
+      method: "POST",
+      body: JSON.stringify(input),
+    });
+  },
 };

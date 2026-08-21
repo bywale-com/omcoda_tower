@@ -646,4 +646,34 @@ export type MachineApiPort = {
       consultantName: string | null;
     }>;
   }>;
+  listContactUploadKinds: (firmId?: string) => Promise<{ kinds: string[] }>;
+  loadContactSeat: (
+    token: string,
+    opts?: { campaignId?: string },
+  ) => Promise<import("./contactSeatTypes").ContactSeatPayload | import("./contactSeatTypes").ContactSeatRefuse>;
+  consentContactSeat: (
+    token: string,
+    action: "agree" | "ignore",
+  ) => Promise<import("./contactSeatTypes").ContactSeatPayload | import("./contactSeatTypes").ContactSeatRefuse>;
+  silenceContactSeat: (
+    token: string,
+  ) => Promise<import("./contactSeatTypes").ContactSeatPayload | import("./contactSeatTypes").ContactSeatRefuse>;
+  submitContactSeatFacts: (
+    token: string,
+    answers: Array<{ fieldKey: string; value: unknown }>,
+  ) => Promise<import("./contactSeatTypes").ContactSeatPayload | import("./contactSeatTypes").ContactSeatRefuse>;
+  bookContactSeat: (
+    token: string,
+    slot: string,
+  ) => Promise<import("./contactSeatTypes").ContactSeatPayload | import("./contactSeatTypes").ContactSeatRefuse>;
+  putContactSeatUpload: (
+    token: string,
+    input: {
+      origin: "kind" | "custom" | "question" | "any";
+      kind?: string | null;
+      fieldKey?: string | null;
+      bodyText?: string | null;
+      fileName?: string | null;
+    },
+  ) => Promise<import("./contactSeatTypes").ContactSeatPayload | import("./contactSeatTypes").ContactSeatRefuse>;
 };

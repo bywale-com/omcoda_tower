@@ -6,6 +6,7 @@ import {
   CloseCircleOutlined,
   FileTextOutlined,
   InboxOutlined,
+  PaperClipOutlined,
   UserAddOutlined,
   UserDeleteOutlined,
 } from "@ant-design/icons";
@@ -36,6 +37,7 @@ const EVENT_ICON: Record<TriggerSelectId, { node: ReactNode; color: string }> = 
   "audit.completed": { node: <CheckCircleOutlined />, color: "#52c41a" },
   contact_import: { node: <CloudUploadOutlined />, color: "#1677ff" },
   "contact.created": { node: <UserAddOutlined />, color: "#13c2c2" },
+  contact_uploaded: { node: <PaperClipOutlined />, color: "#1677ff" },
   "reference.pack": { node: <InboxOutlined />, color: "#fa8c16" },
 };
 

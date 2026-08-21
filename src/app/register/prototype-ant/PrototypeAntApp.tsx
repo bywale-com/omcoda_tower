@@ -34,18 +34,35 @@ import { isPlatformAdminEmail } from "../../auth/platformAdmin";
 import { buildTowerAntTheme, loadAntThemeMode, saveAntThemeMode, type AntThemeMode } from "./theme";
 import { ConsultantAntScene } from "./consultant/ConsultantAntScene";
 import { OperatorAntScene } from "./operator/OperatorAntScene";
-import { ContactAntScene } from "./contact/ContactAntScene";
+import { ContactAntScene, ContactWorkspace } from "./contact/ContactWorkspace";
 import { LoginModule } from "./consultant/LoginModule";
 import { ViewAsProvider, useViewAs } from "./viewAsContext";
 
 const { Header, Content } = Layout;
 const { Text } = Typography;
 
-export type AntDesk = "consultant" | "operator" | "contact";
+type AntDesk = "consultant" | "operator" | "contact";
+
+function contactTokenFromPath(): string | null {
+  if (typeof window === "undefined") return null;
+  const match = window.location.pathname.match(/^\/c\/([^/]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
 
 export function PrototypeAntApp() {
   const [mode, setMode] = useState<AntThemeMode>(() => loadAntThemeMode());
   const themeConfig = useMemo(() => buildTowerAntTheme(mode), [mode]);
+  const seatToken = contactTokenFromPath();
+
+  if (seatToken) {
+    return (
+      <ConfigProvider theme={themeConfig}>
+        <App style={{ height: "100%" }}>
+          <ContactWorkspace token={seatToken} />
+        </App>
+      </ConfigProvider>
+    );
+  }
 
   return (
     <ConfigProvider theme={themeConfig}>

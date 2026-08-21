@@ -214,13 +214,17 @@ export async function handleConsentSet(c: Context) {
     contactId: string;
     firmId: string;
     basis: "express" | "implied" | "none";
+    source?: string;
   }>();
+  const source = body.source ?? null;
   await getPool().query(
-    `INSERT INTO consent_records (contact_id, firm_id, basis, silenced, updated_at)
-     VALUES ($1,$2,$3,false,now())
+    `INSERT INTO consent_records (contact_id, firm_id, basis, silenced, source, updated_at)
+     VALUES ($1,$2,$3,false,$4,now())
      ON CONFLICT (contact_id, firm_id) DO UPDATE
-       SET basis = EXCLUDED.basis, updated_at = now()`,
-    [body.contactId, body.firmId, body.basis],
+       SET basis = EXCLUDED.basis,
+           source = COALESCE(EXCLUDED.source, consent_records.source),
+           updated_at = now()`,
+    [body.contactId, body.firmId, body.basis, source],
   );
   return c.json({ ok: true });
 }
@@ -250,13 +254,14 @@ export async function handleConsentSilence(c: Context) {
 export async function handleConsentGet(c: Context) {
   const contactId = c.req.param("contactId");
   const result = await getPool().query(
-    `SELECT basis, silenced FROM consent_records WHERE contact_id = $1 LIMIT 1`,
+    `SELECT basis, silenced, source FROM consent_records WHERE contact_id = $1 LIMIT 1`,
     [contactId],
   );
   const row = result.rows[0];
   return c.json({
     basis: row?.basis ?? "none",
     silenced: row?.silenced ?? false,
+    source: row?.source ?? null,
   });
 }
 

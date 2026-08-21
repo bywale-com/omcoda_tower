@@ -100,6 +100,15 @@ import {
   handleWorkflowRunsList,
 } from "./machine.ts";
 import { handleEventTestContract } from "./eventTest.ts";
+import {
+  handleContactSeatConsent,
+  handleContactSeatFacts,
+  handleContactSeatGet,
+  handleContactSeatMeeting,
+  handleContactSeatSilence,
+  handleContactSeatUpload,
+  handleContactUploadKinds,
+} from "./contactSeat.ts";
 
 export function createWireRoutes(): Hono {
   const wire = new Hono();
@@ -222,6 +231,14 @@ export function createWireRoutes(): Hono {
   wire.post("/machine/access-invite", handleMachineAccessInvite);
   wire.post("/machine/events", handleMachineEvent);
   wire.post("/hook/:webhookId", handleWebhookTrigger);
+  wire.get("/machine/contact-upload-kinds", handleContactUploadKinds);
+
+  wire.get("/contact-seat/:token", handleContactSeatGet);
+  wire.post("/contact-seat/:token/consent", handleContactSeatConsent);
+  wire.post("/contact-seat/:token/silence", handleContactSeatSilence);
+  wire.post("/contact-seat/:token/facts", handleContactSeatFacts);
+  wire.post("/contact-seat/:token/meeting", handleContactSeatMeeting);
+  wire.post("/contact-seat/:token/uploads", handleContactSeatUpload);
 
   return wire;
 }

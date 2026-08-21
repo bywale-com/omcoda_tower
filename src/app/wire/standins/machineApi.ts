@@ -26,6 +26,7 @@ import type {
 } from "../machineTypes";
 import { standInHaltStore } from "./haltStore";
 import { triggerLocalAxesMatch } from "../../data/automationTriggerSelect";
+import { standInContactSeat, standInContactUploads } from "./contactSeatMirror";
 
 /** Mirrors supabase/seeds/002_machine_tables.sql seq_eligibility_pipeline. */
 const eligibilityPipeline = new Map<string, EligibilityPipelineRow>(
@@ -1812,5 +1813,37 @@ export const standInMachineApi: MachineApiPort = {
     const f = standInFirm();
     const meetings = standInMeetings.filter((m) => m.firmId === f);
     return { firmId: f, count: meetings.length, meetings };
+  },
+
+  async listContactUploadKinds(firmId) {
+    const id = firmId || standInFirm();
+    const kinds = [
+      ...new Set(
+        standInContactUploads
+          .filter((row) => row.firmId === id && row.kind)
+          .map((row) => row.kind as string),
+      ),
+    ];
+    return { kinds };
+  },
+
+  loadContactSeat(token, opts) {
+    return standInContactSeat.load(token, opts?.campaignId);
+  },
+  consentContactSeat(token, action) {
+    return standInContactSeat.consent(token, action);
+  },
+  silenceContactSeat(token) {
+    return standInContactSeat.silence(token);
+  },
+  submitContactSeatFacts(token, answers) {
+    return standInContactSeat.facts(token, answers);
+  },
+  bookContactSeat(token, slot) {
+    void slot;
+    return standInContactSeat.book(token);
+  },
+  putContactSeatUpload(token, input) {
+    return standInContactSeat.upload(token, input);
   },
 };

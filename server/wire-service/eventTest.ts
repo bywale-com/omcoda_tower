@@ -173,6 +173,14 @@ async function door1(
       );
       return ok ? out : null;
     }
+    if (eventName === "contact_uploaded") {
+      const ok = await push(
+        "contact_uploads",
+        `SELECT * FROM contact_uploads WHERE firm_id=$1 ORDER BY created_at DESC LIMIT 20`,
+        [firm],
+      );
+      return ok ? out : null;
+    }
   } catch {
     return null;
   }
