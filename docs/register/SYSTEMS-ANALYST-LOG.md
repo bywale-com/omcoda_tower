@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-21 09:59 UTC — **022 then 023 on this PR (#86).** Engineer cuts 022 now. **021 landed** [#108](https://github.com/bywale-com/omcoda_tower/pull/108). **020** still waiting. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-21 11:12 UTC — **024** contact workspace / upload write / `contact_uploaded`. Engineer cuts **024 now** (this PM lock). **022** still waiting (objectives Local). **023** after 022. **021 landed** [#108](https://github.com/bywale-com/omcoda_tower/pull/108). **020** still waiting. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -1934,3 +1934,46 @@ So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WH
 **Why:** Founder: when creating packets, put them on the SA PR — **#86**. PM on **#96**. Do not open a new SA PR.
 
 **Hard:** 022 / 023 / escrow direction live **here**. Engineer pickup is 022.
+
+---
+
+## 2026-08-21 11:12 UTC — PM contact packets. 024. The seat has no token; Upload has no write.
+
+**Why:** Founder: address the PM packets; run the pass so the Engineer can pick it up. Three locked packets on [#96](https://github.com/bywale-com/omcoda_tower/pull/96): workspace · Upload · `contact_uploaded` (A41–A44).
+
+**Cut:** [`SYSTEMS-CHANGE-PACKET-024.md`](./SYSTEMS-CHANGE-PACKET-024.md).
+
+### Workspace (A–D)
+
+**A. Access.** `/a/<token>` is `access_links` → `users` → consultant session. **Silent** for a no-login contact seat. Mint `contact_access_links`. Path **`/c/<token>`**. Not single-use. C16 embeds that URL; landing is Now.
+
+**B. Now states.** Already written: Agree `consent_records.basis='express'`; form `fact_writebacks` (listing = `missing_fact_signals` ⋈ `collectible_fields` self-reportable); meeting `meeting_booked`. **Ignore** had no write — persist `source='ignored'`. Channel vs page: C16 still sends; Now is the page. Click kind → empty Now (no click interior). Consent is not a `campaign_objective.kind` (010 stands); it wins when basis is none and not ignored.
+
+**C. History.** The ask is `campaign` / `campaign_objective` on this enrollment (form + meeting only) plus the consent row. **Not** `outbound_messages`. No history table. Outstanding = current cursor. Open in Now retargets `campaign_id` on the same token.
+
+**D. Three events.** Form submitted = `fact_writebacks` (Story 8). Contact import = `import_batch`. Contact uploaded = **no write today** → decision 4.
+
+### Upload (A–D)
+
+**A. Put-in vs store.** Operator book-in is `import_batch`. Contact facts on Now are `fact_writebacks`. **Files/put-in: silent.** One table `contact_uploads`. Files tab = SELECT. Put in = INSERT.
+
+**B. Kind.** No identity. Do not mint a catalog. `kind TEXT` on the row (NULL = Any; custom string = Local this kind).
+
+**C. Search corpus.** Questions already asked = `missing_fact_signals.field_key` ∪ `fact_writebacks.field_key`, labels from `collectible_fields`. Kinds = distinct `contact_uploads.kind` for this contact. Answer-that-question is still Upload (`origin='question'`). **Not** `fact_writebacks`.
+
+**D. Event.** The INSERT **is** `contact_uploaded`. Files sitting there is not. Cousin `fact_writeback` is a **different** write (Now). Do not collapse.
+
+### Uploaded event (A–D)
+
+**A. Named events** live in `TRIGGER_SELECT_EVENTS` + `event_write_set` + dispatch on the INSERT. Upload is silent today.
+
+**B. Local.** Same A26 nest: Firm then Kind. `local_ref` = `kind`. Custom names included. No kind table.
+
+**C. Handle.** `{ table: "contact_uploads", id }`. Not `import_batch`.
+
+**D. Re-evaluate.** `handleFactWriteback` already runs eligibility faceless. Upload must **not**. Automations hearing the event is how a Rule runs. No A33 button.
+
+**Did not:** recut 015 / 019 / 021 / 022 / A26; mint a history or kind catalog; collapse the three doors; overwrite 15:43.
+
+**Do not:** wait on 022 to cut this seat; reuse `/a/` ; hardcode eligibility on upload; freeze P6/P7 titles.
+
