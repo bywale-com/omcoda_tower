@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-21 12:32 UTC — **026** evolves 024/025 (workspace until they opt out). Do not mutate a numbered packet. Engineer cuts **026**. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-23 16:55 UTC — **027** Rule compare left is a chip into `fact_writebacks` (not typed Hub path). **026** still waiting (workspace until opt-out). Do not mutate a numbered packet. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -2041,6 +2041,40 @@ So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WH
 **This instance:** restored 024 / 025 bodies. The 12:20 in-place recut is now [`SYSTEMS-CHANGE-PACKET-026.md`](./SYSTEMS-CHANGE-PACKET-026.md). Pickup is **026**.
 
 **Did not:** leave the 12:20 edits in 024/025 as the live cut; recut 015; overwrite 15:43.
+
+---
+
+## 2026-08-23 16:55 UTC — Rule left is a chip into the person write. 027.
+
+**Why:** Founder on the Rule node. Left of the comparison = data you have (drag from Input / output schema). Right = what you compare it to. They cannot drop. Language / “C language” is **text**. Same drag law on Get and every open box. Then: which tables house work-permit urgency, profile metadata present, CRS vs cutoff.
+
+**Founder wording:**
+
+> On the left side is pretty much what the data you're you have. And then on the right side is what you're comparing that to. … I should be able to take from the left side from like the output schema. … drag any one of those variables into the left side
+
+> everything inside of the input data side, it should be I should be able to drag it from the left to the right side … even in like the get node, all the inputs
+
+> C language here. I'm their text. Why is it text? This shouldn't be text.
+
+> what tables house these values … work permit urgency or profile metadata present or CRS at or above latest cutoff? That we're comparing to the constants
+
+**Two buckets**
+
+1. **Specified and clear — go do it.** A29: drag any Input row into **any** open box (Outcomes included). A31 / 019: chip **is** the value; both compare sides chip-or-text. If/Switch already `CompareOperand` + `MappedSlot`. Get Firm/Contact already wrap `MappedSlot`. Rule Outcomes on `origin/main` is two plain `<Input>`s (`label \|\| leftField` · `formatConstantEnvName(constantKey)`). That is why they cannot drop and why the left looks like text.
+2. **Specified but not clear / silent — name it; do not invent.** Per-client **values** = `fact_writebacks` (`field_key`, `value`). **Names** = `collectible_fields` (018). **Missing asks** = `missing_fact_signals`. **Right constants** = `constants_packs.payload` (live evaluator still reads SPA `automationConstants.ts`; seed `003` only has three Hub packs). `rule_eligibility_pathway` is pathway enable/label — **not** the client’s language or CRS. Hub `client_data.crs.*` is **not a table**. Work permit urgency (`work_permit_warn`) and profile metadata (`days_in_system`) have **no** `collectible_fields` row.
+
+**Cut:** [`SYSTEMS-CHANGE-PACKET-027.md`](./SYSTEMS-CHANGE-PACKET-027.md).
+
+**Hard**
+
+1. Rule condition left/right = same `Operand` / `MappedSlot` as If. Label is chrome, not the left.
+2. Left chip → `chainWrites` / `fact_writebacks` for that `field_key`. Stop `readPathFromInput` of `client_data.*` as live left. Seeded keys that exist in `collectible_fields` map (`language_clb`, `crs_score`, …). Empty left fail-closed.
+3. No new table. Do not mint the silent fields. Fold pack constant keys into `constants_packs`.
+4. Do not recut 019. Get cascade stays. Fix occupancy if a drop already specified still fails.
+
+**Did not:** recut 015 / 017 / 019 / 021 / 026; mint `work_permit_warn`; overwrite 15:43; open a second SA PR.
+
+**Do not:** treat the condition label as the person’s value; stuff CRS into `rule_eligibility_pathway.set_value`; keep Hub paths as schema.
 
 
 

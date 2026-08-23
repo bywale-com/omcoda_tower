@@ -120,3 +120,13 @@ Full-chain Input is [`SYSTEMS-CHANGE-PACKET-017.md`](./SYSTEMS-CHANGE-PACKET-017
 Retract the 18:50 line “if the trigger wrote no people, Get makes the records available.” Get is a **node on the DAG**. Trigger Output is the first last-handle. Same retraction as Test 23:12.
 
 Mapped Firm/Contact (A31): chip in `mappedSlots` **is** the slot. [`SYSTEMS-IN-APP-ACTION-ASCRIBE.md`](./SYSTEMS-IN-APP-ACTION-ASCRIBE.md).
+
+---
+
+## 2026-08-23 16:55 — Rule Outcomes left is a person write, not a typed Hub path
+
+Founder: drag Input / output-schema into the **left** of a Rule comparison (and into any open box). Live `RuleOutcomesPane` is plain text Inputs. If already has the widget.
+
+Person values = `fact_writebacks`. Names = `collectible_fields`. Right = `constants_packs` / `reference_versions`. `client_data.crs.*` is not a table. Work-permit urgency and profile metadata are **silent**.
+
+Cut: [`SYSTEMS-CHANGE-PACKET-027.md`](./SYSTEMS-CHANGE-PACKET-027.md). Do not recut 019. Do not mint those silent fields.
