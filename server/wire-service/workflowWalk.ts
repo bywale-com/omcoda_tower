@@ -1390,6 +1390,7 @@ function localRefFromPayload(
   if (eventName === "consent_records.sequenced") {
     return payloadString(payload, ["sequence_id", "sequenceId"]);
   }
+  if (eventName === "contact_uploaded") return payloadString(payload, ["kind"]);
   return null;
 }
 

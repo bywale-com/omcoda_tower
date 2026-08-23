@@ -75,6 +75,47 @@
           "name": "CRS defaults pack"
         }
       ]
+    },
+    {
+      "id": "004_contact_seat",
+      "file": "004_contact_seat.sql",
+      "environments": ["development", "staging"],
+      "description": "Contact workspace token, Files rows, Harbor form enrollment",
+      "records": [
+        {
+          "table": "contact_access_links",
+          "id": "cal-harbor-1",
+          "name": "/c/c-harbor-okonkwo"
+        },
+        {
+          "table": "contact_uploads",
+          "id": "cup-harbor-1-hours",
+          "name": "skilled hours note"
+        }
+      ]
+    },
+    {
+      "id": "005_contact_workspace_fill",
+      "file": "005_contact_workspace_fill.sql",
+      "environments": ["development", "staging"],
+      "description": "Fill Now / History / Upload for the Harbor and Cedar book",
+      "records": [
+        {
+          "table": "contact_uploads",
+          "id": "cup-cedar-1-letter",
+          "name": "Ana employer letter"
+        },
+        {
+          "table": "enrollment",
+          "id": "enr-harbor-3",
+          "name": "Wei Chen meeting Now"
+        },
+        {
+          "table": "contact_access_links",
+          "id": "cal-cedar-1",
+          "name": "/c/c-cedar-ana"
+        }
+      ]
     }
   ]
 }

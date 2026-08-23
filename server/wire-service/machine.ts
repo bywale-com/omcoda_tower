@@ -271,7 +271,7 @@ export async function handleEnrollmentCreate(c: Context) {
  * Shared re-eval ring: eligibility_evaluation → result → signal → motion_decision
  * → eligibility.changed (workflows) / fallback enroll.
  */
-async function runContactEligibilityCascade(opts: {
+export async function runContactEligibilityCascade(opts: {
   firm: string;
   contactIds: string[];
   triggerKind: string;

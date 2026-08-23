@@ -100,6 +100,16 @@ import {
   handleWorkflowRunsList,
 } from "./machine.ts";
 import { handleEventTestContract } from "./eventTest.ts";
+import {
+  handleContactSeatConsent,
+  handleContactSeatFacts,
+  handleContactSeatGet,
+  handleContactSeatMeeting,
+  handleContactSeatSilence,
+  handleContactSeatUpload,
+  handleContactUploadKinds,
+  handleContactWorkspacesList,
+} from "./contactSeat.ts";
 
 export function createWireRoutes(): Hono {
   const wire = new Hono();
@@ -216,12 +226,27 @@ export function createWireRoutes(): Hono {
   wire.post("/machine/campaign-state", handleCampaignStatePost);
   wire.get("/machine/contact-records", handleContactRecordsList);
   wire.get("/machine/consultants", handleConsultantsList);
+  wire.get("/machine/contact-workspaces", handleContactWorkspacesList);
+  wire.get("/machine/contact-workspaces/:contactId", handleContactSeatGet);
+  wire.post("/machine/contact-workspaces/:contactId/consent", handleContactSeatConsent);
+  wire.post("/machine/contact-workspaces/:contactId/silence", handleContactSeatSilence);
+  wire.post("/machine/contact-workspaces/:contactId/facts", handleContactSeatFacts);
+  wire.post("/machine/contact-workspaces/:contactId/meeting", handleContactSeatMeeting);
+  wire.post("/machine/contact-workspaces/:contactId/uploads", handleContactSeatUpload);
   wire.post("/machine/meetings", handleMeetingBook);
   wire.get("/machine/meetings", handleMeetingsList);
   wire.post("/machine/provision", handleMachineProvision);
   wire.post("/machine/access-invite", handleMachineAccessInvite);
   wire.post("/machine/events", handleMachineEvent);
   wire.post("/hook/:webhookId", handleWebhookTrigger);
+  wire.get("/machine/contact-upload-kinds", handleContactUploadKinds);
+
+  wire.get("/contact-seat/:token", handleContactSeatGet);
+  wire.post("/contact-seat/:token/consent", handleContactSeatConsent);
+  wire.post("/contact-seat/:token/silence", handleContactSeatSilence);
+  wire.post("/contact-seat/:token/facts", handleContactSeatFacts);
+  wire.post("/contact-seat/:token/meeting", handleContactSeatMeeting);
+  wire.post("/contact-seat/:token/uploads", handleContactSeatUpload);
 
   return wire;
 }

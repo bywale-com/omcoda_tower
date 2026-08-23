@@ -128,6 +128,7 @@ export const EVENT_WRITE_SET: EventWriteSetRow[] = [
   { event_name: "eligibility.changed", version: 1, table_name: "motion_decisions", ord: 3 },
   { event_name: "halt_records", version: 1, table_name: "halt_records", ord: 0 },
   { event_name: "meeting_booked", version: 1, table_name: "meeting_booked", ord: 0 },
+  { event_name: "contact_uploaded", version: 1, table_name: "contact_uploads", ord: 0 },
 ];
 
 const IMPORT_CONTACTS: EventTestDataRow[] = HARBOR_BOOK.map((row, index) => ({
@@ -599,6 +600,27 @@ export const EVENT_TEST_DATA: EventTestDataRow[] = [
       enrollment_id: "enr-harbor-cole-optin",
       payload: { contactName: "Amina Cole", slot: "2026-08-21T16:30:00-07:00", timezone: "America/Vancouver" },
       created_at: "2026-08-15T19:02:00.000Z",
+    },
+  },
+  {
+    id: "etd-contact_uploaded-okonkwo-hours",
+    event_name: "contact_uploaded",
+    version: 1,
+    table_name: "contact_uploads",
+    ord: 0,
+    body: {
+      id: "cup-harbor-okonkwo-hours",
+      firm_id: "firm-harbor",
+      firm: HARBOR_FIRM,
+      contact_id: "cr-harbor-1",
+      contact_name: "Daniel Okonkwo",
+      kind: "skilled hours note",
+      origin: "custom",
+      field_key: null,
+      body_text: "1680 Canadian skilled hours on the current permit.",
+      file_name: null,
+      file_ref: null,
+      created_at: "2026-08-20T15:10:00.000Z",
     },
   },
 ];

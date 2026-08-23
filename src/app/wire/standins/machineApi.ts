@@ -26,6 +26,7 @@ import type {
 } from "../machineTypes";
 import { standInHaltStore } from "./haltStore";
 import { triggerLocalAxesMatch } from "../../data/automationTriggerSelect";
+import { standInContactSeat, standInContactUploads } from "./contactSeatMirror";
 
 /** Mirrors supabase/seeds/002_machine_tables.sql seq_eligibility_pipeline. */
 const eligibilityPipeline = new Map<string, EligibilityPipelineRow>(
@@ -814,6 +815,26 @@ function standInFirm(): string {
     // Seed/demo only — never a real-session default.
     return "firm-cedar";
   }
+}
+
+function bookPerson(contactId: string) {
+  const c = bookContacts.get(contactId);
+  if (!c) return null;
+  return {
+    id: c.id,
+    firmId: c.firmId,
+    name: c.name,
+    email: c.email,
+    firmName: c.firmName ?? null,
+  };
+}
+
+function missingSeat() {
+  return Promise.resolve({
+    ok: false as const,
+    refuse: "missing" as const,
+    message: "This link could not be opened. Ask the firm for a new one.",
+  });
 }
 
 runs.set("run-cedar-1", {
@@ -1767,6 +1788,47 @@ export const standInMachineApi: MachineApiPort = {
     ];
   },
 
+  async listContactWorkspaces(firmId) {
+    const id = firmId || standInFirm();
+    return [...bookContacts.values()]
+      .filter((c) => c.firmId === id)
+      .filter((c) => !standInContactSeat.isWorkspaceOut(c.id))
+      .sort((a, b) => (a.name ?? a.id).localeCompare(b.name ?? b.id))
+      .map((c) => ({ id: c.id, name: c.name, email: c.email }));
+  },
+
+  loadContactWorkspace(contactId, opts) {
+    const person = bookPerson(contactId);
+    if (!person) return missingSeat();
+    return standInContactSeat.loadContact(person, opts?.campaignId);
+  },
+  consentContactWorkspace(contactId, action) {
+    const person = bookPerson(contactId);
+    if (!person) return missingSeat();
+    return standInContactSeat.consentContact(person, action);
+  },
+  silenceContactWorkspace(contactId) {
+    const person = bookPerson(contactId);
+    if (!person) return missingSeat();
+    return standInContactSeat.silenceContact(person);
+  },
+  submitContactWorkspaceFacts(contactId, answers) {
+    const person = bookPerson(contactId);
+    if (!person) return missingSeat();
+    return standInContactSeat.factsContact(person, answers);
+  },
+  bookContactWorkspace(contactId, slot) {
+    void slot;
+    const person = bookPerson(contactId);
+    if (!person) return missingSeat();
+    return standInContactSeat.bookContact(person);
+  },
+  putContactWorkspaceUpload(contactId, input) {
+    const person = bookPerson(contactId);
+    if (!person) return missingSeat();
+    return standInContactSeat.uploadContact(person, input);
+  },
+
   async issueAccessInvite(input) {
     const email = input.email.trim().toLowerCase();
     const accessPath = `/a/standin-invite-${email.split("@")[0] || "user"}`;
@@ -1812,5 +1874,39 @@ export const standInMachineApi: MachineApiPort = {
     const f = standInFirm();
     const meetings = standInMeetings.filter((m) => m.firmId === f);
     return { firmId: f, count: meetings.length, meetings };
+  },
+
+  async listContactUploadKinds(firmId) {
+    const id = firmId || standInFirm();
+    const harbor = id === "firm-standin-harbor" || id === "firm-harbor";
+    const kinds = [
+      ...new Set(
+        standInContactUploads
+          .filter((row) => row.firmId === id || (harbor && (row.firmId === "firm-harbor" || row.firmId === "firm-standin-harbor")))
+          .filter((row) => row.kind)
+          .map((row) => row.kind as string),
+      ),
+    ];
+    return { kinds };
+  },
+
+  loadContactSeat(token, opts) {
+    return standInContactSeat.load(token, opts?.campaignId);
+  },
+  consentContactSeat(token, action) {
+    return standInContactSeat.consent(token, action);
+  },
+  silenceContactSeat(token) {
+    return standInContactSeat.silence(token);
+  },
+  submitContactSeatFacts(token, answers) {
+    return standInContactSeat.facts(token, answers);
+  },
+  bookContactSeat(token, slot) {
+    void slot;
+    return standInContactSeat.book(token);
+  },
+  putContactSeatUpload(token, input) {
+    return standInContactSeat.upload(token, input);
   },
 };

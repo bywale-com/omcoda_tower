@@ -625,6 +625,15 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
           if (!cancelled) setLocalOptions([]);
           return;
         }
+        if (event === "contact_uploaded") {
+          const kinds = await wirePorts.machineApi.listContactUploadKinds(
+            triggerSelectNode?.data.localFirmId,
+          );
+          if (!cancelled) {
+            setLocalOptions(kinds.kinds.map((kind) => ({ value: kind, label: kind })));
+          }
+          return;
+        }
         const { templates } = await wirePorts.machineApi.listTemplates();
         if (!cancelled) {
           setLocalOptions(templates.map((tpl) => ({ value: tpl.id, label: tpl.label })));
@@ -636,7 +645,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
     return () => {
       cancelled = true;
     };
-  }, [triggerSelectNode?.data.triggerEvent, listingIds.join("|")]);
+  }, [triggerSelectNode?.data.triggerEvent, triggerSelectNode?.data.localFirmId, listingIds.join("|")]);
 
   const movePipelineStage = async (fromIndex: number, toIndex: number) => {
     if (toIndex < 0 || toIndex >= pipeline.length) return;

@@ -29,7 +29,16 @@ export default defineConfig({
       configureServer(server) {
         server.middlewares.use((req, _res, next) => {
           const url = req.url?.split('?')[0] ?? ''
-          if (url === '/prototype-ant' || url.startsWith('/prototype-ant/')) {
+          if (url === '/prototype-ant' || url.startsWith('/prototype-ant/') || url.startsWith('/c/')) {
+            req.url = '/prototype-ant.html'
+          }
+          next()
+        })
+      },
+      configurePreviewServer(server) {
+        server.middlewares.use((req, _res, next) => {
+          const url = req.url?.split('?')[0] ?? ''
+          if (url === '/prototype-ant' || url.startsWith('/prototype-ant/') || url.startsWith('/c/')) {
             req.url = '/prototype-ant.html'
           }
           next()

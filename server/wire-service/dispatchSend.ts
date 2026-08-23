@@ -6,6 +6,7 @@
  * HTTP /wire/send/* uses the live dispatchers directly (explicit probe path).
  */
 import { getPool } from "./db.ts";
+import { contactAccessUrlForSend } from "./contactAccessMint.ts";
 import { getResend, mailRoot } from "./resendClient.ts";
 import { getTwilio, twilioFromNumber } from "./twilioClient.ts";
 import { getWireCapabilities } from "./capabilities.ts";
@@ -113,6 +114,24 @@ export async function dispatchEmailLive(input: DispatchEmailInput): Promise<Disp
   }
 
   const pool = getPool();
+  let bodyText = input.bodyText;
+  let html = input.html;
+  if (input.contactId) {
+    try {
+      const seatUrl = await contactAccessUrlForSend(pool, {
+        firmId: input.firmId,
+        contactId: input.contactId,
+      });
+      if (!bodyText.includes("/c/")) {
+        bodyText = `${bodyText}\n\n${seatUrl}`;
+      }
+      if (html && !html.includes("/c/")) {
+        html = `${html}<p><a href="${seatUrl}">${seatUrl}</a></p>`;
+      }
+    } catch {
+      /* send still goes; token mint is not a send gate */
+    }
+  }
   const domainRow = await pool.query(
     `SELECT full_domain, status FROM sending_domains WHERE firm_id = $1`,
     [input.firmId],
@@ -130,15 +149,15 @@ export async function dispatchEmailLive(input: DispatchEmailInput): Promise<Disp
       from,
       to: input.to,
       subject: input.subject,
-      text: input.bodyText,
-      html: input.html ?? `<p>${input.bodyText.replace(/\n/g, "<br/>")}</p>`,
+      text: bodyText,
+      html: html ?? `<p>${bodyText.replace(/\n/g, "<br/>")}</p>`,
     });
     if (error) {
       return { ok: false, deny: "policy", detail: error.message };
     }
     const messageId = data?.id ?? id("esp");
     const acceptedAt = new Date().toISOString();
-    const html = input.html ?? `<p>${input.bodyText.replace(/\n/g, "<br/>")}</p>`;
+    const bodyHtml = html ?? `<p>${bodyText.replace(/\n/g, "<br/>")}</p>`;
     await pool.query(
       `INSERT INTO outbound_messages
         (id, firm_id, contact_id, channel, purpose, to_addr, from_addr, provider_message_id, status,
@@ -153,13 +172,13 @@ export async function dispatchEmailLive(input: DispatchEmailInput): Promise<Disp
         from,
         messageId,
         input.subject,
-        input.bodyText,
-        html,
+        bodyText,
+        bodyHtml,
         JSON.stringify({
           channel: "email",
           subject: input.subject,
-          bodyText: input.bodyText,
-          bodyHtml: html,
+          bodyText,
+          bodyHtml,
         }),
       ],
     );
@@ -190,14 +209,26 @@ export async function dispatchSmsLive(input: DispatchSmsInput): Promise<Dispatch
   }
 
   try {
+    const pool = getPool();
+    let body = input.body;
+    if (input.contactId) {
+      try {
+        const seatUrl = await contactAccessUrlForSend(pool, {
+          firmId: input.firmId,
+          contactId: input.contactId,
+        });
+        if (!body.includes("/c/")) body = `${body}\n${seatUrl}`;
+      } catch {
+        /* send still goes */
+      }
+    }
     const twilio = await getTwilio();
     const msg = await twilio.messages.create({
       to: input.to,
       from: twilioFromNumber(),
-      body: input.body,
+      body,
     });
     const messageSid = msg.sid;
-    const pool = getPool();
     await pool.query(
       `INSERT INTO outbound_messages
         (id, firm_id, contact_id, channel, purpose, to_addr, from_addr, provider_message_id, status,
@@ -211,8 +242,8 @@ export async function dispatchSmsLive(input: DispatchSmsInput): Promise<Dispatch
         input.to,
         twilioFromNumber(),
         messageSid,
-        input.body,
-        JSON.stringify({ channel: "sms", bodyText: input.body }),
+        body,
+        JSON.stringify({ channel: "sms", bodyText: body }),
       ],
     );
     await pool.query(
