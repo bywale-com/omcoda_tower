@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-23 17:05 UTC — Founder recut the Rule question: seeded compare boxes are literals, not chips. Deeper ask: can Get even fetch those per-client facts? Dialogue; no 028. **027** still the Rule cut. **026** still waiting. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-23 17:20 UTC — Immigration rule field/outcome/constant trace. Analysis, not a cut. [`SYSTEMS-IMMIGRATION-RULE-TRACE.md`](./SYSTEMS-IMMIGRATION-RULE-TRACE.md). **027** still the Rule occupancy cut. **026** still waiting. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -2103,6 +2103,36 @@ So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WH
 5. One Get Contacts is enough **if** those facts show on Contacts. A second Get is only if the value lives in another module (cutoff = Reference — silent). Do not mint a facts Get that bypasses the pane.
 
 **Did not:** cut 028; recut 027; put facts on Contacts; overwrite 15:43.
+
+---
+
+## 2026-08-23 17:20 UTC — Immigration Rule trace. Every left, every R-*, where constants live.
+
+**Why:** Founder: thorough. Trace every field the immigration Rule configuration needs per client (filled or not). Group outcomes; orphans get a group; JS = custom compare + still name the client variable. Constants + versioning as they work. No UI. They will talk to PM if new glass is needed.
+
+**Founder wording:**
+
+> analysis of every single value or field in this like immigration rule … Configuration … every single field that must exist for clients
+
+> outcomes … organized … into like groups … you might find some that can be grouped … always try to group … orphans … other ones that should be part of existing groups … groups that haven't even been considered
+
+> some where it's more of a custom comparison, which is why we have the JS … always try to look for like what the variable is that we would need from the client
+
+> I will talk about UI right now. I just want to find out they exist first
+
+> don't forget where like these constants live … fields like per contact that should exist … how versioning of this … currently works
+
+**Parked:** [`SYSTEMS-IMMIGRATION-RULE-TRACE.md`](./SYSTEMS-IMMIGRATION-RULE-TRACE.md). There was no field-to-store matrix (only R-* / B-*).
+
+**Hard (analysis, not a cut)**
+
+1. **13** pack lefts have a `collectible_fields` key → a `fact_writebacks` row **can** exist after write. **6** pack/JS lefts are silent (student context, province, permit warn/expiry, days-in-system, Hub status).
+2. Pathway / category / ECA enum / stale months / FST offer-or-cert / PNP compound = **already JS**. Draw and hours≥min = honest GUI. GUI boxes under Pathway do not assert R-*.
+3. Never fire: R-GAP-06, R-GAP-07, R-OPS-04, R-OPS-06, R-CAT-05. R-OPS-01 fires on the **wrong** left (`days_in_system`).
+4. Constants live in SPA `automationConstants.ts`. `constants_packs` / `reference_versions` are the house and are unused. SPA reference tables have version/superseded in TS; `latestCutoffForDrawType` is dead. Pack `version = 3` is a git number.
+5. Do not mint. Silent fields and dead R-* are PM + founder before any Contacts/Get glass.
+
+**Did not:** cut 028; recut 027; invent UI; overwrite 15:43.
 
 
 

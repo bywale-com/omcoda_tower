@@ -130,3 +130,9 @@ Founder: drag Input / output-schema into the **left** of a Rule comparison (and 
 Person values = `fact_writebacks`. Names = `collectible_fields`. Right = `constants_packs` / `reference_versions`. `client_data.crs.*` is not a table. Work-permit urgency and profile metadata are **silent**.
 
 Cut: [`SYSTEMS-CHANGE-PACKET-027.md`](./SYSTEMS-CHANGE-PACKET-027.md). Do not recut 019. Do not mint those silent fields.
+
+---
+
+## 2026-08-23 17:20 — Full immigration pack trace (analysis)
+
+Every person left, every R-*, constants, versioning: [`SYSTEMS-IMMIGRATION-RULE-TRACE.md`](./SYSTEMS-IMMIGRATION-RULE-TRACE.md). Not a cut.
