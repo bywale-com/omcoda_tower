@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-23 16:55 UTC — **027** Rule compare left is a chip into `fact_writebacks` (not typed Hub path). **026** still waiting (workspace until opt-out). Do not mutate a numbered packet. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-23 17:05 UTC — Founder recut the Rule question: seeded compare boxes are literals, not chips. Deeper ask: can Get even fetch those per-client facts? Dialogue; no 028. **027** still the Rule cut. **026** still waiting. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -2075,6 +2075,34 @@ So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WH
 **Did not:** recut 015 / 017 / 019 / 021 / 026; mint `work_permit_warn`; overwrite 15:43; open a second SA PR.
 
 **Do not:** treat the condition label as the person’s value; stuff CRS into `rule_eligibility_pathway.set_value`; keep Hub paths as schema.
+
+---
+
+## 2026-08-23 17:05 UTC — Founder recut. Seeded Rule lefts are literals. Get cannot fetch facts today.
+
+**Why:** Founder: the “text” point was not “why is C language a type.” They were looking at the compare boxes already filled. Those strings are not chips from Input. Deeper: every left must exist per client — where stored, and can Get query it (even via several Gets)? Should those values be visible on Contacts? **Dialogue. Do not cut.**
+
+**Founder wording:**
+
+> Anything I referenced around text was in reference to … the actual rules configurations … two sides. … You’re comparing values that you’re either … type the value in there or you can drag from the left side … the input pane from previous nodes
+
+> when you drag from the left side into the right side … why on earth would it be text? … I might have even confused the fact that I was looking at statements already in those boxes and they are text … It probably isn’t referencing anything on the left side.
+
+> every single value that’s inside of the left side of the rules comparison … must exist per client … where is it currently being stored per client?
+
+> if our get node is gives us the ability to get data … even if we might need to use multiple get nodes … where do we even get them from? Does it currently exist as a possible even query in get?
+
+> those values should be present or visible on display. … I’m sure we’re going to put it on their contacts … I’m not asking you to write anything yet.
+
+**Ascribe (no packet)**
+
+1. Seeded Rule lefts (`client_data.crs.language_clb`, labels) are pack strings. Not Input chips. That is why they look like text and do not move when Input changes.
+2. Per-client **answered** facts = `fact_writebacks`. Names = `collectible_fields`. Get Contacts today = `contact_records` (+ leftover `reachability_verdicts` / `sequence_ready`). **Does not SELECT `fact_writebacks`.** No Get module for facts. Reference Get is silent (empty).
+3. Contacts pane today is the book row (name / email / firm), not the fact rows. Get law: you Get what that module **shows**. Facts are not on that pane, so they are not a Get query.
+4. Silent lefts (work-permit urgency, profile metadata) have no write — Get cannot invent them.
+5. One Get Contacts is enough **if** those facts show on Contacts. A second Get is only if the value lives in another module (cutoff = Reference — silent). Do not mint a facts Get that bypasses the pane.
+
+**Did not:** cut 028; recut 027; put facts on Contacts; overwrite 15:43.
 
 
 
