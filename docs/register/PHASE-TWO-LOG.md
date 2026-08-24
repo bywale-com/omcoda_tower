@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Launch is **paper first** (2026-08-24 18:48). Sequence ≠ campaign. Three sequences; automations in the joints. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Launch is **paper first** (18:48). Packet-era **evidence** (21:29) — not named as a sprint yet. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2225,6 +2225,51 @@ upload contacts
 **Do not:** start building; packet this; ideate batches past the footnote; hang the next sequence on the Agents canvas; treat re-engagement as an objective; recut 015; overwrite 15:43; plant; mint tables.
 
 **Ask:** paper the first joint next (opt-in finished → the automation → the flow that produces re-engagement), or first lock the two opt-in campaign objectives / how much of that first goal we can actually make send.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-24 21:29 UTC — Packet trail as evidence. Not a named sprint. Natural-next, not woodhousing.
+
+**Why:** Founder: bouncing micro and macro, but walking a line. Packets since we started the packet way = a product backlog? Are they connected to a sprint backlog (woodhousing a couple of those items)? Feels like building from the front inward; also feels inward-outward. Is this still a sprint. Look at the **trend of packets**. They have been moving on instinct: after one finishes, given what I was trying to accomplish, what is the natural next. Not: here is a sprint, work systematically inside it. **Do not define what they’ve been doing yet.** Look at the evidence.
+
+**Evidence — when packets started.** First packet is **Get** (2026-08-18 17:50). Founder: A23 is good; create the packet now so nothing is lost. That is the method start. Before that (15–17): Agents flagship, Agents plates, Automations face, primitives — specified, not packeted this way.
+
+**Evidence — order of packets (the trail):**
+
+| When | Packet | What just finished / why next (from the log, not a theory) |
+|------|--------|-------------------------------------------------------------|
+| 18th 17:50 | `GET-PACKET` | A23 locked. First packet. |
+| 18th 18:17 | `RULE-OUTPUT` · `RULE-OUTCOMES` | Same chat had three sections; only Get had a packet. Cut the other two so nothing is lost. |
+| 18th 18:58 | `NODE-INTERIOR` | Input was drawn on Get — it is every node. |
+| 18th 20:12 | `TRIGGER-SELECT` · `NODE-PLACE` | Click = configure; wire +. Same breath as Global/Local. |
+| 18th 22:56 | `INPUT-LOOK` · `TEST` | Input look on every node. Test fills the trigger. |
+| 19th 07:55 | `MAPPED-BOX` | Chip **is** the box. Close Input. |
+| 19th 08:29 | `IN-APP-ACTION` | The other Action kind. Can we automate X = does the module already afford it. |
+| 19th 10:12 | *(thinking, no packet)* | New contact → audit → tag → if → agent. The walk showing up **because the nodes now exist.** |
+| 19th 12:04 | `TEST` recut · `RUN` | Canvas Test is not a run. Save · Run · Launch. |
+| 19th 16:26 | `ADD-TAG` | A35 after contact import on that walk. |
+| 20th 10:29 | `AUDIT-FIELD` | Unmix A34 from Tag. System control. |
+| 20th 10:46 | `IF-SWITCH` | “Next node is If.” Forks on that walk. |
+| 20th 15:15–19:04 | `FORM-CLASS` | “The gap is objectives.” Form occupies. |
+| 21st | `CONTACT-WORKSPACE` · `CONTACT-UPLOAD` · `CONTACT-UPLOADED-EVENT` | Contact seat. Where the ask lands. Upload listen additive on A26. |
+| 21st | `SHELL-CHROME` · `WORKSPACE-UNTIL-OPT-OUT` | Operator view-as of that seat. Recut = new packet. |
+
+**Evidence — the line (two timescales, do not collapse):**
+
+1. **Before packets (15–17):** Agents creation place complete enough → enter Automations from the join. That is Operator-desk **front**, then the brain.
+2. **Packet era (18–21):** started in the **middle of Automations** (Get interior) and completed the authoring kit (panes → place → trigger → map → Action kinds → Audit/Tag on Contacts → If → Form objective) → then **out** to the contact seat.
+
+So both feelings have evidence. “Front inward” matches the module order. “Inward outward” matches the packet order. Neither trail is “first opt-in campaign actually sends.”
+
+**Evidence — product backlog vs sprint backlog.** The packet list on #96 is the **locked product backlog** of this method (plus specified-not-packeted: Agents channel sequencing, the three sequences, the joints). A sprint backlog would be **picking a few of those toward a standing outcome**. The trail is not that. Each packet is the natural next of the pocket they were in. 14:49 already named that instinct: rigor in a module makes neighboring modules appear; those become next starting points.
+
+**Not evidence of:** a named sprint, a sprint goal, woodhousing toward launch standing list. Today’s paper (18:48) is the first time the standing list is the question. That is why micro (node interiors) and macro (what must exist) feel like a bounce — they were not on the same list.
+
+**Do not:** name this a sprint; invent a sprint backlog; recut packets into sprints; start building; overwrite 15:43; recut 015; plant.
+
+**Ask:** given this evidence, do they want to name the line, or keep looking before defining.
 
 Flag 15:43 untouched.
 
