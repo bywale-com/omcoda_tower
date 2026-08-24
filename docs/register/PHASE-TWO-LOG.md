@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Launch question is open (2026-08-24 stamp) — what must **exist and work**, not login chrome. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Launch is **paper first** (2026-08-24 18:48). Sequence ≠ campaign. Three sequences; automations in the joints. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2176,6 +2176,55 @@ Flag 15:43 untouched.
 **Do not:** packet this until they lock the standing list; generate a substitute flag; hang send on firm-created; collapse trace with goal-as-escalation; recut 015; overwrite 15:43; plant; mint tables.
 
 **Ask:** is launch those three cores end-to-end (arrive → valid → opt-in outreach → they do the thing → we hear it → Rule/enrich/next or it ends), plus failure heard — or is there another standing workflow before we write a packet.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-24 18:48 UTC — Launch spine on paper. Sequence ≠ campaign. Joints are automations. Do not build yet.
+
+**Why:** Founder: you got it on the head. Then the grain: **campaigns and sequences are different.** Paper this before we get back to building. Not a packet. Not a build.
+
+**Founder wording (this stamp, not a second flag).**
+
+Core zero: they have a platform. Consultant has a workspace. They **upload contacts** — one or a thousand. First thing we do with those contacts is **audit** which are valid. Then, however it is confirmed to start, the **opt-in sequence** begins (and the other stuff required from the consultants). Even the first 10 people: an email goes / the opt-in sequence starts for them.
+
+The **sequence** is the opt-in sequence. Canonical opt-in has **two campaigns**. They forget the two objectives. Mini campaigns inside; then the objective. First goal: how much of that can we actually do. Channel sequencing: lots of rudiments; we have not started building it to **work**.
+
+**Batches** — footnote only. Maybe not all thousands at once. Maybe 50 for a week / two weeks, then the next 50. Worth considering. Do not think too hard yet.
+
+After the opt-in sequence: that sequence’s motive does **not** yet enrich re-engagement. The next sequence is re-engagement — **but it is an automation.** When the opt-in sequence is **finished**, it triggers an automation. That automation does **not** “start the re-engagement sequence.” There is a **flow**. The flow **produces** a re-engagement sequence. That is the first layer of data requests / questionnaires. That layer keeps going given the automations in it until there is a point to reactivate: a **book a meeting** sequence. **Reactivation sequence.**
+
+The **middle** between these: automations that need to be created, probably even ideated. Not a lot. **This is the work on paper first** before we get back into building.
+
+**Alignment (not the flag).** Do not collapse sequence with campaign. Opt-in / re-engagement / reactivation are **sequence templates** (Agents law 10). A campaign is **one objective** inside a sequence (law 2 · 11). Prior teaching names for the two campaigns **inside** opt-in: **Launch window** (build desire; click-this lives here) and **Launch day** (in that example, opt-in day). Operator can rename both. That pair is not a frozen system type (Agents law 3). Founder this stamp forgot the two objectives — those names are prior, not a recut.
+
+**Correction of 18:34 item 3 (do not mutate that stamp):** campaign-to-campaign **inside** the opt-in sequence is the Agents canvas. **Sequence to sequence** (opt-in finished → re-engagement → reactivation) is **not** Agents chaining the next sequence. It is Automations in the joint: a flow that **produces** the next sequence. Law 4 still: an automation does not trigger a “re-engagement objective.” 20:24 “re-engagement is a campaign name” is prior wording; **this stamp** is the launch grain — re-engagement is the next **sequence**.
+
+**Paper spine (standing list, not a packet):**
+
+```
+upload contacts
+  → audit (valid)
+  → [consultant confirm / other required — named, not specified]
+  → OPT-IN SEQUENCE
+       campaign 1  (prior name: launch window)
+       campaign 2  (prior name: launch day)
+       [footnote: batches]
+  → AUTOMATION (opt-in finished) → a flow → PRODUCES
+  → RE-ENGAGEMENT SEQUENCE  (data requests / questionnaires)
+       … automations in that layer …
+  → AUTOMATION (point to reactivate) → a flow → PRODUCES
+  → REACTIVATION SEQUENCE  (book a meeting)
+```
+
+**Specified and clear:** sequence ≠ campaign; three sequences; joints are automations; send starts with audit then opt-in; first build question is the first opt-in goal actually going out.
+
+**Specified but not clear:** the two opt-in campaign objectives this stamp (prior names offered, not re-locked). What “confirmed to start” and “other stuff required from consultants” is. The flow inside each joint (what the automation actually does before the next sequence exists). Batches. Whether first-goal work is channel send or the joint paper.
+
+**Do not:** start building; packet this; ideate batches past the footnote; hang the next sequence on the Agents canvas; treat re-engagement as an objective; recut 015; overwrite 15:43; plant; mint tables.
+
+**Ask:** paper the first joint next (opt-in finished → the automation → the flow that produces re-engagement), or first lock the two opt-in campaign objectives / how much of that first goal we can actually make send.
 
 Flag 15:43 untouched.
 
