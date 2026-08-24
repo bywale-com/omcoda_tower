@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-23 17:20 UTC — Immigration rule field/outcome/constant trace. Analysis, not a cut. [`SYSTEMS-IMMIGRATION-RULE-TRACE.md`](./SYSTEMS-IMMIGRATION-RULE-TRACE.md). **027** still the Rule occupancy cut. **026** still waiting. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-24 18:05 UTC — Evidence: later packet had to change an earlier system cut. Ranked least→greatest. Not a cut. **027** still Rule occupancy. **026** still waiting. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -2133,6 +2133,24 @@ So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WH
 5. Do not mint. Silent fields and dead R-* are PM + founder before any Contacts/Get glass.
 
 **Did not:** cut 028; recut 027; invent UI; overwrite 15:43.
+
+---
+
+## 2026-08-24 18:05 UTC — Later packet had to change an earlier system cut. Ranked.
+
+**Why:** Founder: evidence of a previous packet’s system (table / field) that a later packet had to change. Rank least → greatest impact. Systems layer, not UI.
+
+**Rank (machine already built, then reshaped):**
+
+1. **Least — 024/025 → 026.** Foot was `silenced`. 026 adds `consent_records.workspace_opted_out` (`020_workspace_opt_out.sql`). 024’s new tables untouched. `silenced` keeps send-halt.
+2. **012 → 016 trigger Local.** 012 CHECK `grain=global OR local_ref NOT NULL`. A26 ascribe + `016_trigger_local_cascade.sql` **drops** that CHECK; adds `local_firm_id` / `local_contact_ids`. Local without instance became legal.
+3. **Standing packet “don’t mint a catalog” → 021.** Mints `collectible_fields` (`018`). `missing_fact_signals` stays. Capture kind leaves the SPA.
+4. **010 met-check → 022 (specified, columns not on main).** Completions had no objective axis. 022 ALTERs `outbound_messages` / `fact_writebacks` / `meeting_booked`. What “objective met” means.
+5. **Greatest landed — 004 machine → 010 housing.** Drop `UNIQUE (firm_id, sequence_class)`; `launch_day` class → campaign; `action.agent_ref` nullable; `enrollment.campaign_id`. Spine.
+
+**Not this pattern:** 015 handle — 017 added `chainWrites` and **refused** to recut last-node `previousWrites`. 024 minted `contact_access_links` instead of altering 008 `/a/`.
+
+**Did not:** cut a packet; recut 015; overwrite 15:43.
 
 
 
