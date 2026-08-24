@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Start sprinting** into the same line (21:44). Four sprints on paper — not locked. Module-complete so later sprints traverse. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Pickup:** wake-up plan (22:00) — core automations + agent sequences that must exist to prove Automations and Agents are ready, and everything that must be true about each and the modules. Meets sprint + module-complete. Do not start that list this stamp. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2304,6 +2304,18 @@ Flag 15:43 untouched.
 **Do not:** packet this; start building the four; look outside these modules for a fifth; hang 3 on the Agents canvas; treat re-engagement as an objective; recut 015; overwrite 15:43; plant; mint tables.
 
 **Ask:** is sprint 1 “place upload→audit” (and if Automations/Audit interiors are unfinished, finish those first, contained) — and is 3 the next one we paper, with 2 as Agents-contained between them.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-24 22:00 UTC — Wake-up plan. Prove both modules. Do not start the list tonight.
+
+**Why:** Founder: here’s my plan when I wake up. We are going to discuss **all the core automations and agent sequences that need to exist** to prove **both those modules are ready**, and **everything that must be true about each** and **the modules themselves**. This meets **both** working in sprint and working on the completions of those modules.
+
+**Pickup (next chat):** that discussion. Paper from 18:48 (spine) and 21:44 (four sprints, 1 and 3). Do not invent the list this stamp. Do not packet. Do not build.
+
+**Do not:** start the catalog tonight; generate a substitute flag; recut 015; overwrite 15:43; plant; mint tables.
 
 Flag 15:43 untouched.
 
