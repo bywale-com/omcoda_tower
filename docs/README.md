@@ -65,6 +65,8 @@ Agents is where the **operator** defines outreach **sequencing** (the sequence a
 
 **Packets (this branch)** — listed in [`register/NODE-INTERIOR.md`](./register/NODE-INTERIOR.md): `GET-PACKET.md` · `RULE-OUTPUT-PACKET.md` · `RULE-OUTCOMES-PACKET.md` · `TRIGGER-SELECT-PACKET.md` · `NODE-PLACE-PACKET.md` · `INPUT-LOOK-PACKET.md` · `TEST-PACKET.md` · `RUN-PACKET.md` · `MAPPED-BOX-PACKET.md` · `IN-APP-ACTION-PACKET.md` · `ADD-TAG-PACKET.md` · `AUDIT-FIELD-PACKET.md` · `IF-SWITCH-PACKET.md` · `FORM-CLASS-PACKET.md` · `CONTACT-WORKSPACE-PACKET.md` · `CONTACT-UPLOAD-PACKET.md` · `CONTACT-UPLOADED-EVENT-PACKET.md` · `SHELL-CHROME-PACKET.md` · `WORKSPACE-UNTIL-OPT-OUT-PACKET.md`. Plates **A22–A44** in `register/automations-blueprint/` · contact `register/contact-blueprint/` · shell `register/shell-blueprint/`. Recut = **new packet**; do not mutate a locked packet body.
 
+**Deferred (not a packet, no plates):** [`register/CONFIRM-READY-DEFERRED.md`](./register/CONFIRM-READY-DEFERRED.md) — consultant prompt after new contacts are sequence-ready. Remind when a later sprint is that UI.
+
 **Read before you speak**
 
 1. This file (seats + this identity) and [`../AGENTS.md`](../AGENTS.md).

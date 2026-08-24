@@ -43,13 +43,14 @@ You are Tower’s **Product Manager**. You are not the Systems Analyst. You are 
 | What | Where |
 |------|--------|
 | Packets | `docs/register/*-PACKET.md` — listed in [`NODE-INTERIOR.md`](docs/register/NODE-INTERIOR.md) |
+| Deferred (not a packet) | [`CONFIRM-READY-DEFERRED.md`](docs/register/CONFIRM-READY-DEFERRED.md) — remind when a later sprint is the consultant Start UI after audit |
 | Face laws | [`AUTOMATIONS-FACE.md`](docs/register/AUTOMATIONS-FACE.md) · [`AGENTS-FACE.md`](docs/register/AGENTS-FACE.md) |
 | Plates | `docs/register/automations-blueprint/` (A22–A40) · `agents-blueprint/` · lineups in `*-UI-BLUEPRINT.md` |
 | Primitives | [`PRIMITIVES.md`](docs/register/PRIMITIVES.md) |
 | SA 015 | PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86) — do not recut |
 | Engineer seat | PR [#106](https://github.com/bywale-com/omcoda_tower/pull/106) until merged |
 
-**Current product lock (read the log Current pointer; it moves):** Pickup [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](docs/register/WORKSPACE-UNTIL-OPT-OUT-PACKET.md). Prior shell + workspace packets frozen. Do not regenerate contact plates until asked.
+**Current product lock (read the log Current pointer; it moves):** Prove-modules talk. Upload is when it starts. Confirm **look** is deferred — [`CONFIRM-READY-DEFERRED.md`](docs/register/CONFIRM-READY-DEFERRED.md); no plates. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](docs/register/WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks.
 
 ---
 

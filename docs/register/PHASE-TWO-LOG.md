@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Pickup:** start of the prove-modules talk (22:09). Upload is when it starts. Confirm = UI. Start = audited → right sequence. Joints still this sprint. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Prove-modules talk. Confirm **look** deferred — [`CONFIRM-READY-DEFERRED.md`](./CONFIRM-READY-DEFERRED.md); no plates; remind in a later UI sprint. Upload still when it starts. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2354,6 +2354,22 @@ upload contacts
 **Do not:** packet; invent the criteria; hang start on firm-created; make Confirm an automation; recut 015; overwrite 15:43; plant; mint tables.
 
 **Ask:** is Confirm confirming the **upload**, or confirming **which sequence** — then Start enrolls the audited into that sequence.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-24 23:33 UTC — Confirm look deferred. System prompt after audit. No plates. Remind in a later sprint.
+
+**Why:** Founder: not a side note — we will work the UI. Not worth investing thought or generating plates **yet**. Confirm is a **system operation**: upload + audit performed; **new contacts that have been audited and can be sequenced**. A pop-up: hey, **X** new contacts can be sequenced now. Click → **middle modal**. Only buttons: **Start** or **Show me later**. Maybe a very brief sequence preview — not locked. Crosses later sprints beyond this one. **Defer.** When we are working there, **remind**.
+
+**Parked:** [`CONFIRM-READY-DEFERRED.md`](./CONFIRM-READY-DEFERRED.md). Not a packet. Pointers in README (Deferred, not the packet list), PHASE-TWO companion, AGENTS.md. Recut = new packet when that sprint cuts it.
+
+**Answers 22:09 ask (do not mutate that stamp):** Confirm is not “confirm the upload file” and not a sequence picker we specified. It is a **prompt that they are sequence-ready**, then Start / later. Preview = maybe.
+
+**This sprint still:** upload → audit → start (operations). Do not block that on this modal. Do not generate plates.
+
+**Do not:** plates; packet; invent preview copy; recut 015; overwrite 15:43; plant; mint tables.
 
 Flag 15:43 untouched.
 
