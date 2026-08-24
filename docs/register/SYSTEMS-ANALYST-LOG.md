@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-24 18:05 UTC — Evidence: later packet had to change an earlier system cut. Ranked least→greatest. Not a cut. **027** still Rule occupancy. **026** still waiting. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-24 18:15 UTC — Spine Registry. Verify-before-stacking trigger list. [`SYSTEMS-SPINE-REGISTRY.md`](./SYSTEMS-SPINE-REGISTRY.md). Not a cut. **027** still Rule occupancy. **026** still waiting. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -2151,6 +2151,20 @@ So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WH
 **Not this pattern:** 015 handle — 017 added `chainWrites` and **refused** to recut last-node `previousWrites`. 024 minted `contact_access_links` instead of altering 008 `/a/`.
 
 **Did not:** cut a packet; recut 015; overwrite 15:43.
+
+---
+
+## 2026-08-24 18:15 UTC — Spine Registry. Verify-before-stacking is a trigger list.
+
+**Why:** Founder: 004→010 was the sole spine-class event. Additive is already absorbed by change management (5 of 6). Risk is the spine. Registry so “verify before stacking” fires on an explicit list, not a per-packet judgment.
+
+**Parked:** [`SYSTEMS-SPINE-REGISTRY.md`](./SYSTEMS-SPINE-REGISTRY.md).
+
+**Spine (seven):** (1) sequence ⊃ campaign (2) enrolled + cursor (3) action kinds (4) dispatch = the write / house / grain (5) 015 handle (6) objective met (7) send halt (`silenced`). Additive = one summary line.
+
+**Hard:** Packet remaps a Spine object → that row’s round-trip first. Met round-trip **fails** on main until 022; do not stack 023 as if it passed. 017 `chainWrites` stays Additive alongside 015.
+
+**Did not:** inventory every table; recut 015; cut 028; overwrite 15:43.
 
 
 
