@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Pickup:** wake-up plan (22:00) — core automations + agent sequences that must exist to prove Automations and Agents are ready, and everything that must be true about each and the modules. Meets sprint + module-complete. Do not start that list this stamp. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Pickup:** start of the prove-modules talk (22:09). Upload is when it starts. Confirm = UI. Start = audited → right sequence. Joints still this sprint. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2316,6 +2316,44 @@ Flag 15:43 untouched.
 **Pickup (next chat):** that discussion. Paper from 18:48 (spine) and 21:44 (four sprints, 1 and 3). Do not invent the list this stamp. Do not packet. Do not build.
 
 **Do not:** start the catalog tonight; generate a substitute flag; recut 015; overwrite 15:43; plant; mint tables.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-24 22:09 UTC — Start of the prove-modules talk. Upload is when it starts. Confirm is UI. Start is audited → right sequence.
+
+**Why:** Founder: how we can start. The start is very simple. Everything we’re building after those human steps is **operations**. Getting on the platform does **not** trigger the outreach automations (unless an automation handed them the button — it doesn’t). It really starts landing at **uploading contacts**. Want: **upload → confirm → start**. Confirm is really UI, a lot of UIs, less about automations. Start is only eligible for contacts that have been **audited**. Then: take those audited contacts, add them to the **right sequence**. That’s when we discover everything we need to discover (modules / criteria to delineate). How opt-in transfers to re-engagement into reactivation is still automations, still **this sprint**.
+
+**Founder wording (keep, some audio was muddy).** Get the space. Open contacts. Confirm sequence — that part is important. All the automations and agents fulfilling the operations side. Once they’ve completed those things, everything we’re building is literally just operations. That’s the beautiful thing. Necessary: which of these triggers an automation. Why they get on the platform — not to that point. Things that trigger automations are the things that enrich toward the end. Upload contacts — that’s when everything starts. “Let’s keep that. I want them to upload their contact. Confirm. Then start.” Performing/confirm is really UI. Automations became one state: uploaded contacts, added those contacts. Then start. Giving criteria. The system is supposed to do that.
+
+**Did not pretend to parse:** “Scarborough,” “bacteria / serum bacteria,” “GitHub one,” “first contact stopped the campaign.” If those were locks, say them again.
+
+**Alignment (not a flag).** Recut of 21:44 “four sprints” for this talk: the joints stay **inside this sprint**, not a later sprint. Do not mutate 21:44. Provision / workspace-created is still not the send trigger (15:02). Upload is the start. Audit still sits before Start is eligible. Confirm is **not** an automation. Adding to the right sequence **is** (Automations → Agents action). Criteria for “right” is named, not specified.
+
+**Paper (this stamp only):**
+
+```
+consultant: get workspace
+  (does not trigger outreach automations)
+
+upload contacts
+  → confirm          ← UI, not automations
+  → start            ← eligible: audited only
+       take audited contacts
+       add to the right sequence   ← automations; criteria to discover
+  → system does the sequence
+  → opt-in finished → re-engagement → reactivation
+       still automations, still this sprint
+```
+
+**Specified and clear:** upload is when it starts; confirm is UI; start = audited → sequence; joints are this sprint; platform join is not the trigger.
+
+**Specified but not clear:** what Confirm confirms (the upload vs the sequence). Criteria for “right sequence.” Whether audit is an automation between upload and start, or Start simply cannot take unaudited. The three human things vs upload-confirm-start as the same list.
+
+**Do not:** packet; invent the criteria; hang start on firm-created; make Confirm an automation; recut 015; overwrite 15:43; plant; mint tables.
+
+**Ask:** is Confirm confirming the **upload**, or confirming **which sequence** — then Start enrolls the audited into that sequence.
 
 Flag 15:43 untouched.
 
