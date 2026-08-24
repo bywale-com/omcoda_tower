@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Prove-modules talk. Confirm **look** deferred — [`CONFIRM-READY-DEFERRED.md`](./CONFIRM-READY-DEFERRED.md); no plates; remind in a later UI sprint. Upload still when it starts. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Method:** end in mind; gaps between stages = the automations/sequences for launch (23:36). New contact → opt-in filled from core loops. Later gaps pushed back. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2370,6 +2370,32 @@ Flag 15:43 untouched.
 **This sprint still:** upload → audit → start (operations). Do not block that on this modal. Do not generate plates.
 
 **Do not:** plates; packet; invent preview copy; recut 015; overwrite 15:43; plant; mint tables.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-24 23:36 UTC — Method: start with the end. Gaps between stages. Push back what this seat cannot fill.
+
+**Why:** Founder: this is the systematic way to identify the automations and agents required for launch. Start with the end in mind. Ultimately every **eligible** contact is opted in, then re-engaged, then reactivated. Everything begins from opt-in. What’s the gap **new contact → opt-in**? Known on the **core loop** side: when those loops are met, opt-in can begin — we have the **right / justification** to opt them in. That provides the questions. Semblance of how they think — if that’s enough to identify everything else left, do it; if not, **push the gap back** and they will solve it.
+
+**Method (founder, not a generated framework).** End state → work each gap. The gap **is** the automations (and the sequence that must exist on the far side). Eligible is the filter at every stage.
+
+**End:** eligible contacts complete **opt-in → re-engagement → reactivation**. Three sequence templates must exist.
+
+**Gap A — new contact → opt-in.** Founder: known. This seat fills from this talk, not invention: upload (when it starts) → audit → sequence-ready (can be sequenced) → Start (confirm **look** deferred) → assign **opt-in**. If everything begins from opt-in, Start’s sequence **is** opt-in — not a picker of three. Push back if that’s wrong.
+
+**Gap B — opt-in → re-engagement.** Shape already named (18:48 / 21:44): opt-in **finished** → an automation / flow **produces** re-engagement (data request). This seat **cannot** fill what must be true to have justification to re-engage, or what the flow actually does (Rule? required-data listing? form?). Law 25 listing is a named hole. Consent write on opt-in is a named hole. **Pushed back.**
+
+**Gap C — re-engagement → reactivation.** Shape named: automations in that layer until a **point to reactivate** → produces book-a-meeting sequence. This seat **cannot** name that point. Rule may emit a reactivation signal (law 21) — that is not the product lock of the point. **Pushed back.**
+
+**Gap D — reactivation → done.** Meeting booked. Once met, met. Failure if they never book is an event (`campaign failed`) — what we **do** with it is not filled. **Pushed back** as “what must be true / what we do,” not as whether the sequence exists.
+
+**Identified without asking (agent alignment):** three sequences standing; one automation at A (upload→audit→assign opt-in); automations at B and C (joints) whose interiors are the pushed gaps; eligible / sequence-ready as the filter; confirm look not this sprint.
+
+**Do not:** invent Gap B/C interiors; packet; plates for confirm; recut 015; overwrite 15:43; plant; mint tables.
+
+**Ask:** is Gap A that set (upload · audit · sequence-ready · Start onto opt-in). Then they solve B and C the same way: what must be true / the justification.
 
 Flag 15:43 untouched.
 
