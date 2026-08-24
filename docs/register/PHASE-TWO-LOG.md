@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Launch is **paper first** (18:48). Packet-era **evidence** (21:29) — not named as a sprint yet. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Start sprinting** into the same line (21:44). Four sprints on paper — not locked. Module-complete so later sprints traverse. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2270,6 +2270,40 @@ So both feelings have evidence. “Front inward” matches the module order. “
 **Do not:** name this a sprint; invent a sprint backlog; recut packets into sprints; start building; overwrite 15:43; recut 015; plant.
 
 **Ask:** given this evidence, do they want to name the line, or keep looking before defining.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-24 21:44 UTC — Start sprinting into the same line. Four sprints on paper. Do not look outside the module.
+
+**Why:** Founder: the strike was hard; these are necessities now. There would have been no sprints where we would not have had **opt-in**. The only difference between the **first option** and what we’ve done is we **did not actually sprint into it**. Foundations are built — it is wise to start sprinting in. Even if a module still needs finishing before the rest of the sprint, that is fine: it is **contained**. Want at least **four** sprints laid out. Look at the **1st and the 3rd** that naturally emerge from this one. Not defaultable. A person who has the workspace can upload contacts; we can **place** the automations — already running: workspace created + they upload → **audit runs**. A sprint can emerge **from inside these modules**. Once you hit the module you see the whole modification list. **Don’t look for anything outside.** There are sprints whose job is **completing Automations and Audit** so later sprints **traverse** those modules without working them out again.
+
+**Do not mutate 21:29.** That stamp was evidence, not a named sprint. This stamp is the founder naming: start sprinting. Same line as option 1. Recut of the hold, not of the evidence.
+
+**Two kinds (founder, not a generated framework):**
+
+| Kind | What it is |
+|------|------------|
+| **Module-complete** | Finish Automations. Finish Audit. So other sprints traverse and do not reopen. Don’t look outside. If the sprint hits unfinished interior, finish that module first — still contained. |
+| **Spine** | Place what those modules already afford. Opt-in is on every path. |
+
+**Four spine sprints (from 18:48 paper + this stamp). 1 and 3 are the ones they asked to look at. 2 and 4 sit so there are four. Not locked.**
+
+| # | Standing outcome | Emerges from |
+|---|------------------|--------------|
+| **1** | Workspace exists. They upload contacts (one or a thousand). The automation is **placed** and **runs**: upload → audit. | This one. We can place it. Already running that. Not a silent default. |
+| **2** | Valid contacts enter the **opt-in sequence**. The two campaigns / first goal actually go out. | Inside **Agents**. If that module is unfinished, finish it first (contained). Not the 1st or 3rd they asked to look at. |
+| **3** | Opt-in sequence **finished** → an automation / flow **produces** a re-engagement sequence. | This one, same as 1: we **place** an automation. Does not start re-engagement from the Agents canvas. |
+| **4** | Automations in the re-engagement layer until a point to reactivate → **produces** a reactivation sequence (book a meeting). | Same joint kind as 3. |
+
+**Specified and clear:** start sprinting; same line as option 1; opt-in on every path; 1 = place upload→audit; 3 = place the post-opt-in flow; module-complete Automations + Audit so later sprints traverse; don’t look outside.
+
+**Specified but not clear:** whether sprint 1 **is** “place that automation” or “finish Automations/Audit first, then place.” Whether 2 is its own sprint or a module-complete of Agents inside 1→3. Exact four names. Batches still a footnote.
+
+**Do not:** packet this; start building the four; look outside these modules for a fifth; hang 3 on the Agents canvas; treat re-engagement as an objective; recut 015; overwrite 15:43; plant; mint tables.
+
+**Ask:** is sprint 1 “place upload→audit” (and if Automations/Audit interiors are unfinished, finish those first, contained) — and is 3 the next one we paper, with 2 as Agents-contained between them.
 
 Flag 15:43 untouched.
 
