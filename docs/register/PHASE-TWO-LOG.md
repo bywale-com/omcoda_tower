@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Pickup [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md). Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Launch question is open (2026-08-24 stamp) — what must **exist and work**, not login chrome. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2141,6 +2141,41 @@ Flag 15:43 untouched.
 **Product:** everyone has a workspace until they opt out **of the workspace**. Opt-in is a Now state. Foot ≠ email unsubscribe (not designed). Contact ▾ is not “opted in.”
 
 **Do not:** mutate those prior packet bodies; glue the two opt-outs; build the email button; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-24 18:34 UTC — Launch question opened. What must exist and work. Not a packet yet.
+
+**Why:** Founder: enough to ask the only launch question — what agents / automations / sequences / workflows must **exist, be present, and work**. Not the obvious (login, a workspace). Critical path is Agents + Automations. They answered. Ask this seat to add, then: did I get it all.
+
+**Founder wording (this stamp, not a second flag).** Whole reason: outreach to their contacts; whatever is needed from them (data requests / forms) is possible; the processes to ask, send, opt-in. We know who is **valid to outreach**. Outreach on **pre-determined settings we can change** — channel, campaign, sequence. Keep track of everything that went out; when an objective is met (form submitted or whatever) we can **trace** what led up. Able to **ask for what we want** — not always a data request: book a meeting, the campaigns already ideating. When we receive it, the system **does with it what we want**: Rule, output, enrich tables / data / other sequences.
+
+**Alignment (not the flag).** That is the ring. 15:43 still: sequencing, per firm or default + overrides, attempt escalation, **goal as escalation** to another agent / a workflow / or it ends. Once met, met. 15:15 already named the three cores: **opt-in** (an automation enrolls everyone that comes in) · **re-engagement** (data capture / form) · **reactivation** (book a meeting). 15:02 send canvas: **new contact → audit → if valid → Agents**. Law 28: the objective **is** the event. Law 6: the form is created in Automations. Law 29: lineage is **queryable** — not the engagement chart (Agents law 15).
+
+**They got the why. They did not yet name what must be standing.** Empty world (no templates until authored) is not launch. Launch is those three sequences **existing** as working missions, plus the automations that **enroll** and **hear**.
+
+**Add (agent alignment):**
+
+1. **Exist vs can-author.** The node kit is not launch. The standing list is.
+2. **The send automation must exist:** contact created → Run audit → If sequence-ready → assign opt-in. “We know who is valid” is this canvas working, not a fact.
+3. **Campaign-to-campaign is Agents. Hear-and-do-another-thing is Automations.** Do not put the receive→Rule→enrich chain on the Agents canvas.
+4. **Goal is the endpoint, not only the log.** Trace ≠ escalate. Destinations already named: other agent · other workflow · or it ends.
+5. **Failure** is an event (`campaign failed`). Not meeting the objective does something.
+6. **Per firm or as a default** (15:43). Channel / campaign / sequence overrides sit on that nest.
+7. **Form bind.** If “ask for what we want” is Rule → form, required-data **listing** on Rule output is still the named hole (law 25). If launch is a form we authored and they submit, that is thinner. Do not mix those.
+8. **Two receive doors.** Form submitted = Now / the ask we sent. Contact uploaded = Upload. Launch-critical is the ask. Upload is already cut; it is not the first standing canvas unless they say so.
+9. **Click this link** is an objective type (launch window). Completion write is thinner than form / meeting. Do not pretend it is stood up the same way.
+10. **Email unsubscribe is not designed.** Valid-to-outreach still includes silenced / opt-out as a listen. Workspace foot ≠ that door.
+
+**Specified and clear (forces packets only when this locks as launch):** three sequence templates working; send canvas; settings obeyed when send fires; form / meeting / opt-in as completions the system hears; Rule on those writes; Agents action assign existing / from template.
+
+**Specified but not clear:** operator-authored goal destinations (agent | workflow | end) as data on the package — 15:43 hole, named, not minted. Required-data listing on Rule output (law 25). Click-this-link as a completion write. Email opt-out button. Whether Upload is a launch standing canvas.
+
+**Do not:** packet this until they lock the standing list; generate a substitute flag; hang send on firm-created; collapse trace with goal-as-escalation; recut 015; overwrite 15:43; plant; mint tables.
+
+**Ask:** is launch those three cores end-to-end (arrive → valid → opt-in outreach → they do the thing → we hear it → Rule/enrich/next or it ends), plus failure heard — or is there another standing workflow before we write a packet.
 
 Flag 15:43 untouched.
 
