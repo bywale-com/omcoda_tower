@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Method:** end in mind; gaps between stages = the automations/sequences for launch (23:36). New contact → opt-in filled from core loops. Later gaps pushed back. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Conditions talk (23:45): work with nodes as they exist. Gap A = new contact + confirm/start → opt-in, then Agents. Gap B = sequence complete → Rule → form → re-engagement. **The gap:** Rule clean + no reactivation — no workflow to re-engage again. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2396,6 +2396,39 @@ Flag 15:43 untouched.
 **Do not:** invent Gap B/C interiors; packet; plates for confirm; recut 015; overwrite 15:43; plant; mint tables.
 
 **Ask:** is Gap A that set (upload · audit · sequence-ready · Start onto opt-in). Then they solve B and C the same way: what must be true / the justification.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-24 23:45 UTC — Conditions. Nodes as they exist. The gap after Rule is clean and there is no reactivation.
+
+**Why:** Founder: talk about the conditions; see if Automations + Agents can make a coherent workflow **without adding any new things**. Work the modules as they exist. Giving the conditions. Not talking escrow.
+
+**Gap A — new contact → lodging into an opt-in sequence.** Opt-in = the sequence (has campaigns), built, ready. **New contact is a trigger** (already). Two things: new contact exists, and confirmation we can push them (consultant **confirm / start**). Boom: assign opt-in. **From that point: Agents. No longer Automations.**
+
+**Gap B — opt-in → re-engagement.** All **objectives inside the opt-in sequence are met** → they qualify for re-engagement. In between: an automation. **Opt-in completion is a trigger. It must exist as a trigger.** Would discuss: last campaign / campaign-objective completion / failure’s impact on **sequence** completion, so it is referenceable in Automations. Not locked this stamp.
+
+**The middle (founder example, nodes they have):** Opt-in does **not** elicit information re-engagement operations need (Rule, evaluate, compare existing). That is why re-engagement exists. When opt-in **completes** → **run Rule as it exists**. Usually **negative for everything** the rule asks. Collect that information = **produce a form** from it = first real data-collection event → qualifies them for re-engagement (data collection).
+
+**Then:** collect what we need. **Run Rule again.** This time: **no data requests** and **nothing that triggers reactivation**. How do those people get re-engaged **again**? A workflow that needs to be created. **Can you see the gap.**
+
+**Alignment — possible without a new node kind (not a build):**
+
+- **Enroll without Wait.** Wait is not a node. One canvas that is “new contact fires *and* wait for confirm” does not exist. Two canvases with what we have: **new contact** (and audit / sequence-ready so confirm can appear) · **Start/confirm** → Agents assign opt-in. Start is the enroll trigger; new contact already exists as the who. Manual is already a listen kind. Confirm **look** still deferred.
+- **After opt-in:** campaign-to-campaign stays **Agents**. Automations hears **sequence complete** (all objectives), not each campaign. Trigger grain (sequence vs last campaign vs failure) = the discussion they named. Catalog already has **objective was met** and **campaign failed**. Do not mint a new kind. Do not recut the list this stamp.
+- **Middle:** Trigger (sequence complete) → **Rule** → form from the listing → **Agents** assign re-engagement. Kinds exist (Rule, Form occupancy A40, Agents action). **Law 25** (required-data listing on Rule output) is still the named hole — standing that up is not a new node.
+- **Again:** form submitted (exists) → Rule again → If: still missing → form/re-engagement · reactivation signal → assign reactivation · **neither → the gap.**
+
+**The gap I see:** Rule returns **no data request** and **no reactivation**. No sequence, no automation, no thought yet for those people. Not a missing node kind. A **missing workflow**. Pushed back — they asked if I can see it.
+
+**Specified and clear:** two conditions for enroll; then Agents; sequence complete must be a trigger; Rule → form → re-engagement with existing kinds; Rule again; the neither-path is the gap.
+
+**Specified but not clear:** sequence-complete vs last-campaign vs failure as the Automations trigger grain. Whether enroll is one canvas or two. The neither-path workflow.
+
+**Do not:** add a node kind; invent the neither-path; packet; plates; recut 015; overwrite 15:43; plant; mint tables; talk escrow.
+
+**Ask:** they solve the neither-path, or park it. And: is enroll **Start-triggered** (new contact already true) so we do not need Wait.
 
 Flag 15:43 untouched.
 
