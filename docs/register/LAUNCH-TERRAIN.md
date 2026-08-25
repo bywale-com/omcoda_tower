@@ -1,53 +1,80 @@
-# Launch terrain — work after planning (not a packet)
+# Launch terrain — commence order (not a packet)
 
 **Seat:** Product Manager.  
-**Not a packet.** Do not hand this to the engineer as a build. No plates from this file.  
-**Why:** Founder 2026-08-25: map the terrain; keep track of what we work systematically once planning is done.  
+**Not a packet.** Do not hand this to the engineer until a pocket locks as a packet. No plates from this file.  
+**Sprint:** all **core automations** and **agent sequences** required for launch.  
+**Planning:** done 2026-08-25. Founder: communicate the work-through **in full** so they can walk it back. Then commence.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
-**Does not:** plant; recut 015; mint tables; start Schedule or the consultant-task action until that pocket locks as a packet.
+**Does not:** plant; recut 015; mint tables; start parked pockets (confirm look, request task, in-flight pause-queue, brief vs hardcoded) until that pocket is next.
 
 ---
 
-## Happy path (reproduce with nodes we have)
+## What must **exist** (agent sequences)
 
-1. **First evaluation** — new contact exists + consultant Start → assign **opt-in** sequence → Agents.
-2. **First re-engagement** — opt-in sequence **complete** (all objectives; that trigger must exist) → **Rule** → usually negative → listing **occupies Form** → assign **re-engagement** → Agents.
-3. **Rule again** after they complete the ask → still need data **or** reactivation signal → assign reactivation (book a meeting).
-
-Confirm **look** is deferred: [`CONFIRM-READY-DEFERRED.md`](./CONFIRM-READY-DEFERRED.md).
-
----
-
-## Rule outputs (must be referenceable)
-
-Reactivation **signal** is the critical output that decides reactivation sequence vs re-engagement sequence, and downstream. Re-look Rule outputs so they are **legible** and usable in If / Switch / Action. Lattice already named (law 22 / A20): pass · re-engagement · reactivation · required-data listing · … Do not invent extra classes. **Law 25** listing still not stood up.
-
-**Chain:** if reactivation on → Agents that sequence. On **sequence / objective complete**, keep chaining on the **same canvas** if it is not already possible (law 28 / 32: completion is an event; one canvas or two listening). Meeting booked → maybe display data (brief / who booked). **Automation vs hardcoded — not decided.**
+| Sequence | Objective grain | Notes |
+|----------|-----------------|--------|
+| **Opt-in** | Two campaigns inside (prior names: launch window · launch day — operator can rename) | Built / ready. Lodging people **into** it is the first automation. Then Agents. |
+| **Re-engagement** | Data request most of the time | Not a random campaign name. First time: after opt-in complete. Again: pack / put-in / schedule. |
+| **Reactivation** | Book a meeting | **Not** a sequence that sits “between” re-engagement and meeting. It is a **Rule condition** (reactivation signal on) that assigns this sequence. |
 
 ---
 
-## Both signals at once
+## Work through — in this order
 
-Law 21: Rule can emit re-engagement **and** reactivation together. If reactivation is justified **and** there is a data request that on its own would justify a sequence:
+### 1. Nothing → opt-in
 
-Not “queue until cooldown” as the first answer. **New enough in-app action:** drop the listing the same way as Form (A40), but into a **request task**. Creates a **task on the consultant workspace**. Consultant **triggers** it (go ahead) → asks the contact. **On-click / on-trigger form.** Consultant initiates. Different mechanism. Relates to Agents — talk later.
+**Triggers:** new contact exists · consultant **Start / confirm** (look deferred: [`CONFIRM-READY-DEFERRED.md`](./CONFIRM-READY-DEFERRED.md)).  
+**Middle:** conditions we already walked (sequence-ready / audited so Start is eligible).  
+**Action:** assign **opt-in** sequence.  
+**Then:** Agents. No more Automations until the sequence completes.  
+**New nodes / stores:** none. Existing kinds.
 
-Law 41: the consultant desk must **afford** that task before Automations can consume it. Do not invent a write with no desk button. Do not recut [`IN-APP-ACTION-PACKET.md`](./IN-APP-ACTION-PACKET.md) until this pocket locks.
+### 2. Opt-in complete → first re-engagement
 
----
+**Trigger:** **opt-in sequence complete** (all objectives met). Must exist and be referenceable. Campaign-to-campaign stays Agents. Automations hears the **sequence**, not each campaign. Grain (sequence vs last campaign vs failure) was named as a discussion — do not invent a new node kind.  
+**Middle:** **Rule** as it exists. Usually negative for everything. Required-data **listing** occupies Form (A40). Law 25 still the named hole (listing as a write) — stand up, not a new kind.  
+**Action:** assign **re-engagement**.  
+**Need:** Rule outputs **legible** in If / Switch / Action (reactivation signal, listing, …). Lattice already named. Do not invent extra classes.
 
-## Ongoing re-engagement (after the first)
+### 3. After they complete the ask → reactivation (or more data)
 
-| Trigger | Notes |
-|---------|--------|
-| **Pack update** | Known. Precedence above everything, including in-flight. Different workflow. What it *produces* still a gap. Parked: may restamp the form, or pause/queue the running sequence for priority. **Do not build now.** |
-| **Contact uploaded information** | Workspace Put in. [`CONTACT-UPLOADED-EVENT-PACKET.md`](./CONTACT-UPLOADED-EVENT-PACKET.md). Local = this kind. May not directly trigger. |
-| **Schedule** | Not the first, not in a sequence, conditions met. **Not built yet.** |
+**Trigger:** form submitted / that objective met.  
+**Middle:** Rule **again**. Reactivation is **not a new in-between sequence**. It is a **condition on Rule output**: signal on → assign **reactivation**. Still need data → another data request (same re-engagement grain).  
+**Neither** (no listing, no reactivation): don’t lose them → **§4**.  
+**Both signals at once:** not this slice. §6.
+
+### 4. Re-engagement again (ongoing)
+
+Not in a sequence (or not the first). Conditions in the middle (cooldown on **Rule** vs **assign** — two bars; Schedule does **not** assign mid-flight).
+
+| Trigger | What we know |
+|---------|----------------|
+| **Pack update** | Known. Precedence above everything, including in-flight. Different workflow. Work the canvas: Get → Rule → same Switch as §3. What pack update *produces* still a gap — don’t overbuild. |
+| **Contact uploaded information** | Workspace Put in. [`CONTACT-UPLOADED-EVENT-PACKET.md`](./CONTACT-UPLOADED-EVENT-PACKET.md). Local = **this kind**. May not fire a sequence every time. |
+| **Schedule** | The rest. Not built yet. Heartbeat trigger, not the condition. |
+
+### 5. Mid-flight override (parked — same sprint later)
+
+Only **pack update** overrides a **running** sequence (same situations that override cooldown). Schedule + conditions → mid-flight does **not** get a new sequence. May restamp the **form underneath**, or pause/queue the running sequence for priority. **Do not build first.**
+
+### 6. Both reactivation + data request (talk when we get here)
+
+Law 21 already. Not first-answer queue. After reactivate-agent objective completes: in-app Action, drop listing like Form onto a **request task** (consultant workspace). Consultant triggers → on-click form. Desk must afford the task (law 41). Do not recut A33 until this pocket.
+
+### 7. Open, not this commence slice
+
+- Confirm **look** (popup → Start / later).  
+- Meeting booked → brief / display: automation vs hardcoded.  
+- Canvas chain on sequence complete if not already possible (law 28 / 32).  
+- Sequence-complete trigger grain vs failure.
 
 ---
 
 ## Do not
 
-- Build Schedule, pause-queue, or the request-task this file.
 - Objective-less outreach.
+- Fourth sequence class.
+- Wait node.
+- Get-everyone on Schedule with no conditions.
+- Build §5–§7 before §1–§4.
 - Recut 015. Overwrite 15:43. Plant. Mint tables.

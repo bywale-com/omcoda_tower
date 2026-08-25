@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Terrain:** [`LAUNCH-TERRAIN.md`](./LAUNCH-TERRAIN.md) — keep track. Both-signals → consultant **request task** (on-click form); talk later. Rule outputs must be referenceable. Still planning. Confirm look deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Planning done.** Commence order in [`LAUNCH-TERRAIN.md`](./LAUNCH-TERRAIN.md) — walk it back, then work §1→§4. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2682,6 +2682,18 @@ Flag 15:43 untouched.
 **Added to the list:** Rule outputs referenceable · canvas chain on sequence complete · both-signals request task · brief/display (open).
 
 **Do not:** packet the task; plates; build Schedule; mint; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-25 07:35 UTC — Planning done. Commence order in full. Walk it back.
+
+**Why:** Founder: done planning; answered much of it. Sprint = core automations + agent sequences for launch. Mapped, even if remarks felt disconnected. Nothing → opt-in: one or two triggers + middle conditions; nothing new. Opted in → re-engagement: data request; own trigger; re-engage again = trigger + conditions. Re-engagement → reactivation is **not a new sequence** — a **condition inside** re-engagement (Rule signal). Both signals: we’ll talk. Mid-flight: talked. Most mapped. Communicate the **sequence to work through in full** so they can walk it back. Ready to commence.
+
+**Paper:** [`LAUNCH-TERRAIN.md`](./LAUNCH-TERRAIN.md) rewritten as commence order §1–§7. Not a packet. Do not start engineer packets this stamp — they walk it back first.
+
+**Do not:** skip to §5–§7; invent a fourth sequence; recut 015; overwrite 15:43; plant; mint tables.
 
 Flag 15:43 untouched.
 

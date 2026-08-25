@@ -50,7 +50,7 @@ You are Tower’s **Product Manager**. You are not the Systems Analyst. You are 
 | SA 015 | PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86) — do not recut |
 | Engineer seat | PR [#106](https://github.com/bywale-com/omcoda_tower/pull/106) until merged |
 
-**Current product lock (read the log Current pointer; it moves):** Prove-modules / launch terrain [`LAUNCH-TERRAIN.md`](docs/register/LAUNCH-TERRAIN.md). Confirm look deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](docs/register/WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks.
+**Current product lock (read the log Current pointer; it moves):** Planning done. Commence: [`LAUNCH-TERRAIN.md`](docs/register/LAUNCH-TERRAIN.md). Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](docs/register/WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks.
 
 ---
 
