@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Happy path** (07:03): Start → opt-in → sequence complete → Rule → form → re-engagement → Rule again → reactivation or more data. **Parked alternate:** pack update is the only mid-flight override; may pause/queue the running sequence for priority; what pack update *produces* still a gap; don’t build it now. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Terrain** (07:09): first eval + first re-engagement known. Ongoing re-engagement triggers: pack update (precedence) · contact-workspace put-in (maybe not direct) · **schedule** (not built yet). Mapping, not building schedule. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2646,6 +2646,28 @@ The fork onto this alternate was **neither** → then Schedule, cooldown, queue-
 **Parked (alternate, do not build):** Override cooldown = override running sequence. Schedule respects mid-flight (no new sequence). Pack update is the only other critical trigger; different workflow; may restamp the form **or** pause/queue the running sequence for priority. What it produces is still a gap. 01:20 “poof queue” is not this pause-queue unless they recut later.
 
 **Do not:** build the pause-queue; packet; plates; mint; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-25 07:09 UTC — Terrain: first eval known. Ongoing re-engagement = pack update · contact put-in · schedule.
+
+**Why:** Founder: this sets the stage. Completing: we know what triggers the **first** evaluation. Strong idea of opt-in → **first** re-engagement. We do **not** know what triggers re-engagements **on an ongoing basis**. We know one: **pack update** — takes precedence above everything, including in-flight. If not that, not the first anymore, **not in a sequence**, conditions met → it’s a **schedule**. Another trigger: inputs from the **contact workspace** (they reached for the name — **contact uploaded information**). May not even **directly** trigger unless a specific kind. Other than that, schedule. Have not worked schedule triggers yet. Mapping the terrain so we know we work this, this, this, and that first. Right thing. Strong packet build. Following along?
+
+**Yes.** Named event already: [`CONTACT-UPLOADED-EVENT-PACKET.md`](./CONTACT-UPLOADED-EVENT-PACKET.md) — Local = **this kind**. Matches “maybe not direct unless a specific kind.” Do not recut that packet. Do not start a Schedule packet this stamp.
+
+**Terrain (work order, not a sprint lock):**
+
+| | Trigger | Status |
+|--|---------|--------|
+| First evaluation | new contact + Start (then Agents opt-in) | known |
+| First re-engagement | opt-in sequence complete → Rule → form | strong idea |
+| Ongoing | **Pack update** | known; precedence; in-flight = different workflow |
+| Ongoing | **Contact uploaded information** (workspace Put in) | named; maybe not direct / this kind |
+| Ongoing | **Schedule** | the rest, when not in sequence + conditions; **not built yet** |
+
+**Do not:** build Schedule this stamp; recut upload-event; mint; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 
