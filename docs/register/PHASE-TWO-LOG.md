@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Conditions talk (23:45): work with nodes as they exist. Gap A = new contact + confirm/start → opt-in, then Agents. Gap B = sequence complete → Rule → form → re-engagement. **The gap:** Rule clean + no reactivation — no workflow to re-engage again. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Neither-path **ideas** (00:15) — not law. Re-evaluate vs outreach. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2429,6 +2429,37 @@ Flag 15:43 untouched.
 **Do not:** add a node kind; invent the neither-path; packet; plates; recut 015; overwrite 15:43; plant; mint tables; talk escrow.
 
 **Ask:** they solve the neither-path, or park it. And: is enroll **Start-triggered** (new contact already true) so we do not need Wait.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-25 00:15 UTC — Ideas for the neither-path. Agent alignment, not a flag. Not a packet.
+
+**Why:** Founder: suggest solutions. Entire canvas, existing nodes even if stubbed. Invent if needed. Want ideas for **re-engagement again** — that is the real gap.
+
+**The gap, split (or we mix them):** After Rule again: no required-data listing, no reactivation signal. Engine 2 already has motion **none**. Law 22 already has an else fork (“anything other than that”). What to **do** on that fork is empty.
+
+1. **Re-evaluate** when the world changes. Not outreach. Pack / criteria updated → Get → Rule → same Switch. Already named. 15:02: Rule sits on a write, not a calendar day.
+2. **Outreach again** while still neither. That is a sequence/objective that is not a data request and not a meeting. Not thought. Three classes do not name it.
+
+**Idea 1 — heartbeat is the world, not a sequence (existing nodes).**  
+Else → **Exit**. Second automation: trigger **reference pack updated** (and/or form submitted already did Rule). Get opted-in contacts → Rule → Switch again. When a draw / pack / constant moves, some fall into form or reactivation. Neither stays none. **Honest:** this is not “re-engage.” It is “don’t lose them.” Closest to modules as they exist. No fourth class. No Wait.
+
+**Idea 2 — same re-engagement sequence, next campaign (mostly existing).**  
+Else → Agents assign **re-engagement** again with a **different objective** (not a form — click / stay / a binary they name). Two objectives → two campaigns, already law. Re-engagement’s job stays “until reactivation is justified,” first campaign was the form, second is light. Invented: that objective’s name and whether we send empty-ish mail. Not a new node. Not a fourth sequence class.
+
+**Idea 3 — Schedule as a stubbed heartbeat (existing listen, weakly against 15:02).**  
+Else → Exit. Third automation: **Schedule** → Get the neither people → Rule. If still neither, optional Idea 2. Invented: who “the neither people” are without a new field (Get everyone opted-in and not in reactivation is the no-mint version). Calendar Rule is the tension with “Rule sits on a write.”
+
+**Idea 4 — invent a hold write (new thing).**  
+Else → in-app ascribe something Get can find (not Tag if we can help it). Then Idea 1/3 is precise. **SA** if it is a field. Do not mint from this stamp.
+
+**Not suggesting:** a fourth sequence class (breaks three-class lock unless they recut). Wait node. Silent forever with no pack-update canvas (loses the gap). Using live Tag as the bucket (leave it).
+
+**Do not:** lock an idea; packet; plates; recut 015; overwrite 15:43; plant; mint tables.
+
+**Ask:** is the gap **re-evaluate** (Idea 1) or **outreach while none** (Idea 2), or both.
 
 Flag 15:43 untouched.
 
