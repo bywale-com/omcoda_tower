@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Heartbeat: **scenarios → conditions, then nodes** (00:32). Not Get-everyone. Idea 1 still locked. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Heartbeat walk (01:10): **Rule vs assign** are two bars. Meeting booked → still Rule; don’t assign reactivation. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2538,6 +2538,41 @@ Flag 15:43 untouched.
 **Do not:** skip to nodes; mint the timestamp field; packet; plates; bring back keep-in-touch; recut 015; overwrite 15:43; plant.
 
 **Ask:** keep/kill S2–S8. Add any scenario I missed. Then we reproduce the survivors with nodes.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-25 01:10 UTC — Walk: cooldown is not one bar. Rule vs assign.
+
+**Why:** Founder on the split: good question; walk it. Thinks it is on **running the operation** — then might depend. Example: recently **reactivated = booked a meeting**. A schedule or pack-update automation would still **run** the operation. May or may not **reactivate** if reactivation is a Rule **output**. Different situations, different cases. Do that walk — not difficult.
+
+**Pattern from that example (agent alignment):** Rule is “should we evaluate.” Assign is “should we act on an output.” Meeting booked does not block Rule. It blocks **assigning reactivation** even if the rule emits it. Once met, met.
+
+**Walk (not a flag — kill a row if wrong):**
+
+| Situation | Run Rule? | Assign re-engagement (form)? | Assign reactivation? |
+|-----------|-----------|------------------------------|----------------------|
+| **S5 Meeting booked** (founder) | **Yes** (pack update or schedule) | Lean **no** for launch — loop closed. Not locked. | **No** — even if Rule outputs it |
+| **S1 Rule ran recently + Schedule** | **No** — heartbeat, world didn’t change | — | — |
+| **S1 / S4 Pack updated** (write) | **Yes** — world changed; justification is the pack | Then the assign columns | Then the assign columns |
+| **S2 Opt-in still in flight** | **No** — not through opt-in | **No** | **No** |
+| **S2 / S3 Form outstanding** | Pack update: **maybe yes** (listing can change). Schedule: **no** if inside cooldown | **No** second form | Engine 2: reactivation **first** — not locked this stamp |
+| **S2 Reactivation booking in flight** (not yet booked) | Pack update: maybe yes | Don’t start a competing form unless they say so | **No** second reactivation sequence |
+| **S6 Not opted in** | **No** (this heartbeat isn’t about them) | **No** | **No** |
+| **S7 Silenced** | **Yes** if we still evaluate | **No** Agents | **No** Agents |
+| **S8 Campaign failed** | Not this canvas | Different trigger | Different trigger |
+
+**Two bars, named:**
+
+1. **Evaluate** — Run Rule when there is a **justification** (pack write, form submitted, sequence complete) **or** a heartbeat that has **cleared cooldown**. Skip Rule when Schedule + recent operation, or they are not through opt-in.
+2. **Act** — Assign only from Rule outputs **and** the destination is not already met / not in flight / reachable. Reactivation output ≠ auto-enroll if meeting already booked.
+
+**Nodes after (thin):** If on writes we already have (`meeting_booked`, sequence in flight, silenced). Cooldown on Schedule needs a **time of last Rule** — may be a write we don’t have. Pack-update canvas does not need that write. Do not mint this stamp.
+
+**Do not:** packet; plates; keep-in-touch; recut 015; overwrite 15:43; plant; mint tables.
+
+**Ask:** kill any row. Then we reproduce the survivors with nodes.
 
 Flag 15:43 untouched.
 
