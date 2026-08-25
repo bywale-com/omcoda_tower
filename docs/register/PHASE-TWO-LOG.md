@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Stopped** (01:26). Pack update during in-flight re-engagement **changes the form underneath** — not a competing sequence. Three trigger families: event · schedule · pack update. Pickup: those three and what each does to in-flight work. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Happy path** (07:03): Start → opt-in → sequence complete → Rule → form → re-engagement → Rule again → reactivation or more data. **Parked alternate:** pack update is the only mid-flight override; may pause/queue the running sequence for priority; what pack update *produces* still a gap; don’t build it now. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2612,6 +2612,40 @@ Flag 15:43 untouched.
 **Three trigger families to pick up:** event · schedule · pack update. What each does when a sequence is already in flight — that’s the hard walk. Not tonight.
 
 **Do not:** invent supersede chrome; packet; plates; mint; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-25 07:03 UTC — Happy path vs this alternate. Pack update is the only mid-flight override. Don’t build it now.
+
+**Why:** Founder: what clearly needs to be decided — situations that **override cooldown** are the same that **override a running sequence**. Other than schedule, what events should override mid-flight? **Only pack update** is critical. Schedule just fires again; with the conditions we already have, mid-flight **will not** get a new sequence. Only pack update (those kinds) would assign another sequence mid-flight. What should happen depends on what a pack update **produces** — that’s the gap they can’t articulate yet. Plausible: a **new thing to collect**, no existing field, must collect. Queuing recut: maybe not “store a Rule output during a gap.” Maybe **pause and queue the sequence that was running** so something with **greater priority** takes precedence. Sequences are separate; copy is different. **Do not have to build anything right now.** Glad we saw the crossroads. Then: where did we stop on the **happy path** — this is an alternate. What were we talking about right before this dilemma.
+
+**Happy path (last correct place, 23:45 → Rule-again, before neither/schedule/queue/in-flight):**
+
+```
+new contact + confirm/Start
+  → assign opt-in sequence
+  → AGENTS (campaigns)
+
+opt-in sequence complete (all objectives) — must be a trigger
+  → Rule as it exists
+  → usually negative → produce form
+  → assign re-engagement (data collection)
+  → AGENTS
+
+they complete the ask
+  → Rule again
+  → still need data     → another data request
+  → reactivation output → assign reactivation (book a meeting)
+  → neither             → Idea 1 (pack updated → Get → Rule) was the locked “don’t lose them”
+```
+
+The fork onto this alternate was **neither** → then Schedule, cooldown, queue-vs-now, in-flight supersede. Idea 1 stays locked as the neither workflow. This stamp is **not** that mainline.
+
+**Parked (alternate, do not build):** Override cooldown = override running sequence. Schedule respects mid-flight (no new sequence). Pack update is the only other critical trigger; different workflow; may restamp the form **or** pause/queue the running sequence for priority. What it produces is still a gap. 01:20 “poof queue” is not this pause-queue unless they recut later.
+
+**Do not:** build the pause-queue; packet; plates; mint; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 
