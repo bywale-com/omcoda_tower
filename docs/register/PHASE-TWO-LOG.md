@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Heartbeat walk (01:10): **Rule vs assign** are two bars. Meeting booked → still Rule; don’t assign reactivation. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Rule without assign **poofs** unless stored (01:20). **Queue** when we must wait a gap; **data request that unlocks qualify = now**, don’t queue. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2573,6 +2573,31 @@ Flag 15:43 untouched.
 **Do not:** packet; plates; keep-in-touch; recut 015; overwrite 15:43; plant; mint tables.
 
 **Ask:** kill any row. Then we reproduce the survivors with nodes.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-25 01:20 UTC — Rule without assign poofs. Queue vs now. Two cases.
+
+**Why:** Founder: running a Rule with **no intention of running an Agents sequence** — that result is **queued**. Use case: not only recently booked. Also recently **re-engaged** (data request). We want a **gap between sequences / campaigns**. During that gap a pack update (or similar) **re-evaluates**. That produces a need for a data request **or** a reactivation sequence — maybe they now qualify **without new information**. If we don’t store it, it **lives on the canvas and poof**. Not stored. That’s the case for **queuing**. Could be a bunch of queues. Then two cases: (1) they now qualify for something, or (2) we need a data request. If they complete the data request **now**, they qualify for the thing — **can’t just queue** that. It’s **important right now**.
+
+**Product (this stamp, not a table):** A Rule run that cannot assign yet still has to **leave a write**. Canvas memory is not a store. Law 42: the left is table writes. If we don’t write, it is gone.
+
+**Two cases (founder):**
+
+| After re-evaluate, during a sequence gap | What | Queue? |
+|------------------------------------------|------|--------|
+| They **qualify now**, no new info (reactivation output) | Assign would break the gap | **Queue** the assign until the gap elapses. Don’t poof. |
+| **Data request** — completing it **now** is what makes them qualify | Blocking / important now | **Don’t queue.** Send the ask. |
+
+Not the same as S5 (meeting booked → don’t assign reactivation because once met, met). This is: **will** assign, but **not this second**, unless the output is an ask that unlocks qualify.
+
+**Do not mint** a queue table from PM. The need is: persist “this person, this next sequence/objective, waiting on the gap.” SA ascribes if this locks. Could be a bunch of queued items — priority not specified except: data-request-that-unlocks = now, already-qualified reactivation = wait the gap.
+
+**Do not:** packet; plates; invent Hub queue chrome; recut 015; overwrite 15:43; plant; mint tables.
+
+**Ask:** are those two cases the lock. Then we see what nodes can write so it doesn’t poof.
 
 Flag 15:43 untouched.
 
