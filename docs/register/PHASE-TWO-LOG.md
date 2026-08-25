@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Neither-path: **Idea 1 locked strong** (pack updated → Get → Rule). Idea 2 retracted (no objective-less outreach). Idea 3 = Schedule is the trigger; middle conditions may force a write/node. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Heartbeat: **scenarios → conditions, then nodes** (00:32). Not Get-everyone. Idea 1 still locked. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2499,6 +2499,45 @@ Do not mint the field this stamp. Engine 2 already has motion `none` on `motion_
 **Do not:** bring back keep-in-touch; packet; plates; mint the hold field from PM; recut 015; overwrite 15:43; plant.
 
 **Ask:** on the Schedule canvas, is Get **wide** (opted-in, Rule is the only condition) or do we need a **none-write** so the heartbeat only picks those people.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-25 00:32 UTC — Heartbeat scenarios before nodes. Not Get-everyone.
+
+**Why:** Founder: worth talking the scenarios that justify why it is **not** a simple Schedule → Get everyone → run the operation. Example: if an operation ran on them **recently** (a time threshold), they would **not** qualify for a new operation or re-engagement. Other examples we could think through. That **determines the conditions**, which we then try to reproduce with nodes.
+
+**Method this stamp:** scenarios first. Conditions second. Nodes third. Do not skip to a new node.
+
+**S1 (founder):** Last operation ran inside a **time threshold** → not eligible for a new operation / re-engagement.
+
+**More scenarios (agent alignment — kill or keep):**
+
+| # | Scenario | Why the heartbeat should skip |
+|---|----------|-------------------------------|
+| **S1** | Operation ran recently (threshold) | Don’t double-Rule / don’t start another sequence |
+| **S2** | Live sequence in flight (opt-in campaigns, re-engagement collecting, reactivation booking) | Don’t interrupt a mission that has an objective |
+| **S3** | Outstanding Now / form not submitted | Already in a data-request objective |
+| **S4** | Pack-updated canvas just ran (Idea 1) | Same as S1 if “operation” includes that Rule |
+| **S5** | Meeting booked | Once met, met |
+| **S6** | Not through opt-in yet | Everything begins from opt-in |
+| **S7** | Silenced / email opt-out | If the **action** is Agents. Rule-only might still be allowed — not locked |
+| **S8** | Campaign failed | Different listen (`campaign failed`), not this heartbeat |
+
+**Conditions those scenarios are pointing at (not nodes yet):**
+
+- **Cooldown** since last operation (needs a time on a write — may not exist)
+- **Not in a live sequence / live objective**
+- **Opt-in complete** (eligible for this heartbeat at all)
+- **Goal not already met** (meeting booked)
+- **Reachable** if we are about to assign Agents
+
+**Split (ask):** is the cooldown on **running Rule**, or on **assigning a sequence**. Those are two bars.
+
+**Do not:** skip to nodes; mint the timestamp field; packet; plates; bring back keep-in-touch; recut 015; overwrite 15:43; plant.
+
+**Ask:** keep/kill S2–S8. Add any scenario I missed. Then we reproduce the survivors with nodes.
 
 Flag 15:43 untouched.
 
