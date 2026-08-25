@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Neither-path **ideas** (00:15) — not law. Re-evaluate vs outreach. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Neither-path: **Idea 1 locked strong** (pack updated → Get → Rule). Idea 2 retracted (no objective-less outreach). Idea 3 = Schedule is the trigger; middle conditions may force a write/node. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2460,6 +2460,45 @@ Else → in-app ascribe something Get can find (not Tag if we can help it). Then
 **Do not:** lock an idea; packet; plates; recut 015; overwrite 15:43; plant; mint tables.
 
 **Ask:** is the gap **re-evaluate** (Idea 1) or **outreach while none** (Idea 2), or both.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-25 00:19 UTC — Idea 1 locked. Idea 2 retracted. Schedule is a trigger; the middle is conditions.
+
+**Why:** Founder: **1** is a very strong workflow. **2** — don’t understand; whole purpose of outreach is an **objective**. There is no “just outreach again.” PM should not have needed that said. **3** — what they were intuiting. Schedule is a **trigger / heartbeat**, not a condition. There are still **conditions in the middle** — that is the problem-solving. That might force inventing: a **new node**, or a **new data set / field**.
+
+**Lock:** Idea 1. Pack / criteria updated → Get → Rule → same Switch as the post-form Rule. Else (none) → Exit. Not outreach. Don’t lose them.
+
+**Retract Idea 2.** Agent miss. Agents send people to a **goal**. No objective, no sequence. Do not park a keep-in-touch campaign. Do not mutate 00:15 — this stamp retracts.
+
+**Idea 3, recut as trigger vs middle (not locked):**
+
+```
+Schedule                    ← heartbeat, already a listen
+  → Get                     ← WHO is the pressure
+  → Rule                    ← as it exists
+  → Switch
+       listing not empty  → form + re-engagement
+       reactivation signal → reactivation
+       else (none)        → Exit
+```
+
+Same middle as Idea 1. Different trigger. Schedule does not replace Rule, If, or Switch.
+
+**Middle — what we have vs what we might invent:**
+
+| If Get is… | Conditions | Invent? |
+|------------|------------|---------|
+| Opted-in contacts (wide) | Rule outcomes **are** the middle. Else exits. | No new node. No new field. Heartbeat re-Rules everyone opted-in. |
+| Only people already **none** / not in a live sequence / not Rule’d recently | Get needs that to be a **write** it can read | A field or dataset (SA). Not a new node unless the condition cannot sit on a write. |
+
+Do not mint the field this stamp. Engine 2 already has motion `none` on `motion_decisions` — **ask SA** whether that write is Get-able before inventing a parallel. 15:02 still: Rule sits on a **write**; a Schedule canvas is Rule-after-Get, the write is the Get. Tension named, not a veto — founder intuited the heartbeat.
+
+**Do not:** bring back keep-in-touch; packet; plates; mint the hold field from PM; recut 015; overwrite 15:43; plant.
+
+**Ask:** on the Schedule canvas, is Get **wide** (opted-in, Rule is the only condition) or do we need a **none-write** so the heartbeat only picks those people.
 
 Flag 15:43 untouched.
 
