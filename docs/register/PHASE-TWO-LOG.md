@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Terrain** (07:09): first eval + first re-engagement known. Ongoing re-engagement triggers: pack update (precedence) · contact-workspace put-in (maybe not direct) · **schedule** (not built yet). Mapping, not building schedule. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Terrain:** [`LAUNCH-TERRAIN.md`](./LAUNCH-TERRAIN.md) — keep track. Both-signals → consultant **request task** (on-click form); talk later. Rule outputs must be referenceable. Still planning. Confirm look deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2668,6 +2668,20 @@ Flag 15:43 untouched.
 | Ongoing | **Schedule** | the rest, when not in sequence + conditions; **not built yet** |
 
 **Do not:** build Schedule this stamp; recut upload-event; mint; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-25 07:28 UTC — Keep track. Rule signals referenceable. Both-at-once = consultant request task.
+
+**Why:** Founder: still the re-engagement workflow — Rule’s **reactivation output** is the critical signal (meeting booked vs other outputs; reactivation vs re-engagement sequence; downstream). Have to work it. Nodes: if reactivation on → that agent sequence. Re-look Rule outputs so they are **legible / referenceable**. Chain on the canvas; on that sequence’s completion keep chaining — make possible if not. Meeting booked → maybe take data and display (brief / who booked) — automation vs hardcoded **not decided**. Then the use case: **both** reactivation and a data request in the output. Not first-answer queue. **New enough in-app action:** after the reactivate-agent objective completes, Action in-app, drop the listing the same way as Form into a **request task**. Task on the **consultant workspace**. Consultant triggers → asks the contact. **On-click / on-trigger form.** Different mechanism; relate to Agents later. Keeping track of all of this to work systematically once planning is done?
+
+**Yes.** Paper: [`LAUNCH-TERRAIN.md`](./LAUNCH-TERRAIN.md). Not a packet. Law 21 already allows both signals. Law 41: consultant desk must afford the task before Automations consumes it. Do not recut A33 / in-app packet this stamp. Do not decide brief vs hardcoded this stamp.
+
+**Added to the list:** Rule outputs referenceable · canvas chain on sequence complete · both-signals request task · brief/display (open).
+
+**Do not:** packet the task; plates; build Schedule; mint; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 
