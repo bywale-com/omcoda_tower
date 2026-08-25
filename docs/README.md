@@ -67,7 +67,7 @@ Agents is where the **operator** defines outreach **sequencing** (the sequence a
 
 **Deferred (not a packet, no plates):** [`register/CONFIRM-READY-DEFERRED.md`](./register/CONFIRM-READY-DEFERRED.md) — consultant prompt after new contacts are sequence-ready. Remind when a later sprint is that UI.
 
-**Planning (not a packet):** [`register/LAUNCH-TERRAIN.md`](./register/LAUNCH-TERRAIN.md) — happy path, Rule signals, both-at-once task, ongoing triggers. Keep track until planning locks a pocket.
+**Planning (not a packet):** [`register/LAUNCH-TERRAIN.md`](./register/LAUNCH-TERRAIN.md) — commence order. §1 expanded: [`register/LAUNCH-1-NOTHING-TO-OPT-IN.md`](./register/LAUNCH-1-NOTHING-TO-OPT-IN.md).
 
 **Read before you speak**
 

@@ -23,11 +23,8 @@
 
 ### 1. Nothing → opt-in
 
-**Triggers:** new contact exists · consultant **Start / confirm** (look deferred: [`CONFIRM-READY-DEFERRED.md`](./CONFIRM-READY-DEFERRED.md)).  
-**Middle:** conditions we already walked (sequence-ready / audited so Start is eligible).  
-**Action:** assign **opt-in** sequence.  
-**Then:** Agents. No more Automations until the sequence completes.  
-**New nodes / stores:** none. Existing kinds.
+**Summary:** new contact exists + consultant Start → assign **opt-in** → Agents. Nothing new.  
+**Expanded (working this slice):** [`LAUNCH-1-NOTHING-TO-OPT-IN.md`](./LAUNCH-1-NOTHING-TO-OPT-IN.md). Two canvases (arrive → audit · Start → assign). Confirm look still deferred.
 
 ### 2. Opt-in complete → first re-engagement
 

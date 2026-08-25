@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Planning done. Commence [`LAUNCH-TERRAIN.md`](./LAUNCH-TERRAIN.md). **No queue** (07:47): only pack update / this-kind put-in can’t wait; schedule is influenced by running sequences. **Expand each section when we work it.** Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Working §1.** Expanded: [`LAUNCH-1-NOTHING-TO-OPT-IN.md`](./LAUNCH-1-NOTHING-TO-OPT-IN.md). Not a packet yet. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2708,6 +2708,18 @@ Flag 15:43 untouched.
 **Standing:** commence order stays. Expand the section we are in. Do not expand all seven now.
 
 **Do not:** mint a queue; ignore running sequences on schedule-triggered sequence automations; recut 015; overwrite 15:43; plant.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-25 14:53 UTC — Working §1. Expanded nothing → opt-in. Not a packet yet.
+
+**Why:** Founder: start with one. Expand that clause summary.
+
+**Paper:** [`LAUNCH-1-NOTHING-TO-OPT-IN.md`](./LAUNCH-1-NOTHING-TO-OPT-IN.md). Two canvases, no Wait. Confirm look still deferred. Do not recut A40 into enroll.
+
+**Do not:** packet until they lock; plates for Confirm; recut 015; overwrite 15:43; plant; mint tables.
 
 Flag 15:43 untouched.
 
