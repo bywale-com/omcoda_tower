@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Planning done.** Commence order in [`LAUNCH-TERRAIN.md`](./LAUNCH-TERRAIN.md) — walk it back, then work §1→§4. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Planning done. Commence [`LAUNCH-TERRAIN.md`](./LAUNCH-TERRAIN.md). **No queue** (07:47): only pack update / this-kind put-in can’t wait; schedule is influenced by running sequences. **Expand each section when we work it.** Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2694,6 +2694,20 @@ Flag 15:43 untouched.
 **Paper:** [`LAUNCH-TERRAIN.md`](./LAUNCH-TERRAIN.md) rewritten as commence order §1–§7. Not a packet. Do not start engineer packets this stamp — they walk it back first.
 
 **Do not:** skip to §5–§7; invent a fourth sequence; recut 015; overwrite 15:43; plant; mint tables.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-25 07:47 UTC — Expand when we work. No queue. Schedule influenced by running sequences.
+
+**Why:** Founder: summary is complete and concise; every line has a fuller meaning. When we **work** each one, **expand** so nothing falls through. Add from reading §3: how we decoupled. Re-evaluate on a schedule/event should not be discarded for cooldown — it can produce something that must be addressed **now**. That split evaluation from assigning a sequence. Then “where do we store the first half” → queuing. **No queue anymore.** Only re-evaluations that **can’t wait**: **pack update**, or a **specific kind of contact put-in**. Other than that, it **can wait** → that trigger is a **schedule**. Schedule should be **influenced** by existing / running sequences (mechanism when we get there). Not all automations have sequences — those are not affected. Automations **with a sequence** that are schedule-triggered: running sequences influence them. That **kills the need for any queue**.
+
+**Do not mutate 01:20 / 07:03.** This stamp retracts the queue-as-store. Terrain updated.
+
+**Standing:** commence order stays. Expand the section we are in. Do not expand all seven now.
+
+**Do not:** mint a queue; ignore running sequences on schedule-triggered sequence automations; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 

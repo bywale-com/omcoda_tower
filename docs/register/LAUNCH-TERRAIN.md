@@ -3,9 +3,9 @@
 **Seat:** Product Manager.  
 **Not a packet.** Do not hand this to the engineer until a pocket locks as a packet. No plates from this file.  
 **Sprint:** all **core automations** and **agent sequences** required for launch.  
-**Planning:** done 2026-08-25. Founder: communicate the work-through **in full** so they can walk it back. Then commence.  
+**Planning:** done 2026-08-25. Summary stays tight. **When we work a section, expand it** so nothing falls through.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
-**Does not:** plant; recut 015; mint tables; start parked pockets (confirm look, request task, in-flight pause-queue, brief vs hardcoded) until that pocket is next.
+**Does not:** plant; recut 015; mint tables; start parked pockets until that pocket is next. **No queue** (07:47 recut).
 
 ---
 
@@ -43,23 +43,29 @@
 **Neither** (no listing, no reactivation): don’t lose them → **§4**.  
 **Both signals at once:** not this slice. §6.
 
+**Decouple (why this slice taught us):** a re-evaluate (schedule / event) must not be **discarded** just because of cooldown — it can produce something that has to be addressed **now**. That split **evaluation** (Rule) from **assigning a sequence**. Store/queue of that first half is **retracted** (below).
+
 ### 4. Re-engagement again (ongoing)
 
-Not in a sequence (or not the first). Conditions in the middle (cooldown on **Rule** vs **assign** — two bars; Schedule does **not** assign mid-flight).
+Not in a sequence (or not the first).
+
+**Can’t wait** (re-evaluate now, even mid-flight / even inside cooldown): **pack update**, or a **specific kind** of contact put-in. Those two only.
+
+**Can wait:** everything else. That trigger is a **schedule**. A schedule is **influenced by running sequences** — mechanism when we work this. Influence is on automations that **have a sequence**, not on every workflow (some automations are not sequence-based; those are not affected). That influence **kills the need for a queue**: we do not store a Rule result to fire later. Schedule simply does not assign (or does not pick) people who are mid-flight.
 
 | Trigger | What we know |
 |---------|----------------|
-| **Pack update** | Known. Precedence above everything, including in-flight. Different workflow. Work the canvas: Get → Rule → same Switch as §3. What pack update *produces* still a gap — don’t overbuild. |
-| **Contact uploaded information** | Workspace Put in. [`CONTACT-UPLOADED-EVENT-PACKET.md`](./CONTACT-UPLOADED-EVENT-PACKET.md). Local = **this kind**. May not fire a sequence every time. |
-| **Schedule** | The rest. Not built yet. Heartbeat trigger, not the condition. |
+| **Pack update** | Can’t wait. Precedence. Different workflow. Get → Rule → same Switch as §3. |
+| **Contact uploaded information** | This kind may be can’t-wait. Packet already. May not fire a sequence every time. |
+| **Schedule** | The rest. Can wait. Influenced by running sequences. **Not built yet.** |
 
 ### 5. Mid-flight override (parked — same sprint later)
 
-Only **pack update** overrides a **running** sequence (same situations that override cooldown). Schedule + conditions → mid-flight does **not** get a new sequence. May restamp the **form underneath**, or pause/queue the running sequence for priority. **Do not build first.**
+Can’t-wait triggers (pack update; maybe this-kind put-in) vs schedule (waits / is influenced). Pack update may restamp the **form underneath**. **No queue** — do not pause-and-store a running sequence as the design. **Do not build first.**
 
 ### 6. Both reactivation + data request (talk when we get here)
 
-Law 21 already. Not first-answer queue. After reactivate-agent objective completes: in-app Action, drop listing like Form onto a **request task** (consultant workspace). Consultant triggers → on-click form. Desk must afford the task (law 41). Do not recut A33 until this pocket.
+Law 21 already. Not a queue. After reactivate-agent objective completes: in-app Action, drop listing like Form onto a **request task** (consultant workspace). Consultant triggers → on-click form. Desk must afford the task (law 41). Do not recut A33 until this pocket.
 
 ### 7. Open, not this commence slice
 
@@ -75,6 +81,8 @@ Law 21 already. Not first-answer queue. After reactivate-agent objective complet
 - Objective-less outreach.
 - Fourth sequence class.
 - Wait node.
+- A queue / store of Rule output to fire after a gap.
 - Get-everyone on Schedule with no conditions.
+- Let Schedule-triggered sequence automations ignore running sequences.
 - Build §5–§7 before §1–§4.
 - Recut 015. Overwrite 15:43. Plant. Mint tables.
