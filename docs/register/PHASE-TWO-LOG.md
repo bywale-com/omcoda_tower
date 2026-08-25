@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. Rule without assign **poofs** unless stored (01:20). **Queue** when we must wait a gap; **data request that unlocks qualify = now**, don’t queue. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Stopped** (01:26). Pack update during in-flight re-engagement **changes the form underneath** — not a competing sequence. Three trigger families: event · schedule · pack update. Pickup: those three and what each does to in-flight work. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2598,6 +2598,20 @@ Not the same as S5 (meeting booked → don’t assign reactivation because once 
 **Do not:** packet; plates; invent Hub queue chrome; recut 015; overwrite 15:43; plant; mint tables.
 
 **Ask:** are those two cases the lock. Then we see what nodes can write so it doesn’t poof.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-25 01:26 UTC — Pack update changes the form underneath. Stop. Three trigger families.
+
+**Why:** Founder: deeper gap — re-engagement **in progress** + pack update. Does it supersede. Workflows that supersede other workflows — a real one. Then: don’t overthink. Pack update is **critical**. It has a **different workflow** than any other thing. All it really changes is **the form underneath**. Doesn’t break many things. Hard part: what triggers you expect on an Automations workflow. Usually **event**, or **schedule**, or **pack update** (a specific event). What’s actually hard is thinking that through. Stop — brain tired.
+
+**Named, not overbuilt:** In-flight re-engagement + pack update ≠ kill the sequence and start another. ≠ queue vs now from 01:20 for this trigger. The live ask **restamps** (listing / form). Sequence stays. Pack update is not “just another event” in how it treats in-flight work.
+
+**Three trigger families to pick up:** event · schedule · pack update. What each does when a sequence is already in flight — that’s the hard walk. Not tonight.
+
+**Do not:** invent supersede chrome; packet; plates; mint; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 
