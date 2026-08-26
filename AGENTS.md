@@ -43,14 +43,14 @@ You are Tower’s **Product Manager**. You are not the Systems Analyst. You are 
 | What | Where |
 |------|--------|
 | Packets | `docs/register/*-PACKET.md` — listed in [`NODE-INTERIOR.md`](docs/register/NODE-INTERIOR.md) |
-| Deferred (not a packet) | [`CONFIRM-READY-DEFERRED.md`](docs/register/CONFIRM-READY-DEFERRED.md) — remind when a later sprint is the consultant Start UI after audit |
+| Confirm look (not a packet) | [`CONSULTANT-STAGED-PLATES.md`](docs/register/CONSULTANT-STAGED-PLATES.md) — S1 open · S2 minimized. Packet only if founder agrees. Reminder: [`CONFIRM-READY-DEFERRED.md`](docs/register/CONFIRM-READY-DEFERRED.md) |
 | Face laws | [`AUTOMATIONS-FACE.md`](docs/register/AUTOMATIONS-FACE.md) · [`AGENTS-FACE.md`](docs/register/AGENTS-FACE.md) |
-| Plates | `docs/register/automations-blueprint/` (A22–A40) · `agents-blueprint/` · lineups in `*-UI-BLUEPRINT.md` |
+| Plates | `docs/register/automations-blueprint/` (A22–A40) · `agents-blueprint/` · `consultant-blueprint/` (S1–S2, not a packet) · lineups in `*-UI-BLUEPRINT.md` |
 | Primitives | [`PRIMITIVES.md`](docs/register/PRIMITIVES.md) |
 | SA 015 | PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86) — do not recut |
 | Engineer seat | PR [#106](https://github.com/bywale-com/omcoda_tower/pull/106) until merged |
 
-**Current product lock (read the log Current pointer; it moves):** Working §1 [`LAUNCH-1-NOTHING-TO-OPT-IN.md`](docs/register/LAUNCH-1-NOTHING-TO-OPT-IN.md). Commence order [`LAUNCH-TERRAIN.md`](docs/register/LAUNCH-TERRAIN.md). Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](docs/register/WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks.
+**Current product lock (read the log Current pointer; it moves):** Working §1 [`LAUNCH-1-NOTHING-TO-OPT-IN.md`](docs/register/LAUNCH-1-NOTHING-TO-OPT-IN.md). Confirm look plates [`CONSULTANT-STAGED-PLATES.md`](docs/register/CONSULTANT-STAGED-PLATES.md) — not a packet until founder agrees. Commence order [`LAUNCH-TERRAIN.md`](docs/register/LAUNCH-TERRAIN.md). Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](docs/register/WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks.
 
 ---
 

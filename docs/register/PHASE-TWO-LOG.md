@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Working §1.** Expanded: [`LAUNCH-1-NOTHING-TO-OPT-IN.md`](./LAUNCH-1-NOTHING-TO-OPT-IN.md). Not a packet yet. Confirm look still deferred. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Working §1.** Expanded: [`LAUNCH-1-NOTHING-TO-OPT-IN.md`](./LAUNCH-1-NOTHING-TO-OPT-IN.md). Confirm **look** plates (not a packet): [`CONSULTANT-STAGED-PLATES.md`](./CONSULTANT-STAGED-PLATES.md) **S1** open · **S2** minimized. Packet only if founder agrees. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2720,6 +2720,20 @@ Flag 15:43 untouched.
 **Paper:** [`LAUNCH-1-NOTHING-TO-OPT-IN.md`](./LAUNCH-1-NOTHING-TO-OPT-IN.md). Two canvases, no Wait. Confirm look still deferred. Do not recut A40 into enroll.
 
 **Do not:** packet until they lock; plates for Confirm; recut 015; overwrite 15:43; plant; mint tables.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-26 09:26 UTC — Confirm look: plates first. Not a packet.
+
+**Why:** Founder: generate the 1st plate of the consultant **their** workspace. After **X** contacts staged: popover; click it → high-level sequence (campaigns + objectives still obvious); **Start** · **Start later** (Start later = **schedule** when it starts automatically, not snooze); **X** closes; mode **remains minimized at the bottom**. Plates first; packet if they agree.
+
+**Plates:** [`CONSULTANT-STAGED-PLATES.md`](./CONSULTANT-STAGED-PLATES.md) · [`consultant-blueprint/S1-consultant-staged-popover-open.png`](./consultant-blueprint/S1-consultant-staged-popover-open.png) · [`consultant-blueprint/S2-consultant-staged-minimized.png`](./consultant-blueprint/S2-consultant-staged-minimized.png). Chrome: live consultant Board, **T4** Consultant only.
+
+**Not locked:** first appearance = open card vs bottom bar; Start later pickers on the card vs nested. Example: **24**, Launch window / Click this link · Launch day / Agree.
+
+**Do not:** packet until they agree; freeze campaign names; recut 015; overwrite 15:43; plant; mint tables.
 
 Flag 15:43 untouched.
 
