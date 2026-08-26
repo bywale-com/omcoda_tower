@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-26 10:10 UTC — Staged Start is occupancy + a desk write, not a Wait node. [`SYSTEMS-STAGED-START-ASCRIBE.md`](./SYSTEMS-STAGED-START-ASCRIBE.md). Not a cut. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-26 10:15 UTC — Wait-for-approval is a **new node class** on that canvas. 10:10 two-canvas pass retracted. Not a cut. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -2190,6 +2190,29 @@ So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WH
 4. Start later = schedule that write. Datetime store **silent**. Approve is silent until a module has that button.
 
 **Did not:** cut a packet; mint `approval`; recut A40 / 015; overwrite 15:43.
+
+---
+
+## 2026-08-26 10:15 UTC — Founder correction. New Wait kind on the canonical graph. Not Action.
+
+**Why:** Founder: use the canvas. After audit + If valids, **a node** waits for approval — that is how the popover appears. Weighing new class vs stuffing into an existing node. 10:10 hid that node behind two canvases / PM “no Wait.”
+
+**Founder wording:**
+
+> on the workflow … I would put a node … embedding this new action into it, or we're creating a new node completely, or a new class of nodes
+
+> when audit is completed for that specific contact … maybe a condition node … only valid audits get through … now there will be a node … wait for approval, and that is what … how that pop-up … appears
+
+> I'm deciding whether I create this … waiting operation inside of an existing node or a new node
+
+**Hard**
+
+1. **New class.** Action writes and **continues**. Wait writes occupancy and **stops** until Start/Approve. Putting it on `action.type` recuts Action’s visit under a false name.
+2. Graph: trigger → audit → If `sequence_ready` → **Wait** → enroll.
+3. Popover = pane of **Wait’s** writes, not a naked `sequence_ready` list. Interior = occupancy (people + chip of the sequence).
+4. `sequence_ready` stays the If. Await-row table **silent** until they lock a packet.
+
+**Did not:** packet; mint the await table; recut 015; overwrite 15:43.
 
 
 

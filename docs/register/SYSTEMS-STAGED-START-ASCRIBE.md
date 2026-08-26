@@ -1,78 +1,103 @@
 # Systems — staged Start / wait-for-approval (ascribe, not a packet)
 
 **Seat:** Systems Analyst.  
-**When:** 2026-08-26 10:10 UTC.  
-**What this is:** machine ascribe while the founder weighs new node vs embed. **Not an Engineer cut.** Confirm look is still plates-only until they agree.  
-**Join:** PM [`LAUNCH-1-NOTHING-TO-OPT-IN.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/LAUNCH-1-NOTHING-TO-OPT-IN.md) · plates [`CONSULTANT-STAGED-PLATES.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/CONSULTANT-STAGED-PLATES.md) · law 41 [`SYSTEMS-IN-APP-ACTION-ASCRIBE.md`](./SYSTEMS-IN-APP-ACTION-ASCRIBE.md) · Form occupancy **021** (same occupancy idea, different write) · Spine Registry §5 handle.  
-**Flag:** 15:43 untouched. Do not recut 015. Do not mint a Wait node.
+**When:** 2026-08-26 10:15 UTC (recut). 10:10 below is the wrong two-canvas pass.  
+**What this is:** machine ascribe. **Not an Engineer cut.** Plates still lock with the founder.  
+**Join:** founder graph (this stamp) · plates [`CONSULTANT-STAGED-PLATES.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/CONSULTANT-STAGED-PLATES.md) · Form occupancy **021** (interior, not the kind) · law 41 (desk button completes) · Spine handle **015** (do not recut into a second walker).  
+**Flag:** 15:43 untouched.
 
 ---
 
 ## The decision (hard)
 
-**Do not mint a Wait node.** PM §1 already: one canvas cannot be “new contact **and** wait for the consultant.” Waiting is not a walker pause. Canvas A finishes (audit → If `sequence_ready`). The people **sit as rows**. Canvas B starts when the consultant **Start** writes.
+**New node class. Not Action. Not If.**
 
-That Start is an **operation on the consultant workspace** (a desk button that writes). Automations **consumes** it (law 41). It does not paint a second popover.
+The canonical graph:
 
-Approve now / Approve later is the **same shell**, a **different desk write**, when that module has that button. Not a second graph kind.
+```
+Trigger (import | new contact)
+  → Audit (that contact)
+  → If sequence_ready              // only valids through
+  → Wait (approval)                // NEW KIND. Writes occupancy. Walk stops.
+  → Call agent (opt-in)            // only after Start / Approve completes this wait
+```
 
----
+That Wait node **is** why the popover/bar exists. The workspace SELECTs the rows **this node wrote**. Start / Approve now / later is the same occupancy shell; the verb completes **this** wait.
 
-## Two pieces. Do not collapse them.
-
-| Piece | What it is | Not |
-|-------|------------|-----|
-| **Pane (the popover + the bar)** | The workspace **displays** writes that already exist. Occupancy, same idea as Form (A31): the listing **is** the interior. | A node that blocks the walk. Hardcoded “24 / Launch window / Click this link” |
-| **Operation (Start / Approve / Start now)** | A **write** on that desk. Canvas B’s trigger. In-app Action = wrap that handler when the button exists. | A Wait kind. Teaching copy. |
-
-Chrome that can swap labels (Start · Start later · Start now ↔ Approve · Approve later · Approve now) is **the same occupancy shell**. Silent in the machine except the **verb’s write**.
-
----
-
-## How the interior knows what to show (replaceable)
-
-Same law as Form occupancy. Do not bake campaign names into the SPA.
-
-| Slot on the glass | Write it unfolds | This slice (§1 Start) |
-|-------------------|------------------|------------------------|
-| Count / who is staged | Person rows Canvas A already marked ready | `sequence_ready.ready = true` for that consultant’s book (If true on Canvas A). Not the whole book. |
-| Sequence preview (campaigns + objectives still obvious) | The sequence **this operation will assign** | §1: opt-in `sequence_template` + its `campaign` / `campaign_objective` children. Not a three-sequence picker. |
-| Later / other occupancy | Whatever listing you drop | Same shell; different chip (e.g. a required-data listing, a different sequence). Do not invent a content table. |
-
-The plate’s Harbor / 24 / Launch window / Agree is **example**. Ignore as schema.
-
-**Whose workspace:** the pane lives on the desk of the person who **has the button**. Waiting on the consultant → consultant workspace (T4). Waiting on the contact → contact seat, **if** that seat already has that write-button. Automations does not route a popover to a user. The row is on their book; their desk SELECTs it.
+PM §1 “no Wait node / two canvases” is **retracted as the machine**. Founder is the instruction source.
 
 ---
 
-## Where it fits on the canvas (existing kinds)
+## Why not embed in Action
 
-**Canvas A** (already): trigger import **or** new contact → `run_audit` → If `sequence_ready`. Stop. Those writes **are** the staged set. No Wait.
+Live Action: write, then **follow the outgoing edge in the same visit**. There is no park.
 
-**Canvas B** (already): trigger = consultant Start (the write). Action = `call_agent` / assign existing **opt-in**. Then Agents.
+`action.type = await_approval` still requires `visit` to refuse outgoing until a later write. That is a new kind wearing Action’s name. We already refuse that collision (⋯ Switch ≠ Switch).
 
-Start later = **schedule** that same Start write (PM: not snooze). Trigger type `schedule` already exists. **Store for the datetime:** silent. Do not mint `approval` / `staged_modal`. Name it when they lock the packet — likely a row on an existing table (enrollment not yet; these people are not enrolled). Until then: specified but not clear.
+| Kind now | Visit |
+|----------|--------|
+| If / Switch | Compare, wires, no occupancy write |
+| Get | Read, continue |
+| Action | Write, continue |
+| Exit | Stop forever |
+| **Wait** | Write occupancy, **stop**, resume on the completion write |
+
+`untilNodeId` is Run **up to** a node. It does not resume on Start.
+
+---
+
+## How the popover knows (replaceable)
+
+Occupancy. Same idea as Form — different write.
+
+| Glass | Unfolds |
+|-------|---------|
+| Count / who | The people on the handle when Wait ran (already If-filtered valids) |
+| Preview (campaigns + objectives obvious) | Chip on the Wait node: what they are approving / starting. This slice: the opt-in sequence row + its campaigns. Not hardcoded Launch window / Agree. |
+| Now / Later / bar | Chrome of this kind. Labels Start or Approve — same node. Later = **schedule this wait’s completion**. |
+
+Whose desk: configured on the node (consultant vs contact). The pane is on **that** workspace because those rows are for that actor. Not a second kind per desk.
+
+Harbor / 24 / Ana = example. Ignore.
+
+---
+
+## The write (gap)
+
+`sequence_ready` is the **If**. Valid ≠ sitting on the consultant desk. Do not overload `ready`.
+
+No table today for “parked at this Wait.” Without that write the pane is paint. **Named silence:** person-level await row (`contact_id`, this node/run, whose desk). Wait INSERTs it. Desk lists it. Start/Approve **completes** it. That completion INSERT/UPDATE **is** the event; dispatch resumes this run from Wait’s outgoing (person-split: approved people continue; others stay).
+
+Law 41: workspace must have the Now/Later control. Wait produces the listing; the button completes it. Automations does not paint a second modal.
+
+Do not mint the table until they lock a packet.
 
 ---
 
 ## Specified and clear
 
-- No Wait node.
-- Popover interior = occupancy of existing writes (`sequence_ready` people + the sequence Start assigns).
-- Start / Approve chrome = one reusable shell; verb = desk write; Automations wraps it.
-- Do not hardcode the preview.
+- New kind on the palette.
+- Graph: audit → If valid → Wait → enroll.
+- Popup = pane of Wait’s writes.
+- Interior = occupancy (people + chip).
 
-## Specified but not clear (do not invent)
+## Specified but not clear
 
-- Exact Start `event_name` (manual vs a started INSERT). SA maps when they lock.
-- Where Start-later datetime lives.
-- Whether Approve is a real desk button anywhere today (in-app inventory has Halt, not Approve). Until the module affords it, Automations cannot consume it (law 41).
-- First appearance open vs bar — glass; silent in the machine.
+- Await-row table (not `sequence_ready`).
+- `workflow_run.status` waiting vs running.
+- Start `event_name`.
+
+---
+
+## 2026-08-26 10:10 — Wrong pass (kept)
+
+Two canvases, no Wait node, popup as a naked pane of `sequence_ready`. That hides the node the founder put on the graph. Retracted 10:15.
 
 ---
 
 ## Do not
 
-- Mint `wait` / `approval` / `staged` tables from the plates.
-- Recut A40 Form occupancy into Start.
-- Recut 015. Packet Confirm until they agree. Overwrite 15:43.
+- Stuff wait into `action.type` and recut Action’s visit.
+- Overload `sequence_ready`.
+- Recut 015’s handle type. Recut A40 into Start.
+- Packet Confirm until they agree. Overwrite 15:43.
