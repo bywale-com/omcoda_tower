@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-26 11:00 UTC — Approval pane keys on **what Wait approves**, not next node / workflow. Two popovers. Not a cut. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-26 11:11 UTC — Wait interior is a **title**. Count from the left. Same instance + workflow until Approve. Not a cut. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -2262,6 +2262,30 @@ So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WH
 1. **Primitive holds.** What Wait approves is configured **on that node**, not inherited from the next node. Sequence in the opt-in slice is one value. Audit is another. Pane groups open occupancy by **that object**.
 2. **Two popovers, one occupancy.** Bottom = indicator. Middle = now/later. Both show that object. Duration still has no pane.
 3. **10:21 split retracted.** Do not key the pane on workflow or Wait-node id. Rows still store wait node + run so Approve resumes **that** outgoing (the only contrivance).
+
+**Did not:** plates; packet; mint table; recut 015; overwrite 15:43.
+
+---
+
+## 2026-08-26 11:11 UTC — Wait interior is a title. Count is the only variable.
+
+**Why:** Founder: simpler than an approval-object chip. Popover = text they wrote + a number + two buttons. Combine = this Wait instance in this workflow until approved.
+
+**Founder wording:**
+
+> Inside of the wait node, I literally configure what the title of this wait node is. I call it optin. … it shows a pop-up … and says approve opt-in.
+
+> Every time any contacts pass through that node, that specific instance of the wait node in that specific workflow, it just adds to the number. Until that has been approved, and then it approves all of them at the same time.
+
+> It doesn’t need to know what comes next. … Apart from the part that’s variable, which is the number. … Even the part that says contacts or whatever is text as well.
+
+**Ascribe recut:** [`SYSTEMS-STAGED-START-ASCRIBE.md`](./SYSTEMS-STAGED-START-ASCRIBE.md) **11:11**.
+
+**Hard**
+
+1. **No chip of a sequence/audit on Wait.** Title (and prompt copy) are text. “Opt-in” is the name, not a bind to the next node.
+2. **Number** = occupancy of **this** Wait in **this** workflow, still open. Grows as more people hit it. Approve = all of them.
+3. **11:00 pane key retracted.** Titles matching across workflows do not merge bars.
 
 **Did not:** plates; packet; mint table; recut 015; overwrite 15:43.
 

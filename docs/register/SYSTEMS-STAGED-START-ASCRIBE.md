@@ -1,9 +1,9 @@
 # Systems — staged Start / wait-for-approval (ascribe, not a packet)
 
 **Seat:** Systems Analyst.  
-**When:** 2026-08-26 11:00 UTC (coalesce recut). 10:21 = two shapes. 10:15 = new class. 10:10 = wrong two-canvas.  
+**When:** 2026-08-26 11:11 UTC (title text + count). 11:00 chip recut. 10:21 = two shapes. 10:15 = new class. 10:10 = wrong two-canvas.  
 **What this is:** machine ascribe. **Not an Engineer cut. Not plates.** Founder: talk function first; plates later.  
-**Join:** founder wording this stamp · 017 (Available / N / person-verb vs set-verb) · 015 handle (do not recut) · Form occupancy **021** (interior pattern, not the kind).  
+**Join:** founder wording this stamp · 017 left handle for **N only** · 015 handle (do not recut).  
 **Flag:** 15:43 untouched.
 
 ---
@@ -247,6 +247,68 @@ If a later use needs “this workflow’s wait is a different decision even when
 - Store for the approval object (chip / mapped slot / pick — sequence, audit, …).
 - Await-row columns: object id for GROUP BY; wait_node + run for resume.
 - Start-all on a pane that mixed two workflows (legal under this ascribe; confirm when they lock).
+
+**11:00 chip / “approval object” is recut at 11:11.** Interior is a title. Pane keys on this Wait instance in this workflow.
+
+---
+
+## 2026-08-26 11:11 UTC — Interior is a title. Count is the only variable (founder)
+
+**Why:** Founder: much simpler than a chip of a sequence/audit on the node. The Wait does not know what comes next. The popover is text they wrote, plus a number.
+
+### Founder (excerpt)
+
+> The wait node is literally just … a text box. … Inside of the wait node, I literally configure what the title of this wait node is. I call it optin. … Because I’ve said wait for approval, it shows a pop-up on the approver’s workspace and says approve opt-in.
+>
+> The number of contacts … we can easily grab from the left side … Every time any contacts pass through that node, that specific instance of the wait node in that specific workflow, it just adds to the number. Until that has been approved, and then it approves all of them at the same time.
+>
+> It doesn’t need to know what comes next. … All that is text that we placed. … Apart from the part that’s variable, which is the number. … Even the part that says contacts or whatever is text as well.
+
+### Interior (approval)
+
+Click the Wait node.
+
+- Shape: wait for approval (duration is still the other shape: a duration, no popover).
+- **A text box:** the title of this Wait. Example: `optin`.
+- The prompt copy on the desk is also **text they wrote**. “Contacts” is text. There is no sequence picker, no Form-style chip of what comes next.
+
+### Desk (approval)
+
+A prompt (that title / that copy) + the **number** + two buttons: approve now, approve later. Bottom bar and middle popover are that same prompt. The number is the hole.
+
+The number = people on the left who have reached **this Wait node in this workflow** and are not yet approved. Another run hits the same instance → the number goes up. Approve → those people all continue together. After that, a new arrival starts a new count.
+
+### Pane key (11:00 retracted)
+
+| Combine | Split |
+|---------|--------|
+| Same Wait **instance** in the same **workflow**, still open | A different Wait node, or a different workflow, or this one already approved |
+
+Not “same sequence object.” There is no sequence object on the node. Two workflows both titled `optin` are two bars — they are two instances.
+
+Wait still does not read the next canvas node. After Approve, the walker just follows this Wait’s outgoing. The words “opt-in” are the title, not a bind to a sequence row.
+
+### Still do not
+
+- Put a sequence/audit chip on Wait (11:00).
+- Infer the popover from the next node.
+- Key the pane across workflows because the titles match.
+- Generate plates. Mint the await-row until they lock a packet.
+
+---
+
+## Specified and clear (11:11)
+
+- Approval Wait interior: **title text** (and desk copy is text). One variable: **count** from the left.
+- Count grows: every pass through **this** Wait in **this** workflow, until Approve, then all of them.
+- Two buttons: now / later. Duration: no pane.
+- Pane = that instance + that workflow, while open.
+
+## Specified but not clear (11:11)
+
+- One title field vs title + a prompt template (where the number sits, whether “contacts” is its own box).
+- Await-row: enough to COUNT by (workflow_id, wait_node_id) while open; Approve completes that set.
+- Duration interior (length only) — unchanged, still not locked in SQL.
 
 ---
 
