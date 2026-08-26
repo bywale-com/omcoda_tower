@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-26 10:15 UTC — Wait-for-approval is a **new node class** on that canvas. 10:10 two-canvas pass retracted. Not a cut. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-26 10:21 UTC — Wait has **two shapes** (duration · approval). Approval coalesces one pane. Not a cut. Not plates. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -2214,6 +2214,31 @@ So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WH
 
 **Did not:** packet; mint the await table; recut 015; overwrite 15:43.
 
+---
 
+## 2026-08-26 10:21 UTC — Wait: two shapes, distributor grain, coalesce. Function only.
+
+**Why:** Founder moved the conversation here (questions for SA). Do not generate plates. Copy onto the existing ascribe. Packet pass later reads 10:21.
+
+**Founder wording:**
+
+> There needs to be a new node … Wait. It has at least two shapes. Wait which is like a duration … There would be no pop-up or popover. It’s literally just a wait node. And then there’s a wait for approval
+
+> The wait node only runs once. So it takes everything … it’s like a distributor. It doesn’t run for each and every single data point … We should have that choice.
+
+> start now or start later. Simple as that.
+
+> If I upload just one contact … the pop-up shows. If they then upload another five … I don’t want another pop-up below. It should add to that. Six new contacts ready for opt-in. Unless they are different sequences … or a different automation completely
+
+**Ascribe recut:** [`SYSTEMS-STAGED-START-ASCRIBE.md`](./SYSTEMS-STAGED-START-ASCRIBE.md) **10:21**.
+
+**Hard**
+
+1. **One Wait class, two shapes.** Duration = clock, **no pane**. Approval = occupancy pane, Start now / later. Neither is `action.type`.
+2. **Grain is 017, not a new primitive.** Default this slice: **set-verb** (distributor, one visit over the handle). Person-verb vs set-verb stays a node setting. Desk coalesce is a **second** layer: the pane groups open rows by (workflow, Wait node, sequence chip) — so two imports still make **one** pane, not stacked popups.
+3. **Coalesce / split.** Same automation + same Wait node + same sequence + still open → count accumulates (1 then 5 = 6). Different sequence, different automation, or already Started → separate listing.
+4. Why approval: consultant control. One known use. Do not invent other Wait uses this stamp.
+
+**Did not:** plates; packet 028; mint await-row; recut 015; overwrite 15:43.
 
 
