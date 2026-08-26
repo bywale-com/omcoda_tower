@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Working §1.** Confirm **look** plates (not a packet): [`WAIT-NOTE-PLATES.md`](./WAIT-NOTE-PLATES.md) **W1–W3** Wait · **N1 · N1b · N2** note. Packet only if founder agrees. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Pickup:** [`WAIT-NOTE-PACKET.md`](./WAIT-NOTE-PACKET.md) — Approve now · Approve later. Look [`WAIT-NOTE-PLATES.md`](./WAIT-NOTE-PLATES.md). Workspace foot still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md). Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2772,6 +2772,18 @@ Flag 15:43 untouched.
 **Plates:** [`WAIT-NOTE-PLATES.md`](./WAIT-NOTE-PLATES.md) · **W1** canvas · **W2** approval title · **W3** duration · **N1** note · **N1b** Start later nest · **N2** solid bar. Sequence-preview S1 kept as prior.
 
 **Do not:** packet until they agree; recut SA’s ascribe; recut 015; overwrite 15:43; plant; mint tables.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-26 11:28 UTC — Wait note packet. Approve now · Approve later.
+
+**Why:** Founder: totally for it. Likes the look. No plate regen. Packet. Buttons are **not** Start now / Start later — always **Approve now** · **Approve later**. Agnostic of sequence language.
+
+**Packet:** [`WAIT-NOTE-PACKET.md`](./WAIT-NOTE-PACKET.md). Plates stay. PNGs that say Start = do not build. Pickup this file. Reminder [`CONFIRM-READY-DEFERRED.md`](./CONFIRM-READY-DEFERRED.md) points here.
+
+**Do not:** regen plates; ship Start; recut 015; overwrite 15:43; plant; mint tables.
 
 Flag 15:43 untouched.
 

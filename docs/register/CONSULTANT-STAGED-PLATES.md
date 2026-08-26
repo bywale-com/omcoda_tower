@@ -1,7 +1,7 @@
 # Consultant workspace — staged Start (plates, not a packet)
 
 **Seat:** Product Manager.  
-**Not a packet.** Recut of this look (title + count, no sequence table): [`WAIT-NOTE-PLATES.md`](./WAIT-NOTE-PLATES.md). This file keeps the earlier staged-preview plates as prior.  
+**Not a packet.** Pickup: [`WAIT-NOTE-PACKET.md`](./WAIT-NOTE-PACKET.md). Recut of this look (title + count; **Approve now** · **Approve later**). This file keeps the earlier staged-preview plates as prior.  
 **Who:** consultant **person**, **their** workspace. Shell **T4**: Consultant only. No Operator. No Contact picker.  
 **When:** after audit, **X contacts are staged** (sequence-ready). This is the confirm / Start face — not Canvas A itself.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
