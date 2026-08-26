@@ -4,7 +4,7 @@
 **What this is:** expansion of commence **§1**. Not an engineer packet yet. Recut = new packet when this pocket locks for build.  
 **Summary (stays tight):** new contact exists + consultant Start → assign **opt-in** → Agents. Nothing new.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
-**Cousins:** [`LAUNCH-TERRAIN.md`](./LAUNCH-TERRAIN.md) · confirm **look** plates [`CONSULTANT-STAGED-PLATES.md`](./CONSULTANT-STAGED-PLATES.md) (not a packet) · reminder [`CONFIRM-READY-DEFERRED.md`](./CONFIRM-READY-DEFERRED.md) · Audit field [`AUDIT-FIELD-PACKET.md`](./AUDIT-FIELD-PACKET.md) · Agents assign [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md) A14 (do not recut A40 here — this slice does **not** create a data-request form) · import vs new contact [`PRIMITIVES.md`](./PRIMITIVES.md) · workspace foot [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md).  
+**Cousins:** [`LAUNCH-TERRAIN.md`](./LAUNCH-TERRAIN.md) · confirm **look** plates [`WAIT-NOTE-PLATES.md`](./WAIT-NOTE-PLATES.md) (not a packet) · reminder [`CONFIRM-READY-DEFERRED.md`](./CONFIRM-READY-DEFERRED.md) · Audit field [`AUDIT-FIELD-PACKET.md`](./AUDIT-FIELD-PACKET.md) · Agents assign [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md) A14 (do not recut A40 here — this slice does **not** create a data-request form) · import vs new contact [`PRIMITIVES.md`](./PRIMITIVES.md) · workspace foot [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md).  
 **Does not:** plant; recut 015; mint tables; packet Confirm until they agree with the plates; batches; escrow; §2 sequence-complete; occupy Form; Get-everyone; a sequence picker of three.
 
 ---
@@ -34,7 +34,7 @@ Wait is not this canvas waiting for the consultant. One canvas cannot be “new 
 
 **Then:** **If** sequence-ready. True: they are eligible for Start. False: stop. Do not assign opt-in from this canvas.
 
-This is how we **know who is valid**. Confirm/Start is only eligible for those people. Confirm **look** is plates-first ([`CONSULTANT-STAGED-PLATES.md`](./CONSULTANT-STAGED-PLATES.md)) — do not block this canvas on that modal.
+This is how we **know who is valid**. Confirm/Start is only eligible for those people. Confirm **look** is plates-first ([`WAIT-NOTE-PLATES.md`](./WAIT-NOTE-PLATES.md)) — do not block this canvas on that modal.
 
 ### Canvas B — consultant Start → lodge into opt-in
 

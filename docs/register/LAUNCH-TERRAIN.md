@@ -24,7 +24,7 @@
 ### 1. Nothing → opt-in
 
 **Summary:** new contact exists + consultant Start → assign **opt-in** → Agents. Nothing new.  
-**Expanded (working this slice):** [`LAUNCH-1-NOTHING-TO-OPT-IN.md`](./LAUNCH-1-NOTHING-TO-OPT-IN.md). Two canvases (arrive → audit · Start → assign). Confirm look plates [`CONSULTANT-STAGED-PLATES.md`](./CONSULTANT-STAGED-PLATES.md) — not a packet until they agree.
+**Expanded (working this slice):** [`LAUNCH-1-NOTHING-TO-OPT-IN.md`](./LAUNCH-1-NOTHING-TO-OPT-IN.md). Two canvases (arrive → audit · Start → assign). Confirm look plates [`WAIT-NOTE-PLATES.md`](./WAIT-NOTE-PLATES.md) — not a packet until they agree.
 
 ### 2. Opt-in complete → first re-engagement
 
@@ -66,7 +66,7 @@ Law 21 already. Not a queue. After reactivate-agent objective completes: in-app 
 
 ### 7. Open, not this commence slice
 
-- Confirm **look** — plates [`CONSULTANT-STAGED-PLATES.md`](./CONSULTANT-STAGED-PLATES.md); packet if they agree.  
+- Confirm **look** — plates [`WAIT-NOTE-PLATES.md`](./WAIT-NOTE-PLATES.md); packet if they agree.  
 - Meeting booked → brief / display: automation vs hardcoded.  
 - Canvas chain on sequence complete if not already possible (law 28 / 32).  
 - Sequence-complete trigger grain vs failure.

@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Working §1.** Expanded: [`LAUNCH-1-NOTHING-TO-OPT-IN.md`](./LAUNCH-1-NOTHING-TO-OPT-IN.md). Confirm **look** plates (not a packet): [`CONSULTANT-STAGED-PLATES.md`](./CONSULTANT-STAGED-PLATES.md) **S1** open · **S1b** Start later nest · **S2** solid bar + Start now. Packet only if founder agrees. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Working §1.** Confirm **look** plates (not a packet): [`WAIT-NOTE-PLATES.md`](./WAIT-NOTE-PLATES.md) **W1–W3** Wait · **N1 · N1b · N2** note. Packet only if founder agrees. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2758,6 +2758,20 @@ Flag 15:43 untouched.
 **Pulled “Wait node” / “no Wait”** from [`LAUNCH-1-NOTHING-TO-OPT-IN.md`](./LAUNCH-1-NOTHING-TO-OPT-IN.md) and [`LAUNCH-TERRAIN.md`](./LAUNCH-TERRAIN.md) (those are papers, not packets — same smell). Two canvases / do not collapse **stays**: arrive vs Start are two operations. That is not a ban on a Wait kind. SA ascribes the machine.
 
 **Do not:** invent packet rules; recut 015; overwrite 15:43; plant; mint tables.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-26 11:23 UTC — Wait note plates. Title + count. Not a packet.
+
+**Why:** Founder: look at what SA just committed — that is the idea for the **note**. Generate as many plates as that look needs.
+
+**SA:** PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86) [`SYSTEMS-STAGED-START-ASCRIBE.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/sa-agents-flagship-inventory-a500/docs/register/SYSTEMS-STAGED-START-ASCRIBE.md) **11:11** — Wait interior is a title; desk variable is the count.
+
+**Plates:** [`WAIT-NOTE-PLATES.md`](./WAIT-NOTE-PLATES.md) · **W1** canvas · **W2** approval title · **W3** duration · **N1** note · **N1b** Start later nest · **N2** solid bar. Sequence-preview S1 kept as prior.
+
+**Do not:** packet until they agree; recut SA’s ascribe; recut 015; overwrite 15:43; plant; mint tables.
 
 Flag 15:43 untouched.
 

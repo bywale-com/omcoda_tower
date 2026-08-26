@@ -2,7 +2,7 @@
 
 **Seat:** Product Manager.  
 **Not a packet.** Do not hand this to the engineer this sprint.  
-**Plates (look only, 2026-08-26 recut):** [`CONSULTANT-STAGED-PLATES.md`](./CONSULTANT-STAGED-PLATES.md) — **S1** open · **S1b** Start later nest · **S2** solid bar + Start now. Packet only if the founder agrees. Recut = **new packet**. Do not mutate this reminder into the packet.  
+**Plates (look only):** [`WAIT-NOTE-PLATES.md`](./WAIT-NOTE-PLATES.md) — Wait interiors **W1–W3** · desk note **N1 · N1b · N2**. Packet only if the founder agrees. Recut = **new packet**. Do not mutate this reminder into the packet.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
 **Does not:** plant; recut 015; mint tables; replace Start as an operation; freeze Launch window / Launch day as types.
 
