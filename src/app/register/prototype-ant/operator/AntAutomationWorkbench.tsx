@@ -1352,9 +1352,11 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
           ) : selectedNode?.type === "rule" ? (
             <RuleOutcomesPane
               config={selectedNode.data.ruleConfig ?? emptyRuleNodeConfig()}
-              onChange={(ruleConfig) =>
+              mappedSlots={selectedNode.data.mappedSlots}
+              onChange={({ ruleConfig, mappedSlots }) =>
                 patchNodeData(setNodes, selectedNode.id, {
                   ruleConfig,
+                  mappedSlots,
                   configured: true,
                   ruleSummary: selectedNode.data.label,
                 })

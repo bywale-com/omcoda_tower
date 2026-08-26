@@ -12,6 +12,31 @@ import {
 } from "./campaignHousing.ts";
 import { writesFromPayload, type RunWrite } from "./runWrites.ts";
 
+const RULE_LEFT_FIELD_MAP: Record<string, string> = {
+  "client_data.crs.language_clb": "language_clb",
+  "client_data.crs.score": "crs_score",
+  "client_data.crs.noc": "noc",
+  "client_data.crs.teer_category": "teer_category",
+  "client_data.information.canadian_skilled_hours": "canadian_skilled_hours",
+  "client_data.information.foreign_work_years": "foreign_work_years",
+  "client_data.information.foreign_trade_hours": "foreign_trade_hours",
+  "client_data.information.eca_status": "eca_status",
+  "client_data.information.ee_profile_exists": "ee_profile_exists",
+  "client_data.information.ee_profile_last_updated": "ee_profile_last_updated",
+  "client_data.information.has_ontario_job_offer": "has_ontario_job_offer",
+  "client_data.information.has_qualifying_job_offer": "has_qualifying_job_offer",
+  "client_data.information.has_trade_certificate": "has_trade_certificate",
+};
+
+const RULE_SILENT_LEFTS = new Set([
+  "client_data.crs.work_permit_warn",
+  "client_data.information.days_in_system",
+  "client_data.crs.work_permit_expiry",
+  "client_data.information.oinp_student_context",
+  "client_data.information.status",
+  "client_data.crs.province",
+]);
+
 export type RfNode = {
   id: string;
   type?: string;
@@ -366,7 +391,7 @@ async function executeRuleWrites(
     catalog.rows.filter((row) => row.capture === "self_reportable").map((row) => row.field_key),
   );
   let keys = listingFieldIds.length
-    ? listingFieldIds
+    ? listingFieldIds.map((key) => RULE_LEFT_FIELD_MAP[key] ?? key)
     : catalog.rows.filter((row) => row.capture === "self_reportable").map((row) => row.field_key);
   if (selfReportable.size) keys = keys.filter((key) => selfReportable.has(key));
   const writes: RunWrite[] = [];
@@ -395,12 +420,15 @@ async function executeRuleWrites(
     }
   }
   const listing = [...listingKeys];
+  const collectibleKeys = new Set(catalog.rows.map((row) => row.field_key));
+  const checks = await evaluateRuleConditions(pool, ctx, data, ruleConfig, contactIds, collectibleKeys);
   const lastOutput = {
     headline: writes.length ? "Required data" : "Pass",
     pass: writes.length === 0,
     requiredData: listing,
     listing,
     writes,
+    checks,
     nudge: Boolean(ruleConfig.nudgeSignalOn ?? true),
     reactivation: Boolean(ruleConfig.reactivationSignalOn ?? true),
   };
@@ -409,13 +437,160 @@ async function executeRuleWrites(
 
 function fieldMatches(val: unknown, op: string, expected: unknown): boolean {
   if (op === "exists") return val != null && val !== "";
+  if (op === "not_exists") return val == null || val === "";
   const eq =
     val === expected ||
     String(val) === String(expected) ||
     (val === false && (expected === "false" || expected === false)) ||
     (val === true && (expected === "true" || expected === true));
   if (op === "neq" || op === "not_equals") return !eq;
+  const nL = typeof val === "number" ? val : Number(val);
+  const nR = typeof expected === "number" ? expected : Number(expected);
+  const bothNum = Number.isFinite(nL) && Number.isFinite(nR);
+  if (op === "gte") return bothNum && nL >= nR;
+  if (op === "gt") return bothNum && nL > nR;
+  if (op === "lte") return bothNum && nL <= nR;
+  if (op === "lt") return bothNum && nL < nR;
+  if (op === "contains") {
+    if (bothNum) return nL >= nR;
+    return String(val ?? "").includes(String(expected ?? ""));
+  }
+  if (op === "not_contains") {
+    const banned = String(expected ?? "")
+      .split(",")
+      .map((part) => part.trim())
+      .filter(Boolean);
+    if (banned.length > 1) return !banned.includes(String(val ?? ""));
+    return !String(val ?? "").includes(String(expected ?? ""));
+  }
   return eq;
+}
+
+function jsonbScalar(value: unknown): string {
+  if (value == null) return "";
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return String(value);
+  return JSON.stringify(value);
+}
+
+function hydrateWalkLeft(raw: unknown, leftField: string): WalkOperand {
+  const parsed = parseOperand(raw);
+  if (parsed) return parsed;
+  const field = (leftField ?? "").trim();
+  if (!field || RULE_SILENT_LEFTS.has(field)) return { mode: "text", value: "" };
+  return { mode: "text", value: RULE_LEFT_FIELD_MAP[field] ?? field };
+}
+
+function hydrateWalkRight(raw: unknown, constantKey: string): WalkOperand {
+  const parsed = parseOperand(raw);
+  if (parsed) return parsed;
+  return { mode: "text", value: (constantKey ?? "").trim() };
+}
+
+async function lookupPackConstant(pool: Pool, firmId: string, key: string): Promise<string | undefined> {
+  if (!key) return undefined;
+  const packs = await pool.query<{ payload: Record<string, unknown> }>(
+    `SELECT payload FROM constants_packs
+      WHERE firm_id=$1 OR firm_id IS NULL
+      ORDER BY CASE WHEN firm_id=$1 THEN 0 ELSE 1 END, version DESC`,
+    [firmId],
+  );
+  for (const row of packs.rows) {
+    const payload =
+      typeof row.payload === "string" ? (JSON.parse(row.payload) as Record<string, unknown>) : row.payload;
+    if (payload && Object.prototype.hasOwnProperty.call(payload, key) && payload[key] != null) {
+      return jsonbScalar(payload[key]);
+    }
+  }
+  const ref = await pool.query<{ payload: unknown }>(
+    `SELECT payload FROM reference_versions
+      WHERE key=$1 AND (firm_id=$2 OR firm_id IS NULL)
+      ORDER BY version DESC LIMIT 1`,
+    [key, firmId],
+  );
+  const payload = ref.rows[0]?.payload;
+  if (payload == null) return undefined;
+  if (typeof payload === "object" && !Array.isArray(payload) && payload && key in (payload as object)) {
+    return jsonbScalar((payload as Record<string, unknown>)[key]);
+  }
+  return jsonbScalar(payload);
+}
+
+async function resolveRuleOperand(
+  pool: Pool,
+  ctx: WalkContext,
+  data: Record<string, unknown>,
+  operand: WalkOperand,
+  side: "left" | "right",
+  contactId: string | undefined,
+  collectibleKeys: Set<string>,
+): Promise<string | undefined> {
+  if (operand.mode === "chip") return resolveOperandText(pool, ctx, data, operand, contactId);
+  const text = operand.value.trim();
+  if (!text) return undefined;
+  if (side === "left" && collectibleKeys.has(text) && contactId) {
+    const row = await pool.query<{ value: unknown }>(
+      `SELECT value FROM fact_writebacks
+        WHERE firm_id=$1 AND contact_id=$2 AND field_key=$3
+        ORDER BY created_at DESC LIMIT 1`,
+      [ctx.firmId, contactId, text],
+    );
+    if (!row.rowCount) return undefined;
+    return jsonbScalar(row.rows[0]?.value);
+  }
+  if (side === "right") {
+    const fromPack = await lookupPackConstant(pool, ctx.firmId, text);
+    if (fromPack != null) return fromPack;
+  }
+  return text;
+}
+
+async function evaluateRuleConditions(
+  pool: Pool,
+  ctx: WalkContext,
+  data: Record<string, unknown>,
+  ruleConfig: Record<string, unknown>,
+  contactIds: string[],
+  collectibleKeys: Set<string>,
+): Promise<Array<{ outcomeId: string; id: string; pass: boolean }>> {
+  const outcomeConditions = ruleConfig.outcomeConditions;
+  if (!outcomeConditions || typeof outcomeConditions !== "object") return [];
+  const enabled = Array.isArray(ruleConfig.enabledOutcomeIds)
+    ? (ruleConfig.enabledOutcomeIds as unknown[]).map(String)
+    : Object.keys(outcomeConditions as object);
+  const checks: Array<{ outcomeId: string; id: string; pass: boolean }> = [];
+  const people = contactIds.length ? contactIds : [undefined];
+  for (const outcomeId of enabled) {
+    const conds = (outcomeConditions as Record<string, unknown>)[outcomeId];
+    if (!Array.isArray(conds)) continue;
+    for (const raw of conds) {
+      if (!raw || typeof raw !== "object") continue;
+      const rec = raw as Record<string, unknown>;
+      const left = hydrateWalkLeft(rec.left, String(rec.leftField ?? ""));
+      const right = hydrateWalkRight(rec.right, String(rec.constantKey ?? ""));
+      const op = typeof rec.op === "string" ? rec.op : String(rec.operator ?? "eq");
+      const id = String(rec.id ?? `${outcomeId}-check`);
+      let pass = true;
+      for (const contactId of people) {
+        const leftVal = await resolveRuleOperand(pool, ctx, data, left, "left", contactId, collectibleKeys);
+        if (op === "exists") {
+          if (leftVal == null || leftVal === "") pass = false;
+          continue;
+        }
+        if (op === "not_exists") {
+          if (!(leftVal == null || leftVal === "")) pass = false;
+          continue;
+        }
+        if (leftVal == null || leftVal === "") {
+          pass = false;
+          continue;
+        }
+        const rightVal = await resolveRuleOperand(pool, ctx, data, right, "right", contactId, collectibleKeys);
+        if (!fieldMatches(leftVal, op, rightVal ?? "")) pass = false;
+      }
+      checks.push({ outcomeId, id, pass });
+    }
+  }
+  return checks;
 }
 
 function nestedField(row: Record<string, unknown> | null, field: string): unknown {

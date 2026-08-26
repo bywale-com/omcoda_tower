@@ -116,6 +116,19 @@
           "name": "/c/c-cedar-ana"
         }
       ]
+    },
+    {
+      "id": "008_constants_pack_keys",
+      "file": "008_constants_pack_keys.sql",
+      "environments": ["development", "staging"],
+      "description": "Immigration pack keys on constants_packs.payload (027)",
+      "records": [
+        {
+          "table": "constants_packs",
+          "id": "pack.immigration.criteria",
+          "name": "Immigration criteria"
+        }
+      ]
     }
   ]
 }
