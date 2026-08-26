@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-26 11:11 UTC — Wait interior is a **title**. Count from the left. Same instance + workflow until Approve. Not a cut. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-26 19:35 UTC — **028** Wait kind + occupancy + approval note. Engineer pickup. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -2288,5 +2288,19 @@ So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WH
 3. **11:00 pane key retracted.** Titles matching across workflows do not merge bars.
 
 **Did not:** plates; packet; mint table; recut 015; overwrite 15:43.
+
+---
+
+## 2026-08-26 19:35 UTC — Packet 028. Wait is pickup.
+
+**Why:** Founder: revisit the PM rendition; Engineer can finally pick up. Read [#96](https://github.com/bywale-com/omcoda_tower/pull/96) `WAIT-NOTE-PACKET.md` (frozen 11:28) + `WAIT-NOTE-APPROVER-PACKET.md` (W2b 18:32).
+
+**New vs 11:11 ascribe:** Approver Consultant · Operator. Buttons **Approve now** · **Approve later** (not Start). N1b nest. N2 solid bar + Approve now on the right. Duration amount + unit, no note.
+
+**SA paste:** (A) `wait` kind — confirmed, not `action.type`. (B) one title field. (C) mint `wait_occupancy` — `node_status` cannot COUNT two imports.
+
+**Cut:** [`SYSTEMS-CHANGE-PACKET-028.md`](./SYSTEMS-CHANGE-PACKET-028.md). Migration `021_wait_occupancy.sql`. Additive. Do not recut 015. Do not recut house seed. Empty occupancy (no 24).
+
+**Did not:** implement the cut; recut 015; overwrite 15:43; restore campaign preview.
 
 

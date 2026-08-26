@@ -1,9 +1,9 @@
 # Systems — staged Start / wait-for-approval (ascribe, not a packet)
 
 **Seat:** Systems Analyst.  
-**When:** 2026-08-26 11:11 UTC (title text + count). 11:00 chip recut. 10:21 = two shapes. 10:15 = new class. 10:10 = wrong two-canvas.  
-**What this is:** machine ascribe. **Not an Engineer cut. Not plates.** Founder: talk function first; plates later.  
-**Join:** founder wording this stamp · 017 left handle for **N only** · 015 handle (do not recut).  
+**When:** 2026-08-26 19:35 UTC (packet **028**). 11:11 = title + count. 11:00 chip recut. 10:21 = two shapes. 10:15 = new class. 10:10 = wrong two-canvas.  
+**What this is:** ascribe trail. **Cut is [`SYSTEMS-CHANGE-PACKET-028.md`](./SYSTEMS-CHANGE-PACKET-028.md).**  
+**Join:** PM pickup [`WAIT-NOTE-APPROVER-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/WAIT-NOTE-APPROVER-PACKET.md) + frozen [`WAIT-NOTE-PACKET.md`](https://github.com/bywale-com/omcoda_tower/blob/cursor/node-interior-a11-4b9f/docs/register/WAIT-NOTE-PACKET.md) on PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96). 017 left handle for **N** · 015 handle (do not recut).  
 **Flag:** 15:43 untouched.
 
 ---
@@ -312,6 +312,20 @@ Wait still does not read the next canvas node. After Approve, the walker just fo
 
 ---
 
+## 2026-08-26 19:35 UTC — PM plates locked. Packet 028.
+
+**Why:** Founder: look at the PM rendition; Engineer can pick up. Face on [#96](https://github.com/bywale-com/omcoda_tower/pull/96): Wait note frozen 11:28 + Approver W2b 18:32.
+
+**New on the glass (cut in 028):** Approver Consultant · Operator (W2b). Buttons **Approve now** · **Approve later** (PNG Start ignored). N1b nest beneath Approve later. N2 solid bar, Approve now on the right. Duration W3: amount + unit, no note.
+
+**SA paste answered:** (A) kind `wait`, not `action.type` — confirmed. (B) one title field; desk heading is that string; “contacts” not a second box. (C) `wait_occupancy` — `node_status` cannot COUNT across runs.
+
+**Decided (PM not-clear):** N1 on first occupancy this session; later arrivals bump the bar if already X’d. Date+time **is** the schedule. Consultant = that firm’s T4 desk. Segment, not dropdown.
+
+**Cut:** [`SYSTEMS-CHANGE-PACKET-028.md`](./SYSTEMS-CHANGE-PACKET-028.md). Additive. Do not recut 015.
+
+---
+
 ## 2026-08-26 10:15 — New class (kept)
 
 Wait is not Action. Graph: Trigger → Audit → If valid → Wait → enroll. Popup = occupancy of Wait’s writes. 10:10 retracted.
@@ -329,4 +343,4 @@ Two canvases, no Wait node, popup as a naked pane of `sequence_ready`. That hide
 - Stuff wait into `action.type` and recut Action’s visit.
 - Overload `sequence_ready`.
 - Recut 015’s handle type. Recut A40 into Start.
-- Packet Confirm until they agree. Overwrite 15:43.
+- Overwrite 15:43. **028 is the cut.**
