@@ -1,7 +1,7 @@
 # Systems — staged Start / wait-for-approval (ascribe, not a packet)
 
 **Seat:** Systems Analyst.  
-**When:** 2026-08-26 10:21 UTC (function recut). 10:15 = new class. 10:10 = wrong two-canvas.  
+**When:** 2026-08-26 11:00 UTC (coalesce recut). 10:21 = two shapes. 10:15 = new class. 10:10 = wrong two-canvas.  
 **What this is:** machine ascribe. **Not an Engineer cut. Not plates.** Founder: talk function first; plates later.  
 **Join:** founder wording this stamp · 017 (Available / N / person-verb vs set-verb) · 015 handle (do not recut) · Form occupancy **021** (interior pattern, not the kind).  
 **Flag:** 15:43 untouched.
@@ -176,6 +176,77 @@ Duration shape never coalesces on the desk. There is no pane.
 - Duration: one clock for the batch vs per-person clocks.
 - Start-later datetime vs duration-wait (two different clocks? same column?).
 - Whether an in-progress Start on *some* people in a group splits the pane (ascribed: completed rows leave; remaining stay).
+
+**10:21 coalesce key is recut at 11:00.** Workflow + Wait-node + “next sequence” are not the pane key.
+
+---
+
+## 2026-08-26 11:00 UTC — Pane key is what Wait approves (founder)
+
+**Why:** Founder recut the split. 10:21 keyed the listing on same workflow + same Wait node + same sequence (as if sequence = the next canvas node). That is too much, and it makes Wait look like it only lives in front of a sequence.
+
+### Founder (excerpt)
+
+> All the popovers are still connected to this wait node. There are specifically two popovers … when it’s wait for approval: the popover that sits at the bottom of the page, the first indicator. And then when you click inside of that … the middle popover, where you can approve now or approve later. … They both give context as to what this wait node approves. It’s when what it approves is the same thing … It combines together.
+>
+> It can’t be the next sequence. … The wait node is agnostic of the node. It’s not only used when it’s before a sequence. It can be used before anything, can be used before an audit.
+>
+> Whether it’s the same workflow or not may not matter, unless you have contrivances towards that.
+
+### Two popovers (approval shape only)
+
+Same occupancy. Two chrome of it. Duration still has **no** pane.
+
+| Chrome | What |
+|--------|------|
+| **Bottom** | First indicator. Count + **what this Wait approves**. |
+| **Middle** | Click the bottom. Approve now / Approve later. Same **what it approves**. Occupancy of who is waiting. |
+
+Not a consultant modal Automations paints. Both are the workspace listing of Wait’s writes.
+
+### The primitive (yes — it is legible)
+
+**Wait does not inherit “what this is” from the next node.** The approval object is configured **on the Wait node**. Sequence in this slice is one value of that object, not the kind. Same node can sit before enroll, before Audit, before anything. The chip in both popovers **is that object**.
+
+Pane key = **that object** (still-open occupancy for it).
+
+| Combine | Split |
+|---------|--------|
+| What they are approving is the **same thing** | What they are approving is a **different thing** |
+
+One contact, then five more, same approval object → one bottom bar, count 6, one middle. Different approval object → another bar. Not “the next node is a different sequence.” Not “a different Wait node id.” Not “a different workflow” as the default split.
+
+Completed rows leave the listing (they Started). New arrivals for the **same** object add to the same bar. Do not open a second bar because an earlier batch already left.
+
+### The only contrivance (workflow / Wait node)
+
+Listing does **not** key on workflow or on Wait-node id.
+
+Each occupancy **row** still carries `wait_node_id` + run (and therefore which workflow). Approve completes **that row’s** wait: walker resumes **that** node’s outgoing. If two workflows park people for the **same** approval object, one pane is legal; Start-all completes each row on its own graph. That is why the row keeps those ids — resume, not grouping.
+
+If a later use needs “this workflow’s wait is a different decision even when the chip looks the same,” that is a new split. It is not the default.
+
+### Still do not
+
+- Infer the chip from the next canvas node.
+- Key the pane on workflow or Wait-node id (10:21).
+- Stuff Wait into `action.type`.
+- Generate plates. Mint the await-row until they lock a packet.
+
+---
+
+## Specified and clear (11:00)
+
+- Approval Wait: two popovers (bottom indicator · middle now/later). Both show **what this Wait approves**.
+- That object lives **on the Wait node**. Agnostic of the next node. Sequence is one use, not the kind.
+- Pane key = same approval object (open occupancy). Else split.
+- Workflow / Wait-node id: on the **row** for resume, not the pane key.
+
+## Specified but not clear (11:00)
+
+- Store for the approval object (chip / mapped slot / pick — sequence, audit, …).
+- Await-row columns: object id for GROUP BY; wait_node + run for resume.
+- Start-all on a pane that mixed two workflows (legal under this ascribe; confirm when they lock).
 
 ---
 

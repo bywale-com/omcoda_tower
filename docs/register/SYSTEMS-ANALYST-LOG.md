@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-26 10:21 UTC — Wait has **two shapes** (duration · approval). Approval coalesces one pane. Not a cut. Not plates. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-26 11:00 UTC — Approval pane keys on **what Wait approves**, not next node / workflow. Two popovers. Not a cut. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -2240,5 +2240,29 @@ So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WH
 4. Why approval: consultant control. One known use. Do not invent other Wait uses this stamp.
 
 **Did not:** plates; packet 028; mint await-row; recut 015; overwrite 15:43.
+
+---
+
+## 2026-08-26 11:00 UTC — Coalesce is the approval object. Wait is node-agnostic.
+
+**Why:** Founder recut 10:21’s pane key (workflow + Wait node + “same sequence”). Two popovers restated. Same workflow only if a contrivance needs it.
+
+**Founder wording:**
+
+> two popovers … wait for approval … the popover that sits at the bottom of the page, the first indicator. And then … the middle popover, where you can approve now or approve later. … They both give context as to what this wait node approves. It’s when what it approves is the same thing
+
+> It can’t be the next sequence. … The wait node is agnostic of the node. It’s not only used when it’s before a sequence. It can be used before anything, can be used before an audit.
+
+> Whether it’s the same workflow or not may not matter, unless you have contrivances towards that.
+
+**Ascribe recut:** [`SYSTEMS-STAGED-START-ASCRIBE.md`](./SYSTEMS-STAGED-START-ASCRIBE.md) **11:00**.
+
+**Hard**
+
+1. **Primitive holds.** What Wait approves is configured **on that node**, not inherited from the next node. Sequence in the opt-in slice is one value. Audit is another. Pane groups open occupancy by **that object**.
+2. **Two popovers, one occupancy.** Bottom = indicator. Middle = now/later. Both show that object. Duration still has no pane.
+3. **10:21 split retracted.** Do not key the pane on workflow or Wait-node id. Rows still store wait node + run so Approve resumes **that** outgoing (the only contrivance).
+
+**Did not:** plates; packet; mint table; recut 015; overwrite 15:43.
 
 
