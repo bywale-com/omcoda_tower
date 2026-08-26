@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Pickup:** [`WAIT-NOTE-PACKET.md`](./WAIT-NOTE-PACKET.md) — Approve now · Approve later. Look [`WAIT-NOTE-PLATES.md`](./WAIT-NOTE-PLATES.md). Workspace foot still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md). Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Pickup:** [`WAIT-NOTE-APPROVER-PACKET.md`](./WAIT-NOTE-APPROVER-PACKET.md) — Approver Consultant · Operator (**W2b**). Prior Wait note [`WAIT-NOTE-PACKET.md`](./WAIT-NOTE-PACKET.md) frozen. Workspace foot still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md). Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2784,6 +2784,18 @@ Flag 15:43 untouched.
 **Packet:** [`WAIT-NOTE-PACKET.md`](./WAIT-NOTE-PACKET.md). Plates stay. PNGs that say Start = do not build. Pickup this file. Reminder [`CONFIRM-READY-DEFERRED.md`](./CONFIRM-READY-DEFERRED.md) points here.
 
 **Do not:** regen plates; ship Start; recut 015; overwrite 15:43; plant; mint tables.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-26 18:32 UTC — Approver on Wait for approval. W2b. Recut packet.
+
+**Why:** Founder: gap is who approves. On **W2**, when Wait for approval is on, around Title, select Approver. Two options for now: **Consultant** · **Operator**. Not Contact. Don’t work the backend. See the plate. Spec it in the packet.
+
+**Packet:** [`WAIT-NOTE-APPROVER-PACKET.md`](./WAIT-NOTE-APPROVER-PACKET.md). Plate [`W2b-wait-approver.png`](./automations-blueprint/W2b-wait-approver.png). Prior [`WAIT-NOTE-PACKET.md`](./WAIT-NOTE-PACKET.md) frozen.
+
+**Do not:** add Contact; people picker; mint; recut 015; overwrite 15:43; plant.
 
 Flag 15:43 untouched.
 

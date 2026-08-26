@@ -1,7 +1,7 @@
 # Wait note — plates
 
 **Seat:** Product Manager.  
-**Packet (locked):** [`WAIT-NOTE-PACKET.md`](./WAIT-NOTE-PACKET.md). Engineer paste + SA paste + five buckets live there.  
+**Packet (locked):** [`WAIT-NOTE-APPROVER-PACKET.md`](./WAIT-NOTE-APPROVER-PACKET.md) (pickup). Rest of the note: [`WAIT-NOTE-PACKET.md`](./WAIT-NOTE-PACKET.md) (frozen).  
 **Buttons (written spec):** **Approve now** · **Approve later**. PNGs still say Start — do not build Start. No plate regen.  
 **SA paper (read, do not recut):** fetch `origin pull/86/head` then `docs/register/SYSTEMS-STAGED-START-ASCRIBE.md` **11:11** — PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86).  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
@@ -25,7 +25,8 @@ Approval Wait writes a prompt on the approver’s desk. The prompt is **text the
 | # | File | What it is |
 |---|------|------------|
 | **W1** | [`W1-wait-canvas.png`](./automations-blueprint/W1-wait-canvas.png) | Wait is a kind on the palette and on the chain. |
-| **W2** | [`W2-wait-interior-approval.png`](./automations-blueprint/W2-wait-interior-approval.png) | Approval shape. One **title** text box. |
+| **W2** | [`W2-wait-interior-approval.png`](./automations-blueprint/W2-wait-interior-approval.png) | **Prior.** Title only. Do not ship without Approver. |
+| **W2b** | [`W2b-wait-approver.png`](./automations-blueprint/W2b-wait-approver.png) | Approval. Title + **Approver:** Consultant · Operator. |
 | **W3** | [`W3-wait-interior-duration.png`](./automations-blueprint/W3-wait-interior-duration.png) | Duration shape. A duration. No desk pane. |
 | **N1** | [`N1-wait-note-open.png`](./consultant-blueprint/N1-wait-note-open.png) | Middle note. Title + count + **Approve now** · **Approve later** (pixels: Start). **X**. |
 | **N1b** | [`N1b-wait-note-start-later.png`](./consultant-blueprint/N1b-wait-note-start-later.png) | Approve later clicked. Small date · time popover beneath that button. |
@@ -43,13 +44,21 @@ Approval Wait writes a prompt on the approver’s desk. The prompt is **text the
 
 ---
 
-### W2 — approval interior
+### W2 — approval interior (prior)
 
 ![W2 approval](./automations-blueprint/W2-wait-interior-approval.png)
 
-**Copy:** Shape **Wait for approval**. A **title** text box. That is the interior.
+**Prior:** Title only. Pickup **W2b**.
 
-**Ignore:** The word `example` if it leaked into the field. Get’s Firm / Contact cascade. Sequence / audit chips. Teaching lines on the shape cards.
+---
+
+### W2b — Approver
+
+![W2b Approver](./automations-blueprint/W2b-wait-approver.png)
+
+**Copy:** Shape **Wait for approval**. **Title** text box. **Approver:** **Consultant** · **Operator**. Two values. Around Title. Packet [`WAIT-NOTE-APPROVER-PACKET.md`](./WAIT-NOTE-APPROVER-PACKET.md).
+
+**Ignore:** `optin`. Harbor. Teaching. Contact as a third value. A people list.
 
 ---
 

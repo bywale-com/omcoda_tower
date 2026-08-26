@@ -1,5 +1,7 @@
 # Wait note packet — W1–W3 · N1 · N1b · N2
 
+**Frozen cut.** Approver recut: [`WAIT-NOTE-APPROVER-PACKET.md`](./WAIT-NOTE-APPROVER-PACKET.md). **Do not edit this body.** Pickup is that file.
+
 **Seat:** Product Manager. For the **engineer** and the **Systems Analyst**. One pocket. Do not lose this.  
 **When:** Locked 2026-08-26 11:28 UTC. Look agreed. Buttons recut in writing — **no plate regen**.  
 **Plates:** [`WAIT-NOTE-PLATES.md`](./WAIT-NOTE-PLATES.md) · **W1** [`W1-wait-canvas.png`](./automations-blueprint/W1-wait-canvas.png) · **W2** [`W2-wait-interior-approval.png`](./automations-blueprint/W2-wait-interior-approval.png) · **W3** [`W3-wait-interior-duration.png`](./automations-blueprint/W3-wait-interior-duration.png) · **N1** [`N1-wait-note-open.png`](./consultant-blueprint/N1-wait-note-open.png) · **N1b** [`N1b-wait-note-start-later.png`](./consultant-blueprint/N1b-wait-note-start-later.png) · **N2** [`N2-wait-note-bar.png`](./consultant-blueprint/N2-wait-note-bar.png).  

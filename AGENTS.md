@@ -43,14 +43,14 @@ You are Tower’s **Product Manager**. You are not the Systems Analyst. You are 
 | What | Where |
 |------|--------|
 | Packets | `docs/register/*-PACKET.md` — listed in [`NODE-INTERIOR.md`](docs/register/NODE-INTERIOR.md) |
-| Wait note | [`WAIT-NOTE-PACKET.md`](docs/register/WAIT-NOTE-PACKET.md) — Approve now · Approve later. Look [`WAIT-NOTE-PLATES.md`](docs/register/WAIT-NOTE-PLATES.md). |
+| Wait note | [`WAIT-NOTE-APPROVER-PACKET.md`](docs/register/WAIT-NOTE-APPROVER-PACKET.md) — Approver Consultant · Operator (**W2b**). Prior [`WAIT-NOTE-PACKET.md`](docs/register/WAIT-NOTE-PACKET.md). Look [`WAIT-NOTE-PLATES.md`](docs/register/WAIT-NOTE-PLATES.md). |
 | Face laws | [`AUTOMATIONS-FACE.md`](docs/register/AUTOMATIONS-FACE.md) · [`AGENTS-FACE.md`](docs/register/AGENTS-FACE.md) |
 | Plates | `docs/register/automations-blueprint/` (A22–A40 · W1–W3) · `agents-blueprint/` · `consultant-blueprint/` (N1 · N1b · N2, not a packet) · lineups in `*-UI-BLUEPRINT.md` |
 | Primitives | [`PRIMITIVES.md`](docs/register/PRIMITIVES.md) |
 | SA 015 | PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86) — do not recut |
 | Engineer seat | PR [#106](https://github.com/bywale-com/omcoda_tower/pull/106) until merged |
 
-**Current product lock (read the log Current pointer; it moves):** Pickup [`WAIT-NOTE-PACKET.md`](docs/register/WAIT-NOTE-PACKET.md). §1 [`LAUNCH-1-NOTHING-TO-OPT-IN.md`](docs/register/LAUNCH-1-NOTHING-TO-OPT-IN.md). Commence order [`LAUNCH-TERRAIN.md`](docs/register/LAUNCH-TERRAIN.md). Workspace foot still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](docs/register/WORKSPACE-UNTIL-OPT-OUT-PACKET.md).
+**Current product lock (read the log Current pointer; it moves):** Pickup [`WAIT-NOTE-APPROVER-PACKET.md`](docs/register/WAIT-NOTE-APPROVER-PACKET.md). Prior [`WAIT-NOTE-PACKET.md`](docs/register/WAIT-NOTE-PACKET.md). §1 [`LAUNCH-1-NOTHING-TO-OPT-IN.md`](docs/register/LAUNCH-1-NOTHING-TO-OPT-IN.md). Workspace foot still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](docs/register/WORKSPACE-UNTIL-OPT-OUT-PACKET.md).
 
 ---
 
