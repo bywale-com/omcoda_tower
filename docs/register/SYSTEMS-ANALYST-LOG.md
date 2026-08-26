@@ -4,7 +4,7 @@
 
 **Purpose:** Running log so a new Systems Analyst chat starts where the last one stopped. Stamps are **witnessing history** (what was said, what was corrected, what was parked) — not a second Agents flag.
 
-**Current (read first, then the newest stamp at the bottom):** 2026-08-24 18:15 UTC — Spine Registry. Verify-before-stacking trigger list. [`SYSTEMS-SPINE-REGISTRY.md`](./SYSTEMS-SPINE-REGISTRY.md). Not a cut. **027** still Rule occupancy. **026** still waiting. Flag **15:43**.
+**Current (read first, then the newest stamp at the bottom):** 2026-08-26 10:10 UTC — Staged Start is occupancy + a desk write, not a Wait node. [`SYSTEMS-STAGED-START-ASCRIBE.md`](./SYSTEMS-STAGED-START-ASCRIBE.md). Not a cut. Flag **15:43**.
 
 **How we maintain this log** (same discipline as Phase Two)
 
@@ -2165,6 +2165,31 @@ So `campaignObjectiveMet` is Global-shaped: `SELECT 1 FROM <completion_table> WH
 **Hard:** Packet remaps a Spine object → that row’s round-trip first. Met round-trip **fails** on main until 022; do not stack 023 as if it passed. 017 `chainWrites` stays Additive alongside 015.
 
 **Did not:** inventory every table; recut 015; cut 028; overwrite 15:43.
+
+---
+
+## 2026-08-26 10:10 UTC — Wait-for-approval is occupancy + Start write. Not a Wait node.
+
+**Why:** Founder weighing new node vs embed in an existing node. Operation: wait for approval; appears on that person’s workspace. Plates: Start · Start later / bar Start now could be Approve now · later. Gap: what is **inside** the popover, how it is replaceable, same for the bar. Do not hardcode a one-use.
+
+**Founder wording:**
+
+> create a new node or maybe embed this thing the action inside … an existing node … wait for approval … whoever is waiting for approval, or from whom, it appears in the workspace
+
+> sub out the start buttons for like even approve now and approve later … reusable … What is inside of that pop-up? … How would it know that, and how was that replaceable?
+
+> I want a node or an action where it fits
+
+**Ascribe:** [`SYSTEMS-STAGED-START-ASCRIBE.md`](./SYSTEMS-STAGED-START-ASCRIBE.md). Not a packet (plates still not locked).
+
+**Hard**
+
+1. **No Wait node.** PM §1 already: two canvases. Canvas A writes `sequence_ready`. People sit as rows. Canvas B fires on consultant **Start** (desk write). Law 41.
+2. Popover + bar = **pane**. Interior = occupancy of those writes + the sequence Start will assign (opt-in this slice). Same idea as Form 021. Plate names are example.
+3. Start / Approve labels = one chrome shell. Verb = that desk’s write. Automations wraps the button; it does not paint a second modal.
+4. Start later = schedule that write. Datetime store **silent**. Approve is silent until a module has that button.
+
+**Did not:** cut a packet; mint `approval`; recut A40 / 015; overwrite 15:43.
 
 
 
