@@ -77,7 +77,6 @@ Law 21 already. Not a queue. After reactivate-agent objective completes: in-app 
 
 - Objective-less outreach.
 - Fourth sequence class.
-- Wait node.
 - A queue / store of Rule output to fire after a gap.
 - Get-everyone on Schedule with no conditions.
 - Let Schedule-triggered sequence automations ignore running sequences.

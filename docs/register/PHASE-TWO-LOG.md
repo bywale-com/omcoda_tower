@@ -2749,3 +2749,15 @@ Flag 15:43 untouched.
 
 Flag 15:43 untouched.
 
+---
+
+## 2026-08-26 10:10 UTC — Do not embed machine instructions the founder did not give.
+
+**Why:** Founder: “no wait node” is not PM’s job. Stop putting instructions they did not give inside packets. That confuses SA. Packet rules already exist — list them; do not invent a thirteenth.
+
+**Pulled “Wait node” / “no Wait”** from [`LAUNCH-1-NOTHING-TO-OPT-IN.md`](./LAUNCH-1-NOTHING-TO-OPT-IN.md) and [`LAUNCH-TERRAIN.md`](./LAUNCH-TERRAIN.md) (those are papers, not packets — same smell). Two canvases / do not collapse **stays**: arrive vs Start are two operations. That is not a ban on a Wait kind. SA ascribes the machine.
+
+**Do not:** invent packet rules; recut 015; overwrite 15:43; plant; mint tables.
+
+Flag 15:43 untouched.
+

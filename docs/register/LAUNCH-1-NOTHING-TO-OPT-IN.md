@@ -5,7 +5,7 @@
 **Summary (stays tight):** new contact exists + consultant Start → assign **opt-in** → Agents. Nothing new.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
 **Cousins:** [`LAUNCH-TERRAIN.md`](./LAUNCH-TERRAIN.md) · confirm **look** plates [`CONSULTANT-STAGED-PLATES.md`](./CONSULTANT-STAGED-PLATES.md) (not a packet) · reminder [`CONFIRM-READY-DEFERRED.md`](./CONFIRM-READY-DEFERRED.md) · Audit field [`AUDIT-FIELD-PACKET.md`](./AUDIT-FIELD-PACKET.md) · Agents assign [`FORM-CLASS-PACKET.md`](./FORM-CLASS-PACKET.md) A14 (do not recut A40 here — this slice does **not** create a data-request form) · import vs new contact [`PRIMITIVES.md`](./PRIMITIVES.md) · workspace foot [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md).  
-**Does not:** plant; recut 015; mint tables; packet Confirm until they agree with the plates; batches; escrow; §2 sequence-complete; occupy Form; a Wait node; Get-everyone; a sequence picker of three.
+**Does not:** plant; recut 015; mint tables; packet Confirm until they agree with the plates; batches; escrow; §2 sequence-complete; occupy Form; Get-everyone; a sequence picker of three.
 
 ---
 
@@ -17,9 +17,9 @@ Getting on the platform / a workspace existing does **not** start this. **Upload
 
 ---
 
-## Two canvases. Do not collapse. No Wait.
+## Two canvases. Do not collapse.
 
-Wait is not a node. One canvas cannot be “new contact fires **and** wait for the consultant.” Two automations, existing kinds:
+Wait is not this canvas waiting for the consultant. One canvas cannot be “new contact fires **and** wait for the consultant.” Two automations, existing kinds:
 
 ### Canvas A — people arrived → first evaluation (audit)
 
@@ -64,7 +64,7 @@ This is how we **know who is valid**. Confirm/Start is only eligible for those p
 
 ## Specified and clear
 
-Two canvases; import ≠ new contact; audit then If sequence-ready; Start assigns opt-in only; then Agents; no Wait; no new node kind; no form occupancy.
+Two canvases; import ≠ new contact; audit then If sequence-ready; Start assigns opt-in only; then Agents; no new node kind; no form occupancy.
 
 ## Specified but not clear (do not invent)
 
@@ -77,7 +77,7 @@ Two canvases; import ≠ new contact; audit then If sequence-ready; Start assign
 ## Do not
 
 - Hang enroll on firm created / workspace created.
-- One canvas with Wait.
+- One canvas that both fires on new contact and waits for the consultant to Start.
 - Assign from Canvas A (skip Start).
 - Filter Contact ▾ as the enroll list.
 - Recut A40 / consent form into this automation.
