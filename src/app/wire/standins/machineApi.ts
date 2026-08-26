@@ -1588,6 +1588,7 @@ export const standInMachineApi: MachineApiPort = {
       contact_id: input.contactId,
       field_key: input.fieldKey,
       value: input.value,
+      form_ref: input.formRef ?? null,
       created_at: now(),
     });
     for (let i = missingFactSignals.length - 1; i >= 0; i--) {

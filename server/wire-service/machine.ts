@@ -20,6 +20,9 @@ import type { RunWrite } from "./runWrites.ts";
 import {
   loadHousing,
   saveHousing,
+  onCompletionWrite,
+  resolveFormStamp,
+  campaignObjectiveIdForCampaign,
   type CampaignDraft,
 } from "./campaignHousing.ts";
 
@@ -424,10 +427,23 @@ export async function handleFactWriteback(c: Context) {
   const contactId = body.contactId.trim();
   const fieldKey = body.fieldKey.trim();
   const writeId = `fwb-${randomUUID()}`;
+  const stamp = await resolveFormStamp(pool, {
+    firmId: firm,
+    contactId,
+    formRef: body.formRef,
+  });
   await pool.query(
-    `INSERT INTO fact_writebacks (id, firm_id, contact_id, field_key, value)
-     VALUES ($1,$2,$3,$4,$5::jsonb)`,
-    [writeId, firm, contactId, fieldKey, JSON.stringify(body.value ?? null)],
+    `INSERT INTO fact_writebacks (id, firm_id, contact_id, field_key, value, form_ref, campaign_objective_id)
+     VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7)`,
+    [
+      writeId,
+      firm,
+      contactId,
+      fieldKey,
+      JSON.stringify(body.value ?? null),
+      stamp.formRef,
+      stamp.campaignObjectiveId,
+    ],
   );
   // Answered fact clears its missing signal
   await pool.query(
@@ -458,14 +474,33 @@ export async function handleFactWriteback(c: Context) {
     contactIds: [contactId],
     triggerKind: "fact_writeback",
     resultPayload: { writebackId: writeId, fieldKey, source: body.source ?? "contact" },
-    eventPayload: { writebackId: writeId, fieldKey, contactId, form_ref: body.formRef ?? null },
+    eventPayload: {
+      writebackId: writeId,
+      fieldKey,
+      contactId,
+      form_ref: stamp.formRef,
+      campaign_objective_id: stamp.campaignObjectiveId,
+    },
   });
 
   const factDispatched = await dispatchEventToWorkflows(pool, {
     firmId: firm,
     eventName: "fact_writebacks",
-    payload: { writebackId: writeId, fieldKey, contactId, form_ref: body.formRef ?? null },
+    payload: {
+      writebackId: writeId,
+      fieldKey,
+      contactId,
+      form_ref: stamp.formRef,
+      campaign_objective_id: stamp.campaignObjectiveId,
+    },
     contactIds: [contactId],
+  });
+
+  await onCompletionWrite(pool, {
+    firmId: firm,
+    contactId,
+    table: "fact_writebacks",
+    rowId: writeId,
   });
 
   return json(c, {
@@ -1832,17 +1867,21 @@ export async function handleMeetingBook(c: Context) {
   const pool = getPool();
   const id = `mtg-${randomUUID()}`;
   const source = (body.source ?? "contact_portal").trim();
-  const enr = await pool.query<{ id: string }>(
-    `SELECT id FROM enrollment WHERE firm_id=$1 AND contact_id=$2
+  const enr = await pool.query<{ id: string; campaign_id: string | null }>(
+    `SELECT id, campaign_id FROM enrollment WHERE firm_id=$1 AND contact_id=$2
      ORDER BY enrolled_at DESC LIMIT 1`,
     [firm, contactId],
   );
   const enrollmentId = enr.rows[0]?.id ?? null;
+  const campaignObjectiveId = await campaignObjectiveIdForCampaign(
+    pool,
+    enr.rows[0]?.campaign_id ?? null,
+  );
 
   await pool.query(
     `INSERT INTO meeting_booked
-       (id, firm_id, contact_id, booked_at, source, slot, consultant_name, enrollment_id, payload)
-     VALUES ($1,$2,$3,now(),$4,$5,$6,$7,$8::jsonb)`,
+       (id, firm_id, contact_id, booked_at, source, slot, consultant_name, enrollment_id, campaign_objective_id, payload)
+     VALUES ($1,$2,$3,now(),$4,$5,$6,$7,$8,$9::jsonb)`,
     [
       id,
       firm,
@@ -1851,6 +1890,7 @@ export async function handleMeetingBook(c: Context) {
       body.slot ?? null,
       body.consultantName ?? null,
       enrollmentId,
+      campaignObjectiveId,
       JSON.stringify({
         contactName: body.contactName ?? null,
         slot: body.slot ?? null,
@@ -1861,11 +1901,18 @@ export async function handleMeetingBook(c: Context) {
   const dispatched = await dispatchEventToWorkflows(pool, {
     firmId: firm,
     eventName: "meeting_booked",
-    payload: { meetingId: id, contactId, slot: body.slot ?? null },
+    payload: { meetingId: id, contactId, slot: body.slot ?? null, campaign_objective_id: campaignObjectiveId },
     contactIds: [contactId],
   });
 
-  // Close the loop: stop chasing this contact
+  await onCompletionWrite(pool, {
+    firmId: firm,
+    contactId,
+    table: "meeting_booked",
+    rowId: id,
+  });
+
+  // Remaining open attempts: they responded. Do not recut met (already closed above).
   const stopped = await pool.query(
     `UPDATE active_attempts
      SET status='nullified', updated_at=now(),

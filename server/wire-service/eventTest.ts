@@ -181,6 +181,20 @@ async function door1(
       );
       return ok ? out : null;
     }
+    if (eventName === "objective_met") {
+      const okEng = await push(
+        "engagement_records",
+        `SELECT * FROM engagement_records WHERE firm_id=$1 AND event_kind='objective_met' ORDER BY created_at DESC LIMIT 10`,
+        [firm],
+      );
+      if (!okEng) return null;
+      await push(
+        "enrollment",
+        `SELECT * FROM enrollment WHERE firm_id=$1 ORDER BY enrolled_at DESC LIMIT 10`,
+        [firm],
+      );
+      return out;
+    }
   } catch {
     return null;
   }

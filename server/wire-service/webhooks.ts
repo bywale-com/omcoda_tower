@@ -30,6 +30,10 @@ function mapClass(type: string): string | null {
       return "complaint";
     case "email.failed":
       return "rejected";
+    case "email.clicked":
+      return "clicked";
+    case "email.opened":
+      return "opened";
     default:
       return null;
   }
@@ -102,12 +106,13 @@ export async function handleResendWebhook(c: Context) {
     const firmId = (out.rows[0]?.firm_id as string) ?? "unknown";
     const contactId = out.rows[0]?.contact_id as string | null;
 
+    const evtId = id("evt");
     await pool.query(
       `INSERT INTO messaging_events
         (id, at, firm_id, message_id, event_class, contact_id, provider_event_id, raw)
        VALUES ($1,now(),$2,$3,$4,$5,$6,$7::jsonb)`,
       [
-        id("evt"),
+        evtId,
         firmId,
         messageId,
         eventClass,
@@ -116,6 +121,20 @@ export async function handleResendWebhook(c: Context) {
         raw,
       ],
     );
+
+    if (eventClass === "clicked" && contactId) {
+      try {
+        const { onCompletionWrite } = await import("./campaignHousing.ts");
+        await onCompletionWrite(pool, {
+          firmId,
+          contactId,
+          table: "messaging_events",
+          rowId: evtId,
+        });
+      } catch (err) {
+        console.warn("[webhooks] objective_met on click:", err);
+      }
+    }
 
     if (eventClass === "bounce_hard" && contactId) {
       await pool.query(
