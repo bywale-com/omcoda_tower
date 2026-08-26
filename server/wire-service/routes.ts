@@ -110,6 +110,13 @@ import {
   handleContactUploadKinds,
   handleContactWorkspacesList,
 } from "./contactSeat.ts";
+import {
+  handleActivationGatesGet,
+  handleEscrowGet,
+  handleEscrowPut,
+  handleRegisterGapPut,
+  handleRegisterGapsList,
+} from "./operatorPanes.ts";
 
 export function createWireRoutes(): Hono {
   const wire = new Hono();
@@ -236,6 +243,11 @@ export function createWireRoutes(): Hono {
   wire.post("/machine/meetings", handleMeetingBook);
   wire.get("/machine/meetings", handleMeetingsList);
   wire.post("/machine/provision", handleMachineProvision);
+  wire.get("/machine/activation-gates", handleActivationGatesGet);
+  wire.get("/machine/escrow", handleEscrowGet);
+  wire.put("/machine/escrow", handleEscrowPut);
+  wire.get("/machine/register-gaps", handleRegisterGapsList);
+  wire.put("/machine/register-gaps", handleRegisterGapPut);
   wire.post("/machine/access-invite", handleMachineAccessInvite);
   wire.post("/machine/events", handleMachineEvent);
   wire.post("/hook/:webhookId", handleWebhookTrigger);

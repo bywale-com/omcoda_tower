@@ -1,16 +1,13 @@
 /**
- * Activation state — per-firm activation progress checklist with Jump links.
- * authorize-book / ready-to-send / escrow-held read live wire ports — fail closed
- * until the CRM grant, sending-identity DNS fixtures, and escrow hold are real.
- *
- * Index = session/real firms — never DEMO_FIRMS densification. Live gate reads kept.
+ * Activation state — pane of the six gate tables (020). Percent / "next" is chrome.
+ * Index = session/real firms. Missing row = that gate empty. No fixture OR as truth.
  */
 import { useEffect, useState } from "react";
 import { Button, Progress, Space, Table, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { isSendingIdentityReady, useWireTick, wirePorts } from "../../../wire";
+import { useWireTick, wirePorts } from "../../../wire";
+import type { ActivationGates } from "../../../wire/machineTypes";
 import { useOperatorNav } from "../../prototype/operatorNav";
-import { loadForwardDeployStagingForFirm } from "../../prototype/operator/operatorWireHelpers";
 import { Hint, ModulePage, Surface } from "../chrome";
 import { StatusTag } from "./operatorAntTags";
 import {
@@ -28,40 +25,33 @@ type ActivationRow = {
   next: string;
 };
 
-type LiveGates = {
-  authorizeBook: boolean;
-  readyToSend: boolean;
-  escrowHeld: boolean;
-  forwardDeployed: boolean;
-  campaignRunning: boolean;
-};
-
-const EMPTY_LIVE: LiveGates = {
+const EMPTY_GATES: Omit<ActivationGates, "firmId"> = {
+  firmExists: false,
+  forwardDeployed: false,
   authorizeBook: false,
   readyToSend: false,
   escrowHeld: false,
-  forwardDeployed: false,
   campaignRunning: false,
 };
 
-function rowForFirm(firmId: string, live: LiveGates): ActivationRow {
+function chromeForGates(firmId: string, live: Omit<ActivationGates, "firmId">): ActivationRow {
   const checks = [
+    live.firmExists,
     live.forwardDeployed,
     live.authorizeBook,
     live.readyToSend,
     live.escrowHeld,
-    live.campaignRunning ||
-      (live.forwardDeployed && live.authorizeBook && live.readyToSend && live.escrowHeld),
+    live.campaignRunning,
   ];
   const done = checks.filter(Boolean).length;
   const pct = Math.round((done / checks.length) * 100);
-  let next = "Running";
-  if (!live.forwardDeployed) next = "Forward-deployed";
+  let next = "—";
+  if (!live.firmExists) next = "Firm exists";
+  else if (!live.forwardDeployed) next = "Forward-deployed";
   else if (!live.authorizeBook) next = "Authorize book";
   else if (!live.readyToSend) next = "Ready to send";
   else if (!live.escrowHeld) next = "Escrow held";
-  else if (!checks[4]) next = "Running";
-  else next = "—";
+  else if (!live.campaignRunning) next = "Running";
   return { firmId, pct, next };
 }
 
@@ -69,11 +59,11 @@ export function ActivationStateModule() {
   const { jumpTo } = useOperatorNav();
   const [firms, setFirms] = useState<OperatorFirm[]>(() => peekOperatorFirms());
   const [rows, setRows] = useState<ActivationRow[]>(() =>
-    peekOperatorFirms().map((f) => rowForFirm(f.id, EMPTY_LIVE)),
+    peekOperatorFirms().map((f) => chromeForGates(f.id, EMPTY_GATES)),
   );
   const [selectedId, setSelectedId] = useState<string | null>(() => peekOperatorFirms()[0]?.id ?? null);
   const [jumpNote, setJumpNote] = useState<string | null>(null);
-  const [live, setLive] = useState<LiveGates>(EMPTY_LIVE);
+  const [live, setLive] = useState<Omit<ActivationGates, "firmId">>(EMPTY_GATES);
   const wireTick = useWireTick();
 
   useEffect(() => {
@@ -85,7 +75,7 @@ export function ActivationStateModule() {
         if (prev && nextFirms.some((f) => f.id === prev)) return prev;
         return nextFirms[0]?.id ?? null;
       });
-      setRows(nextFirms.map((f) => rowForFirm(f.id, EMPTY_LIVE)));
+      setRows(nextFirms.map((f) => chromeForGates(f.id, EMPTY_GATES)));
     });
     return () => {
       cancelled = true;
@@ -94,29 +84,27 @@ export function ActivationStateModule() {
 
   useEffect(() => {
     if (!selectedId) {
-      setLive(EMPTY_LIVE);
+      setLive(EMPTY_GATES);
       return;
     }
     let cancelled = false;
-    void Promise.all([
-      wirePorts.crmOAuth.get(selectedId),
-      wirePorts.escrow.get(selectedId),
-      wirePorts.machineApi.getCampaignState().catch(() => null),
-      loadForwardDeployStagingForFirm(selectedId),
-    ]).then(([grant, escrow, campaign, staging]) => {
+    void wirePorts.machineApi.getActivationGates(selectedId).then((gates) => {
       if (cancelled) return;
-      const deployStaging = staging ?? "idle";
-      const nextLive: LiveGates = {
-        authorizeBook: grant.granted && !grant.revoked,
-        readyToSend: isSendingIdentityReady(selectedId),
-        escrowHeld: escrow.status === "held",
-        forwardDeployed: deployStaging === "hydrated" || deployStaging === "enriching",
-        campaignRunning: campaign?.state === "running",
+      const nextLive = {
+        firmExists: gates.firmExists,
+        forwardDeployed: gates.forwardDeployed,
+        authorizeBook: gates.authorizeBook,
+        readyToSend: gates.readyToSend,
+        escrowHeld: gates.escrowHeld,
+        campaignRunning: gates.campaignRunning,
       };
       setLive(nextLive);
       setRows((prev) =>
-        prev.map((r) => (r.firmId === selectedId ? rowForFirm(selectedId, nextLive) : r)),
+        prev.map((r) => (r.firmId === selectedId ? chromeForGates(selectedId, nextLive) : r)),
       );
+    }).catch(() => {
+      if (cancelled) return;
+      setLive(EMPTY_GATES);
     });
     return () => {
       cancelled = true;
@@ -128,6 +116,12 @@ export function ActivationStateModule() {
   const firmName = selectedId ? firmDisplayName(firms, selectedId) : "No firm";
 
   const gates: Gate[] = [
+    {
+      id: "firm-exists",
+      title: "Firm exists",
+      done: live.firmExists,
+      jump: live.firmExists ? undefined : "Jump to Activation & forward-deploy",
+    },
     {
       id: "forward-deployed",
       title: "Forward-deployed",
@@ -155,9 +149,8 @@ export function ActivationStateModule() {
     {
       id: "running",
       title: "Running",
-      done:
-        live.campaignRunning ||
-        (live.forwardDeployed && live.authorizeBook && live.readyToSend && live.escrowHeld),
+      done: live.campaignRunning,
+      jump: live.campaignRunning ? undefined : "Jump to Firm operations bind",
     },
   ];
   const stalledCount = gates.filter((g) => !g.done && g.jump).length;
@@ -230,9 +223,9 @@ export function ActivationStateModule() {
           {jumpNote ? <Typography.Text type="success">Opened · {jumpNote}</Typography.Text> : null}
           <Progress percent={row.pct} size="small" style={{ marginBottom: 16 }} />
           <Hint>
-            Authorize book, Ready to send, and Escrow held read live from crmOAuth /
-            sending-identity DNS fixtures / escrow — never hard-coded green. Operator does not
-            fake-complete consultant commits.
+            Six gates are SELECT on ct_firms, prepared_workspaces, crm_oauth_grants,
+            sending_domains, escrow_acceptances, and campaign_states. Percent is chrome
+            on that list — not a stored readiness row.
           </Hint>
           <Table size="small" rowKey="id" columns={gateColumns} dataSource={gates} pagination={false} />
         </Surface>

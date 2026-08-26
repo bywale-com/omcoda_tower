@@ -6,6 +6,30 @@ function id(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+/** 020 — append on provision / Bind Active / escrow / allocate / hydrate. History, not a second boolean. */
+export async function appendFirmAudit(input: {
+  firmId: string;
+  kind: string;
+  actorId?: string;
+  payload?: Record<string, unknown>;
+}): Promise<string> {
+  const eventId = id("aud");
+  const at = new Date().toISOString();
+  await getPool().query(
+    `INSERT INTO audit_events (id, at, actor_id, kind, subject_type, subject_id, firm_id, payload)
+     VALUES ($1,$2,$3,$4,'firm',$5,$5,$6)`,
+    [
+      eventId,
+      at,
+      input.actorId ?? "operator",
+      input.kind,
+      input.firmId,
+      input.payload ? JSON.stringify(input.payload) : null,
+    ],
+  );
+  return eventId;
+}
+
 export async function handleAuditAppend(c: Context) {
   const body = await c.req.json<{
     actorId: string;

@@ -680,6 +680,26 @@ export type MachineApiPort = {
     }>;
   }>;
   listContactUploadKinds: (firmId?: string) => Promise<{ kinds: string[] }>;
+  /** 020 — six gate tables for Activation state. Missing row = that gate empty. */
+  getActivationGates(firmId?: string): Promise<import("./machineTypes").ActivationGates>;
+  getEscrow(firmId?: string): Promise<import("./machineTypes").EscrowAcceptanceRow>;
+  putEscrow(
+    input: {
+      firmId?: string;
+      terms?: Record<string, unknown>;
+      accepted?: boolean;
+      status?: import("./machineTypes").EscrowInstrumentStatus;
+    },
+  ): Promise<import("./machineTypes").EscrowAcceptanceRow>;
+  listRegisterGaps(): Promise<import("./machineTypes").RegisterGapRow[]>;
+  upsertRegisterGap(input: {
+    id?: string;
+    summary: string;
+    ticket?: string | null;
+    firmId?: string | null;
+    source?: string | null;
+    written?: boolean;
+  }): Promise<import("./machineTypes").RegisterGapRow>;
   loadContactSeat: (
     token: string,
     opts?: { campaignId?: string },

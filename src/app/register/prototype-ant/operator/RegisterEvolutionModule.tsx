@@ -1,33 +1,36 @@
 /**
- * Register & evolution — gaps list, Gap Modal, save, regenerate handoff.
+ * Register & evolution — register_gaps is the operation. Save / New UPSERT;
+ * list = SELECT. No SEED_GAPS paint (020).
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Checkbox, Form, Input, Modal, Select, Space, Table, Typography, message } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import { wirePorts } from "../../../wire";
+import type { RegisterGapRow } from "../../../wire/machineTypes";
 import { Hint, ModulePage, Surface } from "../chrome";
-import { DEMO_FIRMS } from "./operatorAntData";
 import { StatusTag } from "./operatorAntTags";
+import {
+  firmDisplayName,
+  peekOperatorFirms,
+  resolveOperatorFirms,
+  type OperatorFirm,
+} from "./operatorFirmIndex";
 
-type GapRow = {
-  id: string;
-  summary: string;
-  ticket?: string;
-  firm?: string;
-  source?: string;
-  written: boolean;
-};
-
-const SEED_GAPS: GapRow[] = [
-  { id: "gap-seq-silence", summary: "Sequence silence clock not visible on Fleet health — Atlas stuck 9 contacts unnoticed.", ticket: "SUP-184", firm: "Atlas Mobility", source: "Firm health", written: false },
-  { id: "gap-bind-gate", summary: "Bind pack commit lacks before/after on Audit trail for Send gate reviewers.", firm: "Cedar Pathways", source: "Firm operations bind", written: true },
-  { id: "gap-approach-cap", summary: "Approach click budget bound not enforced when firm re-binds mid-campaign.", source: "Acquisition & ads", written: false },
+const SOURCE_SURFACES = [
+  "Oversight",
+  "Firm health",
+  "Customer support",
+  "Firm operations bind",
+  "Acquisition & ads",
+  "Commercial",
+  "Activation & forward-deploy",
+  "Sending infrastructure",
 ];
 
-const SOURCE_SURFACES = ["Oversight", "Firm health", "Customer support", "Firm operations bind", "Acquisition & ads", "Commercial", "Activation & forward-deploy"];
-
 export function RegisterEvolutionModule() {
-  const [gaps, setGaps] = useState(SEED_GAPS);
-  const [selectedId, setSelectedId] = useState(SEED_GAPS[0].id);
+  const [firms, setFirms] = useState<OperatorFirm[]>(() => peekOperatorFirms());
+  const [gaps, setGaps] = useState<RegisterGapRow[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [gapModalOpen, setGapModalOpen] = useState(false);
   const [editingNew, setEditingNew] = useState(false);
   const [formSummary, setFormSummary] = useState("");
@@ -35,23 +38,55 @@ export function RegisterEvolutionModule() {
   const [formFirm, setFormFirm] = useState("");
   const [formSource, setFormSource] = useState("");
   const [handoffNote, setHandoffNote] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const selected = gaps.find((g) => g.id === selectedId) ?? gaps[0];
+  const reload = async () => {
+    const [nextFirms, nextGaps] = await Promise.all([
+      resolveOperatorFirms(),
+      wirePorts.machineApi.listRegisterGaps(),
+    ]);
+    setFirms(nextFirms);
+    setGaps(nextGaps);
+    setSelectedId((prev) => {
+      if (prev && nextGaps.some((g) => g.id === prev)) return prev;
+      return nextGaps[0]?.id ?? null;
+    });
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    void reload()
+      .catch(() => {
+        if (!cancelled) {
+          setGaps([]);
+          setSelectedId(null);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const selected = gaps.find((g) => g.id === selectedId) ?? gaps[0] ?? null;
 
   const openNewGap = () => {
     setEditingNew(true);
     setFormSummary("");
     setFormTicket("");
-    setFormFirm("");
+    setFormFirm(peekOperatorFirms()[0]?.id ?? "");
     setFormSource("");
     setGapModalOpen(true);
   };
 
-  const openEditGap = (gap: GapRow) => {
+  const openEditGap = (gap: RegisterGapRow) => {
     setEditingNew(false);
     setFormSummary(gap.summary);
     setFormTicket(gap.ticket ?? "");
-    setFormFirm(gap.firm ?? "");
+    setFormFirm(gap.firmId ?? "");
     setFormSource(gap.source ?? "");
     setSelectedId(gap.id);
     setGapModalOpen(true);
@@ -59,39 +94,53 @@ export function RegisterEvolutionModule() {
 
   const saveGap = () => {
     if (!formSummary.trim()) return;
-    if (editingNew) {
-      const id = `gap-${Date.now()}`;
-      const row: GapRow = {
-        id,
-        summary: formSummary.trim(),
-        ticket: formTicket.trim() || undefined,
-        firm: formFirm.trim() || undefined,
-        source: formSource.trim() || undefined,
-        written: false,
-      };
-      setGaps((prev) => [row, ...prev]);
-      setSelectedId(id);
-    } else if (selected) {
-      setGaps((prev) =>
-        prev.map((g) =>
-          g.id === selected.id
-            ? { ...g, summary: formSummary.trim(), ticket: formTicket.trim() || undefined, firm: formFirm.trim() || undefined, source: formSource.trim() || undefined }
-            : g,
-        ),
-      );
-    }
-    setGapModalOpen(false);
-    message.success("Gap saved");
+    void (async () => {
+      try {
+        const row = await wirePorts.machineApi.upsertRegisterGap({
+          id: editingNew ? undefined : selected?.id,
+          summary: formSummary.trim(),
+          ticket: formTicket.trim() || null,
+          firmId: formFirm.trim() || null,
+          source: formSource.trim() || null,
+          written: editingNew ? false : selected?.written,
+        });
+        setGapModalOpen(false);
+        message.success("Gap saved");
+        await reload();
+        setSelectedId(row.id);
+      } catch (err) {
+        message.error(err instanceof Error ? err.message : "Gap write failed");
+      }
+    })();
   };
 
-  const columns: ColumnsType<GapRow> = [
+  const toggleWritten = (gap: RegisterGapRow, written: boolean) => {
+    void (async () => {
+      try {
+        await wirePorts.machineApi.upsertRegisterGap({
+          id: gap.id,
+          summary: gap.summary,
+          ticket: gap.ticket,
+          firmId: gap.firmId,
+          source: gap.source,
+          written,
+        });
+        await reload();
+        setSelectedId(gap.id);
+      } catch (err) {
+        message.error(err instanceof Error ? err.message : "Gap write failed");
+      }
+    })();
+  };
+
+  const columns: ColumnsType<RegisterGapRow> = [
     { title: "Id", dataIndex: "id", key: "id", width: 140 },
     { title: "Summary", dataIndex: "summary", key: "summary", ellipsis: true },
     {
       title: "Written",
       key: "written",
       width: 80,
-      render: (_, row) => row.written ? <StatusTag label="Written" color="success" /> : null,
+      render: (_, row) => (row.written ? <StatusTag label="Written" color="success" /> : null),
     },
     {
       title: "",
@@ -116,12 +165,18 @@ export function RegisterEvolutionModule() {
           rowKey="id"
           columns={columns}
           dataSource={gaps}
+          loading={loading}
           pagination={false}
-          rowSelection={{
-            type: "radio",
-            selectedRowKeys: [selectedId],
-            onChange: (keys) => setSelectedId(keys[0] as string),
-          }}
+          locale={{ emptyText: "No gaps — New gap writes register_gaps." }}
+          rowSelection={
+            gaps.length > 0
+              ? {
+                  type: "radio",
+                  selectedRowKeys: selectedId ? [selectedId] : [],
+                  onChange: (keys) => setSelectedId(keys[0] as string),
+                }
+              : undefined
+          }
         />
       </Surface>
 
@@ -131,15 +186,13 @@ export function RegisterEvolutionModule() {
             <Typography.Paragraph style={{ flex: 1 }}>{selected.summary}</Typography.Paragraph>
             <Checkbox
               checked={selected.written}
-              onChange={() =>
-                setGaps((prev) => prev.map((g) => (g.id === selected.id ? { ...g, written: !g.written } : g)))
-              }
+              onChange={(e) => toggleWritten(selected, e.target.checked)}
             >
               Written
             </Checkbox>
           </Space>
           <Space wrap>
-            {selected.firm ? <StatusTag label={selected.firm} /> : null}
+            {selected.firmId ? <StatusTag label={firmDisplayName(firms, selected.firmId)} /> : null}
             {selected.source ? <StatusTag label={selected.source} color="processing" /> : null}
           </Space>
         </Surface>
@@ -182,7 +235,7 @@ export function RegisterEvolutionModule() {
                   onChange={setFormFirm}
                   allowClear
                   style={{ width: 200 }}
-                  options={DEMO_FIRMS.map((f) => ({ value: f.name, label: f.name }))}
+                  options={firms.map((f) => ({ value: f.id, label: f.name }))}
                 />
                 <Select
                   placeholder="Source surface"

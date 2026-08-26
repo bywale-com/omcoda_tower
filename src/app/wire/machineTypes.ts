@@ -391,3 +391,41 @@ export type ProvisionResult = {
   /** One-time direct access path `/a/<token>` when auth user was minted. */
   accessPath?: string | null;
 };
+
+export type EscrowInstrumentStatus =
+  | "held"
+  | "release_pending_window"
+  | "released"
+  | "returned"
+  | "disputed";
+
+export type EscrowAcceptanceRow = {
+  firmId: string;
+  accepted: boolean;
+  terms: Record<string, unknown>;
+  acceptedAt: string | null;
+  status: EscrowInstrumentStatus | null;
+  updatedAt?: string;
+  missing?: boolean;
+};
+
+export type RegisterGapRow = {
+  id: string;
+  summary: string;
+  ticket: string | null;
+  firmId: string | null;
+  source: string | null;
+  written: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ActivationGates = {
+  firmId: string;
+  firmExists: boolean;
+  forwardDeployed: boolean;
+  authorizeBook: boolean;
+  readyToSend: boolean;
+  escrowHeld: boolean;
+  campaignRunning: boolean;
+};
