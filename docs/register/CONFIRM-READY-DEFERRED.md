@@ -2,7 +2,7 @@
 
 **Seat:** Product Manager.  
 **Not a packet.** Do not hand this to the engineer this sprint.  
-**Plates (look only, 2026-08-26):** [`CONSULTANT-STAGED-PLATES.md`](./CONSULTANT-STAGED-PLATES.md) — **S1** open · **S2** minimized. Packet only if the founder agrees with those plates. Recut = **new packet**. Do not mutate this reminder into the packet.  
+**Plates (look only, 2026-08-26 recut):** [`CONSULTANT-STAGED-PLATES.md`](./CONSULTANT-STAGED-PLATES.md) — **S1** open · **S1b** Start later nest · **S2** solid bar + Start now. Packet only if the founder agrees. Recut = **new packet**. Do not mutate this reminder into the packet.  
 **Flag:** [`PHASE-TWO-LOG.md`](./PHASE-TWO-LOG.md) **15:43 UTC** — do not overwrite.  
 **Does not:** plant; recut 015; mint tables; replace Start as an operation; freeze Launch window / Launch day as types.
 
@@ -16,8 +16,8 @@ Founder 2026-08-26 (look, not packet):
 
 - Popover on **their** workspace (consultant person, T4).
 - **X** staged. Click the popover → high-level **sequence** preview (campaigns + objectives still obvious).
-- **Start** · **Start later**. Start later = **schedule when it starts automatically**, not “show me later.”
-- **X** at the top closes; the mode **remains minimized at the bottom**.
+- **Start** · **Start later**. Start later = **schedule when it starts automatically**, not “show me later.” Schedule **hidden** until Start later is clicked → small popover **beneath** that button (date + time + tiny X). Not beside. Does not replace the buttons.
+- Big **X** closes; the mode **remains** as a **solid** bar at the bottom. **Start now** on the **right** of that bar. Rest of the bar reopens the card.
 
 Prior reminder (do not restore “show me later”): a pop-up, then a middle modal, Start · Show me later, preview maybe. That **later** grain was recut to **schedule**.
 

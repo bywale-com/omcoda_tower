@@ -2,7 +2,7 @@
 
 **Purpose:** Running log so a new agent can start where we stopped. Thesis stays in [`PHASE-TWO.md`](./PHASE-TWO.md). Nothing is more important than this file staying current.
 
-**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Working §1.** Expanded: [`LAUNCH-1-NOTHING-TO-OPT-IN.md`](./LAUNCH-1-NOTHING-TO-OPT-IN.md). Confirm **look** plates (not a packet): [`CONSULTANT-STAGED-PLATES.md`](./CONSULTANT-STAGED-PLATES.md) **S1** open · **S2** minimized. Packet only if founder agrees. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
+**Current (read first, then the newest stamp at the bottom):** Agents **flagship** = 2026-08-15 15:43 UTC. **Working §1.** Expanded: [`LAUNCH-1-NOTHING-TO-OPT-IN.md`](./LAUNCH-1-NOTHING-TO-OPT-IN.md). Confirm **look** plates (not a packet): [`CONSULTANT-STAGED-PLATES.md`](./CONSULTANT-STAGED-PLATES.md) **S1** open · **S1b** Start later nest · **S2** solid bar + Start now. Packet only if founder agrees. Engineer pickup still [`WORKSPACE-UNTIL-OPT-OUT-PACKET.md`](./WORKSPACE-UNTIL-OPT-OUT-PACKET.md) until a launch packet locks. Recut = new packet. Do not plant.
 
 **How we maintain this log**
 
@@ -2734,6 +2734,18 @@ Flag 15:43 untouched.
 **Not locked:** first appearance = open card vs bottom bar; Start later pickers on the card vs nested. Example: **24**, Launch window / Click this link · Launch day / Agree.
 
 **Do not:** packet until they agree; freeze campaign names; recut 015; overwrite 15:43; plant; mint tables.
+
+Flag 15:43 untouched.
+
+---
+
+## 2026-08-26 09:51 UTC — Recut staged plates: nest the schedule; solid bar + Start now.
+
+**Why:** Founder: regenerate. S1 — schedule **not in view** until Start later is **clicked**. Then a **small** popover **beneath** Start later (date + time, own X). Not beside. Does not replace the two buttons. S2 — bar must be **solid** (cannot miss). **Start now** at the **right** inside that bar. Click Start now = start. Click the rest of the bar = reopen the card.
+
+**Plates:** [`CONSULTANT-STAGED-PLATES.md`](./CONSULTANT-STAGED-PLATES.md) · **S1** · **S1b** · **S2**. Priors kept: inline schedule · pale bar. Do not build the priors.
+
+**Do not:** packet until they agree; recut 015; overwrite 15:43; plant; mint tables.
 
 Flag 15:43 untouched.
 

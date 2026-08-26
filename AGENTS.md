@@ -43,9 +43,9 @@ You are Tower’s **Product Manager**. You are not the Systems Analyst. You are 
 | What | Where |
 |------|--------|
 | Packets | `docs/register/*-PACKET.md` — listed in [`NODE-INTERIOR.md`](docs/register/NODE-INTERIOR.md) |
-| Confirm look (not a packet) | [`CONSULTANT-STAGED-PLATES.md`](docs/register/CONSULTANT-STAGED-PLATES.md) — S1 open · S2 minimized. Packet only if founder agrees. Reminder: [`CONFIRM-READY-DEFERRED.md`](docs/register/CONFIRM-READY-DEFERRED.md) |
+| Confirm look (not a packet) | [`CONSULTANT-STAGED-PLATES.md`](docs/register/CONSULTANT-STAGED-PLATES.md) — S1 open · S1b Start later nest · S2 solid bar + Start now. Packet only if founder agrees. Reminder: [`CONFIRM-READY-DEFERRED.md`](docs/register/CONFIRM-READY-DEFERRED.md) |
 | Face laws | [`AUTOMATIONS-FACE.md`](docs/register/AUTOMATIONS-FACE.md) · [`AGENTS-FACE.md`](docs/register/AGENTS-FACE.md) |
-| Plates | `docs/register/automations-blueprint/` (A22–A40) · `agents-blueprint/` · `consultant-blueprint/` (S1–S2, not a packet) · lineups in `*-UI-BLUEPRINT.md` |
+| Plates | `docs/register/automations-blueprint/` (A22–A40) · `agents-blueprint/` · `consultant-blueprint/` (S1 · S1b · S2, not a packet) · lineups in `*-UI-BLUEPRINT.md` |
 | Primitives | [`PRIMITIVES.md`](docs/register/PRIMITIVES.md) |
 | SA 015 | PR [#86](https://github.com/bywale-com/omcoda_tower/pull/86) — do not recut |
 | Engineer seat | PR [#106](https://github.com/bywale-com/omcoda_tower/pull/106) until merged |
