@@ -160,6 +160,24 @@
           "name": "Immigration criteria"
         }
       ]
+    },
+    {
+      "id": "009_register_gaps",
+      "file": "009_register_gaps.sql",
+      "environments": ["development", "staging"],
+      "description": "A few register_gaps so Register & evolution is not empty (020)",
+      "records": [
+        {
+          "table": "register_gaps",
+          "id": "gap-seq-silence",
+          "name": "Sequence silence clock"
+        },
+        {
+          "table": "register_gaps",
+          "id": "gap-bind-gate",
+          "name": "Bind pack commit Audit"
+        }
+      ]
     }
   ]
 }

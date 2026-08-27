@@ -25,6 +25,7 @@ import {
   campaignObjectiveIdForCampaign,
   type CampaignDraft,
 } from "./campaignHousing.ts";
+import { appendFirmAudit } from "./stores.ts";
 
 function json(c: Context, body: unknown, status = 200) {
   return c.json(body, status);
@@ -1448,6 +1449,15 @@ export async function handlePreparedWorkspaceUpsert(c: Context) {
      ON CONFLICT (id) DO UPDATE SET status=EXCLUDED.status, body=EXCLUDED.body`,
     [id, firm, body.status ?? "staged", JSON.stringify(body.body ?? {})],
   );
+  const status = body.status ?? "staged";
+  const staging = typeof body.body?.staging === "string" ? body.body.staging : "";
+  if (status === "hydrated" || staging === "hydrated") {
+    await appendFirmAudit({
+      firmId: firm,
+      kind: "workspace.hydrated",
+      payload: { workspaceId: id, status, staging: staging || null },
+    });
+  }
   const row = await pool.query(`SELECT * FROM prepared_workspaces WHERE id=$1`, [id]);
   return json(c, row.rows[0]);
 }
@@ -1570,6 +1580,13 @@ export async function handleCampaignStatePost(c: Context) {
      ON CONFLICT (firm_id) DO UPDATE SET state=EXCLUDED.state, updated_at=now()`,
     [firm, body.state],
   );
+  if (body.state === "running") {
+    await appendFirmAudit({
+      firmId: firm,
+      kind: "campaign.running",
+      payload: { state: body.state },
+    });
+  }
   return json(c, { firmId: firm, state: body.state });
 }
 
@@ -1662,6 +1679,12 @@ export async function handleMachineProvision(c: Context) {
     firmId: firm,
     eventName: "ct_firms",
     payload: { firmId: firm, firmName, email },
+  });
+
+  await appendFirmAudit({
+    firmId: firm,
+    kind: "firm.provisioned",
+    payload: { firmName, email },
   });
 
   return json(c, {

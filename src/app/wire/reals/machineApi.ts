@@ -767,6 +767,50 @@ export const realMachineApi: MachineApiPort = {
     return wireFetch<{ kinds: string[] }>(`/machine/contact-upload-kinds${q}`, { headers });
   },
 
+  async getActivationGates(firmId) {
+    const id = firmId || firm();
+    return wireFetch<import("../machineTypes").ActivationGates>(
+      `/machine/activation-gates?firmId=${encodeURIComponent(id)}`,
+      { headers: { "x-firm-id": id } },
+    );
+  },
+
+  async getEscrow(firmId) {
+    const id = firmId || firm();
+    return wireFetch<import("../machineTypes").EscrowAcceptanceRow>(
+      `/machine/escrow?firmId=${encodeURIComponent(id)}`,
+      { headers: { "x-firm-id": id } },
+    );
+  },
+
+  async putEscrow(input) {
+    const id = input.firmId || firm();
+    return wireFetch<import("../machineTypes").EscrowAcceptanceRow>(`/machine/escrow?firmId=${encodeURIComponent(id)}`, {
+      method: "PUT",
+      headers: { "x-firm-id": id },
+      body: JSON.stringify({
+        terms: input.terms,
+        accepted: input.accepted,
+        status: input.status,
+      }),
+    });
+  },
+
+  async listRegisterGaps() {
+    const res = await wireFetch<{ gaps: import("../machineTypes").RegisterGapRow[] }>(
+      `/machine/register-gaps?firmId=${encodeURIComponent(firm())}`,
+      { headers: firmHeader() },
+    );
+    return res.gaps;
+  },
+
+  async upsertRegisterGap(input) {
+    return wireFetch<import("../machineTypes").RegisterGapRow>(
+      `/machine/register-gaps?firmId=${encodeURIComponent(firm())}`,
+      { method: "PUT", headers: firmHeader(), body: JSON.stringify(input) },
+    );
+  },
+
   async loadContactSeat(token, opts) {
     const q = opts?.campaignId ? `?campaignId=${encodeURIComponent(opts.campaignId)}` : "";
     return wireFetch(`/contact-seat/${encodeURIComponent(token)}${q}`);

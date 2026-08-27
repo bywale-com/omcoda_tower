@@ -2,6 +2,7 @@ import type { Context } from "hono";
 import { getPool } from "./db.ts";
 import { getResend, mailRoot } from "./resendClient.ts";
 import { getWireCapabilities } from "./capabilities.ts";
+import { appendFirmAudit } from "./stores.ts";
 
 function slugify(slug: string): string {
   return slug
@@ -72,6 +73,12 @@ export async function handlePoolAllocate(c: Context) {
            updated_at = now()`,
     [body.firmId, body.name ?? body.firmId, sub, fullDomain, identityId],
   );
+
+  await appendFirmAudit({
+    firmId: body.firmId,
+    kind: "domain.allocated",
+    payload: { subdomain: sub, fullDomain, status },
+  });
 
   return c.json({
     firmId: body.firmId,

@@ -27,6 +27,7 @@ import type {
 import { standInHaltStore } from "./haltStore";
 import { triggerLocalAxesMatch } from "../../data/automationTriggerSelect";
 import { standInContactSeat, standInContactUploads } from "./contactSeatMirror";
+import { standInCrmOAuth } from "./crmOAuth";
 
 /** Mirrors supabase/seeds/002_machine_tables.sql seq_eligibility_pipeline. */
 const eligibilityPipeline = new Map<string, EligibilityPipelineRow>(
@@ -333,9 +334,51 @@ const referenceVersions = new Map<string, ReferenceVersionRow>([
 ]);
 
 const evaluationPins = new Map<string, EvaluationPin>();
-const campaignStates = new Map<string, CampaignState>();
+const campaignStates = new Map<string, CampaignState>([["firm-cedar", "running"]]);
 const provisionedFirms = new Map<string, ProvisionResult>();
 const standInHousing = new Map<string, import("../machineTypes").CampaignHousingRow[]>();
+const standInEscrowAcceptances = new Map<string, import("../machineTypes").EscrowAcceptanceRow>();
+const standInRegisterGaps = new Map<string, import("../machineTypes").RegisterGapRow>([
+  [
+    "gap-seq-silence",
+    {
+      id: "gap-seq-silence",
+      summary: "Sequence silence clock not visible on Fleet health — contacts stall unnoticed.",
+      ticket: "SUP-184",
+      firmId: "firm-cedar",
+      source: "Firm health",
+      written: false,
+      createdAt: "2026-08-20T00:00:00.000Z",
+      updatedAt: "2026-08-20T00:00:00.000Z",
+    },
+  ],
+  [
+    "gap-bind-gate",
+    {
+      id: "gap-bind-gate",
+      summary: "Bind pack commit lacks before/after on Audit trail for Send gate reviewers.",
+      ticket: null,
+      firmId: "firm-cedar",
+      source: "Firm operations bind",
+      written: true,
+      createdAt: "2026-08-19T00:00:00.000Z",
+      updatedAt: "2026-08-19T00:00:00.000Z",
+    },
+  ],
+  [
+    "gap-harbor-spf",
+    {
+      id: "gap-harbor-spf",
+      summary: "Harbor sending domain is allocated; SPF still lags the DNS check.",
+      ticket: null,
+      firmId: "firm-harbor",
+      source: "Sending infrastructure",
+      written: false,
+      createdAt: "2026-08-18T00:00:00.000Z",
+      updatedAt: "2026-08-18T00:00:00.000Z",
+    },
+  ],
+]);
 const standInRulePacks = new Map<string, unknown>();
 const standInAttemptCycle = new Map<string, import("../machineTypes").AttemptCycleRow>([
   [
@@ -1889,6 +1932,85 @@ export const standInMachineApi: MachineApiPort = {
       ),
     ];
     return { kinds };
+  },
+
+  async getActivationGates(firmId) {
+    const id = firmId || standInFirm();
+    const firmExists =
+      provisionedFirms.has(id) ||
+      campaignStates.has(id) ||
+      [...bookContacts.values()].some((c) => c.firmId === id) ||
+      id === standInFirm();
+    const workspace = [...preparedWorkspaces.values()].find((w) => w.firm_id === id);
+    const grant = await standInCrmOAuth.get(id);
+    const escrow = standInEscrowAcceptances.get(id);
+    return {
+      firmId: id,
+      firmExists,
+      forwardDeployed:
+        workspace?.status === "hydrated" ||
+        String(workspace?.body?.staging ?? "") === "hydrated",
+      authorizeBook: Boolean(grant.granted && !grant.revoked),
+      readyToSend: false,
+      escrowHeld: escrow?.status === "held" || escrow?.status === "release_pending_window",
+      campaignRunning: campaignStates.get(id) === "running",
+    };
+  },
+
+  async getEscrow(firmId) {
+    const id = firmId || standInFirm();
+    const row = standInEscrowAcceptances.get(id);
+    if (!row) {
+      return {
+        firmId: id,
+        accepted: false,
+        terms: {},
+        acceptedAt: null,
+        status: null,
+        missing: true,
+      };
+    }
+    return { ...row, missing: false };
+  },
+
+  async putEscrow(input) {
+    const id = input.firmId || standInFirm();
+    const prev = standInEscrowAcceptances.get(id);
+    const terms = input.terms ?? prev?.terms ?? {};
+    const accepted = input.accepted ?? prev?.accepted ?? Boolean(input.terms);
+    const status = input.status ?? prev?.status ?? "held";
+    const acceptedAt = accepted ? (prev?.acceptedAt ?? now()) : prev?.acceptedAt ?? null;
+    const row: import("../machineTypes").EscrowAcceptanceRow = {
+      firmId: id,
+      accepted,
+      terms,
+      acceptedAt,
+      status,
+      updatedAt: now(),
+    };
+    standInEscrowAcceptances.set(id, row);
+    return { ...row, missing: false };
+  },
+
+  async listRegisterGaps() {
+    return [...standInRegisterGaps.values()].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  },
+
+  async upsertRegisterGap(input) {
+    const id = input.id?.trim() || `gap-local-${Date.now()}`;
+    const prev = standInRegisterGaps.get(id);
+    const row: import("../machineTypes").RegisterGapRow = {
+      id,
+      summary: input.summary.trim(),
+      ticket: input.ticket?.trim() || null,
+      firmId: input.firmId?.trim() || null,
+      source: input.source?.trim() || null,
+      written: input.written ?? prev?.written ?? false,
+      createdAt: prev?.createdAt ?? now(),
+      updatedAt: now(),
+    };
+    standInRegisterGaps.set(id, row);
+    return row;
   },
 
   loadContactSeat(token, opts) {
