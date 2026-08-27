@@ -1,3 +1,4 @@
+import type { CompareOperand } from "./automationCompare";
 import { getAutomationConstant } from "./automationConstants";
 import type { ConditionOperator } from "./automationConditions";
 import {
@@ -29,7 +30,61 @@ export type RuleConditionDefinition = {
   operator: ConditionOperator;
   constantKey: string;
   description?: string;
+  /** 027 — chip or text. Legacy leftField / constantKey hydrate when absent. */
+  left?: CompareOperand;
+  right?: CompareOperand;
 };
+
+/** Hub pull paths that have a collectible_fields key. Do not freeze client_data as schema. */
+export const RULE_LEFT_FIELD_MAP: Record<string, string> = {
+  "client_data.crs.language_clb": "language_clb",
+  "client_data.crs.score": "crs_score",
+  "client_data.crs.noc": "noc",
+  "client_data.crs.teer_category": "teer_category",
+  "client_data.information.canadian_skilled_hours": "canadian_skilled_hours",
+  "client_data.information.foreign_work_years": "foreign_work_years",
+  "client_data.information.foreign_trade_hours": "foreign_trade_hours",
+  "client_data.information.eca_status": "eca_status",
+  "client_data.information.ee_profile_exists": "ee_profile_exists",
+  "client_data.information.ee_profile_last_updated": "ee_profile_last_updated",
+  "client_data.information.has_ontario_job_offer": "has_ontario_job_offer",
+  "client_data.information.has_qualifying_job_offer": "has_qualifying_job_offer",
+  "client_data.information.has_trade_certificate": "has_trade_certificate",
+};
+
+/** Pack lefts with no collectible_fields row and no first-class column. Fail closed. */
+export const RULE_SILENT_LEFTS = new Set([
+  "client_data.crs.work_permit_warn",
+  "client_data.information.days_in_system",
+  "client_data.crs.work_permit_expiry",
+  "client_data.information.oinp_student_context",
+  "client_data.information.status",
+  "client_data.crs.province",
+]);
+
+export function hydrateRuleLeft(condition: RuleConditionDefinition): CompareOperand {
+  if (condition.left) return condition.left;
+  const raw = (condition.leftField ?? "").trim();
+  if (!raw || RULE_SILENT_LEFTS.has(raw) || raw.startsWith("client_data.")) {
+    const mapped = RULE_LEFT_FIELD_MAP[raw];
+    if (mapped) return { mode: "text", value: mapped };
+    return { mode: "text", value: "" };
+  }
+  return { mode: "text", value: RULE_LEFT_FIELD_MAP[raw] ?? raw };
+}
+
+export function hydrateRuleRight(condition: RuleConditionDefinition): CompareOperand {
+  if (condition.right) return condition.right;
+  const key = (condition.constantKey ?? "").trim();
+  return { mode: "text", value: key };
+}
+
+export function listingKeyFromLeft(left: CompareOperand, chipField?: string | null): string | null {
+  if (left.mode === "chip") return chipField?.trim() || null;
+  const text = left.value.trim();
+  if (!text || text.startsWith("client_data.")) return null;
+  return RULE_LEFT_FIELD_MAP[text] ?? text;
+}
 
 export type RuleOutcomeDefinition = {
   id: string;
@@ -524,18 +579,59 @@ function checkNarrative(check: Omit<RuleCheckResult, "narrative">): string {
     : `${check.label}: fail (${left} vs ${check.constantKey}=${right})`;
 }
 
-function evaluateCondition(condition: RuleConditionDefinition, input: unknown): RuleCheckResult {
-  const constant = getAutomationConstant(condition.constantKey);
-  const leftValue = readPathFromInput(input, condition.leftField);
-  const rightValue = constant?.value;
-  const pass = compareValues(leftValue, condition.operator, rightValue);
+function factValueFromInput(input: unknown, fieldKey: string): unknown {
+  if (!input || typeof input !== "object" || !fieldKey) return undefined;
+  const rec = input as Record<string, unknown>;
+  if (fieldKey in rec) return rec[fieldKey];
+  const facts = rec.facts;
+  if (facts && typeof facts === "object" && fieldKey in (facts as Record<string, unknown>)) {
+    return (facts as Record<string, unknown>)[fieldKey];
+  }
+  const writes = rec.fact_writebacks;
+  if (Array.isArray(writes)) {
+    const row = writes.find((item) => item && typeof item === "object" && (item as { field_key?: string }).field_key === fieldKey);
+    if (row && typeof row === "object") return (row as { value?: unknown }).value;
+  }
+  return undefined;
+}
+
+function packValue(packPayload: Record<string, unknown> | undefined, key: string): unknown {
+  if (!key) return undefined;
+  if (packPayload && key in packPayload) return packPayload[key];
+  return undefined;
+}
+
+function evaluateCondition(
+  condition: RuleConditionDefinition,
+  input: unknown,
+  packPayload?: Record<string, unknown>,
+): RuleCheckResult {
+  const left = hydrateRuleLeft(condition);
+  const right = hydrateRuleRight(condition);
+  let leftValue: unknown;
+  if (left.mode === "chip") {
+    leftValue = undefined;
+  } else {
+    const text = left.value.trim();
+    if (!text) leftValue = undefined;
+    else leftValue = factValueFromInput(input, text);
+  }
+  let rightValue: unknown;
+  if (right.mode === "chip") {
+    rightValue = undefined;
+  } else {
+    const text = right.value.trim();
+    rightValue = packValue(packPayload, text) ?? (text || undefined);
+  }
+  const emptyLeft = left.mode === "text" && !left.value.trim();
+  const pass = emptyLeft ? false : compareValues(leftValue, condition.operator, rightValue);
   const base = {
     id: condition.id,
     label: condition.label,
-    leftField: condition.leftField,
+    leftField: left.mode === "text" ? left.value : condition.leftField,
     leftValue,
     operator: condition.operator,
-    constantKey: condition.constantKey,
+    constantKey: right.mode === "text" ? right.value : condition.constantKey,
     rightValue,
     pass,
   };
