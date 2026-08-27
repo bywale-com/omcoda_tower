@@ -497,6 +497,7 @@ export async function escalateAttemptWindow(
       (typeof authoredContent.body === "string" && authoredContent.body) ||
       (typeof authoredContent.body_text === "string" && authoredContent.body_text) ||
       `Sequence advanced: ${fromChannel} → ${toChannel} after ${criteria.label}`;
+    const stamp = await pursuitForAttempt(pool, attempt);
     send = await actuateChannelSend({
       firmId: attempt.firm_id,
       contactId: attempt.contact_id,
@@ -504,6 +505,10 @@ export async function escalateAttemptWindow(
       purpose: "cem",
       subject,
       bodyText,
+      enrollmentId: stamp.enrollmentId,
+      campaignId: stamp.campaignId,
+      campaignObjectiveId: stamp.campaignObjectiveId,
+      attemptId: stamp.attemptId,
     });
     if (send.ok && !send.dryRun) {
       await writeEngagement(pool, attempt.firm_id, attempt.contact_id, "send_live", {
@@ -544,6 +549,8 @@ export async function escalateAttemptWindow(
       sequenceId: enr.rows[0]?.sequence_id ?? null,
       campaignId: enr.rows[0]?.campaign_id ?? null,
       payload: { attemptId: attempt.id, criteriaId: criteria.id, setValue },
+      attemptId: attempt.id,
+      enrollmentId: attempt.enrollment_id,
     });
     try {
       const { dispatchEventToWorkflows } = await import("./workflowWalk.ts");
@@ -577,7 +584,22 @@ export type ChannelSendInput = {
   purpose: string;
   subject?: string;
   bodyText?: string;
+  enrollmentId?: string | null;
+  campaignId?: string | null;
+  campaignObjectiveId?: string | null;
+  attemptId?: string | null;
 };
+
+async function pursuitForAttempt(
+  pool: Pool,
+  attempt: { id: string; enrollment_id: string | null },
+) {
+  const { pursuitStampForEnrollment } = await import("./campaignHousing.ts");
+  return pursuitStampForEnrollment(pool, {
+    enrollmentId: attempt.enrollment_id,
+    attemptId: attempt.id,
+  });
+}
 
 export async function actuateChannelSend(input: ChannelSendInput): Promise<DispatchResult> {
   const pool = getPool();
@@ -607,6 +629,10 @@ export async function actuateChannelSend(input: ChannelSendInput): Promise<Dispa
       firmId: input.firmId,
       contactId: input.contactId,
       purpose: input.purpose,
+      enrollmentId: input.enrollmentId,
+      campaignId: input.campaignId,
+      campaignObjectiveId: input.campaignObjectiveId,
+      attemptId: input.attemptId,
     });
   }
 
@@ -628,6 +654,10 @@ export async function actuateChannelSend(input: ChannelSendInput): Promise<Dispa
       firmId: input.firmId,
       contactId: input.contactId,
       purpose: input.purpose,
+      enrollmentId: input.enrollmentId,
+      campaignId: input.campaignId,
+      campaignObjectiveId: input.campaignObjectiveId,
+      attemptId: input.attemptId,
     });
   }
 
@@ -750,6 +780,8 @@ export async function enrollAndActuate(input: EnrollActuateInput) {
       (typeof authoredContent.bodyText === "string" && authoredContent.bodyText) ||
       firstCell?.bodyText ||
       `Sequence start via ${input.agentRef}`;
+    const { campaignObjectiveIdForCampaign } = await import("./campaignHousing.ts");
+    const campaignObjectiveId = await campaignObjectiveIdForCampaign(pool, campaignId);
     send = await actuateChannelSend({
       firmId: input.firmId,
       contactId: input.contactId,
@@ -757,6 +789,10 @@ export async function enrollAndActuate(input: EnrollActuateInput) {
       purpose: input.purpose ?? "opt-in",
       subject,
       bodyText,
+      enrollmentId: id,
+      campaignId,
+      campaignObjectiveId,
+      attemptId,
     });
     await writeEngagement(pool, input.firmId, input.contactId, live ? "send_live" : "send_dry_run", {
       enrollmentId: id,
@@ -881,6 +917,7 @@ export async function advanceTemplateCellIfDue(
   if (toChannel === "email" || toChannel === "text") {
     const subject = next.subject;
     const bodyText = next.bodyText;
+    const stamp = await pursuitForAttempt(pool, attempt);
     send = await actuateChannelSend({
       firmId: attempt.firm_id,
       contactId: attempt.contact_id,
@@ -888,6 +925,10 @@ export async function advanceTemplateCellIfDue(
       purpose: "cem",
       subject,
       bodyText,
+      enrollmentId: stamp.enrollmentId,
+      campaignId: stamp.campaignId,
+      campaignObjectiveId: stamp.campaignObjectiveId,
+      attemptId: stamp.attemptId,
     });
     const live = shouldLiveSend(attempt.contact_id);
     await writeEngagement(
@@ -1035,6 +1076,7 @@ export async function tickOnce(now = new Date()): Promise<{
           (typeof content.body === "string" && content.body) ||
           (typeof content.body_text === "string" && content.body_text) ||
           `Attempt ${Number(cleared.attempt_n ?? 1)}`;
+        const stamp = await pursuitForAttempt(pool, attempt);
         await actuateChannelSend({
           firmId: attempt.firm_id,
           contactId: attempt.contact_id,
@@ -1042,6 +1084,10 @@ export async function tickOnce(now = new Date()): Promise<{
           purpose: "cem",
           subject,
           bodyText,
+          enrollmentId: stamp.enrollmentId,
+          campaignId: stamp.campaignId,
+          campaignObjectiveId: stamp.campaignObjectiveId,
+          attemptId: stamp.attemptId,
         });
         await writeEngagement(pool, attempt.firm_id, attempt.contact_id, "send_dry_run", {
           attemptId: attempt.id,

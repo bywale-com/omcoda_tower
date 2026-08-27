@@ -9,6 +9,7 @@ export type TriggerSelectId =
   | "contact_import"
   | "contact.created"
   | "contact_uploaded"
+  | "objective_met"
   | "reference.pack";
 
 export type TriggerLocalLayer =
@@ -88,6 +89,20 @@ export const TRIGGER_SELECT_EVENTS: TriggerSelectEvent[] = [
     ],
   },
   {
+    id: "objective_met",
+    label: "An objective was met",
+    eventName: "objective_met",
+    layers: [
+      { kind: "firm" },
+      {
+        kind: "instance",
+        label: "Objective",
+        everyLabel: "Every objective",
+        selectLabel: "Select objective",
+      },
+    ],
+  },
+  {
     id: "reference.pack",
     label: "Reference pack updated",
     eventName: null,
@@ -138,6 +153,14 @@ export function triggerLocalRefFromPayload(
   if (eventName === "contact.created") return payloadString(payload, ["contact_id", "contactId", "id"]);
   if (eventName === "consent_records.sequenced") return payloadString(payload, ["sequence_id", "sequenceId"]);
   if (eventName === "contact_uploaded") return payloadString(payload, ["kind"]);
+  if (eventName === "objective_met") {
+    return payloadString(payload, [
+      "campaign_objective_id",
+      "campaignObjectiveId",
+      "campaign_id",
+      "campaignId",
+    ]);
+  }
   return null;
 }
 

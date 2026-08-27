@@ -634,6 +634,23 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
           }
           return;
         }
+        if (event === "objective_met") {
+          const { templates } = await wirePorts.machineApi.listTemplates();
+          const objs: Array<{ value: string; label: string }> = [];
+          for (const tpl of templates) {
+            const { campaigns } = await wirePorts.machineApi.listSequenceHousing(tpl.id);
+            for (const camp of campaigns) {
+              const objective = camp.objective;
+              if (!objective?.id) continue;
+              objs.push({
+                value: objective.id,
+                label: `${camp.name} · ${objective.name}`,
+              });
+            }
+          }
+          if (!cancelled) setLocalOptions(objs);
+          return;
+        }
         const { templates } = await wirePorts.machineApi.listTemplates();
         if (!cancelled) {
           setLocalOptions(templates.map((tpl) => ({ value: tpl.id, label: tpl.label })));

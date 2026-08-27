@@ -596,35 +596,207 @@ export async function copySequenceFromTemplate(
   return newId;
 }
 
+export type PursuitStamp = {
+  enrollmentId: string | null;
+  campaignId: string | null;
+  campaignObjectiveId: string | null;
+  attemptId: string | null;
+};
+
+export function derivedFormRef(enrollmentId: string, campaignObjectiveId: string): string {
+  return `form.${enrollmentId}.${campaignObjectiveId}`;
+}
+
+export async function campaignObjectiveIdForCampaign(
+  pool: Pool,
+  campaignId: string | null | undefined,
+): Promise<string | null> {
+  if (!campaignId) return null;
+  const row = await pool.query<{ id: string }>(
+    `SELECT id FROM campaign_objective WHERE campaign_id=$1 LIMIT 1`,
+    [campaignId],
+  );
+  return row.rows[0]?.id ?? null;
+}
+
+export async function pursuitStampForEnrollment(
+  pool: Pool,
+  opts: { enrollmentId?: string | null; attemptId?: string | null },
+): Promise<PursuitStamp> {
+  const enrollmentId = opts.enrollmentId ?? null;
+  const attemptId = opts.attemptId ?? null;
+  if (!enrollmentId) {
+    return { enrollmentId: null, campaignId: null, campaignObjectiveId: null, attemptId };
+  }
+  const enr = await pool.query<{ campaign_id: string | null }>(
+    `SELECT campaign_id FROM enrollment WHERE id=$1`,
+    [enrollmentId],
+  );
+  const campaignId = enr.rows[0]?.campaign_id ?? null;
+  return {
+    enrollmentId,
+    campaignId,
+    campaignObjectiveId: await campaignObjectiveIdForCampaign(pool, campaignId),
+    attemptId,
+  };
+}
+
+export async function resolveFormStamp(
+  pool: Pool,
+  opts: {
+    firmId: string;
+    contactId: string;
+    formRef?: string | null;
+    campaignObjectiveId?: string | null;
+  },
+): Promise<{ formRef: string | null; campaignObjectiveId: string | null; enrollmentId: string | null }> {
+  const enr = await pool.query<{ id: string; campaign_id: string | null }>(
+    `SELECT id, campaign_id FROM enrollment
+      WHERE firm_id=$1 AND contact_id=$2 AND campaign_id IS NOT NULL
+      ORDER BY enrolled_at DESC LIMIT 1`,
+    [opts.firmId, opts.contactId],
+  );
+  const enrollmentId = enr.rows[0]?.id ?? null;
+  let campaignObjectiveId = opts.campaignObjectiveId?.trim() || null;
+  if (!campaignObjectiveId) {
+    campaignObjectiveId = await campaignObjectiveIdForCampaign(pool, enr.rows[0]?.campaign_id ?? null);
+  }
+  let formRef = opts.formRef?.trim() || null;
+  if (!formRef && enrollmentId && campaignObjectiveId) {
+    formRef = derivedFormRef(enrollmentId, campaignObjectiveId);
+  }
+  return { formRef, campaignObjectiveId, enrollmentId };
+}
+
+type ObjectiveRow = {
+  id: string;
+  kind: ObjectiveKind;
+  name: string;
+  completion_table: CompletionTable;
+};
+
+type EnrollmentCursor = {
+  id: string;
+  firm_id: string;
+  contact_id: string;
+  sequence_id: string | null;
+  campaign_id: string | null;
+  enrolled_at: string | Date;
+};
+
+async function loadObjectiveForCampaign(
+  pool: Pool,
+  campaignId: string,
+): Promise<ObjectiveRow | null> {
+  const obj = await pool.query<ObjectiveRow>(
+    `SELECT id, kind, name, completion_table FROM campaign_objective WHERE campaign_id=$1 LIMIT 1`,
+    [campaignId],
+  );
+  return obj.rows[0] ?? null;
+}
+
+/** Local match. No stamp → no match. Click is event_class='clicked' only. */
+async function objectiveSatisfiedBy(
+  pool: Pool,
+  enrollment: EnrollmentCursor,
+  objective: ObjectiveRow,
+): Promise<{ ok: boolean; completionId: string | null }> {
+  const firmId = enrollment.firm_id;
+  const contactId = enrollment.contact_id;
+  const enrolledAt = enrollment.enrolled_at;
+
+  if (objective.completion_table === "meeting_booked") {
+    const r = await pool.query<{ id: string }>(
+      `SELECT id FROM meeting_booked
+        WHERE firm_id=$1 AND contact_id=$2
+          AND (
+            campaign_objective_id = $3
+            OR (
+              campaign_objective_id IS NULL
+              AND enrollment_id = $4
+              AND created_at >= $5
+            )
+          )
+        ORDER BY created_at DESC LIMIT 1`,
+      [firmId, contactId, objective.id, enrollment.id, enrolledAt],
+    );
+    return { ok: Boolean(r.rowCount), completionId: r.rows[0]?.id ?? null };
+  }
+
+  if (objective.completion_table === "fact_writebacks") {
+    const r = await pool.query<{ id: string }>(
+      `SELECT id FROM fact_writebacks
+        WHERE firm_id=$1 AND contact_id=$2 AND campaign_objective_id = $3
+        ORDER BY created_at DESC LIMIT 1`,
+      [firmId, contactId, objective.id],
+    );
+    return { ok: Boolean(r.rowCount), completionId: r.rows[0]?.id ?? null };
+  }
+
+  const r = await pool.query<{ id: string }>(
+    `SELECT e.id FROM messaging_events e
+      WHERE e.firm_id=$1 AND e.contact_id=$2 AND e.event_class = 'clicked'
+        AND e.message_id IN (
+          SELECT provider_message_id FROM outbound_messages
+           WHERE contact_id=$2
+             AND provider_message_id IS NOT NULL
+             AND (
+               campaign_objective_id = $3
+               OR (
+                 campaign_objective_id IS NULL
+                 AND enrollment_id = $4
+                 AND created_at >= $5
+               )
+             )
+        )
+      ORDER BY e.at DESC LIMIT 1`,
+    [firmId, contactId, objective.id, enrollment.id, enrolledAt],
+  );
+  return { ok: Boolean(r.rowCount), completionId: r.rows[0]?.id ?? null };
+}
+
 export async function campaignObjectiveMet(
   pool: Pool,
   opts: { firmId: string; contactId: string; campaignId: string },
 ): Promise<boolean> {
-  const obj = await pool.query<{ completion_table: CompletionTable }>(
-    `SELECT completion_table FROM campaign_objective WHERE campaign_id=$1 LIMIT 1`,
-    [opts.campaignId],
+  const enr = await pool.query<EnrollmentCursor>(
+    `SELECT id, firm_id, contact_id, sequence_id, campaign_id, enrolled_at
+       FROM enrollment
+      WHERE firm_id=$1 AND contact_id=$2 AND campaign_id=$3
+      ORDER BY enrolled_at DESC LIMIT 1`,
+    [opts.firmId, opts.contactId, opts.campaignId],
   );
-  const table = obj.rows[0]?.completion_table;
-  if (!table) return false;
-  if (table === "meeting_booked") {
-    const r = await pool.query(
-      `SELECT 1 FROM meeting_booked WHERE firm_id=$1 AND contact_id=$2 LIMIT 1`,
-      [opts.firmId, opts.contactId],
-    );
-    return Boolean(r.rowCount);
-  }
-  if (table === "fact_writebacks") {
-    const r = await pool.query(
-      `SELECT 1 FROM fact_writebacks WHERE firm_id=$1 AND contact_id=$2 LIMIT 1`,
-      [opts.firmId, opts.contactId],
-    );
-    return Boolean(r.rowCount);
-  }
-  const r = await pool.query(
-    `SELECT 1 FROM messaging_events WHERE firm_id=$1 AND contact_id=$2 LIMIT 1`,
+  const row = enr.rows[0];
+  if (!row) return false;
+  const obj = await loadObjectiveForCampaign(pool, opts.campaignId);
+  if (!obj) return false;
+  return (await objectiveSatisfiedBy(pool, row, obj)).ok;
+}
+
+/** Detect on the completion write. Do not filter pursuit_state — exhausted still listens. */
+export async function onCompletionWrite(
+  pool: Pool,
+  opts: { firmId: string; contactId: string; table: CompletionTable; rowId: string },
+): Promise<void> {
+  if (!opts.firmId || opts.firmId === "unknown" || !opts.contactId) return;
+  const enr = await pool.query<EnrollmentCursor>(
+    `SELECT id, firm_id, contact_id, sequence_id, campaign_id, enrolled_at
+       FROM enrollment
+      WHERE firm_id=$1 AND contact_id=$2 AND campaign_id IS NOT NULL
+      ORDER BY enrolled_at DESC LIMIT 1`,
     [opts.firmId, opts.contactId],
   );
-  return Boolean(r.rowCount);
+  const row = enr.rows[0];
+  if (!row?.campaign_id) return;
+  const obj = await loadObjectiveForCampaign(pool, row.campaign_id);
+  if (!obj) return;
+  if (obj.completion_table !== opts.table) return;
+  const sat = await objectiveSatisfiedBy(pool, row, obj);
+  if (!sat.ok) return;
+  await advanceEnrollmentCampaign(pool, row.id, {
+    completionTable: opts.table,
+    completionId: opts.rowId,
+  });
 }
 
 export async function nextCampaignId(
@@ -644,33 +816,86 @@ export async function nextCampaignId(
 export async function advanceEnrollmentCampaign(
   pool: Pool,
   enrollmentId: string,
+  completion?: { completionTable: CompletionTable; completionId: string | null },
 ): Promise<{ advanced: boolean; campaignId: string | null }> {
-  const enr = await pool.query<{
-    id: string;
-    firm_id: string;
-    contact_id: string;
-    sequence_id: string | null;
-    campaign_id: string | null;
-  }>(
-    `SELECT id, firm_id, contact_id, sequence_id, campaign_id FROM enrollment WHERE id=$1`,
+  const enr = await pool.query<EnrollmentCursor>(
+    `SELECT id, firm_id, contact_id, sequence_id, campaign_id, enrolled_at FROM enrollment WHERE id=$1`,
     [enrollmentId],
   );
   const row = enr.rows[0];
   if (!row?.sequence_id || !row.campaign_id) {
     return { advanced: false, campaignId: row?.campaign_id ?? null };
   }
-  const met = await campaignObjectiveMet(pool, {
-    firmId: row.firm_id,
-    contactId: row.contact_id,
-    campaignId: row.campaign_id,
-  });
-  if (!met) return { advanced: false, campaignId: row.campaign_id };
-  const next = await nextCampaignId(pool, row.sequence_id, row.campaign_id);
-  await pool.query(`UPDATE enrollment SET campaign_id=$2 WHERE id=$1`, [
-    enrollmentId,
-    next,
-  ]);
-  return { advanced: Boolean(next), campaignId: next };
+  const obj = await loadObjectiveForCampaign(pool, row.campaign_id);
+  if (!obj) return { advanced: false, campaignId: row.campaign_id };
+  const sat = await objectiveSatisfiedBy(pool, row, obj);
+  if (!sat.ok) return { advanced: false, campaignId: row.campaign_id };
+
+  const currentCampaignId = row.campaign_id;
+  const next = await nextCampaignId(pool, row.sequence_id, currentCampaignId);
+  const flipped = await pool.query(
+    `UPDATE enrollment
+        SET campaign_id=$2, pursuit_state='pursuing', exhausted_at=NULL
+      WHERE id=$1 AND campaign_id=$3
+      RETURNING id`,
+    [enrollmentId, next, currentCampaignId],
+  );
+  if (!flipped.rowCount) {
+    return { advanced: false, campaignId: next };
+  }
+
+  const completionId = completion?.completionId ?? sat.completionId;
+  const completionTable = completion?.completionTable ?? obj.completion_table;
+  await pool.query(
+    `INSERT INTO engagement_records (id, firm_id, contact_id, event_kind, payload)
+     VALUES ($1,$2,$3,'objective_met',$4::jsonb)`,
+    [
+      `eng-${randomUUID()}`,
+      row.firm_id,
+      row.contact_id,
+      JSON.stringify({
+        enrollmentId: row.id,
+        sequenceId: row.sequence_id,
+        campaignId: currentCampaignId,
+        campaignObjectiveId: obj.id,
+        kind: obj.kind,
+        completionTable,
+        completionId,
+        nextCampaignId: next,
+      }),
+    ],
+  );
+
+  await pool.query(
+    `UPDATE active_attempts
+        SET status='met', updated_at=now(),
+            state = state || jsonb_build_object('objective_met', true, 'campaign_id', $2::text, 'met_at', now()::text)
+      WHERE enrollment_id=$1 AND status='open'`,
+    [enrollmentId, currentCampaignId],
+  );
+
+  try {
+    const { dispatchEventToWorkflows } = await import("./workflowWalk.ts");
+    await dispatchEventToWorkflows(pool, {
+      firmId: row.firm_id,
+      eventName: "objective_met",
+      payload: {
+        campaign_objective_id: obj.id,
+        campaign_id: currentCampaignId,
+        sequence_id: row.sequence_id,
+        enrollment_id: row.id,
+        contact_id: row.contact_id,
+        kind: obj.kind,
+        completion_table: completionTable,
+        completion_id: completionId,
+      },
+      contactIds: [row.contact_id],
+    });
+  } catch (err) {
+    console.warn("[campaignHousing] objective_met dispatch:", err);
+  }
+
+  return { advanced: true, campaignId: next };
 }
 
 export async function recordCampaignFailure(
@@ -681,21 +906,50 @@ export async function recordCampaignFailure(
     sequenceId: string | null;
     campaignId: string | null;
     payload?: Record<string, unknown>;
+    attemptId?: string | null;
+    enrollmentId?: string | null;
   },
 ): Promise<string> {
+  const client = await pool.connect();
   const id = `cfail-${randomUUID()}`;
-  await pool.query(
-    `INSERT INTO campaign_failure (id, firm_id, contact_id, campaign_id, sequence_id, payload)
-     VALUES ($1,$2,$3,$4,$5,$6::jsonb)`,
-    [
-      id,
-      opts.firmId,
-      opts.contactId,
-      opts.campaignId,
-      opts.sequenceId,
-      JSON.stringify(opts.payload ?? {}),
-    ],
-  );
+  try {
+    await client.query("BEGIN");
+    await client.query(
+      `INSERT INTO campaign_failure (id, firm_id, contact_id, campaign_id, sequence_id, payload)
+       VALUES ($1,$2,$3,$4,$5,$6::jsonb)`,
+      [
+        id,
+        opts.firmId,
+        opts.contactId,
+        opts.campaignId,
+        opts.sequenceId,
+        JSON.stringify(opts.payload ?? {}),
+      ],
+    );
+    if (opts.attemptId) {
+      await client.query(
+        `UPDATE active_attempts
+            SET status='exhausted', updated_at=now(),
+                state = state || jsonb_build_object('exhausted_at', now()::text, 'campaign_failure_id', $2::text)
+          WHERE id=$1 AND status='open'`,
+        [opts.attemptId, id],
+      );
+    }
+    if (opts.enrollmentId) {
+      await client.query(
+        `UPDATE enrollment
+            SET pursuit_state='exhausted', exhausted_at=now()
+          WHERE id=$1`,
+        [opts.enrollmentId],
+      );
+    }
+    await client.query("COMMIT");
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
   return id;
 }
 

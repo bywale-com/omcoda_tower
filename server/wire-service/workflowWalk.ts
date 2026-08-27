@@ -1391,6 +1391,9 @@ function localRefFromPayload(
     return payloadString(payload, ["sequence_id", "sequenceId"]);
   }
   if (eventName === "contact_uploaded") return payloadString(payload, ["kind"]);
+  if (eventName === "objective_met") {
+    return payloadString(payload, ["campaign_objective_id", "campaignObjectiveId", "campaign_id", "campaignId"]);
+  }
   return null;
 }
 

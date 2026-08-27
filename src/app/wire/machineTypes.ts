@@ -303,6 +303,8 @@ export type FactWritebackRow = {
   contact_id: string;
   field_key: string | null;
   value: unknown;
+  form_ref?: string | null;
+  campaign_objective_id?: string | null;
   created_at: string;
 };
 

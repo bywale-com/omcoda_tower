@@ -118,6 +118,37 @@
       ]
     },
     {
+      "id": "006_objective_local_axis",
+      "file": "006_objective_local_axis.sql",
+      "environments": ["development", "staging"],
+      "description": "Stamp Cedar outbound with the window objective; Harbor form met",
+      "records": [
+        {
+          "table": "outbound_messages",
+          "id": "out-cedar-1-window",
+          "name": "Ana launch-window send"
+        },
+        {
+          "table": "engagement_records",
+          "id": "eng-harbor-1-objective-met",
+          "name": "Okonkwo form objective met"
+        }
+      ]
+    },
+    {
+      "id": "007_pursuit_exhausted",
+      "file": "007_pursuit_exhausted.sql",
+      "environments": ["development", "staging"],
+      "description": "One Harbor exhausted pursuit; cursor stays on the campaign",
+      "records": [
+        {
+          "table": "campaign_failure",
+          "id": "cfail-harbor-4-exhausted",
+          "name": "Haddad exhausted"
+        }
+      ]
+    },
+    {
       "id": "009_register_gaps",
       "file": "009_register_gaps.sql",
       "environments": ["development", "staging"],
