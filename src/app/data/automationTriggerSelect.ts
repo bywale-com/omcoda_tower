@@ -128,6 +128,7 @@ export const WIRE_ADD_KINDS: { blockId: string; title: string; hint: string }[] 
   { blockId: "action-sequence", title: "Action", hint: "Run a task or update" },
   { blockId: "condition-if", title: "If", hint: "Two wires — true / false" },
   { blockId: "condition-switch", title: "Switch", hint: "Many paths plus fallback" },
+  { blockId: "wait-approval", title: "Wait", hint: "Park until approval or a duration" },
   { blockId: "operation-exit", title: "Exit", hint: "End the workflow" },
 ];
 

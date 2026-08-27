@@ -16,5 +16,5 @@ export function useCanvasOps(): CanvasOps | null {
 }
 
 export function switchableKind(type: WorkflowNodeType | undefined): boolean {
-  return type === "trigger" || type === "action";
+  return type === "trigger" || type === "action" || type === "wait";
 }

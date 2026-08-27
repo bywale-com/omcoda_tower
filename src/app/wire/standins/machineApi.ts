@@ -676,12 +676,57 @@ function writesFromRunPayload(
   return out;
 }
 
+type StandInOccupancy = {
+  id: string;
+  firm_id: string;
+  workflow_id: string;
+  wait_node_id: string;
+  workflow_run_id: string;
+  contact_id: string;
+  title: string;
+  approver: "consultant" | "operator";
+  status: "open" | "scheduled" | "approved";
+  approve_at: string | null;
+  approved_at: string | null;
+  created_at: string;
+};
+
+const waitOccupancy = new Map<string, StandInOccupancy>();
+
+function peopleFromWaitPayload(
+  payload?: Record<string, unknown>,
+  contactIds?: string[],
+): string[] {
+  if (contactIds?.length) return [...new Set(contactIds)];
+  const fromWrites = writesFromRunPayload(payload)
+    .map((w) => w.contact_id)
+    .filter((id): id is string => Boolean(id));
+  if (fromWrites.length) return [...new Set(fromWrites)];
+  const raw = payload?.contactIds;
+  if (Array.isArray(raw)) return [...new Set(raw.map(String))];
+  return [];
+}
+
 function walkStandInGraph(
   workflowId: string,
   runId: string,
   triggerLabel: string,
-  opts?: { payload?: Record<string, unknown>; untilNodeId?: string },
-): { nodeStatus: Record<string, unknown>; enrollments: string[]; ok: boolean } {
+  opts?: {
+    payload?: Record<string, unknown>;
+    untilNodeId?: string;
+    contactIds?: string[];
+    resumeFromNodeId?: string;
+  },
+): {
+  nodeStatus: Record<string, unknown>;
+  enrollments: string[];
+  ok: boolean;
+  parked?: boolean;
+  waitingNodeId?: string;
+  resumeAt?: string | null;
+  waitContactIds?: string[];
+  waitWrites?: Array<{ table: string; id: string; contact_id?: string | null }>;
+} {
   const w = workflows.get(workflowId);
   const nodes = (w?.graph?.nodes ?? []) as Array<{
     id: string;
@@ -691,10 +736,10 @@ function walkStandInGraph(
   const edges = (w?.graph?.edges ?? []) as Array<{ source: string; target: string }>;
   const nodeStatus: Record<string, unknown> = {};
   const enrIds: string[] = [];
-  const order: string[] = [];
   const start = nodes.find((n) => n.type === "trigger");
   if (!start) return { nodeStatus, enrollments: enrIds, ok: false };
   const writes = writesFromRunPayload(opts?.payload);
+  const people = peopleFromWaitPayload(opts?.payload, opts?.contactIds);
 
   const bySource = new Map<string, string[]>();
   for (const e of edges) {
@@ -703,17 +748,95 @@ function walkStandInGraph(
     bySource.set(e.source, list);
   }
 
-  let cur: string | undefined = start.id;
+  let cur: string | undefined = opts?.resumeFromNodeId
+    ? bySource.get(opts.resumeFromNodeId)?.[0]
+    : start.id;
   const seen = new Set<string>();
+  if (opts?.resumeFromNodeId) seen.add(opts.resumeFromNodeId);
   let ok = true;
+  let parked = false;
+  let waitingNodeId: string | undefined;
+  let resumeAt: string | null | undefined;
+  let waitWrites: Array<{ table: string; id: string; contact_id?: string | null }> = writes;
   while (cur && !seen.has(cur)) {
     seen.add(cur);
-    order.push(cur);
     const node = nodes.find((n) => n.id === cur);
     if (!node) break;
     if (node.type !== "trigger" && node.data?.configured === false) {
       nodeStatus[cur] = { status: "failed", detail: "not configured", at: now() };
       ok = false;
+      break;
+    }
+    if (node.type === "wait") {
+      const shape = String(node.data?.shape ?? node.data?.waitShape ?? "approval");
+      const title = String(node.data?.title ?? node.data?.label ?? "").trim();
+      const approver =
+        String(node.data?.approver ?? node.data?.waitApprover ?? "consultant") === "operator"
+          ? "operator"
+          : "consultant";
+      const amount = Number(node.data?.durationAmount ?? 0);
+      const unit = String(node.data?.durationUnit ?? "");
+      const configured =
+        shape === "duration"
+          ? amount > 0 && (unit === "minutes" || unit === "hours" || unit === "days")
+          : Boolean(title);
+      if (!configured) {
+        nodeStatus[cur] = { status: "failed", detail: "not configured", at: now() };
+        ok = false;
+        break;
+      }
+      if (shape === "duration") {
+        const ms =
+          unit === "minutes"
+            ? amount * 60_000
+            : unit === "hours"
+              ? amount * 3_600_000
+              : amount * 86_400_000;
+        resumeAt = new Date(Date.now() + ms).toISOString();
+        parked = true;
+        waitingNodeId = cur;
+        waitWrites = writes;
+        nodeStatus[cur] = { status: "waiting", detail: `duration ${amount} ${unit}`, at: now() };
+        break;
+      }
+      const occWrites: Array<{ table: string; id: string; contact_id?: string | null }> = [];
+      for (const contactId of people) {
+        const key = `${runId}:${cur}:${contactId}`;
+        if ([...waitOccupancy.values()].some(
+          (row) =>
+            row.workflow_run_id === runId &&
+            row.wait_node_id === cur &&
+            row.contact_id === contactId,
+        )) {
+          continue;
+        }
+        const id = `wo-local-${key}`;
+        waitOccupancy.set(id, {
+          id,
+          firm_id: standInFirm(),
+          workflow_id: workflowId,
+          wait_node_id: cur,
+          workflow_run_id: runId,
+          contact_id: contactId,
+          title,
+          approver,
+          status: "open",
+          approve_at: null,
+          approved_at: null,
+          created_at: now(),
+        });
+        occWrites.push({ table: "wait_occupancy", id, contact_id: contactId });
+      }
+      parked = true;
+      waitingNodeId = cur;
+      resumeAt = null;
+      waitWrites = occWrites;
+      nodeStatus[cur] = {
+        status: "waiting",
+        detail: `approval ${title}; n=${occWrites.length}`,
+        at: now(),
+        writes: occWrites,
+      };
       break;
     }
     if (node.type === "action") {
@@ -724,7 +847,7 @@ function walkStandInGraph(
       enrollments.push({
         id,
         firm_id: standInFirm(),
-        contact_id: "contact-local-1",
+        contact_id: people[0] ?? "contact-local-1",
         agent_ref: agentRef,
         sequence_id: agentRef,
         workflow_run_id: runId,
@@ -743,7 +866,91 @@ function walkStandInGraph(
     cur = bySource.get(cur)?.[0];
   }
   void triggerLabel;
-  return { nodeStatus, enrollments: enrIds, ok: ok && order.length > 0 };
+  return {
+    nodeStatus,
+    enrollments: enrIds,
+    ok: ok && (parked || Object.keys(nodeStatus).length > 0),
+    parked,
+    waitingNodeId,
+    resumeAt,
+    waitContactIds: people,
+    waitWrites,
+  };
+}
+
+function restampStandInWait(workflowId: string, graph: { nodes?: unknown[] }) {
+  const nodes = (graph.nodes ?? []) as Array<{
+    id: string;
+    type?: string;
+    data?: Record<string, unknown>;
+  }>;
+  for (const node of nodes) {
+    if (node.type !== "wait") continue;
+    const title = String(node.data?.title ?? node.data?.label ?? "").trim();
+    const approver =
+      String(node.data?.approver ?? node.data?.waitApprover ?? "consultant") === "operator"
+        ? "operator"
+        : "consultant";
+    if (!title) continue;
+    for (const row of waitOccupancy.values()) {
+      if (row.workflow_id === workflowId && row.wait_node_id === node.id && row.status === "open") {
+        row.title = title;
+        row.approver = approver;
+      }
+    }
+  }
+}
+
+function resumeStandInWaitRun(run: WorkflowRunRow, waitNodeId: string, contactIds: string[], writes: Array<{ table: string; id: string; contact_id?: string | null }>) {
+  const walked = walkStandInGraph(run.workflow_id, run.id, "wait-resume", {
+    payload: { writes },
+    contactIds,
+    resumeFromNodeId: waitNodeId,
+  });
+  run.status = walked.parked ? "waiting" : walked.ok ? "success" : "failed";
+  run.node_status = walked.nodeStatus;
+  run.waiting_node_id = walked.parked ? walked.waitingNodeId ?? null : null;
+  run.resume_at = walked.parked ? walked.resumeAt ?? null : null;
+  run.finished_at = walked.parked ? null : now();
+  run.counts = {
+    enrollments: walked.enrollments.length,
+    waitContactIds: walked.waitContactIds ?? contactIds,
+    waitWrites: walked.waitWrites ?? writes,
+  };
+}
+
+function fireDueStandInWaits() {
+  const stamp = Date.now();
+  for (const row of waitOccupancy.values()) {
+    if (row.status === "scheduled" && row.approve_at && Date.parse(row.approve_at) <= stamp) {
+      row.status = "approved";
+      row.approved_at = now();
+    }
+  }
+  for (const run of runs.values()) {
+    if (run.status !== "waiting" || !run.resume_at || Date.parse(run.resume_at) > stamp) continue;
+    const waitNodeId = run.waiting_node_id;
+    if (!waitNodeId) continue;
+    const occ = [...waitOccupancy.values()].filter(
+      (row) =>
+        row.workflow_run_id === run.id &&
+        row.wait_node_id === waitNodeId &&
+        row.status !== "approved",
+    );
+    for (const row of occ) {
+      row.status = "approved";
+      row.approved_at = now();
+    }
+    const writes = occ.length
+      ? occ.map((row) => ({ table: "wait_occupancy", id: row.id, contact_id: row.contact_id }))
+      : (run.counts.waitWrites as Array<{ table: string; id: string; contact_id?: string | null }> | undefined) ?? [];
+    const contactIds = occ.length
+      ? occ.map((row) => row.contact_id)
+      : Array.isArray(run.counts.waitContactIds)
+        ? (run.counts.waitContactIds as unknown[]).map(String)
+        : [];
+    resumeStandInWaitRun(run, waitNodeId, contactIds, writes);
+  }
 }
 
 const HOUSE_CONTACT_IMPORT_GRAPH = {
@@ -919,6 +1126,7 @@ export const standInMachineApi: MachineApiPort = {
       audience_contact_ids: input.audienceContactIds ?? prev?.audience_contact_ids ?? [],
     };
     workflows.set(id, row);
+    restampStandInWait(id, row.graph);
     return { id, status: row.status, name: row.name, target: row.target };
   },
 
@@ -944,12 +1152,18 @@ export const standInMachineApi: MachineApiPort = {
       id,
       workflow_id: workflowId,
       firm_id: standInFirm(),
-      status: walked.ok ? "success" : "failed",
+      status: walked.parked ? "waiting" : walked.ok ? "success" : "failed",
       trigger_label: triggerLabel ?? "Manual run",
       node_status: walked.nodeStatus,
-      counts: { enrollments: walked.enrollments.length },
+      counts: {
+        enrollments: walked.enrollments.length,
+        waitContactIds: walked.waitContactIds ?? [],
+        waitWrites: walked.waitWrites ?? [],
+      },
       started_at: now(),
-      finished_at: now(),
+      finished_at: walked.parked ? null : now(),
+      waiting_node_id: walked.parked ? walked.waitingNodeId ?? null : null,
+      resume_at: walked.parked ? walked.resumeAt ?? null : null,
     };
     runs.set(id, row);
     return {
@@ -1207,6 +1421,34 @@ export const standInMachineApi: MachineApiPort = {
           notes = v.verdict === "unreachable" ? "missing email and phone" : v.verdict;
         }
         bookContacts.set(v.contactId, { ...person, tags, notes });
+      }
+      if (nodes.some((n) => n.type === "wait")) {
+        const runId = `run-local-${Date.now()}`;
+        const contactIds = writes
+          .filter((row) => row.table === "contact_records")
+          .map((row) => row.contact_id ?? row.id)
+          .filter(Boolean);
+        const walked = walkStandInGraph(w.id, runId, "event:contact_import", {
+          payload: { writes },
+          contactIds,
+        });
+        runs.set(runId, {
+          id: runId,
+          workflow_id: w.id,
+          firm_id: standInFirm(),
+          status: walked.parked ? "waiting" : walked.ok ? "success" : "failed",
+          trigger_label: "event:contact_import",
+          node_status: walked.nodeStatus,
+          counts: {
+            enrollments: walked.enrollments.length,
+            waitContactIds: walked.waitContactIds ?? contactIds,
+            waitWrites: walked.waitWrites ?? writes,
+          },
+          started_at: now(),
+          finished_at: walked.parked ? null : now(),
+          waiting_node_id: walked.parked ? walked.waitingNodeId ?? null : null,
+          resume_at: walked.parked ? walked.resumeAt ?? null : null,
+        });
       }
       workflowsFired.push({ workflowId: w.id, auditRunId: audit.id });
     }
@@ -2011,6 +2253,82 @@ export const standInMachineApi: MachineApiPort = {
     };
     standInRegisterGaps.set(id, row);
     return row;
+  },
+
+  async listWaitOccupancy(approver) {
+    fireDueStandInWaits();
+    const firm = standInFirm();
+    const open = [...waitOccupancy.values()].filter((row) => {
+      if (row.status !== "open" && row.status !== "scheduled") return false;
+      if (row.approver !== approver) return false;
+      if (approver === "consultant" && row.firm_id !== firm) return false;
+      return true;
+    });
+    const groups = new Map<string, import("../machineTypes").WaitOccupancyNote>();
+    for (const row of open) {
+      const key = `${row.workflow_id}:${row.wait_node_id}:${row.title}`;
+      const cur = groups.get(key);
+      if (cur) cur.count += 1;
+      else {
+        groups.set(key, {
+          workflowId: row.workflow_id,
+          waitNodeId: row.wait_node_id,
+          title: row.title,
+          count: 1,
+          approver,
+        });
+      }
+    }
+    return [...groups.values()];
+  },
+
+  async approveWaitOccupancy(input) {
+    fireDueStandInWaits();
+    const firm = standInFirm();
+    const approver = input.approver === "operator" ? "operator" : "consultant";
+    const match = (row: StandInOccupancy) => {
+      if (row.workflow_id !== input.workflowId || row.wait_node_id !== input.waitNodeId) return false;
+      if (row.approver !== approver) return false;
+      if (approver === "consultant" && row.firm_id !== firm) return false;
+      return true;
+    };
+    if (input.mode === "later") {
+      if (!input.approveAt) return { ok: false, mode: "later" as const, runs: 0 };
+      const runIds = new Set<string>();
+      for (const row of waitOccupancy.values()) {
+        if (!match(row) || row.status !== "open") continue;
+        row.status = "scheduled";
+        row.approve_at = input.approveAt;
+        runIds.add(row.workflow_run_id);
+      }
+      for (const runId of runIds) {
+        const run = runs.get(runId);
+        if (run && run.status === "waiting") run.resume_at = input.approveAt;
+      }
+      return { ok: true, mode: "later", runs: runIds.size };
+    }
+    const open = [...waitOccupancy.values()].filter(
+      (row) => match(row) && (row.status === "open" || row.status === "scheduled"),
+    );
+    const byRun = new Map<string, StandInOccupancy[]>();
+    for (const row of open) {
+      row.status = "approved";
+      row.approved_at = now();
+      const list = byRun.get(row.workflow_run_id) ?? [];
+      list.push(row);
+      byRun.set(row.workflow_run_id, list);
+    }
+    for (const [runId, group] of byRun) {
+      const run = runs.get(runId);
+      if (!run) continue;
+      resumeStandInWaitRun(
+        run,
+        input.waitNodeId,
+        group.map((row) => row.contact_id),
+        group.map((row) => ({ table: "wait_occupancy", id: row.id, contact_id: row.contact_id })),
+      );
+    }
+    return { ok: true, mode: "now", runs: byRun.size };
   },
 
   loadContactSeat(token, opts) {

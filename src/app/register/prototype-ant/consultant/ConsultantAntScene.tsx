@@ -17,6 +17,7 @@ import { HaltOutreachModal } from "./HaltOutreachModal";
 import { LoginModule } from "./LoginModule";
 import { MeetingsModule } from "./MeetingsModule";
 import { PreparedModule } from "./PreparedModule";
+import { WaitNoteOverlay } from "../WaitNoteOverlay";
 import {
   DEFAULT_LICENSEE,
   nowStamp,
@@ -303,6 +304,7 @@ export function ConsultantAntScene() {
         onConfirm={() => void confirmHalt()}
         onClose={() => setHaltModalOpen(false)}
       />
+      <WaitNoteOverlay approver="consultant" />
     </Layout>
   );
 }

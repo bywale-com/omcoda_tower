@@ -28,6 +28,7 @@ import {
 } from "../../trace/surfaceCatalog";
 import { OperatorNavProvider } from "../../prototype/operatorNav";
 import { Surface } from "../chrome";
+import { WaitNoteOverlay } from "../WaitNoteOverlay";
 import { AcquisitionAdsModule } from "./AcquisitionAdsModule";
 import { ActivationForwardDeployModule } from "./ActivationForwardDeployModule";
 import { ActivationStateModule } from "./ActivationStateModule";
@@ -186,6 +187,7 @@ export function OperatorAntScene() {
           {main}
         </Content>
       </Layout>
+      <WaitNoteOverlay approver="operator" />
     </Surface>
     </OperatorNavProvider>
   );

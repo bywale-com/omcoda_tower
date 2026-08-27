@@ -84,7 +84,7 @@ function normalizeActionType(data: Record<string, unknown> | undefined): string 
 }
 
 export type NodeRunStatus = {
-  status: "success" | "skipped" | "failed";
+  status: "success" | "skipped" | "failed" | "waiting";
   detail?: string;
   at: string;
   writes?: RunWrite[];
@@ -104,7 +104,8 @@ function isValidatedPipeline(nodes: RfNode[]): boolean {
       types.has("rule") ||
       types.has("branch") ||
       types.has("if") ||
-      types.has("switch"))
+      types.has("switch") ||
+      types.has("wait"))
   );
 }
 
@@ -201,7 +202,54 @@ const PERSON_WRITE_TABLES = new Set([
   "contact_records",
   "contact_tag",
   "enrollment",
+  "wait_occupancy",
 ]);
+
+function waitShapeOf(data: Record<string, unknown> | undefined): "approval" | "duration" {
+  const raw = String(data?.shape ?? data?.waitShape ?? "approval");
+  return raw === "duration" ? "duration" : "approval";
+}
+
+function waitApproverOf(data: Record<string, unknown> | undefined): "consultant" | "operator" {
+  return String(data?.approver ?? data?.waitApprover ?? "consultant") === "operator"
+    ? "operator"
+    : "consultant";
+}
+
+function waitTitleOf(data: Record<string, unknown> | undefined): string {
+  const title = typeof data?.title === "string" ? data.title.trim() : "";
+  if (title) return title;
+  return typeof data?.label === "string" ? data.label.trim() : "";
+}
+
+function waitConfigured(data: Record<string, unknown> | undefined): boolean {
+  const shape = waitShapeOf(data);
+  if (shape === "approval") {
+    const title = waitTitleOf(data);
+    const approver = waitApproverOf(data);
+    return Boolean(title) && (approver === "consultant" || approver === "operator");
+  }
+  const amount = Number(data?.durationAmount ?? 0);
+  const unit = String(data?.durationUnit ?? "");
+  return amount > 0 && (unit === "minutes" || unit === "hours" || unit === "days");
+}
+
+function durationResumeAt(amount: number, unit: string): string {
+  const ms =
+    unit === "minutes"
+      ? amount * 60_000
+      : unit === "hours"
+        ? amount * 3_600_000
+        : amount * 86_400_000;
+  return new Date(Date.now() + ms).toISOString();
+}
+
+function waitPeople(data: Record<string, unknown>, ctx: WalkContext): string[] {
+  const mapped = mappedWrites(data, ctx);
+  if (mapped) return personIdsFromWrites(mapped);
+  if (ctx.contactIds.length) return uniqueIds(ctx.contactIds);
+  return personIdsFromWrites(ctx.previousWrites);
+}
 
 function pickWrites(writes: RunWrite[], pickTable?: string, pickId?: string): RunWrite[] {
   if (pickId) return writes.filter((w) => w.id === pickId);
@@ -1003,9 +1051,12 @@ export async function walkValidatedWorkflow(
     triggerPayload?: Record<string, unknown>;
     contactIds?: string[];
     untilNodeId?: string;
+    /** Resume from this Wait's outgoing. Do not re-visit Wait. */
+    resumeFromNodeId?: string;
   },
 ): Promise<{
   ok: boolean;
+  parked?: boolean;
   nodeStatus: Record<string, NodeRunStatus>;
   enrollments: string[];
   error?: string;
@@ -1062,6 +1113,12 @@ export async function walkValidatedWorkflow(
   const nodeStatus: Record<string, NodeRunStatus> = {};
   const enrollments: string[] = [];
   const visited = new Set<string>();
+  let parked: {
+    nodeId: string;
+    resumeAt: string | null;
+    contactIds: string[];
+    writes: RunWrite[];
+  } | null = null;
 
   const goOn = async (fromId: string, list: RfEdge[]) => {
     if (opts.untilNodeId === fromId) return;
@@ -1467,6 +1524,84 @@ export async function walkValidatedWorkflow(
         return;
       }
 
+      if (type === "wait") {
+        if (!waitConfigured(data)) {
+          nodeStatus[nodeId] = {
+            status: "failed",
+            detail: "not configured",
+            at: now(),
+          };
+          return;
+        }
+        const shape = waitShapeOf(data);
+        const people = waitPeople(data, ctx);
+        if (people.length) ctx.contactIds = people;
+
+        if (shape === "duration") {
+          const amount = Number(data.durationAmount ?? 0);
+          const unit = String(data.durationUnit ?? "days");
+          parked = {
+            nodeId,
+            resumeAt: durationResumeAt(amount, unit),
+            contactIds: people,
+            writes: ctx.previousWrites,
+          };
+          nodeStatus[nodeId] = {
+            status: "waiting",
+            detail: `duration ${amount} ${unit}`,
+            at: now(),
+            writes: ctx.previousWrites,
+          };
+          return;
+        }
+
+        const title = waitTitleOf(data);
+        const approver = waitApproverOf(data);
+        const writes: RunWrite[] = [];
+        for (const contactId of people) {
+          const occId = `wo-${randomUUID()}`;
+          const inserted = await pool.query<{ id: string }>(
+            `INSERT INTO wait_occupancy (
+               id, firm_id, workflow_id, wait_node_id, workflow_run_id,
+               contact_id, title, approver, status
+             ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'open')
+             ON CONFLICT (workflow_run_id, wait_node_id, contact_id) DO NOTHING
+             RETURNING id`,
+            [
+              occId,
+              opts.firmId,
+              opts.workflowId,
+              nodeId,
+              opts.runId,
+              contactId,
+              title,
+              approver,
+            ],
+          );
+          if (inserted.rows[0]?.id) {
+            writes.push({
+              table: "wait_occupancy",
+              id: inserted.rows[0].id,
+              contact_id: contactId,
+            });
+          }
+        }
+        commitWrites(ctx, nodeId, writes);
+        parked = {
+          nodeId,
+          resumeAt: null,
+          contactIds: people,
+          writes,
+        };
+        nodeStatus[nodeId] = {
+          status: "waiting",
+          detail: `approval ${title}; n=${writes.length}`,
+          at: now(),
+          writes,
+        };
+        return;
+      }
+
       if (type === "exit") {
         nodeStatus[nodeId] = { status: "success", detail: "exit", at: now() };
         return;
@@ -1487,12 +1622,52 @@ export async function walkValidatedWorkflow(
     }
   }
 
-  await visit(start.id);
+  if (opts.resumeFromNodeId) {
+    visited.add(opts.resumeFromNodeId);
+    const prior = await pool.query<{ node_status: Record<string, NodeRunStatus> }>(
+      `SELECT node_status FROM workflow_run WHERE id=$1`,
+      [opts.runId],
+    );
+    Object.assign(nodeStatus, prior.rows[0]?.node_status ?? {});
+    nodeStatus[opts.resumeFromNodeId] = {
+      status: "success",
+      detail: "wait resumed",
+      at: now(),
+      writes: ctx.previousWrites,
+    };
+    await goOn(opts.resumeFromNodeId, outgoing(edges, opts.resumeFromNodeId));
+  } else {
+    await visit(start.id);
+  }
+
+  if (parked) {
+    await pool.query(
+      `UPDATE workflow_run
+       SET status='waiting', waiting_node_id=$2, resume_at=$3::timestamptz,
+           node_status=$4::jsonb, counts=$5::jsonb, finished_at=NULL
+       WHERE id=$1`,
+      [
+        opts.runId,
+        parked.nodeId,
+        parked.resumeAt,
+        JSON.stringify(nodeStatus),
+        JSON.stringify({
+          nodes: Object.keys(nodeStatus).length,
+          enrollments: enrollments.length,
+          contacts: parked.contactIds.length,
+          waitContactIds: parked.contactIds,
+          waitWrites: parked.writes,
+        }),
+      ],
+    );
+    return { ok: true, parked: true, nodeStatus, enrollments };
+  }
 
   const failed = Object.values(nodeStatus).some((s) => s.status === "failed");
   await pool.query(
     `UPDATE workflow_run
-     SET status=$2, node_status=$3::jsonb, counts=$4::jsonb, finished_at=now()
+     SET status=$2, waiting_node_id=NULL, resume_at=NULL,
+         node_status=$3::jsonb, counts=$4::jsonb, finished_at=now()
      WHERE id=$1`,
     [
       opts.runId,
@@ -1507,6 +1682,129 @@ export async function walkValidatedWorkflow(
   );
 
   return { ok: !failed, nodeStatus, enrollments };
+}
+
+function writesFromUnknown(raw: unknown): RunWrite[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((row) => {
+      if (!row || typeof row !== "object") return null;
+      const rec = row as Record<string, unknown>;
+      const table = typeof rec.table === "string" ? rec.table : "";
+      const id = typeof rec.id === "string" ? rec.id : "";
+      if (!table || !id) return null;
+      const contact_id = typeof rec.contact_id === "string" ? rec.contact_id : null;
+      return { table, id, contact_id };
+    })
+    .filter((row): row is RunWrite => Boolean(row));
+}
+
+export async function restampOpenWaitOccupancy(
+  pool: Pool,
+  workflowId: string,
+  nodes: RfNode[],
+): Promise<void> {
+  for (const node of nodes) {
+    if (node.type !== "wait") continue;
+    const data = node.data ?? {};
+    const title = waitTitleOf(data);
+    if (!title) continue;
+    const approver = waitApproverOf(data);
+    await pool.query(
+      `UPDATE wait_occupancy
+       SET title=$1, approver=$2
+       WHERE workflow_id=$3 AND wait_node_id=$4 AND status='open'`,
+      [title, approver, workflowId, node.id],
+    );
+  }
+}
+
+export async function resumeWaitRun(
+  pool: Pool,
+  opts: {
+    runId: string;
+    workflowId: string;
+    firmId: string;
+    waitNodeId: string;
+    contactIds: string[];
+    previousWrites: RunWrite[];
+    triggerLabel?: string;
+  },
+): Promise<{
+  ok: boolean;
+  parked?: boolean;
+  nodeStatus: Record<string, NodeRunStatus>;
+  enrollments: string[];
+  error?: string;
+}> {
+  await pool.query(
+    `UPDATE workflow_run
+     SET status='running', waiting_node_id=NULL, resume_at=NULL, finished_at=NULL
+     WHERE id=$1`,
+    [opts.runId],
+  );
+  return walkValidatedWorkflow(pool, {
+    workflowId: opts.workflowId,
+    firmId: opts.firmId,
+    runId: opts.runId,
+    triggerLabel: opts.triggerLabel ?? "wait-resume",
+    triggerPayload: { writes: opts.previousWrites },
+    contactIds: opts.contactIds,
+    resumeFromNodeId: opts.waitNodeId,
+  });
+}
+
+export async function resumeDueWaitingRuns(pool: Pool): Promise<number> {
+  const due = await pool.query<{
+    id: string;
+    workflow_id: string;
+    firm_id: string;
+    waiting_node_id: string | null;
+    counts: Record<string, unknown>;
+    trigger_label: string | null;
+  }>(
+    `SELECT id, workflow_id, firm_id, waiting_node_id, counts, trigger_label
+     FROM workflow_run
+     WHERE status='waiting' AND resume_at IS NOT NULL AND resume_at <= now()`,
+  );
+  let n = 0;
+  for (const row of due.rows) {
+    const waitNodeId = row.waiting_node_id;
+    if (!waitNodeId) continue;
+    const occ = await pool.query<{ id: string; contact_id: string }>(
+      `UPDATE wait_occupancy
+       SET status='approved', approved_at=now()
+       WHERE workflow_run_id=$1 AND wait_node_id=$2 AND status IN ('open','scheduled')
+       RETURNING id, contact_id`,
+      [row.id, waitNodeId],
+    );
+    const occWrites: RunWrite[] = occ.rows.map((r) => ({
+      table: "wait_occupancy",
+      id: r.id,
+      contact_id: r.contact_id,
+    }));
+    const counts = row.counts ?? {};
+    const fromCounts = Array.isArray(counts.waitContactIds)
+      ? (counts.waitContactIds as unknown[]).map(String)
+      : [];
+    const contactIds = occ.rows.length
+      ? uniqueIds(occ.rows.map((r) => r.contact_id))
+      : fromCounts;
+    const previousWrites = occWrites.length
+      ? occWrites
+      : writesFromUnknown(counts.waitWrites);
+    await resumeWaitRun(pool, {
+      runId: row.id,
+      workflowId: row.workflow_id,
+      firmId: row.firm_id,
+      waitNodeId,
+      contactIds,
+      previousWrites,
+      triggerLabel: row.trigger_label ?? "wait-resume",
+    });
+    n += 1;
+  }
+  return n;
 }
 
 /** Fire active schedule triggers (called from worker tick). */

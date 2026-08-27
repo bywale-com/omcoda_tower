@@ -25,6 +25,7 @@ import {
   DeleteOutlined,
   FilterOutlined,
   ForkOutlined,
+  HourglassOutlined,
   LogoutOutlined,
   MoreOutlined,
   PlayCircleOutlined,
@@ -50,6 +51,8 @@ import {
   type WorkflowDefinition,
   type WorkflowNodeData,
   type WorkflowNodeType,
+  waitShapeOf,
+  isWaitConfigured,
 } from "../../../data/automationWorkflows";
 import { newSwitchPath } from "../../../data/automationCompare";
 import { formatGetSummary, previewGetWrites } from "../../../data/automationGet";
@@ -62,6 +65,7 @@ import { ContactPickModal } from "./ContactPickModal";
 import { GetParametersPane } from "./automationPlates/GetParametersPane";
 import { IfPlateModal } from "./automationPlates/IfPlateModal";
 import { SwitchPlateModal } from "./automationPlates/SwitchPlateModal";
+import { WaitParametersPane } from "./automationPlates/WaitParametersPane";
 import { NodeInteriorModal } from "./automationPlates/NodeInteriorModal";
 import { PlateInsertEdge } from "./automationPlates/PlateInsertEdge";
 import { PLATE_NODE_TAG } from "./automationPlates/plateChrome";
@@ -94,6 +98,15 @@ function statusColor(status: WorkflowDefinition["status"]) {
 }
 
 function nodeSummary(data: WorkflowNodeData) {
+  const waitShape = data.shape ?? data.waitShape;
+  if (waitShape === "duration") {
+    const amount = data.durationAmount;
+    const unit = data.durationUnit;
+    if (amount && unit) return `${amount} ${unit}`;
+  }
+  if (waitShape === "approval" || data.title) {
+    if (data.title?.trim()) return data.title.trim();
+  }
   return (
     (data.triggerKind === "event" ? triggerSelectEvent(undefined, data.triggerEvent).label : null) ??
     data.triggerEvent ??
@@ -115,7 +128,11 @@ function nodeSummary(data: WorkflowNodeData) {
 
 function AntWorkflowNode({ id, data, type, selected }: NodeProps<WorkflowFlowNode>) {
   const workflowType = (type ?? "action") as WorkflowNodeType;
-  const chip = PLATE_NODE_TAG[workflowType];
+  const waitShape = workflowType === "wait" ? waitShapeOf(data) : null;
+  const chip =
+    workflowType === "wait"
+      ? { label: waitShape ?? "approval", bg: "#d4b106", color: "#fff" }
+      : PLATE_NODE_TAG[workflowType];
   const { setNodes } = useReactFlow();
   const ops = useCanvasOps();
   const canSwitch = switchableKind(workflowType);
@@ -217,13 +234,21 @@ function AntWorkflowNode({ id, data, type, selected }: NodeProps<WorkflowFlowNod
         </Space>
       </div>
       <Input
-        value={data.label}
+        value={workflowType === "wait" ? (data.title?.trim() ? data.title : data.label) : data.label}
         variant="borderless"
         onChange={(event) => {
           const label = event.target.value;
           setNodes((current) =>
             current.map((node) =>
-              node.id === id ? { ...node, data: { ...node.data, label } } : node,
+              node.id === id
+                ? {
+                    ...node,
+                    data:
+                      workflowType === "wait"
+                        ? { ...node.data, label, title: label }
+                        : { ...node.data, label },
+                  }
+                : node,
             ),
           );
         }}
@@ -361,6 +386,7 @@ const nodeTypes: NodeTypes = {
   action: AntWorkflowNode,
   exit: AntWorkflowNode,
   get: AntWorkflowNode,
+  wait: AntWorkflowNode,
 };
 
 const edgeTypes: EdgeTypes = {
@@ -807,6 +833,15 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
         setInteriorOpen(true);
         setPlate("action-kind");
       }
+      if (node.type === "wait") {
+        const nextShape = waitShapeOf(node.data) === "duration" ? "approval" : "duration";
+        patchNodeData(setNodes, id, {
+          shape: nextShape,
+          configured: isWaitConfigured({ ...node.data, shape: nextShape }),
+        });
+        setSelectedNodeId(id);
+        setInteriorOpen(true);
+      }
     },
   };
 
@@ -870,6 +905,16 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
       icon: <SisternodeOutlined />,
       onClick: () => {
         const block = WORKFLOW_PALETTE_BLOCKS.find((row) => row.id === "condition-switch");
+        if (block) addBlock(block);
+      },
+    },
+    {
+      id: "wait",
+      title: "Wait",
+      body: "Park until approval or a duration.",
+      icon: <HourglassOutlined />,
+      onClick: () => {
+        const block = WORKFLOW_PALETTE_BLOCKS.find((row) => row.id === "wait-approval");
         if (block) addBlock(block);
       },
     },
@@ -960,6 +1005,10 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
       }
       if (started.status === "failed") {
         message.error(started.error ?? "Run stopped");
+        return;
+      }
+      if (started.status === "waiting") {
+        message.success("Parked at Wait");
         return;
       }
       message.success(untilNodeId ? "Ran to here" : "Run finished");
@@ -1420,6 +1469,16 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
                 );
               }}
             />
+          ) : selectedNode?.type === "wait" ? (
+            <WaitParametersPane
+              data={selectedNode.data}
+              onRegisterSave={(fn) => {
+                saveRef.current = fn;
+              }}
+              onSave={(patch) => {
+                patchNodeData(setNodes, selectedNode.id, patch);
+              }}
+            />
           ) : selectedNode?.type === "action" && plate === "action-kind" ? (
             <ActionKindModal
               embed
@@ -1481,7 +1540,7 @@ export function AntAutomationWorkbench({ workflowId }: { workflowId: string }) {
             closeInterior();
             return;
           }
-          if (selectedNode.type === "action" || selectedNode.type === "branch" || selectedNode.type === "switch") {
+          if (selectedNode.type === "action" || selectedNode.type === "branch" || selectedNode.type === "switch" || selectedNode.type === "wait") {
             saveRef.current?.();
             return;
           }
