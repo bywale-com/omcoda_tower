@@ -33,6 +33,20 @@ type SeatKey = { token: string } | { contactId: string };
 
 const WORKSPACES_CHANGED = "tower-contact-workspaces-changed";
 
+function loadFailView(err: unknown): { title: string; body: string } {
+  const text = err instanceof Error ? err.message : "";
+  if (text.includes("wire ") && text.includes("/machine/contact-workspaces")) {
+    return {
+      title: "This workspace couldn't be opened",
+      body: "The desk couldn't load this contact's workspace.",
+    };
+  }
+  return {
+    title: "This link cannot be used",
+    body: text || "This link could not be opened.",
+  };
+}
+
 function refuseView(res: ContactSeatRefuse): { title: string; body: string } {
   if (res.refuse === "workspace_opted_out") {
     return {
@@ -157,10 +171,7 @@ export function ContactWorkspace({
 
   useEffect(() => {
     void load().catch((err: unknown) => {
-      setRefuse({
-        title: "This link cannot be used",
-        body: err instanceof Error ? err.message : "This link could not be opened.",
-      });
+      setRefuse(loadFailView(err));
     });
   }, [load]);
 
