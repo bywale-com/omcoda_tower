@@ -117,6 +117,7 @@ import {
   handleRegisterGapPut,
   handleRegisterGapsList,
 } from "./operatorPanes.ts";
+import { handleWaitOccupancyApprove, handleWaitOccupancyList } from "./waitNote.ts";
 
 export function createWireRoutes(): Hono {
   const wire = new Hono();
@@ -248,6 +249,8 @@ export function createWireRoutes(): Hono {
   wire.put("/machine/escrow", handleEscrowPut);
   wire.get("/machine/register-gaps", handleRegisterGapsList);
   wire.put("/machine/register-gaps", handleRegisterGapPut);
+  wire.get("/machine/wait-occupancy", handleWaitOccupancyList);
+  wire.post("/machine/wait-occupancy/approve", handleWaitOccupancyApprove);
   wire.post("/machine/access-invite", handleMachineAccessInvite);
   wire.post("/machine/events", handleMachineEvent);
   wire.post("/hook/:webhookId", handleWebhookTrigger);

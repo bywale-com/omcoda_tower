@@ -811,6 +811,21 @@ export const realMachineApi: MachineApiPort = {
     );
   },
 
+  async listWaitOccupancy(approver) {
+    const res = await wireFetch<{ notes: import("../machineTypes").WaitOccupancyNote[] }>(
+      `/machine/wait-occupancy?approver=${encodeURIComponent(approver)}&firmId=${encodeURIComponent(firm())}`,
+      { headers: firmHeader() },
+    );
+    return res.notes;
+  },
+
+  async approveWaitOccupancy(input) {
+    return wireFetch<{ ok: boolean; mode: "now" | "later"; runs: number }>(
+      `/machine/wait-occupancy/approve?firmId=${encodeURIComponent(firm())}`,
+      { method: "POST", headers: firmHeader(), body: JSON.stringify(input) },
+    );
+  },
+
   async loadContactSeat(token, opts) {
     const q = opts?.campaignId ? `?campaignId=${encodeURIComponent(opts.campaignId)}` : "";
     return wireFetch(`/contact-seat/${encodeURIComponent(token)}${q}`);

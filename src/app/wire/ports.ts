@@ -700,6 +700,14 @@ export type MachineApiPort = {
     source?: string | null;
     written?: boolean;
   }): Promise<import("./machineTypes").RegisterGapRow>;
+  listWaitOccupancy(approver: "consultant" | "operator"): Promise<import("./machineTypes").WaitOccupancyNote[]>;
+  approveWaitOccupancy(input: {
+    workflowId: string;
+    waitNodeId: string;
+    mode: "now" | "later";
+    approveAt?: string;
+    approver?: "consultant" | "operator";
+  }): Promise<{ ok: boolean; mode: "now" | "later"; runs: number }>;
   loadContactSeat: (
     token: string,
     opts?: { campaignId?: string },

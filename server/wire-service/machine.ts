@@ -13,6 +13,7 @@ import { FirmScopeError, requireSessionActor, requireSessionFirm } from "./sessi
 import {
   dispatchEventToWorkflows,
   materializeTriggersFromGraph,
+  restampOpenWaitOccupancy,
   walkValidatedWorkflow,
   type RfNode,
 } from "./workflowWalk.ts";
@@ -83,6 +84,7 @@ export async function handleWorkflowCreate(c: Context) {
     nodes: graph.nodes ?? [],
     edges: (graph.edges ?? []) as never,
   });
+  await restampOpenWaitOccupancy(pool, id, graph.nodes ?? []);
   for (const node of graph.nodes ?? []) {
     if (node.type !== "rule") continue;
     const data = (node.data ?? {}) as Record<string, unknown>;
@@ -203,7 +205,7 @@ export async function handleWorkflowRunStart(c: Context) {
   return json(c, {
     id,
     workflowId,
-    status: walked.ok ? "success" : "failed",
+    status: walked.parked ? "waiting" : walked.ok ? "success" : "failed",
     nodeStatus: walked.nodeStatus,
     enrollments: walked.enrollments,
     error: walked.error,

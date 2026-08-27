@@ -11,6 +11,7 @@ export const PLATE_NODE_TAG: Record<
   action: { label: "Action", bg: "#52c41a", color: "#fff" },
   branch: { label: "If", bg: "#fa8c16", color: "#fff" },
   switch: { label: "Switch", bg: "#d48806", color: "#fff" },
+  wait: { label: "Wait", bg: "#d4b106", color: "#fff" },
   exit: { label: "Exit", bg: "#595959", color: "#fff" },
   constant: { label: "Constant", bg: "#7c3aed", color: "#fff" },
 };

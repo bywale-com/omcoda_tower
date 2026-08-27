@@ -5,7 +5,7 @@
 
 export type WorkflowStatus = "draft" | "active" | "paused";
 export type WorkflowTarget = "audit" | "contact" | "import" | "client";
-export type WorkflowRunStatus = "running" | "success" | "failed" | "stopped";
+export type WorkflowRunStatus = "running" | "waiting" | "success" | "failed" | "stopped";
 export type SequenceClass = "optin" | "reengagement" | "reactivation";
 export type MotionKind = "nudge" | "reactivation" | "none";
 export type ReachabilityVerdict = "reachable" | "partial" | "unreachable";
@@ -25,6 +25,14 @@ export type WorkflowRow = {
   audience_contact_ids?: string[];
 };
 
+export type WaitOccupancyNote = {
+  workflowId: string;
+  waitNodeId: string;
+  title: string;
+  count: number;
+  approver: "consultant" | "operator";
+};
+
 export type WorkflowRunRow = {
   id: string;
   workflow_id: string;
@@ -35,6 +43,8 @@ export type WorkflowRunRow = {
   counts: Record<string, unknown>;
   started_at: string;
   finished_at: string | null;
+  resume_at?: string | null;
+  waiting_node_id?: string | null;
 };
 
 export type EnrollmentRow = {

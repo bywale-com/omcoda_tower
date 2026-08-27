@@ -45,7 +45,12 @@ export type WorkflowNodeType =
   | "rule"
   | "action"
   | "exit"
-  | "get";
+  | "get"
+  | "wait";
+
+export type WaitShape = "approval" | "duration";
+export type WaitApprover = "consultant" | "operator";
+export type WaitDurationUnit = "minutes" | "hours" | "days";
 
 export type WorkflowTriggerEvent =
   | "fact_writebacks"
@@ -190,6 +195,16 @@ export type WorkflowNodeData = {
   scope?: "every_firm" | "select_from";
   scopeContactIds?: string[];
   delayLabel?: string;
+  /** Wait — approval title. Canvas label follows this when set. */
+  title?: string;
+  /** Wait shape. Default approval. */
+  shape?: WaitShape;
+  waitShape?: WaitShape;
+  /** Wait approval — whose desk gets N1/N2. Default consultant. */
+  approver?: WaitApprover;
+  waitApprover?: WaitApprover;
+  durationAmount?: number;
+  durationUnit?: WaitDurationUnit;
   conditionConfig?: IfConditionConfig;
   /** Get — module + every/select + class cascade. Not copied onto other kinds. */
   getModule?: GetModuleId;
@@ -405,6 +420,20 @@ export const WORKFLOW_PALETTE_BLOCKS: PaletteBlock[] = [
       paths: [],
       fallbackHandle: "fallback",
       filterSummary: "Paths",
+      configured: false,
+    },
+  },
+  {
+    id: "wait-approval",
+    label: "Wait",
+    description: "Park until approval or a duration",
+    module: "operations",
+    nodeType: "wait",
+    defaultData: {
+      label: "Wait",
+      shape: "approval",
+      approver: "consultant",
+      durationUnit: "days",
       configured: false,
     },
   },
@@ -1272,6 +1301,11 @@ export function createNodeFromBlock(
       webhookId: block.defaultData.webhookId,
       scheduleCron: block.defaultData.scheduleCron,
       delayLabel: block.defaultData.delayLabel,
+      title: block.defaultData.title,
+      shape: block.defaultData.shape,
+      approver: block.defaultData.approver,
+      durationAmount: block.defaultData.durationAmount,
+      durationUnit: block.defaultData.durationUnit,
       conditionConfig: block.defaultData.conditionConfig,
       compare: block.defaultData.compare,
       and: block.defaultData.and,
@@ -1290,6 +1324,28 @@ export function createNodeFromBlock(
       lastOutput: null,
     },
   };
+}
+
+export function waitShapeOf(data: WorkflowNodeData): WaitShape {
+  const raw = data.shape ?? data.waitShape;
+  return raw === "duration" ? "duration" : "approval";
+}
+
+export function waitApproverOf(data: WorkflowNodeData): WaitApprover {
+  const raw = data.approver ?? data.waitApprover;
+  return raw === "operator" ? "operator" : "consultant";
+}
+
+export function isWaitConfigured(data: WorkflowNodeData): boolean {
+  const shape = waitShapeOf(data);
+  if (shape === "approval") {
+    const title = (data.title ?? "").trim();
+    const approver = waitApproverOf(data);
+    return Boolean(title) && (approver === "consultant" || approver === "operator");
+  }
+  const amount = Number(data.durationAmount ?? 0);
+  const unit = data.durationUnit;
+  return amount > 0 && (unit === "minutes" || unit === "hours" || unit === "days");
 }
 
 export function isGetConfigured(data: WorkflowNodeData): boolean {
