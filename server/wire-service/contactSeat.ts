@@ -12,6 +12,11 @@ import { getPool } from "./db.ts";
 import { runContactEligibilityCascade } from "./machine.ts";
 import { FirmScopeError, requireSessionActor, requireSessionFirm } from "./sessionFirm.ts";
 import { dispatchEventToWorkflows } from "./workflowWalk.ts";
+import {
+  campaignObjectiveIdForCampaign,
+  onCompletionWrite,
+  resolveFormStamp,
+} from "./campaignHousing.ts";
 
 export const SEED_CONTACT_TOKENS = {
   okonkwo: "c-harbor-okonkwo",
@@ -540,26 +545,25 @@ export async function handleContactSeatFacts(c: Context) {
   if ("refuse" in resolved) return jsonRefuse(c, resolved);
   const body = await c.req.json<{ answers?: Array<{ fieldKey: string; value: unknown }> }>().catch(() => ({}));
   const answers = Array.isArray(body.answers) ? body.answers : [];
-  const cursor = await resolved.pool.query<{ campaign_id: string | null }>(
-    `SELECT campaign_id FROM enrollment
-     WHERE firm_id=$1 AND contact_id=$2
-     ORDER BY enrolled_at DESC LIMIT 1`,
-    [resolved.link.firm_id, resolved.link.contact_id],
-  );
-  const formRef = cursor.rows[0]?.campaign_id ?? resolved.link.campaign_id;
   for (const answer of answers) {
     const fieldKey = String(answer.fieldKey ?? "").trim();
     if (!fieldKey) continue;
     const writeId = `fwb-${randomUUID()}`;
+    const stamp = await resolveFormStamp(resolved.pool, {
+      firmId: resolved.link.firm_id,
+      contactId: resolved.link.contact_id,
+    });
     await resolved.pool.query(
-      `INSERT INTO fact_writebacks (id, firm_id, contact_id, field_key, value)
-       VALUES ($1,$2,$3,$4,$5::jsonb)`,
+      `INSERT INTO fact_writebacks (id, firm_id, contact_id, field_key, value, form_ref, campaign_objective_id)
+       VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7)`,
       [
         writeId,
         resolved.link.firm_id,
         resolved.link.contact_id,
         fieldKey,
         JSON.stringify(answer.value ?? null),
+        stamp.formRef,
+        stamp.campaignObjectiveId,
       ],
     );
     await resolved.pool.query(
@@ -575,7 +579,8 @@ export async function handleContactSeatFacts(c: Context) {
         writebackId: writeId,
         fieldKey,
         contactId: resolved.link.contact_id,
-        form_ref: formRef,
+        form_ref: stamp.formRef,
+        campaign_objective_id: stamp.campaignObjectiveId,
       },
     });
     await dispatchEventToWorkflows(resolved.pool, {
@@ -586,9 +591,16 @@ export async function handleContactSeatFacts(c: Context) {
         fieldKey,
         contactId: resolved.link.contact_id,
         firm_id: resolved.link.firm_id,
-        form_ref: formRef,
+        form_ref: stamp.formRef,
+        campaign_objective_id: stamp.campaignObjectiveId,
       },
       contactIds: [resolved.link.contact_id],
+    });
+    await onCompletionWrite(resolved.pool, {
+      firmId: resolved.link.firm_id,
+      contactId: resolved.link.contact_id,
+      table: "fact_writebacks",
+      rowId: writeId,
     });
   }
   return json(c, await projectSeat(resolved.pool, resolved.link));
@@ -601,16 +613,27 @@ export async function handleContactSeatMeeting(c: Context) {
   const slot = String(body.slot ?? "").trim();
   if (!slot) return json(c, { error: "slot required" }, 400);
   const id = `mtg-${randomUUID()}`;
+  const cursor = await resolved.pool.query<{ campaign_id: string | null }>(
+    `SELECT campaign_id FROM enrollment
+      WHERE firm_id=$1 AND contact_id=$2 AND campaign_id IS NOT NULL
+      ORDER BY enrolled_at DESC LIMIT 1`,
+    [resolved.link.firm_id, resolved.link.contact_id],
+  );
+  const campaignObjectiveId = await campaignObjectiveIdForCampaign(
+    resolved.pool,
+    cursor.rows[0]?.campaign_id ?? resolved.link.campaign_id,
+  );
   await resolved.pool.query(
     `INSERT INTO meeting_booked
-       (id, firm_id, contact_id, booked_at, source, slot, consultant_name, enrollment_id, payload)
-     VALUES ($1,$2,$3,now(),'contact_workspace',$4,NULL,$5,$6::jsonb)`,
+       (id, firm_id, contact_id, booked_at, source, slot, consultant_name, enrollment_id, campaign_objective_id, payload)
+     VALUES ($1,$2,$3,now(),'contact_workspace',$4,NULL,$5,$6,$7::jsonb)`,
     [
       id,
       resolved.link.firm_id,
       resolved.link.contact_id,
       slot,
       resolved.link.enrollment_id,
+      campaignObjectiveId,
       JSON.stringify({ slot, contactName: null }),
     ],
   );
@@ -622,8 +645,15 @@ export async function handleContactSeatMeeting(c: Context) {
       contactId: resolved.link.contact_id,
       firm_id: resolved.link.firm_id,
       slot,
+      campaign_objective_id: campaignObjectiveId,
     },
     contactIds: [resolved.link.contact_id],
+  });
+  await onCompletionWrite(resolved.pool, {
+    firmId: resolved.link.firm_id,
+    contactId: resolved.link.contact_id,
+    table: "meeting_booked",
+    rowId: id,
   });
   await resolved.pool.query(
     `UPDATE active_attempts

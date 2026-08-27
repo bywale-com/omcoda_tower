@@ -62,6 +62,7 @@ export type WorkflowTriggerEvent =
   | "contact.updated"
   | "contact_import"
   | "contact_uploaded"
+  | "objective_met"
   | "import.created";
 
 export type WorkflowActionType =
@@ -306,10 +307,12 @@ export const WORKFLOW_EVENTS_WITH_LOCAL = new Set<WorkflowTriggerEvent>([
   "ct_firms",
   "consent_records.sequenced",
   "contact_uploaded",
+  "objective_met",
 ]);
 export const WORKFLOW_EVENT_CATALOG: { id: WorkflowTriggerEvent; label: string }[] = [
   { id: "contact_import", label: "Contact import" },
   { id: "contact_uploaded", label: "Contact uploaded information" },
+  { id: "objective_met", label: "An objective was met" },
   { id: "fact_writebacks", label: "Fact writeback" },
   { id: "meeting_booked", label: "Meeting booked" },
   { id: "campaign_failure", label: "Campaign failure" },
