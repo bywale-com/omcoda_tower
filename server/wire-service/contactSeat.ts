@@ -105,12 +105,17 @@ function jsonRefuse(c: Context, refused: SeatRefuse) {
 
 async function lookupLink(pool: Pool, raw: string): Promise<LinkRow | null> {
   const hash = sha256(raw);
-  const found = await pool.query<LinkRow>(
-    `SELECT id, firm_id, contact_id, enrollment_id, campaign_id, expires_at, invalidated_at
-     FROM contact_access_links WHERE token_hash=$1 LIMIT 1`,
-    [hash],
-  );
-  return found.rows[0] ?? null;
+  try {
+    const found = await pool.query<LinkRow>(
+      `SELECT id, firm_id, contact_id, enrollment_id, campaign_id, expires_at, invalidated_at
+       FROM contact_access_links WHERE token_hash=$1 LIMIT 1`,
+      [hash],
+    );
+    return found.rows[0] ?? null;
+  } catch (err) {
+    if (isUndefinedTable(err)) return null;
+    throw err;
+  }
 }
 
 function refuseOf(link: LinkRow | null): SeatRefuse | null {
@@ -157,6 +162,19 @@ async function isWorkspaceOut(pool: Pool, firmId: string, contactId: string): Pr
   } catch (err) {
     const code = (err as { code?: string }).code;
     if (code === "42703") return false;
+    throw err;
+  }
+}
+
+function isUndefinedTable(err: unknown): boolean {
+  return (err as { code?: string }).code === "42P01";
+}
+
+async function rowsOrEmpty<T>(run: () => Promise<{ rows: T[] }>): Promise<T[]> {
+  try {
+    return (await run()).rows;
+  } catch (err) {
+    if (isUndefinedTable(err)) return [];
     throw err;
   }
 }
@@ -224,16 +242,18 @@ async function projectSeat(pool: Pool, link: LinkRow): Promise<ContactSeatPayloa
 
   const formFields: FormField[] = [];
   if (!silenced) {
-    const missing = await pool.query<{ field_key: string; label: string }>(
-      `SELECT m.field_key, c.label
-       FROM missing_fact_signals m
-       JOIN collectible_fields c ON c.field_key = m.field_key
-       WHERE m.firm_id=$1 AND m.contact_id=$2
-         AND c.capture = 'self_reportable'
-       ORDER BY c.ord, m.field_key`,
-      [link.firm_id, link.contact_id],
+    const missing = await rowsOrEmpty<{ field_key: string; label: string }>(() =>
+      pool.query(
+        `SELECT m.field_key, c.label
+         FROM missing_fact_signals m
+         JOIN collectible_fields c ON c.field_key = m.field_key
+         WHERE m.firm_id=$1 AND m.contact_id=$2
+           AND c.capture = 'self_reportable'
+         ORDER BY c.ord, m.field_key`,
+        [link.firm_id, link.contact_id],
+      ),
     );
-    for (const row of missing.rows) {
+    for (const row of missing) {
       formFields.push({ fieldKey: row.field_key, label: row.label });
     }
   }
@@ -310,7 +330,7 @@ async function projectSeat(pool: Pool, link: LinkRow): Promise<ContactSeatPayloa
     });
   }
 
-  const files = await pool.query<{
+  const fileRows = await rowsOrEmpty<{
     id: string;
     kind: string | null;
     origin: string;
@@ -318,36 +338,42 @@ async function projectSeat(pool: Pool, link: LinkRow): Promise<ContactSeatPayloa
     body_text: string | null;
     file_name: string | null;
     created_at: Date;
-  }>(
-    `SELECT id, kind, origin, field_key, body_text, file_name, created_at
-     FROM contact_uploads
-     WHERE firm_id=$1 AND contact_id=$2
-     ORDER BY created_at DESC`,
-    [link.firm_id, link.contact_id],
+  }>(() =>
+    pool.query(
+      `SELECT id, kind, origin, field_key, body_text, file_name, created_at
+       FROM contact_uploads
+       WHERE firm_id=$1 AND contact_id=$2
+       ORDER BY created_at DESC`,
+      [link.firm_id, link.contact_id],
+    ),
   );
 
-  const kindRows = await pool.query<{ kind: string }>(
-    `SELECT DISTINCT kind FROM contact_uploads
-     WHERE firm_id=$1 AND contact_id=$2 AND kind IS NOT NULL
-     ORDER BY kind`,
-    [link.firm_id, link.contact_id],
+  const kindRows = await rowsOrEmpty<{ kind: string }>(() =>
+    pool.query(
+      `SELECT DISTINCT kind FROM contact_uploads
+       WHERE firm_id=$1 AND contact_id=$2 AND kind IS NOT NULL
+       ORDER BY kind`,
+      [link.firm_id, link.contact_id],
+    ),
   );
 
-  const questions = await pool.query<{ field_key: string; label: string }>(
-    `SELECT DISTINCT q.field_key, COALESCE(c.label, q.field_key) AS label
-     FROM (
-       SELECT field_key FROM missing_fact_signals WHERE firm_id=$1 AND contact_id=$2
-       UNION
-       SELECT field_key FROM fact_writebacks WHERE firm_id=$1 AND contact_id=$2
-     ) q
-     LEFT JOIN collectible_fields c ON c.field_key = q.field_key
-     ORDER BY label`,
-    [link.firm_id, link.contact_id],
+  const questions = await rowsOrEmpty<{ field_key: string; label: string }>(() =>
+    pool.query(
+      `SELECT DISTINCT q.field_key, COALESCE(c.label, q.field_key) AS label
+       FROM (
+         SELECT field_key FROM missing_fact_signals WHERE firm_id=$1 AND contact_id=$2
+         UNION
+         SELECT field_key FROM fact_writebacks WHERE firm_id=$1 AND contact_id=$2
+       ) q
+       LEFT JOIN collectible_fields c ON c.field_key = q.field_key
+       ORDER BY label`,
+      [link.firm_id, link.contact_id],
+    ),
   );
 
   const search: SearchHit[] = [
-    ...kindRows.rows.map((row) => ({ kind: "kind" as const, value: row.kind, label: row.kind })),
-    ...questions.rows.map((row) => ({
+    ...kindRows.map((row) => ({ kind: "kind" as const, value: row.kind, label: row.kind })),
+    ...questions.map((row) => ({
       kind: "question" as const,
       value: row.field_key,
       label: row.label,
@@ -369,7 +395,7 @@ async function projectSeat(pool: Pool, link: LinkRow): Promise<ContactSeatPayloa
       meetingSlots: nowState === "meeting" ? meetingSlots() : undefined,
     },
     history,
-    files: files.rows.map((row) => ({
+    files: fileRows.map((row) => ({
       id: row.id,
       kind: row.kind,
       origin: row.origin,
@@ -379,7 +405,7 @@ async function projectSeat(pool: Pool, link: LinkRow): Promise<ContactSeatPayloa
       createdAt: new Date(row.created_at).toISOString(),
     })),
     search,
-    kinds: kindRows.rows.map((row) => row.kind),
+    kinds: kindRows.map((row) => row.kind),
   };
 }
 
@@ -691,22 +717,29 @@ export async function handleContactSeatUpload(c: Context) {
   const id = `cup-${randomUUID()}`;
   const fileName = body.fileName?.trim() || null;
   const fileRef = fileName ? `standin:${id}` : null;
-  await resolved.pool.query(
-    `INSERT INTO contact_uploads
-       (id, firm_id, contact_id, kind, origin, field_key, body_text, file_name, file_ref)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
-    [
-      id,
-      resolved.link.firm_id,
-      resolved.link.contact_id,
-      kind,
-      origin,
-      fieldKey,
-      body.bodyText?.trim() || null,
-      fileName,
-      fileRef,
-    ],
-  );
+  try {
+    await resolved.pool.query(
+      `INSERT INTO contact_uploads
+         (id, firm_id, contact_id, kind, origin, field_key, body_text, file_name, file_ref)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+      [
+        id,
+        resolved.link.firm_id,
+        resolved.link.contact_id,
+        kind,
+        origin,
+        fieldKey,
+        body.bodyText?.trim() || null,
+        fileName,
+        fileRef,
+      ],
+    );
+  } catch (err) {
+    if (isUndefinedTable(err)) {
+      return json(c, { error: "contact_uploads missing — apply 019_contact_seat.sql" }, 503);
+    }
+    throw err;
+  }
   await dispatchEventToWorkflows(resolved.pool, {
     firmId: resolved.link.firm_id,
     eventName: "contact_uploaded",
@@ -725,13 +758,15 @@ export async function handleContactSeatUpload(c: Context) {
 export async function handleContactUploadKinds(c: Context) {
   const firmId = (c.req.query("firmId") ?? "").trim();
   const pool = getPool();
-  const rows = firmId
-    ? await pool.query<{ kind: string }>(
-        `SELECT DISTINCT kind FROM contact_uploads WHERE firm_id=$1 AND kind IS NOT NULL ORDER BY kind`,
-        [firmId],
-      )
-    : await pool.query<{ kind: string }>(
-        `SELECT DISTINCT kind FROM contact_uploads WHERE kind IS NOT NULL ORDER BY kind LIMIT 200`,
-      );
-  return json(c, { kinds: rows.rows.map((row) => row.kind) });
+  const rows = await rowsOrEmpty<{ kind: string }>(() =>
+    firmId
+      ? pool.query(
+          `SELECT DISTINCT kind FROM contact_uploads WHERE firm_id=$1 AND kind IS NOT NULL ORDER BY kind`,
+          [firmId],
+        )
+      : pool.query(
+          `SELECT DISTINCT kind FROM contact_uploads WHERE kind IS NOT NULL ORDER BY kind LIMIT 200`,
+        ),
+  );
+  return json(c, { kinds: rows.map((row) => row.kind) });
 }
