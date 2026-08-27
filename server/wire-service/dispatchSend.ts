@@ -16,6 +16,13 @@ function id(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+export type DispatchPursuitStamp = {
+  enrollmentId?: string | null;
+  campaignId?: string | null;
+  campaignObjectiveId?: string | null;
+  attemptId?: string | null;
+};
+
 export type DispatchEmailInput = {
   to: string;
   from?: string;
@@ -25,7 +32,7 @@ export type DispatchEmailInput = {
   firmId: string;
   contactId?: string;
   purpose: string;
-};
+} & DispatchPursuitStamp;
 
 export type DispatchSmsInput = {
   to: string;
@@ -33,7 +40,7 @@ export type DispatchSmsInput = {
   firmId: string;
   contactId?: string;
   purpose?: string;
-};
+} & DispatchPursuitStamp;
 
 export type DispatchResult =
   | { ok: true; dryRun: false; messageId: string; acceptedAt: string; channel: "email" | "sms" }
@@ -161,8 +168,9 @@ export async function dispatchEmailLive(input: DispatchEmailInput): Promise<Disp
     await pool.query(
       `INSERT INTO outbound_messages
         (id, firm_id, contact_id, channel, purpose, to_addr, from_addr, provider_message_id, status,
-         subject, body_text, body_html, content)
-       VALUES ($1,$2,$3,'email',$4,$5,$6,$7,'accepted',$8,$9,$10,$11::jsonb)`,
+         subject, body_text, body_html, content,
+         enrollment_id, campaign_id, campaign_objective_id, attempt_id)
+       VALUES ($1,$2,$3,'email',$4,$5,$6,$7,'accepted',$8,$9,$10,$11::jsonb,$12,$13,$14,$15)`,
       [
         id("out"),
         input.firmId,
@@ -180,6 +188,10 @@ export async function dispatchEmailLive(input: DispatchEmailInput): Promise<Disp
           bodyText,
           bodyHtml,
         }),
+        input.enrollmentId ?? null,
+        input.campaignId ?? null,
+        input.campaignObjectiveId ?? null,
+        input.attemptId ?? null,
       ],
     );
     await pool.query(
@@ -232,8 +244,8 @@ export async function dispatchSmsLive(input: DispatchSmsInput): Promise<Dispatch
     await pool.query(
       `INSERT INTO outbound_messages
         (id, firm_id, contact_id, channel, purpose, to_addr, from_addr, provider_message_id, status,
-         body_text, content)
-       VALUES ($1,$2,$3,'sms',$4,$5,$6,$7,'accepted',$8,$9::jsonb)`,
+         body_text, content, enrollment_id, campaign_id, campaign_objective_id, attempt_id)
+       VALUES ($1,$2,$3,'sms',$4,$5,$6,$7,'accepted',$8,$9::jsonb,$10,$11,$12,$13)`,
       [
         id("out"),
         input.firmId,
@@ -244,6 +256,10 @@ export async function dispatchSmsLive(input: DispatchSmsInput): Promise<Dispatch
         messageSid,
         body,
         JSON.stringify({ channel: "sms", bodyText: body }),
+        input.enrollmentId ?? null,
+        input.campaignId ?? null,
+        input.campaignObjectiveId ?? null,
+        input.attemptId ?? null,
       ],
     );
     await pool.query(

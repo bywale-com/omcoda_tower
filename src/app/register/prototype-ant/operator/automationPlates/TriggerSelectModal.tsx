@@ -4,6 +4,7 @@ import {
   CheckCircleOutlined,
   CloudUploadOutlined,
   CloseCircleOutlined,
+  FlagOutlined,
   FileTextOutlined,
   InboxOutlined,
   PaperClipOutlined,
@@ -38,6 +39,7 @@ const EVENT_ICON: Record<TriggerSelectId, { node: ReactNode; color: string }> = 
   contact_import: { node: <CloudUploadOutlined />, color: "#1677ff" },
   "contact.created": { node: <UserAddOutlined />, color: "#13c2c2" },
   contact_uploaded: { node: <PaperClipOutlined />, color: "#1677ff" },
+  objective_met: { node: <FlagOutlined />, color: "#52c41a" },
   "reference.pack": { node: <InboxOutlined />, color: "#fa8c16" },
 };
 
