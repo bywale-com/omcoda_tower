@@ -6,6 +6,7 @@ Tower is an intelligent client engagement system for immigration consultants. It
 
 Newest first. Engineer trail is still git + PRs; this is the face of what landed.
 
+- **2026-08-29** — Engineer seat [#117](https://github.com/bywale-com/omcoda_tower/pull/117). README Implementation is the face of what landed (last seven, then prepend going forward), because git + PRs were the trail but the desk had no top-of-repo line, and the seat prompt did not record Implementation-prepend, host 42P01, hotfix-on-its-own-branch, or CI-green-then-ready.
 - **2026-08-27** — hotfix [#116](https://github.com/bywale-com/omcoda_tower/pull/116). Contact workspaces open even when `contact_uploads` is missing, because that SELECT was 500ing the whole seat and the desk painted it as a dead link.
 - **2026-08-27** — packet 028 [#115](https://github.com/bywale-com/omcoda_tower/pull/115). Wait is its own graph kind (approval or duration) with an Approve-now / Approve-later desk note, because parking cannot live on `action.type` and resume is this run’s outgoing, not a second graph.
 - **2026-08-27** — packet 020 [#114](https://github.com/bywale-com/omcoda_tower/pull/114). Operator Activation, Escrow, and Register panes read and write the gate tables, because those modules were chrome over a fixture instead of the rows the operations already write.
