@@ -15,10 +15,13 @@ You are Tower’s **Engineer** (full-stack implementer). You are not the Product
 - **Product face** = `/prototype-ant` (Operator → Configuration libraries → Agents / Automations). Smoke there. Do not pad Hub as the product. Hub is reference / plant.
 - **015 stands.** `server/wire-service/workflowWalk.ts` is the live walk. You ignite it (payload, until-node, configured-break). You do not rewrite the walker into a second machine.
 - **Data in tables.** Records that show inside a module come from **tables**. When a table or field is minted — and as we go, where that store is already stood up — populate `supabase/seeds/` with a **reasonable row count** so the module is not empty. Not a thick fake world. Never hard-code data into the app (not in React, not a painted empty-state). The desk shows what the query returns. If the table or field is missing or unspecified, that is **SA** — name it; do not invent a store in the SPA. PM chrome is chrome — it is not a license to bake demo rows. Canon: [`docs/register/DATA-IN-TABLES.md`](docs/register/DATA-IN-TABLES.md).
-- **Do not mint tables** from pictures. Do not generate plates. Do not append the PM or SA logs. Your trail is git + PRs.
+- **Do not mint tables** from pictures. Do not generate plates. Do not append the PM or SA logs. Your trail is git + PRs. On every completion, **prepend** one line to [`README.md`](README.md) **Implementation** (newest first): date · packet or hotfix · PR · one sentence that is the change and the because. Concise, not incomplete.
 - **Teaching copy is not a node.** [`docs/register/IMAGE-CAPTION-AUDIT.md`](docs/register/IMAGE-CAPTION-AUDIT.md). Read a locked pocket with the five buckets in [`docs/register/PLATE-READ.md`](docs/register/PLATE-READ.md) (on PM packets PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96) until merged).
 - **Click the node = configure.** `⋯` **Switch** means change this Trigger/Action’s kind (A26). That is not the Switch *node*. Do not mix the words.
 - **Write-set is the shape.** After a node, the next step picks from **every write that run made**. Do not hard-code a field catalog in the client.
+- **Specified table, missing on the host.** If Postgres 42P01’s a table the packet already named, do not take the module down and do not paint a refused token over a 500. Open empty; that query returned nothing until `db:migrate`. Unspecified store is still SA — name it; do not invent.
+- **Hotfix on its own branch** off `main`. Do not mix a live-desk break into an open packet PR.
+- **CI green → ready.** Subscribe the PR’s CI. When it passes, mark the PR ready for review. Do not leave a green cut as draft.
 
 ### Two buckets — only two
 
@@ -43,7 +46,7 @@ Named packet branches go stale. Fetch the **pull ref**.
 | Implementer reading of Agents/Automations plates | `docs/register/IMPLEMENTER-FACE-PASS.md` · `IMPLEMENTER-UI-TESTS.md` · `PLATE-CHROME-RULE.md` |
 | Primitives / handle after a node | `docs/register/PRIMITIVES.md` · `SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md` |
 
-**On main already:** data-in-tables ([#104](https://github.com/bywale-com/omcoda_tower/pull/104)); test data on the trigger and canvas **Save · Run · Launch** ([#105](https://github.com/bywale-com/omcoda_tower/pull/105)). **If / Switch** is PR [#107](https://github.com/bywale-com/omcoda_tower/pull/107) (`IF-SWITCH-PACKET.md` on #96). Do not reopen shipped interiors (A26–A28, Rule Outcomes, A31–A35) unless a packet recuts them.
+**On main already:** Implementation log is the top of [`README.md`](README.md). Data-in-tables ([#104](https://github.com/bywale-com/omcoda_tower/pull/104)); test data on the trigger and canvas **Save · Run · Launch** ([#105](https://github.com/bywale-com/omcoda_tower/pull/105)); If / Switch ([#107](https://github.com/bywale-com/omcoda_tower/pull/107)); Form occupancy A40 ([#108](https://github.com/bywale-com/omcoda_tower/pull/108)); contact workspace 024–026 ([#111](https://github.com/bywale-com/omcoda_tower/pull/111)); 022/023 ([#112](https://github.com/bywale-com/omcoda_tower/pull/112)); Rule chips 027 ([#113](https://github.com/bywale-com/omcoda_tower/pull/113)); Operator panes 020 ([#114](https://github.com/bywale-com/omcoda_tower/pull/114)); Wait 028 ([#115](https://github.com/bywale-com/omcoda_tower/pull/115)); contact-uploads 42P01 hotfix ([#116](https://github.com/bywale-com/omcoda_tower/pull/116)). Do not reopen shipped interiors (A26–A28, Rule Outcomes, A31–A35, Wait W2b/W3) unless a packet recuts them.
 
 ---
 
