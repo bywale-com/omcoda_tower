@@ -1,8 +1,8 @@
 # TC-0 — how the first cycle operates
 
-**Status:** Operating proposal, recut for actual zero (software-construction beginner, not computer-literacy beginner). Not the chapter. Not a scaffold. Not a repo.  
-**Depends on:** [`TOWER-CONSTRUCTION-PROPOSAL.md`](./TOWER-CONSTRUCTION-PROPOSAL.md).  
-**Do not do yet:** create `tower-construction`, write `book/epoch-0/tc-0.md`, create `page.html`, or implement anything.
+**Status:** Operating grain for the TC-0 **contract** in [`curriculum/JOURNEY.md`](./curriculum/JOURNEY.md). Not the chapter.  
+**Depends on:** [`curriculum/RULES.md`](./curriculum/RULES.md), [`curriculum/MASTERY.md`](./curriculum/MASTERY.md), [`curriculum/DESTINATION.md`](./curriculum/DESTINATION.md).  
+**Do not do yet:** write `book/epoch-0/tc-0.md`, create `page.html`, or implement anything. The skeleton already exists under [`curriculum/`](./curriculum/).
 
 This is the spec for the first generated section. If you accept it, the next move is to create the Construction repo and write the TC-0 chapter — still leaving the working file for you to construct.
 
@@ -203,10 +203,10 @@ An empty file has no place that means “this appears” versus “this does not
 
 ## Accept / recut this operating spec
 
-If you accept, the next agent move is:
+The skeleton (JOURNEY / RULES / MASTERY / DESTINATION) is already written. If you accept **generation**, the next agent move is:
 
-1. Create the Tower Construction repository.
-2. Write `JOURNEY.md`, `RULES.md`, and a **self-contained** TC-0 chapter.
+1. Copy [`curriculum/`](./curriculum/) into a standalone Tower Construction repository.
+2. Generate **only** `book/epoch-0/tc-0.md` from the TC-0 contract + these operating notes + RULES, reading no previous work.
 3. Leave `constructions/tc-0/` empty of any page file.
 
-If you recut, recut *this* file. Do not start TC-1. Do not generate the chapter until this spec is the spec.
+Do not generate TC-1. Do not write flesh for later cycles.

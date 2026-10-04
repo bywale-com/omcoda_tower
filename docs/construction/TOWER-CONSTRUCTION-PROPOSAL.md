@@ -1,6 +1,6 @@
 # Tower Construction — methodology and iteration map
 
-**Status:** Architecture accepted. Recuts applied. TC-0 operating proposal in [`TC-0-OPERATION.md`](./TC-0-OPERATION.md) (compressed: construction beginner, not computer-literacy beginner). Not scaffolded. Not implemented.  
+**Status:** Architecture accepted. Curriculum **specification** lives in [`curriculum/`](./curriculum/) (`JOURNEY.md`, `RULES.md`, `MASTERY.md`, `DESTINATION.md`). No chapter generated. Not implemented.  
 **Seat:** Engineer, inspecting current Tower as destination / convergence test.  
 **What this is:** A curriculum — a book and a repository in one — that trains *intention → computational construction*. Current Tower is the convergence test for the class of system, not the answer key. Each abstraction is encountered as a problem before it is handed over as a mechanism. Required syntax is a mastery target, taught as the representation of a construction already understood.  
 **What this is not:** A plan to copy `omcoda_tower` line by line. A TypeScript → React → CSS syllabus. A simplified conceptual Tower. A frozen 36-lesson contract. An agent-builds-it project.
@@ -636,4 +636,6 @@ Accepted and applied:
 
 Cycle boundaries were **not** redrawn. The ten-epoch architecture is unchanged. TC-12–15 is flagged as the first likely split when we reach it.
 
-What remains for you to accept before anything is created: [`TC-0-OPERATION.md`](./TC-0-OPERATION.md) — how the first chapter actually runs. No scaffold. No Construction repo. No exercises generated until that operating proposal is accepted.
+Further recut: TC-0 compressed to the causal chain *author → interpret → page*. Computer-literacy checkpoints removed. The chapter is the tutor; I evaluate at the unit boundary.
+
+What remains for you to accept before anything is created: [`TC-0-OPERATION.md`](./TC-0-OPERATION.md). No scaffold. No Construction repo. No chapter generated until that spec is accepted.
