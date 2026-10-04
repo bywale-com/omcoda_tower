@@ -1,6 +1,6 @@
 # Tower Construction — methodology and iteration map
 
-**Status:** Architecture accepted. Recuts applied 2026-10-04. TC-0 operating proposal in [`TC-0-OPERATION.md`](./TC-0-OPERATION.md). Not scaffolded. Not implemented.  
+**Status:** Architecture accepted. Recuts applied. TC-0 operating proposal in [`TC-0-OPERATION.md`](./TC-0-OPERATION.md) (compressed: construction beginner, not computer-literacy beginner). Not scaffolded. Not implemented.  
 **Seat:** Engineer, inspecting current Tower as destination / convergence test.  
 **What this is:** A curriculum — a book and a repository in one — that trains *intention → computational construction*. Current Tower is the convergence test for the class of system, not the answer key. Each abstraction is encountered as a problem before it is handed over as a mechanism. Required syntax is a mastery target, taught as the representation of a construction already understood.  
 **What this is not:** A plan to copy `omcoda_tower` line by line. A TypeScript → React → CSS syllabus. A simplified conceptual Tower. A frozen 36-lesson contract. An agent-builds-it project.
@@ -94,9 +94,11 @@ These exist in the repo and are **not** the destination spine (they may be named
 
 ## 2. Working backward from that system toward absolute zero
 
-If you strip current Tower until nothing remains that a person who knows no implementation could have constructed, you do not arrive at “a Vite app.” You arrive at:
+If you strip current Tower until nothing remains that a person who knows no *software construction* could have constructed, you do not arrive at “a Vite app.” You arrive at:
 
-**A blank page, and the intention that something should exist on it.**
+**The smallest causal chain from something you author to something a browser produces — a blank page — and then the intention that something should exist on it.**
+
+Zero is construction, not computer literacy. Folders, editors, browsers, GitHub, and “a file lives in a directory” are assumed. What is not assumed is how authored source becomes a page, or anything downstream of that.
 
 Every later Tower mechanism is a solution to a problem that only appears after an earlier construction works.
 
@@ -247,7 +249,7 @@ Syntax names in parentheses are **arrivals**, not lesson titles. They show up wh
 
 | Cycle | We construct | Previous system cannot | Mechanism that becomes necessary | You learn | Probe |
 |---|---|---|---|---|---|
-| **TC-0** | A blank page you can open | Nothing exists | A file the browser will show. A folder. A way to look at it. | A program is not a feeling. It is a construction the machine will read. | Close the file. What disappeared, and why? |
+| **TC-0** | The smallest causal chain: author a file → browser interprets it → a (blank) page | Nothing you authored is being interpreted into a page | An HTML file as source the browser renders | The page is not the file. It is the product of interpretation. | I have something in my head I want on this page. Why can this chain not cause that? |
 | **TC-1** | One thing on the page | The page has no occupants | A named element. A tag as “this is a thing.” | Existence on a screen is caused. Remove the element, the thing is gone. | Put a different thing on the page without being shown the tag first. What did you have to decide? |
 | **TC-2** | Control where / how it appears | The thing exists but you cannot place it | Rules that apply to appearance. | Place is not the thing. Appearance is a second construction attached to the first. | Change one rule. Predict what moves. Then do it. |
 | **TC-3** | Several things | One thing cannot be a desk | Repeated elements. Sequence on the page. | Order is a construction. The page is a tree of things, not a picture. | Reorder without changing the things themselves. What did you actually change? |
@@ -409,7 +411,7 @@ Not skills. Causal possessions.
 
 | After | You can reason |
 |---|---|
-| Epoch 0 | A page is caused by a file a browser reads. A screen occupant is caused. Appearance is a separate construction. Behavior is a listen plus a run. Those phenomena have their industry names. |
+| Epoch 0 | Authoring → interpretation → page. Then an occupant is caused. Appearance is a separate construction. Behavior is a listen plus a run. Those phenomena have their industry names. |
 | Epoch 1 | The page is a view of information. That relationship is called **state**. Selection is information. A list requires identity. |
 | Epoch 2 | Names prevent drift. Shapes prevent silent lies. A renderer exists because hand-patching the page fails. |
 | Epoch 3 | The desk is not the book. A query is the only honest source. An API is a conversation between constructions that do not share memory. |
@@ -539,7 +541,7 @@ The progression being caused:
 
 | Phase | You | Me |
 |---|---|---|
-| **Early** | Answer: what do you think must exist? | Expose an intention. Ask first. Name the phenomenon after you understand it. Teach the required syntax until you can produce it. |
+| **Early** | Work the chapter independently. Construct. Answer the proofs. Push the evidence. | Write a self-contained chapter. Evaluate the push. I am not beside keystrokes. |
 | **Middle** | Propose the construction. “I think A, B, and C need to exist because…” | Challenge boundaries, relationships, and assumptions. |
 | **Late** | “I need A, B, and C. A owns this. B represents this. C connects them. I am uncertain whether this relationship belongs in A or deserves its own thing.” | “Defend that boundary.” |
 | **End** | “I have constructed it. Here is the model. Here is the implementation. Here is the part I am uncertain about. Attack it.” | Review. Expose consequences you missed. You are the source of the construction. |
@@ -575,14 +577,16 @@ We are not learning each technology for years and then integrating them. We are 
 
 ### Cadence
 
+This is a dynamically authored textbook, not an AI pair-programmer.
+
 1. Agree the journey and the rules (this document).
-2. Generate **only the next cycle’s** book chapter and an empty construction slot. Place it in GitHub.
-3. You work the checkpoints (subsections) in order.
-4. When a checkpoint — and then the cycle — is complete, you **push that work back**. That push *is* the discussion: validation and evaluation.
+2. Generate **only the next cycle’s** book chapter and an empty construction slot. The chapter must be enough to work **alone**: intention, explanation, construction, syntax, experiments, names, proofs.
+3. Long stretch: you, the chapter, the editor, the browser (or later, the server / the table), and the consequences of what you write. I am not in that stretch.
+4. When the cycle is complete, you **push that work back**. That push is the unit boundary: validation and evaluation.
 5. If the construction is understood and the next limitation is visible, I generate the next cycle’s chapter from the journey and the rules.
 6. If it is not understood, we do not advance. The map does not get a vote.
 
-I do not generate TC-1 while TC-0 is unvalidated. I do not generate Epoch 3 while Epoch 0 is a hypothesis you have not lived.
+I do not generate TC-1 while TC-0 is unvalidated. I do not generate Epoch 3 while Epoch 0 is a hypothesis you have not lived. I do not tutor a checkpoint live unless the chapter itself failed as a chapter.
 
 ### This repo’s relationship
 
