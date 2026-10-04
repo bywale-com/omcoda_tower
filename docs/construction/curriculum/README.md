@@ -10,7 +10,9 @@ This folder is the **skeleton** of the Tower Construction repository. It is the 
 | [`DESTINATION.md`](./DESTINATION.md) | Versioned with JOURNEY if Tower’s destination spine changes. | The class of system. Convergence test. Transfer graduation. |
 
 `book/epoch-N/` exists as a slot. **No chapter is generated until that cycle is reached.**  
-`constructions/` and `my-work/` are empty slots.
+`constructions/` and `my-work/` are empty slots until you construct.
+
+**Reached:** [TC-0](./book/epoch-0/tc-0.md). Work it alone. Push `constructions/tc-0/page.html` and `my-work/tc-0/notes.md`.
 
 When TC-0 is accepted for generation, this tree is copied into a standalone **Tower Construction** repository. Until then it lives here, next to the inspection notes in `docs/construction/`.
 
