@@ -1,8 +1,6 @@
 # TC-0 — how the first cycle operates
 
-**Status:** Operating grain for the TC-0 **contract** in [`curriculum/JOURNEY.md`](./curriculum/JOURNEY.md). Not the chapter.  
-**Depends on:** [`curriculum/RULES.md`](./curriculum/RULES.md), [`curriculum/MASTERY.md`](./curriculum/MASTERY.md), [`curriculum/DESTINATION.md`](./curriculum/DESTINATION.md).  
-**Do not do yet:** write `book/epoch-0/tc-0.md`, create `page.html`, or implement anything. The skeleton already exists under [`curriculum/`](./curriculum/).
+**Status:** Operating grain. Chapter generated: [`curriculum/book/epoch-0/tc-0.md`](./curriculum/book/epoch-0/tc-0.md). You construct `page.html`.
 
 This is the spec for the first generated section. If you accept it, the next move is to create the Construction repo and write the TC-0 chapter — still leaving the working file for you to construct.
 
