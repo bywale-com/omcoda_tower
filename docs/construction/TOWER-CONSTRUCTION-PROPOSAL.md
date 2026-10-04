@@ -1,9 +1,9 @@
 # Tower Construction — methodology and iteration map
 
-**Status:** Proposal for review. Not an implementation. Not a curriculum.  
-**Seat:** Engineer, inspecting current Tower as destination/reference.  
-**What this is not:** A plan to copy `omcoda_tower` line by line. A TypeScript → React → CSS syllabus. A simplified conceptual Tower. A repo.  
-**What this is:** A construction path from absolute zero to the Tower that exists in this repository today, engineered so that each abstraction is encountered as a problem before it is handed over as a mechanism.
+**Status:** Architecture accepted. Recuts applied 2026-10-04. TC-0 operating proposal in [`TC-0-OPERATION.md`](./TC-0-OPERATION.md). Not scaffolded. Not implemented.  
+**Seat:** Engineer, inspecting current Tower as destination / convergence test.  
+**What this is:** A curriculum — a book and a repository in one — that trains *intention → computational construction*. Current Tower is the convergence test for the class of system, not the answer key. Each abstraction is encountered as a problem before it is handed over as a mechanism. Required syntax is a mastery target, taught as the representation of a construction already understood.  
+**What this is not:** A plan to copy `omcoda_tower` line by line. A TypeScript → React → CSS syllabus. A simplified conceptual Tower. A frozen 36-lesson contract. An agent-builds-it project.
 
 Inspected on this pass: product face (`/prototype-ant`, `PrototypeAntApp`, Operator / Consultant / Contact desks, Configuration libraries, Automations and Agents workbenches), runtime (`workflowWalk.ts`, `cascade.ts`, `worker.ts`, `runWrites.ts`, `dispatchSend.ts`, `eventTest.ts`, auth/session/firm), ledger (`supabase/migrations/001`–`024`, seeds), and the laws that make Tower unlike a generic app (`DATA-IN-TABLES.md`, `PRIMITIVES.md`, `SYSTEMS-STORY.md`, `AGENTS-FACE.md`, `AUTOMATIONS-FACE.md`, Phase Two thesis).
 
@@ -50,9 +50,26 @@ That completion may be heard as an event → another walk
 
 Story’s spine is the same ring in product language: keep engaging, keep facts fresh, re-evaluate eligibility, surface people so a meeting can be booked. Presentation ≠ fulfillment. The house must stay inspectable without a deploy.
 
-### What “current Tower” means as destination
+### Destination — class of system, not reproduction
 
-Converging on current Tower means becoming able to reconstruct **this** product, not a generic CRM and not Hub:
+Graduation is not “reproduce current Tower.”
+
+The capability being trained:
+
+> Given an intention, discover a computational construction capable of producing it, express that construction in the required mechanisms and syntax, and deliberately modify it when the intention changes.
+
+Current Tower is the **convergence test** for that class of system: a multi-desk, table-backed, firm-scoped engagement machine with authored when-then operations, start-now missions, a walk that accumulates writes, time-path pursuit, and a close-the-loop write. If you can account for and reconstruct the important mechanisms Tower represents, the path aimed at the right class.
+
+If you can only rebuild Tower’s particular pieces, the path reverse-engineered toward known answers.
+
+TC-35 therefore contains **two** audits:
+
+1. **Convergence.** Can I account for and reconstruct the important mechanisms represented by current Tower?
+2. **Transfer.** A small product requirement that does **not** exist in Tower. Without Tower as a template: what information, state, relationships, behavior, boundaries, and mechanisms must exist — then construct it.
+
+The transfer audit is graduation. Convergence without transfer is fluency in one building.
+
+What “account for current Tower” means, for the convergence audit:
 
 - Product face `/prototype-ant` with Operator / Consultant / Contact.
 - Configuration libraries: Evaluation, Automations, Agents.
@@ -113,17 +130,33 @@ Do not simplify Tower conceptually. Do not hide a difficult idea because it is d
 
 If Tower eventually requires a mechanism, the path must first produce the situation in which that mechanism is the thing that becomes possible — after a simpler construction has already failed in a way you can feel.
 
-### Intention → problem → mechanism → syntax
+### Intention → problem → mechanism → name → syntax
 
 Every cycle uses this order. Never the reverse.
 
 1. **Intention.** What are we trying to construct?
-2. **Problem.** The previous working system cannot satisfy that intention. You hit the wall. I do not name the wall first.
+2. **Problem.** The previous working system cannot satisfy that intention. The problem must be felt. Feeling it does **not** require spending hours implementing a construction you already know is insufficient — see *Causal necessity, not ceremonial failure* below.
 3. **What do you think needs to exist?** Asked before the solution is explained.
 4. **Mechanism.** What this actually is, where it sits, what changes if you manipulate it, what becomes impossible if you remove it, what alternative construction would have produced a different result.
-5. **Representation / syntax.** Only the syntax this construction requires, at the moment it is required.
-6. **You construct it.** I do not generate the system for you.
-7. **Observe.** What became possible. What new problem is now visible.
+5. **Industry name, immediately.** Experience the phenomenon → describe it → understand the construction → then acquire the standard technical name. “You just discovered state.” Then the word has something underneath it. Same for function, component, persistence, relation, event, dependency, API, serialization, entry point, interface, and every later name. No private vocabulary that later needs translation. No vocabulary-first teaching.
+6. **Representation / syntax.** The syntax this construction requires, taught until you can produce it — not merely recognize it. Syntax is a mastery target. It is not a separate syllabus.
+7. **You construct it.** I do not generate the working system for you.
+8. **Observe.** What became possible. What new limitation is now visible.
+
+### Syntax is real, and it is taught from construction
+
+This curriculum does optimize for TypeScript syntax — and HTML, CSS, JavaScript, SQL, and whatever else a cycle actually requires — **once that syntax is the representation of a construction you already understand.**
+
+The failure mode of MDN-first study: you can memorize that a particular form means X and still not know when the construction requires it. That is formulas without the concept.
+
+The failure mode of “don’t worry about syntax”: you understand the construction and cannot express it. That is a concept without the formula. Independent navigation (a file named `main.tsx` meaning *entry point*) requires both.
+
+So:
+
+- Do not begin a cycle by listing syntax.
+- The moment the construction needs a representation, teach that syntax completely enough that you can write it without looking.
+- Required syntax is in-scope fluency. Unused syntax “for completeness” is out of scope.
+- TypeScript arrives when named shapes become necessary (map: TC-10). From then on, every TypeScript construct this path requires is a fluency target.
 
 ### Cycle contract
 
@@ -131,23 +164,41 @@ A cycle is legal only if all of the following are true:
 
 - The previous cycle left a **working system** you can run.
 - This cycle adds **one capability** (or one tightly bound pair that cannot be separated without lying).
-- The new mechanism is **forced by a failure** of the previous construction, not by “professionals use this.”
-- Syntax is introduced as **the representation of that mechanism**, not as a lesson.
+- The new mechanism is **forced by a problem** the previous construction cannot satisfy, not by “professionals use this.”
+- The phenomenon is named with the **industry word** as soon as it is understood.
+- Syntax is introduced as **the representation of that mechanism**, then practiced until you can produce it.
 - There is an **understanding test** that cannot be passed by reproducing the previous cycle’s characters.
 
 Tower Construction 0 may barely qualify as software. Tower Construction 1 must do something. Every later cycle must still run.
 
+**Cycle boundaries are provisional.** TC-0–35 is the initial table of contents, not a contract. Split a cycle whenever multiple conceptual constructions are being smuggled through as one (TC-12–15 is the first likely split: persistence, identity/relations, query-as-source, and ask/answer may be six constructions, not four). Merge when the separation would be artificial.
+
+**Never advance because the map says the next cycle has arrived. Advance because the current construction is understood and its next limitation is visible.**
+
+### Causal necessity, not ceremonial failure
+
+Mechanisms arise from problems. That rule stands.
+
+Do not require substantial time implementing an obviously inadequate construction merely so it can fail. When you can accurately predict the failure and explain why the current construction cannot satisfy the new intention, that can be sufficient evidence that the problem has been felt.
+
+The legal minimum is:
+
+> construct the minimal version → observe the limitation → **or** predict the consequence and explain why
+
+Optimize for causal understanding, not artificial difficulty.
+
 ### What I will do, and refuse to do
 
-I will inspect current Tower, teach, create exercises, challenge reasoning, review what you build, expose consequences, and help diagnose misunderstandings.
+I will inspect current Tower, write the next section of the book when the previous section has been validated, create checkpoint exercises, challenge reasoning, review what you build, expose consequences, and help diagnose misunderstandings.
 
 I will not:
 
 - Type the construction so you can watch an agent complete Tower.
-- Hand you current files to copy.
+- Hand you current Tower files to copy.
 - Introduce Vite, React, TypeScript, Ant Design, React Flow, Postgres, Hono, OTP, or React Router because “that is the stack.”
 - Protect you from write-set, Local events, attempt ownership, or firm scoping by replacing them with toys.
-- Introduce those same ideas in their production form before a simpler construction has failed.
+- Introduce those same ideas in their production form before a simpler construction has become insufficient.
+- Generate the next section’s content before the current section has been pushed back and validated.
 
 ### Two buckets, applied to learning
 
@@ -157,13 +208,13 @@ When something is specified but not clear (PM packet incomplete, SA has not ascr
 
 ---
 
-## 4. Estimate: how many cycles
+## 4. The table of contents (provisional)
 
-**Thirty-six cycles (TC-0 through TC-35), in ten epochs.**
+**Ten epochs. Initial map: TC-0 through TC-35.**
 
-That is a design estimate, not a schedule. A cycle that does not produce a felt problem should be split. Two cycles that cannot be separated without lying should be merged. The number is high on purpose: completing current Tower quickly is the failure mode.
+This is the curriculum spine — the pre-configured journey — not a contract to finish 36 lessons. Completing current Tower quickly is still the failure mode. Advancing past an unfelt problem is also a failure mode.
 
-Epochs are the major construction stages. Cycles are the working systems inside them.
+Epochs are the major construction stages. Cycles are working systems. Checkpoints inside a cycle are the subsections you complete and push back.
 
 ```
 TC-0 ………… blank page
@@ -213,7 +264,7 @@ Syntax names in parentheses are **arrivals**, not lesson titles. They show up wh
 | Cycle | We construct | Previous system cannot | Mechanism that becomes necessary | You learn | Probe |
 |---|---|---|---|---|---|
 | **TC-5** | Behavior that depends on information | The click always does the same thing | A value the response reads. | Information is not the page. The page is reading it. | Change the value, not the listener. What changed on the screen, and what did not? |
-| **TC-6** | Changing the information changes what appears | You can change a value but the page still shows the old world | The page must be built from the current information. | This is the first state. Not `useState` — the relationship: information → appearance. | Name one piece of information whose change should not affect the page. Why? |
+| **TC-6** | Changing the information changes what appears | You can change a value but the page still shows the old world | The page must be built from the current information. | Experience that relationship, then name it: **this is called state.** Not `useState` yet — that is one library’s syntax for this construction. | Name one piece of information whose change should not affect the page. Why? |
 | **TC-7** | A list of people; select one; see that one | One value cannot be a book | A collection. An identity for each occupant. A selected identity. | Selection is information. Detail is a function of selection. The board is already this. | Add a person. What had to exist that did not exist for “one name on a page”? |
 
 **Problem that Epoch 1 creates for Epoch 2:** The page is now a pile of repeated constructions. Changing the list in one place and forgetting the other place makes the desk lie.
@@ -346,9 +397,9 @@ React Flow is a **better editor for a graph you already have**. It is a disastro
 |---|---|---|---|---|---|
 | **TC-33** | Get existing records; evaluate a rule whose rows live in a table; wait for time or a person | The walk can only use what the trigger already held, and it cannot pause | Get as a query that becomes writes. Rule as data, not an `if` in the walker. Wait as park / resume. | Fetch, judge, and pause are different problems. A rule in code is a deploy. A rule in a table is the house. | Change a rule row, not a function. The next walk must judge differently. Approve a wait. Only then may the downstream node run. |
 | **TC-34** | This form / this objective / this campaign — not every event of that kind | Global listen over-fires | Grain. Local axis. | Local is a constraint on which write a trigger is allowed to hear. Some events have no Local (a one-time audit). That is still an event. | Submit form B. The automation that listens to form A must not walk. Submit form A. It must. |
-| **TC-35** | The house changes evaluation, binding, sending, and provision without shipping the walker again | Pursuit and eligibility are still half-program | Operator modules as panes and controls on states you already named. Evaluation packs as tables. Bind per firm / default / override. | Story’s house/open-box constraint, constructed. Then: walk current Tower and list what you still cannot reconstruct — stand-ins, silences, dual tenancy, three-clock leftover. Honesty is part of the construction ability. | Point at a current Operator module and say: control or pane? Which table? If you cannot, we are not at destination. |
+| **TC-35** | The house changes evaluation, binding, sending, and provision without shipping the walker again | Pursuit and eligibility are still half-program | Operator modules as panes and controls on states you already named. Evaluation packs as tables. Bind per firm / default / override. | Story’s house/open-box constraint, constructed. Then two audits: **convergence** (account for current Tower’s important mechanisms) and **transfer** (construct a small product that is not in Tower, without Tower as a template). | Convergence: point at a current Operator module — control or pane? Which table? Transfer: given a foreign intention, name information / state / relationships / behavior / boundaries / mechanisms before writing. |
 
-TC-35 ends in a **convergence audit**, not a victory lap. You compare Tower Construction’s working system to this repository’s face + walk + tables, and you name remaining gaps in the two buckets: specified-and-clear (keep constructing) vs specified-but-not-clear (do not invent).
+TC-35 ends in those two audits, not a victory lap. Convergence names remaining gaps in the two buckets: specified-and-clear (keep constructing) vs specified-but-not-clear (do not invent). Transfer determines whether construction ability left this codebase.
 
 ---
 
@@ -358,8 +409,8 @@ Not skills. Causal possessions.
 
 | After | You can reason |
 |---|---|
-| Epoch 0 | A screen occupant is caused. Appearance is a separate construction. Behavior is a listen plus a run. |
-| Epoch 1 | The page is a view of information. Selection is information. A list requires identity. |
+| Epoch 0 | A page is caused by a file a browser reads. A screen occupant is caused. Appearance is a separate construction. Behavior is a listen plus a run. Those phenomena have their industry names. |
+| Epoch 1 | The page is a view of information. That relationship is called **state**. Selection is information. A list requires identity. |
 | Epoch 2 | Names prevent drift. Shapes prevent silent lies. A renderer exists because hand-patching the page fails. |
 | Epoch 3 | The desk is not the book. A query is the only honest source. An API is a conversation between constructions that do not share memory. |
 | Epoch 4 | A face is a question. A token is a constraint. A write on one face is a row the other face can read. |
@@ -367,13 +418,13 @@ Not skills. Causal possessions.
 | Epoch 6 | Hear ≠ start now. The next step picks from this run’s writes. A fork reads a write. A walk reads data so the house can change the chain. |
 | Epoch 7 | Configure writes data; the walk reads data. A canvas is an editor. Agents and Automations are different constructions that meet at enroll. |
 | Epoch 8 | Firm is a ledger boundary. Send is gated. Test, Run, and Launch are three ignitions. |
-| Epoch 9 | Fetch / judge / pause are not one node. Local is a grain. The house is tables plus panes, not a redeploy. You can see where current Tower is still historically tangled. |
+| Epoch 9 | Fetch / judge / pause are not one node. Local is a grain. The house is tables plus panes, not a redeploy. Convergence: you can see where current Tower is load-bearing vs leftover. Transfer: you can construct a small system that is not Tower. |
 
 The **product** of Tower Construction is the ability to look at an intended capability and say:
 
-> These things need to exist. This information needs to be represented. These relationships need to exist. This behavior belongs here. This event needs to cause this transition. This part needs to communicate with that part. Therefore I need these mechanisms.
+> These things need to exist. This information needs to be represented. These relationships need to exist. This behavior belongs here. This event needs to cause this transition. This part needs to communicate with that part. Therefore I need these mechanisms. Here is the syntax that expresses them. If the intention changes here, this construction must change and that one can remain.
 
-If a cycle does not move you toward that sentence, it is a syntax drill and it should be cut.
+If a cycle does not move you toward that sentence, it is a syntax drill and it should be cut. If you can say it and cannot write the required syntax, the cycle is also not done.
 
 ---
 
@@ -443,58 +494,102 @@ Provision, commercial, Meta, escrow, sending-pool chrome are real modules. They 
 
 ---
 
-## 8. How I would test that you understand the construction
+## 8. Proofs — Predict → Explain → Transform → Break → Diagnose → Reconstruct → Transfer
 
-A cycle is not done when the screen matches. It is done when you can do the following without looking at the syntax I typed last time.
+A cycle is not done when the screen matches. It is done when you can do the following without looking at the syntax from the chapter.
 
-### Battery (every cycle)
+| Proof | What I ask | What it shows |
+|---|---|---|
+| **Predict** | Before running: what will appear, what row will exist, what will not happen? | The model is in your head, not only on the page. |
+| **Explain** | What were we constructing? What does this mechanism actually do? Where does it sit? | The industry name is attached to a construction, not a definition. |
+| **Transform** | After it works, a mutation you have not seen. **Before touching code:** what construction must change, what can remain, and why? | You can deliberately deform the mechanism. This is the primary proof. |
+| **Break** | Delete the mechanism, or I change one relationship. What becomes impossible? | If the answer is “nothing,” we introduced it too early. |
+| **Diagnose** | The construction is broken. Find the broken *relationship*, not the missing character — unless the character *is* the relationship. | You can see cause, not only symptoms. |
+| **Reconstruct** | Cause this capability again without yesterday’s files open. | Syntax is producible. The construction is yours. |
+| **Transfer** | A near-neighbor intention, or (at TC-35) a product that is not in Tower. Name what must exist before writing. | Construction ability left this building. |
 
-1. **Intention restated.** What were we constructing, in your words, without mechanism names?
-2. **Prediction.** Before running: what will appear, what row will exist, what will not happen?
-3. **Manipulation.** Change one value. Say what else must change, and what must not.
-4. **Removal.** Delete the new mechanism. What becomes impossible? If the answer is “nothing,” we introduced it too early.
-5. **Alternative.** Name a different construction that would produce a different result. Not “a worse style” — a different cause.
-6. **Diagnosis.** I break one relationship (stale information, guessed handle, painted row, Global firing for the wrong Local, Launch that walks). You find the broken relationship, not the missing semicolon, unless the semicolon is the relationship.
+Transformation examples (the requirement changes; the construction must answer):
 
-### Battery (every epoch)
+- Make the vertical thing horizontal.
+- One selected contact became multiple selected contacts.
+- This used to happen immediately; now it must happen tomorrow.
+- This relationship used to be one-to-many; now either side can have many.
+- One channel becomes several.
+- Local information becomes shared information.
 
-7. **Forward construction.** I give a near-neighbor intention. You name what must exist **before** writing. If you reach for a library name first, we rewind.
-8. **No-look rebuild.** The next day, reconstruct the epoch’s working system from the intention. You may look at current Tower as destination/reference. You may not look at yesterday’s files.
-9. **Law check.** Data-in-tables, write-set, click=configure, teaching-copy-is-not-a-node, Hub-is-not-the-app — only as each law has become live. You should be able to violate one on purpose and say what lie the product now tells.
+If you understand the mechanism, you should be able to say what must change before you write.
 
 ### What I will treat as a fail
 
-- The screen matches and you cannot say what write caused it.
+- The screen matches and you cannot say what write (or file, or value) caused it.
 - You reproduced a syntax pattern and cannot say what problem it is solving.
+- You cannot write the required syntax after the construction is understood.
 - You ask for the next library because it is familiar from current Tower, not because the current construction failed.
 - You paint a person so a module is not empty.
 - You build a second walker.
+- You cannot transform a working construction when the intention changes.
 
 ---
 
 ## 9. How my involvement decreases
 
-The actual product is your construction ability. My usefulness should fall on a schedule.
+Fade is controlled by **what you demonstrate**, not by the TC number. The numbers below are the expected climate, not a calendar.
 
-| Cycles | My role | Your role | I should refuse |
-|---|---|---|---|
-| **TC-0 – TC-11** | Sit in the problem with you. Ask what you think must exist. Introduce the minimum syntax at the moment of need. Demonstrate a mechanism **once**. | Decide what should appear. Type the construction. Predict before we run. | Generating the page for you. Starting from a Vite template “to save time.” |
-| **TC-12 – TC-22** | Name when a simpler construction is still available. Review. Let you sit in a broken persistence or a lying desk longer. | Propose the construction. Build the table, the ask/answer, the second face, the first clock. | Inventing a schema for you because Postgres is “how it’s done.” Introducing OTP so the contact seat feels grown-up. |
-| **TC-23 – TC-29** | Confirm or refute the mechanisms you named against Tower’s actual laws (handle, two doors, enroll-now vs hear, click=configure). | Look at the intended capability and list what must exist **first**. Build the walker, then the editor. | Handing you `workflowWalk.ts` to copy. Opening React Flow before a list editor has failed. |
-| **TC-30 – TC-34** | Inspector of reference Tower. I point at a destination constraint you have not yet felt (firm boundary, Local grain, Launch-must-not-walk). | You are the constructor. You choose representation. You diagnose. | Pair-programming the send gate “because it’s tricky.” |
-| **TC-35 and after** | Packet-reader with you, same two buckets as the Engineer seat. | You can read an intended capability (or a PM/SA packet) and construct. You can look at current Tower and say what is load-bearing vs leftover. | Being the person who decides what needs to exist. |
+The progression being caused:
 
-A concrete fade rule: if I notice I am choosing the next mechanism, I stop and ask you what the current system cannot do. If I notice I am typing the construction, I stop. If you ask me to “just implement this cycle,” that request is out of scope for Tower Construction even when it would be in scope for the Engineer seat on `omcoda_tower`.
+| Phase | You | Me |
+|---|---|---|
+| **Early** | Answer: what do you think must exist? | Expose an intention. Ask first. Name the phenomenon after you understand it. Teach the required syntax until you can produce it. |
+| **Middle** | Propose the construction. “I think A, B, and C need to exist because…” | Challenge boundaries, relationships, and assumptions. |
+| **Late** | “I need A, B, and C. A owns this. B represents this. C connects them. I am uncertain whether this relationship belongs in A or deserves its own thing.” | “Defend that boundary.” |
+| **End** | “I have constructed it. Here is the model. Here is the implementation. Here is the part I am uncertain about. Attack it.” | Review. Expose consequences you missed. You are the source of the construction. |
+
+End state — both, not one:
+
+1. Given an intended behavior or system, you can discover a computational construction capable of producing it.
+2. You can express that construction in the required syntax (including TypeScript when we are there) and deliberately modify it when the intention changes.
+
+I am no longer the source of the construction. Syntax is subordinate to construction, and it is still mastered.
+
+If I notice I am choosing the next mechanism, I stop and ask what the current system cannot do. If I notice I am typing the construction, I stop. If you ask me to “just implement this cycle,” that request is out of scope for Tower Construction even when it would be in scope for the Engineer seat on `omcoda_tower`.
 
 ---
 
-## 10. How Tower Construction would relate to this repository
+## 10. Operating model — a book and a repository in one
 
-- **This repo is the destination and the reference.** We inspect it. We do not rebuild inside it. We do not treat Hub as the destination. We do not recut `workflowWalk.ts` here as a teaching fork.
-- **Tower Construction is a separate repository**, created only after you accept (or recut) this map. Each cycle is a working system in that repo. Early cycles may be a single HTML file. Later cycles grow toward this architecture because the problems require it, not because we paste these folders.
-- **We do not import current source as the lesson.** At convergence we may *compare* a construction to the current file that holds the same mechanism (`workflowWalk.ts`, `cascade.ts`, `ContactWorkspace.tsx`, `001_auth_tables.sql`) to see what production residue is leftover vs load-bearing.
-- **Seeds and empty modules.** Once a table exists, it is seeded enough to query. The Construction desk, like this one, shows what the query returns.
-- **Docs in this repo stay as law**, not as reading homework. `PRIMITIVES.md`, `DATA-IN-TABLES.md`, Agents/Automations face laws, and Story spine are introduced **when the construction has already produced the problem they name.**
+This is a curriculum. It is not an open chat that invents the next hour, and it is not a 36-video course generated up front.
+
+We are not learning each technology for years and then integrating them. We are starting from the middle, pointed at one class of system. Tower already uses a fair bit of each technology it touches. The unit of the curriculum is still a **construction**. Technologies appear as the representations those constructions require.
+
+### What lives where
+
+| Artifact | Job |
+|---|---|
+| **This repo (`omcoda_tower`)** | Destination / convergence test / law. Inspected. Not copied as the lesson. |
+| **Tower Construction (separate repo)** | The book + the working constructions. Created when TC-0 content is generated — not before. |
+| `JOURNEY.md` | Pre-configured table of contents: epochs → cycles → checkpoints. Boundaries provisional. |
+| `RULES.md` | The laws in this document, portable. |
+| `book/epoch-N/tc-N.md` | One cycle’s chapter: intention, checkpoints, names, syntax, proofs. Generated **one cycle at a time**. |
+| `constructions/tc-N/` | The working system **you** build. |
+| `my-work/` | What you push back: the construction, what you think is happening, proof answers, uncertainties. |
+
+### Cadence
+
+1. Agree the journey and the rules (this document).
+2. Generate **only the next cycle’s** book chapter and an empty construction slot. Place it in GitHub.
+3. You work the checkpoints (subsections) in order.
+4. When a checkpoint — and then the cycle — is complete, you **push that work back**. That push *is* the discussion: validation and evaluation.
+5. If the construction is understood and the next limitation is visible, I generate the next cycle’s chapter from the journey and the rules.
+6. If it is not understood, we do not advance. The map does not get a vote.
+
+I do not generate TC-1 while TC-0 is unvalidated. I do not generate Epoch 3 while Epoch 0 is a hypothesis you have not lived.
+
+### This repo’s relationship
+
+- We inspect current Tower. We do not rebuild inside it. Hub is not the destination. We do not recut `workflowWalk.ts` here as a teaching fork.
+- We do not import current source as the lesson. At convergence we may *compare* a construction to the current file that holds the same mechanism to see what is leftover vs load-bearing.
+- Once a table exists in Construction, it is seeded enough to query. The desk shows what the query returns.
+- Face-laws in this repo (`PRIMITIVES.md`, `DATA-IN-TABLES.md`, Agents/Automations) are introduced when the construction has already produced the problem they name.
 
 ---
 
@@ -522,16 +617,19 @@ That is one cycle. Current Tower’s `RunWrite` type is the destination represen
 
 ---
 
-## 12. What I am asking you to review
+## 12. Recut status
 
-Please recut any of the following before anything is created:
+Accepted and applied:
 
-1. **Destination.** Is “current `/prototype-ant` + walk + tables + three desks” the right finish line, with Hub / stand-ins / system-map named as non-spine?
-2. **Cycle count and grain.** 36 cycles in 10 epochs — too coarse (problems get skipped) or too fine (causality drowns in steps)?
-3. **Epoch order.** The sharpest design choice: **durable book and two faces before Automations**, and **pursuit before the walker**. That is the opposite of opening Configuration libraries first. If you want authoring earlier, say so — I think that would teach boxes before writes.
-4. **When React / types / packages / Ant / React Flow / Postgres arrive.** I have them arriving at first failure, which is later than a normal bootcamp and earlier than “write the walker in vanilla DOM.”
-5. **Live send last.** Dry-run rows through Epoch 5–7, real providers only when consent/halt can be felt.
-6. **Understanding tests.** Are prediction / removal / diagnosis / no-look rebuild the right proofs, or do you want a different kind of challenge?
-7. **Fade.** Is the involvement schedule strict enough that this cannot collapse into an agent-builds-it project?
+- Destination = class of system; Tower = convergence test; transfer audit at TC-35.
+- TC-0–35 = initial journey, not a contract. Advance only when understood and the next limitation is visible.
+- Concept before terminology; industry name immediately after.
+- Syntax is a mastery target for whatever the construction requires, taught from construction, not from MDN-first lists.
+- Proofs = Predict → Explain → Transform → Break → Diagnose → Reconstruct → Transfer.
+- Failure = causal necessity, not ceremonial suffering.
+- Fade by demonstrated ability.
+- Operating model = book + repository; generate one cycle; you complete and push back; then the next chapter.
 
-I will not create the Tower Construction repository, scaffold a cycle, or write exercises until you accept or recut this map.
+Cycle boundaries were **not** redrawn. The ten-epoch architecture is unchanged. TC-12–15 is flagged as the first likely split when we reach it.
+
+What remains for you to accept before anything is created: [`TC-0-OPERATION.md`](./TC-0-OPERATION.md) — how the first chapter actually runs. No scaffold. No Construction repo. No exercises generated until that operating proposal is accepted.
