@@ -1,74 +1,39 @@
 # TC-2 evaluation
 
-**Judgment:** Exit capability **not met**. Next chapter **must not** be generated.
+**Judgment:** Exit capability met. Next pressure visible. TC-3 may be generated.
 
-**Evidence read:** `constructions/tc-2/page.html` · `constructions/tc-2/page_frozen.html` · `constructions/tc-2/new_small_file.html` · `my-work/tc-2/notes.md` (`8862410` — notes file **not in the commit**; still the empty template)
+**Evidence read:** `constructions/tc-2/page.html` · `page_frozen.html` · `new_small_file.html` · empty notes template (`8862410`) · learner follow-up: already knows some CSS; would not use HTML-only to design.
 
-The cycle is not done when the heading has a color. It is done when you can change one rule, predict the rendering, and say appearance is attached. The rules are in the file. The saying is not.
-
----
-
-## What the files actually contain
-
-`page.html` copied the TC-1 occupants and put a `<style>` block in the **head**. That is the right *place* for this cycle’s syntax.
-
-Three rules:
-
-- `div { font-size: xx-large; flex: auto; }`
-- `p { color: blue; }`
-- `h2 { margin-top: 100px; }`
-
-Tags and words of the occupants were not swapped to fake look. `p` is still `p`. `h2` is still `h2`. Color and space-above are the chapter’s own example intentions, and they are caused by **declarations**, not by a different tag.
-
-`new_small_file.html` is a second document with one real rule (`h1 { font-size: 40px; }`). Reconstruct was attempted.
-
-So: the second construction (rules) was attached. That is not nothing.
+The HTML-only try is **not** a dealbreaker. RULES: if the failure is predicted and explained, it has been felt. They said tags cannot do look. That is 2.1. Ceremonial hours of “design with HTML” would be the thing the curriculum forbids.
 
 ---
 
-## Why it does not pass
+## What is actually understood
 
-1. **Notes are empty.** Leftovers, 2.1 prediction, 2.1 HTML-only try, 2.2 one-value change, Predict / Explain / Transform / Break / Diagnose / Transfer / Door — all blank. Transform was required **before** changing files. There is no evidence of that. Without the notes, “appearance is a second construction attached to the first” is something the *files* hint and the *learner* has not stated.
+- Appearance is a **second construction**. Occupants stayed `div` / `h1` / `p` / `h2`; look and place changed through **rules**.
+- Representation is right for this cycle: `<style>` in `head`, `selector { property: value; }`.
+- `p { color: blue; }` and `h2 { margin-top: 100px; }` are the chapter’s own intentions, caused by declarations.
+- Reconstruct attempted (`new_small_file.html`, a second document, a rule on `h1`).
+- No server, no JS, no Tailwind, no tag-swap to fake layout.
 
-2. **Leftovers, third skip.** TC-0 Transform 3 and “title also on the page” were carried from TC-0, then TC-1, then into this chapter as required answers *before 2.1*. Empty a third time is a fail **on those proofs**. It is not a rewrite of TC-0.
+## What TC-3 must not pretend
 
-3. **The chapter asked for one occupant.** Three rules on three kinds is a catalog. Pick the intention you actually meant; the rest is noise until you can say which selector did which job.
+- They already know CSS exists and that HTML is not for look. Do not reopen “what is a rule.”
+- Several occupants already exist. Do not “discover that more than one tag can be on a page.” Order / tree / **arrangement** is the pressure, not occupancy.
+- `flex: auto` is already in the file **without** `display: flex`. That is the opening of layout: a flex property does nothing useful until the box is a flex container. Do not scold it as a catalog; use it.
+- Kind-selectors already match every `p` / every `h2`. Targeting *one* of two headings is still missing — cascade/specificity or a more specific selector, only as layout needs it, not as a selector encyclopedia.
 
-4. **`flex: auto` on a `div` with no `display: flex`.** Flex is not this cycle (layout mechanisms are later). As written it is unlikely to be the cause of anything you can point at. If you cannot say what that declaration did, it should not be in the file.
+## Holes (do not block)
 
-5. **2.1 is not evidenced.** `page_frozen.html` already has CSS as **inline** `style="..."` attributes. That is still CSS, attached on the tag, not “HTML only.” The chapter asked you to try tags/words alone, feel the wall, *then* attach a rule in `<style>`. Inline style skips the wall or names a third place rules can sit — either way, it has to be in the notes.
-
-6. **Broken tree.** TC-1’s `div` wrapped `h1` + `p`. `page.html` closes the `div` immediately (`<div>This is a div</div>`) and then has a stray `</div>`. The occupants still show; the parent/child relationship you already had is now a lie in the source.
-
-7. **`new_small_file.html`** has `<head>>`, two empty `<h2>`s, and no notes saying what reconstruct was supposed to prove.
-
----
-
-## What is *not* a fail
-
-- Using `<style>` in the head (correct representation for this cycle).
-- Not starting a server, not writing JavaScript, not Tailwind.
-- Not changing `h2` into another tag in order to “move” it.
-- Reconstruct attempted in a second file (weak, but it exists).
-
----
+1. **Notes were empty.** Proofs live in the files and in the follow-up, not in `notes.md`. Do not make TC-3 a notes-compliance chapter. One leftover is enough: what `flex: auto` did (or failed to do) without `display: flex`.
+2. **Leftovers from TC-0/TC-1** still unanswered. Stop carrying them as a third/fourth fail. They are not this cycle.
+3. **Broken tree.** TC-1’s `div` wrapped `h1` + `p`. `page.html` closes the `div` immediately and leaves a stray `</div>`. Parent/child is already a live bug. TC-3 uses it; it does not fail TC-2 for it.
+4. **Inline `style=""`** on `page_frozen.html` is another place a rule can sit. Name it if it comes up; do not make it the lesson.
 
 ## Syntax
 
-The form `selector { property: value; }` inside `<style>` in `head` was produced. Fluency is not met until you can produce **one** rule on purpose, change **one** value, and write what you predicted. That writing is missing.
-
----
+`<style>` in `head`, rules, declarations produced. Fluency for this cycle met. One unused `flex: auto` is not a syntax fail; it is the next mechanism.
 
 ## Advance
 
-**Do not generate TC-3.**
-
-Fill `my-work/tc-2/notes.md` in your words. Required:
-
-- Both leftovers (third ask — this is the last carry).
-- 2.1: which occupant, intention, HTML-only prediction, what you tried, what happened.
-- 2.2: the one rule that is the point; one value change; prediction then result.
-- Proofs, including Transform written as reasoning, not as a recap of the chapter.
-- Door.
-
-You do **not** need a new essay in the HTML. You may leave `page.html` as the construction if you also say, in notes, which **one** rule is the cycle and what `flex: auto` was doing (or delete it). Push notes + files again. That push is the next evaluation.
+Generate TC-3 from this file + `page.html` + JOURNEY v3 TC-3 (layout: box, flex, grid, cascade, responsive as CSS) + RULES. Opening move: a color rule cannot be a page. Arrange the occupants they already have. Raw CSS once. Tailwind is TC-4.
