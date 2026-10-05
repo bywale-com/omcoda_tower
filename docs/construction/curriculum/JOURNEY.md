@@ -8,7 +8,7 @@ Each heading below is a **contract** for a future chapter. The agent generating 
 
 **Advance:** never because the next heading exists. Advance when that cycle’s **Exit capability** is met and **Next pressure** is visible.
 
-**Provisional count:** TC-0–35 is the initial map, not a contract to finish 36 lessons. Likely split candidates (flag, do not pre-split): TC-15 (persistence-adjacent ask/answer may hide several constructions), TC-33 (Get / Rule / Wait).
+**Chapter path:** `book/epoch-<k>/tc-<n>.md` where `<k>` is the epoch, not the cycle number. Epoch 0 contains TC-0–4. `constructions/` and `my-work/` stay `tc-<n>`.
 
 ---
 
@@ -1011,3 +1011,4 @@ Destination fragment: click = configure; then a canvas; then Agents as a differe
 | Version | Date | Change |
 |---|---|---|
 | 1 | 2026-10-04 | Initial map. TC-0–35. Split flags on TC-15 and TC-33. |
+| 1 | 2026-10-05 | Chapter path: `book/epoch-<k>/tc-<n>.md` (epoch folder, not cycle-number folder). No contract change. |
