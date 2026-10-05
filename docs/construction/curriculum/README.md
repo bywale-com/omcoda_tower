@@ -31,8 +31,8 @@ This folder is the **skeleton** of the Tower Construction repository. It is the 
 | 10 House, files, contrast | TC-60–62 | `book/epoch-10/` | house → S3 → one Next.js slice |
 | 11 The software works | TC-63–72 | `book/epoch-11/` | Playwright full → production image → **CI proves the system** → full delivery → OTel → recover → load (data+desk) → repo → **upgrade exam** → convergence + transfer |
 
-**JOURNEY version:** 3. TC-0–2 are stable. Do not regenerate them. Work TC-2 (CSS rudiment) alone. Tailwind is TC-4 via standalone CLI — no `package.json` in that chapter.
+**JOURNEY version:** 3. TC-0–2 are stable. Do not regenerate them. Tailwind is TC-4 via standalone CLI — no `package.json` in that chapter.
 
-**Reached:** [TC-2](./book/epoch-0/tc-2.md). Push `constructions/tc-2/page.html` and `my-work/tc-2/notes.md`.
+**Reached:** [TC-3](./book/epoch-0/tc-3.md). Work it alone. Push `constructions/tc-3/page.html` and `my-work/tc-3/notes.md`.
 
-**Validated:** [TC-0](./my-work/tc-0/evaluation.md) · [TC-1](./my-work/tc-1/evaluation.md).
+**Validated:** [TC-0](./my-work/tc-0/evaluation.md) · [TC-1](./my-work/tc-1/evaluation.md) · [TC-2](./my-work/tc-2/evaluation.md).
