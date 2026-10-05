@@ -1,6 +1,6 @@
 # TECHNOLOGY-MAP — production competence, and which construction earns it
 
-**Mutability:** Versioned with [`JOURNEY.md`](./JOURNEY.md) (currently **v2**). An agent must not add a library because it is fashionable, or omit a mandated bridge because the rudiment felt complete.  
+**Mutability:** Versioned with [`JOURNEY.md`](./JOURNEY.md) (currently **v3**). An agent must not add a library because it is fashionable, or omit a mandated bridge because the rudiment felt complete.  
 **Companions:** JOURNEY = what constructions emerge. This file = what production technologies must be competent by graduation, and **which construction earns their arrival**.
 
 ---
@@ -13,15 +13,47 @@ bootcamp failure:
 
 v1 curriculum failure:
   raw CSS forever because "we must understand the mechanism first"
+
+v2 leftover:
+  production engineering as a sequence of late logos
+  (CI at TC-58, Compose at TC-57, first e2e after live sends)
 ```
 
 Law (also in [`RULES.md`](./RULES.md) §2b):
 
 > **Rudiment → mechanism → production bridge → production fluency.**
 
-Feel the primitive. Build it once. Then graduate into the production representation. Point back at the mechanism so the tool is not magic. Then use the tool fluently until the next construction fails.
+Practices become **permanent early** and grow. Late cycles deepen what the learner has lived with.
 
-Current Tower’s pins (React 18.3, Vite 6.4, …) are **historical**. Construction uses **current stable** tooling unless a specific Tower *behavior* depends on an older version. See [`DESTINATION.md`](./DESTINATION.md).
+---
+
+## Toolchain baseline (not “always current stable”)
+
+For **this JOURNEY version / cohort**, pin at first bridge:
+
+| Tool | Cohort baseline (v3, 2026-10) |
+|---|---|
+| React | 19.x |
+| Vite | 8.x |
+| Tailwind | 4.x |
+| React Router | 7.x |
+| TypeScript | current strict-capable |
+| Node | current LTS at first toolchain cycle |
+| Vitest / Playwright / Hono / Zod / TanStack Query / Drizzle / others | current stable **at first bridge**, then **pin in the Construction repo** |
+
+Upgrades are **deliberate amendments** (and the TC-71 exam), not silent drift. TC-13 and TC-47 must not regenerate months apart on different majors because the internet moved. Tower’s historical pins (React 18.3, Vite 6.4) remain **not** the destination.
+
+---
+
+## Node is two constructions
+
+```
+Node as TOOLCHAIN HOST          ≠          Node as APPLICATION RUNTIME
+(Vitest, Vite, CLIs, scripts)              (the process IS the product)
+        TC-10, deepened TC-13                        TC-27
+```
+
+**Tailwind TC-4 explicit decision:** compile with the **standalone CLI**. Do not smuggle `package.json` / Vite into appearance. Name the Vite plugin as the usual production install; earn it at TC-13 when the toolchain host exists.
 
 ---
 
@@ -30,123 +62,170 @@ Current Tower’s pins (React 18.3, Vite 6.4, …) are **historical**. Construct
 When generating TC-N:
 
 1. Read the JOURNEY contract (construction, must-not, production bridge).
-2. Read this map: is a bridge **due** at this cycle? Is a **continuing spine** item forced by this construction (e.g. three write shapes → generics)?
-3. Do not introduce a technology listed as “not yet” for this cycle.
-4. Do not skip a bridge that this cycle’s contract names.
+2. Read this map: is a bridge **due**? is a **spine** item forced?
+3. Do not introduce a technology listed as “not yet.”
+4. Do not skip a bridge this cycle names.
 5. If the learner already rebuilt in the production tool, do not pretend they are still on the rudiment.
+6. Grow CI / Compose / Playwright / deploy — do not “rediscover” them.
 
 ---
 
 ## Mandated spine
 
-Arrival cycles match JOURNEY v2. “After” means the named construction has been felt.
+Arrival cycles match JOURNEY v3.
 
 | Area | Require | Rudiment | Mechanism | Bridge arrives | Fluency |
 |---|---|---|---|---|---|
-| Styling | CSS → **Tailwind CSS 4** (current stable) | one rule, selector, declaration (TC-2) | box, flex, grid, positioning, cascade, responsive (TC-3) | TC-4 rebuild in Tailwind; point utilities at CSS | Production UI is Tailwind; drop to CSS when the utility is insufficient |
-| UI system | **shadcn/ui + Radix/Base UI primitives**; **Ant Design literacy** | own components (TC-11) | composition, accessible behavior, slots (TC-14–15) | TC-15 shadcn/Radix; TC-16 consume Ant | Can compose primitives and consume a vendor system without forking it blindly |
-| Runtime | **Node.js** | JS in the browser (TC-5) | a process that is not the browser | TC-25, explicit, raw HTTP | Can run, debug, and env-configure a Node process |
-| Language | **JavaScript → TypeScript strict** | JS as needed from TC-5 | types as constraints (TC-12) | strict mode from arrival; **spine continues** (below) | Can express and narrow real domain shapes |
-| Runtime validation | **Zod** | TypeScript types (TC-12) | types erased at runtime; untrusted input | TC-27, at HTTP/data boundary | Parse incoming values; infer TS from the schema |
-| React | **React 19** (current stable) | manual render / functions-as-page (TC-7–11) | renderer from information | TC-13 | Hooks, composition; effects only where warranted (TC-14) |
-| Build | **Vite 8+** (current stable) | opening a file from disk (TC-0) | modules, HMR, env, build output | TC-13 with React | Can configure, env, plugin, read a build |
-| Routing | **React Router 7** | two questions as two faces | location as information | TC-31, when one React app has multiple faces | Nested routes, loaders if earned — not a tour |
-| Forms | **React Hook Form + Zod** | uncontrolled/controlled fields | nontrivial form state, validation | TC-34 | Can own a real form without reinventing it |
-| Server state | **TanStack Query** | `fetch` in the component (TC-25) | client state ≠ server state; cache, invalidate, mutate | TC-28, after HTTP | Can say why a `useState` for the book is a lie |
-| Backend | **Hono + Node** | raw `http` / request / response (TC-25) | HTTP conversation | TC-26, after the raw server | Can write routes, middleware, context |
-| API | **HTTP + REST + OpenAPI** | one GET (TC-25) | request/response, status, payload | TC-29 contract after routes exist | Can publish and consume a contract |
-| Data | **PostgreSQL + SQL** | a table, insert, select (TC-19) | schema, constraints, FK, null, transactions | deepen TC-20–23 | Can reason about the ledger without an ORM |
-| DB tooling | **migrations, transactions, indexes, EXPLAIN**, then **Drizzle** | SQL by hand (TC-19–23) | the SQL Drizzle will emit | TC-24 | Drizzle is not magic; can drop to SQL |
-| Files | **S3-compatible + signed URLs** | local file / blob in memory | bytes that are not rows | TC-54, when a seat must upload | No blobs in React state as the store |
-| Jobs | in-process tick → **Redis + BullMQ** (or equivalent durable queue) | `setInterval` / manual tick (TC-35) | work outside a request; retry, backoff, idempotency | TC-36 | Can explain why the timer was insufficient |
-| Messaging | **Twilio + Resend** | a row that means “would send” (TC-37) | live send, consent, halt, idempotency | TC-48 | Can send and forbid send |
-| Webhooks | signed ingest, retries, idempotency | events you emit | events the outside emits | TC-49 | Can verify, retry, not double-apply |
-| Unit/integration | **Vitest** | “I know what this should do” (TC-9) | invariant encoded | TC-10, after functions | Break the impl; the test catches it |
-| UI tests | **React Testing Library** | Vitest on functions | rendered user behavior | TC-17, after React | Query by role/text, not internals |
-| Network tests | **MSW** | fetching against a live server in tests | tests must not depend on the real net | TC-30 | Handler as the network |
-| E2E | **Playwright** | unit + RTL + MSW | several real pieces together in a real browser | TC-56 | One user-visible workflow, real browsers |
-| Containers | **Docker + Compose** | “works on my machine” | runtime + DB + worker as a repeatable unit | TC-57 | Another machine can run it |
-| CI/CD | **GitHub Actions** | manual verify | every commit proves itself; then deploy | TC-58 CI; TC-59 CD | Typecheck, test, deploy; secrets in the environment |
-| Observability | structured logs → **OpenTelemetry**, optionally **Sentry** | staring at a terminal | failure where you are not | TC-60 | Traces, metrics, logs; a crash you can find |
-| Deployment | **Vercel** + managed DB + worker-capable runtime | local `vite` + `node` | ship repeatedly | TC-59 | Environments, not a laptop |
-| Repo | npm fundamentals → **pnpm**; workspaces when earned | `package.json` at React/Vite | coordination across packages | TC-13 npm/pnpm; TC-63 workspaces if pressure | Lockfile, scripts, no cargo-cult monorepo |
-| Quality | **ESLint + formatter** | human nitpicks | mechanical standards | TC-63 | Does not consume construction attention |
-| Framework contrast | **Next.js App Router** | Vite + Hono + explicit boundary | what the framework hides | TC-55, **after** the explicit stack | One vertical slice; compare decisions |
-| Graph UI | **React Flow** | list editor of a graph (TC-44) | topology you already walk | TC-45 | Editor, not a second machine |
-| Browser | **DevTools** (Elements, Network, Console, Storage, Performance) | looking at the page | seeing interpretation, network, state | **every cycle from TC-0** | Not a chapter; a standing practice |
-| Security | cookies, sessions, CORS, CSRF, XSS, CSP, SQLi, secrets, rate limits | each threat when the construction creates it | — | attached to cycles (below) | Not a “security week” |
+| Styling | CSS → **Tailwind CSS 4** | TC-2 rule | TC-3 box/flex/grid/cascade/responsive | TC-4 **standalone CLI**; TC-13 Vite plugin (toolchain completion) | Production UI is Tailwind; drop to CSS when insufficient |
+| UI primitives | **shadcn/ui + Base UI** | own components (TC-11) | headless accessible primitives | TC-15 | One primitive stack. **Radix = existing-system literacy** (read, don’t dual-master). **React Aria is not required.** |
+| Vendor UI | **Ant Design literacy** | primitives owned | inheriting a comprehensive vendor system | TC-16 | Consume without forking blindly |
+| Toolchain runtime | **Node as host** | JS in the browser | a process that runs tools | TC-10 (Vitest); TC-13 (Vite, lint, env, modules) | `package.json`, lockfile, scripts, `node_modules`, CLI, exit codes — causal, not encyclopedic |
+| Application runtime | **Node as product** | toolchain Node | a process that *is* the software | TC-27 raw HTTP | PID, port, env, signals, stdio |
+| Language | **JS → TS strict** | JS from TC-5 | types as constraints (TC-12) | strict from arrival; **spine continues** | Real domain shapes |
+| Runtime validation | **Zod** | TS types | types erased; untrusted input | TC-29 | Parse; infer TS from schema |
+| React | **React 19** (cohort) | manual render | renderer from information | TC-13 | Hooks; effects only where warranted (TC-14) |
+| Build | **Vite 8+** (cohort) | file from disk | modules, HMR, env, build | TC-13 | Configure, env, plugin, read a build |
+| Quality scripts | **ESLint + formatter + typecheck** | human nitpicks | mechanical standards as scripts | **TC-13** (not late ops) | Does not consume construction attention |
+| Routing | **React Router 7** | two questions | location as information | TC-34 | Nested routes/loaders if earned |
+| Forms | **React Hook Form + Zod** | field state pile | nontrivial form | TC-37 | Own a real form |
+| Server state | **TanStack Query** | `fetch` in the component | client state ≠ server state | TC-30 | Why `useState` for the book is a lie |
+| Backend | **Hono + Node** | raw `http` (TC-27) | HTTP conversation | TC-28 | Routes, middleware, context |
+| App logs | **Pino** (or equivalent) | `console.log` | structured logs as data | **TC-28** with Hono | Request/job ids *before* tracing |
+| API | **HTTP + REST + OpenAPI** | one GET | request/response | TC-31 | Publish and consume a contract |
+| List query | filter / sort / pagination | `SELECT *` | one intention across layers | **TC-33** | SQL → API params → OpenAPI → Query keys → URL |
+| Data | **PostgreSQL + SQL** | table, insert, select (TC-20) | constraints, tx, plans | TC-21–24 | Ledger without an ORM |
+| Schema evolution | backfill / expand-contract | `CREATE TABLE` | existing rows change the construction | **TC-25** | Cannot just add `NOT NULL` |
+| DB abstraction | **Drizzle** | SQL by hand | the SQL it emits | TC-26 | Drop to SQL |
+| Files | **S3-compatible + signed URLs** | blob in memory | bytes that are not rows | TC-61 | No blobs in React state as the store |
+| Time as data | timestamptz, zones | `Date` / strings | instant ≠ wall clock ≠ duration | **TC-40** | UTC in ledger; zone at edge |
+| Jobs | tick → **Redis + BullMQ** | `setInterval` (TC-41) | work outside a request | TC-42 | Why the timer was insufficient |
+| Local orchestration | **Docker Compose** | many processes | start the system consistently | **TC-42** with the worker | `docker compose up` is not magic |
+| Production images | **Docker** image/layers/health | Compose bind mounts | the artifact you ship | **TC-64** | Build vs runtime |
+| Messaging | **Twilio + Resend** | would-send row | live send, consent, halt | TC-55 | Send and forbid send |
+| Webhooks | signed ingest | events you emit | events the outside emits | TC-56 | Verify, retry, not double-apply |
+| Session auth | cookies/sessions | contact token | returning consultant | TC-53 | First-party; not a vendor |
+| Federated auth | **OAuth 2 / OIDC** contrast | first-party session | external assertion mapped inward | **TC-54** | One provider; no vendor tourism |
+| Unit tests | **Vitest** | “I know what this should do” | encoded invariant | TC-10 | Break the impl; test catches it |
+| UI tests | **RTL** | Vitest on functions | rendered user behavior | TC-17 | Query by role/text |
+| Network tests | **MSW** | live net in tests | handler is the network | TC-32 | |
+| E2E smoke | **Playwright** small | unit/RTL/MSW | first real multi-face loop | **TC-38** | Close-the-loop in a real browser; stays |
+| E2E full | **Playwright** serious | smoke | worker, failure paths, browsers | **TC-63** | |
+| CI | **GitHub Actions** growing | local `pnpm test` | proofs on every push | **TC-18** phase 1; grows at API/e2e; **TC-65** full-system prove | TC-65 is not “discover CI” |
+| Early deploy | hosted slice | localhost | program runs where I am not | **TC-39** | One web, one API, one DB, one env |
+| Delivery | **Vercel** + managed DB + worker runtime | early slice | full system, staging, CD, rollback, DNS/TLS | **TC-66** | |
+| Observability | Pino → **OpenTelemetry** (Sentry optional) | staring at a terminal | failure where you are not | TC-67 (logs already exist) | Correlate, don’t invent logs |
+| Repo | npm fundamentals → **pnpm**; workspaces if earned | `package.json` at TC-10 | coordination | TC-13 pnpm; TC-70 workspaces if pressure | No cargo-cult monorepo |
+| Framework contrast | **Next.js App Router** | Vite + Hono | what the framework hides | TC-62 **after** the explicit stack | One slice; book is not Next |
+| Graph UI | **React Flow** | list editor (TC-50) | topology you already walk | TC-51 | Editor, not a second machine |
+| Upgrade | one deliberate major/meaningful bump | pinned cohort | stack change without collapse | **TC-71** | Changelog, fix, prove |
 
 ---
 
 ## Continuing spines (not chapters)
 
-These must **not** be “TC-12B — today’s lesson is generics.” They enter when a construction repeats a shape that needs them.
-
-### TypeScript (arrives TC-12; never finishes there)
+### TypeScript (arrives TC-12; never finishes)
 
 | When the construction does this | Force this |
 |---|---|
 | Name a shape | `type` / `interface`, annotations |
-| Value may be missing | strict nullability, `undefined` vs `null` |
-| Several exclusive variants | unions, literal types, narrowing, discriminated unions |
-| Same relationship across different write/record shapes | generics (likely TC-39 or TC-41 — write-set, not a lecture) |
+| Value may be missing | strict nullability |
+| Exclusive variants | unions, literals, narrowing, discriminated unions |
+| Same relationship across write/record shapes | generics (likely TC-45 or TC-47) |
 | Take a shape and pick parts | `Pick` / `Omit` / `Partial` / `Record` |
-| Untrusted input | `unknown`, type guards; then Zod (TC-27) |
-| “This should be impossible” | `never` (likely walker node kinds, TC-43) |
-| Callbacks, maps, walkers | function types (TC-14 onward) |
-| Server calls | `Promise<T>`, `async` (TC-25) |
+| Untrusted input | `unknown`, type guards; then Zod (TC-29) |
+| Impossible | `never` (walker kinds, TC-49) |
+| Callbacks | function types (TC-14+) |
+| Server calls | `Promise<T>`, `async` (TC-27) |
 | Files as boundaries | modules, type-only imports, inference |
-| Mapped types | only where genuinely useful — not a catalog |
 
-### JavaScript (from first script, TC-5; do not assume later)
+### JavaScript (from TC-5)
 
-Forced when needed: modules, closures, `this` only if earned, arrays/objects (map/filter/reduce), destructuring, spread, rest, higher-order functions, `Promise` / `async`/`await`, `try`/`catch`, errors as values vs throws.
+Modules, closures, arrays/objects, destructuring, spread, higher-order functions, `Promise` / `async`/`await`, errors — when needed, not assumed.
 
-### SQL (from first table, TC-19; not done at SELECT)
+### SQL (from TC-20)
 
-Forced as the ledger grows: schema, constraints, foreign keys, unique, nullability (TC-21), transactions, atomicity (TC-22), indexes, `EXPLAIN`, N+1, pools, migration safety, useful isolation/locking (TC-23). Then Drizzle (TC-24).
+Constraints (TC-22), transactions (TC-23), indexes/EXPLAIN/N+1/pools (TC-24), **schema evolution** (TC-25), **pagination/filter/sort** as a vertical (TC-33), then Drizzle (TC-26).
 
-### Security (attach, do not stockpile)
+### Accessibility (from TC-1; not TC-15’s side effect)
+
+Semantic HTML; label/control; keyboard; focus; accessible name; roles only when semantics don’t exist; contrast at useful grain; forms/errors; dialog focus; announcements when required. RTL queries by role (TC-17).
+
+### Git (envelope from TC-0; craft grows)
+
+Assumed as envelope: clone, edit, commit, push. **Not** assumed as craft. Force: branch before an intentional break (TC-10+); read a diff before calling a cycle done; conflict when two representations touch one area; `bisect` when a regression is “three commits ago”; revert vs deploy-rollback (TC-68); tags at useful depth; history as diagnosis.
+
+### Systems / tooling (when a process exists)
+
+Terminal, PATH, env vars, processes, PIDs, exit codes, signals, ports, stdin/stdout/stderr, pipes, `curl`, filesystem paths, permissions at useful depth, “which process owns this port?”, “what environment is this process reading?”, “what did this command return?”. TC-10: runner process and exit codes. TC-13: dev server port, env. TC-27: the app process. TC-41–42: a worker dying. Compose isolates what you can already name.
+
+### Networking (beneath HTTP)
+
+Host, port, IP, DNS, origin, TCP at useful grain, TLS, certificate, reverse proxy, domain, localhost, CORS, HTTP caching headers, CDN at useful grain. TC-27: localhost/port. TC-34: origin/CORS. TC-39: first public URL, DNS/TLS as facts. TC-66: custom domain, certificate, edge — not “here is a URL” again.
+
+### Security (attach)
 
 | Construction | Threat |
 |---|---|
-| HTML with user-influenced text | XSS; later CSP |
-| Cookie session (TC-47) | CSRF, cookie flags, theft |
-| Browser asks another origin (TC-31+) | CORS |
-| SQL with concatenated input (TC-25–26) | injection |
-| Secrets in the client or git | secrets handling; CI/CD (TC-59) |
-| Public send / login (TC-47–48) | rate limiting |
-| Webhooks (TC-49) | signature, replay |
+| User-influenced HTML | XSS; later CSP |
+| Cookie session (TC-53) | CSRF, cookie flags, theft |
+| Other origin (TC-34+) | CORS |
+| Concatenated SQL (TC-27–28) | injection |
+| Secrets in client or git | secrets; CI/CD |
+| Public send / login | rate limiting |
+| Webhooks (TC-56) | signature, replay |
 
 ### DevTools
 
-Standing. Elements from TC-1. Console from first script (TC-5). Network from first HTTP (TC-25). Storage from persistence/session. Performance when something is slow on purpose (TC-62).
+Standing. Elements TC-1. Console TC-5. Network TC-27. Storage persistence/session. Performance TC-69.
 
-### Testing
+### Testing and CI (grow)
 
-| Grain | Tool | Arrives |
-|---|---|---|
-| Invariant on a function | Vitest | TC-10 |
-| Rendered user behavior | React Testing Library | TC-17 |
-| Network as a test double | MSW | TC-30 |
-| Several real pieces, real browser | Playwright | TC-56 |
-| Walker / fork / configured-break | Vitest on the walk | TC-42–43, TC-50–51 |
+| Grain | When |
+|---|---|
+| Vitest local | TC-10 |
+| Lint/format/typecheck scripts | TC-13 |
+| RTL | TC-17 |
+| **CI phase 1** (install → typecheck → lint → unit/UI) | **TC-18** |
+| CI + DB / integration | TC-27 era |
+| MSW | TC-32 |
+| Playwright smoke + CI | TC-38 |
+| Playwright full + worker | TC-63 |
+| CI proves full system | TC-65 |
+| CD | TC-66 |
+
+### Time
+
+Instant / zone / wall clock / duration / deadline: **TC-40**, before time as cause.
+
+---
+
+## Explicitly not mandatory
+
+Do not start in **Next.js**. Do not rebuild Construction as a Next app.
+
+Do not require equal fluency in Base UI + Radix + React Aria + Ant.
+
+Do not add as mandatory: Kubernetes, Kafka, Terraform/OpenTofu, GraphQL, gRPC, three clouds, four state managers, six auth vendors.
+
+That is logo tourism. The capability:
+
+```
+I can work below the abstraction.
+I can work fluently at the abstraction.
+I can tell when the abstraction is wrong.
+I can debug the system around it.
+I can replace it.
+I can ship what I built.
+I can prove it works.
+I can see when it doesn't.
+I can change it without fear.
+```
 
 ---
 
 ## Explicitly not a first teacher
 
-Do not start the book in **Next.js**. Do not rebuild the whole of Tower Construction as a Next app. The contrast cycle (TC-55) is one vertical slice after the explicit stack is understood.
-
-Do not teach Tailwind before box/flex/grid/cascade have been constructed (TC-3 before TC-4). TC-2 is the CSS **rudiment** only.
-
-Do not teach Drizzle before the learner can read the SQL (TC-19–23 before TC-24).
-
-Do not teach TanStack Query as “how you fetch” before `fetch` and the lie of putting the book in `useState` have been felt (TC-25 before TC-28).
-
-Do not teach BullMQ before the in-process tick has failed in the learner’s hands (TC-35 before TC-36).
-
-Do not teach React Flow before the graph exists as data and a list editor has failed to show a fork (TC-43–44 before TC-45).
+Tailwind before TC-3. Package.json at TC-4. Drizzle before SQL. Query before `fetch`. BullMQ before the tick fails. React Flow before the graph is data. OTel as the first logger. CI as a late-book surprise. Next as the first stack. Native `Temporal` as the sole time answer.
 
 ---
 
@@ -154,4 +233,5 @@ Do not teach React Flow before the graph exists as data and a list editor has fa
 
 | Version | Date | Change |
 |---|---|---|
-| 2 | 2026-10-05 | Initial map, stamped with JOURNEY v2. Arrival cycles TC-0–64. |
+| 2 | 2026-10-05 | Initial map with JOURNEY v2 (TC-0–64). |
+| 3 | 2026-10-05 | JOURNEY v3. Node split. Tailwind standalone CLI. Early CI/lint/Playwright/Compose/deploy. New spines. Cohort pin + TC-71 upgrade. Base UI default. Pino. Time/pagination/evolution/OIDC. |
