@@ -1,6 +1,6 @@
 # C11 notes
 
-## Leftover — assign to TAX_RATE?
+## Leftover — this 0.06 is a fact that must not change
 
 ## const assignment attempt — what the compiler said
 

@@ -100,7 +100,7 @@
 | 36 | **Figure 2-15** `Substring(start, length)` on `"water"`; last two lines marked wrong on the slide | CONSTRUCT + MEMORIZE | C9 |
 | 37 | Interactive; `ReadLine` until Enter; **all input is a string**; convert to proper type | CONSTRUCT + MEMORIZE | C10 |
 | 38 | Name prompt + `ReadLine` | CONSTRUCT | C10 |
-| 39 | Tax: `const`, string then `Convert.ToDouble`, `{0}` `{1:C}` `{2:C}` | CONSTRUCT | C10 (input/convert); C11 (`const` as lesson) |
+| 39 | Tax: string then `Convert.ToDouble`, `{0}` `{1:C}` `{2:C}` (slide lists `const`; C10 reconstructs with an ordinary `taxRate`) | CONSTRUCT | C10 input/convert; C11 earns `const` |
 | 40 | Nested `Convert.ToDouble(Console.ReadLine())` | CONSTRUCT | C10 |
 | 41 | **Table 2-6** Convert methods | MEMORIZE | C10 |
 | 42 | Named constant `const`; ALL_CAPS with underscores | CONSTRUCT + MEMORIZE | C11 |
@@ -109,7 +109,8 @@
 | 45 | Summary (bool, casts, char, string, const, ReadLine) | MEMORIZE | C6–C11 |
 | 46 | Knowledge check (4 items) | MEMORIZE | mixed exams |
 | 47 | Discussion: always int/float? implicit vs explicit | RECOGNIZE (talk) | mixed exams |
-| 48 | Self-assessment (ease / challenge) | NON-TEST CONTENT | Meta; not a fact from Ch 1–2 content |
+| 48 | “Why is using the right data types important in coding?” | RECOGNIZE / TALK | Mixed exams. No canned SOURCE sentence — the PDF does not give one. Answer only from mechanisms already established (ranges, integer `/`, `decimal` for money, `ReadLine` as string, …). |
+| 48 | “Easy for beginners?” / “What may be more challenging?” | NON-TEST CONTENT | Meta reflection; not a fact from Ch 1–2 |
 
 ---
 

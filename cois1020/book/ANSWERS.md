@@ -145,4 +145,5 @@ Do not open a section until you have attempted that chapter or mixed exam.
 22. `System.Console`; root; .NET  
 23. 1s and 0s; read/write/add; syntax  
 24. `Console.Write("…"); string s = Console.ReadLine(); double x = Convert.ToDouble(s);`  
-25. byte 255 and 0 unsigned; sbyte 127 and −128 signed
+25. byte 255 and 0 unsigned; sbyte 127 and −128 signed  
+26. Talk from established mechanisms only (examples: integer `/` drops the fraction; `decimal` for money; `byte` vs `int` range; `ReadLine` is a string until Convert; `float` literal needs `F`). Not a recitable SOURCE one-liner.

@@ -226,13 +226,13 @@ Advance when **exit capability** is met and **next pressure** is visible. All ch
 
 **Prerequisites:** C9.
 
-**Construction:** Name prompt; tax via string then `Convert.ToDouble`; nested `Convert.ToDouble(Console.ReadLine())`. You may type `const` because it is on the slide program — the **lesson** of `const` is C11. Recite **Table 2-6**.
+**Construction:** Name prompt; tax via string then `Convert.ToDouble`; nested `Convert.ToDouble(Console.ReadLine())`. Rate is an ordinary variable (`double taxRate = 0.06;`). Recite **Table 2-6**.
 
-**Must NOT introduce:** inventing Convert methods not on the table.
+**Must NOT introduce:** `const` / named constants. Inventing Convert methods not on the table.
 
 **Exit capability:** Why a `double` cannot be assigned `ReadLine()` directly. `ToDouble`, `ToInt32`, `ToBoolean`, `ToDecimal`, `ToSingle`, unsigned `ToUInt32`, `ToString`, `ToChar`, `ToByte`, `ToSByte`, `ToInt16`/`ToInt64`/`ToUInt16`/`ToUInt64` as the table names them.
 
-**Next pressure:** `0.06` and `TAX_RATE` are not the same kind of name.
+**Next pressure:** `0.06` is a fact that must not change. An ordinary variable still can.
 
 ---
 
@@ -242,7 +242,7 @@ Advance when **exit capability** is met and **next pressure** is visible. All ch
 
 **Prerequisites:** C10.
 
-**Construction:** `const int INCHES_IN_A_FOOT = 12;` (or the tax rate as a named constant you can explain). Self-documenting multiply. Attempt to assign to the const; compile fails.
+**Construction:** Rebuild C10’s tax with `const double TAX_RATE = 0.06;` (pressure: this fact must not change). Also `const int INCHES_IN_A_FOOT = 12;`. Self-documenting multiply. Attempt to assign to the const; compile fails.
 
 **Must NOT introduce:** anything outside Ch 2.
 

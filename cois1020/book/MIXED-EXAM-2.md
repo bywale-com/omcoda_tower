@@ -62,3 +62,5 @@ Exact layout: one line or two?
 24. Write a fragment: prompt, read a line into a string, convert to `double` with `Convert.ToDouble`.
 
 25. `byte` largest and smallest. `sbyte` largest and smallest. Signed or unsigned for each.
+
+26. Why is using the right data type important in coding? (Talk. The PDF does not give a canned sentence. Use only mechanisms already on the slides.)
