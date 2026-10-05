@@ -1,9 +1,9 @@
 # Tower Construction — methodology and iteration map
 
-**Status:** Architecture accepted. Curriculum **specification** lives in [`curriculum/`](./curriculum/) (`JOURNEY.md`, `RULES.md`, `MASTERY.md`, `DESTINATION.md`). No chapter generated. Not implemented.  
+**Status:** Architecture accepted. Curriculum **specification** lives in [`curriculum/`](./curriculum/) (`JOURNEY.md` **v2**, `TECHNOLOGY-MAP.md`, `RULES.md`, `MASTERY.md`, `DESTINATION.md`). TC-0–2 chapters generated; TC-0–1 validated. Do not regenerate TC-0–2.  
 **Seat:** Engineer, inspecting current Tower as destination / convergence test.  
-**What this is:** A curriculum — a book and a repository in one — that trains *intention → computational construction*. Current Tower is the convergence test for the class of system, not the answer key. Each abstraction is encountered as a problem before it is handed over as a mechanism. Required syntax is a mastery target, taught as the representation of a construction already understood.  
-**What this is not:** A plan to copy `omcoda_tower` line by line. A TypeScript → React → CSS syllabus. A simplified conceptual Tower. A frozen 36-lesson contract. An agent-builds-it project.
+**What this is:** A curriculum — a book and a repository in one — that trains *intention → computational construction*. Current Tower is the convergence test for the class of system, not the answer key. Each abstraction is encountered as a problem before it is handed over as a mechanism. Required syntax is a mastery target, taught as the representation of a construction already understood. After the mechanism: a **production bridge** (rudiment → mechanism → production tool → fluency).  
+**What this is not:** A plan to copy `omcoda_tower` line by line. A TypeScript → React → CSS syllabus. A simplified conceptual Tower. A frozen 36-lesson contract. An agent-builds-it project. Matching Tower’s historical pins (React 18, Vite 6) is not the destination.
 
 Inspected on this pass: product face (`/prototype-ant`, `PrototypeAntApp`, Operator / Consultant / Contact desks, Configuration libraries, Automations and Agents workbenches), runtime (`workflowWalk.ts`, `cascade.ts`, `worker.ts`, `runWrites.ts`, `dispatchSend.ts`, `eventTest.ts`, auth/session/firm), ledger (`supabase/migrations/001`–`024`, seeds), and the laws that make Tower unlike a generic app (`DATA-IN-TABLES.md`, `PRIMITIVES.md`, `SYSTEMS-STORY.md`, `AGENTS-FACE.md`, `AUTOMATIONS-FACE.md`, Phase Two thesis).
 
@@ -62,7 +62,7 @@ Current Tower is the **convergence test** for that class of system: a multi-desk
 
 If you can only rebuild Tower’s particular pieces, the path reverse-engineered toward known answers.
 
-TC-35 therefore contains **two** audits:
+JOURNEY v2 therefore ends (TC-64) in **two** audits:
 
 1. **Convergence.** Can I account for and reconstruct the important mechanisms represented by current Tower?
 2. **Transfer.** A small product requirement that does **not** exist in Tower. Without Tower as a template: what information, state, relationships, behavior, boundaries, and mechanisms must exist — then construct it.
@@ -158,7 +158,7 @@ So:
 - Do not begin a cycle by listing syntax.
 - The moment the construction needs a representation, teach that syntax completely enough that you can write it without looking.
 - Required syntax is in-scope fluency. Unused syntax “for completeness” is out of scope.
-- TypeScript arrives when named shapes become necessary (map: TC-10). From then on, every TypeScript construct this path requires is a fluency target.
+- TypeScript **arrives** when named shapes become necessary (JOURNEY v2: TC-12). It does not finish there. Later constructions force unions, narrowing, generics, utility types, `unknown`/`never` when they have a reason — not as “today’s lesson is generics.” JavaScript, SQL, tests, and security work the same way (continuing spines in `TECHNOLOGY-MAP.md`).
 
 ### Cycle contract
 
@@ -173,7 +173,7 @@ A cycle is legal only if all of the following are true:
 
 Tower Construction 0 may barely qualify as software. Tower Construction 1 must do something. Every later cycle must still run.
 
-**Cycle boundaries are provisional.** TC-0–35 is the initial table of contents, not a contract. Split a cycle whenever multiple conceptual constructions are being smuggled through as one (TC-12–15 is the first likely split: persistence, identity/relations, query-as-source, and ask/answer may be six constructions, not four). Merge when the separation would be artificial.
+**Cycle boundaries are provisional.** Thirty-six was never the product. JOURNEY **v2** maps TC-0–64 because production UI, data depth, testing, runtime, and operations are part of competence. Split a cycle whenever multiple conceptual constructions are being smuggled through as one. Merge when the separation would be artificial. TC-0–2 are stable (TC-2 remains the CSS rudiment; layout is TC-3; Tailwind is TC-4).
 
 **Never advance because the map says the next cycle has arrived. Advance because the current construction is understood and its next limitation is visible.**
 
@@ -188,6 +188,8 @@ The legal minimum is:
 > construct the minimal version → observe the limitation → **or** predict the consequence and explain why
 
 Optimize for causal understanding, not artificial difficulty.
+
+Then, when the mechanism is understood, **graduate into the production representation** (Tailwind, Vitest, React, Hono, Drizzle, BullMQ, …) and point back. That is the Production Bridge law. It is not “professionals use this.” It is refusing to spend the rest of the book on a rudiment whose mechanism is already owned. See `curriculum/RULES.md` §2b and `curriculum/TECHNOLOGY-MAP.md`.
 
 ### What I will do, and refuse to do
 
@@ -212,32 +214,36 @@ When something is specified but not clear (PM packet incomplete, SA has not ascr
 
 ## 4. The table of contents (provisional)
 
-**Ten epochs. Initial map: TC-0 through TC-35.**
+**Live map: [`curriculum/JOURNEY.md`](./curriculum/JOURNEY.md) v2 + [`curriculum/TECHNOLOGY-MAP.md`](./curriculum/TECHNOLOGY-MAP.md).** Twelve epochs. TC-0–64. Thirty-six was never the product.
 
-This is the curriculum spine — the pre-configured journey — not a contract to finish 36 lessons. Completing current Tower quickly is still the failure mode. Advancing past an unfelt problem is also a failure mode.
+v1 (TC-0–35) stopped at the house. That was the pedagogical engine without the production-bridge law. v2 keeps TC-0–2 stable, inserts CSS layout then Tailwind, distributes TypeScript/testing/SQL as spines, and continues through production UI, data, runtime, Next.js-as-contrast, and an ops band (Docker, CI/CD, observability, recover, load, repo standards) before convergence + transfer at TC-64.
 
-Epochs are the major construction stages. Cycles are working systems. Checkpoints inside a cycle are the subsections you complete and push back.
+The epoch sketch below is **historical v1**, kept so the necessity chain is readable. Do not generate from it. Generate from JOURNEY v2.
 
 ```
+v1 historical:
 TC-0 ………… blank page
-        Epoch 0  Appearance
-        Epoch 1  Information
-        Epoch 2  Named constructions
-        Epoch 3  A book that outlives the page
-        Epoch 4  Two faces, same records
-        Epoch 5  Time, pursuit, goal
-        Epoch 6  When → do → handle → data
-        Epoch 7  Authoring faces
-        Epoch 8  Tenancy, gates, ignition kinds
-        Epoch 9  Remaining Tower mechanisms
-TC-35 ………… house layer + honest gap vs current Tower
+        Epoch 0–9 as first drawn
+TC-35 ………… house + audits
+
+v2 live:
+TC-0 ………… blank page (stable)
+TC-2 ………… CSS rudiment (stable; in progress)
+TC-3 ………… layout mechanisms
+TC-4 ………… Tailwind bridge
+        …
+TC-55 ………… one Next.js slice (not a rewrite of the book)
+TC-56–63 …… the software works (Playwright → Docker → CI → CD → OTel → recover → load → repo)
+TC-64 ………… convergence + transfer
 ```
 
 ---
 
 ## 5. Iteration map
 
-Each cycle lists: the capability constructed, the problem that makes the next mechanism necessary, what you would actually learn (as cause, not as a course title), and a first-pass understanding probe.
+**Superseded as a generator source.** The live contracts, including **Production bridge** fields, are JOURNEY v2. This section remains the v1 necessity sketch (why each Tower mechanism is forced). Cycle numbers here do not match v2 (TypeScript is TC-12, not TC-10; audits are TC-64, not TC-35; Vitest/Tailwind/Drizzle/BullMQ/ops are absent).
+
+Each v1 cycle listed: the capability constructed, the problem that makes the next mechanism necessary, what you would actually learn (as cause, not as a course title), and a first-pass understanding probe.
 
 Syntax names in parentheses are **arrivals**, not lesson titles. They show up when the construction requires them.
 
@@ -401,7 +407,7 @@ React Flow is a **better editor for a graph you already have**. It is a disastro
 | **TC-34** | This form / this objective / this campaign — not every event of that kind | Global listen over-fires | Grain. Local axis. | Local is a constraint on which write a trigger is allowed to hear. Some events have no Local (a one-time audit). That is still an event. | Submit form B. The automation that listens to form A must not walk. Submit form A. It must. |
 | **TC-35** | The house changes evaluation, binding, sending, and provision without shipping the walker again | Pursuit and eligibility are still half-program | Operator modules as panes and controls on states you already named. Evaluation packs as tables. Bind per firm / default / override. | Story’s house/open-box constraint, constructed. Then two audits: **convergence** (account for current Tower’s important mechanisms) and **transfer** (construct a small product that is not in Tower, without Tower as a template). | Convergence: point at a current Operator module — control or pane? Which table? Transfer: given a foreign intention, name information / state / relationships / behavior / boundaries / mechanisms before writing. |
 
-TC-35 ends in those two audits, not a victory lap. Convergence names remaining gaps in the two buckets: specified-and-clear (keep constructing) vs specified-but-not-clear (do not invent). Transfer determines whether construction ability left this codebase.
+In v1 those audits sat at TC-35. In v2 they sit at TC-64, after the house (TC-53), files (TC-54), Next contrast (TC-55), and the ops band (TC-56–63). Convergence names remaining gaps in the two buckets: specified-and-clear (keep constructing) vs specified-but-not-clear (do not invent). Transfer determines whether construction ability left this codebase.
 
 ---
 
@@ -508,7 +514,7 @@ A cycle is not done when the screen matches. It is done when you can do the foll
 | **Break** | Delete the mechanism, or I change one relationship. What becomes impossible? | If the answer is “nothing,” we introduced it too early. |
 | **Diagnose** | The construction is broken. Find the broken *relationship*, not the missing character — unless the character *is* the relationship. | You can see cause, not only symptoms. |
 | **Reconstruct** | Cause this capability again without yesterday’s files open. | Syntax is producible. The construction is yours. |
-| **Transfer** | A near-neighbor intention, or (at TC-35) a product that is not in Tower. Name what must exist before writing. | Construction ability left this building. |
+| **Transfer** | A near-neighbor intention, or (at TC-64) a product that is not in Tower. Name what must exist before writing. | Construction ability left this building. |
 
 Transformation examples (the requirement changes; the construction must answer):
 
@@ -569,9 +575,12 @@ We are not learning each technology for years and then integrating them. We are 
 |---|---|
 | **This repo (`omcoda_tower`)** | Destination / convergence test / law. Inspected. Not copied as the lesson. |
 | **Tower Construction (separate repo)** | The book + the working constructions. Created when TC-0 content is generated — not before. |
-| `JOURNEY.md` | Pre-configured table of contents: epochs → cycles → checkpoints. Boundaries provisional. |
-| `RULES.md` | The laws in this document, portable. |
-| `book/epoch-N/tc-N.md` | One cycle’s chapter: intention, checkpoints, names, syntax, proofs. Generated **one cycle at a time**. |
+| `JOURNEY.md` | Versioned table of contents: epochs → cycles → contracts, including **Production bridge**. Currently v2 (TC-0–64). |
+| `TECHNOLOGY-MAP.md` | What production technologies must be competent by graduation, and which construction earns their arrival. |
+| `RULES.md` | The laws in this document, portable — including the Production Bridge law. |
+| `MASTERY.md` | What “learned” means, including bridge proofs and tests as encoded invariants. |
+| `DESTINATION.md` | Class of system. Behavioral/architectural convergence, not lockfile pins. |
+| `book/epoch-<k>/tc-<n>.md` | Chapter flesh in the **epoch** folder (Epoch 0 = TC-0–4). Generated one cycle at a time. |
 | `constructions/tc-N/` | The working system **you** build. |
 | `my-work/` | What you push back: the construction, what you think is happening, proof answers, uncertainties. |
 
@@ -625,17 +634,20 @@ That is one cycle. Current Tower’s `RunWrite` type is the destination represen
 
 Accepted and applied:
 
-- Destination = class of system; Tower = convergence test; transfer audit at TC-35.
-- TC-0–35 = initial journey, not a contract. Advance only when understood and the next limitation is visible.
+- Destination = class of system; Tower = convergence test; transfer audit at **TC-64** (was TC-35 in v1).
+- JOURNEY is versioned. v1 = TC-0–35. **v2 = TC-0–64** with `TECHNOLOGY-MAP.md` and the Production Bridge law. Advance only when understood and the next limitation is visible. The number is not the product.
 - Concept before terminology; industry name immediately after.
 - Syntax is a mastery target for whatever the construction requires, taught from construction, not from MDN-first lists.
-- Proofs = Predict → Explain → Transform → Break → Diagnose → Reconstruct → Transfer.
-- Failure = causal necessity, not ceremonial suffering.
+- TypeScript/JavaScript/SQL/tests/security are **continuing spines**, not one-off chapters.
+- Proofs = Predict → Explain → Transform → Break → Diagnose → Reconstruct → Transfer. Those proofs do not replace software that verifies software.
+- **Rudiment → mechanism → production bridge → production fluency.** Encountering a mechanism is not production fluency.
+- Failure = causal necessity, not ceremonial suffering. Remaining on the rudiment after the bridge is due *is* ceremonial.
+- Construction uses current stable tooling. DESTINATION is behavioral/architectural, not Tower’s historical pins.
+- Next.js is a late contrast slice, not the book’s stack.
 - Fade by demonstrated ability.
 - Operating model = book + repository; generate one cycle; you complete and push back; then the next chapter.
-
-Cycle boundaries were **not** redrawn. The ten-epoch architecture is unchanged. TC-12–15 is flagged as the first likely split when we reach it.
+- TC-0–2 are **stable**. Do not regenerate them.
 
 Further recut: TC-0 compressed to the causal chain *author → interpret → page*. Computer-literacy checkpoints removed. The chapter is the tutor; I evaluate at the unit boundary.
 
-What remains for you to accept before anything is created: [`TC-0-OPERATION.md`](./TC-0-OPERATION.md). No scaffold. No Construction repo. No chapter generated until that spec is accepted.
+Live specification: [`curriculum/README.md`](./curriculum/README.md).
