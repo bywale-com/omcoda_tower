@@ -12,9 +12,9 @@ This folder is the **skeleton** of the Tower Construction repository. It is the 
 `book/epoch-N/` exists as a slot. **No chapter is generated until that cycle is reached.**  
 `constructions/` and `my-work/` are empty slots until you construct.
 
-**Reached:** [TC-1](./book/epoch-1/tc-1.md). Work it alone. Push `constructions/tc-1/page.html` and `my-work/tc-1/notes.md`.
+**Reached:** [TC-2](./book/epoch-2/tc-2.md). Work it alone. Push `constructions/tc-2/page.html` and `my-work/tc-2/notes.md`.
 
-**Validated:** [TC-0](./book/epoch-0/tc-0.md) — see `my-work/tc-0/evaluation.md`.
+**Validated:** [TC-0](./my-work/tc-0/evaluation.md) · [TC-1](./my-work/tc-1/evaluation.md).
 
 When TC-0 is accepted for generation, this tree is copied into a standalone **Tower Construction** repository. Until then it lives here, next to the inspection notes in `docs/construction/`.
 
