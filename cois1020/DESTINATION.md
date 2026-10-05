@@ -15,7 +15,9 @@ I can name every part of that program the way the slides name it.
 I can say how source becomes machine code (IL, JIT).
 I can declare, display, compute, convert, and read values.
 I can pick int / double / decimal / bool / char / string on purpose.
+I can retrieve the slide tables (types, formats, escapes, Convert, comparisons, identifier convention).
 I can tell syntax error from logic error.
+I can answer mixed questions that do not name the chapter.
 I can answer the slides’ True/False and fill-ins without the PDF open.
 ```
 

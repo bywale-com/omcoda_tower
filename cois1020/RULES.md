@@ -42,6 +42,16 @@ Forbidden to introduce (even “just a little”):
 
 If a chapter needs a fact not in the two PDFs, the chapter is wrong.
 
+**Source purity.** Every assertion in the book is one of:
+
+- **SOURCE** — explicitly on a slide in `source/`
+- **EXPERIMENT** — directly observed from running code the PDFs require
+- **removed**
+
+No invisible general-C# augmentation (prefix/postfix *expression* semantics, “console host”, extra format characters you invented, extra Convert methods you invented).
+
+**Coverage.** [`COVERAGE.md`](./COVERAGE.md) addresses every PDF page as CONSTRUCT, RECOGNIZE, MEMORIZE, or NON-TEST CONTENT with a reason. A slide with a table is not covered by naming three of the rows.
+
 ---
 
 ## 3. Exam language is not a skip
@@ -69,3 +79,9 @@ Empty notes are acceptable only if the files and a spoken recap prove the cycle.
 ## 6. One leftover, then advance
 
 Each chapter names **one** leftover that the next chapter uses. Do not fail a cycle for a later PDF’s mechanism. Do not reopen a passed cycle as a third fail.
+
+---
+
+## 7. Mixed retrieval after C11
+
+Isolated chapters are not the sitting. After C11: `EXAM-SURFACE.md` → `MIXED-EXAM-1.md` (closed book, no cycle labels) → review misses only → `MIXED-EXAM-2.md`. Do not skip the mix.

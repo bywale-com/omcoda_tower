@@ -1,9 +1,5 @@
 # C7 notes
 
-## Leftover — types for true/false, one char, a word
+## Leftover — type for yes/no
 
-## comparison prediction
-
-## CompareTo("Alaa","John") prediction
-
-## 'r' vs "r"
+## Table 2-4 predictions (true/false for each operator)

@@ -4,13 +4,13 @@ A cycle is learned when the JOURNEY **exit capability** is true **and** you can 
 
 ---
 
-## Triple target (this folder)
+## Triple target
 
 1. **Construction.** The program runs and does what you intended.
 2. **Syntax.** You can produce the required C# from a blank file.
-3. **Exam language.** You can say the slide’s word for the mechanism (identifier, placeholder, implicit cast, named constant, …).
+3. **Exam language.** You can say the slide’s word **and** retrieve the slide’s tables (2-1, 2-2, 2-3, 2-4, 2-5, 2-6, identifier Tables 1-2/1-3/1-4).
 
-Any two without the third is not ready. The test grades (3) at least as hard as (1).
+Any two without the third is not ready.
 
 ---
 
@@ -19,13 +19,20 @@ Any two without the third is not ready. The test grades (3) at least as hard as 
 | Proof | Demand |
 |---|---|
 | **Predict** | Before Run: what will appear, fail, or stay the same? |
-| **Explain** | What was constructed? What is the slide’s name for it? |
-| **Break** | Remove or misspell the mechanism. Name whether the failure is **syntax** or **logic**. |
-| **Reconstruct** | A second `.cs` file, chapter closed, same capability. |
-| **Exam** | The cycle’s drill questions, answers not in view. |
+| **Explain** | What was constructed? Slide’s name? SOURCE or EXPERIMENT? |
+| **Break** | Remove or misspell. Syntax error or logic error (PDF’s two kinds)? |
+| **Reconstruct** | A second `.cs` file, chapter closed. |
+| **Exam** | Cycle drill, answers not in view. |
 
 ---
 
 ## Ready for the sitting
 
-You are ready when C8’s exit is met **and** you can walk [`EXAM-SURFACE.md`](./EXAM-SURFACE.md) out loud without looking at the answers in [`book/ANSWERS.md`](./book/ANSWERS.md).
+C11’s exit is met **and**:
+
+1. Walk [`EXAM-SURFACE.md`](./EXAM-SURFACE.md) including the **tables**, not only the one-liners.
+2. Sit [`book/MIXED-EXAM-1.md`](./book/MIXED-EXAM-1.md) closed book. No cycle labels on the questions — that is the point.
+3. Review **only misses**.
+4. Sit [`book/MIXED-EXAM-2.md`](./book/MIXED-EXAM-2.md) closed book.
+
+Knowing it “when you are standing in C6” is not ready.

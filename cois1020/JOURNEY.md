@@ -1,7 +1,8 @@
 # JOURNEY — cycle contracts
 
-**Version:** 1  
-**Closed:** Chapters 1 and 2 of the PDFs in `source/` only. Do not add cycles from later lectures.
+**Version:** 2  
+**Closed:** Chapters 1 and 2 of the PDFs in `source/` only.  
+**Coverage:** [`COVERAGE.md`](./COVERAGE.md) is the page index. Do not drop a table row because “they probably won’t ask.”
 
 Advance when **exit capability** is met and **next pressure** is visible. All chapters already exist because the test is the whole two PDFs.
 
@@ -17,212 +18,234 @@ Advance when **exit capability** is met and **next pressure** is visible. All ch
 | **Forces** | Why the previous program is not enough |
 | **Concepts expected** | Slide names, attached **after** the phenomenon |
 | **Must produce** | Observable outcome |
-| **Must NOT introduce** | Hard boundary |
+| **Must NOT introduce** | Hard boundary, including general-C# the PDF omitted |
 | **Exit capability** | Ready for the next cycle *and* that slice of the test |
 | **Next pressure** | Why the following cycle exists |
 
 ---
 
-## Epoch 0 — A first program (PDF Ch 1)
+## Epoch 0 — A first program (PDF 1)
 
-Destination fragment: a console program you caused, whose parts you can name, whose path to machine code you can say.
-
-### C0 — The line appears
+### C0 — Run
 
 **Destination:** The smallest causal chain from a `.cs` file to a line on the console.
 
 **Prerequisites:** None.
 
-**Construction:** A public static class with `Main` that writes one literal string and waits.
+**Construction:** A public static class with `Main` that writes one literal string and waits (`ReadLine` holds the Windows screen — SOURCE p.26).
 
 **Forces:** Nothing authored is being compiled into a running program.
 
-**Concepts expected:** computer program / software · source · compile · `Main` · `WriteLine` · literal string · console application
+**Concepts expected:** computer program / software · source · `Main` · `void` · `WriteLine` · literal string · console application · curiosity, patience, practice · face errors
 
-**Must produce:** `constructions/c0/Program.cs` that prints a line you chose (course shape: hello + your name). Run it. Output matches intention.
+**Must produce:** `constructions/c0/Program.cs` in the lab shape (PDF p.31). Run it. Face one syntax error and fix it.
 
-**Must NOT introduce:** variables, data types, `using` as a lesson, comments as a lesson, identifier rules, IL/JIT names.
+**Must NOT introduce:** identifier convention tables, IL/JIT names, variables, `using` as a lesson, “console host.”
 
-**Exit capability:** From a blank file, write a program with `Main` and `System.Console.WriteLine`, compile, run, see the line. Face one error and fix it.
+**Exit capability:** From a blank file, write `Main` + `System.Console.WriteLine`, compile, run, see the line.
 
-**Next pressure:** The file is made of parts you did not invent. The test will ask what those parts are called.
+**Next pressure:** The file is made of parts the test will ask you to name.
 
 ---
 
-### C1 — The parts of the program
+### C1 — Parts
 
-**Destination:** Every token in C0’s program has a slide name, and you can change the program by changing a named part.
+**Destination:** Tokens, identifier **legality and convention**, comments, `using`.
 
 **Prerequisites:** C0.
 
-**Construction:** Same program, rebuilt: identifiers that follow the rules; line and block comments; `using System;` so `Console` is enough; whitespace that does not change behavior.
+**Construction:** Same program rebuilt. Label: namespace, identifier, access modifier, argument, method, literal string. Conventional vs unconventional-but-legal vs illegal class names (Tables 1-2, 1-3, 1-4). Keyword table as recognize (Table 1-1). Line and block comments. `using System;`.
 
-**Forces:** You can make it run. You cannot yet *point* at namespace, access modifier, keyword, method header vs body.
+**Forces:** Running is not labeling; legal is not conventional.
 
-**Concepts expected:** namespace · access modifier · keyword · identifier (rules) · method header · method body · whitespace · line comment `//` · block comment `/* */` · `using` directive · `System` · `Console` class
+**Concepts expected:** namespace · access modifier · keyword · identifier rules · conventional / unconventional / illegal · method header / body · whitespace · `//` `/* */` · comment out · using directive · System as root namespace, part of .NET · Console = standard in/out/error · `void` returns nothing · every console app has `Main()`
 
-**Must produce:** `constructions/c1/Program.cs` plus a labeled copy in notes (or comments) naming: namespace, class identifier, `public`/`static`/`void`, `Main`, argument, literal string.
+**Must produce:** labeled program + notes that classify at least two names from each of Tables 1-2, 1-3, 1-4.
 
-**Must NOT introduce:** variables as storage, numeric types, ReadLine-as-input (holding the screen is already in C0).
+**Must NOT introduce:** “console host”; variables as storage; Ch 2 types.
 
-**Exit capability:** Given a printed program, label the parts. Switch between `System.Console.WriteLine` and `using System;` + `Console.WriteLine`. Comment out a line and restore it. Invent a legal identifier; reject an illegal one (`#`, keyword, starting with a digit).
+**Exit capability:** Given a printed program, label the p.11 tokens. Switch `System.Console` vs `using System`. Invent a conventional name; reject an illegal one; flag an unconventional-but-legal one.
 
-**Next pressure:** The test will ask what a compiler *is*, and how this is not machine language.
+**Next pressure:** How source became machine code; what programming is.
 
 ---
 
-### C2 — What the machine did
+### C2 — Translation + errors
 
-**Destination:** Exam language for the translation stack and for kinds of error.
+**Destination:** Exam language for programming, software, translation, errors.
 
 **Prerequisites:** C1.
 
-**Construction:** Break C1 on purpose (syntax). Produce wrong output on purpose (logic). Comment-out to disable a statement. Restore.
+**Construction:** One syntax break; one logic break (wrong output that still compiles). Restore.
 
-**Forces:** Running is not the same as being able to say: program, system vs application software, machine language vs high-level, compiler / interpreter / assembler, IL, JIT, debugging, procedural vs object-oriented (as the slide states it).
+**Forces:** Running is not explaining the stack.
 
-**Concepts expected:** system software · application software · machine language · high-level language · syntax · compiler · interpreter · assembler · programming logic · debugging · syntax error · logic error · IL · JIT · Visual Studio IDE · procedural program · method · object-oriented (C#’s claim on the slide)
+**Concepts expected:** solving problems / designing instructions / developing things · system vs application software · machine vs high-level · compiler / interpreter / assembler · programming logic · debugging · syntax vs logic error · IL · JIT · Visual Studio advantages · procedural + methods · C# as OO (slide’s claim) · sample bytes vs `int x = 5`
 
-**Must produce:** notes that distinguish one syntax failure from one logic failure you caused. Rebuild still runs.
+**Must produce:** notes naming one syntax failure and one logic failure you caused.
 
-**Must NOT introduce:** variables / types from Ch 2.
+**Must NOT introduce:** Ch 2 data.
 
-**Exit capability:** Explain source → IL → JIT → machine without the PDF. Define debugging. Say why C# is called object-oriented *in this course’s words*. List Visual Studio’s claimed advantages from the slide (color, click error to line, scaffolding).
+**Exit capability:** Source → IL → JIT → machine. Define debugging as removing syntax **and** logical errors. Course framing (why programming; curiosity/patience/practice already C0).
 
-**Next pressure:** Output so far is only literal strings. The test’s second PDF is named memory.
+**Next pressure:** Output is still only literal strings.
 
 ---
 
-## Epoch 1 — Using data (PDF Ch 2)
+## Epoch 1 — Using data (PDF 2)
 
-Destination fragment: values that live in named storage, have a type, can be computed, converted, compared, and read from the keyboard.
-
-### C3 — Named memory
+### C3 — Named memory + display
 
 **Destination:** A value lives in a named location; you can show it.
 
 **Prerequisites:** C2.
 
-**Construction:** Declare at least one `int` and one `double`, assign, display with `Write`, `WriteLine`, and a format string with a placeholder.
+**Construction:** Declare; `Write` / `WriteLine`; placeholder `{0}`; alignment `{0, 5}`.
 
-**Forces:** Literal strings cannot change from run to run. You need a place that *holds* a value.
+**Forces:** Literal strings cannot hold a changing number.
 
-**Concepts expected:** literal constant · variable · data type · declaration · `Write` vs `WriteLine` · format string · placeholder `{0}` · alignment `{0, 5}`
+**Concepts expected:** literal constant · variable · data type · declaration · format string · placeholder
 
-**Must produce:** `constructions/c3/Program.cs` that prints a stored number alone, then in a sentence with a placeholder, then three integers right-aligned in width 5.
+**Must produce:** number alone; sentence with `{0}`; three ints width 5.
 
-**Must NOT introduce:** the full integral/float catalog, suffixes, arithmetic, casts, `ReadLine` as input.
+**Must NOT introduce:** full Table 2-1, suffixes, arithmetic, Convert.
 
-**Exit capability:** Declare two ways (two statements; one statement with commas). Explain placeholder vs ordinary text in the string. Predict `Write` vs `WriteLine`.
+**Exit capability:** Two declaration styles. Placeholder purpose. `Write` vs `WriteLine`.
 
-**Next pressure:** `39.45` and `4` are not the same *kind* of number; money and whole counts need different types.
+**Next pressure:** Kinds of numbers and how they print.
 
 ---
 
-### C4 — Numeric kinds and printed form
+### C4 — Numeric kinds + numeric formatting
 
-**Destination:** Choose integral vs floating types; control how a number is printed.
+**Destination:** Table 2-1 and Table 2-2 are retrievable; suffixes and the F/E/C demo run.
 
 **Prerequisites:** C3.
 
-**Construction:** Use `int`, `float` (with `F`), `double`, `decimal` (with `M`). Print one value with default, `F`/`F1`/`F3`, `E`, `C`/`C3`. Write one scientific-notation literal.
+**Construction:** `int`, `float`+`F`, `double`, `decimal`+`M`. Format demo from p.17. Recall **all nine** format characters and Table 2-1 columns (system type, bytes, signed/unsigned, range, `object`).
 
-**Forces:** A type is format, size, and allowed operations — not just “a number.”
+**Forces:** `39.45` and `4` are not the same kind; `{0:F}` is not the whole format table.
 
-**Concepts expected:** integral types (`byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, `ulong`, `char`) · `float` / `double` / `decimal` · significant digits · suffixes `F` `D` `M` · scientific notation · format specifier + precision (`F`, `E`, `C`)
+**Concepts expected:** nine integral types · three floating types · Table 2-1 · suffixes F D M · scientific E · nine format characters C D E F G N P R X · form `X0`
 
-**Must produce:** a program matching the slide’s format demo *in spirit* (same specifiers, your number). Notes: why `float x = 54.7;` fails and `54.7F` works.
+**Must produce:** running format demo; notes that recopy Table 2-2 meanings without looking; Table 2-1 at least type / system type / bytes / signed vs unsigned for integrals.
 
-**Must NOT introduce:** operator precedence as a lesson, casts as a lesson, `bool`/`string` methods.
+**Must NOT introduce:** operator precedence as the lesson; implicit/explicit as the lesson.
 
-**Exit capability:** List the nine integral types and three floating types. Pick `decimal` for money and say why. Read `{0:C2}` aloud.
+**Exit capability:** List nine integrals and three floats. Why `float x = 54.7;` fails. What `P`, `X`, `R`, `N`, `G`, `D` mean on Table 2-2. `int` system type is Int32.
 
-**Next pressure:** Stored numbers must be combined.
+**Next pressure:** Combine numbers.
 
 ---
 
 ### C5 — Arithmetic
 
-**Destination:** Compute with binary and shortcut operators; precedence is a rule, not left-to-right hope.
+**Destination:** Binary, unary, Table 2-3, precedence, shortcuts. Prefix and postfix as **two writings of +1**, not expression-value semantics.
 
 **Prerequisites:** C4.
 
-**Construction:** Expressions using `+ - * / %`, unary `-`, `+=` (and kin), prefix and postfix `++` / `--`. One expression where parentheses change the result.
+**Construction:** Table 2-3 examples including **45 / 2 is 22 (not 22.5)**. Precedence. `+=` and kin. `++someValue` and `someValue++` each as `someValue = someValue + 1`. `--`.
 
-**Forces:** Displaying two numbers is not combining them.
+**Must NOT introduce:** printing `n++` vs `++n` to show old vs new value (not on the PDF). Casts as the lesson.
 
-**Concepts expected:** binary operator · unary operator · operand · operator precedence (`* / %` above `+ -`) · add-and-assign · prefix vs postfix increment/decrement
+**Exit capability:** Evaluate `3+4*2`. Recite Table 2-3 including integer division example. Write both increment forms as equivalent to `x = x + 1`.
 
-**Must produce:** program that prints results you predicted in notes *before* running, including one prefix vs postfix pair.
-
-**Must NOT introduce:** implicit/explicit cast as the lesson (integer division `7/4` may *appear* — name it as leftover for C6).
-
-**Exit capability:** Evaluate `3 + 4 * 2` and `(3 + 4) * 2` without running. Rewrite `total = total + val` as `total += val`. Say whether `++x` and `x++` differ when the value is *used* in the same statement.
-
-**Next pressure:** `7 / 4` stored in a `double` is `1.0`. Types do not forgive.
+**Next pressure:** `7 / 4` stored in a `double` is `1.0`.
 
 ---
 
 ### C6 — Conversion
 
-**Destination:** Same-type arithmetic keeps the type; mixed types unify; you can force a cast.
+**Destination:** Unifying type; implicit vs explicit; the 7/4 contrast from the PDF.
 
 **Prerequisites:** C5.
 
-**Construction:** Show `7 / 4` in a `double` (truncation). Fix with an explicit cast. Show one implicit widening (e.g. `int` into `double`).
+**Construction:** `double truncated = 7 / 4;` and `7 / (double)4`. One implicit `int` into `double`.
 
-**Forces:** Precedence does not explain lost fractions.
+**Concepts expected:** unifying type · higher type precedence · integrals widen to larger integral and floating; float→double · implicit cast · explicit cast
 
-**Concepts expected:** unifying type · implicit cast · explicit cast · type precedence (integrals widen; `float` → `double`; `decimal` is special — as the slide)
+**Must NOT introduce:** bool/char/string catalog.
 
-**Must produce:** two lines of output: truncated division vs `7 / (double)4` (or equivalent). Notes: which conversion you did not write because C# did it.
-
-**Must NOT introduce:** `bool`/`char`/`string` catalog.
-
-**Exit capability:** Define implicit vs explicit. Predict `double r = 7 / 4;`. Write the cast that preserves the fraction.
+**Exit capability:** Predict `double r = 7 / 4;`. Write the explicit cast. State int can convert to long, float, double, or decimal.
 
 **Next pressure:** Not every value is a number.
 
 ---
 
-### C7 — Other values (bool, char, string)
+### C7 — Bool + comparisons
 
-**Destination:** True/false, a single character, a series of characters — each with the operations the slides give.
+**Destination:** `true`/`false` and Table 2-4.
 
 **Prerequisites:** C6.
 
-**Construction:** `bool` from a comparison; `char` in single quotes; one escape; `string` in double quotes; `==` / `Equals` / `Compare` / `CompareTo`; `Length`; `Substring`.
+**Construction:** `bool done = true;` plus each comparison operator from Table 2-4 (true example and false example, as the table).
 
-**Forces:** Numeric types cannot hold “done,” `'A'`, or a name.
+**Must NOT introduce:** char escapes, string methods.
 
-**Concepts expected:** `bool` · comparison operator · `char` · escape sequence · `string` · `Equals` · `Compare` · `CompareTo` (negative / zero / positive) · `Length` · `Substring`
+**Exit capability:** Recite Table 2-4 operators. A comparison expression has a Boolean value.
 
-**Must produce:** program that prints a comparison, a `CompareTo` integer, a length, and a substring. Notes: `'r'` vs `"r"`.
-
-**Must NOT introduce:** `ReadLine` as typed input (C8). Named `const` as the lesson.
-
-**Exit capability:** Declare `bool`, `char`, `string`. Explain why Compare of “Alaa” vs “John” is negative. Use `Length` and `Substring` on a word you chose.
-
-**Next pressure:** Values so far are authored in the source. The slide’s programs ask the occupant.
+**Next pressure:** A single character is not a `bool` and not a `string`.
 
 ---
 
-### C8 — Input and named constants
+### C8 — Char + escape sequences
 
-**Destination:** Keyboard text becomes a typed value; some names must not change.
+**Destination:** `char` in single quotes; **Table 2-5** complete.
 
 **Prerequisites:** C7.
 
-**Construction:** Prompt; `ReadLine` into a `string`; `Convert.ToDouble` (nested or via a string variable); a `const` rate; print with placeholders and currency format. Second `const` that makes a conversion self-documenting (inches in a foot, or equivalent).
+**Construction:** `char letter = 'r';` Print at least `\'` `\\` `\n` `\t`. Recite the rest of Table 2-5 (null, alert, backspace, form feed, carriage return, vertical tab, double quote).
 
-**Forces:** Literals in source cannot be the user’s price. Magic numbers in expressions cannot explain themselves.
+**Must NOT introduce:** string Compare/Length/Substring as the lesson.
 
-**Concepts expected:** interactive program · `Console.ReadLine` (input is a string) · `Convert.ToDouble` (and kin) · named constant · `const` · ALL_CAPS with underscores · self-documenting
+**Exit capability:** `'r'` vs a string. Full escape table from memory (sequence + character name).
 
-**Must produce:** `constructions/c8/Program.cs` in the shape of the tax example: enter a price, see tax money. A named constant, not a bare `0.06` in the multiply.
+**Next pressure:** A series of characters.
+
+---
+
+### C9 — String operations
+
+**Destination:** string literals; `==` (slide: not recommended); Equals; Compare / CompareTo; Length; Substring figure.
+
+**Prerequisites:** C8.
+
+**Construction:** Amy/Matthew `==` program; Alaa/John CompareTo; `"water".Length`; Substring(0,1)/(0,2)/(1,2) as the figure. Note the figure’s last two lines are marked wrong on the slide.
+
+**Must NOT introduce:** ReadLine as typed input.
+
+**Exit capability:** Quote rules. Equals → bool. CompareTo negative/zero/positive. Length of water is 5. Substring(start, length) on the figure’s first three lines.
+
+**Next pressure:** Values authored in source vs the keyboard.
+
+---
+
+### C10 — Console input + Convert
+
+**Destination:** `ReadLine` is a string; Convert table; tax-shaped program.
+
+**Prerequisites:** C9.
+
+**Construction:** Name prompt; tax via string then `Convert.ToDouble`; nested `Convert.ToDouble(Console.ReadLine())`. You may type `const` because it is on the slide program — the **lesson** of `const` is C11. Recite **Table 2-6**.
+
+**Must NOT introduce:** inventing Convert methods not on the table.
+
+**Exit capability:** Why a `double` cannot be assigned `ReadLine()` directly. `ToDouble`, `ToInt32`, `ToBoolean`, `ToDecimal`, `ToSingle`, unsigned `ToUInt32`, `ToString`, `ToChar`, `ToByte`, `ToSByte`, `ToInt16`/`ToInt64`/`ToUInt16`/`ToUInt64` as the table names them.
+
+**Next pressure:** `0.06` and `TAX_RATE` are not the same kind of name.
+
+---
+
+### C11 — Named constants + self-documenting
+
+**Destination:** `const` cannot change; ALL_CAPS; self-documenting expression.
+
+**Prerequisites:** C10.
+
+**Construction:** `const int INCHES_IN_A_FOOT = 12;` (or the tax rate as a named constant you can explain). Self-documenting multiply. Attempt to assign to the const; compile fails.
 
 **Must NOT introduce:** anything outside Ch 2.
 
-**Exit capability:** Explain why `ReadLine` cannot go straight into a `double` without conversion. Write `const double TAX_RATE = 0.06;`. Replace a magic number with a named constant and say why the statement is self-documenting. Answer Ch 2’s knowledge-check items from memory.
+**Exit capability:** Knowledge check 1–4 from memory. Self-documenting example. `const` naming convention.
 
-**Next pressure:** None. This is the closed syllabus. Drill [`EXAM-SURFACE.md`](./EXAM-SURFACE.md).
+**Next pressure:** None. `EXAM-SURFACE.md` then mixed exams.

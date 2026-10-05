@@ -6,4 +6,6 @@
 
 ## 2.1B logic — prediction / result
 
+## Programming is about (three bullets)
+
 ## IL then JIT (own words)

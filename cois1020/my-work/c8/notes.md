@@ -1,14 +1,7 @@
 # C8 notes
 
-## Leftover — type of keyboard text
+## Leftover — 'r' vs "r"
 
-## ReadLine into double — what the compiler said
+## Escapes constructed
 
-## tax run (28.77) — what printed
-
-## Knowledge check (attempt before ANSWERS.md)
-
-1.
-2.
-3.
-4.
+## Table 2-5 recitation (sequence + name, all rows)

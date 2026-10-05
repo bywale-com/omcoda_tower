@@ -2,10 +2,13 @@
 
 ## Predictions (write before Run)
 
-- 10 % 3:
+- 45 / 2:
+- 45 % 2:
 - 3 + 4 * 2:
 - (3 + 4) * 2:
-- n++ printed / n after:
-- ++n printed:
+
+## Increment
+
+Prefix and postfix each as `x = x + 1` (do not study print-of-`n++`).
 
 ## Leftover — 7 / 4 into a double (observe only)
