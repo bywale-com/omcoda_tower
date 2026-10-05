@@ -105,9 +105,9 @@ One late-book cycle **performs** a meaningful upgrade (JOURNEY: TC-71). That exa
 If a practice has arrived, later cycles **extend** it:
 
 - Vitest (TC-10) is not replaced by RTL or Playwright; they join it.
-- CI phase 1 (TC-18) grows until it proves the full system (TC-65). TC-65 must not be “what is GitHub Actions?”
+- CI phase 1 (TC-18) grows until it proves the full system (TC-65). TC-65 must not be “what is GitHub Actions?” Postgres enters that workflow at **TC-20–22** (ledger invariants), not at first HTTP. TC-27 adds API integration.
 - Playwright smoke (TC-38) stays; TC-63 deepens it.
-- Compose as local start (TC-42) stays; TC-64 is the production image.
+- Compose as local start begins at **TC-27** (Postgres + API) and grows Redis + worker at TC-42. TC-64 is the production image.
 - Early deploy (TC-39) is not full delivery (TC-66).
 
 ---
@@ -260,6 +260,7 @@ An amendment must increment the JOURNEY version, stamp TECHNOLOGY-MAP if arrival
 - Treat “we added a library” as “this is now an engineering practice.”
 - Require equal fluency in Base UI + Radix + React Aria + Ant.
 - Discover CI / Compose / e2e / lint in the last epoch as if they were new.
+- Invent a browser-to-Postgres path, or an HTTP server, to preserve TC-20–26 order.
 
 ---
 
@@ -268,4 +269,4 @@ An amendment must increment the JOURNEY version, stamp TECHNOLOGY-MAP if arrival
 | Date | Change | Acceptance |
 |---|---|---|
 | 2026-10-05 | §2b Production Bridge law. TECHNOLOGY-MAP. Spines. Tests ≠ learner-proofs. TC-0–2 do not regenerate. Next.js is contrast. | Founder: *“Rudiment → mechanism → production bridge → production fluency.”* |
-| 2026-10-05 | §2c Node host ≠ Node app; Tailwind TC-4 standalone CLI. §2d cohort pin + upgrade exam. §2e practices grow. Git/systems/network/a11y spines. Early CI/Playwright/Compose/deploy. No logo tourism. | Founder review of PR #123: practices permanent early; requested changes 1–12. |
+| 2026-10-05 | Seams locked: no SPA→Postgres before HTTP; CI+Postgres with ledger invariants; Compose grows from TC-27; transfer must actually deploy; TC-39 synthetic. | Founder: four architecture corrections + TC-39 non-sensitive deploy. |

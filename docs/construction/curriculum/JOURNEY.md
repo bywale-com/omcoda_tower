@@ -12,7 +12,7 @@ Each heading below is a **contract** for a future chapter. The agent generating 
 
 **Stable already generated:** TC-0, TC-1, and TC-2. Do not regenerate them. TC-2 remains the CSS **rudiment**. Layout is TC-3. Tailwind is TC-4.
 
-**Practices, not a logo sequence.** v2 added production technology. v3 makes ordinary engineering practices **permanent early** and grow: tests, CI, lint, Git, processes, networking, accessibility, compose, deploy. Late ops cycles deepen what the learner has lived with. They do not “discover CI.”
+**Practices, not a logo sequence.** v3 is locked on direction. Seams below (persistence/HTTP, CI+Postgres, Compose growth, transfer must ship, TC-39 synthetic) are the last architecture corrections. Do not add another wave of technologies.
 
 **Cycle count is not a product.** v3 maps TC-0–72. Split if a cycle smuggles two constructions. Merge if the split is ceremonial.
 
@@ -50,7 +50,8 @@ Forced when a construction needs them. Never “today’s lesson is generics / b
 - **TypeScript** arrives TC-12; never finishes there.
 - **SQL** from the first table (TC-20); not done at `SELECT`. Pagination/filter/sort is a later *vertical* (TC-33). Schema evolution is TC-25.
 - **Tests** from TC-10, growing: Vitest → RTL → MSW → Playwright smoke (TC-38) → serious E2E (TC-63).
-- **CI** from TC-18, growing: unit/UI → DB/network → smoke e2e → full-system prove (TC-65) → CD (TC-66).
+- **CI** from TC-18, growing: unit/UI → **Postgres ledger invariants (TC-20–22)** → API integration (TC-27) → smoke e2e (TC-38) → worker/Redis as needed (TC-42) → full-system prove (TC-65) → CD (TC-66).
+- **Compose** from TC-27 (Postgres + API as local orchestration), growing Redis + worker at TC-42. TC-64 is the **image**, not “discover Compose.”
 - **DevTools** from TC-0.
 - **Security** attached to the threat the construction creates.
 - **Accessibility** from semantic HTML (TC-1); hardens at forms, dialogs, errors; RTL queries by role.
@@ -621,85 +622,87 @@ Destination fragment: reuse, software that verifies software, named shapes, a re
 
 ## Epoch 3 — A book that outlives the page
 
+The SPA does **not** talk to Postgres until TC-27. Do not invent a browser driver or smuggle an HTTP server to preserve order.
+
 ### TC-19 — Persistence
 
-**Destination:** Change a name, reload, the change is still there.
+**Destination:** Change a name, reload, the change is still there. The causal fact is: **page state can outlive the page.**
 
 **Prerequisites:** TC-0 → TC-18
 
-**Construction:** Durable information in a second place the page is not. First: a file.
+**Construction:** Durable information in a store **the browser owns**. **`localStorage`** (or an equivalent deliberately browser-owned durable store — not a disk file the SPA cannot honestly reach, not IndexedDB-as-a-course).
 
-**Forces:** State in the page dies with the page.
+**Forces:** State in the page dies with the page. Refresh, a second tab, tomorrow.
 
-**Concepts expected:** persistence · source of truth · serialize / deserialize
+**Concepts expected:** persistence · source of truth · serialize / deserialize · **Spine (DevTools):** Application → Storage
 
-**Technologies touched:** local file read/write · TypeScript · **Spine (TS):** types for the serialized shape; they still vanish at runtime
+**Technologies touched:** `localStorage` (or equivalent browser store) · TypeScript · **Spine (TS):** types for the serialized shape; they still vanish at runtime
 
-**Syntax families:** read/write of the durable representation (JSON if that is the file)
+**Syntax families:** `getItem` / `setItem` (or equivalent) · JSON as the durable representation if used
 
-**Production bridge:** Not yet. Postgres after the blob fails.
+**Production bridge:** Not yet. Postgres is the **ledger**, from the terminal, at TC-20. The desk does not talk to it until TC-27.
 
-**Must produce:** Kill the page; open again; the change survived; the learner can say *where*.
+**Must produce:** Kill the page; open again; the change survived; the learner can say *where* (a browser store, not “a file next to the HTML”).
 
-**Must NOT introduce:** Postgres · HTTP · a server · painted rows
+**Must NOT introduce:** Postgres · HTTP · a server · Node-as-product · a local file pretending the browser can write the repo · painted rows as the method
 
-**Exit capability:** Point at the second place. The page is a view of it — or it is a lie.
+**Exit capability:** Point at the browser-owned store. The page is a view of it — or it is a lie.
 
-**Next pressure:** A blob cannot be asked a precise question.
+**Next pressure:** A blob cannot be asked a precise question. Many people, one fact each, identity, relations.
 
 ---
 
 ### TC-20 — Identity, rows, relations
 
-**Destination:** Find one person among many. Attach a second fact to them.
+**Destination:** Find one person among many. Attach a second fact to them. **PostgreSQL is the ledger**, reached from the **terminal / one-shot tooling** — not from the SPA.
 
 **Prerequisites:** TC-0 → TC-19
 
-**Construction:** Identity. Rows. A table. A relation. **PostgreSQL** arrives because the blob failed.
+**Construction:** Identity. Rows. A table. A relation. **PostgreSQL** because the browser blob cannot be queried without reading everything. Work happens in `psql` (or equivalent). The React desk **still** reads `localStorage`. Two books exist; that tension is named, not secretly wired.
 
-**Forces:** A file-blob cannot be queried without reading everything.
+**Forces:** `localStorage` JSON cannot be asked “this person, this fact” without hoping.
 
-**Concepts expected:** identity · row · column · table · relation · foreign key · SQL
+**Concepts expected:** identity · row · column · table · relation · foreign key · SQL · ledger vs page store
 
-**Technologies touched:** **PostgreSQL** · SQL · the desk
+**Technologies touched:** **PostgreSQL** · SQL · **Spine (CI):** grow TC-18 — CI **boots/migrates Postgres** (service container or equivalent). Ledger work must not be laptop-only.
 
-**Syntax families:** `CREATE TABLE` · `INSERT` · `SELECT` by id · a second table keyed to the first
+**Syntax families:** `CREATE TABLE` · `INSERT` · `SELECT` by id · a second table keyed to the first · a migration as the way that schema enters CI
 
-**Production bridge:** **PostgreSQL + SQL** as the ledger. Not an ORM.
+**Production bridge:** **PostgreSQL + SQL** as the ledger. Not an ORM. Not an API.
 
-**Must produce:** Delete a person; related facts are gone or uninterpretable; the learner can say which.
+**Must produce:** Delete a person in SQL; related facts are gone or uninterpretable; the learner can say which. CI brings Postgres up. Notes: the SPA is still the old book.
 
-**Must NOT introduce:** a second server · RLS · an ORM · Drizzle · `SELECT *` as the product query forever (pressure, not this cycle’s encyclopedia)
+**Must NOT introduce:** HTTP · a listening Node process · a browser Postgres driver · RLS · an ORM · Drizzle · wiring the desk to SQL · `SELECT *` as the product query forever
 
-**Exit capability:** Explain why a table is a construction without being told “we’re learning SQL.”
+**Exit capability:** Explain why a table is a construction without being told “we’re learning SQL.” Can say the desk does not yet see this ledger.
 
-**Next pressure:** The desk is tempted to keep a pretty list in the page so it is not empty.
+**Next pressure:** A painted row (or a leftover localStorage person) is a different product from a query.
 
 ---
 
-### TC-21 — Query is the only source
+### TC-21 — Query is the only source (of the ledger)
 
-**Destination:** The desk shows only what the query returned. An empty module is honest.
+**Destination:** The **ledger** is only what the query returned. An empty table is honest. The SPA is **not** this ledger yet.
 
 **Prerequisites:** TC-0 → TC-20
 
-**Construction:** Query as the only source. Seeds — a reasonable count, not a fake world.
+**Construction:** Query as the only source of the book-in-Postgres. Seeds — a reasonable count, not a fake world. Proven from the terminal: `SELECT` after removing the seed is empty. **Do not** make the React desk query Postgres (no process boundary yet). Name the second book in `localStorage` as a lie-in-waiting, not as the law of this cycle.
 
-**Forces:** A painted person is a different product.
+**Forces:** A painted person is a different product (Hub failure mode). Data-in-tables must be lived **on the ledger** first. Pretending the SPA already shows the query would smuggle TC-27.
 
-**Concepts expected:** query · seed · empty state (honest)
+**Concepts expected:** query · seed · empty state (honest) — of the *table*, not yet of the *desk*
 
-**Technologies touched:** Postgres · SQL · the React desk
+**Technologies touched:** Postgres · SQL · CI already booting Postgres
 
-**Syntax families:** the select the desk actually runs
+**Syntax families:** the select that *is* the book · a seed file
 
-**Production bridge:** Data-in-tables as law.
+**Production bridge:** Data-in-tables as **ledger** law. The same law becomes the **desk** law at TC-27, when a conversation exists.
 
-**Must produce:** Remove the seed; the desk goes empty.
+**Must produce:** Remove the seed; `SELECT` is empty. If a SQL script still invents a person, a second book was invented. Notes state: the SPA may still show localStorage people — that is **not** this ledger.
 
-**Must NOT introduce:** a second catalog in the client · Hub
+**Must NOT introduce:** HTTP · wiring the desk to Postgres · Hub · “just for the screenshot” rows in SQL
 
-**Exit capability:** Will not paint a person to finish a plate.
+**Exit capability:** Will not paint a person into the ledger to finish a plate. Can say the desk is not yet a view of this query.
 
 **Next pressure:** Application caution is not a constraint. Two writers will disagree.
 
@@ -717,7 +720,7 @@ Destination fragment: reuse, software that verifies software, named shapes, a re
 
 **Concepts expected:** constraint · `UNIQUE` · `NOT NULL` · foreign key · schema as law · migration (create-time)
 
-**Technologies touched:** PostgreSQL · SQL
+**Technologies touched:** PostgreSQL · SQL · GitHub Actions already owned (ledger invariant on push)
 
 **Syntax families:** `ALTER` / `CREATE` with constraints · a migration
 
@@ -725,11 +728,11 @@ Destination fragment: reuse, software that verifies software, named shapes, a re
 
 **Bridge proof:** Insert the illegal row through SQL. The database refuses.
 
-**Must produce:** At least three refusals the application did not have to remember.
+**Must produce:** At least three refusals the application did not have to remember. **CI encodes at least one:** insert the illegal row; the job goes red if the database accepts it. Postgres is already in CI (TC-20); this cycle adds **ledger invariants**, not “first database.”
 
-**Must NOT introduce:** Drizzle · “ORM will handle this”
+**Must NOT introduce:** Drizzle · “ORM will handle this” · HTTP · the SPA as the thing that “handles” constraints
 
-**Exit capability:** Name which constraint failed from the error. Add one without being told “add a unique index.”
+**Exit capability:** Name which constraint failed from the error. Add one without being told “add a unique index.” A push proves a refusal.
 
 **Next pressure:** Two writes that must both happen or neither.
 
@@ -781,9 +784,9 @@ Destination fragment: reuse, software that verifies software, named shapes, a re
 
 **Production bridge:** Operations literacy for data.
 
-**Must produce:** Plan before and after an index. An N+1 and its repair.
+**Must produce:** Plan before and after an index. An N+1 (a loop of queries in a **one-shot script**, not a secret HTTP client) and its repair.
 
-**Must NOT introduce:** Drizzle yet
+**Must NOT introduce:** Drizzle yet · an HTTP server to “have a desk query path”
 
 **Exit capability:** Read a simple plan well enough to say why a query is expensive.
 
@@ -827,27 +830,27 @@ Destination fragment: reuse, software that verifies software, named shapes, a re
 
 **Prerequisites:** TC-0 → TC-25
 
-**Construction:** Recreate owned queries with **Drizzle**. One query both ways.
+**Construction:** Recreate owned queries with **Drizzle** in a **one-shot Node script** (toolchain host, TC-10 — not a listening server). One query both ways.
 
 **Forces:** Hiding SQL behind a magic ORM would undo TC-20–25.
 
 **Concepts expected:** schema-in-code · typed query · SQL-like ORM · emitted SQL
 
-**Technologies touched:** **Drizzle ORM** · PostgreSQL · TypeScript
+**Technologies touched:** **Drizzle ORM** · PostgreSQL · TypeScript · Node as **toolchain host** (script, not product)
 
 **Syntax families:** Drizzle schema · owned select/insert · reading emitted SQL
 
 **Production bridge:** **Drizzle.**
 
-**Bridge proof:** Point at emitted SQL. Drop to SQL once.
+**Bridge proof:** Point at emitted SQL. Drop to SQL once. The script is not an API.
 
-**Must produce:** The desk still shows the query. Types refuse a wrong column.
+**Must produce:** The same ledger queries, typed. Types refuse a wrong column. The SPA is still not this ledger.
 
-**Must NOT introduce:** “never write SQL again”
+**Must NOT introduce:** “never write SQL again” · `app.listen` · `fetch` from the desk to Postgres · pretending Drizzle *is* the server
 
-**Exit capability:** Look through Drizzle and see the SQL.
+**Exit capability:** Look through Drizzle and see the SQL. Can say this process is a tool, not the product.
 
-**Next pressure:** The page opening a local table cannot be a second face. Two programs do not share memory.
+**Next pressure:** Two programs do not share memory. The desk cannot honestly be a view of this ledger until something **listens**.
 
 ---
 
@@ -855,29 +858,29 @@ Destination fragment: reuse, software that verifies software, named shapes, a re
 
 ### TC-27 — The process is the product
 
-**Destination:** A process that is not the browser **is the application**. Raw request/response. **Node as application runtime.**
+**Destination:** A process that is not the browser **is the application**. Raw request/response. **Node as application runtime.** Only now may the desk honestly be a live view of the ledger.
 
 **Prerequisites:** TC-0 → TC-26
 
-**Construction:** A Node HTTP listener. Request. Response. The desk calls it with `fetch`. SQL on the server side. **Spine (systems):** this process has a PID, listens on a **port**, reads **env**, writes stdout/stderr, dies on a signal. `localhost:PORT` is not an incantation. **Spine (network):** host, port, loopback.
+**Construction:** A Node HTTP listener. Request. Response. The desk calls it with `fetch`. SQL on the **server** side of that conversation. **Data-in-tables becomes the desk law:** remove the seed; the desk goes empty. Discard `localStorage` as the book (or leave it as a named leftover you refuse to read). **Spine (systems):** PID, **port**, env, stdio, signal. `localhost:PORT` is not an incantation. **Spine (network):** host, port, loopback. **Spine (Compose):** Vite + app process + Postgres is already multi-process. **Docker Compose begins here as dependency/local-system orchestration — Postgres + API.** Not a Docker class. Redis/worker grow the **same** file at TC-42. **Spine (CI):** DB is already in CI (TC-20–22). This cycle **adds API integration** to that workflow.
 
-**Forces:** Two programs do not share memory. Toolchain-Node (TC-10/13) built software. This Node *is* software.
+**Forces:** Two programs do not share memory. Toolchain-Node built software. This Node *is* software. A weird “SPA talks to Postgres” architecture would have been a lie to preserve cycle order.
 
-**Concepts expected:** process · application runtime · server · request · response · HTTP · status · JSON payload · PID · port · bind · env · **Spine (CI):** CI now needs a database (or a test double) for a honest integration — grow the TC-18 workflow
+**Concepts expected:** process · application runtime · server · request · response · HTTP · status · JSON payload · PID · port · bind · env · compose service (Postgres + API)
 
-**Technologies touched:** **Node.js (application runtime)** · raw `node:http` · PostgreSQL · `fetch` · GitHub Actions grown to include DB if the test is honest
+**Technologies touched:** **Node.js (application runtime)** · raw `node:http` · PostgreSQL · `fetch` · **Docker Compose** (Postgres + API only) · GitHub Actions grown to hit the API
 
-**Syntax families:** listen · read URL/method · write status and body · `fetch` · **Spine (JS/TS):** `async`/`await`, `Promise<T>` · `curl` once as a second client
+**Syntax families:** listen · read URL/method · write status and body · `fetch` · **Spine (JS/TS):** `async`/`await`, `Promise<T>` · `curl` once as a second client · a small `compose.yaml` for Postgres + the API process
 
-**Production bridge:** **Node as product.** Hono is TC-28. Query is TC-30.
+**Production bridge:** **Node as product.** Compose as *start the local system*, not as the shipping artifact. Hono is TC-28.
 
-**Bridge proof:** Kill the Node **app** process; the Vite toolchain can still start; the book cannot. Contrast with killing Vitest. Draw ask and answer. Break the answer’s shape; the desk must not invent a person.
+**Bridge proof:** Kill the Node **app** process; Vite can still start; the **book on the desk** is gone. Kill Vitest; the product remains. Remove the seed; the desk is empty — if it is not, a second book was invented. `compose up` starts Postgres + API without a remembered `psql` ritual as the method.
 
-**Must produce:** One GET the desk needs. Notes: toolchain process vs application process. Who owns the port.
+**Must produce:** One GET the desk needs, from the ledger. Empty seed → empty desk. Compose for Postgres + API. CI proves an API+DB path (not first-time Postgres).
 
-**Must NOT introduce:** Hono yet · 90 routes · auth · Next.js · `useState` as the book’s cache
+**Must NOT introduce:** Hono yet · 90 routes · auth · Next.js · `useState` as the book’s cache · Redis · a production image (TC-64) · browser-to-Postgres
 
-**Exit capability:** Describe an API as a conversation between constructions that do not share memory. Write the ask with `fetch` and a raw Node listener. Say what a process dying means.
+**Exit capability:** Describe an API as a conversation between constructions that do not share memory. Write the ask with `fetch` and a raw Node listener. Say what a process dying means. The desk shows only what that conversation returned.
 
 **Next pressure:** Raw `http` will be rewritten by hand for every route.
 
@@ -905,9 +908,9 @@ Destination fragment: reuse, software that verifies software, named shapes, a re
 
 **Bridge proof:** Point each Hono piece at raw request/response. Remove Pino; say what you lost that `console.log('oops')` never gave you.
 
-**Must produce:** The desk talking to Hono. One middleware. Structured logs for ask and error.
+**Must produce:** The desk talking to Hono. One middleware. Structured logs for ask and error. The TC-27 Compose file still starts Postgres + API (the API process is now Hono) — do not rediscover Compose.
 
-**Must NOT introduce:** OpenTelemetry yet · OpenAPI yet · GraphQL · auth as a Hono tutorial
+**Must NOT introduce:** OpenTelemetry yet · OpenAPI yet · GraphQL · auth as a Hono tutorial · Redis · a second orchestrator
 
 **Exit capability:** Write a route and a middleware. Drop to raw HTTP facts when sugar hides a status. Emit a log that is data.
 
@@ -1215,15 +1218,15 @@ Destination fragment: reuse, software that verifies software, named shapes, a re
 
 ### TC-39 — Someone else’s machine
 
-**Destination:** A small slice runs on someone else’s machine. **Early deploy.** Not full production delivery.
+**Destination:** A small slice runs on someone else’s machine. **Early deploy.** Not full production delivery. **Synthetic / non-sensitive.**
 
 **Prerequisites:** TC-0 → TC-38
 
-**Construction:** Deploy **one web app, one API, one database, one environment.** A URL that is not localhost. Secrets not in git. **Spine (network):** DNS at useful grain for this URL; TLS as “the browser’s lock is a certificate,” not a PKI course.
+**Construction:** Deploy **one web app, one API, one database, one environment.** A URL that is not localhost. Secrets not in git. **Spine (network):** DNS at useful grain for this URL; TLS as “the browser’s lock is a certificate,” not a PKI course. Firm/session auth does not exist until TC-53 — so this slice must not be a pre-auth SaaS.
 
 **Forces:** If first deploy waits until workers, Redis, object storage, staging, CD, and rollback arrive together, too much machinery lands at once. The construction here is: *my program runs where I am not.*
 
-**Concepts expected:** environment · secret · deploy · hosted URL · DNS · TLS as a fact of that URL
+**Concepts expected:** environment · secret · deploy · hosted URL · DNS · TLS as a fact of that URL · synthetic data
 
 **Technologies touched:** **Vercel** (or equivalent) for the web face · a hosted API runtime · managed Postgres · existing app
 
@@ -1235,9 +1238,9 @@ Destination fragment: reuse, software that verifies software, named shapes, a re
 
 **Must produce:** A non-localhost desk against a real environment, *this slice only*.
 
-**Must NOT introduce:** pretending this is production operations · shipping workers/queues here · Kubernetes
+**Must NOT introduce:** pretending this is production operations · shipping workers/queues here · Kubernetes · **real client data** · **live send capability** · a **sensitive unauthenticated surface** (no secrets, no PII, no “anyone on the internet writes the book”)
 
-**Exit capability:** Can ship a simple slice and say what is *not* yet true of production delivery.
+**Exit capability:** Can ship a simple **synthetic** slice and say what is *not* yet true of production delivery. Can say why this URL must not be treated as a product.
 
 **Next pressure:** “Tuesday at 9 AM” is about to become a send. That is not an instant until you know where Tuesday is.
 
@@ -1303,31 +1306,31 @@ Destination fragment: reuse, software that verifies software, named shapes, a re
 
 ---
 
-### TC-42 — Durable work, and starting the system
+### TC-42 — Durable work
 
-**Destination:** Work outside a request survives process death. **Local multi-service orchestration** exists: API + Postgres + Redis + worker.
+**Destination:** Work outside a request survives process death. **Compose grows:** the TC-27 file (Postgres + API) gains **Redis + worker**. CI understands worker/Redis as needed.
 
 **Prerequisites:** TC-0 → TC-41
 
-**Construction:** Jobs on **Redis + BullMQ**. Retries, backoff, idempotency. **Docker Compose** for local dependencies/runtime: `docker compose up` is how this system starts — not magic, not a container-engineering course. Production image layering is TC-64.
+**Construction:** Jobs on **Redis + BullMQ**. Retries, backoff, idempotency. Add services to the **existing** Compose file — do not invent Compose here. Production image layering remains TC-64.
 
-**Forces:** The learner has felt why the timer was insufficient. Postgres + Redis + API + worker is already several processes. Waiting twenty cycles to start them consistently is the CI-late mistake again.
+**Forces:** The learner has felt why the timer was insufficient. Redis + worker are new processes; orchestration already existed for Postgres + API.
 
-**Concepts expected:** queue · job · worker process · retry · backoff · idempotency · **compose service** · volume · port mapping · **Spine (systems):** Compose isolates processes you can already name
+**Concepts expected:** queue · job · worker process · retry · backoff · idempotency · **Spine (systems):** a worker dying is a process dying
 
-**Technologies touched:** **Redis** · **BullMQ** · **Docker Compose** (local) · Node
+**Technologies touched:** **Redis** · **BullMQ** · Docker Compose **already owned** · Node · GitHub Actions grown if a job invariant belongs on push
 
-**Syntax families:** enqueue · worker handler · retry/backoff · idempotency key · a `compose.yaml` for API + Postgres + Redis + worker
+**Syntax families:** enqueue · worker handler · retry/backoff · idempotency key · compose services for Redis + worker added to the existing file
 
-**Production bridge:** **Redis + BullMQ** + **Compose as local orchestration.**
+**Production bridge:** **Redis + BullMQ.** Compose fluency continues (growth, not discovery).
 
-**Bridge proof:** Kill the API process; the job still exists to run. `compose down` / `up` on a clean state runs the desk and one job. Point at the in-process timer and say what it could not do.
+**Bridge proof:** Kill the API process; the job still exists to run. `compose up` still starts the system — now including Redis + worker. Point at the in-process timer and say what it could not do. Point at TC-27 Compose and say what was added.
 
-**Must produce:** A due reminder after restart. A failure that retries. Compose as the start command. Notes: this is not a production image lesson.
+**Must produce:** A due reminder after restart. A failure that retries. Notes: this is not a production image lesson.
 
-**Must NOT introduce:** live Twilio as the job body · Kubernetes · multi-stage image fluency (TC-64)
+**Must NOT introduce:** live Twilio as the job body · Kubernetes · multi-stage image fluency (TC-64) · a second compose stack as a personality
 
-**Exit capability:** Explain why the timer was insufficient. Make a job idempotent. Start the multi-service system with Compose.
+**Exit capability:** Explain why the timer was insufficient. Make a job idempotent. Grow Compose instead of rediscovering it.
 
 **Next pressure:** One later send is not a mission.
 
@@ -2197,9 +2200,9 @@ Late cycles **deepen practices already lived**. They do not introduce CI, tests,
 
 **Prerequisites:** TC-0 → TC-71
 
-**Construction:** (1) Convergence against [`DESTINATION.md`](./DESTINATION.md) — mechanisms, not lockfile archaeology. (2) Transfer: foreign intention; name information / state / relationships / behavior / boundaries / mechanisms **before** writing; choose and wield a stack; construct, verify, ship-or-say-how-to-ship.
+**Construction:** (1) Convergence against [`DESTINATION.md`](./DESTINATION.md) — mechanisms, not lockfile archaeology. (2) Transfer: foreign intention; name information / state / relationships / behavior / boundaries / mechanisms **before** writing; choose and wield a stack; **construct it, encode its important invariants, run them in CI, and deploy at least one working environment that is not localhost.** Demonstrate one observable failure or operational signal appropriate to its scope (a log line, a health check, a red CI, a trace — whatever the product actually has). If the product does not need a worker, do not invent one. If it does not need Redis, do not add Redis to pass the exam.
 
-**Forces:** Fluency in one building is not the bar.
+**Forces:** Fluency in one building is not the bar. “I know how I would deploy this” is not shipping. By TC-72 the learner has deployed twice, grown CI, built images, and operated logs.
 
 **Concepts expected:** convergence · transfer · class of system
 
@@ -2209,9 +2212,9 @@ Late cycles **deepen practices already lived**. They do not introduce CI, tests,
 
 **Production bridge:** Graduation.
 
-**Must produce:** Written convergence. Then a small product not in Tower, with tests, with a named deploy path.
+**Must produce:** Written convergence. Then a small product not in Tower: tests, CI green on those tests, **a non-localhost URL (or equivalent running environment)**, and one operational signal. “A named deploy path” without a deploy does **not** pass.
 
-**Must NOT introduce:** Hub as the finish · matching Tower’s React 18 / Vite 6 pins · “I would use Next for everything” as a personality · Kubernetes/Kafka/GraphQL as competence theater
+**Must NOT introduce:** Hub as the finish · matching Tower’s React 18 / Vite 6 pins · “I would use Next for everything” as a personality · Kubernetes/Kafka/GraphQL as competence theater · inventing Tower’s whole infrastructure for a product that does not need it
 
 **Exit capability:**
 
@@ -2241,3 +2244,4 @@ Determines what needs to exist. The agent is no longer the source of the constru
 | 1 | 2026-10-05 | Chapter path: `book/epoch-<k>/tc-<n>.md`. |
 | 2 | 2026-10-05 | Production Bridge law. TECHNOLOGY-MAP. TC-0–2 stable. ~65 cycles. |
 | 3 | 2026-10-05 | Founder review of PR #123. Node toolchain ≠ Node application; Tailwind TC-4 = standalone CLI. CI/lint/Playwright/Compose/deploy as growing practices, not late discoveries. Git, systems, networking, accessibility spines. Time-as-data (TC-40). Pagination vertical (TC-33). Schema evolution (TC-25). OIDC contrast (TC-54). Base UI default. Pino before OTel. Frontend performance (TC-69). Early deploy (TC-39) then full delivery (TC-66). Cohort pin + upgrade exam (TC-71). Audits at TC-72. |
+| 3 | 2026-10-05 | **Seams locked.** TC-19 = browser persistence (`localStorage`). TC-20–26 = Postgres ledger from terminal/one-shot; SPA does not talk to it. Desk-as-query operational at TC-27. CI gains Postgres at TC-20–22 (ledger invariants); TC-27 adds API integration. Compose begins TC-27 (Postgres+API); TC-42 grows Redis+worker. TC-39 synthetic/non-sensitive. TC-72 transfer must actually leave localhost. |

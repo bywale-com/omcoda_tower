@@ -46,7 +46,7 @@ Current Tower is a **convergence test** of the *class of system*. A **transfer a
 | **Break** | Remove the mechanism. If a bridge was due: drop to the rudiment and still cause the capability. |
 | **Diagnose** | Broken *relationship*, not missing character — unless the character *is* the relationship. Exit codes, ports, and CI red are relationships. |
 | **Reconstruct** | Cause it again without yesterday’s files. Production syntax too, if the bridge has been crossed. |
-| **Transfer** | Near-neighbor intention. At TC-72: a product not in Tower, choosing a stack on purpose. |
+| **Transfer** | Near-neighbor intention. At TC-72: a product not in Tower, choosing a stack on purpose, **CI green, actually deployed off localhost**, one operational signal. |
 
 Transformation is the primary proof.
 
@@ -112,6 +112,8 @@ The evaluator judges pushed `my-work/` against that bar.
 - `setInterval` is still “what time is” after TC-40.
 - `localhost:3000` is still an incantation after TC-27.
 - Convergence claimed by matching Tower’s React 18 / Vite 6 pins.
+- Transfer claimed by naming a deploy path without deploying.
+- Wiring the SPA to Postgres before an HTTP process exists.
 - Equal fluency claimed in every primitive vendor.
 - Logo tourism (K8s, Kafka, GraphQL, six auth vendors) offered as competence.
 

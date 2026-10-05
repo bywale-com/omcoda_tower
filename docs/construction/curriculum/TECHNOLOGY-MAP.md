@@ -93,13 +93,13 @@ Arrival cycles match JOURNEY v3.
 | App logs | **Pino** (or equivalent) | `console.log` | structured logs as data | **TC-28** with Hono | Request/job ids *before* tracing |
 | API | **HTTP + REST + OpenAPI** | one GET | request/response | TC-31 | Publish and consume a contract |
 | List query | filter / sort / pagination | `SELECT *` | one intention across layers | **TC-33** | SQL → API params → OpenAPI → Query keys → URL |
-| Data | **PostgreSQL + SQL** | table, insert, select (TC-20) | constraints, tx, plans | TC-21–24 | Ledger without an ORM |
+| Data | **PostgreSQL + SQL** | table, insert, select from **terminal** (TC-20) | constraints, tx, plans, evolution | TC-21–25. SPA does not talk to Postgres until TC-27 | Ledger without an ORM |
 | Schema evolution | backfill / expand-contract | `CREATE TABLE` | existing rows change the construction | **TC-25** | Cannot just add `NOT NULL` |
-| DB abstraction | **Drizzle** | SQL by hand | the SQL it emits | TC-26 | Drop to SQL |
+| DB abstraction | **Drizzle** | SQL by hand | the SQL it emits | TC-26 **one-shot script** (Node host, not product) | Drop to SQL |
 | Files | **S3-compatible + signed URLs** | blob in memory | bytes that are not rows | TC-61 | No blobs in React state as the store |
 | Time as data | timestamptz, zones | `Date` / strings | instant ≠ wall clock ≠ duration | **TC-40** | UTC in ledger; zone at edge |
 | Jobs | tick → **Redis + BullMQ** | `setInterval` (TC-41) | work outside a request | TC-42 | Why the timer was insufficient |
-| Local orchestration | **Docker Compose** | many processes | start the system consistently | **TC-42** with the worker | `docker compose up` is not magic |
+| Local orchestration | **Docker Compose** | Vite + API + Postgres | start the local system | **TC-27** (Postgres + API); **TC-42 grows** Redis + worker | `docker compose up` is not magic |
 | Production images | **Docker** image/layers/health | Compose bind mounts | the artifact you ship | **TC-64** | Build vs runtime |
 | Messaging | **Twilio + Resend** | would-send row | live send, consent, halt | TC-55 | Send and forbid send |
 | Webhooks | signed ingest | events you emit | events the outside emits | TC-56 | Verify, retry, not double-apply |
@@ -156,7 +156,7 @@ Assumed as envelope: clone, edit, commit, push. **Not** assumed as craft. Force:
 
 ### Systems / tooling (when a process exists)
 
-Terminal, PATH, env vars, processes, PIDs, exit codes, signals, ports, stdin/stdout/stderr, pipes, `curl`, filesystem paths, permissions at useful depth, “which process owns this port?”, “what environment is this process reading?”, “what did this command return?”. TC-10: runner process and exit codes. TC-13: dev server port, env. TC-27: the app process. TC-41–42: a worker dying. Compose isolates what you can already name.
+Terminal, PATH, env vars, processes, PIDs, exit codes, signals, ports, stdin/stdout/stderr, pipes, `curl`, filesystem paths, permissions at useful depth, “which process owns this port?”, “what environment is this process reading?”, “what did this command return?”. TC-10: runner process and exit codes. TC-13: dev server port, env. TC-27: the app process; Compose starts Postgres + API. TC-41–42: a worker dying. Compose isolates what you can already name.
 
 ### Networking (beneath HTTP)
 
@@ -186,9 +186,11 @@ Standing. Elements TC-1. Console TC-5. Network TC-27. Storage persistence/sessio
 | Lint/format/typecheck scripts | TC-13 |
 | RTL | TC-17 |
 | **CI phase 1** (install → typecheck → lint → unit/UI) | **TC-18** |
-| CI + DB / integration | TC-27 era |
+| CI boots/migrates Postgres; ledger invariants | **TC-20–22** |
+| CI + API integration | **TC-27** |
 | MSW | TC-32 |
 | Playwright smoke + CI | TC-38 |
+| CI + worker/Redis as needed | TC-42 |
 | Playwright full + worker | TC-63 |
 | CI proves full system | TC-65 |
 | CD | TC-66 |
@@ -206,6 +208,10 @@ Do not start in **Next.js**. Do not rebuild Construction as a Next app.
 Do not require equal fluency in Base UI + Radix + React Aria + Ant.
 
 Do not add as mandatory: Kubernetes, Kafka, Terraform/OpenTofu, GraphQL, gRPC, three clouds, four state managers, six auth vendors.
+
+Do not teach a browser-to-Postgres driver. TC-19 is browser persistence. TC-20–26 are the ledger from the terminal. The desk becomes a view of the query at TC-27.
+
+Do not pass TC-72 with “a named deploy path.”
 
 That is logo tourism. The capability:
 
@@ -225,7 +231,7 @@ I can change it without fear.
 
 ## Explicitly not a first teacher
 
-Tailwind before TC-3. Package.json at TC-4. Drizzle before SQL. Query before `fetch`. BullMQ before the tick fails. React Flow before the graph is data. OTel as the first logger. CI as a late-book surprise. Next as the first stack. Native `Temporal` as the sole time answer.
+Tailwind before TC-3. Package.json at TC-4. Drizzle before SQL. Query before `fetch`. BullMQ before the tick fails. React Flow before the graph is data. OTel as the first logger. CI as a late-book surprise. Compose as a late-book surprise (it begins at TC-27). Next as the first stack. Native `Temporal` as the sole time answer. HTTP so the SPA can pretend to reach Postgres before TC-27.
 
 ---
 
@@ -235,3 +241,4 @@ Tailwind before TC-3. Package.json at TC-4. Drizzle before SQL. Query before `fe
 |---|---|---|
 | 2 | 2026-10-05 | Initial map with JOURNEY v2 (TC-0–64). |
 | 3 | 2026-10-05 | JOURNEY v3. Node split. Tailwind standalone CLI. Early CI/lint/Playwright/Compose/deploy. New spines. Cohort pin + TC-71 upgrade. Base UI default. Pino. Time/pagination/evolution/OIDC. |
+| 3 | 2026-10-05 | Seams locked: browser persistence; ledger-from-terminal; CI+Postgres at TC-20–22; Compose at TC-27 growing at TC-42; transfer must deploy. |

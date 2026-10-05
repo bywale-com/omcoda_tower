@@ -21,10 +21,10 @@ This folder is the **skeleton** of the Tower Construction repository. It is the 
 | 0 Appearance | TC-0–4 | `book/epoch-0/` | chain → occupant → CSS rudiment → layout → Tailwind **standalone CLI** |
 | 1 Information | TC-5–8 | `book/epoch-1/` | behavior → state → list/selection |
 | 2 Named constructions | TC-9–18 | `book/epoch-2/` | function → Vitest + **Node host** → component → TS arrives → React/Vite/lint → composition → shadcn/**Base UI** → Ant → RTL → **CI phase 1** |
-| 3 Book that outlives the page | TC-19–26 | `book/epoch-3/` | file → SQL → query-as-source → constraints → tx → plans → **schema evolution** → Drizzle |
-| 4 Ask / answer | TC-27–33 | `book/epoch-4/` | **Node as product** + raw HTTP → Hono + **Pino** → Zod → Query → OpenAPI → MSW → **filter/sort/page** |
+| 3 Book that outlives the page | TC-19–26 | `book/epoch-3/` | **localStorage** → SQL from the **terminal** → query-as-source (ledger) → constraints (**CI+Postgres**) → tx → plans → schema evolution → Drizzle script |
+| 4 Ask / answer | TC-27–33 | `book/epoch-4/` | **Node as product** + desk-as-query + **Compose (Postgres+API)** → Hono + **Pino** → Zod → Query → OpenAPI → MSW → **filter/sort/page** |
 | 5 Two faces, prove, ship a slice | TC-34–39 | `book/epoch-5/` | RR7 → token → close-the-loop → RHF → **Playwright smoke** → **early deploy** |
-| 6 Time, pursuit, goal | TC-40–45 | `book/epoch-6/` | **time as data** → tick → BullMQ + **Compose** → attempt → goal → sequence |
+| 6 Time, pursuit, goal | TC-40–45 | `book/epoch-6/` | **time as data** → tick → BullMQ + **Compose grows Redis/worker** → attempt → goal → sequence |
 | 7 When → do → handle | TC-46–49 | `book/epoch-7/` | event → write-set → fork → walker as data |
 | 8 Authoring faces | TC-50–52 | `book/epoch-8/` | click = configure → React Flow → Agents |
 | 9 Tenancy, gates, outside | TC-53–59 | `book/epoch-9/` | session → **OIDC contrast** → Twilio/Resend → webhooks → Test/Run/Launch → Get/Rule/Wait → Local |

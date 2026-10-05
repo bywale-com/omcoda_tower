@@ -53,7 +53,7 @@ That class is not the whole of product engineering. Practices start in the middl
 ## Two audits (TC-72)
 
 1. **Convergence.** Account for and reconstruct the important **mechanisms** represented by current Tower. Versions need not match Tower. Cohort pins need not match “today’s latest.” Leftovers stay leftovers.
-2. **Transfer.** A small product that does **not** exist in Tower. Without Tower as a template: information, state, relationships, behavior, boundaries, mechanisms — then **choose a stack** from the map for a reason, construct it, verify it, and name how it ships and is observed.
+2. **Transfer.** A small product that does **not** exist in Tower. Without Tower as a template: information, state, relationships, behavior, boundaries, mechanisms — then **choose a stack** from the map for a reason, construct it, encode important invariants, **run them in CI**, **deploy at least one working environment that is not localhost**, and demonstrate one operational signal appropriate to its scope. “I know how I would deploy this” does not pass. Do not invent Tower’s whole infrastructure for a product that does not need it.
 
 Transfer is graduation. Convergence without transfer is fluency in one building. Transfer without the underneath is a bootcamp.
 
@@ -98,7 +98,7 @@ By TC-72 the learner must have *used*, not merely named:
 | Time | timestamptz / zone / duration before ticks and queues |
 | Work | in-process tick, then Redis + BullMQ; webhooks |
 | Verify | Vitest, RTL, MSW, Playwright smoke then full; **CI from TC-18**, grown to full-system |
-| Operate | Compose locally when multi-service; images later; early slice deploy then full delivery; OTel over existing logs; recover; load (query *and* desk); repo standards; one upgrade |
+| Operate | Compose locally from first API+Postgres; images later; early **synthetic** slice deploy then full delivery; OTel over existing logs; recover; load (query *and* desk); repo standards; one upgrade |
 | Contrast | one Next.js slice after the explicit stack; one OIDC mapping after first-party sessions |
 | Craft | Git, systems/tooling, networking, accessibility as spines |
 
