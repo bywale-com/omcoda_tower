@@ -1952,7 +1952,7 @@ Late cycles **deepen practices already lived**. They do not introduce CI, tests,
 
 **Exit capability:** Protect a cross-process workflow, including the worker.
 
-**Next pressure:** Compose starts the system. A **production image** is a different construction.
+**Next pressure:** Compose already starts the system. A **production image** is a different construction.
 
 ---
 
