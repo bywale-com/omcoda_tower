@@ -1,6 +1,6 @@
 # COVERAGE — every PDF page has an address
 
-**Law:** If it is on a slide, it needs an address. Nothing silently disappears. Nothing is added from general C#.
+**Law (EXAM):** if it is on a slide, it needs an address. This file is the **assessment** map. Explanation that is not on the slides lives in [`FOUNDATION-MAP.md`](./FOUNDATION-MAP.md).
 
 **Buckets**
 
@@ -114,13 +114,15 @@
 
 ---
 
-## Closed-world exclusions (do not teach)
+## Exam-lane exclusions (do not drill / do not mix-exam)
 
-These are **true C#** in the world and **illegal here** because the PDFs do not teach them:
+True in C#, **not** on these PDFs as test items:
 
-- Prefix vs postfix **expression value** (`WriteLine(n++)` vs `++n` printing different numbers). The PDF only shows both as `someValue = someValue + 1`.
-- “Console host looks for `Main`.” The PDF: every console application must have `Main()`; `void` returns nothing.
-- `if`, loops, arrays, GUI, methods you write besides `Main`, later chapters.
+- Prefix vs postfix **expression value** (`WriteLine(n++)` vs `++n`). The PDF only shows both as `someValue = someValue + 1`.
+- “Console host looks for `Main`.” **EXAM:** every console application must have `Main()`; `void` returns nothing. **FOUNDATION (C0):** static entry point — that is allowed explanation, not extra exam lore.
+- `if`, loops, arrays, GUI, methods you write besides `Main`, later chapters, top-level statements as the course shape.
+
+Foundation **may** explain class, `static`, property vs method, nested calls. It may **not** expand the mixed exams.
 
 ---
 
@@ -128,6 +130,7 @@ These are **true C#** in the world and **illegal here** because the PDFs do not 
 
 | Artifact | Job |
 |---|---|
+| [`FOUNDATION-MAP.md`](./FOUNDATION-MAP.md) | Explanatory spine (not mixed-exam) |
 | [`EXAM-SURFACE.md`](./EXAM-SURFACE.md) | Full retrieval lists and tables |
 | [`book/MIXED-EXAM-1.md`](./book/MIXED-EXAM-1.md) | Closed-book, no cycle labels |
 | Review misses only | |

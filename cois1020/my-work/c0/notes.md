@@ -11,11 +11,15 @@
 - What the machine did:
 - Why it waited:
 
-## 0.2 semicolon prediction
+## 0.2 — file / source / program / compiled / running
 
-- Predicted:
-- Happened:
+## 0.6 predictions then results
+
+- A string change:
+- B missing semicolon:
+- C rename class:
+- D omit public on class:
+- E class not static, Main still static:
+- F Main not static:
 
 ## Reconstruct
-
-(done / not)

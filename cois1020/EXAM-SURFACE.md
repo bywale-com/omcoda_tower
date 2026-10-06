@@ -2,7 +2,9 @@
 
 Cram **after C11**, then sit the mixed exams. If a row is foggy, rebuild that cycle — do not only reread.
 
-Every table below is on a slide. Retrieve it. See [`COVERAGE.md`](./COVERAGE.md).
+This file is **EXAM lane only**. Foundation (what is a class, static vs instance, property vs method) lives in [`FOUNDATION-MAP.md`](./FOUNDATION-MAP.md) and the chapters. Do not treat those as extra exam items.
+
+Every **table** below is on a slide. Retrieve it. See [`COVERAGE.md`](./COVERAGE.md).
 
 ---
 

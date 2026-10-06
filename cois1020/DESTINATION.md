@@ -19,6 +19,7 @@ I can retrieve the slide tables (types, formats, escapes, Convert, comparisons, 
 I can tell syntax error from logic error.
 I can answer mixed questions that do not name the chapter.
 I can answer the slides’ True/False and fill-ins without the PDF open.
+I can read every token I had to type (class, static, property vs method, nested Convert, …). Those meanings are not extra exam items. They are why the exam syntax is not an incantation.
 ```
 
 When the test is over, move this folder out of the Tower repo. It is not part of Tower Construction.

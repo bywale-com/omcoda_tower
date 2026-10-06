@@ -1,10 +1,10 @@
 # JOURNEY — cycle contracts
 
-**Version:** 2  
-**Closed:** Chapters 1 and 2 of the PDFs in `source/` only.  
-**Coverage:** [`COVERAGE.md`](./COVERAGE.md) is the page index. Do not drop a table row because “they probably won’t ask.”
+**Version:** 3  
+**Assessment universe:** Chapters 1 and 2 of the PDFs in `source/` only. [`COVERAGE.md`](./COVERAGE.md) · [`EXAM-SURFACE.md`](./EXAM-SURFACE.md).  
+**Explanatory universe:** [`FOUNDATION-MAP.md`](./FOUNDATION-MAP.md). The PDFs do **not** cap what you may understand.
 
-Advance when **exit capability** is met and **next pressure** is visible. All chapters already exist because the test is the whole two PDFs.
+Advance when **exit capability** is met (exam **and** no remaining magic for this cycle’s syntax) and **next pressure** is visible.
 
 ---
 
@@ -16,35 +16,38 @@ Advance when **exit capability** is met and **next pressure** is visible. All ch
 | **Prerequisites** | Prior exits that must be stable |
 | **Construction** | What is built |
 | **Forces** | Why the previous program is not enough |
-| **Concepts expected** | Slide names, attached **after** the phenomenon |
+| **Concepts expected** | **EXAM** names, attached after the phenomenon |
+| **Foundation** | **FOUNDATION** lane — owned this cycle; not mixed-exam |
 | **Must produce** | Observable outcome |
-| **Must NOT introduce** | Hard boundary, including general-C# the PDF omitted |
-| **Exit capability** | Ready for the next cycle *and* that slice of the test |
+| **Must NOT introduce (exam)** | Do not add to the test surface |
+| **Exit capability** | Ready for the next cycle *and* that slice of the test; tokens of this cycle are not boilerplate |
 | **Next pressure** | Why the following cycle exists |
 
 ---
 
 ## Epoch 0 — A first program (PDF 1)
 
-### C0 — Run
+### C0 — A program begins
 
-**Destination:** The smallest causal chain from a `.cs` file to a line on the console.
+**Destination:** The smallest causal chain from a `.cs` file to a line on the console — and no token in the slide program remains boilerplate.
 
 **Prerequisites:** None.
 
-**Construction:** A public static class with `Main` that writes one literal string and waits (`ReadLine` holds the Windows screen — SOURCE p.26).
+**Construction:** The lab-shape program (PDF p.31). Then read file/source/program/compile/run; class; method; entry point; one statement. FOUNDATION experiments: rename class; omit `public` on class; non-static class + static `Main`; drop `static` from `Main`.
 
 **Forces:** Nothing authored is being compiled into a running program.
 
-**Concepts expected:** computer program / software · source · `Main` · `void` · `WriteLine` · literal string · console application · curiosity, patience, practice · face errors
+**Concepts expected (EXAM):** computer program / software · source · `Main` · `void` · `WriteLine` · literal string · argument · console application · curiosity, patience, practice · face errors
 
-**Must produce:** `constructions/c0/Program.cs` in the lab shape (PDF p.31). Run it. Face one syntax error and fix it.
+**Foundation:** file vs source vs program vs compiled result vs process · class/type · `public` · `static` (class vs `Main`) · instance vs type · method/function · entry point · `void` · parameter list vs argument · braces · statement · semicolon · namespace · `.` · method call · compile vs run
 
-**Must NOT introduce:** identifier convention tables, IL/JIT names, variables, `using` as a lesson, “console host.”
+**Must produce:** `constructions/c0/Program.cs` in the lab shape. Run it. Face a missing-semicolon syntax failure. Complete 0.6 D–F (or written predictions + compile results).
 
-**Exit capability:** From a blank file, write `Main` + `System.Console.WriteLine`, compile, run, see the line.
+**Must NOT introduce (exam):** identifier convention tables, IL/JIT names, variables, `using` as a lesson, top-level statements as the course shape.
 
-**Next pressure:** The file is made of parts the test will ask you to name.
+**Exit capability:** From a blank file, write the slide program, compile, run. Point at every token and say what it does (foundation). Know which words are load-bearing for starting (`static` on `Main`) vs slide clothing (`static` on the class).
+
+**Next pressure:** The test will also ask identifier **rules**, comments, and `using`.
 
 ---
 
@@ -62,7 +65,7 @@ Advance when **exit capability** is met and **next pressure** is visible. All ch
 
 **Must produce:** labeled program + notes that classify at least two names from each of Tables 1-2, 1-3, 1-4.
 
-**Must NOT introduce:** “console host”; variables as storage; Ch 2 types.
+**Must NOT introduce (exam):** “console host” as exam lore; variables as storage; Ch 2 types. (FOUNDATION entry point already C0.)
 
 **Exit capability:** Given a printed program, label the p.11 tokens. Switch `System.Console` vs `using System`. Invent a conventional name; reject an illegal one; flag an unconventional-but-legal one.
 
@@ -105,6 +108,8 @@ Advance when **exit capability** is met and **next pressure** is visible. All ch
 **Forces:** Literal strings cannot hold a changing number.
 
 **Concepts expected:** literal constant · variable · data type · declaration · format string · placeholder
+
+**Foundation:** type vs identifier vs `=` vs literal vs `;` · declaration vs initialization vs assignment · expression vs statement · named location in memory
 
 **Must produce:** number alone; sentence with `{0}`; three ints width 5.
 
@@ -212,7 +217,9 @@ Advance when **exit capability** is met and **next pressure** is visible. All ch
 
 **Construction:** Amy/Matthew `==` program; Alaa/John CompareTo; `"water".Length`; Substring(0,1)/(0,2)/(1,2) as the figure. Note the figure’s last two lines are marked wrong on the slide.
 
-**Must NOT introduce:** ReadLine as typed input.
+**Must NOT introduce (exam):** ReadLine as typed input.
+
+**Foundation:** static method vs instance method · property vs method (`Length` has no `()`) · zero-based position
 
 **Exit capability:** Quote rules. Equals → bool. CompareTo negative/zero/positive. Length of water is 5. Substring(start, length) on the figure’s first three lines.
 
@@ -228,7 +235,9 @@ Advance when **exit capability** is met and **next pressure** is visible. All ch
 
 **Construction:** Name prompt; tax via string then `Convert.ToDouble`; nested `Convert.ToDouble(Console.ReadLine())`. Rate is an ordinary variable (`double taxRate = 0.06;`). Recite **Table 2-6**.
 
-**Must NOT introduce:** `const` / named constants. Inventing Convert methods not on the table.
+**Must NOT introduce (exam):** `const` / named constants. Inventing Convert methods not on the table.
+
+**Foundation:** nested calls · return value as argument · `Convert` as a type with static methods
 
 **Exit capability:** Why a `double` cannot be assigned `ReadLine()` directly. `ToDouble`, `ToInt32`, `ToBoolean`, `ToDecimal`, `ToSingle`, unsigned `ToUInt32`, `ToString`, `ToChar`, `ToByte`, `ToSByte`, `ToInt16`/`ToInt64`/`ToUInt16`/`ToUInt64` as the table names them.
 
@@ -244,7 +253,9 @@ Advance when **exit capability** is met and **next pressure** is visible. All ch
 
 **Construction:** Rebuild C10’s tax with `const double TAX_RATE = 0.06;` (pressure: this fact must not change). Also `const int INCHES_IN_A_FOOT = 12;`. Self-documenting multiply. Attempt to assign to the const; compile fails.
 
-**Must NOT introduce:** anything outside Ch 2.
+**Must NOT introduce (exam):** anything outside Ch 2.
+
+**Foundation:** mutable binding vs `const` · compile-time enforcement
 
 **Exit capability:** Knowledge check 1–4 from memory. Self-documenting example. `const` naming convention.
 
