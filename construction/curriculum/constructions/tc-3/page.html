@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <title>TC-3</title>
+        <style>
+            .box{
+                display: flex;
+                background-color:blue;
+                /* width: 100px;
+                padding: 100px; */
+                border: 15px solid black;
+                margin: auto;
+                /* margin: 10px; */
+                
+            }
+
+            .box-styling{
+                border-right: dotted blueviolet ;
+                padding: 100px;
+                width: 100%;
+                text-align: center;
+            }
+
+            .box-styling:first-child{
+                border-left: dotted blueviolet;
+            }
+            
+            .box:nth-child(2){
+                background-color: brown;
+                flex-direction: column;
+            }
+
+            /* Because the second box is now in flex-direction: column, I need to re-apply the border and margin to 
+            look more appropriate */
+
+            
+            .box:nth-child(2) > .box-styling{
+                border: none;
+                border-bottom: dotted blueviolet;
+                text-align: center;
+            }
+            
+            .box:nth-child(3){
+                background-color:aqua;
+                flex-direction: row-reverse;
+            }
+        </style>
+    
+    </head>
+    <body>
+        <div class="box box-2 box-3">
+            <div class="box-styling">this is box1</div>
+            <div class="box-styling">this is box2</div>
+            <div class="box-styling">this is box3</div>
+        </div>
+        <div class="box box-2 box-3">
+            <div class="box-styling">this is box1</div>
+            <div class="box-styling">this is box2</div>
+            <div class="box-styling">this is box3</div>
+        </div>
+        <div class="box box-2 box-3">
+            <div class="box-styling">this is box1</div>
+            <div class="box-styling">this is box2</div>
+            <div class="box-styling">this is box3</div>
+        </div>
+    
+
+    </body>
+</html>
