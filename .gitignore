@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
 
+# Tailwind standalone CLI binary (TC-4) — do not commit
+construction/curriculum/constructions/tc-4/tailwindcss*
+
 # Build output
 dist/
 dist-ssr/

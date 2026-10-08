@@ -14,7 +14,7 @@ This folder is the **skeleton** of the Tower Construction repository. It is the 
 **Node:** toolchain host ≠ application runtime.  
 **Pin:** current stable at first bridge for this JOURNEY cohort; then pin; upgrades are deliberate.
 
-`book/epoch-<k>/` holds every **chapter in that epoch**. `constructions/tc-N/` and `my-work/tc-N/` are keyed by **cycle**.
+`book/epoch-<k>/` holds every **chapter in that epoch**. `constructions/tc-N/` holds the construction **and** notes / evaluation for that cycle. Do not revive `my-work/`.
 
 | Epoch | Cycles | Folder | Fragment |
 |---|---|---|---|
@@ -33,6 +33,6 @@ This folder is the **skeleton** of the Tower Construction repository. It is the 
 
 **JOURNEY version:** 3. TC-0–2 are stable. Do not regenerate them. Tailwind is TC-4 via standalone CLI — no `package.json` in that chapter.
 
-**Reached:** [TC-3](./book/epoch-0/tc-3.md). Work it alone. Push `constructions/tc-3/page.html` and `my-work/tc-3/notes.md`.
+**Reached:** [TC-4](./book/epoch-0/tc-4.md). Work it alone. Push `constructions/tc-4/page.html`, `input.css`, `output.css`, and `notes.md`. Do not push the CLI binary.
 
-**Validated:** [TC-0](./my-work/tc-0/evaluation.md) · [TC-1](./my-work/tc-1/evaluation.md) · [TC-2](./my-work/tc-2/evaluation.md).
+**Validated:** [TC-0](./constructions/tc-0/evaluation.md) · [TC-1](./constructions/tc-1/evaluation.md) · [TC-2](./constructions/tc-2/evaluation.md) · [TC-3](./constructions/tc-3/evaluation.md).
