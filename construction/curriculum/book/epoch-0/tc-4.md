@@ -2,7 +2,7 @@
 
 Generated from your TC-3 work. Work this chapter alone. Push when you are done.
 
-You already arrange with CSS. `.container` is a **grid parent** of three `.box` children. Padding, border, and margin are on the box. Color is not layout. Do not prove those again.
+You already arrange with CSS. `.container` is a **grid parent** of three `.box` children (`tc-3/page.html`). You also have a **flex parent** of four sibling boxes (`tc-3/flex.html`: `display: flex` + `flex-direction: row` on the parent). Padding, border, and margin are on the box. Color is not layout. Do not prove those again. Do not prove flex again.
 
 This cycle is the **production vocabulary for the same mechanisms** — not a new kind of page.
 
@@ -14,11 +14,11 @@ Tailwind’s usual install (Vite plugin, `node_modules`) is real. It is **TC-13*
 
 ## Leftover (one)
 
-Your grid works because **the element with `display: grid` is the parent of the things being arranged**.
+You already wrote `.container { display: flex; flex-direction: row }` with four children. Arrangement sits on the **parent of the siblings**. Grid in `page.html` is the same shape with a different `display`.
 
-In TC-3 notes you put `display: flex` on a class around a single labeled `div`. There were no sibling children for that flex container to arrange. That is the same shape as TC-2’s `flex: auto` on a lonely box.
+This cycle does not ask you to discover flex. It asks you to **name the utility that compiles to that declaration**.
 
-In `construction/curriculum/constructions/tc-4/notes.md`, before 4.1: which element in `tc-3/page.html` is the parent of the three boxes? If you had used flex for that row, which element would get `display: flex`? If you don’t know, say that — then look at the tree, not at a catalog.
+In `construction/curriculum/constructions/tc-4/notes.md`, before 4.1: in `flex.html`, which selector got `display: flex`? When a class name on that occupant *means* `display: flex`, what still has to happen before the browser sees CSS? If you don’t know, say that — then look at the tree, not at a catalog.
 
 ---
 
@@ -75,6 +75,7 @@ Translate **your** rules, not a tutorial’s navbar.
 | Your CSS (TC-3) | You are looking for a utility that means this |
 |---|---|
 | `display: grid` | the name for that display |
+| `display: flex` | the name for that display (you already wrote this on a parent) |
 | `grid-template-columns: auto 1fr` | columns you can still count |
 | `padding: 100px` | padding — a scale name **or** an arbitrary value if the scale has no 100px |
 | `border: 15px solid black` | border |
@@ -88,7 +89,7 @@ If a utility name does nothing, diagnose like TC-3: wrong element, compiler not 
 
 **Drop to CSS once.** Your `.box:nth-child(2)` padding is a good candidate — a utility catalog may not be the point. A small extra CSS file, or a `@layer` / ordinary rule next to the import, that still applies after compile. Point at it: this is when the abstraction is insufficient. Do not drown the page in hand CSS again.
 
-One flex parent: two occupants as a **row** using the utility that means `display: flex`. That closes the leftover. Not a flex encyclopedia. `flex-col` (or the name your compile produced for column direction) is the stack.
+One flex parent **in utilities**: put the class that means `display: flex` on a parent of siblings (your four boxes, or two). You already know which element that is. Point at the compiled CSS. Not a flex encyclopedia. If you also want the stack, the name your compile produced for column direction is enough.
 
 ---
 
@@ -113,7 +114,7 @@ Without this chapter open:
 - a link from the HTML to that file
 - utilities that reproduce **your** grid parent and box spacing
 - one drop-through CSS rule
-- one flex-row parent
+- the utility that means `display: flex` on a parent of siblings (you already have the CSS)
 
 If you can say “Tailwind” and cannot show `display: grid` (or `display: flex`) in the compiled CSS, the cycle is not done.
 

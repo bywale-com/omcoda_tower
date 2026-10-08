@@ -4,7 +4,7 @@ Write in your words. Do not paste the chapter.
 
 ## Leftover
 
-Which element in the TC-3 tree is the parent of the three boxes? If that parent were flex, what declaration would it need?
+In `flex.html`, which selector got `display: flex`? When a class name on that occupant means `display: flex`, what still has to happen before the browser sees CSS?
 
 ## 4.1
 
@@ -24,7 +24,7 @@ Utilities I used for the grid parent:
 
 Drop to CSS (what, and why a utility wasn’t the point):
 
-Flex parent (which element):
+Utility that means `display: flex` (which occupant, compiled CSS):
 
 ## 4.4 Bridge proof
 
