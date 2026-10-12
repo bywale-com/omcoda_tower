@@ -1,0 +1,43 @@
+[
+  {
+    "id": "computed-index",
+    "occurrences": 472,
+    "fileCount": 135,
+    "examples": [
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 64,
+        "excerpt": "reversed[i]"
+      },
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 267,
+        "excerpt": "acc[r.class]"
+      },
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 267,
+        "excerpt": "acc[r.class]"
+      },
+      {
+        "file": "scripts/verify-boot-env.ts",
+        "line": 69,
+        "excerpt": "merged[k]"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-boot-env.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/machine.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/App.tsx",
+      "src/app/components/BoardPanel.tsx",
+      "src/app/components/ClientIcon.tsx",
+      "src/app/components/ClientPageHeader.tsx",
+      "src/app/components/ClientView.tsx",
+      "src/app/components/DataPanel.tsx"
+    ]
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "root": "/tmp/tower-main",
+  "commit": "48d4511",
+  "listed": 1081,
+  "scanned": 730,
+  "excluded": 351,
+  "failed": 0,
+  "syntaxEntries": 94,
+  "typeEntries": 40,
+  "jsxEntries": 7,
+  "importEntries": 2637,
+  "apiEntries": 4308,
+  "globalEntries": 70,
+  "sqlEntries": 15,
+  "cssEntries": 12
+}

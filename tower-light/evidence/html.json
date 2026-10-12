@@ -1,0 +1,86 @@
+[
+  {
+    "id": "HTML-link-icon",
+    "occurrences": 2,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "index.html",
+        "line": 9,
+        "excerpt": "rel=\"icon\""
+      },
+      {
+        "file": "prototype-ant.html",
+        "line": 7,
+        "excerpt": "rel=\"icon\""
+      }
+    ],
+    "filesSample": [
+      "index.html",
+      "prototype-ant.html"
+    ]
+  },
+  {
+    "id": "HTML-meta-viewport",
+    "occurrences": 2,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "index.html",
+        "line": 7,
+        "excerpt": "name=\"viewport\""
+      },
+      {
+        "file": "prototype-ant.html",
+        "line": 5,
+        "excerpt": "name=\"viewport\""
+      }
+    ],
+    "filesSample": [
+      "index.html",
+      "prototype-ant.html"
+    ]
+  },
+  {
+    "id": "HTML-root-div",
+    "occurrences": 2,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "index.html",
+        "line": 18,
+        "excerpt": "id=\"root\""
+      },
+      {
+        "file": "prototype-ant.html",
+        "line": 20,
+        "excerpt": "id=\"root\""
+      }
+    ],
+    "filesSample": [
+      "index.html",
+      "prototype-ant.html"
+    ]
+  },
+  {
+    "id": "HTML-script-module",
+    "occurrences": 2,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "index.html",
+        "line": 19,
+        "excerpt": "<script type=\"module\""
+      },
+      {
+        "file": "prototype-ant.html",
+        "line": 21,
+        "excerpt": "<script type=\"module\""
+      }
+    ],
+    "filesSample": [
+      "index.html",
+      "prototype-ant.html"
+    ]
+  }
+]

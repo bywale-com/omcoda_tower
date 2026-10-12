@@ -1,0 +1,6734 @@
+[
+  {
+    "path": ".env.example",
+    "status": "scanned",
+    "kind": "config",
+    "bytes": 3265
+  },
+  {
+    "path": ".env.sandbox.example",
+    "status": "scanned",
+    "kind": "config",
+    "bytes": 2777
+  },
+  {
+    "path": ".git",
+    "status": "scanned",
+    "kind": "other",
+    "reason": "git metadata",
+    "bytes": 45
+  },
+  {
+    "path": ".github/workflows/prod-tick.yml",
+    "status": "scanned",
+    "kind": "config",
+    "bytes": 1045
+  },
+  {
+    "path": ".github/workflows/ship.yml",
+    "status": "scanned",
+    "kind": "config",
+    "bytes": 2623
+  },
+  {
+    "path": ".gitignore",
+    "status": "scanned",
+    "kind": "config",
+    "bytes": 762
+  },
+  {
+    "path": "AGENTS.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 6576
+  },
+  {
+    "path": "api/auth.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 152
+  },
+  {
+    "path": "api/ping.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 748
+  },
+  {
+    "path": "api/wire.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 152
+  },
+  {
+    "path": "ATTRIBUTIONS.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 290
+  },
+  {
+    "path": "claude-design-hero-trimmed.mp4",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "default_shadcn_theme.css",
+    "status": "scanned",
+    "kind": "css",
+    "bytes": 4319
+  },
+  {
+    "path": "deploy/tower-tick-worker.service",
+    "status": "scanned",
+    "kind": "config",
+    "bytes": 509
+  },
+  {
+    "path": "docker-compose.worker.yml",
+    "status": "scanned",
+    "kind": "config",
+    "bytes": 833
+  },
+  {
+    "path": "Dockerfile.worker",
+    "status": "scanned",
+    "kind": "config",
+    "bytes": 424
+  },
+  {
+    "path": "docs/build-foundation/00-rudiments.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 5424
+  },
+  {
+    "path": "docs/build-foundation/01-ui-first-and-how.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3797
+  },
+  {
+    "path": "docs/build-foundation/02-surface-registry.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3057
+  },
+  {
+    "path": "docs/build-foundation/03-visual-system.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3607
+  },
+  {
+    "path": "docs/build-foundation/04-flows-and-shipping.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2439
+  },
+  {
+    "path": "docs/build-foundation/05-register-augmented-build.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 18283
+  },
+  {
+    "path": "docs/build-foundation/06-parametric-elimination-applied.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 8066
+  },
+  {
+    "path": "docs/build-foundation/06-parametric-elimination.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3761
+  },
+  {
+    "path": "docs/build-foundation/07-overlay-escape.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2765
+  },
+  {
+    "path": "docs/build-foundation/08-outcome-so-that.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 4500
+  },
+  {
+    "path": "docs/build-foundation/cursor-rules/how-analysis.mdc",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1471
+  },
+  {
+    "path": "docs/build-foundation/cursor-rules/icons.mdc",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 929
+  },
+  {
+    "path": "docs/build-foundation/cursor-rules/overlay-escape.mdc",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 765
+  },
+  {
+    "path": "docs/build-foundation/cursor-rules/parametric-elimination.mdc",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1336
+  },
+  {
+    "path": "docs/build-foundation/cursor-rules/surface-registry.mdc",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1379
+  },
+  {
+    "path": "docs/build-foundation/cursor-rules/theme-tokens.mdc",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1090
+  },
+  {
+    "path": "docs/build-foundation/PROJECT-BRIEF.template.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 860
+  },
+  {
+    "path": "docs/build-foundation/README.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3765
+  },
+  {
+    "path": "docs/ideas/audit-module.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 5720
+  },
+  {
+    "path": "docs/ideas/tower-product-vision.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 4799
+  },
+  {
+    "path": "docs/method/00-INDEX.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 565
+  },
+  {
+    "path": "docs/method/DECISION-CONSTITUTION.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2648
+  },
+  {
+    "path": "docs/method/TWO-COLUMN-SYNTHESIS.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3760
+  },
+  {
+    "path": "docs/product/auth-service-contract.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 6721
+  },
+  {
+    "path": "docs/product/console-state.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 9735
+  },
+  {
+    "path": "docs/product/database-seeding-protocol.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2539
+  },
+  {
+    "path": "docs/product/engagement-chart-gantt-decisions.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3852
+  },
+  {
+    "path": "docs/product/immigration-rules-engine2-giveback.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 9136
+  },
+  {
+    "path": "docs/product/product-log-2026-06-13.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 6124
+  },
+  {
+    "path": "docs/product/PRODUCT-STATE-GUIDE.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 15290
+  },
+  {
+    "path": "docs/product/product-state-index.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2714
+  },
+  {
+    "path": "docs/product/psd/tower/PSD-tower-v0.1.0.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 25459
+  },
+  {
+    "path": "docs/product/psd/tower/PSD-tower-v0.2.0.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 16393
+  },
+  {
+    "path": "docs/product/psd/tower/PSD-tower-v0.3.0.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 16512
+  },
+  {
+    "path": "docs/product/psd/tower/PSD-tower-v0.4.0.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 16346
+  },
+  {
+    "path": "docs/product/psd/tower/screenshots/01-board-sarah-details.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/product/psd/tower/screenshots/02-hub-audits-sidebar.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/product/psd/tower/screenshots/03-hub-audit-detail-records.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/product/psd/tower/screenshots/04-contacts-directory.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/product/psd/tower/screenshots/05-console-holon-registry.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/product/psd/tower/screenshots/06-sarah-engagement-activity.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/product/psd/tower/screenshots/README.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 901
+  },
+  {
+    "path": "docs/product/register-augmented-build-bridge.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2172
+  },
+  {
+    "path": "docs/product/register-manager-prompt.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 18424
+  },
+  {
+    "path": "docs/product/systems-register.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 6552
+  },
+  {
+    "path": "docs/product/tasks/login-production-follow-ups.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 4206
+  },
+  {
+    "path": "docs/product/ui-first-build-methodology.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 20452
+  },
+  {
+    "path": "docs/README.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 33994
+  },
+  {
+    "path": "docs/register/AGENT-NOTIFY-CHANNEL.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1051
+  },
+  {
+    "path": "docs/register/agents-blueprint/C0-agents-global-settings-entry.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/agents-blueprint/C1-sequence-templates.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/agents-blueprint/C11-channel-attempt-variation.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/agents-blueprint/C13-sequence-activity.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/agents-blueprint/C14-sequence-settings-channel-rules.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/agents-blueprint/C15-channel-rules-one-timer.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/agents-blueprint/C2-add-objective-template.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/agents-blueprint/C2b-add-objective-scratch.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/agents-blueprint/C3-two-campaigns.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/agents-blueprint/C4-override-this.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/agents-blueprint/C5-content-toggle.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/agents-blueprint/C5b-content-toggle-closeup.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/agents-blueprint/C6-agents-settings-global.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/agents-blueprint/C7-sequence-settings.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/agents-blueprint/C8-sequence-contacts-enroll.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/agents-blueprint/C8b-select-from-list.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/agents-blueprint/C9-campaign-local-attempt-add-channel.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/AGENTS-FACE.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 28489
+  },
+  {
+    "path": "docs/register/AGENTS-SA-PACKAGE.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 6226
+  },
+  {
+    "path": "docs/register/AGENTS-UI-BLUEPRINT.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 22458
+  },
+  {
+    "path": "docs/register/APP-ELEVATION-GAP.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 4989
+  },
+  {
+    "path": "docs/register/AUTHOR-RUNTIME-CLOSED.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 4589
+  },
+  {
+    "path": "docs/register/automations-blueprint/A1-smallest-workflow.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/A10-output-classes-lattice.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/A11-rule-output-required-data-listing.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/A12-form-from-required-data.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/A13-lattice-required-data-listing.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/A14-action-assign-or-template.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/A15-blank-canvas-chain.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/A16-if-previous-result.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/A17-trigger-firm-provisioned.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/A18-trigger-global-local.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/A19-automations-contacts.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/A2-rule-gui.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/A3-rule-custom.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/a34-live-contacts.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/A4-gui-plus-named-code.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/A5-inside-trigger.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/A6-add-node.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/A7-action-two-kinds.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/A8-action-agents-objective.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/A9-rule-output-gap.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/add-tag-pass/01-add-tag-parameters.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/add-tag-pass/02-tag-picker-open.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/add-tag-pass/03-contact-empty.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/add-tag-pass/04-close-input.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/add-tag-pass/05-output.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/add-tag-pass/README.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 646
+  },
+  {
+    "path": "docs/register/automations-blueprint/in-app-action-pass/01-kind.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/in-app-action-pass/02-in-app-by-module.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/in-app-action-pass/03-book-readiness-start-audit.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/in-app-action-pass/04-contacts-confirm-book.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/in-app-action-pass/05-firms-provision.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/in-app-action-pass/06-output.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/in-app-action-pass/07-input-closed.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "docs/register/automations-blueprint/in-app-action-pass/README.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 544
+  },
+  {
+    "path": "docs/register/AUTOMATIONS-FACE.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 31512
+  },
+  {
+    "path": "docs/register/AUTOMATIONS-SA-PACKAGE.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 10321
+  },
+  {
+    "path": "docs/register/AUTOMATIONS-UI-BLUEPRINT.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 30726
+  },
+  {
+    "path": "docs/register/CLIENT-DATA-BIND.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3164
+  },
+  {
+    "path": "docs/register/CONTROLS-LEDGER.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 40792
+  },
+  {
+    "path": "docs/register/DATA-IN-TABLES.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2208
+  },
+  {
+    "path": "docs/register/DEPLOY-READINESS.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 6028
+  },
+  {
+    "path": "docs/register/enrichment/00-INDEX.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 897
+  },
+  {
+    "path": "docs/register/enrichment/consultant-cants.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 8691
+  },
+  {
+    "path": "docs/register/enrichment/contact-cants.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 9613
+  },
+  {
+    "path": "docs/register/enrichment/operator-cants.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 11480
+  },
+  {
+    "path": "docs/register/FACELESS-GAPS-CLOSED.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3769
+  },
+  {
+    "path": "docs/register/FIRM-BINDING.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3164
+  },
+  {
+    "path": "docs/register/furnish/00-INDEX.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 882
+  },
+  {
+    "path": "docs/register/furnish/consultant-furnish.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 11182
+  },
+  {
+    "path": "docs/register/furnish/contact-furnish.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 13858
+  },
+  {
+    "path": "docs/register/furnish/operator-furnish.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 13536
+  },
+  {
+    "path": "docs/register/how/00-INDEX.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 4011
+  },
+  {
+    "path": "docs/register/how/consultant-access.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3986
+  },
+  {
+    "path": "docs/register/how/consultant-core.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 11108
+  },
+  {
+    "path": "docs/register/how/consultant-governance.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3391
+  },
+  {
+    "path": "docs/register/how/contact-book.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3477
+  },
+  {
+    "path": "docs/register/how/contact-consent.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3041
+  },
+  {
+    "path": "docs/register/how/contact-refresh.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3398
+  },
+  {
+    "path": "docs/register/how/contact-silence.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1657
+  },
+  {
+    "path": "docs/register/how/operator-acquisition.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3586
+  },
+  {
+    "path": "docs/register/how/operator-activation-state.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1560
+  },
+  {
+    "path": "docs/register/how/operator-activation.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 5445
+  },
+  {
+    "path": "docs/register/how/operator-audit-trail.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2395
+  },
+  {
+    "path": "docs/register/how/operator-book-readiness.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2695
+  },
+  {
+    "path": "docs/register/how/operator-commercial.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2808
+  },
+  {
+    "path": "docs/register/how/operator-configuration-libraries.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 5535
+  },
+  {
+    "path": "docs/register/how/operator-firm-bind.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 4288
+  },
+  {
+    "path": "docs/register/how/operator-firm-health.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1576
+  },
+  {
+    "path": "docs/register/how/operator-founder-controls.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2572
+  },
+  {
+    "path": "docs/register/how/operator-oversight.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2290
+  },
+  {
+    "path": "docs/register/how/operator-provision.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2467
+  },
+  {
+    "path": "docs/register/how/operator-reference-data.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2510
+  },
+  {
+    "path": "docs/register/how/operator-register-evolution.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2928
+  },
+  {
+    "path": "docs/register/how/operator-support.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3605
+  },
+  {
+    "path": "docs/register/HUB-STRUCTURE-SYSTEM-BIND.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 22942
+  },
+  {
+    "path": "docs/register/IMAGE-CAPTION-AUDIT.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 32752
+  },
+  {
+    "path": "docs/register/IMPLEMENTER-FACE-PASS.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 16147
+  },
+  {
+    "path": "docs/register/IMPLEMENTER-UI-TESTS.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1754
+  },
+  {
+    "path": "docs/register/MAGIC-ACCESS-LINK.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1554
+  },
+  {
+    "path": "docs/register/MODULAR-CONTROL-MAP.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 4367
+  },
+  {
+    "path": "docs/register/OPERATOR-REVISIONS.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 11338
+  },
+  {
+    "path": "docs/register/ORCHESTRATION.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 6057
+  },
+  {
+    "path": "docs/register/OUTCOME-SYSTEM-MAP.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 9770
+  },
+  {
+    "path": "docs/register/OUTCOMES.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 8460
+  },
+  {
+    "path": "docs/register/PASS-FORK-MAP.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 11038
+  },
+  {
+    "path": "docs/register/personas.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 17866
+  },
+  {
+    "path": "docs/register/PHASE-TWO-LOG.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 93740
+  },
+  {
+    "path": "docs/register/PHASE-TWO.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 8478
+  },
+  {
+    "path": "docs/register/PLACEHOLDER-REAL-MAP.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 8944
+  },
+  {
+    "path": "docs/register/PLATE-CHROME-RULE.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1471
+  },
+  {
+    "path": "docs/register/PRIMITIVES.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 8799
+  },
+  {
+    "path": "docs/register/priors/00-INDEX.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1888
+  },
+  {
+    "path": "docs/register/priors/consultant.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 5816
+  },
+  {
+    "path": "docs/register/priors/contact-and-ct-chrome.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2237
+  },
+  {
+    "path": "docs/register/priors/operator-house.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1261
+  },
+  {
+    "path": "docs/register/priors/operator-libraries.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 5050
+  },
+  {
+    "path": "docs/register/PRODUCTION-WALK.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 5145
+  },
+  {
+    "path": "docs/register/PROTOTYPE-COHESION-ANALYSIS.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 8730
+  },
+  {
+    "path": "docs/register/PROTOTYPE-COHESION-PLAN.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 4821
+  },
+  {
+    "path": "docs/register/PROTOTYPE-ON-CANVAS-PLAN.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 19055
+  },
+  {
+    "path": "docs/register/SEED.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 32936
+  },
+  {
+    "path": "docs/register/SHIP-READINESS.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 4369
+  },
+  {
+    "path": "docs/register/SYSTEM-COMPONENT-MAP.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 26782
+  },
+  {
+    "path": "docs/register/system-map/ACTUATION-REPORT.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3965
+  },
+  {
+    "path": "docs/register/system-map/BUILD-interactive-system-map.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 11451
+  },
+  {
+    "path": "docs/register/system-map/BUILD-system-map-v2-table-inventory.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 6155
+  },
+  {
+    "path": "docs/register/system-map/BUILD-system-map-v3-templates-and-binding.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 8555
+  },
+  {
+    "path": "docs/register/system-map/CONTROLS-TABLES-RECONCILIATION.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1857
+  },
+  {
+    "path": "docs/register/system-map/END-TO-END-REPORT.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2882
+  },
+  {
+    "path": "docs/register/system-map/FROZEN-TABLES-v1.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 6294
+  },
+  {
+    "path": "docs/register/system-map/MODULARITY-REPORT.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3167
+  },
+  {
+    "path": "docs/register/system-map/RECONCILIATION-v1.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3001
+  },
+  {
+    "path": "docs/register/system-map/RESOLUTION-REPORT.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2841
+  },
+  {
+    "path": "docs/register/system-map/SCHEMA-REPORT.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 4460
+  },
+  {
+    "path": "docs/register/system-map/V2-BACKLOG.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2113
+  },
+  {
+    "path": "docs/register/system-map/V3-REPORT.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3219
+  },
+  {
+    "path": "docs/register/SYSTEMS-AGENTS-ASCRIBE.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 22806
+  },
+  {
+    "path": "docs/register/SYSTEMS-ANALYST-LOG.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 91384
+  },
+  {
+    "path": "docs/register/SYSTEMS-AUTOMATIONS-ASCRIBE.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 18659
+  },
+  {
+    "path": "docs/register/SYSTEMS-AUTOMATIONS-NODE-OUTPUT.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 6996
+  },
+  {
+    "path": "docs/register/SYSTEMS-CHANGE-PACKET-022.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 21339
+  },
+  {
+    "path": "docs/register/SYSTEMS-CHANGE-PACKET-023.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 7818
+  },
+  {
+    "path": "docs/register/SYSTEMS-GOAL.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 21861
+  },
+  {
+    "path": "docs/register/SYSTEMS-OBJECTIVE-ESCROW.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 7632
+  },
+  {
+    "path": "docs/register/SYSTEMS-REQUIREMENTS-FILLED.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 21523
+  },
+  {
+    "path": "docs/register/SYSTEMS-REQUIREMENTS.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 10411
+  },
+  {
+    "path": "docs/register/SYSTEMS-STORY.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 23769
+  },
+  {
+    "path": "docs/register/THREE-SURFACE-MODEL.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3278
+  },
+  {
+    "path": "docs/register/weak/00-INDEX.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1894
+  },
+  {
+    "path": "docs/register/weak/consultant.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1896
+  },
+  {
+    "path": "docs/register/weak/contact.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 534
+  },
+  {
+    "path": "docs/register/weak/operator-house.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1180
+  },
+  {
+    "path": "docs/register/weak/operator-libraries.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2649
+  },
+  {
+    "path": "docs/register/WORLD-CRAFT-ARCHIVE.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 27413
+  },
+  {
+    "path": "docs/register/WORLD.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 28537
+  },
+  {
+    "path": "docs/sme/AGENT-VS-HUMAN-PROVISIONING.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2244
+  },
+  {
+    "path": "docs/sme/capability/00-ROSTER.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 10531
+  },
+  {
+    "path": "docs/sme/capability/C1-email-deliverability.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 41075
+  },
+  {
+    "path": "docs/sme/capability/C2-agentic-engagement-runtime.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 44616
+  },
+  {
+    "path": "docs/sme/capability/C3-eligibility-reference-pipeline.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 39163
+  },
+  {
+    "path": "docs/sme/capability/C4-book-ingestion-identity.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 32847
+  },
+  {
+    "path": "docs/sme/capability/C5-forward-deploy-generation.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 41495
+  },
+  {
+    "path": "docs/sme/capability/C6-escrow-payment-mechanics.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 36821
+  },
+  {
+    "path": "docs/sme/capability/C7-instrumentation-analytics.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 38789
+  },
+  {
+    "path": "docs/sme/capability/CAPABILITY-CONSIDERATIONS.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 5881
+  },
+  {
+    "path": "docs/sme/CROSS-CUTTING.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 11078
+  },
+  {
+    "path": "docs/sme/DOCTRINE-sme-cto-implementation.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 8277
+  },
+  {
+    "path": "docs/sme/HANDOFF-ROUTING.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1494
+  },
+  {
+    "path": "docs/sme/HANDOFF.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 26659
+  },
+  {
+    "path": "docs/sme/implementation/00-INDEX.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1685
+  },
+  {
+    "path": "docs/sme/implementation/00-SURFACE-VOCAB.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2740
+  },
+  {
+    "path": "docs/sme/implementation/01-immigration-pathway-eligibility.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 24432
+  },
+  {
+    "path": "docs/sme/implementation/02-ircc-reference-data.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 21517
+  },
+  {
+    "path": "docs/sme/implementation/03-canadian-privacy-casl.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 21995
+  },
+  {
+    "path": "docs/sme/implementation/04-consultancy-desk-ops.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 15843
+  },
+  {
+    "path": "docs/sme/implementation/05-platform-ads-meta-trust.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 18784
+  },
+  {
+    "path": "docs/sme/implementation/06-payments-escrow.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 18088
+  },
+  {
+    "path": "docs/sme/implementation/07-consultancy-crm-book-connect.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 18343
+  },
+  {
+    "path": "docs/sme/implementation/CLICKPATH-DENSIFICATION.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 7122
+  },
+  {
+    "path": "docs/sme/implementation/DENSIFY-LAW.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1965
+  },
+  {
+    "path": "docs/sme/METHODOLOGY.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 16414
+  },
+  {
+    "path": "docs/sme/pass2/01-immigration-pathway-eligibility.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 32688
+  },
+  {
+    "path": "docs/sme/pass2/02-ircc-reference-data.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 27837
+  },
+  {
+    "path": "docs/sme/pass2/03-canadian-privacy-casl.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 24187
+  },
+  {
+    "path": "docs/sme/pass2/04-consultancy-desk-ops.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 29393
+  },
+  {
+    "path": "docs/sme/pass2/05-platform-ads-meta-trust.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 23332
+  },
+  {
+    "path": "docs/sme/pass2/06-payments-escrow.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 31395
+  },
+  {
+    "path": "docs/sme/pass2/07-consultancy-crm-book-connect.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 22321
+  },
+  {
+    "path": "docs/sme/ROSTER.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2341
+  },
+  {
+    "path": "docs/sme/SME-GRAPH.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 27087
+  },
+  {
+    "path": "docs/sme/SURFACE-INTENT.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3174
+  },
+  {
+    "path": "docs/wiring/00-INDEX.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1765
+  },
+  {
+    "path": "docs/wiring/CTO-THINK-STACK.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 4111
+  },
+  {
+    "path": "docs/wiring/external-models/00-INDEX.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 4441
+  },
+  {
+    "path": "docs/wiring/external-models/00-PASS-BRIEF.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3071
+  },
+  {
+    "path": "docs/wiring/external-models/01-runtime-and-engagement.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 16860
+  },
+  {
+    "path": "docs/wiring/external-models/02-send-enrich-ads.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 21827
+  },
+  {
+    "path": "docs/wiring/external-models/03-data-identity-money.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 20997
+  },
+  {
+    "path": "docs/wiring/external-models/04-CONTROL-RECONCILIATION.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 18583
+  },
+  {
+    "path": "docs/wiring/external-models/05-SENDING-IDENTITY-WALL.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 11075
+  },
+  {
+    "path": "docs/wiring/external-models/06-SMS-CANADA-GATE.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1277
+  },
+  {
+    "path": "docs/wiring/external-models/HUMAN-ONLY.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 9825
+  },
+  {
+    "path": "docs/wiring/FOUNDER-INPUT-CHECKLIST.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2263
+  },
+  {
+    "path": "docs/wiring/NODE-DEFINITION.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 7755
+  },
+  {
+    "path": "docs/wiring/paper-trace/_NODE-UNION-DRAFT.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 16120
+  },
+  {
+    "path": "docs/wiring/paper-trace/00-INDEX.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1985
+  },
+  {
+    "path": "docs/wiring/paper-trace/01-STEP1-STATUS.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1203
+  },
+  {
+    "path": "docs/wiring/paper-trace/CANONICAL-NODES.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 18322
+  },
+  {
+    "path": "docs/wiring/paper-trace/CANTS-AND-FURNISH.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 28019
+  },
+  {
+    "path": "docs/wiring/paper-trace/function/_SEED-NODES.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2640
+  },
+  {
+    "path": "docs/wiring/paper-trace/function/C1-email-deliverability.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 33306
+  },
+  {
+    "path": "docs/wiring/paper-trace/function/C2-agentic-engagement-runtime.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 33219
+  },
+  {
+    "path": "docs/wiring/paper-trace/function/C3-eligibility-reference-pipeline.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 28706
+  },
+  {
+    "path": "docs/wiring/paper-trace/function/C4-book-ingestion-identity.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 28912
+  },
+  {
+    "path": "docs/wiring/paper-trace/function/C5-forward-deploy-generation.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 24303
+  },
+  {
+    "path": "docs/wiring/paper-trace/function/C6-escrow-payment-mechanics.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 29218
+  },
+  {
+    "path": "docs/wiring/paper-trace/function/C7-instrumentation-analytics.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 29388
+  },
+  {
+    "path": "docs/wiring/paper-trace/HUMAN-PROVISIONING-SET.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 6363
+  },
+  {
+    "path": "docs/wiring/STANDIN-WIRING.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 4950
+  },
+  {
+    "path": "docs/wiring/wire-log/00-INDEX.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1333
+  },
+  {
+    "path": "docs/wiring/wire-log/CRM-OAUTH-META-CHIPS.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1197
+  },
+  {
+    "path": "docs/wiring/wire-log/GO-CUTOVER.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1583
+  },
+  {
+    "path": "docs/wiring/wire-log/HALT-OUTREACH.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 812
+  },
+  {
+    "path": "docs/wiring/wire-log/LOGIN-OTP.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1196
+  },
+  {
+    "path": "docs/wiring/wire-log/POOL-SEND-GATES.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1567
+  },
+  {
+    "path": "docs/wiring/WIRING-CRITICAL-INTERACTION.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 6496
+  },
+  {
+    "path": "docs/wiring/WIRING-METHOD.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 8851
+  },
+  {
+    "path": "guidelines/Activity.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 8921
+  },
+  {
+    "path": "guidelines/Guidelines.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2555
+  },
+  {
+    "path": "guidelines/Reactivation.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 11140
+  },
+  {
+    "path": "index.html",
+    "status": "scanned",
+    "kind": "html",
+    "bytes": 675
+  },
+  {
+    "path": "landingpage.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 8162
+  },
+  {
+    "path": "MODULES-ALIVE.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2846
+  },
+  {
+    "path": "package-lock.json",
+    "status": "scanned",
+    "kind": "other",
+    "reason": "lockfile internals",
+    "bytes": 290878
+  },
+  {
+    "path": "package.json",
+    "status": "scanned",
+    "kind": "config",
+    "bytes": 4873
+  },
+  {
+    "path": "pnpm-workspace.yaml",
+    "status": "scanned",
+    "kind": "config",
+    "bytes": 17
+  },
+  {
+    "path": "postcss.config.mjs",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 458
+  },
+  {
+    "path": "prototype-ant.html",
+    "status": "scanned",
+    "kind": "html",
+    "bytes": 689
+  },
+  {
+    "path": "public/assets/claude-design-hero-trimmed.mp4",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "public/assets/tower-by-omcoda-logo.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "public/tower-app-logo.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "README.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 4229
+  },
+  {
+    "path": "rules.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3077
+  },
+  {
+    "path": "scripts/bundle-vercel-api.mjs",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 999
+  },
+  {
+    "path": "scripts/check-access-table.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 377
+  },
+  {
+    "path": "scripts/close-walk-gaps.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 9233
+  },
+  {
+    "path": "scripts/copy-notion-icons.mjs",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 667
+  },
+  {
+    "path": "scripts/ensure-platform-admin.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1515
+  },
+  {
+    "path": "scripts/generate-holon-catalog-flat.mts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 677
+  },
+  {
+    "path": "scripts/generate-how-graphs.py",
+    "status": "scanned",
+    "kind": "other",
+    "reason": "python helper",
+    "bytes": 18481
+  },
+  {
+    "path": "scripts/issue-access-link.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1244
+  },
+  {
+    "path": "scripts/lift-active-halts.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 311
+  },
+  {
+    "path": "scripts/pgConnect.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 421
+  },
+  {
+    "path": "scripts/prod-otp-verify-once.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1264
+  },
+  {
+    "path": "scripts/read-latest-otp.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2084
+  },
+  {
+    "path": "scripts/restore-channel-order.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 481
+  },
+  {
+    "path": "scripts/run-migration.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1548
+  },
+  {
+    "path": "scripts/run-seed.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2382
+  },
+  {
+    "path": "scripts/sync-capability-sme-from-docs.py",
+    "status": "scanned",
+    "kind": "other",
+    "reason": "python helper",
+    "bytes": 10320
+  },
+  {
+    "path": "scripts/sync-how-from-docs.py",
+    "status": "scanned",
+    "kind": "other",
+    "reason": "python helper",
+    "bytes": 10364
+  },
+  {
+    "path": "scripts/sync-persona-cants-furnish-from-docs.py",
+    "status": "scanned",
+    "kind": "other",
+    "reason": "python helper",
+    "bytes": 10380
+  },
+  {
+    "path": "scripts/sync-sme-from-docs.py",
+    "status": "scanned",
+    "kind": "other",
+    "reason": "python helper",
+    "bytes": 21981
+  },
+  {
+    "path": "scripts/sync-wiring-paper-from-docs.py",
+    "status": "scanned",
+    "kind": "other",
+    "reason": "python helper",
+    "bytes": 17628
+  },
+  {
+    "path": "scripts/vercel-entries/auth.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 370
+  },
+  {
+    "path": "scripts/vercel-entries/fetchBridge.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3632
+  },
+  {
+    "path": "scripts/vercel-entries/wire.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 370
+  },
+  {
+    "path": "scripts/verify-access-link.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2264
+  },
+  {
+    "path": "scripts/verify-admin-consultants.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1658
+  },
+  {
+    "path": "scripts/verify-affordance-roundtrip.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 9838
+  },
+  {
+    "path": "scripts/verify-author-runtime.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6136
+  },
+  {
+    "path": "scripts/verify-automations-alive.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6651
+  },
+  {
+    "path": "scripts/verify-boot-env.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4166
+  },
+  {
+    "path": "scripts/verify-continuous-worker.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5676
+  },
+  {
+    "path": "scripts/verify-deny-gates.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2543
+  },
+  {
+    "path": "scripts/verify-firm-binding.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 11995
+  },
+  {
+    "path": "scripts/verify-machine-e2e.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7165
+  },
+  {
+    "path": "scripts/verify-modular-surfaces.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 15411
+  },
+  {
+    "path": "scripts/verify-production-walk.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 9933
+  },
+  {
+    "path": "scripts/verify-reference-persist.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2016
+  },
+  {
+    "path": "scripts/verify-session-firm.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6876
+  },
+  {
+    "path": "scripts/verify-ship-spine.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7613
+  },
+  {
+    "path": "scripts/verify-worker-actuation.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 10591
+  },
+  {
+    "path": "scripts/walk-verify-firm.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2538
+  },
+  {
+    "path": "server/auth-service/accessLinks.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1525
+  },
+  {
+    "path": "server/auth-service/app.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2135
+  },
+  {
+    "path": "server/auth-service/cors.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1213
+  },
+  {
+    "path": "server/auth-service/crypto.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 927
+  },
+  {
+    "path": "server/auth-service/db.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1810
+  },
+  {
+    "path": "server/auth-service/email.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2049
+  },
+  {
+    "path": "server/auth-service/index.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 868
+  },
+  {
+    "path": "server/auth-service/logger.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 457
+  },
+  {
+    "path": "server/auth-service/platformAdmin.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 279
+  },
+  {
+    "path": "server/auth-service/registerRoutes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3108
+  },
+  {
+    "path": "server/auth-service/routes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 16869
+  },
+  {
+    "path": "server/wire-service/app.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1166
+  },
+  {
+    "path": "server/wire-service/auditRun.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3687
+  },
+  {
+    "path": "server/wire-service/bootEnv.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2013
+  },
+  {
+    "path": "server/wire-service/campaignHousing.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 33661
+  },
+  {
+    "path": "server/wire-service/capabilities.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 886
+  },
+  {
+    "path": "server/wire-service/cascade.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 37924
+  },
+  {
+    "path": "server/wire-service/contactAccessMint.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1676
+  },
+  {
+    "path": "server/wire-service/contactSeat.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 25623
+  },
+  {
+    "path": "server/wire-service/db.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 66
+  },
+  {
+    "path": "server/wire-service/dispatchSend.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 10460
+  },
+  {
+    "path": "server/wire-service/eventTest.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 8904
+  },
+  {
+    "path": "server/wire-service/machine.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 73274
+  },
+  {
+    "path": "server/wire-service/operatorPanes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7471
+  },
+  {
+    "path": "server/wire-service/pool.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7579
+  },
+  {
+    "path": "server/wire-service/resendClient.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 388
+  },
+  {
+    "path": "server/wire-service/routes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 11383
+  },
+  {
+    "path": "server/wire-service/runWrites.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1543
+  },
+  {
+    "path": "server/wire-service/send.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3459
+  },
+  {
+    "path": "server/wire-service/sendMode.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1525
+  },
+  {
+    "path": "server/wire-service/sessionFirm.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3454
+  },
+  {
+    "path": "server/wire-service/stores.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 12041
+  },
+  {
+    "path": "server/wire-service/templateWalk.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4002
+  },
+  {
+    "path": "server/wire-service/twilioClient.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 800
+  },
+  {
+    "path": "server/wire-service/waitNote.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5656
+  },
+  {
+    "path": "server/wire-service/webhooks.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5213
+  },
+  {
+    "path": "server/wire-service/worker.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1585
+  },
+  {
+    "path": "server/wire-service/workflowWalk.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 71269
+  },
+  {
+    "path": "src/app/App.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 16669
+  },
+  {
+    "path": "src/app/auth/AccessEntry.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2460
+  },
+  {
+    "path": "src/app/auth/authClient.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4491
+  },
+  {
+    "path": "src/app/auth/AuthContext.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3389
+  },
+  {
+    "path": "src/app/auth/AuthGate.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 906
+  },
+  {
+    "path": "src/app/auth/platformAdmin.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 289
+  },
+  {
+    "path": "src/app/components/ActivityBar.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2914
+  },
+  {
+    "path": "src/app/components/ActivityBarHeader.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 9298
+  },
+  {
+    "path": "src/app/components/archive/NudgePopover.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 8050
+  },
+  {
+    "path": "src/app/components/BoardPanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 35685
+  },
+  {
+    "path": "src/app/components/client-portal/ClientEngagementCalendar.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 10785
+  },
+  {
+    "path": "src/app/components/client-portal/ClientPortalPage.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4877
+  },
+  {
+    "path": "src/app/components/ClientDataPage.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 604
+  },
+  {
+    "path": "src/app/components/ClientIcon.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1998
+  },
+  {
+    "path": "src/app/components/ClientPageHeader.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4432
+  },
+  {
+    "path": "src/app/components/ClientView.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 8017
+  },
+  {
+    "path": "src/app/components/contacts/ContactIndicatorIcon.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 909
+  },
+  {
+    "path": "src/app/components/contacts/ContactRow.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2018
+  },
+  {
+    "path": "src/app/components/contacts/ContactsBody.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3939
+  },
+  {
+    "path": "src/app/components/contacts/ContactsSectionHeader.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 729
+  },
+  {
+    "path": "src/app/components/contacts/directoryRowStyles.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1055
+  },
+  {
+    "path": "src/app/components/contacts/DirectorySectionHeader.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4284
+  },
+  {
+    "path": "src/app/components/contacts/ImportRow.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2545
+  },
+  {
+    "path": "src/app/components/contacts/ImportsSectionHeader.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 881
+  },
+  {
+    "path": "src/app/components/ContactView.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2695
+  },
+  {
+    "path": "src/app/components/DataPanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 20788
+  },
+  {
+    "path": "src/app/components/docs/agentHolons.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2996
+  },
+  {
+    "path": "src/app/components/docs/automationHolons.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3098
+  },
+  {
+    "path": "src/app/components/docs/boardBodyHolons.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1984
+  },
+  {
+    "path": "src/app/components/docs/clientDataHolons.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3383
+  },
+  {
+    "path": "src/app/components/docs/contactsBodyHolons.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1014
+  },
+  {
+    "path": "src/app/components/docs/docsHighlight.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1785
+  },
+  {
+    "path": "src/app/components/docs/docsRegistryHolons.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2047
+  },
+  {
+    "path": "src/app/components/docs/engagementListHolons.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2606
+  },
+  {
+    "path": "src/app/components/docs/engagementTimelineHolons.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1926
+  },
+  {
+    "path": "src/app/components/docs/HolonBoundary.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3142
+  },
+  {
+    "path": "src/app/components/docs/holonCatalogChrome.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 499
+  },
+  {
+    "path": "src/app/components/docs/holonCatalogFlat.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 18002
+  },
+  {
+    "path": "src/app/components/docs/holonCatalogTree.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6803
+  },
+  {
+    "path": "src/app/components/docs/holonDetailContent.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 13382
+  },
+  {
+    "path": "src/app/components/docs/holonIcons.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 172
+  },
+  {
+    "path": "src/app/components/docs/HolonInspectLayer.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2473
+  },
+  {
+    "path": "src/app/components/docs/HolonPurposeHoverCard.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5012
+  },
+  {
+    "path": "src/app/components/docs/HolonTreeIcon.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1009
+  },
+  {
+    "path": "src/app/components/docs/hubBodyHolons.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1054
+  },
+  {
+    "path": "src/app/components/docs/icepanelLinks.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4098
+  },
+  {
+    "path": "src/app/components/docs/loginHolons.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1757
+  },
+  {
+    "path": "src/app/components/docs/primaryNavigationIcons.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1853
+  },
+  {
+    "path": "src/app/components/docs/RegisterContentChildHolons.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1703
+  },
+  {
+    "path": "src/app/components/docs/registerMeta/boardRegisterMeta.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2325
+  },
+  {
+    "path": "src/app/components/docs/registerMeta/composeViewHolons.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1305
+  },
+  {
+    "path": "src/app/components/docs/registerMeta/index.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 464
+  },
+  {
+    "path": "src/app/components/docs/registerMeta/loginRegisterMeta.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1595
+  },
+  {
+    "path": "src/app/components/docs/registerMeta/registry.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 433
+  },
+  {
+    "path": "src/app/components/docs/registerMeta/types.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1090
+  },
+  {
+    "path": "src/app/components/docs/registerMeta/views.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1149
+  },
+  {
+    "path": "src/app/components/docs/shellHolonOrder.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 785
+  },
+  {
+    "path": "src/app/components/docs/surfacePurpose.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2021
+  },
+  {
+    "path": "src/app/components/docs/surfacePurposeBoard.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4742
+  },
+  {
+    "path": "src/app/components/docs/surfacePurposeClientData.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 8043
+  },
+  {
+    "path": "src/app/components/docs/surfacePurposeContacts.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2865
+  },
+  {
+    "path": "src/app/components/docs/surfacePurposeHub.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 18598
+  },
+  {
+    "path": "src/app/components/docs/surfacePurposeShell.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7053
+  },
+  {
+    "path": "src/app/components/docs/treeLayout.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1145
+  },
+  {
+    "path": "src/app/components/docs/treeTypography.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1321
+  },
+  {
+    "path": "src/app/components/DocsPanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 16343
+  },
+  {
+    "path": "src/app/components/EventsTab.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 20693
+  },
+  {
+    "path": "src/app/components/figma/ImageWithFallback.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1153
+  },
+  {
+    "path": "src/app/components/HaltOutreachBar.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2656
+  },
+  {
+    "path": "src/app/components/HolonDetailPanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7993
+  },
+  {
+    "path": "src/app/components/hub/AddAuditFlow.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 10236
+  },
+  {
+    "path": "src/app/components/hub/agent/AgentAddStepMenu.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2905
+  },
+  {
+    "path": "src/app/components/hub/agent/AgentDetailView.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3125
+  },
+  {
+    "path": "src/app/components/hub/agent/AgentEditor.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 14461
+  },
+  {
+    "path": "src/app/components/hub/agent/AgentEditorEmptyState.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3717
+  },
+  {
+    "path": "src/app/components/hub/agent/AgentHeader.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5581
+  },
+  {
+    "path": "src/app/components/hub/agent/AgentSequenceCanvas.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5214
+  },
+  {
+    "path": "src/app/components/hub/agent/AgentSequenceEditor.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2830
+  },
+  {
+    "path": "src/app/components/hub/agent/AgentStepRail.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7169
+  },
+  {
+    "path": "src/app/components/hub/agent/nodes/AgentStepFrame.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4698
+  },
+  {
+    "path": "src/app/components/hub/agent/nodes/EmailStepNode.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 8694
+  },
+  {
+    "path": "src/app/components/hub/agent/nodes/TaskStepNode.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3663
+  },
+  {
+    "path": "src/app/components/hub/agent/stepNodeStyles.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2965
+  },
+  {
+    "path": "src/app/components/hub/AgentsSectionHeader.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 779
+  },
+  {
+    "path": "src/app/components/hub/AuditDetailView.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2755
+  },
+  {
+    "path": "src/app/components/hub/AuditRecordsTable.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6617
+  },
+  {
+    "path": "src/app/components/hub/auditRowIcon.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 656
+  },
+  {
+    "path": "src/app/components/hub/AuditServicesPanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6051
+  },
+  {
+    "path": "src/app/components/hub/AuditsSectionHeader.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1108
+  },
+  {
+    "path": "src/app/components/hub/AuditTreeBlock.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4865
+  },
+  {
+    "path": "src/app/components/hub/automation/AttachStepMenu.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7576
+  },
+  {
+    "path": "src/app/components/hub/automation/AutomationAddTriggerMenu.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3502
+  },
+  {
+    "path": "src/app/components/hub/automation/AutomationBuildPalette.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 9622
+  },
+  {
+    "path": "src/app/components/hub/automation/AutomationDetailView.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4555
+  },
+  {
+    "path": "src/app/components/hub/automation/automationEdgeTypes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 291
+  },
+  {
+    "path": "src/app/components/hub/automation/AutomationEditorContext.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2307
+  },
+  {
+    "path": "src/app/components/hub/automation/AutomationEmptyCanvas.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2037
+  },
+  {
+    "path": "src/app/components/hub/automation/AutomationEventTriggerConfigPanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5365
+  },
+  {
+    "path": "src/app/components/hub/automation/AutomationManualClassFilterPanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 9151
+  },
+  {
+    "path": "src/app/components/hub/automation/AutomationManualTriggerConfigPanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4867
+  },
+  {
+    "path": "src/app/components/hub/automation/AutomationNodeConfigModal.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 28466
+  },
+  {
+    "path": "src/app/components/hub/automation/automationNodeTypes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 581
+  },
+  {
+    "path": "src/app/components/hub/automation/AutomationRunsTab.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6691
+  },
+  {
+    "path": "src/app/components/hub/automation/AutomationWorkflowCanvas.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5421
+  },
+  {
+    "path": "src/app/components/hub/automation/AutomationWorkflowEditor.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 27993
+  },
+  {
+    "path": "src/app/components/hub/automation/AutomationWorkflowHeader.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5884
+  },
+  {
+    "path": "src/app/components/hub/automation/ConstantsIndustryTableView.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6175
+  },
+  {
+    "path": "src/app/components/hub/automation/DataClassScopeSelector.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6409
+  },
+  {
+    "path": "src/app/components/hub/automation/edges/AutomationInsertEdge.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3746
+  },
+  {
+    "path": "src/app/components/hub/automation/edges/EdgeInsertMenu.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 499
+  },
+  {
+    "path": "src/app/components/hub/automation/FieldPathDropInput.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2021
+  },
+  {
+    "path": "src/app/components/hub/automation/IfConditionConfigForm.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 12095
+  },
+  {
+    "path": "src/app/components/hub/automation/ManualEnrollmentCriteriaSummary.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6074
+  },
+  {
+    "path": "src/app/components/hub/automation/NodeDataPane.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 21800
+  },
+  {
+    "path": "src/app/components/hub/automation/nodes/ActionNode.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2590
+  },
+  {
+    "path": "src/app/components/hub/automation/nodes/BranchNode.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6427
+  },
+  {
+    "path": "src/app/components/hub/automation/nodes/ConstantNode.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2338
+  },
+  {
+    "path": "src/app/components/hub/automation/nodes/ExitNode.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1860
+  },
+  {
+    "path": "src/app/components/hub/automation/nodes/GetNode.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1513
+  },
+  {
+    "path": "src/app/components/hub/automation/nodes/RuleNode.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3195
+  },
+  {
+    "path": "src/app/components/hub/automation/nodes/TriggerNode.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 8098
+  },
+  {
+    "path": "src/app/components/hub/automation/RuleAnalysisPane.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6994
+  },
+  {
+    "path": "src/app/components/hub/automation/RuleOutcomesConfigForm.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 9292
+  },
+  {
+    "path": "src/app/components/hub/automation/WorkflowNodeFrame.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1725
+  },
+  {
+    "path": "src/app/components/hub/automation/WorkflowNodeRunChrome.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 728
+  },
+  {
+    "path": "src/app/components/hub/automation/workflowNodeStyles.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1849
+  },
+  {
+    "path": "src/app/components/hub/automation/WorkflowNodeToolbar.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5545
+  },
+  {
+    "path": "src/app/components/hub/AutomationsSectionHeader.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 913
+  },
+  {
+    "path": "src/app/components/hub/HubBody.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4001
+  },
+  {
+    "path": "src/app/components/hub/HubToolDetailView.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3725
+  },
+  {
+    "path": "src/app/components/hub/HubToolRow.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2475
+  },
+  {
+    "path": "src/app/components/hub/HubToolView.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 697
+  },
+  {
+    "path": "src/app/components/icons/NotionIcon.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1011
+  },
+  {
+    "path": "src/app/components/icons/ResendLogo.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 664
+  },
+  {
+    "path": "src/app/components/icons/SupabaseLogo.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 689
+  },
+  {
+    "path": "src/app/components/icons/TowerAppLogo.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1102
+  },
+  {
+    "path": "src/app/components/imports/CsvImportColumnMappingDialog.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6861
+  },
+  {
+    "path": "src/app/components/imports/CsvImportFlow.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6949
+  },
+  {
+    "path": "src/app/components/imports/csvImportTypes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 705
+  },
+  {
+    "path": "src/app/components/imports/csvImportValidation.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1346
+  },
+  {
+    "path": "src/app/components/imports/parseCsvPreview.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2640
+  },
+  {
+    "path": "src/app/components/inspector/clientMessageData.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6379
+  },
+  {
+    "path": "src/app/components/inspector/ClientMessagePanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6222
+  },
+  {
+    "path": "src/app/components/inspector/emailInspectorData.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 37083
+  },
+  {
+    "path": "src/app/components/inspector/EmailOutputPreview.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6687
+  },
+  {
+    "path": "src/app/components/inspector/EngagementNodePanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 35711
+  },
+  {
+    "path": "src/app/components/inspector/FormCaptureReplay.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6039
+  },
+  {
+    "path": "src/app/components/inspector/FormOutputPreview.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5561
+  },
+  {
+    "path": "src/app/components/JourneyTab.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 109535
+  },
+  {
+    "path": "src/app/components/NudgeGantt.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 13617
+  },
+  {
+    "path": "src/app/components/PhaseTooltip.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6802
+  },
+  {
+    "path": "src/app/components/StatusBar.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4325
+  },
+  {
+    "path": "src/app/components/tasks/TaskRow.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2803
+  },
+  {
+    "path": "src/app/components/tasks/TasksBody.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2637
+  },
+  {
+    "path": "src/app/components/tasks/TasksSectionHeader.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3212
+  },
+  {
+    "path": "src/app/components/tasks/TaskStatusToggle.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1549
+  },
+  {
+    "path": "src/app/components/tokens.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2745
+  },
+  {
+    "path": "src/app/components/touchpoints/TaskTouchpointPanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4793
+  },
+  {
+    "path": "src/app/components/touchpoints/touchpointUtils.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1167
+  },
+  {
+    "path": "src/app/components/ui/accordion.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2060
+  },
+  {
+    "path": "src/app/components/ui/alert-dialog.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3866
+  },
+  {
+    "path": "src/app/components/ui/alert.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1621
+  },
+  {
+    "path": "src/app/components/ui/aspect-ratio.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 284
+  },
+  {
+    "path": "src/app/components/ui/avatar.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1104
+  },
+  {
+    "path": "src/app/components/ui/badge.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1636
+  },
+  {
+    "path": "src/app/components/ui/breadcrumb.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2368
+  },
+  {
+    "path": "src/app/components/ui/button.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2106
+  },
+  {
+    "path": "src/app/components/ui/calendar.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2913
+  },
+  {
+    "path": "src/app/components/ui/card.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1988
+  },
+  {
+    "path": "src/app/components/ui/carousel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5606
+  },
+  {
+    "path": "src/app/components/ui/chart.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 9852
+  },
+  {
+    "path": "src/app/components/ui/checkbox.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1244
+  },
+  {
+    "path": "src/app/components/ui/collapsible.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 806
+  },
+  {
+    "path": "src/app/components/ui/command.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4662
+  },
+  {
+    "path": "src/app/components/ui/context-menu.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 8251
+  },
+  {
+    "path": "src/app/components/ui/dialog.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3828
+  },
+  {
+    "path": "src/app/components/ui/drawer.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4085
+  },
+  {
+    "path": "src/app/components/ui/dropdown-menu.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 8313
+  },
+  {
+    "path": "src/app/components/ui/form.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3785
+  },
+  {
+    "path": "src/app/components/ui/hover-card.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1537
+  },
+  {
+    "path": "src/app/components/ui/input-otp.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2282
+  },
+  {
+    "path": "src/app/components/ui/input.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 963
+  },
+  {
+    "path": "src/app/components/ui/label.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 614
+  },
+  {
+    "path": "src/app/components/ui/menubar.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 8426
+  },
+  {
+    "path": "src/app/components/ui/navigation-menu.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6684
+  },
+  {
+    "path": "src/app/components/ui/pagination.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2709
+  },
+  {
+    "path": "src/app/components/ui/popover.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1641
+  },
+  {
+    "path": "src/app/components/ui/progress.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 743
+  },
+  {
+    "path": "src/app/components/ui/radio-group.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1471
+  },
+  {
+    "path": "src/app/components/ui/resizable.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2036
+  },
+  {
+    "path": "src/app/components/ui/scroll-area.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1649
+  },
+  {
+    "path": "src/app/components/ui/select.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6275
+  },
+  {
+    "path": "src/app/components/ui/separator.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 707
+  },
+  {
+    "path": "src/app/components/ui/sheet.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4105
+  },
+  {
+    "path": "src/app/components/ui/sidebar.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 21663
+  },
+  {
+    "path": "src/app/components/ui/skeleton.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 275
+  },
+  {
+    "path": "src/app/components/ui/slider.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2006
+  },
+  {
+    "path": "src/app/components/ui/sonner.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 571
+  },
+  {
+    "path": "src/app/components/ui/switch.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1182
+  },
+  {
+    "path": "src/app/components/ui/syncShadcnTheme.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1762
+  },
+  {
+    "path": "src/app/components/ui/table.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2460
+  },
+  {
+    "path": "src/app/components/ui/tabs.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1945
+  },
+  {
+    "path": "src/app/components/ui/textarea.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 767
+  },
+  {
+    "path": "src/app/components/ui/toggle-group.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1920
+  },
+  {
+    "path": "src/app/components/ui/toggle.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1565
+  },
+  {
+    "path": "src/app/components/ui/tooltip.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1897
+  },
+  {
+    "path": "src/app/components/ui/towerChrome.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2934
+  },
+  {
+    "path": "src/app/components/ui/use-mobile.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 585
+  },
+  {
+    "path": "src/app/components/ui/utils.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 169
+  },
+  {
+    "path": "src/app/components/Workspace.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 14163
+  },
+  {
+    "path": "src/app/constants/layout.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 990
+  },
+  {
+    "path": "src/app/context/AuditContext.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5165
+  },
+  {
+    "path": "src/app/context/AutomationContext.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 12584
+  },
+  {
+    "path": "src/app/context/DocsHighlightContext.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1592
+  },
+  {
+    "path": "src/app/context/DocsRegistryContext.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3695
+  },
+  {
+    "path": "src/app/context/HolonDetailContext.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1218
+  },
+  {
+    "path": "src/app/context/PanelContext.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 692
+  },
+  {
+    "path": "src/app/context/TaskContext.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2112
+  },
+  {
+    "path": "src/app/context/TouchpointFocusContext.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 957
+  },
+  {
+    "path": "src/app/data/agentDefinitions.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3265
+  },
+  {
+    "path": "src/app/data/agentSteps.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3371
+  },
+  {
+    "path": "src/app/data/auditRecordReachability.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1900
+  },
+  {
+    "path": "src/app/data/audits.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7282
+  },
+  {
+    "path": "src/app/data/automationBuildModules.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1896
+  },
+  {
+    "path": "src/app/data/automationCompare.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1125
+  },
+  {
+    "path": "src/app/data/automationConditions.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 12720
+  },
+  {
+    "path": "src/app/data/automationConstants.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 13476
+  },
+  {
+    "path": "src/app/data/automationDataClassNames.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1450
+  },
+  {
+    "path": "src/app/data/automationDataPull.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 10183
+  },
+  {
+    "path": "src/app/data/automationEvents.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 9346
+  },
+  {
+    "path": "src/app/data/automationGet.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4347
+  },
+  {
+    "path": "src/app/data/automationNodeRuntime.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 998
+  },
+  {
+    "path": "src/app/data/automationRules.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 39752
+  },
+  {
+    "path": "src/app/data/automationRuns.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2747
+  },
+  {
+    "path": "src/app/data/automationTriggerSelect.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6482
+  },
+  {
+    "path": "src/app/data/automationWorkflows.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 48793
+  },
+  {
+    "path": "src/app/data/clientPortalData.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 102
+  },
+  {
+    "path": "src/app/data/clients.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 19454
+  },
+  {
+    "path": "src/app/data/collectibleFields.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4180
+  },
+  {
+    "path": "src/app/data/contacts.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1868
+  },
+  {
+    "path": "src/app/data/engagementCalendarData.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4385
+  },
+  {
+    "path": "src/app/data/eventTestContract.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 28496
+  },
+  {
+    "path": "src/app/data/hub.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2930
+  },
+  {
+    "path": "src/app/data/immigrationMatrixOutcomes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7450
+  },
+  {
+    "path": "src/app/data/immigrationReferenceTables.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5075
+  },
+  {
+    "path": "src/app/data/imports.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1159
+  },
+  {
+    "path": "src/app/data/inAppAffordances.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6249
+  },
+  {
+    "path": "src/app/data/journeyByClient.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1266
+  },
+  {
+    "path": "src/app/data/journeyGantt.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 312
+  },
+  {
+    "path": "src/app/data/journeySequences.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1606
+  },
+  {
+    "path": "src/app/data/journeyTree.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 11845
+  },
+  {
+    "path": "src/app/data/marcusJourney.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 10149
+  },
+  {
+    "path": "src/app/data/optInLaunchTree.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3661
+  },
+  {
+    "path": "src/app/data/reactivationTree.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3236
+  },
+  {
+    "path": "src/app/data/sarahNudgeTimeline.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 20807
+  },
+  {
+    "path": "src/app/data/tasks.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 594
+  },
+  {
+    "path": "src/app/data/testWalk.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 13115
+  },
+  {
+    "path": "src/app/icons/brand/index.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 144
+  },
+  {
+    "path": "src/app/icons/dependency-55534e-icon.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/app/icons/notion-icon-urls.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4730
+  },
+  {
+    "path": "src/app/icons/tower-app-logo.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/app/marketing/components/AuthHeroMedia.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 368
+  },
+  {
+    "path": "src/app/marketing/components/LoginForm.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 9008
+  },
+  {
+    "path": "src/app/marketing/components/OmcodaNav.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4359
+  },
+  {
+    "path": "src/app/marketing/omcodaLinks.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 434
+  },
+  {
+    "path": "src/app/marketing/pages/LoginPage.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1373
+  },
+  {
+    "path": "src/app/register/canvas/createRegisterCanvasNodes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2495
+  },
+  {
+    "path": "src/app/register/canvas/flowWireAnchors.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2007
+  },
+  {
+    "path": "src/app/register/canvas/frameChrome.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3107
+  },
+  {
+    "path": "src/app/register/canvas/RegisterCanvasFlowWires.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 12309
+  },
+  {
+    "path": "src/app/register/canvas/registerCanvasNodeTypes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 351
+  },
+  {
+    "path": "src/app/register/canvas/RegisterFlowWireMetaCard.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3731
+  },
+  {
+    "path": "src/app/register/canvas/RegisterFlowWireStepBadge.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1013
+  },
+  {
+    "path": "src/app/register/canvas/RegisterSystemNode.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4472
+  },
+  {
+    "path": "src/app/register/canvas/RegisterTableNode.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3515
+  },
+  {
+    "path": "src/app/register/canvas/RegisterViewFrameContent.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 351
+  },
+  {
+    "path": "src/app/register/canvas/RegisterViewFrameNode.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1413
+  },
+  {
+    "path": "src/app/register/canvas/registerViewLayout.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 761
+  },
+  {
+    "path": "src/app/register/canvas/registerViewNodes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1121
+  },
+  {
+    "path": "src/app/register/components/ArtboardBodySkeleton.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 416
+  },
+  {
+    "path": "src/app/register/components/HowAnalysisDetailPanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6192
+  },
+  {
+    "path": "src/app/register/components/RegisterArtboardCanvas.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1515
+  },
+  {
+    "path": "src/app/register/components/RegisterArtboardFrame.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1357
+  },
+  {
+    "path": "src/app/register/components/RegisterBootSkeleton.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7186
+  },
+  {
+    "path": "src/app/register/components/RegisterCanvasPlaceholder.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3247
+  },
+  {
+    "path": "src/app/register/components/RegisterClickThroughPanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7327
+  },
+  {
+    "path": "src/app/register/components/RegisterComponentsTree.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7864
+  },
+  {
+    "path": "src/app/register/components/RegisterEnrichmentTree.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6908
+  },
+  {
+    "path": "src/app/register/components/RegisterErrorBoundary.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1242
+  },
+  {
+    "path": "src/app/register/components/RegisterFlowCanvas.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4454
+  },
+  {
+    "path": "src/app/register/components/RegisterFlowsTree.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 9364
+  },
+  {
+    "path": "src/app/register/components/RegisterGate.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3623
+  },
+  {
+    "path": "src/app/register/components/RegisterHowCanvas.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6413
+  },
+  {
+    "path": "src/app/register/components/RegisterHowTree.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 10452
+  },
+  {
+    "path": "src/app/register/components/RegisterJourneyFlowsTree.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6696
+  },
+  {
+    "path": "src/app/register/components/RegisterLeftPanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4843
+  },
+  {
+    "path": "src/app/register/components/RegisterPassSection.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3503
+  },
+  {
+    "path": "src/app/register/components/RegisterPriorsTree.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7726
+  },
+  {
+    "path": "src/app/register/components/RegisterShellChrome.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3330
+  },
+  {
+    "path": "src/app/register/components/RegisterSmeTree.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7959
+  },
+  {
+    "path": "src/app/register/components/RegisterTheoryCanvas.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1495
+  },
+  {
+    "path": "src/app/register/components/RegisterWiringPaperTree.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 11779
+  },
+  {
+    "path": "src/app/register/components/theory/ImplementationBlock.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2778
+  },
+  {
+    "path": "src/app/register/components/theory/RegisterTheoryPanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1189
+  },
+  {
+    "path": "src/app/register/components/theory/TextWithUiRefs.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6376
+  },
+  {
+    "path": "src/app/register/components/treeCollapse.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 473
+  },
+  {
+    "path": "src/app/register/composer/HolonComposerNode.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3839
+  },
+  {
+    "path": "src/app/register/composer/RegisterViewComposer.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1593
+  },
+  {
+    "path": "src/app/register/composer/surfaceRegistry.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1742
+  },
+  {
+    "path": "src/app/register/composer/surfaceTypes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 342
+  },
+  {
+    "path": "src/app/register/context/RegisterSelectionContext.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 23598
+  },
+  {
+    "path": "src/app/register/context/RegisterShellContext.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3427
+  },
+  {
+    "path": "src/app/register/flowCanvas/buildFlowStepGraph.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1402
+  },
+  {
+    "path": "src/app/register/flowCanvas/nodes/RegisterFlowGraphNode.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1628
+  },
+  {
+    "path": "src/app/register/flowCanvas/registerFlowEdgeTypes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 272
+  },
+  {
+    "path": "src/app/register/flowCanvas/registerFlowNodeStyles.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2093
+  },
+  {
+    "path": "src/app/register/flowCanvas/registerFlowNodeTypes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 284
+  },
+  {
+    "path": "src/app/register/flowCanvas/RegisterFlowStepCanvas.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3559
+  },
+  {
+    "path": "src/app/register/flowCanvas/RegisterFlowWireEdge.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2235
+  },
+  {
+    "path": "src/app/register/flows/arriveAtBoardSeeBoardStep.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5544
+  },
+  {
+    "path": "src/app/register/flows/flowFocus.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4382
+  },
+  {
+    "path": "src/app/register/flows/flowWireEndpointLabels.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1385
+  },
+  {
+    "path": "src/app/register/flows/index.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1793
+  },
+  {
+    "path": "src/app/register/flows/loginSendOtpStep.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7371
+  },
+  {
+    "path": "src/app/register/flows/loginVerifyOtpStep.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7089
+  },
+  {
+    "path": "src/app/register/flows/types.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2766
+  },
+  {
+    "path": "src/app/register/howAnalysis/buildHowGraph.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2147
+  },
+  {
+    "path": "src/app/register/howAnalysis/consultantAccess.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3586
+  },
+  {
+    "path": "src/app/register/howAnalysis/consultantCore.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7870
+  },
+  {
+    "path": "src/app/register/howAnalysis/consultantGovernance.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3191
+  },
+  {
+    "path": "src/app/register/howAnalysis/contactBook.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3182
+  },
+  {
+    "path": "src/app/register/howAnalysis/contactConsent.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2946
+  },
+  {
+    "path": "src/app/register/howAnalysis/contactRefresh.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3172
+  },
+  {
+    "path": "src/app/register/howAnalysis/contactSilence.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1571
+  },
+  {
+    "path": "src/app/register/howAnalysis/helpers.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 396
+  },
+  {
+    "path": "src/app/register/howAnalysis/howAnalysisEdgeTypes.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1692
+  },
+  {
+    "path": "src/app/register/howAnalysis/howAnalysisLayout.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 768
+  },
+  {
+    "path": "src/app/register/howAnalysis/howAnalysisNodeStyles.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2121
+  },
+  {
+    "path": "src/app/register/howAnalysis/howAnalysisNodeTypes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 263
+  },
+  {
+    "path": "src/app/register/howAnalysis/index.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 323
+  },
+  {
+    "path": "src/app/register/howAnalysis/nodes/HowAnalysisNode.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1752
+  },
+  {
+    "path": "src/app/register/howAnalysis/operatorAcquisition.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3431
+  },
+  {
+    "path": "src/app/register/howAnalysis/operatorActivation.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4856
+  },
+  {
+    "path": "src/app/register/howAnalysis/operatorActivationState.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1703
+  },
+  {
+    "path": "src/app/register/howAnalysis/operatorAuditTrail.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2744
+  },
+  {
+    "path": "src/app/register/howAnalysis/operatorBookReadiness.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2711
+  },
+  {
+    "path": "src/app/register/howAnalysis/operatorCommercial.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2952
+  },
+  {
+    "path": "src/app/register/howAnalysis/operatorConfigurationLibraries.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4752
+  },
+  {
+    "path": "src/app/register/howAnalysis/operatorFirmBind.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3676
+  },
+  {
+    "path": "src/app/register/howAnalysis/operatorFirmHealth.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1592
+  },
+  {
+    "path": "src/app/register/howAnalysis/operatorFounderControls.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2855
+  },
+  {
+    "path": "src/app/register/howAnalysis/operatorOversight.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2628
+  },
+  {
+    "path": "src/app/register/howAnalysis/operatorProvision.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2567
+  },
+  {
+    "path": "src/app/register/howAnalysis/operatorReferenceData.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2660
+  },
+  {
+    "path": "src/app/register/howAnalysis/operatorRegisterEvolution.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2953
+  },
+  {
+    "path": "src/app/register/howAnalysis/operatorSupport.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3648
+  },
+  {
+    "path": "src/app/register/howAnalysis/registry.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2443
+  },
+  {
+    "path": "src/app/register/howAnalysis/types.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2794
+  },
+  {
+    "path": "src/app/register/journeyFlows/coreCloseFlow.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3077
+  },
+  {
+    "path": "src/app/register/journeyFlows/index.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 831
+  },
+  {
+    "path": "src/app/register/journeyFlows/types.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 623
+  },
+  {
+    "path": "src/app/register/pages/RegisterPage.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 8293
+  },
+  {
+    "path": "src/app/register/pages/RegisterWorkspace.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3758
+  },
+  {
+    "path": "src/app/register/panes/EnrichmentFurnishPane.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6036
+  },
+  {
+    "path": "src/app/register/panes/FlowsPane.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3470
+  },
+  {
+    "path": "src/app/register/panes/PersonasFunctionPane.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 13031
+  },
+  {
+    "path": "src/app/register/panes/PriorsPane.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7082
+  },
+  {
+    "path": "src/app/register/panes/SmePane.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5793
+  },
+  {
+    "path": "src/app/register/panes/WiringPaperPane.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 13497
+  },
+  {
+    "path": "src/app/register/panes/WorldPane.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 11293
+  },
+  {
+    "path": "src/app/register/passes/registerPasses.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2711
+  },
+  {
+    "path": "src/app/register/prototype-ant/ant-design-composition-patterns.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 4423
+  },
+  {
+    "path": "src/app/register/prototype-ant/AntCtHost.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1429
+  },
+  {
+    "path": "src/app/register/prototype-ant/antFill.css",
+    "status": "scanned",
+    "kind": "css",
+    "bytes": 500
+  },
+  {
+    "path": "src/app/register/prototype-ant/chrome.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2439
+  },
+  {
+    "path": "src/app/register/prototype-ant/consultant/BoardModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 14683
+  },
+  {
+    "path": "src/app/register/prototype-ant/consultant/clientData/ActivityChronology.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 17928
+  },
+  {
+    "path": "src/app/register/prototype-ant/consultant/clientData/ActivityInspectDrawer.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7396
+  },
+  {
+    "path": "src/app/register/prototype-ant/consultant/clientData/ClientDataPanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 9094
+  },
+  {
+    "path": "src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 10400
+  },
+  {
+    "path": "src/app/register/prototype-ant/consultant/ClientWorkspace.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7196
+  },
+  {
+    "path": "src/app/register/prototype-ant/consultant/ConsultantAntScene.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 10515
+  },
+  {
+    "path": "src/app/register/prototype-ant/consultant/ContactsModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 11815
+  },
+  {
+    "path": "src/app/register/prototype-ant/consultant/HaltOutreachModal.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2697
+  },
+  {
+    "path": "src/app/register/prototype-ant/consultant/LoginModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 9148
+  },
+  {
+    "path": "src/app/register/prototype-ant/consultant/meetingsData.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 828
+  },
+  {
+    "path": "src/app/register/prototype-ant/consultant/MeetingsModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 13974
+  },
+  {
+    "path": "src/app/register/prototype-ant/consultant/PreparedModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 14187
+  },
+  {
+    "path": "src/app/register/prototype-ant/consultant/shared.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1902
+  },
+  {
+    "path": "src/app/register/prototype-ant/contact/ContactAntScene.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 72
+  },
+  {
+    "path": "src/app/register/prototype-ant/contact/ContactWorkspace.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 18428
+  },
+  {
+    "path": "src/app/register/prototype-ant/MATCH-REPORT.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 4720
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/AcquisitionAdsModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 17274
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/ActivationForwardDeployModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 11066
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/ActivationStateModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7869
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/AgentsSettingsModal.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7469
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/AntAgentCanvas.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 29827
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 47932
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/AntAutomationWorkbench.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 58574
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/AuditTrailModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6341
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/ActionPlateModals.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 20479
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/canvasOps.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 732
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/CompareOperand.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1197
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/DirectInputPane.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2330
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/GetParametersPane.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 10826
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/IfPlateModal.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5390
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/InputPane.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 11645
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/MappedSlot.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3116
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/NodeInteriorModal.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6165
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/OutputPane.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5153
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/pickerDirectory.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2014
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/plateChrome.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1159
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/PlateInsertEdge.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 956
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/RuleOutcomesPane.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 12492
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/RulePlateModal.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 13474
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/SwitchPlateModal.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4228
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/TriggerSelectModal.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 13402
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/TriggerTestDataPane.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 853
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/WaitParametersPane.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3650
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/automationPlates/WireAddMenu.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2820
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/BookReadinessModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 23015
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/channelRuleGrain.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6229
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/ChannelRulesFields.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2660
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/CommercialModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 12468
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/ConfigurationLibrariesModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 35717
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/ContactPickModal.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 8158
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/CustomerSupportModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 9833
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/FirmHealthModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 8800
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/FirmOperationsBindModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 19676
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/FounderAgencyControlsModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7504
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/modalScroll.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 155
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/operatorAntData.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1126
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/OperatorAntScene.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6239
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/operatorAntTags.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 784
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/operatorConfigLibraries.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5657
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/operatorFirmIndex.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2300
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/OversightModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4993
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/packCatalogStore.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2376
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/ProvisionModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7513
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/ReferenceDataModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 13873
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/RegisterEvolutionModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 8364
+  },
+  {
+    "path": "src/app/register/prototype-ant/operator/SendingInfrastructureModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 12688
+  },
+  {
+    "path": "src/app/register/prototype-ant/PEER-CREATE-PARITY.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 2607
+  },
+  {
+    "path": "src/app/register/prototype-ant/PrototypeAntApp.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 9362
+  },
+  {
+    "path": "src/app/register/prototype-ant/REARCHITECTURE.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 3931
+  },
+  {
+    "path": "src/app/register/prototype-ant/SPACING.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1789
+  },
+  {
+    "path": "src/app/register/prototype-ant/theme.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1412
+  },
+  {
+    "path": "src/app/register/prototype-ant/viewAsContext.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5197
+  },
+  {
+    "path": "src/app/register/prototype-ant/WaitNoteOverlay.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 10638
+  },
+  {
+    "path": "src/app/register/prototype/ConsultantClientWorkspace.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 12693
+  },
+  {
+    "path": "src/app/register/prototype/ConsultantPrototypeScene.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 27409
+  },
+  {
+    "path": "src/app/register/prototype/ContactPrototypeScene.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 73381
+  },
+  {
+    "path": "src/app/register/prototype/HiFiEmptyModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3109
+  },
+  {
+    "path": "src/app/register/prototype/LiveBriefPanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 8818
+  },
+  {
+    "path": "src/app/register/prototype/MeetingsModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 13933
+  },
+  {
+    "path": "src/app/register/prototype/operator/AcquisitionAdsModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 28061
+  },
+  {
+    "path": "src/app/register/prototype/operator/ActivationForwardDeployModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 22388
+  },
+  {
+    "path": "src/app/register/prototype/operator/ActivationStateModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 12056
+  },
+  {
+    "path": "src/app/register/prototype/operator/AuditTrailModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 12263
+  },
+  {
+    "path": "src/app/register/prototype/operator/BookReadinessPanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3129
+  },
+  {
+    "path": "src/app/register/prototype/operator/CommercialModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 16717
+  },
+  {
+    "path": "src/app/register/prototype/operator/ConfigurationLibrariesPanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 18953
+  },
+  {
+    "path": "src/app/register/prototype/operator/CustomerSupportModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 17092
+  },
+  {
+    "path": "src/app/register/prototype/operator/FirmHealthModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 14997
+  },
+  {
+    "path": "src/app/register/prototype/operator/FirmOperationsBindPanel.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 25276
+  },
+  {
+    "path": "src/app/register/prototype/operator/FounderAgencyControlsModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 15826
+  },
+  {
+    "path": "src/app/register/prototype/operator/index.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1081
+  },
+  {
+    "path": "src/app/register/prototype/operator/operatorChrome.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 9519
+  },
+  {
+    "path": "src/app/register/prototype/operator/operatorConfigLibraries.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4672
+  },
+  {
+    "path": "src/app/register/prototype/operator/operatorWireHelpers.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 19063
+  },
+  {
+    "path": "src/app/register/prototype/operator/OversightModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 8977
+  },
+  {
+    "path": "src/app/register/prototype/operator/packCatalogStore.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2376
+  },
+  {
+    "path": "src/app/register/prototype/operator/ProvisionModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 11807
+  },
+  {
+    "path": "src/app/register/prototype/operator/ReferenceDataModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 25624
+  },
+  {
+    "path": "src/app/register/prototype/operator/RegisterEvolutionModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 16010
+  },
+  {
+    "path": "src/app/register/prototype/operator/SendingInfrastructureModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 18791
+  },
+  {
+    "path": "src/app/register/prototype/operatorNav.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2575
+  },
+  {
+    "path": "src/app/register/prototype/OperatorPrototypeScene.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5999
+  },
+  {
+    "path": "src/app/register/prototype/PreparedWorkspaceModule.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 23085
+  },
+  {
+    "path": "src/app/register/prototype/RegisterLoginScene.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 12014
+  },
+  {
+    "path": "src/app/register/prototype/RegisterPrototypeCanvas.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3140
+  },
+  {
+    "path": "src/app/register/prototype/registerSurfaceChrome.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3153
+  },
+  {
+    "path": "src/app/register/prototype/shared/meetingsStore.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 13829
+  },
+  {
+    "path": "src/app/register/prototype/shared/referenceDraft.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1942
+  },
+  {
+    "path": "src/app/register/registerAuth.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 920
+  },
+  {
+    "path": "src/app/register/RegisterHolonCatalogBootstrap.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1140
+  },
+  {
+    "path": "src/app/register/surfaces/boardSurfaces.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 10033
+  },
+  {
+    "path": "src/app/register/surfaces/loginSurfaces.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1932
+  },
+  {
+    "path": "src/app/register/systems/registerSystemLayout.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 787
+  },
+  {
+    "path": "src/app/register/systems/registry.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1747
+  },
+  {
+    "path": "src/app/register/tables/registerTableLayout.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 774
+  },
+  {
+    "path": "src/app/register/tables/registry.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2640
+  },
+  {
+    "path": "src/app/register/theory/enrichment/index.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 357
+  },
+  {
+    "path": "src/app/register/theory/enrichment/personaCantsFurnish.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 74822
+  },
+  {
+    "path": "src/app/register/theory/enrichment/types.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 672
+  },
+  {
+    "path": "src/app/register/theory/outcomes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 9543
+  },
+  {
+    "path": "src/app/register/theory/priors/index.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 376
+  },
+  {
+    "path": "src/app/register/theory/priors/items.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 55905
+  },
+  {
+    "path": "src/app/register/theory/priors/types.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2103
+  },
+  {
+    "path": "src/app/register/theory/priors/weakItems.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 20178
+  },
+  {
+    "path": "src/app/register/theory/sme.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 725
+  },
+  {
+    "path": "src/app/register/theory/sme/capability/index.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1041
+  },
+  {
+    "path": "src/app/register/theory/sme/capability/seats/C1-email-deliverability.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 46858
+  },
+  {
+    "path": "src/app/register/theory/sme/capability/seats/C2-agentic-engagement-runtime.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 42918
+  },
+  {
+    "path": "src/app/register/theory/sme/capability/seats/C3-eligibility-reference-pipeline.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 37895
+  },
+  {
+    "path": "src/app/register/theory/sme/capability/seats/C4-book-ingestion-identity.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 31005
+  },
+  {
+    "path": "src/app/register/theory/sme/capability/seats/C5-forward-deploy-generation.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 40739
+  },
+  {
+    "path": "src/app/register/theory/sme/capability/seats/C6-escrow-payment-mechanics.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 34823
+  },
+  {
+    "path": "src/app/register/theory/sme/capability/seats/C7-instrumentation-analytics.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 34999
+  },
+  {
+    "path": "src/app/register/theory/sme/index.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 981
+  },
+  {
+    "path": "src/app/register/theory/sme/seats/01-immigration-pathway-eligibility.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 53553
+  },
+  {
+    "path": "src/app/register/theory/sme/seats/02-ircc-reference-data.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 50675
+  },
+  {
+    "path": "src/app/register/theory/sme/seats/03-canadian-privacy-casl.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 48754
+  },
+  {
+    "path": "src/app/register/theory/sme/seats/04-consultancy-desk-ops.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 44158
+  },
+  {
+    "path": "src/app/register/theory/sme/seats/05-platform-ads-meta-trust.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 42366
+  },
+  {
+    "path": "src/app/register/theory/sme/seats/06-payments-escrow.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 46185
+  },
+  {
+    "path": "src/app/register/theory/sme/seats/07-consultancy-crm-book-connect.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 36337
+  },
+  {
+    "path": "src/app/register/theory/types.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1222
+  },
+  {
+    "path": "src/app/register/theory/uiKindStyles.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 692
+  },
+  {
+    "path": "src/app/register/theory/wiring/canonicalNodes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 31389
+  },
+  {
+    "path": "src/app/register/theory/wiring/cantsAndFurnish.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 28799
+  },
+  {
+    "path": "src/app/register/theory/wiring/function/index.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 204966
+  },
+  {
+    "path": "src/app/register/theory/wiring/humanProvisioning.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6346
+  },
+  {
+    "path": "src/app/register/theory/wiring/index.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 486
+  },
+  {
+    "path": "src/app/register/theory/wiring/types.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 999
+  },
+  {
+    "path": "src/app/register/theory/world.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 19248
+  },
+  {
+    "path": "src/app/register/trace/moduleShapes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5051
+  },
+  {
+    "path": "src/app/register/trace/RegisterTraceContext.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2349
+  },
+  {
+    "path": "src/app/register/trace/surfaceCatalog.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 17562
+  },
+  {
+    "path": "src/app/register/views/boardClientsView.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 786
+  },
+  {
+    "path": "src/app/register/views/index.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 729
+  },
+  {
+    "path": "src/app/register/views/loginSignInView.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 508
+  },
+  {
+    "path": "src/app/register/views/loginVerifyView.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 536
+  },
+  {
+    "path": "src/app/register/views/types.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 507
+  },
+  {
+    "path": "src/app/Router.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2626
+  },
+  {
+    "path": "src/app/system-map/canvas/layout.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1689
+  },
+  {
+    "path": "src/app/system-map/canvas/SystemMapNode.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2283
+  },
+  {
+    "path": "src/app/system-map/data/corpusSources.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1937
+  },
+  {
+    "path": "src/app/system-map/data/coverage.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2238
+  },
+  {
+    "path": "src/app/system-map/data/edges.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 4084
+  },
+  {
+    "path": "src/app/system-map/data/model.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1681
+  },
+  {
+    "path": "src/app/system-map/data/modularity.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1317
+  },
+  {
+    "path": "src/app/system-map/data/nodes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 39460
+  },
+  {
+    "path": "src/app/system-map/data/submaps.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5928
+  },
+  {
+    "path": "src/app/system-map/data/tables.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 35693
+  },
+  {
+    "path": "src/app/system-map/data/tableTypes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3630
+  },
+  {
+    "path": "src/app/system-map/data/templates.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 6294
+  },
+  {
+    "path": "src/app/system-map/data/types.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2739
+  },
+  {
+    "path": "src/app/system-map/sim/engine.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 7654
+  },
+  {
+    "path": "src/app/system-map/SystemMapPage.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 25550
+  },
+  {
+    "path": "src/app/wire/activeFirm.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 647
+  },
+  {
+    "path": "src/app/wire/contactSeatTypes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1304
+  },
+  {
+    "path": "src/app/wire/demoIds.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 238
+  },
+  {
+    "path": "src/app/wire/firmBrand.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 568
+  },
+  {
+    "path": "src/app/wire/fixtures/catalog.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5554
+  },
+  {
+    "path": "src/app/wire/fixtures/store.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3949
+  },
+  {
+    "path": "src/app/wire/http.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 772
+  },
+  {
+    "path": "src/app/wire/index.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1755
+  },
+  {
+    "path": "src/app/wire/machineTypes.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 10623
+  },
+  {
+    "path": "src/app/wire/ports.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 24443
+  },
+  {
+    "path": "src/app/wire/reals/auditTrail.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 647
+  },
+  {
+    "path": "src/app/wire/reals/bootstrapFixtures.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1168
+  },
+  {
+    "path": "src/app/wire/reals/consentSilence.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 616
+  },
+  {
+    "path": "src/app/wire/reals/crmOAuth.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 970
+  },
+  {
+    "path": "src/app/wire/reals/espMailer.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 933
+  },
+  {
+    "path": "src/app/wire/reals/haltStore.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1070
+  },
+  {
+    "path": "src/app/wire/reals/index.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 532
+  },
+  {
+    "path": "src/app/wire/reals/machineApi.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 26816
+  },
+  {
+    "path": "src/app/wire/reals/otpStore.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1953
+  },
+  {
+    "path": "src/app/wire/reals/primaryStore.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 790
+  },
+  {
+    "path": "src/app/wire/reals/sendingPool.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1500
+  },
+  {
+    "path": "src/app/wire/reals/smsApi.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 278
+  },
+  {
+    "path": "src/app/wire/registry.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 5421
+  },
+  {
+    "path": "src/app/wire/sessionFirm.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 520
+  },
+  {
+    "path": "src/app/wire/standins/auditTrail.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 976
+  },
+  {
+    "path": "src/app/wire/standins/consentSilence.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 896
+  },
+  {
+    "path": "src/app/wire/standins/contactSeatMirror.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 19772
+  },
+  {
+    "path": "src/app/wire/standins/crmOAuth.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1701
+  },
+  {
+    "path": "src/app/wire/standins/enrichCrawl.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1252
+  },
+  {
+    "path": "src/app/wire/standins/escrow.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1216
+  },
+  {
+    "path": "src/app/wire/standins/espMailer.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2486
+  },
+  {
+    "path": "src/app/wire/standins/haltStore.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 2812
+  },
+  {
+    "path": "src/app/wire/standins/index.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1267
+  },
+  {
+    "path": "src/app/wire/standins/ipPool.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 608
+  },
+  {
+    "path": "src/app/wire/standins/listUnsubscribe.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 595
+  },
+  {
+    "path": "src/app/wire/standins/machineApi.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 74895
+  },
+  {
+    "path": "src/app/wire/standins/mailer.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 721
+  },
+  {
+    "path": "src/app/wire/standins/metaAds.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1746
+  },
+  {
+    "path": "src/app/wire/standins/otpStore.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1952
+  },
+  {
+    "path": "src/app/wire/standins/primaryStore.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 714
+  },
+  {
+    "path": "src/app/wire/standins/sendGate.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3827
+  },
+  {
+    "path": "src/app/wire/standins/sendingPool.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1592
+  },
+  {
+    "path": "src/app/wire/standins/smsApi.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1364
+  },
+  {
+    "path": "src/app/wire/standins/warmup.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 1273
+  },
+  {
+    "path": "src/app/wire/useWireTick.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 330
+  },
+  {
+    "path": "src/assets/notion-icons/arrows-up-down-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/bell-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/bell-slash-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/calendar-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/chart-bar-horizontal-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/chart-bar-line-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/chart-bar-vertical-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/checkmark-list-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/chevrons-down-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/circle-dashed-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/clock-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/cloud-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/compass-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/computer-window-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/cursor-click-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/dependency-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/directional-sign-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/document-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/document-arrow-up-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/documents-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/dot-circle-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/eye-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/eye-slash-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/filter-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/gear-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/git-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/graduation-cap-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/grid-square-2x2-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/house-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/information-circle-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/lightning-bolt-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/list-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/list-bullet-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/magnifying-glass-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/pencil-list-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/people-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/plus-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/square-dashed-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/tag-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/user-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/user-circle-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/user-squares-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/assets/notion-icons/wrench-55534e-icon.svg",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/imports/image-1.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/imports/image-2.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/imports/image-3.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/imports/image-4.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/imports/image-5.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/imports/image-6.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/imports/image.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "src/main-prototype-ant.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 428
+  },
+  {
+    "path": "src/main.tsx",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 234
+  },
+  {
+    "path": "src/styles/fonts.css",
+    "status": "scanned",
+    "kind": "css",
+    "bytes": 93
+  },
+  {
+    "path": "src/styles/globals.css",
+    "status": "scanned",
+    "kind": "css",
+    "bytes": 0
+  },
+  {
+    "path": "src/styles/index.css",
+    "status": "scanned",
+    "kind": "css",
+    "bytes": 2062
+  },
+  {
+    "path": "src/styles/omcoda-marketing.css",
+    "status": "scanned",
+    "kind": "css",
+    "bytes": 10483
+  },
+  {
+    "path": "src/styles/tailwind.css",
+    "status": "scanned",
+    "kind": "css",
+    "bytes": 98
+  },
+  {
+    "path": "src/styles/theme.css",
+    "status": "scanned",
+    "kind": "css",
+    "bytes": 7216
+  },
+  {
+    "path": "supabase/migrations/001_auth_tables.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 2327
+  },
+  {
+    "path": "supabase/migrations/002_applied_seeds.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 343
+  },
+  {
+    "path": "supabase/migrations/003_ct_wire_stores.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 3907
+  },
+  {
+    "path": "supabase/migrations/004_machine_tables.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 14322
+  },
+  {
+    "path": "supabase/migrations/005_actuation.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 878
+  },
+  {
+    "path": "supabase/migrations/006_workflow_trigger.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 1323
+  },
+  {
+    "path": "supabase/migrations/007_meeting_booked.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 910
+  },
+  {
+    "path": "supabase/migrations/008_access_links.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 1041
+  },
+  {
+    "path": "supabase/migrations/009_outbound_message_content.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 620
+  },
+  {
+    "path": "supabase/migrations/010_sequence_campaign_housing.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 11099
+  },
+  {
+    "path": "supabase/migrations/011_channel_variations.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 1901
+  },
+  {
+    "path": "supabase/migrations/012_grain_audience_one_timer.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 5011
+  },
+  {
+    "path": "supabase/migrations/013_operator_book_people.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 1681
+  },
+  {
+    "path": "supabase/migrations/014_contact_import.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 714
+  },
+  {
+    "path": "supabase/migrations/015_house_notes_handle.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 2131
+  },
+  {
+    "path": "supabase/migrations/016_trigger_local_cascade.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 369
+  },
+  {
+    "path": "supabase/migrations/017_event_test_contract.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 25317
+  },
+  {
+    "path": "supabase/migrations/018_collectible_fields.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 2021
+  },
+  {
+    "path": "supabase/migrations/019_contact_seat.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 1901
+  },
+  {
+    "path": "supabase/migrations/020_workspace_opt_out.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 241
+  },
+  {
+    "path": "supabase/migrations/021_objective_local_axis.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 4460
+  },
+  {
+    "path": "supabase/migrations/022_pursuit_exhausted.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 691
+  },
+  {
+    "path": "supabase/migrations/023_operator_panes.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 1039
+  },
+  {
+    "path": "supabase/migrations/024_wait_occupancy.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 1501
+  },
+  {
+    "path": "supabase/seeds/001_tower_platform.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 855
+  },
+  {
+    "path": "supabase/seeds/002_machine_tables.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 13030
+  },
+  {
+    "path": "supabase/seeds/003_canonical_workflows.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 7214
+  },
+  {
+    "path": "supabase/seeds/004_contact_seat.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 3148
+  },
+  {
+    "path": "supabase/seeds/005_contact_workspace_fill.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 11581
+  },
+  {
+    "path": "supabase/seeds/006_objective_local_axis.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 3149
+  },
+  {
+    "path": "supabase/seeds/007_pursuit_exhausted.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 1284
+  },
+  {
+    "path": "supabase/seeds/008_constants_pack_keys.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 4731
+  },
+  {
+    "path": "supabase/seeds/009_register_gaps.sql",
+    "status": "scanned",
+    "kind": "sql",
+    "bytes": 956
+  },
+  {
+    "path": "supabase/seeds/manifest.json",
+    "status": "scanned",
+    "kind": "config",
+    "bytes": 5319
+  },
+  {
+    "path": "tower_logo_icon_dark-mode.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "tower_logo_icon_light-mode.png",
+    "status": "excluded",
+    "reason": "binary/media asset",
+    "kind": "asset"
+  },
+  {
+    "path": "tsconfig.json",
+    "status": "scanned",
+    "kind": "config",
+    "bytes": 330
+  },
+  {
+    "path": "V2-BACKLOG.md",
+    "status": "excluded",
+    "reason": "markdown / not runtime construction",
+    "kind": "docs",
+    "bytes": 1007
+  },
+  {
+    "path": "vercel.json",
+    "status": "scanned",
+    "kind": "config",
+    "bytes": 1396
+  },
+  {
+    "path": "vite.config.ts",
+    "status": "scanned",
+    "kind": "js-ts-ast",
+    "bytes": 3228
+  }
+]

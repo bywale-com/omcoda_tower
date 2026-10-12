@@ -1,0 +1,3595 @@
+[
+  {
+    "id": "LANG-const",
+    "occurrences": 7946,
+    "fileCount": 565,
+    "examples": [
+      {
+        "file": "scripts/bundle-vercel-api.mjs",
+        "line": 7,
+        "excerpt": "const root = process.cwd()"
+      },
+      {
+        "file": "scripts/bundle-vercel-api.mjs",
+        "line": 8,
+        "excerpt": "const outDir = path.join(root, \"dist-api\")"
+      },
+      {
+        "file": "scripts/bundle-vercel-api.mjs",
+        "line": 11,
+        "excerpt": "const targets = [ { entry: path.join(root, \"scripts/vercel-entries/wire.ts"
+      },
+      {
+        "file": "scripts/bundle-vercel-api.mjs",
+        "line": 24,
+        "excerpt": "const t"
+      }
+    ],
+    "filesSample": [
+      "scripts/bundle-vercel-api.mjs",
+      "scripts/check-access-table.ts",
+      "scripts/close-walk-gaps.ts",
+      "scripts/copy-notion-icons.mjs",
+      "scripts/ensure-platform-admin.ts",
+      "scripts/generate-holon-catalog-flat.mts",
+      "scripts/issue-access-link.ts",
+      "scripts/lift-active-halts.ts",
+      "scripts/pgConnect.ts",
+      "scripts/prod-otp-verify-once.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/restore-channel-order.ts"
+    ]
+  },
+  {
+    "id": "LANG-return",
+    "occurrences": 4678,
+    "fileCount": 520,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 17,
+        "excerpt": "return"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 42,
+        "excerpt": "return"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 46,
+        "excerpt": "return"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 72,
+        "excerpt": "return"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/pgConnect.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-production-walk.ts",
+      "scripts/verify-session-firm.ts",
+      "scripts/walk-verify-firm.ts",
+      "server/auth-service/accessLinks.ts"
+    ]
+  },
+  {
+    "id": "LANG-arrow-function",
+    "occurrences": 4297,
+    "fileCount": 360,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 14,
+        "excerpt": "(l) => l && !l.startsWith(\"#\") && l.includes(\"=\")"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 15,
+        "excerpt": "(l) => { const i = l.indexOf(\"=\"); return [l.slice(0, i), l.slic"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 254,
+        "excerpt": "(c: { id: string }) => (bookA.body.contacts || []).some((a: { id: string }"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 255,
+        "excerpt": "(a: { id: string }) => a.id === c.id"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/copy-notion-icons.mjs",
+      "scripts/read-latest-otp.ts",
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts"
+    ]
+  },
+  {
+    "id": "LANG-null",
+    "occurrences": 3421,
+    "fileCount": 323,
+    "examples": [
+      {
+        "file": "api/ping.ts",
+        "line": 17,
+        "excerpt": "null"
+      },
+      {
+        "file": "api/ping.ts",
+        "line": 18,
+        "excerpt": "null"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 45,
+        "excerpt": "null"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 268,
+        "excerpt": "null"
+      }
+    ],
+    "filesSample": [
+      "api/ping.ts",
+      "scripts/close-walk-gaps.ts",
+      "scripts/generate-holon-catalog-flat.mts",
+      "scripts/issue-access-link.ts",
+      "scripts/prod-otp-verify-once.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-admin-consultants.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts"
+    ]
+  },
+  {
+    "id": "LANG-strict-eq",
+    "occurrences": 3405,
+    "fileCount": 323,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 111,
+        "excerpt": "camp.status === 200"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 111,
+        "excerpt": "camp.body?.state === \"running\""
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 127,
+        "excerpt": "bind.status === 200"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 127,
+        "excerpt": "bind.status === 201"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-production-walk.ts"
+    ]
+  },
+  {
+    "id": "LANG-ternary",
+    "occurrences": 3165,
+    "fileCount": 321,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 46,
+        "excerpt": "sc ? (sc.split(\";\")[0] ?? \"\") : \"\""
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 270,
+        "excerpt": "failed.length ? `\\nFAIL ${failed.length}` : \"\\nALL PASS\""
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 271,
+        "excerpt": "failed.length ? 1 : 0"
+      },
+      {
+        "file": "scripts/pgConnect.ts",
+        "line": 12,
+        "excerpt": "connectionString.includes(\"supabase\") ? { rejectUnauthorized: false }"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/pgConnect.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-production-walk.ts",
+      "scripts/verify-reference-persist.ts",
+      "scripts/verify-session-firm.ts"
+    ]
+  },
+  {
+    "id": "LANG-if",
+    "occurrences": 2850,
+    "fileCount": 326,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 29,
+        "excerpt": "if"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 30,
+        "excerpt": "if"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 69,
+        "excerpt": "if"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 94,
+        "excerpt": "if"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/ensure-platform-admin.ts",
+      "scripts/issue-access-link.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-boot-env.ts"
+    ]
+  },
+  {
+    "id": "LANG-export-named",
+    "occurrences": 2142,
+    "fileCount": 612,
+    "examples": [
+      {
+        "file": "scripts/pgConnect.ts",
+        "line": 9,
+        "excerpt": "export function createPgPool(connectionString: string): pg.Pool { return new P"
+      },
+      {
+        "file": "scripts/vercel-entries/auth.ts",
+        "line": 8,
+        "excerpt": "export const config = { api: { bodyParser: false, }, maxDuration: 60,"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 45,
+        "excerpt": "export function createVercelFetchHandler(app: Hono, base: string) { return asy"
+      },
+      {
+        "file": "scripts/vercel-entries/wire.ts",
+        "line": 8,
+        "excerpt": "export const config = { api: { bodyParser: false, }, maxDuration: 60,"
+      }
+    ],
+    "filesSample": [
+      "scripts/pgConnect.ts",
+      "scripts/vercel-entries/auth.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/vercel-entries/wire.ts",
+      "server/auth-service/accessLinks.ts",
+      "server/auth-service/app.ts",
+      "server/auth-service/cors.ts",
+      "server/auth-service/crypto.ts",
+      "server/auth-service/db.ts",
+      "server/auth-service/email.ts",
+      "server/auth-service/logger.ts",
+      "server/auth-service/platformAdmin.ts"
+    ]
+  },
+  {
+    "id": "LANG-import-named",
+    "occurrences": 2051,
+    "fileCount": 465,
+    "examples": [
+      {
+        "file": "scripts/check-access-table.ts",
+        "line": 1,
+        "excerpt": "import { createPgPool } from \"./pgConnect.ts\";"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 6,
+        "excerpt": "import { readFileSync } from \"node:fs\";"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 7,
+        "excerpt": "import { createPgPool } from \"./pgConnect.ts\";"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 8,
+        "excerpt": "import { generateOtpCode, sha256 } from \"../server/auth-service/crypto.ts\";"
+      }
+    ],
+    "filesSample": [
+      "scripts/check-access-table.ts",
+      "scripts/close-walk-gaps.ts",
+      "scripts/copy-notion-icons.mjs",
+      "scripts/ensure-platform-admin.ts",
+      "scripts/generate-holon-catalog-flat.mts",
+      "scripts/issue-access-link.ts",
+      "scripts/lift-active-halts.ts",
+      "scripts/prod-otp-verify-once.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/restore-channel-order.ts",
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts"
+    ]
+  },
+  {
+    "id": "LANG-template-literal",
+    "occurrences": 2009,
+    "fileCount": 309,
+    "examples": [
+      {
+        "file": "scripts/bundle-vercel-api.mjs",
+        "line": 35,
+        "excerpt": "`bundled ${t.label} → ${path.relative(root, t.outfile)}`"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 31,
+        "excerpt": "`Bearer ${CRON}`"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 34,
+        "excerpt": "`${BASE}${path}`"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 70,
+        "excerpt": "`login failed ${email}: ${JSON.stringify(v)}`"
+      }
+    ],
+    "filesSample": [
+      "scripts/bundle-vercel-api.mjs",
+      "scripts/close-walk-gaps.ts",
+      "scripts/copy-notion-icons.mjs",
+      "scripts/ensure-platform-admin.ts",
+      "scripts/generate-holon-catalog-flat.mts",
+      "scripts/issue-access-link.ts",
+      "scripts/prod-otp-verify-once.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-access-link.ts"
+    ]
+  },
+  {
+    "id": "LANG-nullish-coalesce",
+    "occurrences": 1899,
+    "fileCount": 260,
+    "examples": [
+      {
+        "file": "api/ping.ts",
+        "line": 16,
+        "excerpt": "process.env.SEND_MODE ?? \"\""
+      },
+      {
+        "file": "api/ping.ts",
+        "line": 17,
+        "excerpt": "process.env.NODE_ENV ?? null"
+      },
+      {
+        "file": "api/ping.ts",
+        "line": 18,
+        "excerpt": "process.env.NODEJS_HELPERS ?? null"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 22,
+        "excerpt": "env.PRODUCTION_BASE_URL ?? \"https://omcoda-tower.vercel.app\""
+      }
+    ],
+    "filesSample": [
+      "api/ping.ts",
+      "scripts/close-walk-gaps.ts",
+      "scripts/issue-access-link.ts",
+      "scripts/prod-otp-verify-once.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/run-seed.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-admin-consultants.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-automations-alive.ts"
+    ]
+  },
+  {
+    "id": "LANG-function-declaration",
+    "occurrences": 1891,
+    "fileCount": 506,
+    "examples": [
+      {
+        "file": "api/ping.ts",
+        "line": 7,
+        "excerpt": "export default function handler(_req: IncomingMessage, res: ServerResponse) { res.statusCode = 200"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 45,
+        "excerpt": "function cookieFrom(sc: string | null) { return sc ? (sc.split(\";\")[0] ?? \"\") : \"\"; }"
+      },
+      {
+        "file": "scripts/pgConnect.ts",
+        "line": 9,
+        "excerpt": "export function createPgPool(connectionString: string): pg.Pool { return new Pool({ connection"
+      },
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 7,
+        "excerpt": "function loadEnv(): Record<string, string> { try { return Object.fromEntries( readFileSy"
+      }
+    ],
+    "filesSample": [
+      "api/ping.ts",
+      "scripts/close-walk-gaps.ts",
+      "scripts/pgConnect.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-machine-e2e.ts"
+    ]
+  },
+  {
+    "id": "LANG-await",
+    "occurrences": 1456,
+    "fileCount": 118,
+    "examples": [
+      {
+        "file": "scripts/bundle-vercel-api.mjs",
+        "line": 25,
+        "excerpt": "await esbuild.build({ entryPoints: [t.entry], outfile: t.outfile, bu"
+      },
+      {
+        "file": "scripts/check-access-table.ts",
+        "line": 5,
+        "excerpt": "await pool.query(`SELECT to_regclass('public.access_links') AS t`)"
+      },
+      {
+        "file": "scripts/check-access-table.ts",
+        "line": 7,
+        "excerpt": "await pool.query(`SELECT count(*)::int AS n FROM access_links`)"
+      },
+      {
+        "file": "scripts/check-access-table.ts",
+        "line": 10,
+        "excerpt": "await pool.end()"
+      }
+    ],
+    "filesSample": [
+      "scripts/bundle-vercel-api.mjs",
+      "scripts/check-access-table.ts",
+      "scripts/close-walk-gaps.ts",
+      "scripts/ensure-platform-admin.ts",
+      "scripts/issue-access-link.ts",
+      "scripts/lift-active-halts.ts",
+      "scripts/prod-otp-verify-once.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/restore-channel-order.ts",
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts",
+      "scripts/vercel-entries/fetchBridge.ts"
+    ]
+  },
+  {
+    "id": "LANG-shorthand-property",
+    "occurrences": 1455,
+    "fileCount": 255,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 34,
+        "excerpt": "headers"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 66,
+        "excerpt": "email"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 66,
+        "excerpt": "code"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 184,
+        "excerpt": "contactId"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/pgConnect.ts",
+      "scripts/prod-otp-verify-once.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-admin-consultants.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts"
+    ]
+  },
+  {
+    "id": "LANG-optional-chain-token",
+    "occurrences": 1310,
+    "fileCount": 232,
+    "examples": [
+      {
+        "file": "api/ping.ts",
+        "line": 14,
+        "excerpt": "?."
+      },
+      {
+        "file": "api/ping.ts",
+        "line": 15,
+        "excerpt": "?."
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 69,
+        "excerpt": "?."
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 111,
+        "excerpt": "?."
+      }
+    ],
+    "filesSample": [
+      "api/ping.ts",
+      "scripts/close-walk-gaps.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-admin-consultants.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-machine-e2e.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-production-walk.ts"
+    ]
+  },
+  {
+    "id": "LANG-logical-and",
+    "occurrences": 1286,
+    "fileCount": 235,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 14,
+        "excerpt": "l && !l.startsWith(\"#\") && l.includes(\"=\")"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 14,
+        "excerpt": "l && !l.startsWith(\"#\")"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 30,
+        "excerpt": "path.includes(\"/machine/tick\") && CRON"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 111,
+        "excerpt": "camp.status === 200 && camp.body?.state === \"running\""
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-deny-gates.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-production-walk.ts",
+      "scripts/verify-ship-spine.ts"
+    ]
+  },
+  {
+    "id": "LANG-optional-chain",
+    "occurrences": 1224,
+    "fileCount": 215,
+    "examples": [
+      {
+        "file": "api/ping.ts",
+        "line": 14,
+        "excerpt": "process.env.DATABASE_URL?.trim"
+      },
+      {
+        "file": "api/ping.ts",
+        "line": 15,
+        "excerpt": "process.env.RESEND_API_KEY?.trim"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 69,
+        "excerpt": "v.body?.ok"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 111,
+        "excerpt": "camp.body?.state"
+      }
+    ],
+    "filesSample": [
+      "api/ping.ts",
+      "scripts/close-walk-gaps.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-admin-consultants.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-machine-e2e.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-production-walk.ts"
+    ]
+  },
+  {
+    "id": "LANG-logical-or",
+    "occurrences": 1193,
+    "fileCount": 239,
+    "examples": [
+      {
+        "file": "api/ping.ts",
+        "line": 16,
+        "excerpt": "(process.env.SEND_MODE ?? \"\").trim() || \"(unset→dry_run)\""
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 69,
+        "excerpt": "v.status !== 200 || !v.body?.ok || !cookie"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 69,
+        "excerpt": "v.status !== 200 || !v.body?.ok"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 127,
+        "excerpt": "bind.status === 200 || bind.status === 201"
+      }
+    ],
+    "filesSample": [
+      "api/ping.ts",
+      "scripts/close-walk-gaps.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-admin-consultants.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts"
+    ]
+  },
+  {
+    "id": "LANG-destructure-object",
+    "occurrences": 1009,
+    "fileCount": 323,
+    "examples": [
+      {
+        "file": "scripts/pgConnect.ts",
+        "line": 7,
+        "excerpt": "{ Pool }"
+      },
+      {
+        "file": "scripts/verify-firm-binding.ts",
+        "line": 267,
+        "excerpt": "{ readFileSync }"
+      },
+      {
+        "file": "scripts/verify-session-firm.ts",
+        "line": 162,
+        "excerpt": "{ readFileSync }"
+      },
+      {
+        "file": "server/auth-service/db.ts",
+        "line": 7,
+        "excerpt": "{ Pool }"
+      }
+    ],
+    "filesSample": [
+      "scripts/pgConnect.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-session-firm.ts",
+      "server/auth-service/db.ts",
+      "server/auth-service/email.ts",
+      "server/auth-service/index.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/dispatchSend.ts",
+      "server/wire-service/eventTest.ts",
+      "server/wire-service/machine.ts",
+      "server/wire-service/waitNote.ts"
+    ]
+  },
+  {
+    "id": "LANG-array.map",
+    "occurrences": 946,
+    "fileCount": 228,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 12,
+        "excerpt": "readFileSync(\".env\", \"utf8\") .split(\"\\n\") .filter((l) => l && !l.sta"
+      },
+      {
+        "file": "scripts/copy-notion-icons.mjs",
+        "line": 9,
+        "excerpt": "[...text.matchAll(/@notion-icons\\/([^\"?]+)/g)].map((m) => m[1])"
+      },
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 10,
+        "excerpt": "readFileSync(\".env\", \"utf8\") .split(\"\\n\") .filter((l) => l && !l"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 36,
+        "excerpt": "nested .split(\"/\") .filter(Boolean) .map(encodeURIComponent)"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/copy-notion-icons.mjs",
+      "scripts/read-latest-otp.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-production-walk.ts",
+      "scripts/verify-reference-persist.ts",
+      "scripts/walk-verify-firm.ts",
+      "server/auth-service/cors.ts",
+      "server/wire-service/campaignHousing.ts"
+    ]
+  },
+  {
+    "id": "LANG-destructure-array",
+    "occurrences": 821,
+    "fileCount": 173,
+    "examples": [
+      {
+        "file": "scripts/restore-channel-order.ts",
+        "line": 9,
+        "excerpt": "[id, ord]"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 55,
+        "excerpt": "[key, value]"
+      },
+      {
+        "file": "scripts/verify-boot-env.ts",
+        "line": 68,
+        "excerpt": "[k, v]"
+      },
+      {
+        "file": "scripts/verify-continuous-worker.ts",
+        "line": 43,
+        "excerpt": "[id, ord]"
+      }
+    ],
+    "filesSample": [
+      "scripts/restore-channel-order.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/machine.ts",
+      "server/wire-service/operatorPanes.ts",
+      "server/wire-service/waitNote.ts",
+      "src/app/App.tsx",
+      "src/app/auth/AccessEntry.tsx",
+      "src/app/auth/AuthContext.tsx",
+      "src/app/components/ActivityBarHeader.tsx"
+    ]
+  },
+  {
+    "id": "LANG-spread-object",
+    "occurrences": 681,
+    "fileCount": 177,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 11,
+        "excerpt": "...Object.fromEntries( readFileSync(\".env\", \"utf8\") .split(\"\\n\")"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 20,
+        "excerpt": "...process.env"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 34,
+        "excerpt": "...init"
+      },
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 23,
+        "excerpt": "...loadEnv()"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-production-walk.ts",
+      "scripts/verify-session-firm.ts",
+      "server/auth-service/app.ts",
+      "server/auth-service/logger.ts",
+      "server/wire-service/app.ts",
+      "server/wire-service/campaignHousing.ts"
+    ]
+  },
+  {
+    "id": "LANG-import-type-named",
+    "occurrences": 633,
+    "fileCount": 404,
+    "examples": [
+      {
+        "file": "api/ping.ts",
+        "line": 5,
+        "excerpt": "import type { IncomingMessage, ServerResponse } from \"node:http\";"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 8,
+        "excerpt": "import type { IncomingMessage, ServerResponse } from \"node:http\";"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 9,
+        "excerpt": "import type { Hono } from \"hono\";"
+      },
+      {
+        "file": "server/auth-service/accessLinks.ts",
+        "line": 4,
+        "excerpt": "import type { Pool, PoolClient } from \"pg\";"
+      }
+    ],
+    "filesSample": [
+      "api/ping.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "server/auth-service/accessLinks.ts",
+      "server/auth-service/registerRoutes.ts",
+      "server/auth-service/routes.ts",
+      "server/wire-service/auditRun.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/contactAccessMint.ts",
+      "server/wire-service/contactSeat.ts",
+      "server/wire-service/eventTest.ts",
+      "server/wire-service/machine.ts"
+    ]
+  },
+  {
+    "id": "LANG-template-literal-plain",
+    "occurrences": 578,
+    "fileCount": 55,
+    "examples": [
+      {
+        "file": "scripts/check-access-table.ts",
+        "line": 5,
+        "excerpt": "`SELECT to_regclass('public.access_links') AS t`"
+      },
+      {
+        "file": "scripts/check-access-table.ts",
+        "line": 7,
+        "excerpt": "`SELECT count(*)::int AS n FROM access_links`"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 50,
+        "excerpt": "`DELETE FROM otp_send_log WHERE lower(email)=lower($1)`"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 54,
+        "excerpt": "`UPDATE otp_challenges SET invalidated_at=now() WHERE firm_id=$1::uuid AND"
+      }
+    ],
+    "filesSample": [
+      "scripts/check-access-table.ts",
+      "scripts/close-walk-gaps.ts",
+      "scripts/ensure-platform-admin.ts",
+      "scripts/lift-active-halts.ts",
+      "scripts/prod-otp-verify-once.ts",
+      "scripts/restore-channel-order.ts",
+      "scripts/run-seed.ts",
+      "scripts/verify-admin-consultants.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-boot-env.ts"
+    ]
+  },
+  {
+    "id": "LANG-new",
+    "occurrences": 475,
+    "fileCount": 179,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 28,
+        "excerpt": "new Headers(init.headers)"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 70,
+        "excerpt": "new Error(`login failed ${email}: ${JSON.stringify(v)}`)"
+      },
+      {
+        "file": "scripts/generate-holon-catalog-flat.mts",
+        "line": 12,
+        "excerpt": "new URL(\"../src/app/components/docs/holonCatalogFlat.ts\", import.meta.url)"
+      },
+      {
+        "file": "scripts/pgConnect.ts",
+        "line": 10,
+        "excerpt": "new Pool({ connectionString, ssl: connectionString.includes(\"supabase\") ? { rejectUnau"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/generate-holon-catalog-flat.mts",
+      "scripts/pgConnect.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-production-walk.ts",
+      "scripts/verify-reference-persist.ts",
+      "scripts/verify-session-firm.ts",
+      "scripts/verify-ship-spine.ts"
+    ]
+  },
+  {
+    "id": "LANG-strict-neq",
+    "occurrences": 467,
+    "fileCount": 137,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 69,
+        "excerpt": "v.status !== 200"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 14,
+        "excerpt": "prefilled !== undefined"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 14,
+        "excerpt": "prefilled !== null"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 65,
+        "excerpt": "method !== \"GET\""
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-deny-gates.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-machine-e2e.ts",
+      "scripts/verify-production-walk.ts",
+      "scripts/verify-reference-persist.ts",
+      "scripts/verify-session-firm.ts"
+    ]
+  },
+  {
+    "id": "LANG-undefined",
+    "occurrences": 400,
+    "fileCount": 132,
+    "examples": [
+      {
+        "file": "scripts/pgConnect.ts",
+        "line": 14,
+        "excerpt": "undefined"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 14,
+        "excerpt": "undefined"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 56,
+        "excerpt": "undefined"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 68,
+        "excerpt": "undefined"
+      }
+    ],
+    "filesSample": [
+      "scripts/pgConnect.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-session-firm.ts",
+      "server/auth-service/db.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/contactSeat.ts",
+      "server/wire-service/machine.ts",
+      "server/wire-service/operatorPanes.ts",
+      "server/wire-service/stores.ts",
+      "server/wire-service/webhooks.ts"
+    ]
+  },
+  {
+    "id": "LANG-import-inline-type",
+    "occurrences": 394,
+    "fileCount": 171,
+    "examples": [
+      {
+        "file": "scripts/verify-continuous-worker.ts",
+        "line": 11,
+        "excerpt": "type ChildProcess"
+      },
+      {
+        "file": "server/wire-service/cascade.ts",
+        "line": 8,
+        "excerpt": "type DispatchResult"
+      },
+      {
+        "file": "server/wire-service/cascade.ts",
+        "line": 13,
+        "excerpt": "type NormalizedCell"
+      },
+      {
+        "file": "server/wire-service/machine.ts",
+        "line": 18,
+        "excerpt": "type RfNode"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-continuous-worker.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/machine.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/App.tsx",
+      "src/app/auth/AuthContext.tsx",
+      "src/app/components/ActivityBarHeader.tsx",
+      "src/app/components/BoardPanel.tsx",
+      "src/app/components/DataPanel.tsx",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/NudgeGantt.tsx",
+      "src/app/components/Workspace.tsx"
+    ]
+  },
+  {
+    "id": "LANG-spread",
+    "occurrences": 368,
+    "fileCount": 102,
+    "examples": [
+      {
+        "file": "scripts/copy-notion-icons.mjs",
+        "line": 9,
+        "excerpt": "...text.matchAll(/@notion-icons\\/([^\"?]+)/g)"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 86,
+        "excerpt": "...existing"
+      },
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 61,
+        "excerpt": "...stages.rows"
+      },
+      {
+        "file": "scripts/verify-modular-surfaces.ts",
+        "line": 42,
+        "excerpt": "...before"
+      }
+    ],
+    "filesSample": [
+      "scripts/copy-notion-icons.mjs",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "server/wire-service/contactSeat.ts",
+      "server/wire-service/eventTest.ts",
+      "server/wire-service/machine.ts",
+      "server/wire-service/waitNote.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/App.tsx",
+      "src/app/components/DataPanel.tsx",
+      "src/app/components/JourneyTab.tsx"
+    ]
+  },
+  {
+    "id": "LANG-array.filter",
+    "occurrences": 337,
+    "fileCount": 124,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 12,
+        "excerpt": "readFileSync(\".env\", \"utf8\") .split(\"\\n\") .filter((l) => l && !l.sta"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 269,
+        "excerpt": "report.filter((r) => !r.ok)"
+      },
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 10,
+        "excerpt": "readFileSync(\".env\", \"utf8\") .split(\"\\n\") .filter((l) => l && !l"
+      },
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 41,
+        "excerpt": "data.data.filter( (e) => e.to.some((t) => t.toLowerCase() === email) &&"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-machine-e2e.ts",
+      "scripts/verify-production-walk.ts",
+      "scripts/verify-session-firm.ts"
+    ]
+  },
+  {
+    "id": "LANG-array.find",
+    "occurrences": 322,
+    "fileCount": 127,
+    "examples": [
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 48,
+        "excerpt": "ref.rows[0]?.payload?.rows?.find((r) => r.key === \"cec.min_hours\")"
+      },
+      {
+        "file": "scripts/verify-author-runtime.ts",
+        "line": 119,
+        "excerpt": "tick.fired.find((f) => String(f.criteriaId).startsWith(\"cell:\"))"
+      },
+      {
+        "file": "scripts/verify-modular-surfaces.ts",
+        "line": 27,
+        "excerpt": "(await standInMachineApi.listReferenceVersions()).find( (v) => v.id === resu"
+      },
+      {
+        "file": "scripts/verify-modular-surfaces.ts",
+        "line": 35,
+        "excerpt": "rows.find((r) => r.key === key)"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-reference-persist.ts",
+      "scripts/verify-ship-spine.ts",
+      "scripts/verify-worker-actuation.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/contactSeat.ts",
+      "server/wire-service/pool.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/App.tsx",
+      "src/app/components/docs/registerMeta/views.ts"
+    ]
+  },
+  {
+    "id": "LANG-async-function",
+    "occurrences": 317,
+    "fileCount": 54,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 27,
+        "excerpt": "async function live(path: string, init: RequestInit & { cookie?: string } = {}) { const headers ="
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 49,
+        "excerpt": "async function login(email: string, firmId: string) { await pool.query(`DELETE FROM otp_send_log W"
+      },
+      {
+        "file": "scripts/verify-firm-binding.ts",
+        "line": 50,
+        "excerpt": "async function provision(firmName: string, email: string) { const app = wireApp(); const res = a"
+      },
+      {
+        "file": "scripts/verify-firm-binding.ts",
+        "line": 61,
+        "excerpt": "async function mintSession(email: string, firmId: string) { // Force OTP challenge with known code"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-production-walk.ts",
+      "scripts/verify-reference-persist.ts",
+      "scripts/verify-session-firm.ts",
+      "server/auth-service/accessLinks.ts",
+      "server/auth-service/db.ts",
+      "server/auth-service/email.ts",
+      "server/auth-service/registerRoutes.ts",
+      "server/auth-service/routes.ts",
+      "server/wire-service/auditRun.ts"
+    ]
+  },
+  {
+    "id": "LANG-array.push",
+    "occurrences": 308,
+    "fileCount": 65,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 101,
+        "excerpt": "report.push({ step: \"A-login\", ok: true })"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 109,
+        "excerpt": "report.push({ step: \"A-campaign-running\", ok: camp.status === 200 && cam"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 125,
+        "excerpt": "report.push({ step: \"A-binding\", ok: bind.status === 200 || bind.status"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 155,
+        "excerpt": "report.push({ step: \"A-onboarding-fire\", ok: fire.status === 200, detail: fire.b"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-machine-e2e.ts",
+      "scripts/verify-production-walk.ts",
+      "scripts/verify-session-firm.ts",
+      "scripts/verify-ship-spine.ts",
+      "scripts/verify-worker-actuation.ts"
+    ]
+  },
+  {
+    "id": "LANG-case",
+    "occurrences": 300,
+    "fileCount": 32,
+    "examples": [
+      {
+        "file": "server/wire-service/webhooks.ts",
+        "line": 22,
+        "excerpt": "case \"email.sent\":"
+      },
+      {
+        "file": "server/wire-service/webhooks.ts",
+        "line": 23,
+        "excerpt": "case \"email.delivered\": return type === \"email.sent\" ?"
+      },
+      {
+        "file": "server/wire-service/webhooks.ts",
+        "line": 25,
+        "excerpt": "case \"email.delivery_delayed\": return \"deferred\";"
+      },
+      {
+        "file": "server/wire-service/webhooks.ts",
+        "line": 27,
+        "excerpt": "case \"email.bounced\": return \"bounce_hard\";"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/webhooks.ts",
+      "src/app/components/BoardPanel.tsx",
+      "src/app/components/DataPanel.tsx",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/hub/agent/AgentEditor.tsx",
+      "src/app/components/hub/automation/AutomationRunsTab.tsx",
+      "src/app/components/hub/automation/NodeDataPane.tsx",
+      "src/app/components/hub/automation/RuleAnalysisPane.tsx",
+      "src/app/components/inspector/EngagementNodePanel.tsx",
+      "src/app/data/agentDefinitions.ts",
+      "src/app/data/agentSteps.ts",
+      "src/app/data/auditRecordReachability.ts"
+    ]
+  },
+  {
+    "id": "LANG-for-of",
+    "occurrences": 270,
+    "fileCount": 95,
+    "examples": [
+      {
+        "file": "scripts/bundle-vercel-api.mjs",
+        "line": 24,
+        "excerpt": "for (const t of targets) { await esbuild.build({ entry"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 135,
+        "excerpt": "for (const r of contacts.rows) { await pool.query("
+      },
+      {
+        "file": "scripts/copy-notion-icons.mjs",
+        "line": 12,
+        "excerpt": "for (const file of files) { fs.copyFileSync(path.join(src,"
+      },
+      {
+        "file": "scripts/restore-channel-order.ts",
+        "line": 9,
+        "excerpt": "for (const [id, ord] of order) { await pool.query(`UPDATE"
+      }
+    ],
+    "filesSample": [
+      "scripts/bundle-vercel-api.mjs",
+      "scripts/close-walk-gaps.ts",
+      "scripts/copy-notion-icons.mjs",
+      "scripts/restore-channel-order.ts",
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-modular-surfaces.ts"
+    ]
+  },
+  {
+    "id": "LANG-method",
+    "occurrences": 267,
+    "fileCount": 31,
+    "examples": [
+      {
+        "file": "src/app/register/components/RegisterErrorBoundary.tsx",
+        "line": 18,
+        "excerpt": "static getDerivedStateFromError(error: Error): RegisterErrorBoundaryState {"
+      },
+      {
+        "file": "src/app/register/components/RegisterErrorBoundary.tsx",
+        "line": 22,
+        "excerpt": "componentDidCatch(error: Error, info: ErrorInfo): void { console.error(\"Regi"
+      },
+      {
+        "file": "src/app/register/components/RegisterErrorBoundary.tsx",
+        "line": 26,
+        "excerpt": "render() { if (this.state.error) { return ( <div sty"
+      },
+      {
+        "file": "src/app/wire/reals/auditTrail.ts",
+        "line": 6,
+        "excerpt": "async append(input) { return wireFetch<AuditEvent>(\"/audit\", { method:"
+      }
+    ],
+    "filesSample": [
+      "src/app/register/components/RegisterErrorBoundary.tsx",
+      "src/app/wire/reals/auditTrail.ts",
+      "src/app/wire/reals/consentSilence.ts",
+      "src/app/wire/reals/crmOAuth.ts",
+      "src/app/wire/reals/espMailer.ts",
+      "src/app/wire/reals/haltStore.ts",
+      "src/app/wire/reals/machineApi.ts",
+      "src/app/wire/reals/otpStore.ts",
+      "src/app/wire/reals/primaryStore.ts",
+      "src/app/wire/reals/sendingPool.ts",
+      "src/app/wire/reals/smsApi.ts",
+      "src/app/wire/standins/auditTrail.ts"
+    ]
+  },
+  {
+    "id": "LANG-typeof",
+    "occurrences": 260,
+    "fileCount": 57,
+    "examples": [
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 16,
+        "excerpt": "typeof prefilled"
+      },
+      {
+        "file": "scripts/verify-reference-persist.ts",
+        "line": 17,
+        "excerpt": "typeof target.value"
+      },
+      {
+        "file": "server/wire-service/cascade.ts",
+        "line": 305,
+        "excerpt": "typeof withinSeconds"
+      },
+      {
+        "file": "server/wire-service/cascade.ts",
+        "line": 481,
+        "excerpt": "typeof nextState.attempt_wait_until"
+      }
+    ],
+    "filesSample": [
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-reference-persist.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/eventTest.ts",
+      "server/wire-service/machine.ts",
+      "server/wire-service/operatorPanes.ts",
+      "server/wire-service/runWrites.ts",
+      "server/wire-service/templateWalk.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/components/hub/agent/AgentEditor.tsx",
+      "src/app/components/hub/automation/AutomationNodeConfigModal.tsx",
+      "src/app/components/hub/automation/NodeDataPane.tsx"
+    ]
+  },
+  {
+    "id": "LANG-let",
+    "occurrences": 227,
+    "fileCount": 111,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 36,
+        "excerpt": "let body: unknown = text"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 64,
+        "excerpt": "let body: Buffer | undefined"
+      },
+      {
+        "file": "scripts/verify-access-link.ts",
+        "line": 29,
+        "excerpt": "let redeemBody: { ok?: boolean; user?: { firmId?: string }; error?:"
+      },
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 62,
+        "excerpt": "let i = 0"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-production-walk.ts",
+      "scripts/walk-verify-firm.ts",
+      "server/auth-service/db.ts",
+      "server/auth-service/email.ts",
+      "server/auth-service/routes.ts"
+    ]
+  },
+  {
+    "id": "LANG-void",
+    "occurrences": 210,
+    "fileCount": 65,
+    "examples": [
+      {
+        "file": "server/wire-service/eventTest.ts",
+        "line": 201,
+        "excerpt": "void tables"
+      },
+      {
+        "file": "server/wire-service/worker.ts",
+        "line": 58,
+        "excerpt": "void runTick()"
+      },
+      {
+        "file": "src/app/auth/AuthContext.tsx",
+        "line": 118,
+        "excerpt": "void refresh()"
+      },
+      {
+        "file": "src/app/components/BoardPanel.tsx",
+        "line": 606,
+        "excerpt": "void wirePorts.machineApi .boardDe"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/eventTest.ts",
+      "server/wire-service/worker.ts",
+      "src/app/auth/AuthContext.tsx",
+      "src/app/components/BoardPanel.tsx",
+      "src/app/components/hub/agent/AgentDetailView.tsx",
+      "src/app/components/hub/agent/AgentEditor.tsx",
+      "src/app/components/hub/automation/AutomationDetailView.tsx",
+      "src/app/components/imports/CsvImportFlow.tsx",
+      "src/app/context/AuditContext.tsx",
+      "src/app/context/AutomationContext.tsx",
+      "src/app/register/components/RegisterHowCanvas.tsx",
+      "src/app/register/pages/RegisterPage.tsx"
+    ]
+  },
+  {
+    "id": "LANG-else",
+    "occurrences": 206,
+    "fileCount": 85,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 94,
+        "excerpt": "else"
+      },
+      {
+        "file": "scripts/ensure-platform-admin.ts",
+        "line": 28,
+        "excerpt": "else"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 57,
+        "excerpt": "else"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 85,
+        "excerpt": "else"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/ensure-platform-admin.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-machine-e2e.ts",
+      "scripts/verify-production-walk.ts",
+      "scripts/verify-session-firm.ts"
+    ]
+  },
+  {
+    "id": "LANG-try",
+    "occurrences": 193,
+    "fileCount": 85,
+    "examples": [
+      {
+        "file": "scripts/check-access-table.ts",
+        "line": 4,
+        "excerpt": "try"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 37,
+        "excerpt": "try"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 80,
+        "excerpt": "try"
+      },
+      {
+        "file": "scripts/ensure-platform-admin.ts",
+        "line": 12,
+        "excerpt": "try"
+      }
+    ],
+    "filesSample": [
+      "scripts/check-access-table.ts",
+      "scripts/close-walk-gaps.ts",
+      "scripts/ensure-platform-admin.ts",
+      "scripts/issue-access-link.ts",
+      "scripts/prod-otp-verify-once.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-admin-consultants.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts"
+    ]
+  },
+  {
+    "id": "LANG-array.includes",
+    "occurrences": 192,
+    "fileCount": 72,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 14,
+        "excerpt": "l.includes(\"=\")"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 30,
+        "excerpt": "path.includes(\"/machine/tick\")"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 219,
+        "excerpt": "cellsJson.includes(\"CELLWALK-50f14d\")"
+      },
+      {
+        "file": "scripts/pgConnect.ts",
+        "line": 12,
+        "excerpt": "connectionString.includes(\"supabase\")"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/pgConnect.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-production-walk.ts",
+      "scripts/verify-session-firm.ts",
+      "scripts/verify-ship-spine.ts",
+      "scripts/walk-verify-firm.ts"
+    ]
+  },
+  {
+    "id": "LANG-array.slice",
+    "occurrences": 121,
+    "fileCount": 68,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 17,
+        "excerpt": "l.slice(0, i)"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 17,
+        "excerpt": "l.slice(i + 1)"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 220,
+        "excerpt": "cellsJson.slice(0, 300)"
+      },
+      {
+        "file": "scripts/prod-otp-verify-once.ts",
+        "line": 31,
+        "excerpt": "text.slice(0, 240)"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/prod-otp-verify-once.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-admin-consultants.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-deny-gates.ts",
+      "scripts/verify-firm-binding.ts"
+    ]
+  },
+  {
+    "id": "LANG-continue",
+    "occurrences": 104,
+    "fileCount": 31,
+    "examples": [
+      {
+        "file": "scripts/run-seed.ts",
+        "line": 51,
+        "excerpt": "continue"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 56,
+        "excerpt": "continue"
+      },
+      {
+        "file": "server/wire-service/campaignHousing.ts",
+        "line": 234,
+        "excerpt": "continue"
+      },
+      {
+        "file": "server/wire-service/campaignHousing.ts",
+        "line": 439,
+        "excerpt": "continue"
+      }
+    ],
+    "filesSample": [
+      "scripts/run-seed.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/contactSeat.ts",
+      "server/wire-service/machine.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/data/automationDataPull.ts",
+      "src/app/data/automationEvents.ts",
+      "src/app/data/automationRules.ts",
+      "src/app/data/automationWorkflows.ts"
+    ]
+  },
+  {
+    "id": "LANG-reexport-named",
+    "occurrences": 98,
+    "fileCount": 21,
+    "examples": [
+      {
+        "file": "api/auth.ts",
+        "line": 3,
+        "excerpt": "export { default, config } from \"../dist-api/auth.js\";"
+      },
+      {
+        "file": "api/wire.ts",
+        "line": 3,
+        "excerpt": "export { default, config } from \"../dist-api/wire.js\";"
+      },
+      {
+        "file": "server/wire-service/db.ts",
+        "line": 1,
+        "excerpt": "export { getPool, withTransaction } from \"../auth-service/db.ts\";"
+      },
+      {
+        "file": "src/app/components/docs/registerMeta/index.ts",
+        "line": 1,
+        "excerpt": "export type { ComposedHolonNode, RegisterHolonMeta, RegisterHolonRenderKey, RegisterViewLayoutId, RegisterViewManifest, } from \"./types\";"
+      }
+    ],
+    "filesSample": [
+      "api/auth.ts",
+      "api/wire.ts",
+      "server/wire-service/db.ts",
+      "src/app/components/docs/registerMeta/index.ts",
+      "src/app/data/journeyGantt.ts",
+      "src/app/data/sarahNudgeTimeline.ts",
+      "src/app/icons/brand/index.ts",
+      "src/app/register/flows/index.ts",
+      "src/app/register/howAnalysis/index.ts",
+      "src/app/register/journeyFlows/index.ts",
+      "src/app/register/prototype-ant/consultant/meetingsData.ts",
+      "src/app/register/prototype-ant/contact/ContactAntScene.tsx"
+    ]
+  },
+  {
+    "id": "LANG-computed-property",
+    "occurrences": 97,
+    "fileCount": 34,
+    "examples": [
+      {
+        "file": "server/wire-service/cascade.ts",
+        "line": 413,
+        "excerpt": "[criteria.id]: now.toISOString()"
+      },
+      {
+        "file": "server/wire-service/workflowWalk.ts",
+        "line": 279,
+        "excerpt": "[slot]: chips"
+      },
+      {
+        "file": "server/wire-service/workflowWalk.ts",
+        "line": 1166,
+        "excerpt": "[packId]: true"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2720,
+        "excerpt": "[ENGAGEMENT_SEQUENCE_BAR_HOLON.id]: sequenceBar"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/cascade.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/docs/docsHighlight.ts",
+      "src/app/components/docs/engagementListHolons.ts",
+      "src/app/components/docs/holonDetailContent.ts",
+      "src/app/components/docs/registerMeta/boardRegisterMeta.ts",
+      "src/app/components/hub/agent/AgentSequenceCanvas.tsx",
+      "src/app/components/hub/automation/WorkflowNodeRunChrome.tsx",
+      "src/app/components/hub/automation/automationEdgeTypes.ts",
+      "src/app/data/automationDataPull.ts",
+      "src/app/data/journeyByClient.ts"
+    ]
+  },
+  {
+    "id": "LANG-loose-neq",
+    "occurrences": 95,
+    "fileCount": 42,
+    "examples": [
+      {
+        "file": "scripts/verify-modular-surfaces.ts",
+        "line": 110,
+        "excerpt": "r.threshold != null"
+      },
+      {
+        "file": "server/wire-service/campaignHousing.ts",
+        "line": 969,
+        "excerpt": "row.attempt_n != null"
+      },
+      {
+        "file": "server/wire-service/contactSeat.ts",
+        "line": 295,
+        "excerpt": "campaignId != null"
+      },
+      {
+        "file": "server/wire-service/contactSeat.ts",
+        "line": 317,
+        "excerpt": "campaignId != null"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-modular-surfaces.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/contactSeat.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/components/BoardPanel.tsx",
+      "src/app/components/ClientView.tsx",
+      "src/app/components/DocsPanel.tsx",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/docs/surfacePurpose.ts",
+      "src/app/components/hub/AddAuditFlow.tsx",
+      "src/app/components/hub/AuditTreeBlock.tsx",
+      "src/app/components/hub/automation/AutomationNodeConfigModal.tsx"
+    ]
+  },
+  {
+    "id": "LANG-array.some",
+    "occurrences": 94,
+    "fileCount": 58,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 254,
+        "excerpt": "bookB.body.contacts.some((c: { id: string }) => (bookA.body.contacts || []"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 255,
+        "excerpt": "(bookA.body.contacts || []).some((a: { id: string }) => a.id === c.id)"
+      },
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 43,
+        "excerpt": "e.to.some((t) => t.toLowerCase() === email)"
+      },
+      {
+        "file": "scripts/verify-author-runtime.ts",
+        "line": 166,
+        "excerpt": "report.some((r) => !r.ok)"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-production-walk.ts",
+      "scripts/verify-worker-actuation.ts",
+      "server/wire-service/pool.ts",
+      "server/wire-service/webhooks.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/hub/agent/AgentSequenceCanvas.tsx"
+    ]
+  },
+  {
+    "id": "LANG-catch-binding",
+    "occurrences": 90,
+    "fileCount": 44,
+    "examples": [
+      {
+        "file": "scripts/run-migration.ts",
+        "line": 26,
+        "excerpt": "catch"
+      },
+      {
+        "file": "scripts/run-seed.ts",
+        "line": 71,
+        "excerpt": "catch"
+      },
+      {
+        "file": "scripts/verify-automations-alive.ts",
+        "line": 196,
+        "excerpt": "catch"
+      },
+      {
+        "file": "server/auth-service/db.ts",
+        "line": 42,
+        "excerpt": "catch"
+      }
+    ],
+    "filesSample": [
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts",
+      "scripts/verify-automations-alive.ts",
+      "server/auth-service/db.ts",
+      "server/auth-service/email.ts",
+      "server/auth-service/routes.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/contactSeat.ts",
+      "server/wire-service/dispatchSend.ts",
+      "server/wire-service/eventTest.ts",
+      "server/wire-service/machine.ts"
+    ]
+  },
+  {
+    "id": "LANG-async-arrow",
+    "occurrences": 86,
+    "fileCount": 36,
+    "examples": [
+      {
+        "file": "server/auth-service/routes.ts",
+        "line": 137,
+        "excerpt": "async (client) => { await invalidateChallenges(user.firm_id, email, client"
+      },
+      {
+        "file": "server/auth-service/routes.ts",
+        "line": 196,
+        "excerpt": "async (client) => { const consume = await client.query( `UPDATE ot"
+      },
+      {
+        "file": "server/auth-service/routes.ts",
+        "line": 473,
+        "excerpt": "async (client) => { const consume = await client.query( `UPDATE ac"
+      },
+      {
+        "file": "server/wire-service/eventTest.ts",
+        "line": 42,
+        "excerpt": "async (table: string, sql: string, params: unknown[]) => { const { rows } ="
+      }
+    ],
+    "filesSample": [
+      "server/auth-service/routes.ts",
+      "server/wire-service/eventTest.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/auth/AccessEntry.tsx",
+      "src/app/auth/AuthContext.tsx",
+      "src/app/components/hub/agent/AgentDetailView.tsx",
+      "src/app/components/hub/agent/AgentEditor.tsx",
+      "src/app/components/imports/CsvImportFlow.tsx",
+      "src/app/context/AutomationContext.tsx",
+      "src/app/register/prototype-ant/WaitNoteOverlay.tsx",
+      "src/app/register/prototype-ant/consultant/BoardModule.tsx",
+      "src/app/register/prototype-ant/consultant/ConsultantAntScene.tsx"
+    ]
+  },
+  {
+    "id": "LANG-array.join",
+    "occurrences": 82,
+    "fileCount": 38,
+    "examples": [
+      {
+        "file": "scripts/bundle-vercel-api.mjs",
+        "line": 8,
+        "excerpt": "path.join(root, \"dist-api\")"
+      },
+      {
+        "file": "scripts/bundle-vercel-api.mjs",
+        "line": 13,
+        "excerpt": "path.join(root, \"scripts/vercel-entries/wire.ts\")"
+      },
+      {
+        "file": "scripts/bundle-vercel-api.mjs",
+        "line": 14,
+        "excerpt": "path.join(outDir, \"wire.js\")"
+      },
+      {
+        "file": "scripts/bundle-vercel-api.mjs",
+        "line": 18,
+        "excerpt": "path.join(root, \"scripts/vercel-entries/auth.ts\")"
+      }
+    ],
+    "filesSample": [
+      "scripts/bundle-vercel-api.mjs",
+      "scripts/copy-notion-icons.mjs",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "server/wire-service/cascade.ts",
+      "src/app/components/BoardPanel.tsx",
+      "src/app/components/hub/automation/AutomationManualClassFilterPanel.tsx",
+      "src/app/components/hub/automation/ConstantsIndustryTableView.tsx",
+      "src/app/components/hub/automation/RuleAnalysisPane.tsx",
+      "src/app/components/hub/automation/RuleOutcomesConfigForm.tsx",
+      "src/app/components/inspector/FormCaptureReplay.tsx"
+    ]
+  },
+  {
+    "id": "LANG-default-param",
+    "occurrences": 82,
+    "fileCount": 52,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 27,
+        "excerpt": "init: RequestInit & { cookie?: string } = {}"
+      },
+      {
+        "file": "scripts/verify-production-walk.ts",
+        "line": 39,
+        "excerpt": "init: RequestInit & { cookie?: string } = {}"
+      },
+      {
+        "file": "scripts/verify-session-firm.ts",
+        "line": 43,
+        "excerpt": "headers: Record<string, string> = {}"
+      },
+      {
+        "file": "server/auth-service/accessLinks.ts",
+        "line": 39,
+        "excerpt": "ttlMs: number = ACCESS_LINK_TTL_MS"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/verify-production-walk.ts",
+      "scripts/verify-session-firm.ts",
+      "server/auth-service/accessLinks.ts",
+      "server/auth-service/logger.ts",
+      "server/auth-service/routes.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/contactSeat.ts",
+      "server/wire-service/machine.ts",
+      "server/wire-service/operatorPanes.ts",
+      "server/wire-service/waitNote.ts"
+    ]
+  },
+  {
+    "id": "LANG-optional-catch",
+    "occurrences": 79,
+    "fileCount": 43,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 39,
+        "excerpt": "catch"
+      },
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 18,
+        "excerpt": "catch"
+      },
+      {
+        "file": "scripts/verify-access-link.ts",
+        "line": 37,
+        "excerpt": "catch"
+      },
+      {
+        "file": "scripts/verify-continuous-worker.ts",
+        "line": 156,
+        "excerpt": "catch"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-production-walk.ts",
+      "server/auth-service/registerRoutes.ts",
+      "server/auth-service/routes.ts",
+      "server/wire-service/dispatchSend.ts",
+      "server/wire-service/eventTest.ts",
+      "server/wire-service/pool.ts",
+      "server/wire-service/webhooks.ts",
+      "src/app/auth/AuthContext.tsx"
+    ]
+  },
+  {
+    "id": "LANG-regex-literal",
+    "occurrences": 77,
+    "fileCount": 50,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 22,
+        "excerpt": "/\\/$/"
+      },
+      {
+        "file": "scripts/copy-notion-icons.mjs",
+        "line": 9,
+        "excerpt": "/@notion-icons\\/([^\"?]+)/g"
+      },
+      {
+        "file": "scripts/issue-access-link.ts",
+        "line": 20,
+        "excerpt": "/\\/$/"
+      },
+      {
+        "file": "scripts/prod-otp-verify-once.ts",
+        "line": 5,
+        "excerpt": "/\\/$/"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/copy-notion-icons.mjs",
+      "scripts/issue-access-link.ts",
+      "scripts/prod-otp-verify-once.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-production-walk.ts",
+      "server/auth-service/cors.ts",
+      "server/auth-service/crypto.ts",
+      "server/auth-service/routes.ts"
+    ]
+  },
+  {
+    "id": "LANG-import-namespace",
+    "occurrences": 75,
+    "fileCount": 48,
+    "examples": [
+      {
+        "file": "scripts/bundle-vercel-api.mjs",
+        "line": 3,
+        "excerpt": "import * as esbuild from \"esbuild\";"
+      },
+      {
+        "file": "src/app/components/PhaseTooltip.tsx",
+        "line": 2,
+        "excerpt": "import * as HoverCard from \"@radix-ui/react-hover-card\";"
+      },
+      {
+        "file": "src/app/components/archive/NudgePopover.tsx",
+        "line": 5,
+        "excerpt": "import * as HoverCard from \"@radix-ui/react-hover-card\";"
+      },
+      {
+        "file": "src/app/components/ui/accordion.tsx",
+        "line": 3,
+        "excerpt": "import * as React from \"react\";"
+      }
+    ],
+    "filesSample": [
+      "scripts/bundle-vercel-api.mjs",
+      "src/app/components/PhaseTooltip.tsx",
+      "src/app/components/archive/NudgePopover.tsx",
+      "src/app/components/ui/accordion.tsx",
+      "src/app/components/ui/alert-dialog.tsx",
+      "src/app/components/ui/alert.tsx",
+      "src/app/components/ui/aspect-ratio.tsx",
+      "src/app/components/ui/avatar.tsx",
+      "src/app/components/ui/badge.tsx",
+      "src/app/components/ui/breadcrumb.tsx",
+      "src/app/components/ui/button.tsx",
+      "src/app/components/ui/calendar.tsx"
+    ]
+  },
+  {
+    "id": "LANG-loose-eq",
+    "occurrences": 75,
+    "fileCount": 29,
+    "examples": [
+      {
+        "file": "server/wire-service/cascade.ts",
+        "line": 308,
+        "excerpt": "row.threshold == null"
+      },
+      {
+        "file": "server/wire-service/eventTest.ts",
+        "line": 217,
+        "excerpt": "version == null"
+      },
+      {
+        "file": "server/wire-service/machine.ts",
+        "line": 1872,
+        "excerpt": "r.sequence_ready == null"
+      },
+      {
+        "file": "server/wire-service/workflowWalk.ts",
+        "line": 115,
+        "excerpt": "handle == null"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/cascade.ts",
+      "server/wire-service/eventTest.ts",
+      "server/wire-service/machine.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/components/hub/automation/AutomationNodeConfigModal.tsx",
+      "src/app/components/hub/automation/NodeDataPane.tsx",
+      "src/app/data/automationConditions.ts",
+      "src/app/data/automationDataPull.ts",
+      "src/app/data/automationRules.ts",
+      "src/app/data/automationRuns.ts",
+      "src/app/data/automationWorkflows.ts",
+      "src/app/data/eventTestContract.ts"
+    ]
+  },
+  {
+    "id": "LANG-array.sort",
+    "occurrences": 73,
+    "fileCount": 37,
+    "examples": [
+      {
+        "file": "scripts/run-migration.ts",
+        "line": 16,
+        "excerpt": "readdirSync(migrationsDir) .filter((name) => name.endsWith(\".sql\")) .sort()"
+      },
+      {
+        "file": "server/wire-service/campaignHousing.ts",
+        "line": 965,
+        "excerpt": "variations.slice().sort((a, b) => a.ord - b.ord)"
+      },
+      {
+        "file": "src/app/components/NudgeGantt.tsx",
+        "line": 61,
+        "excerpt": "[ ...data.markers, ...data.escalations.map((e, i) => ({ id: `esc-$"
+      },
+      {
+        "file": "src/app/components/client-portal/ClientEngagementCalendar.tsx",
+        "line": 193,
+        "excerpt": "[...months] .map((key) => { const [y, m] = key.split(\"-\").map(Numb"
+      }
+    ],
+    "filesSample": [
+      "scripts/run-migration.ts",
+      "server/wire-service/campaignHousing.ts",
+      "src/app/components/NudgeGantt.tsx",
+      "src/app/components/client-portal/ClientEngagementCalendar.tsx",
+      "src/app/components/docs/registerMeta/composeViewHolons.ts",
+      "src/app/components/hub/agent/AgentEditor.tsx",
+      "src/app/context/AutomationContext.tsx",
+      "src/app/context/DocsRegistryContext.tsx",
+      "src/app/data/automationRuns.ts",
+      "src/app/data/automationWorkflows.ts",
+      "src/app/data/engagementCalendarData.ts",
+      "src/app/data/eventTestContract.ts"
+    ]
+  },
+  {
+    "id": "LANG-throw",
+    "occurrences": 71,
+    "fileCount": 44,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 70,
+        "excerpt": "throw new Error(`login failed ${email}: ${JSON.stringify(v)}`);"
+      },
+      {
+        "file": "scripts/run-migration.ts",
+        "line": 37,
+        "excerpt": "throw error;"
+      },
+      {
+        "file": "scripts/run-seed.ts",
+        "line": 74,
+        "excerpt": "throw error;"
+      },
+      {
+        "file": "scripts/verify-firm-binding.ts",
+        "line": 69,
+        "excerpt": "throw new Error(`user missing for ${email}`);"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-reference-persist.ts",
+      "server/auth-service/db.ts",
+      "server/auth-service/email.ts",
+      "server/auth-service/registerRoutes.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/contactSeat.ts",
+      "server/wire-service/machine.ts"
+    ]
+  },
+  {
+    "id": "LANG-finally",
+    "occurrences": 70,
+    "fileCount": 45,
+    "examples": [
+      {
+        "file": "scripts/check-access-table.ts",
+        "line": 4,
+        "excerpt": "finally"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 80,
+        "excerpt": "finally"
+      },
+      {
+        "file": "scripts/ensure-platform-admin.ts",
+        "line": 12,
+        "excerpt": "finally"
+      },
+      {
+        "file": "scripts/issue-access-link.ts",
+        "line": 23,
+        "excerpt": "finally"
+      }
+    ],
+    "filesSample": [
+      "scripts/check-access-table.ts",
+      "scripts/close-walk-gaps.ts",
+      "scripts/ensure-platform-admin.ts",
+      "scripts/issue-access-link.ts",
+      "scripts/prod-otp-verify-once.ts",
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-admin-consultants.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-automations-alive.ts"
+    ]
+  },
+  {
+    "id": "LANG-break",
+    "occurrences": 69,
+    "fileCount": 11,
+    "examples": [
+      {
+        "file": "scripts/verify-continuous-worker.ts",
+        "line": 116,
+        "excerpt": "break"
+      },
+      {
+        "file": "server/wire-service/cascade.ts",
+        "line": 1114,
+        "excerpt": "break"
+      },
+      {
+        "file": "src/app/data/automationConditions.ts",
+        "line": 306,
+        "excerpt": "break"
+      },
+      {
+        "file": "src/app/data/automationDataPull.ts",
+        "line": 77,
+        "excerpt": "break"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-continuous-worker.ts",
+      "server/wire-service/cascade.ts",
+      "src/app/data/automationConditions.ts",
+      "src/app/data/automationDataPull.ts",
+      "src/app/data/automationRules.ts",
+      "src/app/data/journeyTree.ts",
+      "src/app/register/components/RegisterFlowsTree.tsx",
+      "src/app/register/components/theory/TextWithUiRefs.tsx",
+      "src/app/register/prototype-ant/operator/OperatorAntScene.tsx",
+      "src/app/register/prototype/OperatorPrototypeScene.tsx",
+      "src/app/wire/standins/machineApi.ts"
+    ]
+  },
+  {
+    "id": "LANG-promise.then",
+    "occurrences": 67,
+    "fileCount": 46,
+    "examples": [
+      {
+        "file": "scripts/verify-ship-spine.ts",
+        "line": 179,
+        "excerpt": "import(\"node:fs\").then((fs) => fs.readFileSync(new URL(\"../src/app/Router.ts"
+      },
+      {
+        "file": "src/app/components/BoardPanel.tsx",
+        "line": 606,
+        "excerpt": "wirePorts.machineApi .boardDetections() .then((data) => { if"
+      },
+      {
+        "file": "src/app/components/hub/agent/AgentEditor.tsx",
+        "line": 75,
+        "excerpt": "wirePorts.machineApi .listTemplates() .then(({ templates }) => {"
+      },
+      {
+        "file": "src/app/components/hub/automation/AutomationDetailView.tsx",
+        "line": 68,
+        "excerpt": "activateWorkflow(automationId).then(() => { startManualRun(automationId);"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-ship-spine.ts",
+      "src/app/components/BoardPanel.tsx",
+      "src/app/components/hub/agent/AgentEditor.tsx",
+      "src/app/components/hub/automation/AutomationDetailView.tsx",
+      "src/app/context/AuditContext.tsx",
+      "src/app/register/components/RegisterArtboardFrame.tsx",
+      "src/app/register/pages/RegisterPage.tsx",
+      "src/app/register/pages/RegisterWorkspace.tsx",
+      "src/app/register/prototype-ant/WaitNoteOverlay.tsx",
+      "src/app/register/prototype-ant/consultant/BoardModule.tsx",
+      "src/app/register/prototype-ant/consultant/ClientWorkspace.tsx",
+      "src/app/register/prototype-ant/consultant/ConsultantAntScene.tsx"
+    ]
+  },
+  {
+    "id": "LANG-promise.catch",
+    "occurrences": 66,
+    "fileCount": 34,
+    "examples": [
+      {
+        "file": "scripts/verify-access-link.ts",
+        "line": 46,
+        "excerpt": "session.json().catch(() => ({}))"
+      },
+      {
+        "file": "scripts/verify-modular-surfaces.ts",
+        "line": 406,
+        "excerpt": "main().catch((err) => { console.error(err instanceof Error ? err.message : err"
+      },
+      {
+        "file": "scripts/verify-reference-persist.ts",
+        "line": 60,
+        "excerpt": "main().catch((err) => { console.error(err instanceof Error ? err.message : err"
+      },
+      {
+        "file": "server/auth-service/registerRoutes.ts",
+        "line": 104,
+        "excerpt": "c.req.json<{ password?: string }>().catch(() => ({}))"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-access-link.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-reference-persist.ts",
+      "server/auth-service/registerRoutes.ts",
+      "server/auth-service/routes.ts",
+      "server/wire-service/contactSeat.ts",
+      "server/wire-service/machine.ts",
+      "src/app/auth/authClient.ts",
+      "src/app/components/BoardPanel.tsx",
+      "src/app/components/hub/agent/AgentEditor.tsx",
+      "src/app/context/AuditContext.tsx",
+      "src/app/context/AutomationContext.tsx"
+    ]
+  },
+  {
+    "id": "LANG-import-default",
+    "occurrences": 59,
+    "fileCount": 11,
+    "examples": [
+      {
+        "file": "scripts/bundle-vercel-api.mjs",
+        "line": 4,
+        "excerpt": "import fs from \"node:fs\";"
+      },
+      {
+        "file": "scripts/bundle-vercel-api.mjs",
+        "line": 5,
+        "excerpt": "import path from \"node:path\";"
+      },
+      {
+        "file": "scripts/copy-notion-icons.mjs",
+        "line": 1,
+        "excerpt": "import fs from \"node:fs\";"
+      },
+      {
+        "file": "scripts/copy-notion-icons.mjs",
+        "line": 2,
+        "excerpt": "import path from \"node:path\";"
+      }
+    ],
+    "filesSample": [
+      "scripts/bundle-vercel-api.mjs",
+      "scripts/copy-notion-icons.mjs",
+      "scripts/pgConnect.ts",
+      "server/auth-service/db.ts",
+      "src/app/Router.tsx",
+      "src/app/components/figma/ImageWithFallback.tsx",
+      "src/app/components/imports/parseCsvPreview.ts",
+      "src/app/components/ui/carousel.tsx",
+      "src/app/icons/notion-icon-urls.ts",
+      "src/app/register/prototype/operator/operatorWireHelpers.ts",
+      "vite.config.ts"
+    ]
+  },
+  {
+    "id": "LANG-switch",
+    "occurrences": 53,
+    "fileCount": 32,
+    "examples": [
+      {
+        "file": "server/wire-service/webhooks.ts",
+        "line": 21,
+        "excerpt": "switch"
+      },
+      {
+        "file": "src/app/components/BoardPanel.tsx",
+        "line": 104,
+        "excerpt": "switch"
+      },
+      {
+        "file": "src/app/components/DataPanel.tsx",
+        "line": 94,
+        "excerpt": "switch"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 516,
+        "excerpt": "switch"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/webhooks.ts",
+      "src/app/components/BoardPanel.tsx",
+      "src/app/components/DataPanel.tsx",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/hub/agent/AgentEditor.tsx",
+      "src/app/components/hub/automation/AutomationRunsTab.tsx",
+      "src/app/components/hub/automation/NodeDataPane.tsx",
+      "src/app/components/hub/automation/RuleAnalysisPane.tsx",
+      "src/app/components/inspector/EngagementNodePanel.tsx",
+      "src/app/data/agentDefinitions.ts",
+      "src/app/data/agentSteps.ts",
+      "src/app/data/auditRecordReachability.ts"
+    ]
+  },
+  {
+    "id": "LANG-optional-call",
+    "occurrences": 50,
+    "fileCount": 34,
+    "examples": [
+      {
+        "file": "scripts/verify-continuous-worker.ts",
+        "line": 160,
+        "excerpt": "child.unref?.()"
+      },
+      {
+        "file": "src/app/components/BoardPanel.tsx",
+        "line": 340,
+        "excerpt": "onViewAsClient?.(client)"
+      },
+      {
+        "file": "src/app/components/BoardPanel.tsx",
+        "line": 354,
+        "excerpt": "onResumeContact?.(client.id)"
+      },
+      {
+        "file": "src/app/components/BoardPanel.tsx",
+        "line": 355,
+        "excerpt": "onHaltContact?.(client.id)"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-continuous-worker.ts",
+      "src/app/components/BoardPanel.tsx",
+      "src/app/components/DataPanel.tsx",
+      "src/app/components/DocsPanel.tsx",
+      "src/app/components/HaltOutreachBar.tsx",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/contacts/DirectorySectionHeader.tsx",
+      "src/app/components/hub/AddAuditFlow.tsx",
+      "src/app/components/hub/automation/AutomationBuildPalette.tsx",
+      "src/app/components/hub/automation/ManualEnrollmentCriteriaSummary.tsx",
+      "src/app/components/imports/CsvImportFlow.tsx",
+      "src/app/components/ui/sidebar.tsx"
+    ]
+  },
+  {
+    "id": "LANG-compound-assign",
+    "occurrences": 44,
+    "fileCount": 20,
+    "examples": [
+      {
+        "file": "scripts/verify-automations-alive.ts",
+        "line": 34,
+        "excerpt": "failed += 1"
+      },
+      {
+        "file": "scripts/verify-continuous-worker.ts",
+        "line": 97,
+        "excerpt": "logs += String(d)"
+      },
+      {
+        "file": "scripts/verify-continuous-worker.ts",
+        "line": 100,
+        "excerpt": "logs += String(d)"
+      },
+      {
+        "file": "server/wire-service/cascade.ts",
+        "line": 1017,
+        "excerpt": "nullified += 1"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-continuous-worker.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/waitNote.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/components/EventsTab.tsx",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/inspector/emailInspectorData.ts",
+      "src/app/context/AuditContext.tsx",
+      "src/app/data/agentSteps.ts",
+      "src/app/data/audits.ts",
+      "src/app/data/testWalk.ts"
+    ]
+  },
+  {
+    "id": "LANG-in",
+    "occurrences": 40,
+    "fileCount": 15,
+    "examples": [
+      {
+        "file": "scripts/verify-deny-gates.ts",
+        "line": 69,
+        "excerpt": "\"ok\" in halted.send"
+      },
+      {
+        "file": "scripts/verify-worker-actuation.ts",
+        "line": 257,
+        "excerpt": "\"dryRun\" in otherEnroll.send"
+      },
+      {
+        "file": "server/wire-service/contactSeat.ts",
+        "line": 522,
+        "excerpt": "\"refuse\" in resolved"
+      },
+      {
+        "file": "server/wire-service/contactSeat.ts",
+        "line": 541,
+        "excerpt": "\"refuse\" in resolved"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-deny-gates.ts",
+      "scripts/verify-worker-actuation.ts",
+      "server/wire-service/contactSeat.ts",
+      "server/wire-service/machine.ts",
+      "server/wire-service/worker.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/components/hub/automation/NodeDataPane.tsx",
+      "src/app/components/inspector/EngagementNodePanel.tsx",
+      "src/app/components/ui/chart.tsx",
+      "src/app/data/automationConditions.ts",
+      "src/app/data/automationNodeRuntime.ts",
+      "src/app/data/automationRules.ts"
+    ]
+  },
+  {
+    "id": "LANG-optional-element",
+    "occurrences": 36,
+    "fileCount": 26,
+    "examples": [
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 182,
+        "excerpt": "tpl.rows[0]?.cells?.[0]"
+      },
+      {
+        "file": "scripts/verify-automations-alive.ts",
+        "line": 156,
+        "excerpt": "tpl.rows[0]?.cells?.[0]"
+      },
+      {
+        "file": "scripts/verify-continuous-worker.ts",
+        "line": 113,
+        "excerpt": "row.rows[0]?.fired_criteria?.[\"acr-text-not-opened\"]"
+      },
+      {
+        "file": "scripts/verify-continuous-worker.ts",
+        "line": 136,
+        "excerpt": "after.rows[0]?.fired_criteria?.[\"acr-text-not-opened\"]"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-worker-actuation.ts",
+      "server/wire-service/cascade.ts",
+      "src/app/components/NudgeGantt.tsx",
+      "src/app/components/docs/RegisterContentChildHolons.tsx",
+      "src/app/components/docs/registerMeta/composeViewHolons.ts",
+      "src/app/components/imports/CsvImportColumnMappingDialog.tsx",
+      "src/app/components/imports/CsvImportFlow.tsx",
+      "src/app/components/ui/chart.tsx",
+      "src/app/data/audits.ts"
+    ]
+  },
+  {
+    "id": "LANG-instanceof",
+    "occurrences": 35,
+    "fileCount": 26,
+    "examples": [
+      {
+        "file": "scripts/verify-modular-surfaces.ts",
+        "line": 407,
+        "excerpt": "err instanceof Error"
+      },
+      {
+        "file": "scripts/verify-reference-persist.ts",
+        "line": 61,
+        "excerpt": "err instanceof Error"
+      },
+      {
+        "file": "server/auth-service/logger.ts",
+        "line": 13,
+        "excerpt": "error instanceof Error"
+      },
+      {
+        "file": "server/wire-service/dispatchSend.ts",
+        "line": 204,
+        "excerpt": "err instanceof Error"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-reference-persist.ts",
+      "server/auth-service/logger.ts",
+      "server/wire-service/dispatchSend.ts",
+      "server/wire-service/pool.ts",
+      "server/wire-service/routes.ts",
+      "server/wire-service/send.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/auth/AccessEntry.tsx",
+      "src/app/auth/authClient.ts",
+      "src/app/components/docs/HolonInspectLayer.tsx",
+      "src/app/components/imports/CsvImportFlow.tsx"
+    ]
+  },
+  {
+    "id": "LANG-delete",
+    "occurrences": 27,
+    "fileCount": 16,
+    "examples": [
+      {
+        "file": "scripts/verify-boot-env.ts",
+        "line": 27,
+        "excerpt": "delete process.env.SEND_MODE"
+      },
+      {
+        "file": "scripts/verify-boot-env.ts",
+        "line": 57,
+        "excerpt": "delete process.env.SEND_MODE"
+      },
+      {
+        "file": "scripts/verify-boot-env.ts",
+        "line": 59,
+        "excerpt": "delete process.env.SEND_TEST_COHORT"
+      },
+      {
+        "file": "scripts/verify-boot-env.ts",
+        "line": 69,
+        "excerpt": "delete merged[k]"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-session-firm.ts",
+      "scripts/verify-ship-spine.ts",
+      "server/wire-service/cascade.ts",
+      "src/app/components/hub/automation/AutomationEventTriggerConfigPanel.tsx",
+      "src/app/components/hub/automation/AutomationManualTriggerConfigPanel.tsx",
+      "src/app/components/hub/automation/AutomationNodeConfigModal.tsx",
+      "src/app/data/automationEvents.ts",
+      "src/app/register/prototype-ant/consultant/ConsultantAntScene.tsx",
+      "src/app/register/prototype-ant/operator/CommercialModule.tsx",
+      "src/app/register/prototype-ant/operator/automationPlates/ActionPlateModals.tsx"
+    ]
+  },
+  {
+    "id": "LANG-default-clause",
+    "occurrences": 24,
+    "fileCount": 15,
+    "examples": [
+      {
+        "file": "server/wire-service/webhooks.ts",
+        "line": 37,
+        "excerpt": "default:"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 527,
+        "excerpt": "default:"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 572,
+        "excerpt": "default:"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 590,
+        "excerpt": "default:"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/webhooks.ts",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/hub/agent/AgentEditor.tsx",
+      "src/app/components/hub/automation/NodeDataPane.tsx",
+      "src/app/components/hub/automation/RuleAnalysisPane.tsx",
+      "src/app/data/automationConditions.ts",
+      "src/app/data/automationRules.ts",
+      "src/app/register/components/RegisterLeftPanel.tsx",
+      "src/app/register/components/RegisterTheoryCanvas.tsx",
+      "src/app/register/passes/registerPasses.ts",
+      "src/app/register/prototype-ant/consultant/clientData/ActivityChronology.tsx",
+      "src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts"
+    ]
+  },
+  {
+    "id": "LANG-array.flatMap",
+    "occurrences": 23,
+    "fileCount": 12,
+    "examples": [
+      {
+        "file": "server/wire-service/workflowWalk.ts",
+        "line": 288,
+        "excerpt": "Object.values(slots as Record<string, unknown>).flatMap((row) => Array.isArr"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2481,
+        "excerpt": "sequences.flatMap((seq) => { if (seq.tree?.length) return collectTreeTouchpo"
+      },
+      {
+        "file": "src/app/data/automationEvents.ts",
+        "line": 175,
+        "excerpt": "AUTOMATION_DATA_CLASSES.flatMap((dataClass) => { const selection = scopes[da"
+      },
+      {
+        "file": "src/app/data/automationRules.ts",
+        "line": 1060,
+        "excerpt": "outcomes.flatMap((o) => o.assertedResults)"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/workflowWalk.ts",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/data/automationEvents.ts",
+      "src/app/data/automationRules.ts",
+      "src/app/data/automationWorkflows.ts",
+      "src/app/data/testWalk.ts",
+      "src/app/register/flows/flowFocus.ts",
+      "src/app/register/prototype-ant/consultant/clientData/ActivityChronology.tsx",
+      "src/app/register/prototype-ant/operator/AntAutomationWorkbench.tsx",
+      "src/app/register/prototype-ant/operator/ContactPickModal.tsx",
+      "src/app/register/prototype-ant/operator/automationPlates/InputPane.tsx",
+      "src/app/register/prototype-ant/operator/automationPlates/OutputPane.tsx"
+    ]
+  },
+  {
+    "id": "LANG-for",
+    "occurrences": 22,
+    "fileCount": 13,
+    "examples": [
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 62,
+        "excerpt": "for"
+      },
+      {
+        "file": "server/wire-service/contactSeat.ts",
+        "line": 186,
+        "excerpt": "for"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2299,
+        "excerpt": "for"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2304,
+        "excerpt": "for"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-affordance-roundtrip.ts",
+      "server/wire-service/contactSeat.ts",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/data/audits.ts",
+      "src/app/data/automationConditions.ts",
+      "src/app/data/automationDataPull.ts",
+      "src/app/data/automationWorkflows.ts",
+      "src/app/register/canvas/RegisterCanvasFlowWires.tsx",
+      "src/app/register/prototype-ant/consultant/clientData/ActivityChronology.tsx",
+      "src/app/register/prototype/operator/operatorWireHelpers.ts",
+      "src/app/register/prototype/shared/meetingsStore.ts",
+      "src/app/system-map/sim/engine.ts"
+    ]
+  },
+  {
+    "id": "LANG-dynamic-import",
+    "occurrences": 21,
+    "fileCount": 13,
+    "examples": [
+      {
+        "file": "scripts/verify-firm-binding.ts",
+        "line": 267,
+        "excerpt": "import(\"node:fs\")"
+      },
+      {
+        "file": "scripts/verify-session-firm.ts",
+        "line": 162,
+        "excerpt": "import(\"node:fs\")"
+      },
+      {
+        "file": "scripts/verify-ship-spine.ts",
+        "line": 179,
+        "excerpt": "import(\"node:fs\")"
+      },
+      {
+        "file": "server/auth-service/index.ts",
+        "line": 11,
+        "excerpt": "import(\"../wire-service/routes.ts\")"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-session-firm.ts",
+      "scripts/verify-ship-spine.ts",
+      "server/auth-service/index.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/twilioClient.ts",
+      "server/wire-service/webhooks.ts",
+      "src/app/register/components/RegisterArtboardFrame.tsx",
+      "src/app/register/pages/RegisterWorkspace.tsx",
+      "src/app/register/prototype/operator/ProvisionModule.tsx",
+      "src/app/wire/reals/machineApi.ts"
+    ]
+  },
+  {
+    "id": "LANG-array.every",
+    "occurrences": 18,
+    "fileCount": 13,
+    "examples": [
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 1869,
+        "excerpt": "criteria.checks.every((c) => c.met)"
+      },
+      {
+        "file": "src/app/components/hub/automation/AutomationManualClassFilterPanel.tsx",
+        "line": 48,
+        "excerpt": "allOptions.every((option) => selectedSet.has(option.name))"
+      },
+      {
+        "file": "src/app/components/imports/csvImportValidation.ts",
+        "line": 16,
+        "excerpt": "IMPORT_TARGET_FIELDS.every((field) => targets.includes(field))"
+      },
+      {
+        "file": "src/app/data/audits.ts",
+        "line": 206,
+        "excerpt": "records.every((r) => r.email.includes(\"@\") && !r.email.endsWith(\"@\"))"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/hub/automation/AutomationManualClassFilterPanel.tsx",
+      "src/app/components/imports/csvImportValidation.ts",
+      "src/app/data/audits.ts",
+      "src/app/data/automationConditions.ts",
+      "src/app/data/automationRules.ts",
+      "src/app/register/canvas/RegisterCanvasFlowWires.tsx",
+      "src/app/register/prototype-ant/consultant/clientData/ActivityChronology.tsx",
+      "src/app/register/prototype-ant/operator/BookReadinessModule.tsx",
+      "src/app/register/prototype-ant/operator/SendingInfrastructureModule.tsx",
+      "src/app/register/prototype/operator/SendingInfrastructureModule.tsx",
+      "src/app/system-map/data/coverage.ts"
+    ]
+  },
+  {
+    "id": "TS-export-type",
+    "occurrences": 13,
+    "fileCount": 12,
+    "examples": [
+      {
+        "file": "src/app/components/docs/registerMeta/index.ts",
+        "line": 1,
+        "excerpt": "export type { ComposedHolonNode, RegisterHolonMeta, RegisterHolonRenderKey, RegisterViewLayoutId, RegisterViewManifest, } from \"./types\";"
+      },
+      {
+        "file": "src/app/data/sarahNudgeTimeline.ts",
+        "line": 15,
+        "excerpt": "export type { ChannelBarSegment, JourneyAttemptRow as NudgeAttemptRow, JourneyFormVisitRow as NudgeFormVisitRow, JourneyEscalation as NudgeEscalation, JourneyGanttData as"
+      },
+      {
+        "file": "src/app/data/testWalk.ts",
+        "line": 10,
+        "excerpt": "export type { MappedChip };"
+      },
+      {
+        "file": "src/app/register/flows/index.ts",
+        "line": 6,
+        "excerpt": "export type { RegisterFlow, RegisterFlowStep, RegisterFlowCanvasWire, RegisterFlowGraphEdge, RegisterFlowGraphNode, RegisterFlowWireMeta, RegisterFlowWireVia, } from"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/docs/registerMeta/index.ts",
+      "src/app/data/sarahNudgeTimeline.ts",
+      "src/app/data/testWalk.ts",
+      "src/app/register/flows/index.ts",
+      "src/app/register/howAnalysis/index.ts",
+      "src/app/register/journeyFlows/index.ts",
+      "src/app/register/prototype-ant/consultant/meetingsData.ts",
+      "src/app/register/theory/enrichment/index.ts",
+      "src/app/register/theory/priors/index.ts",
+      "src/app/register/theory/wiring/index.ts",
+      "src/app/register/views/index.ts",
+      "src/app/wire/index.ts"
+    ]
+  },
+  {
+    "id": "LANG-array.forEach",
+    "occurrences": 12,
+    "fileCount": 6,
+    "examples": [
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 81,
+        "excerpt": "response.headers.forEach((value, key) => { // Node forbids setting some ho"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2274,
+        "excerpt": "WEEKS.forEach((w) => { lines.push(vline(w.label, w.day * dayW, t.borderLig"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2606,
+        "excerpt": "cleanups.forEach((fn) => fn())"
+      },
+      {
+        "file": "src/app/context/AuditContext.tsx",
+        "line": 50,
+        "excerpt": "timersRef.current.forEach((id) => window.clearTimeout(id))"
+      }
+    ],
+    "filesSample": [
+      "scripts/vercel-entries/fetchBridge.ts",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/context/AuditContext.tsx",
+      "src/app/register/prototype/RegisterPrototypeCanvas.tsx",
+      "src/app/register/prototype/shared/meetingsStore.ts",
+      "src/app/system-map/canvas/layout.ts"
+    ]
+  },
+  {
+    "id": "LANG-array.splice",
+    "occurrences": 12,
+    "fileCount": 6,
+    "examples": [
+      {
+        "file": "src/app/data/agentSteps.ts",
+        "line": 67,
+        "excerpt": "next.splice(insertAt, 0, createAgentStep(kind, insertAt))"
+      },
+      {
+        "file": "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+        "line": 161,
+        "excerpt": "next.splice(fromIndex, 1)"
+      },
+      {
+        "file": "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+        "line": 163,
+        "excerpt": "next.splice(toIndex, 0, moved)"
+      },
+      {
+        "file": "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+        "line": 173,
+        "excerpt": "next.splice(fromIndex, 1)"
+      }
+    ],
+    "filesSample": [
+      "src/app/data/agentSteps.ts",
+      "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+      "src/app/register/prototype-ant/operator/AntAutomationWorkbench.tsx",
+      "src/app/register/prototype-ant/operator/ConfigurationLibrariesModule.tsx",
+      "src/app/system-map/data/templates.ts",
+      "src/app/wire/standins/machineApi.ts"
+    ]
+  },
+  {
+    "id": "LANG-import-side-effect",
+    "occurrences": 10,
+    "fileCount": 9,
+    "examples": [
+      {
+        "file": "src/app/components/hub/automation/AutomationWorkflowCanvas.tsx",
+        "line": 14,
+        "excerpt": "import \"@xyflow/react/dist/style.css\";"
+      },
+      {
+        "file": "src/app/register/components/RegisterFlowCanvas.tsx",
+        "line": 11,
+        "excerpt": "import \"@xyflow/react/dist/style.css\";"
+      },
+      {
+        "file": "src/app/register/components/RegisterHowCanvas.tsx",
+        "line": 13,
+        "excerpt": "import \"@xyflow/react/dist/style.css\";"
+      },
+      {
+        "file": "src/app/register/flowCanvas/RegisterFlowStepCanvas.tsx",
+        "line": 10,
+        "excerpt": "import \"@xyflow/react/dist/style.css\";"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/hub/automation/AutomationWorkflowCanvas.tsx",
+      "src/app/register/components/RegisterFlowCanvas.tsx",
+      "src/app/register/components/RegisterHowCanvas.tsx",
+      "src/app/register/flowCanvas/RegisterFlowStepCanvas.tsx",
+      "src/app/register/prototype-ant/AntCtHost.tsx",
+      "src/app/register/prototype-ant/PrototypeAntApp.tsx",
+      "src/app/register/prototype-ant/operator/AntAutomationWorkbench.tsx",
+      "src/app/system-map/SystemMapPage.tsx",
+      "src/main.tsx"
+    ]
+  },
+  {
+    "id": "LANG-array.reduce",
+    "occurrences": 9,
+    "fileCount": 8,
+    "examples": [
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 265,
+        "excerpt": "ledger.reduce( (acc, r) => { acc[r.class] = (acc[r.class] ?? 0) + 1;"
+      },
+      {
+        "file": "server/wire-service/machine.ts",
+        "line": 818,
+        "excerpt": "dispatched.reduce((n, d) => n + d.enrollments, 0)"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2732,
+        "excerpt": "rows.reduce((sum, r) => sum + rowHeight(r, expandedReasoning, revealedThoughts),"
+      },
+      {
+        "file": "src/app/components/client-portal/ClientEngagementCalendar.tsx",
+        "line": 40,
+        "excerpt": "PLACEHOLDER_TASK_METRICS.reduce((sum, item) => sum + item.value, 0)"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-affordance-roundtrip.ts",
+      "server/wire-service/machine.ts",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/client-portal/ClientEngagementCalendar.tsx",
+      "src/app/data/automationEvents.ts",
+      "src/app/data/automationWorkflows.ts",
+      "src/app/register/panes/SmePane.tsx",
+      "src/app/register/panes/WiringPaperPane.tsx"
+    ]
+  },
+  {
+    "id": "LANG-while",
+    "occurrences": 8,
+    "fileCount": 8,
+    "examples": [
+      {
+        "file": "scripts/verify-continuous-worker.ts",
+        "line": 108,
+        "excerpt": "while"
+      },
+      {
+        "file": "src/app/components/docs/surfacePurpose.ts",
+        "line": 32,
+        "excerpt": "while"
+      },
+      {
+        "file": "src/app/data/automationWorkflows.ts",
+        "line": 1257,
+        "excerpt": "while"
+      },
+      {
+        "file": "src/app/data/testWalk.ts",
+        "line": 308,
+        "excerpt": "while"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-continuous-worker.ts",
+      "src/app/components/docs/surfacePurpose.ts",
+      "src/app/data/automationWorkflows.ts",
+      "src/app/data/testWalk.ts",
+      "src/app/register/components/theory/TextWithUiRefs.tsx",
+      "src/app/register/flows/flowFocus.ts",
+      "src/app/system-map/sim/engine.ts",
+      "src/app/wire/standins/machineApi.ts"
+    ]
+  },
+  {
+    "id": "LANG-export-default",
+    "occurrences": 7,
+    "fileCount": 7,
+    "examples": [
+      {
+        "file": "api/ping.ts",
+        "line": 7,
+        "excerpt": "export default function handler(_req: IncomingMessage, res: ServerResponse) {"
+      },
+      {
+        "file": "postcss.config.mjs",
+        "line": 15,
+        "excerpt": "export default {}"
+      },
+      {
+        "file": "scripts/vercel-entries/auth.ts",
+        "line": 15,
+        "excerpt": "export default createVercelFetchHandler(app, \"/api/auth\");"
+      },
+      {
+        "file": "scripts/vercel-entries/wire.ts",
+        "line": 15,
+        "excerpt": "export default createVercelFetchHandler(app, \"/api/wire\");"
+      }
+    ],
+    "filesSample": [
+      "api/ping.ts",
+      "postcss.config.mjs",
+      "scripts/vercel-entries/auth.ts",
+      "scripts/vercel-entries/wire.ts",
+      "src/app/App.tsx",
+      "src/app/register/pages/RegisterWorkspace.tsx",
+      "vite.config.ts"
+    ]
+  },
+  {
+    "id": "LANG-this",
+    "occurrences": 5,
+    "fileCount": 3,
+    "examples": [
+      {
+        "file": "server/wire-service/sessionFirm.ts",
+        "line": 18,
+        "excerpt": "this"
+      },
+      {
+        "file": "src/app/auth/authClient.ts",
+        "line": 76,
+        "excerpt": "this"
+      },
+      {
+        "file": "src/app/register/components/RegisterErrorBoundary.tsx",
+        "line": 27,
+        "excerpt": "this"
+      },
+      {
+        "file": "src/app/register/components/RegisterErrorBoundary.tsx",
+        "line": 40,
+        "excerpt": "this"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/sessionFirm.ts",
+      "src/app/auth/authClient.ts",
+      "src/app/register/components/RegisterErrorBoundary.tsx"
+    ]
+  },
+  {
+    "id": "LANG-array.unshift",
+    "occurrences": 3,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "src/app/wire/standins/contactSeatMirror.ts",
+        "line": 439,
+        "excerpt": "standInContactUploads.unshift({ id: `cup-standin-${Date.now()}`, fir"
+      },
+      {
+        "file": "src/app/wire/standins/contactSeatMirror.ts",
+        "line": 466,
+        "excerpt": "standInContactUploads.unshift({ id: `cup-standin-${Date.now()}`, fir"
+      },
+      {
+        "file": "src/app/wire/standins/machineApi.ts",
+        "line": 1870,
+        "excerpt": "factWritebacks.unshift({ id: writebackId, firm_id: standInFirm(),"
+      }
+    ],
+    "filesSample": [
+      "src/app/wire/standins/contactSeatMirror.ts",
+      "src/app/wire/standins/machineApi.ts"
+    ]
+  },
+  {
+    "id": "LANG-class-extends",
+    "occurrences": 3,
+    "fileCount": 3,
+    "examples": [
+      {
+        "file": "server/wire-service/sessionFirm.ts",
+        "line": 14,
+        "excerpt": "export class FirmScopeError extends Error { status: number; constructor(stat"
+      },
+      {
+        "file": "src/app/auth/authClient.ts",
+        "line": 69,
+        "excerpt": "export class AuthRequestError extends Error { constructor( message: string"
+      },
+      {
+        "file": "src/app/register/components/RegisterErrorBoundary.tsx",
+        "line": 12,
+        "excerpt": "export class RegisterErrorBoundary extends Component< RegisterErrorBoundaryPro"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/sessionFirm.ts",
+      "src/app/auth/authClient.ts",
+      "src/app/register/components/RegisterErrorBoundary.tsx"
+    ]
+  },
+  {
+    "id": "LANG-promise.finally",
+    "occurrences": 3,
+    "fileCount": 3,
+    "examples": [
+      {
+        "file": "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+        "line": 1239,
+        "excerpt": "wirePorts.machineApi .enrollSequenceContacts(binding.templateId, {"
+      },
+      {
+        "file": "src/app/register/prototype-ant/operator/RegisterEvolutionModule.tsx",
+        "line": 59,
+        "excerpt": "reload() .catch(() => { if (!cancelled) { setGaps([]);"
+      },
+      {
+        "file": "src/app/register/prototype-ant/viewAsContext.tsx",
+        "line": 70,
+        "excerpt": "wirePorts.machineApi .listConsultants() .then((rows) => { if"
+      }
+    ],
+    "filesSample": [
+      "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+      "src/app/register/prototype-ant/operator/RegisterEvolutionModule.tsx",
+      "src/app/register/prototype-ant/viewAsContext.tsx"
+    ]
+  },
+  {
+    "id": "LANG-array.flat",
+    "occurrences": 2,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/app/register/prototype/operator/operatorWireHelpers.ts",
+        "line": 386,
+        "excerpt": "runLists.flat()"
+      },
+      {
+        "file": "src/app/register/prototype/operator/operatorWireHelpers.ts",
+        "line": 436,
+        "excerpt": "runLists.flat()"
+      }
+    ],
+    "filesSample": [
+      "src/app/register/prototype/operator/operatorWireHelpers.ts"
+    ]
+  },
+  {
+    "id": "LANG-array.shift",
+    "occurrences": 2,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "src/app/data/testWalk.ts",
+        "line": 309,
+        "excerpt": "queue.shift()"
+      },
+      {
+        "file": "src/app/system-map/sim/engine.ts",
+        "line": 52,
+        "excerpt": "queue.shift()"
+      }
+    ],
+    "filesSample": [
+      "src/app/data/testWalk.ts",
+      "src/app/system-map/sim/engine.ts"
+    ]
+  },
+  {
+    "id": "LANG-constructor",
+    "occurrences": 2,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "server/wire-service/sessionFirm.ts",
+        "line": 16,
+        "excerpt": "constructor(status: number, message: string) { super(message); this.stat"
+      },
+      {
+        "file": "src/app/auth/authClient.ts",
+        "line": 70,
+        "excerpt": "constructor( message: string, readonly status: number, readonly code"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/sessionFirm.ts",
+      "src/app/auth/authClient.ts"
+    ]
+  },
+  {
+    "id": "LANG-function-expression",
+    "occurrences": 2,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 46,
+        "excerpt": "async function handler(req: IncomingMessage, res: ServerResponse): Promise<void>"
+      },
+      {
+        "file": "src/app/components/hub/automation/AutomationWorkflowEditor.tsx",
+        "line": 90,
+        "excerpt": "function AutomationWorkflowEditor({ workflow, t, isDark, onGraphChange, onOpenCo"
+      }
+    ],
+    "filesSample": [
+      "scripts/vercel-entries/fetchBridge.ts",
+      "src/app/components/hub/automation/AutomationWorkflowEditor.tsx"
+    ]
+  },
+  {
+    "id": "LANG-super",
+    "occurrences": 2,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "server/wire-service/sessionFirm.ts",
+        "line": 17,
+        "excerpt": "super"
+      },
+      {
+        "file": "src/app/auth/authClient.ts",
+        "line": 75,
+        "excerpt": "super"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/sessionFirm.ts",
+      "src/app/auth/authClient.ts"
+    ]
+  },
+  {
+    "id": "LANG-array.pop",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 725,
+        "excerpt": "tp.label.split(\"·\").pop()"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/JourneyTab.tsx"
+    ]
+  },
+  {
+    "id": "LANG-export-star",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/app/wire/index.ts",
+        "line": 53,
+        "excerpt": "export * from \"./standins\";"
+      }
+    ],
+    "filesSample": [
+      "src/app/wire/index.ts"
+    ]
+  },
+  {
+    "id": "LANG-rest-param",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/app/components/ui/utils.ts",
+        "line": 4,
+        "excerpt": "...inputs: ClassValue[]"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/ui/utils.ts"
+    ]
+  }
+]

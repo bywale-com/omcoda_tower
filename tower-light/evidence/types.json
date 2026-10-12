@@ -1,0 +1,1429 @@
+[
+  {
+    "id": "TS-literal-type",
+    "occurrences": 3185,
+    "fileCount": 308,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 45,
+        "excerpt": "null"
+      },
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 20,
+        "excerpt": "\"PASS\""
+      },
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 20,
+        "excerpt": "\"FAKE-WRITE\""
+      },
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 20,
+        "excerpt": "\"READ-ONLY-MISLABELED\""
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-machine-e2e.ts",
+      "scripts/verify-production-walk.ts",
+      "server/auth-service/db.ts",
+      "server/auth-service/email.ts",
+      "server/auth-service/platformAdmin.ts",
+      "server/auth-service/routes.ts",
+      "server/wire-service/auditRun.ts"
+    ]
+  },
+  {
+    "id": "TS-union",
+    "occurrences": 1871,
+    "fileCount": 319,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 45,
+        "excerpt": "string | null"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 64,
+        "excerpt": "Buffer | undefined"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 74,
+        "excerpt": "BodyInit | undefined"
+      },
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 20,
+        "excerpt": "\"PASS\" | \"FAKE-WRITE\" | \"READ-ONLY-MISLABELED\" | \"APP-LOCAL\""
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-machine-e2e.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-production-walk.ts",
+      "server/auth-service/accessLinks.ts",
+      "server/auth-service/db.ts",
+      "server/auth-service/email.ts"
+    ]
+  },
+  {
+    "id": "TS-type-literal",
+    "occurrences": 1841,
+    "fileCount": 421,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 25,
+        "excerpt": "{ step: string; ok: boolean; detail?: unknown }"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 27,
+        "excerpt": "{ cookie?: string }"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 90,
+        "excerpt": "{ id: string }"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 131,
+        "excerpt": "{ id: string }"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/ensure-platform-admin.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/run-seed.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts"
+    ]
+  },
+  {
+    "id": "TS-optional-property",
+    "occurrences": 1610,
+    "fileCount": 236,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 25,
+        "excerpt": "detail?: unknown"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 27,
+        "excerpt": "cookie?: string"
+      },
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 54,
+        "excerpt": "html?: string;"
+      },
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 54,
+        "excerpt": "text?: string;"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-production-walk.ts",
+      "scripts/verify-ship-spine.ts",
+      "server/auth-service/registerRoutes.ts",
+      "server/auth-service/routes.ts",
+      "server/wire-service/auditRun.ts"
+    ]
+  },
+  {
+    "id": "TS-array-type",
+    "occurrences": 1486,
+    "fileCount": 292,
+    "examples": [
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 39,
+        "excerpt": "string[]"
+      },
+      {
+        "file": "scripts/run-seed.ts",
+        "line": 13,
+        "excerpt": "string[]"
+      },
+      {
+        "file": "scripts/run-seed.ts",
+        "line": 20,
+        "excerpt": "SeedManifestEntry[]"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 21,
+        "excerpt": "Buffer[]"
+      }
+    ],
+    "filesSample": [
+      "scripts/read-latest-otp.ts",
+      "scripts/run-seed.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "server/auth-service/cors.ts",
+      "server/wire-service/auditRun.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/contactSeat.ts",
+      "server/wire-service/eventTest.ts",
+      "server/wire-service/machine.ts"
+    ]
+  },
+  {
+    "id": "TS-type-arguments",
+    "occurrences": 1474,
+    "fileCount": 310,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 25,
+        "excerpt": "Array<{ step: string; ok: boolean; detail?: unknown }>"
+      },
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 7,
+        "excerpt": "Record<string, string>"
+      },
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 39,
+        "excerpt": "Array<{ id: string; to: string[]; subject: string; created_at: string }>"
+      },
+      {
+        "file": "scripts/restore-channel-order.ts",
+        "line": 4,
+        "excerpt": "Array<[string, number]>"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/restore-channel-order.ts",
+      "scripts/run-seed.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-machine-e2e.ts",
+      "scripts/verify-modular-surfaces.ts"
+    ]
+  },
+  {
+    "id": "TS-type-alias",
+    "occurrences": 836,
+    "fileCount": 317,
+    "examples": [
+      {
+        "file": "scripts/run-seed.ts",
+        "line": 10,
+        "excerpt": "type SeedManifestEntry = { id: string; file: string; environments: string["
+      },
+      {
+        "file": "scripts/run-seed.ts",
+        "line": 18,
+        "excerpt": "type SeedManifest = { version: number; seeds: SeedManifestEntry[]; };"
+      },
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 20,
+        "excerpt": "type Class = \"PASS\" | \"FAKE-WRITE\" | \"READ-ONLY-MISLABELED\" | \"APP-LOCAL\";"
+      },
+      {
+        "file": "server/auth-service/accessLinks.ts",
+        "line": 11,
+        "excerpt": "export type AccessLinkMint = { rawToken: string; accessPath: string; expir"
+      }
+    ],
+    "filesSample": [
+      "scripts/run-seed.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "server/auth-service/accessLinks.ts",
+      "server/auth-service/db.ts",
+      "server/auth-service/logger.ts",
+      "server/wire-service/auditRun.ts",
+      "server/wire-service/bootEnv.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/capabilities.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/contactSeat.ts",
+      "server/wire-service/dispatchSend.ts"
+    ]
+  },
+  {
+    "id": "TS-void",
+    "occurrences": 559,
+    "fileCount": 185,
+    "examples": [
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 30,
+        "excerpt": "void"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 46,
+        "excerpt": "void"
+      },
+      {
+        "file": "server/auth-service/accessLinks.ts",
+        "line": 24,
+        "excerpt": "void"
+      },
+      {
+        "file": "server/auth-service/app.ts",
+        "line": 26,
+        "excerpt": "void"
+      }
+    ],
+    "filesSample": [
+      "scripts/vercel-entries/fetchBridge.ts",
+      "server/auth-service/accessLinks.ts",
+      "server/auth-service/app.ts",
+      "server/auth-service/email.ts",
+      "server/auth-service/logger.ts",
+      "server/auth-service/registerRoutes.ts",
+      "server/auth-service/routes.ts",
+      "server/wire-service/bootEnv.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/auth/AuthContext.tsx",
+      "src/app/auth/authClient.ts"
+    ]
+  },
+  {
+    "id": "TS-as-assertion",
+    "occurrences": 558,
+    "fileCount": 152,
+    "examples": [
+      {
+        "file": "scripts/check-access-table.ts",
+        "line": 3,
+        "excerpt": "process.env.DATABASE_URL as string"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 23,
+        "excerpt": "env.DATABASE_URL as string"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 42,
+        "excerpt": "body as any"
+      },
+      {
+        "file": "scripts/ensure-platform-admin.ts",
+        "line": 11,
+        "excerpt": "process.env.DATABASE_URL as string"
+      }
+    ],
+    "filesSample": [
+      "scripts/check-access-table.ts",
+      "scripts/close-walk-gaps.ts",
+      "scripts/ensure-platform-admin.ts",
+      "scripts/issue-access-link.ts",
+      "scripts/lift-active-halts.ts",
+      "scripts/prod-otp-verify-once.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-admin-consultants.ts"
+    ]
+  },
+  {
+    "id": "TS-function-type",
+    "occurrences": 535,
+    "fileCount": 155,
+    "examples": [
+      {
+        "file": "server/auth-service/db.ts",
+        "line": 34,
+        "excerpt": "(client: pg.PoolClient) => Promise<T>"
+      },
+      {
+        "file": "server/wire-service/app.ts",
+        "line": 19,
+        "excerpt": "(body: unknown, status?: number) => Response"
+      },
+      {
+        "file": "server/wire-service/contactSeat.ts",
+        "line": 173,
+        "excerpt": "() => Promise<{ rows: T[] }>"
+      },
+      {
+        "file": "src/app/auth/AuthContext.tsx",
+        "line": 59,
+        "excerpt": "() => Promise<void>"
+      }
+    ],
+    "filesSample": [
+      "server/auth-service/db.ts",
+      "server/wire-service/app.ts",
+      "server/wire-service/contactSeat.ts",
+      "src/app/auth/AuthContext.tsx",
+      "src/app/components/ActivityBar.tsx",
+      "src/app/components/ActivityBarHeader.tsx",
+      "src/app/components/BoardPanel.tsx",
+      "src/app/components/ClientView.tsx",
+      "src/app/components/DataPanel.tsx",
+      "src/app/components/DocsPanel.tsx",
+      "src/app/components/HaltOutreachBar.tsx",
+      "src/app/components/HolonDetailPanel.tsx"
+    ]
+  },
+  {
+    "id": "TS-unknown",
+    "occurrences": 531,
+    "fileCount": 70,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 25,
+        "excerpt": "unknown"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 36,
+        "excerpt": "unknown"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 213,
+        "excerpt": "unknown"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 13,
+        "excerpt": "unknown"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-reference-persist.ts",
+      "scripts/verify-ship-spine.ts",
+      "scripts/walk-verify-firm.ts",
+      "server/auth-service/logger.ts",
+      "server/wire-service/app.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/cascade.ts"
+    ]
+  },
+  {
+    "id": "TS-utility-Record",
+    "occurrences": 491,
+    "fileCount": 147,
+    "examples": [
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 7,
+        "excerpt": "Record<string, string>"
+      },
+      {
+        "file": "scripts/run-seed.ts",
+        "line": 15,
+        "excerpt": "Record<string, string>"
+      },
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 270,
+        "excerpt": "Record<string, number>"
+      },
+      {
+        "file": "scripts/verify-boot-env.ts",
+        "line": 62,
+        "excerpt": "Record<string, string | undefined>"
+      }
+    ],
+    "filesSample": [
+      "scripts/read-latest-otp.ts",
+      "scripts/run-seed.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-session-firm.ts",
+      "scripts/verify-worker-actuation.ts",
+      "server/auth-service/logger.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/cascade.ts"
+    ]
+  },
+  {
+    "id": "TS-utility-Promise",
+    "occurrences": 284,
+    "fileCount": 42,
+    "examples": [
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 11,
+        "excerpt": "Promise<Buffer>"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 46,
+        "excerpt": "Promise<void>"
+      },
+      {
+        "file": "scripts/verify-production-walk.ts",
+        "line": 40,
+        "excerpt": "Promise<{ status: number; body: any; setCookie: string | null }>"
+      },
+      {
+        "file": "scripts/verify-production-walk.ts",
+        "line": 63,
+        "excerpt": "Promise<string>"
+      }
+    ],
+    "filesSample": [
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-production-walk.ts",
+      "server/auth-service/accessLinks.ts",
+      "server/auth-service/db.ts",
+      "server/auth-service/email.ts",
+      "server/auth-service/registerRoutes.ts",
+      "server/auth-service/routes.ts",
+      "server/wire-service/auditRun.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/contactAccessMint.ts",
+      "server/wire-service/contactSeat.ts"
+    ]
+  },
+  {
+    "id": "TS-as-const",
+    "occurrences": 243,
+    "fileCount": 91,
+    "examples": [
+      {
+        "file": "scripts/verify-continuous-worker.ts",
+        "line": 43,
+        "excerpt": "[ [\"ch-text\", 0], [\"ch-email\", 1], [\"ch-form\", 2], ] as const"
+      },
+      {
+        "file": "scripts/verify-reference-persist.ts",
+        "line": 12,
+        "excerpt": "\"immigration\" as const"
+      },
+      {
+        "file": "server/wire-service/campaignHousing.ts",
+        "line": 274,
+        "excerpt": "\"every\" as const"
+      },
+      {
+        "file": "server/wire-service/campaignHousing.ts",
+        "line": 368,
+        "excerpt": "\"every\" as const"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-reference-persist.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/contactSeat.ts",
+      "server/wire-service/dispatchSend.ts",
+      "server/wire-service/machine.ts",
+      "server/wire-service/operatorPanes.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/NudgeGantt.tsx",
+      "src/app/components/docs/agentHolons.ts"
+    ]
+  },
+  {
+    "id": "TS-typeof-type",
+    "occurrences": 213,
+    "fileCount": 69,
+    "examples": [
+      {
+        "file": "scripts/verify-access-link.ts",
+        "line": 36,
+        "excerpt": "typeof redeemBody"
+      },
+      {
+        "file": "server/wire-service/campaignHousing.ts",
+        "line": 220,
+        "excerpt": "typeof chans.rows"
+      },
+      {
+        "file": "server/wire-service/campaignHousing.ts",
+        "line": 226,
+        "excerpt": "typeof variations.rows"
+      },
+      {
+        "file": "server/wire-service/campaignHousing.ts",
+        "line": 232,
+        "excerpt": "typeof rules.rows"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-access-link.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/machine.ts",
+      "server/wire-service/operatorPanes.ts",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/docs/holonCatalogTree.ts",
+      "src/app/components/hub/agent/AgentHeader.tsx",
+      "src/app/components/hub/automation/AutomationAddTriggerMenu.tsx",
+      "src/app/components/imports/csvImportTypes.ts",
+      "src/app/components/ui/accordion.tsx",
+      "src/app/components/ui/alert-dialog.tsx"
+    ]
+  },
+  {
+    "id": "TS-optional-param",
+    "occurrences": 139,
+    "fileCount": 58,
+    "examples": [
+      {
+        "file": "scripts/verify-modular-surfaces.ts",
+        "line": 10,
+        "excerpt": "detail?: string"
+      },
+      {
+        "file": "server/wire-service/app.ts",
+        "line": 19,
+        "excerpt": "status?: number"
+      },
+      {
+        "file": "server/wire-service/campaignHousing.ts",
+        "line": 819,
+        "excerpt": "completion?: { completionTable: CompletionTable; completionI"
+      },
+      {
+        "file": "server/wire-service/cascade.ts",
+        "line": 271,
+        "excerpt": "withinSeconds?: number | null"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-modular-surfaces.ts",
+      "server/wire-service/app.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/dispatchSend.ts",
+      "server/wire-service/templateWalk.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/App.tsx",
+      "src/app/auth/authClient.ts",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/NudgeGantt.tsx",
+      "src/app/components/docs/holonCatalogTree.ts"
+    ]
+  },
+  {
+    "id": "TS-Array-generic",
+    "occurrences": 129,
+    "fileCount": 52,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 25,
+        "excerpt": "Array<{ step: string; ok: boolean; detail?: unknown }>"
+      },
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 39,
+        "excerpt": "Array<{ id: string; to: string[]; subject: string; created_a"
+      },
+      {
+        "file": "scripts/restore-channel-order.ts",
+        "line": 4,
+        "excerpt": "Array<[string, number]>"
+      },
+      {
+        "file": "scripts/run-seed.ts",
+        "line": 15,
+        "excerpt": "Array<Record<string, string>>"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/restore-channel-order.ts",
+      "scripts/run-seed.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-machine-e2e.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-production-walk.ts"
+    ]
+  },
+  {
+    "id": "TS-indexed-access",
+    "occurrences": 110,
+    "fileCount": 51,
+    "examples": [
+      {
+        "file": "server/wire-service/auditRun.ts",
+        "line": 65,
+        "excerpt": "AuditContactVerdict[\"verdict\"]"
+      },
+      {
+        "file": "server/wire-service/contactSeat.ts",
+        "line": 261,
+        "excerpt": "ContactSeatPayload[\"now\"][\"state\"]"
+      },
+      {
+        "file": "server/wire-service/contactSeat.ts",
+        "line": 261,
+        "excerpt": "ContactSeatPayload[\"now\"]"
+      },
+      {
+        "file": "server/wire-service/operatorPanes.ts",
+        "line": 22,
+        "excerpt": "(typeof ESCROW_STATUSES)[number]"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/auditRun.ts",
+      "server/wire-service/contactSeat.ts",
+      "server/wire-service/operatorPanes.ts",
+      "src/app/components/ClientPageHeader.tsx",
+      "src/app/components/EventsTab.tsx",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/NudgeGantt.tsx",
+      "src/app/components/docs/holonCatalogTree.ts",
+      "src/app/components/hub/HubBody.tsx",
+      "src/app/components/hub/agent/nodes/EmailStepNode.tsx",
+      "src/app/components/hub/agent/nodes/TaskStepNode.tsx",
+      "src/app/components/hub/automation/AutomationNodeConfigModal.tsx"
+    ]
+  },
+  {
+    "id": "TS-non-null-assertion",
+    "occurrences": 94,
+    "fileCount": 42,
+    "examples": [
+      {
+        "file": "scripts/restore-channel-order.ts",
+        "line": 3,
+        "excerpt": "process.env.DATABASE_URL!"
+      },
+      {
+        "file": "scripts/verify-modular-surfaces.ts",
+        "line": 31,
+        "excerpt": "stored!"
+      },
+      {
+        "file": "scripts/verify-modular-surfaces.ts",
+        "line": 236,
+        "excerpt": "stored!"
+      },
+      {
+        "file": "scripts/walk-verify-firm.ts",
+        "line": 23,
+        "excerpt": "process.env.DATABASE_URL!"
+      }
+    ],
+    "filesSample": [
+      "scripts/restore-channel-order.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/walk-verify-firm.ts",
+      "server/auth-service/routes.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/contactSeat.ts",
+      "server/wire-service/stores.ts",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/hub/agent/AgentEditor.tsx",
+      "src/app/components/hub/automation/RuleOutcomesConfigForm.tsx",
+      "src/app/context/DocsRegistryContext.tsx",
+      "src/app/data/audits.ts"
+    ]
+  },
+  {
+    "id": "TS-intersection",
+    "occurrences": 77,
+    "fileCount": 46,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 27,
+        "excerpt": "RequestInit & { cookie?: string }"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 13,
+        "excerpt": "IncomingMessage & { body?: unknown }"
+      },
+      {
+        "file": "scripts/verify-production-walk.ts",
+        "line": 39,
+        "excerpt": "RequestInit & { cookie?: string }"
+      },
+      {
+        "file": "server/wire-service/dispatchSend.ts",
+        "line": 26,
+        "excerpt": "{ to: string; from?: string; subject: string; bodyText: string; html?:"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-production-walk.ts",
+      "server/wire-service/dispatchSend.ts",
+      "server/wire-service/eventTest.ts",
+      "server/wire-service/stores.ts",
+      "src/app/components/docs/HolonBoundary.tsx",
+      "src/app/components/docs/docsHighlight.ts",
+      "src/app/components/hub/automation/AutomationEditorContext.tsx",
+      "src/app/components/inspector/EngagementNodePanel.tsx",
+      "src/app/components/inspector/emailInspectorData.ts",
+      "src/app/components/ui/alert.tsx"
+    ]
+  },
+  {
+    "id": "TS-utility-Partial",
+    "occurrences": 63,
+    "fileCount": 39,
+    "examples": [
+      {
+        "file": "src/app/components/docs/holonDetailContent.ts",
+        "line": 81,
+        "excerpt": "Partial<Record<HolonId, HolonDetailContent>>"
+      },
+      {
+        "file": "src/app/components/docs/icepanelLinks.ts",
+        "line": 113,
+        "excerpt": "Partial<Record<string, IcepanelObjectRef>>"
+      },
+      {
+        "file": "src/app/components/docs/registerMeta/types.ts",
+        "line": 19,
+        "excerpt": "Partial<Record<string, number>>"
+      },
+      {
+        "file": "src/app/components/hub/agent/AgentAddStepMenu.tsx",
+        "line": 15,
+        "excerpt": "Partial<Record<AgentStepKind, NotionIconName>>"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/docs/holonDetailContent.ts",
+      "src/app/components/docs/icepanelLinks.ts",
+      "src/app/components/docs/registerMeta/types.ts",
+      "src/app/components/hub/agent/AgentAddStepMenu.tsx",
+      "src/app/components/hub/agent/nodes/EmailStepNode.tsx",
+      "src/app/components/hub/agent/nodes/TaskStepNode.tsx",
+      "src/app/components/hub/automation/AutomationEventTriggerConfigPanel.tsx",
+      "src/app/components/hub/automation/AutomationManualTriggerConfigPanel.tsx",
+      "src/app/components/hub/automation/AutomationNodeConfigModal.tsx",
+      "src/app/components/hub/automation/AutomationWorkflowEditor.tsx",
+      "src/app/components/hub/automation/DataClassScopeSelector.tsx",
+      "src/app/components/hub/automation/IfConditionConfigForm.tsx"
+    ]
+  },
+  {
+    "id": "TS-type-predicate",
+    "occurrences": 18,
+    "fileCount": 14,
+    "examples": [
+      {
+        "file": "server/wire-service/operatorPanes.ts",
+        "line": 24,
+        "excerpt": "value is EscrowStatus"
+      },
+      {
+        "file": "server/wire-service/runWrites.ts",
+        "line": 26,
+        "excerpt": "row is RunWrite"
+      },
+      {
+        "file": "server/wire-service/workflowWalk.ts",
+        "line": 261,
+        "excerpt": "id is string"
+      },
+      {
+        "file": "server/wire-service/workflowWalk.ts",
+        "line": 1699,
+        "excerpt": "row is RunWrite"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/operatorPanes.ts",
+      "server/wire-service/runWrites.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/components/EventsTab.tsx",
+      "src/app/data/agentDefinitions.ts",
+      "src/app/data/audits.ts",
+      "src/app/data/automationConditions.ts",
+      "src/app/data/automationRules.ts",
+      "src/app/data/automationWorkflows.ts",
+      "src/app/data/eventTestContract.ts",
+      "src/app/register/flows/flowFocus.ts",
+      "src/app/register/prototype/ContactPrototypeScene.tsx"
+    ]
+  },
+  {
+    "id": "TS-readonly-type",
+    "occurrences": 14,
+    "fileCount": 8,
+    "examples": [
+      {
+        "file": "server/wire-service/operatorPanes.ts",
+        "line": 25,
+        "excerpt": "readonly string[]"
+      },
+      {
+        "file": "server/wire-service/workflowWalk.ts",
+        "line": 82,
+        "excerpt": "readonly string[]"
+      },
+      {
+        "file": "src/app/components/docs/registerMeta/types.ts",
+        "line": 15,
+        "excerpt": "readonly string[]"
+      },
+      {
+        "file": "src/app/register/prototype/ContactPrototypeScene.tsx",
+        "line": 74,
+        "excerpt": "readonly string[]"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/operatorPanes.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/components/docs/registerMeta/types.ts",
+      "src/app/register/prototype-ant/operator/operatorFirmIndex.ts",
+      "src/app/register/prototype/ContactPrototypeScene.tsx",
+      "src/app/register/prototype/operator/operatorWireHelpers.ts",
+      "src/app/register/prototype/operatorNav.tsx",
+      "src/app/register/prototype/shared/meetingsStore.ts"
+    ]
+  },
+  {
+    "id": "TS-utility-Extract",
+    "occurrences": 13,
+    "fileCount": 6,
+    "examples": [
+      {
+        "file": "src/app/components/EventsTab.tsx",
+        "line": 379,
+        "excerpt": "Extract<CampaignEntry, { kind: \"thought\" }>"
+      },
+      {
+        "file": "src/app/components/EventsTab.tsx",
+        "line": 427,
+        "excerpt": "Extract<CampaignEntry, { kind: \"step\" }>"
+      },
+      {
+        "file": "src/app/components/EventsTab.tsx",
+        "line": 471,
+        "excerpt": "Extract<CampaignEntry, { kind: \"step\" }>"
+      },
+      {
+        "file": "src/app/components/EventsTab.tsx",
+        "line": 522,
+        "excerpt": "Extract<CampaignEntry, { kind: \"step\" }>"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/EventsTab.tsx",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/inspector/EngagementNodePanel.tsx",
+      "src/app/data/agentSteps.ts",
+      "src/app/data/automationRuns.ts",
+      "src/app/data/journeyTree.ts"
+    ]
+  },
+  {
+    "id": "TS-never",
+    "occurrences": 12,
+    "fileCount": 7,
+    "examples": [
+      {
+        "file": "scripts/verify-reference-persist.ts",
+        "line": 51,
+        "excerpt": "never"
+      },
+      {
+        "file": "scripts/verify-reference-persist.ts",
+        "line": 56,
+        "excerpt": "never"
+      },
+      {
+        "file": "scripts/verify-worker-actuation.ts",
+        "line": 35,
+        "excerpt": "never"
+      },
+      {
+        "file": "server/wire-service/machine.ts",
+        "line": 85,
+        "excerpt": "never"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-reference-persist.ts",
+      "scripts/verify-worker-actuation.ts",
+      "server/wire-service/machine.ts",
+      "src/app/components/ui/chart.tsx",
+      "src/app/wire/reals/primaryStore.ts",
+      "src/app/wire/standins/machineApi.ts",
+      "src/app/wire/standins/primaryStore.ts"
+    ]
+  },
+  {
+    "id": "TS-keyof",
+    "occurrences": 11,
+    "fileCount": 4,
+    "examples": [
+      {
+        "file": "server/wire-service/machine.ts",
+        "line": 1234,
+        "excerpt": "keyof typeof MODULAR_RULE_TABLES"
+      },
+      {
+        "file": "src/app/components/docs/holonCatalogTree.ts",
+        "line": 85,
+        "excerpt": "keyof typeof SHELL_HOLON_ORDER"
+      },
+      {
+        "file": "src/app/components/ui/chart.tsx",
+        "line": 17,
+        "excerpt": "keyof typeof THEMES"
+      },
+      {
+        "file": "src/app/components/ui/chart.tsx",
+        "line": 91,
+        "excerpt": "keyof typeof itemConfig.theme"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/machine.ts",
+      "src/app/components/docs/holonCatalogTree.ts",
+      "src/app/components/ui/chart.tsx",
+      "src/app/icons/notion-icon-urls.ts"
+    ]
+  },
+  {
+    "id": "TS-utility-Omit",
+    "occurrences": 10,
+    "fileCount": 5,
+    "examples": [
+      {
+        "file": "src/app/components/inspector/emailInspectorData.ts",
+        "line": 254,
+        "excerpt": "Omit<NodeInspectorPayload, \"touchpointId\" | \"sequenceId\">"
+      },
+      {
+        "file": "src/app/components/inspector/emailInspectorData.ts",
+        "line": 614,
+        "excerpt": "Omit<FormNodeInspectorPayload, \"touchpointId\" | \"sequenceId\">"
+      },
+      {
+        "file": "src/app/components/inspector/emailInspectorData.ts",
+        "line": 837,
+        "excerpt": "Omit<TextNodeInspectorPayload, \"touchpointId\" | \"sequenceId\">"
+      },
+      {
+        "file": "src/app/components/inspector/emailInspectorData.ts",
+        "line": 1016,
+        "excerpt": "Omit<NodeInspectorPayload, \"touchpointId\" | \"sequenceId\">"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/inspector/emailInspectorData.ts",
+      "src/app/data/automationRules.ts",
+      "src/app/data/contacts.ts",
+      "src/app/register/prototype-ant/operator/ActivationStateModule.tsx",
+      "src/app/wire/ports.ts"
+    ]
+  },
+  {
+    "id": "TS-utility-Pick",
+    "occurrences": 8,
+    "fileCount": 6,
+    "examples": [
+      {
+        "file": "src/app/components/docs/HolonBoundary.tsx",
+        "line": 40,
+        "excerpt": "Pick<HTMLAttributes<HTMLDivElement>, \"onClick\" | \"onMouseEnter\" | \"onMouseLeave\""
+      },
+      {
+        "file": "src/app/components/docs/docsHighlight.ts",
+        "line": 14,
+        "excerpt": "Pick<CSSProperties, \"boxShadow\" | \"transition\">"
+      },
+      {
+        "file": "src/app/components/docs/docsHighlight.ts",
+        "line": 41,
+        "excerpt": "Pick<CSSProperties, \"boxShadow\" | \"transition\">"
+      },
+      {
+        "file": "src/app/components/docs/docsHighlight.ts",
+        "line": 52,
+        "excerpt": "Pick<CSSProperties, \"boxShadow\" | \"transition\" | \"zIndex\">"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/docs/HolonBoundary.tsx",
+      "src/app/components/docs/docsHighlight.ts",
+      "src/app/components/ui/chart.tsx",
+      "src/app/components/ui/pagination.tsx",
+      "src/app/context/AutomationContext.tsx",
+      "src/app/data/clients.ts"
+    ]
+  },
+  {
+    "id": "TS-tuple",
+    "occurrences": 6,
+    "fileCount": 5,
+    "examples": [
+      {
+        "file": "scripts/restore-channel-order.ts",
+        "line": 4,
+        "excerpt": "[string, number]"
+      },
+      {
+        "file": "src/app/register/prototype/operator/packCatalogStore.ts",
+        "line": 39,
+        "excerpt": "[ConfigPack[], typeof setPackCatalog]"
+      },
+      {
+        "file": "src/app/register/prototype-ant/operator/packCatalogStore.ts",
+        "line": 39,
+        "excerpt": "[ConfigPack[], typeof setPackCatalog]"
+      },
+      {
+        "file": "src/app/register/theory/priors/types.ts",
+        "line": 71,
+        "excerpt": "[]"
+      }
+    ],
+    "filesSample": [
+      "scripts/restore-channel-order.ts",
+      "src/app/register/prototype-ant/operator/packCatalogStore.ts",
+      "src/app/register/prototype/operator/packCatalogStore.ts",
+      "src/app/register/theory/priors/types.ts",
+      "src/app/wire/ports.ts"
+    ]
+  },
+  {
+    "id": "TS-utility-Exclude",
+    "occurrences": 6,
+    "fileCount": 5,
+    "examples": [
+      {
+        "file": "src/app/register/components/RegisterWiringPaperTree.tsx",
+        "line": 377,
+        "excerpt": "Exclude<WiringPaperSection, \"overview\" | \"function\">"
+      },
+      {
+        "file": "src/app/register/context/RegisterSelectionContext.tsx",
+        "line": 65,
+        "excerpt": "Exclude<WiringPaperSection, \"overview\" | \"function\">"
+      },
+      {
+        "file": "src/app/register/context/RegisterSelectionContext.tsx",
+        "line": 441,
+        "excerpt": "Exclude<WiringPaperSection, \"overview\" | \"function\">"
+      },
+      {
+        "file": "src/app/register/prototype/RegisterLoginScene.tsx",
+        "line": 149,
+        "excerpt": "Exclude<VerifyFailure, null>"
+      }
+    ],
+    "filesSample": [
+      "src/app/register/components/RegisterWiringPaperTree.tsx",
+      "src/app/register/context/RegisterSelectionContext.tsx",
+      "src/app/register/prototype-ant/consultant/LoginModule.tsx",
+      "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+      "src/app/register/prototype/RegisterLoginScene.tsx"
+    ]
+  },
+  {
+    "id": "TS-utility-NonNullable",
+    "occurrences": 6,
+    "fileCount": 6,
+    "examples": [
+      {
+        "file": "src/app/components/EventsTab.tsx",
+        "line": 427,
+        "excerpt": "NonNullable<Extract<CampaignEntry, { kind: \"step\" }>[\"card\"]>"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 1863,
+        "excerpt": "NonNullable<Touchpoint[\"successCriteria\"]>"
+      },
+      {
+        "file": "src/app/components/hub/agent/nodes/EmailStepNode.tsx",
+        "line": 24,
+        "excerpt": "NonNullable<AgentStep[\"email\"]>"
+      },
+      {
+        "file": "src/app/components/hub/agent/nodes/TaskStepNode.tsx",
+        "line": 22,
+        "excerpt": "NonNullable<AgentStep[\"task\"]>"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/EventsTab.tsx",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/hub/agent/nodes/EmailStepNode.tsx",
+      "src/app/components/hub/agent/nodes/TaskStepNode.tsx",
+      "src/app/data/agentDefinitions.ts",
+      "src/app/wire/fixtures/store.ts"
+    ]
+  },
+  {
+    "id": "TS-utility-ReturnType",
+    "occurrences": 6,
+    "fileCount": 5,
+    "examples": [
+      {
+        "file": "server/wire-service/cascade.ts",
+        "line": 966,
+        "excerpt": "ReturnType<typeof loadTemplateCells>"
+      },
+      {
+        "file": "src/app/components/hub/agent/AgentHeader.tsx",
+        "line": 39,
+        "excerpt": "ReturnType<typeof getLinkedAutomationSummaries>"
+      },
+      {
+        "file": "src/app/components/ui/carousel.tsx",
+        "line": 25,
+        "excerpt": "ReturnType<typeof useEmblaCarousel>"
+      },
+      {
+        "file": "src/app/components/ui/carousel.tsx",
+        "line": 26,
+        "excerpt": "ReturnType<typeof useEmblaCarousel>"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/cascade.ts",
+      "src/app/components/hub/agent/AgentHeader.tsx",
+      "src/app/components/ui/carousel.tsx",
+      "src/app/register/pages/RegisterPage.tsx",
+      "src/app/register/prototype-ant/operator/BookReadinessModule.tsx"
+    ]
+  },
+  {
+    "id": "TS-utility-Parameters",
+    "occurrences": 5,
+    "fileCount": 4,
+    "examples": [
+      {
+        "file": "src/app/components/ui/carousel.tsx",
+        "line": 13,
+        "excerpt": "Parameters<typeof useEmblaCarousel>"
+      },
+      {
+        "file": "src/app/register/prototype-ant/contact/ContactWorkspace.tsx",
+        "line": 77,
+        "excerpt": "Parameters<typeof api.putContactSeatUpload>"
+      },
+      {
+        "file": "src/app/register/prototype-ant/contact/ContactWorkspace.tsx",
+        "line": 89,
+        "excerpt": "Parameters<typeof api.putContactWorkspaceUpload>"
+      },
+      {
+        "file": "src/app/register/surfaces/boardSurfaces.tsx",
+        "line": 47,
+        "excerpt": "Parameters<typeof NotionIcon>"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/ui/carousel.tsx",
+      "src/app/register/prototype-ant/contact/ContactWorkspace.tsx",
+      "src/app/register/surfaces/boardSurfaces.tsx",
+      "src/app/system-map/sim/engine.ts"
+    ]
+  },
+  {
+    "id": "TS-any",
+    "occurrences": 4,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 42,
+        "excerpt": "any"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 163,
+        "excerpt": "any"
+      },
+      {
+        "file": "scripts/verify-production-walk.ts",
+        "line": 40,
+        "excerpt": "any"
+      },
+      {
+        "file": "scripts/verify-production-walk.ts",
+        "line": 49,
+        "excerpt": "any"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/verify-production-walk.ts"
+    ]
+  },
+  {
+    "id": "TS-satisfies",
+    "occurrences": 3,
+    "fileCount": 3,
+    "examples": [
+      {
+        "file": "server/wire-service/campaignHousing.ts",
+        "line": 359,
+        "excerpt": "[ { token: \"text\", ord: 0 }, { token: \"email\", ord: 1 },"
+      },
+      {
+        "file": "src/app/components/docs/icepanelLinks.ts",
+        "line": 33,
+        "excerpt": "{ towerPlatform: { id: \"GchDw8HRImEOum9TrCKA\", name: \"Tower Platform\","
+      },
+      {
+        "file": "src/app/system-map/SystemMapPage.tsx",
+        "line": 105,
+        "excerpt": "{ label: n.label, holds: `token=${n.token} · from seq.channe"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/campaignHousing.ts",
+      "src/app/components/docs/icepanelLinks.ts",
+      "src/app/system-map/SystemMapPage.tsx"
+    ]
+  },
+  {
+    "id": "TS-generic-alias",
+    "occurrences": 2,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "src/app/components/ui/form.tsx",
+        "line": 21,
+        "excerpt": "type FormFieldContextValue< TFieldValues extends FieldValues = FieldValues,"
+      },
+      {
+        "file": "src/app/data/immigrationReferenceTables.ts",
+        "line": 6,
+        "excerpt": "export type VersionedTableRow<T> = { id: string; version: number; effectiv"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/ui/form.tsx",
+      "src/app/data/immigrationReferenceTables.ts"
+    ]
+  },
+  {
+    "id": "TS-utility-ReadonlyArray",
+    "occurrences": 2,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "src/app/wire/standins/auditTrail.ts",
+        "line": 5,
+        "excerpt": "ReadonlyArray<AuditEvent>"
+      },
+      {
+        "file": "src/app/wire/standins/mailer.ts",
+        "line": 6,
+        "excerpt": "ReadonlyArray<MailerSendInput & MailerSendResult>"
+      }
+    ],
+    "filesSample": [
+      "src/app/wire/standins/auditTrail.ts",
+      "src/app/wire/standins/mailer.ts"
+    ]
+  },
+  {
+    "id": "TS-index-signature",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "server/wire-service/cascade.ts",
+        "line": 32,
+        "excerpt": "[key: string]: unknown;"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/cascade.ts"
+    ]
+  },
+  {
+    "id": "TS-mapped-type",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/app/components/ui/chart.tsx",
+        "line": 11,
+        "excerpt": "{ [k in string]: { label?: React.ReactNode; icon?: React.ComponentType"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/ui/chart.tsx"
+    ]
+  },
+  {
+    "id": "TS-utility-Awaited",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "server/wire-service/cascade.ts",
+        "line": 966,
+        "excerpt": "Awaited<ReturnType<typeof loadTemplateCells>>"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/cascade.ts"
+    ]
+  }
+]

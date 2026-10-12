@@ -1,0 +1,289 @@
+[
+  {
+    "id": "JSX-expression",
+    "occurrences": 13743,
+    "fileCount": 311,
+    "examples": [
+      {
+        "file": "src/app/App.tsx",
+        "line": 297,
+        "excerpt": "{isPanelOpen}"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 298,
+        "excerpt": "{() => setIsPanelOpen((o) => !o)}"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 299,
+        "excerpt": "{() => setIsPanelOpen(true)}"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 301,
+        "excerpt": "{ensureConsoleOpen}"
+      }
+    ],
+    "filesSample": [
+      "src/app/App.tsx",
+      "src/app/Router.tsx",
+      "src/app/auth/AccessEntry.tsx",
+      "src/app/auth/AuthContext.tsx",
+      "src/app/auth/AuthGate.tsx",
+      "src/app/components/ActivityBar.tsx",
+      "src/app/components/ActivityBarHeader.tsx",
+      "src/app/components/BoardPanel.tsx",
+      "src/app/components/ClientDataPage.tsx",
+      "src/app/components/ClientIcon.tsx",
+      "src/app/components/ClientPageHeader.tsx",
+      "src/app/components/ClientView.tsx"
+    ]
+  },
+  {
+    "id": "JSX-element",
+    "occurrences": 5222,
+    "fileCount": 286,
+    "examples": [
+      {
+        "file": "src/app/App.tsx",
+        "line": 72,
+        "excerpt": "<TouchpointFocusProvider> <TaskProvider> <DocsHighlightProvider>"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 73,
+        "excerpt": "<TaskProvider> <DocsHighlightProvider> <HolonDetailProvider>"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 74,
+        "excerpt": "<DocsHighlightProvider> <HolonDetailProvider> <AuditProv"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 75,
+        "excerpt": "<HolonDetailProvider> <AuditProvider> <AutomationP"
+      }
+    ],
+    "filesSample": [
+      "src/app/App.tsx",
+      "src/app/Router.tsx",
+      "src/app/auth/AccessEntry.tsx",
+      "src/app/auth/AuthContext.tsx",
+      "src/app/auth/AuthGate.tsx",
+      "src/app/components/ActivityBar.tsx",
+      "src/app/components/ActivityBarHeader.tsx",
+      "src/app/components/BoardPanel.tsx",
+      "src/app/components/ClientDataPage.tsx",
+      "src/app/components/ClientIcon.tsx",
+      "src/app/components/ClientPageHeader.tsx",
+      "src/app/components/ClientView.tsx"
+    ]
+  },
+  {
+    "id": "JSX-intrinsic",
+    "occurrences": 3702,
+    "fileCount": 256,
+    "examples": [
+      {
+        "file": "src/app/App.tsx",
+        "line": 311,
+        "excerpt": "div"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 325,
+        "excerpt": "div"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 337,
+        "excerpt": "div"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 338,
+        "excerpt": "div"
+      }
+    ],
+    "filesSample": [
+      "src/app/App.tsx",
+      "src/app/auth/AccessEntry.tsx",
+      "src/app/auth/AuthGate.tsx",
+      "src/app/components/ActivityBar.tsx",
+      "src/app/components/ActivityBarHeader.tsx",
+      "src/app/components/BoardPanel.tsx",
+      "src/app/components/ClientDataPage.tsx",
+      "src/app/components/ClientIcon.tsx",
+      "src/app/components/ClientPageHeader.tsx",
+      "src/app/components/ClientView.tsx",
+      "src/app/components/ContactView.tsx",
+      "src/app/components/DataPanel.tsx"
+    ]
+  },
+  {
+    "id": "JSX-component",
+    "occurrences": 3324,
+    "fileCount": 289,
+    "examples": [
+      {
+        "file": "src/app/App.tsx",
+        "line": 72,
+        "excerpt": "TouchpointFocusProvider"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 73,
+        "excerpt": "TaskProvider"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 74,
+        "excerpt": "DocsHighlightProvider"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 75,
+        "excerpt": "HolonDetailProvider"
+      }
+    ],
+    "filesSample": [
+      "src/app/App.tsx",
+      "src/app/Router.tsx",
+      "src/app/auth/AuthContext.tsx",
+      "src/app/auth/AuthGate.tsx",
+      "src/app/components/ActivityBar.tsx",
+      "src/app/components/ActivityBarHeader.tsx",
+      "src/app/components/BoardPanel.tsx",
+      "src/app/components/ClientDataPage.tsx",
+      "src/app/components/ClientPageHeader.tsx",
+      "src/app/components/ClientView.tsx",
+      "src/app/components/ContactView.tsx",
+      "src/app/components/DataPanel.tsx"
+    ]
+  },
+  {
+    "id": "JSX-self-closing",
+    "occurrences": 1804,
+    "fileCount": 280,
+    "examples": [
+      {
+        "file": "src/app/App.tsx",
+        "line": 78,
+        "excerpt": "<AppShell />"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 301,
+        "excerpt": "<HolonInspectLayer onEnsureConsoleOpen={ensureConsoleOpen} />"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 303,
+        "excerpt": "<ClientPortalPage clientId={portalClientId} onClose={() => setPo"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 333,
+        "excerpt": "<DocsPanel width={consolePanelWidth} t={t} />"
+      }
+    ],
+    "filesSample": [
+      "src/app/App.tsx",
+      "src/app/Router.tsx",
+      "src/app/auth/AuthGate.tsx",
+      "src/app/components/ActivityBar.tsx",
+      "src/app/components/ActivityBarHeader.tsx",
+      "src/app/components/BoardPanel.tsx",
+      "src/app/components/ClientDataPage.tsx",
+      "src/app/components/ClientIcon.tsx",
+      "src/app/components/ClientPageHeader.tsx",
+      "src/app/components/ClientView.tsx",
+      "src/app/components/ContactView.tsx",
+      "src/app/components/DataPanel.tsx"
+    ]
+  },
+  {
+    "id": "JSX-spread-props",
+    "occurrences": 290,
+    "fileCount": 74,
+    "examples": [
+      {
+        "file": "src/app/components/BoardPanel.tsx",
+        "line": 165,
+        "excerpt": "{...holonInspectTargetProps(PHASE_SIGNAL_HOLON.id)}"
+      },
+      {
+        "file": "src/app/components/BoardPanel.tsx",
+        "line": 166,
+        "excerpt": "{...(registerMode ? { \"data-register-surface\": \"Phase signal"
+      },
+      {
+        "file": "src/app/components/BoardPanel.tsx",
+        "line": 232,
+        "excerpt": "{...holonInspectTargetProps(CLIENT_ROW_HOLON.id)}"
+      },
+      {
+        "file": "src/app/components/BoardPanel.tsx",
+        "line": 233,
+        "excerpt": "{...(registerMode ? { \"data-register-surface\": \"Client row\""
+      }
+    ],
+    "filesSample": [
+      "src/app/components/BoardPanel.tsx",
+      "src/app/components/DocsPanel.tsx",
+      "src/app/components/contacts/ContactRow.tsx",
+      "src/app/components/docs/HolonBoundary.tsx",
+      "src/app/components/figma/ImageWithFallback.tsx",
+      "src/app/components/hub/HubToolRow.tsx",
+      "src/app/components/hub/agent/AgentAddStepMenu.tsx",
+      "src/app/components/hub/agent/AgentSequenceCanvas.tsx",
+      "src/app/components/hub/agent/AgentStepRail.tsx",
+      "src/app/components/hub/agent/nodes/AgentStepFrame.tsx",
+      "src/app/components/hub/automation/nodes/ActionNode.tsx",
+      "src/app/components/hub/automation/nodes/BranchNode.tsx"
+    ]
+  },
+  {
+    "id": "JSX-fragment",
+    "occurrences": 122,
+    "fileCount": 72,
+    "examples": [
+      {
+        "file": "src/app/auth/AuthGate.tsx",
+        "line": 15,
+        "excerpt": "<>{children}</>"
+      },
+      {
+        "file": "src/app/auth/AuthGate.tsx",
+        "line": 33,
+        "excerpt": "<>{children}</>"
+      },
+      {
+        "file": "src/app/components/ActivityBarHeader.tsx",
+        "line": 178,
+        "excerpt": "<> <div style={{"
+      },
+      {
+        "file": "src/app/components/BoardPanel.tsx",
+        "line": 773,
+        "excerpt": "<> <ContactsSectionHeader coun"
+      }
+    ],
+    "filesSample": [
+      "src/app/auth/AuthGate.tsx",
+      "src/app/components/ActivityBarHeader.tsx",
+      "src/app/components/BoardPanel.tsx",
+      "src/app/components/ClientView.tsx",
+      "src/app/components/DocsPanel.tsx",
+      "src/app/components/EventsTab.tsx",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/Workspace.tsx",
+      "src/app/components/docs/HolonPurposeHoverCard.tsx",
+      "src/app/components/docs/RegisterContentChildHolons.tsx",
+      "src/app/components/hub/AuditTreeBlock.tsx",
+      "src/app/components/hub/agent/AgentEditor.tsx"
+    ]
+  }
+]

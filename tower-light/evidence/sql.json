@@ -1,0 +1,533 @@
+[
+  {
+    "id": "SQL-jsonb",
+    "occurrences": 203,
+    "fileCount": 19,
+    "examples": [
+      {
+        "file": "supabase/migrations/003_ct_wire_stores.sql",
+        "line": 67,
+        "excerpt": "payload JSONB"
+      },
+      {
+        "file": "supabase/migrations/003_ct_wire_stores.sql",
+        "line": 79,
+        "excerpt": "body JSONB NOT NULL,"
+      },
+      {
+        "file": "supabase/migrations/003_ct_wire_stores.sql",
+        "line": 109,
+        "excerpt": "raw JSONB"
+      },
+      {
+        "file": "supabase/migrations/003_ct_wire_stores.sql",
+        "line": 121,
+        "excerpt": "payload JSONB NOT NULL,"
+      }
+    ],
+    "filesSample": [
+      "supabase/migrations/003_ct_wire_stores.sql",
+      "supabase/migrations/004_machine_tables.sql",
+      "supabase/migrations/005_actuation.sql",
+      "supabase/migrations/006_workflow_trigger.sql",
+      "supabase/migrations/007_meeting_booked.sql",
+      "supabase/migrations/009_outbound_message_content.sql",
+      "supabase/migrations/010_sequence_campaign_housing.sql",
+      "supabase/migrations/011_channel_variations.sql",
+      "supabase/migrations/012_grain_audience_one_timer.sql",
+      "supabase/migrations/015_house_notes_handle.sql",
+      "supabase/migrations/017_event_test_contract.sql",
+      "supabase/migrations/019_contact_seat.sql"
+    ]
+  },
+  {
+    "id": "SQL-constraint",
+    "occurrences": 144,
+    "fileCount": 20,
+    "examples": [
+      {
+        "file": "supabase/migrations/001_auth_tables.sql",
+        "line": 8,
+        "excerpt": "id UUID PRIMARY KEY DEFAULT gen_random_uuid(),"
+      },
+      {
+        "file": "supabase/migrations/001_auth_tables.sql",
+        "line": 14,
+        "excerpt": "id UUID PRIMARY KEY DEFAULT gen_random_uuid(),"
+      },
+      {
+        "file": "supabase/migrations/001_auth_tables.sql",
+        "line": 18,
+        "excerpt": "CONSTRAINT users_email_unique UNIQUE (email)"
+      },
+      {
+        "file": "supabase/migrations/001_auth_tables.sql",
+        "line": 25,
+        "excerpt": "id UUID PRIMARY KEY DEFAULT gen_random_uuid(),"
+      }
+    ],
+    "filesSample": [
+      "supabase/migrations/001_auth_tables.sql",
+      "supabase/migrations/002_applied_seeds.sql",
+      "supabase/migrations/003_ct_wire_stores.sql",
+      "supabase/migrations/004_machine_tables.sql",
+      "supabase/migrations/006_workflow_trigger.sql",
+      "supabase/migrations/007_meeting_booked.sql",
+      "supabase/migrations/008_access_links.sql",
+      "supabase/migrations/010_sequence_campaign_housing.sql",
+      "supabase/migrations/011_channel_variations.sql",
+      "supabase/migrations/012_grain_audience_one_timer.sql",
+      "supabase/migrations/014_contact_import.sql",
+      "supabase/migrations/016_trigger_local_cascade.sql"
+    ]
+  },
+  {
+    "id": "SQL-insert",
+    "occurrences": 81,
+    "fileCount": 19,
+    "examples": [
+      {
+        "file": "supabase/migrations/007_meeting_booked.sql",
+        "line": 24,
+        "excerpt": "INSERT INTO ct_collections (name) VALUES ('meeting_booked')"
+      },
+      {
+        "file": "supabase/migrations/010_sequence_campaign_housing.sql",
+        "line": 120,
+        "excerpt": "INSERT INTO campaign (id, firm_id, sequence_id, name, ord, override_this)"
+      },
+      {
+        "file": "supabase/migrations/010_sequence_campaign_housing.sql",
+        "line": 131,
+        "excerpt": "INSERT INTO campaign (id, firm_id, sequence_id, name, ord, override_this)"
+      },
+      {
+        "file": "supabase/migrations/010_sequence_campaign_housing.sql",
+        "line": 144,
+        "excerpt": "INSERT INTO campaign_objective (id, campaign_id, kind, name, completion_table, source)"
+      }
+    ],
+    "filesSample": [
+      "supabase/migrations/007_meeting_booked.sql",
+      "supabase/migrations/010_sequence_campaign_housing.sql",
+      "supabase/migrations/011_channel_variations.sql",
+      "supabase/migrations/012_grain_audience_one_timer.sql",
+      "supabase/migrations/013_operator_book_people.sql",
+      "supabase/migrations/015_house_notes_handle.sql",
+      "supabase/migrations/017_event_test_contract.sql",
+      "supabase/migrations/018_collectible_fields.sql",
+      "supabase/migrations/019_contact_seat.sql",
+      "supabase/migrations/021_objective_local_axis.sql",
+      "supabase/seeds/001_tower_platform.sql",
+      "supabase/seeds/002_machine_tables.sql"
+    ]
+  },
+  {
+    "id": "SQL-on-conflict",
+    "occurrences": 78,
+    "fileCount": 17,
+    "examples": [
+      {
+        "file": "supabase/migrations/007_meeting_booked.sql",
+        "line": 25,
+        "excerpt": "ON CONFLICT (name) DO NOTHING;"
+      },
+      {
+        "file": "supabase/migrations/010_sequence_campaign_housing.sql",
+        "line": 129,
+        "excerpt": "ON CONFLICT (id) DO NOTHING;"
+      },
+      {
+        "file": "supabase/migrations/010_sequence_campaign_housing.sql",
+        "line": 140,
+        "excerpt": "ON CONFLICT (id) DO NOTHING;"
+      },
+      {
+        "file": "supabase/migrations/010_sequence_campaign_housing.sql",
+        "line": 151,
+        "excerpt": "ON CONFLICT (campaign_id) DO NOTHING;"
+      }
+    ],
+    "filesSample": [
+      "supabase/migrations/007_meeting_booked.sql",
+      "supabase/migrations/010_sequence_campaign_housing.sql",
+      "supabase/migrations/012_grain_audience_one_timer.sql",
+      "supabase/migrations/013_operator_book_people.sql",
+      "supabase/migrations/015_house_notes_handle.sql",
+      "supabase/migrations/018_collectible_fields.sql",
+      "supabase/migrations/019_contact_seat.sql",
+      "supabase/migrations/021_objective_local_axis.sql",
+      "supabase/seeds/001_tower_platform.sql",
+      "supabase/seeds/002_machine_tables.sql",
+      "supabase/seeds/003_canonical_workflows.sql",
+      "supabase/seeds/004_contact_seat.sql"
+    ]
+  },
+  {
+    "id": "SQL-create-table",
+    "occurrences": 74,
+    "fileCount": 16,
+    "examples": [
+      {
+        "file": "supabase/migrations/001_auth_tables.sql",
+        "line": 7,
+        "excerpt": "CREATE TABLE IF NOT EXISTS firms ("
+      },
+      {
+        "file": "supabase/migrations/001_auth_tables.sql",
+        "line": 13,
+        "excerpt": "CREATE TABLE IF NOT EXISTS users ("
+      },
+      {
+        "file": "supabase/migrations/001_auth_tables.sql",
+        "line": 24,
+        "excerpt": "CREATE TABLE IF NOT EXISTS otp_challenges ("
+      },
+      {
+        "file": "supabase/migrations/001_auth_tables.sql",
+        "line": 48,
+        "excerpt": "CREATE TABLE IF NOT EXISTS sessions ("
+      }
+    ],
+    "filesSample": [
+      "supabase/migrations/001_auth_tables.sql",
+      "supabase/migrations/002_applied_seeds.sql",
+      "supabase/migrations/003_ct_wire_stores.sql",
+      "supabase/migrations/004_machine_tables.sql",
+      "supabase/migrations/006_workflow_trigger.sql",
+      "supabase/migrations/007_meeting_booked.sql",
+      "supabase/migrations/008_access_links.sql",
+      "supabase/migrations/010_sequence_campaign_housing.sql",
+      "supabase/migrations/011_channel_variations.sql",
+      "supabase/migrations/012_grain_audience_one_timer.sql",
+      "supabase/migrations/014_contact_import.sql",
+      "supabase/migrations/017_event_test_contract.sql"
+    ]
+  },
+  {
+    "id": "SQL-alter-table",
+    "occurrences": 61,
+    "fileCount": 15,
+    "examples": [
+      {
+        "file": "supabase/migrations/004_machine_tables.sql",
+        "line": 8,
+        "excerpt": "ALTER TABLE consent_records"
+      },
+      {
+        "file": "supabase/migrations/004_machine_tables.sql",
+        "line": 436,
+        "excerpt": "EXECUTE format('ALTER TABLE %I ENABLE ROW LEVEL SECURITY', t);"
+      },
+      {
+        "file": "supabase/migrations/004_machine_tables.sql",
+        "line": 445,
+        "excerpt": "ALTER TABLE action ENABLE ROW LEVEL SECURITY;"
+      },
+      {
+        "file": "supabase/migrations/005_actuation.sql",
+        "line": 4,
+        "excerpt": "ALTER TABLE active_attempts"
+      }
+    ],
+    "filesSample": [
+      "supabase/migrations/004_machine_tables.sql",
+      "supabase/migrations/005_actuation.sql",
+      "supabase/migrations/006_workflow_trigger.sql",
+      "supabase/migrations/009_outbound_message_content.sql",
+      "supabase/migrations/010_sequence_campaign_housing.sql",
+      "supabase/migrations/011_channel_variations.sql",
+      "supabase/migrations/012_grain_audience_one_timer.sql",
+      "supabase/migrations/014_contact_import.sql",
+      "supabase/migrations/015_house_notes_handle.sql",
+      "supabase/migrations/016_trigger_local_cascade.sql",
+      "supabase/migrations/020_workspace_opt_out.sql",
+      "supabase/migrations/021_objective_local_axis.sql"
+    ]
+  },
+  {
+    "id": "SQL-create-index",
+    "occurrences": 45,
+    "fileCount": 17,
+    "examples": [
+      {
+        "file": "supabase/migrations/001_auth_tables.sql",
+        "line": 21,
+        "excerpt": "CREATE INDEX IF NOT EXISTS users_firm_id_idx ON users (firm_id);"
+      },
+      {
+        "file": "supabase/migrations/001_auth_tables.sql",
+        "line": 37,
+        "excerpt": "CREATE INDEX IF NOT EXISTS otp_challenges_lookup_idx"
+      },
+      {
+        "file": "supabase/migrations/001_auth_tables.sql",
+        "line": 41,
+        "excerpt": "CREATE UNIQUE INDEX IF NOT EXISTS otp_challenges_one_active_per_email_firm"
+      },
+      {
+        "file": "supabase/migrations/001_auth_tables.sql",
+        "line": 57,
+        "excerpt": "CREATE INDEX IF NOT EXISTS sessions_token_hash_idx ON sessions (token_hash);"
+      }
+    ],
+    "filesSample": [
+      "supabase/migrations/001_auth_tables.sql",
+      "supabase/migrations/002_applied_seeds.sql",
+      "supabase/migrations/003_ct_wire_stores.sql",
+      "supabase/migrations/004_machine_tables.sql",
+      "supabase/migrations/005_actuation.sql",
+      "supabase/migrations/006_workflow_trigger.sql",
+      "supabase/migrations/007_meeting_booked.sql",
+      "supabase/migrations/008_access_links.sql",
+      "supabase/migrations/010_sequence_campaign_housing.sql",
+      "supabase/migrations/011_channel_variations.sql",
+      "supabase/migrations/012_grain_audience_one_timer.sql",
+      "supabase/migrations/014_contact_import.sql"
+    ]
+  },
+  {
+    "id": "SQL-select",
+    "occurrences": 41,
+    "fileCount": 11,
+    "examples": [
+      {
+        "file": "supabase/migrations/004_machine_tables.sql",
+        "line": 450,
+        "excerpt": "SELECT 1 FROM workflow w"
+      },
+      {
+        "file": "supabase/migrations/007_meeting_booked.sql",
+        "line": 23,
+        "excerpt": "IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'ct_collections') THEN"
+      },
+      {
+        "file": "supabase/migrations/010_sequence_campaign_housing.sql",
+        "line": 104,
+        "excerpt": "SELECT conname FROM pg_constraint"
+      },
+      {
+        "file": "supabase/migrations/010_sequence_campaign_housing.sql",
+        "line": 111,
+        "excerpt": "SELECT conname FROM pg_constraint"
+      }
+    ],
+    "filesSample": [
+      "supabase/migrations/004_machine_tables.sql",
+      "supabase/migrations/007_meeting_booked.sql",
+      "supabase/migrations/010_sequence_campaign_housing.sql",
+      "supabase/migrations/011_channel_variations.sql",
+      "supabase/migrations/012_grain_audience_one_timer.sql",
+      "supabase/migrations/022_pursuit_exhausted.sql",
+      "supabase/seeds/001_tower_platform.sql",
+      "supabase/seeds/002_machine_tables.sql",
+      "supabase/seeds/004_contact_seat.sql",
+      "supabase/seeds/005_contact_workspace_fill.sql",
+      "supabase/seeds/006_objective_local_axis.sql"
+    ]
+  },
+  {
+    "id": "SQL-transaction",
+    "occurrences": 14,
+    "fileCount": 7,
+    "examples": [
+      {
+        "file": "supabase/migrations/004_machine_tables.sql",
+        "line": 426,
+        "excerpt": "BEGIN"
+      },
+      {
+        "file": "supabase/migrations/007_meeting_booked.sql",
+        "line": 22,
+        "excerpt": "BEGIN"
+      },
+      {
+        "file": "supabase/migrations/010_sequence_campaign_housing.sql",
+        "line": 102,
+        "excerpt": "BEGIN"
+      },
+      {
+        "file": "supabase/migrations/010_sequence_campaign_housing.sql",
+        "line": 156,
+        "excerpt": "BEGIN"
+      }
+    ],
+    "filesSample": [
+      "supabase/migrations/004_machine_tables.sql",
+      "supabase/migrations/007_meeting_booked.sql",
+      "supabase/migrations/010_sequence_campaign_housing.sql",
+      "supabase/migrations/011_channel_variations.sql",
+      "supabase/migrations/012_grain_audience_one_timer.sql",
+      "supabase/migrations/022_pursuit_exhausted.sql",
+      "supabase/seeds/009_register_gaps.sql"
+    ]
+  },
+  {
+    "id": "SQL-uuid",
+    "occurrences": 14,
+    "fileCount": 4,
+    "examples": [
+      {
+        "file": "supabase/migrations/001_auth_tables.sql",
+        "line": 8,
+        "excerpt": "id UUID PRIMARY KEY DEFAULT gen_random_uuid(),"
+      },
+      {
+        "file": "supabase/migrations/001_auth_tables.sql",
+        "line": 14,
+        "excerpt": "id UUID PRIMARY KEY DEFAULT gen_random_uuid(),"
+      },
+      {
+        "file": "supabase/migrations/001_auth_tables.sql",
+        "line": 15,
+        "excerpt": "firm_id UUID NOT NULL REFERENCES firms(id) ON DELETE CASCADE,"
+      },
+      {
+        "file": "supabase/migrations/001_auth_tables.sql",
+        "line": 25,
+        "excerpt": "id UUID PRIMARY KEY DEFAULT gen_random_uuid(),"
+      }
+    ],
+    "filesSample": [
+      "supabase/migrations/001_auth_tables.sql",
+      "supabase/migrations/003_ct_wire_stores.sql",
+      "supabase/migrations/004_machine_tables.sql",
+      "supabase/migrations/008_access_links.sql"
+    ]
+  },
+  {
+    "id": "SQL-update",
+    "occurrences": 13,
+    "fileCount": 7,
+    "examples": [
+      {
+        "file": "supabase/migrations/004_machine_tables.sql",
+        "line": 12,
+        "excerpt": "UPDATE consent_records"
+      },
+      {
+        "file": "supabase/migrations/005_actuation.sql",
+        "line": 11,
+        "excerpt": "UPDATE active_attempts"
+      },
+      {
+        "file": "supabase/migrations/010_sequence_campaign_housing.sql",
+        "line": 165,
+        "excerpt": "UPDATE sequence_template SET sequence_class = 'optin'"
+      },
+      {
+        "file": "supabase/migrations/010_sequence_campaign_housing.sql",
+        "line": 168,
+        "excerpt": "UPDATE firm_sequence_binding SET sequence_class = 'optin', template_id = 'tpl.optin_launch.v1'"
+      }
+    ],
+    "filesSample": [
+      "supabase/migrations/004_machine_tables.sql",
+      "supabase/migrations/005_actuation.sql",
+      "supabase/migrations/010_sequence_campaign_housing.sql",
+      "supabase/migrations/011_channel_variations.sql",
+      "supabase/seeds/006_objective_local_axis.sql",
+      "supabase/seeds/007_pursuit_exhausted.sql",
+      "supabase/seeds/008_constants_pack_keys.sql"
+    ]
+  },
+  {
+    "id": "SQL-delete",
+    "occurrences": 5,
+    "fileCount": 3,
+    "examples": [
+      {
+        "file": "supabase/migrations/010_sequence_campaign_housing.sql",
+        "line": 174,
+        "excerpt": "DELETE FROM firm_sequence_binding WHERE template_id = 'tpl.launch_day.v1';"
+      },
+      {
+        "file": "supabase/migrations/010_sequence_campaign_housing.sql",
+        "line": 175,
+        "excerpt": "DELETE FROM sequence_template WHERE id = 'tpl.launch_day.v1';"
+      },
+      {
+        "file": "supabase/seeds/001_tower_platform.sql",
+        "line": 7,
+        "excerpt": "DELETE FROM users WHERE email = 'consultant@demo.firm';"
+      },
+      {
+        "file": "supabase/seeds/001_tower_platform.sql",
+        "line": 8,
+        "excerpt": "DELETE FROM firms"
+      }
+    ],
+    "filesSample": [
+      "supabase/migrations/010_sequence_campaign_housing.sql",
+      "supabase/seeds/001_tower_platform.sql",
+      "supabase/seeds/002_machine_tables.sql"
+    ]
+  },
+  {
+    "id": "SQL-policy",
+    "occurrences": 3,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "supabase/migrations/004_machine_tables.sql",
+        "line": 439,
+        "excerpt": "'CREATE POLICY %I ON %I FOR ALL USING (firm_id = COALESCE(current_setting(''request.jwt.claims'', true)::jsonb->>''firm_"
+      },
+      {
+        "file": "supabase/migrations/004_machine_tables.sql",
+        "line": 447,
+        "excerpt": "CREATE POLICY action_via_workflow ON action FOR ALL"
+      },
+      {
+        "file": "supabase/migrations/006_workflow_trigger.sql",
+        "line": 30,
+        "excerpt": "CREATE POLICY workflow_trigger_firm_isolation ON workflow_trigger FOR ALL"
+      }
+    ],
+    "filesSample": [
+      "supabase/migrations/004_machine_tables.sql",
+      "supabase/migrations/006_workflow_trigger.sql"
+    ]
+  },
+  {
+    "id": "SQL-rls-enable",
+    "occurrences": 3,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "supabase/migrations/004_machine_tables.sql",
+        "line": 436,
+        "excerpt": "EXECUTE format('ALTER TABLE %I ENABLE ROW LEVEL SECURITY', t);"
+      },
+      {
+        "file": "supabase/migrations/004_machine_tables.sql",
+        "line": 445,
+        "excerpt": "ALTER TABLE action ENABLE ROW LEVEL SECURITY;"
+      },
+      {
+        "file": "supabase/migrations/006_workflow_trigger.sql",
+        "line": 28,
+        "excerpt": "ALTER TABLE workflow_trigger ENABLE ROW LEVEL SECURITY;"
+      }
+    ],
+    "filesSample": [
+      "supabase/migrations/004_machine_tables.sql",
+      "supabase/migrations/006_workflow_trigger.sql"
+    ]
+  },
+  {
+    "id": "SQL-comment",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "supabase/migrations/009_outbound_message_content.sql",
+        "line": 16,
+        "excerpt": "COMMENT ON COLUMN outbound_messages.content IS"
+      }
+    ],
+    "filesSample": [
+      "supabase/migrations/009_outbound_message_content.sql"
+    ]
+  }
+]

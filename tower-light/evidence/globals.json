@@ -1,0 +1,2250 @@
+[
+  {
+    "id": "process.env",
+    "occurrences": 402,
+    "fileCount": 46,
+    "examples": [
+      {
+        "file": "api/ping.ts",
+        "line": 14,
+        "excerpt": "process.env.DATABASE_URL?.trim"
+      },
+      {
+        "file": "api/ping.ts",
+        "line": 14,
+        "excerpt": "process.env.DATABASE_URL"
+      },
+      {
+        "file": "api/ping.ts",
+        "line": 14,
+        "excerpt": "process.env"
+      },
+      {
+        "file": "api/ping.ts",
+        "line": 15,
+        "excerpt": "process.env.RESEND_API_KEY?.trim"
+      }
+    ],
+    "filesSample": [
+      "api/ping.ts",
+      "scripts/check-access-table.ts",
+      "scripts/close-walk-gaps.ts",
+      "scripts/ensure-platform-admin.ts",
+      "scripts/issue-access-link.ts",
+      "scripts/lift-active-halts.ts",
+      "scripts/prod-otp-verify-once.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/restore-channel-order.ts",
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts",
+      "scripts/verify-access-link.ts"
+    ]
+  },
+  {
+    "id": "String()",
+    "occurrences": 269,
+    "fileCount": 62,
+    "examples": [
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 87,
+        "excerpt": "String(existing)"
+      },
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 53,
+        "excerpt": "String(got)"
+      },
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 110,
+        "excerpt": "String(after.rows[0]?.enabled)"
+      },
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 134,
+        "excerpt": "String(after.rows[0]?.threshold)"
+      }
+    ],
+    "filesSample": [
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-reference-persist.ts",
+      "scripts/verify-ship-spine.ts",
+      "server/auth-service/app.ts",
+      "server/auth-service/crypto.ts",
+      "server/auth-service/logger.ts",
+      "server/auth-service/registerRoutes.ts",
+      "server/wire-service/app.ts"
+    ]
+  },
+  {
+    "id": "JSON.stringify()",
+    "occurrences": 255,
+    "fileCount": 62,
+    "examples": [
+      {
+        "file": "api/ping.ts",
+        "line": 11,
+        "excerpt": "JSON.stringify({ ok: true, service: \"tower-ping\", hasDatabaseUrl: Boolean(process."
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 66,
+        "excerpt": "JSON.stringify({ email, code })"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 70,
+        "excerpt": "JSON.stringify(v)"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 107,
+        "excerpt": "JSON.stringify({ state: \"running\" })"
+      }
+    ],
+    "filesSample": [
+      "api/ping.ts",
+      "scripts/close-walk-gaps.ts",
+      "scripts/ensure-platform-admin.ts",
+      "scripts/generate-holon-catalog-flat.mts",
+      "scripts/issue-access-link.ts",
+      "scripts/prod-otp-verify-once.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-admin-consultants.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts"
+    ]
+  },
+  {
+    "id": "process",
+    "occurrences": 244,
+    "fileCount": 49,
+    "examples": [
+      {
+        "file": "api/ping.ts",
+        "line": 14,
+        "excerpt": "process"
+      },
+      {
+        "file": "api/ping.ts",
+        "line": 15,
+        "excerpt": "process"
+      },
+      {
+        "file": "api/ping.ts",
+        "line": 16,
+        "excerpt": "process"
+      },
+      {
+        "file": "api/ping.ts",
+        "line": 17,
+        "excerpt": "process"
+      }
+    ],
+    "filesSample": [
+      "api/ping.ts",
+      "scripts/bundle-vercel-api.mjs",
+      "scripts/check-access-table.ts",
+      "scripts/close-walk-gaps.ts",
+      "scripts/ensure-platform-admin.ts",
+      "scripts/issue-access-link.ts",
+      "scripts/lift-active-halts.ts",
+      "scripts/prod-otp-verify-once.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/restore-channel-order.ts",
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts"
+    ]
+  },
+  {
+    "id": "Boolean()",
+    "occurrences": 195,
+    "fileCount": 76,
+    "examples": [
+      {
+        "file": "api/ping.ts",
+        "line": 14,
+        "excerpt": "Boolean(process.env.DATABASE_URL?.trim())"
+      },
+      {
+        "file": "api/ping.ts",
+        "line": 15,
+        "excerpt": "Boolean(process.env.RESEND_API_KEY?.trim())"
+      },
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 174,
+        "excerpt": "Boolean(authored)"
+      },
+      {
+        "file": "scripts/verify-access-link.ts",
+        "line": 61,
+        "excerpt": "Boolean(redeemBody.ok)"
+      }
+    ],
+    "filesSample": [
+      "api/ping.ts",
+      "scripts/close-walk-gaps.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-worker-actuation.ts",
+      "server/auth-service/app.ts",
+      "server/auth-service/index.ts",
+      "server/auth-service/routes.ts",
+      "server/wire-service/app.ts",
+      "server/wire-service/auditRun.ts",
+      "server/wire-service/bootEnv.ts",
+      "server/wire-service/campaignHousing.ts"
+    ]
+  },
+  {
+    "id": "new Set",
+    "occurrences": 144,
+    "fileCount": 67,
+    "examples": [
+      {
+        "file": "server/wire-service/eventTest.ts",
+        "line": 147,
+        "excerpt": "new Set(evals.rows.map((row) => row.contact_id))"
+      },
+      {
+        "file": "server/wire-service/sendMode.ts",
+        "line": 21,
+        "excerpt": "new Set( raw .split(/[, \\n\\t]+/) .map((s) => s.trim()) .filter(Boolean), )"
+      },
+      {
+        "file": "server/wire-service/waitNote.ts",
+        "line": 104,
+        "excerpt": "new Set(scheduled.rows.map((r) => r.workflow_run_id))"
+      },
+      {
+        "file": "server/wire-service/waitNote.ts",
+        "line": 157,
+        "excerpt": "new Set(group.contactIds)"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/eventTest.ts",
+      "server/wire-service/sendMode.ts",
+      "server/wire-service/waitNote.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/components/DocsPanel.tsx",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/client-portal/ClientEngagementCalendar.tsx",
+      "src/app/components/docs/HolonInspectLayer.tsx",
+      "src/app/components/docs/engagementListHolons.ts",
+      "src/app/components/docs/holonCatalogChrome.ts",
+      "src/app/components/docs/holonCatalogTree.ts",
+      "src/app/components/docs/registerMeta/composeViewHolons.ts"
+    ]
+  },
+  {
+    "id": "new Date",
+    "occurrences": 139,
+    "fileCount": 59,
+    "examples": [
+      {
+        "file": "scripts/verify-author-runtime.ts",
+        "line": 115,
+        "excerpt": "new Date(Date.now() - 60_000)"
+      },
+      {
+        "file": "scripts/verify-author-runtime.ts",
+        "line": 118,
+        "excerpt": "new Date()"
+      },
+      {
+        "file": "scripts/verify-continuous-worker.ts",
+        "line": 54,
+        "excerpt": "new Date(Date.now() - 31 * 60 * 1000)"
+      },
+      {
+        "file": "scripts/verify-worker-actuation.ts",
+        "line": 63,
+        "excerpt": "new Date(Date.now() - 31 * 60 * 1000)"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-worker-actuation.ts",
+      "server/auth-service/accessLinks.ts",
+      "server/auth-service/logger.ts",
+      "server/auth-service/routes.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/contactSeat.ts",
+      "server/wire-service/dispatchSend.ts",
+      "server/wire-service/machine.ts",
+      "server/wire-service/operatorPanes.ts",
+      "server/wire-service/pool.ts"
+    ]
+  },
+  {
+    "id": "encodeURIComponent()",
+    "occurrences": 121,
+    "fileCount": 12,
+    "examples": [
+      {
+        "file": "scripts/verify-session-firm.ts",
+        "line": 53,
+        "excerpt": "encodeURIComponent(headers[\"x-firm-id\"])"
+      },
+      {
+        "file": "server/auth-service/accessLinks.ts",
+        "line": 18,
+        "excerpt": "encodeURIComponent(rawToken)"
+      },
+      {
+        "file": "server/wire-service/contactAccessMint.ts",
+        "line": 31,
+        "excerpt": "encodeURIComponent(raw)"
+      },
+      {
+        "file": "server/wire-service/machine.ts",
+        "line": 1665,
+        "excerpt": "encodeURIComponent(email)"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-session-firm.ts",
+      "server/auth-service/accessLinks.ts",
+      "server/wire-service/contactAccessMint.ts",
+      "server/wire-service/machine.ts",
+      "src/app/auth/AuthGate.tsx",
+      "src/app/wire/reals/consentSilence.ts",
+      "src/app/wire/reals/crmOAuth.ts",
+      "src/app/wire/reals/espMailer.ts",
+      "src/app/wire/reals/haltStore.ts",
+      "src/app/wire/reals/machineApi.ts",
+      "src/app/wire/reals/primaryStore.ts",
+      "src/app/wire/reals/sendingPool.ts"
+    ]
+  },
+  {
+    "id": "new Map",
+    "occurrences": 102,
+    "fileCount": 45,
+    "examples": [
+      {
+        "file": "server/wire-service/campaignHousing.ts",
+        "line": 219,
+        "excerpt": "new Map(objs.rows.map((o) => [o.campaign_id, o]))"
+      },
+      {
+        "file": "server/wire-service/campaignHousing.ts",
+        "line": 220,
+        "excerpt": "new Map<string, typeof chans.rows>()"
+      },
+      {
+        "file": "server/wire-service/campaignHousing.ts",
+        "line": 226,
+        "excerpt": "new Map<string, typeof variations.rows>()"
+      },
+      {
+        "file": "server/wire-service/campaignHousing.ts",
+        "line": 232,
+        "excerpt": "new Map<string, typeof rules.rows>()"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/waitNote.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/components/docs/registerMeta/registry.ts",
+      "src/app/components/hub/automation/AutomationWorkflowEditor.tsx",
+      "src/app/context/AutomationContext.tsx",
+      "src/app/context/DocsRegistryContext.tsx",
+      "src/app/data/automationWorkflows.ts",
+      "src/app/data/engagementCalendarData.ts",
+      "src/app/data/eventTestContract.ts",
+      "src/app/data/journeyTree.ts"
+    ]
+  },
+  {
+    "id": "Math.max()",
+    "occurrences": 84,
+    "fileCount": 35,
+    "examples": [
+      {
+        "file": "server/wire-service/machine.ts",
+        "line": 1118,
+        "excerpt": "Math.max(1, Math.round(rule.withinSeconds))"
+      },
+      {
+        "file": "server/wire-service/templateWalk.ts",
+        "line": 79,
+        "excerpt": "Math.max(0, mins)"
+      },
+      {
+        "file": "server/wire-service/templateWalk.ts",
+        "line": 82,
+        "excerpt": "Math.max(0, day)"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 218,
+        "excerpt": "Math.max(MIN_CONSOLE_PANEL_WIDTH, startW + delta)"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/machine.ts",
+      "server/wire-service/templateWalk.ts",
+      "src/app/App.tsx",
+      "src/app/components/DataPanel.tsx",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/NudgeGantt.tsx",
+      "src/app/components/hub/agent/AgentEditor.tsx",
+      "src/app/components/icons/TowerAppLogo.tsx",
+      "src/app/components/inspector/ClientMessagePanel.tsx",
+      "src/app/components/inspector/emailInspectorData.ts",
+      "src/app/data/automationEvents.ts",
+      "src/app/data/automationRules.ts"
+    ]
+  },
+  {
+    "id": "console.log()",
+    "occurrences": 81,
+    "fileCount": 34,
+    "examples": [
+      {
+        "file": "scripts/bundle-vercel-api.mjs",
+        "line": 35,
+        "excerpt": "console.log(`bundled ${t.label} → ${path.relative(root, t.outfile)}`)"
+      },
+      {
+        "file": "scripts/bundle-vercel-api.mjs",
+        "line": 38,
+        "excerpt": "console.log(\"api bundle ready (dist-api)\")"
+      },
+      {
+        "file": "scripts/check-access-table.ts",
+        "line": 6,
+        "excerpt": "console.log(\"table\", r.rows[0])"
+      },
+      {
+        "file": "scripts/check-access-table.ts",
+        "line": 8,
+        "excerpt": "console.log(\"rows\", c.rows[0])"
+      }
+    ],
+    "filesSample": [
+      "scripts/bundle-vercel-api.mjs",
+      "scripts/check-access-table.ts",
+      "scripts/close-walk-gaps.ts",
+      "scripts/copy-notion-icons.mjs",
+      "scripts/ensure-platform-admin.ts",
+      "scripts/generate-holon-catalog-flat.mts",
+      "scripts/issue-access-link.ts",
+      "scripts/lift-active-halts.ts",
+      "scripts/prod-otp-verify-once.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/restore-channel-order.ts",
+      "scripts/run-migration.ts"
+    ]
+  },
+  {
+    "id": "Array.isArray()",
+    "occurrences": 80,
+    "fileCount": 29,
+    "examples": [
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 57,
+        "excerpt": "Array.isArray(value)"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 86,
+        "excerpt": "Array.isArray(existing)"
+      },
+      {
+        "file": "scripts/verify-modular-surfaces.ts",
+        "line": 30,
+        "excerpt": "Array.isArray(stored?.payload?.rows)"
+      },
+      {
+        "file": "scripts/verify-modular-surfaces.ts",
+        "line": 235,
+        "excerpt": "Array.isArray(stored?.cells)"
+      }
+    ],
+    "filesSample": [
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-reference-persist.ts",
+      "server/wire-service/contactSeat.ts",
+      "server/wire-service/machine.ts",
+      "server/wire-service/runWrites.ts",
+      "server/wire-service/templateWalk.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/components/hub/agent/AgentEditor.tsx",
+      "src/app/components/hub/automation/NodeDataPane.tsx",
+      "src/app/components/ui/slider.tsx",
+      "src/app/context/AutomationContext.tsx"
+    ]
+  },
+  {
+    "id": "console.error()",
+    "occurrences": 56,
+    "fileCount": 28,
+    "examples": [
+      {
+        "file": "scripts/issue-access-link.ts",
+        "line": 11,
+        "excerpt": "console.error(\"Usage: issue-access-link.ts <email>\")"
+      },
+      {
+        "file": "scripts/issue-access-link.ts",
+        "line": 26,
+        "excerpt": "console.error(`No user for ${email}`)"
+      },
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 27,
+        "excerpt": "console.error(\"Need RESEND_API_KEY and email\")"
+      },
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 35,
+        "excerpt": "console.error(\"Resend list failed\", list.status, await list.text())"
+      }
+    ],
+    "filesSample": [
+      "scripts/issue-access-link.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-author-runtime.ts",
+      "scripts/verify-automations-alive.ts",
+      "scripts/verify-boot-env.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-deny-gates.ts",
+      "scripts/verify-firm-binding.ts"
+    ]
+  },
+  {
+    "id": "Number()",
+    "occurrences": 53,
+    "fileCount": 27,
+    "examples": [
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 124,
+        "excerpt": "Number(acr.rows[0].threshold ?? 30)"
+      },
+      {
+        "file": "scripts/verify-affordance-roundtrip.ts",
+        "line": 133,
+        "excerpt": "Number(after.rows[0]?.threshold)"
+      },
+      {
+        "file": "scripts/verify-continuous-worker.ts",
+        "line": 22,
+        "excerpt": "Number(process.env.VERIFY_WORKER_INTERVAL_MS ?? 5_000)"
+      },
+      {
+        "file": "scripts/verify-worker-actuation.ts",
+        "line": 37,
+        "excerpt": "Number(acrText.threshold)"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-affordance-roundtrip.ts",
+      "scripts/verify-continuous-worker.ts",
+      "scripts/verify-worker-actuation.ts",
+      "server/auth-service/db.ts",
+      "server/auth-service/index.ts",
+      "server/auth-service/registerRoutes.ts",
+      "server/auth-service/routes.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/templateWalk.ts",
+      "server/wire-service/waitNote.ts",
+      "server/wire-service/worker.ts",
+      "server/wire-service/workflowWalk.ts"
+    ]
+  },
+  {
+    "id": "new Error",
+    "occurrences": 50,
+    "fileCount": 38,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 70,
+        "excerpt": "new Error(`login failed ${email}: ${JSON.stringify(v)}`)"
+      },
+      {
+        "file": "scripts/verify-firm-binding.ts",
+        "line": 69,
+        "excerpt": "new Error(`user missing for ${email}`)"
+      },
+      {
+        "file": "scripts/verify-firm-binding.ts",
+        "line": 71,
+        "excerpt": "new Error(`user.firm_id ${user.rows[0].firm_id} !== provisioned ${firmId}`)"
+      },
+      {
+        "file": "scripts/verify-modular-surfaces.ts",
+        "line": 11,
+        "excerpt": "new Error(`FAIL · ${label}${detail ? ` · ${detail}` : \"\"}`)"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-modular-surfaces.ts",
+      "scripts/verify-reference-persist.ts",
+      "server/auth-service/db.ts",
+      "server/auth-service/email.ts",
+      "server/auth-service/registerRoutes.ts",
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/resendClient.ts",
+      "server/wire-service/twilioClient.ts",
+      "src/app/auth/AuthContext.tsx",
+      "src/app/components/hub/automation/AutomationEditorContext.tsx"
+    ]
+  },
+  {
+    "id": "Object.keys()",
+    "occurrences": 28,
+    "fileCount": 20,
+    "examples": [
+      {
+        "file": "scripts/verify-automations-alive.ts",
+        "line": 140,
+        "excerpt": "Object.keys(walked.nodeStatus)"
+      },
+      {
+        "file": "server/wire-service/workflowWalk.ts",
+        "line": 194,
+        "excerpt": "Object.keys(ctx.lastOutput ?? {})"
+      },
+      {
+        "file": "server/wire-service/workflowWalk.ts",
+        "line": 607,
+        "excerpt": "Object.keys(outcomeConditions as object)"
+      },
+      {
+        "file": "server/wire-service/workflowWalk.ts",
+        "line": 1655,
+        "excerpt": "Object.keys(nodeStatus)"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-automations-alive.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/components/hub/automation/AutomationEventTriggerConfigPanel.tsx",
+      "src/app/components/hub/automation/AutomationNodeConfigModal.tsx",
+      "src/app/components/hub/automation/NodeDataPane.tsx",
+      "src/app/data/automationDataPull.ts",
+      "src/app/data/automationEvents.ts",
+      "src/app/register/components/RegisterFlowCanvas.tsx",
+      "src/app/register/prototype-ant/consultant/ConsultantAntScene.tsx",
+      "src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts",
+      "src/app/register/prototype-ant/operator/AntAgentCanvas.tsx",
+      "src/app/register/prototype-ant/operator/BookReadinessModule.tsx"
+    ]
+  },
+  {
+    "id": "Promise.resolve()",
+    "occurrences": 28,
+    "fileCount": 3,
+    "examples": [
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 15,
+        "excerpt": "Promise.resolve(prefilled)"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 16,
+        "excerpt": "Promise.resolve(Buffer.from(prefilled))"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 17,
+        "excerpt": "Promise.resolve(Buffer.from(JSON.stringify(prefilled)))"
+      },
+      {
+        "file": "src/app/wire/standins/contactSeatMirror.ts",
+        "line": 359,
+        "excerpt": "Promise.resolve(asSeatFromLink(linkOf(token), campaignId))"
+      }
+    ],
+    "filesSample": [
+      "scripts/vercel-entries/fetchBridge.ts",
+      "src/app/wire/standins/contactSeatMirror.ts",
+      "src/app/wire/standins/machineApi.ts"
+    ]
+  },
+  {
+    "id": "Promise.all()",
+    "occurrences": 25,
+    "fileCount": 17,
+    "examples": [
+      {
+        "file": "server/wire-service/machine.ts",
+        "line": 737,
+        "excerpt": "Promise.all([ pool.query( `SELECT DISTINCT ON (contact_id) * FROM eligibility_resul"
+      },
+      {
+        "file": "server/wire-service/operatorPanes.ts",
+        "line": 40,
+        "excerpt": "Promise.all([ pool.query(`SELECT 1 FROM ct_firms WHERE id=$1 LIMIT 1`, [firm]), pool.query("
+      },
+      {
+        "file": "src/app/register/prototype/operator/ActivationStateModule.tsx",
+        "line": 97,
+        "excerpt": "Promise.all([ wirePorts.crmOAuth.get(selectedId), wirePorts.escrow.get(selectedId),"
+      },
+      {
+        "file": "src/app/register/prototype/operator/FounderAgencyControlsModule.tsx",
+        "line": 66,
+        "excerpt": "Promise.all(DEMO_FIRMS.map((f) => wirePorts.haltStore.isFirmBookHalted(f.id)))"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/machine.ts",
+      "server/wire-service/operatorPanes.ts",
+      "src/app/register/prototype-ant/consultant/BoardModule.tsx",
+      "src/app/register/prototype-ant/consultant/ContactsModule.tsx",
+      "src/app/register/prototype-ant/consultant/MeetingsModule.tsx",
+      "src/app/register/prototype-ant/consultant/clientData/ClientDataPanel.tsx",
+      "src/app/register/prototype-ant/operator/AgentsSettingsModal.tsx",
+      "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+      "src/app/register/prototype-ant/operator/CommercialModule.tsx",
+      "src/app/register/prototype-ant/operator/ConfigurationLibrariesModule.tsx",
+      "src/app/register/prototype-ant/operator/FounderAgencyControlsModule.tsx",
+      "src/app/register/prototype-ant/operator/RegisterEvolutionModule.tsx"
+    ]
+  },
+  {
+    "id": "Math.min()",
+    "occurrences": 22,
+    "fileCount": 14,
+    "examples": [
+      {
+        "file": "src/app/App.tsx",
+        "line": 218,
+        "excerpt": "Math.min(MAX_CONSOLE_PANEL_WIDTH, Math.max(MIN_CONSOLE_PANEL_WIDTH, startW + del"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 240,
+        "excerpt": "Math.min(MAX_HOLON_DETAIL_PANEL_WIDTH, Math.max(MIN_HOLON_DETAIL_PANEL_WIDTH, st"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 262,
+        "excerpt": "Math.min(MAX_SIDEBAR_WIDTH, Math.max(MIN_SIDEBAR_WIDTH, startW + delta))"
+      },
+      {
+        "file": "src/app/components/DataPanel.tsx",
+        "line": 501,
+        "excerpt": "Math.min(MAX_H, Math.max(MIN_H, startH + delta))"
+      }
+    ],
+    "filesSample": [
+      "src/app/App.tsx",
+      "src/app/components/DataPanel.tsx",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/NudgeGantt.tsx",
+      "src/app/components/contacts/ContactsBody.tsx",
+      "src/app/components/hub/automation/NodeDataPane.tsx",
+      "src/app/components/icons/TowerAppLogo.tsx",
+      "src/app/components/inspector/FormCaptureReplay.tsx",
+      "src/app/data/automationEvents.ts",
+      "src/app/data/journeyTree.ts",
+      "src/app/register/prototype-ant/consultant/clientData/ActivityChronology.tsx",
+      "src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts"
+    ]
+  },
+  {
+    "id": "window.setTimeout()",
+    "occurrences": 22,
+    "fileCount": 19,
+    "examples": [
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2767,
+        "excerpt": "window.setTimeout(() => { scrollToActivityNode(focusTouchpointId); },"
+      },
+      {
+        "file": "src/app/components/hub/AddAuditFlow.tsx",
+        "line": 52,
+        "excerpt": "window.setTimeout(() => { setActiveSubmenu(null); }, HOVER_CLOSE_DELAY"
+      },
+      {
+        "file": "src/app/components/hub/automation/AutomationDetailView.tsx",
+        "line": 63,
+        "excerpt": "window.setTimeout(() => setSavedFlash(false), 1500)"
+      },
+      {
+        "file": "src/app/components/hub/automation/AutomationWorkflowCanvas.tsx",
+        "line": 90,
+        "excerpt": "window.setTimeout(() => { setHoveredEdgeId(null); hideEdgeTimerR"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/hub/AddAuditFlow.tsx",
+      "src/app/components/hub/automation/AutomationDetailView.tsx",
+      "src/app/components/hub/automation/AutomationWorkflowCanvas.tsx",
+      "src/app/components/hub/automation/AutomationWorkflowEditor.tsx",
+      "src/app/components/imports/CsvImportFlow.tsx",
+      "src/app/components/inspector/FormCaptureReplay.tsx",
+      "src/app/context/AuditContext.tsx",
+      "src/app/register/components/RegisterArtboardFrame.tsx",
+      "src/app/register/pages/RegisterWorkspace.tsx",
+      "src/app/register/prototype-ant/consultant/ConsultantAntScene.tsx",
+      "src/app/register/prototype-ant/consultant/MeetingsModule.tsx"
+    ]
+  },
+  {
+    "id": "Math.round()",
+    "occurrences": 19,
+    "fileCount": 17,
+    "examples": [
+      {
+        "file": "server/wire-service/machine.ts",
+        "line": 1118,
+        "excerpt": "Math.round(rule.withinSeconds)"
+      },
+      {
+        "file": "src/app/components/ClientIcon.tsx",
+        "line": 22,
+        "excerpt": "Math.round(size * (16 / 14))"
+      },
+      {
+        "file": "src/app/components/ClientIcon.tsx",
+        "line": 23,
+        "excerpt": "Math.round(size * (4 / 14))"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2541,
+        "excerpt": "Math.round((dayWidth / JOURNEY_DAY_WIDTH) * 100)"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/machine.ts",
+      "src/app/components/ClientIcon.tsx",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/hub/agent/AgentEditor.tsx",
+      "src/app/components/inspector/FormCaptureReplay.tsx",
+      "src/app/data/agentSteps.ts",
+      "src/app/data/automationDataPull.ts",
+      "src/app/data/automationEvents.ts",
+      "src/app/data/automationRuns.ts",
+      "src/app/data/sarahNudgeTimeline.ts",
+      "src/app/register/canvas/RegisterCanvasFlowWires.tsx",
+      "src/app/register/prototype-ant/consultant/clientData/ActivityChronology.tsx"
+    ]
+  },
+  {
+    "id": "import.meta",
+    "occurrences": 17,
+    "fileCount": 10,
+    "examples": [
+      {
+        "file": "scripts/copy-notion-icons.mjs",
+        "line": 5,
+        "excerpt": "import.meta"
+      },
+      {
+        "file": "scripts/generate-holon-catalog-flat.mts",
+        "line": 12,
+        "excerpt": "import.meta"
+      },
+      {
+        "file": "scripts/run-migration.ts",
+        "line": 6,
+        "excerpt": "import.meta"
+      },
+      {
+        "file": "scripts/run-seed.ts",
+        "line": 6,
+        "excerpt": "import.meta"
+      }
+    ],
+    "filesSample": [
+      "scripts/copy-notion-icons.mjs",
+      "scripts/generate-holon-catalog-flat.mts",
+      "scripts/run-migration.ts",
+      "scripts/run-seed.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-session-firm.ts",
+      "scripts/verify-ship-spine.ts",
+      "src/app/auth/AuthContext.tsx",
+      "src/app/auth/authClient.ts",
+      "src/app/wire/http.ts"
+    ]
+  },
+  {
+    "id": "JSON.parse()",
+    "occurrences": 17,
+    "fileCount": 14,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 38,
+        "excerpt": "JSON.parse(text)"
+      },
+      {
+        "file": "scripts/run-seed.ts",
+        "line": 31,
+        "excerpt": "JSON.parse(readFileSync(manifestPath, \"utf8\"))"
+      },
+      {
+        "file": "scripts/verify-access-link.ts",
+        "line": 36,
+        "excerpt": "JSON.parse(redeemText)"
+      },
+      {
+        "file": "scripts/verify-production-walk.ts",
+        "line": 51,
+        "excerpt": "JSON.parse(text)"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/run-seed.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-production-walk.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/webhooks.ts",
+      "server/wire-service/workflowWalk.ts",
+      "src/app/data/automationWorkflows.ts",
+      "src/app/register/canvas/registerViewLayout.ts",
+      "src/app/register/howAnalysis/howAnalysisLayout.ts",
+      "src/app/register/prototype-ant/operator/automationPlates/MappedSlot.tsx",
+      "src/app/register/systems/registerSystemLayout.ts"
+    ]
+  },
+  {
+    "id": "Object.entries()",
+    "occurrences": 17,
+    "fileCount": 10,
+    "examples": [
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 55,
+        "excerpt": "Object.entries(req.headers)"
+      },
+      {
+        "file": "scripts/verify-boot-env.ts",
+        "line": 68,
+        "excerpt": "Object.entries(env)"
+      },
+      {
+        "file": "src/app/components/DataPanel.tsx",
+        "line": 330,
+        "excerpt": "Object.entries(client.profile)"
+      },
+      {
+        "file": "src/app/components/hub/automation/NodeDataPane.tsx",
+        "line": 104,
+        "excerpt": "Object.entries(value as Record<string, unknown>)"
+      }
+    ],
+    "filesSample": [
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-boot-env.ts",
+      "src/app/components/DataPanel.tsx",
+      "src/app/components/hub/automation/NodeDataPane.tsx",
+      "src/app/components/ui/chart.tsx",
+      "src/app/register/prototype-ant/operator/automationPlates/InputPane.tsx",
+      "src/app/register/prototype-ant/operator/automationPlates/OutputPane.tsx",
+      "src/app/register/prototype/ConsultantPrototypeScene.tsx",
+      "src/app/register/prototype/operator/operatorWireHelpers.ts",
+      "src/app/register/prototype/operatorNav.tsx"
+    ]
+  },
+  {
+    "id": "structuredClone()",
+    "occurrences": 17,
+    "fileCount": 6,
+    "examples": [
+      {
+        "file": "src/app/components/hub/automation/AutomationDetailView.tsx",
+        "line": 75,
+        "excerpt": "structuredClone(workflow.nodes)"
+      },
+      {
+        "file": "src/app/components/hub/automation/AutomationDetailView.tsx",
+        "line": 75,
+        "excerpt": "structuredClone(workflow.edges)"
+      },
+      {
+        "file": "src/app/components/hub/automation/AutomationWorkflowEditor.tsx",
+        "line": 94,
+        "excerpt": "structuredClone(workflow.nodes)"
+      },
+      {
+        "file": "src/app/components/hub/automation/AutomationWorkflowEditor.tsx",
+        "line": 96,
+        "excerpt": "structuredClone(workflow.edges)"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/hub/automation/AutomationDetailView.tsx",
+      "src/app/components/hub/automation/AutomationWorkflowEditor.tsx",
+      "src/app/data/automationWorkflows.ts",
+      "src/app/register/prototype-ant/operator/AntAutomationWorkbench.tsx",
+      "src/app/system-map/SystemMapPage.tsx",
+      "src/app/system-map/data/tables.ts"
+    ]
+  },
+  {
+    "id": "window.addEventListener()",
+    "occurrences": 16,
+    "fileCount": 8,
+    "examples": [
+      {
+        "file": "src/app/App.tsx",
+        "line": 228,
+        "excerpt": "window.addEventListener(\"mousemove\", handleMove)"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 229,
+        "excerpt": "window.addEventListener(\"mouseup\", handleUp)"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 251,
+        "excerpt": "window.addEventListener(\"mousemove\", handleMove)"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 252,
+        "excerpt": "window.addEventListener(\"mouseup\", handleUp)"
+      }
+    ],
+    "filesSample": [
+      "src/app/App.tsx",
+      "src/app/components/ActivityBarHeader.tsx",
+      "src/app/components/DataPanel.tsx",
+      "src/app/components/hub/automation/WorkflowNodeToolbar.tsx",
+      "src/app/components/inspector/EngagementNodePanel.tsx",
+      "src/app/components/ui/sidebar.tsx",
+      "src/app/register/prototype-ant/operator/automationPlates/NodeInteriorModal.tsx",
+      "src/app/register/prototype-ant/viewAsContext.tsx"
+    ]
+  },
+  {
+    "id": "window.removeEventListener()",
+    "occurrences": 16,
+    "fileCount": 8,
+    "examples": [
+      {
+        "file": "src/app/App.tsx",
+        "line": 223,
+        "excerpt": "window.removeEventListener(\"mousemove\", handleMove)"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 224,
+        "excerpt": "window.removeEventListener(\"mouseup\", handleUp)"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 246,
+        "excerpt": "window.removeEventListener(\"mousemove\", handleMove)"
+      },
+      {
+        "file": "src/app/App.tsx",
+        "line": 247,
+        "excerpt": "window.removeEventListener(\"mouseup\", handleUp)"
+      }
+    ],
+    "filesSample": [
+      "src/app/App.tsx",
+      "src/app/components/ActivityBarHeader.tsx",
+      "src/app/components/DataPanel.tsx",
+      "src/app/components/hub/automation/WorkflowNodeToolbar.tsx",
+      "src/app/components/inspector/EngagementNodePanel.tsx",
+      "src/app/components/ui/sidebar.tsx",
+      "src/app/register/prototype-ant/operator/automationPlates/NodeInteriorModal.tsx",
+      "src/app/register/prototype-ant/viewAsContext.tsx"
+    ]
+  },
+  {
+    "id": "fetch()",
+    "occurrences": 15,
+    "fileCount": 9,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 34,
+        "excerpt": "fetch(`${BASE}${path}`, { ...init, headers })"
+      },
+      {
+        "file": "scripts/prod-otp-verify-once.ts",
+        "line": 25,
+        "excerpt": "fetch(`${BASE}/api/auth/otp/verify`, { method: \"POST\", headers: { \"content-type\": \"application/json\" }, body"
+      },
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 31,
+        "excerpt": "fetch(\"https://api.resend.com/emails?limit=20\", { headers: { Authorization: `Bearer ${key}` }, })"
+      },
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 51,
+        "excerpt": "fetch(`https://api.resend.com/emails/${latest.id}`, { headers: { Authorization: `Bearer ${key}` }, })"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/prod-otp-verify-once.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/verify-access-link.ts",
+      "scripts/verify-admin-consultants.ts",
+      "scripts/verify-production-walk.ts",
+      "src/app/auth/authClient.ts",
+      "src/app/wire/http.ts",
+      "src/app/wire/reals/otpStore.ts"
+    ]
+  },
+  {
+    "id": "import.meta.env",
+    "occurrences": 14,
+    "fileCount": 3,
+    "examples": [
+      {
+        "file": "src/app/auth/AuthContext.tsx",
+        "line": 46,
+        "excerpt": "import.meta.env.VITE_DEV_FIRM_ID"
+      },
+      {
+        "file": "src/app/auth/AuthContext.tsx",
+        "line": 46,
+        "excerpt": "import.meta.env"
+      },
+      {
+        "file": "src/app/auth/authClient.ts",
+        "line": 1,
+        "excerpt": "import.meta.env.VITE_AUTH_BASE_URL"
+      },
+      {
+        "file": "src/app/auth/authClient.ts",
+        "line": 1,
+        "excerpt": "import.meta.env"
+      }
+    ],
+    "filesSample": [
+      "src/app/auth/AuthContext.tsx",
+      "src/app/auth/authClient.ts",
+      "src/app/wire/http.ts"
+    ]
+  },
+  {
+    "id": "Math.floor()",
+    "occurrences": 12,
+    "fileCount": 11,
+    "examples": [
+      {
+        "file": "server/auth-service/registerRoutes.ts",
+        "line": 38,
+        "excerpt": "Math.floor(REGISTER_GATE_TTL_MS / 1000)"
+      },
+      {
+        "file": "server/auth-service/routes.ts",
+        "line": 36,
+        "excerpt": "Math.floor(SESSION_TTL_MS / 1000)"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2220,
+        "excerpt": "Math.floor(totalMinutes / 60)"
+      },
+      {
+        "file": "src/app/components/ui/sidebar.tsx",
+        "line": 611,
+        "excerpt": "Math.floor(Math.random() * 40)"
+      }
+    ],
+    "filesSample": [
+      "server/auth-service/registerRoutes.ts",
+      "server/auth-service/routes.ts",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/ui/sidebar.tsx",
+      "src/app/context/AuditContext.tsx",
+      "src/app/data/automationRuns.ts",
+      "src/app/data/engagementCalendarData.ts",
+      "src/app/data/sarahNudgeTimeline.ts",
+      "src/app/system-map/canvas/layout.ts",
+      "src/app/wire/standins/otpStore.ts",
+      "src/app/wire/standins/warmup.ts"
+    ]
+  },
+  {
+    "id": "Array.from()",
+    "occurrences": 11,
+    "fileCount": 9,
+    "examples": [
+      {
+        "file": "src/app/components/archive/NudgePopover.tsx",
+        "line": 181,
+        "excerpt": "Array.from({ length: briefing.nudgeTotal })"
+      },
+      {
+        "file": "src/app/components/client-portal/ClientEngagementCalendar.tsx",
+        "line": 263,
+        "excerpt": "Array.from({ length: dayCount }, (_, i) => { const day = i + 1; const da"
+      },
+      {
+        "file": "src/app/components/hub/automation/NodeDataPane.tsx",
+        "line": 537,
+        "excerpt": "Array.from({ length: itemCount }, (_, index) => ( <option key={index} value={index"
+      },
+      {
+        "file": "src/app/components/ui/slider.tsx",
+        "line": 52,
+        "excerpt": "Array.from({ length: _values.length }, (_, index) => ( <SliderPrimitive.Thumb data"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/archive/NudgePopover.tsx",
+      "src/app/components/client-portal/ClientEngagementCalendar.tsx",
+      "src/app/components/hub/automation/NodeDataPane.tsx",
+      "src/app/components/ui/slider.tsx",
+      "src/app/register/composer/HolonComposerNode.tsx",
+      "src/app/register/prototype-ant/operator/AntAgentCanvas.tsx",
+      "src/app/register/prototype-ant/operator/AuditTrailModule.tsx",
+      "src/app/register/prototype/operator/AuditTrailModule.tsx",
+      "src/app/system-map/canvas/layout.ts"
+    ]
+  },
+  {
+    "id": "document.querySelector()",
+    "occurrences": 11,
+    "fileCount": 8,
+    "examples": [
+      {
+        "file": "src/app/register/canvas/flowWireAnchors.ts",
+        "line": 4,
+        "excerpt": "document.querySelector(`[data-register-holon=\"${holonId}\"]`)"
+      },
+      {
+        "file": "src/app/register/canvas/flowWireAnchors.ts",
+        "line": 14,
+        "excerpt": "document.querySelector(`[data-register-system=\"${systemId}\"]`)"
+      },
+      {
+        "file": "src/app/register/canvas/flowWireAnchors.ts",
+        "line": 24,
+        "excerpt": "document.querySelector(`[data-register-table=\"${tableId}\"]`)"
+      },
+      {
+        "file": "src/app/register/components/RegisterComponentsTree.tsx",
+        "line": 248,
+        "excerpt": "document .querySelector(`[data-register-tree-holon=\"${selectedHolonId}\"]`)"
+      }
+    ],
+    "filesSample": [
+      "src/app/register/canvas/flowWireAnchors.ts",
+      "src/app/register/components/RegisterComponentsTree.tsx",
+      "src/app/register/components/RegisterFlowsTree.tsx",
+      "src/app/register/components/RegisterHowTree.tsx",
+      "src/app/register/components/RegisterJourneyFlowsTree.tsx",
+      "src/app/register/components/RegisterSmeTree.tsx",
+      "src/app/register/components/RegisterWiringPaperTree.tsx",
+      "src/app/register/panes/PersonasFunctionPane.tsx"
+    ]
+  },
+  {
+    "id": "window.clearTimeout()",
+    "occurrences": 10,
+    "fileCount": 10,
+    "examples": [
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2770,
+        "excerpt": "window.clearTimeout(scrollTimer)"
+      },
+      {
+        "file": "src/app/components/hub/AddAuditFlow.tsx",
+        "line": 45,
+        "excerpt": "window.clearTimeout(closeTimerRef.current)"
+      },
+      {
+        "file": "src/app/components/hub/automation/AutomationWorkflowCanvas.tsx",
+        "line": 78,
+        "excerpt": "window.clearTimeout(hideEdgeTimerRef.current)"
+      },
+      {
+        "file": "src/app/components/hub/automation/AutomationWorkflowEditor.tsx",
+        "line": 153,
+        "excerpt": "window.clearTimeout(timer)"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/hub/AddAuditFlow.tsx",
+      "src/app/components/hub/automation/AutomationWorkflowCanvas.tsx",
+      "src/app/components/hub/automation/AutomationWorkflowEditor.tsx",
+      "src/app/components/imports/CsvImportFlow.tsx",
+      "src/app/components/inspector/FormCaptureReplay.tsx",
+      "src/app/context/AuditContext.tsx",
+      "src/app/register/components/RegisterArtboardFrame.tsx",
+      "src/app/register/pages/RegisterWorkspace.tsx",
+      "src/app/register/prototype/RegisterPrototypeCanvas.tsx"
+    ]
+  },
+  {
+    "id": "document.addEventListener()",
+    "occurrences": 9,
+    "fileCount": 5,
+    "examples": [
+      {
+        "file": "src/app/components/ActivityBarHeader.tsx",
+        "line": 79,
+        "excerpt": "document.addEventListener(\"mousedown\", handleClick)"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2678,
+        "excerpt": "document.addEventListener(\"mousemove\", onMove)"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2679,
+        "excerpt": "document.addEventListener(\"mouseup\", onUp)"
+      },
+      {
+        "file": "src/app/components/docs/HolonInspectLayer.tsx",
+        "line": 58,
+        "excerpt": "document.addEventListener(\"mousemove\", onMove)"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/ActivityBarHeader.tsx",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/docs/HolonInspectLayer.tsx",
+      "src/app/marketing/components/OmcodaNav.tsx",
+      "src/app/register/prototype-ant/WaitNoteOverlay.tsx"
+    ]
+  },
+  {
+    "id": "document.removeEventListener()",
+    "occurrences": 9,
+    "fileCount": 5,
+    "examples": [
+      {
+        "file": "src/app/components/ActivityBarHeader.tsx",
+        "line": 80,
+        "excerpt": "document.removeEventListener(\"mousedown\", handleClick)"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2674,
+        "excerpt": "document.removeEventListener(\"mousemove\", onMove)"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2675,
+        "excerpt": "document.removeEventListener(\"mouseup\", onUp)"
+      },
+      {
+        "file": "src/app/components/docs/HolonInspectLayer.tsx",
+        "line": 64,
+        "excerpt": "document.removeEventListener(\"mousemove\", onMove)"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/ActivityBarHeader.tsx",
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/docs/HolonInspectLayer.tsx",
+      "src/app/marketing/components/OmcodaNav.tsx",
+      "src/app/register/prototype-ant/WaitNoteOverlay.tsx"
+    ]
+  },
+  {
+    "id": "Math.abs()",
+    "occurrences": 9,
+    "fileCount": 4,
+    "examples": [
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2591,
+        "excerpt": "Math.abs(e.deltaY)"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2591,
+        "excerpt": "Math.abs(e.deltaX)"
+      },
+      {
+        "file": "src/app/data/automationRules.ts",
+        "line": 786,
+        "excerpt": "Math.abs(delta)"
+      },
+      {
+        "file": "src/app/data/automationRules.ts",
+        "line": 795,
+        "excerpt": "Math.abs(Number(delta.toFixed(1)))"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/JourneyTab.tsx",
+      "src/app/data/automationRules.ts",
+      "src/app/data/automationWorkflows.ts",
+      "src/app/register/canvas/RegisterCanvasFlowWires.tsx"
+    ]
+  },
+  {
+    "id": "Math.random()",
+    "occurrences": 9,
+    "fileCount": 9,
+    "examples": [
+      {
+        "file": "server/wire-service/dispatchSend.ts",
+        "line": 16,
+        "excerpt": "Math.random()"
+      },
+      {
+        "file": "server/wire-service/stores.ts",
+        "line": 6,
+        "excerpt": "Math.random()"
+      },
+      {
+        "file": "server/wire-service/webhooks.ts",
+        "line": 6,
+        "excerpt": "Math.random()"
+      },
+      {
+        "file": "src/app/components/ui/sidebar.tsx",
+        "line": 611,
+        "excerpt": "Math.random()"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/dispatchSend.ts",
+      "server/wire-service/stores.ts",
+      "server/wire-service/webhooks.ts",
+      "src/app/components/ui/sidebar.tsx",
+      "src/app/context/AuditContext.tsx",
+      "src/app/data/automationCompare.ts",
+      "src/app/data/automationConditions.ts",
+      "src/app/wire/standins/machineApi.ts",
+      "src/app/wire/standins/otpStore.ts"
+    ]
+  },
+  {
+    "id": "new URL",
+    "occurrences": 9,
+    "fileCount": 5,
+    "examples": [
+      {
+        "file": "scripts/generate-holon-catalog-flat.mts",
+        "line": 12,
+        "excerpt": "new URL(\"../src/app/components/docs/holonCatalogFlat.ts\", import.meta.url)"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 32,
+        "excerpt": "new URL(raw, \"http://n\")"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 51,
+        "excerpt": "new URL(req.url ?? base, `${proto}://${host}`)"
+      },
+      {
+        "file": "scripts/verify-firm-binding.ts",
+        "line": 268,
+        "excerpt": "new URL(\"../server/wire-service/machine.ts\", import.meta.url)"
+      }
+    ],
+    "filesSample": [
+      "scripts/generate-holon-catalog-flat.mts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-firm-binding.ts",
+      "scripts/verify-session-firm.ts",
+      "scripts/verify-ship-spine.ts"
+    ]
+  },
+  {
+    "id": "Object.fromEntries()",
+    "occurrences": 9,
+    "fileCount": 8,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 11,
+        "excerpt": "Object.fromEntries( readFileSync(\".env\", \"utf8\") .split(\"\\n\") .filter((l) => l && !l"
+      },
+      {
+        "file": "scripts/read-latest-otp.ts",
+        "line": 9,
+        "excerpt": "Object.fromEntries( readFileSync(\".env\", \"utf8\") .split(\"\\n\") .filter((l) => l"
+      },
+      {
+        "file": "scripts/walk-verify-firm.ts",
+        "line": 8,
+        "excerpt": "Object.fromEntries( readFileSync(\".env\", \"utf8\") .split(\"\\n\") .filter((l) => l && !l.start"
+      },
+      {
+        "file": "src/app/register/prototype/operator/CommercialModule.tsx",
+        "line": 90,
+        "excerpt": "Object.fromEntries(COMMERCIAL_ROWS.map((r) => [r.firmId, r.status]))"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/read-latest-otp.ts",
+      "scripts/walk-verify-firm.ts",
+      "src/app/register/prototype-ant/operator/AgentsSettingsModal.tsx",
+      "src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx",
+      "src/app/register/prototype-ant/operator/automationPlates/InputPane.tsx",
+      "src/app/register/prototype-ant/operator/automationPlates/RulePlateModal.tsx",
+      "src/app/register/prototype/operator/CommercialModule.tsx"
+    ]
+  },
+  {
+    "id": "localStorage.getItem()",
+    "occurrences": 8,
+    "fileCount": 8,
+    "examples": [
+      {
+        "file": "src/app/data/automationWorkflows.ts",
+        "line": 1110,
+        "excerpt": "localStorage.getItem(WORKFLOWS_STORAGE_KEY)"
+      },
+      {
+        "file": "src/app/register/canvas/registerViewLayout.ts",
+        "line": 10,
+        "excerpt": "localStorage.getItem(VIEW_POSITIONS_STORAGE_KEY)"
+      },
+      {
+        "file": "src/app/register/context/RegisterShellContext.tsx",
+        "line": 24,
+        "excerpt": "localStorage.getItem(CT_DS_STORAGE_KEY)"
+      },
+      {
+        "file": "src/app/register/howAnalysis/howAnalysisLayout.ts",
+        "line": 10,
+        "excerpt": "localStorage.getItem(`${STORAGE_PREFIX}${graphId}`)"
+      }
+    ],
+    "filesSample": [
+      "src/app/data/automationWorkflows.ts",
+      "src/app/register/canvas/registerViewLayout.ts",
+      "src/app/register/context/RegisterShellContext.tsx",
+      "src/app/register/howAnalysis/howAnalysisLayout.ts",
+      "src/app/register/prototype-ant/theme.ts",
+      "src/app/register/systems/registerSystemLayout.ts",
+      "src/app/register/tables/registerTableLayout.ts",
+      "src/app/wire/standins/contactSeatMirror.ts"
+    ]
+  },
+  {
+    "id": "localStorage.setItem()",
+    "occurrences": 8,
+    "fileCount": 8,
+    "examples": [
+      {
+        "file": "src/app/data/automationWorkflows.ts",
+        "line": 1123,
+        "excerpt": "localStorage.setItem(WORKFLOWS_STORAGE_KEY, JSON.stringify(workflows))"
+      },
+      {
+        "file": "src/app/register/canvas/registerViewLayout.ts",
+        "line": 23,
+        "excerpt": "localStorage.setItem(VIEW_POSITIONS_STORAGE_KEY, JSON.stringify(saved))"
+      },
+      {
+        "file": "src/app/register/context/RegisterShellContext.tsx",
+        "line": 34,
+        "excerpt": "localStorage.setItem(CT_DS_STORAGE_KEY, ds)"
+      },
+      {
+        "file": "src/app/register/howAnalysis/howAnalysisLayout.ts",
+        "line": 27,
+        "excerpt": "localStorage.setItem(`${STORAGE_PREFIX}${graphId}`, JSON.stringify(saved))"
+      }
+    ],
+    "filesSample": [
+      "src/app/data/automationWorkflows.ts",
+      "src/app/register/canvas/registerViewLayout.ts",
+      "src/app/register/context/RegisterShellContext.tsx",
+      "src/app/register/howAnalysis/howAnalysisLayout.ts",
+      "src/app/register/prototype-ant/theme.ts",
+      "src/app/register/systems/registerSystemLayout.ts",
+      "src/app/register/tables/registerTableLayout.ts",
+      "src/app/wire/standins/contactSeatMirror.ts"
+    ]
+  },
+  {
+    "id": "Object.values()",
+    "occurrences": 7,
+    "fileCount": 6,
+    "examples": [
+      {
+        "file": "server/wire-service/workflowWalk.ts",
+        "line": 288,
+        "excerpt": "Object.values(slots as Record<string, unknown>)"
+      },
+      {
+        "file": "server/wire-service/workflowWalk.ts",
+        "line": 1666,
+        "excerpt": "Object.values(nodeStatus)"
+      },
+      {
+        "file": "src/app/components/docs/agentHolons.ts",
+        "line": 118,
+        "excerpt": "Object.values(AGENT_STEP_NODE_PATTERN_HOLONS)"
+      },
+      {
+        "file": "src/app/components/docs/automationHolons.ts",
+        "line": 121,
+        "excerpt": "Object.values(AUTOMATION_NODE_PATTERN_HOLONS)"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/workflowWalk.ts",
+      "src/app/components/docs/agentHolons.ts",
+      "src/app/components/docs/automationHolons.ts",
+      "src/app/components/docs/holonCatalogTree.ts",
+      "src/app/data/automationEvents.ts",
+      "src/app/register/prototype-ant/operator/BookReadinessModule.tsx"
+    ]
+  },
+  {
+    "id": "parseFloat()",
+    "occurrences": 6,
+    "fileCount": 4,
+    "examples": [
+      {
+        "file": "src/app/register/prototype/operator/ReferenceDataModule.tsx",
+        "line": 175,
+        "excerpt": "parseFloat(meta.version.replace(\"v\", \"\"))"
+      },
+      {
+        "file": "src/app/register/prototype/operator/ReferenceDataModule.tsx",
+        "line": 177,
+        "excerpt": "parseFloat(nextNum)"
+      },
+      {
+        "file": "src/app/register/prototype/operator/operatorConfigLibraries.ts",
+        "line": 123,
+        "excerpt": "parseFloat(p.versionId!.replace(`${prefix}-v`, \"\"))"
+      },
+      {
+        "file": "src/app/register/prototype-ant/operator/ReferenceDataModule.tsx",
+        "line": 149,
+        "excerpt": "parseFloat(meta.version.replace(\"v\", \"\"))"
+      }
+    ],
+    "filesSample": [
+      "src/app/register/prototype-ant/operator/ReferenceDataModule.tsx",
+      "src/app/register/prototype-ant/operator/operatorConfigLibraries.ts",
+      "src/app/register/prototype/operator/ReferenceDataModule.tsx",
+      "src/app/register/prototype/operator/operatorConfigLibraries.ts"
+    ]
+  },
+  {
+    "id": "new Promise",
+    "occurrences": 5,
+    "fileCount": 5,
+    "examples": [
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 20,
+        "excerpt": "new Promise((resolve, reject) => { const chunks: Buffer[] = []; req.on(\"data\", (chunk: Buffer) => { chunks"
+      },
+      {
+        "file": "scripts/verify-continuous-worker.ts",
+        "line": 36,
+        "excerpt": "new Promise((r) => setTimeout(r, ms))"
+      },
+      {
+        "file": "src/app/components/imports/parseCsvPreview.ts",
+        "line": 17,
+        "excerpt": "new Promise((resolve, reject) => { if (!isAcceptedImportFile(file)) { reject(new Error(\"Only .csv and .tsv fil"
+      },
+      {
+        "file": "src/app/register/prototype/operator/operatorWireHelpers.ts",
+        "line": 561,
+        "excerpt": "new Promise((resolve, reject) => { Papa.parse<Record<string, string>>(file, { header: true, skipEmptyLin"
+      }
+    ],
+    "filesSample": [
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-continuous-worker.ts",
+      "src/app/components/imports/parseCsvPreview.ts",
+      "src/app/register/prototype-ant/consultant/PreparedModule.tsx",
+      "src/app/register/prototype/operator/operatorWireHelpers.ts"
+    ]
+  },
+  {
+    "id": "console.warn()",
+    "occurrences": 4,
+    "fileCount": 3,
+    "examples": [
+      {
+        "file": "server/wire-service/campaignHousing.ts",
+        "line": 895,
+        "excerpt": "console.warn(\"[campaignHousing] objective_met dispatch:\", err)"
+      },
+      {
+        "file": "server/wire-service/cascade.ts",
+        "line": 564,
+        "excerpt": "console.warn(\"[cascade] campaign_failure dispatch:\", err)"
+      },
+      {
+        "file": "server/wire-service/cascade.ts",
+        "line": 1147,
+        "excerpt": "console.warn(\"[cascade] schedule triggers:\", err)"
+      },
+      {
+        "file": "server/wire-service/webhooks.ts",
+        "line": 135,
+        "excerpt": "console.warn(\"[webhooks] objective_met on click:\", err)"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/campaignHousing.ts",
+      "server/wire-service/cascade.ts",
+      "server/wire-service/webhooks.ts"
+    ]
+  },
+  {
+    "id": "document.createElement()",
+    "occurrences": 4,
+    "fileCount": 3,
+    "examples": [
+      {
+        "file": "src/app/register/prototype-ant/consultant/ContactsModule.tsx",
+        "line": 249,
+        "excerpt": "document.createElement(\"input\")"
+      },
+      {
+        "file": "src/app/register/prototype-ant/consultant/PreparedModule.tsx",
+        "line": 85,
+        "excerpt": "document.createElement(\"input\")"
+      },
+      {
+        "file": "src/app/register/prototype-ant/operator/BookReadinessModule.tsx",
+        "line": 133,
+        "excerpt": "document.createElement(\"a\")"
+      },
+      {
+        "file": "src/app/register/prototype-ant/operator/BookReadinessModule.tsx",
+        "line": 430,
+        "excerpt": "document.createElement(\"input\")"
+      }
+    ],
+    "filesSample": [
+      "src/app/register/prototype-ant/consultant/ContactsModule.tsx",
+      "src/app/register/prototype-ant/consultant/PreparedModule.tsx",
+      "src/app/register/prototype-ant/operator/BookReadinessModule.tsx"
+    ]
+  },
+  {
+    "id": "requestAnimationFrame()",
+    "occurrences": 4,
+    "fileCount": 3,
+    "examples": [
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2559,
+        "excerpt": "requestAnimationFrame(() => { const nextScroll = focalDay * clamped - pointerX; el.scrollLeft = Math.max(0,"
+      },
+      {
+        "file": "src/app/register/components/RegisterHowCanvas.tsx",
+        "line": 37,
+        "excerpt": "requestAnimationFrame(() => { void fitView({ padding: 0.25, maxZoom: 1 }); })"
+      },
+      {
+        "file": "src/app/register/prototype-ant/consultant/clientData/ActivityChronology.tsx",
+        "line": 185,
+        "excerpt": "requestAnimationFrame(() => { syncing.current = null; })"
+      },
+      {
+        "file": "src/app/register/prototype-ant/consultant/clientData/ActivityChronology.tsx",
+        "line": 196,
+        "excerpt": "requestAnimationFrame(() => { syncing.current = null; })"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/JourneyTab.tsx",
+      "src/app/register/components/RegisterHowCanvas.tsx",
+      "src/app/register/prototype-ant/consultant/clientData/ActivityChronology.tsx"
+    ]
+  },
+  {
+    "id": "decodeURIComponent()",
+    "occurrences": 3,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "server/wire-service/contactSeat.ts",
+        "line": 413,
+        "excerpt": "decodeURIComponent(c.req.param(\"token\") ?? \"\")"
+      },
+      {
+        "file": "server/wire-service/contactSeat.ts",
+        "line": 435,
+        "excerpt": "decodeURIComponent(c.req.param(\"contactId\") ?? \"\")"
+      },
+      {
+        "file": "src/app/register/prototype-ant/PrototypeAntApp.tsx",
+        "line": 47,
+        "excerpt": "decodeURIComponent(match[1])"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/contactSeat.ts",
+      "src/app/register/prototype-ant/PrototypeAntApp.tsx"
+    ]
+  },
+  {
+    "id": "document.getElementById()",
+    "occurrences": 3,
+    "fileCount": 3,
+    "examples": [
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2747,
+        "excerpt": "document.getElementById(`activity-node-${nodeId}`)"
+      },
+      {
+        "file": "src/main-prototype-ant.tsx",
+        "line": 9,
+        "excerpt": "document.getElementById(\"root\")"
+      },
+      {
+        "file": "src/main.tsx",
+        "line": 7,
+        "excerpt": "document.getElementById(\"root\")"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/JourneyTab.tsx",
+      "src/main-prototype-ant.tsx",
+      "src/main.tsx"
+    ]
+  },
+  {
+    "id": "Math.ceil()",
+    "occurrences": 3,
+    "fileCount": 3,
+    "examples": [
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 459,
+        "excerpt": "Math.ceil(text.length / 72)"
+      },
+      {
+        "file": "src/app/components/inspector/emailInspectorData.ts",
+        "line": 609,
+        "excerpt": "Math.ceil(lastAt / 1000)"
+      },
+      {
+        "file": "src/app/register/prototype-ant/consultant/clientData/ActivityChronology.tsx",
+        "line": 151,
+        "excerpt": "Math.ceil(originMs / tickStepMs)"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/JourneyTab.tsx",
+      "src/app/components/inspector/emailInspectorData.ts",
+      "src/app/register/prototype-ant/consultant/clientData/ActivityChronology.tsx"
+    ]
+  },
+  {
+    "id": "new Headers",
+    "occurrences": 3,
+    "fileCount": 3,
+    "examples": [
+      {
+        "file": "scripts/close-walk-gaps.ts",
+        "line": 28,
+        "excerpt": "new Headers(init.headers)"
+      },
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 54,
+        "excerpt": "new Headers()"
+      },
+      {
+        "file": "scripts/verify-production-walk.ts",
+        "line": 41,
+        "excerpt": "new Headers(init.headers)"
+      }
+    ],
+    "filesSample": [
+      "scripts/close-walk-gaps.ts",
+      "scripts/vercel-entries/fetchBridge.ts",
+      "scripts/verify-production-walk.ts"
+    ]
+  },
+  {
+    "id": "sessionStorage.getItem()",
+    "occurrences": 3,
+    "fileCount": 3,
+    "examples": [
+      {
+        "file": "src/app/auth/AuthContext.tsx",
+        "line": 22,
+        "excerpt": "sessionStorage.getItem(LOGGED_OUT_KEY)"
+      },
+      {
+        "file": "src/app/register/prototype-ant/WaitNoteOverlay.tsx",
+        "line": 19,
+        "excerpt": "sessionStorage.getItem(collapsedKey(note))"
+      },
+      {
+        "file": "src/app/wire/standins/contactSeatMirror.ts",
+        "line": 187,
+        "excerpt": "sessionStorage.getItem(STORAGE_KEY)"
+      }
+    ],
+    "filesSample": [
+      "src/app/auth/AuthContext.tsx",
+      "src/app/register/prototype-ant/WaitNoteOverlay.tsx",
+      "src/app/wire/standins/contactSeatMirror.ts"
+    ]
+  },
+  {
+    "id": "sessionStorage.setItem()",
+    "occurrences": 3,
+    "fileCount": 3,
+    "examples": [
+      {
+        "file": "src/app/auth/AuthContext.tsx",
+        "line": 30,
+        "excerpt": "sessionStorage.setItem(LOGGED_OUT_KEY, \"1\")"
+      },
+      {
+        "file": "src/app/register/prototype-ant/WaitNoteOverlay.tsx",
+        "line": 27,
+        "excerpt": "sessionStorage.setItem(collapsedKey(note), \"1\")"
+      },
+      {
+        "file": "src/app/wire/standins/contactSeatMirror.ts",
+        "line": 200,
+        "excerpt": "sessionStorage.setItem(STORAGE_KEY, value)"
+      }
+    ],
+    "filesSample": [
+      "src/app/auth/AuthContext.tsx",
+      "src/app/register/prototype-ant/WaitNoteOverlay.tsx",
+      "src/app/wire/standins/contactSeatMirror.ts"
+    ]
+  },
+  {
+    "id": "window.clearInterval()",
+    "occurrences": 3,
+    "fileCount": 3,
+    "examples": [
+      {
+        "file": "src/app/register/prototype/RegisterLoginScene.tsx",
+        "line": 70,
+        "excerpt": "window.clearInterval(id)"
+      },
+      {
+        "file": "src/app/register/prototype-ant/WaitNoteOverlay.tsx",
+        "line": 62,
+        "excerpt": "window.clearInterval(tick)"
+      },
+      {
+        "file": "src/app/register/prototype-ant/consultant/LoginModule.tsx",
+        "line": 45,
+        "excerpt": "window.clearInterval(id)"
+      }
+    ],
+    "filesSample": [
+      "src/app/register/prototype-ant/WaitNoteOverlay.tsx",
+      "src/app/register/prototype-ant/consultant/LoginModule.tsx",
+      "src/app/register/prototype/RegisterLoginScene.tsx"
+    ]
+  },
+  {
+    "id": "window.setInterval()",
+    "occurrences": 3,
+    "fileCount": 3,
+    "examples": [
+      {
+        "file": "src/app/register/prototype/RegisterLoginScene.tsx",
+        "line": 67,
+        "excerpt": "window.setInterval(() => { setCooldown((c) => (c <= 1 ? 0 : c - 1)); }"
+      },
+      {
+        "file": "src/app/register/prototype-ant/WaitNoteOverlay.tsx",
+        "line": 56,
+        "excerpt": "window.setInterval(load, 4000)"
+      },
+      {
+        "file": "src/app/register/prototype-ant/consultant/LoginModule.tsx",
+        "line": 42,
+        "excerpt": "window.setInterval(() => { setCooldown((c) => (c <= 1 ? 0 : c - 1)); }"
+      }
+    ],
+    "filesSample": [
+      "src/app/register/prototype-ant/WaitNoteOverlay.tsx",
+      "src/app/register/prototype-ant/consultant/LoginModule.tsx",
+      "src/app/register/prototype/RegisterLoginScene.tsx"
+    ]
+  },
+  {
+    "id": "document.querySelectorAll()",
+    "occurrences": 2,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/app/register/prototype/RegisterPrototypeCanvas.tsx",
+        "line": 20,
+        "excerpt": "document.querySelectorAll<HTMLElement>(\"[data-register-surface]\")"
+      },
+      {
+        "file": "src/app/register/prototype/RegisterPrototypeCanvas.tsx",
+        "line": 29,
+        "excerpt": "document.querySelectorAll<HTMLElement>(\"[data-register-surface-ring]\")"
+      }
+    ],
+    "filesSample": [
+      "src/app/register/prototype/RegisterPrototypeCanvas.tsx"
+    ]
+  },
+  {
+    "id": "Math.hypot()",
+    "occurrences": 2,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2612,
+        "excerpt": "Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY)"
+      },
+      {
+        "file": "src/app/components/JourneyTab.tsx",
+        "line": 2621,
+        "excerpt": "Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY)"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/JourneyTab.tsx"
+    ]
+  },
+  {
+    "id": "Object.assign()",
+    "occurrences": 2,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "server/wire-service/workflowWalk.ts",
+        "line": 1631,
+        "excerpt": "Object.assign(nodeStatus, prior.rows[0]?.node_status ?? {})"
+      },
+      {
+        "file": "src/app/components/hub/automation/NodeDataPane.tsx",
+        "line": 107,
+        "excerpt": "Object.assign(row, flattenForTable(child, path))"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/workflowWalk.ts",
+      "src/app/components/hub/automation/NodeDataPane.tsx"
+    ]
+  },
+  {
+    "id": "sessionStorage.removeItem()",
+    "occurrences": 2,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "src/app/auth/AuthContext.tsx",
+        "line": 38,
+        "excerpt": "sessionStorage.removeItem(LOGGED_OUT_KEY)"
+      },
+      {
+        "file": "src/app/register/prototype-ant/WaitNoteOverlay.tsx",
+        "line": 28,
+        "excerpt": "sessionStorage.removeItem(collapsedKey(note))"
+      }
+    ],
+    "filesSample": [
+      "src/app/auth/AuthContext.tsx",
+      "src/app/register/prototype-ant/WaitNoteOverlay.tsx"
+    ]
+  },
+  {
+    "id": "crypto.randomUUID()",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/app/wire/standins/machineApi.ts",
+        "line": 2041,
+        "excerpt": "globalThis.crypto?.randomUUID?.()"
+      }
+    ],
+    "filesSample": [
+      "src/app/wire/standins/machineApi.ts"
+    ]
+  },
+  {
+    "id": "Math.cos()",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/app/system-map/canvas/layout.ts",
+        "line": 37,
+        "excerpt": "Math.cos(angle)"
+      }
+    ],
+    "filesSample": [
+      "src/app/system-map/canvas/layout.ts"
+    ]
+  },
+  {
+    "id": "Math.sin()",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/app/system-map/canvas/layout.ts",
+        "line": 38,
+        "excerpt": "Math.sin(angle)"
+      }
+    ],
+    "filesSample": [
+      "src/app/system-map/canvas/layout.ts"
+    ]
+  },
+  {
+    "id": "new Request",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "scripts/vercel-entries/fetchBridge.ts",
+        "line": 71,
+        "excerpt": "new Request(url, { method, headers, body: body as BodyInit | undefined, // @ts-expect-error dupl"
+      }
+    ],
+    "filesSample": [
+      "scripts/vercel-entries/fetchBridge.ts"
+    ]
+  },
+  {
+    "id": "new URLSearchParams",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/app/wire/reals/auditTrail.ts",
+        "line": 13,
+        "excerpt": "new URLSearchParams()"
+      }
+    ],
+    "filesSample": [
+      "src/app/wire/reals/auditTrail.ts"
+    ]
+  },
+  {
+    "id": "setInterval()",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "server/wire-service/worker.ts",
+        "line": 57,
+        "excerpt": "setInterval(() => { void runTick(); }, intervalMs)"
+      }
+    ],
+    "filesSample": [
+      "server/wire-service/worker.ts"
+    ]
+  },
+  {
+    "id": "setTimeout()",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "scripts/verify-continuous-worker.ts",
+        "line": 36,
+        "excerpt": "setTimeout(r, ms)"
+      }
+    ],
+    "filesSample": [
+      "scripts/verify-continuous-worker.ts"
+    ]
+  },
+  {
+    "id": "window.cancelIdleCallback()",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/app/register/pages/RegisterWorkspace.tsx",
+        "line": 26,
+        "excerpt": "window.cancelIdleCallback(idleId)"
+      }
+    ],
+    "filesSample": [
+      "src/app/register/pages/RegisterWorkspace.tsx"
+    ]
+  },
+  {
+    "id": "window.dispatchEvent()",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/app/register/prototype-ant/contact/ContactWorkspace.tsx",
+        "line": 63,
+        "excerpt": "window.dispatchEvent(new Event(WORKSPACES_CHANGED))"
+      }
+    ],
+    "filesSample": [
+      "src/app/register/prototype-ant/contact/ContactWorkspace.tsx"
+    ]
+  },
+  {
+    "id": "window.matchMedia()",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/app/components/ui/use-mobile.ts",
+        "line": 11,
+        "excerpt": "window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)"
+      }
+    ],
+    "filesSample": [
+      "src/app/components/ui/use-mobile.ts"
+    ]
+  },
+  {
+    "id": "window.requestIdleCallback()",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/app/register/pages/RegisterWorkspace.tsx",
+        "line": 25,
+        "excerpt": "window.requestIdleCallback(onReady, { timeout: 2500 })"
+      }
+    ],
+    "filesSample": [
+      "src/app/register/pages/RegisterWorkspace.tsx"
+    ]
+  }
+]

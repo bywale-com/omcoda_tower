@@ -1,0 +1,277 @@
+[
+  {
+    "id": "CSS-custom-prop",
+    "occurrences": 240,
+    "fileCount": 3,
+    "examples": [
+      {
+        "file": "default_shadcn_theme.css",
+        "line": 4,
+        "excerpt": "--font-size: 16px;"
+      },
+      {
+        "file": "default_shadcn_theme.css",
+        "line": 5,
+        "excerpt": "--background: #ffffff;"
+      },
+      {
+        "file": "default_shadcn_theme.css",
+        "line": 6,
+        "excerpt": "--foreground: oklch(0.145 0 0);"
+      },
+      {
+        "file": "default_shadcn_theme.css",
+        "line": 7,
+        "excerpt": "--card: #ffffff;"
+      }
+    ],
+    "filesSample": [
+      "default_shadcn_theme.css",
+      "src/styles/omcoda-marketing.css",
+      "src/styles/theme.css"
+    ]
+  },
+  {
+    "id": "CSS-var",
+    "occurrences": 181,
+    "fileCount": 4,
+    "examples": [
+      {
+        "file": "default_shadcn_theme.css",
+        "line": 82,
+        "excerpt": "--color-background: var(--background);"
+      },
+      {
+        "file": "default_shadcn_theme.css",
+        "line": 83,
+        "excerpt": "--color-foreground: var(--foreground);"
+      },
+      {
+        "file": "default_shadcn_theme.css",
+        "line": 84,
+        "excerpt": "--color-card: var(--card);"
+      },
+      {
+        "file": "default_shadcn_theme.css",
+        "line": 85,
+        "excerpt": "--color-card-foreground: var(--card-foreground);"
+      }
+    ],
+    "filesSample": [
+      "default_shadcn_theme.css",
+      "src/styles/index.css",
+      "src/styles/omcoda-marketing.css",
+      "src/styles/theme.css"
+    ]
+  },
+  {
+    "id": "CSS-flex",
+    "occurrences": 8,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "src/app/register/prototype-ant/antFill.css",
+        "line": 3,
+        "excerpt": "display: flex;"
+      },
+      {
+        "file": "src/styles/omcoda-marketing.css",
+        "line": 78,
+        "excerpt": "display: flex;"
+      },
+      {
+        "file": "src/styles/omcoda-marketing.css",
+        "line": 88,
+        "excerpt": "display: flex;"
+      },
+      {
+        "file": "src/styles/omcoda-marketing.css",
+        "line": 102,
+        "excerpt": "display: flex;"
+      }
+    ],
+    "filesSample": [
+      "src/app/register/prototype-ant/antFill.css",
+      "src/styles/omcoda-marketing.css"
+    ]
+  },
+  {
+    "id": "CSS-at-import",
+    "occurrences": 7,
+    "fileCount": 4,
+    "examples": [
+      {
+        "file": "src/styles/fonts.css",
+        "line": 1,
+        "excerpt": "@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');"
+      },
+      {
+        "file": "src/styles/index.css",
+        "line": 1,
+        "excerpt": "@import './fonts.css';"
+      },
+      {
+        "file": "src/styles/index.css",
+        "line": 2,
+        "excerpt": "@import './tailwind.css';"
+      },
+      {
+        "file": "src/styles/index.css",
+        "line": 3,
+        "excerpt": "@import './theme.css';"
+      }
+    ],
+    "filesSample": [
+      "src/styles/fonts.css",
+      "src/styles/index.css",
+      "src/styles/omcoda-marketing.css",
+      "src/styles/tailwind.css"
+    ]
+  },
+  {
+    "id": "CSS-at-layer",
+    "occurrences": 3,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/styles/theme.css",
+        "line": 130,
+        "excerpt": "@layer components {"
+      },
+      {
+        "file": "src/styles/theme.css",
+        "line": 178,
+        "excerpt": "@layer base {"
+      },
+      {
+        "file": "src/styles/theme.css",
+        "line": 189,
+        "excerpt": "* These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them."
+      }
+    ],
+    "filesSample": [
+      "src/styles/theme.css"
+    ]
+  },
+  {
+    "id": "CSS-at-apply",
+    "occurrences": 2,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/styles/theme.css",
+        "line": 180,
+        "excerpt": "@apply border-border outline-ring/50;"
+      },
+      {
+        "file": "src/styles/theme.css",
+        "line": 184,
+        "excerpt": "@apply bg-background text-foreground;"
+      }
+    ],
+    "filesSample": [
+      "src/styles/theme.css"
+    ]
+  },
+  {
+    "id": "CSS-at-media",
+    "occurrences": 2,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/styles/omcoda-marketing.css",
+        "line": 526,
+        "excerpt": "@media (max-width: 920px) {"
+      },
+      {
+        "file": "src/styles/omcoda-marketing.css",
+        "line": 561,
+        "excerpt": "@media (min-width: 921px) {"
+      }
+    ],
+    "filesSample": [
+      "src/styles/omcoda-marketing.css"
+    ]
+  },
+  {
+    "id": "CSS-at-theme",
+    "occurrences": 2,
+    "fileCount": 2,
+    "examples": [
+      {
+        "file": "default_shadcn_theme.css",
+        "line": 81,
+        "excerpt": "@theme inline {"
+      },
+      {
+        "file": "src/styles/theme.css",
+        "line": 89,
+        "excerpt": "@theme inline {"
+      }
+    ],
+    "filesSample": [
+      "default_shadcn_theme.css",
+      "src/styles/theme.css"
+    ]
+  },
+  {
+    "id": "CSS-at-custom",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/styles/theme.css",
+        "line": 1,
+        "excerpt": "@custom-variant dark (&:is(.dark *));"
+      }
+    ],
+    "filesSample": [
+      "src/styles/theme.css"
+    ]
+  },
+  {
+    "id": "CSS-at-source",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/styles/tailwind.css",
+        "line": 2,
+        "excerpt": "@source '../**/*.{js,ts,jsx,tsx}';"
+      }
+    ],
+    "filesSample": [
+      "src/styles/tailwind.css"
+    ]
+  },
+  {
+    "id": "CSS-grid",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/styles/omcoda-marketing.css",
+        "line": 290,
+        "excerpt": "display: grid;"
+      }
+    ],
+    "filesSample": [
+      "src/styles/omcoda-marketing.css"
+    ]
+  },
+  {
+    "id": "CSS-nesting",
+    "occurrences": 1,
+    "fileCount": 1,
+    "examples": [
+      {
+        "file": "src/styles/theme.css",
+        "line": 1,
+        "excerpt": "@custom-variant dark (&:is(.dark *));"
+      }
+    ],
+    "filesSample": [
+      "src/styles/theme.css"
+    ]
+  }
+]
