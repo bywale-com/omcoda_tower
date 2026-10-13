@@ -9,8 +9,12 @@
  * Run: npm run verify:continuous-worker
  */
 import { spawn, type ChildProcess } from "node:child_process";
+import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { createPgPool } from "./pgConnect.ts";
+
+/** Local tsx CLI — avoids `npx` ENOENT on Windows (npx.cmd). */
+const tsxCli = path.join(process.cwd(), "node_modules", "tsx", "dist", "cli.mjs");
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
@@ -48,6 +52,17 @@ try {
     await pool.query(`UPDATE seq_channel_ownership_order SET ord=$2 WHERE id=$1`, [id, ord]);
   }
 
+  // Prior verify runs leave open attempts across firms; tick scans all (LIMIT 500)
+  // and can miss the seeded row within the short window. Clear the open set first.
+  const cleared = await pool.query(
+    `UPDATE active_attempts SET status='nullified', updated_at=now()
+     WHERE status='open'`,
+  );
+  ok(
+    "clear-open-attempts",
+    `nullified ${cleared.rowCount ?? 0} leftover open attempt(s)`,
+  );
+
   const contactId = `cont-worker-${randomUUID().slice(0, 8)}`;
   const enrId = `enr-worker-${randomUUID().slice(0, 8)}`;
   const attemptId = `att-worker-${randomUUID().slice(0, 8)}`;
@@ -79,18 +94,24 @@ try {
   );
   ok("seed-stale-attempt", `${attemptId} (no manual tickOnce)`);
 
-  child = spawn("npx", ["tsx", "--env-file=.env", "server/wire-service/worker.ts"], {
-    env: {
-      ...process.env,
-      DATABASE_URL: connectionString,
-      WORKER_INTERVAL_MS: String(intervalMs),
-      WORKER_ONCE: "",
-      SEND_MODE: process.env.SEND_MODE || "dry_run",
-      DEPLOY_STRICT: "0",
-      NODE_ENV: "test",
+  child = spawn(
+    process.execPath,
+    [tsxCli, "--env-file=.env", "server/wire-service/worker.ts"],
+    {
+      env: {
+        ...process.env,
+        DATABASE_URL: connectionString,
+        WORKER_INTERVAL_MS: String(intervalMs),
+        WORKER_ONCE: "",
+        // Proof is escalation, not ESP blast — keep fail-closed dry_run in the child.
+        SEND_MODE: "dry_run",
+        SEND_TEST_COHORT: "",
+        DEPLOY_STRICT: "0",
+        NODE_ENV: "test",
+      },
+      stdio: ["ignore", "pipe", "pipe"],
     },
-    stdio: ["ignore", "pipe", "pipe"],
-  });
+  );
 
   let logs = "";
   child.stdout?.on("data", (d) => {
@@ -98,6 +119,9 @@ try {
   });
   child.stderr?.on("data", (d) => {
     logs += String(d);
+  });
+  child.on("error", (err) => {
+    logs += `spawn-error: ${err.message}`;
   });
 
   ok("worker-started", `pid=${child.pid} intervalMs=${intervalMs} (continuous, not WORKER_ONCE)`);

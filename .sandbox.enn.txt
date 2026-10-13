@@ -1,0 +1,14 @@
+DATABASE_URL=postgresql://postgres.pptggopuvbvzosxemjyo:Apexfinalb0$$@aws-1-us-west-2.pooler.supabase.com:5432/postgres
+
+RESEND_API_KEY=re_CjVSnHww_CdsUmDMeWCaDQWr4DSfW1myZ
+RESEND_FROM_EMAIL=Tower <send@mail.try-tower.com>
+
+MAIL_ROOT_DOMAIN=mail.try-tower.com
+PUBLIC_APP_URL=https://omcoda-tower.vercel.app
+
+TWILIO_ACCOUNT_SID=AC3512f43478fd6692a8083a41991299eb
+TWILIO_AUTH_TOKEN=6bddaf0d2b5076c8d623c81aa570647d
+TWILIO_FROM_NUMBER=+12893018212
+
+TEST_EMAIL_TO=truthist00@gmail.com
+TEST_SMS_TO=+14374557204

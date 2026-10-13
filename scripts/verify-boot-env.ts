@@ -9,7 +9,11 @@
  * Run: npm run verify:boot-env
  */
 import { spawnSync } from "node:child_process";
+import path from "node:path";
 import { shouldLiveSend, getSendMode } from "../server/wire-service/sendMode.ts";
+
+/** Local tsx CLI — avoids `npx` ENOENT on Windows (npx.cmd). */
+const tsxCli = path.join(process.cwd(), "node_modules", "tsx", "dist", "cli.mjs");
 
 const report: Array<{ step: string; ok: boolean; detail: string }> = [];
 function ok(step: string, detail: string) {
@@ -69,9 +73,9 @@ function bootProbe(env: Record<string, string | undefined>): {
     if (v === undefined) delete merged[k];
   }
   const r = spawnSync(
-    "npx",
+    process.execPath,
     [
-      "tsx",
+      tsxCli,
       "-e",
       `import { assertBootEnv } from "./server/wire-service/bootEnv.ts"; assertBootEnv("api"); console.log("BOOT_OK");`,
     ],
