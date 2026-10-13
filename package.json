@@ -30,7 +30,8 @@
     "ensure:admin": "tsx --env-file=.env scripts/ensure-platform-admin.ts",
     "issue:access": "tsx --env-file=.env scripts/issue-access-link.ts",
     "verify:access": "tsx --env-file=.env scripts/verify-access-link.ts"
-  },  "dependencies": {
+  },
+  "dependencies": {
     "@ant-design/icons": "^6.3.2",
     "@emotion/react": "11.14.0",
     "@emotion/styled": "11.14.1",
@@ -100,18 +101,27 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.1.12",
-    "@types/node": "^22.13.10",
+    "@types/node": "^22.20.5",
     "@types/papaparse": "^5.5.2",
     "@types/pg": "^8.11.11",
     "@vitejs/plugin-react": "4.7.0",
     "esbuild": "^0.28.2",
     "tailwindcss": "4.1.12",
     "tsx": "^4.19.3",
+    "typescript": "^7.0.2",
     "vite": "6.4.3"
   },
   "pnpm": {
     "overrides": {
       "vite": "6.4.3"
     }
-  }
+  },
+  "description": "Tower is an intelligent client engagement system for immigration consultants. It watches each client’s file, runs scheduled nudges driven by their data, and arms fixed reactivation sequences when eligibility appears.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

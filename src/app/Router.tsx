@@ -10,15 +10,15 @@ import { RegisterPage } from "./register/pages/RegisterPage";
 import { SystemMapPage } from "./system-map/SystemMapPage";
 
 /** Hub (legacy app) — engagement Activity / client look-inside live here until CT parity. */
-function HubApp() {
-  const authOff = isAuthDisabled();
-  if (authOff) return <App />;
-  return (
-    <AuthGate>
-      <App />
-    </AuthGate>
-  );
-}
+// function HubApp() {
+//   const authOff = isAuthDisabled();
+//   if (authOff) return <App />;
+//   return (
+//     <AuthGate>
+//       <App />
+//     </AuthGate>
+//   );
+// }
 
 export function AppRouter() {
   const authOff = isAuthDisabled();
