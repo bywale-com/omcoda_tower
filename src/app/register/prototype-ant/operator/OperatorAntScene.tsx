@@ -1,7 +1,7 @@
 import { Layout} from "antd";
 
 export function OperatorAntScene() {
-  const title = "Operator Desk Reconstruction";
+  const title = "Operator Desk Reconstruction and addition.";
   const version = 1;
   return (
     < Layout style={{ height: "100%", padding: "24"}}>
