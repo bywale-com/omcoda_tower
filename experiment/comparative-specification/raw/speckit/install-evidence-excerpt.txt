@@ -1,0 +1,104 @@
+CMD: which uv; uv --version 2>/dev/null; which specify; python3 --version; which curl; which git
+OUT: Python 3.12.3
+/usr/bin/curl
+/usr/bin/git
+
+---
+CMD: curl -LsSf https://astral.sh/uv/install.sh | sh && export PATH="$HOME/.local/bin:$PATH" && uv --version
+OUT: installing to /home/ubuntu/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+uv 0.13.1 (x86_64-unknown-linux-gnu)
+
+---
+CMD: source $HOME/.local/bin/env && export PATH="$HOME/.local/bin:$PATH" && specify version && echo "==== HELP INIT ====" && specify init --help && echo "==== HELP ====" && specify --help
+OUT:               ███████╗██████╗ ███████╗ ██████╗██╗███████╗██╗   ██╗              
+              ██╔════╝██╔══██╗██╔════╝██╔════╝██║██╔════╝╚██╗ ██╔╝              
+              ███████╗██████╔╝█████╗  ██║     ██║█████╗   ╚████╔╝               
+              ╚════██║██╔═══╝ ██╔══╝  ██║     ██║██╔══╝    ╚██╔╝                
+              ███████║██║     ███████╗╚██████╗██║██║        ██║                 
+              ╚══════╝╚═╝     ╚══════╝ ╚═════╝╚═╝╚═╝        ╚═╝                 
+                                                                                
+               GitHub Spec Kit - Spec-Driven Development Toolkit                
+
+╭────────────────────────── Specify CLI Information ───────────────────────────╮
+│                                                                     
+---
+CMD: source $HOME/.local/bin/env && export PATH="$HOME/.local/bin:$PATH" && mkdir -p /home/ubuntu/tower-spec-output/install && specify version > /home/ubuntu/tower-spec-output/install/specify-version.txt 2
+OUT: ==== ARTIFACT HELP ====
+                                                                                
+ Usage: specify artifact [OPTIONS] COMMAND [ARGS]...                            
+                                                                                
+ Introspect commands, templates, scripts, and hooks Spec Kit exposes.           
+                                                                                
+╭─ Options ────────────────────────────────────────────────────────────────────╮
+│ --help          Show this message and exit.                                  │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Commands ───────────────────────────────────────────────────────────────────╮
+│ list    List every command, template, script,
+---
+CMD: source $HOME/.local/bin/env && export PATH="$HOME/.local/bin:$PATH" && cd /workspace && git checkout -b cursor/speckit-methodology-fa8c && specify init --here --force --non-interactive --integration c
+OUT:               ███████╗██████╗ ███████╗ ██████╗██╗███████╗██╗   ██╗              
+              ██╔════╝██╔══██╗██╔════╝██╔════╝██║██╔════╝╚██╗ ██╔╝              
+              ███████╗██████╔╝█████╗  ██║     ██║█████╗   ╚████╔╝               
+              ╚════██║██╔═══╝ ██╔══╝  ██║     ██║██╔══╝    ╚██╔╝                
+              ███████║██║     ███████╗╚██████╗██║██║        ██║                 
+              ╚══════╝╚═╝     ╚══════╝ ╚═════╝╚═╝╚═╝        ╚═╝                 
+                                                                                
+               GitHub Spec Kit - Spec-Driven Development Toolkit                
+
+Warning: Current directory is not empty (36 items)
+Template files will be merged with existing content and may overwrite existing 
+files
+--force suppli
+---
+CMD: source $HOME/.local/bin/env && export PATH="$HOME/.local/bin:$PATH" && cd /workspace && echo "==== GIT STATUS ====" && git status --short && echo "==== .specify ====" && find .specify -type f | head -
+OUT: ==== GIT STATUS ====
+?? .specify/
+==== .specify ====
+.specify/integration.json
+.specify/integrations/speckit.manifest.json
+.specify/integrations/cursor-agent.manifest.json
+.specify/scripts/bash/setup-tasks.sh
+.specify/scripts/bash/create-new-feature.sh
+.specify/scripts/bash/resolve-template.sh
+.specify/scripts/bash/check-prerequisites.sh
+.specify/scripts/bash/setup-plan.sh
+.specify/scripts/bash/common.sh
+.specify/memory/constitution.md
+.specify/memory/.constitution-template.json
+.specify/templates/plan-template.md
+.specify/templates/checklist-template.md
+.specify/templates/spec-template.md
+.specify/templates/constitution-template.md
+.specify/templates/tasks-template.md
+.specify/.gitignore
+.specify/init-options.json
+.specify/workflows/workflow-registry.json
+.specify/workflows/speckit/workfl
+---
+CMD: source $HOME/.local/bin/env && export PATH="$HOME/.local/bin:$PATH" && cd /workspace && mkdir -p /home/ubuntu/tower-spec-output/native-mirrors/init && cp -a .specify /home/ubuntu/tower-spec-output/nat
+OUT: {"TEMPLATE_NAME":"constitution-template","TEMPLATE_CONTENT":"# [PROJECT_NAME] Constitution\n<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->\n\n## Core Principles\n\n### [PRINCIPLE_1_NAME]\n<!-- Example: I. Library-First -->\n[PRINCIPLE_1_DESCRIPTION]\n<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->\n\n### [PRINCIPLE_2_NAME]\n<!-- Example: II. CLI Interface -->\n[PRINCIPLE_2_DESCRIPTION]\n<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->\n\n### [PRINCIPLE_3_NAME]\n<!-- Example: III. Test-First (NON-NEGOTIABLE) -->\n[PRINCIP
+---
+CMD: set -e ROOT=/home/ubuntu/tower-spec-output mkdir -p "$ROOT/native-mirrors/final/.specify" "$ROOT/native-mirrors/final/specs" "$ROOT/native-mirrors/final/cursor-skills" "$ROOT/versions/plan" "$ROOT/ver
+OUT:   1342 /home/ubuntu/tower-spec-output/BUNDLE.md
+   118 /home/ubuntu/tower-spec-output/INVENTORY.md
+  1460 total
+2026-10-19T16:53:52Z
+
+---
+CMD: find /home/ubuntu/tower-spec-output -type f | sort > /home/ubuntu/tower-spec-output/INVENTORY.md.tmp && { echo "# File inventory"; echo; cat /home/ubuntu/tower-spec-output/INVENTORY.md.tmp; } > /home/
+OUT: {
+  "contestant_id": "speckit",
+  "sha": "c5bd617b9b1bb9fbd5d73c99da16a973594c6bd7",
+  "framework": "github-spec-kit",
+  "framework_version": "1.2.1",
+  "status": "complete",
+  "completion_claim": "GitHub Spec Kit v1.2.1 was installed and initialized with integration cursor-agent. The installed SDD path was followed: constitution → specify → clarify (no founder answers; silences kept) → plan (research, data-model, contracts, quickstart) → custom checklists → tasks → analyze. Implementation and converge were not run because the experiment forbids product-code changes. The intended Tower product is specified from repository evidence (Seed/World/Story/Outcomes/Phase Two flagship 15:43, Agents/Automations face law, primitives, migrations on this SHA, origin pull/96 packets and pull/86|/110 asc
+---

@@ -1,0 +1,1 @@
+git -C /workspace fetch origin pull/96/head:refs/tmp/pr96 --depth=1 2>&1 | tail -5; git -C /workspace ls-tree -r --name-only FETCH_HEAD 2>/dev/null | grep -E 'docs/register/.*PACKET|docs/register/PLATE|docs/register/FORM|docs/register/IF-|docs/register/TEST|docs/register/RUN|docs/register/GET|docs/register/NODE' | head -80

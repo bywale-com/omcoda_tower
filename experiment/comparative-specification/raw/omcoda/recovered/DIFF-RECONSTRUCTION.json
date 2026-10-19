@@ -1,0 +1,226 @@
+{
+  "n_create": 18,
+  "n_edit": 3,
+  "n_files": 18,
+  "n_revision_snapshots": 0,
+  "written": [
+    {
+      "src": "/home/ubuntu/tower-spec-output/00-session/METHODOLOGY-INVENTORY.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/omcoda/artifacts/00-session/METHODOLOGY-INVENTORY.md",
+      "bytes": 4677
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/00-session/SESSION-START.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/omcoda/artifacts/00-session/SESSION-START.md",
+      "bytes": 1944
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/00-session/WORKING-PLAN.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/omcoda/artifacts/00-session/WORKING-PLAN.md",
+      "bytes": 1913
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/01-seed/SEED-CONFIRMATION.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/omcoda/artifacts/01-seed/SEED-CONFIRMATION.md",
+      "bytes": 5817
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/02-world/WORLD-CONFIRMATION.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/omcoda/artifacts/02-world/WORLD-CONFIRMATION.md",
+      "bytes": 3900
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/03-machine/MACHINE-EXTRACT.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/omcoda/artifacts/03-machine/MACHINE-EXTRACT.md",
+      "bytes": 7340
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/04-faces/FUNCTION-EXTRACT.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/omcoda/artifacts/04-faces/FUNCTION-EXTRACT.md",
+      "bytes": 5556
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/04-faces/HOW-LATTICE.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/omcoda/artifacts/04-faces/HOW-LATTICE.md",
+      "bytes": 3378
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/05-bind/TWO-COLUMN-JOIN.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/omcoda/artifacts/05-bind/TWO-COLUMN-JOIN.md",
+      "bytes": 3854
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/06-sme/CAPABILITY-ABSORB.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/omcoda/artifacts/06-sme/CAPABILITY-ABSORB.md",
+      "bytes": 4415
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/06-sme/PRACTICE-ABSORB.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/omcoda/artifacts/06-sme/PRACTICE-ABSORB.md",
+      "bytes": 5684
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/07-phase-two/MODULE-FLAGS.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/omcoda/artifacts/07-phase-two/MODULE-FLAGS.md",
+      "bytes": 8052
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/08-uncertainty/GATES-AND-SILENCES.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/omcoda/artifacts/08-uncertainty/GATES-AND-SILENCES.md",
+      "bytes": 5619
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/09-revisions/DOWNSTREAM-PASSES.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/omcoda/artifacts/09-revisions/DOWNSTREAM-PASSES.md",
+      "bytes": 2715
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/CROSS-REFERENCES.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/omcoda/artifacts/CROSS-REFERENCES.md",
+      "bytes": 2059
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/EXPERIMENT-RECORD.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/omcoda/artifacts/EXPERIMENT-RECORD.md",
+      "bytes": 7264
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/SPEC/TOWER-INTENDED-PRODUCT.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/omcoda/artifacts/SPEC/TOWER-INTENDED-PRODUCT.md",
+      "bytes": 24245
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/STATUS.json",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/omcoda/artifacts/STATUS.json",
+      "bytes": 1998
+    }
+  ],
+  "events": [
+    {
+      "path": "/home/ubuntu/tower-spec-output/00-session/SESSION-START.md",
+      "kind": "create",
+      "added": 29,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/00-session/METHODOLOGY-INVENTORY.md",
+      "kind": "create",
+      "added": 53,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/00-session/WORKING-PLAN.md",
+      "kind": "create",
+      "added": 24,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/01-seed/SEED-CONFIRMATION.md",
+      "kind": "create",
+      "added": 95,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/02-world/WORLD-CONFIRMATION.md",
+      "kind": "create",
+      "added": 63,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/03-machine/MACHINE-EXTRACT.md",
+      "kind": "create",
+      "added": 118,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/04-faces/FUNCTION-EXTRACT.md",
+      "kind": "create",
+      "added": 95,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/05-bind/TWO-COLUMN-JOIN.md",
+      "kind": "create",
+      "added": 49,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/06-sme/PRACTICE-ABSORB.md",
+      "kind": "create",
+      "added": 84,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/06-sme/CAPABILITY-ABSORB.md",
+      "kind": "create",
+      "added": 50,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/07-phase-two/MODULE-FLAGS.md",
+      "kind": "create",
+      "added": 106,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/08-uncertainty/GATES-AND-SILENCES.md",
+      "kind": "create",
+      "added": 76,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/TOWER-INTENDED-PRODUCT.md",
+      "kind": "create",
+      "added": 307,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/04-faces/HOW-LATTICE.md",
+      "kind": "create",
+      "added": 60,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/CROSS-REFERENCES.md",
+      "kind": "create",
+      "added": 22,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/09-revisions/DOWNSTREAM-PASSES.md",
+      "kind": "create",
+      "added": 43,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/TOWER-INTENDED-PRODUCT.md",
+      "kind": "edit",
+      "added": 12,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/00-session/METHODOLOGY-INVENTORY.md",
+      "kind": "edit",
+      "added": 19,
+      "removed": 1
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/STATUS.json",
+      "kind": "create",
+      "added": 10,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/EXPERIMENT-RECORD.md",
+      "kind": "create",
+      "added": 111,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/EXPERIMENT-RECORD.md",
+      "kind": "edit",
+      "added": 1,
+      "removed": 1
+    }
+  ]
+}

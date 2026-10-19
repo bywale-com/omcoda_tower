@@ -1,0 +1,1 @@
+ls -la /workspace && echo '---' && find /workspace -maxdepth 3 -type d -not -path '*/node_modules*' -not -path '*/.git/*' | head -200 && echo '---DOCS---' && find /workspace/docs -type f 2>/dev/null | head -300

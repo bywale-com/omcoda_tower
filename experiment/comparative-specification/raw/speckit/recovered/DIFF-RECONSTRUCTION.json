@@ -1,0 +1,212 @@
+{
+  "n_files": 19,
+  "written": [
+    {
+      "src": "/home/ubuntu/tower-spec-output/EXPERIMENT-RECORD.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/EXPERIMENT-RECORD.md",
+      "bytes": 5554
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/START.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/START.md",
+      "bytes": 414
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/STATUS.json",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/STATUS.json",
+      "bytes": 1074
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/analysis/ANALYZE-REPORT.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/analysis/ANALYZE-REPORT.md",
+      "bytes": 4358
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/analysis/EVIDENCE-INDEX.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/analysis/EVIDENCE-INDEX.md",
+      "bytes": 2590
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/versions/spec/spec-v1-after-specify.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/versions/spec/spec-v1-after-specify.md",
+      "bytes": 94
+    },
+    {
+      "src": "/workspace/.specify/feature.json",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/_workspace/.specify/feature.json",
+      "bytes": 53
+    },
+    {
+      "src": "/workspace/.specify/memory/constitution.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/_workspace/.specify/memory/constitution.md",
+      "bytes": 7627
+    },
+    {
+      "src": "/workspace/specs/001-tower-product/checklists/honesty-and-silences.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/_workspace/specs/001-tower-product/checklists/honesty-and-silences.md",
+      "bytes": 2270
+    },
+    {
+      "src": "/workspace/specs/001-tower-product/checklists/product-coherence.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/_workspace/specs/001-tower-product/checklists/product-coherence.md",
+      "bytes": 2634
+    },
+    {
+      "src": "/workspace/specs/001-tower-product/checklists/requirements.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/_workspace/specs/001-tower-product/checklists/requirements.md",
+      "bytes": 2056
+    },
+    {
+      "src": "/workspace/specs/001-tower-product/contracts/events-and-primitives.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/_workspace/specs/001-tower-product/contracts/events-and-primitives.md",
+      "bytes": 2415
+    },
+    {
+      "src": "/workspace/specs/001-tower-product/contracts/http-auth-wire.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/_workspace/specs/001-tower-product/contracts/http-auth-wire.md",
+      "bytes": 3189
+    },
+    {
+      "src": "/workspace/specs/001-tower-product/data-model.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/_workspace/specs/001-tower-product/data-model.md",
+      "bytes": 5947
+    },
+    {
+      "src": "/workspace/specs/001-tower-product/plan.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/_workspace/specs/001-tower-product/plan.md",
+      "bytes": 4868
+    },
+    {
+      "src": "/workspace/specs/001-tower-product/quickstart.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/_workspace/specs/001-tower-product/quickstart.md",
+      "bytes": 2549
+    },
+    {
+      "src": "/workspace/specs/001-tower-product/research.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/_workspace/specs/001-tower-product/research.md",
+      "bytes": 3805
+    },
+    {
+      "src": "/workspace/specs/001-tower-product/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/_workspace/specs/001-tower-product/spec.md",
+      "bytes": 40269
+    },
+    {
+      "src": "/workspace/specs/001-tower-product/tasks.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/speckit/artifacts/_workspace/specs/001-tower-product/tasks.md",
+      "bytes": 9596
+    }
+  ],
+  "events": [
+    {
+      "path": "/home/ubuntu/tower-spec-output/START.md",
+      "kind": "create",
+      "added": 11
+    },
+    {
+      "path": "/workspace/.specify/memory/constitution.md",
+      "kind": "create",
+      "added": 67
+    },
+    {
+      "path": "/workspace/.specify/feature.json",
+      "kind": "create",
+      "added": 3
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/analysis/EVIDENCE-INDEX.md",
+      "kind": "create",
+      "added": 39
+    },
+    {
+      "path": "/workspace/specs/001-tower-product/spec.md",
+      "kind": "create",
+      "added": 355
+    },
+    {
+      "path": "/workspace/specs/001-tower-product/checklists/requirements.md",
+      "kind": "create",
+      "added": 38
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/versions/spec/spec-v1-after-specify.md",
+      "kind": "create",
+      "added": 1
+    },
+    {
+      "path": "/workspace/specs/001-tower-product/spec.md",
+      "kind": "edit",
+      "added": 10
+    },
+    {
+      "path": "/workspace/specs/001-tower-product/plan.md",
+      "kind": "create",
+      "added": 48
+    },
+    {
+      "path": "/workspace/specs/001-tower-product/research.md",
+      "kind": "create",
+      "added": 63
+    },
+    {
+      "path": "/workspace/specs/001-tower-product/data-model.md",
+      "kind": "create",
+      "added": 125
+    },
+    {
+      "path": "/workspace/specs/001-tower-product/contracts/http-auth-wire.md",
+      "kind": "create",
+      "added": 62
+    },
+    {
+      "path": "/workspace/specs/001-tower-product/contracts/events-and-primitives.md",
+      "kind": "create",
+      "added": 54
+    },
+    {
+      "path": "/workspace/specs/001-tower-product/quickstart.md",
+      "kind": "create",
+      "added": 49
+    },
+    {
+      "path": "/workspace/specs/001-tower-product/checklists/product-coherence.md",
+      "kind": "create",
+      "added": 45
+    },
+    {
+      "path": "/workspace/specs/001-tower-product/checklists/honesty-and-silences.md",
+      "kind": "create",
+      "added": 47
+    },
+    {
+      "path": "/workspace/specs/001-tower-product/tasks.md",
+      "kind": "create",
+      "added": 178
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/analysis/ANALYZE-REPORT.md",
+      "kind": "create",
+      "added": 74
+    },
+    {
+      "path": "/workspace/specs/001-tower-product/tasks.md",
+      "kind": "edit",
+      "added": 1
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/analysis/ANALYZE-REPORT.md",
+      "kind": "edit",
+      "added": 1
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/STATUS.json",
+      "kind": "create",
+      "added": 10
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/EXPERIMENT-RECORD.md",
+      "kind": "create",
+      "added": 81
+    }
+  ]
+}

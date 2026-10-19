@@ -1,0 +1,10 @@
+{
+  "contestant_id": "bmad",
+  "sha": "c5bd617b9b1bb9fbd5d73c99da16a973594c6bd7",
+  "framework": "bmad-method",
+  "framework_version": "6.12.4",
+  "status": "complete",
+  "completion_claim": "Installed genuine bmad-method@6.12.4 (module bmm, tool cursor), followed bmad-help catalog routing, and ran the planning skills in headless mode against the Tower repository (plus origin pull refs this SHA names as live spec). Produced a product brief, PRD (FR-1–FR-39), UX DESIGN/EXPERIENCE spines, architecture spine (AD-1–AD-12, lint clean), SPEC-tower kernel with companions, and a headless analog of epics/stories. Uncertainties are explicit; no founder decisions were invented. Ship-phase bmad-build was skipped because product implementation is forbidden. Headless artifacts are status=partial pending founder confirmation of open questions — the assignment to establish a coherent specification from existing material is complete.",
+  "blocker": null,
+  "artifact_root": "/home/ubuntu/tower-spec-output/"
+}

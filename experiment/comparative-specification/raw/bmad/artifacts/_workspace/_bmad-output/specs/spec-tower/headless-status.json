@@ -1,0 +1,10 @@
+{
+  "status": "partial",
+  "files": [
+    "_bmad-output/specs/spec-tower/SPEC.md",
+    "_bmad-output/specs/spec-tower/glossary.md",
+    "_bmad-output/specs/spec-tower/brownfield.md",
+    "_bmad-output/specs/spec-tower/open-questions.md",
+    "_bmad-output/specs/spec-tower/.memlog.md"
+  ]
+}

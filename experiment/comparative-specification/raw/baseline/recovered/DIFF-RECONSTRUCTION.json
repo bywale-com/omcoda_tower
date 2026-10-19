@@ -1,0 +1,258 @@
+{
+  "n_create": 21,
+  "n_edit": 3,
+  "n_files": 21,
+  "written": [
+    {
+      "src": "/home/ubuntu/tower-spec-output/00-START.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/00-START.md",
+      "bytes": 483
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/01-APPROACH.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/01-APPROACH.md",
+      "bytes": 1414
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/EXPERIMENT-RECORD.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/EXPERIMENT-RECORD.md",
+      "bytes": 4731
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/SOURCE-MAP.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/SOURCE-MAP.md",
+      "bytes": 2482
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/SPEC/00-HOW-TO-READ.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/SPEC/00-HOW-TO-READ.md",
+      "bytes": 2850
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/SPEC/01-IDENTITY.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/SPEC/01-IDENTITY.md",
+      "bytes": 6156
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/SPEC/02-ACTORS-AND-DESKS.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/SPEC/02-ACTORS-AND-DESKS.md",
+      "bytes": 5819
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/SPEC/03-CORE-LOOP-AND-SYSTEMS.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/SPEC/03-CORE-LOOP-AND-SYSTEMS.md",
+      "bytes": 8249
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/SPEC/04-CONSULTANT-DESK.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/SPEC/04-CONSULTANT-DESK.md",
+      "bytes": 3559
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/SPEC/05-OPERATOR-DESK.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/SPEC/05-OPERATOR-DESK.md",
+      "bytes": 4618
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/SPEC/06-CONTACT-EXPERIENCE.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/SPEC/06-CONTACT-EXPERIENCE.md",
+      "bytes": 2389
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/SPEC/07-AGENTS.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/SPEC/07-AGENTS.md",
+      "bytes": 7883
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/SPEC/08-AUTOMATIONS.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/SPEC/08-AUTOMATIONS.md",
+      "bytes": 8416
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/SPEC/09-ELIGIBILITY-AND-MOTION.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/SPEC/09-ELIGIBILITY-AND-MOTION.md",
+      "bytes": 2987
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/SPEC/10-DATA-AND-RUNTIME.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/SPEC/10-DATA-AND-RUNTIME.md",
+      "bytes": 5608
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/SPEC/11-CONSTRAINTS.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/SPEC/11-CONSTRAINTS.md",
+      "bytes": 2380
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/SPEC/12-GLOSSARY.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/SPEC/12-GLOSSARY.md",
+      "bytes": 2502
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/SPEC/13-UNCERTAINTY.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/SPEC/13-UNCERTAINTY.md",
+      "bytes": 4776
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/STATUS.json",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/STATUS.json",
+      "bytes": 692
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/SUPPORTING/AS-BUILT-VS-INTENDED.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/SUPPORTING/AS-BUILT-VS-INTENDED.md",
+      "bytes": 1451
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/SUPPORTING/PM-PACKETS-ON-PR96.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/baseline/artifacts/SUPPORTING/PM-PACKETS-ON-PR96.md",
+      "bytes": 1877
+    }
+  ],
+  "events": [
+    {
+      "path": "/home/ubuntu/tower-spec-output/00-START.md",
+      "kind": "create",
+      "added": 10,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/01-APPROACH.md",
+      "kind": "create",
+      "added": 21,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SOURCE-MAP.md",
+      "kind": "create",
+      "added": 32,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/00-HOW-TO-READ.md",
+      "kind": "create",
+      "added": 40,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/01-IDENTITY.md",
+      "kind": "create",
+      "added": 82,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/02-ACTORS-AND-DESKS.md",
+      "kind": "create",
+      "added": 101,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/03-CORE-LOOP-AND-SYSTEMS.md",
+      "kind": "create",
+      "added": 145,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/04-CONSULTANT-DESK.md",
+      "kind": "create",
+      "added": 55,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/05-OPERATOR-DESK.md",
+      "kind": "create",
+      "added": 85,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/06-CONTACT-EXPERIENCE.md",
+      "kind": "create",
+      "added": 40,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/07-AGENTS.md",
+      "kind": "create",
+      "added": 119,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/08-AUTOMATIONS.md",
+      "kind": "create",
+      "added": 150,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/09-ELIGIBILITY-AND-MOTION.md",
+      "kind": "create",
+      "added": 57,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/10-DATA-AND-RUNTIME.md",
+      "kind": "create",
+      "added": 108,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/11-CONSTRAINTS.md",
+      "kind": "create",
+      "added": 51,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/12-GLOSSARY.md",
+      "kind": "create",
+      "added": 41,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/13-UNCERTAINTY.md",
+      "kind": "create",
+      "added": 78,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SUPPORTING/PM-PACKETS-ON-PR96.md",
+      "kind": "create",
+      "added": 30,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SUPPORTING/AS-BUILT-VS-INTENDED.md",
+      "kind": "create",
+      "added": 18,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/02-ACTORS-AND-DESKS.md",
+      "kind": "edit",
+      "added": 2,
+      "removed": 2
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/07-AGENTS.md",
+      "kind": "edit",
+      "added": 5,
+      "removed": 1
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/SPEC/05-OPERATOR-DESK.md",
+      "kind": "edit",
+      "added": 1,
+      "removed": 1
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/STATUS.json",
+      "kind": "create",
+      "added": 10,
+      "removed": 0
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/EXPERIMENT-RECORD.md",
+      "kind": "create",
+      "added": 78,
+      "removed": 0
+    }
+  ]
+}

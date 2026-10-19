@@ -1,0 +1,26 @@
+{
+  "agents": [
+    {
+      "bcId": "bc-1afeb59a-6ec2-5eff-8f49-a771bc53008a",
+      "name": "Baseline spec contestant",
+      "branchName": null,
+      "repoUrl": "github.com/bywale-com/omcoda_tower",
+      "status": "IDLE",
+      "setupStatus": null,
+      "source": "internal",
+      "visibility": "user",
+      "originalModelName": null,
+      "owningUser": 291403563,
+      "owningServiceAccount": null,
+      "isArchived": false,
+      "isKilled": false,
+      "createdAtMs": 1792428378083,
+      "updatedAtMs": 1792428713807,
+      "lastMessageActivityAtMs": 1792428378171,
+      "privateWorkerId": null,
+      "usePrivateWorker": false,
+      "sourceDetails": null,
+      "url": "https://cursor.com/agents/bc-1afeb59a-6ec2-5eff-8f49-a771bc53008a"
+    }
+  ]
+}
