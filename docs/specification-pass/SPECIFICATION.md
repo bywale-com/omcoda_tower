@@ -522,6 +522,98 @@ No founder question. The If reads a field of the failure row this firing inserte
 
 ---
 
+## Claim 14 — A contact-scope firing of `halt_records` places the inserted primary key on `payload.writes`
+
+**Standing:** technical decision made in this session.
+
+The listening run’s handle is still `previousWrites`, built from `payload.writes` by `writesFromPayload` (claim 11). The pointer’s `id` is still the row’s primary key (claim 10). This claim is the array on the contact-scope dispatch in `handleHaltCommit`. `writesFromPayload` gains no reader for `haltId`. The firm-book branch does not dispatch. That branch stays the gate. It is not a second copy of this array.
+
+`handleHaltCommit` builds `haltId` with `id("halt")`, which returns `halt-` followed by `Date.now()`, a hyphen, and `Math.random().toString(36).slice(2, 8)`, and inserts one `halt_records` row with that string as `id`. The other columns stored are `consultant_id`, `contact_id` (`body.contactId`, or null), `firm_id`, `scope`, `reason` (or null), and `halted_at`. `lifted_at` is left null. The same handler then inserts one `audit_events` row. When `scope` is `contact`, it dispatches once:
+
+`eventName: "halt_records"`, `firmId: body.firmId`, `payload: { haltId, contactId: body.contactId ?? null }`, and `contactIds` of that one contact when `body.contactId` is set. There is no `writes`.
+
+`halt_records.id` is `TEXT PRIMARY KEY` (`supabase/migrations/003_ct_wire_stores.sql`). There is no second column in the key. `contact_id` is nullable. `scope` is `contact` or `firm-book`. Neither is the key. There is no unique constraint on an active contact halt, so two contact commits for one person are two primary keys.
+
+`event_write_set` version 1 names `halt_records` alone, at ord 0 (`supabase/migrations/017_event_test_contract.sql`). The contact-scope dispatch payload gains
+
+`writes: [{ table: "halt_records", id: <the haltId the insert stored>, contact_id: <the contact_id column> }]`.
+
+That is the only element. The id is the same string as `haltId`. `contact_id` on the pointer is the column. When the column is a string, `contactIds` is that one contact and `personIdsFromWrites` uses `contact_id`. When the column is null, `contact_id` on the element is null and `contactIds` is omitted. `halt_records` is not in `PERSON_WRITE_TABLES`. A null `contact_id` does not publish the `halt-` id as a person. `firm_id` stays off the pointer. `RunWrite` has no such field. This firing places one pointer, so this claim does not add the table to that set.
+
+The desk path stores a string. `confirmHalt` returns before the commit when the scope is this contact and there is no active client, and the commit then passes that client as `contactId` (`ConsultantAntScene.tsx`). A contact-scope body that omits `contactId` still inserts and still dispatches. `dispatchEventToWorkflows`, for an every-firm audience with no contact ids, loads every `contact_records` id for the firm. That substitution is the empty-list walk claim 12 left unspecified. This claim does not specify it. The pointer on that body is still this insert’s id.
+
+The keys already on the payload stay: `haltId` and `contactId`. `localRefFromPayload` has no case for `halt_records` and returns null. `triggerLocalRefFromPayload` is the same. `localAxesMatch` compares `local_ref` only when `local_ref` is set, so a trigger with no `local_ref` still matches. A trigger that has `local_ref` set does not match, because null is not that string. This claim does not add a case.
+
+Halt is not an instance axis the operator selects. `TRIGGER_SELECT_EVENTS` is the A26 list, and its comment says not to add halt. `WORKFLOW_EVENTS_WITH_LOCAL` does not include `halt_records`. The primitives event table does not include Halt (`docs/register/PRIMITIVES.md`). The trigger-select packet says that list is the named events, and that extra events are not built (`origin/pr-96:docs/register/TRIGGER-SELECT-PACKET.md`). The seed graphs do not subscribe to `halt_records` (`supabase/seeds/003_canonical_workflows.sql`). Hub’s catalog still has the label Halt. Hub is not the product face. This claim does not add the row to A26. The dispatcher still starts an active event trigger whose `event_name` is `halt_records` for this firm, or a platform trigger (`firm_id` null), when `localAxesMatch` passes (`dispatchEventToWorkflows`). That stored row is who hears this firing.
+
+The firm axis and the contact axis already resolve without new payload keys. The dispatch passes `firmId: body.firmId`, and `localAxesMatch` falls back to `opts.firmId`. The payload already has `contactId`, which is the key the contact compare reads, and `contactIds` carries the same person when the column is a string. This claim does not add `firm_id` or `scope` to the payload root.
+
+`dispatchEventToWorkflows` copies the payload onto the trigger and still sets `anyPass: true`. `writes` has to be on the object passed in, because the copy is what `writesFromPayload` reads. Claim 7’s refusal of `anyPass` is not recut.
+
+`loadWriteRow` has no branch for `halt_records` and returns null. Claim 10 already requires an `id` primary key to load `SELECT * FROM <table> WHERE id = pointer.id`, with no firm predicate, no contact predicate, no `lifted_at` predicate, and no “latest”. That is the re-read. This claim does not retune the function. A later node reads `consultant_id`, `scope`, `reason`, `halted_at`, and `lifted_at` from that row. On this firing `scope` is `contact` and `lifted_at` is null. `reason` is the optional text, or null. Those columns are not added to the dispatch. The specimen bodies also carry `consultant_name`, `contact_name`, and `firm`. The insert does not store those keys. This claim does not enrich the row and does not retune door 1.
+
+Door 1 for this event is the newest ten `halt_records` rows for the firm with `lifted_at` null, both scopes (`eventTest.ts`). `toWrites` uses `body.id`. Those rows are the specimen reader. This firing has the inserted id in hand. The version 1 bodies are two rows: Moreau, scope `contact`, id `halt-harbor-moreau-contact`, and a firm-book row, id `halt-harbor-book-ircc-outage`, `contact_id` null. The live contact branch inserts one row and dispatches once. The two bodies are not this firing’s cardinality.
+
+**The firm-book branch.** When `scope` is `firm-book`, the handler first sets `lifted_at` on every other active firm-book row for that firm, then inserts the new row with `contact_id` null, then inserts `audit_events` with kind `halt.firm-book`. It does not call `dispatchEventToWorkflows`. The consultant’s Firm book control is that scope: the modal says it stops automatic firm→client sends across the book, and `confirmHalt` omits `contactId` (`HaltOutreachModal.tsx`, `ConsultantAntScene.tsx`). The founder kill-switch is the same scope, one commit per target firm, with no contact (`FounderAgencyControlsModule.tsx`). The copy on that desk says the write suppresses new enrollments and new sends, and leaves in-flight attempts alone.
+
+That is what the runners already do. `consentAndHaltGate` denies a send when an active firm-book row exists for the firm, including a send with no contact id (`dispatchSend.ts`). `enrollAndActuate` calls `isHaltBlockingNew` and returns `blocked: "halt"` before inserting an enrollment. The comment on that check says a firm-book or contact halt blocks new enrollments and does not abort in-flight attempts (`cascade.ts`). `handleHaltIsFirmBook` is the same active-row check. Those readers do not need a listening run. The governance leaf and the kill-switch leaf name the same readers: runners and send gates (`docs/register/how/consultant-governance.md` leaf 1.2, `docs/register/how/operator-founder-controls.md` leaf 1.2).
+
+A dispatch on this branch would start every subscribed workflow with no `contactIds`. The every-firm audience would then load the firm’s contacts, which is the empty-list walk this claim does not specify. The handler already withholds the call. The book specimen and door 1’s active-row query are not that call. This claim does not add it.
+
+**Lift.** `handleHaltLift` sets `lifted_at` on the row with this id and inserts `audit_events` kind `halt.lift`. It does not dispatch. There is no `event_write_set` for a lift. After the lift, the gates stop treating the row as active. A listening run that already holds this firing’s pointer re-reads the same id and sees `lifted_at`. The load does not require `lifted_at` null, so the row remains the handle. This claim does not add a lift event.
+
+**Rows this path writes that the array does not carry.**
+
+The contact-scope `audit_events` insert uses `id("aud")` and does not keep that string. The kind is `halt.contact`. The subject is the contact, or the firm id when `contactId` was omitted. The jsonb is `{ haltId, reason }`. `event_write_set` does not name `audit_events`. That row is not an element of `writes`.
+
+The contact-scope path does not update any other `halt_records` row. The firm-book supersede, and the rows it lifts, belong to the branch that does not dispatch.
+
+The contact-scope gate is a different reader. `consentAndHaltGate`, `isHaltBlockingNew`, and `handleHaltIsContact` treat an active `scope = 'contact'` row for that `contact_id` as halted. The contact arm of those checks does not also constrain `firm_id`. The handle’s predicate is claim 10’s `WHERE id = pointer.id`. Whether one contact id can exist in two firms was not investigated. That gate is not this pointer.
+
+The HTTP body returned by `handleHaltCommit` is the halt record. The dispatch does not receive it. The in-memory stand-in commit does not call the dispatcher. This firing is the server handler.
+
+**Rejected alternatives.**
+
+- Teach `writesFromPayload` to map `haltId` onto `halt_records`. Claim 7 refused a second channel. The function already returns when `writes` is an array and it never reads that key. The caller holds the id the insert stored.
+
+- Leave the id on `haltId` and let the If read `triggerPayload`. Rejected under claim 7. The established pick is `mappedWrites` and `loadWriteField`.
+
+- Have the listener select the newest active `halt_records` for the contact or the firm. Rejected under claim 7 and claim 10. Door 1’s ten rows are the specimen. The gate’s `LIMIT 1` is an existence check with no `ORDER BY`. Two contact commits are two primary keys. Re-read by the first id is the first row, including after a later commit for the same person.
+
+- Use `contact_id` as the pointer id. The primary key is `id`. The gate looks up the person. `WHERE id = contactId` finds nothing. The `halt-` string is the row this firing inserted.
+
+- Add a `localRefFromPayload` case, or put `scope` on the payload as an instance axis. A26 does not offer Halt, and the primitives list does not name it. There is no Select control whose stored id this payload fails to carry. `scope` on this firing is the column `contact`. A book-versus-contact axis would be a new control, and the book branch does not dispatch.
+
+- Dispatch the firm-book branch with the same array, using a null `contact_id`. The product’s firm halt and the kill-switch are the gate: new sends and new enrollments stop, in-flight attempts stay. The handler already omits the dispatch. Starting workflows for a book commit would run the empty-list walk against a suppression, including a fleet kill-switch that writes one row per firm. The specimen’s book body is a test row of the table. It is not this firing.
+
+- Add `audit_events` to the array. The write-set names `halt_records`. The audit id is not kept. The halt id is already inside the audit jsonb.
+
+- Add the firm-book rows lifted by a book commit. That update is the other branch. The contact path does not lift earlier contact halts.
+
+- Add `contact_records` because `contactIds` is passed beside the payload. The write-set does not name that table. The separate argument is the person list. With `writes` present, the contact fallback in `writesFromPayload` does not run.
+
+- Add `halt_records` to `PERSON_WRITE_TABLES`. This firing has one pointer and it carries `contact_id` when the column is a string. The `halt-` id is not a person. Adding the table and omitting `contact_id` would publish that id as a person.
+
+- Load the row as the audit pair, or by latest `(firm_id, contact_id)`, or with `lifted_at IS NULL`. The primary key is `id`. The partial indexes are the gate scans. A lift updates this row. The re-read has to see `lifted_at`. Door 1’s active filter is the specimen.
+
+- Drop `haltId` and `contactId` once `writes` exists. They are already on the payload. `contactId` is also the contact-axis key. Claim 11 kept scalars the matcher does not use as the handle. The two stay. They are not the handle.
+
+- Add `scope`, `reason`, `consultant_id`, or the specimen’s `consultant_name` as new root scalars. The matcher does not read them. The row the pointer loads already holds the columns the insert writes.
+
+- Copy the row onto the pointer, or put `firm_id` on it. `writesFromPayload` keeps `table`, `id`, and `contact_id`. Claim 8 rejected the snapshot. Claim 10 left firm off the id predicate.
+
+- Require `INSERT … RETURNING` as a different product result. `haltId` is the id the insert stored. Claim 11 treated that as the same pointer.
+
+- Add Halt to the A26 list so the operator can subscribe. The named list and the primitives table already exclude it. The pointer is for the dispatch the handler already performs. A new event row would be a new listen, which the trigger-select packet refuses.
+
+No founder question. The If reads a field of the halt row this contact-scope firing inserted. The write-set chose the table. The primary key chose the pointer id. The missing matcher case is the absence of an instance axis, not a selected campaign the payload forgot to carry. A firm halt and a kill-switch stay the gate the desk already describes, and they do not start this listening run. A listener that is already subscribed starts from this insert’s `halt-` id, and a later lift of that same id is visible on the re-read.
+
+**Evidence:** `stores.ts` `id`, `handleHaltCommit`, `handleHaltLift`, `handleHaltIsContact`, `handleHaltIsFirmBook`. `dispatchSend.ts` `consentAndHaltGate`. `cascade.ts` `enrollAndActuate`, `isHaltBlockingNew`. `runWrites.ts` `writesFromPayload`. `workflowWalk.ts` `localRefFromPayload`, `localAxesMatch`, `dispatchEventToWorkflows`, `loadWriteRow`, `PERSON_WRITE_TABLES`, `personIdsFromWrites`. `eventTest.ts` `door1`, `writeId`. `src/app/data/automationTriggerSelect.ts` `TRIGGER_SELECT_EVENTS`, `triggerLocalRefFromPayload`. `src/app/data/automationWorkflows.ts` `WORKFLOW_EVENTS_WITH_LOCAL`, `WORKFLOW_EVENT_CATALOG`. `ConsultantAntScene.tsx` `confirmHalt`. `HaltOutreachModal.tsx`. `FounderAgencyControlsModule.tsx`. `supabase/migrations/003_ct_wire_stores.sql`. `supabase/migrations/017_event_test_contract.sql`. `supabase/seeds/003_canonical_workflows.sql`. `docs/register/PRIMITIVES.md`. `docs/register/how/consultant-governance.md` leaf 1.2. `docs/register/how/operator-founder-controls.md` leaf 1.2. `origin/pr-96:docs/register/TRIGGER-SELECT-PACKET.md`.
+
+**Live.** The contact-scope dispatch is still `{ haltId, contactId }` with no `writes`. `previousWrites` for that event is still empty when a listener starts. `loadWriteRow` still returns null for `halt_records`. The firm-book branch still does not dispatch. No migration was written.
+
+---
+
 ## What has no home, what cannot fulfill, what cannot work together
 
 **No home**
@@ -538,7 +630,7 @@ Those two bullets describe the live payloads. They still do. Claim 11 names the 
 - `enrollment` as the thing a listener reads to learn which objective was met (claim 7). After the flip it answers a different question.
 - `reachability_verdicts` and `sequence_ready` while their primary key is `(contact_id, firm_id)` and `auditRun.ts` upserts on that pair (claim 8). The key that holds two runs is specified: `(audit_run_id, contact_id)`, insert, pointer `id` = that run. The live tables do not have that column yet.
 - `reachability_verdicts.details.auditRunId` as the way `handleAuditRunGet` names a run (claim 8). The next audit overwrites `details`. The specified name is the `audit_run_id` column. The live query still reads the jsonb.
-- `loadWriteRow` as the reader of the handle (claim 7). The earlier sentence was that several tables the product already puts on a handle come back as null. Claim 10 specifies the load for `engagement_records`, `fact_writebacks`, `meeting_booked`, and `wait_occupancy` as `WHERE id = pointer.id`. The live function still returns null for them. The generic action still pushes the contact id. `PERSON_WRITE_TABLES` still omits the three append tables, so the If does not yet split them per contact. The same function also returns null for `eligibility_evaluations`, `eligibility_results`, `signals`, and `motion_decisions`. Claim 12 applies that same id predicate to those four. The live function still has no branch for them. It also returns null for `campaign_failure`. Claim 13 applies that same id predicate. The live function still has no branch for it.
+- `loadWriteRow` as the reader of the handle (claim 7). The earlier sentence was that several tables the product already puts on a handle come back as null. Claim 10 specifies the load for `engagement_records`, `fact_writebacks`, `meeting_booked`, and `wait_occupancy` as `WHERE id = pointer.id`. The live function still returns null for them. The generic action still pushes the contact id. `PERSON_WRITE_TABLES` still omits the three append tables, so the If does not yet split them per contact. The same function also returns null for `eligibility_evaluations`, `eligibility_results`, `signals`, and `motion_decisions`. Claim 12 applies that same id predicate to those four. The live function still has no branch for them. It also returns null for `campaign_failure`. Claim 13 applies that same id predicate. The live function still has no branch for it. It also returns null for `halt_records`. Claim 14 applies that same id predicate to the contact-scope firing. The live function still has no branch for it.
 - `resolveFormStamp` and `onCompletionWrite` as the attribution of a completion (claim 3). They answer “newest pursuit for this person.” The live send does persist the click’s stamp. The click path does not read it back as the enrollment to advance.
 
 **Individually reasonable, cannot work together**
@@ -549,6 +641,7 @@ Those two bullets describe the live payloads. They still do. Claim 11 names the 
 - That same function, when the dispatch fires no workflow, inserting `enrollment`, `active_attempts`, and `engagement_records`, which this write-set does not name (claim 12). Those inserts are not the listening pointer. The enroll was not specified.
 - `event_write_set` naming `campaign_failure`, and `escalateAttemptWindow` dispatching that event with no `writes` (claim 13). The insert already stored the `cfail-` id. Claim 13 specifies the array. The live dispatch still omits it, and `loadWriteRow` still returns null, so the write-set and the listener still do not meet in the running code.
 - `localRefFromPayload("campaign_failure")` reading `campaign_id`, and that dispatch not carrying `campaign_id` (claim 13). The column is on the row the insert wrote. Claim 13 puts that column’s value on the payload. The live payload still omits it, so a trigger that selected a campaign still does not match.
+- `event_write_set` naming `halt_records`, and the contact-scope dispatch in `handleHaltCommit` omitting `writes` (claim 14). The insert already stored the `halt-` id. Claim 14 specifies the array. The live dispatch still omits it, and `loadWriteRow` still returns null, so the write-set and the listener still do not meet in the running code. The firm-book branch does not dispatch. Claim 14 leaves that branch as the gate. It is not a second missing array.
 - `writeEngagement` returning the inserted id, and the generic action pushing `id: contactId` (claim 10). The row exists. The pointer names the contact. The specified load looks up the pointer id.
 - `chainWrites` for every node (the in-memory walker), and resume forwarding only the wait’s writes (claim 6).
 - The cursor as a once-only latch (packet 022 §2.3), and “Open in Now” writing `campaign_id` (claim 4).
@@ -603,3 +696,7 @@ Claim 12 specifies that array: one pointer per inserted row, table order from th
 **The reactivation branch on the seed graph.** `wf-eligibility-reactivation` (`supabase/seeds/003_canonical_workflows.sql`) has a branch labelled “Reactivation-worthy?” with `filterSummary` `reactivation-worthy`, and with no compare and no `pickTable`. `evalIfPick` with no compares returns false. `evalBranch` reads `eligibilityPass` and `triggerPayload.motion`, and the walker does not call it. Claim 12’s pointers are what a configured If reads. Placing them does not make this branch read `motion_decisions.motion`. That pick was not specified.
 
 **An empty eligibility firing and the firm book.** When `opts.contactIds` is empty, claim 12’s `writes` is an empty array. `dispatchEventToWorkflows`, for an every-firm audience with no contact ids, selects every `contact_records` id for the firm and walks those contacts. That list is not the four inserted rows. It was seen while reading the dispatch. It was not specified.
+
+### Revision — claim 14
+
+Claim 14 specifies the contact-scope `halt_records` array: one pointer, `halt_records` and the `halt-` id the insert stored, `contact_id` from that row’s column. The live contact dispatch still omits `writes`. The firm-book branch, including the founder kill-switch, stays the gate and does not dispatch. Lift updates the same row and does not start a second firing. The contact-scope gate’s missing firm predicate was seen on `consentAndHaltGate`, `isHaltBlockingNew`, and `handleHaltIsContact`. It is another reader of `halt_records`. It was not specified. The paragraph above stands for the empty-list walk. A contact-scope halt body that omits `contactId` still reaches that walk. Claim 14 does not specify it.
