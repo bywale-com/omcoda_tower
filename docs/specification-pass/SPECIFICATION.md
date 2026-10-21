@@ -448,6 +448,80 @@ No founder question. The If reads a field of a row this firing named. The write-
 
 ---
 
+## Claim 13 — A live firing of `campaign_failure` places the inserted primary key on `payload.writes`, and the payload carries that row’s `campaign_id`
+
+**Standing:** technical decision made in this session.
+
+The listening run’s handle is still `previousWrites`, built from `payload.writes` by `writesFromPayload` (claim 11). The pointer’s `id` is still the row’s primary key (claim 10). This claim is the array on the one `campaign_failure` dispatch in `escalateAttemptWindow`, and the `campaign_id` scalar that dispatch has to carry so the local matcher already written for this event can see the column the insert stored. `writesFromPayload` gains no reader for `campaignFailureId`. Packet 023’s meaning is unchanged: exhaustion stops spending and keeps listening, and a meeting is a win rather than a failure.
+
+The dispatch runs only in the `!toChannel` branch, after `recordCampaignFailure` returns. When that function queues another attempt, it sets `toChannel` and this branch does not run. One call inserts one row and dispatches once.
+
+`recordCampaignFailure` inserts `campaign_failure` with `id` = `cfail-` plus a uuid and returns that string. The columns stored are `firm_id`, `contact_id`, `campaign_id`, `sequence_id`, and `payload`. On this path `contact_id` is the attempt’s contact. `campaign_id` and `sequence_id` are the second read of that attempt’s enrollment (`SELECT sequence_id, campaign_id FROM enrollment`), or null when the attempt has no enrollment. The jsonb stored is `{ attemptId, criteriaId, setValue }` with `attemptId` equal to `attempt.id`. The same transaction sets that attempt to `status='exhausted'` when it is still `open`, and sets that enrollment’s `pursuit_state` to `exhausted`. It does not change `enrollment.campaign_id`.
+
+`campaign_failure.id` is `TEXT PRIMARY KEY` (`supabase/migrations/010_sequence_campaign_housing.sql`). There is no second column in the key. `campaign_id` references `campaign` and is not the failure’s key. The specimen rows for one campaign (`camp.optin.harbor.v1`) are two different ids, Alvarez and Tanaka.
+
+`event_write_set` version 1 names `campaign_failure` alone, at ord 0 (`supabase/migrations/017_event_test_contract.sql`). The dispatch payload gains
+
+`writes: [{ table: "campaign_failure", id: <the id recordCampaignFailure returned and stored>, contact_id: <the contact stored on the row> }]`.
+
+That is the only element. The id is the same string as `campaignFailureId`. `contact_id` on the pointer is the contact column, which is the one contact in `contactIds`. The row id is not a person. `firm_id` stays off the pointer. `RunWrite` has no such field. `campaign_failure` is not in `PERSON_WRITE_TABLES`. This firing places one pointer, so this claim does not add the table to that set. `personIdsFromWrites` uses `contact_id` when it is set.
+
+The keys already on the payload stay: `campaignFailureId` and `attemptId`. The payload also gains `campaign_id` set to the `campaign_id` column just stored, including null. That is the second enrollment read, the value passed into `recordCampaignFailure`, not the earlier `campaignId` peek. The peek is what decides whether another attempt is queued. The failure branch reads the enrollment again, and that later value is the column.
+
+`localRefFromPayload("campaign_failure")` and the client `triggerLocalRefFromPayload` both return `payload.campaign_id` or `payload.campaignId`, and nothing else. `localAxesMatch` compares that string to `workflow_trigger.local_ref` only when `local_ref` is set. The operator’s Select campaign stores `campaign.id` as `local_ref` (`AntAutomationWorkbench` builds the options from `listSequenceHousing`, `value: camp.id`). Every campaign clears `local_ref` and leaves `grain` local, so the compare does not run. A null column is not a string, `payloadString` returns null, and a trigger that selected a campaign does not match. A trigger that left the axis unset still matches.
+
+The firm axis and the contact axis already resolve without new payload keys. `localAxesMatch` uses `payload.firm_id` or `payload.firmId`, and otherwise `opts.firmId`, which this dispatch already passes as `attempt.firm_id`. This event’s layers are firm and campaign, not contact (`TRIGGER_SELECT_EVENTS`). When `local_contact_ids` is set, the matcher uses `payload.contact_id` or, if that key is absent, `opts.contactIds`. This payload has no root `contact_id`. The separate `contactIds` argument is that one contact. This claim does not add `firm_id` or `contact_id` to the payload root.
+
+`dispatchEventToWorkflows` copies the payload onto the trigger and still sets `anyPass: true`. The match reads the dispatch payload, before that copy. `campaign_id` has to be on the object passed into the dispatch. Claim 7’s refusal of `anyPass` is not recut.
+
+`loadWriteRow` has no branch for `campaign_failure` and returns null. Claim 10 already requires an `id` primary key to load `SELECT * FROM <table> WHERE id = pointer.id`, with no firm predicate, no contact predicate, and no “latest”. That is the re-read. This claim does not retune the function. A later node reads `sequence_id`, and `payload.attemptId`, `payload.criteriaId`, and `payload.setValue`, from that row. `sequence_id` is not added to the dispatch. The specimen jsonb also carries `attemptN`, `channel`, `to`, `subject`, `reason`, and `lastAttemptAt`. The insert does not store those keys. This claim does not enrich the jsonb and does not retune door 1. Door 1 for this event is the newest ten `campaign_failure` rows for the firm. Those rows are the specimen reader. This firing has the inserted id in hand.
+
+**Rows this path writes that the array does not carry.**
+
+Before the branch, `escalateAttemptWindow` updates the open attempt’s channel and state, inserts a `workflow_run` labelled `window:` plus the criteria id, and inserts an `engagement_records` row of kind `window_fired`. The engagement id comes back as `engagementId` and is not put on this dispatch. That run is the tick’s record. The listening run is the one `dispatchEventToWorkflows` inserts. A forward channel may also insert `send_live` or `send_dry_run`. Those rows are written when this dispatch does not run. The write-set does not name `engagement_records` or `workflow_run`.
+
+Inside `recordCampaignFailure`, the attempt update and the enrollment update are the spending stop packet 023 already specified. `event_write_set` does not name `active_attempts` or `enrollment`. The attempt id is the existing scalar and `payload.attemptId` on the failure row. `enrollment_id` is the id the update uses. It is not a column of `campaign_failure` and it is not in the jsonb. This claim does not add it to the row or to `writes`.
+
+**Rejected alternatives.**
+
+- Teach `writesFromPayload` to map `campaignFailureId` onto `campaign_failure`. Claim 7 refused a second channel. The function already returns when `writes` is an array and it never reads that key. The caller holds the returned id, which is the primary key the insert stored.
+
+- Leave the id on `campaignFailureId` and let the If read `triggerPayload`. Rejected under claim 7. The established pick is `mappedWrites` and `loadWriteField`.
+
+- Have the listener select the newest `campaign_failure` for the contact or the firm. Rejected under claim 7 and claim 10. Door 1’s ten rows are the specimen. Two exhaustions are two primary keys. The seed row `cfail-harbor-4-exhausted` is another reader’s row.
+
+- Point the handle at `active_attempts` or at `enrollment`. The write-set names `campaign_failure`. Those updates are the spending stop. The attempt id is already a field of the failure row. Packet 023 already listed the failure row’s columns and did not name the enrollment as this event’s write.
+
+- Use `campaign_id` as the pointer id. The primary key is `id`. One campaign has many failure rows. The specimen pair shares `camp.optin.harbor.v1` and does not share an id. `WHERE id = campaign_id` finds nothing. The operator’s `local_ref` is the campaign. It is not the failure row.
+
+- Change `localRefFromPayload` to load the failure row and read the column, and omit the scalar. The matcher is a payload read, in the walker and in `triggerLocalRefFromPayload`. Packet 022 §2.5 put `objective_met`’s axis on the payload and registered that function. This event’s case already asks for `campaign_id`. The caller holds the column it just stored. A row load would be a second mechanism, and it would still need the id. Select campaign compares `local_ref` to that payload string. The match the operator already configured is that compare.
+
+- Put `campaign_id` only on the `writes` element. `writesFromPayload` keeps `table`, `id`, and `contact_id`. `localRefFromPayload` reads the payload root. The axis has to be a root scalar. It is not a second pointer.
+
+- Add `firm_id` or `contact_id` to the payload root so the other axes match. The firm compare already falls back to `opts.firmId`. The contact compare already falls back to `opts.contactIds`. This event’s trigger layers do not offer a contact axis. Those keys are not the instance axis.
+
+- Drop `campaignFailureId` and `attemptId` once `writes` exists. They are already on the payload. `attemptId` is also the jsonb field. Claim 11 kept scalars the matcher does not read when they were already present. Dropping `campaign_id` would make a selected campaign miss. The two existing scalars stay. They are not the handle.
+
+- Add `sequence_id`, `criteriaId`, `setValue`, or the specimen’s `reason` and `channel` as new root scalars. The matcher does not read them. `criteriaId` and `setValue` are already on the row. `sequence_id` is a column of the row the pointer loads. The specimen’s extra keys are not this insert.
+
+- Add the `window_fired` engagement, the tick `workflow_run`, or a send engagement to this array. The write-set does not name them. They are written for windows that still have a forward channel and do not dispatch this event.
+
+- Treat the specimen’s two bodies as one firing’s cardinality. The live branch inserts one row for one attempt and dispatches once. The specimen ords are two test bodies. This is not the eligibility loop.
+
+- Load the row as the audit pair, or by latest `(firm_id, contact_id)`. The primary key is `id`. The index on `(firm_id, contact_id)` is not the handle.
+
+- Copy the row onto the pointer, or put `firm_id` on it. `writesFromPayload` keeps `table`, `id`, and `contact_id`. Claim 8 rejected the snapshot. Claim 10 left firm off the id predicate.
+
+- Require `INSERT … RETURNING` as a different product result. `recordCampaignFailure` already returns the id it stored. Claim 11 treated that as the same pointer.
+
+No founder question. The If reads a field of the failure row this firing inserted. The write-set chose the table. The primary key chose the pointer id. The matcher and Select campaign already chose `campaign_id`, and the insert already stores that column. A listener subscribed to one campaign starts when that column equals the campaign the operator selected, and the run’s pointer is this insert’s `cfail-` id. A listener that left the campaign axis unset still starts, and it starts from that same id.
+
+**Evidence:** `cascade.ts` `escalateAttemptWindow`. `campaignHousing.ts` `recordCampaignFailure`. `runWrites.ts` `writesFromPayload`. `workflowWalk.ts` `localRefFromPayload`, `localAxesMatch`, `dispatchEventToWorkflows`, `loadWriteRow`, `PERSON_WRITE_TABLES`, `personIdsFromWrites`. `eventTest.ts` `door1`. `src/app/data/automationTriggerSelect.ts` `triggerLocalRefFromPayload`, `TRIGGER_SELECT_EVENTS`. `AntAutomationWorkbench.tsx` the `campaign_failure` options. `TriggerSelectModal.tsx` Every campaign clears `local_ref`. `supabase/migrations/010_sequence_campaign_housing.sql`. `supabase/migrations/017_event_test_contract.sql`. `supabase/seeds/007_pursuit_exhausted.sql`. `docs/register/SYSTEMS-CHANGE-PACKET-022.md` §1. `docs/register/SYSTEMS-CHANGE-PACKET-023.md` §3.1, §3.2, §3.5.
+
+**Live.** `escalateAttemptWindow` still dispatches `{ campaignFailureId, attemptId }` with no `writes` and no `campaign_id`. `previousWrites` for that event is still empty. A trigger with `local_ref` set still does not match. `loadWriteRow` still returns null for `campaign_failure`. No migration was written.
+
+---
+
 ## What has no home, what cannot fulfill, what cannot work together
 
 **No home**
@@ -464,7 +538,7 @@ Those two bullets describe the live payloads. They still do. Claim 11 names the 
 - `enrollment` as the thing a listener reads to learn which objective was met (claim 7). After the flip it answers a different question.
 - `reachability_verdicts` and `sequence_ready` while their primary key is `(contact_id, firm_id)` and `auditRun.ts` upserts on that pair (claim 8). The key that holds two runs is specified: `(audit_run_id, contact_id)`, insert, pointer `id` = that run. The live tables do not have that column yet.
 - `reachability_verdicts.details.auditRunId` as the way `handleAuditRunGet` names a run (claim 8). The next audit overwrites `details`. The specified name is the `audit_run_id` column. The live query still reads the jsonb.
-- `loadWriteRow` as the reader of the handle (claim 7). The earlier sentence was that several tables the product already puts on a handle come back as null. Claim 10 specifies the load for `engagement_records`, `fact_writebacks`, `meeting_booked`, and `wait_occupancy` as `WHERE id = pointer.id`. The live function still returns null for them. The generic action still pushes the contact id. `PERSON_WRITE_TABLES` still omits the three append tables, so the If does not yet split them per contact. The same function also returns null for `eligibility_evaluations`, `eligibility_results`, `signals`, and `motion_decisions`. Claim 12 applies that same id predicate to those four. The live function still has no branch for them.
+- `loadWriteRow` as the reader of the handle (claim 7). The earlier sentence was that several tables the product already puts on a handle come back as null. Claim 10 specifies the load for `engagement_records`, `fact_writebacks`, `meeting_booked`, and `wait_occupancy` as `WHERE id = pointer.id`. The live function still returns null for them. The generic action still pushes the contact id. `PERSON_WRITE_TABLES` still omits the three append tables, so the If does not yet split them per contact. The same function also returns null for `eligibility_evaluations`, `eligibility_results`, `signals`, and `motion_decisions`. Claim 12 applies that same id predicate to those four. The live function still has no branch for them. It also returns null for `campaign_failure`. Claim 13 applies that same id predicate. The live function still has no branch for it.
 - `resolveFormStamp` and `onCompletionWrite` as the attribution of a completion (claim 3). They answer “newest pursuit for this person.” The live send does persist the click’s stamp. The click path does not read it back as the enrollment to advance.
 
 **Individually reasonable, cannot work together**
@@ -473,6 +547,8 @@ Those two bullets describe the live payloads. They still do. Claim 11 names the 
 - `event_write_set` naming `engagement_records` for `objective_met`, and `loadWriteRow` not loading that table (claim 7). Claim 10 specifies the load. Claim 11 specifies the handoff: `payload.writes` carries the engagement id and the enrollment id. The live function still returns null, and the live dispatch still omits `writes`. The write-set and the listener still do not meet in the running code.
 - `event_write_set` naming `eligibility_evaluations`, `eligibility_results`, `signals`, and `motion_decisions` for `eligibility.changed`, and `runContactEligibilityCascade` dispatching that event with no `writes` (claim 12). The cascade does insert those four rows before the dispatch. Claim 12 specifies the array. The live dispatch still omits it, and `loadWriteRow` still returns null for the four, so the write-set and the listener still do not meet in the running code.
 - That same function, when the dispatch fires no workflow, inserting `enrollment`, `active_attempts`, and `engagement_records`, which this write-set does not name (claim 12). Those inserts are not the listening pointer. The enroll was not specified.
+- `event_write_set` naming `campaign_failure`, and `escalateAttemptWindow` dispatching that event with no `writes` (claim 13). The insert already stored the `cfail-` id. Claim 13 specifies the array. The live dispatch still omits it, and `loadWriteRow` still returns null, so the write-set and the listener still do not meet in the running code.
+- `localRefFromPayload("campaign_failure")` reading `campaign_id`, and that dispatch not carrying `campaign_id` (claim 13). The column is on the row the insert wrote. Claim 13 puts that column’s value on the payload. The live payload still omits it, so a trigger that selected a campaign still does not match.
 - `writeEngagement` returning the inserted id, and the generic action pushing `id: contactId` (claim 10). The row exists. The pointer names the contact. The specified load looks up the pointer id.
 - `chainWrites` for every node (the in-memory walker), and resume forwarding only the wait’s writes (claim 6).
 - The cursor as a once-only latch (packet 022 §2.3), and “Open in Now” writing `campaign_id` (claim 4).
@@ -487,6 +563,12 @@ Those two bullets describe the live payloads. They still do. Claim 11 names the 
 **Queryable lineage.** Automations face law 29: who created the objective, the path, the completion, the time. The `objective_met` engagement append is one fact that query would read. Building the query is a separate capability.
 
 **Failure.** Packet 023: exhaustion stops spending and keeps listening. Claim 9 records only the meeting nullify, so it is not mistaken for a hole in attribution. The failure event’s own handle has the same shape as claim 7 and was not walked.
+
+### Revision — claim 13
+
+The sentence above is the meaning, and it stands. Claim 13 specifies the handle: `payload.writes` carries the inserted `cfail-` id, and `campaign_id` on that payload is the column the matcher already reads. The live dispatch still omits both. The spending stop and the meeting nullify were not reopened.
+
+**Which enrollment a failure row names.** `recordCampaignFailure` updates `enrollment` by the `enrollmentId` the caller passed. That id is not a column of `campaign_failure` and it is not in the jsonb. Packet 023 lists the columns the row already carries and does not add it. The attempt id is on the row. Two enrollments can share a contact and a campaign (claims 2 and 3). This pointer does not name the enrollment. Loading the attempt to find it was not specified.
 
 **Form authoring.** Whether the form is its own graph node or embedded in the agent action is still open on `AUTOMATIONS-FACE.md`. Attribution assumes the derived `form_ref` once a form exists. It does not decide where the form is authored.
 
@@ -503,6 +585,10 @@ The paragraph above is the gap as session 004 left it. Claim 11 specifies the th
 ### Revision — claim 12
 
 Claim 12 does not change those three payloads. While the next site was being named, the `campaign_failure` dispatch in `cascade.ts` was visible: `payload` is `{ campaignFailureId: failId, attemptId: attempt.id }`, `contactIds` is that one contact, and there is no `writes`. That placement was not specified.
+
+### Revision — claim 13
+
+Claim 13 specifies that placement. The paragraph above stands as the description of the live payload.
 
 **`eligibility.changed` from a fact write.** Both fact handlers call `runContactEligibilityCascade` before they dispatch `fact_writebacks`. That cascade inserts four rows (`eval-`, `eres-`, `sig-`, `mot-`) and dispatches `eligibility.changed` with the fact scalars, `anyPass: true`, and `motion: "reactivation"`, and with no `writes`. `event_write_set` version 1 names `eligibility_evaluations`, `eligibility_results`, `signals`, and `motion_decisions`. Claim 11 leaves those rows off the fact pointer because they are the other event. How that firing places its own ids on `payload.writes` is the same shape of hole, and it was not specified. When the dispatch fires no workflow, the function enrolls `tpl.reactivation.v1`. That enroll was seen and not specified.
 
