@@ -614,6 +614,106 @@ No founder question. The If reads a field of the halt row this contact-scope fir
 
 ---
 
+## Claim 15 — A live firing of `consent_records.opt_out` places the current consent pair on `payload.writes`
+
+**Standing:** technical decision made in this session.
+
+The listening run’s handle is still `previousWrites`, built from `payload.writes` by `writesFromPayload` (claim 11). This table has no column named `id`. Claim 10’s `WHERE id = pointer.id` does not apply. Claim 8’s audit pair does not transfer. This claim is the array on the dispatch in `handleConsentSilence`. `writesFromPayload` gains no reader for `contactId` or `source`. `handleConsentSet` does not dispatch. That route stays the basis write the send gate reads. It is not a second copy of this array.
+
+`handleConsentSilence` reads `contactId`, `firmId`, and `source`. It upserts `consent_records` on `(contact_id, firm_id)`:
+
+`INSERT … (contact_id, firm_id, basis, silenced, source, updated_at) VALUES (contactId, firmId, 'none', true, source, now()) ON CONFLICT (contact_id, firm_id) DO UPDATE SET silenced = true, source = EXCLUDED.source, updated_at = now()`.
+
+The conflict clause does not assign `basis` and does not assign `status`. A row this statement inserts stores `basis` `none` and `silenced` true. `status` takes the column default `unsequenced` (`supabase/migrations/004_machine_tables.sql`). `workspace_opted_out` takes the column default false (`supabase/migrations/020_workspace_opt_out.sql`). A conflict leaves the existing `basis`, `status`, and `workspace_opted_out`, and sets `silenced` true and `source` to this call’s source. Then it dispatches once:
+
+`eventName: "consent_records.opt_out"`, `firmId: body.firmId`, `payload: { contactId: body.contactId, source: body.source }`, `contactIds: [body.contactId]`. There is no `writes`.
+
+`consent_records` has `PRIMARY KEY (contact_id, firm_id)` (`supabase/migrations/003_ct_wire_stores.sql`). There is no `id` column. One contact in one firm is one row. Every writer of this table upserts that pair. A later call replaces columns on that row. It does not insert a second decision.
+
+That is the grain the readers already use. `consentAndHaltGate` denies a send when `silenced` is true or `status` is `silenced`, and, unless `purpose` is `opt-in`, when the row is missing or `basis` is `none` (`dispatchSend.ts`). `projectSeat` reads `basis`, `silenced`, and `source` for that contact and firm (`contactSeat.ts`). `handleConsentGet` reads the same three by `contact_id`. `isWorkspaceOut` and `handleContactWorkspacesList` read `workspace_opted_out` on that pair. `docs/register/how/contact-silence.md` says the Silence commit writes silenced state that runners, send gates, and Book readiness read. `docs/register/how/contact-consent.md` says Agree writes consented state and Ignore writes the no-deeper state, both read by runners. `docs/register/SYSTEMS-STORY.md` §6 treats a contact as sequenced, silenced, or unsequenced. Those are states of the contact at the firm. They are not a log of decisions. The specimen body has no `id` (`supabase/migrations/017_event_test_contract.sql`, `etd-consent-haddad`).
+
+Claim 8 split the audit tables because a later audit must not erase what an earlier run wrote, and the desk still asks who is ready now. Those are two questions the product already asks, and the old upsert answered only the second. Consent’s readers ask for the current row. A later write to the same pair is an update of that state. A listening run that already holds this firing’s pointer re-reads the same pair and sees the later columns, the way claim 14’s re-read sees `lifted_at`. A history of consent decisions would be a second stored fact. This claim does not add a table and does not add an `id` column. No migration.
+
+`event_write_set` version 1 names `consent_records` alone, at ord 0. The dispatch payload gains
+
+`writes: [{ table: "consent_records", id: <body.contactId>, contact_id: <body.contactId> }]`.
+
+That is the only element. `writesFromPayload` drops an element with no string `id`. This table has no other column to put there. The person half of the primary key is `contact_id`. The firm half is the walk’s firm. `handleConsentSilence` passes `firmId: body.firmId`, which is the firm the upsert wrote. `dispatchEventToWorkflows` inserts `workflow_run.firm_id` as that `opts.firmId` and walks with the same firm. `loadWriteRow` already receives that firm as its `firmId` argument. `RunWrite` has no `firm_id` field. Claim 10 left firm off the pointer for tables whose primary key is `id`. Here firm is half the key, and it is already the walk. The pointer’s `id` and `contact_id` are both the contact. Both are required. They are the same string.
+
+`consent_records` is not in `PERSON_WRITE_TABLES`. This firing has one pointer and it carries `contact_id`. `personIdsFromWrites` uses that field. This claim does not add the table to the set.
+
+The keys already on the payload stay: `contactId` and `source`. `contactIds` stays that one contact.
+
+**Who hears it.** The primitives table names “Someone opted out / unsubscribed” with Global “all of those” and Local “—” (`docs/register/PRIMITIVES.md`). There is no instance axis. The A26 row is firm and contact (`TRIGGER_SELECT_EVENTS` in `src/app/data/automationTriggerSelect.ts`). The contact control stores `localContactIds`. It does not store `localRef` (`TriggerSelectModal.tsx`). `localAxesMatch` compares `local_contact_ids` to `payload.contactId`, which this dispatch already sends, and falls back to `opts.firmId` for the firm. `localRefFromPayload("consent_records.opt_out")` and `triggerLocalRefFromPayload` return `contact_id` or `contactId`. The compare against `local_ref` runs only when `local_ref` is set. The product face for this event does not set it. A stored `local_ref` matches when it equals this contact id. This claim does not add a payload key and does not remove the case. `WORKFLOW_EVENTS_WITH_LOCAL` does not include `consent_records.opt_out`. `consent_records.sequenced` is in that set and in the Hub catalog. It is not on the A26 list, it is not in `event_write_set`, and no handler dispatches it. This claim does not add that firing.
+
+`dispatchEventToWorkflows` copies the payload onto the trigger and still sets `anyPass: true`. `writes` has to be on the object passed in. Claim 7’s refusal of `anyPass` is not recut.
+
+`loadWriteRow` has no branch for `consent_records` and returns null. The re-read for this pointer is `SELECT * FROM consent_records WHERE contact_id = pointer.contact_id AND firm_id = <the walk’s firm>`. No `ORDER BY`. No “latest”. No `silenced` filter. A miss returns null. The loader does not drop `firm_id`, and it does not look for a column named `id`. On this firing `pointer.contact_id` and `pointer.id` are the same contact. The predicate uses `contact_id` and the walk firm, which together are the primary key. This claim does not retune the function. It does not revise claim 10’s predicate. It does not revise claim 8’s `(audit_run_id, contact_id)` load.
+
+A later node reads `basis`, `silenced`, `source`, `status`, `workspace_opted_out`, and `updated_at` from that row. On an insert from this firing, `basis` is `none`, `silenced` is true, `source` is the body’s source, `status` is `unsequenced`, and `workspace_opted_out` is false. On a conflict, `silenced` is true, `source` is this call’s source, and `basis`, `status`, and `workspace_opted_out` are whatever the row already held. Those columns are not added to the dispatch. The specimen also carries `contact_name` and `firm`. The upsert does not store those keys. This claim does not enrich the row and does not retune door 1.
+
+Door 1 for this event is the newest ten `consent_records` rows for the firm with `silenced` true, ordered by `updated_at` (`eventTest.ts`). `writeId` uses `body.contact_id` when `body.id` is absent. The version 1 body is one row, Haddad, source `unsubscribe.email`, and it has no `id`. Those rows are the specimen reader. This firing has this contact and this firm in hand. The ten rows are not this firing’s cardinality.
+
+The HTTP body is `{ ok: true }`. The dispatch does not receive a row. The statement does not use `RETURNING`. The pair is the body’s `contactId` and `firmId`. The in-memory stand-in `silence` records the flag and does not call the dispatcher (`src/app/wire/standins/consentSilence.ts`). This firing is the server handler.
+
+**`handleConsentSet` does not start this listener.** `POST /consent` upserts the same primary key. A new row stores `basis` as express, implied, or none, and `silenced` false. On conflict it updates `basis`, keeps `source` when the body omits it (`COALESCE`), updates `updated_at`, and leaves `silenced` as it was. It returns `{ ok: true }`. It does not call `dispatchEventToWorkflows`. `handleContactSeatConsent` upserts the same pair, sets `basis` from Agree or Ignore, sets `silenced` false, and does not dispatch. There is no `event_write_set` for a basis write. The event the primitives table and the A26 list name is opted out / unsubscribed. The send gate reads `basis` before it will send, unless the purpose is `opt-in`. That read does not need a listening run. Dispatching `consent_records.opt_out` from Agree would start this listener on a consent. The handler already withholds the call. This claim does not add it.
+
+**Rows and writers that this array does not carry.**
+
+`handleContactSeatSilence` sets `workspace_opted_out` true on the same pair and does not set `silenced` and does not dispatch. Migration 020 calls that flag a field, not email silence. A listening run that already holds this firing’s pointer and later re-reads the pair sees the flag. That seat call is not this firing. This claim does not place a pointer on it.
+
+The hard-bounce branch in `webhooks.ts` upserts the same pair with `silenced` true and `source` `hard-bounce`, and it does not dispatch. The event class is `bounce_hard`. The primitives row is opt-out / unsubscribe. A bounce updates the current row the gate reads. It does not start this listener. If a bounce lands on the pair this firing already pointed at, the re-read sees `source` `hard-bounce` and `silenced` true. This claim does not add a bounce dispatch.
+
+`consentAndHaltGate` selects `consent_records` with `WHERE contact_id = $1 LIMIT 1`. It does not constrain `firm_id`. The handle’s predicate is the primary key, contact and the walk’s firm. Whether one contact id can exist in two firms was not investigated. That gate is not this pointer.
+
+The silence statement’s refusal to assign `status` is not this pointer. The story’s three-way word sits on `status`. The handler this event is wired to writes `silenced`. The gate denies when either is set. A branch that reads `status` on a row this firing inserted sees `unsequenced` while `silenced` is true. This claim names the row. It does not retune the `UPDATE`.
+
+**Rejected alternatives.**
+
+- Point at a new `id` the way `campaign_failure` points at `cfail-`. This table has no `id` column. The primary key is the pair. A surrogate would be a new column, and a decision log would be a new grain. The writers upsert. The readers read the current row. Claim 8 refused a surrogate on the audit tables because the pointer already had two fields and a column named `id` would become the specimen identity. This specimen has no `id`. `writeId` already uses `contact_id`. No migration.
+
+- Change the primary key to a history of decisions, and put that decision’s id in the pointer, leaving “current consent” as a latest-row read. That is the audit split. Consent does not have a reader that asks what an earlier opt-out wrote after a later write to the same pair. The silence leaf, the consent leaf, the send gate, the seat projection, and the story’s sequenced / silenced / unsequenced words ask for the current state. A later update of this pair is the state. The re-read has to see it. A second table would be a shadow copy. Claim 8 refused that. The CASL regime silence in `SYSTEMS-STORY.md` §6 (geography, firm→client and the first agent→consultant text) is not a choice this pointer needs. The pair is named without it.
+
+- Put `firm_id` in `pointer.id` and keep the contact in `contact_id`. The walk’s firm is already `body.firmId`. Claim 10 and claim 11 left firm off the pointer. Using the `id` slot for the firm would make `id` a firm, while `writeId` for this specimen is the contact and the contact axis compares the contact. The half of the key that is not already the walk is the contact.
+
+- Encode `contactId` and `firmId` into one string. Claim 8 refused an encoding. `writesFromPayload` keeps `table`, `id`, and `contact_id`. The firm is the walk. The loader would have to parse a private format.
+
+- Teach `writesFromPayload` to map `contactId` onto `consent_records` when `writes` is absent. Claim 7 refused a second channel. The function already returns when `writes` is an array, and the contact-list fallback builds `contact_records`, not this table. The caller holds the contact the upsert used.
+
+- Leave the row off the handle and let the If read `contactId` and `source` on `triggerPayload`. Rejected under claim 7. The established pick is `mappedWrites` and `loadWriteField`.
+
+- Have the listener select the newest silenced row for the firm, or any silenced row for the contact. Door 1’s ten rows are the specimen. The gate’s `LIMIT 1` is the send check. Two contacts are two pairs. This firing has this pair in hand. “Latest” is the guess claim 7 and claim 8 already refused, and this key has only one row to find.
+
+- Load by `contact_id` alone, copying the send gate. The primary key includes `firm_id`. The walk has that firm. Dropping it would read some other firm’s row when the contact id is not unique to the firm. That uniqueness was not investigated. The pointer does not inherit the gate’s predicate.
+
+- Load with `silenced = true`, or require `status = 'silenced'`. A later writer can clear `silenced` (`handleContactSeatConsent` sets it false) or leave `status` unmoved. The re-read has to see the current columns. Door 1’s silenced filter is the specimen.
+
+- Dispatch `handleConsentSet`, or the seat Agree / Ignore, as `consent_records.opt_out`. The named event is the opt-out. The basis write is what the gate reads before a send. Agree sets `silenced` false. Starting this listener there would treat a consent as an unsubscribe. The handlers already omit the call.
+
+- Add the hard-bounce upsert, or the workspace opt-out, as a second element or a second firing of this event. The write-set is this opt-out dispatch. The bounce does not call it. The workspace flag is a different column, and migration 020 separates it from email silence. The shared pair is why a later re-read can see those columns. It is not why those writers become this dispatch.
+
+- Add `contact_records` because `contactIds` is passed beside the payload. The write-set does not name that table. The separate argument is the person list. With `writes` present, the contact fallback does not run.
+
+- Add `consent_records` to `PERSON_WRITE_TABLES`. This firing has one pointer and it carries `contact_id`. The set was not required to name the person.
+
+- Drop `contactId` and `source` once `writes` exists. `contactId` is the contact-axis key, and it is what `localRefFromPayload` returns when `local_ref` is set. `source` is already on the payload. Claim 11 kept scalars that are not the handle. The two stay.
+
+- Add `basis`, `status`, `firmId`, or the specimen’s `contact_name` as new root scalars. The firm compare already uses `opts.firmId`. The other fields are columns on the row, or display keys the upsert does not store.
+
+- Copy the row onto the pointer. `writesFromPayload` keeps `table`, `id`, and `contact_id`. `loadWriteField` re-reads. Claim 8 rejected the snapshot. A second opt-out replaces `source` on the row. This run’s payload still has the source this call passed. The If reads the row.
+
+- Require `INSERT … RETURNING` as a different product result. The statement returns no id. The identity is the pair the body already passed, and the conflict updates that same pair.
+
+- Retune `status` inside this claim so the inserted row’s `status` is `silenced`. The pointer names the row either way. The handler already writes the boolean the silence leaf and the gate’s first arm read. Changing `status` is a different write.
+
+No founder question. The If reads a field of the consent row this opt-out upserted for this contact at this firm. The write-set chose the table. The primary key chose the pair. The walk already holds the firm, so the pointer’s `id` is the contact, and `contact_id` is the same contact. A basis write, a workspace opt-out, and a hard bounce stay off this dispatch. A listener that is already subscribed starts from this pair, and a later update of that pair is visible on the re-read.
+
+**Evidence:** `stores.ts` `handleConsentSilence`, `handleConsentSet`, `handleConsentGet`. `routes.ts` `POST /consent`, `POST /consent/silence`. `dispatchSend.ts` `consentAndHaltGate`. `contactSeat.ts` `projectSeat`, `handleContactSeatConsent`, `handleContactSeatSilence`, `isWorkspaceOut`, `handleContactWorkspacesList`. `webhooks.ts` the `bounce_hard` upsert. `runWrites.ts` `writesFromPayload`, `RunWrite`. `workflowWalk.ts` `localRefFromPayload`, `localAxesMatch`, `dispatchEventToWorkflows`, `loadWriteRow`, `PERSON_WRITE_TABLES`, `personIdsFromWrites`. `eventTest.ts` `door1`, `writeId`. `src/app/data/automationTriggerSelect.ts` `TRIGGER_SELECT_EVENTS`, `triggerLocalRefFromPayload`. `src/app/data/automationWorkflows.ts` `WORKFLOW_EVENTS_WITH_LOCAL`, `WORKFLOW_EVENT_CATALOG`. `TriggerSelectModal.tsx`. `src/app/wire/standins/consentSilence.ts`. `supabase/migrations/003_ct_wire_stores.sql`. `supabase/migrations/004_machine_tables.sql`. `supabase/migrations/017_event_test_contract.sql`. `supabase/migrations/020_workspace_opt_out.sql`. `docs/register/PRIMITIVES.md`. `docs/register/how/contact-silence.md`. `docs/register/how/contact-consent.md`. `docs/register/SYSTEMS-STORY.md` §6. `origin/pr-96:docs/register/TRIGGER-SELECT-PACKET.md`.
+
+**Live.** The silence dispatch is still `{ contactId, source }` with no `writes`. `previousWrites` for that event is still empty when a listener starts. `loadWriteRow` still returns null for `consent_records`. `handleConsentSet` still does not dispatch. The primary key is still `(contact_id, firm_id)`. No migration was written.
+
+---
+
 ## What has no home, what cannot fulfill, what cannot work together
 
 **No home**
@@ -630,7 +730,7 @@ Those two bullets describe the live payloads. They still do. Claim 11 names the 
 - `enrollment` as the thing a listener reads to learn which objective was met (claim 7). After the flip it answers a different question.
 - `reachability_verdicts` and `sequence_ready` while their primary key is `(contact_id, firm_id)` and `auditRun.ts` upserts on that pair (claim 8). The key that holds two runs is specified: `(audit_run_id, contact_id)`, insert, pointer `id` = that run. The live tables do not have that column yet.
 - `reachability_verdicts.details.auditRunId` as the way `handleAuditRunGet` names a run (claim 8). The next audit overwrites `details`. The specified name is the `audit_run_id` column. The live query still reads the jsonb.
-- `loadWriteRow` as the reader of the handle (claim 7). The earlier sentence was that several tables the product already puts on a handle come back as null. Claim 10 specifies the load for `engagement_records`, `fact_writebacks`, `meeting_booked`, and `wait_occupancy` as `WHERE id = pointer.id`. The live function still returns null for them. The generic action still pushes the contact id. `PERSON_WRITE_TABLES` still omits the three append tables, so the If does not yet split them per contact. The same function also returns null for `eligibility_evaluations`, `eligibility_results`, `signals`, and `motion_decisions`. Claim 12 applies that same id predicate to those four. The live function still has no branch for them. It also returns null for `campaign_failure`. Claim 13 applies that same id predicate. The live function still has no branch for it. It also returns null for `halt_records`. Claim 14 applies that same id predicate to the contact-scope firing. The live function still has no branch for it.
+- `loadWriteRow` as the reader of the handle (claim 7). The earlier sentence was that several tables the product already puts on a handle come back as null. Claim 10 specifies the load for `engagement_records`, `fact_writebacks`, `meeting_booked`, and `wait_occupancy` as `WHERE id = pointer.id`. The live function still returns null for them. The generic action still pushes the contact id. `PERSON_WRITE_TABLES` still omits the three append tables, so the If does not yet split them per contact. The same function also returns null for `eligibility_evaluations`, `eligibility_results`, `signals`, and `motion_decisions`. Claim 12 applies that same id predicate to those four. The live function still has no branch for them. It also returns null for `campaign_failure`. Claim 13 applies that same id predicate. The live function still has no branch for it. It also returns null for `halt_records`. Claim 14 applies that same id predicate to the contact-scope firing. The live function still has no branch for it. It also returns null for `consent_records`. Claim 15 does not apply that id predicate. The table has no `id` column. The specified re-read is `contact_id` plus the walk’s firm, the primary key. The live function still has no branch for it.
 - `resolveFormStamp` and `onCompletionWrite` as the attribution of a completion (claim 3). They answer “newest pursuit for this person.” The live send does persist the click’s stamp. The click path does not read it back as the enrollment to advance.
 
 **Individually reasonable, cannot work together**
@@ -642,6 +742,7 @@ Those two bullets describe the live payloads. They still do. Claim 11 names the 
 - `event_write_set` naming `campaign_failure`, and `escalateAttemptWindow` dispatching that event with no `writes` (claim 13). The insert already stored the `cfail-` id. Claim 13 specifies the array. The live dispatch still omits it, and `loadWriteRow` still returns null, so the write-set and the listener still do not meet in the running code.
 - `localRefFromPayload("campaign_failure")` reading `campaign_id`, and that dispatch not carrying `campaign_id` (claim 13). The column is on the row the insert wrote. Claim 13 puts that column’s value on the payload. The live payload still omits it, so a trigger that selected a campaign still does not match.
 - `event_write_set` naming `halt_records`, and the contact-scope dispatch in `handleHaltCommit` omitting `writes` (claim 14). The insert already stored the `halt-` id. Claim 14 specifies the array. The live dispatch still omits it, and `loadWriteRow` still returns null, so the write-set and the listener still do not meet in the running code. The firm-book branch does not dispatch. Claim 14 leaves that branch as the gate. It is not a second missing array.
+- `event_write_set` naming `consent_records` for `consent_records.opt_out`, and `handleConsentSilence` dispatching that event with no `writes` (claim 15). The upsert already stored the pair. Claim 15 specifies the array: `id` and `contact_id` are both that contact, and the walk’s firm is the other half of the key. The live dispatch still omits `writes`, and `loadWriteRow` still returns null, so the write-set and the listener still do not meet in the running code. `handleConsentSet` does not dispatch. Claim 15 leaves that route as the basis write. It is not a second missing array.
 - `writeEngagement` returning the inserted id, and the generic action pushing `id: contactId` (claim 10). The row exists. The pointer names the contact. The specified load looks up the pointer id.
 - `chainWrites` for every node (the in-memory walker), and resume forwarding only the wait’s writes (claim 6).
 - The cursor as a once-only latch (packet 022 §2.3), and “Open in Now” writing `campaign_id` (claim 4).
@@ -700,3 +801,7 @@ Claim 12 specifies that array: one pointer per inserted row, table order from th
 ### Revision — claim 14
 
 Claim 14 specifies the contact-scope `halt_records` array: one pointer, `halt_records` and the `halt-` id the insert stored, `contact_id` from that row’s column. The live contact dispatch still omits `writes`. The firm-book branch, including the founder kill-switch, stays the gate and does not dispatch. Lift updates the same row and does not start a second firing. The contact-scope gate’s missing firm predicate was seen on `consentAndHaltGate`, `isHaltBlockingNew`, and `handleHaltIsContact`. It is another reader of `halt_records`. It was not specified. The paragraph above stands for the empty-list walk. A contact-scope halt body that omits `contactId` still reaches that walk. Claim 14 does not specify it.
+
+### Revision — claim 15
+
+Claim 15 specifies the `consent_records.opt_out` array: one pointer, `consent_records`, `id` and `contact_id` both the contact the upsert used, and the walk’s firm as the other half of `(contact_id, firm_id)`. The live silence dispatch still omits `writes`. `handleConsentSet` and the seat Agree / Ignore stay off this event. The hard-bounce upsert and the workspace opt-out write the same pair and do not dispatch. They were not specified as firings. The send gate’s consent read still has no `firm_id` predicate. The silence upsert still does not assign `status`. Those two are other readers and another write of the row the pointer names. They were not specified. `consent_records.sequenced` still has no dispatch.
