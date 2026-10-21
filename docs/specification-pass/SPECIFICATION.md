@@ -321,6 +321,10 @@ The keys already on the dispatch stay, including `campaign_objective_id`, `enrol
 
 Both fact handlers call `runContactEligibilityCascade` before the fact dispatch. That function inserts `eligibility_evaluations` (`eval-`), `eligibility_results` (`eres-`), `signals` (`sig-`), and `motion_decisions` (`mot-`), then dispatches `eligibility.changed`. The payload is the fact event payload spread, plus `anyPass: true` and `motion: "reactivation"`. It has no `writes`. `event_write_set` for `eligibility.changed` names those four tables, in that ord. They belong to that event. They are not elements of the `fact_writebacks` array. When that dispatch fires no workflow, the same function enrolls `tpl.reactivation.v1`. That fallback was seen and is not specified here.
 
+### Revision — claim 12
+
+The paragraph above describes the live `eligibility.changed` dispatch. Claim 12 specifies the array that firing places. It leaves those four rows off the `fact_writebacks` array. It does not specify the reactivation enroll.
+
 `handleMeetingBook` inserts an `engagement_records` row of kind `meeting_booked` after the meeting dispatch. The id is generated inside the SQL. `handleContactSeatMeeting` does not insert that row. `event_write_set` for `meeting_booked` names `meeting_booked` only. Claim 10 already left the side row off the handle. It stays off. This claim does not move the insert.
 
 `handleFactWriteback`’s HTTP body includes `cascade: [{ table: "fact_writebacks", id: writeId }, …]`. That object is the response. The dispatch does not receive it.
@@ -359,6 +363,91 @@ No founder question. The If reads a field of a row this firing named. The write-
 
 ---
 
+## Claim 12 — A live firing of `eligibility.changed` places each inserted primary key on `payload.writes`
+
+**Standing:** technical decision made in this session.
+
+The listening run’s handle is still `previousWrites`, built from `payload.writes` by `writesFromPayload` (claim 11). The pointer’s `id` is still the row’s primary key (claim 10). This claim is the array on the one `eligibility.changed` dispatch inside `runContactEligibilityCascade`. `writesFromPayload` gains no reader for `evaluationId`, `resultId`, `signalId`, or `motionId`.
+
+The function loops `opts.contactIds`. For each contact it inserts one row of each table the write-set names, in that order. After the loop it dispatches once:
+
+| Table | Primary key stored | Pointer `id` |
+|---|---|---|
+| `eligibility_evaluations` | `eval-` plus a uuid | that `id` |
+| `eligibility_results` | `eres-` plus a uuid | that `id` |
+| `signals` | `sig-` plus a uuid | that `id` |
+| `motion_decisions` | `mot-` plus a uuid | that `id` |
+
+Each of those tables is `id TEXT PRIMARY KEY` (`supabase/migrations/004_machine_tables.sql`). There is no second column in the key. `contact_id` on the pointer is the contact of that loop iteration, which is the `contact_id` the insert stored. `firm_id` stays off the pointer. `RunWrite` has no such field.
+
+`event_write_set` version 1 names those four tables at ord 0 through 3 (`supabase/migrations/017_event_test_contract.sql`). The dispatch payload gains `writes` in that table order. Inside one table the pointers follow `opts.contactIds`. One contact therefore yields
+
+`writes: [{ table: "eligibility_evaluations", id: <eval- id>, contact_id }, { table: "eligibility_results", id: <eres- id>, contact_id }, { table: "signals", id: <sig- id>, contact_id }, { table: "motion_decisions", id: <mot- id>, contact_id }]`.
+
+Two contacts yield the two evaluation pointers, then the two result pointers, then the two signal pointers, then the two motion pointers. The ids are the variables the inserts already bind (`evalId`, `resultId`, `signalId`, `motionId`). The dispatch sits after the loop, so the array is every row that loop inserted.
+
+The keys already on the payload stay. The cascade sets them to `{ ...opts.eventPayload, anyPass: true, motion: "reactivation" }`. `handleFactWriteback` and `handleContactSeatFacts` pass one contact and the fact scalars (`writebackId`, `fieldKey`, `contactId`, `form_ref`, `campaign_objective_id`). The seat handler calls the cascade inside the answer loop, so each answer is its own firing and its own quartet. `handleReferenceUpsert` passes the body `contactIds`, or up to 50 `contact_records` ids for the firm when the body omits them, and `eventPayload: { referenceId }`. `localRefFromPayload` has no case for `eligibility.changed`. This claim does not add one. `dispatchEventToWorkflows` still copies that payload and still sets `anyPass: true`. Claim 7’s refusal of `anyPass` is not recut.
+
+**How a later node tells two rows of the same table apart.** One firing inserts one row of each table per entry of `opts.contactIds`. A fact firing has one contact, so each table appears once. A reference firing has one row of each table per contact in that list. Two rows of `eligibility_evaluations`, or of any of the other three, belong to one firing when that list has two contacts.
+
+`pickWrites` filters by table, so a node that names `motion_decisions` does not read the evaluation row. The four tables are four facts. They share `contact_id`. They do not share a primary key. The result row’s `evaluation_id` is the evaluation’s id. The signal row’s `payload.resultId` is the result’s id. The motion row’s `reason.signalId` is the signal’s id. Those are columns on the row the pointer loads. They are not extra pointer fields.
+
+A person-row write splits people (`docs/register/PRIMITIVES.md`). These four rows are one per contact. They join that split the way claim 10 joined `engagement_records`, `fact_writebacks`, and `meeting_booked`: the If tests each contact on the run against the pointer of the named table whose `contact_id` is that contact, then loads that pointer’s id. The row id is not a person. Every pointer carries `contact_id`. `personIdsFromWrites` uses `contact_id` when it is set. These tables are not in `PERSON_WRITE_TABLES` today. Putting them in that set and omitting `contact_id` would publish `eval-` as a person. The live set still omits them, so `evalIfPick` does not split them, and a table pick with no contact reads the first pointer of that table.
+
+The loop does not dedupe `opts.contactIds`. A repeated contact id inserts a second quartet. Two pointers of one table then share `contact_id`. The existing `find` still takes the first. A pick that names the primary key selects that row (`pickWrites` on id, and `mappedWrites` when the chip id equals `w.id`). That find stays the parked chip. This firing’s id is the new primary key. A chip that stored a specimen id does not name it.
+
+`loadWriteRow` has no branch for these four tables and returns null. Claim 10 already requires an `id` primary key to load `SELECT * FROM <table> WHERE id = pointer.id`, with no firm predicate, no contact predicate, and no “latest”. That is the re-read. This claim does not retune the function. The Board’s `DISTINCT ON (contact_id) … created_at DESC` in `handleBoardDetections` stays the desk’s current row. It is not this load.
+
+**Rows this function writes that the array does not carry.** On the path that reaches a listening workflow, the inserts are those four tables, one row each per contact. The write-set names those four. Nothing named is skipped. No fifth table is inserted before the dispatch.
+
+When `dispatched.length === 0`, the function then calls `enrollAndActuate` for `tpl.reactivation.v1`. That call inserts `enrollment` and `active_attempts`, and because `fireFirstStep` is omitted it also calls `writeEngagement`, which inserts `engagement_records`. A halt returns before those inserts. `event_write_set` for `eligibility.changed` does not name `enrollment`, `active_attempts`, or `engagement_records`. Those rows exist only when no workflow fired, so there is no listening run to hand them to. They are not elements of this firing’s `writes`. The enroll itself is not specified.
+
+Callers write other rows before the cascade. `handleFactWriteback` writes `fact_writebacks` and may write `missing_fact_signals`. `handleReferenceUpsert` writes `reference_versions`. Those tables are not in this write-set. `referenceId` and the fact scalars stay on the payload. They are not pointers. The fact event’s own array is claim 11, and that dispatch happens after this one returns.
+
+The value the cascade returns, and that `handleFactWriteback` spreads into the HTTP `cascade` array, is `{ contactId, evaluationId, resultId, signalId, motionId, motion }` per contact. That object is the response. The dispatch does not receive it. `scripts/verify-automations-alive.ts` dispatches the event name with `anyPass`, `motion`, and a contact id, and without these inserts. That script is not this firing.
+
+Door 1 for `eligibility.changed` takes the newest eight `eligibility_evaluations` for the firm, the `eligibility_results` whose `evaluation_id` is in that set, every `signals` row of kind `eligibility_determination` for those contacts, and every `motion_decisions` row for those contacts. The signal query does not match `payload.resultId`. The motion query does not match `reason.signalId`. Those queries are the test specimen. This firing has the inserted ids in hand. Door 1 was not retuned.
+
+The inserted `any_pathway_pass` is the constant `true`, and the inserted `motion` is `reactivation`, because `anyPass` is fixed true before the motion expression `anyPass ? "reactivation" : "nudge"`. The payload’s `motion` is the same string, also fixed. A configured If reads the motion column of the motion row this firing named. This claim does not change the constant. What a pathway rule would write into `result` was not specified.
+
+**Rejected alternatives.**
+
+- Teach `writesFromPayload` to map `evaluationId`, `resultId`, `signalId`, and `motionId`. Claim 7 refused a second channel. The function already returns when `writes` is an array. The HTTP cascade object uses those key names and is not the dispatch argument. The cascade holds the four ids in variables at the dispatch, which is how the fact and meeting handlers already hold `fwb-` and `mtg-`. One array carries every row.
+
+- Leave the ids on the returned cascade object, or on `anyPass` and `motion`, for the If to read. Rejected under claim 7. The established pick is `mappedWrites` and `loadWriteField`. `evalBranch` reads `eligibilityPass` and `triggerPayload.motion`, and the walker does not call it.
+
+- Have the listener select the newest rows of the four tables. Rejected under claim 7 and claim 10. Door 1’s eight evaluations are the specimen. `handleBoardDetections` is the desk’s latest row per contact. This firing has the inserted id in hand. A later cascade inserts a new id. Re-read by the first id is the first row.
+
+- Dispatch once per contact so each run has a single row of each table. The function already dispatches once, after the loop, with the whole `contactIds` list. `contact_import` and `audit.completed` already place many person rows on one `payload.writes`. The version 1 specimen places two contacts on one `eligibility.changed` (`etd-elig-eval-okonkwo`, `etd-elig-eval-alvarez`, and the paired result, signal, and motion bodies). The primitive splits person-rows inside that run. A dispatch per contact would be a second firing model. The list order inside each table is the run’s way of keeping the registered table ord.
+
+- Put the quartet in contact order (evaluation, result, signal, motion, then the next contact). `pickWrites` by table does not depend on cross-table order. The registered ord is a table order, and the specimen groups by table. The array follows that ord. For one contact the two orders are the same four pointers.
+
+- Point only at `motion_decisions`, or only at the evaluation, and let the listener join the children. The write-set names four tables. The result, the signal, and the motion are different rows. Claim 7 already refused treating one row of a write-set as a substitute for another. The foreign keys stay columns.
+
+- Add `fact_writebacks`, `missing_fact_signals`, `reference_versions`, `enrollment`, `active_attempts`, or `engagement_records` to this array. The write-set does not name them. The fact row is the other event. The reference row is the caller’s scalar `referenceId`. The enroll rows are written only when no workflow fired.
+
+- Add every prior signal or motion for the contact, because door 1 selects them. This firing inserted one signal and one motion per contact. The handle is those rows. `PRIMITIVES.md` is every write this run made, not the contact’s history.
+
+- Filter the signal pointer by `kind = 'eligibility_determination'` as a condition of membership. The insert writes that kind. The write-set names the table. The kind is a column of the row. The pointer is the inserted id.
+
+- Use `evaluation_id` as the result pointer’s id, or `payload.resultId` as the signal pointer’s id. Each row’s primary key is its own `id`. The foreign key is readable after the load. The same refusal as the wait triple under claim 10.
+
+- Load these four as the audit pair, or by latest `(firm_id, contact_id)`. The primary key is `id` alone. These tables have that column. The audit tables did not. The contact index on `eligibility_results` is the Board scan, not the handle.
+
+- Copy the row body onto the pointer, or put `firm_id` on it. `writesFromPayload` keeps `table`, `id`, and `contact_id`. Claim 8 rejected the snapshot. Claim 10 left firm off the id predicate.
+
+- Drop `anyPass`, `motion`, `form_ref`, `campaign_objective_id`, or `referenceId` once `writes` exists. Claim 7’s `anyPass` refusal is not recut here. `localRefFromPayload` does not read this event. The scalars already on the three callers’ payloads stay, the way claim 11 left the fact and meeting scalars. They are not the handle.
+
+- One pointer per firing when `opts.contactIds` is empty. The loop inserts nothing. `writes` is an empty array. That is this firing’s handle. `dispatchEventToWorkflows`, when `contactIds` is empty and the audience is the whole firm, loads every `contact_records` id for the firm onto the walk. That substitution is not these four rows. It was seen and is not specified.
+
+No founder question. The If reads a field of a row this firing named. The write-set already chose the four tables. The primary key already chose the pointer id. One dispatch already carries every contact in the list, and a person-row already splits those contacts. A listener on this firing starts from this loop’s evaluation, result, signal, and motion rows. Two contacts are two ids of the same table, and the contact on the pointer is how the later node tells them apart.
+
+**Evidence:** `machine.ts` `runContactEligibilityCascade`, `handleFactWriteback`, `handleReferenceUpsert`, `handleBoardDetections`. `contactSeat.ts` `handleContactSeatFacts`. `runWrites.ts` `writesFromPayload`. `workflowWalk.ts` `dispatchEventToWorkflows`, `walkValidatedWorkflow`, `pickWrites`, `mappedWrites`, `personIdsFromWrites`, `PERSON_WRITE_TABLES`, `evalIfPick`, `resolveOperandText`, `loadWriteRow`, `localRefFromPayload`, `evalBranch`. `cascade.ts` `enrollAndActuate`, `writeEngagement`. `eventTest.ts` `door1`. `supabase/migrations/004_machine_tables.sql`. `supabase/migrations/017_event_test_contract.sql`. `docs/register/PRIMITIVES.md`. `supabase/seeds/003_canonical_workflows.sql` (`wf-eligibility-reactivation`).
+
+**Live.** `runContactEligibilityCascade` still dispatches with no `writes`. `previousWrites` for that event is still empty. `loadWriteRow` still returns null for the four tables. `PERSON_WRITE_TABLES` still omits them. No migration was written.
+
+---
+
 ## What has no home, what cannot fulfill, what cannot work together
 
 **No home**
@@ -375,13 +464,15 @@ Those two bullets describe the live payloads. They still do. Claim 11 names the 
 - `enrollment` as the thing a listener reads to learn which objective was met (claim 7). After the flip it answers a different question.
 - `reachability_verdicts` and `sequence_ready` while their primary key is `(contact_id, firm_id)` and `auditRun.ts` upserts on that pair (claim 8). The key that holds two runs is specified: `(audit_run_id, contact_id)`, insert, pointer `id` = that run. The live tables do not have that column yet.
 - `reachability_verdicts.details.auditRunId` as the way `handleAuditRunGet` names a run (claim 8). The next audit overwrites `details`. The specified name is the `audit_run_id` column. The live query still reads the jsonb.
-- `loadWriteRow` as the reader of the handle (claim 7). The earlier sentence was that several tables the product already puts on a handle come back as null. Claim 10 specifies the load for `engagement_records`, `fact_writebacks`, `meeting_booked`, and `wait_occupancy` as `WHERE id = pointer.id`. The live function still returns null for them. The generic action still pushes the contact id. `PERSON_WRITE_TABLES` still omits the three append tables, so the If does not yet split them per contact.
+- `loadWriteRow` as the reader of the handle (claim 7). The earlier sentence was that several tables the product already puts on a handle come back as null. Claim 10 specifies the load for `engagement_records`, `fact_writebacks`, `meeting_booked`, and `wait_occupancy` as `WHERE id = pointer.id`. The live function still returns null for them. The generic action still pushes the contact id. `PERSON_WRITE_TABLES` still omits the three append tables, so the If does not yet split them per contact. The same function also returns null for `eligibility_evaluations`, `eligibility_results`, `signals`, and `motion_decisions`. Claim 12 applies that same id predicate to those four. The live function still has no branch for them.
 - `resolveFormStamp` and `onCompletionWrite` as the attribution of a completion (claim 3). They answer “newest pursuit for this person.” The live send does persist the click’s stamp. The click path does not read it back as the enrollment to advance.
 
 **Individually reasonable, cannot work together**
 
 - Packet 022 §2.4’s newest-enrollment detection, and packet 022 §2.5’s escalation, which inserts a second enrollment (claims 2 and 3).
 - `event_write_set` naming `engagement_records` for `objective_met`, and `loadWriteRow` not loading that table (claim 7). Claim 10 specifies the load. Claim 11 specifies the handoff: `payload.writes` carries the engagement id and the enrollment id. The live function still returns null, and the live dispatch still omits `writes`. The write-set and the listener still do not meet in the running code.
+- `event_write_set` naming `eligibility_evaluations`, `eligibility_results`, `signals`, and `motion_decisions` for `eligibility.changed`, and `runContactEligibilityCascade` dispatching that event with no `writes` (claim 12). The cascade does insert those four rows before the dispatch. Claim 12 specifies the array. The live dispatch still omits it, and `loadWriteRow` still returns null for the four, so the write-set and the listener still do not meet in the running code.
+- That same function, when the dispatch fires no workflow, inserting `enrollment`, `active_attempts`, and `engagement_records`, which this write-set does not name (claim 12). Those inserts are not the listening pointer. The enroll was not specified.
 - `writeEngagement` returning the inserted id, and the generic action pushing `id: contactId` (claim 10). The row exists. The pointer names the contact. The specified load looks up the pointer id.
 - `chainWrites` for every node (the in-memory walker), and resume forwarding only the wait’s writes (claim 6).
 - The cursor as a once-only latch (packet 022 §2.3), and “Open in Now” writing `campaign_id` (claim 4).
@@ -409,6 +500,20 @@ Those two bullets describe the live payloads. They still do. Claim 11 names the 
 
 The paragraph above is the gap as session 004 left it. Claim 11 specifies the three payloads. The live five dispatches still omit `writes`. `campaign_failure` was still not followed. `recordCampaignFailure` inserts `cfail-` plus a uuid and returns that id. Its dispatch was not read.
 
+### Revision — claim 12
+
+Claim 12 does not change those three payloads. While the next site was being named, the `campaign_failure` dispatch in `cascade.ts` was visible: `payload` is `{ campaignFailureId: failId, attemptId: attempt.id }`, `contactIds` is that one contact, and there is no `writes`. That placement was not specified.
+
 **`eligibility.changed` from a fact write.** Both fact handlers call `runContactEligibilityCascade` before they dispatch `fact_writebacks`. That cascade inserts four rows (`eval-`, `eres-`, `sig-`, `mot-`) and dispatches `eligibility.changed` with the fact scalars, `anyPass: true`, and `motion: "reactivation"`, and with no `writes`. `event_write_set` version 1 names `eligibility_evaluations`, `eligibility_results`, `signals`, and `motion_decisions`. Claim 11 leaves those rows off the fact pointer because they are the other event. How that firing places its own ids on `payload.writes` is the same shape of hole, and it was not specified. When the dispatch fires no workflow, the function enrolls `tpl.reactivation.v1`. That enroll was seen and not specified.
 
+### Revision — claim 12
+
+Claim 12 specifies that array: one pointer per inserted row, table order from the write-set, `contact_id` on each pointer, person split across two contacts. The live dispatch still omits `writes`. The reactivation enroll remains unspecified. The paragraph above stands as the description of the live payload.
+
 **Onboarding’s `audit.completed`.** `handleOnboardingFire` dispatches that event name with no `writes` and no audit-run id. The audit module’s own completion does pass `result.writes`. The onboarding payload was seen while checking that pattern. It was not specified.
+
+**What the eligibility row’s pass is derived from.** `runContactEligibilityCascade` sets `anyPass` to the constant `true`, stores that on `eligibility_results.any_pathway_pass`, and stores `motion` `reactivation`. It does not read `rule_eligibility_pathway` or the in-memory eligibility pack. Claim 12 names the row that insert wrote. It does not decide the derivation. Same shape as the parked `sequence_ready.ready` derivation, and a different writer.
+
+**The reactivation branch on the seed graph.** `wf-eligibility-reactivation` (`supabase/seeds/003_canonical_workflows.sql`) has a branch labelled “Reactivation-worthy?” with `filterSummary` `reactivation-worthy`, and with no compare and no `pickTable`. `evalIfPick` with no compares returns false. `evalBranch` reads `eligibilityPass` and `triggerPayload.motion`, and the walker does not call it. Claim 12’s pointers are what a configured If reads. Placing them does not make this branch read `motion_decisions.motion`. That pick was not specified.
+
+**An empty eligibility firing and the firm book.** When `opts.contactIds` is empty, claim 12’s `writes` is an empty array. `dispatchEventToWorkflows`, for an every-firm audience with no contact ids, selects every `contact_records` id for the firm and walks those contacts. That list is not the four inserted rows. It was seen while reading the dispatch. It was not specified.
