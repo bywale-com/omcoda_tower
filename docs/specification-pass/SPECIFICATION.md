@@ -728,6 +728,10 @@ No founder question. The If reads a field of the consent row this opt-out upsert
 
 **Live.** The silence dispatch is still `{ contactId, source }` with no `writes`. `previousWrites` for that event is still empty when a listener starts. `loadWriteRow` still returns null for `consent_records`. `handleConsentSet` still does not dispatch. The primary key is still `(contact_id, firm_id)`. No migration was written.
 
+### Revision — claim 25
+
+The sentence that this statement does not assign `status`, and that a branch reading `status` on an insert sees `unsequenced` while `silenced` is true, stands. Claim 25 specifies that write. The default on insert and the previous `status` on conflict stand. The boolean arm still denies. This revision does not retune the pointer.
+
 ---
 
 ## Claim 16 — A live firing of `ct_firms` places the current firm id on `payload.writes`
@@ -1228,6 +1232,10 @@ No founder question. Another firm’s consent row denying or allowing this firm�
 
 The sentence that `handleConsentGet` was seen and not specified stands as the gap. Claim 24 specifies that route. It returns one row for the contact id, or the defaults, because no caller of it is acting as a firm. This claim’s select is unchanged. The live send query still omits `firm_id`. The arms on `silenced`, `status`, `basis`, and `purpose` were not retuned. The silence upsert still does not assign `status`.
 
+### Revision — claim 25
+
+The sentence that this claim does not decide what the silence upsert writes into `status` stands as the gap. Claim 25 decides that write. The insert keeps the default `unsequenced`. The conflict keeps the previous `status`. The arms on `silenced`, `status`, `basis`, and `purpose` were not retuned.
+
 ---
 
 ## Claim 24 — The consent get returns one row for the contact id
@@ -1269,6 +1277,52 @@ No founder question. Whose consent binds a send, and whose consent the seat show
 **Evidence:** `stores.ts` `handleConsentGet`. `routes.ts` `GET /consent/:contactId`. `src/app/wire/reals/consentSilence.ts` `get`. `src/app/wire/ports.ts` `ConsentSilencePort`. `src/app/wire/http.ts` `wireFetch`. `server/wire-service/sessionFirm.ts` `requireSessionFirm`. `src/app/register/prototype/ContactPrototypeScene.tsx` the mount effect, `DEMO_CONTACT_ID`, `applyConsent`, `applySilence`. `src/app/wire/firmBrand.ts` `FIRM_BRAND`. `src/app/wire/demoIds.ts` `CT_DEMO.firmId`. `src/app/register/prototype/RegisterPrototypeCanvas.tsx`. `src/app/register/context/RegisterShellContext.tsx` `ctDesk` default `consultant`, `loadCtDesignSystem` default `dsi`. `src/app/register/components/RegisterClickThroughPanel.tsx`. `src/app/register/prototype-ant/AntCtHost.tsx` `ContactAntScene`. `src/app/Router.tsx` `/register` and `/prototype-ant`. `src/app/register/prototype-ant/contact/ContactWorkspace.tsx`. `src/app/wire/reals/machineApi.ts` `consentContactWorkspace`, `consentContactSeat`. `src/app/wire/reals/smsApi.ts` `realSmsApi.send`. `contactSeat.ts` `projectSeat`. `src/app/register/prototype-ant/operator/FirmOperationsBindModule.tsx` the `decide` calls. `src/app/wire/registry.ts` `sendGate` and `consentSilence`. `src/app/data/clients.ts` id `sarah`. `supabase/migrations/003_ct_wire_stores.sql` `consent_records`. `scripts/verify-modular-surfaces.ts` `trialConsent`.
 
 **Live.** The query is still `WHERE contact_id = $1 LIMIT 1` with no `firm_id` and no `ORDER BY`. No firm argument was added. No migration was written.
+
+### Revision — claim 25
+
+The sentence that this claim does not assign `status` on the silence upsert stands as the gap. Claim 25 specifies that statement. This get is unchanged. It still does not read `status`.
+
+---
+
+## Claim 25 — The silence upsert does not assign `status`
+
+**Standing:** technical decision made in this session.
+
+`handleConsentSilence` does not assign `consent_records.status`. An insert keeps the column default `unsequenced`. A conflict keeps the `status` the row already held. The statement still sets `silenced` true. Claim 23’s boolean arm denies that row. No reader treats `status` `unsequenced` as the contact’s silence, so the default does not let the send through. This claim does not retune that arm, does not add a firm to `handleConsentGet`, and does not specify `consent_records.sequenced`.
+
+**The statement.** The insert in `handleConsentSilence` lists `contact_id`, `firm_id`, `basis`, `silenced`, `source`, and `updated_at`. The values are the body’s contact, the body’s firm, `basis` `none`, `silenced` true, the body’s source, and `now()`. The conflict update sets `silenced` true, `source` to this call’s source, and `updated_at` to `now()`. Neither clause names `status`. `supabase/migrations/004_machine_tables.sql` defines the column `TEXT NOT NULL DEFAULT 'unsequenced'` with a check of `unsequenced`, `waitlisted`, `sequenced`, and `silenced`. A new pair stores `status` `unsequenced` and `silenced` true. A pair that already exists keeps its `status`, including a previous `sequenced` or `waitlisted`.
+
+**What the one-time update was.** The same migration, after the `ADD COLUMN`, runs one `UPDATE`. When `silenced` is true it sets `status` to `silenced`. When `basis` is `express` or `implied` it sets `status` to `sequenced`. Otherwise it sets `unsequenced`. The `WHERE` is `status = 'unsequenced'` and (`silenced` is true or that basis). The comment says `consent_records` is extended for waitlisted. The statement runs with the migration. It is not a trigger, and it does not run when `handleConsentSilence` inserts. Rows written after the migration keep the default unless the insert names the column. The silence route does not name it. The seat seeds insert `basis` and `silenced` and do not name it (`supabase/seeds/004_contact_seat.sql`, `supabase/seeds/005_contact_workspace_fill.sql`). `docs/register/SYSTEMS-GOAL.md` already records that the cascade does not write `waitlisted` or `sequenced`.
+
+**Readers of `status`.** The only product query that reads `consent_records.status` is the select inside `consentAndHaltGate`: `SELECT basis, silenced, status`, then deny when `silenced` is true or `status` equals `silenced`, including when `purpose` is `opt-in`. The status compare is equality to the literal `silenced`. The value `unsequenced` does not deny, and it does not allow a row whose `silenced` is true. When this upsert has set `silenced` true, the boolean arm denies whether `status` is the default or a previous `sequenced` or `waitlisted`. Claim 23 left that arm as it is. This claim does not retune it.
+
+`projectSeat` selects `basis`, `silenced`, and `source` for the pair and does not select `status`. The boolean skips the form fields and is returned on the payload. `now.state` is set from the basis and the objective. The payload type allows `now.state` `silenced`, and this function does not assign it. `handleConsentGet` selects the same three columns by `contact_id` and does not select `status`. Door 1 selects every column of `consent_records` where `silenced` is true. The filter is the boolean, so a row this upsert inserted is in that set, and the returned `status` is `unsequenced`. That reader does not compare `status`. `isWorkspaceOut` and `handleContactWorkspacesList` read `workspace_opted_out`. `loadWriteRow` has no branch for `consent_records` and returns null, so a configured If does not currently receive the column. Claim 15’s re-read is `SELECT *`. On an insert it sees `status` `unsequenced` and `silenced` true. No seeded graph picks `consent_records.status`. `ConsentStatus` in `src/app/wire/machineTypes.ts` is not imported. The contact indicator in `src/app/data/contacts.ts` is `client.optedIn`. It does not read this column. `executeAuditRun` sets `sequence_ready.ready` from the presence of email and phone. It does not read `consent_records`. `standInSendGate` denies when the stand-in boolean is true. That row has no `status`. It was not retuned.
+
+`scripts/verify-deny-gates.ts` and `scripts/verify-ship-spine.ts` insert `status` `silenced` beside `silenced` true. That is the script’s row. It is not this upsert. Other verify scripts insert `status` `unsequenced` with `basis` `express` and `silenced` false. They do not derive `status` from the boolean.
+
+**Why the default stands.** A reader that treated `status` as the silence would see `unsequenced` and treat this contact as unsequenced. That reader is not in the send, the seat, the get, door 1, the loader, or the audit. The boolean is the silence those readers use. The status arm denies only when the stored value is already `silenced`. This upsert does not store that value. Leaving the default, and leaving a previous `sequenced` or `waitlisted` on conflict, does not open the send.
+
+**Rejected alternatives.**
+
+- Assign `status` `silenced` on the insert and on the conflict, copying the migration’s `WHEN silenced THEN 'silenced'`. That `UPDATE` aligned rows that already existed when the column was added, so they would not all sit at the new default. It is not this statement. No later reader classifies the contact from `unsequenced`. The boolean arm already denies. Writing `silenced` on conflict would replace a `sequenced` or `waitlisted` value this call did not come to change. `SYSTEMS-GOAL` already says those two values are not written by the cascade. This route is not the writer that starts them.
+
+- Assign `status` `silenced` only on the insert, and leave the conflict’s previous `status`. The insert’s default is safe for the same reason the conflict’s previous value is safe. The two clauses store one silence. No reader asks a new row and a repeated silence to carry different words.
+
+- Copy the migration’s full `CASE`, including `basis` `express` or `implied` to `sequenced`. This statement sets `basis` `none` on insert and does not assign `basis` on conflict, and it sets `silenced` true, so the `silenced` arm of that `CASE` would win on every row this call touches. The `sequenced` arm would not run. `consent_records.sequenced` is still a catalog event with a matcher and no dispatch. It is not this column write.
+
+- Treat `SYSTEMS-STORY` §6’s sequenced / silenced / unsequenced word as a reason to write `status` although no reader classifies from it. Claim 15 located that word on this column. The readers that treat silence read the boolean, which `supabase/migrations/003_ct_wire_stores.sql` stored before the column existed. The seat, the send, and the get do not show `status`. Leaving the default does not change which firm’s row the send reads, and it does not choose a consent regime. The CASL silence in that section stays unnamed.
+
+- Retune claim 23 so the gate stops reading `status`. The arm stays. It denies a row whose `status` is already `silenced`. This upsert does not produce that row. Changing the arm is a different read.
+
+- Specify `handleContactSeatSilence` or the hard-bounce upsert as this same omission. Both write the pair and both omit `status`. They are other statements. This claim names the silence route.
+
+No founder question. The two writes were assign `status` `silenced`, or leave the default and the previous value. The boolean already denies, and no reader treats `unsequenced` as the silence. The operator does not see the column. The distinction does not change which firm’s consent binds the send. The values `waitlisted` and `sequenced` stay the write `SYSTEMS-GOAL` already says the cascade does not do.
+
+**What this leaves.** `handleContactSeatConsent` sets `silenced` false and does not assign `status`. `handleConsentSet` on conflict does not assign `silenced` or `status`. The gate still denies when `status` equals `silenced` and the boolean is false. The migration’s one-time `UPDATE` is the production statement that stores that value. A row it marked `silenced` stays denied after a later Agree clears the boolean. That interaction was not specified. It is not this upsert.
+
+**Evidence:** `stores.ts` `handleConsentSilence`, `handleConsentSet`, `handleConsentGet`. `dispatchSend.ts` `consentAndHaltGate`. `contactSeat.ts` `projectSeat`, `handleContactSeatConsent`, `handleContactSeatSilence`, `isWorkspaceOut`, `handleContactWorkspacesList`. `webhooks.ts` the `bounce_hard` upsert. `eventTest.ts` door 1 for `consent_records.opt_out`. `workflowWalk.ts` `loadWriteRow`. `auditRun.ts` `executeAuditRun`. `src/app/wire/machineTypes.ts` `ConsentStatus`. `src/app/data/contacts.ts` `contactIndicatorFromClient`. `src/app/wire/standins/sendGate.ts`. `src/app/wire/standins/consentSilence.ts`. `supabase/migrations/003_ct_wire_stores.sql` `consent_records`. `supabase/migrations/004_machine_tables.sql` the `status` column and the one-time `UPDATE`. `supabase/seeds/004_contact_seat.sql`. `supabase/seeds/005_contact_workspace_fill.sql`. `scripts/verify-deny-gates.ts`. `scripts/verify-ship-spine.ts`. `docs/register/SYSTEMS-STORY.md` §6. `docs/register/SYSTEMS-GOAL.md`. `docs/register/system-map/SCHEMA-REPORT.md`.
+
+**Live.** The insert still omits `status`. The conflict update still omits `status`. No migration was written.
 
 ---
 
@@ -1422,5 +1476,9 @@ The sentence that the consent select was not specified stands as the gap session
 ### Revision — claim 24
 
 The sentence that `handleConsentGet` still selects by `contact_id` alone stands as the description of the live query, and claim 24 makes that the specification of the route. The get returns one row for the contact id, or the defaults `none`, false, and null. It is not the send’s pair. No caller of the route is acting as a firm. The live query is unchanged, and it matches this claim. The send’s live query still omits `firm_id`. The silence upsert still does not assign `status`. `consent_records.sequenced` still has no dispatch. The stand-in map is still one slot per contact id. Those were not specified.
+
+### Revision — claim 25
+
+The sentence that the silence upsert still does not assign `status` stands as the live statement, and claim 25 makes that the specification. An insert keeps `unsequenced`. A conflict keeps the previous `status`. The boolean arm still denies. The live statement already matches this claim. `consent_records.sequenced` still has no dispatch. A later consent that clears `silenced` and leaves a `status` of `silenced` was not specified.
 
 **An import that reuses a contact id.** `handleContactImport` inserts `ON CONFLICT (id) DO UPDATE` and does not assign `firm_id` on the update. The id stays on the first firm’s book row. The dispatch still puts that id in `contactIds` for the importing firm. Claim 17 keeps a non-empty list. Claim 18 judges the enroll by the importing firm’s halt, not by the first firm’s. The conflict update was not specified.
