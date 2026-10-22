@@ -736,6 +736,10 @@ The sentence that this statement does not assign `status`, and that a branch rea
 
 The rejected alternative that a later writer can leave `status` unmoved described the live seat SQL. Claim 26 specifies that conflict. When the stored value is `silenced`, the seat consent sets `unsequenced`. The re-read still sees the current columns. This revision does not retune the pointer.
 
+### Revision — claim 27
+
+The sentence that `consent_records.sequenced` is in the Hub catalog and in `WORKFLOW_EVENTS_WITH_LOCAL`, is not on the A26 list, is not in `event_write_set`, and has no handler, stands. Claim 27 specifies that name. The absence of a dispatch, and the absence of an ongoing writer of `waitlisted` and `sequenced`, is the specification of the event. This revision does not add the firing and does not retune the opt-out pointer.
+
 ---
 
 ## Claim 16 — A live firing of `ct_firms` places the current firm id on `payload.writes`
@@ -1394,6 +1398,54 @@ No founder question. Blocked and not blocked are different sends, and the consen
 
 **Live.** The seat conflict still sets `basis`, `silenced` false, `source`, and `updated_at`, and it still omits `status`. A backfilled `silenced` stays denied after Agree. No migration was written.
 
+### Revision — claim 27
+
+The sentence that this claim does not write `waitlisted` or `sequenced`, and does not dispatch `consent_records.sequenced`, stands. Claim 27 is that event. The seat conflict remains the move off `silenced`, and it remains off those two values.
+
+---
+
+## Claim 27 — `consent_records.sequenced` is not a firing
+
+**Standing:** technical decision made in this session.
+
+No production statement dispatches `consent_records.sequenced`. No production statement sets `consent_records.status` to `waitlisted`. The only statement that sets `status` to `sequenced` is the one-time `UPDATE` in `supabase/migrations/004_machine_tables.sql`, and that statement does not dispatch this event. The catalog label and the matcher remain. They do not start a run. Claim 26 does not become this writer. Claim 25 does not assign `status`. This claim does not add a dispatch, does not add an `event_write_set` row, and does not write a migration.
+
+**The name.** `localRefFromPayload` in `server/wire-service/workflowWalk.ts` returns `sequence_id` or `sequenceId` when the event name is `consent_records.sequenced`. `triggerLocalRefFromPayload` in `src/app/data/automationTriggerSelect.ts` is the same case. `WORKFLOW_EVENT_CATALOG` in `src/app/data/automationWorkflows.ts` labels the name “Consent sequenced”. `WORKFLOW_EVENTS_WITH_LOCAL` includes the name, and nothing imports that set. `TRIGGER_SELECT_EVENTS` does not list it. `TriggerSelectModal.tsx` builds the product-face picker from that list. `origin/pr-86:docs/register/SYSTEMS-TRIGGER-PLACE-ASCRIBE.md` says the event is not on A26 and is not to be sneaked in. Hub’s `AutomationEventTriggerConfigPanel` and `AutomationNodeConfigModal` still render `WORKFLOW_EVENT_CATALOG`, so the Hub list still shows the label. Hub is not the product face. `event_write_set` names `consent_records` for `consent_records.opt_out` only (`supabase/migrations/017_event_test_contract.sql`). The later inserts name `contact_uploaded` (`019_contact_seat.sql`) and `objective_met` (`021_objective_local_axis.sql`). None name this event. `door1` in `eventTest.ts` has no branch for it. `supabase/seeds/003_canonical_workflows.sql` does not subscribe a trigger to it. `docs/register/PRIMITIVES.md` lists “Someone opted out / unsubscribed” and “An objective was met”. It does not list consent sequenced.
+
+**What the goal already said the write was.** `docs/register/SYSTEMS-GOAL.md` puts `waitlisted` and `sequenced` on the opt-in row and says the cascade does not write those statuses. Sign-up met is the campaign goal drawn as landing on `sequenced`, and that landing sits in the column that is not stood up. The same file leaves open whether launch day is only for contacts who were waitlisted. `origin/pr-86:docs/register/SYSTEMS-CHANGE-PACKET.md` maps a `consent_records` update of `status` to `sequenced` onto this event, and it says the picker is yes if the launch-day objective points here. The same packet says the production path is the write, and that `handleMachineEvent` stays a probe. `origin/pr-86:docs/register/SYSTEMS-CHANGE-PACKET-012.md` maps the local axis of this event to `sequence_template.id` on `payload.sequence_id`, in the table of writes to connect. The teaching launch-day objective `obj.optin.day` is kind `form`, name “They opt in”, completion table `fact_writebacks` (`supabase/seeds/002_machine_tables.sql`). `campaign_objective.completion_table` allows `messaging_events`, `fact_writebacks`, and `meeting_booked` (`supabase/migrations/010_sequence_campaign_housing.sql`). The objective does not point at this event, and the check does not allow that pointer. The condition for adding the dispatch is not met.
+
+`advanceEnrollmentCampaign` dispatches `objective_met`. The payload carries `sequence_id` from the enrollment (`campaignHousing.ts`). `dispatchEventToWorkflows` loads triggers whose `event_name` equals the name it was given (`workflowWalk.ts`). `objective_met` does not enter the sequenced case of `localRefFromPayload`. That call does not update `consent_records`.
+
+**Writers of the column.** The migration `UPDATE` sets `sequenced` when `basis` is `express` or `implied`, the silenced arm does not win, and `status` is still `unsequenced`. It sets `silenced` when the boolean is true. It does not set `waitlisted`. It runs with the migration. It is not a trigger. It does not call `dispatchEventToWorkflows`. Claim 25 and claim 26 already left it off the silence route and off Agree. No later statement in `server/` assigns `consent_records.status`. Seeds that insert consent omit the column. Scripts that name `status` store `silenced` or `unsequenced` (`scripts/verify-deny-gates.ts`, `scripts/close-walk-gaps.ts`). They do not store `waitlisted` or `sequenced`, and they do not dispatch this event. `cs-waitlist` in `src/app/system-map/data/tables.ts` writes the cohort value `intent_waitlist`. It is not an update of `consent_records`, and `supabase/seeds/` does not contain that row. The map edge “Day3 waitlist → waitlisted” and the `optin_phase` line “On success → consent_state sequenced” are labels (`tables.ts`, `nodes.ts`). They are not statements that run. `ConsentStatus` in `src/app/wire/machineTypes.ts` is not imported. The send gate compares `status` to the literal `silenced`. `unsequenced`, `waitlisted`, and `sequenced` do not change that allow.
+
+**The probe.** `handleMachineEvent` forwards `body.eventName` to `dispatchEventToWorkflows` and does not write `consent_records` (`machine.ts`, `POST /machine/events`). No caller in `src/` invokes `fireEvent`. A body that already contains this name would start a stored trigger of this name. That forward does not record that consent became sequenced, and it does not set `status`.
+
+**Why the absence is the specification.** A listener on this name would be a different run from `objective_met`. The goal already says the cascade does not write `waitlisted` or `sequenced`. The launch-day objective already completes on `fact_writebacks`, and the completion that carries `sequence_id` is `objective_met`. The product face does not list this name, and the A26 ascribe says not to add it. Storing `sequenced` and dispatching this event would start a listener the operator cannot select on that face, on a rung the goal says this class of write does not own. The matcher remains, so a stored `local_ref` would compare `sequence_id` if a probe posted the name. No production statement posts it. A listening run of this event does not start.
+
+**Rejected alternatives.**
+
+- Treat the migration `UPDATE` as the firing. It stores `sequenced` from `basis` for rows that were still `unsequenced` when the column was added. It does not pass `sequence_id`. It does not dispatch. A row inserted after the migration with `basis` `express` keeps the default `unsequenced` unless a later statement names the column. No later statement does.
+
+- Assign `sequenced` or `waitlisted` on `handleContactSeatConsent`. Claim 26 refused that assignment. Agree clears the boolean and, when the stored word is `silenced`, stores `unsequenced`. That unlocks the nudge the consent leaf names. It is not the sign-up landing. The gate treats `unsequenced`, `waitlisted`, and `sequenced` alike.
+
+- Dispatch this event from `advanceEnrollmentCampaign` beside `objective_met`, because that payload already has `sequence_id`. The event name on that call is `objective_met`. The launch-day completion table is `fact_writebacks`. Packet 012 mapped a local axis for a write that would be connected when the objective pointed here. The objective points at `fact_writebacks`. The later A26 ascribe keeps the name off the product face. One completion stays one event.
+
+- Treat `handleMachineEvent` as the production firing. It forwards a name the caller already supplied. It does not read `consent_records` and does not set `status`. No product caller posts this name. The change packet already calls that route a probe.
+
+- Treat the system-map labels, or `cs-waitlist`, as the writer of `waitlisted` or `sequenced`. The edge and the ramification are diagram copy. The rule row’s write target is the cohort tier, and the seed does not contain the row.
+
+- Fill the CASL silence in `SYSTEMS-STORY` §6, or decide whether launch day is only for waitlisted, in order to say whether this event fires. The regime and the audience fork are not which statement dispatches this name. Nothing writes `waitlisted`, so that fork has no stored signal on this column. The event is specified without choosing either.
+
+- Add the name to `TRIGGER_SELECT_EVENTS` so the absent firing has a product-face row. The ascribe says not to sneak it in. This claim does not add the row.
+
+No founder question. A firing and the absence of a firing are different listeners. The goal, the launch-day completion table, and the A26 list already choose the absence. `waitlisted` and `sequenced` stay values the check allows. No ongoing statement stores them. The one-time `UPDATE` remains the backfill claim 25 and claim 26 already named. It is not this event.
+
+**What this leaves.** The sentence “Sign-up met = CAMPAIGN GOAL → consent sequenced” remains in `SYSTEMS-GOAL`. This claim says that sentence is not a dispatch and not a status write. It does not retune `obj.optin.day`. When that objective advances the cursor, the dispatch is still `objective_met`. Whether launch day is only for waitlisted stays the open ask that file already marked and said not to fill. It is not this event. `projectSeat` showing a form after Ignore stays the separate paint claim 26 left unnamed.
+
+**Evidence:** `workflowWalk.ts` `localRefFromPayload`, `dispatchEventToWorkflows`, `materializeTriggersFromGraph`. `src/app/data/automationTriggerSelect.ts` `TRIGGER_SELECT_EVENTS`, `triggerLocalRefFromPayload`. `src/app/data/automationWorkflows.ts` `WORKFLOW_EVENT_CATALOG`, `WORKFLOW_EVENTS_WITH_LOCAL`. `TriggerSelectModal.tsx`. `src/app/components/hub/automation/AutomationEventTriggerConfigPanel.tsx`. `src/app/components/hub/automation/AutomationNodeConfigModal.tsx`. `campaignHousing.ts` `advanceEnrollmentCampaign`. `machine.ts` `handleMachineEvent`. `stores.ts` `handleConsentSilence`. `contactSeat.ts` `handleContactSeatConsent`. `dispatchSend.ts` `consentAndHaltGate`. `eventTest.ts` `door1`. `supabase/migrations/004_machine_tables.sql` the `status` column and the one-time `UPDATE`. `supabase/migrations/010_sequence_campaign_housing.sql` `completion_table`. `supabase/migrations/017_event_test_contract.sql`. `supabase/migrations/019_contact_seat.sql`. `supabase/migrations/021_objective_local_axis.sql`. `supabase/seeds/002_machine_tables.sql` `obj.optin.day`. `supabase/seeds/003_canonical_workflows.sql`. `scripts/verify-deny-gates.ts`. `scripts/close-walk-gaps.ts`. `src/app/system-map/data/tables.ts` `cs-waitlist`, the waitlist edge. `src/app/system-map/data/nodes.ts` `optin_phase`. `src/app/wire/machineTypes.ts` `ConsentStatus`. `docs/register/SYSTEMS-GOAL.md` the opt-in row and “Sign-up met = CAMPAIGN GOAL → consent sequenced”. `docs/register/PRIMITIVES.md`. `origin/pr-86:docs/register/SYSTEMS-CHANGE-PACKET.md` the dispatch table. `origin/pr-86:docs/register/SYSTEMS-CHANGE-PACKET-012.md` the local-axis row. `origin/pr-86:docs/register/SYSTEMS-TRIGGER-PLACE-ASCRIBE.md` the A26 exclusion. `docs/register/SYSTEMS-STORY.md` §6.
+
+**Live.** No handler dispatches `consent_records.sequenced`. No statement sets `waitlisted`. The migration `UPDATE` still sets `sequenced` once for the backfill and still does not dispatch. The seat conflict still does not write those two values. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
@@ -1559,3 +1611,11 @@ The sentence that a later consent can clear `silenced` and leave `status` `silen
 **An import that reuses a contact id.** `handleContactImport` inserts `ON CONFLICT (id) DO UPDATE` and does not assign `firm_id` on the update. The id stays on the first firm’s book row. The dispatch still puts that id in `contactIds` for the importing firm. Claim 17 keeps a non-empty list. Claim 18 judges the enroll by the importing firm’s halt, not by the first firm’s. The conflict update was not specified.
 
 **Ignore and the deeper form.** Claim 26’s statement also stores Ignore: `basis` `none`, `silenced` false, `source` `ignored`, and the same `status` move when the word was `silenced`. `projectSeat` then treats `source` `ignored` as not the consent ask. When the enrollment’s objective kind is `form`, `now.state` becomes `form`, and the form fields are included because `silenced` is false. `docs/register/how/contact-consent.md` says Ignore writes the no-deeper state and deeper collection forms do not open. That paint was seen while reading what the seat shows after the statement. It was not specified. It is not the status word.
+
+### Revision — claim 27
+
+The sentences that `consent_records.sequenced` still has no dispatch stand as the live call, and claim 27 makes that absence the specification of the event. No ongoing statement sets `waitlisted` or `sequenced`. The one-time migration `UPDATE` still sets `sequenced` from `basis` and still does not dispatch. The seat consent is still not that writer.
+
+**Sign-up met and the consent rung.** `SYSTEMS-GOAL` draws sign-up met as the campaign goal that lands on `consent sequenced`, and the same row says the cascade does not write that status. Claim 27 says that drawing is not a dispatch and not a status write. `obj.optin.day` still completes on `fact_writebacks`, and the cursor advance still dispatches `objective_met`. What that objective would write onto `consent_records`, beyond the absence claim 27 records, was not given a second formula. It is not this event.
+
+**Who receives launch day.** `SYSTEMS-GOAL` already asks whether launch day is only for contacts who were waitlisted, and it says not to fill that ask. Claim 27 found no writer of `waitlisted`, so the fork has no stored signal on `consent_records.status`. The ask stays open. It was not answered. It is not this event.
