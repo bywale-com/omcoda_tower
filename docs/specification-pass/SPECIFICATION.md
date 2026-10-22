@@ -1340,6 +1340,10 @@ No founder question. The two writes were assign `status` `silenced`, or leave th
 
 The sentence that a row the migration marked `silenced` stays denied after a later Agree clears the boolean stands as the gap. Claim 26 decides that seat write. When the stored `status` is `silenced`, the conflict sets `unsequenced`. The silence upsert still does not assign `status`. The arms were not retuned.
 
+### Revision — claim 42
+
+The rejected alternative that `handleContactSeatSilence` and the hard-bounce upsert were other statements stands as the scope of this route. Claim 42 specifies their `status`. Neither assigns it. This silence upsert is unchanged.
+
 ---
 
 ## Claim 26 — The seat consent that clears the boolean moves `status` off `silenced`
@@ -1401,6 +1405,10 @@ No founder question. Blocked and not blocked are different sends, and the consen
 ### Revision — claim 27
 
 The sentence that this claim does not write `waitlisted` or `sequenced`, and does not dispatch `consent_records.sequenced`, stands. Claim 27 is that event. The seat conflict remains the move off `silenced`, and it remains off those two values.
+
+### Revision — claim 41
+
+The sentence that `standInContactSeat.consent` keeps the previous boolean, and that that map is not this row, stands as a description of the live mirror. The server statement remains this claim. Claim 41 is the mirror’s Agree. It sets `silenced` false. This conflict’s `CASE` on `status` was not retuned.
 
 ---
 
@@ -1495,6 +1503,10 @@ No founder question. Showing the form and withholding it are different pages for
 ### Revision — claim 29
 
 The sentence that `handleContactSeatFacts` still accepts answers for this contact and firm, and that whether that write is inside the opt-in gate was not specified, stands as the gap. Claim 29 decides the write. The pane is unchanged. `now.state` is not set from this claim. The meeting branch is unchanged.
+
+### Revision — claim 41
+
+The rejected alternative that this claim does not retune the mirror’s kept boolean stands as the scope of the pane. Claim 41 clears that boolean on the mirror’s Agree. Ignore still does not open the form. This projection is unchanged.
 
 ---
 
@@ -2012,6 +2024,88 @@ No founder question. The three results are already three kinds. The operator col
 
 **Live.** `eventKindProse` still returns `Sent` when the kind contains `send`, so `send_denied` and `send_dry_run` still read as `Sent`. `titleFor` still has no `send_denied` case, and its default still spaces the kind. `kindOf` still returns `other` for `send_denied`. No migration was written.
 
+### Revision — claim 41
+
+The sentence that `standInConsentSilence` is one slot per contact, and that `standInContactSeat.consent` keeps the previous boolean, stands as the live maps. Claim 41 specifies both. `get` still does not take a firm. The operator column is unchanged.
+
+### Revision — claim 42
+
+The hard-bounce upsert and `handleContactSeatSilence` still omit `status`. Claim 42 specifies that omission. This column is unchanged.
+
+---
+
+## Claim 41 — The one-slot consent map is the consent routes, and the seat mirror’s Agree clears the boolean
+
+**Standing:** technical decision made in this session.
+
+`standInConsentSilence` and `standInContactSeat` are two maps. They do not share a slot, and they do not share a boolean rule. The one-slot map is the stand-in of `POST /consent` and `POST /consent/silence`, collapsed onto `contactId`. It is not the pair `(contact_id, firm_id)`, and it is not the seat. `standInContactSeat.consent` and `consentContact` set `silenced` false. That is the seat statement claim 26 already specified. Keeping the previous boolean on those two functions is not a second Agree.
+
+**The consent map.** `byContact` in `src/app/wire/standins/consentSilence.ts` is `Map<string, { firmId, basis, silenced }>`. The key is `contactId`. `setConsent` stores the call’s `firmId` and `basis`, and sets `silenced` to the previous boolean, or false when the slot is new. `silence` stores the call’s `firmId`, keeps the previous `basis`, or `none` when the slot is new, and sets `silenced` true. The `source` argument is unused. `get` takes the contact id and returns `basis` and `silenced`, or `none` and false. It does not take a firm and does not return `source` or `firmId`. A second firm’s `setConsent` or `silence` replaces the slot. The table keeps both pairs. This map cannot.
+
+That boolean is the consent routes, not the seat. `handleConsentSet` inserts `silenced` false and, on conflict, does not assign `silenced`. `setConsent` is that keep. Claim 26 already said this function is not the product-face Agree. `handleConsentSilence` inserts `basis` `none` and `silenced` true and, on conflict, sets `silenced` true and does not assign `basis`. `silence` is that keep. Claim 25 is that route’s `status`. This claim does not assign `status` on the map. The row has no `status` and no `source`. `get` would not return a stored source. The send stand-in and the sms stand-in do not read one. This claim does not add the field.
+
+`get` stays without a firm. Claim 24 already specified `GET /consent/:contactId` as one row for the contact id because no caller of that route is acting as a firm. `ConsentSilencePort.get` is typed `get(contactId)`. `realConsentSilence.get` requests that path and passes no firm. The stand-in `get` is that route when the wire is off. Adding a firm argument would invent the caller claim 24 refused. A pair key under a firm-less `get` would still have to choose a slot. The send that needs the pair is `consentAndHaltGate`, claim 23, which does not read this map.
+
+**Who reads and writes the slot.** `standInSendGate.collectReasons` calls `get` only when `contactId` is set and `purpose` is `cem`, `opt-in`, `nudge`, or `reactivation`. `silenced` true pushes `silence`. `basis` `none` pushes `consent` unless `purpose` is `opt-in`. `chips` calls `collectReasons` with firm, channel `email`, purpose `cem`, and posture `Active`, and with no contact, so that arm does not run. `FirmOperationsBindModule` and `FirmOperationsBindPanel` call `decide` with `firmId`, `channel`, `purpose`, and `posture`, and they do not pass `contactId`. `registry.ts` sets `sendGate` to `standInSendGate` even when `consentSilence` is `realConsentSilence`. Those calls do not read `consent_records`, and they do not read a slot the real writer fills. `standInSmsApi.send` calls `get` when `contactId` is set. `silenced` true returns deny `STOP`. `basis` `none` returns deny `consent`. The input has no `purpose`, so there is no opt-in exemption on that function. When the wire is real, `smsApi` is `realSmsApi`, which posts `/send/sms`. That post is claim 23’s gate, which exempts `purpose` `opt-in`. This claim does not add a purpose to the stand-in. A contactless stand-in send does not call `get`. `listUnsubscribe.accept` and `espMailer.injectEvent` on `bounce_hard` call `silence`. Nothing in `src/` calls `accept`. No handler under `server/` writes a list-unsubscribe. The bounce stand-in writes this map only when `espMailer` is the stand-in. `contactSeatMirror.ts` does not import this module.
+
+**The seat mirror.** `consent` in `contactSeatMirror.ts` is a different `Map`, keyed by `contactId`, holding `basis`, `silenced`, `source`, and `workspaceOptedOut`. The header says the stand-in mirrors the seat. The six seeded slots that exist are `silenced` false. `cr-harbor-2` and `cr-cedar-3` have no slot. No function in that file sets `silenced` true. `consent` and `consentContact` currently copy `prev?.silenced ?? false`. `handleContactSeatConsent` sets `silenced` false on the insert and on the conflict. Claim 26 is that statement. The product-face Agree posts the seat routes. When the wire is off, `standInMachineApi` calls `consent` and `consentContact`. Those two functions set `silenced` false. `basis` and `source` stay the action’s values: Agree is `express` and `contact_workspace`, Ignore is `none` and `ignored`. `workspaceOptedOut` stays the previous value, or false when the slot is new. The server seat consent does not assign `workspace_opted_out`. This claim does not assign it either. A slot that was silenced becomes not silenced, and the payload’s `silenced` flag follows `project`. The seeds do not show the split, because none of them are silenced and nothing in the file sets the boolean. The write is still the seat statement. A slot that arrives silenced does not survive Agree.
+
+`silence` and `silenceContact` stay `markWorkspaceOut`. They set `workspaceOptedOut` true, keep `basis`, and keep `silenced`. That is `handleContactSeatSilence`’s conflict, which sets `workspace_opted_out` and does not assign `silenced` or `basis`. The server insert of a new pair sets `basis` `none` and `silenced` false. The mirror’s new slot uses those same defaults. This claim does not retune that function. Workspace-out is not email silence. The file already says that. Claim 42 is the `status` those statements omit.
+
+**Rejected alternatives.**
+
+- Key `byContact` by `contactId` and `firmId` so the stand-in keeps both pairs. `get` cannot name a firm. Claim 24 refused to add a firm to the route. The port matches that route. The bind screen does not pass a contact. Claim 23 already refused to let this map choose the send’s select. A second firm replacing the slot is the stand-in’s limit. It is not a product rule that one contact has one consent across firms.
+
+- Clear `silenced` on `setConsent` so the register scene’s Agree matches the seat. `setConsent` is `POST /consent`. Claim 26 left that conflict as the basis write that does not assign `silenced`. `ContactPrototypeScene.applyConsent` calls it with `express`. It does not post the seat. Clearing the boolean here would lift a silence the server conflict keeps.
+
+- Leave `consent` and `consentContact` copying the previous boolean because no seed is silenced. The live copy is the discrepancy claim 26 named and claims 28 and 29 left inside their own scope. The mirror is the seat when the wire is off. The server Agree already clears the boolean. A kept true would leave `project` reporting `silenced` after Agree. The empty seed is not a second Agree.
+
+- Have the seat mirror write `standInConsentSilence`, or have `standInSendGate` read the seat slot, so one boolean governs both. Claim 38 already refused to merge them for the meeting post. The send stand-in reads the consent map. The seat projection reads the seat slot. A register silence of `sarah` would change `cr-harbor-1`, or a seat Agree would clear the sms stand-in’s `STOP`. The product already keeps those writes on different statements.
+
+- Add an opt-in exemption to `standInSmsApi`, or store `source` on the consent map, in order to finish the boolean. The sms input has no purpose. The product exemption is claim 23. The map’s `get` does not return `source`. Neither change decides whether Agree clears `silenced`.
+
+No founder question. The pair stays the table. The firm-less get stays the route whose caller is not a firm. The consent map’s keep is `POST /consent` and `POST /consent/silence`. The seat mirror’s Agree is the clear claim 26 already chose. The two maps stay two maps.
+
+**What this leaves.** `runContactEligibilityCascade`, when `dispatchEventToWorkflows` returns no workflows, calls `enrollAndActuate` without `fireFirstStep`. Inside that function a missing flag still enters the first-step branch, because the test is `!== false`. That call does not read `consent_records`. Claim 31 does not block it. The enroll was not specified. `listUnsubscribe.accept` still has no caller, and no server handler writes the pair from a list-unsubscribe. The leaf names that control. This claim does not add a route. `SYSTEMS-GOAL` still asks whether launch day is only for contacts who were waitlisted, and it still says not to fill that ask. Nothing writes `waitlisted`.
+
+**Evidence:** `src/app/wire/standins/consentSilence.ts` `setConsent`, `silence`, `get`. `src/app/wire/ports.ts` `ConsentSilencePort`. `src/app/wire/reals/consentSilence.ts`. `src/app/wire/registry.ts` `sendGate`, `consentSilence`, `smsApi`, `listUnsubscribe`. `src/app/wire/standins/sendGate.ts` `collectReasons`, `chips`. `src/app/wire/standins/smsApi.ts` `send`. `src/app/wire/standins/listUnsubscribe.ts` `accept`. `src/app/wire/standins/espMailer.ts` the `bounce_hard` call. `src/app/wire/standins/contactSeatMirror.ts` the consent `Map`, `consent`, `consentContact`, `markWorkspaceOut`. `src/app/wire/standins/machineApi.ts` `consentContact`, `consent`. `src/app/register/prototype-ant/operator/FirmOperationsBindModule.tsx` the `decide` calls. `src/app/register/prototype/operator/FirmOperationsBindPanel.tsx` the `decide` calls. `src/app/register/prototype/ContactPrototypeScene.tsx` `applyConsent`. `stores.ts` `handleConsentSet`, `handleConsentSilence`. `contactSeat.ts` `handleContactSeatConsent`. Claims 23, 24, 25, 26, and 38.
+
+**Live.** `setConsent` still keeps the previous boolean. `silence` still keeps the previous basis and sets the boolean true, and it still ignores `source`. `get` still does not take a firm. `standInContactSeat.consent` and `consentContact` still copy `prev?.silenced`. The server seat statement still sets `silenced` false. No migration was written.
+
+---
+
+## Claim 42 — The hard bounce and the workspace opt-out do not assign `status`
+
+**Standing:** necessary implication of claim 25, and a technical decision made in this session.
+
+The hard-bounce upsert and `handleContactSeatSilence` do not assign `consent_records.status`. An insert keeps the column default `unsequenced`. A conflict keeps the `status` the row already held. Claim 25 is the silence route. These are the other two statements that claim left unnamed. This claim does not assign `status` on `handleConsentSilence`, does not dispatch `consent_records.opt_out` from either statement, and does not set `silenced` true on the workspace opt-out.
+
+**The bounce.** When `eventClass` is `bounce_hard` and the outbound row supplied a `contact_id`, `webhooks.ts` upserts `consent_records` for that contact and that row’s `firm_id`. The insert lists `contact_id`, `firm_id`, `basis` `none`, `silenced` true, `source` `hard-bounce`, and `updated_at`. The conflict sets `silenced` true, `source` `hard-bounce`, and `updated_at`. Neither clause names `status`, `basis` on the conflict, or `workspace_opted_out`. `outbound_messages.firm_id` is `TEXT NOT NULL`. `contact_id` on that table is nullable. The consent statement runs only when `contactId` is set. The `?? "unknown"` firm is the miss of the outbound row, and that same miss leaves `contactId` unset, so the consent statement does not run. The pair this upsert writes is the outbound message’s firm and contact. It does not call `dispatchEventToWorkflows`. Claim 15 already left this write off the opt-out firing. A conflict can leave `basis` `express` or `implied` with `silenced` true. Claim 31 already reads that row as a fact the opt-in still allows. Claim 23’s boolean arm denies the send. Assigning `status` `silenced` would replace a `sequenced` or `waitlisted` value this call did not come to change. Claim 25 refused that assignment on the silence route, because the boolean already denies and no reader treats `unsequenced` as the silence. The bounce is that same boolean. The default and the previous `status` stand.
+
+**The workspace opt-out.** `handleContactSeatSilence` inserts `basis` `none`, `silenced` false, `source` `contact_workspace.workspace_opt_out`, and `workspace_opted_out` true. The conflict sets `workspace_opted_out` true and `updated_at`. It does not assign `basis`, `silenced`, `source`, or `status`. It does not dispatch. The handler returns the workspace-out refuse. `supabase/migrations/020_workspace_opt_out.sql` says the flag is a field, not email silence. `isWorkspaceOut` reads the flag for the pair. `consentAndHaltGate` reads `basis`, `silenced`, and `status`. It does not read the flag. Claim 15 left this call off the opt-out firing. Claim 37 already said the seat Opt out control is this statement and is not the `silenced` boolean. Assigning `status` `silenced` would make claim 23’s status arm deny a row whose boolean this insert set false, or whose boolean this conflict did not set. That would turn the flag into the silence word migration 020 separated. Leaving `status` does not change the refuse, and it does not open a send the boolean had already closed. A previous `sequenced` or `waitlisted` stays, which is the non-write claim 25 and claim 26 already kept for a statement that does not own those rungs.
+
+**The mirrors.** `espMailer.injectEvent` on `bounce_hard` calls `standInConsentSilence.silence`. Claim 41 keeps that as the previous basis and `silenced` true. It does not set `workspaceOptedOut`. `markWorkspaceOut` sets the seat flag and does not call the consent map. The two stand-ins stay the two statements. This claim does not add `status` to either map.
+
+**Rejected alternatives.**
+
+- Assign `status` `silenced` on the bounce insert and on the bounce conflict, because `silenced` is true. That is the assignment claim 25 refused for the silence route. The boolean arm already denies. The conflict’s previous `basis` is why claim 31 still allows the fact. The status word is not that fact and it is not that deny.
+
+- Assign `status` `silenced` on the workspace opt-out so the seat Opt out stops sends. The send does not read the flag. The flag’s migration says it is not email silence. Claim 37 already kept this control off the `silenced` boolean. A status word of `silenced` would deny through the arm that reads the word, including an opt-in purpose, on a row this insert stored as `silenced` false. That is a second silence. This claim does not add it.
+
+- Set `silenced` true on the seat conflict so Opt out matches the silence leaf’s button. Claim 15, claim 37, and migration 020 already split the flag from the boolean. This claim is the `status` column. It does not recut that split.
+
+- Dispatch `consent_records.opt_out` from the bounce or from the seat opt-out so a listener sees the row. Claim 15 left both off that firing. The bounce updates the pair the gate re-reads. The seat call updates the flag `isWorkspaceOut` reads. Neither becomes the dispatch by omitting `status`.
+
+- Retune the `?? "unknown"` firm. The consent insert does not run on the miss that produces that fallback, because `contactId` is unset with it. `firm_id` on `outbound_messages` is not null. The pair that is written already has a firm.
+
+No founder question. The boolean already denies the bounce. The flag already closes the workspace. `status` `unsequenced` is not either of those reads. Writing `silenced` into the column would replace a rung these statements do not own, or would make the workspace flag into the send’s silence word. The omission is the specification.
+
+**What this leaves.** `runContactEligibilityCascade`, when no workflow is dispatched, still calls `enrollAndActuate` without `fireFirstStep`, and that function still treats a missing flag as the first step. The call does not read `consent_records`. A silenced contact is not withheld there. Claim 31 does not block the enroll. It was not specified. Nothing writes `waitlisted`. The launch-day audience ask in `SYSTEMS-GOAL` stays the ask that file said not to fill.
+
+**Evidence:** `webhooks.ts` the `bounce_hard` upsert, the outbound lookup. `contactSeat.ts` `handleContactSeatSilence`, `isWorkspaceOut`. `supabase/migrations/003_ct_wire_stores.sql` `outbound_messages.firm_id`. `supabase/migrations/004_machine_tables.sql` the `status` default. `supabase/migrations/020_workspace_opt_out.sql`. `dispatchSend.ts` `consentAndHaltGate`. `src/app/wire/standins/espMailer.ts` the `bounce_hard` call. `src/app/wire/standins/contactSeatMirror.ts` `markWorkspaceOut`. `machine.ts` `runContactEligibilityCascade` the `dispatched.length === 0` loop. `cascade.ts` `enrollAndActuate` the `fireFirstStep !== false` branch. Claims 15, 23, 25, 31, and 37.
+
+**Live.** The bounce conflict still sets `silenced` and `source` and still omits `status`. The seat silence conflict still sets `workspace_opted_out` and still omits `status`. Neither dispatches. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
@@ -2064,6 +2158,7 @@ Those two bullets describe the live payloads. They still do. Claim 11 names the 
 - `handleMeetingBook` inserting `meeting_booked`, dispatching, completing, nullifying, and writing the side engagement without reading `consent_records` or `campaign_objective.kind`, and claim 38, which does none of those unless the same invitation test passes. The live handler still inserts. `standInMachineApi.bookMeeting` still pushes.
 - `writeBackContactFacts` calling `applyFactsToMeetingsStore` with the submitted facts when `writeFact` throws, and calling `addMeeting` for a client the local array does not already hold, and claim 39, which does not paint on that throw and does not add a meeting from a fact. The live catch still paints. The live function still adds `m-facts-` plus the client id.
 - `eventKindProse` returning `Sent` for `send_denied` and for `send_dry_run` because both contain `send`, and claim 40, which leaves those two to the function’s spaced leftover. The live helper still returns `Sent`. `titleFor` still has no `send_denied` case. Claim 21 already names that default.
+- `standInContactSeat.consent` and `consentContact` copying `prev?.silenced`, and claim 41, which sets `silenced` false on both. The live functions still copy the previous boolean. The server seat statement already sets it false. Claim 26 is that statement.
 
 ---
 
