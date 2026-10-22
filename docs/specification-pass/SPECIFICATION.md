@@ -1446,6 +1446,52 @@ No founder question. A firing and the absence of a firing are different listener
 
 **Live.** No handler dispatches `consent_records.sequenced`. No statement sets `waitlisted`. The migration `UPDATE` still sets `sequenced` once for the backfill and still does not dispatch. The seat conflict still does not write those two values. No migration was written.
 
+### Revision — claim 28
+
+The sentence that `projectSeat` showing a form after Ignore stays the separate paint claim 26 left unnamed stands as the gap. Claim 28 decides that pane. This event is unchanged. No dispatch was added. `waitlisted` and `sequenced` were not assigned. The seat conflict’s `CASE` was not retuned.
+
+---
+
+## Claim 28 — After Ignore the seat does not open the form
+
+**Standing:** technical decision made in this session.
+
+When the consent row for the link’s contact and firm is the Ignore row claim 26 writes — `basis` `none`, `source` `ignored`, `silenced` false — and the objective kind on the campaign the seat is reading is `form`, `projectSeat` does not set `now.state` to `form` and does not include form fields. `now.state` stays `empty`. The title stays `Nothing needed right now`. The instruction stays the firm name plus `will put the next ask here.` Agree is unchanged: `basis` `express` still takes the form branch. This claim does not set `silenced` true, does not assign `status`, does not write `waitlisted` or `sequenced`, and does not dispatch.
+
+**The pane.** `handleContactSeatConsent` returns `projectSeat` after the upsert. `handleContactSeatGet` returns the same function. `ContactWorkspace` renders the form, the field inputs, and Submit only when `now.state` is `form`. The empty state renders the title and the instruction and does not render those controls. The payload includes `formFields` only when `now.state` is `form`, so withholding that state withholds the fields. The consent ask stays finished: `source` `ignored` is already not the branch that sets `now.state` to `consent`, and the history row for consent stays not outstanding. Ignore remains a completed choice. It does not put Agree and Ignore back on the page.
+
+**What the product already required.** `docs/register/SEED.md` §8.2 says opt-in before deep collection. `docs/register/SYSTEMS-STORY.md` §6 extracts that as a must: gate deep data collection on opt-in, and consent state gates fact-refresh. `docs/register/OUTCOMES.md` states the contact agrees or ignores before any deeper collection. `docs/register/how/contact-consent.md` leaf 1.2 says Ignore writes the no-deeper state and deeper collection forms do not open, and that Agree is what unlocks the later nudge. `docs/register/how/contact-refresh.md` places the consolidated form after consent, entered from the nudge message. `docs/register/OUTCOME-SYSTEM-MAP.md` binds consent to system 6 and the form to fact-refresh. `docs/register/furnish/contact-furnish.md` says the Ignore policy row does not change that core function: no express consent, and deeper forms stay closed. The plant in `ContactPrototypeScene` repeats the same sentence on the Ignore click. That plant is not the wired seat. It matches the leaf. The wired seat is the implementation that does not.
+
+**What the seat does instead.** The consent select is `basis`, `silenced`, and `source` for the link’s contact and firm. The consent branch requires a missing row, or `basis` `none` with `source` other than `ignored`. Ignore fails that test. The next branch sets `now.state` to `form` when `campaign_objective.kind` is `form`. The field query runs because `silenced` is false, and the return attaches those rows because the state is `form`. `obj.optin.day` is that kind, on `camp.optin.day`, completion `fact_writebacks`. The seed contact `cr-harbor-4` at `firm-harbor` is `basis` `none`, `source` `ignored`, `silenced` false, enrolled on that campaign, with self-reportable missing facts. The live projection therefore shows that contact the form. The file note on that contact’s upload is not a specification of the pane. `standInContactSeat`’s `project` uses the same consent test and then sets `form` for `camp.optin.day` and `camp.reeng.nudge`, and it attaches that contact’s questions. This claim is both projections. Neither was edited.
+
+**Why the empty Now is the no-deeper pane.** The leaf does not name a further block after Ignore. The workspace already has `empty` for a Now that is not the consent ask, not a form, and not a meeting. Furnish’s confirmation sentence is clarify copy. It does not add a state. Withholding `form` is the form not opening. The shared empty instruction is the copy that state already uses. This claim does not replace it.
+
+**What stays.** The cursor does not move. History still lists the current form campaign as outstanding, because that list follows campaign order and the current `campaign_id`, not `source`. Open in Now calls `projectSeat` again, so it also does not render the form. Claim 4’s write of `campaign_id` on that click was not reopened. `handleContactSeatFacts` still inserts `fact_writebacks` without reading this row. The workspace calls that route from the form’s submit, which this pane does not render. The route itself was not specified. A meeting objective still takes the meeting branch after the same consent test. Book is a separate outcome. That branch was not specified.
+
+**Rejected alternatives.**
+
+- Keep `now.state` `form` after Ignore, and treat “forms do not open” as only the later send. Claim 26 already has the basis arm deny a purpose that is not `opt-in` when `basis` is `none`. That arm stops a nudge from being sent. It does not stop this response from rendering the fields. The leaf’s click path is Agree or Ignore before any deeper form, and the refresh leaf opens the form after consent. Seed §8.2 and Story §6 gate the collection on opt-in. The seat is the collection pane. The campaign cursor sitting on a form objective is not that opt-in. `basis` `none` is not opted in.
+
+- Leave `now.state` on `consent` so the contact can still Agree. The leaf says Ignore is a valid choice that writes the no-deeper state. The projection already treats `source` `ignored` as the ask not outstanding, and the history row is already not outstanding. Putting the buttons back would make the click a dismiss that did not stick. The no-deeper pane is the finished choice with the form withheld, not an unfinished ask.
+
+- Set `silenced` true so the field query skips, and call that the closed form. Claim 26 clears the boolean on this statement and does not turn Ignore into a silence. The silence leaf and the furnish distinction are a different control. Story §6’s “silenced when not opted in” is the indicator sentence those claims already left off this write. The collection gate is met by not opening the form. The boolean stays false. The `CASE` on `status` stays the move off `silenced` and is not how the pane is chosen. `projectSeat` does not read `status`.
+
+- Add a `now.state` for the prototype sentence “Deeper collection stays closed.” The leaf’s affordance is the button that writes the state. It does not list that confirmation as a block. The workspace has no such state. A new state would be a screen this session does not mint. Empty is the pane that already means there is no ask on Now.
+
+- Hide the form for every row whose `source` is `ignored`, including a later `basis` of `express`. The Ignore click writes `basis` `none` and `source` `ignored` together. Opt-in is the basis that unlocks the form. A mixed row is another writer. This claim withholds the form for the Ignore pair, not for every leftover source string.
+
+- Treat the stand-in as a second rule, or retune its kept boolean. The mirror’s `project` is this same pane. Its `consent` keeping the previous boolean is the discrepancy claim 26 already left. This claim does not retune that store.
+
+- Move the cursor off the form campaign, or mark that history row not outstanding, in order to hide the form. The pursuit’s campaign is claim 4’s latch. Ignore is not a completion of `obj.optin.day`. The history row can still name the current ask. Now does not open it.
+
+No founder question. Showing the form and withholding it are different pages for the contact. Seed §8.2, Story §6, the consent outcome, the consent leaf, and the refresh leaf’s “after consent” already choose the second. The seat’s branch is the implementation that still takes the first. Empty is the state the pane already uses when it is not that form. The status word, the sequenced event, and the silence boolean stay as claims 25, 26, and 27 wrote them.
+
+**What this leaves.** `handleContactSeatFacts` still accepts answers for this contact and firm and does not read `consent_records`. Whether that write is inside the opt-in gate, or a door the withheld pane does not close, was not specified. It is not this pane. When the objective kind is `meeting`, the same consent test still sets `now.state` to `meeting`. Book’s criteria are an invitation and not silenced. Whether that surface is deep collection was not specified. It is not the form.
+
+**Evidence:** `contactSeat.ts` `projectSeat`, `handleContactSeatConsent`, `handleContactSeatGet`, `handleContactSeatFacts`. `src/app/register/prototype-ant/contact/ContactWorkspace.tsx` the `now.state` branches. `src/app/wire/standins/contactSeatMirror.ts` `project`. `src/app/register/prototype/ContactPrototypeScene.tsx` the Ignore outcome. `supabase/seeds/002_machine_tables.sql` `obj.optin.day`. `supabase/seeds/005_contact_workspace_fill.sql` `cr-harbor-4`. `supabase/migrations/018_collectible_fields.sql` `self_reportable`. `docs/register/SEED.md` §8.2. `docs/register/SYSTEMS-STORY.md` §6. `docs/register/OUTCOMES.md` the consent statement. `docs/register/how/contact-consent.md` leaf 1.2. `docs/register/how/contact-refresh.md` the root criteria and leaf 1.1. `docs/register/how/contact-book.md` leaf 1.1. `docs/register/OUTCOME-SYSTEM-MAP.md` the consent and refresh rows. `docs/register/furnish/contact-furnish.md` `contact-furnish-08`. `docs/register/PASS-FORK-MAP.md` the face track beside the machine track.
+
+**Live.** `projectSeat` still sets `now.state` to `form` when `source` is `ignored` and the objective kind is `form`, and it still attaches the fields because `silenced` is false. The mirror still does the same for `camp.optin.day` and `camp.reeng.nudge`. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
@@ -1491,6 +1537,7 @@ Those two bullets describe the live payloads. They still do. Claim 11 names the 
 - `enrollAndActuate` choosing that same kind from `shouldLiveSend` and storing `subject` and `bodyText` on a result with `ok: false` (claim 22). Claim 22 names `send_denied` for that result and takes the copy off the payload. An allowed result takes its kind from the `DispatchResult`. The live writer still labels from `shouldLiveSend`.
 - `consentAndHaltGate` selecting `consent_records` by `contact_id` alone with `LIMIT 1`, and claim 23, which also requires `firm_id` of the firm the send was given. The live query still omits `firm_id`. Another firm’s row can still deny or allow the send. This firm’s row can still be missed.
 - `handleContactSeatConsent` leaving `status` unassigned on conflict, and claim 26, which sets `unsequenced` when the stored value is `silenced`. The live statement still omits `status`. A backfilled row stays denied after Agree until that assignment is written.
+- `projectSeat` setting `now.state` to `form` and attaching form fields when `source` is `ignored`, `basis` is `none`, and the objective kind is `form`, and claim 28, which leaves that Now `empty` and omits the fields. The live branch still sets `form`. The mirror still sets `form` for `camp.optin.day` and `camp.reeng.nudge`.
 
 ---
 
@@ -1611,6 +1658,10 @@ The sentence that a later consent can clear `silenced` and leave `status` `silen
 **An import that reuses a contact id.** `handleContactImport` inserts `ON CONFLICT (id) DO UPDATE` and does not assign `firm_id` on the update. The id stays on the first firm’s book row. The dispatch still puts that id in `contactIds` for the importing firm. Claim 17 keeps a non-empty list. Claim 18 judges the enroll by the importing firm’s halt, not by the first firm’s. The conflict update was not specified.
 
 **Ignore and the deeper form.** Claim 26’s statement also stores Ignore: `basis` `none`, `silenced` false, `source` `ignored`, and the same `status` move when the word was `silenced`. `projectSeat` then treats `source` `ignored` as not the consent ask. When the enrollment’s objective kind is `form`, `now.state` becomes `form`, and the form fields are included because `silenced` is false. `docs/register/how/contact-consent.md` says Ignore writes the no-deeper state and deeper collection forms do not open. That paint was seen while reading what the seat shows after the statement. It was not specified. It is not the status word.
+
+### Revision — claim 28
+
+The paragraph above is the gap session 021 left. Claim 28 specifies the Now pane. For that Ignore row, when the objective kind is `form`, `now.state` stays `empty` and the form fields are not included. The live branch still sets `form`. The status word is unchanged.
 
 ### Revision — claim 27
 
