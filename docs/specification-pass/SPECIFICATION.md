@@ -1224,6 +1224,52 @@ No founder question. Another firm’s consent row denying or allowing this firm�
 
 **Live.** The select is still `WHERE contact_id = $1 LIMIT 1` with no `firm_id` and no `ORDER BY`. Another firm’s row can still be the row that denies or allows. No migration was written.
 
+### Revision — claim 24
+
+The sentence that `handleConsentGet` was seen and not specified stands as the gap. Claim 24 specifies that route. It returns one row for the contact id, or the defaults, because no caller of it is acting as a firm. This claim’s select is unchanged. The live send query still omits `firm_id`. The arms on `silenced`, `status`, `basis`, and `purpose` were not retuned. The silence upsert still does not assign `status`.
+
+---
+
+## Claim 24 — The consent get returns one row for the contact id
+
+**Standing:** technical decision made in this session.
+
+`handleConsentGet` returns `basis`, `silenced`, and `source` from one `consent_records` row whose `contact_id` is the path parameter, or the defaults when no such row exists. It does not return the row for a firm the caller is acting as. No caller of `GET /consent/:contactId` is acting as a firm, and the handler does not resolve one. The route has no firm argument because of that. Claim 23’s pair is the row a send reads. This route does not send. This claim does not retune that select or its arms, and it does not assign `status` on the silence upsert.
+
+**The route.** `routes.ts` maps `GET /consent/:contactId` to `handleConsentGet`. The handler reads `contactId` from the path. The query is `SELECT basis, silenced, source FROM consent_records WHERE contact_id = $1 LIMIT 1`. There is no `firm_id` and no `ORDER BY`. It does not call `requireSessionFirm`. The body is `{ basis: row?.basis ?? "none", silenced: row?.silenced ?? false, source: row?.source ?? null }`. A missing row and a stored row of basis `none`, silenced false, and a null source are the same body. `consent_records` is still `PRIMARY KEY (contact_id, firm_id)`. Two firms are two rows. `LIMIT 1` does not name which of them returns.
+
+**Who calls it.** `realConsentSilence.get` is the function that requests that path. It passes the contact id and no firm. `ConsentSilencePort.get` is typed `get(contactId: string)` and the promised value is `basis` and `silenced`. The HTTP body also carries `source`. The port type does not. `wireFetch` sends the session cookie on every wire request. The comment there says the cookie carries `firm_id` for binding. This handler does not read the cookie, the `x-firm-id` header, or a `firmId` query.
+
+The only call of `wirePorts.consentSilence.get` is `ContactPrototypeScene`. On mount it passes `DEMO_CONTACT_ID`, the string `sarah`, and copies `state.silenced` into the scene’s local state. The scene’s `setConsent` and `silence` pass `FIRM_BRAND.firmId`, which is `firm-cedar`. The get does not. The register canvas renders that scene when `ctDesk` is `contact` and the click-through is the DS-I canvas. The default desk is `consultant`. The default design system is `dsi`. The ant branch of the same panel renders `ContactAntScene`, which does not call `consentSilence.get`. `/register` is `RegisterPage`. The product face is `/prototype-ant`.
+
+The product-face contact workspace calls `consentContactSeat` and `consentContactWorkspace`. Those post to the seat routes. `projectSeat` reads `basis`, `silenced`, and `source` with `WHERE contact_id=$1 AND firm_id=$2`. That firm is the link’s firm. The operator bind screen calls `wirePorts.sendGate.decide` with `firmId`, channel, purpose, and posture, and with no contact. `registry.ts` sets `sendGate` to `standInSendGate` even when `consentSilence` is `realConsentSilence`. Those `decide` calls do not request this path. `realSmsApi.send` posts `/send/sms`, which is the send of claim 23. No script requests `GET /consent/:contactId`. `scripts/verify-modular-surfaces.ts` calls `standInConsentSilence.get`, which does not query this table.
+
+`sarah` is a client id in `src/app/data/clients.ts`. It is not a `contact_id` in `supabase/seeds`. A table with no row for that id returns the defaults. A later `silence` or `setConsent` from the same scene inserts `(sarah, firm-cedar)`. Another firm’s row for `sarah`, when one exists, remains a row this query can return.
+
+**What the read is for.** It is the real adapter of `ConsentSilencePort.get`. It answers the basis and the silenced flag stored against that contact id, and it puts `source` on the HTTP body. The register prototype uses the flag to paint its Silence / Opt out surface for the demo id. It does not decide a send. It does not paint the product-face seat. It does not paint the operator bind screen. Those surfaces already read a firm: the seat by the link, the send by the firm the send was given.
+
+**Rejected alternatives.**
+
+- Add `firm_id` and return the row for a firm the caller is acting as, the way claim 23 names the send and the way `projectSeat` names the link. No caller of this route is acting as a firm. The port’s `get` does not take a firm. The handler does not resolve a session. The product-face read of these three columns for a firm is already `projectSeat`. Adding a firm on this route would invent that caller.
+
+- Read `requireSessionFirm` from the cookie `wireFetch` already sends. The cookie is on every wire call because binding needs it. This handler is not that binding. The register scene passes a demo contact id and does not present itself as the session firm. An operator session does not call this route. Requiring the session would refuse a get that today returns the defaults with no session, and it would answer `sarah` from whatever firm the cookie names. That firm is not the `firm-cedar` the scene writes on `setConsent` and `silence`.
+
+- Use `FIRM_BRAND.firmId` (`firm-cedar`) because the same scene writes with that constant. The get does not receive the constant. The route is not the scene. A request for some other contact id would then return only Cedar’s row. The scene is the register prototype. It is not an operator on the product face acting as Cedar.
+
+- Treat any silenced row for the contact as the flag, or any `express` row as the basis. Claim 23 refused that for a send, because another firm’s state would govern this firm’s message. This route does not send. The query is `LIMIT 1`, not a search for a denying row. A rule that any firm’s silence wins would be a new cross-firm obligation for a paint the product face does not show.
+
+- Add `ORDER BY updated_at DESC` and still omit `firm_id`. The newest write across firms would become the contact’s answer. The caller did not ask for a firm, and did not ask for the newest firm. Claim 23 already refused “latest” as the name of the row a send acts on. This get is not that send.
+
+- Read the stand-in map as the row this query returns. `standInConsentSilence` keeps one slot per `contactId`, stores `firmId` on the slot, and replaces the slot when another firm writes. `get` does not take a firm. `standInSendGate` calls that `get` only when a contact is passed, and the bind screen’s `decide` calls do not pass one. `standInSmsApi` calls it when it has a contact. The map is not `consent_records`. It was not retuned. It does not choose the SQL row.
+
+- Assign `status` on the silence upsert, specify `consent_records.sequenced`, or fill the CASL silence in `SYSTEMS-STORY` §6, in order to name this row. This select does not read `status`. The upsert and the sequenced event are other writes. The story’s geography is not which row an unscoped get returns.
+
+No founder question. Whose consent binds a send, and whose consent the seat shows, are already the pair. This get sits outside those reads because the caller is not acting as a firm. When two rows exist, which one `LIMIT 1` returns can change the boolean the register prototype paints for `sarah`. It does not change the operator’s desk, the send, or the client seat.
+
+**Evidence:** `stores.ts` `handleConsentGet`. `routes.ts` `GET /consent/:contactId`. `src/app/wire/reals/consentSilence.ts` `get`. `src/app/wire/ports.ts` `ConsentSilencePort`. `src/app/wire/http.ts` `wireFetch`. `server/wire-service/sessionFirm.ts` `requireSessionFirm`. `src/app/register/prototype/ContactPrototypeScene.tsx` the mount effect, `DEMO_CONTACT_ID`, `applyConsent`, `applySilence`. `src/app/wire/firmBrand.ts` `FIRM_BRAND`. `src/app/wire/demoIds.ts` `CT_DEMO.firmId`. `src/app/register/prototype/RegisterPrototypeCanvas.tsx`. `src/app/register/context/RegisterShellContext.tsx` `ctDesk` default `consultant`, `loadCtDesignSystem` default `dsi`. `src/app/register/components/RegisterClickThroughPanel.tsx`. `src/app/register/prototype-ant/AntCtHost.tsx` `ContactAntScene`. `src/app/Router.tsx` `/register` and `/prototype-ant`. `src/app/register/prototype-ant/contact/ContactWorkspace.tsx`. `src/app/wire/reals/machineApi.ts` `consentContactWorkspace`, `consentContactSeat`. `src/app/wire/reals/smsApi.ts` `realSmsApi.send`. `contactSeat.ts` `projectSeat`. `src/app/register/prototype-ant/operator/FirmOperationsBindModule.tsx` the `decide` calls. `src/app/wire/registry.ts` `sendGate` and `consentSilence`. `src/app/data/clients.ts` id `sarah`. `supabase/migrations/003_ct_wire_stores.sql` `consent_records`. `scripts/verify-modular-surfaces.ts` `trialConsent`.
+
+**Live.** The query is still `WHERE contact_id = $1 LIMIT 1` with no `firm_id` and no `ORDER BY`. No firm argument was added. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
@@ -1372,5 +1418,9 @@ The sentence that the first step still labels from `shouldLiveSend` stands as th
 ### Revision — claim 23
 
 The sentence that the consent select was not specified stands as the gap session 016 left. Claim 23 specifies the row: `contact_id` and the `firmId` the gate was given. The live query still omits `firm_id`. The arms on `silenced`, `status`, `basis`, and `purpose` were not retuned. The silence upsert still does not assign `status`. `consent_records.sequenced` still has no dispatch. `handleConsentGet` still selects by `contact_id` alone. The stand-in map is still one slot per contact id. Those reads were not specified.
+
+### Revision — claim 24
+
+The sentence that `handleConsentGet` still selects by `contact_id` alone stands as the description of the live query, and claim 24 makes that the specification of the route. The get returns one row for the contact id, or the defaults `none`, false, and null. It is not the send’s pair. No caller of the route is acting as a firm. The live query is unchanged, and it matches this claim. The send’s live query still omits `firm_id`. The silence upsert still does not assign `status`. `consent_records.sequenced` still has no dispatch. The stand-in map is still one slot per contact id. Those were not specified.
 
 **An import that reuses a contact id.** `handleContactImport` inserts `ON CONFLICT (id) DO UPDATE` and does not assign `firm_id` on the update. The id stays on the first firm’s book row. The dispatch still puts that id in `contactIds` for the importing firm. Claim 17 keeps a non-empty list. Claim 18 judges the enroll by the importing firm’s halt, not by the first firm’s. The conflict update was not specified.
