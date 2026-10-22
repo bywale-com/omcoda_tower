@@ -732,6 +732,10 @@ No founder question. The If reads a field of the consent row this opt-out upsert
 
 The sentence that this statement does not assign `status`, and that a branch reading `status` on an insert sees `unsequenced` while `silenced` is true, stands. Claim 25 specifies that write. The default on insert and the previous `status` on conflict stand. The boolean arm still denies. This revision does not retune the pointer.
 
+### Revision — claim 26
+
+The rejected alternative that a later writer can leave `status` unmoved described the live seat SQL. Claim 26 specifies that conflict. When the stored value is `silenced`, the seat consent sets `unsequenced`. The re-read still sees the current columns. This revision does not retune the pointer.
+
 ---
 
 ## Claim 16 — A live firing of `ct_firms` places the current firm id on `payload.writes`
@@ -1236,6 +1240,10 @@ The sentence that `handleConsentGet` was seen and not specified stands as the ga
 
 The sentence that this claim does not decide what the silence upsert writes into `status` stands as the gap. Claim 25 decides that write. The insert keeps the default `unsequenced`. The conflict keeps the previous `status`. The arms on `silenced`, `status`, `basis`, and `purpose` were not retuned.
 
+### Revision — claim 26
+
+The status arm was not retuned. Claim 26 is the seat write. After that conflict, a row whose `status` was `silenced` holds `unsequenced`, so the arm does not deny it. A row that still holds `silenced` is still denied. The compare stays equality to that literal.
+
 ---
 
 ## Claim 24 — The consent get returns one row for the contact id
@@ -1324,6 +1332,68 @@ No founder question. The two writes were assign `status` `silenced`, or leave th
 
 **Live.** The insert still omits `status`. The conflict update still omits `status`. No migration was written.
 
+### Revision — claim 26
+
+The sentence that a row the migration marked `silenced` stays denied after a later Agree clears the boolean stands as the gap. Claim 26 decides that seat write. When the stored `status` is `silenced`, the conflict sets `unsequenced`. The silence upsert still does not assign `status`. The arms were not retuned.
+
+---
+
+## Claim 26 — The seat consent that clears the boolean moves `status` off `silenced`
+
+**Standing:** technical decision made in this session.
+
+`handleContactSeatConsent` clears `silenced` and, on conflict, when `consent_records.status` is `silenced`, sets that column to `unsequenced`. An insert still omits `status` and keeps the default `unsequenced`. A conflict whose `status` is `waitlisted`, `sequenced`, or `unsequenced` keeps that value. The contact who has agreed is not denied by claim 23’s status arm. Claim 23’s compare is unchanged. Claim 25’s silence upsert still does not assign `status`. This claim does not write `waitlisted` or `sequenced`, and it does not dispatch `consent_records.sequenced`.
+
+**The statement.** `routes.ts` mounts the handler at `POST /contact-seat/:token/consent` and `POST /machine/contact-workspaces/:contactId/consent`. The body action `agree` stores `basis` `express` and `source` `contact_workspace`. Any other action, including `ignore`, stores `basis` `none` and `source` `ignored`. Both go through one upsert. The insert lists `contact_id`, `firm_id`, `basis`, `silenced`, `source`, and `updated_at`, with `silenced` false. The conflict of `(contact_id, firm_id)` sets `basis`, `silenced` false, `source`, and `updated_at`. The pair is the link’s contact and the link’s firm. The handler then returns `projectSeat` for that link. It does not dispatch.
+
+The conflict also assigns `status`:
+
+`status = CASE WHEN consent_records.status = 'silenced' THEN 'unsequenced' ELSE consent_records.status END`.
+
+The insert does not name the column. A new pair takes the default `unsequenced` from `supabase/migrations/004_machine_tables.sql`. That default is already off the deny word. The `CASE` runs only on a pair that already exists. It moves the literal `silenced` and leaves the other three checked values where they are.
+
+**What Agree is for.** `docs/register/how/contact-consent.md` leaf 1.2 says Agree writes the consented state that engagement runners read, and that this unlocks later nudges. Ignore writes the no-deeper state. The same leaf says a silenced contact does not receive the opt-in send. The seat route still accepts the click. `projectSeat` does not read `status`. It treats `basis` `express` as the consent ask finished, and it loads form fields when `silenced` is false. After Agree the seat already shows a contact who is not silenced. The runner that still blocks the nudge is `consentAndHaltGate`. Claim 23 denies when `silenced` is true or `status` equals `silenced`, including an opt-in purpose. With the boolean cleared and `basis` `express`, the basis arm allows a purpose that is not `opt-in`. The status arm is the deny that remains if the word stays `silenced`. A nudge is that later send. `workflowWalk.ts` passes purpose `opt-in` for an opt-in class and `cem` otherwise. `cem` is not exempt. Leaving the word denies it with detail `silenced`.
+
+**What the one-time update was.** `supabase/migrations/004_machine_tables.sql` adds `status` for the waitlist rung. The comment says `consent_records` is extended for waitlisted. One `UPDATE` then copies rows that were still `unsequenced`: `silenced` true becomes `status` `silenced`, and `basis` `express` or `implied` becomes `sequenced`, with silence winning when both match. It runs with the migration. It is not a trigger. Claim 25 already recorded that it is not the silence upsert. It is not a writer on this Agree. Seeds inserted after it omit `status` and keep the default. No later production statement assigns `consent_records.status`. The word `silenced` on a live row is that backfill, or a script that built the row. `scripts/verify-deny-gates.ts`, when it wants the silence deny to stop, sets `silenced` false and `status` `unsequenced` together. That is the script’s row. It is not this route. It agrees that the word alone keeps the deny.
+
+A contact silenced after the migration, through `handleConsentSilence`, has `silenced` true and, on an insert, `status` `unsequenced`. Agree already unlocks that row, because the boolean clear is enough and the word was never `silenced`. The row this claim changes is the one the backfill marked, including a later silence that kept that previous `status` under claim 25. After Agree the boolean is false and the word would still say `silenced`. The seat would show the consent as given. The send would still be denied.
+
+**Why that contact is not blocked.** The backfill labeled the boolean as it stood when the column appeared, so a reader of the new word would not see every existing row as `unsequenced`. It did not leave a latch. Consent is the current row of the pair, which claim 15 already treated as one state rather than a log. Agree replaces `basis`, `silenced`, and `source` on that row. The status arm denies the stored word. It does not ignore a later write that changes the word. After this conflict the word is `unsequenced` whenever it had been `silenced`. The boolean is false. `basis` is `express`. Claim 23’s consent arms allow the send. A halt on the same contact is still claim 19. This claim does not retune that arm.
+
+Ignore is the same statement. It also clears the boolean, so the same `CASE` moves a stored `silenced` to `unsequenced`. The basis arm then denies a purpose that is not `opt-in`, because `basis` is `none`. An opt-in purpose is the exemption claim 23 already kept. A post-migration Ignore on a default `unsequenced` row already had that shape. The `CASE` makes the backfilled row the same shape. It does not turn Ignore into a silence.
+
+**What stays put.** `handleConsentSet` on conflict updates `basis`, keeps `source` with `COALESCE`, and does not assign `silenced` or `status`. Its insert sets `silenced` false, and a new pair takes the default `unsequenced`. The conflict is the basis write claim 15 left off the opt-out dispatch. `ContactPrototypeScene` calls it. `standInConsentSilence.setConsent` keeps the previous boolean. Neither is the product-face Agree. `ContactWorkspace.tsx` posts the seat routes. A conflict that leaves `silenced` true stays denied by the boolean arm. If that row’s `status` is also `silenced`, the status arm denies it too. Moving the word there would not open the send. This claim does not assign `status` on that conflict.
+
+`handleConsentSilence`, `handleContactSeatSilence`, and the hard-bounce upsert are other writers of the pair. They are not this clear. Claim 25 stands. `standInContactSeat.consent` keeps the previous boolean. That map is not this row.
+
+**Rejected alternatives.**
+
+- Leave `status` `silenced` on the seat conflict, and let the arm keep denying because it does not read the boolean. That is the live SQL. The contact who agreed has `basis` `express` and `silenced` false, and the seat already shows the consent as given. The send still returns detail `silenced`, including the nudge the consent leaf says the runners unlock. The word was copied from the boolean once, at column-add. No production statement assigns `status` after that, so the word would outlast every later Agree. The arm stays a deny of whatever value is stored. This write changes the value.
+
+- Set `status` `sequenced` on Agree, copying the backfill’s second arm. After Agree the boolean is false and `basis` is `express`, which is the row that arm would have labeled `sequenced`. `docs/register/SYSTEMS-GOAL.md` says the cascade does not write `waitlisted` or `sequenced`. Sign-up met is the campaign goal that lands on `sequenced`. The system map’s opt-in phase says success goes to `consent_state` sequenced. Agree is the consent button that unlocks nudges. It is not that completion. The gate treats `unsequenced`, `waitlisted`, and `sequenced` alike. Writing `sequenced` would not change the send, the seat, or which firm’s row binds it. It would claim the rung this statement does not own.
+
+- Set `status` `unsequenced` on every seat conflict, including a stored `sequenced` or `waitlisted`. Those two values are the rungs the goal says this class of write does not own. Claim 25 refused to replace them when silence ran. Replacing them here would drop a completion the seat consent did not come to record. The deny word is the literal `silenced`. The `CASE` moves that literal and leaves the other three.
+
+- Set `status` `waitlisted`. Waitlisted is the launch-day rung in the same goal. Agree is not that signal. The same non-write applies.
+
+- Retune claim 23 so `status` `silenced` does not deny when `silenced` is false. The compare stays. A row that still holds the word is still denied, including a backfilled row that has not been through this seat consent. Changing the arm would make the backfill’s word invisible. This claim moves the word on the consent that cleared the boolean.
+
+- Assign `status` on `handleConsentSilence` so a later Agree has a matching word to clear. Claim 25 leaves the silence upsert without that assignment. The boolean arm denies that route. The backfill is the production statement that stored `silenced`. This consent does not rewrite that route in order to meet it.
+
+- Treat `handleConsentSet`’s conflict as the same clear. It does not assign `silenced`. A previous silence stays, and the boolean arm denies. The product-face Agree is the seat statement, which already sets the boolean false.
+
+- Copy the backfill’s full `CASE` onto this conflict, as an ongoing rule. The `UPDATE` is not a writer on Agree. Its `sequenced` arm is the writer the goal does not give this statement. Its `silenced` arm would put the word back on a statement that just cleared the boolean.
+
+- Fill the CASL silence in `SYSTEMS-STORY` §6 in order to decide whether an agreed contact may be sent to. The leaf already says the runners unlock later nudges. The seat statement already clears the boolean. The regime, the geography, and the first agent→consultant text stay unnamed. They are not which word this conflict stores.
+
+- Write a migration that rewrites every current `status` `silenced` to `unsequenced`. Rows that never come back through this seat stay as the backfill left them, and claim 23’s arm still denies those. The consent that clears the boolean is the write that moves the word. No migration.
+
+No founder question. Blocked and not blocked are different sends, and the consent leaf already chooses the second for a contact who agreed. The seat already clears the boolean and already shows that contact as consented. The status word is the backfill’s copy of the boolean, not a second silence the seat is forbidden to move. `unsequenced` is the checked value that is off that word and is not the opt-in rung. `sequenced` and `waitlisted` would not change the send. The silence route stays as claim 25 wrote it.
+
+**Evidence:** `contactSeat.ts` `handleContactSeatConsent`, `projectSeat`. `routes.ts` the two consent posts. `stores.ts` `handleConsentSet`, `handleConsentSilence`. `dispatchSend.ts` `consentAndHaltGate`. `workflowWalk.ts` the purpose passed on `call_agent`. `webhooks.ts` the `bounce_hard` upsert. `src/app/register/prototype-ant/contact/ContactWorkspace.tsx` `consent("agree")`. `src/app/wire/standins/contactSeatMirror.ts` `consent`. `src/app/wire/standins/consentSilence.ts` `setConsent`. `src/app/register/prototype/ContactPrototypeScene.tsx` the `setConsent` call. `supabase/migrations/004_machine_tables.sql` the `status` column and the one-time `UPDATE`. `scripts/verify-deny-gates.ts`. `docs/register/how/contact-consent.md` leaf 1.2. `docs/register/SYSTEMS-GOAL.md` the opt-in row and “Sign-up met = CAMPAIGN GOAL → consent sequenced”. `src/app/system-map/data/nodes.ts` `optin_phase`. `docs/register/SYSTEMS-STORY.md` §6.
+
+**Live.** The seat conflict still sets `basis`, `silenced` false, `source`, and `updated_at`, and it still omits `status`. A backfilled `silenced` stays denied after Agree. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
@@ -1368,6 +1438,7 @@ Those two bullets describe the live payloads. They still do. Claim 11 names the 
 - The escalation writing a send engagement only when `send.ok`, the cell advance filing a deny as `send_dry_run` with the `send` object stored, and the wait arm filing every result as `send_dry_run` with no `send` object (claim 21). The same `DispatchResult` is three files. Claim 21 names one row, kind `send_denied`, for `ok: false`. The live writers still do not write it.
 - `enrollAndActuate` choosing that same kind from `shouldLiveSend` and storing `subject` and `bodyText` on a result with `ok: false` (claim 22). Claim 22 names `send_denied` for that result and takes the copy off the payload. An allowed result takes its kind from the `DispatchResult`. The live writer still labels from `shouldLiveSend`.
 - `consentAndHaltGate` selecting `consent_records` by `contact_id` alone with `LIMIT 1`, and claim 23, which also requires `firm_id` of the firm the send was given. The live query still omits `firm_id`. Another firm’s row can still deny or allow the send. This firm’s row can still be missed.
+- `handleContactSeatConsent` leaving `status` unassigned on conflict, and claim 26, which sets `unsequenced` when the stored value is `silenced`. The live statement still omits `status`. A backfilled row stays denied after Agree until that assignment is written.
 
 ---
 
@@ -1481,4 +1552,10 @@ The sentence that `handleConsentGet` still selects by `contact_id` alone stands 
 
 The sentence that the silence upsert still does not assign `status` stands as the live statement, and claim 25 makes that the specification. An insert keeps `unsequenced`. A conflict keeps the previous `status`. The boolean arm still denies. The live statement already matches this claim. `consent_records.sequenced` still has no dispatch. A later consent that clears `silenced` and leaves a `status` of `silenced` was not specified.
 
+### Revision — claim 26
+
+The sentence that a later consent can clear `silenced` and leave `status` `silenced` stands as the gap session 019 left. Claim 26 specifies the seat conflict. When the stored value is `silenced`, it becomes `unsequenced`. The live conflict still omits `status`. The silence upsert is unchanged. `consent_records.sequenced` still has no dispatch.
+
 **An import that reuses a contact id.** `handleContactImport` inserts `ON CONFLICT (id) DO UPDATE` and does not assign `firm_id` on the update. The id stays on the first firm’s book row. The dispatch still puts that id in `contactIds` for the importing firm. Claim 17 keeps a non-empty list. Claim 18 judges the enroll by the importing firm’s halt, not by the first firm’s. The conflict update was not specified.
+
+**Ignore and the deeper form.** Claim 26’s statement also stores Ignore: `basis` `none`, `silenced` false, `source` `ignored`, and the same `status` move when the word was `silenced`. `projectSeat` then treats `source` `ignored` as not the consent ask. When the enrollment’s objective kind is `form`, `now.state` becomes `form`, and the form fields are included because `silenced` is false. `docs/register/how/contact-consent.md` says Ignore writes the no-deeper state and deeper collection forms do not open. That paint was seen while reading what the seat shows after the statement. It was not specified. It is not the status word.
