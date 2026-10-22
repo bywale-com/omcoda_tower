@@ -446,6 +446,10 @@ No founder question. The If reads a field of a row this firing named. The write-
 
 **Live.** `runContactEligibilityCascade` still dispatches with no `writes`. `previousWrites` for that event is still empty. `loadWriteRow` still returns null for the four tables. `PERSON_WRITE_TABLES` still omits them. No migration was written.
 
+### Revision — claim 17
+
+The empty-list sentence stands as what the function does when `opts.contactIds` is empty: `writes` is an empty array, and the dispatcher’s audience branch is what puts people on the walk. Claim 17 specifies that branch. It does not add `contact_records` to this firing’s `writes`, and it does not change the four pointers.
+
 ---
 
 ## Claim 13 — A live firing of `campaign_failure` places the inserted primary key on `payload.writes`, and the payload carries that row’s `campaign_id`
@@ -611,6 +615,10 @@ No founder question. The If reads a field of the halt row this contact-scope fir
 **Evidence:** `stores.ts` `id`, `handleHaltCommit`, `handleHaltLift`, `handleHaltIsContact`, `handleHaltIsFirmBook`. `dispatchSend.ts` `consentAndHaltGate`. `cascade.ts` `enrollAndActuate`, `isHaltBlockingNew`. `runWrites.ts` `writesFromPayload`. `workflowWalk.ts` `localRefFromPayload`, `localAxesMatch`, `dispatchEventToWorkflows`, `loadWriteRow`, `PERSON_WRITE_TABLES`, `personIdsFromWrites`. `eventTest.ts` `door1`, `writeId`. `src/app/data/automationTriggerSelect.ts` `TRIGGER_SELECT_EVENTS`, `triggerLocalRefFromPayload`. `src/app/data/automationWorkflows.ts` `WORKFLOW_EVENTS_WITH_LOCAL`, `WORKFLOW_EVENT_CATALOG`. `ConsultantAntScene.tsx` `confirmHalt`. `HaltOutreachModal.tsx`. `FounderAgencyControlsModule.tsx`. `supabase/migrations/003_ct_wire_stores.sql`. `supabase/migrations/017_event_test_contract.sql`. `supabase/seeds/003_canonical_workflows.sql`. `docs/register/PRIMITIVES.md`. `docs/register/how/consultant-governance.md` leaf 1.2. `docs/register/how/operator-founder-controls.md` leaf 1.2. `origin/pr-96:docs/register/TRIGGER-SELECT-PACKET.md`.
 
 **Live.** The contact-scope dispatch is still `{ haltId, contactId }` with no `writes`. `previousWrites` for that event is still empty when a listener starts. `loadWriteRow` still returns null for `halt_records`. The firm-book branch still does not dispatch. No migration was written.
+
+### Revision — claim 17
+
+The sentence that a contact-scope body with no `contactId` reaches the empty-list walk stands. Claim 17 specifies that walk. The pointer on that body is still this insert’s id. The firm-book branch still does not dispatch. The contact arm of the halt gate was not decided.
 
 ---
 
@@ -812,6 +820,79 @@ No founder question. The If reads a field of the firm row this provision upserte
 
 **Live.** The provision dispatch is still `{ firmId, firmName, email }` with no `writes` and no `contactIds`. `previousWrites` for that event is still empty when a listener starts. `loadWriteRow` still returns null for `ct_firms`. The primary key is still `id`. No migration was written.
 
+### Revision — claim 17
+
+The sentences that this dispatch passes no `contactIds`, and that the dispatcher then fills a person list, stand as a description of the live call. Claim 17 specifies that fill. It does not add `contact_records` to this array, and it does not put a person on this pointer.
+
+---
+
+## Claim 17 — A firing that passes no contact ids walks that automation’s audience inside the firing firm
+
+**Standing:** technical decision made in this session.
+
+The listening run’s handle stays `previousWrites` (claim 11). Claim 16’s `ct_firms` pointer stays one element, the firm id, with no `contact_id`. This claim is the person list on the walk when `dispatchEventToWorkflows` is called with no `contactIds`. That is an omitted argument or an empty array. `handleMachineProvision` omits it. `runContactEligibilityCascade` passes `opts.contactIds`, which is empty when the loop inserted nothing. `handleHaltCommit` omits it when a contact-scope body has no `contactId`. One branch covers all three. The branch does not read the event name.
+
+The audience is who the automation applies to. It is stored on `workflow`, and it does not start a mission when it is saved. `handleWorkflowCreate` writes `audience_scope` and `audience_contact_ids`. The Automations Add-contact footer is “Who this automation applies to. It does not start a mission now.” `docs/register/PRIMITIVES.md` names the same action: contacts on the automation, and it does not start a mission now. `docs/register/AUTOMATIONS-FACE.md` law 31 puts that scope on events, and says the event does not start a mission now. The founder’s provision example is this firing: a firm was just created, then run an audit on the contacts, then a condition, then agents. `PRIMITIVES.md` states the same pattern: the firm is already there, and the listener does the inside (audit, agents).
+
+`ct_firms` cannot supply those contacts. The call passes no `contactIds`. The pointer has no `contact_id`. `ct_firms` is not in `PERSON_WRITE_TABLES`. `personIdsFromWrites` therefore contributes nobody. `walkValidatedWorkflow` replaces an empty `contactIds` from `personIdsFromWrites` only. It does not query `contact_records`. The only list left is the audience, resolved in `dispatchEventToWorkflows` after `localAxesMatch` and before the run is inserted.
+
+**The branch.** `localAxesMatch` reads the firing’s own `contactIds` and the payload’s `contactId`. It does not read the list this branch is about to build. A trigger with `local_contact_ids` set does not match a firing that named no person. That workflow does not start, and it does not receive the audience. The audience is not a way through the contact axis.
+
+For a workflow that matched, `audience_scope` comes from `workflow`, not from `workflow_trigger.scope`. The trigger insert in `materializeTriggersFromGraph` stores `scope` `every_firm` and an empty `scope_contact_ids`. The dispatcher does not read those columns. `select_from` is the only scope that narrows. Null and every other value are `every_firm`, which is also the column default (`supabase/migrations/012_grain_audience_one_timer.sql`).
+
+When the firing passed no contact ids:
+
+- `select_from`. The people are the stored `audience_contact_ids` that are `contact_records` rows with `firm_id` equal to the firing firm (`opts.firmId`, the firm stored on `workflow_run`). An id with no such row is not a person on this run. When none remain, the workflow does not start. There is no `workflow_run`.
+- `every_firm`. The people are every `contact_records.id` with `firm_id` equal to that same firing firm. The statement that does this today has no `ORDER BY`. This claim does not add one. An empty book is an empty list, and the run still starts.
+
+When the firing passed a non-empty list, this claim leaves the other arm as it is. `every_firm` walks that list and does not query the book. `select_from` walks the intersection with `audience_contact_ids` and does not start when the intersection is empty. This claim does not add a firm predicate to that arm. The firing already named the people.
+
+The list is the `contactIds` argument of `walkValidatedWorkflow`. It becomes `ctx.contactIds`. It is not copied onto `triggerPayload`. `writesFromPayload` reads `payload.writes`, then `import_batch_id`, then `contact_ids` / `contactIds` on the payload. It does not read the walk argument. With claim 16’s `writes` present, the contact fallback does not run. The book is not an element of `writes`, and it is not a `contact_records` pointer beside `ct_firms`. `call_agent` enrolls each id in `ctx.contactIds` under `opts.firmId` and passes `fireFirstStep: true`. `ascribe_tag`, when it has no chip and no `pickTable`, tags that same list. `contactsForAudit` uses `ctx.contactIds` when the list is non-empty, and its query also requires `firm_id` of the walk. A firm-row If does not split the list: `ct_firms` has no `contact_id` and is not a person table, so `evalIfPick` takes one branch and leaves `ctx.contactIds` as it was.
+
+**Why the list is this firm’s contacts.** The run is one firm. `dispatchEventToWorkflows` inserts `workflow_run.firm_id` as `opts.firmId`. The inside the primitives name is the inside of the firm that was just provisioned. The every-firm arm already queries `WHERE firm_id = opts.firmId`. `contactsForAudit` uses the same predicate. `call_agent` passes that firm into `enrollAndActuate`. A contact of another firm on this run would be enrolled, and the first step asked, under the firing firm.
+
+The Add-contact picker is a different read. `handleContactRecordsList` with `scope=every_firm` is the operator book, no firm predicate, and the modal is firms first. Every firm on that modal means “All contacts, every firm.” Select from stores the ids the operator left checked, and those ids may belong to several firms. `handleWorkflowCreate` stores that array as given. This claim does not change the save. The stored list remains who the automation applies to. Each firing resolves the subset whose `contact_records.firm_id` is the firing firm. A later firing of another firm resolves again. Agents’ Every firm is the other door: `handleSequenceEnrollContacts` selects every `contact_records` row with no firm predicate and enrolls each under `row.firm_id`, and the footer says that starts the mission now. A listening run has one `firmId`. It cannot repeat that per-contact firm. The helper sentence is the picker. It is not a second firm on `workflow_run`.
+
+**Why an empty every-firm book still starts.** The firm row is the handle. A first provision mints an id and inserts no `contact_records`. There is nobody to audit yet. `contactsForAudit` returns no rows when `ctx.contactIds` is empty and the writes include no `contact_records`. The run is how the listener holds the firm pointer. Skipping it would drop that listen. `select_from` skips because the operator named people and none of them are in this firm, so this firing has nobody the automation applies to. `every_firm` did not name a list.
+
+**The same branch on the other two callers.** An `eligibility.changed` whose `contactIds` is empty inserts none of the four rows. `writes` is empty (claim 12). The people are still this audience. They are not those four rows. A contact-scope `halt_records` body that omits `contactId` still dispatches, with `contact_id` null on the pointer (claim 14). The people are this audience. They are not a person the halt row forgot. The firm-book halt still does not dispatch. A firing that already passed people is the other arm: a fact’s one contact, a reference list, a halt that included `contactId`. Those lists are not replaced by the book.
+
+A later provision of the same firm id still dispatches (claim 16). This branch runs again, on the contacts that firm has then. The audience rule does not distinguish the insert from the conflict. `call_agent` enrolls each walked contact and asks for the first step. This claim does not stop that dispatch and does not retune `fireFirstStep`.
+
+The in-memory dispatcher in `src/app/wire/standins/machineApi.ts` does not run the book query. For `select_from` it uses the stored ids, unfiltered, and skips when that array is empty. For `every_firm` it starts a run and does not pass a person list. `startRun` does not walk `ctx.contactIds`. That stand-in is not this branch.
+
+**The halt check this walk enters.** `call_agent` calls `enrollAndActuate` per walked contact. That function returns before the enrollment insert when `isHaltBlockingNew` is true. The contact arm of that query is `scope = 'contact' AND contact_id = $2`. It does not constrain `firm_id`. The firm-book arm does. Whether a contact halt in another firm blocks this run’s enroll was not decided. That predicate is not the audience.
+
+**Rejected alternatives.**
+
+- Walk nobody whenever the firing passed no contact ids. The provision workflow audits the contacts and then assigns agents. This firing has no person on the call and none on the pointer. `walkValidatedWorkflow` will not query the book on its own. An empty person list leaves that audit with no contacts. The audience is the list the operator stored for the moment the event fires.
+
+- Treat Every firm as every `contact_records` row, with no firm predicate, the way `handleSequenceEnrollContacts` does. That door starts now, and each enroll uses the contact’s own `firm_id`. This run’s enroll uses the firing firm for every id. The operator-book query would put another firm’s contact on this firm’s run. Firm isolation is already housed: `workflow_run.firm_id` is the firing firm. The every-firm arm’s `WHERE firm_id = $1` is the list that matches the inside of that firm.
+
+- Leave `select_from` as the stored array with no firm cut, which is what the live branch does when `contactIds` is empty. The picker saves ids from the whole book. On this empty arm those ids become the walk. `call_agent` would enroll another firm’s contact under `opts.firmId` and ask for the first step. The every-firm arm and `contactsForAudit` already refuse that. The stored array stays the operator’s selection. The walk takes the subset in the firing firm. When that subset is empty, the workflow does not start.
+
+- Skip the every-firm workflow when the book is empty, the way `select_from` skips. The firm listen is the run. An empty book means there is nobody to audit yet. It does not mean the firm row has no listener. `select_from` is the scope that named people and found none in this firm.
+
+- Fill the book only for `ct_firms`, and walk nobody for an empty eligibility list or a contact halt that omitted `contactId`. The dispatcher has one audience branch. It does not read the event name. Claim 12 and claim 14 already enter it. The handle stays the writes of that firing: an empty array, the halt id, or the firm id. The person list is the audience. It is not a repair of a missing person on the row. An If that needs a row this firing did not write still fails closed (claim 7).
+
+- Satisfy `local_contact_ids` with the filled audience. The match runs on the firing’s list, before the fill. A trigger that named contacts does not hear a firing that named none.
+
+- Read `workflow_trigger.scope` instead of `workflow.audience_scope`. The materialized trigger scope is hardcoded `every_firm`. The save path writes the operator’s choice on `workflow`. The dispatcher already joins that column.
+
+- Put the filled ids on `payload.writes` as `contact_records`, or on the `ct_firms` element as `contact_id`. The write-set for this firing names `ct_firms` alone (claim 16). The eligibility write-set names the four tables (claim 12). The halt write-set names `halt_records` (claim 14). `writesFromPayload` does not see the walk argument. A firm id in `contact_id` is the person split claim 16 refused.
+
+- Copy the audience onto the payload as `contactIds` so the contact fallback in `writesFromPayload` builds `contact_records` pointers. That fallback runs only when `writes` is absent, and it would make the book the handle. The handle is the firing’s rows. The audience is the walk’s person list.
+
+- Use the stand-in’s missing book query as the rule that every-firm walks nobody. The stand-in records a started run. It does not walk the contacts the server enrolls, tags, and audits.
+
+- Give the every-firm query an `ORDER BY`, or dedupe the stored array, as a new product rule. The live book query has no order. `contact_records.id` is the primary key, so that query does not repeat an id. This claim names the set. It does not add a sort.
+
+No founder question. Who the automation applies to is already the audience, and it already waits for the event. The firing firm is already the run. A firing that names people keeps those people, narrowed by Select from. A firing that names none walks the audience inside that firm: every contact of the firm, or the saved ids that belong to the firm. Select from with none in the firm does not start. Every firm with an empty book starts, and the person list is empty. The three callers share that branch. The book is not a write.
+
+**Evidence:** `workflowWalk.ts` `dispatchEventToWorkflows`, `localAxesMatch`, `walkValidatedWorkflow`, `personIdsFromWrites`, `PERSON_WRITE_TABLES`, `evalIfPick`, `contactsForAudit`, `materializeTriggersFromGraph`. `machine.ts` `handleMachineProvision`, `runContactEligibilityCascade`, `handleWorkflowCreate`, `handleSequenceEnrollContacts`, `handleContactRecordsList`. `stores.ts` `handleHaltCommit`. `cascade.ts` `enrollAndActuate`. `dispatchSend.ts` `isHaltBlockingNew`. `runWrites.ts` `writesFromPayload`. `ContactPickModal.tsx`. `AntAutomationWorkbench.tsx` the audience save and the footer “Who this automation applies to. It does not start a mission now.” `AntAgentWorkbench.tsx` the footer “This starts the mission now.” `src/app/wire/standins/machineApi.ts` the in-memory event fan-out. `supabase/migrations/012_grain_audience_one_timer.sql`. `docs/register/PRIMITIVES.md`. `docs/register/AUTOMATIONS-FACE.md` law 31 and the provision quotation. `docs/register/AUTOMATIONS-UI-BLUEPRINT.md` A19. `docs/register/IMPLEMENTER-FACE-PASS.md` (Global/Local is not “who this applies to”).
+
+**Live.** `dispatchEventToWorkflows` still loads every `contact_records.id` for the firing firm when the scope is not `select_from` and the firing passed no contact ids, and it still starts the run when that query is empty. `select_from` with no incoming ids still walks `audience_contact_ids` with no `firm_id` predicate, and it skips only when that array is empty. The filled ids are still not written onto the payload. `workflow_trigger.scope` is still hardcoded `every_firm` and still unread by this function. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
@@ -844,6 +925,7 @@ Those two bullets describe the live payloads. They still do. Claim 11 names the 
 - `event_write_set` naming `halt_records`, and the contact-scope dispatch in `handleHaltCommit` omitting `writes` (claim 14). The insert already stored the `halt-` id. Claim 14 specifies the array. The live dispatch still omits it, and `loadWriteRow` still returns null, so the write-set and the listener still do not meet in the running code. The firm-book branch does not dispatch. Claim 14 leaves that branch as the gate. It is not a second missing array.
 - `event_write_set` naming `consent_records` for `consent_records.opt_out`, and `handleConsentSilence` dispatching that event with no `writes` (claim 15). The upsert already stored the pair. Claim 15 specifies the array: `id` and `contact_id` are both that contact, and the walk’s firm is the other half of the key. The live dispatch still omits `writes`, and `loadWriteRow` still returns null, so the write-set and the listener still do not meet in the running code. `handleConsentSet` does not dispatch. Claim 15 leaves that route as the basis write. It is not a second missing array.
 - `event_write_set` naming `ct_firms`, and `handleMachineProvision` dispatching that event with no `writes` (claim 16). The upsert already stored the firm id. Claim 16 specifies the array: one element, `ct_firms` and that id, no `contact_id`. The live dispatch still omits `writes`, and `loadWriteRow` still returns null, so the write-set and the listener still do not meet in the running code. The same handler also writes `firms`, `campaign_states`, `users`, sometimes `access_links`, and an `audit_events` row. Claim 16 leaves those off the array. They are not a second missing `ct_firms` element.
+- `select_from` on a firing that passed no contact ids, and the live branch walking `audience_contact_ids` with no `firm_id` predicate (claim 17). The specified people are the stored ids that are `contact_records` of the firing firm. The live arm does not apply that cut. The every-firm arm’s `WHERE firm_id = $1` already matches claim 17.
 - `writeEngagement` returning the inserted id, and the generic action pushing `id: contactId` (claim 10). The row exists. The pointer names the contact. The specified load looks up the pointer id.
 - `chainWrites` for every node (the in-memory walker), and resume forwarding only the wait’s writes (claim 6).
 - The cursor as a once-only latch (packet 022 §2.3), and “Open in Now” writing `campaign_id` (claim 4).
@@ -903,6 +985,10 @@ Claim 12 specifies that array: one pointer per inserted row, table order from th
 
 Claim 14 specifies the contact-scope `halt_records` array: one pointer, `halt_records` and the `halt-` id the insert stored, `contact_id` from that row’s column. The live contact dispatch still omits `writes`. The firm-book branch, including the founder kill-switch, stays the gate and does not dispatch. Lift updates the same row and does not start a second firing. The contact-scope gate’s missing firm predicate was seen on `consentAndHaltGate`, `isHaltBlockingNew`, and `handleHaltIsContact`. It is another reader of `halt_records`. It was not specified. The paragraph above stands for the empty-list walk. A contact-scope halt body that omits `contactId` still reaches that walk. Claim 14 does not specify it.
 
+### Revision — claim 17
+
+Claim 17 specifies the empty-list walk the paragraph above left open. The people are the audience inside the firing firm. They are not the four eligibility rows, and they are not a `contact_records` write. The contact-scope halt gate’s missing `firm_id` predicate stays unspecified.
+
 ### Revision — claim 15
 
 Claim 15 specifies the `consent_records.opt_out` array: one pointer, `consent_records`, `id` and `contact_id` both the contact the upsert used, and the walk’s firm as the other half of `(contact_id, firm_id)`. The live silence dispatch still omits `writes`. `handleConsentSet` and the seat Agree / Ignore stay off this event. The hard-bounce upsert and the workspace opt-out write the same pair and do not dispatch. They were not specified as firings. The send gate’s consent read still has no `firm_id` predicate. The silence upsert still does not assign `status`. Those two are other readers and another write of the row the pointer names. They were not specified. `consent_records.sequenced` still has no dispatch.
@@ -912,5 +998,9 @@ Claim 15 specifies the `consent_records.opt_out` array: one pointer, `consent_re
 Claim 16 specifies the `ct_firms` array: one pointer, `ct_firms` and the firm id the upsert stored, with no `contact_id`. The re-read is `WHERE id = pointer.id`. The live provision dispatch still omits `writes`. `firms`, `campaign_states`, `users`, `access_links`, and the `firm.provisioned` audit stay off that array. `handlePoolAllocate` still updates the same id and does not dispatch. `website` and `role` are still echoed on the HTTP body and still not inserted. The paragraph above stands for the empty-list walk. This provision dispatch does not pass `contactIds`, and the pointer has no person, so the every-firm fill is the only person list a listening run of this event can get. Claim 16 does not specify that fill.
 
 **The person list on a firing that passes no contact.** `handleMachineProvision` does not pass `contactIds`. Claim 16’s pointer has no `contact_id`. `dispatchEventToWorkflows` then fills the walk’s person list from the firm’s `contact_records`, or from the workflow’s `select_from` audience. Claim 12 saw that fill when an eligibility list was empty. Claim 14 saw it when a contact-scope halt body omitted `contactId`. The firm firing is the same branch, and it is the one whose write has no person of its own. That fill was not specified. It is not an extra element of `writes`.
+
+### Revision — claim 17
+
+Claim 17 specifies that fill. Every firm walks `contact_records` of the firing firm, and the run starts even when the book is empty. Select from walks the stored ids that are contacts of that firm, and does not start when none are. The live `select_from` arm still does not apply the firm cut. The list is still not an element of `writes`.
 
 **Provision’s other stores.** The same request writes `firms`, `campaign_states`, and `users`, and it may insert `access_links` and `audit_events`. Claim 16 leaves them off the pointer because `event_write_set` names `ct_firms` alone. `website` and `role` are on the HTTP body and are not inserted by this handler. `handlePoolAllocate` updates pool columns on the firm id this pointer names, and it does not dispatch. Those are other writers of the provision, and of the row the listener re-reads. They were not specified as firings.
