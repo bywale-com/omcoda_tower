@@ -1752,6 +1752,86 @@ No founder question. The gap can be recorded before the contact has opted in, an
 
 **Live.** `handleMissingFactSignalCreate` still does not read `consent_records` and still inserts any `fieldKey`. `signalMissingFact` still pushes without reading consent. That is this claim for the opt-in question. The class of the key on this route is still unread. No migration was written.
 
+### Revision — claim 35
+
+The sentence that this handler still inserts whatever `fieldKey` was posted, and that whether a key with no `collectible_fields` row, a `document_dependent` key, or an `employer_directed` key may be inserted here was not specified, stands as the gap. Claim 35 decides that key. Consent is unchanged. A missing row, `basis` `none`, and `silenced` true still do not withhold a key the class allows. The fact class is unchanged. A refused fact still does not insert the fact handler’s own `missingFieldKeys`. `validity_still_valid` still is not stored as `fact_writebacks`.
+
+---
+
+## Claim 35 — A missing-fact signal is a form field, not the consultant’s tracked ask
+
+**Standing:** necessary implication of claim 32 and of the form-occupancy ascription, and a technical decision made in this session.
+
+`handleMissingFactSignalCreate` inserts `missing_fact_signals` only when `collectible_fields` has the body `fieldKey`, `capture` is `self_reportable`, and `employer_directed` is false. A key with no row, a key whose `capture` is `document_dependent`, and a key whose `employer_directed` is true do not insert. The handler does not return `id`. The response is not ok. An empty `contactId` or `fieldKey` remains the existing 400. The class withhold does not reuse that 400. Claim 34 is unchanged: a missing consent row, `basis` `none`, and `silenced` true do not withhold a key the class allows. The insert still does not write `fact_writebacks`, does not dispatch, does not run the eligibility cascade, and does not call `onCompletionWrite`. It still does not complete `obj.optin.day`. This claim does not set `now.state`, does not assign `status`, and does not set `silenced`.
+
+**Why this table is the form.** `missing_fact_signals.field_key` is text and has no foreign key, in `supabase/migrations/004_machine_tables.sql`. The live insert accepts any string. The class is a read of `collectible_fields` before the insert. This claim does not add a constraint. `projectSeat` already joins the table to `collectible_fields` and keeps `capture` `self_reportable`. Claim 32 already adds `employer_directed` false to that keep, and already makes `executeRuleWrites` use the same positive test, including when the catalog is empty. A key this route stored outside that class would sit on the form’s required-data table and would not become a field. Claim 32 would not clear it, because a refused fact does not delete the signal. `src/app/data/eventTestContract.ts` names the folder for this table `Required data`. The Systems Analyst log on `origin/pr-86`, stamp 2026-08-20 19:20 UTC, says form occupancy is this run’s `missing_fact_signals`, and the 2026-08-21 08:55 UTC stamp says the rule insert is self-reportable `missing_fact_signals` only. The same sentences are in the working-tree copy of that log. No leaf in `docs/register/how/` names `missing_fact_signals` as Manage. `docs/register/how/contact-book.md` says document-dependent asks stay Manage on the consultant desk and does not name this table. No `CREATE TABLE` under `supabase/` is that desk. `ClientDataPanel` prints every listed `field_key` as a tag. That is a dump of the rows. It is not a module named Manage.
+
+**The three refusals.** `validity_still_valid` has no `collectible_fields` row. Loop-closer still posts it through `signalMissingFact` after `writeFact`, including when `writeFact` rejects. The route refuses it. The helper still calls. The catch still swallows a response that is not ok. `applyFactsToMeetingsStore` still runs. This claim does not retune that paint and does not stop the call. `eca_status` and `has_trade_certificate` are `document_dependent`. The four employer-directed keys are the same capture and `employer_directed` true. No seeded row is `self_reportable` and `employer_directed` true. The check allows it. All of those fail this route. Seed §5.4 and Story §8 route document-dependent needs off the form and employer-directed asks to the firm. Putting them on this table would be the form occupancy the join then hides. The seeded signals in `supabase/seeds/005_contact_workspace_fill.sql` are `canadian_skilled_hours`, `language_clb`, `foreign_work_years`, `ee_profile_last_updated`, `crs_score`, `noc`, and `ee_profile_exists`. Those pass. The Ignore contact’s three signals stay.
+
+**The list.** `handleMissingFactSignalsList` still returns the stored rows for the firm, or for the contact, and does not apply this class. This claim does not delete a row that would now fail. The form join still drops it. `GET` is not the insert.
+
+**The mirror.** `standInMachineApi.signalMissingFact` pushes only when `COLLECTIBLE_FIELDS` has the key, `capture` is `self_reportable`, and `employerDirected` is not true. An omitted `employerDirected` is false. When the key fails, it does not push and it does not resolve an id. It still does not read `standInConsentSilence`. A missing slot, `basis` `none`, and `silenced` true still do not withhold a key that passes.
+
+**Rejected alternatives.**
+
+- Record a `document_dependent` key or an `employer_directed` key here, and let the form join hide it, so this table is the tracked gap. The join is a filter on the form, not a second desk. No leaf names the table as Manage. The walker claim 32 already refuses to signal outside the class. A second writer that plants `eca_status` would store a need the form does not show and the fact landing does not answer. Seed §5.4’s Manage item is not given a table by that hide.
+
+- Accept a key with no row, so `validity_still_valid` still lands. The string has no class. Story §8 routes by field class. The painted loop-closer key is the same family as the slugs claim 32 refused as facts. Storing it makes a signal the fact landing cannot clear.
+
+- Withhold the class-legal key when consent is missing, `basis` is `none`, or `silenced` is true, in order to keep the new rows inside opt-in. Claim 34 already separated the detection from the opt-in. The Ignore contact already has three class-legal signals. The class is which key, not whether the contact has agreed.
+
+- Stop `writeBackContactFacts` from calling `signalMissingFact` when `writeFact` rejects, so the unclassed key never arrives. Claim 34 already left that call in place. The route refuses the key. Closing the helper would make the signal a side effect of a successful fact.
+
+- Reuse the empty-field 400, or add a foreign key. The 400 is the empty body. A missing row is a withhold. This claim does not write a migration.
+
+No founder question. The form’s required-data row is the class claim 32 already uses for the answer and for the walker. The consultant desk for a document-dependent ask is still unnamed. This table is not that desk. `validity_still_valid` does not become a signal in order to give the loop-closer a place to put it.
+
+**What this leaves.** No table is named Manage. `contact_uploads` in the same seed stores kinds such as `ECA` and `job offer` with `field_key` null. Those rows are not `eca_status`. This claim does not call that table the desk. `handleContactSeatUpload` still inserts without reading `consent_records` or `collectible_fields`. The meeting branch was not specified. The local meetings-store paint was not retuned.
+
+**Evidence:** `machine.ts` `handleMissingFactSignalCreate`, `handleMissingFactSignalsList`. `routes.ts` `POST /machine/missing-fact-signals`. `src/app/wire/standins/machineApi.ts` `signalMissingFact`. `src/app/wire/reals/machineApi.ts` `signalMissingFact`. `src/app/data/collectibleFields.ts`. `src/app/data/eventTestContract.ts` the Required data folder. `src/app/register/prototype-ant/consultant/clientData/ClientDataPanel.tsx` the missing-fact tags. `workflowWalk.ts` `executeRuleWrites`. `contactSeat.ts` the field join. `supabase/migrations/004_machine_tables.sql` `missing_fact_signals`. `supabase/seeds/005_contact_workspace_fill.sql` the signal rows. `docs/register/SEED.md` §5.4. `docs/register/SYSTEMS-STORY.md` §8. `docs/register/how/contact-book.md` the Manage sentence. `origin/pr-86` `docs/register/SYSTEMS-ANALYST-LOG.md` 2026-08-20 19:20 UTC and 2026-08-21 08:55 UTC. Claim 32. Claim 34.
+
+**Live.** `handleMissingFactSignalCreate` still inserts any non-empty `fieldKey` and still does not read `collectible_fields`. `signalMissingFact` still pushes any key. The list still returns every stored row. No migration was written.
+
+### Revision — claim 36
+
+The sentence that `handleContactSeatUpload` still inserts without this read, and that whether that insert is inside the opt-in gate was not specified, stands as the gap. The same sentence in claims 32, 33, and 34 stands as that gap. Claim 36 decides that insert. The signal class is unchanged. The fact class is unchanged.
+
+---
+
+## Claim 36 — An upload lands before opt-in, and a question note names only a form field
+
+**Standing:** necessary implication of the rows the seed already stores, and a technical decision made in this session.
+
+`handleContactSeatUpload` does not read `consent_records`. A missing consent row, `basis` `none`, and `silenced` true do not withhold the insert. The handler still inserts one `contact_uploads` row for the link’s firm and contact when the origin checks already pass, and it still dispatches `contact_uploaded` with `writes` of that row. It does not insert `fact_writebacks`, does not delete or insert `missing_fact_signals`, and does not call `onCompletionWrite`. It does not complete `obj.optin.day`. It still returns `projectSeat`. An origin other than `kind`, `custom`, `question`, or `any` remains the existing 400. A `custom` origin with no kind, and a `question` origin with no field key, remain the existing 400s. This claim does not set `now.state`, does not assign `status`, and does not set `silenced`.
+
+**The question key.** When `origin` is `question`, `field_key` is stored only when `collectible_fields` has it, `capture` is `self_reportable`, and `employer_directed` is false. That is claim 32’s class. A key with no row, a `document_dependent` key, and an `employer_directed` key do not insert, do not dispatch, and do not return the seat. The response is not ok. The class withhold does not reuse the empty-field 400. `kind`, `custom`, and `any` do not read `collectible_fields`. Their `field_key` stays null, as the insert already sets it. A kind of `ECA` or `job offer` still stores. `language_clb` as a question still stores.
+
+**Why consent does not gate it.** `supabase/seeds/005_contact_workspace_fill.sql` inserts four `contact_uploads` for `cr-harbor-4`, the Ignore row claims 26, 28, and 29 left at `basis` `none` and `source` `ignored`: a pay stub, a passport, an `any` note `Called in; asked to hold the file.`, and a `question` on `language_clb`. The same file inserts four uploads for `cr-cedar-3`, including `Has not Agreed yet; sent the docs ahead.` The consent insert in that file has no row for `cr-cedar-3`. Gating this route on opt-in would refuse files the seed already keeps for a contact who has not agreed and for the contact who ignored. `projectSeat` loads `files` for the link with no consent predicate. `ContactWorkspace` puts Upload on the sider beside Now and History, on every seat, including when `now.state` is `consent`. The upload is not the form. `docs/register/furnish/contact-furnish.md` says the Nudge form, Update facts, and Loop-closer form have no upload controls. Those forms stay the fact landing. This handler is the other write.
+
+**What the question is.** The seat search builds question hits from `missing_fact_signals` union `fact_writebacks`, and uses `collectible_fields` only for the label. After claims 32 and 35, new rows in those two tables are the form class. A direct question post is still the catalog test, not a requirement that a signal already exist. `language_clb` passes with or without a signal. `validity_still_valid` and `eca_status` do not. A document can still arrive as `kind` or `custom` with `field_key` null. The seed already does that for `ECA` and `job offer`. Those kinds are not `collectible_fields.field_key` values. This claim does not name `contact_uploads` as Manage.
+
+**The mirror.** `standInContactSeat.upload` and `uploadContact` still refuse when `isOut` is set. That refuse stays. They do not gain a read of `basis`. A missing slot, `basis` `none`, and `silenced` true still upload. A `question` whose key fails the class does not unshift a row and does not resolve the seat as a stored upload. The stand-in of the catalog is `COLLECTIBLE_FIELDS`. `kind`, `custom`, and `any` still unshift without that test.
+
+**Rejected alternatives.**
+
+- Withhold the insert when the consent row is missing or `basis` is `none`, because claims 29 and 30 stopped the fact. The fact is the answer that can advance “They opt in”. This insert does not write that table and does not call `onCompletionWrite`. The seed already stores the Ignore contact’s files and Priya Shah’s note that the docs went ahead of Agree.
+
+- Withhold the insert when `silenced` is true, so a silenced contact files nothing. Silence stops the send. The Upload control is on the seat the contact opened. Claim 31 already let that contact store a class-legal fact. The file is the same kind of contact write. It is not an automatic ask.
+
+- Apply claim 32’s class to `kind`, `custom`, and `any`, so `ECA` must be `eca_status` or it is refused. Those origins store a free-text kind and a null `field_key`. The seed’s document rows are that shape. Collapsing them onto the catalog would refuse `passport` and `pay stub`, which are not collectible fields, and would treat the upload table as the form.
+
+- Accept any question `field_key`, so a note can name `validity_still_valid` or `eca_status`. The question hit is a field the form can carry. A string with no row is not that field. A document-dependent key is the ask Story §8 keeps off the form. The file for that ask is still a `kind` or `custom` row, which this claim stores.
+
+- Call `contact_uploads` the Manage desk because the seed has an `ECA` file. Manage, in the booking leaf, is where document-dependent asks stay. `eca_status` is not the `kind` `ECA`. No column here is that field. Naming the table would invent the desk claim 35 refused to invent.
+
+No founder question. A file can land before the contact has opted in, and after the contact is silenced. A question note can name only a self-reportable field that is not aimed at the firm. A document kind is not that test. The opt-in objective still completes on `fact_writebacks`, not on this insert.
+
+**What this leaves.** When the objective kind is `meeting`, `projectSeat` still sets `now.state` to `meeting` after the consent test, including the Ignore row and including `silenced` true. `handleContactSeatBook` still inserts `meeting_booked` and still dispatches. `docs/register/how/contact-book.md` leaf 1.1 still asks for an invitation and a contact who is not silenced. That surface was not specified. `writeBackContactFacts` still calls `applyFactsToMeetingsStore` when `writeFact` rejects. That local list was not retuned. No table is named Manage.
+
+**Evidence:** `contactSeat.ts` `handleContactSeatUpload`, `projectSeat` the file query, `seatFromContext` via the two routes. `routes.ts` `POST /contact-seat/:token/uploads` and `POST /machine/contact-workspaces/:contactId/uploads`. `supabase/migrations/019_contact_seat.sql` `contact_uploads`. `supabase/seeds/005_contact_workspace_fill.sql` the `cr-harbor-4` and `cr-cedar-3` upload rows, and the consent insert that omits `cr-cedar-3`. `src/app/register/prototype-ant/contact/ContactWorkspace.tsx` the Upload nav and `putIn`. `src/app/wire/standins/contactSeatMirror.ts` `upload`, `uploadContact`, `isOut`. `docs/register/furnish/contact-furnish.md` the no-upload legend. `docs/register/how/contact-book.md` leaf 1.1 and leaf 1.2. Claims 32 and 35.
+
+**Live.** `handleContactSeatUpload` still does not read `consent_records` or `collectible_fields`, and a `question` still stores whatever `fieldKey` was posted. The mirror still unshifts that key and still does not read `basis`. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
