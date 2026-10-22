@@ -1166,6 +1166,64 @@ No founder question. The chronology the licensee reads is the kind. Claim 21, th
 
 **Live.** The writer still chooses `send_live` or `send_dry_run` from `shouldLiveSend` and still stores `subject` and `bodyText` on a deny. The enrollment payload still stores `dryRun: !live` before the send returns. `titleFor` still has no `send_denied` case. No migration was written.
 
+### Revision — claim 23
+
+The sentence that the consent select was not specified stands as the gap. Claim 23 decides which row that select returns. The deny is still `send_denied`. This revision does not read `detail`, does not retune the kind, and does not assign `status` on the silence upsert.
+
+---
+
+## Claim 23 — The send reads the consent row for the firm it was given
+
+**Standing:** technical decision made in this session.
+
+The consent query inside `consentAndHaltGate` returns the `consent_records` row for the contact and for the firm the send was given. It does not return another firm’s row for that contact id. Claim 15’s pair is that row. Claim 19’s contact halt arm still runs after this query, so a silence or consent deny still returns first. Claim 22 still records that deny as `send_denied` and still does not read `detail`. This claim does not assign `status` on the silence upsert, and it does not specify `consent_records.sequenced`.
+
+**The live query.** After the firm-book halt check, and only when `contactId` is present, the function runs `SELECT basis, silenced, status FROM consent_records WHERE contact_id = $1 LIMIT 1` (`dispatchSend.ts`). There is no `firm_id` and no `ORDER BY`. The firm-book arm above it already uses the `firmId` argument. The contact halt arm below it is claim 19, and the live SQL of that arm still omits `firm_id`. This claim does not retune that arm.
+
+`consent_records` has `PRIMARY KEY (contact_id, firm_id)` (`supabase/migrations/003_ct_wire_stores.sql`). There is no foreign key to `contact_records`. Two rows for one contact id are two firms. The query names one contact and no order, so it does not name which of those rows it returns. A silenced row in another firm can be the row that denies this send. This firm’s own row can be the one it misses. An `express` basis in another firm can be the row that lets a non-opt-in purpose through. That is the gap.
+
+**What a contact id is.** `contact_records.id` is `TEXT PRIMARY KEY`, and `firm_id` is not part of that key (`supabase/migrations/004_machine_tables.sql`). One id is one book row and one firm. Claim 18 already recorded that the same person on two books is two ids, and that the same id can still hold a second firm’s consent because this table’s key is the pair. Claim 15 already re-reads that pair for the opt-out listener: `contact_id` plus the walk’s firm. The send gate is the reader that still drops the firm.
+
+**The firm the send was given.** The gate’s second argument is that firm. `dispatchEmail` and `dispatchSms` pass `input.firmId` before the cohort short-circuit. `dispatchEmailLive` and `dispatchSmsLive` call the gate again with the same argument. `actuateChannelSend` passes `input.firmId` into those functions, and it loads the address with `contact_records.id` and that same `firm_id`. The first step passes `enrollAndActuate`’s `input.firmId`. On `call_agent` that is the walk’s firm. The escalation, the cell advance, and the wait arm each pass `attempt.firm_id`. `handleCemSend` and `handleSmsSend` pass `requireSessionFirm` and do not use `body.firmId`. Those are the firms already on the call. This claim does not reclassify which of them are new sends.
+
+**The row.** The select is `SELECT basis, silenced, status FROM consent_records WHERE contact_id = $1 AND firm_id = $2 LIMIT 1`. `$2` is the `firmId` the gate was given. The primary key makes that pair one row. `LIMIT 1` stays. There is no `ORDER BY`. A row whose `firm_id` is some other firm is not this row.
+
+The arms already on the function stay, and they read this row only. `silenced` true, or `status` equal to `silenced`, returns `{ allow: false, deny: "policy", detail: "silenced" }`, including when `purpose` is `opt-in`. When `purpose` is not `opt-in`, a missing row or `basis` `none` returns `{ allow: false, deny: "policy", detail: "consent missing" }`. `docs/register/system-map/ACTUATION-REPORT.md` already states those two arms: an opt-in purpose may proceed without a prior consent basis, and silence always blocks. A missing pair is the missing-row arm. Another firm’s row does not fill it, so another firm’s silence does not deny this send, and another firm’s `express` basis does not satisfy it. When the send names no contact, the function still returns after the firm-book check and does not run this select.
+
+This claim does not decide what the silence upsert writes into `status`. An insert from `handleConsentSilence` still leaves the column default, and the `silenced` arm still sees the boolean that statement sets. Reading `status` on the firm’s row is not an assignment to that column. `consent_records.sequenced` still has a matcher case and a catalog label, and no dispatch. This claim does not add one.
+
+**Why this is the pair the product already writes.** `SYSTEMS-STORY` §6 requires firm→client consent, and it forbids treating firm database authority as the end-client’s consent. The silence that follows is CASL and SMS by geography, for firm→client and for the first agent→consultant text. The select does not need that silence. The columns and the opt-in exemption are already the gate. The question is which row those arms see. `docs/register/how/contact-consent.md` is a firm-branded request; Agree and Ignore are read by the runners of that request. `docs/register/how/contact-silence.md` says the commit stops further automatic firm→client outreach, and that send gates read the state. The writers upsert the pair: `handleConsentSet` and `handleConsentSilence` take `firmId` from the body, and the silence dispatch walks that firm (claim 15); `handleContactSeatConsent` and `handleContactSeatSilence` use the link’s firm; the hard-bounce upsert uses the outbound message’s `firm_id`. `projectSeat`, `isWorkspaceOut`, and `handleContactWorkspacesList` read the pair. Door 1 lists silenced rows of the firm. The seat of the sending firm shows this pair. It does not show the other firm’s row. Allowing or denying from that other row would govern this firm’s message by a state this firm’s seat does not show. Claim 18 closed that split for a contact halt on the enroll. Claim 19 closed it for a contact halt on the send. Consent is the same shape, and the pair key is how this table already keeps the second firm’s state apart.
+
+`scripts/verify-deny-gates.ts` inserts the silenced pair for `firm-cedar` and dispatches with that firm. It does not insert a second firm’s row, so it does not decide the split. It does agree with the pair on the path it writes.
+
+**Rejected alternatives.**
+
+- Leave `WHERE contact_id = $1 LIMIT 1`. That is the live SQL. Two firms are two rows, and the query does not name which one returns. Another firm’s silence denies this send, including an opt-in, and this firm’s silence can be missed. Another firm’s `express` basis can satisfy a non-opt-in purpose when this firm has no row or `basis` `none`. The seat that shows consent for this send’s firm is the pair. The board argument claim 18 used for halt is this seat. The index is not the reason: this table’s primary key is already the pair.
+
+- Treat any denying row for the contact id as the deny, and any `express` row as the basis. That still applies another firm’s consent to this firm’s message. Claim 18 already refused a halt that followed the contact id into every firm. The id is one book row. The same person on another book is another id. The second consent row is the other firm’s state for this id, which is why the key is a pair.
+
+- Add `ORDER BY updated_at DESC` and still omit `firm_id`. The query would name a row. The row would be the newest write across firms. A later silence in the other firm would deny this firm’s send, and a later `express` there would satisfy it. Claim 15’s readers ask for the current row of the pair, not the newest pair for the contact. Claim 7 and claim 8 already refused “latest” as the way to name a row this run is acting on.
+
+- Match `contact_records.firm_id` instead of the firm on the call. The address lookup already uses the send’s firm. On a desk-written pair the book firm and the send firm are the same, because the book row has one firm. They differ when a firing names an id whose book row is another firm and the send is stamped with the walk’s firm. Claim 19 rejected this match for the halt. Using the book firm would let the book firm’s consent govern a send the walk’s firm is making, or would ignore a silence stored for the walk’s firm. The firm the send is acting as is the firm already passed in.
+
+- Require the consent firm to equal both the send’s firm and the book firm. The second conjunct holds for every pair written for a client of that book. It adds a `contact_records` read to a lookup the consent key already answers, and it makes a walked id whose book sits in another firm fail the gate for want of a book match. That is the audience cut. The predicate stays on `consent_records`.
+
+- Join another firm’s contact by email or phone and honor that firm’s consent. Claim 18 refused that join for halt. Email and phone are not unique. Two books are two ids. This claim does not add a person table.
+
+- Read the stand-in map as the product’s choice of “one row per contact.” `standInConsentSilence` keeps one slot per `contactId`, stores `firmId` on the slot, and `get` does not take a firm. A second firm’s `silence` or `setConsent` replaces the slot. The table keeps both pairs. The map cannot. `standInSendGate` calls `get(input.contactId)` only when `contactId` is set. The `decide` calls in `FirmOperationsBindModule.tsx` pass the firm and do not pass a contact, so that consent arm does not run there. The map is the same dropped firm, in a store that is not this table. It does not settle the select.
+
+- Fill the CASL silence in order to choose the row. `SYSTEMS-STORY` §6 leaves geography and the first agent→consultant text unnamed. The gate already has `basis`, `silenced`, `status`, and the opt-in exemption. Which row those arms see is the pair. Choosing express against implied, or a country, is not required to name it.
+
+- Assign `status` `silenced` on the silence upsert so the selected row’s `status` matches the boolean. The select names the row either way. The boolean arm already denies an insert that set `silenced`. Changing `status` is a different write. `consent_records.sequenced` is a different event. Neither is this predicate.
+
+- Retune claim 22 so a consent deny from the wrong firm is a different kind from a halt deny. The writers branch on `send.ok`. Claim 22 does not read `detail`. Which row produced the deny is this claim. The file stays one kind.
+
+No founder question. Another firm’s consent row denying or allowing this firm’s send is the split claim 18 and claim 19 already closed for halt. The book id is one firm. The consent key is the pair so a second firm’s state stays on its own row. The send was given a firm, and every writer of the row the seat shows already stores that firm. The regime silence in the story is not which row the gate loads.
+
+**Evidence:** `dispatchSend.ts` `consentAndHaltGate`, `dispatchEmail`, `dispatchSms`, `dispatchEmailLive`, `dispatchSmsLive`. `cascade.ts` `actuateChannelSend` (the address lookup and `firmId: input.firmId`), `enrollAndActuate` (the first step’s `firmId`), `escalateAttemptWindow`, `advanceTemplateCellIfDue`, and the wait arm in `tickOnce` (`firmId: attempt.firm_id`). `send.ts` `handleCemSend`, `handleSmsSend` (`requireSessionFirm`). `stores.ts` `handleConsentSet`, `handleConsentSilence`, `handleConsentGet`. `contactSeat.ts` `projectSeat`, `isWorkspaceOut`, `handleContactWorkspacesList`, `handleContactSeatConsent`, `handleContactSeatSilence`. `webhooks.ts` the `bounce_hard` upsert. `eventTest.ts` door 1 for `consent_records.opt_out`. `src/app/wire/standins/consentSilence.ts`. `src/app/wire/standins/sendGate.ts`. `src/app/wire/ports.ts` `ConsentSilencePort`. `src/app/register/prototype-ant/operator/FirmOperationsBindModule.tsx` the `decide` calls. `supabase/migrations/003_ct_wire_stores.sql` `consent_records`. `supabase/migrations/004_machine_tables.sql` `contact_records` and the `status` column. `scripts/verify-deny-gates.ts`. `docs/register/SYSTEMS-STORY.md` §6. `docs/register/how/contact-consent.md`. `docs/register/how/contact-silence.md`. `docs/register/system-map/ACTUATION-REPORT.md`.
+
+**Live.** The select is still `WHERE contact_id = $1 LIMIT 1` with no `firm_id` and no `ORDER BY`. Another firm’s row can still be the row that denies or allows. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
@@ -1209,6 +1267,7 @@ Those two bullets describe the live payloads. They still do. Claim 11 names the 
 - A click predicate that treats `campaign_objective_id` as enough, and two enrollments on one campaign sharing that id (claims 2 and 3). The tick then advances both while both attempts are open.
 - The escalation writing a send engagement only when `send.ok`, the cell advance filing a deny as `send_dry_run` with the `send` object stored, and the wait arm filing every result as `send_dry_run` with no `send` object (claim 21). The same `DispatchResult` is three files. Claim 21 names one row, kind `send_denied`, for `ok: false`. The live writers still do not write it.
 - `enrollAndActuate` choosing that same kind from `shouldLiveSend` and storing `subject` and `bodyText` on a result with `ok: false` (claim 22). Claim 22 names `send_denied` for that result and takes the copy off the payload. An allowed result takes its kind from the `DispatchResult`. The live writer still labels from `shouldLiveSend`.
+- `consentAndHaltGate` selecting `consent_records` by `contact_id` alone with `LIMIT 1`, and claim 23, which also requires `firm_id` of the firm the send was given. The live query still omits `firm_id`. Another firm’s row can still deny or allow the send. This firm’s row can still be missed.
 
 ---
 
@@ -1309,5 +1368,9 @@ The sentence that the engagement kind on that deny is still unspecified stands a
 ### Revision — claim 22
 
 The sentence that the first step still labels from `shouldLiveSend` stands as the gap session 015 left. Claim 22 specifies that row. `ok: false` is `send_denied`, with this writer’s step keys and the `DispatchResult`, and with no subject and no body. An allowed result is `send_live` or `send_dry_run` from the result. `enrollment.payload.dryRun` stays `!shouldLiveSend`, written before the send returns. The live writer still uses the cohort flag as the kind. The consent select was not specified. Whether the enroll insert should have been blocked was not decided.
+
+### Revision — claim 23
+
+The sentence that the consent select was not specified stands as the gap session 016 left. Claim 23 specifies the row: `contact_id` and the `firmId` the gate was given. The live query still omits `firm_id`. The arms on `silenced`, `status`, `basis`, and `purpose` were not retuned. The silence upsert still does not assign `status`. `consent_records.sequenced` still has no dispatch. `handleConsentGet` still selects by `contact_id` alone. The stand-in map is still one slot per contact id. Those reads were not specified.
 
 **An import that reuses a contact id.** `handleContactImport` inserts `ON CONFLICT (id) DO UPDATE` and does not assign `firm_id` on the update. The id stays on the first firm’s book row. The dispatch still puts that id in `contactIds` for the importing firm. Claim 17 keeps a non-empty list. Claim 18 judges the enroll by the importing firm’s halt, not by the first firm’s. The conflict update was not specified.
