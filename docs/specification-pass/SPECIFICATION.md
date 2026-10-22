@@ -620,6 +620,10 @@ No founder question. The If reads a field of the halt row this contact-scope fir
 
 The sentence that a contact-scope body with no `contactId` reaches the empty-list walk stands. Claim 17 specifies that walk. The pointer on that body is still this insert’s id. The firm-book branch still does not dispatch. The contact arm of the halt gate was not decided.
 
+### Revision — claim 18
+
+The sentence above stands as what claim 14 left open. Claim 18 decides the contact arm of `isHaltBlockingNew`: an active contact halt blocks the enroll only when that row’s `firm_id` is the firm the enroll is stamped with. The same contact id is one `contact_records` row, so it is one firm on the book, and the pair keys on consent, verdict, and sequence-ready already keep a second firm’s state apart from the first. `consentAndHaltGate`’s contact arm and `handleHaltIsContact` still omit `firm_id`. Claim 18 does not retune them. The pointer is unchanged.
+
 ---
 
 ## Claim 15 — A live firing of `consent_records.opt_out` places the current consent pair on `payload.writes`
@@ -893,6 +897,58 @@ No founder question. Who the automation applies to is already the audience, and 
 
 **Live.** `dispatchEventToWorkflows` still loads every `contact_records.id` for the firing firm when the scope is not `select_from` and the firing passed no contact ids, and it still starts the run when that query is empty. `select_from` with no incoming ids still walks `audience_contact_ids` with no `firm_id` predicate, and it skips only when that array is empty. The filled ids are still not written onto the payload. `workflow_trigger.scope` is still hardcoded `every_firm` and still unread by this function. No migration was written.
 
+### Revision — claim 18
+
+The halt paragraph above stands as the live query. Claim 18 decides it. A contact halt blocks this enroll only when the row’s `firm_id` is the walk’s firm. The audience branch is unchanged.
+
+---
+
+## Claim 18 — A contact halt blocks a new enroll only in the firm stored on that halt row
+
+**Standing:** technical decision made in this session.
+
+A contact halt in another firm does not block an enroll this firm’s listening run is about to make. `call_agent` calls `enrollAndActuate` once per contact on the walk, with `firmId` set to the walk’s firm (`opts.firmId`). That function calls `isHaltBlockingNew` and returns `blocked: "halt"` before the `enrollment` insert when the check is true. The contact arm of the check blocks only an active `halt_records` row whose `scope` is `contact`, whose `contact_id` is the contact being enrolled, and whose `firm_id` is that same enroll firm. `lifted_at` is still null. The firm-book arm is unchanged: an active `scope = 'firm-book'` row for that same firm, with no contact predicate. `LIMIT 1` stays an existence check. There is no `ORDER BY`. Two active contact halts in this firm for this contact are still one block. This claim does not add a unique constraint.
+
+The live contact arm is `scope = 'contact' AND contact_id = $2` inside an `OR` with the firm-book arm. It does not constrain `firm_id`. A row stamped with another firm and this contact id makes the check true, and the insert does not happen. That is the gap.
+
+**What a contact id is.** `contact_records.id` is `TEXT PRIMARY KEY` (`supabase/migrations/004_machine_tables.sql`). `firm_id` is required and is not part of the key. One id is one row, and that row has one firm. Migrations 014 and 015 add `import_batch_id` and `notes`. They do not change the key. `handleContactImport` and `executeAuditRun` insert `ON CONFLICT (id) DO UPDATE` and the update does not assign `firm_id`, so a second firm that supplies an existing id does not create a second row and does not move the first. An import row that omits an id is minted `cr-` plus a uuid. The seed book uses distinct ids per firm (`cr-cedar-1`, `cr-harbor-1` in `supabase/seeds/002_machine_tables.sql`). Email and phone are not unique. The same person on two books is two ids. This predicate does not join them.
+
+The same id can still carry a second firm’s state on the tables whose key is the pair. `consent_records`, `reachability_verdicts`, `sequence_ready`, and `cohort_tiers` use `PRIMARY KEY (contact_id, firm_id)`. A second firm can hold its own consent or verdict for an id whose book row remains the first firm. Claim 15 already keeps the firm on the consent re-read for that reason. Halt is the same shape of state. Every `halt_records` row stores `firm_id NOT NULL`. The contact reader is the one that drops it.
+
+**What the halt row stores, and who writes it.** The columns are `id`, `consultant_id`, nullable `contact_id`, `firm_id`, `scope` (`contact` or `firm-book`), `reason`, `halted_at`, and `lifted_at` (`supabase/migrations/003_ct_wire_stores.sql`). There is no foreign key from `contact_id` to `contact_records`. There is no unique constraint on an active contact halt, so two commits for one person in one firm are two primary keys (claim 14). The contact partial index is on `contact_id` alone, for active contact-scope rows. It matches the live query. It is not a second key.
+
+`confirmHalt` writes `firmId` from `wireFirmId()` and, for This contact, `contactId` from the active client (`ConsultantAntScene.tsx`). That client is loaded by `listContactRecords()` with no scope argument, which is the session book: `contact_records` of the session firm. Firm book writes the same firm and omits the contact. The board restores active halts with `listActive(firmId)`, and `handleHaltList` with a firm id keeps `firm_id = $1`. A contact halt stamped with another firm is not on this firm’s board. The founder kill-switch writes one `scope: "firm-book"` commit per target firm and passes no `contactId` (`FounderAgencyControlsModule.tsx`). The firm-book arm is that control. A fleet stop is one row per firm, not one contact id.
+
+**What a halt already means.** Governance leaf 1.2: Confirm halt writes the state runners and send gates read, further automatic firm→client sends stop, and the halt is refusal under the consultant’s license (`docs/register/how/consultant-governance.md`). The modal states the two scopes inside that refusal. This contact stops automatic sends for this contact only. Firm book stops automatic firm→client sends across the book (`HaltOutreachModal.tsx`). Desk-13 names those two scopes as firm responsibility rather than platform policy, both of them firm→client (`src/app/register/theory/sme/seats/04-consultancy-desk-ops.ts`). Desk-14 is the prospective stop: new motion stops, and the chronology of what already fired stays. The comment on `enrollAndActuate` matches the enroll side of that stop. In-flight attempts are not aborted. `scripts/verify-deny-gates.ts` and `docs/register/SHIP-READINESS.md` exercise the firm-book arm. They do not exercise a contact halt that ignores firm.
+
+The enroll firm on this path is the walk’s firm. Claim 17’s empty firing walks contacts of that firm, and the desk’s halt of such a client stores that firm, so the live arm and this predicate agree on the pair the product writes. They diverge on a `halt_records` row whose `contact_id` is the person being enrolled and whose `firm_id` is some other firm. That row is not a second book entry for the person. The board of the enroll’s firm does not list it. Treating it as a block would stop this firm’s insert for a refusal this firm’s desk does not show, and it would let this firm’s halt stop another firm’s insert of the same id. The license the leaves name is this firm’s firm→client refusal. The control that does cross firms already writes a firm-book row per firm, and the firm-book arm already requires `firm_id`.
+
+`call_agent` does not pass `fireFirstStep`. `enrollAndActuate` fires the first step when the flag is not false, so an enroll this predicate allows still reaches `consentAndHaltGate`. That function’s contact arm is still the unscoped select. This claim does not retune it. The same is true of `handleHaltIsContact`, which is the real `isContactHalted`, and of the stand-in’s `isContactHalted`, which returns true on `contactId` alone. Those readers remain.
+
+The predicate lives on `isHaltBlockingNew`, so every `enrollAndActuate` caller inherits it. `call_agent` is the listening caller this question names. `handleEnrollmentCreate`, `handleSequenceEnrollContacts`, the onboarding fallback, and the eligibility fallback call the same function. This claim does not specify those enrolls. `handleSequenceEnrollContacts` already passes `row.firm_id`, which is the book firm of that id. The onboarding fallback and the eligibility fallback stay unspecified.
+
+**Rejected alternatives.**
+
+- Leave the contact arm as `contact_id` alone. That is the live SQL, the contact partial index, `consentAndHaltGate`’s contact select, `handleHaltIsContact`, and the stand-in’s `isContactHalted`. They were written without `firm_id`. The index follows the query. It does not decide that one firm’s refusal binds another firm’s enroll. The row already stores the firm. The firm-book arm, the board list, the desk commit, and the pair keys on consent and the audit flags already use it.
+
+- Match the halt to `contact_records.firm_id` instead of the enroll firm. On a desk-written halt those two firms are the same, because the client was listed from the session book and the book row has one firm. They differ when a firing names an id whose book row is another firm and `call_agent` stamps the walk’s firm on it. Claim 17 left that on the non-empty arm. Using this gate to catch it would turn the halt into the audience cut, and it would still miss the same person under a second id. The firm the run is acting as is the enroll firm. The halt that binds that enroll is a halt of that firm.
+
+- Require `halt.firm_id` to equal both the enroll firm and `contact_records.firm_id`. The second conjunct is true for every desk-written pair, because the book row cannot sit in two firms. It adds a read of `contact_records` to an existence check the halt row already answers. The predicate stays on `halt_records`.
+
+- Join another firm’s contact by email or phone and honor that firm’s halt. There is no such key. Two books are two ids. That join would be a platform-wide stop, which desk-13 sets the two scopes against. This claim does not add a person table.
+
+- Treat the founder kill-switch as a contact-id match. Each commit is `firm-book` for one target firm, with no `contactId`. The firm-book arm is that control. This claim does not move it onto the contact arm.
+
+- Drop the contact arm and leave only firm-book. This contact is the surgical scope inside the firm. A book halt of another firm is not how one client is refused. The contact arm stays, with the firm.
+
+- Retune `consentAndHaltGate` and `handleHaltIsContact` in this claim. They are the same missing predicate, and the first-step send can still deny on another firm’s row after this predicate has allowed the insert. They are the neighbouring readers. This claim names them and does not rewrite them.
+
+No founder question. A halt that followed the contact id into every firm would change whose license binds the motion. The id is not a cross-firm person: the book row has one firm, and the same human on another book is another id. Per-firm state for one id is already how consent and the audit flags are keyed. The refusal the leaves describe is firm→client under this license. The board shows this firm’s rows. The control that crosses firms writes a firm-book row per firm. Another firm’s contact halt does not block this enroll.
+
+**Evidence:** `dispatchSend.ts` `isHaltBlockingNew`, `consentAndHaltGate`. `cascade.ts` `enrollAndActuate`. `workflowWalk.ts` `call_agent` inside `walkValidatedWorkflow`, `dispatchEventToWorkflows`. `stores.ts` `handleHaltCommit`, `handleHaltList`, `handleHaltIsContact`, `handleHaltIsFirmBook`. `machine.ts` `handleContactImport`, `handleContactRecordsList`, `handleEnrollmentCreate`, `handleSequenceEnrollContacts`, `handleOnboardingFire`. `auditRun.ts` `executeAuditRun`. `ConsultantAntScene.tsx` `confirmHalt`. `HaltOutreachModal.tsx`. `FounderAgencyControlsModule.tsx` `onConfirmHalt`. `src/app/wire/reals/machineApi.ts` `listContactRecords`. `src/app/wire/reals/haltStore.ts` `isContactHalted`. `src/app/wire/standins/haltStore.ts` `isContactHalted`. `src/app/wire/standins/sendGate.ts`. `src/app/wire/standins/machineApi.ts` `createEnrollment`. `supabase/migrations/003_ct_wire_stores.sql`. `supabase/migrations/004_machine_tables.sql` `contact_records`, `reachability_verdicts`, `sequence_ready`, `cohort_tiers`. `supabase/migrations/014_contact_import.sql`. `supabase/migrations/015_house_notes_handle.sql`. `supabase/seeds/002_machine_tables.sql`. `docs/register/how/consultant-governance.md` leaf 1.2. `docs/register/how/operator-founder-controls.md` leaf 1.2. `src/app/register/theory/sme/seats/04-consultancy-desk-ops.ts` desk-13 and desk-14. `scripts/verify-deny-gates.ts`. `docs/register/SHIP-READINESS.md`.
+
+**Live.** The contact arm of `isHaltBlockingNew` still has no `firm_id`. `consentAndHaltGate` and `handleHaltIsContact` still match `contact_id` alone. The stand-in’s `isContactHalted` still does. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
@@ -926,6 +982,7 @@ Those two bullets describe the live payloads. They still do. Claim 11 names the 
 - `event_write_set` naming `consent_records` for `consent_records.opt_out`, and `handleConsentSilence` dispatching that event with no `writes` (claim 15). The upsert already stored the pair. Claim 15 specifies the array: `id` and `contact_id` are both that contact, and the walk’s firm is the other half of the key. The live dispatch still omits `writes`, and `loadWriteRow` still returns null, so the write-set and the listener still do not meet in the running code. `handleConsentSet` does not dispatch. Claim 15 leaves that route as the basis write. It is not a second missing array.
 - `event_write_set` naming `ct_firms`, and `handleMachineProvision` dispatching that event with no `writes` (claim 16). The upsert already stored the firm id. Claim 16 specifies the array: one element, `ct_firms` and that id, no `contact_id`. The live dispatch still omits `writes`, and `loadWriteRow` still returns null, so the write-set and the listener still do not meet in the running code. The same handler also writes `firms`, `campaign_states`, `users`, sometimes `access_links`, and an `audit_events` row. Claim 16 leaves those off the array. They are not a second missing `ct_firms` element.
 - `select_from` on a firing that passed no contact ids, and the live branch walking `audience_contact_ids` with no `firm_id` predicate (claim 17). The specified people are the stored ids that are `contact_records` of the firing firm. The live arm does not apply that cut. The every-firm arm’s `WHERE firm_id = $1` already matches claim 17.
+- The contact arm of `isHaltBlockingNew`, which matches any active contact halt for that `contact_id`, and claim 18, which also requires that row’s `firm_id` to be the enroll’s firm. The live query still omits `firm_id`. Another firm’s row still blocks the insert.
 - `writeEngagement` returning the inserted id, and the generic action pushing `id: contactId` (claim 10). The row exists. The pointer names the contact. The specified load looks up the pointer id.
 - `chainWrites` for every node (the in-memory walker), and resume forwarding only the wait’s writes (claim 6).
 - The cursor as a once-only latch (packet 022 §2.3), and “Open in Now” writing `campaign_id` (claim 4).
@@ -989,6 +1046,10 @@ Claim 14 specifies the contact-scope `halt_records` array: one pointer, `halt_re
 
 Claim 17 specifies the empty-list walk the paragraph above left open. The people are the audience inside the firing firm. They are not the four eligibility rows, and they are not a `contact_records` write. The contact-scope halt gate’s missing `firm_id` predicate stays unspecified.
 
+### Revision — claim 18
+
+Claim 18 specifies that predicate for `isHaltBlockingNew`. A contact halt blocks the enroll when the row is active, `scope` is `contact`, `contact_id` is the person, and `firm_id` is the enroll’s firm. The live contact arm still omits `firm_id`. `consentAndHaltGate` and `handleHaltIsContact` were not retuned. The paragraph above stands for the empty-list walk.
+
 ### Revision — claim 15
 
 Claim 15 specifies the `consent_records.opt_out` array: one pointer, `consent_records`, `id` and `contact_id` both the contact the upsert used, and the walk’s firm as the other half of `(contact_id, firm_id)`. The live silence dispatch still omits `writes`. `handleConsentSet` and the seat Agree / Ignore stay off this event. The hard-bounce upsert and the workspace opt-out write the same pair and do not dispatch. They were not specified as firings. The send gate’s consent read still has no `firm_id` predicate. The silence upsert still does not assign `status`. Those two are other readers and another write of the row the pointer names. They were not specified. `consent_records.sequenced` still has no dispatch.
@@ -1004,3 +1065,7 @@ Claim 16 specifies the `ct_firms` array: one pointer, `ct_firms` and the firm id
 Claim 17 specifies that fill. Every firm walks `contact_records` of the firing firm, and the run starts even when the book is empty. Select from walks the stored ids that are contacts of that firm, and does not start when none are. The live `select_from` arm still does not apply the firm cut. The list is still not an element of `writes`.
 
 **Provision’s other stores.** The same request writes `firms`, `campaign_states`, and `users`, and it may insert `access_links` and `audit_events`. Claim 16 leaves them off the pointer because `event_write_set` names `ct_firms` alone. `website` and `role` are on the HTTP body and are not inserted by this handler. `handlePoolAllocate` updates pool columns on the firm id this pointer names, and it does not dispatch. Those are other writers of the provision, and of the row the listener re-reads. They were not specified as firings.
+
+**The other contact-halt readers.** Claim 18 specifies the contact arm of `isHaltBlockingNew`. `consentAndHaltGate` still selects an active contact halt by `contact_id` alone, after the firm-book check and the consent check. `handleHaltIsContact` is the same contact select, and the real `isContactHalted` calls it with no firm. The stand-in’s `isContactHalted` matches `contactId` and does not read `firmId`. `call_agent` omits `fireFirstStep`, and `enrollAndActuate` fires the first step when that flag is not false, so an enroll claim 18 allows still reaches the send gate. Those readers were not specified.
+
+**An import that reuses a contact id.** `handleContactImport` inserts `ON CONFLICT (id) DO UPDATE` and does not assign `firm_id` on the update. The id stays on the first firm’s book row. The dispatch still puts that id in `contactIds` for the importing firm. Claim 17 keeps a non-empty list. Claim 18 judges the enroll by the importing firm’s halt, not by the first firm’s. The conflict update was not specified.
