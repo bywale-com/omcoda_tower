@@ -1924,6 +1924,94 @@ No founder question. The machine post writes a meeting under the same invitation
 
 **Live.** `handleMeetingBook` still does not read `consent_records` or `campaign_objective.kind`. `standInMachineApi.bookMeeting` still pushes and still nullifies without that read. The plant’s Booking still calls through. No migration was written.
 
+### Revision — claim 39
+
+The sentence that `writeBackContactFacts` still calls `applyFactsToMeetingsStore` when `writeFact` rejects, and that the local list was not retuned, stands as the gap. The same sentence in claims 30, 34, 35, and 37 stands as that gap. Claim 39 decides the paint. The meeting insert is unchanged. A refused book still does not add a `StoredMeeting`. `meeting_booked` is unchanged. `signalMissingFact` is unchanged.
+
+---
+
+## Claim 39 — A refused fact does not paint the local meetings list
+
+**Standing:** necessary implication of Live brief reading the write-back, and of the booking mirror in claim 38, and a technical decision made in this session.
+
+`writeBackContactFacts` calls `applyFactsToMeetingsStore` only when every `writeFact` in its loop returned. The facts it applies are the ones that helper already chooses on that path: `mergeFactsPreferMachine` of the listed write-backs and the submitted facts when `listFactWritebacks` returns at least one fact, and the submitted facts when that list throws or returns none. The apply updates a `StoredMeeting` already in the array whose `clientId` matches. It does not call `addMeeting`. When any `writeFact` throws, the helper does not call `applyFactsToMeetingsStore`. The array is unchanged by that call. `signalMissingFact` still runs when `signalMissingFieldKey` is set, including when the loop threw. Claims 34 and 35 are that call. This claim does not stop it. It does not insert `fact_writebacks` and it does not insert `meeting_booked`.
+
+**One array.** `meetings` in `src/app/register/prototype/shared/meetingsStore.ts` is the only list. It starts as `SEED_MEETINGS`: `m1` for `sarah`, status Upcoming, phase Meeting-ready; `m2` for `james`, the same status and phase; `m3` for `priya`, status Tentative, phase In motion. `applyFactsToMeetingsStore` maps that array. On a match it replaces facts whose labels collide, sets `asOf` to a write-back clock, and appends the observation that the source refreshed Live brief facts. When nothing matches and the fact list is non-empty, the live function calls `addMeeting` with id `m-facts-` plus the client id, status Tentative, phase In motion, purpose `Facts write-back`. `confirmContactBooking` calls `addMeeting` on that same array, and only after `bookMeeting` returns an id. A throw from `bookMeeting` is rethrown and does not add. Claim 38 already said a refused response does not give the caller an id. This claim does not retune the `StoredMeeting` that function builds. The purpose, the pathway sentence, the observation, and the two painted facts stay. The fact paint and the booking push are not two lists.
+
+**Who reads it.** `useMeetings` is what `src/app/register/prototype/MeetingsModule.tsx` renders, and what `src/app/register/prototype/ConsultantPrototypeScene.tsx` uses for the today chips and the meeting-ready ids. Those modules are the plant. `src/app/register/prototype-ant/consultant/MeetingsModule.tsx` loads `listMeetings` and does not call `useMeetings`. The brief on that module comes from `hydrateFactsFromMachine`, which lists `fact_writebacks`. The mapped meeting row does not set `facts`. `src/app/register/prototype-ant/consultant/meetingsData.ts` snapshots `getMeetings()` at import. No other file under `src/` imports it. A paint of this array does not appear on the product-face Meetings list. `LiveBriefPanel` hydrates the same way, and `mergeFactsPreferMachine` keeps snapshot labels the machine list does not have. A refused label put on the snapshot is a label that survives that hydrate.
+
+**What a throw paints today.** `factsToApply` starts as `input.facts`. The `writeFact` loop is inside the try. `wireFetch` throws when the response is not ok. That response is the withhold in claims 30 and 32. The catch skips `listFactWritebacks`. `applyFactsToMeetingsStore` still runs with the submitted facts. The three submits in `ContactPrototypeScene` use `DEMO_CONTACT_ID`, which is `sarah`, so they match `m1`. Nudge form posts source `Nudge form`. Loop-closer form posts source `Loop-closer form`. Update facts posts source `Update facts`. A refused loop still rewrites `sarah`’s facts, stamps `asOf`, and appends the refresh sentence. A client id with no row takes the `m-facts-` insert. That id is not a `meeting_booked` id. `selectConsultantTodayMeetings` keeps status Upcoming, so the invented row is not a today chip. `selectMeetingReadyClientIds` keeps phase Meeting-ready, so it is not that set. It is still a row on the plant Meetings list. The three live callers hit `m1`. The insert is still the function.
+
+**Why a throw does not paint.** `docs/register/how/consultant-core.md`, `docs/register/how/consultant-access.md`, `docs/register/how/contact-book.md`, and `docs/register/how/contact-refresh.md` say Live brief reads the contact’s write-back. Claim 30 says a rejected `writeFact` is no machine result. The observation string says the write-back refreshed. A refused post did not. The product-face list never shows the refused label, because it does not read this array and because the row was not inserted. The plant brief would, through the snapshot merge. The booking caller on this same array already waits for an id. The fact caller waits for `writeFact` to return.
+
+**A fact does not add a meeting.** Leaf 1.1 of `docs/register/how/contact-book.md` writes the meeting on Confirm booking. Claims 37 and 38 are that insert. The invented row’s overview says the source wrote facts before booking, and the function then adds a meeting. A stored fact is `fact_writebacks`. When the loop returns and no local row has that `clientId`, the helper does not add one. The stored facts stay on the table. `hydrateFactsFromMachine` still reads them when a meeting for that contact is open. The product face already does that read off `listMeetings`.
+
+**A throw after an earlier success.** The loop posts one fact at a time. A later throw means an earlier call may have stored. The list call sits after the loop, inside the same try, so the catch does not have the partial set. This claim does not paint `input.facts` from that catch. That array includes the call that threw. The stored earlier rows stay in `fact_writebacks`. The next hydrate reads them. The local observation does not say the batch refreshed. This claim does not add a second list call inside the catch.
+
+**The signal and the seeds.** Loop-closer still passes `signalMissingFieldKey` `validity_still_valid` after the loop, including when the loop threw. Claim 35 refuses that key. The helper still calls. The paint is not that insert. This claim does not delete `SEED_MEETINGS` and does not make the product-face module read the array. The three rows are the plant’s starting list. A refused submit does not replace `sarah`’s facts. A loop that returned may replace matching labels on that row. Unmatched seed labels stay, because the apply keeps them. Stripping the seed is not this withhold.
+
+**Rejected alternatives.**
+
+- Keep painting `input.facts` when `writeFact` throws, because the catch comment says the UI store still updates. The comment is the behavior this claim stops. The update would record a write-back the handler refused. The product face already shows the query. The plant brief’s hydrate does too, except the snapshot merge keeps a label the query does not have.
+
+- List write-backs inside the catch, so a partial success shows and the thrown fact does not. The list call is inside the try that just failed. A failed batch does not get the refresh sentence. The stored rows are still listed when the brief opens.
+
+- `addMeeting` when the contact has no local row, so facts submitted before a booking have a card. The card is a meeting on the plant list. Claims 37 and 38 already say which post stores a meeting. A fact is not that post. The product face does not show the card.
+
+- Treat the array as `meeting_booked` and withhold that table again. The table is claims 37 and 38. `confirmContactBooking` already adds only after an id. This claim does not change `handleMeetingBook` and does not change `handleContactSeatMeeting`.
+
+- Delete `SEED_MEETINGS` so the plant list is empty until a book returns an id. The product-face module already lists `meeting_booked`. Emptying the plant array is not what makes a refused fact absent. The refused submit is absent because the apply does not run.
+
+- Stop `signalMissingFact` in the same catch. Claims 34 and 35 left that call. Claim 35 refuses `validity_still_valid` on the route. The paint is not the signal.
+
+- Mint a Manage table so document-dependent asks have a desk instead of this list. No `CREATE TABLE` under `supabase/` is that desk. This list is not that desk. This claim does not name one.
+
+No founder question. A write-back the machine stored, and a label painted after the machine refused, are different briefs. The leaves already say the brief reads the write-back. The booking caller already waits for an id on this same array. A fact waits for `writeFact` to return, and it does not add a meeting.
+
+**What this leaves.** `eventKindProse` returns `Sent` for every kind that contains `send`, so `send_denied` and `send_dry_run` read as `Sent` on the operator activity column. `titleFor` has no `send_denied` case. Claim 21 already names that default, the kind with underscores turned into spaces, as the complaint-desk title. The operator column was not retuned. It is the next reader.
+
+**Evidence:** `src/app/register/prototype/shared/meetingsStore.ts` `SEED_MEETINGS`, `applyFactsToMeetingsStore`, `writeBackContactFacts`, `confirmContactBooking`, `mergeFactsPreferMachine`, `hydrateFactsFromMachine`, `selectConsultantTodayMeetings`, `selectMeetingReadyClientIds`. `src/app/register/prototype/ContactPrototypeScene.tsx` the three `writeBackContactFacts` calls, `DEMO_CONTACT_ID`, `confirmBooking`. `src/app/register/prototype/MeetingsModule.tsx`. `src/app/register/prototype/ConsultantPrototypeScene.tsx`. `src/app/register/prototype/LiveBriefPanel.tsx`. `src/app/register/prototype-ant/consultant/MeetingsModule.tsx` `listMeetings`. `src/app/register/prototype-ant/consultant/meetingsData.ts`. `src/app/wire/http.ts` `wireFetch`. `src/app/wire/reals/machineApi.ts` `writeFact`, `listFactWritebacks`, `listMeetings`. `docs/register/how/consultant-core.md`. `docs/register/how/consultant-access.md`. `docs/register/how/contact-book.md` leaf 1.1. `docs/register/how/contact-refresh.md`. `docs/register/DATA-IN-TABLES.md`. Claims 30, 32, 34, 35, 37, and 38.
+
+**Live.** The catch still calls `applyFactsToMeetingsStore` with the submitted facts. A client with no local row and a non-empty fact list still gets `m-facts-` plus that id. `confirmContactBooking` still adds only after an id. The product-face module still lists `meeting_booked` and does not subscribe to the array. No migration was written.
+
+### Revision — claim 40
+
+The sentence that `eventKindProse` returns `Sent` for a kind that contains `send`, and that the operator column was not retuned, stands as the gap. Claim 40 decides that column. The local meetings paint is unchanged. `titleFor` is not given a new case. `kindOf` and the Activity tags stay as claim 21 left them.
+
+---
+
+## Claim 40 — A denied send does not read as Sent on the operator activity column
+
+**Standing:** necessary implication of claim 21, and a technical decision made in this session.
+
+`eventKindProse` does not return `Sent` for `send_denied` or for `send_dry_run`. Those two kinds do not enter the arm that tests `includes("send")` or equality with `sent`. They do not match the later arms, which test `open`, `click`, `deliver`, `nullif`, `halt`, `window`, `escalat`, `fail`, `answer`, and `complete`. The function’s last line is their prose. Underscores become spaces, so the column reads `send denied` and `send dry run`. `send_live` and the exact kind `sent` still return `Sent`. This claim does not add a case to `titleFor`. Claim 21 already names that function’s default, the kind with underscores turned into spaces, as the complaint-desk title of an uncased kind. `kindOf` still has no `send_denied` case, so that kind stays `other`. `outcomeFrom` therefore still has an empty outcome line for it. `signalsFrom` and the Activity Sent and Delivered tags stay a reading of attempt state. Claim 21 left those. This claim does not retune them.
+
+**The column.** The activity tab in `src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx` renders `engagement_records` from `listEngagementRecords`. The column title is What happened. The cell is `eventKindProse(row.event_kind)`. The search haystack includes that prose. The channel is a separate column, `channelFromPayload`. This is the operator Agents surface on the product face. The consultant chronology is `titleFor` in `src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts`. That function is not this column. Its default for `send_denied` is already `send denied`. Its case for `send_dry_run` is `Send · {channel} (dry-run)`. Its case for `send_live` is `Send · {channel} (live)`.
+
+**Why those two leave the send arm.** Claim 21 splits one dispatcher result into three kinds. `send_live` is the provider accept. `send_dry_run` is the fail-closed stage, `ok: true`. `send_denied` is `ok: false`. The same claim refused to rename the denial so that it would avoid the substring `send`, and it left this helper unretuned. The live helper returns `Sent` for every kind that contains `send`, and that test sits before the `fail` test. `send_denied` contains `send`. `send_dry_run` contains `send`. `send_live` contains `send`. The column then calls a refusal a send, and it calls a staged dry run a send. The complaint desk does not. The operator column has no channel inside the prose. The spaced kind is the line the function already uses for a kind it does not recognize. Using it does not invent a fourth label. A search for the word sent no longer matches those two rows. A search for the spaced kind does.
+
+**What stays Sent.** A row whose kind is `send_live` went out. A row whose kind is `sent` is the exact word that arm already returns. Those stay `Sent`. Kinds that do not contain `send` are unchanged.
+
+**Rejected alternatives.**
+
+- Return `Sent` for `send_denied` because claim 21 said the helper was not retuned. That sentence is the gap. The rejected alternative in claim 21 was renaming the kind to dodge the substring. The kind stays `send_denied`. The column is the reader that still treats the substring as a send. Claim 21 already says a refusal and a message that went out are different files.
+
+- Return `Failed` for `send_denied`, by folding `denied` into the `fail` arm. `Failed` is the arm for a kind that contains `fail`. A policy deny, a halt deny, a silence deny, and a throughput deny are one kind because the writers do not read `detail`. `Failed` would be a second file. The spaced kind is the file the complaint desk already uses.
+
+- Add a `titleFor` case so the chronology says `Send denied` or `Send · {channel} (denied)`. Claim 21 already specified the default. The chronology title of an uncased `send_denied` is `send denied`. The operator column is the reader that said `Sent`.
+
+- Bucket `send_denied` as `send` inside `kindOf`, so the outcome line and the Sent tag follow the kind. Claim 21 left `kindOf` as `other` and left the tags on attempt state. A denial lighting Sent from the kind would be the collapse this column just lost.
+
+- Return `Sent` for `send_dry_run` because the worker staged the message. `docs/register/system-map/ACTUATION-REPORT.md` and claim 21 call that result a dry run, `ok: true`, not the provider accept. The complaint desk already titles it as a dry run. The operator column saying `Sent` puts the stage in the same cell as `send_live`. The spaced kind keeps them apart. The channel column still says the channel.
+
+No founder question. The three results are already three kinds. The operator column is a reader of the kind. `Sent` stays the result that went out. The other two use the function’s own leftover line.
+
+**What this leaves.** `standInConsentSilence` is still one slot per `contactId`. `get` still does not take a firm. `setConsent` and `silence` still store `firmId` on that slot and replace the previous firm. `setConsent` still keeps the previous boolean. `silence` still keeps the previous basis and sets the boolean true. `standInContactSeat.consent` still keeps the previous boolean, while the server seat statement clears it. Claims 29 through 40 do not retune that map. `SYSTEMS-GOAL` still asks whether launch day is only for contacts who were waitlisted, and it still says not to fill that ask. Nothing writes `waitlisted`. Claim 27 already says the sign-up drawing is not a dispatch and not a status write. `advanceEnrollmentCampaign` is not a writer of `consent_records`. That absence is not a second formula.
+
+**Evidence:** `src/app/register/prototype-ant/operator/channelRuleGrain.ts` `eventKindProse`. `src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx` the activity table, `listEngagementRecords`, the What happened column. `src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts` `kindOf`, `titleFor`, `outcomeFrom`, `signalsFrom`. `server/wire-service/cascade.ts` the `send_live`, `send_dry_run` writers. `docs/register/system-map/ACTUATION-REPORT.md` the fail-closed dry run. Claims 21 and 22.
+
+**Live.** `eventKindProse` still returns `Sent` when the kind contains `send`, so `send_denied` and `send_dry_run` still read as `Sent`. `titleFor` still has no `send_denied` case, and its default still spaces the kind. `kindOf` still returns `other` for `send_denied`. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
@@ -1974,6 +2062,8 @@ Those two bullets describe the live payloads. They still do. Claim 11 names the 
 - `handleFactWriteback` inserting `fact_writebacks`, deleting the answered `missing_fact_signals` row, inserting further missing-fact rows from `missingFieldKeys`, running the eligibility cascade, dispatching `fact_writebacks`, and calling `onCompletionWrite` without reading `consent_records`, and claim 30, which does none of those when the row for the session firm and the body contact is missing or `basis` is `none`. The live handler still does not read the row. `standInMachineApi.writeFact` still records the write.
 - `projectSeat` setting `now.state` to `meeting` when the objective kind is `meeting` and the consent ask is passed, including when `silenced` is true, and `handleContactSeatMeeting` inserting, dispatching, completing, and nullifying without reading `consent_records` or that kind, and claim 37, which does none of those unless the contact is invited and not silenced. The live projection still sets `meeting`. The live handler still inserts. The mirror still sets `meeting` for `camp.react.meeting` without reading `silenced`.
 - `handleMeetingBook` inserting `meeting_booked`, dispatching, completing, nullifying, and writing the side engagement without reading `consent_records` or `campaign_objective.kind`, and claim 38, which does none of those unless the same invitation test passes. The live handler still inserts. `standInMachineApi.bookMeeting` still pushes.
+- `writeBackContactFacts` calling `applyFactsToMeetingsStore` with the submitted facts when `writeFact` throws, and calling `addMeeting` for a client the local array does not already hold, and claim 39, which does not paint on that throw and does not add a meeting from a fact. The live catch still paints. The live function still adds `m-facts-` plus the client id.
+- `eventKindProse` returning `Sent` for `send_denied` and for `send_dry_run` because both contain `send`, and claim 40, which leaves those two to the function’s spaced leftover. The live helper still returns `Sent`. `titleFor` still has no `send_denied` case. Claim 21 already names that default.
 
 ---
 
@@ -2071,6 +2161,10 @@ The paragraph above is the gap as session 013 left it. Claim 20 decides the send
 
 The sentence that the engagement kind on that deny is still unspecified stands as the gap session 014 left. Claim 21 specifies the row: `send_denied`, with the `DispatchResult` on the payload, and with no subject and no body. The live three writers still disagree. The first step inside `enrollAndActuate` still labels from `shouldLiveSend` and still stores a deny on that row. Claim 21 does not label that write. The operator helper `eventKindProse` still returns `Sent` for any kind that contains `send`. That helper was not retuned. The Activity Sent and Delivered tags still read attempt state.
 
+### Revision — claim 40
+
+The sentence that `eventKindProse` still returns `Sent` for any kind that contains `send` stands as the live helper. Claim 40 decides the operator column. `send_denied` and `send_dry_run` do not take that arm. `send_live` and `sent` still return `Sent`. `titleFor` is not given a `send_denied` case. Claim 21’s default remains the complaint-desk title. The Activity tags still read attempt state.
+
 ### Revision — claim 22
 
 The sentence that the first step still labels from `shouldLiveSend` stands as the gap session 015 left. Claim 22 specifies that row. `ok: false` is `send_denied`, with this writer’s step keys and the `DispatchResult`, and with no subject and no body. An allowed result is `send_live` or `send_dry_run` from the result. `enrollment.payload.dryRun` stays `!shouldLiveSend`, written before the send returns. The live writer still uses the cohort flag as the kind. The consent select was not specified. Whether the enroll insert should have been blocked was not decided.
@@ -2104,6 +2198,10 @@ The paragraph above is the gap session 021 left. Claim 28 specifies the Now pane
 The sentences that `consent_records.sequenced` still has no dispatch stand as the live call, and claim 27 makes that absence the specification of the event. No ongoing statement sets `waitlisted` or `sequenced`. The one-time migration `UPDATE` still sets `sequenced` from `basis` and still does not dispatch. The seat consent is still not that writer.
 
 **Sign-up met and the consent rung.** `SYSTEMS-GOAL` draws sign-up met as the campaign goal that lands on `consent sequenced`, and the same row says the cascade does not write that status. Claim 27 says that drawing is not a dispatch and not a status write. `obj.optin.day` still completes on `fact_writebacks`, and the cursor advance still dispatches `objective_met`. What that objective would write onto `consent_records`, beyond the absence claim 27 records, was not given a second formula. It is not this event.
+
+### Revision — claim 27, re-read
+
+The sentence that what `obj.optin.day` would write onto `consent_records`, beyond the absence claim 27 records, was not given a second formula, stands as the question the previous handoff still listed. The writers of `consent_records` under `server/` are the seat, the send’s select, the event-test sample, the silence and consent stores, the hard-bounce upsert, and the sequenced matcher in `workflowWalk.ts`. `advanceEnrollmentCampaign` is not among them. Claim 27 already says the goal sentence is not a status write. There is no second formula. The launch-day audience ask stays the question that file said not to fill. It was not answered.
 
 **Who receives launch day.** `SYSTEMS-GOAL` already asks whether launch day is only for contacts who were waitlisted, and it says not to fill that ask. Claim 27 found no writer of `waitlisted`, so the fork has no stored signal on `consent_records.status`. The ask stays open. It was not answered. It is not this event.
 
