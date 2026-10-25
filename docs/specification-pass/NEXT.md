@@ -2,23 +2,21 @@
 
 ## Established
 
-Claims 1–51 stand in `docs/specification-pass/SPECIFICATION.md`. Claims 50 and 51 are the spam complaint and the day calendar the seed had compressed.
+Claims 1–52 stand in `docs/specification-pass/SPECIFICATION.md`. Claim 52 is the active eligibility graph.
 
-Claim 50: `email.complained` inserts `messaging_events` with class `complaint`. When that `message_id` matches an `outbound_messages` row, the next `dispatchEmailLive` to the same `to_addr` is denied in every firm, after consent and halt have allowed it. The detail is `suppressed`. The event does not write `consent_records`, does not dispatch the opt-out, and does not quarantine the firm. One complaint is not the rate ceiling. SMS and the auth OTP mailer are not this address. The attempt stays open. Claims 43 and 44 still enroll from the pair. Claim 49 stays the one-click. Claim 42 stays the hard bounce.
+Claim 52: when `wf-eligibility-reactivation` is active, the branch “Reactivation-worthy?” passes a contact whose `motion_decisions.motion` on this firing is `reactivation`. The edge to the reactivation agent is `sourceHandle` `true`. There is no false edge. `call_agent` enrolls that contact only when claim 43’s non-opt-in pair would allow the send. A missing basis or a silence does not open the attempt. Opt-in `call_agent` is unchanged. The constant `anyPass` is unchanged. A `nudge` motion is not enrolled by this graph.
 
-Claim 51: days 4–7 of `tpl.optin_launch.v1` are an email on day 4, an email on day 5, and a text on day 6. `ol-d3-waitlist` stays one email. `ol-d2-social` stays channel `form` and does not send. The first reactivation calendar is two nurture emails, on day 1 and day 2, then a day-3 email and a day-3 text for the slot. Claim 45’s offset applies. A repeat reactivation is not compressed by that claim.
-
-Claim 45 still governs the later opt-in purpose. The people claims 46 and 47 place are who the walk holds until a Get replaces them.
+Claims 50 and 51 stand. The address deny is still one complaint. The day calendar is still claim 51.
 
 ## Still worth investigating
 
-The complaint-rate ceiling was not specified. `deliv-11` quarantines or throttles a reputation unit when the rate approaches about 0.3 percent. The handler does not count, and claim 50 does not. The window and the denominator are the open part of that path. `email.delivery_delayed` maps to `deferred` and only inserts the event. Whether `bounce_hard` should also deny by the address join, beside claim 42’s pair, was not decided.
+The complaint rate’s window and denominator are still open. `deliv-11` already names the bars: throttle as the rate approaches a target at or under 0.1 percent, quarantine when a ceiling of about 0.3 percent is breached. The cited Google sender page states those bars as Postmaster Tools spam rates and does not state the window or what the rate divides. There is no `reputation_unit` table. `email.delivery_delayed` still only inserts `deferred`. Whether `bounce_hard` should also deny by the address join, beside claim 42’s pair, was not decided.
 
-The seed branch “Reactivation-worthy?” has no compares. `evalIfPick` returns false, and the edge has no `sourceHandle`, so activating `wf-eligibility-reactivation` enrolls nobody and also suppresses claim 43’s fallback. `any_pathway_pass` is still the constant true. The field chip’s `find`, and what `sequence_ready.ready` is derived from, remain open. `executeAuditRun` sets `ready` from email and phone and does not read `consent_records`.
+Nothing on a seeded graph enrolls `tpl.reengagement.v1` when the motion is `nudge`. The template and the `firm-cedar` binding exist. The false handle of this branch has no edge. `any_pathway_pass` is still the constant `true`. What `sequence_ready.ready` is derived from remains the verdict-only writer in `executeAuditRun`.
 
-`campaign_failure` does not store `enrollment_id`. Two enrollments can share a contact and a campaign. `handleContactImport` inserts `ON CONFLICT (id) DO UPDATE` and does not assign `firm_id`. `handleMachineProvision` also writes tables claim 16 leaves off the pointer. `handlePoolAllocate` updates the same `ct_firms` id and does not dispatch.
+`campaign_failure` does not store `enrollment_id`. `handleContactImport` inserts `ON CONFLICT (id) DO UPDATE` and does not assign `firm_id`. `handleMachineProvision` also writes tables claim 16 leaves off the pointer. `handlePoolAllocate` updates the same `ct_firms` id and does not dispatch.
 
-P1’s remainder is what a halt does to Engine 2’s “one client, one motion,” and to the attempt engine’s live-override. Claim 20 does not nullify the attempt. Claim 2 still allows two enrollments. Claims 43 through 51 did not add a one-motion refusal. Whether the founder kill-switch row can be lifted was not read.
+P1’s remainder is what a halt does to Engine 2’s “one client, one motion,” and to the attempt engine’s live-override. Claim 20 does not nullify the attempt. Claim 2 still allows two enrollments. Claims 43 through 52 did not add a one-motion refusal. Whether the founder kill-switch row can be lifted was not read.
 
 ## Founder question
 
@@ -28,4 +26,4 @@ Repeat compression stays the question `docs/register/system-map/BUILD-system-map
 
 ## Next move
 
-Start at the “Reactivation-worthy?” branch on `wf-eligibility-reactivation`. The compares are empty, `evalIfPick` returns false, and the edge has no `sourceHandle`, so the action does not run. Activating that graph stops claim 43’s fallback and enrolls nobody. Decide what that branch compares, and what an active graph then enrolls. Leave both founder questions recorded. The complaint-rate window is the other open end of claim 50, if that branch settles first.
+Start at the complaint-rate window and denominator. The bars are already the 0.1 percent target and the 0.3 percent ceiling in `deliv-11`, and the fetched Google sender page states them as Postmaster rates without a formula. Decide what the rate divides, and over what window, before any quarantine is applied. The “Learn more about spam rates” link on that page was not fetched. Leave both founder questions recorded. If that rate settles, the open enroll for a `nudge` motion is the gap claim 52 left on the false handle.

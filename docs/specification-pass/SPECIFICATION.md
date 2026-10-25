@@ -458,6 +458,10 @@ The empty-list sentence stands as what the function does when `opts.contactIds` 
 
 The sentence that the enroll itself is not specified stands as the gap. Claim 43 specifies that enroll. The four pointers stay this firing’s `writes`. `enrollment`, `active_attempts`, and `engagement_records` stay off that array. A contact the pair would deny is not enrolled, and that absence is still not a pointer.
 
+### Revision — claim 52
+
+The sentence that the live set still omits the four tables, so `evalIfPick` does not split them, stands as the running code. Claim 52 puts `eligibility_evaluations`, `eligibility_results`, `signals`, and `motion_decisions` in the set that split consults. Each pointer still carries `contact_id`. The row id is still not a person.
+
 ---
 
 ## Claim 13 — A live firing of `campaign_failure` places the inserted primary key on `payload.writes`, and the payload carries that row’s `campaign_id`
@@ -2190,6 +2194,10 @@ No founder question. A stored eligibility quartet and a reactivation enrollment 
 
 The sentence that whether silence stops the no-workflow opt-in insert was not decided stands as the gap. Claim 44 decides that insert. The missing-basis arm still does not apply. `liveSends` stays the cohort count. Nothing in that claim writes `waitlisted`.
 
+### Revision — claim 52
+
+The sentence that this claim does not give the branch a pick stands as the gap. Claim 52 gives that pick, and it applies the same pair on `call_agent` when the purpose is not `opt-in`. The no-workflow loop is unchanged. Activating the graph still suppresses this fallback. The graph enrolls the contacts the pick and that pair allow.
+
 ---
 
 ## Claim 44 — When no workflow is active, the opt-in enroll skips a silenced contact
@@ -2556,6 +2564,50 @@ No founder question on the opt-in cells or on the first reactivation calendar. T
 
 ---
 
+## Claim 52 — An active eligibility graph enrolls reactivation when this firing’s motion is reactivation and the non-opt-in pair allows it
+
+**Standing:** necessary implication of Engine 2’s stored motion and of claim 43’s pair, and a technical decision made in this session.
+
+When `wf-eligibility-reactivation` is active, `eligibility.changed` walks that graph and does not run claim 43’s fallback. The branch “Reactivation-worthy?” passes a contact when this firing’s `motion_decisions` row for that contact has `motion` equal to `reactivation`. The edge from that branch to “Call reactivation agent” is the true handle. `call_agent` then enrolls that contact only when the `consent_records` row for that contact and for the walk’s firm would allow a send whose purpose is not `opt-in`. A missing row, `basis` `none`, `silenced` true, or `status` `silenced` does not enroll. A contact whose motion is not `reactivation` does not enroll. There is no false edge and no nudge action on this graph. Claim 43’s loop is unchanged. Claim 2 still allows a second enrollment when the call is made. This claim does not change the constant `anyPass`, and it does not define the immigration predicate that would write `any_pathway_pass`.
+
+**The compare.** The walker reads `data.compare` and `data.mappedSlots`. It does not read `filterSummary`, and it does not read `conditionConfig`. The node’s compare is one row: left chip slot `if-left`, op `eq`, right text `reactivation`. The chip’s table is `motion_decisions` and its field is `motion`. `fromNodeId` is empty, so the chip reads `previousWrites`, which are this firing’s pointers. The load is claim 12’s `SELECT * FROM motion_decisions WHERE id = pointer.id`. `motion` is that row’s column. `fieldMatches` treats the equality as the string. The inserted value is the lowercase `reactivation` or `nudge`. The label stays “Reactivation-worthy?”. The catalog copy of this graph in `automationWorkflows.ts` carries the same compare, the same chip, and the same true handle. Its `conditionConfig` from `emptyIfConditionConfig` is the hours row the walker never reads. That object does not satisfy this compare.
+
+**Who is tested.** Claim 12 already said these four rows join the person split. The set `evalIfPick` consults is `PERSON_WRITE_TABLES`, and this claim puts `eligibility_evaluations`, `eligibility_results`, `signals`, and `motion_decisions` in it. Every pointer still carries `contact_id`, so the `eval-` id is not a person. The If tests each contact in `ctx.contactIds` against the motion pointer whose `contact_id` is that contact, then loads that pointer’s id. The version 1 specimen puts Okonkwo at `motion` `reactivation` and Alvarez at `motion` `nudge` on one `eligibility.changed`. Okonkwo is the true side. Alvarez is not. A run-level pass on the first pointer would have enrolled Alvarez. `reason.precedence` is not the compare. The live insert writes `precedence` `mp-1` for both motions, and the specimen’s nudge row also stores `mp-1`. Reading that key would pass the contact the motion column calls `nudge`. `any_pathway_pass` is not the compare. The motion expression is what stored the decision. `triggerPayload.motion` is not the compare. Claim 12 already refused that scalar, and `evalBranch`, which returns false when the filter contains `reactivation` and that scalar is `nudge`, is not the function the walker calls. A missing pointer, or a `motion` that is not the string `reactivation`, fails the contact. The existing `find` still takes the first pointer when two rows of the table share a `contact_id`. This claim does not retune that find.
+
+**The edge.** `outgoingHandle` keeps an edge only when `sourceHandle` equals the handle. The seed edge `e-branch-1-action-1` has no `sourceHandle`, so it matches neither `true` nor `false`. This claim sets that edge’s `sourceHandle` to `true`. The false handle has no edge. A contact who fails is not enrolled by this graph and is not handed to another node on it. `tpl.reengagement.v1` is seeded and bound for `firm-cedar`. No seeded workflow’s action names it. This claim does not add a nudge action.
+
+**The enroll the true side reaches.** The action is the existing `call_agent` with `agentRef` `tpl.reactivation.v1`. `resolveAgentRef` still returns the firm’s bound template for that class, or the platform id when the firm has no row. The purpose is claim 45’s: the class column `reactivation` passes `cem`. Before `enrollAndActuate`, when the purpose that call would pass is not `opt-in`, the loop reads claim 23’s select for that contact and for `opts.firmId`. The arms are claim 43’s non-opt-in arms. A deny does not call `enrollAndActuate`. Halt is not consulted for that contact. There is no `enrollment` row, no `active_attempts` row, and no `engagement_records` row from this action. The contact is absent from the action’s writes and from the enrolled count. A pair that allows still calls `enrollAndActuate` with `fireFirstStep: true`. `isHaltBlockingNew` still returns before the insert, and `call_agent` still continues on `blocked` `halt`. Past that check the first step runs. The purpose on that send is `cem`, so claim 23’s missing-basis arm denies it. This withhold is the same predicate, applied before the insert, so the attempt does not start. `workspace_opted_out` is not read.
+
+The same check is the `call_agent` loop, so any other action that passes a purpose other than `opt-in` uses it. An opt-in `call_agent` does not. Claim 44 already left that action enrolling a silenced contact. `handleEnrollmentCreate`, `handleSequenceEnrollContacts`, and the two fallback loops do not go through `call_agent`. They stay where claims 43 and 44 put them. The withhold is not moved into `enrollAndActuate`.
+
+**Why the column is the branch.** Seed §5.8 and `rule_motion_precedence` `mp-1` say reactivation when anything is reactivation-worthy, and `mp-2` says nudge when nothing is. The cascade stores that choice on `motion_decisions.motion` with `anyPass ? "reactivation" : "nudge"`. The graph’s only action is the reactivation agent. The branch asks whether this contact’s stored motion is that action. `docs/register/system-map/RESOLUTION-REPORT.md` marks the immigration criteria of “reactivation-worthy” named-silent, and `docs/sme/pass2/01-immigration-pathway-eligibility.md` says Seed never defines the predicate that distinguishes a meeting-grade change from a nudge-grade missing fact. Those sentences are about what would write the column. They are not a second compare on the node. While `anyPass` stays the constant `true`, every contact on the firing has motion `reactivation`, the branch passes them, and the pair is what still withholds. The specimen’s Alvarez is the contact the branch excludes once the column is `nudge`. This claim does not read `rule_eligibility_pathway` and does not change the constant.
+
+**Why the pair is on the action.** The If reads writes. `consent_records` is not on this firing’s `writes`. Claim 12 refused adding it. The silence leaf says a silenced contact is not sequence-ready for new automatic motion, and claim 43 already refused to open the attempt and let the later deny be the record. That reasoning is the purpose, not the fallback function. Leaving the attempt open only after the operator activates this graph would make the listening path the looser one. The pair stays off the If because the If cannot see it, and it stays off `enrollAndActuate` because an opt-in caller must still insert when the basis is missing.
+
+`docs/register/IMAGE-CAPTION-AUDIT.md` calls a background Branch “Reactivation-worthy?” generated drift against A1’s smallest workflow, which is trigger, rule, and action on the opt-in canvas. This graph is the seeded eligibility workflow, and its middle node is this branch. The compare does not replace it with a rule and does not change `wf-optin-launch`.
+
+**Rejected alternatives.**
+
+- Leave the compares empty. `allComparesPass` returns false, `outgoingHandle` misses the edge, and an active graph enrolls nobody while also suppressing claim 43. The seeded firm’s draft state is why the fallback runs today. Activation would be the stop.
+- Compare `triggerPayload.motion` or call `evalBranch`. The payload motion is the constant `reactivation` for the whole firing. Two contacts with two motions would take one branch. Claim 12 already named the row.
+- Compare `any_pathway_pass` or `reason.precedence`. The boolean is the input of the motion expression, and the precedence key is written `mp-1` even when the motion is `nudge`. The branch’s question is the motion.
+- Add a false edge to `tpl.reengagement.v1`. Seed §5.8 does say nudge is the other motion. This graph’s action is the reactivation agent, and no seeded edge carries the false handle. Inventing that action would be a second workflow this seed did not draw. Where a `nudge` motion enrolls stays open.
+- Enroll every contact the branch passes and let claim 23 deny the first step. That opens the attempt. Claim 20’s tick then keeps sending. Claim 43 already refused that for this purpose.
+- Put the pair inside `enrollAndActuate` for every caller. An opt-in `call_agent` and the onboarding fallback would take the missing-basis deny. Claim 44 kept those inserts. The check is the non-opt-in `call_agent`.
+- Put the pair on the If by adding `consent_records` to this firing’s writes. Claim 12 named four tables. The consent row is not one of them.
+- Treat `conditionConfig`’s `canadian_skilled_hours` row as the branch. The walker never reads that object. The hours compare is the empty form default, not this firing’s motion.
+- Fill the named-silent immigration predicate in order to name the branch. The branch reads the column the cascade stored. What a pathway rule writes into `result` stays the derivation claim 12 left open.
+
+No founder question. The active graph enrolls the reactivation sequence for a contact this firing marked `reactivation`, when the pair that would deny that send does not. A contact marked `nudge` is not enrolled here. A silenced contact is not enrolled here. Another firm’s consent does not decide it. Who is placed on launch day, and whether a repeat reactivation compresses, stay the questions those documents said not to fill.
+
+**What this leaves.** Nothing on a seeded graph enrolls `tpl.reengagement.v1` when the motion is `nudge`. The complaint-rate window and its denominator were read and not settled. `deliv-11` names a target at or under 0.1 percent and a ceiling about 0.3 percent, throttle as the rate approaches the target, and quarantine when the ceiling is breached. The cited Google sender page states those bars as Postmaster Tools spam rates and does not state the window or the denominator. There is no `reputation_unit` table. `email.delivery_delayed` still only inserts `deferred`. Whether `bounce_hard` should also deny by the address join was not decided. `any_pathway_pass` is still the constant `true`. What `sequence_ready.ready` is derived from remains the verdict-only writer.
+
+**Evidence:** `supabase/seeds/003_canonical_workflows.sql` `wf-eligibility-reactivation`. `src/app/data/automationWorkflows.ts` the same graph and `chainEdges`. `src/app/data/automationConditions.ts` `emptyIfConditionConfig`. `src/app/data/automationCompare.ts` `operandSlot`. `src/app/register/prototype-ant/operator/automationPlates/IfPlateModal.tsx` the `if-left` chip. `server/wire-service/workflowWalk.ts` `comparesForIf`, `evalIfPick`, `personTableOf`, `PERSON_WRITE_TABLES`, `outgoingHandle`, `loadWriteRow`, `fieldMatches`, `call_agent`, `evalBranch`. `server/wire-service/machine.ts` `runContactEligibilityCascade` the motion expression and the `dispatched.length === 0` loop. `supabase/migrations/017_event_test_contract.sql` `etd-elig-mot-okonkwo`, `etd-elig-mot-alvarez`. `supabase/seeds/002_machine_tables.sql` `mp-1`, `mp-2`, `tpl.reengagement.v1`. `docs/register/SEED.md` §5.8. `docs/register/system-map/RESOLUTION-REPORT.md` the `motion_decision` named-silent. `docs/sme/pass2/01-immigration-pathway-eligibility.md` the thesis gap. `docs/register/IMAGE-CAPTION-AUDIT.md` A1 and A7. `docs/register/how/contact-silence.md`. Claims 2, 12, 23, 43, 44, and 45.
+
+**Live.** The seed branch still has no compare. The edge still has no `sourceHandle`. `PERSON_WRITE_TABLES` still omits the four tables. `loadWriteRow` still returns null for `motion_decisions`. `call_agent` still enrolls every `ctx.contactIds` and still does not read `consent_records`. No migration was written.
+
+---
+
 ## What has no home, what cannot fulfill, what cannot work together
 
 **No home**
@@ -2597,6 +2649,8 @@ The sentence that the enroll was not specified stands as the gap. Claim 43 speci
 - `listUnsubscribe.accept` having no caller, and claim 49, which writes the silence statement for the email’s firm and contact with source `list-unsubscribe` and dispatches `consent_records.opt_out`. The live send still has no List-Unsubscribe header. `email.complained` still only inserts `messaging_events`, and claim 50, which treats that row joined to `outbound_messages.to_addr` as the address deny and does not quarantine the firm. The live send still does not look for a prior complaint. `injectEvent` on `complaint` still calls `setFirmQuarantined`.
 
 - The seeded `ol-d4-7` one email, and claim 51, which replaces that cell with an email on day 4, an email on day 5, and a text on day 6. `ol-d3-waitlist` stays one email. `ol-d2-social` stays `form`. The reactivation nurture and slot-open are still one token each. The live `offsetMs` is still `day × 24h`.
+
+- The seeded branch “Reactivation-worthy?” with no compares and no `sourceHandle`, and claim 52, which compares this firing’s `motion_decisions.motion` to `reactivation`, follows `sourceHandle` `true`, and withholds the `call_agent` enroll when the non-opt-in pair would deny. The live branch still enrolls nobody once the graph is active, because the compare is empty and the edge matches neither handle. `call_agent` still does not read `consent_records`.
 
 - Approve now calling `resumeWaitRun` without the run’s `trigger_label`, and claim 46, which passes that column the way the tick already does. The live desk call still defaults the walk to `wait-resume`. The outgoing nodes themselves already run.
 
@@ -2680,6 +2734,10 @@ The sentence that the onboarding payload was not specified stands as the gap. Cl
 **What the eligibility row’s pass is derived from.** `runContactEligibilityCascade` sets `anyPass` to the constant `true`, stores that on `eligibility_results.any_pathway_pass`, and stores `motion` `reactivation`. It does not read `rule_eligibility_pathway` or the in-memory eligibility pack. Claim 12 names the row that insert wrote. It does not decide the derivation. Same shape as the parked `sequence_ready.ready` derivation, and a different writer.
 
 **The reactivation branch on the seed graph.** `wf-eligibility-reactivation` (`supabase/seeds/003_canonical_workflows.sql`) has a branch labelled “Reactivation-worthy?” with `filterSummary` `reactivation-worthy`, and with no compare and no `pickTable`. `evalIfPick` with no compares returns false. `evalBranch` reads `eligibilityPass` and `triggerPayload.motion`, and the walker does not call it. Claim 12’s pointers are what a configured If reads. Placing them does not make this branch read `motion_decisions.motion`. That pick was not specified.
+
+### Revision — claim 52
+
+The sentence that the pick was not specified stands as the gap. Claim 52 specifies it: `motion` equal to `reactivation` on this firing’s motion row, the true handle into `call_agent`, and claim 43’s pair before that enroll when the purpose is not `opt-in`. The live branch still has no compare, and the live edge still has no `sourceHandle`. The paragraph above stands as the description of the live node.
 
 **An empty eligibility firing and the firm book.** When `opts.contactIds` is empty, claim 12’s `writes` is an empty array. `dispatchEventToWorkflows`, for an every-firm audience with no contact ids, selects every `contact_records` id for the firm and walks those contacts. That list is not the four inserted rows. It was seen while reading the dispatch. It was not specified.
 
