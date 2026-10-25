@@ -2,15 +2,17 @@
 
 ## Established
 
-Claims 1–54 stand in `docs/specification-pass/SPECIFICATION.md`. Claim 54 is the nudge enroll.
+Claims 1–55 stand in `docs/specification-pass/SPECIFICATION.md`. Claim 55 is the permanent-bounce address deny.
 
-Claim 54: a contact whose `motion_decisions.motion` on this firing is `nudge` enrolls the firm’s re-engagement sequence, and this firing does not also enroll that contact in reactivation. On an active `wf-eligibility-reactivation` the enroll is node `action-nudge`, `agentRef` `tpl.reengagement.v1`, reached by `sourceHandle` `false` from “Reactivation-worthy?”. When the graph is inactive, claim 43’s loop uses that class instead of reactivation. The purpose is `cem`. Claim 52’s non-opt-in pair withholds. The cursor lands on `camp.reeng.nudge`, whose form is the one self-reportable form the seat already lists. `anyPass` stays the constant `true`, so the inserted motion is still `reactivation` until the pathway predicate is specified. The webhook label, the rule’s nudge flag, and the Agents Launch button do not read the column. Claim 52’s true side stands. Claim 2 still allows a second enrollment from another caller.
-
-Claim 53 stands. The complaint rate was not reopened.
+Claim 55: `email.bounced` is classified from `data.bounce.type`. `Permanent` is `bounce_hard`. `Temporary`, `Transient`, and `Undetermined` are `bounce_soft`. A missing type, any other string, and a payload with no `bounce` object stay `bounce_hard`. `bounce_hard` keeps claim 42’s pair, which silences that firm and contact and does not assign `status`, and it joins claim 50’s address deny. The detail stays `suppressed`. The join does not stop a text. `bounce_soft` only inserts the event. `email.delivery_delayed` stays `deferred` and does not join. Claim 54 stands. The complaint window was not reopened.
 
 ## Still worth investigating
 
-`email.delivery_delayed` still only inserts `deferred`. Whether `bounce_hard` should also deny by claim 50’s address join, beside claim 42’s pair, was not decided.
+`bounce_soft` has no retry bound. `deliv-10` says the soft bounce retries within a limit, and the paper path writes that limit on `engagement_attempt`. `cascade.ts` carries `window_started_at`. That field was not read as the bound.
+
+`email.delivery_delayed` still only inserts `deferred`. `deliv-23` says the queue backs off when a provider defers, and it states no count and no duration. The payload names `to` and does not name the receiving server. One delay pausing the firm, and one delay pausing that address, were not chosen.
+
+`email.suppressed` and `suppression.added` fall through `mapClass`. The permanent bounce and the complaint already feed the join.
 
 What `sequence_ready.ready` is derived from remains the verdict-only writer in `executeAuditRun`. `SYSTEMS-REQUIREMENTS-FILLED.md` §5 says the flag is derived from the verdict and consent. The audit writer sets it from the verdict alone.
 
@@ -26,4 +28,4 @@ Repeat compression stays the question `docs/register/system-map/BUILD-system-map
 
 ## Next move
 
-Start at `email.delivery_delayed` and the hard bounce. Claim 42’s bounce upsert silences the contact and does not assign `status`. Claim 50’s address deny is the complaint joined to `outbound_messages.to_addr`. The open choice is whether `bounce_hard` also suppresses that address, beside the consent pair. Leave both founder questions recorded. The nudge enroll is claim 54. Do not redraw the false edge, and do not reopen the complaint window.
+Start at `bounce_soft` and the retry bound. Claim 55 stores that class and does not suppress it. `deliv-10` says the retry is bounded. Read `window_started_at` before inventing a count. Then `email.delivery_delayed`: the event is `deferred`, the payload has no receiving server, and `deliv-23` states no duration. Leave both founder questions recorded. The permanent-bounce join is claim 55. Do not redraw the false edge, and do not reopen the complaint window.
