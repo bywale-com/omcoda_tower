@@ -2,19 +2,21 @@
 
 ## Established
 
-Claims 1–53 stand in `docs/specification-pass/SPECIFICATION.md`. Claim 53 is the complaint rate on the firm’s email.
+Claims 1–54 stand in `docs/specification-pass/SPECIFICATION.md`. Claim 54 is the nudge enroll.
 
-Claim 53: for one firm and one UTC day, the rate is distinct `messaging_events.message_id` values with `event_class` `complaint` divided by distinct `message_id` values with `event_class` `delivered`, using `at` as the receipt time. The rate exists only when that day has at least one delivery. At or over 0.10 percent, and under 0.30 percent, throttles the rest of that UTC day. At or over 0.30 percent on any of the seven UTC dates ending today quarantines the firm’s email until that date ages out. The check is in `dispatchEmailLive`, after consent, halt, and claim 50’s address deny. Text, the login code, and the enroll loops are not this rate. There is no `reputation_unit` row and no volume floor. `accepted` is not the denominator.
+Claim 54: a contact whose `motion_decisions.motion` on this firing is `nudge` enrolls the firm’s re-engagement sequence, and this firing does not also enroll that contact in reactivation. On an active `wf-eligibility-reactivation` the enroll is node `action-nudge`, `agentRef` `tpl.reengagement.v1`, reached by `sourceHandle` `false` from “Reactivation-worthy?”. When the graph is inactive, claim 43’s loop uses that class instead of reactivation. The purpose is `cem`. Claim 52’s non-opt-in pair withholds. The cursor lands on `camp.reeng.nudge`, whose form is the one self-reportable form the seat already lists. `anyPass` stays the constant `true`, so the inserted motion is still `reactivation` until the pathway predicate is specified. The webhook label, the rule’s nudge flag, and the Agents Launch button do not read the column. Claim 52’s true side stands. Claim 2 still allows a second enrollment from another caller.
 
-Claim 52 stands. A `nudge` motion is still not enrolled by the eligibility graph. Claim 50 stands. One complaint is still the address deny, and it quarantines the firm only when the day’s ratio meets the ceiling.
+Claim 53 stands. The complaint rate was not reopened.
 
 ## Still worth investigating
 
-Nothing under `server/` passes `tpl.reengagement.v1` into `enrollAndActuate` unless the caller already holds that ref. The eligibility action’s ref is `tpl.reactivation.v1`. `wf-webhook-reeval` says “nudge” in the label and stores the same reactivation ref. `actionAgentRef` prefers `agentRef` over the summary, so the label does not select the reengagement template. Seed §5.8 says a nudge fires when nothing is reactivation-worthy, and it marks the orchestration open. The false handle still has no edge. The fallback when the graph is inactive still enrolls reactivation, because `anyPass` is the constant `true`.
+`email.delivery_delayed` still only inserts `deferred`. Whether `bounce_hard` should also deny by claim 50’s address join, beside claim 42’s pair, was not decided.
 
-`email.delivery_delayed` still only inserts `deferred`. Whether `bounce_hard` should also deny by claim 50’s address join, beside claim 42’s pair, was not decided. What `sequence_ready.ready` is derived from remains the verdict-only writer in `executeAuditRun`.
+What `sequence_ready.ready` is derived from remains the verdict-only writer in `executeAuditRun`. `SYSTEMS-REQUIREMENTS-FILLED.md` §5 says the flag is derived from the verdict and consent. The audit writer sets it from the verdict alone.
 
-P1’s remainder is what a halt does to Engine 2’s “one client, one motion,” and to the attempt engine’s live-override. Claim 20 does not nullify the attempt. Claim 2 still allows two enrollments. Claims 43 through 53 did not add a one-motion refusal. Whether the founder kill-switch row can be lifted was not read.
+A halt still does not decide Engine 2’s “one client, one motion,” and it does not decide the attempt engine’s live-override. Claim 20 does not nullify the attempt. Claim 54 keeps this firing to one sequence and does not add a unique enrollment constraint. Whether the founder kill-switch row can be lifted was not read.
+
+`any_pathway_pass` is still the constant `true`. What a pathway rule would write into `result` remains the derivation claim 12 left open. Until that write exists, the false side has nobody to enroll.
 
 ## Founder question
 
@@ -24,4 +26,4 @@ Repeat compression stays the question `docs/register/system-map/BUILD-system-map
 
 ## Next move
 
-Start at where a `nudge` motion enrolls `tpl.reengagement.v1`. The template, the `firm-cedar` binding, and `camp.reeng.nudge` exist. No seeded edge carries the false handle, and §5.8 calls the orchestration open, so the first read is whether some other firing already names that template, not whether to draw the edge claim 52 refused. `actionAgentRef` and the two seeded actions are the places that look like they might and do not. Leave both founder questions recorded. The complaint rate is claim 53. Do not reopen the window.
+Start at `email.delivery_delayed` and the hard bounce. Claim 42’s bounce upsert silences the contact and does not assign `status`. Claim 50’s address deny is the complaint joined to `outbound_messages.to_addr`. The open choice is whether `bounce_hard` also suppresses that address, beside the consent pair. Leave both founder questions recorded. The nudge enroll is claim 54. Do not redraw the false edge, and do not reopen the complaint window.
