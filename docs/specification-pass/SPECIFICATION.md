@@ -450,6 +450,10 @@ No founder question. The If reads a field of a row this firing named. The write-
 
 The empty-list sentence stands as what the function does when `opts.contactIds` is empty: `writes` is an empty array, and the dispatcher’s audience branch is what puts people on the walk. Claim 17 specifies that branch. It does not add `contact_records` to this firing’s `writes`, and it does not change the four pointers.
 
+### Revision — claim 43
+
+The sentence that the enroll itself is not specified stands as the gap. Claim 43 specifies that enroll. The four pointers stay this firing’s `writes`. `enrollment`, `active_attempts`, and `engagement_records` stay off that array. A contact the pair would deny is not enrolled, and that absence is still not a pointer.
+
 ---
 
 ## Claim 13 — A live firing of `campaign_failure` places the inserted primary key on `payload.writes`, and the payload carries that row’s `campaign_id`
@@ -1182,6 +1186,10 @@ No founder question. The chronology the licensee reads is the kind. Claim 21, th
 
 The sentence that the consent select was not specified stands as the gap. Claim 23 decides which row that select returns. The deny is still `send_denied`. This revision does not read `detail`, does not retune the kind, and does not assign `status` on the silence upsert.
 
+### Revision — claim 43
+
+The sentence that whether the enroll insert should have been blocked was not decided stands for `call_agent`, `handleEnrollmentCreate`, `handleOnboardingFire`, and `handleSequenceEnrollContacts`. Claim 43 decides the no-workflow reactivation enroll. When the pair would deny a non-opt-in send, that call is not made, so there is no first-step row. A first step that does run is still this claim.
+
 ---
 
 ## Claim 23 — The send reads the consent row for the firm it was given
@@ -1650,6 +1658,10 @@ No founder question. A stored fact and a refused post are different collections.
 
 The sentence that an allowed answer on both handlers still inserts any non-empty `fieldKey`, and that whether a key that fails the class is refused was not specified, stands as the gap. The same sentence in claims 29 and 30 stands as that gap. Claim 32 decides the class. Silence is unchanged. A key the class allows still inserts when `silenced` is true. A missing row or `basis` `none` still does not insert.
 
+### Revision — claim 43
+
+The sentence that this claim does not block the cascade’s enroll for a silenced contact stands as the gap. Claim 43 blocks that fallback enroll when the pair would deny a non-opt-in send, including `silenced` true on a basis of `express` or `implied`. The fact insert is unchanged. The quartet and the `fact_writebacks` dispatch still run.
+
 ---
 
 ## Claim 32 — A fact write stores only a self-reportable field that is not aimed at the firm
@@ -2106,6 +2118,58 @@ No founder question. The boolean already denies the bounce. The flag already clo
 
 **Live.** The bounce conflict still sets `silenced` and `source` and still omits `status`. The seat silence conflict still sets `workspace_opted_out` and still omits `status`. Neither dispatches. No migration was written.
 
+### Revision — claim 43
+
+The sentence that the no-workflow enroll was not specified stands as the gap. Claim 43 specifies it. Nothing in that claim writes `waitlisted`. The launch-day audience ask in `SYSTEMS-GOAL` stays the ask that file said not to fill.
+
+---
+
+## Claim 43 — When no workflow is active, reactivation enrolls only a contact the non-opt-in send would allow
+
+**Standing:** necessary implication of the silence leaf and of claim 23, and a technical decision made in this session.
+
+When `dispatchEventToWorkflows` returns no workflow for `eligibility.changed`, `runContactEligibilityCascade` enrolls reactivation for a contact only when the `consent_records` row for that contact and for `opts.firm` would allow a send whose purpose is not `opt-in`. A missing row, `basis` `none`, `silenced` true, or `status` `silenced` does not enroll. A row with `basis` `express` or `implied`, `silenced` false, and `status` other than `silenced` does enroll, and the first step runs. Those rows are not elements of this firing’s `writes`. Claim 12 stands. Claim 2 still allows a second enrollment when the call is made. This claim does not assign `status`, does not set `silenced`, and does not read `workspace_opted_out`.
+
+**When the loop runs.** The dispatch loads triggers with `t.enabled` true, `t.type` `event`, `t.event_name` `eligibility.changed`, `s.status` `active`, and `t.firm_id` the firing firm or null. `wf-eligibility-reactivation` is seeded with `workflow_state` `draft`, so that graph does not make `dispatched.length` greater than zero. The fallback is the path a seeded firm takes. An active workflow that matches is a listening run. The loop does not run, even when that run’s If enrolls nobody. The seed branch “Reactivation-worthy?” has no compares. `evalIfPick` then returns false, and `outgoingHandle` follows `sourceHandle` `false`. The seed edge from that branch has no `sourceHandle`, so the action does not run. Activating that graph stops this fallback and does not itself enroll. This claim does not give that branch a pick.
+
+The quartet is already inserted, for every contact in `opts.contactIds`, before the dispatch. A contact this loop skips still has that evaluation, result, signal, and motion. Claim 31’s fact insert, its signal changes, its `fact_writebacks` dispatch, and its `onCompletionWrite` still run. The withhold is the enroll after an empty dispatch. An empty `opts.contactIds` enrolls nobody. The loop does not dedupe. A repeated id that passes the pair is two enrollments. Claim 2 already allows that. This claim does not add a one-motion refusal.
+
+**The pair.** The read is claim 23’s select: `basis`, `silenced`, and `status` where `contact_id` is the contact and `firm_id` is `opts.firm`. Another firm’s row is not this row. The arms are the arms that function already uses when `purpose` is not `opt-in`. `silenced` true or `status` `silenced` denies, including a prior `express` or `implied`. A missing row or `basis` `none` denies. Those are the contacts this loop does not pass to `enrollAndActuate`. The cascade entry is `{ contactId, blocked: "consent", fallback: true }`. There is no `enrollmentId`, no `active_attempts` row, and no `engagement_records` row. Halt is not consulted for that contact, because the call is not made. A contact who is both silenced and firm-halted still gets no enrollment. The label on the response is `consent`.
+
+**The enroll that is allowed.** The agent and the sequence are the template `resolveAgentRef` already returns for sequence class `reactivation`: `firm_sequence_binding.template_id` for `opts.firm` and that class, `is_default` first, then `created_at`, or `tpl.reactivation.v1` when the firm has no row. `call_agent` resolves that way before it enrolls. `scripts/verify-machine-e2e.ts` stores the reference-cascade enrollment under that same lookup. The payload stays `{ faceless: true, fallback: true, trigger: opts.triggerKind }`. The purpose stays the string `reactivation`. `fireFirstStep` stays omitted. Inside `enrollAndActuate` the test is `!== false`, so the first step runs. `isHaltBlockingNew` still returns before the insert. The cascade entry is then `{ contactId, blocked: "halt", fallback: true }`. Past that check the function inserts `enrollment` and an open `active_attempts` row, then `actuateChannelSend` with that purpose and the owner channel the function already chooses. An allowed result is claim 22’s `send_live` or `send_dry_run`. A deny the gate returns after the insert, including a halt or a silence written between the two reads, is claim 22’s `send_denied`. The return’s `dryRun` stays `!shouldLiveSend`. The cascade entry for an enroll that inserted is `{ contactId, enrollmentId, fallback: true }`. That object is the HTTP cascade. It is not a dispatch, and it is not `payload.writes`.
+
+**Why the insert is the motion.** `docs/register/how/contact-silence.md` says the silenced state is read by engagement runners, send gates, and book readiness, and that the contact is not sequence-ready for new automatic motion. `docs/register/how/operator-book-readiness.md` says enrollment is the autonomous entry into engagement, and that silenced contacts are excluded from automatic motion. `docs/register/SYSTEMS-STORY.md` §6 says consent state gates Engagement. This purpose is `reactivation`, not `opt-in`, so claim 23’s exemption does not apply. A missing basis is the same deny as silence. Leaving the insert and relying on the later deny would open an attempt. Claim 20’s tick would keep sending, and each deny would be another row. That is new automatic motion after the pair has already refused the send. The withhold is the same predicate, applied before the call, so the attempt does not start. Claim 22 remains the record of a first step that does run. This caller does not run it for a pair the gate would deny.
+
+**The mirror.** `standInMachineApi.upsertReference` has no workflow dispatch. It is this no-workflow path. It still pushes the eligibility result, the signal, and the motion for each contact. It pushes the enrollment only when `standInConsentSilence.get` returns `basis` `express` or `implied` and `silenced` false. A missing slot is `none` and false, and that slot does not enroll. The map has no `status`. This claim does not add one. The function does not read the seat mirror. It does not actuate a channel. This claim does not add a first-step send to it. The agent on that row stays `tpl.reactivation.v1`, the unbound default. The server lookup is `resolveAgentRef`.
+
+**Rejected alternatives.**
+
+- Put `enrollment`, `active_attempts`, or `engagement_records` on this firing’s `writes`. Claim 12 already refused that. The write-set names the four eligibility tables. These rows exist only when no workflow fired, so there is no listening run to hand them to. The HTTP cascade object is the response. It is not the dispatch argument.
+
+- Enroll every contact and let claim 23 deny the first step. That is the live call. The send does not go out. The enrollment and the open attempt do. Book readiness treats that entry as the motion. The silence leaf says the contact is not sequence-ready for a new one. Claim 20 then keeps the attempt sending. The chronology of those denies is claim 22, which is the record of a step that ran. The step this pair refuses does not run.
+
+- Withhold only `silenced` true, and still enroll a missing row or `basis` `none`. The purpose is not `opt-in`. Claim 23 denies that send for a missing basis. Story §6 gates Engagement on consent, and the opt-in phase is the purpose this call did not use. An open reactivation for a contact who has not opted in is the motion the non-opt-in arm already refuses. The two denies are one predicate.
+
+- Put the withhold inside `enrollAndActuate` for every caller. `handleOnboardingFire` and an opt-in `call_agent` pass purpose `opt-in`. Claim 23 allows that send with no prior basis. A shared insert-block would stop the opt-in phase. The withhold is this loop, whose purpose is `reactivation`. The other callers stay claim 22’s park.
+
+- Use `sequence_ready.ready` as the list. Book readiness says only sequence-ready contacts enter engagement, and `executeAuditRun` sets `ready` from email and phone and does not read `consent_records`. A ready contact with `basis` `none` would still be a reactivation the non-opt-in arm denies. An opted-in contact the fact just stored, who was never audited, would be skipped. The cascade’s list is `opts.contactIds`. The pair is the gate on that list. This claim does not derive `ready`.
+
+- Pass `fireFirstStep: false` so the row exists and nothing sends. Seed §5.3 names reactivation armed as a ghost template with nothing sending, and active as the sequence executing. This function does not write an armed flag. The omitted flag is the first step. `docs/register/system-map/END-TO-END-REPORT.md` names the reference edit’s result as the enrollment. The branch that runs is the send. An armed row with no attempt would be a second state.
+
+- Keep the platform id `tpl.reactivation.v1` when the firm has bound another reactivation template. `firm_sequence_binding` holds the firm’s template for the class. `call_agent` and the e2e reference enrollment already resolve it. The live fallback passes the platform id for both arguments. `resolveBoundTemplate` then matches a binding only when `template_id` equals that id, so a firm copy is not the sequence the no-workflow path starts. The class lookup is the one the active graph’s action already uses. The unbound firm still gets `tpl.reactivation.v1`.
+
+- Treat `workspace_opted_out` as this withhold. Claim 42 keeps that flag off the send. The seat Opt out does not set `silenced` true. This loop reads the same columns the non-opt-in send reads.
+
+- Copy this withhold onto `handleOnboardingFire`. That loop’s purpose is `opt-in`, and its list is `sequence_ready` where `ready` is true. The missing-basis arm does not deny that purpose. Whether silence stops that insert is still claim 22’s park. This claim does not decide it.
+
+No founder question. A stored eligibility quartet and a reactivation enrollment are different writes. The quartet is claim 12, and it still happens. The enrollment is new automatic motion, and the pair that would deny the reactivation send is the pair that does not start it. The firm’s bound reactivation template is the sequence. The first step of an enroll that starts is the send claim 22 already records. Another firm’s consent does not decide it. The operator does not get a second pursuit from a contact the send would have refused, and a contact the send would allow can still hold more than one pursuit, which claim 2 already settled.
+
+**What this leaves.** `handleOnboardingFire`, when `audit.completed` fires no workflow, still calls `enrollAndActuate` with purpose `opt-in` and with `fireFirstStep` omitted, for each `sequence_ready` row with `ready` true. The first step still runs. Claim 43’s missing-basis withhold does not apply to that purpose. Whether silence stops that insert was not decided. The response still counts `liveSends` from `!result.dryRun` and does not read `result.send`. `listUnsubscribe.accept` still has no caller. The launch-day audience ask stays unfilled. The seed branch still has no pick.
+
+**Evidence:** `machine.ts` `runContactEligibilityCascade` the `dispatched.length === 0` loop, `handleOnboardingFire`. `cascade.ts` `enrollAndActuate` the halt return and the `fireFirstStep !== false` branch, `actuateChannelSend`. `dispatchSend.ts` `consentAndHaltGate` the non-opt-in arms, `isHaltBlockingNew`. `workflowWalk.ts` `dispatchEventToWorkflows` the `s.status='active'` predicate, `resolveAgentRef`, `evalIfPick`, `allComparesPass`, `outgoingHandle`, `call_agent`. `templateWalk.ts` `resolveBoundTemplate`. `supabase/seeds/003_canonical_workflows.sql` `wf-eligibility-reactivation` and its `workflow_state`. `supabase/seeds/002_machine_tables.sql` `bind.demo-firm.reactivation`. `supabase/migrations/010_sequence_campaign_housing.sql` `firm_sequence_binding_default_idx`. `scripts/verify-machine-e2e.ts` the reference-cascade template lookup. `src/app/wire/standins/machineApi.ts` `upsertReference`. `src/app/wire/standins/consentSilence.ts` `get`. `docs/register/how/contact-silence.md`. `docs/register/how/operator-book-readiness.md` leaf 1.2. `docs/register/SYSTEMS-STORY.md` §6. `docs/register/SEED.md` §5.3. `docs/register/system-map/END-TO-END-REPORT.md`. Claims 2, 12, 20, 22, 23, and 31.
+
+**Live.** The loop still calls `enrollAndActuate` for every contact id, still passes `tpl.reactivation.v1` for the agent and the sequence, and still does not read `consent_records`. The omitted flag still fires the first step. `upsertReference` still pushes the enrollment for every contact. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
@@ -2133,6 +2197,11 @@ Those two bullets describe the live payloads. They still do. Claim 11 names the 
 - `event_write_set` naming `engagement_records` for `objective_met`, and `loadWriteRow` not loading that table (claim 7). Claim 10 specifies the load. Claim 11 specifies the handoff: `payload.writes` carries the engagement id and the enrollment id. The live function still returns null, and the live dispatch still omits `writes`. The write-set and the listener still do not meet in the running code.
 - `event_write_set` naming `eligibility_evaluations`, `eligibility_results`, `signals`, and `motion_decisions` for `eligibility.changed`, and `runContactEligibilityCascade` dispatching that event with no `writes` (claim 12). The cascade does insert those four rows before the dispatch. Claim 12 specifies the array. The live dispatch still omits it, and `loadWriteRow` still returns null for the four, so the write-set and the listener still do not meet in the running code.
 - That same function, when the dispatch fires no workflow, inserting `enrollment`, `active_attempts`, and `engagement_records`, which this write-set does not name (claim 12). Those inserts are not the listening pointer. The enroll was not specified.
+
+### Revision — claim 43
+
+The sentence that the enroll was not specified stands as the gap. Claim 43 specifies who is enrolled and which template. The three tables stay off `eligibility.changed`’s `writes`. The live loop still enrolls every contact into `tpl.reactivation.v1` and still does not read `consent_records`.
+
 - `event_write_set` naming `campaign_failure`, and `escalateAttemptWindow` dispatching that event with no `writes` (claim 13). The insert already stored the `cfail-` id. Claim 13 specifies the array. The live dispatch still omits it, and `loadWriteRow` still returns null, so the write-set and the listener still do not meet in the running code.
 - `localRefFromPayload("campaign_failure")` reading `campaign_id`, and that dispatch not carrying `campaign_id` (claim 13). The column is on the row the insert wrote. Claim 13 puts that column’s value on the payload. The live payload still omits it, so a trigger that selected a campaign still does not match.
 - `event_write_set` naming `halt_records`, and the contact-scope dispatch in `handleHaltCommit` omitting `writes` (claim 14). The insert already stored the `halt-` id. Claim 14 specifies the array. The live dispatch still omits it, and `loadWriteRow` still returns null, so the write-set and the listener still do not meet in the running code. The firm-book branch does not dispatch. Claim 14 leaves that branch as the gate. It is not a second missing array.
@@ -2199,6 +2268,10 @@ Claim 13 specifies that placement. The paragraph above stands as the description
 ### Revision — claim 12
 
 Claim 12 specifies that array: one pointer per inserted row, table order from the write-set, `contact_id` on each pointer, person split across two contacts. The live dispatch still omits `writes`. The reactivation enroll remains unspecified. The paragraph above stands as the description of the live payload.
+
+### Revision — claim 43
+
+The sentence that the reactivation enroll remains unspecified stands as the gap. Claim 43 specifies it. The live dispatch still omits `writes`. The live fallback still enrolls every contact into the platform template.
 
 **Onboarding’s `audit.completed`.** `handleOnboardingFire` dispatches that event name with no `writes` and no audit-run id. The audit module’s own completion does pass `result.writes`. The onboarding payload was seen while checking that pattern. It was not specified.
 
