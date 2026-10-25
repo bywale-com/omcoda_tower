@@ -2,17 +2,15 @@
 
 ## Established
 
-Claims 1–55 stand in `docs/specification-pass/SPECIFICATION.md`. Claim 55 is the permanent-bounce address deny.
+Claims 1–57 stand in `docs/specification-pass/SPECIFICATION.md`. Claim 56 is the soft-bounce budget. Claim 57 is Resend’s suppression list.
 
-Claim 55: `email.bounced` is classified from `data.bounce.type`. `Permanent` is `bounce_hard`. `Temporary`, `Transient`, and `Undetermined` are `bounce_soft`. A missing type, any other string, and a payload with no `bounce` object stay `bounce_hard`. `bounce_hard` keeps claim 42’s pair, which silences that firm and contact and does not assign `status`, and it joins claim 50’s address deny. The detail stays `suppressed`. The join does not stop a text. `bounce_soft` only inserts the event. `email.delivery_delayed` stays `deferred` and does not join. Claim 54 stands. The complaint window was not reopened.
+Claim 56: `window_started_at` is the attempt-window clock. The soft-retry bound is the attempt budget `escalateAttemptWindow` already reads: `campaign.attempt_count`, else `sac-global` (seeded `3`), else `1`. Distinct `bounce_soft` messages for that `attemptId` and address fill it. The next email on that attempt then returns detail `soft-retry`. The attempt stays open. The address is not globally suppressed. The webhook does not resend the body. `deferred` does not count.
+
+Claim 57: `email.suppressed`, `suppression.added`, and `suppression.removed` are stored. An add or a skip denies that address with detail `suppressed` until a later removal is the newest list event. A `bounce_hard` row and a `complaint` row stay denied after a removal. Origin `bounce` on an add also runs claim 42’s pair when the outbound row named the contact. `complaint`, `manual`, and any other origin deny the address only. `data.to` is still not the binding. Claim 55’s classification stands. One `deferred` event does not pause the firm.
 
 ## Still worth investigating
 
-`bounce_soft` has no retry bound. `deliv-10` says the soft bounce retries within a limit, and the paper path writes that limit on `engagement_attempt`. `cascade.ts` carries `window_started_at`. That field was not read as the bound.
-
-`email.delivery_delayed` still only inserts `deferred`. `deliv-23` says the queue backs off when a provider defers, and it states no count and no duration. The payload names `to` and does not name the receiving server. One delay pausing the firm, and one delay pausing that address, were not chosen.
-
-`email.suppressed` and `suppression.added` fall through `mapClass`. The permanent bounce and the complaint already feed the join.
+`email.delivery_delayed` still only inserts `deferred`. The payload carries `to` and `from`. `from` is the sender. There is no receiving server and no retry time. `deliv-23` asks for a per-provider backoff and states no duration. `wait_after_last_failed_seconds` and the email `within_seconds` are the attempt machine. The cell advance runs before that wait. Whether the next email to that address waits, and for how long, is the founder question below.
 
 What `sequence_ready.ready` is derived from remains the verdict-only writer in `executeAuditRun`. `SYSTEMS-REQUIREMENTS-FILLED.md` §5 says the flag is derived from the verdict and consent. The audit writer sets it from the verdict alone.
 
@@ -26,6 +24,8 @@ Launch day stays the ask `docs/register/SYSTEMS-GOAL.md` already left open, and 
 
 Repeat compression stays the question `docs/register/system-map/BUILD-system-map-v3-templates-and-binding.md` section C already marked named-silent. The choice is whether a later reactivation of a contact who already walked the days-1–3 nurture sends those two emails again, or walks a shorter cell. What changes is the cells that repeat enrollment’s cursor advances through. The first calendar is claim 51. The build said not to invent the repeat.
 
+A `deferred` event’s hold stays open. The choice is whether the next email to that same address waits, and for how long, or whether the row is only a record and the due cell still sends. What changes is whether one temporary delay holds that address’s later mail. `deliv-23` wants the backoff inside a provider window. The payload does not name the receiving server and does not name a retry time, so a full inbox and a transient receiving server are the same event. One delay does not pause the firm. That part is claim 56. Parsing the recipient domain was not chosen, because a custom domain is not the receiving server and one full inbox would then hold every recipient at that domain.
+
 ## Next move
 
-Start at `bounce_soft` and the retry bound. Claim 55 stores that class and does not suppress it. `deliv-10` says the retry is bounded. Read `window_started_at` before inventing a count. Then `email.delivery_delayed`: the event is `deferred`, the payload has no receiving server, and `deliv-23` states no duration. Leave both founder questions recorded. The permanent-bounce join is claim 55. Do not redraw the false edge, and do not reopen the complaint window.
+Start at the `deferred` hold only if this session’s evidence is being used to answer the founder question above. Otherwise start at `sequence_ready.ready`. The audit writer sets the flag from the verdict alone. `SYSTEMS-REQUIREMENTS-FILLED.md` §5 says the flag is derived from the verdict and consent. Read that writer and the consent row before inventing a third input. Leave the three founder questions recorded. Claims 56 and 57 stand. Do not reopen the complaint window, and do not recut the soft budget.
