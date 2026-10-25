@@ -89,6 +89,10 @@ Changing only `onCompletionWrite`’s select, and leaving the predicate, was con
 
 No SMS handler calls `onCompletionWrite`. This lock is the email click. The form path and the meeting path were not re-walked.
 
+### Revision — claim 68
+
+The sentence that the form path was not re-walked stands as the gap for every form caller except the token seat. Claim 68 walks that seat. The link the live send mints names the enrollment on the send, and the facts submit advances that enrollment. The meeting path was not re-walked. The click paragraph above stands.
+
 ---
 
 ## Claim 4 — Opening an ask does not move the cursor
@@ -1734,6 +1738,10 @@ No founder question. A stored fact and a refused key are different collections. 
 
 **Live.** Both handlers still insert any non-empty `fieldKey` and still do not read `collectible_fields`. `projectSeat` still keeps `capture` `self_reportable` and does not read `employer_directed`. `executeRuleWrites` still skips the catalog filter when the self-reportable set is empty, and when the set is non-empty it still does not read `employer_directed`. The mirrors still drop or record the posted key without this class. No migration was written.
 
+### Revision — claim 69
+
+The sentence that an empty `fieldKey` is still skipped stands. Claim 69 does not store a blank answer as a collectible. The null-key row it inserts is the launch-day sign-up when no stamped fact was stored. It is not a key this class tests.
+
 ### Revision — claim 33
 
 The sentence that when `basis` is `express` or `implied` and `silenced` is true and the objective kind is `form`, the live seat still sets `now.state` to `form` and still skips the field query, and that the pane was not specified, stands as the gap. Claim 33 decides that pane. The class is unchanged. Claim 31 is unchanged.
@@ -3231,6 +3239,10 @@ No founder question. A cursor this function moved to another campaign is a new o
 
 **Live.** The flip still updates `met` and still does not insert `active_attempts`. The seed jsonb is still the five day cells. `normalizeTemplateCells` still drops `campaignOrd`. No migration was written.
 
+### Revision — claim 68
+
+The sentence that the address inside the sign-up email, and which route that address opens, was not read, stands as the gap. Claim 68 is that address. The cell, the attempt, and the `campaignOrd` mark are unchanged.
+
 ---
 
 ## Claim 67 — The launch-day form’s confirmation is one email on that completion, and it does not leave an attempt open
@@ -3257,6 +3269,82 @@ No founder question. Signing up on the launch-day form sends one confirmation em
 **Evidence:** `server/wire-service/campaignHousing.ts` `advanceEnrollmentCampaign` the flip before the dispatch. `supabase/seeds/002_machine_tables.sql` `obj.optin.day`, `camp.optin.day` ord 1. `supabase/migrations/010_sequence_campaign_housing.sql` `UNIQUE (campaign_id, token)` on `campaign_channel`. `src/app/system-map/data/templates.ts` `ld-confirm`. `guidelines/Reactivation.md` the confirmation email on sign-up. `docs/register/system-map/BUILD-system-map-v3-templates-and-binding.md` section C. `docs/register/SYSTEMS-GOAL.md` launch-day sign-up as the class completion. Claims 22, 28, 29, 45, 64, and 66.
 
 **Live.** The flip still does not send a confirmation. The `ld-confirm` cell is not on the seed template. No migration was written.
+
+### Revision — claim 68
+
+The sentence that how the sign-up email addresses the seat, and which route that address opens, was not read, stands as the gap. Claim 68 is that address. A live confirmation uses the same append. This email’s stamp and its refusal to leave an attempt open are unchanged.
+
+### Revision — claim 69
+
+The sentence that the confirmation does not answer the address stands. Claim 69 is the submit that meets this form when no fact was entered, which is what lets this email go. The send itself is unchanged.
+
+---
+
+## Claim 68 — The sign-up email’s address is the contact seat for the enrollment that send stamped
+
+**Standing:** necessary implication of the live append and of claim 3’s identity, and a technical decision made in this session.
+
+The sign-up email claim 66 sends does not carry its address in the cell. On a live email, `dispatchEmailLive` appends the contact seat URL when `bodyText` does not already contain `/c/`, and it appends the same URL in the html when html is present and does not already contain `/c/`. The URL is `{origin}/c/{token}`. The origin is `PUBLIC_APP_URL`, else `APP_ORIGIN`, else `http://localhost:5173`, with one trailing slash removed. The token is a new `contact_access_links` row. It is not `access_links` and it is not `/a/<token>`. Opening the path serves the Ant document. `PrototypeAntApp` matches `/c/<token>` and renders `ContactWorkspace` with that token and no operator shell. The load is `GET /wire/contact-seat/:token`. A missing, invalidated, or expired link is the refuse that seat already returns. The mint does not set `expires_at` or `invalidated_at`. The mint’s own comment says the link is not single-use. This claim does not add a TTL and does not consume the token.
+
+A dry-run returns before `dispatchEmailLive`. It does not mint a link and does not append one. A deny from the gate returns before the append. The cell’s subject and body stay the firm’s copy. The seed still does not have to fill them. The deleted template’s `ld-signup-email` variables — `firm_name`, `firm_logo`, `tower_logo`, `copy`, `expectations`, `consequences`, `reactivation_seed` — are that copy. They are the three jobs the launch-day guideline gives the sign-up moment. They are not fields the contact submits, and they are not a second route. `ld-landing` stays unadded. Claim 66 already refused the web cell. The page the address opens is this seat.
+
+The confirmation email claim 67 sends uses the same live dispatcher, so a live confirmation appends an address of the same kind. The text dispatcher appends the same helper when the body does not contain `/c/`. The sign-up cell is email. This claim does not turn it into a text.
+
+**Which enrollment the token names.** `contactAccessUrlForSend` selects the newest enrollment by `enrolled_at` and stores that id and its `campaign_id`. The send already carries `enrollmentId` and `campaignId`. `actuateChannelSend` passes them into `dispatchEmail`. Claim 66’s sign-up send passes the enrollment and `camp.optin.day`. Claim 3 says the completion belongs to the pursuit on the send, not to the newest enrollment. When the send carries `enrollmentId`, the mint stores that id and the send’s `campaignId`. It does not query `enrolled_at`. A send that carries neither keeps the newest-enrollment mint. Those are the outside-a-sequence rows claim 3 already excluded. The sign-up email carries the stamp, so its link names that enrollment and `camp.optin.day`. Claim 67’s confirmation passes the cleared campaign id explicitly, because the enrollment’s `campaign_id` is already null. The mint stores that passed campaign id with the enrollment id.
+
+**What the seat reads.** `projectSeat` ignores `link.enrollment_id` and selects the newest enrollment. The campaign it shows is that row’s `campaign_id`, or the link’s `campaign_id` only when no enrollment row exists. A later enrollment would open a different objective. When the link has `enrollment_id`, the seat loads that enrollment. The campaign it reads is that row’s current `campaign_id`. A null `campaign_id` stays null. The link’s stored `campaign_id` is not substituted over that null, because the null is the latch after the form. The confirmation’s link therefore opens a seat whose objective cursor is finished. When the link has no `enrollment_id`, the newest-enrollment read stays. The admin path that fabricates a link from the newest enrollment is that read. It is not this email.
+
+Claims 28 and 29 stay the gate on the form. A missing consent row, or `basis` `none`, still shows the consent ask, and the facts post still refuses. Purpose `opt-in` can send this email while `basis` is `none`, so the first open is often Agree or Ignore, and Agree is what takes the form branch. Ignore stays empty. This claim does not show the launch-day form under that withhold.
+
+A click on the URL is not the sign-up. The live send is an email Resend can report as `email.clicked`. `obj.optin.day` completes on `fact_writebacks`. Opening the address does not meet “They opt in”. The submit does. That submit is claim 69.
+
+**The stamp on the submit.** `handleContactSeatFacts` calls `resolveFormStamp` with firm and contact only. That function fills `form_ref` and `campaign_objective_id` from the newest enrollment that still has a campaign. When the link has `enrollment_id`, the facts write stamps that enrollment’s current campaign. `form_ref` is `form.${enrollmentId}.${objectiveId}` for that current objective. When that enrollment’s `campaign_id` is null, the write carries no `form_ref` and no `campaign_objective_id`, and `resolveFormStamp` does not fill them from another enrollment on this call. The completion advances the link’s enrollment when the stamped fact satisfies that enrollment’s current objective. It does not select the newest enrollment. Claim 3’s click paragraph is unchanged. The meeting path was not re-walked.
+
+**Rejected alternatives.**
+
+- Put the address in the cell body as a stored slot, and skip the append. The live send already builds the token. The cell is the firm’s copy. A body that already contains `/c/` is left as authored, and this claim does not parse that substring as the seat token.
+- Mint `access_links` and open `/a/<token>`. That redeem is a session onto the consultant desk. The contact seat is `/c/<token>` and `contact_access_links`. The mint comment says not `access_links`.
+- Keep the newest-enrollment mint for the sign-up send. Two open enrollments make the link name the later pursuit. Claim 2 allows the second enrollment. Claim 3 refuses the newest pick as the identity.
+- Show the link’s stored `campaign_id` after the enrollment’s cursor is null. The confirmation would reopen the form the null flip just finished. The latch is the current `campaign_id`.
+- Treat the Resend click on this URL as `obj.optin.day`. The objective’s completion table is `fact_writebacks`. The window’s click objective is already met before this email goes.
+- Add `ld-landing` as a web send, or a route besides `/c/<token>`, so the three jobs have a page. Claim 66 refused that cell. The jobs are the email’s variables. The page is the seat.
+- Add a TTL or make the token single-use. The mint does not. This claim does not invent an expiry.
+
+No founder question. The address in the sign-up email is the contact seat for the enrollment that send stamped, and the route is `/c/<token>`. Who is placed on the day, whether a repeat reactivation compresses, whether a `deferred` event holds the next email, and what makes one family’s `pass` true, stay the questions already recorded.
+
+**What this leaves.** Day 3’s waitlist email is still one email (claim 51). The guideline says that email directs clients to a landing page to join the waitlist. The same live append will put this seat URL on that email. Whether that page is this seat, and what “join” writes, was not specified. Nothing here writes `waitlisted`.
+
+**Evidence:** `server/wire-service/dispatchSend.ts` `dispatchEmail`, `dispatchEmailLive`, `dispatchSmsLive`. `server/wire-service/contactAccessMint.ts` `mintContactAccessLink`, `contactAccessUrlForSend`. `server/wire-service/contactSeat.ts` `lookupLink`, `projectSeat`, `handleContactSeatFacts`, `seatFromToken`. `server/wire-service/cascade.ts` `actuateChannelSend`. `server/wire-service/campaignHousing.ts` `resolveFormStamp`, `onCompletionWrite`, `objectiveSatisfiedBy`. `server/wire-service/routes.ts` `GET /contact-seat/:token`. `vite.config.ts` the `/c/` document. `src/main-prototype-ant.tsx`. `src/app/register/prototype-ant/PrototypeAntApp.tsx` `contactTokenFromPath`. `src/app/register/prototype-ant/contact/ContactWorkspace.tsx`. `src/app/Router.tsx` `/a/:token`. `docs/register/MAGIC-ACCESS-LINK.md`. `supabase/migrations/019_contact_seat.sql`. `src/app/system-map/data/templates.ts` `ld-signup-email` variables and `ld-landing`. `guidelines/Reactivation.md` Launch Day. Claims 3, 28, 29, 45, 66, and 67.
+
+**Live.** `contactAccessUrlForSend` still selects the newest enrollment and does not read the send’s stamp. `dispatchEmailLive` still mints before it tests `/c/`, so a body that already contains `/c/` can still insert a link that is not appended. `projectSeat` still ignores `link.enrollment_id`. `handleContactSeatFacts` still stamps the newest enrollment. A dry-run still returns before the append. No migration was written.
+
+---
+
+## Claim 69 — Submitting the launch-day form signs the contact up even when no fact was entered
+
+**Standing:** necessary implication of the objective name “They opt in” and of the seat submit, and a technical decision made in this session.
+
+When the seat is showing the form for the link’s enrollment, and that enrollment’s current objective is `obj.optin.day`, Submit meets that objective even if no answer is stored. The contact with no outstanding self-reportable fact, and the contact who leaves every field blank, still signs up. Claim 32 still skips an empty `fieldKey` and still refuses a key that is not a self-reportable field aimed at the contact. This claim does not turn a blank into a collectible.
+
+**The row.** `ContactWorkspace` posts only the fields whose values are non-blank. An empty list, or a list claim 32 refuses, inserts no `fact_writebacks` row. `objectiveSatisfiedBy` for `fact_writebacks` requires one row whose `campaign_objective_id` is the objective id. Zero rows leave the cursor on launch day, and claim 67’s confirmation does not send. After the answer loop, when this enrollment’s current objective is `obj.optin.day` and no `fact_writebacks` row yet carries that objective id, the handler inserts one row: a new `fwb-` id, the link’s firm and contact, `field_key` null, `value` null, `form_ref` `form.${enrollmentId}.${objectiveId}`, and that objective id. `fact_writebacks.field_key` is nullable. The insert does not delete `missing_fact_signals`. It does not run `runContactEligibilityCascade`. It is not a pathway fact. It then advances that enrollment the way claim 68 already names, so the null flip and claim 67’s confirmation run. An answer that already stored a row with that objective id satisfies the objective by itself. The null row is not added beside it.
+
+Claims 29 and 30 still withhold the whole post when the consent row is missing or `basis` is `none`. This marker is inside the allowed path. Ignore does not sign up. The other fact route, `handleFactWriteback`, is not this submit. A posted key there still follows claim 32. This claim does not add a null row on that route.
+
+**Rejected alternatives.**
+
+- Require one self-reportable answer before “They opt in” can be met. A contact with an empty missing-fact list can open the form and press Submit, and the live post stores nothing. The objective name is the sign-up. The guideline calls launch day the real opt-in. Outstanding facts are the collection claim 32 already routes. They are not the gate on the sign-up.
+- Store a synthetic `field_key` such as `signup`. Claim 32 refuses a key with no `collectible_fields` row. The catalog has no sign-up key. A new collectible would be a field this pass does not mint.
+- Leave the empty submit as a no-op and treat the email click as the sign-up. Claim 68. The completion table is `fact_writebacks`.
+- Run the eligibility cascade on the null row. There is no new fact. Claim 65’s enroll after a finishing fact stays the fact path. This row does not start it.
+- Insert the null row on every form objective, including `obj.reeng.nudge`. The nudge is the fact ask. An empty nudge submit is not “They opt in”. This marker is `obj.optin.day` only.
+
+No founder question. Pressing Submit on the launch-day form signs the contact up, including when the form has nothing to collect. The four questions already recorded stay recorded.
+
+**What this leaves.** Day 3’s waitlist landing is still unread. The same seat URL will be appended to that email on a live send. What “join the waitlist” writes was not specified.
+
+**Evidence:** `src/app/register/prototype-ant/contact/ContactWorkspace.tsx` the form `onFinish` filter. `server/wire-service/contactSeat.ts` `handleContactSeatFacts`. `server/wire-service/campaignHousing.ts` `objectiveSatisfiedBy` the `fact_writebacks` select. `supabase/migrations/004_machine_tables.sql` `fact_writebacks.field_key`. `supabase/seeds/002_machine_tables.sql` `obj.optin.day` name `They opt in`. `guidelines/Reactivation.md` Launch Day. Claims 29, 32, 66, 67, and 68.
+
+**Live.** An empty answers array still inserts nothing, and Submit still does not meet the objective. No migration was written.
 
 ---
 
