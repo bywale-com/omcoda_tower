@@ -462,6 +462,10 @@ The sentence that the enroll itself is not specified stands as the gap. Claim 43
 
 The sentence that the live set still omits the four tables, so `evalIfPick` does not split them, stands as the running code. Claim 52 puts `eligibility_evaluations`, `eligibility_results`, `signals`, and `motion_decisions` in the set that split consults. Each pointer still carries `contact_id`. The row id is still not a person.
 
+### Revision — claim 60
+
+The sentence that the inserted `any_pathway_pass` is the constant `true`, and that what a pathway rule would write into `result` was not specified, stands as the live insert and as the gap. Claim 60 specifies the boolean and the `pathways` array on that same object. The dispatch still hardcodes `anyPass: true` and `motion: "reactivation"` for the whole firing. The per-family pass stays the predicate claim 60 does not encode.
+
 ---
 
 ## Claim 13 — A live firing of `campaign_failure` places the inserted primary key on `payload.writes`, and the payload carries that row’s `campaign_id`
@@ -2657,6 +2661,10 @@ No founder question. A firm’s email stops for the rest of the UTC day when tha
 
 The sentence in claim 52 that there is no false edge, and that where a `nudge` motion enrolls stays open, stands as that claim’s decision. The rejected alternative that names the false edge stays in that claim. Claim 54 is that handle, after the other firings were read and none of them enroll from the motion column. The sentence in claim 43 that the no-workflow loop enrolls reactivation stands when the stored motion is `reactivation`. Claim 54 enrolls the re-engagement class when the stored motion is `nudge`. `anyPass` stays the constant `true`, so the row this function inserts is still `reactivation` until the pathway predicate is specified.
 
+### Revision — claim 60
+
+That sentence stands as the live insert. Claim 60 makes the expression’s input the OR of enabled pathway entries. The live constant remains because the per-family pass is still open. A stored `nudge` is still claim 54’s enroll.
+
 ---
 
 ## Claim 54 — A nudge motion enrolls the firm’s re-engagement sequence, on the false side of the same branch
@@ -2922,6 +2930,55 @@ No founder question. The kill row ends when something calls the lift route with 
 
 ---
 
+## Claim 60 — `any_pathway_pass` is the OR of this evaluation’s enabled pathway assertions, and that boolean is what the motion expression reads
+
+**Standing:** necessary implication of Seed §5.7’s any-pathway law and of the one boolean this cascade already stores, and a technical decision made in this session.
+
+`eligibility_results.any_pathway_pass` is true only when at least one enabled pathway family on this contact’s `result.pathways` has `pass` true. No asserting family is false. The motion expression already written in the loop is `anyPass ? "reactivation" : "nudge"`. `anyPass` is this boolean. There is not a second flag for the motion.
+
+**Which rows are families.** The rows are `rule_eligibility_pathway` where `firm_id` is null or the cascade’s firm. The row whose `set_value` is `any_pathway_pass` is the aggregate law. On the seed that row is `epath-any`, enabled, ord 0, label “Pass if any of CEC|FSW|FST|PNP-* asserts.” Its `enabled` bit is not a contact’s pass. A family is every other enabled row. The seed families that qualify are `epath-cec` (`set_value` `pathway_cec`) and `epath-fsw` (`pathway_fsw`). `epath-pnp` is stored `enabled` false, so a provincial assertion is not an entry and cannot make the OR true. There is no FST row. The aggregate label names FST, and the client pack computes an FST result. A family with no row is not in the OR. Order is `ord`.
+
+The ascribe’s `SELECT … WHERE enabled=true LIMIT 1` is not in the server. `listModularRules` returns the firm’s rows and the platform rows, firm first, by `ord`. The cascade does not call it. Reading `epath-any` alone and treating `enabled` as the pass would mark every contact true, which is the constant by another statement.
+
+**What `result` stores.** The insert already writes `{ trigger: opts.triggerKind, ...opts.resultPayload }`. A fact firing’s payload is the fact scalars. A reference firing’s payload is `{ refId }`. That object stays. It gains `pathways`, one object per enabled family. The object’s `id` is the `set_value` with the `pathway_` prefix removed, so `cec` and `fsw` on the seed. The object’s `label` is the row’s `label`. The object’s `pass` is that family’s assertion. `any_pathway_pass` is the OR of those `pass` values. An empty `pathways` array is false. The version 1 specimen stores the same shape of array, and Okonkwo’s OR is true while Alvarez’s is false. The specimen also puts a `pnp` entry on Okonkwo. That entry is the teaching body. This claim does not copy a disabled family onto the array.
+
+The signal insert in the same loop stores `payload` `{ resultId, anyPass }` with that same boolean. The motion insert stores the expression’s string. When the string is `reactivation`, `reason.precedence` is `mp-1`. When the string is `nudge`, `reason.precedence` is `mp-2`. Those rows’ `set_value`s are those motions, and their `condition_clause`s are “any reactivation-worthy” and “no reactivation-worthy.” Claim 52 still does not compare `precedence`. The specimen’s nudge row stores `mp-1`. That is the teaching body. This write stores the precedence row whose `set_value` is the motion. The expression does not write `none`. Claim 54 already leaves a stored `none` unenrolled.
+
+**One dispatch cannot carry two motions.** The payload built for `eligibility.changed` is one object after the loop. The live object sets `anyPass: true` and `motion: "reactivation"` in addition to the caller’s scalars. `dispatchEventToWorkflows` then copies that object and sets `anyPass: true` again, after the spread, so a false on the cascade’s object would not survive. `walkValidatedWorkflow` also sets `eligibilityPass` when the trigger label contains `eligibility`, which `event:eligibility.changed` does. Claim 52 already refused to branch on `triggerPayload.motion` because two contacts on one firing would take one branch. This claim does not retune that payload and does not retune the dispatcher. The per-contact boolean is the result row, the signal payload, and the motion row. The branch claim 52 named still reads the motion row.
+
+**What is not this boolean.** The rule node’s `lastOutput.pass` is true when that node inserted no `missing_fact_signals` row. Its `nudge` and `reactivation` default true from `nudgeSignalOn` and `reactivationSignalOn`. `executeRuleWrites` does not insert `eligibility_results`. The cascade does not call it. Setting `ctx.eligibilityPass` from an empty missing-fact list is not this column.
+
+`evaluateRulePack` is the client pack. Its pathway outcome’s `pass` is `asserted.length > 0`, and the narrative says overall pathway pass means any asserting pathway. That OR is the same shape as this column, computed for CEC, FSW, FST, and three PNP result ids together. `summary.pass` is a different boolean: every enabled critical family must pass, and the critical families are `pathway` and `draw`. Seed §5.7 is any pathway, not pathway and draw. A contact who asserts CEC and misses the cutoff would fail `summary.pass` and still pass this column. `summary.reactivation.warranted` is true only when the ops outcome asserted `R-OPS-05`, the work-permit urgency. That is a second boolean. This claim does not store it and does not let it choose `motion`. `summary.nudge.needed` is that urgency or any `R-GAP-*` assertion. The false side of the motion expression is already `nudge`. The pack’s nudge signal does not choose the column.
+
+**The pass this claim does not encode.** `when_clause` and `condition_clause` are null on every seed pathway row. The pack’s `buildPathwayOutcome` is one encoder that does exist: CEC from `canadian_skilled_hours`, `language_clb`, and `teer_category` against `cec.min_hours`, `cec.min_clb_all`, and `teer.ineligible`; FSW from `foreign_work_years`, `language_clb`, and `teer_category` against `fsw.min_foreign_years` and `fsw.min_clb_all`. Those numbers are in `constants_packs` (`pack.immigration.criteria`, 1560 hours, CLB 7, one foreign year, ineligible TEER `4,5`). `RULE_LEFT_FIELD_MAP` names the collectible keys for those paths. The walker can resolve a condition’s left side from `fact_writebacks` and its right side from `constants_packs`. The pathway rows do not hold those conditions, and the cascade does not call the pack.
+
+`docs/sme/pass2/01-immigration-pathway-eligibility.md` elig-04 gives a different encoder. Reactivation-worthy is a material change in service posture: a program-minimum newly met, a published cutoff newly crossed, a nomination or job offer or certificate newly held, or a time-critical ops loss. Pure missing self-reportables stay nudge. A contact who already asserts would not be stored `reactivation` on the next fact write. An ops loss could be `reactivation` while every family `pass` is false. Seed §5.8 and `SYSTEMS-STORY` §11 name that predicate a silence. `SYSTEMS-REQUIREMENTS-FILLED.md` says the silence is not invented here. `RESOLUTION-REPORT.md` still marks the reactivation-worthy criteria undefined.
+
+This claim does not copy the pack function into the cascade. It does not treat a null clause as an assertion, and it does not treat a null clause as a specified `pass: false` for every contact. Storing false for every family would empty claim 52 and fill claim 54 by a predicate the seed did not write. The live assignment remains the constant until the family’s pass is the one the founder names. The shape, the enabled set, the OR, and the motion expression’s input are this claim.
+
+**Rejected alternatives.**
+
+- Leave `any_pathway_pass` the constant `true`. That is the live assignment. Seed §5.7 says the pass is any assertion. A contact with no asserting family would be stored `reactivation`. Claim 54’s false side would stay empty. The specimen’s Alvarez is that contact once the OR is false.
+- Treat `epath-any.enabled` as the contact’s pass. The row is on for the platform. Every contact would pass. That is the constant. The ascribe’s `LIMIT 1` peek is not a reader in `server/`.
+- Use `summary.pass`. The draw family would be able to fail a contact the pathway OR had passed. Directive 2 is any pathway. The cutoff is a different outcome.
+- Let `summary.reactivation.warranted` choose the motion. Work-permit urgency would be the only reactivation, and a CEC assertion would not be. That is a second flag. The expression already reads `anyPass`, and `anyPass` is this column.
+- Use the rule node’s missing-fact `pass`. A contact with no missing self-reportable would be reactivation even when no family asserts. A missing field would be nudge even when a family asserts. The rule node writes `missing_fact_signals`. It does not write this row.
+- Include PNP because the specimen has it, and include FST because the aggregate label and the pack name it. Enablement is the row. `epath-pnp` is off. FST has no row. Turning PNP on is an `enabled` update the pathway route already performs. It is not a second family invented for this write.
+- Put the pack’s hours, CLB, and TEER formula into this claim as `pass`. That formula is one encoder. elig-04 is another. The SQL clauses state neither. Which contacts then store `reactivation` is the founder question below.
+- Store `pass: false` on every family while that question is open, so the book goes to nudge. That chooses the empty clause as a predicate. The constant in the live writer is the gap. It is not a specified false.
+- Put each contact’s motion on the firing payload, and stop the dispatcher from forcing `anyPass: true`. One dispatch follows the loop. Two contacts can store two motions. Claim 52 already refused a firing-level motion for that reason. Claim 7’s refusal of the pin, which claim 12 did not recut, stays the live dispatcher. The row is the decision.
+- Compare `reason.precedence` on the branch once `mp-2` is stored for a nudge. Claim 52 refused that compare because the key was `mp-1` on both motions. The branch still reads `motion`. This claim only stores the precedence row that matches the motion.
+
+The founder question is what makes one enabled family’s `pass` true. It is recorded in `docs/specification-pass/NEXT.md`. Seed §5.7 settles the OR. It does not settle the assertion. Claim 52’s branch and claim 54’s false side stay as specified. They read the motion column this expression stores.
+
+**What this leaves.** A missing-fact detection is still a `missing_fact_signals` row from the rule node, and this firing’s `signals` row is still the one `eligibility_determination`. Whether Seed §5.8’s “every detection, including missing-data, is a signal” means that missing-fact row is also a `signals` insert was not walked. `email.delivery_delayed` still only inserts `deferred`. Whether the next email to that address waits, and for how long, stays the question claim 56 left open. A halt still does not decide Engine 2’s “one client, one motion,” and it does not decide the attempt engine’s live-override.
+
+**Evidence:** `server/wire-service/machine.ts` `runContactEligibilityCascade` the constant, the motion expression, the signal payload, the precedence `mp-1`, and the dispatch payload. `server/wire-service/workflowWalk.ts` `executeRuleWrites` `lastOutput`, `dispatchEventToWorkflows` the `anyPass: true` overwrite, `walkValidatedWorkflow` the label test, `evaluateRuleConditions`, `lookupPackConstant`. `src/app/data/automationRules.ts` `buildPathwayOutcome`, `buildSummary`, `RULE_LEFT_FIELD_MAP`, `evaluateRulePack`. `supabase/seeds/002_machine_tables.sql` `epath-any`, `epath-cec`, `epath-fsw`, `epath-pnp`, `mp-1`, `mp-2`. `supabase/seeds/008_constants_pack_keys.sql` `pack.immigration.criteria`. `supabase/migrations/017_event_test_contract.sql` `etd-elig-result-okonkwo`, `etd-elig-result-alvarez`, `etd-elig-mot-alvarez`. `docs/register/SEED.md` §5.7 and §5.8. `docs/register/SYSTEMS-STORY.md` §10 and §11. `docs/register/SYSTEMS-REQUIREMENTS-FILLED.md` the reactivation-worthy silence. `docs/register/SYSTEMS-AUTOMATIONS-ASCRIBE.md` A2. `docs/register/system-map/RESOLUTION-REPORT.md` the `motion_decision` row. `docs/sme/pass2/01-immigration-pathway-eligibility.md` elig-04. Claims 12, 52, and 54.
+
+**Live.** `anyPass` is still the constant `true`. `result` is still the trigger object with no `pathways`. `motion` is still `reactivation`. `reason.precedence` is still `mp-1`. The dispatch payload is still `anyPass: true` and `motion: "reactivation"`. No migration was written.
+
+---
+
 ## What has no home, what cannot fulfill, what cannot work together
 
 **No home**
@@ -3054,6 +3111,10 @@ The sentence that the reactivation enroll remains unspecified stands as the gap.
 The sentence that the onboarding payload was not specified stands as the gap. Claim 44 specifies it. This firing inserts none of the audit tables, so `writes` stays absent and the payload keeps no audit-run id. The ready contact ids stay the `contactIds` argument, including a silenced contact. The silence filter is the fallback enroll, not this array. The live dispatch still omits `writes`.
 
 **What the eligibility row’s pass is derived from.** `runContactEligibilityCascade` sets `anyPass` to the constant `true`, stores that on `eligibility_results.any_pathway_pass`, and stores `motion` `reactivation`. It does not read `rule_eligibility_pathway` or the in-memory eligibility pack. Claim 12 names the row that insert wrote. It does not decide the derivation. Same shape as the parked `sequence_ready.ready` derivation, and a different writer.
+
+### Revision — claim 60
+
+The paragraph above stands as the live writer. Claim 60 specifies the shape of the derivation: `any_pathway_pass` is the OR of the enabled pathway entries on `result.pathways`, and the motion expression reads that boolean. The pack’s `summary.pass` and `summary.reactivation.warranted` are not the column. The per-family assertion stays the question claim 60 leaves open. The live insert is still the constant.
 
 **The reactivation branch on the seed graph.** `wf-eligibility-reactivation` (`supabase/seeds/003_canonical_workflows.sql`) has a branch labelled “Reactivation-worthy?” with `filterSummary` `reactivation-worthy`, and with no compare and no `pickTable`. `evalIfPick` with no compares returns false. `evalBranch` reads `eligibilityPass` and `triggerPayload.motion`, and the walker does not call it. Claim 12’s pointers are what a configured If reads. Placing them does not make this branch read `motion_decisions.motion`. That pick was not specified.
 

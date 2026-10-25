@@ -2,19 +2,15 @@
 
 ## Established
 
-Claims 1–59 stand in `docs/specification-pass/SPECIFICATION.md`. Claim 58 is what `sequence_ready.ready` stores. Claim 59 is the founder kill-switch lift.
+Claims 1–60 stand in `docs/specification-pass/SPECIFICATION.md`. Claim 58 is what `sequence_ready.ready` stores. Claim 59 is the founder kill-switch lift. Claim 60 is `any_pathway_pass`.
 
-Claim 58: the audit still classifies reachable, partial, and unreachable from email and phone. `ready` on that run’s row is true only when the verdict is reachable or partial and the consent row for that contact and firm is not a silence. A missing row and `basis` `none` stay ready. `basis` is not an input. A later silence does not rewrite the run. Claim 44 still filters that later silence at enroll time. A contact already silenced when the audit wrote is not on the onboarding list.
-
-Claim 59: the kill-switch is a firm-book `halt_records` row with `consultant_id` `founder`. `POST /halt/:haltId/lift` sets `lifted_at` on it, including when the consultant resume holds that id. The founder desk does not call lift. There is no expiry. A later firm-book commit still replaces the active row and does not return the firm to standby. One firm’s lift does not lift the fleet. The attempt is not nullified.
+Claim 60: the column is the OR of this evaluation’s enabled pathway entries on `result.pathways`. The trigger fields already on `result` stay. An enabled family is a `rule_eligibility_pathway` row for this firm, or a platform row, whose `set_value` is not `any_pathway_pass` and whose `enabled` is true. On the seed that is CEC and FSW. PNP is off. There is no FST row. The motion expression reads that boolean: `reactivation` or `nudge`. Precedence is `mp-1` or `mp-2` with the motion. The rule node’s missing-fact pass, the pack’s pathway-and-draw pass, and the pack’s work-permit reactivation signal are not the column. One firing payload still cannot carry two contacts’ motions. The per-family `pass` is the founder question below. The live insert is still the constant `true`.
 
 ## Still worth investigating
 
-`email.delivery_delayed` still only inserts `deferred`. Whether the next email to that address waits, and for how long, is the founder question below. Do not reopen it unless this session’s evidence answers it.
+A missing-fact detection is a `missing_fact_signals` row from the rule node. This firing’s `signals` row is one `eligibility_determination`. Seed §5.8 says every detection, including missing-data, is recorded as a signal. Whether that missing-fact row is also a `signals` insert is the next read.
 
 A halt still does not decide Engine 2’s “one client, one motion,” and it does not decide the attempt engine’s live-override. Claim 20 postponed that abort. Claim 59 does not nullify the attempt. Claim 54 keeps one firing to one sequence and does not add a unique enrollment constraint.
-
-`any_pathway_pass` is still the constant `true`. What a pathway rule would write into `result` remains the derivation claim 12 left open. Until that write exists, the false side has nobody to enroll.
 
 ## Founder question
 
@@ -24,6 +20,8 @@ Repeat compression stays the question `docs/register/system-map/BUILD-system-map
 
 A `deferred` event’s hold stays open. The choice is whether the next email to that same address waits, and for how long, or whether the row is only a record and the due cell still sends. What changes is whether one temporary delay holds that address’s later mail. `deliv-23` wants the backoff inside a provider window. The payload does not name the receiving server and does not name a retry time, so a full inbox and a transient receiving server are the same event. One delay does not pause the firm. That part is claim 56. Parsing the recipient domain was not chosen, because a custom domain is not the receiving server and one full inbox would then hold every recipient at that domain.
 
+What makes one enabled family’s `pass` true stays open. The choice is which encoder fills it. The client pack’s current assertion would store `reactivation` whenever CEC or FSW clears the constants already in `pack.immigration.criteria` (hours, CLB, TEER), including on a later cascade that sees the same assertion, and would store `nudge` when neither family clears. The SME note in `docs/sme/pass2/01-immigration-pathway-eligibility.md` elig-04 would store `reactivation` only for a material change — a minimum newly met, a cutoff newly crossed, a nomination or offer or certificate newly held, or a time-critical ops loss — and would keep a stable pass and a pure missing self-reportable off that motion. The seed clauses are null. Treating that emptiness as “no assertion” would store `nudge` for every contact. Treating `epath-any.enabled` as the pass would store `reactivation` for every contact, which is the live constant claim 60 refuses. What changes is who claim 52 enrolls and who claim 54 enrolls. Seed §5.7 settles the OR. Seed §5.8 names the worthy predicate a silence. The pack, the SME note, and the empty clauses are three fillings, and the motion expression does not take a second flag.
+
 ## Next move
 
-Start at `any_pathway_pass`. The inserted value is the constant `true`, and claim 12 left open what a pathway rule would write into `result`. Read the cascade’s motion expression and the eligibility rule output before inventing a second flag. Leave the three founder questions recorded. Claims 58 and 59 stand. Do not reopen the deferral hold, and do not recut the ready flag or the kill-switch lift.
+Start at the missing-fact signal. Seed §5.8 records every detection, including missing-data, as a signal. The rule node writes `missing_fact_signals`. The cascade writes one `signals` row of kind `eligibility_determination`. Read those two inserts and what the form already lists before deciding they are the same row. Leave the four founder questions recorded. Claim 60 stands.
