@@ -2288,6 +2288,90 @@ No founder question. The day calendar of the opt-in phase is the motion that run
 
 **Live.** The three calls still pass the literal `cem`. `call_agent` still uses `sequenceClassForAgent`. `offsetMs` is still `day × 24h`, so the announcement is still due one day after enroll. No migration was written.
 
+### Revision — claims 46 and 47
+
+The sentence that the actions after the wait were not followed stands as the gap. Claim 46 names them. The occupancy pointers are the re-entry writes when the due update returns rows. A duration wait inserts none, and that re-entry uses `counts.waitWrites`. The sentence that the schedule walk was not followed past `{ schedule: true, anyPass: true }` stands as the other gap. Claim 47 names who that walk is about, and which minute starts it.
+
+---
+
+## Claim 46 — A resumed wait continues that same run, and the nodes after it are the operations already on the graph
+
+**Standing:** necessary implication of a Wait being a park on this run, and a technical decision made in this session.
+
+`resumeWaitRun` does not insert a `workflow_run`. It sets the existing row back to `running`, clears `waiting_node_id` and `resume_at`, and calls `walkValidatedWorkflow` with `resumeFromNodeId` set to the wait. That call marks the wait visited, copies the stored `node_status`, writes this node’s status as success with detail `wait resumed`, and follows every outgoing edge. It does not execute the wait again. `call_agent` on that walk remains claim 18’s enroll check, claim 22’s first step, and claim 45’s purpose. This claim is every other node that walk can reach.
+
+**Which runs the tick resumes.** `resumeDueWaitingRuns` selects `workflow_run` where `status` is `waiting`, `resume_at` is not null, and `resume_at` is due. A duration wait is that row: the park stored `resume_at` from `durationAmount` and `durationUnit`, and it did not insert `wait_occupancy`. An approval wait parks with `resume_at` null, so the tick does not select it. Approve later, in `handleWaitOccupancyApprove`, sets the group’s open occupancy to `scheduled` and sets `resume_at` on those runs. The tick then selects them. Approve now does not wait for the tick. It calls `resumeWaitRun` itself. Both doors enter the same function. The outgoing operations are one set.
+
+**What the re-entry is holding.** The tick updates `wait_occupancy` to `approved` for that run and that wait node where `status` is `open` or `scheduled`. It does not filter `approver`. The node has one approver, so the rows are the note the desk scheduled, plus any open row for that same run and node. When that update returns rows, the people are those `contact_id`s and the writes are those occupancy pointers. `counts.waitWrites` is not the handle. When the update returns nothing, which is the duration park, the people are `counts.waitContactIds` and the writes are `counts.waitWrites`. Those writes are `ctx.previousWrites` from the moment the walk parked, which is the previous node’s list, not an occupancy row. Approve now always passes the occupancy pointers it just approved, and the contacts on them. Claim 6 still requires `chainWrites` to be rebuilt from the stored `node_status` before the outgoing nodes run. The live resume still starts that map empty. A chip that names a node from before the wait still falls through to this re-entry’s writes. This claim does not retune that find.
+
+**The label.** `run_audit` skips its `audit.completed` dispatch when `opts.triggerLabel` contains `audit.completed`. The tick passes the run’s `trigger_label`, or `wait-resume` when the column is null. Approve now omits the argument, and `resumeWaitRun` then defaults the walk to `wait-resume`. The column on the row is the label of this run. Both callers pass it. A null column stays `wait-resume`. The walk does not rewrite the column.
+
+**What those nodes may do.** The firm is the run’s `firm_id`. The people and the writes are the re-entry above. Each node does the work that node already does on a walk. None of them is a second graph. The resume function does not dispatch.
+
+- `ascribe_tag` inserts `contact_tag` for the contacts the node already resolves: a contact chip when that chip matches these writes, otherwise the `pickTable` slice of these writes, otherwise `ctx.contactIds`. `notesFromVerdict` updates `contact_records.notes` only when these writes include a `reachability_verdicts` pointer for that contact and the load returns a rationale or a verdict. An occupancy re-entry has no verdict pointer. A duration re-entry has one only when the parked list had one. The tag is an in-app write. It does not read `consent_records`. It is not a send.
+- `run_audit` takes `ctx.contactIds` when that list is non-empty, and `contactsForAudit` keeps the rows whose `firm_id` is the walk’s firm. It then runs `executeAuditRun`. The dispatch of `audit.completed` remains that action’s dispatch, skipped when the label rule above matches. It is not a second copy of this graph. The approve handler still does not dispatch.
+- `manage_lists`, `assign_task`, and `notify_consultant` are the fallthrough claim 10 already specified: one `engagement_records` insert per contact, and the pointer’s `id` is the `eng-` id `writeEngagement` returns. An in-app affordance other than `run_audit` or `ascribe_tag` still returns with an empty write list and does not insert.
+- A rule inserts `missing_fact_signals` for the resumed contacts, the same writer as a fresh walk. `directContactIds` on the node still replaces the list when that array is non-empty.
+- A Get with mapped slots filters these writes. A Get with no mapped slots calls `executeGet` and that result replaces the handle and, when it returns contact ids, the people. The contacts module with select `every` still has no `firm_id` predicate. Claim 8 left that predicate. This claim does not add it.
+- An If or a Switch reads the writes this re-entry placed. Claim 6’s rebuild is still what a chip from before the wait needs. This claim does not make the occupancy row stand in for a write the wait did not hold.
+- A further Wait may park the same run. A duration stores a new `resume_at`. An approval inserts occupancy and parks with `resume_at` null, so the tick does not select it until the desk sets that column. The walk does not continue past the new park.
+- A constant loads the pack into `ctx.constants` and continues. An exit ends the run. A node with `configured` false fails and does not continue. An unknown type is skipped and the outgoing edges still run.
+
+**Why these are the operations.** `docs/register/AUTOMATIONS-FACE.md` law 2 says the middle does not change: on this event, perform this operation. A Wait is a park inside that middle. Law 13 says actions are not only outreach. Law 19 names the two kinds: in the application, and agents. The agent kind is `call_agent`, already specified. The in-app kinds are the other action types the check constraint already allows (`action_type_check` in `supabase/migrations/010_sequence_campaign_housing.sql`). `waitNote.ts` says the desk resumes this run’s outgoing and does not dispatch a second graph. That sentence is the approve handler. It is not a ban on `run_audit`’s own event.
+
+**What this does not withhold.** Claims 43 and 44 withhold a silenced contact from the two no-workflow enroll loops. They do not read the pair on a tag, an audit, a rule, or an engagement append. A resumed `call_agent` is still the enroll those claims left in place: halt is claim 18, and a first step that runs is claim 22. This claim does not move the silence withhold onto the outgoing nodes, and it does not add the one-motion refusal P1 left open.
+
+**Rejected alternatives.**
+
+- Treat the occupancy pointers as the writes of every tick resume. That is the approval-later path, and it is Approve now. A duration wait never inserts occupancy. Journal 001 already recorded that the duration park stashes `ctx.previousWrites` on `counts.waitWrites`. Using the occupancy update for that run would hand the outgoing nodes an empty list and drop the people the wait was holding.
+- Start a new `workflow_run` from the wait’s outgoing edges. The row id is the parked run. `resumeWaitRun` updates that id. A second run would be the dispatch `waitNote.ts` says not to make.
+- Re-execute the wait on resume. The walker adds the wait to `visited` before `goOn`. Executing it again would park the same node without having run anything after it.
+- Leave Approve now on the default label `wait-resume`. The tick already passes `trigger_label`. A `run_audit` after Approve now would then dispatch `audit.completed` for a run the tick would have skipped. The column is one label.
+- Extend claims 43 and 44 so a silenced contact is not tagged, audited, or appended on resume. Those claims are the two enroll loops. The silence leaf is read by send gates and by book readiness for a new enrollment. These nodes are the in-app half of law 19. A send still goes through `consentAndHaltGate` when the node is `call_agent`.
+- Fill claim 6 by treating the occupancy row as every earlier write. The occupancy row is this wait’s pointer. A chip that names the rule or the audit from before the wait is the rebuild claim 6 already required. One pointer does not become that map.
+
+No founder question. The wait holds this run. The tick and the desk both continue it. The nodes after the wait do the work the graph already named, for the contacts that park was holding. A silenced pair still does not, by this claim, stop a tag or an audit. Another firm’s contact is not added by the tag or by the audit query. Who is placed on launch day stays unfilled.
+
+**Evidence:** `workflowWalk.ts` `resumeDueWaitingRuns`, `resumeWaitRun`, the `resumeFromNodeId` branch, the `type === "action"` arms, the `type === "wait"` park, `contactsForAudit`, `noteFromVerdict`, `executeGet`. `waitNote.ts` `handleWaitOccupancyApprove`. `cascade.ts` the call after the attempt loop. `supabase/migrations/024_wait_occupancy.sql`. `supabase/migrations/010_sequence_campaign_housing.sql` `action_type_check`. `docs/register/AUTOMATIONS-FACE.md` laws 2, 13, and 19. Claims 6, 8, 10, 18, 22, 43, 44, and 45.
+
+**Live.** The tick already splits duration and occupancy the way this claim says, and the outgoing nodes already run. Approve now still omits `triggerLabel`, so that walk is still `wait-resume`. `chainWrites` is still empty. `executeGet` for every contact still has no firm predicate. No migration was written.
+
+---
+
+## Claim 47 — A schedule tick walks this automation’s audience, and only in a minute the stored cron matches
+
+**Standing:** necessary implication of schedule being an event-of-origin and of claim 17’s audience, and a technical decision made in this session.
+
+`dispatchScheduleTriggers` is the other call `tickOnce` makes after the attempt loop. It selects enabled `workflow_trigger` rows of type `schedule` whose workflow is `active` and whose `firm_id` is not null. It inserts one new `workflow_run` labelled `schedule` and walks from the trigger. It does not resume a parked run. Claim 46 does not apply to it. The people on that walk are claim 17’s audience for the trigger’s firm. The walk starts only when `schedule.cron` matches the tick’s UTC minute, and only once in that minute.
+
+**Why it is the audience.** `docs/register/AUTOMATIONS-FACE.md` law 2 names schedule as the event the middle starts from. Law 31 puts Add-contact on events: Every firm or Select from, and the automation does not start a mission now. The footer on the product face is the same sentence claim 17 already used: who this automation applies to, and it does not start a mission now. A schedule firing passes no contact ids and no writes. `writesFromPayload` of `{ schedule: true }` is an empty list. `personIdsFromWrites` of that list is nobody. `walkValidatedWorkflow` does not query the book. Without the audience, `call_agent` enrolls nobody, `contactsForAudit` audits nobody, and the middle the operator saved does not run. Claim 17 already decided that a firing with no contact ids walks `workflow.audience_scope` inside the firing firm. The schedule dispatcher never calls `dispatchEventToWorkflows`, so that branch does not run today. The firing firm is `workflow_trigger.firm_id`, which is the firm the run insert already stamps.
+
+The branch is the one claim 17 specified, not a second copy of the rule. `select_from` walks the stored `audience_contact_ids` that are `contact_records` of that firm, and does not start when none remain. `every_firm`, including a null scope, walks every `contact_records.id` of that firm, and an empty book still starts. The list is the `contactIds` argument. It is not copied onto the payload. `previousWrites` stays empty. There is no row on this firing, so there is nothing to put in `writes`. A repeated minute enrolls again when the graph reaches `call_agent`. Claim 17 already left a later firing of the same firm free to enroll again. This claim does not add the one-motion refusal.
+
+**Which minute.** The worker tick is the clock. `handleMachineTick` calls `tickOnce`, and the route comment says the production host runs that route every minute. The time the operator named is `scheduleCron` on the trigger, materialized as `workflow_trigger.schedule` jsonb `{ summary, cron }`. The modal writes the same string into both keys. The matcher reads `cron`. The value is a five-field cron: minute, hour, day of month, month, day of week, evaluated in UTC against the tick’s time, including `*`, lists, and steps. An empty string or a string that does not parse does not fire. A tick does not catch up a minute it missed. The next matching minute is the next run.
+
+The live query is `DISTINCT` on `workflow_id` and `firm_id`, so one firm’s workflow is one row. One such pair starts at most one schedule run in a UTC minute. The guard is an existing `workflow_run` for that workflow and that firm with `trigger_label` `schedule` and `started_at` in that same minute. `started_at` is already the column. A second schedule trigger on the same workflow and firm does not start a second run. The walker still begins at the graph’s first trigger. A draft workflow does not fire. The three seeded workflows are `draft`, and none of their triggers is `schedule`.
+
+**The payload.** It is `{ schedule: true }`. It does not set `anyPass`. Claim 7 refused that flag on an event dispatch because absence of a write is not a pass. A schedule firing did not evaluate a pathway. With the flag set, `ctx.eligibilityPass` is already true and the rule does not assign it from whether it wrote missing facts. Without the flag, a rule may still assign it, and a legacy branch that has not seen a failure still falls through to true. The If does not read the flag. The handle stays empty, so an If that needs a row still fails closed.
+
+`call_agent` on this walk is claim 18, then claim 22, then claim 45 when the resolved class is `optin`. A Get with no mapped slots may still replace the audience. That replacement is the open `executeGet` predicate claim 46 left where claim 8 left it. This claim does not firm-scope that query.
+
+**Rejected alternatives.**
+
+- Keep firing every enabled schedule on every tick and ignore `schedule`. That is the live function. The glass is the cron the operator typed. The tick is the minute-check. Firing the audience on every worker minute would enroll on every minute, including for a cron of `0 * * * *`.
+- Walk nobody, which is what an empty `contactIds` does today. The audience is who the automation applies to, and schedule is the event it was waiting for. The middle would not run. Claim 17 already rejected this for a firing that names no one.
+- Put the book on `payload.writes` as `contact_records`. Claim 17 already refused that. The handle is the firing’s rows. This firing has none. The audience is the person list.
+- Set `anyPass` so a branch passes. The flag is not a pathway result. The branch’s own fallthrough already returns true when nothing has failed. The pin only stops the rule from recording its own result.
+- Read `workflow_trigger.scope`. Claim 17 already refused that. Materialize writes `every_firm` on that column for every trigger. The operator’s choice is `workflow.audience_scope`.
+- Skip contacts who already have an open enrollment. A later event firing enrolls again. Claim 2 allows two enrollments. P1’s one-motion refusal is still the abort that was not specified. This clock does not add it.
+- Catch up missed minutes after a quiet tick. One match per tick that lands in the minute. A backlog would enroll once per skipped slot.
+
+No founder question. Schedule is the event-of-origin the face already named. The people are the audience claim 17 already walks when a firing names none. The minute is the cron the trigger already stores. Another firm’s contacts are not on the run. Who is placed on launch day stays unfilled.
+
+**Evidence:** `workflowWalk.ts` `dispatchScheduleTriggers`, `materializeTriggersFromGraph` the schedule jsonb and the grain forced to `global`, `dispatchEventToWorkflows` the audience arms, `writesFromPayload`. `cascade.ts` the call after the attempt loop. `machine.ts` `handleMachineTick`. `TriggerSelectModal.tsx` the cron input. `supabase/migrations/006_workflow_trigger.sql` `schedule`. `supabase/migrations/004_machine_tables.sql` `workflow_run.started_at`. `supabase/migrations/012_grain_audience_one_timer.sql` `audience_scope`. `supabase/seeds/003_canonical_workflows.sql` the three draft workflows. `docs/register/AUTOMATIONS-FACE.md` laws 2 and 31. `docs/register/AUTOMATIONS-UI-BLUEPRINT.md` A5. Claims 2, 7, 8, 17, 18, 22, 45, and 46.
+
+**Live.** The function still inserts a run for every enabled schedule trigger on every tick, still passes `{ schedule: true, anyPass: true }`, and still passes no contact ids. `schedule.cron` is still unread. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
@@ -2323,6 +2407,10 @@ The sentence that the enroll was not specified stands as the gap. Claim 43 speci
 - `handleOnboardingFire`, when `audit.completed` fires no workflow, calling `enrollAndActuate` for every ready contact, and claim 44, which does not call it when that contact’s pair for the session firm has `silenced` true or `status` `silenced`. The live loop still does not read `consent_records`. A silenced ready contact still gets an enrollment and an open attempt. The dispatch still omits `writes`.
 
 - The three tick sends passing purpose `cem` for every open attempt, and claim 45, which passes `opt-in` when that attempt’s `sequence_template.sequence_class` is `optin`. The live calls still pass `cem`. A contact with no basis still receives the day-1 primer and is still denied the day-1 announcement. `normalizeTemplateCells` still offsets that announcement by `day × 24h`. Claim 45’s offset is the difference from the first cell’s day, which is 0 for the two day-1 cells. The live announcement is still due one day after enroll. `call_agent` still classifies the purpose with `sequenceClassForAgent`.
+
+- `dispatchScheduleTriggers` inserting a `schedule` run on every tick with no contact ids and `anyPass: true`, and claim 47, which starts one run in a UTC minute `schedule.cron` matches, walks claim 17’s audience for the trigger’s firm, and does not set `anyPass`. The live function still ignores the cron and still walks nobody.
+
+- Approve now calling `resumeWaitRun` without the run’s `trigger_label`, and claim 46, which passes that column the way the tick already does. The live desk call still defaults the walk to `wait-resume`. The outgoing nodes themselves already run.
 
 - `event_write_set` naming `campaign_failure`, and `escalateAttemptWindow` dispatching that event with no `writes` (claim 13). The insert already stored the `cfail-` id. Claim 13 specifies the array. The live dispatch still omits it, and `loadWriteRow` still returns null, so the write-set and the listener still do not meet in the running code.
 - `localRefFromPayload("campaign_failure")` reading `campaign_id`, and that dispatch not carrying `campaign_id` (claim 13). The column is on the row the insert wrote. Claim 13 puts that column’s value on the payload. The live payload still omits it, so a trigger that selected a campaign still does not match.
