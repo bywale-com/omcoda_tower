@@ -2300,6 +2300,10 @@ No founder question. The day calendar of the opt-in phase is the motion that run
 
 The sentence that the actions after the wait were not followed stands as the gap. Claim 46 names them. The occupancy pointers are the re-entry writes when the due update returns rows. A duration wait inserts none, and that re-entry uses `counts.waitWrites`. The sentence that the schedule walk was not followed past `{ schedule: true, anyPass: true }` stands as the other gap. Claim 47 names who that walk is about, and which minute starts it.
 
+### Revision — claim 51
+
+The sentence that this claim does not add a cell, and that the day-3 guideline names email and SMS while `ol-d3-waitlist` is one email, and that days 4–7 name two emails and one text while the seeded cell is one email at day 4, stands as the gap. Claim 51 names which of those sends the resolved calendar carries. The day-2 cell stays a non-send. The launch-day audience ask stays unfilled.
+
 ---
 
 ## Claim 46 — A resumed wait continues that same run, and the nodes after it are the operations already on the graph
@@ -2474,6 +2478,82 @@ No founder question. One-click is the silence commit the leaf already named, for
 
 **Live.** `accept` still has no caller. `dispatchEmailLive` still sets no List-Unsubscribe header. `handleResendWebhook` still does not write `consent_records` for `email.complained`. No migration was written.
 
+### Revision — claim 50
+
+The sentence that whether `email.complained` is a silence, a quarantine, or only the event row was not decided stands as the gap. Claim 50 decides it. One complaint suppresses that message’s address and does not quarantine the firm. The one-click path stays this claim.
+
+---
+
+## Claim 50 — A spam complaint suppresses that message’s address, and one complaint does not quarantine the firm
+
+**Standing:** necessary implication of the delivery-event split between an address deny and a reputation-unit ceiling, and a technical decision made in this session.
+
+When `handleResendWebhook` maps `email.complained` to `complaint` and the `outbound_messages` row for that provider message id exists, the `messaging_events` insert already written for that class is the address suppression. The next `dispatchEmailLive` to that same address is denied, in every firm, after consent and halt have allowed the send. The event does not write `consent_records`, does not dispatch `consent_records.opt_out`, and does not quarantine the firm. Claim 49 stays the one-click. Claim 42 stays the hard bounce. Claim 20’s open attempt is not aborted.
+
+**The row that is already the deny.** The handler inserts `messaging_events` with `event_class` `complaint`, `message_id` the webhook’s `email_id`, and the firm and contact from `outbound_messages` where `provider_message_id` matches. That is the same id claim 3 already uses to find the send. `to_addr` on that outbound row is the address. A later email is suppressed when some `complaint` row’s `message_id` equals some `outbound_messages.provider_message_id` whose `to_addr`, trimmed and lowercased, equals the later send’s `to`, trimmed and lowercased. The compare does not strip a plus-tag. It does not filter `firm_id`. Another firm’s complaint on that address denies this firm’s send. A second complaint for the same address inserts another event when the provider event id is new, and the exists-check still matches. There is no receipt table beyond `provider_webhook_receipts`, which already returns on a replay before the class is handled.
+
+No outbound row means no address. The handler still inserts the event, with firm `unknown` when the lookup misses, and that event does not match the join. The webhook body `data.to` is not the binding. The Resend route still accepts a call when `RESEND_WEBHOOK_SECRET` is unset. An unbound address in that body is not a suppression. `to_addr` is `TEXT NOT NULL`, so a matched row has an address even when `contact_id` is null. The bounce’s consent upsert still requires `contactId`. This join does not.
+
+**The next send.** The check runs in `dispatchEmailLive` after `consentAndHaltGate` returns allow, and before `emails.send`. A consent or halt deny returns first, with the detail those arms already use. A suppressed address then returns `{ ok: false, deny: "policy", detail: "suppressed" }`. The word is not `silenced` and not `halt active`, and the detail does not carry another firm’s id or that firm’s contact id. Claim 21’s writers still do not read `detail`, so the engagement kind stays `send_denied`. Purpose `opt-in` is not exempt. `dispatchSmsLive` does not run this join. An email complaint does not stop a text. The auth OTP mailer in `server/auth-service/email.ts` calls Resend itself and is not `dispatchEmailLive`. A complained CEM address does not, by this claim, block a login code.
+
+The attempt stays `open`. `tickOnce` still loads it. A later email cell is denied. A later text cell is not this address. Claim 9’s nullify stays the meeting. Claim 20’s refusal to abort stays the halt. This event is neither of those stops. Claims 43 and 44 still enroll from the consent pair. A suppressed address does not remove the contact from those loops. The day-1 text of an opt-in enrollment is not this deny. The announcement email is, when the address matches.
+
+**What is not this event.** `docs/register/how/contact-silence.md` does not name a spam complaint. `standInEspMailer.injectEvent` on `complaint` calls `setFirmQuarantined(firmId, true)` and does not call `silence`. That flip is not the server rule. One complaint is not the ceiling. `docs/sme/capability/C1-email-deliverability.md` `deliv-11`, and the same path in `docs/wiring/paper-trace/function/C1-email-deliverability.md`, count the complaint on the reputation unit and quarantine or throttle when the rate breaches. The handler does not compute a rate, and this claim does not. Other contacts of the firm are not denied. Peer firms are not quarantined. They are denied only when they email the suppressed address, which is the global block `deliv-15` names and which `cant-05` says must not be stored as a firm-local consent fact.
+
+`docs/wiring/external-models/02-send-enrich-ads.md` says CT must exercise “complaint → quarantine path” beside “hard-bounce → global suppress.” That line names the unit path the count feeds. It does not make one webhook the ceiling. The stand-in’s in-memory set has no count, so the first inject trips the terminal state. The specified stand-in records the outbox `to` for that `messageId` and `send` denies that address. No outbox row, no record. It does not call `setFirmQuarantined`. `setFirmQuarantined` stays the explicit flip for a unit quarantine this event does not trip. `SendGateDecideInput` has no `to`. `collectReasons` never pushes `suppression`. This claim does not add `to` to that input. The address is on the mailer and on `dispatchEmailLive`.
+
+**Rejected alternatives.**
+
+- Treat the complaint as claim 49’s silence commit, source `list-unsubscribe` or `complaint`, and dispatch `consent_records.opt_out`. The leaf’s commit is the one-click. A provider spam report is not that control. Dispatching the opt-out would start the listeners claim 15 reserved for the person withdrawing.
+- Copy claim 42’s upsert onto the pair, `silenced` true, no dispatch. The boolean would deny every channel for that firm and contact, including the text, and would hide the address block as a firm-local consent fact. `cant-05` names that hide as the failure. The pair is the bounce’s store. It is not this address.
+- Quarantine the firm on this one event, which is what `setFirmQuarantined` does. Every later send for every contact of that firm would stop, including contacts who did not complain, while the complained address would still be mailable by the next firm. `deliv-11` quarantines the unit at the ceiling. One event is not that ceiling.
+- Leave the event as a log the gate does not read. The next CEM to that address would still go out. `deliv-14` and `deliv-15` say a complaint denies the next send to the address. The join is that deny. The event row is not only a log.
+- Mint a `suppression_list` table for this one class. The complaint row and the outbound address already join. This claim does not add a migration. Claim 42’s bounce is not moved onto the join.
+- Nullify open attempts for every contact with that email. The complaint does not stop the text, and it is not the meeting. The email send is what does not leave.
+- Withhold claims 43 and 44 because the email is suppressed. Those loops withhold a pair that denies every channel. This deny is the email address. The text primer still starts.
+- Put the other firm’s id in the deny detail so the operator can see who complained. `deliv-15` calls the cross-tenant reason privacy-preserving. The detail is the word `suppressed`.
+
+No founder question. A complained address is not mailed again from any firm. The contact is not silenced by it. The firm is not quarantined by one report. Who is placed on launch day stays unfilled.
+
+**What this leaves.** The complaint-rate ceiling, the window, and the denominator that would quarantine a reputation unit were not specified. `email.delivery_delayed` still maps to `deferred` and only inserts the event. Whether `bounce_hard` should also deny by this address join, beside claim 42’s pair, was not decided. The seeded day-3 and days 4–7 cells were still the calendar claim 45 left unadded.
+
+**Evidence:** `webhooks.ts` `mapClass`, the outbound lookup, the `messaging_events` insert, the `bounce_hard` upsert. `dispatchSend.ts` `dispatchEmailLive`, `consentAndHaltGate`. `server/auth-service/email.ts`. `supabase/migrations/003_ct_wire_stores.sql` `outbound_messages.to_addr`, `messaging_events`. `src/app/wire/standins/espMailer.ts` `injectEvent`. `src/app/wire/standins/sendGate.ts` `setFirmQuarantined`, `collectReasons`. `src/app/wire/ports.ts` `SendGateDecideInput`, `EspSendInput`. `docs/wiring/external-models/02-send-enrich-ads.md` the CT line under `ext-esp-mailer`. `docs/sme/capability/C1-email-deliverability.md` `deliv-11`, `deliv-14`, `deliv-15`, `deliv-16`. `docs/wiring/paper-trace/function/C1-email-deliverability.md` those paths. `docs/wiring/paper-trace/CANTS-AND-FURNISH.md` `cant-05`, `cant-07`. `docs/register/how/contact-silence.md`. Claims 3, 20, 21, 23, 42, 43, 44, and 49.
+
+**Live.** The handler still inserts `complaint` and still does not read `to_addr`. `dispatchEmailLive` still does not look for a prior complaint. `injectEvent` on `complaint` still quarantines the firm. No migration was written.
+
+---
+
+## Claim 51 — The opt-in days 4–7 are three sends, the day-3 waitlist stays one email, and the day-2 social cell does not send
+
+**Standing:** necessary implication of the resolved launch calendar and of claim 45’s offset, and a technical decision made in this session.
+
+`docs/register/system-map/BUILD-system-map-v3-templates-and-binding.md` section C says to build the opt-in calendar as day-1 text, day-1 announcement email, day-2 social follow, day-3 waitlist, and days 4–7 nurture as two emails and one text, and not to re-open that list. The seeded `tpl.optin_launch.v1` keeps the first four of those steps and stores days 4–7 as one email, `ol-d4-7`, at day 4. That one cell is not the three sends. Day 3 stays the one email the same list named. Day 2 stays channel `form` and does not send. Claim 45’s purpose and its offset rule apply to the cells this claim adds. Nothing here writes `waitlisted`. Who is placed on launch day stays the ask `SYSTEMS-GOAL` left open.
+
+**Day 2.** The seed sets `ol-d2-social` to channel `form`. `channelFromToken` returns `form` for a token that contains `social` when no explicit channel overrides it. `advanceTemplateCellIfDue` calls `actuateChannelSend` only when the next channel is `email` or `text`. The cursor still moves onto the cell, and the function still marks `delivered` true before that test. There is no social sender. The guideline’s channel is Social, a follow on Instagram or LinkedIn, not a CEM. Substituting an email or a text would be a message that list did not name. The cell stays `form`.
+
+**Day 3.** The seed sets `ol-d3-waitlist` to channel `email`, so the explicit channel wins over the token rule that would otherwise return `form` for `waitlist`. Section C names one step, “Day3 waitlist,” and does not say email and SMS. The same section does say email and SMS for the reactivation slot-open, and two emails plus one text for days 4–7. The guideline’s “Email + SMS” is the sentence that resolved list did not carry. The cell stays one email. Claim 45’s offset, first cell day 1, makes day 3 due two days after enroll.
+
+**Days 4–7.** Section C’s “2 emails + 1 text” is three cells, written emails then text. The seed’s single email at day 4 is not those three. They are one email on day 4, one email on day 5, and one text on day 6. Day 7 has no cell. The window the guideline gives the launch is five to seven days, and “over remaining days” is why they are not stacked on day 4. Claim 45’s offset is each cell’s day minus the first cell’s day, which is 1, so the three are due three, four, and five days after enroll. `advanceTemplateCellIfDue` advances one cell per call. A tick that finds the day-4 email due sends that cell only. The next due cell waits for a later tick. The live `day × 24h` formula is the offset claim 45 already replaced. The one seeded id `ol-d4-7` does not stand in for the three.
+
+**Reactivation’s first calendar, and the question that stays open.** The seeded reactivation cells carry no `channel` and no `day`. `channelFromToken` and `dayFromToken` therefore read the token. `day0_text_primer` is text at day 0. `day0_email` is email at day 0. `days1_3_nurture` matches day 1 and, because the token contains `nurture`, email. `day3_slot_opens` matches day 3 and falls through to text. Section C asks for two nurture emails across days 1–3, and for the slot-open as email and SMS. The first calendar is a day-1 email, a day-2 email, a day-3 email, and a day-3 text, after the day-0 primer and the day-0 email. The two day-3 cells share an offset. The advance sends one per tick, email then text, which is the order that section writes. The single `rx-d1-3` and the single `rx-d3-slot` are not those four.
+
+The same section marks named-silent on repeat-compression: whether the three-day nurture compresses on a repeat activation is undecided, and the answer is not to be invented. This claim does not compress a later enrollment. A repeat walks these cells. Whether a repeat walks a shorter list stays that question.
+
+**Rejected alternatives.**
+
+- Keep `ol-d4-7` as the nurture because the seed is what the walker loads. Section C says the nurture is two emails and one text, and says not to re-open that list. One email does not fulfill it. Claim 45 left the cell unadded. This claim is those three sends.
+- Put all three on day 4 so they share the seeded day number. “Over remaining days” is a span. One tick would not be that span. Successive ticks of three same-day cells would still be one calendar day, which is how day 1’s two cells already share a day. Days 4–7 are the days that are not one day.
+- Send the text before the emails. The resolved list says two emails and one text. The order written is the order of the cells.
+- Add the guideline’s day-3 SMS beside `ol-d3-waitlist`. Section C restated that step without a second channel, in a paragraph that adds a second channel where it wants one. The explicit email is the send. The token’s form default is not the seed.
+- Retarget `ol-d2-social` to email or text so the day is not empty. The step is a social follow. The product has no sender for that channel. `form` is the non-dispatch token the normalizer already returns for `social`.
+- Decide the repeat compression in order to name the first reactivation calendar. The first calendar is the list section C already gave. The silent is the repeat. Carrying it is the instruction in that section.
+
+No founder question on the opt-in cells or on the first reactivation calendar. The repeat compression stays the question section C said not to fill. Who is placed on `camp.optin.day` stays the other question `SYSTEMS-GOAL` said not to fill. Nothing in this claim writes `waitlisted`.
+
+**Evidence:** `supabase/seeds/002_machine_tables.sql` `tpl.optin_launch.v1` and the reactivation cells. `templateWalk.ts` `channelFromToken`, `dayFromToken`, `normalizeTemplateCells`. `cascade.ts` `advanceTemplateCellIfDue` the one-cell advance and the `email` or `text` send. `guidelines/Reactivation.md` Day 2, Day 3, Days 4–7, Days 1–3, Day 3 slot opens. `docs/register/system-map/BUILD-system-map-v3-templates-and-binding.md` section C. Claim 45.
+
+**Live.** The opt-in seed is still five cells, with `ol-d4-7` one email at day 4, `ol-d3-waitlist` one email, and `ol-d2-social` channel `form`. The reactivation seed is still four cells, and the nurture and the slot still normalize from the token alone. `offsetMs` is still `day × 24h`. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
@@ -2514,7 +2594,9 @@ The sentence that the enroll was not specified stands as the gap. Claim 43 speci
 
 - `executeGet` for contacts `every` selecting `contact_records` with no `firm_id`, and any `mappedSlots` chip skipping that read, and claim 48, which reads the walk’s firm and uses a chip as the class value of a select. The live query is still unscoped. A chip still replaces the module read. An empty contacts read still leaves `ctx.contactIds` in place. Firms, audits, imports, and agents `every` are still unscoped.
 
-- `listUnsubscribe.accept` having no caller, and claim 49, which writes the silence statement for the email’s firm and contact with source `list-unsubscribe` and dispatches `consent_records.opt_out`. The live send still has no List-Unsubscribe header. The complaint class still does not write the pair.
+- `listUnsubscribe.accept` having no caller, and claim 49, which writes the silence statement for the email’s firm and contact with source `list-unsubscribe` and dispatches `consent_records.opt_out`. The live send still has no List-Unsubscribe header. `email.complained` still only inserts `messaging_events`, and claim 50, which treats that row joined to `outbound_messages.to_addr` as the address deny and does not quarantine the firm. The live send still does not look for a prior complaint. `injectEvent` on `complaint` still calls `setFirmQuarantined`.
+
+- The seeded `ol-d4-7` one email, and claim 51, which replaces that cell with an email on day 4, an email on day 5, and a text on day 6. `ol-d3-waitlist` stays one email. `ol-d2-social` stays `form`. The reactivation nurture and slot-open are still one token each. The live `offsetMs` is still `day × 24h`.
 
 - Approve now calling `resumeWaitRun` without the run’s `trigger_label`, and claim 46, which passes that column the way the tick already does. The live desk call still defaults the walk to `wait-resume`. The outgoing nodes themselves already run.
 
