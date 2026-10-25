@@ -2977,6 +2977,108 @@ The founder question is what makes one enabled family’s `pass` true. It is rec
 
 **Live.** `anyPass` is still the constant `true`. `result` is still the trigger object with no `pathways`. `motion` is still `reactivation`. `reason.precedence` is still `mp-1`. The dispatch payload is still `anyPass: true` and `motion: "reactivation"`. No migration was written.
 
+### Revision — claim 61
+
+The sentence that whether the missing-fact row is also a `signals` insert was not walked stands as the question this session opened. Claim 61 answers it. The missing-fact row is the detection. The `signals` insert stays the one `eligibility_determination`.
+
+---
+
+## Claim 61 — A missing fact is recorded on `missing_fact_signals`, and the eligibility firing’s `signals` row stays the determination
+
+**Standing:** necessary implication of Seed §5.8’s two recordings and of the form that already lists one of them.
+
+A missing self-reportable field is one `missing_fact_signals` row. That row is the detection Seed §5.8 records when it is found. It is not also an insert into `signals`. The cascade still inserts one `signals` row per contact per evaluation, `kind` `eligibility_determination`, `payload` `{ resultId, anyPass }`. Door 1 and the version 1 specimen read that kind. They do not read a missing-field kind, and the specimen does not store one.
+
+**Two states, two tables.** `docs/register/system-map/FROZEN-TABLES-v1.md` maps `signals` to `state.signal` and `missing_fact_signals` to `state.missing_fact_signal`. The node map keeps both. `missing_fact_signal` holds “a missing fact recorded as a signal,” and its ramification is Engine 2 input into `signal`. `signal` is fed by an `eligibility_result` and by a `missing_fact_signal`. Those are the inputs. They are not one physical row. `SYSTEMS-REQUIREMENTS-FILLED.md` §8 uses the Seed §5.8 phrase for `missing_fact_signal`: a missing fact recorded as a signal, detected rather than clicked, and an input to Engine 2. §11’s `signal` has the delta “any `eligibility_result` / `missing_fact_signal`.” The motion reads those recordings. It does not require a copy of the field into `signals`.
+
+The columns are why the copy cannot be the form. `missing_fact_signals` stores `field_key` and has no `kind` and no `payload`. `signals` stores `kind` and `payload` and has no `field_key`. `projectSeat` builds `formFields` from `missing_fact_signals` joined to `collectible_fields` on `field_key`. Seed §5.8’s one form is that list. A `signals` row is not a row of that join. Claim 35 already named this table the form’s required data. Claim 34 already named the insert the §5.8 detection, and that route does not run the cascade.
+
+The lifetimes differ. An answered fact deletes `missing_fact_signals` for that firm, contact, and `field_key`. The need is no longer outstanding. Nothing in the cascade deletes `signals`. The determination stays. `handleBoardDetections` keeps one `signals` row per contact, the newest. A missing-fact set is many keys. Inserting each key into `signals` would leave that read with one field and drop the rest. The form needs the set. The board’s one row is the determination.
+
+`event_write_set` for `eligibility.changed` names `signals` beside the evaluation, the result, and the motion. It does not name `missing_fact_signals`. Claim 12’s pointer is the inserted determination id. The rule node pushes its own `missing_fact_signals` pointer. Claim 60 already refused that node’s missing-fact `pass` as `any_pathway_pass`. The motion expression reads the pathway OR. A missing field does not become a second flag on that expression, and it does not become a second row in `signals` in order to be seen.
+
+**Rejected alternatives.**
+
+- Insert one `signals` row per missing field, kind `missing_data` or `eligibility_determination`, with `field_key` in the payload. The form does not read `signals`. The board’s newest-row read would keep one field. The fact delete would not clear the copy. Claim 34’s route would have to run the cascade it was specified not to run. Seed §5.8’s “recorded as a signal” is already the `missing_fact_signals` row. §8 says so.
+- Treat `executeRuleWrites`’ `lastOutput.pass` as the `signals` insert. That boolean is true when the node inserted nothing. Claim 60 refused it as the pathway column. The node’s write is `missing_fact_signals`.
+- Drop `missing_fact_signals` and keep only `signals`. The seat form, the seat search, the fact delete, the rule-node pointer, and Client Data’s tags name this table. The frozen map gives it a state. Claim 35 is the form field.
+- Filter the determination insert away when a missing-fact row exists, so the firing has one signal in total. The evaluation still produced a determination. The specimen stores both a result and an `eligibility_determination` for the contact who has pathway entries. The missing fields are the other recording.
+
+No founder question. The word “signal” in Seed §5.8 is the detection. The missing-data detection has its table. The eligibility firing’s `signals` row remains the determination.
+
+**What this leaves.** The same field can be inserted again by the rule node and by `handleMissingFactSignalCreate`. The fact route already keeps one row. That identity is claim 62. The brief does not yet list these rows. That read is claim 63.
+
+**Evidence:** `supabase/migrations/004_machine_tables.sql` `signals` and `missing_fact_signals`. `docs/register/system-map/FROZEN-TABLES-v1.md` the two map rows. `src/app/system-map/data/nodes.ts` `missing_fact_signal` and `signal`. `docs/register/SYSTEMS-REQUIREMENTS-FILLED.md` §8 and §11. `docs/register/SEED.md` §5.8. `docs/register/SYSTEMS-STORY.md` §8, §10, and §11. `server/wire-service/machine.ts` `runContactEligibilityCascade` the `eligibility_determination` insert, `handleFactWriteback` the delete, `handleMissingFactSignalCreate`, `handleBoardDetections` the `DISTINCT ON (contact_id)` signals read. `server/wire-service/workflowWalk.ts` `executeRuleWrites`. `server/wire-service/contactSeat.ts` the `formFields` join. `server/wire-service/eventTest.ts` the `kind='eligibility_determination'` specimen query. `supabase/migrations/017_event_test_contract.sql` `etd-elig-sig-okonkwo` and `etd-elig-sig-alvarez`, and `event_write_set` for `eligibility.changed`. Claims 12, 34, 35, and 60.
+
+**Live.** The cascade still inserts one `eligibility_determination`. The rule node and the create route still insert `missing_fact_signals` and still do not insert `signals`. The fact delete still does not delete `signals`. No migration was written.
+
+---
+
+## Claim 62 — One outstanding field is one `missing_fact_signals` row, and that set is the one form
+
+**Standing:** necessary implication of Seed §5.8’s one form and of the identity the fact route already uses, and a technical decision made in this session.
+
+While a `missing_fact_signals` row exists for a firm, a contact, and a `field_key`, a later detection of that same key does not insert another row. The outstanding set has one row per key. `projectSeat` attaches that set once: one question per `field_key`. That list is `mp-3`, `one_consolidated_form`. It is not one enrollment per field, and it is not one `signals` row per field.
+
+**The identity already used on the answer.** `handleFactWriteback` selects `id` from `missing_fact_signals` for the firm, the contact, and the key. When a row exists, it keeps that id and does not insert. The delete that clears an answered key is the same triple: `firm_id`, `contact_id`, `field_key`, with no id. Two rows of `language_clb` are one need. The table has no unique constraint. This claim does not add one.
+
+**The two writers that still insert the second row.** `executeRuleWrites` inserts whenever the contact has no `fact_writebacks` row for the key. It does not look for an existing signal. `handleMissingFactSignalCreate` inserts after the class check and does not look either. A second walk, and a second post of a key the class allows, store a second id. The seat query has no `DISTINCT`. The contact would be asked twice. The seat search already uses `DISTINCT` on `field_key`. The action’s `formFieldKeys` already uniques the keys it loaded from this run’s pointers. The seat list is the form the contact submits. It is the list that has to be the set.
+
+The rule node, for a key the class claim 32 already keeps, skips the key when a fact is stored, and when a signal row exists it pushes `{ table: "missing_fact_signals", id: that id, contact_id }` and does not insert. This run’s occupancy still names the need. A40’s “this run’s `missing_fact_signals`” stays that pointer. When no row exists, it inserts and pushes the new id, as it does now. The create route, after claim 35’s class check passes, returns the existing id and does not insert. When no row exists, it inserts and returns the new id. An empty body remains the existing 400. A key the class refuses still does not insert and still does not return an id. Claim 34 is unchanged: a missing consent row, `basis` `none`, and `silenced` true do not withhold a key the class allows. A key that was deleted because it was answered is absent, so the next detection inserts. The skip is only while the row exists.
+
+The sentence in claim 35 that the create route inserts only when the class passes stands. The class is still required. A second post of a key that already has a row does not insert. Claim 35 did not say that second post stores a new id.
+
+**The list.** `formFields` contains each `field_key` once, in the order the join already uses (`collectible_fields.ord`, then `field_key`), with the label from that row. The class is the one claim 32 already keeps. A historical second row of the same key does not become a second question. This claim does not delete that extra row. The answered-key delete already removes every row of the triple. `ClientDataPanel` still prints a tag per stored row. Claim 35 called that a dump. It is not this form.
+
+**Rejected alternatives.**
+
+- Leave the duplicate rows and rely on the contact to ignore a repeated question. Seed §5.8 consolidates every outstanding need into one form, never one nudge per field. Two rows of one key are not two needs. The delete already treats the key as one need.
+- Only `DISTINCT` the seat query, and keep inserting. The second row is a second recording of a detection that was already found. §5.8 records the detection when it is found. The fact route already implements that once.
+- Drop the pointer when the row exists, so a later walk’s writes omit the need. The form occupancy ascribed for this run is the `missing_fact_signals` pointer. Re-finding the need names the row that holds it. An empty write list would say the run found nothing while the seat still shows the field.
+- Enroll once per field. Claim 54 enrolls one re-engagement sequence. `mp-3`’s `set_value` is `one_consolidated_form`. The server lists `rule_motion_precedence` and does not have to read `mp-3` for the seat to be that form. The list is the consolidation.
+- Add a unique constraint. The identity is the read the fact route and the delete already share. This claim does not write a migration.
+
+No founder question. The one form is the outstanding set the seat already queries, stored once per key and shown once per key.
+
+**What this leaves.** The Live brief does not list this set. Claim 63 is that list on the booked meeting. `email.delivery_delayed` still only inserts `deferred`. A halt still does not decide Engine 2’s one motion.
+
+**Evidence:** `server/wire-service/machine.ts` `handleFactWriteback` the existing-id select and the delete, `handleMissingFactSignalCreate`. `server/wire-service/workflowWalk.ts` `executeRuleWrites` the insert, `formFieldKeys`. `server/wire-service/contactSeat.ts` the `formFields` join and the `DISTINCT` search. `supabase/seeds/002_machine_tables.sql` `mp-3`. `src/app/register/prototype-ant/consultant/clientData/ClientDataPanel.tsx` the missing-fact tags. `docs/register/SEED.md` §5.8. `docs/register/SYSTEMS-ANALYST-LOG.md` the form-occupancy sentence claim 35 cited. Claims 32, 33, 34, 35, 54, and 61.
+
+**Live.** The rule node still inserts a new id whenever the fact is absent. The create route still inserts a new id for every class-legal post. The seat still appends one question per stored row. No migration was written.
+
+---
+
+## Claim 63 — On a booked meeting, the outstanding missing facts are agenda lines on the Live brief, not a second sequence
+
+**Standing:** necessary implication of Seed §5.8’s agenda sentence and of the brief surface that already opens on a meeting, and a technical decision made in this session.
+
+The Live brief of a booked meeting lists the contact’s outstanding missing-fact set, the set claim 62 shows once, as agenda lines beside the current facts. Those lines are not send controls. They do not call `enrollAndActuate`. They do not insert `signals`. They do not insert a `live_brief` row. `mp-4`’s `attach_agenda` and `fcr-agenda`’s `route_live_brief` are this read. The server can list those rule rows. It does not apply them. Claims 52 and 54 remain the one sequence. The agenda does not add `tpl.reengagement.v1` beside `tpl.reactivation.v1`.
+
+**What the brief already is.** `MeetingsModule` opens Live brief on the selected meeting. `hydrateFactsFromMachine` loads `fact_writebacks` for the contact, keeps the newest row per key, and may add a cascade note when the newest eligibility result’s trigger is `fact_writeback`. The pane titles that table Current facts. Copy brief writes those lines, the overview, and the time. It does not load `missing_fact_signals`. `FROZEN-TABLES-v1.md` leaves `live_brief` without a table: a column or jsonb on a row that already exists, or later, if the phase-4 loop does not need it. The phase-4 loop’s list does not include a brief table. This claim does not mint one. The agenda is a read of `missing_fact_signals` for the meeting’s contact and firm, the same class and the same one-key list as the seat form, with the label from `collectible_fields`. There is no value on a missing key. The line does not enrol and does not offer a campaign button. The current facts stay the write-backs. The meeting’s phase line stays the phase the row already shows. Client Data’s missing-fact tags stay the dump claim 35 named. They are not this brief.
+
+The seeded meeting objective is `obj.react.meeting` on `camp.react.meeting`, kind `meeting`. The nudge objective is `obj.reeng.nudge`, kind `form`. The contact’s one form is that nudge objective’s seat. The consultant’s agenda is the same outstanding keys on the meeting’s brief. Showing the keys in both places is one set of needs. It is not two outreaches. The giveback’s parenthetical — other eligibilities, closing gaps, and missing fields — is wider than the rows this brief can list. Gap result ids and pathway `pass` values are not stored as rows. A family’s `pass` is the encoder claim 60 left open. This claim does not invent those lines and does not put the pack’s in-memory assertions on the brief. The agenda this claim names is the missing-fact set.
+
+**What this does not place.** Seed §5.8’s D-01 asks whether pre-meeting capture is the tail of the reactivation sequence or a standalone `meeting_booked` sequence. D-02 asks which module is the in-meeting fallback. Those stay the seed’s open decisions. This claim does not move `camp.react.meeting` and does not name a fallback module. The brief reads rows that already exist when a meeting is open.
+
+The painted facts on the local meetings store, with their `signal` strings, are the teaching body. Machine hydration already prefers write-backs when they exist. The agenda prefers the machine missing-fact rows the same way. It does not copy those painted signal words onto the contact.
+
+**Rejected alternatives.**
+
+- Insert the outstanding keys into `signals` so the brief can read “secondary signals” from that table. Claim 61 is the missing-fact row. The brief joins the table the form already joins.
+- Enroll the re-engagement sequence when a reactivation meeting is booked, so the gaps become a form send. Seed §5.8 attaches secondary signals as agenda and forbids parallel outreach. The nudge enroll is claim 54’s false side, when the motion is `nudge`.
+- Mint `live_brief`. The frozen map left it off the phase-4 tables. The meeting pane is the surface. The rows are `missing_fact_signals` and `fact_writebacks`.
+- Put pathway failures and the pack’s gap ids on the agenda now. Those assertions are not rows, and the per-family pass is still the open encoder. A line this claim cannot fill from a stored field is not a line.
+- Hide the agenda unless the newest `motion_decisions.motion` is `reactivation`. The seeded meeting is the reactivation objective. The keys are outstanding either way. Hiding them when a later cascade stored `nudge` would take the gaps off the brief the consultant opened. The enroll is what precedence chooses. The read is the set.
+- Settle D-01 by calling the agenda the capture form. The capture form is the seat list on a form objective. The agenda is the consultant’s list on the brief. They are the same keys and not the same control.
+
+No founder question. D-01 and D-02 stay as the seed left them. The family’s `pass` stays the question claim 60 recorded. Neither is which table the agenda reads.
+
+**What this leaves.** A later eligibility enroll while an attempt is already open was looked at and not specified. `enrollAndActuate` still inserts after the halt check. `mp-5` is still only a listed row. `email.delivery_delayed` still only inserts `deferred`.
+
+**Evidence:** `supabase/seeds/002_machine_tables.sql` `mp-4`, `fcr-agenda`, `obj.react.meeting`, `obj.reeng.nudge`. `docs/register/SEED.md` §5.8. `docs/register/SYSTEMS-STORY.md` §11 and §12. `docs/register/SYSTEMS-REQUIREMENTS-FILLED.md` §11 and §12. `docs/register/system-map/FROZEN-TABLES-v1.md` the `live_brief` backlog line. `docs/product/immigration-rules-engine2-giveback.md` the agenda parenthetical. `docs/sme/pass2/04-consultancy-desk-ops.md` desk-07 and desk-10. `src/app/register/prototype-ant/consultant/MeetingsModule.tsx` the Live brief pane and `copyBrief`. `src/app/register/prototype/shared/meetingsStore.ts` `hydrateFactsFromMachine`. `server/wire-service/machine.ts` `listModularRules` for `rule_motion_precedence`. Claims 52, 54, 60, 61, and 62.
+
+**Live.** The brief still hydrates write-backs only. It still does not list `missing_fact_signals`. `mp-4` and `fcr-agenda` are still unread by the enroll and by the brief. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
