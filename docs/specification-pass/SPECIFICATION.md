@@ -225,6 +225,10 @@ How each named reader follows that key:
 
 No founder question. Contacts still shows the latest mark. Book readiness still shows the run that was opened. The enroll gate still enrolls whoever is ready now, including a contact a later batch did not mention. The surrogate would not change those three. The pointer shape and the missing `id` column already pick the pair.
 
+### Revision — claim 48
+
+The sentence that `executeGet` for contacts still does not constrain `firm_id`, and that the omission was left alone because it is not this key, stands. Claim 48 constrains which contacts that node reads to the walk’s firm. The verdict pointer and the ready pointer stay this claim’s latest row for that contact and that firm. The key is not retuned.
+
 ---
 
 ## Claim 9 — A meeting response stops chasing for the contact
@@ -2092,6 +2096,10 @@ No founder question. The pair stays the table. The firm-less get stays the route
 
 **Live.** `setConsent` still keeps the previous boolean. `silence` still keeps the previous basis and sets the boolean true, and it still ignores `source`. `get` still does not take a firm. `standInContactSeat.consent` and `consentContact` still copy `prev?.silenced`. The server seat statement still sets `silenced` false. No migration was written.
 
+### Revision — claim 49
+
+The sentence that `listUnsubscribe.accept` has no caller, and that this claim does not add a route, stands as the gap. Claim 49 is that commit. It uses the silence statement this claim already kept as `POST /consent/silence`, with source `list-unsubscribe`. The stand-in map is still not that row.
+
 ---
 
 ## Claim 42 — The hard bounce and the workspace opt-out do not assign `status`
@@ -2336,6 +2344,10 @@ No founder question. The wait holds this run. The tick and the desk both continu
 
 **Live.** The tick already splits duration and occupancy the way this claim says, and the outgoing nodes already run. Approve now still omits `triggerLabel`, so that walk is still `wait-resume`. `chainWrites` is still empty. `executeGet` for every contact still has no firm predicate. No migration was written.
 
+### Revision — claim 48
+
+The sentence that a contacts Get with select `every` still has no `firm_id` predicate, and that this claim does not add it, stands as the gap. Claim 48 adds that predicate, and it says a mapped Get keeps the module read rather than the chip’s source rows.
+
 ---
 
 ## Claim 47 — A schedule tick walks this automation’s audience, and only in a minute the stored cron matches
@@ -2371,6 +2383,96 @@ No founder question. Schedule is the event-of-origin the face already named. The
 **Evidence:** `workflowWalk.ts` `dispatchScheduleTriggers`, `materializeTriggersFromGraph` the schedule jsonb and the grain forced to `global`, `dispatchEventToWorkflows` the audience arms, `writesFromPayload`. `cascade.ts` the call after the attempt loop. `machine.ts` `handleMachineTick`. `TriggerSelectModal.tsx` the cron input. `supabase/migrations/006_workflow_trigger.sql` `schedule`. `supabase/migrations/004_machine_tables.sql` `workflow_run.started_at`. `supabase/migrations/012_grain_audience_one_timer.sql` `audience_scope`. `supabase/seeds/003_canonical_workflows.sql` the three draft workflows. `docs/register/AUTOMATIONS-FACE.md` laws 2 and 31. `docs/register/AUTOMATIONS-UI-BLUEPRINT.md` A5. Claims 2, 7, 8, 17, 18, 22, 45, and 46.
 
 **Live.** The function still inserts a run for every enabled schedule trigger on every tick, still passes `{ schedule: true, anyPass: true }`, and still passes no contact ids. `schedule.cron` is still unread. No migration was written.
+
+### Revision — claim 48
+
+The sentence that a Get with no mapped slots may still replace the audience, and that this claim does not firm-scope that query, stands as the gap. Claim 48 is that scope. The people claim 47 placed are who the walk holds until that node. The Get then replaces them with the records it read.
+
+---
+
+## Claim 48 — A Get reads this run’s firm, and a mapped slot is the class that read uses
+
+**Standing:** necessary implication of Get being a module read on a one-firm run, and a technical decision made in this session.
+
+`executeGet` is the read a Get takes when `mappedWrites` returns null. For module `contacts` and select `every`, the live statement is `SELECT id, firm_id FROM contact_records` with no predicate. The ids become `contact_records` pointers, and, when the list is non-empty, the walk replaces `ctx.contactIds`. Claim 46’s waited contacts and claim 47’s audience are who the walk held until that node. Claim 8 left the missing predicate because it was not the audit-grain question. This claim is that read, the same door on the other modules in the function, and what a mapped Get keeps.
+
+**The firm.** The walk’s firm is `ctx.firmId`, which `walkValidatedWorkflow` sets from `opts.firmId`. Resume and the schedule tick already pass the run’s `firm_id`. A contacts read is `contact_records` whose `firm_id` is that firm. Select `every`, and a missing `getSelect` (the function’s default is `every`), are that whole book. There is no `ORDER BY`. An empty book is an empty id list. A missing `getModule` stays `contacts`, so the same predicate applies.
+
+Select other than `every` still needs a firm. That firm is `getClass1` when the firm slot has no chip. The read is empty unless `getClass1` is the walk’s firm. When it is, `getClass2All` or an empty `getClass2` is every contact of that firm, and a non-empty `getClass2` is those ids that are contacts of that firm. An id from another firm does not match. The live select path already filters `firm_id = getClass1` and, when class 2 is narrowed, `id = ANY(getClass2)`. This claim adds the requirement that `getClass1` be the walk’s firm.
+
+**Why it is this firm and not every row.** `origin/pr-96:docs/register/GET-PACKET.md` says Every firm on Get is the same idea as a dispatch that loads the whole firm book, and law 36 of `AUTOMATIONS-FACE.md` on that pull says select a firm and the contacts are that firm’s. `origin/pr-86:docs/register/SYSTEMS-GET-RULE-ASCRIBE.md` names the contacts cascade as firm then contact, and it calls the audits cascade the same tenancy door. The book query it lists, `contact_records WHERE firm_id = $1`, is marked audience and enroll rather than the Get node. That sentence keeps Get from being a second copy of Add contact. It does not give Get a house-wide book. Claim 17 already refused “every `contact_records` row, no firm predicate” on a run, because `call_agent` enrolls each id under `opts.firmId`. A Get that replaced the people with another firm’s contacts would do that. `handleSequenceEnrollContacts` can enroll each row under `row.firm_id` because that door starts now. This run has one firm. The operator-book helper “All contacts, every firm” stays the picker, which claim 17 already separated from the run.
+
+**The people and the audit pointers.** When the module is `contacts`, the id list replaces `ctx.contactIds`, including when the list is empty. The live guard `if (result.contactIds?.length)` leaves the previous people in place when the read returns nobody, and a select with no `getClass1` returns `{ writes: [] }` and no `contactIds` at all. An empty read is zero people. The next `call_agent` enrolls that list. The writes are the `contact_records` pointers, then claim 8’s latest `reachability_verdicts` row and latest `sequence_ready` row for that contact and the walk’s firm. No such row means omit. The live attach still selects both tables by `contact_id` only and still stores the contact id as the pointer `id`. This claim does not retune that key. Law 45’s “Get contact always includes it” is those two pointers. Firms, audits, imports, agents, and reference do not return `contactIds`. They do not replace the people. Their writes still replace `previousWrites` through `commitWrites`.
+
+**The other modules in the same function.** Each `every` arm that omits `firm_id` is the same door.
+
+- Firms. Every is one write, `ct_firms` and the walk’s firm. Select is that write when `getClass1` is the walk’s firm, and empty otherwise. The live every arm is `SELECT id FROM ct_firms`. The live select arm returns `getClass1` with no check. Auth `firms` stays silent as the picker key, which the ascribe already said.
+- Audits. Every is `audit_runs` whose `firm_id` is the walk’s firm. Select is empty unless `getClass1` is that firm, then every audit of that firm, or the `getClass2` ids that are audits of that firm.
+- Imports. The same, and the live `kind = 'contact'` stays. Select is empty unless `getClass1` is the walk’s firm.
+- Agents. The glass labels are Every sequence and Select sequence (`automationGet.ts`). The ascribe’s first class is `sequence_template` via `firm_sequence_binding` for this firm, and the second class is `campaign` of that sequence. Every is the campaigns whose `sequence_id` is a `template_id` bound to the walk’s firm. Select is empty unless `getClass1` is one of those template ids, then every campaign of that sequence, or the `getClass2` ids that are campaigns of that sequence. The live every arm is `SELECT id FROM campaign`. The live narrowed arm returns `getClass2` with no query. `campaign.firm_id` is not the predicate. A platform campaign of a bound sequence stays in the set.
+- Reference. The function already returns `{ writes: [] }`. It stays empty. It does not replace the people. The ascribe already called that module silent.
+
+**What a mapped Get keeps.** `mappedSlots` comment in `automationWorkflows.ts` says a chip, when present, is that slot’s value, and the class field for that slot is ignored. Law 40 says the chip is the box. The Get packet says a left-side write applies in the firm or contact box, and that replacing Every firm with a mapped-only slot was the first wrong turn. The writes are the records the module read. They are not the chip’s source rows.
+
+When `getSelect` is `every`, or is missing, chips are not the read. Stale `mappedSlots` do not skip `executeGet`. The live branch treats any chip as the whole result and never queries the module.
+
+When `getSelect` is `select`, a chip is the class value for its slot, and the module is still read inside the walk’s firm.
+
+- A firm chip resolves the way `mappedWrites` already finds a chip: `chainWrites[fromNodeId]` when that node was filled, otherwise `previousWrites`, filtered by the chip’s table and id. The firm id is the chip’s `id` when that string is set, otherwise the `id` of the matched `ct_firms` write. If the slot does not resolve to an id, `getClass1` is not the fallback. The read is empty. If the id is not the walk’s firm, the read is empty.
+- No firm chip: `getClass1`, and it still has to be the walk’s firm.
+- A contact chip’s ids are the chip `id` when set, otherwise the matched write’s `contact_id`, otherwise that write’s `id` when the table is a person table. Those ids are then the contacts of the walk’s firm. A contact slot that does not resolve is an empty contact list, not every child of the firm.
+- No contact chip: the closed-contact default. `getClass2All`, or an empty `getClass2`, is every contact of the walk’s firm. A non-empty `getClass2` is those ids that belong to that firm.
+
+The same slot rule is the class value on firms, audits, imports, and agents. A firm chip that is not the walk’s firm, or a sequence chip that is not bound to the walk’s firm, is an empty read. Earlier nodes keep their own writes. Claim 6 still rebuilds `chainWrites` on resume. This node’s `previousWrites` are the records just read. On contacts, the people are that id list. The waited list and the schedule audience are not kept beside it.
+
+**Rejected alternatives.**
+
+- Leave contacts `every` as every row of `contact_records`. That is the live statement. Claim 17 already refused it for a run whose enroll uses one `firmId`. The packet’s “whole firm book” is the firm-scoped dispatch, not `handleSequenceEnrollContacts`.
+- Let Select firm of another firm return that firm’s contacts, and let `call_agent` enroll them under the walk’s firm. The three-level selector names a firm. On this run the firm is already `ctx.firmId`. Another firm’s book is the harm the unscoped `every` has. The read is empty.
+- Enroll a foreign Get under each contact’s own `firm_id`. That is the Agents door claim 17 separated. This walk does not grow a second firm.
+- Treat any `mappedSlots` chip as the Get’s writes, which is the live branch. A firm chip would put a `ct_firms` pointer on the handle and, with no `contact_id`, would leave the people unchanged. The packet’s firm box selects that firm’s records. The chip is the class, not the result.
+- Let a chip that fails to resolve fall back to `getClass1` or to every contact. The chip is the box. An unresolved box is an empty read. `getClass1` is the value when the slot has no chip.
+- Let `every` honor stale chips and skip the book. Every hides the boxes. A leftover chip would be the mapped-only slot the packet rejected.
+- Keep the previous people when the contacts read is empty. The set the node named has nobody. The length guard would enroll the people the Get replaced.
+- Add `ORDER BY`, or retune claim 8’s pointer `id` to `audit_run_id` inside this claim. The book has no order. The key is claim 8. This claim names which contacts are read and which latest row is attached.
+- Read `reference_versions` because the teaching chain is pack update, Get, rule. The module is silent. The example tree is not a write-set.
+
+No founder question. Get is the module read on this run’s firm. Every contacts is that firm’s book. A mapped slot picks the class inside that firm. The people become the contacts that read returned, including none. Another firm’s contacts are not added. Who is placed on launch day stays unfilled.
+
+**Evidence:** `workflowWalk.ts` `executeGet`, `mappedWrites`, the `type === "get"` branch, `ctx.firmId`. `automationGet.ts` `GET_MODULES`, `previewGetWrites`. `automationWorkflows.ts` `mappedSlots`. `GetParametersPane.tsx` the every/select dropdown. `origin/pr-96:docs/register/GET-PACKET.md`. `origin/pr-96:docs/register/AUTOMATIONS-FACE.md` laws 36, 40, and 45. `origin/pr-86:docs/register/SYSTEMS-GET-RULE-ASCRIBE.md` the contacts cascade and the tenancy door. `supabase/migrations/004_machine_tables.sql` `audit_runs.firm_id`, `firm_sequence_binding`. `supabase/migrations/010_sequence_campaign_housing.sql` `campaign`. `supabase/migrations/014_contact_import.sql` `import_batch.firm_id`. Claims 6, 8, 17, 46, and 47.
+
+**Live.** Contacts `every` still has no `firm_id` predicate. Any chip still skips the module read and returns the matched source rows. An empty contacts read still does not clear `ctx.contactIds`. Firms, audits, imports, and agents `every` are still unscoped. No migration was written.
+
+---
+
+## Claim 49 — A one-click list-unsubscribe is the silence commit, for that email’s firm and contact
+
+**Standing:** necessary implication of the silence leaf’s one-click being that same commit, and a technical decision made in this session.
+
+`docs/register/how/contact-silence.md` says Silence, Opt out, and List-Unsubscribe one-click, where the channel provides it, are one commit. That commit writes the silenced state the runners, the send gates, and Book readiness read. `listUnsubscribe.accept` calls `standInConsentSilence.silence` with source `list-unsubscribe` and returns `{ accepted: true }`. Nothing in `src/` calls `accept`. No route under `server/` mentions list-unsubscribe. `dispatchEmailLive` sends the CEM without a List-Unsubscribe header. Claim 41 left the route unwritten. This claim is that commit.
+
+**The write.** It is `handleConsentSilence`’s statement, with `source` `list-unsubscribe`. The pair is the firm and the contact the email was sent to. The insert stores `basis` `none`, `silenced` true, and that source. `status` takes the column default `unsequenced`. A conflict sets `silenced` true, `source`, and `updated_at`, and does not assign `basis`, `status`, or `workspace_opted_out`. That is claims 15 and 25 on this source. The dispatch is the one claim 15 specified: `consent_records.opt_out`, that firm, that contact, and the `writes` array whose `id` and `contact_id` are both the contact. The live silence handler still omits `writes`. This claim does not draw a second array.
+
+**How the email carries it.** `dispatchEmailLive` is the firm-branded CEM. When `input.contactId` is set, that send includes `List-Unsubscribe` and `List-Unsubscribe-Post: List-Unsubscribe=One-Click`. The URI is bound to that `firmId` and that `contactId`. The POST writes only when the binding checks. A failed check does not upsert and does not dispatch. The Resend webhook’s fail-open, when `RESEND_WEBHOOK_SECRET` is unset, is not this check. A public URI that accepted an unbound pair would silence a contact the email was not sent to. When `contactId` is null, the send has no header and there is no pair to write. SMS is not this header. The OTP mailer is not `dispatchEmailLive`.
+
+A second POST runs the same statement and dispatches again. `handleConsentSilence` already does that on a second call. This claim does not add a receipt table.
+
+**What is not this commit.** `handleResendWebhook` maps `email.complained` to event class `complaint`, inserts `messaging_events`, and does not touch `consent_records`. The leaf does not name that complaint. This claim does not silence it. The hard-bounce upsert stays claim 42: same pair, source `hard-bounce`, no dispatch. The stand-in `silence` ignores its source argument and keeps the previous basis. That map is not the row the gate reads. `registry.ts` still tags `listUnsubscribe` as the stand-in.
+
+**Rejected alternatives.**
+
+- Leave `accept` with no server writer. The leaf already named the control, and the stand-in already calls silence with the firm, the contact, and the source. The pair the gate reads is the server statement.
+- Write a third upsert that does not dispatch, the way the bounce does. The leaf calls one-click the same commit as Silence / Opt out. That commit is `POST /consent/silence`, which dispatches. Claim 15 left the bounce off that event because a bounce is not the opt-out. One-click is the opt-out.
+- Look the pair up only after Resend returns `provider_message_id`, and put that id in the header. The header is on the send. The provider id does not exist yet. The binding is the firm and the contact the function already has.
+- Accept the POST with no binding check, matching the webhook when the secret is unset. The webhook URL is the provider’s callback. This URI is on the message. An unbound POST is not the email’s contact.
+- Mint a receipt table so a retry does not dispatch twice. The silence route has no such table. A repeated silence is the same upsert and another dispatch. Claim 2 already allows a later firing to enroll again.
+- Fold `email.complained` into this source. The handler records `complaint` and stops. The leaf’s control is the one-click. Whether that complaint is a silence, a quarantine, or only the event row was not decided.
+
+No founder question. One-click is the silence commit the leaf already named, for the firm and contact on that email. A silenced pair is what the gates already deny. A complaint event is not this write. Who is placed on launch day stays unfilled.
+
+**Evidence:** `src/app/wire/standins/listUnsubscribe.ts` `accept`. `src/app/wire/standins/consentSilence.ts` `silence`. `src/app/wire/registry.ts` `listUnsubscribe`. `stores.ts` `handleConsentSilence`. `routes.ts` `POST /consent/silence`, `POST /webhooks/resend`. `webhooks.ts` `mapClass`, the `bounce_hard` upsert, the `complaint` class. `dispatchSend.ts` `dispatchEmailLive`. `docs/register/how/contact-silence.md`. Claims 15, 25, 41, and 42.
+
+**Live.** `accept` still has no caller. `dispatchEmailLive` still sets no List-Unsubscribe header. `handleResendWebhook` still does not write `consent_records` for `email.complained`. No migration was written.
 
 ---
 
@@ -2409,6 +2511,10 @@ The sentence that the enroll was not specified stands as the gap. Claim 43 speci
 - The three tick sends passing purpose `cem` for every open attempt, and claim 45, which passes `opt-in` when that attempt’s `sequence_template.sequence_class` is `optin`. The live calls still pass `cem`. A contact with no basis still receives the day-1 primer and is still denied the day-1 announcement. `normalizeTemplateCells` still offsets that announcement by `day × 24h`. Claim 45’s offset is the difference from the first cell’s day, which is 0 for the two day-1 cells. The live announcement is still due one day after enroll. `call_agent` still classifies the purpose with `sequenceClassForAgent`.
 
 - `dispatchScheduleTriggers` inserting a `schedule` run on every tick with no contact ids and `anyPass: true`, and claim 47, which starts one run in a UTC minute `schedule.cron` matches, walks claim 17’s audience for the trigger’s firm, and does not set `anyPass`. The live function still ignores the cron and still walks nobody.
+
+- `executeGet` for contacts `every` selecting `contact_records` with no `firm_id`, and any `mappedSlots` chip skipping that read, and claim 48, which reads the walk’s firm and uses a chip as the class value of a select. The live query is still unscoped. A chip still replaces the module read. An empty contacts read still leaves `ctx.contactIds` in place. Firms, audits, imports, and agents `every` are still unscoped.
+
+- `listUnsubscribe.accept` having no caller, and claim 49, which writes the silence statement for the email’s firm and contact with source `list-unsubscribe` and dispatches `consent_records.opt_out`. The live send still has no List-Unsubscribe header. The complaint class still does not write the pair.
 
 - Approve now calling `resumeWaitRun` without the run’s `trigger_label`, and claim 46, which passes that column the way the tick already does. The live desk call still defaults the walk to `wait-resume`. The outgoing nodes themselves already run.
 
