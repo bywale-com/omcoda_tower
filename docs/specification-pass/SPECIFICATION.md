@@ -2582,6 +2582,10 @@ The same section marks named-silent on repeat-compression: whether the three-day
 
 No founder question on the opt-in cells or on the first reactivation calendar. The repeat compression stays the question section C said not to fill. Who is placed on `camp.optin.day` stays the other question `SYSTEMS-GOAL` said not to fill. Nothing in this claim writes `waitlisted`.
 
+### Revision — claim 70
+
+Day 3 remains the one email this claim named. Claim 70 is the address on that email and the click that email can produce. The cell, the offset, and the refusal to add a second channel are unchanged. Nothing in that claim writes `waitlisted` either.
+
 **Evidence:** `supabase/seeds/002_machine_tables.sql` `tpl.optin_launch.v1` and the reactivation cells. `templateWalk.ts` `channelFromToken`, `dayFromToken`, `normalizeTemplateCells`. `cascade.ts` `advanceTemplateCellIfDue` the one-cell advance and the `email` or `text` send. `guidelines/Reactivation.md` Day 2, Day 3, Days 4–7, Days 1–3, Day 3 slot opens. `docs/register/system-map/BUILD-system-map-v3-templates-and-binding.md` section C. Claim 45.
 
 **Live.** The opt-in seed is still five cells, with `ol-d4-7` one email at day 4, `ol-d3-waitlist` one email, and `ol-d2-social` channel `form`. The reactivation seed is still four cells, and the nurture and the slot still normalize from the token alone. `offsetMs` is still `day × 24h`. No migration was written.
@@ -3314,6 +3318,10 @@ No founder question. The address in the sign-up email is the contact seat for th
 
 **What this leaves.** Day 3’s waitlist email is still one email (claim 51). The guideline says that email directs clients to a landing page to join the waitlist. The same live append will put this seat URL on that email. Whether that page is this seat, and what “join” writes, was not specified. Nothing here writes `waitlisted`.
 
+### Revision — claim 70
+
+That sentence stands as the gap. Claim 70 is the page and the click. The sign-up address, the mint, and the seat’s read of `enrollment_id` are unchanged.
+
 **Evidence:** `server/wire-service/dispatchSend.ts` `dispatchEmail`, `dispatchEmailLive`, `dispatchSmsLive`. `server/wire-service/contactAccessMint.ts` `mintContactAccessLink`, `contactAccessUrlForSend`. `server/wire-service/contactSeat.ts` `lookupLink`, `projectSeat`, `handleContactSeatFacts`, `seatFromToken`. `server/wire-service/cascade.ts` `actuateChannelSend`. `server/wire-service/campaignHousing.ts` `resolveFormStamp`, `onCompletionWrite`, `objectiveSatisfiedBy`. `server/wire-service/routes.ts` `GET /contact-seat/:token`. `vite.config.ts` the `/c/` document. `src/main-prototype-ant.tsx`. `src/app/register/prototype-ant/PrototypeAntApp.tsx` `contactTokenFromPath`. `src/app/register/prototype-ant/contact/ContactWorkspace.tsx`. `src/app/Router.tsx` `/a/:token`. `docs/register/MAGIC-ACCESS-LINK.md`. `supabase/migrations/019_contact_seat.sql`. `src/app/system-map/data/templates.ts` `ld-signup-email` variables and `ld-landing`. `guidelines/Reactivation.md` Launch Day. Claims 3, 28, 29, 45, 66, and 67.
 
 **Live.** `contactAccessUrlForSend` still selects the newest enrollment and does not read the send’s stamp. `dispatchEmailLive` still mints before it tests `/c/`, so a body that already contains `/c/` can still insert a link that is not appended. `projectSeat` still ignores `link.enrollment_id`. `handleContactSeatFacts` still stamps the newest enrollment. A dry-run still returns before the append. No migration was written.
@@ -3342,9 +3350,55 @@ No founder question. Pressing Submit on the launch-day form signs the contact up
 
 **What this leaves.** Day 3’s waitlist landing is still unread. The same seat URL will be appended to that email on a live send. What “join the waitlist” writes was not specified.
 
+### Revision — claim 70
+
+That sentence stands as the gap. Claim 70 is that landing and that write. The null-key row stays `obj.optin.day` only.
+
 **Evidence:** `src/app/register/prototype-ant/contact/ContactWorkspace.tsx` the form `onFinish` filter. `server/wire-service/contactSeat.ts` `handleContactSeatFacts`. `server/wire-service/campaignHousing.ts` `objectiveSatisfiedBy` the `fact_writebacks` select. `supabase/migrations/004_machine_tables.sql` `fact_writebacks.field_key`. `supabase/seeds/002_machine_tables.sql` `obj.optin.day` name `They opt in`. `guidelines/Reactivation.md` Launch Day. Claims 29, 32, 66, 67, and 68.
 
 **Live.** An empty answers array still inserts nothing, and Submit still does not meet the objective. No migration was written.
+
+---
+
+## Claim 70 — The day-3 waitlist email opens the contact seat, and the click is the window’s “Click this link”
+
+**Standing:** necessary implication of claim 51’s one email, of claim 68’s append, and of the window objective, and a technical decision made in this session.
+
+`ol-d3-waitlist` sends only while the window attempt is still `open`. The stamp on that send is the enrollment’s current campaign, which is `camp.optin.window`, and `obj.optin.window`. A live email appends `{origin}/c/{token}` when the body does not already contain `/c/`, and the mint stores that enrollment and `camp.optin.window`, the same rule claim 68 already gave a stamped send. The page is the contact seat. It is not the launch-day form. The click Resend reports on that email is the window objective “Click this link”. It does not write `consent_records.status`, and it does not write `cohort_tiers`.
+
+**Why this email is still the window.** Claim 51 keeps the cell as one email, channel `email`, due two days after enroll. `advanceTemplateCellIfDue` sends it when the attempt’s `state.templateId` is set and the cell is due, and it passes `pursuitStampForEnrollment`. That function reads `enrollment.campaign_id` and the objective for that campaign. The cursor is still `camp.optin.window` because a click that had already satisfied `obj.optin.window` would have set this attempt to `met` (claim 64), and the tick loads `status='open'` only. Claim 66’s launch-day attempt has no `templateId`, so it does not walk this cell. The day-3 email does not go out after the window has qualified, and it does not go out from the launch-day attempt.
+
+**What the seat shows.** Claim 68’s read applies: the link’s `enrollment_id` loads that enrollment, and the campaign is that row’s current `campaign_id`. The objective kind is `click`. `projectSeat` sets `now.state` to `consent` when the consent row is missing, or `basis` is `none` and `source` is not `ignored`. It sets `form` only for kind `form`, and `meeting` only for kind `meeting`. A click falls through. After the consent test, `now.state` stays `empty`, the title stays `Nothing needed right now`, and the instruction stays the firm name plus `will put the next ask here.` The history query keeps `o.kind <> 'click'`, so the window campaign is not a row on that list, outstanding or done. `ContactWorkspace` renders Agree and Ignore only for `consent`, and the form only for `form`. This page has no join control.
+
+Purpose `opt-in` can still send this email while `basis` is `none`, so the first open is often the consent ask. Agree is claim 26. It does not assign `status`. Ignore is claim 28’s empty Now, which a click objective already is. Neither button meets `obj.optin.window`. Claims 28 and 29 still gate the launch-day form. That form is `obj.optin.day`. The cursor is not that campaign when this email is sent, so those claims do not paint it here.
+
+**The click.** `handleResendWebhook` maps `email.clicked` to `event_class` `clicked` and inserts `messaging_events`. `objectiveSatisfiedBy` for a completion table other than `meeting_booked` and `fact_writebacks` matches that class when the outbound row’s `campaign_objective_id` is the objective. This send’s stamp is `obj.optin.window`. The seed names that objective `Click this link`, kind `click`, completion `messaging_events`. `campaign_objective` is unique per campaign, so the day-1 announcement and the days 4–7 emails carry the same id while the cursor is the window. A click on any of those emails is the same completion. `email.opened` is class `opened` and does not match. Opening the seat is a GET. It does not insert `messaging_events`.
+
+The day-1 text primer can append the same URL. `dispatchSmsLive` uses the helper when the body does not contain `/c/`. `mapClass` has no text click. That open does not satisfy the window. Day 2 stays channel `form` and does not send (claim 51). The emails are the messages that can meet “Click this link”.
+
+A click that does satisfy it is the qualify claims 64 and 66 already run. The window attempt becomes `met`. Later day cells do not send. A contact who clicked the announcement does not receive `ol-d3-waitlist`. This email is the ask for a contact who has not yet clicked. After the click is ingested, the cursor is `camp.optin.day`. A later load of the same link reads that current `campaign_id`, so the seat can then show the launch-day form when claims 28 and 29 allow it. That paint is the qualify. The day-3 cell did not address the launch-day page. Claim 3’s matcher is unchanged. The live webhook still advances the newest enrollment. This claim does not retune it.
+
+**What join does not write.** Section C puts the waitlist value on consent state, and the map edge is labeled “Day3 waitlist → waitlisted”. Claim 27 already refused that edge as a statement. No production statement sets `status` to `waitlisted`. This click does not become that statement. `cs-waitlist` would store `intent_waitlist` on the cohort tier. The seed does not contain the row. No statement in `server/` writes `cohort_tiers`. The guideline’s “landing page to join” is the action the email is for. The page the address opens is this seat, and the commitment the machine records is the click the objective already names. The firm’s subject and body stay the cell. The seed does not fill them. When they are absent, the sender uses subject `Tower` and body `Tower sequence step`, and a live send still appends the seat URL. A body that already contains `/c/` is left as authored. A dry-run still does not mint a link. There is no web cell on day 3. `ld-landing` stays the launch-day cell claim 66 refused.
+
+`docs/register/AGENTS-FACE.md` says the window’s one binary is the click, and that this is not the waitlist question. `docs/register/SYSTEMS-GOAL.md` at 22:41 puts the day calendar inside campaign A, qualifies on that campaign’s objective, and says a mini-goal miss continues the campaign. The same file leaves who is placed on launch day unfilled, and says the face qualify is the objective met, not yet `waitlisted`. This claim follows that click. It does not store the status the audience fork would read, and it does not require that status before the click qualifies.
+
+**Rejected alternatives.**
+
+- Render a join form on this seat and meet the window with a `fact_writebacks` row, including claim 69’s null key. The window objective is a click. A form would be a second objective on the same campaign. The face says not to split the window unless there are two objectives. Claim 69’s marker is `obj.optin.day` only.
+- Treat this URL as the launch-day form, or add `ld-landing` so day 3 has a web step. The cursor is the window when the email goes. The launch-day form is the next campaign. Claim 66 already refused that web cell.
+- Write `waitlisted` on the click so the audience fork has a column. The goal says this class of write does not store that status, and says not to fill who gets launch day. Claim 27 refused the map edge. The gate treats `waitlisted` like `unsequenced`. The click objective does not own the rung.
+- Write `cohort_tiers` from `cs-waitlist`, or from the guideline’s top-tier sentence. The seed has `cs-open-click` and `cs-top-tier` and does not have `cs-waitlist`. Nothing in `server/` writes the table. The sentence is a reading of metrics, not this send.
+- Count only a day-3 click, and ignore a click on the announcement. One campaign has one objective. The announcement carries the same stamp. An earlier click already qualifies, and claim 64 stops the calendar.
+- Add the guideline’s day-3 SMS so a text can join. Claim 51 kept one email. There is no text click class.
+- Leave the seat URL off this cell so the landing can be specified later. The live append is how an email without `/c/` addresses the contact. The cell is the firm’s copy. The page is the seat the append already opens.
+
+No founder question. The day-3 address is the contact seat for the window enrollment, and the click is `obj.optin.window`. Who is placed on launch day, whether a repeat reactivation compresses, whether a `deferred` event holds the next email, and what makes one family’s `pass` true, stay the questions already recorded. This click does not choose the audience.
+
+**What this leaves.** When the attempt’s `cellIndex` is already the last day cell, `advanceTemplateCellIfDue` returns without a send. `tickOnce` still evaluates the attempt ladder on that open row. Whether those later sends are part of campaign A, or the day calendar is the whole of the window’s outreach, was not settled. A miss continues the campaign, and class failure is after both campaigns, in `SYSTEMS-GOAL`. Those sentences were not applied to this return. D-01 and D-02 stay the seed’s open decisions. This claim does not place them.
+
+**Evidence:** `supabase/seeds/002_machine_tables.sql` `ol-d3-waitlist`, `obj.optin.window`, `camp.optin.window`, `cs-open-click`, `cs-top-tier`. `server/wire-service/cascade.ts` `advanceTemplateCellIfDue`, `tickOnce` the `status='open'` load. `server/wire-service/campaignHousing.ts` `pursuitStampForEnrollment`, `objectiveSatisfiedBy`. `server/wire-service/dispatchSend.ts` `dispatchEmailLive`, `dispatchSmsLive`. `server/wire-service/webhooks.ts` `mapClass`. `server/wire-service/contactSeat.ts` `projectSeat` the `now.state` branches and the `kind <> 'click'` history query. `src/app/register/prototype-ant/contact/ContactWorkspace.tsx` the `consent` and `form` branches. `src/app/system-map/data/templates.ts` the day-3 label and `ld-landing`. `src/app/system-map/data/tables.ts` `cs-waitlist` and the waitlist edge. `guidelines/Reactivation.md` Day 3 and Launch Day. `docs/register/system-map/BUILD-system-map-v3-templates-and-binding.md` section C. `docs/register/AGENTS-FACE.md` “One thing in the window.” `docs/register/SYSTEMS-GOAL.md` the 22:41 grain and the unfilled audience. Claims 26, 27, 28, 29, 45, 51, 64, 66, 68, and 69.
+
+**Live.** A click objective already falls through to `empty`, or to `consent` when that test matches. The history query already drops kind `click`. `email.clicked` already completes a message stamped with the window objective, and `email.opened` does not. No statement sets `waitlisted` or writes `cohort_tiers`. The cell send still passes purpose `cem`. The mint and the seat’s enrollment read remain the live gap claim 68 named. No migration was written.
 
 ---
 
