@@ -30,6 +30,10 @@ Packet 022’s detection SQL comments “one open sequence per contact today.”
 
 **Rejected alternative:** refuse a second enrollment, or close the first when the second starts. That would restrict the operator to one mission per contact. Nothing in the face or the flagship says the first mission ends when another agent is assigned.
 
+### Revision — claim 64
+
+The sentence that `advanceEnrollmentCampaign` moves `campaign_id` to the next campaign, or to NULL on the last, and does not close other enrollments, stands. The same update also sets every still-`open` attempt on that enrollment to `met`, including when the next id is null. Journal 044 said the function leaves the attempt `open`. That sentence missed the status write. Other enrollments stay open. Claim 64 is that status. Claim 65 is the eligibility withhold that follows from it. The operator and the `objective_met` listener may still insert a second pursuit.
+
 ---
 
 ## Claim 3 — A completion belongs to the pursuit that asked for it
@@ -1096,6 +1100,10 @@ The sentence that the engagement kind stored for the deny was not specified stan
 ### Revision — claim 45
 
 The sentence that the three sends each use purpose `cem` stands as the live literal. Claim 45 keeps `cem` when the attempt’s sequence class is not `optin`, and when no template row loads. When `sequence_template.sequence_class` for that attempt is `optin`, those three calls pass `opt-in`. The halt arm still does not read purpose. The deny, the open attempt, and the writes made before the send are unchanged.
+
+### Revision — claim 64
+
+The sentence that the attempt’s own endings stay the engine’s stands. One of those endings is the campaign cursor. Claim 64 names the status that cursor writes: `met`. Halt still does not set `status`. The inbound nullify path is still that path. `recordCampaignFailure` is still `exhausted`.
 
 ---
 
@@ -2614,6 +2622,10 @@ No founder question. The active graph enrolls the reactivation sequence for a co
 
 The sentence in claim 50 that the complaint-rate window and the denominator were not specified stands as the gap. The same sentence in claim 52 stands. Claim 53 specifies that rate. One complaint is still not, by itself, the quarantine. The address deny is unchanged.
 
+### Revision — claim 65
+
+The sentence that claim 2 still allows a second enrollment when the call is made stands. Claim 65 is when the eligibility callers do not make the call: this firm and contact already have an attempt in `open`. The operator and the `objective_met` listener still go through `enrollAndActuate`, which still inserts.
+
 ---
 
 ## Claim 53 — The complaint rate is this UTC day’s complaints divided by this UTC day’s deliveries, and the ceiling holds for seven days
@@ -2705,6 +2717,10 @@ No founder question. A contact this firing marked `nudge` enters the firm’s re
 **Evidence:** `supabase/seeds/003_canonical_workflows.sql` `wf-eligibility-reactivation`, `wf-webhook-reeval`. `src/app/data/automationWorkflows.ts` the same graphs and `chainEdges`. `server/wire-service/workflowWalk.ts` `actionAgentRef`, `sequenceClassForAgent`, `resolveAgentRef`, `evalIfPick`, `personTableOf`, the branch `personSplit`, `call_agent`, `formFieldKeys`, the rule `lastOutput` nudge flags. `server/wire-service/machine.ts` `runContactEligibilityCascade` the motion expression, the payload `motion`, the `dispatched.length === 0` loop, `handleEnrollmentCreate` the purpose default. `server/wire-service/campaignHousing.ts` `firstCampaignId`, `platformTemplateIdForClass`. `server/wire-service/contactSeat.ts` the `missing_fact_signals` form query. `supabase/seeds/002_machine_tables.sql` `tpl.reengagement.v1`, `bind.demo-firm.reengagement`, `camp.reeng.nudge`, `obj.reeng.nudge`, `mp-2`. `supabase/migrations/017_event_test_contract.sql` `etd-elig-mot-alvarez`. `src/app/register/prototype-ant/operator/AntAgentWorkbench.tsx` `handleLaunch`. `src/app/data/agentDefinitions.ts` `AGENT_TEMPLATE_BINDING` `agent-nudge`. `docs/register/SEED.md` §5.8. `docs/register/SYSTEMS-REQUIREMENTS-FILLED.md` §11. `docs/register/how/contact-refresh.md` leaf 1.1. `docs/register/CLIENT-DATA-BIND.md` the first-contact launch. Claims 2, 12, 20, 23, 28, 43, 45, and 52.
 
 **Live.** The seed graph still has no `action-nudge` and no false edge. The fallback still passes `tpl.reactivation.v1` for every contact. `anyPass` is still the constant `true`. No migration was written.
+
+### Revision — claim 65
+
+The sentence that this claim does not add a one-motion refusal stands as this firing’s one sequence. The rejected unique constraint stays rejected. Claim 65 is a later eligibility enroll beside an attempt that is still `open`. This firing still starts one of the two classes. A halt’s effect on an in-flight motion stays the refinement claim 20 postponed.
 
 ### Revision — claims 42 and 50
 
@@ -3078,6 +3094,82 @@ No founder question. D-01 and D-02 stay as the seed left them. The family’s `p
 **Evidence:** `supabase/seeds/002_machine_tables.sql` `mp-4`, `fcr-agenda`, `obj.react.meeting`, `obj.reeng.nudge`. `docs/register/SEED.md` §5.8. `docs/register/SYSTEMS-STORY.md` §11 and §12. `docs/register/SYSTEMS-REQUIREMENTS-FILLED.md` §11 and §12. `docs/register/system-map/FROZEN-TABLES-v1.md` the `live_brief` backlog line. `docs/product/immigration-rules-engine2-giveback.md` the agenda parenthetical. `docs/sme/pass2/04-consultancy-desk-ops.md` desk-07 and desk-10. `src/app/register/prototype-ant/consultant/MeetingsModule.tsx` the Live brief pane and `copyBrief`. `src/app/register/prototype/shared/meetingsStore.ts` `hydrateFactsFromMachine`. `server/wire-service/machine.ts` `listModularRules` for `rule_motion_precedence`. Claims 52, 54, 60, 61, and 62.
 
 **Live.** The brief still hydrates write-backs only. It still does not list `missing_fact_signals`. `mp-4` and `fcr-agenda` are still unread by the enroll and by the brief. No migration was written.
+
+### Revision — claims 64 and 65
+
+The sentence that a later eligibility enroll while an attempt is already open was looked at and not specified stands as the gap. Claims 64 and 65 specify it. The agenda read is unchanged. `mp-5` is the withhold in claim 65, not a line on the brief.
+
+---
+
+## Claim 64 — A campaign objective that advances the cursor closes that enrollment’s open attempts as `met`
+
+**Standing:** necessary implication of the status write `advanceEnrollmentCampaign` already performs, and of §7b’s finishing event.
+
+When `advanceEnrollmentCampaign` flips `enrollment.campaign_id`, every `active_attempts` row on that enrollment that is still `open` becomes `met`. The next campaign id may be another campaign or null. Both flips write `met`. `tickOnce` loads `status = 'open'` only, so a `met` attempt is not still sending. On the tick that applies the flip, that attempt’s cell walk and channel ladder do not run. `recordCampaignFailure` does not run for it on that pass, and the enrollment is not marked `exhausted` by that pass. `nullified` and `exhausted` remain the other endings. This claim does not insert a new attempt for the next campaign.
+
+**What the flip already writes.** The function loads the enrollment. It returns without a status write when `sequence_id` or `campaign_id` is missing, or when the current campaign has no objective, or when `objectiveSatisfiedBy` is not ok. When the objective is satisfied it computes `nextCampaignId`. The last campaign yields null. The update sets `campaign_id` to that next id, `pursuit_state` to `pursuing`, and `exhausted_at` to null, and it matches only if `campaign_id` is still the campaign that just cleared. After that update matches, it inserts `engagement_records` of kind `objective_met`, then:
+
+`UPDATE active_attempts SET status='met' … WHERE enrollment_id=$1 AND status='open'`
+
+The state merge records `objective_met`, the campaign that cleared, and `met_at`. Then it dispatches `objective_met`. The return is `{ advanced: true, campaignId: next }`. A second call sees a null `campaign_id`, or a campaign whose objective is not yet satisfied, and returns `advanced: false` without another status write.
+
+`tickOnce` selects `status = 'open'`. A `met` row is not in that list on the next tick. The only server insert of `active_attempts` is `enrollAndActuate`, one row per new enrollment, so the `met` update is that enrollment’s attempt. Seed `006_objective_local_axis.sql` sets `enr-harbor-1.campaign_id` to null and does not touch `active_attempts`. That enrollment has no attempt row. The seed is a cursor illustration. It is not the function. Seed `007_pursuit_exhausted.sql` is the other ending: `aa-harbor-4-exhausted` is `exhausted`, and the enrollment stays on `camp.optin.day`.
+
+**The same tick stops.** `tickOnce` calls `advanceEnrollmentCampaign` and ignores the return. It then calls `advanceTemplateCellIfDue` and, unless a wait is still in the future, `escalateAttemptWindow`. Those updates require `status='open'`, so they do not rewrite a row just set to `met`. The sends sit after the updates and do not read how many rows matched. `escalateAttemptWindow` calls `recordCampaignFailure` when it has no next channel. That function sets the attempt to `exhausted` only while it is `open`, so a `met` row stays `met`, and it sets the enrollment’s `pursuit_state` to `exhausted` with no such guard. A win on this pass would be stored as a failure. Packet 023 keeps the completion a win and keeps exhaustion as the stop-spending path. When `advanced` is true, the rest of that attempt’s body in this tick does not run. No cell send, no ladder send, no `campaign_failure` insert, no `pursuit_state='exhausted'`. When `advanced` is false, the cell walk and the ladder stay as they are. Claim 20’s halt still does not set status. The inbound path still sets `nullified`. The meeting path still nullifies attempts that are still `open` after the completion write, and the comment on that update says not to recut `met`.
+
+**What is in flight.** In flight is `status='open'`. That is the row the tick sends. `met` is the objective finish, including the finish that leaves `campaign_id` null. `exhausted` is the ladder with nowhere left to go. The cursor stays on the campaign. `nullified` is the inbound override, and it is the meeting’s remaining open attempts. Migration 022 calls `nullified` a win and refuses to reuse it for exhaustion. None of those three is still sending. An attempt enrolled with a null `firstCampaignId` stays `open`, because the early return does not write `met`, and the tick still walks its cells. That row is in flight. It is not the null cursor the flip writes.
+
+**Rejected alternatives.**
+
+- Treat `campaign_id` null as finished while leaving `status='open'`. That is the reading journal 044 stopped on. The function writes `met` in the same turn as the null. A later tick does not load the row. Using `open` as “the calendar has nowhere left to go” confuses the early return, which keeps `open`, with the flip, which does not.
+- Leave the cell walk and the ladder running on the tick that flipped. The updates miss, and the sends still go out. The failure call can mark the enrollment `exhausted` after the cursor just advanced as a win. The finishing event has already closed the attempt.
+- Write `nullified` or `closed` on the flip. The flip already writes `met`. The meeting comment says not to recut that status. `nullified` stays the inbound and the attempts the meeting finds still open.
+- Insert an attempt for the next campaign inside the flip. Reactivation and re-engagement each have one campaign, so the flip’s next id is null and there is no next campaign to arm. Opt-in has a second campaign. Arming it is the next read. This claim does not invent that attempt.
+
+No founder question. A cursor that this function moved, including a cursor it moved to null, is an attempt in `met`. The tick does not keep sending it, and the same pass does not record it as exhaustion.
+
+**What this leaves.** Opt-in satisfies `obj.optin.window` and the flip points `campaign_id` at `camp.optin.day` while setting the attempt to `met`. Nothing in the flip or the tick inserts an attempt for that next campaign. Launch day then has a cursor and no sender. Who is placed on that day stays the question `SYSTEMS-GOAL` left open. This claim does not decide it. Claim 65 is the eligibility enroll beside an attempt that is still `open`.
+
+**Evidence:** `server/wire-service/campaignHousing.ts` `advanceEnrollmentCampaign`, `nextCampaignId`, `recordCampaignFailure`. `server/wire-service/cascade.ts` `tickOnce`, `enrollAndActuate`, `advanceTemplateCellIfDue`, `escalateAttemptWindow`. `server/wire-service/machine.ts` the meeting nullify and the comment not to recut `met`. `server/wire-service/contactSeat.ts` the seat meeting nullify. `supabase/migrations/022_pursuit_exhausted.sql` the comment that `nullified` is a win. `supabase/seeds/002_machine_tables.sql` `camp.optin.window`, `camp.optin.day`, `camp.reeng.nudge`, `camp.react.meeting`. `supabase/seeds/006_objective_local_axis.sql` the specimen null cursor. `supabase/seeds/007_pursuit_exhausted.sql` the exhausted attempt. `docs/register/SYSTEMS-STORY.md` §7b. `docs/register/SYSTEMS-CHANGE-PACKET-022.md` the tick as catch-up. Claims 2 and 20.
+
+**Live.** The status update to `met` already runs after a matched flip. `tickOnce` still ignores `advanced` and still walks the cell and the ladder. `recordCampaignFailure` still sets `pursuit_state='exhausted'` with no guard against the flip that just ran. No migration was written.
+
+---
+
+## Claim 65 — An eligibility enroll waits while this contact’s attempt is `open`, and a fact that finishes that attempt enrolls after the close
+
+**Standing:** necessary implication of Seed §5.8’s one motion and of §7b’s single in-flight sequence, and a technical decision made in this session.
+
+The eligibility enroll in claims 52 and 54 does not call `enrollAndActuate` while this firm and this contact have an `active_attempts` row in `status='open'`. The motion row is still stored. The open attempt is not nullified and its `campaign_id` is not moved by the refusal. `met`, `exhausted`, and `nullified` do not withhold. `enrollAndActuate` itself still inserts, so an operator or an `objective_met` listener can still start a second pursuit. On a fact write-back, the completion runs before that enroll, so a write that finishes the open attempt can arm the next sequence from the same request. A firing that leaves an attempt `open` records the motion and does not start a second sequence. The cells of a later enroll are that sequence’s own cells. Repeat compression stays the question the reactivation template already marked.
+
+**Who withholds.** The callers are the cascade’s no-workflow fallback and the eligibility graph’s `call_agent`, the same two doors claims 52 and 54 specified. Before `enrollAndActuate`, those doors look for `active_attempts` with this `firm_id`, this `contact_id`, and `status='open'`. One such row withholds that contact. There is no `enrollment` insert, no new attempt, and no first-step send. The evaluation, the `eligibility_determination`, and the `motion_decisions` row stay the cascade’s inserts. Claim 61’s missing-fact row is not this check. `mp-5` is the lock: enabled, `when_clause` `motion chosen`, `condition_clause` `always`, `set_value` `single_motion_lock`. The enroll does not have to select the row for the behavior to be that lock. A patch that sets `enabled` false does not start a second sequence. The motion expression already ignores `mp-1`’s flag the same way. Halt is still claim 20. This claim does not abort the open attempt.
+
+**Why `open` is the latch.** §7b runs one in-flight sequence and, on a finishing event, closes it and can arm the next. §11 forbids parallel motions and forbids Engine 2 from replacing the attempt engine inside a sequence. In flight is the row claim 64 names: `open`. After the flip, that row is `met`, including when `campaign_id` is null, so a later eligibility firing is not standing beside a sequence that is still sending. `exhausted` is the ladder’s end. The cursor remains, and the tick does not load the attempt. A later firing may enroll. That enroll is a new sequence. It is not a shorter copy of days 1–3. The reactivation template’s silence is still `Repeat-compression undecided`. `nullified` is already a win. It does not withhold.
+
+The opt-in window is the case that must not widen the latch. Satisfying `obj.optin.window` sets the attempt to `met` and points the cursor at `camp.optin.day`. No open attempt remains. A later eligibility enroll is allowed. Treating `pursuit_state='pursuing'` or a non-null `campaign_id` as the lock would withhold that enroll until launch day finished, and claim 64 found nothing that sends launch day once the attempt is `met`. Who is placed on the day stays the open question. This claim does not answer it by freezing the cursor.
+
+**The fact that finishes.** `handleFactWriteback` and `handleContactSeatFacts` insert the fact, run `runContactEligibilityCascade`, and only then call `onCompletionWrite`. The cascade stores the motion and, when no workflow is active, enrolls before the completion. An active graph enrolls inside that same cascade, from `eligibility.changed`, also before the completion. The nudge objective is `obj.reeng.nudge`, completion `fact_writebacks`. Submitting that form is the finishing event of the one campaign on `tpl.reengagement.v1`. Enrolling first either refuses, because the attempt is still `open`, and then the completion closes it with no sequence armed, or it sends the new first step while the old attempt is still `open`. §7b closes, then arms. On these two handlers the order is: store the evaluation, the signal, and the motion; apply the completion; then run this firing’s eligibility enroll, graph or fallback, under the `open` check. The check then sees `met` when this write was the objective, and the enroll may start. A fact that does not satisfy the objective leaves the attempt `open`, and the enroll withholds. `handleReferenceUpsert` has no completion. Its enroll withholds while an attempt is `open`. The meeting handlers complete and nullify. They do not run this enroll. A listener on `objective_met` may still insert during the completion, which is claim 2. The eligibility check runs after that dispatch, so an attempt the listener just opened withholds the eligibility enroll. One in-flight sequence remains.
+
+A withheld firing does not leave a job to replay when the attempt later ends. The motion row is the record of that detection. The next enroll is the next eligibility firing that finds no `open` attempt. Replaying the newest `motion_decisions` row from inside the flip would enroll again the motion that started the sequence just closed, which is a second walk of the same class invented at the finish. The arm on the finishing event stays the `objective_met` listener claim 2 already allows. This claim does not add one.
+
+**Rejected alternatives.**
+
+- Put the check inside `enrollAndActuate`, or add a unique constraint on `(firm_id, contact_id)`. Claim 2. The operator and the `objective_met` listener may start a second pursuit while another is open. The must-not is Engine 2’s enroll beside an in-flight attempt.
+- Withhold on every status, or for the life of the contact. §7b arms the next sequence after the close. A lifetime ban would make that arm impossible, and it would answer repeat compression by never walking the days again. The template’s silence is the cell list of a later walk, not a ban on the walk.
+- Withhold on `pursuit_state='pursuing'` after the attempt is `met`. That freezes a contact whose opt-in cursor sits on launch day with nobody sending it. Launch-day placement stays the question already recorded.
+- Nullify the open attempt so the new motion can start. That replaces the attempt engine inside a sequence. §7b forbids it. The motion is stored. The enroll waits for a firing that finds the attempt no longer `open`.
+- Enroll beside the open attempt. That is two in-flight sequences. §5.8 line 5 and §11 forbid the parallel motion.
+- Keep today’s order, cascade enroll then completion. The form submit is the nudge’s finishing event. The enroll then either misses the arm or sends beside the attempt it is about to close.
+- Queue the withheld motion and enroll it from the flip. The newest motion at the finish is often the one that started the sequence. Replaying it invents the repeat. A table of pending enrolls is a store this pass does not add. The next detection is the next enroll.
+- Let `mp-5.enabled = false` allow the parallel enroll. The settled sentence is the lock. The house can list and patch the row. The patch does not start a second sequence while an attempt is `open`.
+
+No founder question. A contact with an open attempt keeps that attempt, and this firing’s motion is only a row. A contact whose attempt this fact just finished can be enrolled by this firing. A contact whose attempt is already `met`, `exhausted`, or `nullified` can be enrolled by a later firing. The cells of that enroll are the sequence’s cells. Who is placed on launch day, whether a repeat reactivation compresses, whether a `deferred` event holds the next email, and what makes one family’s `pass` true, stay the questions already recorded.
+
+**What this leaves.** After `obj.optin.window` is met, the attempt is `met` and the cursor is `camp.optin.day`, and no attempt is opened for that campaign. Whether the later campaigns of a multi-campaign sequence are a new attempt the flip should arm, or the same attempt that should have stayed `open` through the cursor, is the next read. Claim 64’s `met` on a flip stays. Reactivation and re-engagement have one campaign each, so their flip is the end of the sequence. `email.delivery_delayed` still only inserts `deferred`.
+
+**Evidence:** `docs/register/SEED.md` §5.8 line 5. `docs/register/SYSTEMS-STORY.md` §7b and §11, and the cross-system row from a finishing event to the next sequence. `docs/register/WORLD.md` §3.3. `supabase/seeds/002_machine_tables.sql` `mp-5`, `tpl.reactivation.v1` silences, `camp.optin.window`, `camp.optin.day`, `camp.reeng.nudge`, `camp.react.meeting`. `server/wire-service/machine.ts` `runContactEligibilityCascade`, `handleFactWriteback`, `handleReferenceUpsert`, `upsertModularRuleEnabled`. `server/wire-service/contactSeat.ts` `handleContactSeatFacts`. `server/wire-service/cascade.ts` `enrollAndActuate`. Claims 2, 20, 52, 54, and 64.
+
+**Live.** The fallback still enrolls inside the cascade, before `onCompletionWrite`. The graph walk still enrolls from `eligibility.changed` in that same call. Neither door reads `active_attempts`. `mp-5` is still only a listed row. No migration was written.
 
 ---
 
