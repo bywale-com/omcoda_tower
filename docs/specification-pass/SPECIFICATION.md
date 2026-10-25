@@ -2316,6 +2316,10 @@ No founder question. The day calendar of the opt-in phase is the motion that run
 
 **Live.** The three calls still pass the literal `cem`. `call_agent` still uses `sequenceClassForAgent`. `offsetMs` is still `day × 24h`, so the announcement is still due one day after enroll. No migration was written.
 
+### Revision — claim 66
+
+The sentence that an open attempt of class `optin` uses purpose `opt-in` while the cursor sits on `camp.optin.day`, and that this does not place a contact on that campaign, stands. Claim 66 is the attempt the flip arms on the enrollment whose cursor just moved. The purpose lookup is the one this claim already wrote: `enrollment.sequence_id` when the new row has no `templateId`. Who is placed on the day stays the unfilled ask.
+
 ### Revision — claims 46 and 47
 
 The sentence that the actions after the wait were not followed stands as the gap. Claim 46 names them. The occupancy pointers are the re-entry writes when the due update returns rows. A duration wait inserts none, and that re-entry uses `counts.waitWrites`. The sentence that the schedule walk was not followed past `{ schedule: true, anyPass: true }` stands as the other gap. Claim 47 names who that walk is about, and which minute starts it.
@@ -2573,6 +2577,10 @@ No founder question on the opt-in cells or on the first reactivation calendar. T
 **Evidence:** `supabase/seeds/002_machine_tables.sql` `tpl.optin_launch.v1` and the reactivation cells. `templateWalk.ts` `channelFromToken`, `dayFromToken`, `normalizeTemplateCells`. `cascade.ts` `advanceTemplateCellIfDue` the one-cell advance and the `email` or `text` send. `guidelines/Reactivation.md` Day 2, Day 3, Days 4–7, Days 1–3, Day 3 slot opens. `docs/register/system-map/BUILD-system-map-v3-templates-and-binding.md` section C. Claim 45.
 
 **Live.** The opt-in seed is still five cells, with `ol-d4-7` one email at day 4, `ol-d3-waitlist` one email, and `ol-d2-social` channel `form`. The reactivation seed is still four cells, and the nurture and the slot still normalize from the token alone. `offsetMs` is still `day × 24h`. No migration was written.
+
+### Revision — claim 66
+
+The day list in this claim is the cells the window walker indexes. Claim 66 puts two further cells on the same `tpl.optin_launch.v1` jsonb, each with `campaignOrd`, and takes those cells out of that index. Day 1 through the day-6 text stay the cells this claim named. The launch-day audience ask stays unfilled.
 
 ---
 
@@ -3134,6 +3142,10 @@ No founder question. A cursor that this function moved, including a cursor it mo
 
 **Live.** The status update to `met` already runs after a matched flip. `tickOnce` still ignores `advanced` and still walks the cell and the ladder. `recordCampaignFailure` still sets `pursuit_state='exhausted'` with no guard against the flip that just ran. No migration was written.
 
+### Revision — claim 66
+
+The sentence that this claim does not insert a new attempt, and that arming the opt-in second campaign is the next read, stands as this claim’s scope. Both flips still write `met` on the attempts that were `open`. Claim 66 inserts the next campaign’s attempt after that update. The null flip still inserts none. Claim 67 is the confirmation email on the launch-day form, and that email is not an attempt.
+
 ---
 
 ## Claim 65 — An eligibility enroll waits while this contact’s attempt is `open`, and a fact that finishes that attempt enrolls after the close
@@ -3170,6 +3182,81 @@ No founder question. A contact with an open attempt keeps that attempt, and this
 **Evidence:** `docs/register/SEED.md` §5.8 line 5. `docs/register/SYSTEMS-STORY.md` §7b and §11, and the cross-system row from a finishing event to the next sequence. `docs/register/WORLD.md` §3.3. `supabase/seeds/002_machine_tables.sql` `mp-5`, `tpl.reactivation.v1` silences, `camp.optin.window`, `camp.optin.day`, `camp.reeng.nudge`, `camp.react.meeting`. `server/wire-service/machine.ts` `runContactEligibilityCascade`, `handleFactWriteback`, `handleReferenceUpsert`, `upsertModularRuleEnabled`. `server/wire-service/contactSeat.ts` `handleContactSeatFacts`. `server/wire-service/cascade.ts` `enrollAndActuate`. Claims 2, 20, 52, 54, and 64.
 
 **Live.** The fallback still enrolls inside the cascade, before `onCompletionWrite`. The graph walk still enrolls from `eligibility.changed` in that same call. Neither door reads `active_attempts`. `mp-5` is still only a listed row. No migration was written.
+
+### Revision — claim 66
+
+The sentence that satisfying `obj.optin.window` leaves no open attempt, and that a later eligibility enroll is then allowed, was written when the flip armed nothing. It stays as that reading. Claim 66 inserts an `open` attempt on `camp.optin.day` before `advanceEnrollmentCampaign` returns, so the check in this claim sees that row and withholds. `met`, `exhausted`, and `nullified` still do not withhold. After the launch-day form, the next id is null, claim 66 inserts nothing, and claim 67’s confirmation does not leave an attempt `open`. A later firing may enroll. The latch stays `status='open'`. `pursuit_state` and a non-null `campaign_id` are still not the lock.
+
+---
+
+## Claim 66 — Qualifying into the next campaign arms one new open attempt, and launch day’s first step is the sign-up email
+
+**Standing:** necessary implication of packet 022’s close, of the campaign cursor, and of section C’s sign-up email, and a technical decision made in this session.
+
+When `advanceEnrollmentCampaign` flips `enrollment.campaign_id` to a non-null next campaign, it still sets that enrollment’s then-open attempts to `met` (claim 64), and after that update it inserts one `active_attempts` row on the same enrollment with `status='open'`. The row is the next campaign’s sender. The tick loads `status='open'` only, so the attempt just set to `met` is not that sender. The same tick does not walk the closed attempt (claim 64). The new row is not in the list that tick already loaded. Its first step runs in this function, before the `objective_met` dispatch, so the attempt is open and the sign-up email has been asked before a listener or a later eligibility check runs. A null next id inserts nothing. Who may be moved onto `camp.optin.day` stays the question `SYSTEMS-GOAL` left open. This claim arms the enrollment the flip already moved.
+
+**Why the closed row cannot keep sending.** Packet 022 §2.4 closes open attempts in the same cut that flips the cursor, including the flip whose next campaign is the next `ord`, and the verify step that moves `campaign_id` to `camp.optin.day` confirms those attempts closed. Claim 64 is that write. `SYSTEMS-AGENTS-ASCRIBE.md` keeps qualify inside the sequence: enroll into a sequence, the cursor is the campaign, 7b runs inside that campaign, and qualify moves to the next campaign. It says not to put `workflow_trigger` on the canvas to implement that qualify. `enrollAndActuate` starts at `firstCampaignId`, which is `camp.optin.window`, so a second enrollment would replay the window. The listener on `objective_met` remains the flagship arm to another agent. It is not this cursor. The face’s next cycle inside one campaign is still `state.attempt_n` on the same `active_attempts` row, the branch `escalateAttemptWindow` already takes when the ladder has no next channel and `attempt_n` is under the campaign count or `sac-global`. That cycle is not a new row, and it is not the next campaign.
+
+**What the new row is.** One insert, after the `status='met'` update, so the new row is not matched by that update. The met update may match zero rows. A click that arrives after `recordCampaignFailure` still flips: the function sets `pursuit_state` back to `pursuing` and `exhausted_at` to null, which is the win packet 022 §2.4 allows after spending has stopped. The insert still runs. Columns: a new `att-` id, the enrollment’s `firm_id` and `contact_id`, that `enrollment_id`, `status='open'`, `owner_channel` as below, `fired_criteria` `{}`, `window_started_at` now. `state` is a new object: `delivered` true, `delivered_at` now, `attempt_n` 1, `enrolledAt` now, and the step named below. It does not copy `templateId`, `cellIndex`, or `attempt_n` from the row just set to `met`. `advanceTemplateCellIfDue` returns immediately when `templateId` is missing, so this attempt does not walk `ol-d1-sms` or any later day cell. Those cells are the launch window. `SYSTEMS-GOAL.md` places that calendar inside campaign A. Claim 64 already stopped them when the window objective was met. A day-1 click does not leave days 2–7 still going out under `camp.optin.day`.
+
+**Launch day’s first step.** Section C’s launch-day list is a sign-up email, then a landing page, then a confirmation email on sign-up. The system-map template `tpl.launch_day.v1` held those as `ld-signup-email`, `ld-landing`, and `ld-confirm`. Migration `010_sequence_campaign_housing.sql` deletes that template and folds the `launch_day` class into `optin`, because that class is the housing lie the ascribe names. The cells were not copied onto `camp.optin.day`. This claim puts the two email cells back on `tpl.optin_launch.v1`, which is the sequence that now owns both campaigns:
+
+- `ld-signup-email`, token `signup_email`, label `Sign-up email`, channel `email`, `campaignOrd` 1
+- `ld-confirm`, token `signup_confirmation`, label `Confirmation email on sign-up`, channel `email`, `campaignOrd` 1
+
+`ld-landing` is not added. Its system-map channel is `web`. The housed landing step is `obj.optin.day`, kind `form`, completion `fact_writebacks`. Claims 28 and 29 still decide when the seat opens that form. This claim does not send a page and does not recut those claims.
+
+`normalizeTemplateCells` keeps `campaignOrd`. `advanceTemplateCellIfDue` indexes only cells that have no `campaignOrd`. Claim 51’s day list, and the indexes already stored on a window attempt, do not move. The two new cells have no day offset. The window walker never advances onto them.
+
+The next campaign’s `ord` is read from `campaign`. For `camp.optin.day` that ord is 1. The first step loads the cell whose `campaignOrd` equals that ord and whose token is `signup_email`. The owner is `email`. `actuateChannelSend` runs with purpose from claim 45’s class lookup on `enrollment.sequence_id` (`opt-in` for this template), stamp `enrollment_id`, `campaign_id` the next id, that campaign’s objective id, and the new attempt id. Subject and body are the cell’s `subject` and `bodyText`. The seed does not have to fill them. Section C binds those slots per firm. When `override_this` is true, `pickAuthoredContent` for token `email` and `attempt_n` 1 replaces that subject and body, because `campaign_channel` is one row per token. The seed row is `override_this` false, so the cell is the body. The engagement payload’s `step` is `signup_email`. The kind is claim 22’s: `send_denied` when the result is `ok: false`, otherwise the kind the `DispatchResult` already selects. A deny leaves the attempt `open`.
+
+**A next campaign with no sign-up cell.** The insert still happens. Owner and copy are `firstAuthoredChannel` when `override_this` is true. Otherwise the owner is `loadChannelOrder`’s head, `text` on the seed, and the first step sends when that head is `email` or `text`, with subject the campaign `name` and without a day-calendar cell. Opt-in’s second campaign hits the sign-up cell, not this arm. Reactivation and re-engagement have one campaign each. Their flip’s next id is null. They insert nothing.
+
+**What this leaves.** The confirmation email is claim 67. The address inside the sign-up email, and which route that address opens, was not read. Claims 28 and 29 stay the seat. Nothing here writes `waitlisted`.
+
+**Rejected alternatives.**
+
+- Leave the same `active_attempts` row `open` and only change `campaign_id`. Packet 022 closes the row on the flip to `camp.optin.day`. Claim 64 writes `met` on every flip, including a null next. Reopening that row recuts both and is the leftover journal 044 misread.
+- Insert nothing, and treat the cursor as enough. The tick will not load a `met` row. Section C’s sign-up email never goes out. The ascribe’s 7b inside the next campaign has no row to run.
+- Call `enrollAndActuate` for the next campaign. The insert uses `firstCampaignId`, the window, and a new enrollment. Qualify is the same enrollment’s cursor. The `objective_met` listener stays the other-agent arm.
+- Set `templateId` and `cellIndex` 0 on the new row. The next tick sends `ol-d1-sms` again, stamped with `camp.optin.day`.
+- Append the sign-up email to the day-calendar array with no `campaignOrd`. The window walker would send it on the window clock, including when the click never comes.
+- Restore `tpl.launch_day.v1` or the `launch_day` sequence class. Migration 010 deleted that row. The ascribe calls the class the lie.
+- Withhold the insert unless `consent_records.status` is `waitlisted`. Nothing in this pass writes that value. The face’s qualify is the previous objective met. Who is placed on the day stays the open ask. This claim does not answer it.
+- Insert on the null flip as well. The sequence has ended. An open row there is the leftover claim 64 closed, and claim 65 would withhold the next class until something else ended it.
+
+No founder question. A cursor this function moved to another campaign is a new open attempt on that enrollment, and launch day’s opening send is the sign-up email. A cursor it moved to null is not a new attempt. The audience of the day, the repeat calendar, the `deferred` hold, and the family’s `pass` stay the questions already recorded.
+
+**Evidence:** `server/wire-service/campaignHousing.ts` `advanceEnrollmentCampaign`, `nextCampaignId`, `firstCampaignId`, `firstAuthoredChannel`, `pickAuthoredContent`. `server/wire-service/cascade.ts` `tickOnce` the `status='open'` load, `enrollAndActuate` the attempt insert, `advanceTemplateCellIfDue` the `templateId` return, `escalateAttemptWindow` the `attempt_n` cycle, `loadChannelOrder`. `server/wire-service/templateWalk.ts` `normalizeTemplateCells`. `supabase/seeds/002_machine_tables.sql` `camp.optin.window` ord 0, `camp.optin.day` ord 1, `override_this` false, `ch-text` ord 0. `supabase/migrations/010_sequence_campaign_housing.sql` the delete of `tpl.launch_day.v1` and `sac-global`. `src/app/system-map/data/templates.ts` `ld-signup-email`, `ld-landing`, `ld-confirm`. `docs/register/SYSTEMS-CHANGE-PACKET-022.md` §2.4 and verify step 2. `docs/register/SYSTEMS-AGENTS-ASCRIBE.md` the qualify row and the `launch_day` class lie. `docs/register/SYSTEMS-GOAL.md` the canonical grain diagram. `docs/register/system-map/BUILD-system-map-v3-templates-and-binding.md` section C. `guidelines/Reactivation.md` Launch Day. `docs/register/AGENTS-FACE.md` the attempt cycle. Claims 22, 45, 51, 64, and 65.
+
+**Live.** The flip still updates `met` and still does not insert `active_attempts`. The seed jsonb is still the five day cells. `normalizeTemplateCells` still drops `campaignOrd`. No migration was written.
+
+---
+
+## Claim 67 — The launch-day form’s confirmation is one email on that completion, and it does not leave an attempt open
+
+**Standing:** necessary implication of section C’s confirmation on sign-up, and of claim 64’s null flip, and a technical decision made in this session.
+
+When the campaign `advanceEnrollmentCampaign` just cleared has a `signup_confirmation` cell at that campaign’s `ord`, and the objective just satisfied has kind `form`, the same turn sends one confirmation email. The send uses the attempt ids the `met` update just wrote, when it wrote any. It does not insert `active_attempts`. It does not set a `met` row back to `open`. On the seed, `camp.optin.day` is that campaign: ord 1, kind `form`, next id null. Claim 66 therefore inserts nothing beside this email. The window objective is a click at ord 0 and has no confirmation cell. The nudge form and the meeting objective have no such cell. They do not send this email.
+
+**The send.** It runs after the `met` update and before the dispatch, and before claim 66’s insert when `next` is not null. The stamp passes the cleared `campaign_id` and that objective id explicitly. The enrollment row’s `campaign_id` is already the next id or null, so a re-read would stamp the wrong campaign or none. Purpose is claim 45’s lookup on `enrollment.sequence_id`. Channel is `email`. Subject and body are the `ld-confirm` cell, replaced by `pickAuthoredContent` for token `email` only when `override_this` is true. The engagement payload’s `step` is `signup_confirmation`. The kind is claim 22’s. A deny does not open an attempt to retry this email. The sign-up chase is claim 66’s open attempt. This email is the receipt after the form objective is met.
+
+The two cells share one `campaign_channel` email row when an operator turns `override_this` on. `UNIQUE (campaign_id, token)` is that one row. The seed leaves the override off, so the two tokens stay two bodies. This claim does not add a second channel row and does not restore `tpl.launch_day.v1`.
+
+**Rejected alternatives.**
+
+- Walk `ld-confirm` as a later cell of the open attempt. On the seed the next id is null. An open row would be in flight after the sequence ended, and claim 65 would withhold the next class until something else closed it. The confirmation is not a chase.
+- Send it only from an `objective_met` listener. Section C builds the step into the launch-day sequence. A missing workflow would drop it. The listener stays the flagship arm to another agent, another workflow, or the end.
+- Send a confirmation on every null flip. The meeting and the nudge are not this cell.
+- Recut claims 28 and 29 so the seat shows a landing page while `basis` is `none`. Those claims already treated `obj.optin.day` as the form they gate. The confirmation is the email after that form is submitted.
+
+No founder question. Signing up on the launch-day form sends one confirmation email and leaves no open attempt from that email. The sign-up chase is the attempt claim 66 already armed, and it is `met` before this email goes. Who is placed on the day, whether a repeat reactivation compresses, whether a `deferred` event holds the next email, and what makes one family’s `pass` true, stay the questions already recorded.
+
+**What this leaves.** How the sign-up email addresses the seat, and which route that address opens, was not read. The confirmation does not answer it.
+
+**Evidence:** `server/wire-service/campaignHousing.ts` `advanceEnrollmentCampaign` the flip before the dispatch. `supabase/seeds/002_machine_tables.sql` `obj.optin.day`, `camp.optin.day` ord 1. `supabase/migrations/010_sequence_campaign_housing.sql` `UNIQUE (campaign_id, token)` on `campaign_channel`. `src/app/system-map/data/templates.ts` `ld-confirm`. `guidelines/Reactivation.md` the confirmation email on sign-up. `docs/register/system-map/BUILD-system-map-v3-templates-and-binding.md` section C. `docs/register/SYSTEMS-GOAL.md` launch-day sign-up as the class completion. Claims 22, 28, 29, 45, 64, and 66.
+
+**Live.** The flip still does not send a confirmation. The `ld-confirm` cell is not on the seed template. No migration was written.
 
 ---
 
