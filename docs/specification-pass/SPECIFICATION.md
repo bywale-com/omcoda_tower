@@ -2832,6 +2832,94 @@ No founder question. An address Resend has on the suppression list is not mailed
 
 **Live.** `mapClass` still returns null for all three types, and the handler still inserts no row. `dispatchEmailLive` still does not read `data.email`. `injectEvent` still has no branch for them. No migration was written.
 
+### Revision — claim 8
+
+The sentence that `ready` is still true for reachable or partial stands as the live writer, and as the reach half of the flag. The key change did not retune the three verdict words. Claim 58 adds the consent conjunct. A silenced contact with a channel stays `reachable` or `partial`, and `ready` on that run’s row is false.
+
+### Revision — claim 44
+
+The sentence that the dispatch’s `contactIds` stay the ready list, silenced contacts included, stands for a silence that is newer than the ready row. Claim 58 makes a contact already silenced when the audit wrote not ready, so that contact is not on the list. The enroll filter remains for a later silence. The missing-basis arm is unchanged.
+
+### Revision — claim 14
+
+The sentence that the founder kill-switch is the firm-book gate, and that it does not dispatch, stands. Whether that row can be lifted had not been read. Claim 59 reads it. The lift still does not dispatch.
+
+---
+
+## Claim 58 — `sequence_ready.ready` is this run’s verdict and the silence arms, stored when the audit writes
+
+**Standing:** necessary implication of `SYSTEMS-REQUIREMENTS-FILLED.md` §5 and of the opt-in list this flag already is, and a technical decision made in this session.
+
+`executeAuditRun` still classifies `reachable`, `partial`, and `unreachable` from the presence of email and phone. `ready` on the `sequence_ready` row that loop inserts is true only when that verdict is `reachable` or `partial` and the `consent_records` row for that contact and `opts.firmId` is not a silence. A missing consent row stays ready when the verdict already would. `basis` `none` stays ready. `basis` is not an input. The verdict word is not retuned.
+
+**The two inputs.** `SYSTEMS-REQUIREMENTS-FILLED.md` §5 says `sequence_ready` is derived from `reachability_verdict` and consent state, and that the verdict sets the flag. `SYSTEMS-STORY.md` §5 asks two questions: can we reach this contact, and can we start a sequence. §6 feeds consent into the audit and still gates engagement on its own. The reach half is the classification already in the loop: both channels `reachable`, one channel `partial`, neither `unreachable`. The file header says the walker must not recode that grain. Claim 8 said the key change does not retune those words, and that `ready` is true for `reachable` or `partial`. That sentence is the reach half. Consent is the second input, read in the same loop, before the insert.
+
+The consent read is claim 23’s select: `basis`, `silenced`, and `status` where `contact_id` is the contact and `firm_id` is `opts.firmId`. Another firm’s row is not this row. `silenced` true, or `status` `silenced`, makes `ready` false even when the verdict is `reachable` or `partial`. A missing row does not. `basis` `none` with those arms clear does not. `express` or `implied` with those arms clear does not, by itself, make `ready` false. `workspace_opted_out` is not read. Claim 42 kept that flag off the send. Halt is not read. `waitlisted` is not read. The launch-day audience stays the question `SYSTEMS-GOAL` left open.
+
+**Why the basis arm stays off.** This flag is the list `handleOnboardingFire` enrolls, and claim 44 enrolls a missing row and `basis` `none` because the purpose is `opt-in`. `SEED.md` §5.3 names that phase as firm→client consent. Folding claim 43’s missing-basis deny into `ready` would take those contacts off the only list that phase uses. Claim 43 already refused to use this flag as the reactivation list: a ready contact with `basis` `none` is still a reactivation the non-opt-in arm denies, and an opted-in contact who was never audited would be skipped. Reactivation stays on `opts.contactIds` and on that pair. Book readiness leaf 1.2 says a pass is sequence-ready and that silenced contacts are excluded from automatic motion. It does not say an unsequenced contact fails the pass. `docs/register/how/contact-silence.md` says the silenced contact is not sequence-ready for new automatic motion. That sentence is the silence arms, which both purposes already share.
+
+**When it is stored.** The boolean is computed from the consent row as it stands in that loop, and the insert stores it. `summary.ready` counts those booleans. The in-memory `verdicts[].ready` is the same value. The rationale on the verdict stays the channel sentence the function already writes: `missing email and phone`, `missing email`, `missing phone`, or the verdict word. A silenced contact who has both channels keeps rationale `reachable` and stores `ready` false. `sequence_ready` still has no `details` column. Claim 8’s key is unchanged: the row is this run and this contact, and a later audit inserts another row.
+
+A later silence does not update this row. Claim 8’s run page is what that run wrote. Silence is not an audit run. Claim 44 still withholds the opt-in enroll when the pair is silenced at enroll time, including a silence that landed after the audit. Claim 43 still withholds reactivation on its stronger pair. Those gates are the live consent read. “Who is ready now” stays the latest stored row. The onboarding dispatch’s `contactIds` stay that list where `ready` is true. A contact silenced before the audit is not on it. A contact silenced after it is on it, and the enroll filter still skips them, which is why a listening run can still see that later silence. Re-deriving the flag on every read would drop that contact from the firing. Claim 44 refused that drop.
+
+`handleAuditRunGet` paints `row.ready` when the join finds a row. False stays false, because the fallback `row.ready ?? row.verdict !== "unreachable"` only replaces null. This claim does not retune that fallback. A missing ready row is not a second derivation.
+
+**What this does not add.** Name present, dedupe, already-in-Tower, typo or garbage, a channel match to one intended sequence, and external validation are on `SEED.md` §5.2 and on the verdict’s check list in the filled spec. The loop does not perform them. One boolean cannot be “matches the opt-in channel” and “matches the reactivation channel,” and reactivation does not read this flag. Those checks are not the second input. The second input is the consent row.
+
+**Rejected alternatives.**
+
+- Leave `ready` equal to the verdict alone. That is the live assignment. The filled spec derives the flag from the verdict and consent. A silenced contact with both channels would be stored startable. Claim 44 would still skip the enroll. The flag the audit shows would still say ready.
+- Fold silence into the verdict word, so a silenced contact becomes `unreachable`. That retunes the three words claim 8 left as the reach answer. Both channels are still a way to reach them. The start answer is the flag.
+- Require `basis` `express` or `implied`. That is claim 43’s non-opt-in arm. This flag is claim 44’s list. The opt-in phase is how a missing basis becomes a consent. Reactivation does not consult the flag.
+- Rewrite `ready` when silence is committed, on the latest audit row. The run page would show a consent change the run did not see. The enroll gates already read the live pair. A silence has no `audit_run_id` to insert under.
+- Join consent into “who is ready now” so the latest row is not the fact. The onboarding list would hide a post-audit silence from every listener. Claim 44 kept that contact on `contactIds` and filtered the enroll.
+- Read halt, `workspace_opted_out`, or `waitlisted` as a third conjunct. Halt is the enroll and send gate claims 18 and 20 already named. Claim 42 kept the workspace flag off the send. `waitlisted` is the launch-day question, and this pass still does not write it.
+
+No founder question. A contact the audit can reach is sequence-ready unless that firm’s consent row is already a silence. A missing basis stays ready, because this flag is who opt-in may ask. A later silence does not rewrite the run, and the enroll filters still read it. The three verdict words stay the channel classification.
+
+**What this leaves.** `email.delivery_delayed` still only inserts `deferred`. Whether the next email to that address waits, and for how long, stays the question claim 56 left open. A halt still does not decide Engine 2’s “one client, one motion,” and it does not decide the attempt engine’s live-override. `any_pathway_pass` is still the constant `true`.
+
+**Evidence:** `server/wire-service/auditRun.ts` `executeAuditRun` the verdict assignment and the `sequence_ready` insert. `server/wire-service/machine.ts` `handleAuditRunGet` the `ready` fallback, `handleOnboardingFire`. `server/wire-service/dispatchSend.ts` `consentAndHaltGate` the silence arms. `docs/register/SYSTEMS-REQUIREMENTS-FILLED.md` §5. `docs/register/SYSTEMS-STORY.md` §5 and §6. `docs/register/SEED.md` §5.2 and §5.3. `docs/register/WORLD.md` §3.1. `docs/register/how/operator-book-readiness.md` leaf 1.2. `docs/register/how/contact-silence.md`. `supabase/migrations/003_ct_wire_stores.sql` `consent_records`. `supabase/migrations/004_machine_tables.sql` `sequence_ready` and the `status` check. Claims 8, 23, 42, 43, and 44.
+
+**Live.** The assignment is still `ready = verdict === "reachable" || verdict === "partial"`. The loop still does not read `consent_records`. No migration was written.
+
+---
+
+## Claim 59 — The founder kill-switch row is lifted by the same firm-book lift, and the founder desk does not offer it
+
+**Standing:** necessary implication of H1’s “same mechanism,” and a technical decision made in this session.
+
+A founder kill-switch commit is a `halt_records` row with `scope` `firm-book`, `contact_id` null, and `consultant_id` `founder`, one row per firm the confirm names. `POST /halt/:haltId/lift` sets `lifted_at` on that row the same way it sets `lifted_at` on any other halt id. The founder desk does not call lift. “Permanent in founder posture” is that desk: the control does not expire the row and does not draw a resume. It is not a second table, and it is not a refusal of `lifted_at`.
+
+**The commit.** `FounderAgencyControlsModule` `onConfirmHalt` maps the target firms and calls `haltStore.commit` with `consultantId` `founder`, `scope` `firm-book`, that firm’s id, no `contactId`, and the reason. Fleet uses the module’s `DEMO_FIRMS`. Selected uses the first three of that list. This claim does not specify a tenancy picker. The handler is `handleHaltCommit`. Claim 14 already describes it: an active firm-book row for that firm is given `lifted_at`, then the new row is inserted, then `audit_events` kind `halt.firm-book`. The handler does not dispatch. H1 says kill is that mechanism, firm-wide. The plan’s halt row says the same and does not add a second store. The module copy says the write suppresses new enrollments and new sends and leaves in-flight attempts alone. That is claim 20.
+
+**The lift that ends it.** `handleHaltLift` loads `halt_records` by the path id. A missing id returns `{ record: null }`. A row that already has `lifted_at` returns that record and does not insert a second audit event. Otherwise it sets `lifted_at` to now and inserts `audit_events` kind `halt.lift`. The actor on that event is the row’s `consultant_id`. The request body is empty. The route does not read a session firm, does not compare `consultant_id` to `founder`, and does not branch on `scope`. After the update, `handleHaltIsFirmBook` no longer matches, because it requires `lifted_at IS NULL`. `consentAndHaltGate`’s firm-book arm and `isHaltBlockingNew` use the same predicate. New enrollments and new sends are no longer denied by this row. An attempt claim 20 left `open` stays open, and its later tick send is no longer denied by this row. The lift does not dispatch. Claim 14 already said a lift updates the same row and does not start a second firing.
+
+The consultant desk is a caller of that route. On load it takes `listActive` for the session firm and, when a `firm-book` row is active, stores that id as the book halt. Resume book calls `haltStore.lift` with that id. A founder kill of this firm is that row, so the resume lifts it. That is the same firm-book resume the desk already has for a consultant’s own book halt. It is not a founder control drawn on the firm desk. The kill-switch leaf names Halt motion. It does not name a resume, and the module has no lift button. The house tag is `halted` when any of `DEMO_FIRMS` still has an active firm-book row. Lifting one firm does not lift the others. The tag is not a lift.
+
+A later firm-book commit still supersedes. Claim 14’s update sets `lifted_at` on the kill row and inserts a new active row. The firm stays suppressed. Supersession is not a return to standby. The return is `handleHaltLift`.
+
+**What “permanent” is.** H1’s parenthetical is “permanent in founder posture.” The plan that analysis feeds says kill is the same mechanism, firm-wide, and drops the parenthetical. The leaf describes the throw. The module never clears the row. Permanence here is the absence of an expiry and the absence of a resume on that desk. A rule that refused `lifted_at` on `consultant_id` `founder` would be a second mechanism: the firm could not return to enrollments and sends, because the founder desk has no other path back, and the next firm-book commit only replaces the active row. H1 said not to invent a mechanism beside this one.
+
+**The mirror.** `standInHaltStore.lift` sets `liftedAt` on the id and appends `halt.lift` with the stored `consultantId`. It does not refuse `founder`. `commit` for `firm-book` lifts prior active firm-book rows for that firm first, the same supersession. This claim does not add a founder exception to the map.
+
+**Rejected alternatives.**
+
+- Refuse the lift when `consultant_id` is `founder`. The parenthetical would then mean the row cannot end. The founder desk has no resume, so the firm would stay suppressed. The plan and the table treat the kill as a firm-book halt. The consultant resume and `POST /halt/:haltId/lift` are how that halt already ends.
+- Add a resume button on the founder desk. The leaf does not name one. The module does not call lift. This claim does not draw the control.
+- Treat the consultant resume as unable to see the kill row. `listActive` returns every active row for the firm. The book restore uses the firm-book one. Hiding it would leave runners suppressed while the firm desk showed standby. Desk-14’s failure is a halt the runners do not honor, and the inverse is a halt the desk cannot see.
+- Treat claim 14’s supersession as the un-kill. That update inserts a new active firm-book row. The gates still match. The firm does not return to sending.
+- Expire the row on a timer. Nothing in H1, the leaf, or the handler writes an expiry. Permanence is the lack of that timer.
+- Dispatch `halt_records` from the lift. Claim 14 already left the firm-book branch, and the lift, off the listening run.
+
+No founder question. The kill row ends when something calls the lift route with its id, including the consultant resume that already holds that id. The founder desk does not call it. One firm’s lift does not lift the fleet. Engine 2’s “one client, one motion,” and the attempt engine’s live-override, stay the refinement claim 20 postponed. This claim does not nullify the attempt.
+
+**What this leaves.** `email.delivery_delayed` still only inserts `deferred`. Whether the next email to that address waits, and for how long, stays the question claim 56 left open. `any_pathway_pass` is still the constant `true`. What a pathway rule would write into `result` remains the derivation claim 12 left open.
+
+**Evidence:** `docs/register/PROTOTYPE-COHESION-ANALYSIS.md` H1. `docs/register/PROTOTYPE-COHESION-PLAN.md` the halt row. `docs/register/how/operator-founder-controls.md` leaf 1.2. `src/app/register/prototype-ant/operator/FounderAgencyControlsModule.tsx` `onConfirmHalt` and the kill-switch card. `src/app/register/prototype-ant/consultant/ConsultantAntScene.tsx` the `listActive` restore, `liftHaltForActive`, and `onResumeBook`. `server/wire-service/stores.ts` `handleHaltCommit`, `handleHaltLift`, `handleHaltIsFirmBook`. `server/wire-service/routes.ts` `POST /halt/:haltId/lift`. `server/wire-service/dispatchSend.ts` `consentAndHaltGate`, `isHaltBlockingNew`. `src/app/wire/reals/haltStore.ts` `lift`. `src/app/wire/standins/haltStore.ts` `lift` and the firm-book supersession. Claims 14 and 20.
+
+**Live.** `handleHaltLift` already sets `lifted_at` on any id, including a founder firm-book row. The founder module still has no lift control. The consultant resume already lifts whichever firm-book id `listActive` returned. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together

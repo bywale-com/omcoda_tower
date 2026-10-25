@@ -2,19 +2,17 @@
 
 ## Established
 
-Claims 1–57 stand in `docs/specification-pass/SPECIFICATION.md`. Claim 56 is the soft-bounce budget. Claim 57 is Resend’s suppression list.
+Claims 1–59 stand in `docs/specification-pass/SPECIFICATION.md`. Claim 58 is what `sequence_ready.ready` stores. Claim 59 is the founder kill-switch lift.
 
-Claim 56: `window_started_at` is the attempt-window clock. The soft-retry bound is the attempt budget `escalateAttemptWindow` already reads: `campaign.attempt_count`, else `sac-global` (seeded `3`), else `1`. Distinct `bounce_soft` messages for that `attemptId` and address fill it. The next email on that attempt then returns detail `soft-retry`. The attempt stays open. The address is not globally suppressed. The webhook does not resend the body. `deferred` does not count.
+Claim 58: the audit still classifies reachable, partial, and unreachable from email and phone. `ready` on that run’s row is true only when the verdict is reachable or partial and the consent row for that contact and firm is not a silence. A missing row and `basis` `none` stay ready. `basis` is not an input. A later silence does not rewrite the run. Claim 44 still filters that later silence at enroll time. A contact already silenced when the audit wrote is not on the onboarding list.
 
-Claim 57: `email.suppressed`, `suppression.added`, and `suppression.removed` are stored. An add or a skip denies that address with detail `suppressed` until a later removal is the newest list event. A `bounce_hard` row and a `complaint` row stay denied after a removal. Origin `bounce` on an add also runs claim 42’s pair when the outbound row named the contact. `complaint`, `manual`, and any other origin deny the address only. `data.to` is still not the binding. Claim 55’s classification stands. One `deferred` event does not pause the firm.
+Claim 59: the kill-switch is a firm-book `halt_records` row with `consultant_id` `founder`. `POST /halt/:haltId/lift` sets `lifted_at` on it, including when the consultant resume holds that id. The founder desk does not call lift. There is no expiry. A later firm-book commit still replaces the active row and does not return the firm to standby. One firm’s lift does not lift the fleet. The attempt is not nullified.
 
 ## Still worth investigating
 
-`email.delivery_delayed` still only inserts `deferred`. The payload carries `to` and `from`. `from` is the sender. There is no receiving server and no retry time. `deliv-23` asks for a per-provider backoff and states no duration. `wait_after_last_failed_seconds` and the email `within_seconds` are the attempt machine. The cell advance runs before that wait. Whether the next email to that address waits, and for how long, is the founder question below.
+`email.delivery_delayed` still only inserts `deferred`. Whether the next email to that address waits, and for how long, is the founder question below. Do not reopen it unless this session’s evidence answers it.
 
-What `sequence_ready.ready` is derived from remains the verdict-only writer in `executeAuditRun`. `SYSTEMS-REQUIREMENTS-FILLED.md` §5 says the flag is derived from the verdict and consent. The audit writer sets it from the verdict alone.
-
-A halt still does not decide Engine 2’s “one client, one motion,” and it does not decide the attempt engine’s live-override. Claim 20 does not nullify the attempt. Claim 54 keeps this firing to one sequence and does not add a unique enrollment constraint. Whether the founder kill-switch row can be lifted was not read.
+A halt still does not decide Engine 2’s “one client, one motion,” and it does not decide the attempt engine’s live-override. Claim 20 postponed that abort. Claim 59 does not nullify the attempt. Claim 54 keeps one firing to one sequence and does not add a unique enrollment constraint.
 
 `any_pathway_pass` is still the constant `true`. What a pathway rule would write into `result` remains the derivation claim 12 left open. Until that write exists, the false side has nobody to enroll.
 
@@ -28,4 +26,4 @@ A `deferred` event’s hold stays open. The choice is whether the next email to 
 
 ## Next move
 
-Start at the `deferred` hold only if this session’s evidence is being used to answer the founder question above. Otherwise start at `sequence_ready.ready`. The audit writer sets the flag from the verdict alone. `SYSTEMS-REQUIREMENTS-FILLED.md` §5 says the flag is derived from the verdict and consent. Read that writer and the consent row before inventing a third input. Leave the three founder questions recorded. Claims 56 and 57 stand. Do not reopen the complaint window, and do not recut the soft budget.
+Start at `any_pathway_pass`. The inserted value is the constant `true`, and claim 12 left open what a pathway rule would write into `result`. Read the cascade’s motion expression and the eligibility rule output before inventing a second flag. Leave the three founder questions recorded. Claims 58 and 59 stand. Do not reopen the deferral hold, and do not recut the ready flag or the kill-switch lift.
