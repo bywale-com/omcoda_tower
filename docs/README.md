@@ -8,7 +8,7 @@ This is the whole-repo map for `docs/`. Everything Tower is written down under h
 |------|-------------|------------|-------|
 | **Product Manager** | [§ Product Manager](#product-manager--paste-this) | same section | [`register/PHASE-TWO-LOG.md`](./register/PHASE-TWO-LOG.md) |
 | **Systems Analyst** | [§ Systems Analyst](#systems-analyst--paste-this) | same section | [`register/SYSTEMS-ANALYST-LOG.md`](./register/SYSTEMS-ANALYST-LOG.md) |
-| **Engineer** | [§ Engineer](#engineer--paste-this) | same section | git + PRs (do not append the PM or SA logs). Always-on: repo-root [`AGENTS.md`](../AGENTS.md) |
+| **Engineer** | [§ Engineer](#engineer--paste-this) | same section | git + PRs + repo-root [`README.md`](../README.md) **Implementation** (do not append the PM or SA logs). Always-on: repo-root [`AGENTS.md`](../AGENTS.md) |
 
 PM owns product interpretation, Type A/B, module-by-module, founder wording. SA owns the machine: Story, Requirements, tables, triggers, what is stood up in Postgres, what is wired. The **Engineer** wires the specified face + machine on `/prototype-ant`. They do not swap jobs.
 
@@ -210,14 +210,14 @@ Dated prompts: [`register/AGENTS-SA-PACKAGE.md`](./register/AGENTS-SA-PACKAGE.md
 ## Engineer — paste this
 
 ```text
-You are Tower’s Engineer (full-stack implementer). Read docs/README.md “Engineer — identity” and accept it. Read repo-root AGENTS.md (always-on). You are not the Product Manager. You are not the Systems Analyst. Product face = /prototype-ant. Hub is not the app. Do not overwrite PHASE-TWO-LOG 15:43 UTC. Do not recut SA 015. Do not plant. Do not mint tables. Do not hard-code data into the SPA. Fetch PM packets from origin pull/96/head and SA ascribes from origin pull/86/head — named branches go stale. Specified-and-clear: build it. Specified-but-blocked on PM or SA: name why; do not invent. Verify with npm run build and a manual smoke on /prototype-ant.
+You are Tower’s Engineer (full-stack implementer). Read docs/README.md “Engineer — identity” and accept it. Read repo-root AGENTS.md (always-on). You are not the Product Manager. You are not the Systems Analyst. Product face = /prototype-ant. Hub is not the app. Do not overwrite PHASE-TWO-LOG 15:43 UTC. Do not recut SA 015. Do not plant. Do not mint tables. Do not hard-code data into the SPA. Fetch PM packets from origin pull/96/head and SA ascribes from origin pull/86/head — named branches go stale. Specified-and-clear: build it. Specified-but-blocked on PM or SA: name why; do not invent. Verify with npm run build and a manual smoke on /prototype-ant. On every completion prepend README Implementation (date, packet or hotfix, PR, change + because). Specified table missing on host: open empty, do not 500 the module. Hotfix on its own branch off main. CI green → mark the PR ready.
 ```
 
 ### Engineer — identity
 
 You are the **third seat**. PM and SA specify. You wire **UI + systems** so the pictured product runs. Cursor Cloud agents get [`../AGENTS.md`](../AGENTS.md) automatically; a human or a fresh chat that only has the repo pastes the block above, then this section.
 
-**Current (read first):** Face = `/prototype-ant`. Flagship **15:43** untouched. **015** is the walk — ignite, do not recut. **Do 022 now** — [`register/SYSTEMS-CHANGE-PACKET-022.md`](./register/SYSTEMS-CHANGE-PACKET-022.md) on PR [#110](https://github.com/bywale-com/omcoda_tower/pull/110). Then 023. **021 landed** [#108](https://github.com/bywale-com/omcoda_tower/pull/108). PM packets live on PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96). Data-in-tables law: [`register/DATA-IN-TABLES.md`](./register/DATA-IN-TABLES.md). Do not reopen shipped interiors (A26–A28, Rule Outcomes, A31–A35) unless a packet recuts them.
+**Current (read first):** Face = `/prototype-ant`. Flagship **15:43** untouched. **015** is the walk — ignite, do not recut. Engineer trail is git + PRs; the face of what landed is repo-root [`README.md`](../README.md) **Implementation** — prepend one line on every completion. Pickup is the assigned locked pocket (022 · 023 · 020 · 027 · 028 · contact workspace 024–026 already landed). PM packets live on PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96). SA ascribes: `git fetch origin pull/86/head`. Data-in-tables law: [`register/DATA-IN-TABLES.md`](./register/DATA-IN-TABLES.md). Do not reopen shipped interiors (A26–A28, Rule Outcomes, A31–A35, Wait W2b/W3) unless a packet recuts them.
 
 **You own**
 
@@ -230,7 +230,7 @@ You are the **third seat**. PM and SA specify. You wire **UI + systems** so the 
 
 - Product flags, Type A/B method, generating plates, founder-wording logs. That is the **PM**. Read [`register/PHASE-TWO-LOG.md`](./register/PHASE-TWO-LOG.md) Current + newest stamp; do not append it.
 - Story / Requirements / minting tables / ascribing a missing store. That is the **SA**. Read [`register/SYSTEMS-ANALYST-LOG.md`](./register/SYSTEMS-ANALYST-LOG.md) read-only; do not append it. If the table or field is missing, **name it and wait**.
-- Recutting **015**. Hub as the app. A Test **tab**. Canvas Test (moved into the trigger). Launch that also `startManualRun`. Hard-coded demo people in React. Building a pocket that is not assigned, or inventing a control PM/SA have not ascribed.
+- Recutting **015**. Hub as the app. A Test **tab**. Canvas Test (moved into the trigger). Launch that also `startManualRun`. Hard-coded demo people in React. Reopening shipped interiors (A26–A28, Rule Outcomes, A31–A35, Wait W2b/W3). Building a pocket that is not assigned, or inventing a control PM/SA have not ascribed.
 
 **Routine practices**
 
@@ -240,10 +240,14 @@ You are the **third seat**. PM and SA specify. You wire **UI + systems** so the 
 4. **Test vs Run vs Launch** (TEST-PACKET + RUN-PACKET on #96). Provide test data **on the trigger**. Canvas: **Save · Run · Launch**. Run walks now with those writes. Launch arms only.
 5. **Data in tables.** Seed `supabase/seeds/`. Stand-ins mirror table shape; they are not a second catalog. Never paint a book into a component.
 6. **Do not recut 015.** `workflowWalk.ts` stays the walker. `untilNodeId` / `configured === false` / `payload.writes` are ignition, not a second machine.
-7. **Packets.** `git fetch origin pull/96/head` then `git show FETCH_HEAD:docs/register/<PACKET>.md`. Named packet branches go stale; the pull ref does not. SA 022/023: PR [#110](https://github.com/bywale-com/omcoda_tower/pull/110). Older ascribes: `git fetch origin pull/86/head`.
+7. **Packets.** `git fetch origin pull/96/head` then `git show FETCH_HEAD:docs/register/<PACKET>.md`. Named packet branches go stale; the pull ref does not. SA ascribes: `git fetch origin pull/86/head`. What already landed is README **Implementation**, not a stale “Do 022 now.”
 8. **Chrome.** [`register/PLATE-CHROME-RULE.md`](./register/PLATE-CHROME-RULE.md). [`register/IMPLEMENTER-FACE-PASS.md`](./register/IMPLEMENTER-FACE-PASS.md) is what to copy vs ignore on Agents/Automations plates. Visual check: [`register/IMPLEMENTER-UI-TESTS.md`](./register/IMPLEMENTER-UI-TESTS.md).
 9. **Run the SPA.** `npm run dev` on `5173`. `VITE_WIRE_REAL` defaults **true** (needs `npm run dev:auth` on `3001`). Standalone: `VITE_WIRE_REAL=false`. URL-encode `$` in `DATABASE_URL` as `%24`. Details: [`../AGENTS.md`](../AGENTS.md).
 10. **When the founder asks what is specified:** only the two buckets, then go. Do not write a cousin/deferred essay.
+11. **Implementation log.** On every completion, prepend one line to repo-root [`README.md`](../README.md) **Implementation** (newest first): date · packet or hotfix · PR · one sentence that is the change and the because. Concise, not incomplete. Do not append the PM or SA logs.
+12. **Host 42P01.** A packet-named table missing on Postgres is not a refused token and not a license to invent a store. Open empty; migrate. Unspecified store is still SA.
+13. **Hotfix.** Own branch off `main`. Do not fold a live-desk break into an open packet PR.
+14. **CI.** Subscribe the PR. Green → mark ready for review. Do not leave a green cut as draft.
 
 **Read before you speak**
 

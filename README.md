@@ -2,7 +2,20 @@
 
 Tower is an intelligent client engagement system for immigration consultants. It watches each client’s file, runs scheduled nudges driven by their data, and arms fixed reactivation sequences when eligibility appears.
 
-**Agent seats** (paste-prompts + identity): [`docs/README.md`](docs/README.md) — Product Manager, Systems Analyst, and Engineer. Always-on for the Engineer: [`AGENTS.md`](AGENTS.md). Trails: [`docs/register/PHASE-TWO-LOG.md`](docs/register/PHASE-TWO-LOG.md) (PM/founder) · [`docs/register/SYSTEMS-ANALYST-LOG.md`](docs/register/SYSTEMS-ANALYST-LOG.md) (SA) · git + PRs (Engineer — do not append those logs).
+## Implementation
+
+Newest first. Engineer trail is still git + PRs; this is the face of what landed.
+
+- **2026-08-29** — Engineer seat [#117](https://github.com/bywale-com/omcoda_tower/pull/117). README Implementation is the face of what landed (last seven, then prepend going forward), because git + PRs were the trail but the desk had no top-of-repo line, and the seat prompt did not record Implementation-prepend, host 42P01, hotfix-on-its-own-branch, or CI-green-then-ready.
+- **2026-08-27** — hotfix [#116](https://github.com/bywale-com/omcoda_tower/pull/116). Contact workspaces open even when `contact_uploads` is missing, because that SELECT was 500ing the whole seat and the desk painted it as a dead link.
+- **2026-08-27** — packet 028 [#115](https://github.com/bywale-com/omcoda_tower/pull/115). Wait is its own graph kind (approval or duration) with an Approve-now / Approve-later desk note, because parking cannot live on `action.type` and resume is this run’s outgoing, not a second graph.
+- **2026-08-27** — packet 020 [#114](https://github.com/bywale-com/omcoda_tower/pull/114). Operator Activation, Escrow, and Register panes read and write the gate tables, because those modules were chrome over a fixture instead of the rows the operations already write.
+- **2026-08-27** — packet 027 [#113](https://github.com/bywale-com/omcoda_tower/pull/113). Rule Outcomes compare uses the same chip box as If into the person write, because the left operand was a text label (Hub `client_data.*`) and Language CLB was not a write.
+- **2026-08-27** — packets 022 · 023 [#112](https://github.com/bywale-com/omcoda_tower/pull/112). Objective-met is Local to the stamped ask, and an exhausted attempt stops spending while the campaign keeps listening, because a past form, meeting, or click on the contact was satisfying every campaign.
+- **2026-08-23** — packets 024–026 [#111](https://github.com/bywale-com/omcoda_tower/pull/111). Contact workspace is a no-login Now / History / Upload seat until they opt out of the workspace, because Contact was not a desk and the leftover firm chip was still the header.
+- **2026-08-21** — packet A40 / 021 [#108](https://github.com/bywale-com/omcoda_tower/pull/108). Form occupancy is one box of this run’s required-data listing, because Submit-this-form was still a catalog of questions instead of the listing write.
+
+**Agent seats** (paste-prompts + identity): [`docs/README.md`](docs/README.md) — Product Manager, Systems Analyst, and Engineer. Always-on for the Engineer: [`AGENTS.md`](AGENTS.md). Trails: [`docs/register/PHASE-TWO-LOG.md`](docs/register/PHASE-TWO-LOG.md) (PM/founder) · [`docs/register/SYSTEMS-ANALYST-LOG.md`](docs/register/SYSTEMS-ANALYST-LOG.md) (SA) · git + PRs (Engineer — do not append those logs). Prepend **Implementation** above on every Engineer completion.
 
 This repository is a **UI prototype** — mock data, no backend — focused on how operators see and navigate a client’s engagement over time.
 
