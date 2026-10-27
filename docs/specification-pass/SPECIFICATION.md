@@ -1946,6 +1946,10 @@ No founder question. The leaf already chooses an invited contact who is not sile
 
 The sentence that `handleMeetingBook` still inserts without this read, and that the plant’s Booking calls that route, stands as the gap. Claim 38 decides that post. The seat pane and the seat insert are unchanged. A silenced contact still does not book through `handleContactSeatMeeting`. An uninvited contact still does not. `contact_uploads` are unchanged.
 
+### Revision — claim 88
+
+The sentence that Confirm booking returns `projectSeat` stands. While the objective kind is `meeting` and the contact is not silenced, that projection is still the slots. Claim 88 is the later projection, after the cursor is null and a meeting is still pending. It does not put fields beside the slot picker, and it does not reopen the slots. A silenced meeting cursor stays the empty Now claim 37 already set.
+
 ---
 
 ## Claim 38 — The machine meeting post is the same invitation
@@ -3123,6 +3127,10 @@ No founder question. D-01 and D-02 stay as the seed left them. The family’s `p
 
 The sentence that a later eligibility enroll while an attempt is already open was looked at and not specified stands as the gap. Claims 64 and 65 specify it. The agenda read is unchanged. `mp-5` is the withhold in claim 65, not a line on the brief.
 
+### Revision — claim 88
+
+The sentence that the contact’s one form is the nudge objective’s seat, and that this claim does not place the pre-meeting capture, stands as the brief’s scope. The capture form on a form objective stays that seat. Claim 88 is the contact’s form after the book, on the same seat, when the cursor is already null. The agenda read is unchanged. `obj.reeng.nudge` is still the nudge. D-01 is still the builder’s drawing. This claim does not add a campaign.
+
 ---
 
 ## Claim 64 — A campaign objective that advances the cursor closes that enrollment’s open attempts as `met`
@@ -3345,6 +3353,10 @@ No founder question. The address in the sign-up email is the contact seat for th
 ### Revision — claim 70
 
 That sentence stands as the gap. Claim 70 is the page and the click. The sign-up address, the mint, and the seat’s read of `enrollment_id` are unchanged.
+
+### Revision — claim 88
+
+The sentence that a null `campaign_id` stays null, and that the link’s stored `campaign_id` is not substituted over it, stands. Claim 88 fills that finished cursor with the pending form when a meeting is still ahead and self-reportable fields remain. It does not put `camp.react.meeting` back. A finished cursor with no pending meeting, including the launch-day confirmation, stays the cursor claim 68 already named.
 
 **Evidence:** `server/wire-service/dispatchSend.ts` `dispatchEmail`, `dispatchEmailLive`, `dispatchSmsLive`. `server/wire-service/contactAccessMint.ts` `mintContactAccessLink`, `contactAccessUrlForSend`. `server/wire-service/contactSeat.ts` `lookupLink`, `projectSeat`, `handleContactSeatFacts`, `seatFromToken`. `server/wire-service/cascade.ts` `actuateChannelSend`. `server/wire-service/campaignHousing.ts` `resolveFormStamp`, `onCompletionWrite`, `objectiveSatisfiedBy`. `server/wire-service/routes.ts` `GET /contact-seat/:token`. `vite.config.ts` the `/c/` document. `src/main-prototype-ant.tsx`. `src/app/register/prototype-ant/PrototypeAntApp.tsx` `contactTokenFromPath`. `src/app/register/prototype-ant/contact/ContactWorkspace.tsx`. `src/app/Router.tsx` `/a/:token`. `docs/register/MAGIC-ACCESS-LINK.md`. `supabase/migrations/019_contact_seat.sql`. `src/app/system-map/data/templates.ts` `ld-signup-email` variables and `ld-landing`. `guidelines/Reactivation.md` Launch Day. Claims 3, 28, 29, 45, 66, and 67.
 
@@ -4141,6 +4153,49 @@ No founder question. A reply is stored on the CEM it answers. It does not silenc
 
 **Live.** `emails.send` still sets no `replyTo`. `mapClass` still returns null for `email.received`. The handler still looks up `data.email_id` as an outbound id. Nothing in `server/` inserts `email_inbound` or `email_reply`. No migration was written.
 
+### Revision — claim 88
+
+The sentence that claim 63 did not place the contact’s pre-meeting form stands as the gap. Claim 88 places that form. The reply address and `email_reply` are unchanged.
+
+---
+
+## Claim 88 — After the meeting is booked, the same seat shows the outstanding form, and that form is not a campaign
+
+**Standing:** necessary implication of Seed §5.8’s pending capture and of the booking leaf’s write-back, and a technical decision made in this session.
+
+When the seat has already passed the consent ask, and the enrollment it reads has a null `campaign_id`, and this firm and this contact have a `meeting_booked` row that is still pending, and the outstanding self-reportable set is non-empty, `now.state` is `form`. The title stays `A few facts so we can continue`. The instruction stays the firm’s form instruction. The attached `formFields` are the class claim 32 already keeps, one key, the same list claim 62 shows. The field query is not skipped because `silenced` is true. This claim does not assign a new `now.state`. It does not insert `meeting_booked`, `enrollment`, or `active_attempts`. It does not add a campaign to `tpl.reactivation.v1`. It does not call `enrollAndActuate`. Submit is the fact write already specified. A blank submit does not insert claim 69’s null key, because that key is only for `obj.optin.day`.
+
+**Why this seat, after the book.** Seed §5.8 opens a data-capture form on `meeting_booked` when self-reportable fields are outstanding, and it marks that behavior settled. The builder drawing is the open half. `handleContactSeatMeeting` inserts the row, `onCompletionWrite` advances, and the handler returns `projectSeat`. `obj.react.meeting` completes on `meeting_booked`. `tpl.reactivation.v1` has one campaign, so `nextCampaignId` is null. Claim 66 inserts nothing on that flip. Claim 68 keeps the null: the link’s stored `campaign_id` is not put back. The live expression `enrollment?.campaign_id ?? link.campaign_id` would put it back, and the seat would show slots again. Claim 68 already forbids that. With the null left in place, the kind is not `meeting` and not `form`, and the projection falls through to `Nothing needed right now` even though `formFields` were loaded and then dropped. Leaf 1.2 of `docs/register/how/contact-book.md` is the form on booking confirm, or the pending form before the meeting. The plant’s booking caption says the outstanding fields open after confirm. The product face has one Now. `ContactWorkspace` already renders the form when the state is `form`. The return of the book is that Now.
+
+**What is still pending.** A `meeting_booked` row for this firm and contact is pending when `slot` is null, when `slot` is blank, when `Date.parse` does not accept it, or when the parsed time is after now. A parsed time that is not after now is not pending. One pending row is enough. The fields are the contact’s set, not a set stored on the meeting. The specimen `mtg-harbor-cole-2026-08-21` has slot `2026-08-21T16:30:00-07:00`. That time is before this session’s date, so that row does not open this form. Its `objective_met` payload already records `nextCampaignId` null. `cr-harbor-3` and `cr-cedar-2` are on `camp.react.meeting` with no meeting row in the seed. Their Now stays the slots until they book. There is no status column and no held event. `FROZEN-TABLES-v1.md` leaves `pending_capture` off the phase-4 tables. The system-map node of that name is this behavior. This claim does not mint the table.
+
+**What still wins.** A missing consent row, or `basis` `none` whose `source` is not `ignored`, stays the consent ask, including when a meeting row is pending. A current objective kind `form` stays that form. That is launch day and `obj.reeng.nudge`. A current kind `meeting` with `silenced` false stays the slots. A current kind `meeting` with `silenced` true stays the empty Now claim 37 set. A current kind `click` stays empty. This claim does not cover those cursors. Ignore is not the consent ask. An Ignore row whose cursor is null, with a pending meeting and outstanding fields, sees this form. Claim 37 already allowed that contact to book when the kind was `meeting`.
+
+**The submit.** `handleContactSeatFacts` stores a class-legal answer, deletes that key, and runs the cascade. The enrollment’s `campaign_id` is null, so claim 68’s stamp carries no `form_ref` and no `campaign_objective_id`, and `onCompletionWrite` does not advance. The meeting objective is already met. This submit does not meet it again, and a fact does not satisfy `completion_table` `meeting_booked`. When the set becomes empty, the next projection is the empty Now. Claim 65 is unchanged: a `met` attempt does not withhold, so this firing can enroll. This claim does not add a meeting latch on that enroll. Claim 63’s brief still reads the same keys. It is not this form.
+
+**D-01 and D-02.** D-01 asks whether a builder draws the capture as a tail of the reactivation sequence or as a standalone `meeting_booked` sequence. Seed §5.8 and §13.5 leave that drawing open and call the behavior settled. This claim is the behavior on the seat the book already returns. A later tail whose objective kind is `form` is the form branch above, not this null-cursor branch. A later sequence enroll is claim 65, not the book. This claim does not choose either drawing. D-02 asks which module is the in-meeting fallback for gaps still open in the room. Desk-07 names what the brief contains. It does not name that module. This claim does not either.
+
+**Rejected alternatives.**
+
+- Add a form campaign after `camp.react.meeting`. That is D-01’s tail. Claim 66 would arm an attempt and could send. The reactivation seed has one campaign. The book’s return is this seat. The drawing stays open.
+- Enroll a sequence from `meeting_booked`. That is D-01’s other drawing. The meeting handler does not call `enrollAndActuate`. Claim 65 already says the meeting handlers do not run the eligibility enroll.
+- Put the fields on the slot picker before the insert. The seed opens the form on `meeting_booked`. Until that row exists, claim 37’s pane is the slots.
+- Restore the link’s `campaign_id` after the null flip so the contact can book again. Claim 68. The first commit already wrote the meeting. A second slot list is a second meeting.
+- Invent `now.state` `pending_capture`, or mint that table. The workspace renders `form`. The frozen map left the table off. The rows are `meeting_booked` and `missing_fact_signals`.
+- Show this form when the set is empty. Claim 33. An empty list is not the form. The empty title stays. The furnish chip is not a second Now.
+- Show it over a current form, click, or meeting objective. Those cursors are the ask that is still current. This claim fills the finished cursor only.
+- Hide it when `silenced` is true. Claim 33. The book already happened. Silence stops the send. The list stays. Furnish-03 puts Silence on this form.
+- Withhold claim 65 because a new sequence before the meeting would be parallel outreach. The no-parallel sentence is the agenda on the reactivation firing. The later enroll is claim 65. This submit does not recut it.
+- Treat a parsed slot in the past as still pending, or delete the signals when the slot passes. The pane is pending the meeting. The signals stay for the brief and for a later nudge. A past meeting does not keep this Now.
+
+No founder question. The contact who just booked, and who still has outstanding self-reportable fields, sees that form on the seat the book returned. The form is not a campaign and not a second enrollment. Who is placed on launch day, whether a repeat reactivation compresses, whether a `deferred` event holds the next email, and what makes one family’s `pass` true, stay the questions already recorded. D-01 stays the builder’s drawing. D-02 stays the in-meeting module.
+
+**What this leaves.** After `campaign_id` is null, `projectSeat`’s history keeps a campaign only when it is the current cursor or an earlier `ord`. Both tests fail, so the booked meeting drops out of History and only the consent row remains. That list was not specified. A firm-monitored Reply-To is still unstored.
+
+**Evidence:** `docs/register/SEED.md` §5.8 and §13.5. `docs/register/how/contact-book.md` leaf 1.2. `docs/register/SYSTEMS-STORY.md` §12. `docs/register/SYSTEMS-REQUIREMENTS-FILLED.md` §12. `docs/register/system-map/FROZEN-TABLES-v1.md` the `pending_capture` backlog line. `src/app/system-map/data/nodes.ts` `pending_capture`. `server/wire-service/contactSeat.ts` `projectSeat` the state branches and the history loop, `handleContactSeatMeeting` the return. `server/wire-service/campaignHousing.ts` `onCompletionWrite`, `objectiveSatisfiedBy`, `nextCampaignId`. `src/app/register/prototype-ant/contact/ContactWorkspace.tsx` the `form` branch and `MeetingBook`. `src/app/register/prototype/ContactPrototypeScene.tsx` the after-confirm caption and `LoopCloserForm`. `supabase/seeds/002_machine_tables.sql` `obj.react.meeting`, `camp.react.meeting`. `supabase/migrations/007_meeting_booked.sql`. `supabase/migrations/017_event_test_contract.sql` `mtg-harbor-cole-2026-08-21`. `supabase/migrations/021_objective_local_axis.sql` the cole `nextCampaignId` null. `docs/sme/pass2/04-consultancy-desk-ops.md` desk-07. Claims 32, 33, 37, 62, 63, 65, 66, 68, and 69.
+
+**Live.** After a book, `projectSeat` still falls through to empty when the cursor is null, and the live `??` still restores `link.campaign_id`, so a meeting link still shows slots. `formFields` are still attached only when the state is already `form`. The field query is still inside `if (!silenced)`. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
@@ -4200,6 +4255,8 @@ The sentence that the enroll was not specified stands as the gap. Claim 43 speci
 - `mapClass` returning `rejected` for `email.failed`, and claim 84, which stores that class and does not silence, does not join the address deny, and does not pause the firm. The live handler already inserts the class and already does none of those three.
 
 - `routes.ts` having no Twilio post, and claims 85 and 86, which store the carrier status, the STOP keyword, and a non-keyword body as `sms_inbound` plus `sms_reply`. The live app still has no route. A sentence still inserts nothing. `emails.send` still omits `replyTo`. Claim 87 sets that field to the platform capture address and stores `email.received` as `email_inbound` plus `email_reply`. The live handler still drops that type.
+
+- `handleContactSeatMeeting` returning `projectSeat` after the null flip, and that projection falling through to empty while `missing_fact_signals` still hold self-reportable keys, and claim 88, which sets `now.state` to `form` on that finished cursor when a `meeting_booked` row is still pending. The live `??` still restores `link.campaign_id`. The live form fields are still withheld unless the state is already `form`. The history loop still drops every campaign once `campaign_id` is null. Claim 88 does not specify that list.
 
 - `dispatchScheduleTriggers` inserting a `schedule` run on every tick with no contact ids and `anyPass: true`, and claim 47, which starts one run in a UTC minute `schedule.cron` matches, walks claim 17’s audience for the trigger’s firm, and does not set `anyPass`. The live function still ignores the cron and still walks nobody.
 
