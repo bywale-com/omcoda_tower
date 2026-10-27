@@ -3897,6 +3897,83 @@ No founder question. The call rules do not fire on the seeded walks, and nothing
 
 **Live.** `answered` and `completed` are still never assigned. A seeded attempt’s owner is still text, email, or form. The call rows are still not in that toggle set. No migration was written.
 
+### Revision — claim 80
+
+The sentence that the enroll state sets `opened` and `link_clicked` false stands as how `criteriaDue` reads an absent key. The insert in `enrollAndActuate` does not assign those keys. The cell advance assigns both false. An absent `opened` does not withhold `acr-text-not-opened`.
+
+### Revision — claim 82
+
+The sentence that a bounce or a failed text was not walked stands as the gap. Claim 83 is that read. The call rows stay unselected.
+
+---
+
+## Claim 83 — A bounce or a failed text does not clear `delivered`, and the not-delivered row does not move the owner
+
+**Standing:** necessary implication of the flag written before the receipt, of claims 20 and 22 leaving that write in place on a deny, and of the two text toggles sharing one clock.
+
+`acr-text-not-delivered` is enabled, `firm_id` null, `channel_token` `text`, `when_clause` `channel=text`, `condition_clause` `not delivered`, `set_value` `escalate_forward`, ord 1. `criteriaDue` withholds it when `state.delivered` is true. It does not withhold it when the flag is false or absent. The when-clause does not contain the word `delivered`, so the positive test that returns false when the flag is missing does not apply to this row. `scr-global-text` is 1800 seconds. That number is the clock for every text toggle on the attempt. The row’s own `threshold` is null and is not this clock.
+
+**The flag is written before a receipt.** `enrollAndActuate` inserts `delivered` true and `delivered_at` now, then sends. `advanceTemplateCellIfDue` writes the same pair, then sends when the new channel is email or text. Claims 20 and 22 leave those writes in place when the send returns `ok: false`. `handleResendWebhook` does not update `active_attempts`. `email.bounced` becomes `bounce_hard` or `bounce_soft` and, on the hard class, upserts the consent pair. It does not assign `delivered`. `email.delivered` stores class `delivered` and does not assign the flag. Claim 80’s update, for `opened` and `clicked` only, does not change `delivered` or `delivered_at`. `email.failed` stores `rejected` and does not assign the flag. That class is claim 84.
+
+A text that Twilio accepts stores `outbound_messages.status` `accepted` and a `messaging_events` row of class `accepted`. `messages.create` is called with `to`, `from`, and `body`. It is not called with a status callback. `routes.ts` posts `/webhooks/resend` and does not post a Twilio status route. An undelivered or failed carrier status therefore never arrives, and nothing in the server would apply it to the attempt if it did. A throw from `messages.create`, a missing Twilio configuration, and a gate deny return `ok: false` after the attempt write. They do not clear the flag. The Activity tags stay the reading of that flag claim 21 already named. A bounce does not turn Delivered off. This claim does not retune `signalsFrom`.
+
+**The only false write is a channel change, and it is not a receipt.** `escalateAttemptWindow` sets `delivered` false when `toChannel` is not `fromChannel`, and it keeps the previous flag when the channel stays. That write happens before the send. It also sets `opened` false. It does not clear `delivered_at`. `clockAnchor` still prefers `delivered_at`, so the 1800 seconds are measured from the earlier stamp. Claim 74’s return send, when the result is allowed, sets `delivered` true and `delivered_at` now. A result with `ok: false` does not perform that write. The false value from the channel change stays, which is claim 20. A dry run is an allowed result. It takes claim 74’s true flag.
+
+**Why the row still does not move the owner.** On a text owner the seeded toggles are `acr-text-not-opened`, ord 0, then this row. `loadAttemptCriteria` orders by `ord`, and the filter keeps that order. The not-opened condition withholds only when `state.opened` is true. The enroll leaves `opened` absent, which does not withhold. The cell advance sets it false. The channel-change write sets it false in the same object that sets `delivered` false. No writer sets `delivered` false and leaves `opened` true. While the not-opened row is enabled, not already in `fired_criteria`, and `opened` is not true, it is due on the same 1800 seconds whenever this row would be due. It fires first. `escalate_forward` from text sets the owner to email. The reload on that tick no longer matches a text rule, so this row does not fire. A later tick resolves the email toggles. Firing the not-opened row is what leaves text, so the id is not sitting in `fired_criteria` on a later tick that is still on text.
+
+After enroll, after a cell advance, and after an allowed return send, the flag is true and this row is not due. That is the same withhold claim 71 already used on the day-6 text. A bounce or a failed text does not create the due that withhold refused. Disabling `acr-text-not-opened` and leaving this row enabled does not turn a failed text into an escalation. The flag is still true, so this row is still not due, and the text owner has no other selected toggle. The contact stays on that owner until a later cell advance. This claim does not disable either row.
+
+`acr-text` is the §5b sentence, delivered and not opened. Its `channel_token` is null, so it is not in the text toggle set. Text has channel toggles, so the no-token fallback is not used. The row that requires the flag to be true is not the row that fires. The row that fires is `acr-text-not-opened`, and its when-clause does not require the flag. There is no email row whose condition is `not delivered`. A bounce while the owner is email does not select this text row. The email ladder stays claim 80. The address deny and the soft-bounce budget stay claims 55 and 56.
+
+**Rejected alternatives.**
+
+- Clear `delivered` when `bounce_hard`, `bounce_soft`, or `rejected` is stored, so this row can become due. The flag is the attempt marker claims 20 and 22 left in place before the receipt. The webhook does not know a text carrier status. Clearing it on an email bounce would make a text rule due for an email failure, or would un-deliver the cell the ladder is still inside. Claims 55 and 56 already say what those email classes do to a later send.
+- Treat `messaging_events` class `delivered` as the flag, and start the flag false until that row exists. The enroll and the cell advance write the flag before `actuateChannelSend` returns. `email.delivered` is not a text receipt. An accepted text has no later delivered event in this server. The not-opened clock would never start for the primer.
+- Add a Twilio status route so undelivered can clear the flag. `deliv-24` names undelivered SMS as reputation, not as this toggle. The face timer is the 1800 seconds both text rows already share. The condition this row reads is the flag the attempt already wrote. A carrier route is not required for that condition, and this claim does not invent the route.
+- Let this row fire ahead of `acr-text-not-opened` when both are due. The seed ord is 0 then 1. The migration says the tick reads the condition it already reads. Reordering would escalate twice toward the same next channel, or would skip the not-opened row the calendars already walk.
+- Select `acr-text` for the text owner so §5b’s conjunction is the firing row. The C6 rows are the channel toggles. The older row has no `channel_token`. Putting it in the set would add a third text rule beside the two the face lists.
+
+No founder question. A bounce and a failed text leave `delivered` as the attempt write left it. On the seeded text toggles the owner moves by `acr-text-not-opened`, or it does not move. `acr-text-not-delivered` does not move it. The four founder questions stay the questions already recorded.
+
+**What this leaves.** `email.failed` is stored as `rejected` and was not given a send gate of its own. D-01 and D-02 stay the seed’s open decisions.
+
+**Evidence:** `server/wire-service/cascade.ts` `enrollAndActuate` the attempt insert, `advanceTemplateCellIfDue` the `delivered: true` write, `escalateAttemptWindow` the channel-change flag, `criteriaDue` the not-delivered withhold and the within-seconds clock, `clockAnchor`, `loadAttemptCriteria` `ORDER BY ord`, `resolveRulesForAttempt` the channel-token filter. `server/wire-service/dispatchSend.ts` `dispatchSmsLive` the `messages.create` arguments and the catch, the `accepted` insert. `server/wire-service/webhooks.ts` `mapClass`, the `messaging_events` insert, the `bounce_hard` consent upsert. `server/wire-service/routes.ts` `POST /webhooks/resend`. `supabase/seeds/002_machine_tables.sql` `acr-text`, `acr-text-not-opened`, `acr-text-not-delivered`, `scr-global-text`. `supabase/migrations/012_grain_audience_one_timer.sql` the C6 insert and the comment that the tick reads the condition. `docs/register/OPERATOR-REVISIONS.md` §5b the delivered-not-opened window. Claims 20, 21, 22, 55, 56, 71, 74, and 80.
+
+**Live.** The enroll and the cell advance still set `delivered` true before the send. The webhook still does not update the attempt. `dispatchSmsLive` still returns a throw without writing `state`. `messages.create` still takes no status callback, and there is still no Twilio status route. `acr-text-not-delivered` is still withheld while the flag is true. No migration was written.
+
+### Revision — claim 83
+
+The sentence that `email.failed` was not given a send gate stands as the gap. Claim 84 is that class. The flag and the text row are unchanged.
+
+---
+
+## Claim 84 — `email.failed` is `rejected`, and it does not suppress the address or pause the firm
+
+**Standing:** necessary implication of the failed-event page and of the two classes that already deny an address, and a technical decision made in this session.
+
+`mapClass` returns `rejected` for `email.failed`. The handler inserts `messaging_events` with that class, the firm and contact from `outbound_messages` where `provider_message_id` is `data.email_id`, and the raw body. It does not upsert `consent_records`. It does not update `active_attempts`. Claim 81 already treats the class as the end of that message’s open-rate wait, and it leaves the message out of the rate’s base. This claim does not change that rate.
+
+**Why it is not an address deny.** The failed-event page says the email failed to send because of an error, and it names invalid recipients, API key problems, domain verification issues, email quota limits, and other sending failures. The payload’s `failed.reason` is one string. The only token the page gives is `reached_daily_quota`. That token is the account’s quota. It is not the recipient. Claims 50 and 55 deny an address for `complaint` and `bounce_hard`, which are the two origins the suppressions page names. Extending that join to every `rejected` row would deny the recipient, in every firm, because the account hit a quota or the API key failed. A missing `failed` object, and a reason other than the one example, are the same insert. The page does not give a closed list of reason codes, so this claim does not branch on the string.
+
+The pair is not silenced. A domain that is not verified is not that contact’s consent. `dispatchEmailLive` does not read `rejected`. The next email to that address still reaches the provider unless a claim that already denies it applies. `dispatchSmsLive` does not read it. The text still sends. The attempt stays `open`. `delivered` stays claim 83. `rejected` is not added to claim 56’s `bounce_soft` count. One row does not write `halt_records`, does not set a firm quarantine, and does not write `attempt_wait_until`. Halt remains the operator stop. The payload does not say when a quota ends. `injectEvent` on `rejected` pushes the event and does not call `silence` and does not quarantine. This claim does not add those calls.
+
+**Rejected alternatives.**
+
+- Join `rejected` to the address deny because `deliv-14` lists the class beside bounce and complaint. The failed page’s example is a quota. The suppressions page’s origins are bounce and complaint. Those already have classes. A quota is not a dead address.
+- Silence the contact. Claim 42’s upsert is the permanent bounce. An API key failure is not that pair.
+- Pause the firm, or insert a halt, so the book stops until the quota lifts. The event does not say the duration. Claim 20’s halt is the operator’s firm stop. One `rejected` row is not that act. A later send that fails the same way inserts another row.
+- Suppress only when the prose says invalid recipients. The reason field’s only published token is `reached_daily_quota`. Matching the prose would require a token the page does not give. A loose match would catch the quota.
+- Clear `state.delivered`, or count the row as `bounce_soft`. Claim 83. The email rules do not read that flag. The soft budget is the transient recipient bounce. A quota is not that bounce.
+- Finish claim 81’s wait with `accepted` instead, so a failure that never bounces holds the firm rate open. Claim 81 already ends the wait on `rejected`. A send Resend failed is not an unopened arrival.
+
+No founder question. A failed send is stored as `rejected`. It does not suppress the address, does not silence the contact, and does not pause the firm. The four founder questions stay the questions already recorded.
+
+**What this leaves.** The SMS external model names queued, sent, delivered, undelivered, failed, and STOP. None of those is ingested. `deliv-24` wants undelivered and complaint on the SMS suppression path. That path was not walked. It does not change `rejected`. D-01 and D-02 stay the seed’s open decisions.
+
+**Evidence:** `server/wire-service/webhooks.ts` `mapClass` `email.failed`, the insert, the `bounce_hard` branch. `server/wire-service/dispatchSend.ts` `dispatchEmailLive` with no read of `rejected`. `src/app/wire/ports.ts` `DeliveryEventClass`. `src/app/wire/standins/espMailer.ts` `injectEvent`. `https://resend.com/docs/webhooks/emails/failed` the failure situations and `failed.reason` `reached_daily_quota`. `docs/sme/capability/C1-email-deliverability.md` `deliv-14` and `deliv-24`. Claims 20, 50, 55, 56, 81, and 83.
+
+**Live.** `mapClass` already returns `rejected`. The handler already inserts the row and already does not silence, does not touch the attempt, and does not deny the next send. `injectEvent` on `rejected` already only pushes the event. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
@@ -3950,6 +4027,10 @@ The sentence that the enroll was not specified stands as the gap. Claim 43 speci
 - `mt-ann-open` and `mt-email-open` sitting enabled with no writer, and claim 81, which inserts `metrics_flags` for the firm when the cell’s open rate is taken and has crossed, without writing `cohort_tiers.tier`. The live webhook still only inserts `messaging_events`. Nothing in `server/` inserts `metrics_flags`. An announcement open still does not flag the firm.
 
 - `acr-call-not-answered` and `acr-call-not-completed` reading `answered` and `completed`, and claim 82, which does not set those flags because the walk’s owner is never `call`. The live enroll still remaps an authored call token to the ladder head. The call rows stay unselected on text, email, and form.
+
+- The enroll and the cell advance setting `delivered` true before a receipt, and `acr-text-not-delivered` withholding while that flag is true, and claim 83, which does not clear the flag on a bounce or a failed text, so `acr-text-not-opened` remains the text move. The live webhook still does not update the attempt. `dispatchSmsLive` still returns a throw without writing `state`. There is still no Twilio status route.
+
+- `mapClass` returning `rejected` for `email.failed`, and claim 84, which stores that class and does not silence, does not join the address deny, and does not pause the firm. The live handler already inserts the class and already does none of those three.
 
 - `dispatchScheduleTriggers` inserting a `schedule` run on every tick with no contact ids and `anyPass: true`, and claim 47, which starts one run in a UTC minute `schedule.cron` matches, walks claim 17’s audience for the trigger’s firm, and does not set `anyPass`. The live function still ignores the cron and still walks nobody.
 
