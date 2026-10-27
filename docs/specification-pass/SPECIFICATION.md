@@ -3820,6 +3820,83 @@ No founder question. An open or a click on the cell the attempt is still on sets
 
 **Live.** The webhook still does not update the attempt. `opened` and `link_clicked` are still only written false. `acr-email-not-opened` is still due after the email timer for a cell the contact opened. No migration was written.
 
+### Revision — claim 81
+
+The sentence that `mt-ann-open` and `mt-email-open` were not walked stands as the gap. Claim 81 is the firm rate those two rows write, and why an announcement open is one cell of that rate and not this contact’s `tier`.
+
+---
+
+## Claim 81 — The two open thresholds are firm rates on two cells, and they do not write `tier`
+
+**Standing:** necessary implication of the campaign axis and of the two percent sentences, and a technical decision made in this session.
+
+`metrics_flags` has `firm_id` and no `contact_id`. `docs/register/SYSTEMS-GOAL.md` puts that table on the campaign and node axis, and puts `cohort_tiers` on the contact. The build says a crossed threshold flags for the machine. It is not a dashboard, and it is not a send gate. `mt-ann-open` and `mt-email-open` are the seeded rows. Both are enabled, `firm_id` null. Their `when_clause` and `condition_clause` are null. The predicate is the label and the threshold. The firm sees an enabled row of that id whose `firm_id` is null or that firm, the same way claim 78 sees `cs-top-tier`. A settings save still stamps the acting firm onto the one row. This claim does not split the id. `enabled` false does not write. A null `threshold` or a null `set_value` does not write. Disabling does not delete a flag already stored.
+
+**The cells.** `mt-ann-open` reads `ol-d1-email`. That is the announcement whose `opened` row claim 79 ranks on the contact. The threshold is 30. The flag token is `flag_deliverability_or_relationship`. `mt-email-open` reads `rx-d0-email`. The threshold is 35. The flag token is `flag_cooled`. The 35 percent is the reactivation metrics row whose metric is “Email open rate,” whose measure is authority and subject line strength, and whose signal is below 35 percent, the relationship has cooled. The day-0 email is that send. A nurture open is the separate line, and that line has no percent. `rx-d1-3` is claim 78’s nurture term. It is not this rate. `rx-d3-slot` normalizes to text. It is not this rate. Days 4–7 and `ol-d3-waitlist` are not the announcement. The map rows `mt-unsub` and `mt-rx-booking` are not inserted. This claim does not add them and does not invent a spike count.
+
+**Which messages.** For one firm and one of those cells, a send is a `send_live` engagement of that firm whose payload `cellId` is the cell and whose payload `messageId` is `outbound_messages.provider_message_id` for that firm on channel `email`. Distinct message ids. A dry run has no provider id. An escalation `send_live` that stores no `cellId` is not the cell. `firm_id` `unknown` is not a firm. Another firm’s mail is not this base.
+
+**When the rate is taken.** A send is still out while that message has no `messaging_events` row of class `delivered`, `opened`, `clicked`, `bounce_hard`, or `rejected`. While any send of that cell is still out, the rate is not taken and the rule does not insert. `accepted` does not finish the wait. `deferred` does not finish the wait. That delay stays the open question already recorded. This rate does not hold the next email and does not send.
+
+The base is the sends that have `delivered` or `opened`. The opens are the sends that have `opened`. A `clicked` row with no `opened` finishes the wait, is not an open, and is not in the base. A `bounce_hard` or a `rejected` finishes the wait and is not in the base. The rate is taken when nothing is still out and the base has at least one message. It is below the threshold when `opens * 100 < threshold * base`. Thirty opens of one hundred is not below 30. There is no second floor. One arrived message that was not opened is below either percent.
+
+**The row.** The current flag is the newest `metrics_flags` row for that `firm_id` and `metric` equal to the rule id, by `created_at`. No row means `none`. When the rate is below and the current flag is not the row’s `set_value`, insert `flag` that `set_value`, `metric` the rule id, and `value` `opens * 100 / base`. When the rate is taken and is not below, and the current flag is that `set_value`, insert `flag` `none` with the same metric and the same value formula. Otherwise do not insert. The id is `mflag-` plus a uuid. The table has no `updated_at` and no unique pair, so the newest insert is the current flag. This claim does not add a key.
+
+The pass runs when `handleResendWebhook` has stored one of the five classes and the join names the cell. It does not run on the send tick. It does not run on claim 77’s email tick. An announcement `opened` still does claim 79’s tier write. This insert does not change `tier`, `score`, the attempt, or the cursor. It does not quarantine and it does not deny. Claim 53 remains the complaint ratio.
+
+**Rejected alternatives.**
+
+- Write the percent onto `cohort_tiers.tier`, or treat one contact’s `open_only` as the firm flag. The tier is the contact. The flag table has no contact. One open is not a rate.
+- Read every email open as `mt-ann-open`. The 30 percent sentence is the announcement. Nurture open and the day-0 email are the other sentences.
+- Put `rx-d1-3` inside the 35 percent. The nurture line is drop-off, and it has no percent. Folding it into `flag_cooled` would name friction as a cooled relationship.
+- Use `accepted` as the base, or take the rate at send time. The message would be unopened before an open could arrive. That is the miss claim 79 refused to write as `no_open`.
+- Flag on the first `delivered` while later sends of the same cell are still out. The percent is the cell’s arrivals, not the first receipt.
+- Treat a click with no `opened` row as an open. The click rate is the next sentence in the opt-in table, and it has no threshold row. The click still finishes the wait, so one missing pixel does not hold the rate open.
+- Cut the base to a UTC day, or to the first 48–72 hours. The complaint day is claim 53, because that bar named a day. This row names a percent. The 48–72 hour sentence is when the opt-in metrics can be read. It is not a sample window.
+- Add a minimum number of sends before the percent applies. The row’s bar is the percent. A floor would be a second number.
+- Evaluate `mt-unsub` or `mt-rx-booking`, or store `flag_tone_frequency`. Those ids are not in the seed. Nothing under `server/` writes an unsubscribe class. A spike count is not on the guideline line.
+
+No founder question. An announcement open is in `mt-ann-open`’s numerator and can still set `open_only` on the contact. It does not by itself write the firm flag, and the firm flag does not write `tier`. The day-0 reactivation email is the other rate. The four founder questions stay the questions already recorded.
+
+**What this leaves.** `answered` and `completed` are still unset, and the call rules were the other unread. A `deferred` receipt still does not finish this wait. D-01 and D-02 stay the seed’s open decisions.
+
+**Evidence:** `supabase/seeds/002_machine_tables.sql` `mt-ann-open`, `mt-email-open`, `ol-d1-email`, `rx-d0-email`, `rx-d1-3`, `rx-d3-slot`. `supabase/migrations/004_machine_tables.sql` `rule_metrics_thresholds`, `metrics_flags`. `guidelines/Reactivation.md` the opt-in announcement line at 30 percent, the reactivation email line at 35 percent, and the nurture lines with no percent. `docs/register/SYSTEMS-GOAL.md` the two axes. `docs/register/system-map/BUILD-system-map-v3-templates-and-binding.md` the threshold paragraph. `src/app/system-map/data/tables.ts` the `when` gloss and `mt-unsub`, `mt-rx-booking`. `src/app/system-map/data/nodes.ts` `metrics_flag`. `server/wire-service/machine.ts` `handleMetricsThresholdsUpsert`. `server/wire-service/webhooks.ts` `mapClass` and the insert. `server/wire-service/cascade.ts` `writeEngagement`, the cell-advance `send_live` payload, the escalation `send_live` payload with no `cellId`. `server/wire-service/templateWalk.ts` `channelFromToken` on `day3_slot_opens`. Claims 53, 78, 79, and 80.
+
+**Live.** Nothing in `server/` inserts `metrics_flags`. An announcement open still does not write a firm flag. The two map rows are still not seeded. No migration was written.
+
+### Revision — claim 82
+
+The sentence that `answered` and `completed` were not walked stands as the gap. Claim 82 is why those flags are unset and why the call rules are not due on the walks the calendars produce.
+
+---
+
+## Claim 82 — The call rules are not due, because the walk never owns `call`
+
+**Standing:** necessary implication of the channel test and of the enroll’s call remap.
+
+`acr-call-not-answered` and `acr-call-not-completed` are enabled, `firm_id` null, `channel_token` `call`, `set_value` `escalate_forward`, ord 0 and 1. The conditions are `not answered` and `not completed`. `scr-global-call` is 1800 seconds. `criteriaDue` withholds the row when `state.answered` or `state.completed` is true. `resolveRulesForAttempt` keeps a global toggle only when `channel_token` equals the owner. `channelFromWhen` recognizes `call` and does not rewrite it to text.
+
+No statement assigns `answered` or `completed`. The enroll state does not mention them. The cell advance sets `opened` and `link_clicked` false and does not mention them. `AttemptState` does not list them. `handleResendWebhook` has no call class. `actuateChannelSend` dispatches email and text.
+
+The owner those rows require is not produced. `seq_channel_ownership_order` is text, email, form. `channelFromToken` returns only text, email, or form, so a raw channel `call` does not become a call cell, and no seeded token is a call. `advanceTemplateCellIfDue` sets `owner_channel` to that normalized channel. Seeded campaigns have `override_this` false, so `firstAuthoredChannel` returns null and the owner is the first cell. When an authored token is `call`, `enrollAndActuate` sets the owner to `order[0]`, the ladder head, not `call`. The product callers that pass `ownerChannel` are the verify scripts, and they pass `email`. Escalation steps through the same order. `call` is not an entry.
+
+On a text, email, or form owner the call rows are not in the toggle set. The unset flags do not escalate that attempt. `scr-global-call` does not time those owners. An email open does not set `answered`. A primer Y does not set `completed`. This claim does not add a call cell, does not insert `call` into the channel order, and does not invent a voice receipt.
+
+**Rejected alternatives.**
+
+- Set `answered` from an email open or a click. The call rule is not selected on an email owner. Those flags are claim 80.
+- Treat the call remap as a call owner. The assignment is the ladder head. The call timer does not start.
+- Add `call` to `seq_channel_ownership_order` so the ladder can land on it. The seed order is the three tokens. This claim does not insert one.
+- Invent a telephony webhook so the flags can become true. No provider event in the server is a call answer or a call completion. A flag with no call owner would still not be selected.
+
+No founder question. The call rules do not fire on the seeded walks, and nothing sets the flags they read. The four founder questions stay the questions already recorded.
+
+**What this leaves.** The enroll and the cell advance set `state.delivered` true before any receipt. `acr-text-not-delivered` reads that flag. Whether a bounce or a failed text clears it was not walked. D-01 and D-02 stay the seed’s open decisions.
+
+**Evidence:** `supabase/seeds/002_machine_tables.sql` `acr-call-not-answered`, `acr-call-not-completed`, `scr-global-call`, `ch-text`, `ch-email`, `ch-form`, the campaign `override_this` false. `supabase/migrations/012_grain_audience_one_timer.sql` the call token check and the 1800-second row. `server/wire-service/cascade.ts` `criteriaDue`, `resolveRulesForAttempt`, `channelFromWhen`, `enrollAndActuate` the call remap, `advanceTemplateCellIfDue` the owner write, `actuateChannelSend`. `server/wire-service/templateWalk.ts` `channelFromToken`. `server/wire-service/campaignHousing.ts` `firstAuthoredChannel`. `server/wire-service/webhooks.ts` `mapClass`. `docs/register/IMPLEMENTER-FACE-PASS.md` the Call toggles. Claims 71 and 80.
+
+**Live.** `answered` and `completed` are still never assigned. A seeded attempt’s owner is still text, email, or form. The call rows are still not in that toggle set. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
@@ -3869,6 +3946,10 @@ The sentence that the enroll was not specified stands as the gap. Claim 43 speci
 - `cs-top-tier` and `cs-open-click` sitting enabled with no reader, and claims 78 and 79, which re-read the reactivation four and the announcement depth into `cohort_tiers.tier` without reading `score.sms_nonreply`. The live settings list still only lists the rows. A late Y still does not change `low`, because the view click still has no row. An announcement open still does not write `open_only`.
 
 - `handleResendWebhook` inserting `opened` and `clicked` without setting `attempt.state.opened` or `link_clicked`, and claim 80, which sets the flag when the attempt is still on that cell. The live handler still does not read `attempt_id`. `acr-email-not-opened` is still due after the email timer for a cell the contact opened.
+
+- `mt-ann-open` and `mt-email-open` sitting enabled with no writer, and claim 81, which inserts `metrics_flags` for the firm when the cell’s open rate is taken and has crossed, without writing `cohort_tiers.tier`. The live webhook still only inserts `messaging_events`. Nothing in `server/` inserts `metrics_flags`. An announcement open still does not flag the firm.
+
+- `acr-call-not-answered` and `acr-call-not-completed` reading `answered` and `completed`, and claim 82, which does not set those flags because the walk’s owner is never `call`. The live enroll still remaps an authored call token to the ladder head. The call rows stay unselected on text, email, and form.
 
 - `dispatchScheduleTriggers` inserting a `schedule` run on every tick with no contact ids and `anyPass: true`, and claim 47, which starts one run in a UTC minute `schedule.cron` matches, walks claim 17’s audience for the trigger’s firm, and does not set `anyPass`. The live function still ignores the cron and still walks nobody.
 
