@@ -3710,6 +3710,116 @@ No founder question. A primer Y is `primer_y` and does not close the attempt. A 
 
 **Live.** The text toggles still omit `acr-sms-nonreply`. Nothing in `server/` inserts `primer_y`. Nothing writes `cohort_tiers`. The day-0 email is still the walker’s send and still does not read a reply. No migration was written.
 
+### Revision — claim 78
+
+The sentence that a late `primer_y` does not change `low` in claim 77 stands. That tick records the miss and does not score. Claim 78 is the later read. A late Y by itself still leaves `low` and still leaves `score.sms_nonreply` true. The rank changes only when the four terms of `cs-top-tier` are all present, and the view term has no row, so that write does not happen.
+
+---
+
+## Claim 78 — `cs-top-tier` reads the four reactivation events, and a late Y does not lift `low`
+
+**Standing:** necessary implication of scoring as a derivation over the chronology, and a technical decision made in this session.
+
+`cs-top-tier` is enabled, `firm_id` null, `ord` 1, `set_value` `top_tier`. Its `when_clause` and `condition_clause` are null. The predicate is the label, which is the reactivation sentence in `guidelines/Reactivation.md`: Y-reply, view click, nurture open, and booking. `docs/register/SYSTEMS-GOAL.md` says that row is cohort, not goal met. The build says the score is a derivation over the engagement chronology. `score.sms_nonreply` is the miss claim 77 already stored. It is not one of the four terms. The derivation does not read it, does not treat it as a block, and does not clear it.
+
+The window is the newest reactivation enrollment for this firm and contact: `enrollment.enrolled_at` where `sequence_id` is `tpl.reactivation.v1`. A signal older than that stamp belongs to an earlier activation. A contact with no such enrollment is not this rule.
+
+**Y-reply.** A `primer_y` whose payload `attemptId` is an attempt with `state.templateId` `tpl.reactivation.v1`, and whose `created_at` is at or after that `enrolled_at`. A late one still counts. Claim 77 stored it as that kind without closing the attempt. An opt-in primer Y is a different attempt’s row and is not this term.
+
+**View click.** `NO_LOGIN_CLIENT_VIEW_CHECK` records the client eligibility view as not found. The build says not to create `state.no_login_client_view`. The day-0 cell keeps `deferredSlots` `no_login_client_view_link` and does not store a click. A `messaging_events` row of class `clicked` on the day-0 email is the message click. It is not a view of the file. The term has no row. The conjunction is false.
+
+**Nurture open.** One `messaging_events` row of class `opened` for this firm and contact, at or after `enrolled_at`, whose `message_id` is `outbound_messages.provider_message_id` for that contact, where a `send_live` or `send_dry_run` engagement for that contact carries the same `messageId` and a `cellId` of a reactivation nurture email. Claim 51 names those emails as the day-1, the day-2, and the day-3 email. One of them is the term. The live seed still sends that span as the single cell `rx-d1-3`, and an open of that cell is the term the seed can produce. The day-0 email is not it. The day-3 slot text is not it. An opt-in nurture open is not it.
+
+**Booking.** A `meeting_booked` row for this firm and contact whose `created_at` is at or after `enrolled_at`. The seat path and the machine path both insert that row. The machine path also inserts an engagement of kind `meeting_booked`. The seat path does not. The table is the term. `objective_met` is the goal event. This rule does not read it.
+
+**When it runs.** Re-read the four when a reactivation `primer_y` is inserted, when a nurture open is stored, when that `meeting_booked` row is inserted, and when a view click is stored. `enabled` false does not write. The row the firm can see is an enabled `cs-top-tier` whose `firm_id` is null or that firm. Claim 77’s email tick does not run this read. `cs-open-click` is the other rule.
+
+**A late Y.** The insert re-reads. The view term is absent, so the conjunction is false whether or not the nurture and the booking are already there. `tier` stays, including `low`. `score` stays, including `sms_nonreply` true. The attempt stays `open`. Nothing is sent.
+
+**When the four are present.** Upsert `cohort_tiers` on `(contact_id, firm_id)` and set `tier` to `top_tier`. That replaces `unranked`, `low`, and the announcement ranks claim 79 stores. It does not clear score keys. It does not send and it does not move the attempt. A later read that still sees the four leaves `top_tier`. Until a view click has a row, this write does not happen.
+
+**Rejected alternatives.**
+
+- Read `score.sms_nonreply` as a block on `top_tier`. The miss would make the four-part sentence unreachable for the contact claim 77 just marked. The guideline keeps the miss and the later steps as separate points. The score key holds the miss. The tier holds the rank.
+- Clear `sms_nonreply` when the late Y arrives. The miss already happened. Claim 77 refused to undo it on the email tick. This read does not undo it either.
+- Treat the day-0 email’s `clicked` event as the view. The existence check found no view. The build left a slot. The message click is a different event.
+- Set `tier` to `top_tier` on the Y alone. One term is not the label.
+- Require the side engagement, so a seat booking does not count. The seat path does not insert that engagement. The meeting row is the book.
+- Count a Y, an open, or a meeting from before this enrollment’s `enrolled_at`. The sentence is this reactivation candidate. An earlier activation is an earlier window.
+
+No founder question. `cs-top-tier` reads the four events and does not read `score.sms_nonreply`. A late Y leaves `low` in place. `top_tier` is the rank when all four exist, and the view term has no row, so the rank is not stored. Who is placed on launch day, whether a repeat reactivation compresses, whether a `deferred` event holds the next email, and what makes one family’s `pass` true, stay the questions already recorded.
+
+**What this leaves.** The same `tier` column is the rank `cs-open-click` writes from the announcement. An announcement open can arrive while the tier is still `low`. The settings save of `cs-top-tier` writes the acting firm onto `firm_id` of the one row, because the primary key is the id. This claim does not split that row. D-01 and D-02 stay the seed’s open decisions.
+
+**Evidence:** `supabase/seeds/002_machine_tables.sql` `cs-top-tier`, `tpl.reactivation.v1`, `rx-d0-email` `deferredSlots`, `rx-d1-3`. `supabase/migrations/004_machine_tables.sql` `cohort_tiers`, `rule_cohort_scoring`, `engagement_records`. `supabase/migrations/007_meeting_booked.sql`. `src/app/system-map/data/corpusSources.ts` `NO_LOGIN_CLIENT_VIEW_CHECK`. `src/app/system-map/data/tables.ts` the `cs-top-tier` prose. `server/wire-service/machine.ts` `handleMeetingBook` the side engagement, `handleCohortScoringUpsert`, `upsertModularRuleEnabled` the `firm_id` stamp. `server/wire-service/contactSeat.ts` `handleContactSeatMeeting`. `server/wire-service/webhooks.ts` `mapClass`. `server/wire-service/cascade.ts` `writeEngagement` on the cell send, the `templateId` stored at enroll. `docs/register/system-map/BUILD-system-map-v3-templates-and-binding.md` the scoring paragraph and the deferred view. `docs/register/SYSTEMS-GOAL.md` the reactivation top-tier sentence. `guidelines/Reactivation.md` the reactivation metrics. Claims 38, 51, 70, and 77.
+
+**Live.** Nothing in `server/` evaluates `rule_cohort_scoring`. Nothing writes `cohort_tiers`. The webhook still stores `opened` and `clicked` and still does not read the attempt. The view check is still false. No migration was written.
+
+### Revision — claim 79
+
+The sentence that claim 78 replaces an announcement rank when the four are present stands. Claim 79 is how that rank is written, and why an announcement open does not replace `top_tier` on a later read.
+
+---
+
+## Claim 79 — The announcement’s open and click are the depth rank, and they do not replace `top_tier`
+
+**Standing:** necessary implication of one `tier` column and of the announcement sentence, and a technical decision made in this session.
+
+`cs-open-click` is enabled, `firm_id` null, `ord` 0, `set_value` `tier_from_open_click`. The label is “open+click > open only > no open.” That `set_value` is the name of the ranking. It is not a tier token. The three depths are the words in the label. The sentence sits with the opt-in announcement metrics. The cell is `ol-d1-email`.
+
+The pass runs when an `opened` or `clicked` messaging event is stored for the outbound of that cell. The join is the same one claim 78 used for a nurture open: `messaging_events.message_id` to `outbound_messages.provider_message_id`, and a send engagement whose `messageId` is that id and whose `cellId` is `ol-d1-email`. `enabled` false does not write. The firm sees the row the same way claim 78 sees `cs-top-tier`.
+
+A `clicked` event on that outbound sets `tier` to `open_click` when the stored tier is missing, `unranked`, `low`, or `open_only`. The click is that rank when no `opened` row is stored. An `opened` event, with no `clicked` event on that same outbound, sets `tier` to `open_only` when the stored tier is missing, `unranked`, or `low`. It does not replace `open_click`. Neither write replaces `top_tier`. Neither writes `no_open`. At the moment the announcement is sent there is no open and no click, so the rank is absent and claim 77’s `low` stays. `score.sms_nonreply` is not cleared. The write does not send and does not move the attempt.
+
+An open of the days 4–7 cells is not this rank. A click on `ol-d3-waitlist` is not this rank. Claim 70’s completion of “Click this link” is the objective. This write is the cohort column. The two can both happen from one announcement click when that message is stamped with the window objective. This claim does not change the completion.
+
+**Rejected alternatives.**
+
+- Store `tier_from_open_click` in `tier`. The three depths would be one token, and the order in the label would have nowhere to sit.
+- Write `no_open` when the announcement is sent. The miss write and this write are the same tick. `low` would be replaced by the absence of an open that has not had time to arrive.
+- Replace `top_tier` when a later read still sees the announcement click. Ord 0 is the depth. Ord 1 is the conjunction. The depth does not downgrade the conjunction.
+- Treat every email open as this rank. Nurture open is the term claim 78 already named. The label’s sentence is the announcement order.
+- Treat “opens, clicks, follows, and joins the waitlist” as this row. That reading is the one claim 70 left off the day-3 send. The seed has no `cs-waitlist`. This row is the depth order.
+
+No founder question. An announcement click stores `open_click` over `low`. An announcement open, with no click, stores `open_only` over `low`. Neither replaces `top_tier`, and neither writes `no_open`. The four founder questions stay the questions already recorded.
+
+**What this leaves.** The webhook stores `opened` and `clicked` and does not set `attempt.state.opened` or `link_clicked`. `acr-email-not-opened` stays due after the email timer for a cell the contact opened. Those booleans are the ladder. They are not this rank. D-01 and D-02 stay the seed’s open decisions.
+
+**Evidence:** `supabase/seeds/002_machine_tables.sql` `cs-open-click`, `ol-d1-email`. `guidelines/Reactivation.md` the opt-in reading “Open + click > open only > no open.” `src/app/system-map/data/tables.ts` the `cs-open-click` prose. `server/wire-service/webhooks.ts` the `opened` and `clicked` insert. `server/wire-service/cascade.ts` `advanceTemplateCellIfDue` setting `opened` and `link_clicked` false, `criteriaDue` the `state.opened` and `state.link_clicked` tests. Claims 70, 77, and 78.
+
+**Live.** Nothing evaluates `cs-open-click`. An announcement open still does not change `cohort_tiers`. `attempt.state.opened` is still only set false. No migration was written.
+
+### Revision — claim 80
+
+The sentence that `acr-email-not-opened` is due after one day stands for a cell whose `state.opened` is still false. Claims 71 and 72 described that case. Claim 80 is the open that makes the flag true, and the click that makes `link_clicked` true, while the cursor is still that cell.
+
+---
+
+## Claim 80 — An open or a click on the current cell sets the flag that email rule already reads
+
+**Standing:** necessary implication of the email toggles reading `state.opened` and `state.link_clicked`, and of those flags being cleared when the cell changes.
+
+`criteriaDue` withholds `acr-email-not-opened` when `condition_clause` says “not opened” and `state.opened` is true. It withholds `acr-email-link` when the condition says “link not clicked” and `state.link_clicked` is true. `advanceTemplateCellIfDue` sets both flags false on the cell it enters. The enroll state sets them false. No statement assigns either flag true. `handleResendWebhook` inserts `messaging_events` of class `opened` or `clicked` and selects `firm_id` and `contact_id` from the outbound. It does not read `attempt_id`. A cell the contact opened still meets the not-opened rule when the email timer elapses.
+
+When that handler stores `opened` or `clicked` and the outbound’s `attempt_id` is set, load that attempt. If its `status` is not `open`, leave `state` as it is. The event row remains, and claims 78 and 79 still read it. If it is `open`, the send engagement whose payload `messageId` equals `outbound_messages.provider_message_id` carries the `cellId` of the send. When `attempt.state.cellId` is that cell, an open sets `opened` true and `opened_at` to the event time, and a click sets `link_clicked` true. The update does not change `cellIndex`, `owner_channel`, `delivered`, or `delivered_at`. When the walker has already moved `cellId`, the update does not mark the new cell.
+
+An open on the current cell makes `acr-email-not-opened` not due. A click on the current cell makes `acr-email-link` not due. With the open flag true, the not-opened row does not fire, and the link row is the email toggle that can still be due after `scr-global-email`. The not-opened row remains the one that fires when the flag is still false, which is the case claims 71 and 72 already walked. Text has no Resend open. `acr-text-not-opened` is unchanged. A `primer_y` does not set `opened`. `email.opened` still does not complete a click objective.
+
+**Rejected alternatives.**
+
+- Leave the flags false and keep the ladder on the timer alone. The migration says the tick reads the not-opened condition. The condition would never see an open. Every email cell would escalate as unopened.
+- Set the flag after `cellId` has changed. The advance clears the flags because they belong to the cell just entered. The next cell would look opened.
+- Treat a primer Y as `opened` so the text rule waits. The Y is claim 77’s engagement. The text rule is the channel ladder. The calendar already sends the email.
+- Complete the window objective from `opened`. Claim 70. The open is not the click.
+
+No founder question. An open or a click on the cell the attempt is still on sets the flag that cell’s email rule already reads. An open or a click that arrives after the cursor has moved stays on the event row and does not mark the new cell. The four founder questions stay the questions already recorded.
+
+**What this leaves.** `answered`, `completed`, and the call rules were not walked. `mt-ann-open` and `mt-email-open` flag a rate on `metrics_flags`. They were not walked. They are the campaign axis, not this contact’s `tier`. D-01 and D-02 stay the seed’s open decisions.
+
+**Evidence:** `server/wire-service/cascade.ts` `criteriaDue` the opened and link tests, `advanceTemplateCellIfDue` the false flags, `enrollAndActuate` the initial false flags. `server/wire-service/webhooks.ts` `handleResendWebhook` the outbound lookup and the `messaging_events` insert. `supabase/seeds/002_machine_tables.sql` `acr-email-not-opened`, `acr-email-link`, `scr-global-email`. `supabase/migrations/012_grain_audience_one_timer.sql` the comment that the tick reads the channel and the medium condition. `server/wire-service/dispatchSend.ts` the outbound insert that stores `attempt_id`. Claims 70, 71, 72, 78, and 79.
+
+**Live.** The webhook still does not update the attempt. `opened` and `link_clicked` are still only written false. `acr-email-not-opened` is still due after the email timer for a cell the contact opened. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
@@ -3755,6 +3865,10 @@ The sentence that the enroll was not specified stands as the gap. Claim 43 speci
 - The wait-elapsed arm in `tickOnce` writing `state` from the attempt loaded at the start of the tick, after `advanceTemplateCellIfDue` has already updated the row, and claim 76, which deletes `attempt_wait_until` from the row the walker left and does not send a second body when `last_escalation` is a cell advance. The live arm still writes the loaded object. A due cell on that tick is still rewound, and the next tick still sends it again.
 
 - `acr-sms-nonreply` staying outside the text toggles, with no writer for a missing Y, and claim 77, which stores a Y as `primer_y` and, on the same-offset email tick, upserts `cohort_tiers` to `tier` `low` with `score.sms_nonreply` true when that row is absent and the contact is still `unranked`. The live tick still does not write `cohort_tiers`. Nothing in `server/` inserts `primer_y`. The criteria row is still not selected.
+
+- `cs-top-tier` and `cs-open-click` sitting enabled with no reader, and claims 78 and 79, which re-read the reactivation four and the announcement depth into `cohort_tiers.tier` without reading `score.sms_nonreply`. The live settings list still only lists the rows. A late Y still does not change `low`, because the view click still has no row. An announcement open still does not write `open_only`.
+
+- `handleResendWebhook` inserting `opened` and `clicked` without setting `attempt.state.opened` or `link_clicked`, and claim 80, which sets the flag when the attempt is still on that cell. The live handler still does not read `attempt_id`. `acr-email-not-opened` is still due after the email timer for a cell the contact opened.
 
 - `dispatchScheduleTriggers` inserting a `schedule` run on every tick with no contact ids and `anyPass: true`, and claim 47, which starts one run in a UTC minute `schedule.cron` matches, walks claim 17’s audience for the trigger’s firm, and does not set `anyPass`. The live function still ignores the cron and still walks nobody.
 
