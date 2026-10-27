@@ -3718,6 +3718,10 @@ No founder question. A primer Y is `primer_y` and does not close the attempt. A 
 
 The sentence that a late `primer_y` does not change `low` in claim 77 stands. That tick records the miss and does not score. Claim 78 is the later read. A late Y by itself still leaves `low` and still leaves `score.sms_nonreply` true. The rank changes only when the four terms of `cs-top-tier` are all present, and the view term has no row, so that write does not happen.
 
+### Revision — claim 86
+
+The sentence that a longer body is not `primer_y`, and that claim 77 does not say what that body does and does not add a provider route, stands as the refusal to store that body as the Y. Claim 86 is that body, on the inbound post claim 85 specified. The email still sends. The Y row is unchanged.
+
 ---
 
 ## Claim 78 — `cs-top-tier` reads the four reactivation events, and a late Y does not lift `low`
@@ -4047,6 +4051,51 @@ No founder question. A STOP keyword, or error 21610, silences the contact on the
 
 **Live.** `messages.create` still takes no `statusCallback`. `routes.ts` still has no Twilio route. `dispatchSmsLive` still does not read a prior text. No migration was written.
 
+### Revision — claim 86
+
+The sentence that a body which is none of the keywords, and which has no `OptOutType`, inserts nothing stands as the refusal to classify that body as `stop`, `sms_start`, or `sms_help`. Claim 86 is the insert. The sentence that intent on any other inbound stays unread stands. The new row is the body. It is not an intent. The sentence that a free-text “stop texting me” is not this keyword stands.
+
+---
+
+## Claim 86 — A non-keyword SMS body is stored as a reply, and it does not withdraw and does not nullify
+
+**Standing:** necessary implication of `agent-01` requiring a durable reply, of `casl-11` limiting authoritative SMS silence to the keyword, of `agent-04` refusing a guessed class, and of the primer email not being a gate, and a technical decision made in this session.
+
+Claim 85’s inbound post already parsed the body. A whole-body keyword, or `OptOutType`, becomes `stop`, `sms_start`, or `sms_help`, and that claim’s effects run. This claim does not add a second event for that body. Every other inbound on that post is the body claim 85 left unread.
+
+**What is still the Y.** The body, trimmed, compared without regard to case, equals `Y`, and the matched outbound’s `attempt_id` is an `active_attempts` row in `status='open'` whose `state.templateId` is `tpl.optin_launch.v1` or `tpl.reactivation.v1`. Those are the two templates whose cells include `day1_text_primer` and `day0_text_primer`. That insert is claim 77’s `primer_y`, with that `attemptId`. This claim does not also insert. A `Y` whose outbound has no such open attempt is not that row. Claim 77 refused to treat another body as the confirmation. A `Y` outside those two open attempts is another body.
+
+**The row.** The phone match is claim 85’s last-10 compare, and the outbound is the newest SMS row by `created_at`. The receipt id is already `MessageSid:inbound`. The event class is `sms_inbound`. `message_id` is that outbound’s `provider_message_id`. Firm and contact are that row’s. `raw` holds the form body, including `Body`. No matching outbound stores firm `unknown`, contact null, and `message_id` the inbound `MessageSid`, which is the unbound receipt claim 85 already used. A trimmed body that is empty inserts nothing. There is no reply in it.
+
+When `contact_id` is set and the firm is not `unknown`, the same post inserts one `engagement_records` row, kind `sms_reply`. `engagement_records.contact_id` is `NOT NULL`, so the unbound receipt has no chronology row. The payload is `body` (the trimmed text), `messageId` (the same `message_id`), and `attemptId` when the outbound’s `attempt_id` is non-null. The kind is not `inbound_reply`, `form_visit`, `inbound_override`, or `primer_y`. `hasInboundOverride` lists the first three and does not list `sms_reply`. The attempt stays `open`. `state.inbound_override` is not set. No consent row is written. `handleConsentSilence` does not run.
+
+**Why this is not a withdrawal.** `casl-11` treats inbound STOP, Unsubscribe, and equivalent keywords as the silence ledger. The implementation names those keywords. The equivalent list is the whole-body list claim 85 already classified, including `OptOutType` STOP and error 21610. C2’s header says that paper is not register-integrated, and that seat 3 owns silence law while the runtime honors the ledger. `agent-03` maps stop-class language to intent `stop` once that class is written, and its paper path freezes the attempt after that intent and a suppression entry. This body is not that class. `agent-04` emits `unsure` below a configured confidence floor and says a guess ships stop or hostile as a question. No floor is stored on a firm, a template, or a send. A sentence cannot clear a floor that is not there.
+
+Emitting `unsure` for every remaining body would, by `agent-16`, pause the open attempt until a person resolves it. `docs/register/SYSTEMS-GOAL.md` says the primer Y is a signal and not a gate, and that a missed Y continues the campaign. Claims 75 and 77 already send the same-offset email whether or not `primer_y` exists. A pause on “thanks”, or on “please stop texting me”, would hold that email. The reply would be the gate the goal refused. This claim does not emit `unsure` and does not pause.
+
+**Why the scan does not see it.** `inbound_reply` nullifies. Packet 023 says `nullified` means they responded, a win. Claim 65 does not withhold a later enroll on `nullified`. A win that can arm the next sequence is not a withdrawal, and the nullify would also stop the primer email, which claim 77 already refused for the Y. `sms_reply` stays out of the scan. The tick still loads `status='open'`. The day cell still sends.
+
+**What the next send consults.** Claim 85’s phone join matches `stop` and `sms_unreachable`. `sms_inbound` does not match. The pair is not silenced, so the email gate does not deny on this row. `dispatchEmailLive` does not read it. A later whole-body STOP on the same phone is still claim 85, and that later event still silences the matched contact and still denies the number. This row does not lift that later stop, and it does not itself deny.
+
+**Rejected alternatives.**
+
+- Classify “leave me alone” or “stop texting me” as `stop` and run `handleConsentSilence`. Seat 3’s ledger is the keyword. No phrase list is published. `agent-04` forbids the guess. The silence deny would also stop the primer email, which is a gate.
+- Treat a body that contains STOP as a token. Claim 85. A keyword is the whole body. A sentence that says not to stop would match the token.
+- Emit `unsure` and pause the attempt until a person classifies it. The floor is not configured. `agent-16`’s pause would hold the primer email. The goal says the email still comes.
+- Store the body as `inbound_reply`. The scan nullifies. Claim 65 can enroll again. The email does not come. Claim 77 already refused that kind for the Y.
+- Insert nothing, which is the sentence claim 85 left. `agent-01` says the reply has to be durable or the read half of the loop does not exist. The chronology would not show the body.
+- Mint `intent_classification`, `conversation_thread`, `escalation_ticket`, or `suppression_list` for the unread sentence. The event and the engagement row are the store. The intent is the absence of a class. Claim 50 already refused the suppression table where an event can join an outbound.
+- Write a new attempt status so the tick stops loading the row. The paper’s freeze is downstream of intent `stop`. Claim 85 left the keyword’s attempt `open`, and the keyword’s CEM stop is the silence deny. A sentence does not get a status write the keyword does not get. Claim 20’s refusal to abort on halt stays that refusal.
+- Count `sms_inbound` in claim 53’s ratio. The class is not `delivered` and not `complaint`. The channel join claim 85 added still stands.
+
+No founder question. A sentence is stored on the text it answers. It does not silence, it does not deny the phone, and it does not nullify. The primer email still sends. Who is placed on launch day, whether a repeat reactivation compresses, whether a `deferred` event holds the next email, and what makes one family’s `pass` true, stay the questions already recorded.
+
+**What this leaves.** Error 30007 is still `sms_filtered`, with no SMS ceiling and no `sms_reputation_unit`. An email reply is not this post. `emails.send` is called with `from`, `to`, `subject`, `text`, and `html`, and not with `reply_to`. `mapClass` returns null for a type it does not name, and it does not name an inbound. `deliv-21` sets Reply-To to a platform-captured address or a firm-monitored address and does not say which applies before a firm saves a strategy. D-01 and D-02 stay the seed’s open decisions.
+
+**Evidence:** `docs/sme/capability/C2-agentic-engagement-runtime.md` the status line, `agent-01`, `agent-03`, `agent-04`, `agent-16`. `docs/wiring/paper-trace/function/C2-agentic-engagement-runtime.md` the `agent-01` and `agent-03` paths. `docs/sme/pass2/03-canadian-privacy-casl.md` `casl-11`. `docs/sme/implementation/03-canadian-privacy-casl.md` the keyword chip. `docs/register/SYSTEMS-GOAL.md` the primer line and the missed-Y continuation. `docs/register/SYSTEMS-STORY.md` §7b the inbound that can nullify. `docs/register/SYSTEMS-CHANGE-PACKET-023.md` §3.4 `nullified` as a win. `server/wire-service/cascade.ts` `hasInboundOverride` the three kinds. `server/wire-service/dispatchSend.ts` `dispatchSmsLive` the `attempt_id` column on the insert, `dispatchEmailLive` the `emails.send` arguments. `server/wire-service/webhooks.ts` `mapClass`. `supabase/migrations/004_machine_tables.sql` `engagement_records.contact_id` `NOT NULL`. `supabase/migrations/021_objective_local_axis.sql` `outbound_messages.attempt_id`. `supabase/seeds/002_machine_tables.sql` `ol-d1-sms` `day1_text_primer`, `rx-d0-sms` `day0_text_primer`, `tpl.optin_launch.v1`, `tpl.reactivation.v1`. `docs/sme/capability/C1-email-deliverability.md` `deliv-21`. Claims 65, 75, 77, and 85.
+
+**Live.** Nothing in `server/` inserts `sms_inbound` or `sms_reply`. The Twilio route is still absent. `emails.send` still omits `reply_to`. No migration was written.
+
 ---
 
 ## What has no home, what cannot fulfill, what cannot work together
@@ -4104,6 +4153,8 @@ The sentence that the enroll was not specified stands as the gap. Claim 43 speci
 - The enroll and the cell advance setting `delivered` true before a receipt, and `acr-text-not-delivered` withholding while that flag is true, and claim 83, which does not clear the flag on a bounce or a failed text, so `acr-text-not-opened` remains the text move. The live webhook still does not update the attempt. `dispatchSmsLive` still returns a throw without writing `state`. There is still no Twilio status route.
 
 - `mapClass` returning `rejected` for `email.failed`, and claim 84, which stores that class and does not silence, does not join the address deny, and does not pause the firm. The live handler already inserts the class and already does none of those three.
+
+- `routes.ts` having no Twilio post, and claims 85 and 86, which store the carrier status, the STOP keyword, and a non-keyword body as `sms_inbound` plus `sms_reply`. The live app still has no route. A sentence still inserts nothing. `emails.send` still omits `reply_to`, so claim 86’s mail gap is also the live send.
 
 - `dispatchScheduleTriggers` inserting a `schedule` run on every tick with no contact ids and `anyPass: true`, and claim 47, which starts one run in a UTC minute `schedule.cron` matches, walks claim 17’s audience for the trigger’s firm, and does not set `anyPass`. The live function still ignores the cron and still walks nobody.
 
