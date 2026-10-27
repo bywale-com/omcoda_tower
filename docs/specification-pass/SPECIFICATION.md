@@ -2689,6 +2689,10 @@ No founder question. A firm’s email stops for the rest of the UTC day when tha
 
 **Live.** `dispatchEmailLive` still does not count `complaint` or `delivered`. `injectEvent` on `complaint` still calls `setFirmQuarantined`. No migration was written.
 
+### Revision — claim 85
+
+The sentence that SMS `accepted` rows do not enter this ratio stands. Claim 85 stores a Twilio `delivered` callback as class `delivered` on the text’s message id. The numerator and the denominator now count a `message_id` only when it equals an `outbound_messages.provider_message_id` whose `channel` is `email`. A text’s `delivered` row is not a delivery in this rate. A text’s `complaint` is not this numerator either: claim 85 does not store error 30007 as class `complaint`.
+
 ### Revision — claims 43 and 52
 
 The sentence in claim 52 that there is no false edge, and that where a `nudge` motion enrolls stays open, stands as that claim’s decision. The rejected alternative that names the false edge stays in that claim. Claim 54 is that handle, after the other firings were read and none of them enroll from the motion column. The sentence in claim 43 that the no-workflow loop enrolls reactivation stands when the stored motion is `reactivation`. Claim 54 enrolls the re-engagement class when the stored motion is `nudge`. `anyPass` stays the constant `true`, so the row this function inserts is still `reactivation` until the pathway predicate is specified.
@@ -3945,6 +3949,10 @@ No founder question. A bounce and a failed text leave `delivered` as the attempt
 
 The sentence that `email.failed` was not given a send gate stands as the gap. Claim 84 is that class. The flag and the text row are unchanged.
 
+### Revision — claim 85
+
+The sentence that this claim does not invent a Twilio route stands as the refusal to clear `delivered`. Claim 85 is that route. It stores the carrier status and the STOP keyword. It still does not update `active_attempts`. The flag stays the attempt write.
+
 ---
 
 ## Claim 84 — `email.failed` is `rejected`, and it does not suppress the address or pause the firm
@@ -3973,6 +3981,71 @@ No founder question. A failed send is stored as `rejected`. It does not suppress
 **Evidence:** `server/wire-service/webhooks.ts` `mapClass` `email.failed`, the insert, the `bounce_hard` branch. `server/wire-service/dispatchSend.ts` `dispatchEmailLive` with no read of `rejected`. `src/app/wire/ports.ts` `DeliveryEventClass`. `src/app/wire/standins/espMailer.ts` `injectEvent`. `https://resend.com/docs/webhooks/emails/failed` the failure situations and `failed.reason` `reached_daily_quota`. `docs/sme/capability/C1-email-deliverability.md` `deliv-14` and `deliv-24`. Claims 20, 50, 55, 56, 81, and 83.
 
 **Live.** `mapClass` already returns `rejected`. The handler already inserts the row and already does not silence, does not touch the attempt, and does not deny the next send. `injectEvent` on `rejected` already only pushes the event. No migration was written.
+
+### Revision — claim 85
+
+The sentence that `rejected` does not suppress the address stands. A Twilio `MessageStatus` of `failed`, other than error 21610, is that same class on the text’s message id. It still does not suppress the phone, does not silence the contact, and does not pause the firm. The sentence that none of the named SMS statuses is ingested stands as the gap claim 84 left. Claim 85 is that ingest.
+
+---
+
+## Claim 85 — A Twilio status is stored beside the attempt, STOP silences that contact, and error 30006 is not texted again
+
+**Standing:** necessary implication of the status list the external model already names, of `casl-11` treating STOP as the silence ledger, and of the two carrier errors this session read, and a technical decision made in this session.
+
+`routes.ts` posts `/webhooks/resend` and does not post a Twilio route. `messages.create` is called with `to`, `from`, and `body`, and not with `statusCallback`. None of queued, sent, delivered, undelivered, failed, or STOP is ingested. Claim 83 left that gap on purpose for the attempt flag. This claim is the ingest. It does not write `active_attempts`. `state.delivered` stays the pre-receipt write claim 83 named.
+
+**The route.** The wire app gains `POST /webhooks/twilio`, so the path is `/wire/webhooks/twilio` and `/api/wire/webhooks/twilio`, the same two mounts as the Resend route. The body is `application/x-www-form-urlencoded`, which is the format the incoming-message page says Twilio posts. A body that does not parse is 400. When `TWILIO_AUTH_TOKEN` is unset, the route returns 401. When the token is set, the signature is checked with the Twilio SDK’s validator, which is what the status-callback page tells the integrator to use instead of a hand-rolled signature. A failed check is 401. This route does not copy the Resend fail-open. The Resend secret is optional in the live handler. The Twilio token is the same secret `getTwilio` already requires before a send.
+
+A receipt inserts `provider_webhook_receipts` with provider `twilio`. The provider event id is `MessageSid`, a colon, and `MessageStatus` when `MessageStatus` is present, and `MessageSid`, a colon, and `inbound` when it is not. A unique violation returns `{ ok: true, deduped: true }` before any class is applied, which is the Resend replay. The handler then inserts `messaging_events` with the class below, the raw body, and `provider_event_id` that same id. `event_class` is `TEXT` with no check. This claim does not add a table and does not add a value to `DeliveryEventClass`.
+
+When `PUBLIC_APP_URL` or `APP_ORIGIN` is set, `messages.create` also sends `statusCallback` as that origin, with one trailing slash removed, plus `/api/wire/webhooks/twilio`. The production mount note in `server/auth-service/index.ts` is `/api/wire`. When neither origin is set, the create omits `statusCallback`. A console-configured URL can still post to the route. The initial status of a message created with `From` and without a Messaging Service is `queued`, and the status-callback guide says Twilio does not send a callback for that initial status. The create’s existing `accepted` row remains that accept. This claim does not insert a second row for it.
+
+**Which callback becomes which class.** The lookup for a status callback is `MessageSid` against `outbound_messages.provider_message_id`. Firm and contact come from that row. When the lookup misses, the event stores firm `unknown` and a null contact, and that event does not match a later join.
+
+`ErrorCode` `21610` is class `stop`, on any `MessageStatus`. The advanced opt-out page says a later message to a number Twilio has blocked fails with that code. It is not class `rejected`.
+
+Otherwise `MessageStatus` `failed` is class `rejected`. The message-resource page says that status is a failure to send, including queue overflows, account suspensions, and media errors. Claim 84 already refused to suppress, silence, or pause the firm for that class. This callback does not do those things either. One Twilio account is not a firm halt.
+
+`MessageStatus` `sent` is class `sent`. `queued` is class `queued`. `delivered` is class `delivered`. None of those three denies the next send. None of them writes the attempt. Claim 81 finishes an open-rate wait by the email send’s own message id. A text’s id is not that id.
+
+`MessageStatus` `undelivered` with `ErrorCode` `30006` is class `sms_unreachable`. The 30006 page says the destination is a landline or the carrier cannot be reached, and it says not to retry the same SMS when Lookup would call the line a landline. `undelivered` with `ErrorCode` `30007` is class `sms_filtered`. The 30007 page says Twilio or the carrier filtered the message, and the causes it names are spam, phishing, fraud, and carrier rules. The remedy on that page is the sender’s compliance, not a dead handset. Any other `undelivered`, including a missing `ErrorCode`, `30003`, and `30005`, is class `sms_undelivered`. The 30003 page says the handset is unavailable and says to retry. The 30005 page says the number may no longer exist and also says the device may be off, the line may be a landline, or the carrier may be at fault, and it says to send another test. This claim does not treat that mix as a permanent number. `sending`, `read`, `accepted`, `scheduled`, `canceled`, `receiving`, `received`, and `partially_delivered` insert nothing. `read` is the page’s RCS and WhatsApp receipt. It is not `state.opened`.
+
+**Why `delivered` does not enter the email rate.** Claim 53 counted every `delivered` row for the firm. A text receipt would have become a delivery in that ratio. The count now requires the event’s `message_id` to equal an `outbound_messages.provider_message_id` whose `channel` is `email`. The complaint numerator is the same join. Error 30007 is not stored as `complaint`, so it is not in that numerator either. There is no published SMS percent in `deliv-11` or on the 30007 page. This claim does not invent one, and one filtered text does not quarantine the firm and does not throttle it.
+
+**STOP is the silence button for the contact the text named.** An inbound request has no `MessageStatus`. `OptOutType`, when present, is the advanced-opt-out page’s `STOP`, `START`, or `HELP`, and it wins over the body. Otherwise the body, trimmed, compared without regard to case, must equal one keyword. The default list on that page is `STOP`, `UNSUBSCRIBE`, `END`, `QUIT`, `STOPALL`, `REVOKE`, `OPTOUT`, and `CANCEL`. Those are class `stop`. `START` and `UNSTOP` are class `sms_start`. The same page says those two reserved words are what fully undo a block, and that `YES` does not. `YES` is not `sms_start`. `HELP` is class `sms_help`. A body that is none of these, and that has no `OptOutType`, inserts nothing. A keyword is the whole body. A longer sentence is not this list.
+
+The inbound number is `From`. It matches an `outbound_messages` row of `channel` `sms` when both sides have at least 10 digits and the last 10 digits are equal. Spaces, hyphens, parentheses, dots, and a leading `+` are not part of the compare. The Canadian gate is firms to Canadian numbers, and Twilio sends E.164 while `contact_records.phone` is unparsed text. A side with fewer than 10 digits does not match. The event’s `message_id` is the newest matching row’s `provider_message_id`, by `created_at`. Firm and contact are that row’s. No matching row stores firm `unknown`, contact null, and `message_id` the inbound `MessageSid`. That row has no phone to join, and it does not silence anyone.
+
+Class `stop`, from the keyword or from error 21610, then does two things. The phone join is below. The pair, when `contact_id` is set and the firm is not `unknown`, is the statement `handleConsentSilence` already runs: insert `basis` `none`, `silenced` true, `source` `sms-stop`, and on conflict set `silenced` true and `source` `sms-stop`, and do not assign `basis`, `status`, or `workspace_opted_out`. It then dispatches `consent_records.opt_out` the way claim 15 specified, with that source and with `writes` holding the contact. `casl-11` says the keyword is the same ledger outcome as the Silence button. The button dispatches. A hard bounce does not, and this claim does not move the bounce onto the dispatch. The attempt stays `open`. Later sends to that contact take the existing `silenced` deny, including purpose `opt-in`, because that deny sits above the opt-in exemption. Claims 43 and 44 still decide enroll from the pair. This claim does not nullify the attempt. Claim 9 stays the meeting. Claim 20 stays the halt.
+
+The pair is that outbound’s firm and contact. Claims 18 and 23 already refused to join another firm’s contact by phone. A second book that happens to hold the same digits is not silenced by this dispatch. Email to that other contact still sends.
+
+**What the next text consults.** `dispatchSmsLive`, after `consentAndHaltGate` returns allow and before `messages.create`, denies the send when some `stop` or `sms_unreachable` event’s `message_id` equals some `outbound_messages.provider_message_id` of `channel` `sms` whose `to_addr` matches the later `to` by the same last-10 rule. The compare does not filter `firm_id`. The return is `{ ok: false, deny: "policy", detail: "suppressed" }`. Claim 21’s writers still do not read `detail`. One word is the email address deny and this phone deny. `sms_filtered`, `sms_undelivered`, `sent`, `queued`, `delivered`, `rejected`, and `sms_help` do not match. `dispatchEmailLive` does not run this join. A landline’s email still sends. The auth OTP mailer does not call `dispatchSmsLive`. Purpose `opt-in` is not exempt from the join. A dry run never reaches `dispatchSmsLive`. The pair’s `silenced` deny still runs in `dispatchSms` before that short-circuit.
+
+A later `sms_start` lifts `stop` and does not lift `sms_unreachable`. The join ignores a `stop` whose `at` is strictly earlier than an `sms_start` that matches the same phone. No `sms_start` means any `stop` denies. The start does not clear `silenced` and does not dispatch a consent write. `casl-15` keeps silence until a new affirmative express consent. The seat’s Agree is that write. `START` is the carrier keyword the opt-out page uses to remove Twilio’s block. It is not `basis` `express`. A landline stays suppressed after `START`. `HELP` inserts the event and changes neither the join nor the pair.
+
+`standInSmsApi` already returns deny `STOP` when the stand-in consent says silenced. It has no status injector. This claim does not add one. The server route is the ingest.
+
+**Rejected alternatives.**
+
+- Clear `state.delivered` from `undelivered` or `failed`. Claim 83. The flag is the attempt’s pre-receipt write. The text rule does not become due because a carrier receipt arrived. This route does not update the attempt.
+- Treat every `undelivered` as a phone suppress because `deliv-24`’s solution sentence names undelivered and complaint together. The status page says that one word covers carrier filtering and handset availability. The 30003 page says to retry. The 30005 page says to send another test. Suppressing the number for a powered-off handset is the soft-bounce mistake claim 55 already refused for mail.
+- Suppress the number on 30007, or store it as `complaint` so claim 50’s join and claim 53’s numerator see it. The 30007 page describes a filter of the message by Twilio or the carrier. The email complaint is the recipient marking spam. One filter would block a live mobile in every firm, and it would move the email spam rate. The paper path puts delivery, undelivered, and complaint on `sms_reputation_unit`, and puts STOP on the suppression list. The unit is not minted. No SMS percent was published, so the filter is the event and not a ceiling.
+- Silence every contact whose phone matches, in every firm. Claims 18 and 23. The shared `TWILIO_FROM_NUMBER` is why the phone join is global for the next text. It is not a second consent key.
+- Leave STOP as a log, or silence without the opt-out dispatch. `casl-11` says the keyword is the Silence button’s ledger. The button is `handleConsentSilence`, which dispatches. A log the gate does not read would text the number again until Twilio answered 21610.
+- Clear `silenced` on `START` or on `YES`. Express consent is the Agree write. `YES` is the word that page says does not undo a prior unsubscribe. A start lifts the technical `stop` join only.
+- Use class `bounce_hard` for 30006. That class upserts the pair and would stop the contact’s email because the line cannot take a text. `deliv-24` keeps the SMS failure off the email rule. The phone join is the deny. The pair is not.
+- Mint `suppression_list` or `sms_reputation_unit`. The event row and `outbound_messages.to_addr` already join. Claim 50 refused the table for the same reason.
+- Classify a free-text “stop texting me” as this keyword. The default list is the words the opt-out page names. A sentence is not one of them. Intent on any other inbound stays unread.
+- Fail the webhook open when the token is unset, in order to match Resend. A carrier post that cannot be signed is not the setup the Resend handler allowed. The send already refuses to run without the token.
+
+No founder question. A STOP keyword, or error 21610, silences the contact on the matched text and stops a later text to that number from any firm, until `START` or `UNSTOP` lifts the keyword and not the silence. Error 30006 stops the number and does not silence. A filtered text, a handset that was off, and a failed send are stored and do not do either. The attempt flag is unchanged. The four founder questions stay the questions already recorded.
+
+**What this leaves.** An inbound body that is not one of those keywords is not classified. `agent-03` still says stop-class language freezes CEMs. This claim did not read that language. Error 30007 has no SMS ceiling. D-01 and D-02 stay the seed’s open decisions.
+
+**Evidence:** `server/wire-service/routes.ts` `POST /webhooks/resend`. `server/wire-service/dispatchSend.ts` `dispatchSmsLive` the `messages.create` arguments, `consentAndHaltGate` the `silenced` deny above the opt-in exemption. `server/wire-service/twilioClient.ts` `twilioFromNumber`. `server/wire-service/stores.ts` `handleConsentSilence`. `server/auth-service/index.ts` the `/wire` and `/api/wire` mounts. `src/app/wire/standins/smsApi.ts` the `STOP` deny. `docs/wiring/external-models/02-send-enrich-ads.md` `ext-sms-api` the event list. `docs/wiring/external-models/06-SMS-CANADA-GATE.md` the Canadian number. `docs/sme/pass2/03-canadian-privacy-casl.md` `casl-11`, `casl-15`. `docs/sme/capability/C1-email-deliverability.md` `deliv-24`. `docs/wiring/paper-trace/function/C1-email-deliverability.md` the `deliv-24` path, steps 3 and 4. `https://www.twilio.com/docs/messaging/api/message-resource` the status table, `StatusCallback`, and `ErrorCode`. `https://www.twilio.com/docs/messaging/guides/outbound-message-status-in-status-callbacks` the initial status and the callback transitions. `https://www.twilio.com/docs/messaging/guides/webhook-request` the form body. `https://www.twilio.com/docs/messaging/tutorials/advanced-opt-out` the default keywords, `OptOutType`, error 21610, and `START`/`UNSTOP` against `YES`. `https://www.twilio.com/docs/api/errors/30003`. `https://www.twilio.com/docs/api/errors/30005`. `https://www.twilio.com/docs/api/errors/30006`. `https://www.twilio.com/docs/api/errors/30007`. Claims 15, 18, 20, 21, 23, 50, 53, 55, 81, 83, and 84.
+
+**Live.** `messages.create` still takes no `statusCallback`. `routes.ts` still has no Twilio route. `dispatchSmsLive` still does not read a prior text. No migration was written.
 
 ---
 
