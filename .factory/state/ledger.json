@@ -1,7 +1,7 @@
 {
-  "stateRevision": 7,
+  "stateRevision": 8,
   "authorizedDispatches": 4,
-  "usedDispatches": 0,
+  "usedDispatches": 1,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -29,9 +29,15 @@
       "outstanding": [
         "Claims 4, 6, 7, and 8 have no packets."
       ],
-      "session": "continuation_due",
+      "session": "running",
       "revision": "rev-0",
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "exec-identity",
+        "revision": "rev-0",
+        "prHead": "077478c536467fe1858d08b7dd66c17b669b3d72",
+        "effect": "wake_architect",
+        "label": "factory-wake-architect"
+      },
       "blockedReason": null,
       "packetIds": [
         "pkt-001-click-attribution"
