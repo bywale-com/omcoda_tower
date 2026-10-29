@@ -58,3 +58,7 @@ coverage/
 .pnpm-store/
 .vercel
 .env*
+
+# Misspelled or filled sandbox env dumps — never commit
+.sandbox.enn.txt
+.sandbox.env.txt
