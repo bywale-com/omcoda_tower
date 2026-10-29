@@ -7,6 +7,9 @@
 **Release eligible:** yes  
 **Systems change:** [`../systems/SCP-pkt-001-click-attribution.md`](../systems/SCP-pkt-001-click-attribution.md)  
 **Production plant:** `server/wire-service` click path, on this branch  
+**Ledger stage:** `verified`  
+**Execution:** manual  
+**Verified SHA:** `19c47938d8aa8884b4874999a50667f5677205b3`
 
 Eligibility is not authorization. The controller is inactive. Wake stays `hold`. The systems-change packet and the plant were written in one coding session because Cursor Automations are not configured. That session is not a label wake. Do not flip this Wake line unless the founder authorizes factory dispatch.
 
@@ -48,4 +51,4 @@ Form completion, meeting booking, parked-run resume, `payload.writes`, audit-row
 
 ## Handoff
 
-The systems-change packet is signed in this tree. The click plant is in `server/wire-service/webhooks.ts` and the messaging-events arm of `objectiveSatisfiedBy`. Verification is the ship workflow’s click-attribution step. The ledger stays `draft` with Wake `hold` and `authorizedDispatches: null`. Acceptance needs a real merge SHA. This packet does not invent one.
+The systems-change packet is signed in this tree. The click plant is in `server/wire-service/webhooks.ts` and the messaging-events arm of `objectiveSatisfiedBy`. The ledger records that plant as `verified` manual evidence against `19c47938d8aa8884b4874999a50667f5677205b3`, with factory-check run `40873984441` and ship run `40873984426`. Wake stays `hold`. There is no dispatch record. Acceptance still needs a real merge SHA.

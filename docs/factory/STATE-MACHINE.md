@@ -61,6 +61,8 @@ Side stages: `blocked`, `returned_architect`, `returned_analyst`.
 | T39 | Label actuator returns failure | The ledger is not acknowledged. `usedDispatches` stays. `decide` still proposes the wake. |
 | T40 | A second `dispatchWake` after acknowledgement | Effect `none`. The actuator is not called again. |
 | T41 | `compareAndSwap` whose expected revision is stale | Returns false and leaves the stored ledger unchanged. |
+| T42 | `record_manual_evidence` from `draft` with `wake: hold`, no dispatch record, a non-empty SHA, all nine sections, and at least one passing check that names a run id | Stage `verified`. `candidateSha` and `verifiedSha` are that SHA. `execution.mode` is `manual`. `dispatch` stays null. Wake stays `hold`. `usedDispatches` stays. `decide` does not propose a wake. |
+| T43 | `record_manual_evidence` with an empty SHA, a missing section, no passing check, a failed check, a stage other than `draft`, `wake: sa`, or an existing dispatch record | Refused. Stage unchanged. No dispatch record is written. |
 
 ## Required systems-change sections
 
@@ -97,8 +99,8 @@ There is no `factory-wake-architect` label. Investigation is a seated execution,
 
 ## Persistence
 
-`.factory/controller/dispatch.ts` loads the ledger shape and compare-and-swaps on `stateRevision`. A live runner uses `GitHubContentsStore`: the Contents API blob sha is the compare token, and a stale PUT is a 409. `FileStore` locks a directory on one machine only. A failed label add does not bump the revision and does not increment `usedDispatches`. The committed ledger in this branch is the held draft of PKT-001. Tests use their own ledger. They do not advance the committed file.
+`.factory/controller/dispatch.ts` loads the ledger shape and compare-and-swaps on `stateRevision`. A live runner uses `GitHubContentsStore`: the Contents API blob sha is the compare token, and a stale PUT is a 409. `FileStore` locks a directory on one machine only. A failed label add does not bump the revision and does not increment `usedDispatches`. The committed ledger records PKT-001 as `verified` by manual evidence: execution mode `manual`, dispatch null, Wake `hold`. `integratedSha` is null. Tests that are not that record use their own ledger.
 
 ## What is not implemented
 
-`reopen` from `returned_architect` or `returned_analyst` is not an event yet. The label actuator can spawn `gh pr edit` and stays disarmed until spending confirmation, saved Cursor automations, and a positive `authorizedDispatches`. It does not start a Cursor agent by itself. Checkpoint times are not observed by a scheduler. A provider spending limit is not configured.
+`reopen` from `returned_architect` or `returned_analyst` is not an event yet. The label actuator can spawn `gh pr edit` and stays disarmed until spending confirmation, saved Cursor automations, and a positive `authorizedDispatches`. It does not start a Cursor agent by itself. Checkpoint times are not observed by a scheduler. A provider spending limit is not configured. Manual evidence does not replace the integration gate: `accept` still requires `reconciled` and a merge SHA.

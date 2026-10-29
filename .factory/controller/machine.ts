@@ -71,6 +71,23 @@ export interface DispatchRecord {
   label: (typeof SEAT_LABELS)[number];
 }
 
+/** A check that actually ran. A name without a run id is not evidence. */
+export interface CheckEvidence {
+  name: string;
+  runId: string;
+  outcome: "pass" | "fail";
+}
+
+/**
+ * How this packet's implementation was carried out.
+ * `manual` is a seated run with no label wake.
+ * `automatic` is a run whose dispatch record was acknowledged.
+ */
+export interface ExecutionRecord {
+  mode: "manual" | "automatic";
+  checks: CheckEvidence[];
+}
+
 export interface WorkItem {
   id: string;
   initiativeId: string;
@@ -93,6 +110,8 @@ export interface WorkItem {
   integratedSha: string | null;
   reconciliationId: string | null;
   dispatch: DispatchRecord | null;
+  /** Null until a manual record or an automatic verification says how the work ran. */
+  execution: ExecutionRecord | null;
 }
 
 export interface World {
@@ -140,6 +159,18 @@ export type FactoryEvent =
   | { type: "integrate"; candidateSha: string; mergeSha: string }
   | { type: "reconcile"; sha: string; reconciliationId: string }
   | { type: "accept"; sha: string }
+  | {
+      /**
+       * Record seated work that never received a label wake.
+       * Lands on `verified` only. Does not write a dispatch record, does not
+       * spend `authorizedDispatches`, and does not authorize integration.
+       */
+      type: "record_manual_evidence";
+      sha: string;
+      revision: string;
+      sections: string[];
+      checks: CheckEvidence[];
+    }
   | { type: "blocker"; blockerId: string; failureClass: "infrastructure" | "external" }
   | { type: "clear_blocker" }
   | { type: "hold" }
@@ -181,6 +212,7 @@ export function freshItem(id = "pkt-001", initiativeId = "exec-identity"): WorkI
     integratedSha: null,
     reconciliationId: null,
     dispatch: null,
+    execution: null,
   };
 }
 
@@ -200,6 +232,9 @@ function clone(item: WorkItem): WorkItem {
     ...item,
     lease: item.lease ? { ...item.lease } : null,
     dispatch: item.dispatch ? { ...item.dispatch } : null,
+    execution: item.execution
+      ? { mode: item.execution.mode, checks: item.execution.checks.map((check) => ({ ...check })) }
+      : null,
   };
 }
 
@@ -322,6 +357,9 @@ export function applyEvent(item: WorkItem, event: FactoryEvent, world: World): A
       next.stage = "verified";
       next.verifiedSha = event.sha;
       next.lastFailureClass = null;
+      if (item.dispatch) {
+        next.execution = { mode: "automatic", checks: [] };
+      }
       return accept(next, "verified");
     }
     const failureClass = event.failureClass;
@@ -397,6 +435,32 @@ export function applyEvent(item: WorkItem, event: FactoryEvent, world: World): A
     }
     next.stage = "accepted";
     return accept(next, "accepted");
+  }
+
+  if (event.type === "record_manual_evidence") {
+    if (item.stage !== "draft") return refuse(item, "wrong_stage");
+    if (item.wake !== "hold") return refuse(item, "wake_is_dispatch");
+    if (item.dispatch) return refuse(item, "dispatch_already_recorded");
+    if (item.hold || item.blockerId) return refuse(item, item.hold ? "hold" : "blocked");
+    if (!event.sha || !event.revision) return refuse(item, "sha_mismatch");
+    const missing = REQUIRED_CHANGE_SECTIONS.filter((section) => !event.sections.includes(section));
+    if (missing.length) return refuse(item, "sections_incomplete");
+    if (!event.checks.length) return refuse(item, "verification_evidence_missing");
+    for (const check of event.checks) {
+      if (!check.name || !check.runId) return refuse(item, "verification_evidence_missing");
+      if (check.outcome !== "pass") return refuse(item, "verification_failed");
+    }
+    next.stage = "verified";
+    next.revision = event.revision;
+    next.candidateSha = event.sha;
+    next.verifiedSha = event.sha;
+    next.execution = {
+      mode: "manual",
+      checks: event.checks.map((check) => ({ ...check })),
+    };
+    next.dispatch = null;
+    next.lease = null;
+    return accept(next, "verified_manual");
   }
 
   return refuse(item, "unknown_event");
@@ -592,4 +656,6 @@ export const TRANSITION_IDS = [
   "T39",
   "T40",
   "T41",
+  "T42",
+  "T43",
 ] as const;

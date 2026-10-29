@@ -976,8 +976,84 @@ check("T38 through T41 durable dispatch binds the wake and rejects stale or fail
   const committed = JSON.parse(read(".factory/state/ledger.json"));
   assert.equal(committed.authorizedDispatches, null);
   assert.equal(committed.usedDispatches, 0);
-  assert.equal(committed.packets[packetId].stage, "draft");
-  assert.equal(committed.packets[packetId].wake, "hold");
+  assert.equal(committed.stateRevision, 1);
+  const recorded = committed.packets[packetId];
+  assert.equal(recorded.stage, "verified");
+  assert.equal(recorded.wake, "hold");
+  assert.equal(recorded.dispatch, null);
+  assert.equal(recorded.integratedSha, null);
+  assert.equal(recorded.reconciliationId, null);
+  assert.equal(recorded.candidateSha, "19c47938d8aa8884b4874999a50667f5677205b3");
+  assert.equal(recorded.verifiedSha, recorded.candidateSha);
+  assert.equal(recorded.execution.mode, "manual");
+  assert.deepEqual(
+    recorded.execution.checks.map((check: { runId: string }) => check.runId),
+    ["40873984441", "40873984426"],
+  );
+});
+
+check("T42 and T43 manual evidence verifies without a dispatch and cannot accept", async () => {
+  const packetId = "pkt-001-click-attribution";
+  const sha = "19c47938d8aa8884b4874999a50667f5677205b3";
+  const checks = [
+    { name: "factory-check", runId: "40873984441", outcome: "pass" as const },
+    { name: "verify:click-attribution", runId: "40873984426", outcome: "pass" as const },
+  ];
+  const evidence = {
+    type: "record_manual_evidence" as const,
+    sha,
+    revision: "rev-1",
+    sections: [...sections()],
+    checks,
+  };
+  const store = new MemoryStore(emptyLedger(null));
+  const result = await commitEvent(store, packetId, evidence, inactive);
+  assert.equal(result.reason, "verified_manual");
+  assert.equal(result.item.stage, "verified");
+  assert.equal(result.item.wake, "hold");
+  assert.equal(result.item.dispatch, null);
+  assert.equal(result.item.execution?.mode, "manual");
+  assert.equal(result.item.candidateSha, sha);
+  assert.equal(result.item.verifiedSha, sha);
+  const ledger = await store.read();
+  assert.equal(ledger.stateRevision, 1);
+  assert.equal(ledger.usedDispatches, 0);
+  assert.equal(ledger.authorizedDispatches, null);
+  const decision = decide(result.item, active);
+  assert.equal(decision.effect, "none");
+  assert.equal(decision.reason, "no_transition");
+  assert.equal(
+    (await commitEvent(store, packetId, { type: "accept", sha }, active)).reason,
+    "wrong_stage",
+  );
+  assert.equal(
+    (await commitEvent(store, packetId, { type: "integrate", candidateSha: sha, mergeSha: "merge-1" }, active)).reason,
+    "wrong_stage",
+  );
+
+  const failed = applyEvent(
+    freshItem(packetId),
+    { ...evidence, checks: [{ name: "ship", runId: "1", outcome: "fail" }] },
+    inactive,
+  );
+  assert.equal(failed.reason, "verification_failed");
+  assert.equal(failed.item.stage, "draft");
+  assert.equal(
+    applyEvent(freshItem(packetId), { ...evidence, sections: ["intent"] }, inactive).reason,
+    "sections_incomplete",
+  );
+  assert.equal(applyEvent(freshItem(packetId), { ...evidence, sha: "" }, inactive).reason, "sha_mismatch");
+  assert.equal(applyEvent(freshItem(packetId), { ...evidence, checks: [] }, inactive).reason, "verification_evidence_missing");
+  const released = must(
+    applyEvent(freshItem(packetId), { type: "release", wake: "sa", gatesPass: true, revision: "rev-1" }, inactive),
+    "released",
+  );
+  assert.equal(applyEvent(released, evidence, inactive).reason, "wrong_stage");
+  const marked = freshItem(packetId);
+  marked.wake = "sa";
+  assert.equal(applyEvent(marked, evidence, inactive).reason, "wake_is_dispatch");
+  const dispatched = acknowledgeDispatch(freshItem(packetId), "wake_engineer", { prHead: "head-1" });
+  assert.equal(applyEvent(dispatched, evidence, inactive).reason, "dispatch_already_recorded");
 });
 
 class BarrierRemote implements ContentsRemote {
