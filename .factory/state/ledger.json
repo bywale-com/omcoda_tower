@@ -1,7 +1,7 @@
 {
-  "stateRevision": 18,
+  "stateRevision": 19,
   "authorizedDispatches": 4,
-  "usedDispatches": 1,
+  "usedDispatches": 2,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -119,13 +119,19 @@
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
-      "dispatchedSaRevision": null,
+      "dispatchedSaRevision": "rev-1",
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-002-open-ask-cursor",
+        "revision": "rev-1",
+        "prHead": "a19229352274f07f177619c8d92f689d21d4fdba",
+        "effect": "wake_sa",
+        "label": "factory-wake-sa"
+      },
       "execution": null
     },
     "pkt-003-resume-same-run": {
