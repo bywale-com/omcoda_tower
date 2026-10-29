@@ -33,7 +33,7 @@ export type FailureClass =
   | "infrastructure"
   | "external";
 
-export type WakeEffect = "none" | "wake_sa" | "wake_engineer" | "wake_repair";
+export type WakeEffect = "none" | "wake_sa" | "wake_engineer" | "wake_repair" | "wake_architect";
 
 export const REQUIRED_CHANGE_SECTIONS = [
   "intent",
@@ -48,6 +48,7 @@ export const REQUIRED_CHANGE_SECTIONS = [
 ] as const;
 
 export const SEAT_LABELS = [
+  "factory-wake-architect",
   "factory-wake-sa",
   "factory-wake-engineer",
   "factory-repair",
@@ -127,6 +128,12 @@ export interface World {
    */
   authorizedDispatches: number | null;
   usedDispatches: number;
+  /**
+   * Set by the ledger. Undefined means this caller is exercising a packet
+   * transition and has not supplied a scope. `suspended`, `inactive`, and
+   * `complete` refuse every wake.
+   */
+  scopeStatus?: "inactive" | "active" | "suspended" | "complete";
 }
 
 export type FactoryEvent =
@@ -467,6 +474,7 @@ export function applyEvent(item: WorkItem, event: FactoryEvent, world: World): A
 }
 
 const LABEL_FOR: Record<Exclude<WakeEffect, "none">, (typeof SEAT_LABELS)[number]> = {
+  wake_architect: "factory-wake-architect",
   wake_sa: "factory-wake-sa",
   wake_engineer: "factory-wake-engineer",
   wake_repair: "factory-repair",
@@ -475,6 +483,9 @@ const LABEL_FOR: Record<Exclude<WakeEffect, "none">, (typeof SEAT_LABELS)[number
 export function decide(item: WorkItem, world: World): Decision {
   const none = (reason: string): Decision => ({ effect: "none", reason, label: null });
   if (world.activation !== "active") return none("inactive");
+  if (world.scopeStatus === "suspended") return none("suspended");
+  if (world.scopeStatus === "inactive") return none("scope_inactive");
+  if (world.scopeStatus === "complete") return none("scope_complete");
   if (item.hold) return none("hold");
   if (item.blockerId || item.stage === "blocked") return none("blocked");
   if (item.stage === "returned_architect" || item.stage === "returned_analyst") {
@@ -562,6 +573,9 @@ export function workerMayRun(input: {
     return { ok: false, reason: "label_mismatch" };
   }
   if (input.dispatch.effect === "wake_repair" && input.label !== "factory-repair") {
+    return { ok: false, reason: "label_mismatch" };
+  }
+  if (input.dispatch.effect === "wake_architect" && input.label !== "factory-wake-architect") {
     return { ok: false, reason: "label_mismatch" };
   }
   return { ok: true, reason: "authorized" };
@@ -658,4 +672,9 @@ export const TRANSITION_IDS = [
   "T41",
   "T42",
   "T43",
+  "T44",
+  "T45",
+  "T46",
+  "T47",
+  "T48",
 ] as const;

@@ -21,8 +21,8 @@
     "noContradictorySpecification": true,
     "independentlyImplementable": true
   },
-  "authorization": "Wake stays hold until the founder authorizes factory dispatch. Eligibility is not release.",
+  "authorization": "Wake stays hold. Manual evidence is not a release. The committed ledger scope is inactive.",
   "acceptanceOracle": ".factory/experiments/click-attribution.ts",
-  "productionPlant": "server/wire-service click path on this branch; ledger stays draft until a real merge SHA",
+  "productionPlant": "server/wire-service click path on this branch. Ledger stage is verified by manual evidence. integratedSha is null.",
   "systemsChange": "docs/factory/initiatives/exec-identity/systems/SCP-pkt-001-click-attribution.md"
 }

@@ -1,0 +1,113 @@
+/**
+ * One controller pass.
+ *
+ * With no arming flags this process prints the proposal and exits.
+ * It does not add a label and it does not spend a dispatch.
+ * `--apply` reaches the label actuator only when every disarm gate is set
+ * and the ledger scope is active. Those gates are unset in this repository.
+ */
+import { readFileSync } from "node:fs";
+import { githubContentsRemote, GitHubContentsStore } from "../.factory/controller/contents.ts";
+import { githubLabelActuator, type FactoryLedger } from "../.factory/controller/dispatch.ts";
+import { controlStep, dispatchInitiative } from "../.factory/controller/queue.ts";
+import { dispatchWake } from "../.factory/controller/dispatch.ts";
+
+function armed(): boolean {
+  return (
+    process.env.FACTORY_CONTROLLER === "active" &&
+    process.env.FACTORY_LABELS === "armed" &&
+    Boolean(process.env.WAKE_GITHUB_TOKEN) &&
+    process.env.FACTORY_SPEND_LIMIT_CONFIRMED === "yes" &&
+    process.env.FACTORY_AUTOMATIONS_SAVED === "yes"
+  );
+}
+
+function worldFrom(ledger: FactoryLedger) {
+  return {
+    activation: process.env.FACTORY_CONTROLLER === "active" ? ("active" as const) : ("inactive" as const),
+    now: new Date().toISOString(),
+    engineeringBusy: false,
+    budgetUsd: null,
+    authorizedDispatches: ledger.authorizedDispatches,
+    usedDispatches: ledger.usedDispatches,
+    scopeStatus: ledger.scope.status,
+  };
+}
+
+const apply = process.argv.includes("--apply");
+if (apply && !armed()) {
+  console.error("actuator disarmed");
+  process.exit(1);
+}
+
+if (!apply) {
+  const ledger = JSON.parse(readFileSync(".factory/state/ledger.json", "utf8")) as FactoryLedger;
+  const step = controlStep(ledger, worldFrom(ledger));
+  console.log(JSON.stringify({ reason: step.reason, wakes: step.wakes.map((wake) => ({ id: wake.id, effect: wake.decision.effect, reason: wake.decision.reason })) }));
+  process.exit(0);
+}
+
+const pr = Number(process.env.FACTORY_PR);
+const prHead = process.env.FACTORY_PR_HEAD?.trim() ?? "";
+const repository = process.env.FACTORY_REPOSITORY ?? "";
+const slash = repository.indexOf("/");
+const branch = process.env.FACTORY_LEDGER_BRANCH?.trim() ?? "";
+if (!Number.isInteger(pr) || pr <= 0 || !prHead || slash <= 0 || !branch) {
+  console.error("actuator_pr_unset");
+  process.exit(1);
+}
+
+const store = new GitHubContentsStore(
+  githubContentsRemote({
+    owner: repository.slice(0, slash),
+    repo: repository.slice(slash + 1),
+    path: ".factory/state/ledger.json",
+    branch,
+    env: process.env,
+  }),
+);
+const ledger = await store.read();
+const step = controlStep(ledger, worldFrom(ledger));
+const wake = step.wakes[0];
+if (!wake) {
+  console.log(step.reason);
+  process.exit(0);
+}
+if (step.ledger !== ledger && step.ledger.initiatives !== ledger.initiatives) {
+  const selected = Object.values(step.ledger.initiatives).find((item) => item.queue === "active" && item.session === "continuation_due" && !item.dispatch);
+  if (selected && !ledger.initiatives[selected.id]?.dispatch && ledger.initiatives[selected.id]?.queue !== "active") {
+    const { commitLedgerEvent } = await import("../.factory/controller/queue.ts");
+    const wrote = await commitLedgerEvent(store, { type: "select_next" }, worldFrom(ledger));
+    if (!wrote.ok && wrote.reason !== "initiative_active") {
+      console.error(wrote.reason);
+      process.exit(1);
+    }
+  }
+}
+const actuator = githubLabelActuator({ env: process.env, pr });
+const result = wake.kind === "initiative"
+  ? await dispatchInitiative({
+      store,
+      actuator,
+      initiativeId: wake.id,
+      prHead,
+      activation: "active",
+      now: new Date().toISOString(),
+      engineeringBusy: false,
+      budgetUsd: null,
+    })
+  : await dispatchWake({
+      store,
+      actuator,
+      packetId: wake.id,
+      prHead,
+      activation: "active",
+      now: new Date().toISOString(),
+      engineeringBusy: false,
+      budgetUsd: null,
+    });
+if (!result.ok) {
+  console.error(result.reason);
+  process.exit(1);
+}
+console.log(result.reason);

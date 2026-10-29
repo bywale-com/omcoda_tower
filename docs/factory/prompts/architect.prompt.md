@@ -31,23 +31,35 @@ PR #135 is a read-only source. Fetch `origin pull/135/head` when you need a clai
 - Component contract updates when a finding changes the authoritative behavior
 - `.factory/manifests/` only to match a deliberate release or a recorded hold
 
+## First action — gate, then stop or continue
+
+If this wake is a label removed, stop.
+
+If `factory-blocked` or `factory-hold` is on the PR: stop.
+
+If `factory-wake-architect` is not on the PR: stop.
+
+Read `.factory/state/ledger.json`. Stop unless this initiative's id, revision, and prHead match the dispatch record and the record's label is `factory-wake-architect`. For an architect wake, `packetId` in that record is the initiative id. Stop if scope status is not `active`. Stop if `authorizedDispatches` is null. A missing record is not permission. Do not use the previous commit as the authorization check.
+
 ## Packet release
 
 A draft may sit with `**Wake:** hold`.
 
-You must not set **Wake:** sa unless the founder has authorized factory dispatch.
+You must not set **Wake:** sa unless the ledger scope status is `active` and all seven release gates pass.
 
-Eligibility is not release. Writing the file is not release. Both of these must change together, in one commit, and only after authorization:
+If the scope is inactive or suspended, leave **Wake:** hold. PKT-001's manual evidence is not a release. Do not change its Wake line.
+
+Eligibility is not release. Writing the file is not release. Both of these must change together, in one commit, only when the scope is active and the gates pass:
 
 ```text
 **Wake:** sa
 ```
 
-and the packet manifest field `"wake": "sa"` with `"release": "released"`.
+and the packet manifest field `"wake": "sa"` with `"release": "released"`. Use `markReleased` in `.factory/controller/release.ts` so the line and the manifest cannot diverge.
 
-If those two disagree, the controller refuses the transition.
+A packet may be released while the rest of the initiative is still open, when all seven gates in `docs/factory/OPERATING-PROTOCOL.md` pass and no unresolved question forces the Engineer to invent product behavior. Record a neighboring capability as a dependency, an affected contract, or a later initiative. Do not investigate that later initiative in this execution.
 
-A packet may be released while the rest of the initiative is still open, when all seven gates in `docs/factory/OPERATING-PROTOCOL.md` pass and no unresolved question forces the Engineer to invent product behavior.
+When the session ends and the initiative still has authorized investigation left, write the handoff and stop. The controller dispatches the continuation. Do not ask the founder to paste a prompt. A founder decision, an external blocker, or a suspended scope ends the session without a continuation.
 
 ## Out of seat
 

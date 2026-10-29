@@ -1,25 +1,38 @@
 # Tower factory dispatch.
-# This workflow does not listen to pull requests, pushes, or a schedule.
-# workflow_dispatch simulate runs the deterministic check.
-# workflow_dispatch apply adds a label only when every disarm gate passes
-# and the ledger carries a positive authorizedDispatches count.
-# Those gates are unset in this repository. Apply exits before gh.
+# pull_request runs the deterministic controller and prints the proposal.
+# It adds a label only when every disarm gate below is already set.
+# Those gates are unset in this repository, so the pull request job exits
+# on "actuator disarmed" and does not spawn gh.
+# workflow_dispatch authorize writes a scope, then one control apply.
+# workflow_dispatch suspend writes a suspension and does not apply.
+# There is no schedule.
 
 name: Factory dispatch
 
 on:
+  pull_request:
+    paths:
+      - ".factory/**"
+      - "docs/factory/**"
+      - "scripts/factory-control.ts"
+      - "scripts/factory-authorize-scope.ts"
+      - "scripts/factory-suspend.ts"
+      - "scripts/factory-check.ts"
+      - ".github/workflows/factory-dispatch.yml"
   workflow_dispatch:
     inputs:
       mode:
-        description: "simulate or apply"
+        description: "simulate, apply, authorize, or suspend"
         required: true
         default: simulate
         type: choice
         options:
           - simulate
           - apply
+          - authorize
+          - suspend
       authorize:
-        description: "Required only for apply: I_AUTHORIZE_FACTORY_DISPATCH"
+        description: "Required for apply, authorize, and suspend: I_AUTHORIZE_FACTORY_DISPATCH"
         required: false
         default: ""
         type: string
@@ -33,12 +46,68 @@ on:
         required: false
         default: ""
         type: string
+      scope_id:
+        description: "Required for authorize. Example: agents-module"
+        required: false
+        default: ""
+        type: string
+      scope_modules:
+        description: "Comma-separated module names. Required for authorize."
+        required: false
+        default: ""
+        type: string
+      authorized_dispatches:
+        description: "Positive integer dispatch cap. Required for authorize."
+        required: false
+        default: ""
+        type: string
+      suspend_reason:
+        description: "Required for suspend."
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: read
 
+concurrency:
+  group: factory-control-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
+  control:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Control pass
+        env:
+          FACTORY_CONTROLLER: ${{ vars.FACTORY_CONTROLLER }}
+          FACTORY_LABELS: ${{ vars.FACTORY_LABELS }}
+          FACTORY_SPEND_LIMIT_CONFIRMED: ${{ vars.FACTORY_SPEND_LIMIT_CONFIRMED }}
+          FACTORY_AUTOMATIONS_SAVED: ${{ vars.FACTORY_AUTOMATIONS_SAVED }}
+          WAKE_GITHUB_TOKEN: ${{ secrets.WAKE_GITHUB_TOKEN }}
+          FACTORY_PR: ${{ github.event.pull_request.number }}
+          FACTORY_PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          FACTORY_REPOSITORY: ${{ github.repository }}
+          FACTORY_LEDGER_BRANCH: ${{ github.head_ref }}
+        run: |
+          set -euo pipefail
+          if [ "$FACTORY_CONTROLLER" != "active" ] || [ "$FACTORY_LABELS" != "armed" ] || [ "$FACTORY_SPEND_LIMIT_CONFIRMED" != "yes" ] || [ "$FACTORY_AUTOMATIONS_SAVED" != "yes" ] || [ -z "${WAKE_GITHUB_TOKEN}" ]; then
+            echo "actuator disarmed"
+            npx tsx scripts/factory-control.ts
+            exit 0
+          fi
+          npx tsx scripts/factory-control.ts --apply
+
   dispatch:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -61,23 +130,37 @@ jobs:
           FACTORY_PR_HEAD: ${{ inputs.pr_head }}
           FACTORY_REPOSITORY: ${{ github.repository }}
           FACTORY_LEDGER_BRANCH: ${{ github.ref_name }}
+          SCOPE_ID: ${{ inputs.scope_id }}
+          SCOPE_MODULES: ${{ inputs.scope_modules }}
+          AUTHORIZED_DISPATCHES: ${{ inputs.authorized_dispatches }}
+          SUSPEND_REASON: ${{ inputs.suspend_reason }}
         run: |
           set -euo pipefail
-          if [ "$MODE" != "apply" ]; then
+          if [ "$MODE" = "simulate" ] || [ -z "$MODE" ]; then
             echo "mode=simulate. No labels. No agents."
             npm run factory:check
             exit 0
           fi
           if [ "$AUTHORIZE" != "I_AUTHORIZE_FACTORY_DISPATCH" ]; then
-            echo "apply refused: authorization phrase does not match."
+            echo "refused: authorization phrase does not match."
             exit 1
           fi
-          if [ "$FACTORY_CONTROLLER" != "active" ]; then
-            echo "apply refused: repository variable FACTORY_CONTROLLER is not active."
-            exit 1
+          if [ "$MODE" = "suspend" ]; then
+            if [ -z "$SUSPEND_REASON" ] || [ -z "${WAKE_GITHUB_TOKEN}" ]; then
+              echo "suspend refused: set suspend_reason and WAKE_GITHUB_TOKEN, or set repository variable FACTORY_CONTROLLER to inactive."
+              exit 1
+            fi
+            npx tsx scripts/factory-suspend.ts --apply
+            exit 0
           fi
-          if [ "$FACTORY_LABELS" != "armed" ] || [ "$FACTORY_SPEND_LIMIT_CONFIRMED" != "yes" ] || [ "$FACTORY_AUTOMATIONS_SAVED" != "yes" ] || [ -z "${WAKE_GITHUB_TOKEN}" ]; then
+          if [ "$FACTORY_CONTROLLER" != "active" ] || [ "$FACTORY_LABELS" != "armed" ] || [ "$FACTORY_SPEND_LIMIT_CONFIRMED" != "yes" ] || [ "$FACTORY_AUTOMATIONS_SAVED" != "yes" ] || [ -z "${WAKE_GITHUB_TOKEN}" ]; then
             echo "actuator disarmed: spending limit or Cursor automations are not confirmed. No labels were added."
             exit 1
           fi
-          npx tsx scripts/factory-dispatch-apply.ts
+          if [ "$MODE" = "authorize" ]; then
+            npx tsx scripts/factory-authorize-scope.ts --apply
+          elif [ "$MODE" != "apply" ]; then
+            echo "refused: unknown mode."
+            exit 1
+          fi
+          npx tsx scripts/factory-control.ts --apply

@@ -12,6 +12,8 @@ If this wake is a label removed, stop.
 
 If `factory-blocked` or `factory-hold` is on the PR: stop.
 
+If ledger `scope.status` is `inactive`, `suspended`, or `complete`: stop.
+
 If `factory-wake-sa` is not on the PR: stop.
 
 Ensure you are on the pull request head branch. Cursor Automations boot with the checkout on the default branch.

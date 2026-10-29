@@ -33,4 +33,4 @@ That command runs the state machine, the click-attribution oracle, and the guard
 
 ## Current handoff
 
-[handoffs/FACTORY.md](./handoffs/FACTORY.md)
+[ACTIVATION.md](./ACTIVATION.md) is the founder activation sheet. [handoffs/FACTORY.md](./handoffs/FACTORY.md) is the implementation record.

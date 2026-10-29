@@ -22,11 +22,7 @@ These are identified from Travis’s working chain (`.github/workflows/wake-pack
 
 ## Human steps that remain, and that this change does not perform
 
-1. Review the three prompts under `docs/factory/prompts/`.
-2. At cursor.com/automations, create three automations only when you intend to spend cloud-agent budget: Architect is manual or absent (no label), Analyst triggers on label `factory-wake-sa` added, Engineer triggers on labels `factory-wake-engineer` and `factory-repair` added. Memories off. Pull request creation off. Repository `bywale-com/omcoda_tower`.
-3. Add `WAKE_GITHUB_TOKEN` in GitHub Actions secrets for this repository.
-4. Set the repository variable `FACTORY_CONTROLLER` to `active`.
-5. Only then consider `workflow_dispatch` with mode `apply` and the phrase `I_AUTHORIZE_FACTORY_DISPATCH`.
+The paste-ready automations, the variable names, the start action, and the stop action are in [ACTIVATION.md](./ACTIVATION.md). This change does not save those automations and does not set the secret or the variables.
 
 Step 5 still does not add a label while any disarm gate is unset. `githubLabelActuator` returns `actuator_disabled` without spawning `gh` unless all of these are present: `FACTORY_CONTROLLER=active`, `FACTORY_LABELS=armed`, `WAKE_GITHUB_TOKEN`, `FACTORY_SPEND_LIMIT_CONFIRMED=yes`, and `FACTORY_AUTOMATIONS_SAVED=yes`. The command is `gh pr edit <pr> --add-label <label>`, built by `labelEditArgs`, with `GH_TOKEN` and `GITHUB_TOKEN` set from `WAKE_GITHUB_TOKEN`. The apply script then refuses when ledger `authorizedDispatches` is null. That count is still null.
 

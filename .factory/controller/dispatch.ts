@@ -22,6 +22,7 @@ import {
   applyEvent,
   decide,
   freshItem,
+  type DispatchRecord,
   type FactoryEvent,
   type WakeEffect,
   type WorkItem,
@@ -32,7 +33,40 @@ export interface FactoryLedger {
   stateRevision: number;
   authorizedDispatches: number | null;
   usedDispatches: number;
+  scope: ScopeState;
+  initiatives: Record<string, InitiativeRecord>;
   packets: Record<string, WorkItem>;
+}
+
+export interface ScopeState {
+  id: string | null;
+  status: "inactive" | "active" | "suspended" | "complete";
+  modules: string[];
+  founderDecision: string | null;
+  blockReason: string | null;
+}
+
+export type InitiativeQueue = "discovered" | "eligible" | "active" | "blocked" | "completed";
+
+export interface InitiativeRecord {
+  id: string;
+  module: string;
+  capability: string;
+  entry: string;
+  obligation: string;
+  priority: number;
+  dependsOn: string[];
+  inheritedSpecifications: string[];
+  investigation: "discovered" | "investigating" | "specifying" | "closed";
+  queue: InitiativeQueue;
+  coverageComplete: boolean | null;
+  outstanding: string[];
+  session: "idle" | "running" | "continuation_due" | "founder_decision";
+  revision: string;
+  dispatch: DispatchRecord | null;
+  blockedReason: string | null;
+  packetIds: string[];
+  updatedAt: string | null;
 }
 
 export interface LabelRequest {
@@ -58,11 +92,18 @@ export interface StateStore {
   ): Promise<T>;
 }
 
+export function emptyScope(): ScopeState {
+  return { id: null, status: "inactive", modules: [], founderDecision: null, blockReason: null };
+}
+
+/** Test ledger. Scope is active so packet-wake tests are not refused. The committed ledger is inactive. */
 export function emptyLedger(authorizedDispatches: number | null = null): FactoryLedger {
   return {
     stateRevision: 0,
     authorizedDispatches,
     usedDispatches: 0,
+    scope: { id: "test", status: "active", modules: ["test"], founderDecision: null, blockReason: null },
+    initiatives: {},
     packets: {
       "pkt-001-click-attribution": freshItem("pkt-001-click-attribution", "exec-identity"),
     },
@@ -181,6 +222,7 @@ function worldFrom(ledger: FactoryLedger, opts: {
     budgetUsd: opts.budgetUsd,
     authorizedDispatches: ledger.authorizedDispatches,
     usedDispatches: ledger.usedDispatches,
+    scopeStatus: ledger.scope?.status,
   };
 }
 

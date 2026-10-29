@@ -3,7 +3,8 @@
   "activation": "inactive",
   "dispatch": "forbidden",
   "labelActuator": "connected_disarmed",
-  "reason": "The label command can spawn gh pr edit. It stays disarmed until FACTORY_CONTROLLER=active, FACTORY_LABELS=armed, WAKE_GITHUB_TOKEN, FACTORY_SPEND_LIMIT_CONFIRMED=yes, and FACTORY_AUTOMATIONS_SAVED=yes. Those are unset. authorizedDispatches is null, which also refuses a wake. Cursor Automations are not saved.",
+  "integration": "merge_sha_required",
+  "reason": "The label command can spawn gh pr edit. It stays disarmed until FACTORY_CONTROLLER=active, FACTORY_LABELS=armed, WAKE_GITHUB_TOKEN, FACTORY_SPEND_LIMIT_CONFIRMED=yes, and FACTORY_AUTOMATIONS_SAVED=yes. Those are unset. The committed scope is inactive. authorizedDispatches is null, which also refuses a wake. Cursor Automations are not saved.",
   "concurrency": {
     "architect": 1,
     "analyst": 1,
@@ -35,7 +36,7 @@
     "authorizedDispatchesMeans": "Null does not mean unlimited. While dispatch is active, decide refuses a wake until the ledger carries a fixed positive run count. Illustrative dollars never grant a wake. A provider-side spending limit is still unset and is required before any live worker."
   },
   "labels": {
-    "wakes": ["factory-wake-sa", "factory-wake-engineer", "factory-repair"],
+    "wakes": ["factory-wake-architect", "factory-wake-sa", "factory-wake-engineer", "factory-repair"],
     "holds": ["factory-blocked", "factory-hold"],
     "actor": "WAKE_GITHUB_TOKEN user connected to the Cursor automation. github-actions[bot] must not be the label actor.",
     "absenceIsNotPermission": true

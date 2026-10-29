@@ -12,6 +12,8 @@ If this wake is a label removed, stop.
 
 If `factory-blocked` or `factory-hold` is on the PR: stop.
 
+If ledger `scope.status` is `inactive`, `suspended`, or `complete`: stop.
+
 If neither `factory-wake-engineer` nor `factory-repair` is on the PR: stop.
 
 Switch to the pull request head branch before reading the packet.

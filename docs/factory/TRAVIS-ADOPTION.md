@@ -9,7 +9,7 @@ Source: `bywale-com/travis` default branch, cloned 2026-10-29. The tree’s last
 | Three seats, jobs not swapped | `docs/BUILD-PROTOCOL.md`, `docs/seats/*.md` | Architect, Analyst, Engineer. The Architect absorbs the old Technical PM packet cut. |
 | Two buckets only | Build protocol and Engineer seat | `OPERATING-PROTOCOL.md` |
 | Exact wake line | `**Wake:** hold` and `**Wake:** sa` | Same lines. Filename is not the hold. Prose is not the hold. |
-| Cheap gate before any model | `.github/workflows/wake-packet-seats.yml` | `.github/workflows/factory-dispatch.yml`, stricter: no pull-request trigger at all |
+| Cheap gate before any model | `.github/workflows/wake-packet-seats.yml` | `.github/workflows/factory-dispatch.yml`. The pull-request job runs the controller and stays disarmed. It does not boot a model. There is no schedule. |
 | Label actor must be the connected user | `WAKE_GITHUB_TOKEN`, not `github-actions[bot]` | `SECRETS.md`. Not configured |
 | One wake label at a time | `strip_seats_except` in the wake workflow | Documented. Not wired |
 | Blocker strips wakes and boots nobody | Blocker path in the wake workflow; blockers 001–004 | `factory-blocked` plus failure class `external` / `infrastructure` |

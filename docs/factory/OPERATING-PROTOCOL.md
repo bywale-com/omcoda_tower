@@ -36,14 +36,9 @@ All seven must be true before `wake` may become `sa`:
 6. The packet does not contradict another authoritative specification.
 7. The work is independently implementable, or its dependencies are declared.
 
-Then the release itself is a second act:
+Release is the ledger scope being `active`, plus those gates. The Architect writes `**Wake:** sa` and `"release": "released"` together. The founder does not edit that line per packet. A scope that is `inactive` or `suspended` keeps the line at `hold`.
 
-- The packet Markdown contains the whole line `**Wake:** sa`.
-- The manifest contains `"wake": "sa"` and `"release": "released"`.
-- `.factory/manifests/factory.json` has `"activation": "active"`.
-- The founder has authorized dispatch, as [SECRETS.md](./SECRETS.md) describes.
-
-Until that act, a packet may be `releaseEligible: true` and still `**Wake:** hold`. PKT-001 is in that state. Saving the Markdown does not wake the Analyst.
+PKT-001 is `verified` manual evidence. Its Wake stays `hold`. `markReleased` refuses `execution: "manual"`. Saving a file does not wake the Analyst. The dispatch record does.
 
 ## Batching
 
@@ -51,7 +46,7 @@ Related released packets may share one Analyst execution or one Engineer branch 
 
 ## Concurrency
 
-One Architect, one Analyst, and one Engineer at most. One implementation batch in engineering or verification at a time. `engineeringBusy` on the controller world enforces the slot. Two investigations of different components may exist only after this single-batch path has been observed for real. That observation has not happened.
+One Architect, one Analyst, and one Engineer at most. One implementation batch at a time. `controlStep` treats the slot as taken when an engineer dispatch is outstanding, an engineering lease is live, or a repair for the current fingerprint was already woken. One pass proposes at most one `wake_engineer` or `wake_repair`. Packet wakes are preferred over another architect session. Two investigations of different components may exist only after this single-batch path has been observed for real. That observation has not happened.
 
 ## Verification evidence
 
@@ -61,7 +56,7 @@ A passing check moves the packet to `verified`. Acceptance is later: `integratio
 
 Product packets use Tower’s existing checks (`npm run build`, `npm run verify:ship`, and any script the systems-change packet names). They do not import Travis phone walks or `runtime-doors`.
 
-The factory’s own check is `npm run factory:check`. It proves the controller and the PKT-001 oracle. It does not prove the production click path, because that path has not been planted.
+The factory’s own check is `npm run factory:check`. It proves the controller, the PKT-001 oracle, and the manual-evidence record. The production click path is proved by `scripts/verify-click-attribution.ts` on the ship workflow, against the SHA named in the ledger.
 
 ## Plates
 

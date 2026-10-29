@@ -3,6 +3,7 @@
  * Run: npm run factory:check
  */
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -42,6 +43,17 @@ import {
   type PursuitEnrollment,
   type PursuitMessage,
 } from "../.factory/experiments/click-attribution.ts";
+import { markReleased } from "../.factory/controller/release.ts";
+import {
+  applyLedgerEvent,
+  commitLedgerEvent,
+  controlStep,
+  dispatchInitiative,
+  freshInitiative,
+  moduleComplete,
+  projectFactory,
+  type LedgerEvent,
+} from "../.factory/controller/queue.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (path: string) => readFileSync(join(root, path), "utf8");
@@ -545,16 +557,25 @@ check("state-machine page lists every transition id", () => {
   }
 });
 
-check("dispatch workflow cannot boot from a pull request or a schedule", () => {
+check("dispatch workflow prints a control pass and does not schedule labels", () => {
   const workflow = read(".github/workflows/factory-dispatch.yml");
-  assert.equal(workflow.includes("pull_request:"), false);
+  assert.ok(workflow.includes("pull_request:"));
   assert.equal(workflow.includes("schedule:"), false);
   assert.ok(workflow.includes("workflow_dispatch:"));
   assert.ok(workflow.includes("I_AUTHORIZE_FACTORY_DISPATCH"));
   assert.ok(workflow.includes("actuator disarmed"));
   assert.ok(workflow.includes("FACTORY_SPEND_LIMIT_CONFIRMED"));
   assert.ok(workflow.includes("FACTORY_AUTOMATIONS_SAVED"));
+  assert.ok(workflow.includes("scripts/factory-control.ts"));
+  assert.ok(workflow.includes("scripts/factory-authorize-scope.ts"));
+  assert.ok(workflow.includes("scripts/factory-suspend.ts"));
   assert.equal(workflow.includes("gh pr edit"), false);
+  const controlJob = workflow.slice(workflow.indexOf("  control:"), workflow.indexOf("  dispatch:"));
+  assert.ok(controlJob.indexOf('echo "actuator disarmed"') < controlJob.indexOf("scripts/factory-control.ts --apply"));
+  assert.equal(controlJob.includes("factory-authorize-scope.ts"), false);
+  assert.equal(controlJob.includes("factory-suspend.ts"), false);
+  assert.match(read("scripts/factory-authorize-scope.ts"), /dispatch_not_authorized/);
+  assert.match(read("scripts/factory-suspend.ts"), /suspension_reason_missing/);
 });
 
 check("seat prompts keep the Travis gates that stopped empty boots", () => {
@@ -563,7 +584,10 @@ check("seat prompts keep the Travis gates that stopped empty boots", () => {
   const engineer = read("docs/factory/prompts/engineer.prompt.md");
   assert.match(architect, /Checkpoint does not end the session/);
   assert.match(architect, /Do not edit docs\/specification-pass\//);
-  assert.match(architect, /You must not set \*\*Wake:\*\* sa unless the founder has authorized factory dispatch/);
+  assert.match(architect, /You must not set \*\*Wake:\*\* sa unless the ledger scope status is `active` and all seven release gates pass/);
+  assert.match(architect, /factory-wake-architect/);
+  assert.match(architect, /initiative's id, revision, and prHead/);
+  assert.match(architect, /`packetId` in that record is the initiative id/);
   assert.match(analyst, /Run only if this commit has this exact line: `\*\*Wake:\*\* sa`/);
   assert.match(analyst, /If this wake is a label removed, stop/);
   assert.match(analyst, /If `factory-blocked` or `factory-hold` is on the PR: stop/);
@@ -1208,6 +1232,627 @@ function sections(): string[] {
     "dependency_reconciliation",
   ];
 }
+
+function initiativeSeed(id: string, module: string, priority: number, dependsOn: string[] = []): LedgerEvent {
+  return {
+    type: "register_initiative",
+    initiative: {
+      id,
+      module,
+      capability: id,
+      entry: `Operator → ${module} → ${id}`,
+      obligation: `Complete ${id}`,
+      priority,
+      dependsOn,
+    },
+  };
+}
+
+function changeSpecified(id: string): WorkItem {
+  let item = must(
+    applyEvent(freshItem(id, "alpha"), { type: "release", wake: "sa", gatesPass: true, revision: "rev-1" }, active),
+    "released",
+  );
+  item = must(
+    applyEvent(
+      item,
+      { type: "acquire_lease", workerId: "bc-a", role: "analyst", until: "2026-10-29T13:00:00Z", revision: "rev-1" },
+      active,
+    ),
+    "lease_acquired",
+  );
+  return must(
+    applyEvent(
+      item,
+      { type: "sign_change", revision: "rev-1", sections: [...sections()], workerId: "bc-a" },
+      active,
+    ),
+    "change_specified",
+  );
+}
+
+const cycleWorld: World = { ...active, now: "2026-10-29T12:00:00Z", authorizedDispatches: 8 };
+
+check("T44 through T48 an authorized scope continues and selects the next initiative", async () => {
+  const store = new MemoryStore(emptyLedger(null));
+  const refused = await commitLedgerEvent(
+    store,
+    { type: "authorize_scope", id: "agents-scope", modules: ["Agents"], authorizedDispatches: 0 },
+    cycleWorld,
+  );
+  assert.equal(refused.ok, false);
+  assert.equal(refused.reason, "dispatch_not_authorized");
+  assert.equal((await store.read()).authorizedDispatches, null);
+
+  const authorized = await commitLedgerEvent(
+    store,
+    { type: "authorize_scope", id: "agents-scope", modules: ["Agents"], authorizedDispatches: 8 },
+    cycleWorld,
+  );
+  assert.equal(authorized.reason, "scope_authorized");
+  assert.equal(authorized.ledger.scope.status, "active");
+  for (const event of [
+    initiativeSeed("alpha", "Agents", 1),
+    initiativeSeed("beta", "Agents", 2, ["alpha"]),
+    initiativeSeed("gamma", "Other", 1),
+  ]) {
+    const registered = await commitLedgerEvent(store, event, cycleWorld);
+    assert.equal(registered.ok, true, registered.reason);
+  }
+
+  const selected = await commitLedgerEvent(store, { type: "select_next" }, cycleWorld);
+  assert.equal(selected.reason, "selected");
+  assert.equal(selected.ledger.initiatives.alpha.queue, "active");
+  assert.equal(selected.ledger.initiatives.alpha.session, "continuation_due");
+  assert.equal(selected.ledger.initiatives.beta.queue, "discovered");
+  assert.equal(selected.ledger.initiatives.gamma.queue, "discovered");
+
+  const calls: string[] = [];
+  const failedWake = await dispatchInitiative({
+    store,
+    actuator: scriptedActuator([{ ok: false, reason: "label_add_failed" }], calls),
+    initiativeId: "alpha",
+    prHead: "head-a",
+    activation: "active",
+    now: cycleWorld.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(failedWake.ok, false);
+  assert.equal(failedWake.reason, "label_add_failed");
+  assert.equal(calls.length, 1);
+  assert.equal((await store.read()).usedDispatches, 0);
+  assert.equal((await store.read()).initiatives.alpha.dispatch, null);
+
+  const woke = await dispatchInitiative({
+    store,
+    actuator: scriptedActuator([{ ok: true, reason: "labeled" }], calls),
+    initiativeId: "alpha",
+    prHead: "head-a",
+    activation: "active",
+    now: cycleWorld.now,
+    engineeringBusy: false,
+    budgetUsd: 30,
+  });
+  assert.equal(woke.reason, "dispatched");
+  assert.equal((await store.read()).usedDispatches, 1);
+  assert.equal((await store.read()).initiatives.alpha.session, "running");
+  const architectDispatch = (await store.read()).initiatives.alpha.dispatch;
+  assert.equal(
+    workerMayRun({
+      label: "factory-wake-architect",
+      packetId: "alpha",
+      revision: "rev-0",
+      prHead: "head-a",
+      wake: "hold",
+      dispatch: architectDispatch,
+    }).ok,
+    true,
+  );
+  assert.equal(
+    workerMayRun({
+      label: "factory-wake-sa",
+      packetId: "alpha",
+      revision: "rev-0",
+      prHead: "head-a",
+      wake: "hold",
+      dispatch: architectDispatch,
+    }).reason,
+    "label_mismatch",
+  );
+  const beforeDuplicate = calls.length;
+  const duplicate = await dispatchInitiative({
+    store,
+    actuator: scriptedActuator([{ ok: true, reason: "labeled" }], calls),
+    initiativeId: "alpha",
+    prHead: "head-b",
+    activation: "active",
+    now: cycleWorld.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(duplicate.reason, "already_dispatched");
+  assert.equal(calls.length, beforeDuplicate);
+
+  const continued = await commitLedgerEvent(
+    store,
+    { type: "architect_session", initiativeId: "alpha", outcome: "continue" },
+    cycleWorld,
+  );
+  assert.equal(continued.reason, "architect_continue");
+  assert.equal(continued.ledger.initiatives.alpha.revision, "rev-1");
+  assert.equal(continued.ledger.initiatives.alpha.dispatch, null);
+  assert.equal(continued.ledger.initiatives.alpha.session, "continuation_due");
+  assert.equal(continued.ledger.initiatives.alpha.queue, "active");
+  const again = controlStep(await store.read(), cycleWorld);
+  assert.equal(again.wakes.length, 1);
+  assert.equal(again.wakes[0].id, "alpha");
+  assert.equal(again.wakes[0].decision.label, "factory-wake-architect");
+
+  const releasedSession = await commitLedgerEvent(
+    store,
+    { type: "architect_session", initiativeId: "alpha", outcome: "packets_released" },
+    cycleWorld,
+  );
+  assert.equal(releasedSession.reason, "packets_released");
+  assert.equal(releasedSession.ledger.initiatives.alpha.session, "idle");
+  assert.equal(releasedSession.ledger.initiatives.alpha.queue, "active");
+  const opened = await commitLedgerEvent(
+    store,
+    { type: "open_packet", initiativeId: "alpha", packetId: "pkt-alpha" },
+    cycleWorld,
+  );
+  assert.equal(opened.reason, "packet_opened");
+  const wrongRole = await commitEvent(
+    store,
+    "pkt-alpha",
+    { type: "acquire_lease", workerId: "bc-e", role: "engineer", until: "2026-10-29T13:00:00Z", revision: "rev-0" },
+    cycleWorld,
+  );
+  assert.equal(wrongRole.reason, "role_not_admitted");
+  const packetRelease = await commitEvent(
+    store,
+    "pkt-alpha",
+    { type: "release", wake: "sa", gatesPass: true, revision: "rev-1" },
+    cycleWorld,
+  );
+  assert.equal(packetRelease.reason, "released");
+  const staleSign = await commitEvent(
+    store,
+    "pkt-alpha",
+    { type: "sign_change", revision: "rev-0", sections: [...sections()], workerId: "bc-a" },
+    cycleWorld,
+  );
+  assert.equal(staleSign.reason, "wrong_stage");
+  const saProposed = controlStep(await store.read(), cycleWorld);
+  assert.equal(saProposed.wakes.length, 1);
+  assert.equal(saProposed.wakes[0].kind, "packet");
+  assert.equal(saProposed.wakes[0].id, "pkt-alpha");
+  assert.equal(saProposed.wakes[0].decision.label, "factory-wake-sa");
+
+  const saWake = await dispatchWake({
+    store,
+    actuator: scriptedActuator([{ ok: true, reason: "labeled" }], calls),
+    packetId: "pkt-alpha",
+    prHead: "head-a",
+    activation: "active",
+    now: cycleWorld.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(saWake.effect, "wake_sa");
+  await commitEvent(
+    store,
+    "pkt-alpha",
+    { type: "acquire_lease", workerId: "bc-a", role: "analyst", until: "2026-10-29T13:00:00Z", revision: "rev-1" },
+    cycleWorld,
+  );
+  const signed = await commitEvent(
+    store,
+    "pkt-alpha",
+    { type: "sign_change", revision: "rev-1", sections: [...sections()], workerId: "bc-a" },
+    cycleWorld,
+  );
+  assert.equal(signed.reason, "change_specified");
+  const busy = controlStep(await store.read(), { ...cycleWorld, engineeringBusy: true });
+  assert.equal(busy.wakes.filter((wake) => wake.decision.effect === "wake_engineer").length, 0);
+
+  const engineerWake = await dispatchWake({
+    store,
+    actuator: scriptedActuator([{ ok: true, reason: "labeled" }], calls),
+    packetId: "pkt-alpha",
+    prHead: "head-a",
+    activation: "active",
+    now: cycleWorld.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(engineerWake.effect, "wake_engineer");
+  await commitEvent(
+    store,
+    "pkt-alpha",
+    { type: "acquire_lease", workerId: "bc-e", role: "engineer", until: "2026-10-29T14:00:00Z", revision: "rev-1" },
+    cycleWorld,
+  );
+  const candidate = await commitEvent(
+    store,
+    "pkt-alpha",
+    { type: "commit_candidate", sha: "cand-1", revision: "rev-1", workerId: "bc-e" },
+    cycleWorld,
+  );
+  assert.equal(candidate.item.candidateSha, "cand-1");
+  await commitEvent(store, "pkt-alpha", { type: "start_verification", sha: "cand-1" }, cycleWorld);
+  const verifying = (await store.read()).packets["pkt-alpha"];
+  const repair = applyEvent(
+    verifying,
+    { type: "verification_result", sha: "cand-1", outcome: "fail", failureClass: "implementation", fingerprint: "fp-1" },
+    cycleWorld,
+  );
+  assert.equal(repair.reason, "repair_ready");
+  assert.equal(decide(repair.item, cycleWorld).label, "factory-repair");
+  const duplicatedFailure = applyEvent(
+    { ...repair.item, stage: "verifying" },
+    { type: "verification_result", sha: "cand-1", outcome: "fail", failureClass: "implementation", fingerprint: "fp-1" },
+    cycleWorld,
+  );
+  assert.equal(duplicatedFailure.reason, "duplicate_failure");
+  assert.equal(
+    applyEvent(
+      verifying,
+      { type: "verification_result", sha: "cand-1", outcome: "fail", failureClass: "specification", fingerprint: "spec-1" },
+      cycleWorld,
+    ).item.stage,
+    "returned_architect",
+  );
+  assert.equal(
+    applyEvent(
+      verifying,
+      { type: "verification_result", sha: "cand-1", outcome: "fail", failureClass: "systems_contract", fingerprint: "contract-1" },
+      cycleWorld,
+    ).item.stage,
+    "returned_analyst",
+  );
+  const external = applyEvent(
+    verifying,
+    { type: "verification_result", sha: "cand-1", outcome: "fail", failureClass: "external", fingerprint: "provider" },
+    cycleWorld,
+  );
+  assert.equal(external.item.stage, "blocked");
+  assert.equal(decide(external.item, cycleWorld).effect, "none");
+
+  const passed = await commitEvent(
+    store,
+    "pkt-alpha",
+    { type: "verification_result", sha: "cand-1", outcome: "pass" },
+    cycleWorld,
+  );
+  assert.equal(passed.item.stage, "verified");
+  assert.equal(passed.item.execution?.mode, "automatic");
+  assert.equal((await commitEvent(store, "pkt-alpha", { type: "accept", sha: "cand-1" }, cycleWorld)).reason, "wrong_stage");
+  assert.equal(
+    (await commitEvent(store, "pkt-alpha", { type: "integrate", candidateSha: "cand-1", mergeSha: "merge-sim" }, cycleWorld)).reason,
+    "wrong_stage",
+  );
+  await commitEvent(store, "pkt-alpha", { type: "authorize_integration", sha: "cand-1" }, cycleWorld);
+  const integrated = await commitEvent(
+    store,
+    "pkt-alpha",
+    { type: "integrate", candidateSha: "cand-1", mergeSha: "merge-sim" },
+    cycleWorld,
+  );
+  assert.equal(integrated.item.integratedSha, "merge-sim");
+  await commitEvent(
+    store,
+    "pkt-alpha",
+    { type: "reconcile", sha: "cand-1", reconciliationId: "rec-alpha" },
+    cycleWorld,
+  );
+  const accepted = await commitEvent(store, "pkt-alpha", { type: "accept", sha: "cand-1" }, cycleWorld);
+  assert.equal(accepted.item.stage, "accepted");
+
+  const earlyClose = await commitLedgerEvent(store, { type: "close_initiative", initiativeId: "alpha" }, cycleWorld);
+  assert.equal(earlyClose.reason, "coverage_incomplete");
+  assert.equal(moduleComplete(await store.read(), "Agents").reason, "coverage_open");
+  await commitLedgerEvent(store, { type: "set_coverage", initiativeId: "alpha", coverageComplete: true }, cycleWorld);
+  const closed = await commitLedgerEvent(store, { type: "close_initiative", initiativeId: "alpha" }, cycleWorld);
+  assert.equal(closed.reason, "initiative_completed");
+  assert.equal(closed.ledger.initiatives.alpha.queue, "completed");
+  const view = projectFactory(closed.ledger);
+  assert.equal(view.packets.find((packet) => packet.id === "pkt-alpha")?.initiativeId, "alpha");
+  assert.equal(view.initiatives.find((item) => item.id === "beta")?.dependsOn[0], "alpha");
+  assert.equal(view.packets.find((packet) => packet.id === "pkt-alpha")?.integratedSha, "merge-sim");
+
+  const preview = controlStep(await store.read(), cycleWorld);
+  assert.equal(preview.wakes[0].id, "beta");
+  assert.equal(preview.wakes[0].decision.label, "factory-wake-architect");
+  assert.equal(preview.ledger.authorizedDispatches, 8);
+  const persisted = await commitLedgerEvent(store, { type: "select_next" }, cycleWorld);
+  assert.equal(persisted.reason, "selected");
+  assert.equal(persisted.ledger.initiatives.beta.queue, "active");
+  assert.equal(persisted.ledger.initiatives.gamma.queue, "discovered");
+  const follow = controlStep(await store.read(), cycleWorld);
+  assert.equal(follow.wakes[0].id, "beta");
+  assert.equal(follow.wakes[0].decision.label, "factory-wake-architect");
+
+  const pilot = (await store.read()).packets["pkt-001-click-attribution"];
+  assert.equal(pilot.stage, "draft");
+  assert.equal(pilot.wake, "hold");
+  assert.equal(pilot.execution, null);
+  assert.equal(pilot.dispatch, null);
+
+  await commitLedgerEvent(store, { type: "suspend", reason: "founder_stop" }, cycleWorld);
+  const stopped = controlStep(await store.read(), cycleWorld);
+  assert.equal(stopped.wakes.length, 0);
+  assert.equal(stopped.reason, "suspended");
+  assert.equal(decide(packetRelease.item, { ...cycleWorld, scopeStatus: "suspended" }).reason, "suspended");
+  assert.equal((await store.read()).initiatives.beta.queue, "active");
+});
+
+check("equal priority selects the lower initiative id", async () => {
+  const store = new MemoryStore(emptyLedger(null));
+  await commitLedgerEvent(
+    store,
+    { type: "authorize_scope", id: "agents-scope", modules: ["Agents"], authorizedDispatches: 2 },
+    cycleWorld,
+  );
+  await commitLedgerEvent(store, initiativeSeed("b", "Agents", 1), cycleWorld);
+  await commitLedgerEvent(store, initiativeSeed("a", "Agents", 1), cycleWorld);
+  const selected = await commitLedgerEvent(store, { type: "select_next" }, cycleWorld);
+  assert.equal(selected.ledger.initiatives.a.queue, "active");
+  assert.equal(selected.ledger.initiatives.b.queue, "discovered");
+});
+
+check("an unsatisfied dependency does not start and does not complete the scope", async () => {
+  const store = new MemoryStore(emptyLedger(null));
+  await commitLedgerEvent(
+    store,
+    { type: "authorize_scope", id: "agents-scope", modules: ["Agents"], authorizedDispatches: 2 },
+    cycleWorld,
+  );
+  await commitLedgerEvent(store, initiativeSeed("beta", "Agents", 1, ["alpha"]), cycleWorld);
+  const selected = await commitLedgerEvent(store, { type: "select_next" }, cycleWorld);
+  assert.equal(selected.reason, "none_eligible");
+  assert.equal(selected.ledger.scope.status, "active");
+  const step = controlStep(await store.read(), cycleWorld);
+  assert.equal(step.wakes.length, 0);
+  assert.equal(step.reason, "no_initiative");
+});
+
+check("a founder decision does not start the next initiative", async () => {
+  const store = new MemoryStore(emptyLedger(null));
+  await commitLedgerEvent(
+    store,
+    { type: "authorize_scope", id: "agents-scope", modules: ["Agents"], authorizedDispatches: 2 },
+    cycleWorld,
+  );
+  await commitLedgerEvent(store, initiativeSeed("alpha", "Agents", 1), cycleWorld);
+  await commitLedgerEvent(store, initiativeSeed("beta", "Agents", 2), cycleWorld);
+  await commitLedgerEvent(store, { type: "select_next" }, cycleWorld);
+  const decision = await commitLedgerEvent(
+    store,
+    { type: "architect_session", initiativeId: "alpha", outcome: "founder_decision", note: "which enrollment" },
+    cycleWorld,
+  );
+  assert.equal(decision.reason, "founder_decision");
+  const step = controlStep(await store.read(), cycleWorld);
+  assert.equal(step.wakes.length, 0);
+  assert.equal(step.reason, "founder_decision");
+  assert.equal((await store.read()).initiatives.beta.queue, "discovered");
+  assert.equal((await store.read()).initiatives.alpha.queue, "active");
+});
+
+check("one authorized dispatch does not continue after it is spent", async () => {
+  const store = new MemoryStore(emptyLedger(null));
+  await commitLedgerEvent(
+    store,
+    { type: "authorize_scope", id: "agents-scope", modules: ["Agents"], authorizedDispatches: 1 },
+    cycleWorld,
+  );
+  await commitLedgerEvent(store, initiativeSeed("alpha", "Agents", 1), cycleWorld);
+  await commitLedgerEvent(store, { type: "select_next" }, cycleWorld);
+  const woke = await dispatchInitiative({
+    store,
+    actuator: scriptedActuator([{ ok: true, reason: "labeled" }], []),
+    initiativeId: "alpha",
+    prHead: "head-a",
+    activation: "active",
+    now: cycleWorld.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(woke.reason, "dispatched");
+  await commitLedgerEvent(store, { type: "architect_session", initiativeId: "alpha", outcome: "continue" }, cycleWorld);
+  const step = controlStep(await store.read(), cycleWorld);
+  assert.equal(step.wakes.length, 0);
+  assert.equal(step.reason, "dispatch_authorization_exhausted");
+});
+
+check("an interrupted architect session stays open and an external blocker suspends the scope", async () => {
+  const store = new MemoryStore(emptyLedger(null));
+  await commitLedgerEvent(
+    store,
+    { type: "authorize_scope", id: "agents-scope", modules: ["Agents"], authorizedDispatches: 3 },
+    cycleWorld,
+  );
+  await commitLedgerEvent(store, initiativeSeed("alpha", "Agents", 1), cycleWorld);
+  await commitLedgerEvent(store, initiativeSeed("beta", "Agents", 2), cycleWorld);
+  await commitLedgerEvent(store, { type: "select_next" }, cycleWorld);
+  const interrupted = await commitLedgerEvent(
+    store,
+    { type: "architect_session", initiativeId: "alpha", outcome: "interrupted" },
+    cycleWorld,
+  );
+  assert.equal(interrupted.reason, "architect_interrupted");
+  assert.equal(interrupted.ledger.initiatives.alpha.queue, "active");
+  assert.equal(interrupted.ledger.initiatives.alpha.session, "continuation_due");
+  assert.equal(controlStep(interrupted.ledger, cycleWorld).wakes[0].decision.label, "factory-wake-architect");
+  const blocked = await commitLedgerEvent(
+    store,
+    { type: "architect_session", initiativeId: "alpha", outcome: "external_blocker", note: "provider cap" },
+    cycleWorld,
+  );
+  assert.equal(blocked.reason, "external_blocker");
+  assert.equal(blocked.ledger.scope.status, "suspended");
+  assert.equal(blocked.ledger.initiatives.alpha.queue, "blocked");
+  const step = controlStep(blocked.ledger, cycleWorld);
+  assert.equal(step.wakes.length, 0);
+  assert.equal(step.reason, "suspended");
+  assert.equal(step.ledger.initiatives.beta.queue, "discovered");
+});
+
+check("one engineering slot is proposed and a second implementation waits", () => {
+  const ledger = emptyLedger(4);
+  ledger.packets = { "pkt-b": changeSpecified("pkt-b"), "pkt-a": changeSpecified("pkt-a") };
+  const open = controlStep(ledger, cycleWorld);
+  const engineers = open.wakes.filter((wake) => wake.decision.effect === "wake_engineer");
+  assert.equal(engineers.length, 1);
+  assert.equal(engineers[0].id, "pkt-a");
+  const taken = structuredClone(ledger);
+  taken.packets["pkt-a"].dispatchedEngineerRevision = taken.packets["pkt-a"].revision;
+  const waiting = controlStep(taken, cycleWorld);
+  assert.equal(waiting.wakes.filter((wake) => wake.decision.effect === "wake_engineer").length, 0);
+});
+
+check("a module with no initiatives is not complete, and a covered module completes the scope", () => {
+  const empty = emptyLedger(2);
+  empty.scope = { id: "s", status: "active", modules: ["Empty"], founderDecision: null, blockReason: null };
+  empty.packets = {};
+  assert.equal(moduleComplete(empty, "Empty").reason, "no_initiatives");
+  const refused = applyLedgerEvent(empty, { type: "select_next" }, cycleWorld);
+  assert.equal(refused.reason, "none_eligible");
+  assert.equal(refused.ledger.scope.status, "active");
+
+  const openCoverage = emptyLedger(2);
+  openCoverage.scope = { id: "s", status: "active", modules: ["Agents"], founderDecision: null, blockReason: null };
+  openCoverage.packets = {};
+  openCoverage.initiatives.alpha = freshInitiative({
+    id: "alpha",
+    module: "Agents",
+    capability: "alpha",
+    entry: "Operator → Agents → alpha",
+    obligation: "Complete alpha",
+    priority: 1,
+    now: cycleWorld.now,
+  });
+  openCoverage.initiatives.alpha.queue = "completed";
+  openCoverage.initiatives.alpha.coverageComplete = null;
+  const stillOpen = applyLedgerEvent(openCoverage, { type: "select_next" }, cycleWorld);
+  assert.equal(stillOpen.reason, "none_eligible");
+  assert.equal(moduleComplete(openCoverage, "Agents").reason, "coverage_open");
+  assert.equal(stillOpen.ledger.scope.status, "active");
+
+  const covered = structuredClone(openCoverage);
+  covered.initiatives.alpha.coverageComplete = true;
+  const done = applyLedgerEvent(covered, { type: "select_next" }, cycleWorld);
+  assert.equal(done.reason, "scope_complete");
+  assert.equal(done.ledger.scope.status, "complete");
+  const step = controlStep(done.ledger, cycleWorld);
+  assert.equal(step.wakes.length, 0);
+  assert.equal(step.reason, "scope_complete");
+});
+
+check("markReleased refuses manual evidence and rewrites a gated packet once", () => {
+  const manifest = JSON.parse(read(".factory/manifests/packets/pkt-001-click-attribution.json"));
+  const markdown = read("docs/factory/initiatives/exec-identity/packets/PKT-001-click-attribution.md");
+  const refused = markReleased(markdown, manifest);
+  assert.equal(refused.ok, false);
+  if (!refused.ok) assert.equal(refused.reason, "manual_evidence_not_a_release");
+  assert.equal(manifest.wake, "hold");
+  assert.match(markdown, /\*\*Wake:\*\* hold/);
+  const ungated = markReleased("**Wake:** hold\n", { gates: { behaviorEstablished: true, scopeBounded: false } });
+  assert.equal(ungated.ok, false);
+  if (!ungated.ok) assert.equal(ungated.reason, "gates_failed");
+  const missing = markReleased("no wake line", { gates: { behaviorEstablished: true } });
+  assert.equal(missing.ok, false);
+  if (!missing.ok) assert.equal(missing.reason, "wake_line_missing");
+  const released = markReleased("**Wake:** hold\n", {
+    gates: { behaviorEstablished: true, scopeBounded: true },
+  });
+  assert.equal(released.ok, true);
+  if (released.ok) {
+    assert.match(released.markdown, /\*\*Wake:\*\* sa/);
+    assert.equal(released.manifest.wake, "sa");
+    assert.equal(released.manifest.release, "released");
+  }
+});
+
+check("the committed ledger stays inactive and PKT-001 stays manual", () => {
+  const committed = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
+  const view = projectFactory(committed);
+  assert.equal(view.scope.status, "inactive");
+  assert.equal(view.scope.modules.length, 0);
+  const packet = view.packets.find((item) => item.id === "pkt-001-click-attribution");
+  assert.ok(packet);
+  assert.equal(packet.stage, "verified");
+  assert.equal(packet.wake, "hold");
+  assert.equal(packet.executionMode, "manual");
+  assert.equal(packet.integratedSha, null);
+  assert.equal(packet.dispatch, null);
+  assert.equal(packet.candidateSha, "19c47938d8aa8884b4874999a50667f5677205b3");
+  const execIdentity = view.initiatives.find((item) => item.id === "exec-identity");
+  const launch = view.initiatives.find((item) => item.id === "launch-agent");
+  assert.equal(execIdentity?.queue, "eligible");
+  assert.equal(execIdentity?.packetIds[0], "pkt-001-click-attribution");
+  assert.equal(launch?.queue, "discovered");
+  assert.deepEqual(launch?.dependsOn, ["exec-identity"]);
+  assert.equal(moduleComplete(committed, "Agents").reason, "coverage_open");
+  assert.equal(moduleComplete(committed, "Missing").reason, "no_initiatives");
+  const step = controlStep(committed, { ...cycleWorld, activation: "active" });
+  assert.equal(step.wakes.length, 0);
+  assert.equal(step.reason, "scope_inactive");
+  assert.equal(committed.packets["pkt-001-click-attribution"].execution?.mode, "manual");
+  assert.equal(committed.authorizedDispatches, null);
+  assert.equal(committed.usedDispatches, 0);
+});
+
+function runTsx(script: string, env: NodeJS.ProcessEnv) {
+  return spawnSync(join(root, "node_modules/.bin/tsx"), [script], { cwd: root, encoding: "utf8", env });
+}
+
+function quietEnv(extra: Record<string, string> = {}): NodeJS.ProcessEnv {
+  const env: NodeJS.ProcessEnv = { ...process.env };
+  delete env.FACTORY_CONTROLLER;
+  delete env.FACTORY_LABELS;
+  delete env.WAKE_GITHUB_TOKEN;
+  delete env.FACTORY_SPEND_LIMIT_CONFIRMED;
+  delete env.FACTORY_AUTOMATIONS_SAVED;
+  delete env.GH_TOKEN;
+  delete env.GITHUB_TOKEN;
+  return { ...env, ...extra };
+}
+
+check("control and authorize commands do not arm the committed ledger", () => {
+  const dry = runTsx("scripts/factory-control.ts", quietEnv());
+  assert.equal(dry.status, 0, dry.stderr);
+  const inactiveBody = JSON.parse(dry.stdout) as { reason: string; wakes: unknown[] };
+  assert.equal(inactiveBody.reason, "inactive");
+  assert.deepEqual(inactiveBody.wakes, []);
+  const scoped = runTsx("scripts/factory-control.ts", quietEnv({ FACTORY_CONTROLLER: "active" }));
+  assert.equal(scoped.status, 0, scoped.stderr);
+  assert.equal((JSON.parse(scoped.stdout) as { reason: string }).reason, "scope_inactive");
+  const planned = runTsx(
+    "scripts/factory-authorize-scope.ts",
+    quietEnv({ SCOPE_ID: "agents-scope", SCOPE_MODULES: "Agents", AUTHORIZED_DISPATCHES: "4" }),
+  );
+  assert.equal(planned.status, 0, planned.stderr);
+  const event = JSON.parse(planned.stdout) as { type: string; authorizedDispatches: number };
+  assert.equal(event.type, "authorize_scope");
+  assert.equal(event.authorizedDispatches, 4);
+  const apply = spawnSync(join(root, "node_modules/.bin/tsx"), ["scripts/factory-authorize-scope.ts", "--apply"], {
+    cwd: root,
+    encoding: "utf8",
+    env: quietEnv({ AUTHORIZED_DISPATCHES: "4", SCOPE_ID: "agents-scope", SCOPE_MODULES: "Agents" }),
+  });
+  assert.equal(apply.status, 1);
+  assert.match(apply.stderr, /actuator disarmed/);
+  const suspend = runTsx("scripts/factory-suspend.ts", quietEnv({ SUSPEND_REASON: "founder_stop" }));
+  assert.equal(suspend.status, 0, suspend.stderr);
+  assert.equal((JSON.parse(suspend.stdout) as { type: string }).type, "suspend");
+  const committed = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
+  assert.equal(committed.scope.status, "inactive");
+  assert.equal(committed.authorizedDispatches, null);
+  assert.equal(committed.packets["pkt-001-click-attribution"].execution?.mode, "manual");
+});
 
 const failures: string[] = [];
 for (const item of queue) {
