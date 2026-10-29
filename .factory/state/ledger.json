@@ -1,5 +1,5 @@
 {
-  "stateRevision": 6,
+  "stateRevision": 7,
   "authorizedDispatches": 4,
   "usedDispatches": 0,
   "scope": {
@@ -24,19 +24,19 @@
         "docs/specification-pass/SPECIFICATION.md"
       ],
       "investigation": "investigating",
-      "queue": "eligible",
+      "queue": "active",
       "coverageComplete": null,
       "outstanding": [
         "Claims 4, 6, 7, and 8 have no packets."
       ],
-      "session": "idle",
+      "session": "continuation_due",
       "revision": "rev-0",
       "dispatch": null,
       "blockedReason": null,
       "packetIds": [
         "pkt-001-click-attribution"
       ],
-      "updatedAt": null
+      "updatedAt": "2026-10-29T21:10:50.922Z"
     },
     "launch-agent": {
       "id": "launch-agent",
