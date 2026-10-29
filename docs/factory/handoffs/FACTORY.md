@@ -11,9 +11,8 @@
 
 **Verified**
 
-- `npm run factory:check` (local). It covers the transition ids T01–T30, the click oracle, the inactive manifests, the prompt gates, and the dispatch workflow’s lack of a pull-request or schedule trigger.
-- The production click path was not executed. `npm run build` was not required for this change: no product UI or server code moved.
-- GitHub Actions has not run on this branch until the pull request exists.
+- `npm run factory:check` locally, then GitHub Actions run `40865661945` on pull request #136 (factory-check, passed in 36s). It covers transition ids T01–T30, the click oracle, the inactive manifests, the prompt gates, and the dispatch workflow’s lack of a pull-request or schedule trigger.
+- The production click path was not executed. No product UI or server code moved, so `/prototype-ant` was not exercised.
 
 **Remaining**
 
