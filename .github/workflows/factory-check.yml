@@ -1,0 +1,28 @@
+# Deterministic factory check. No Cursor agent. No labels. No secrets.
+name: Factory check
+
+on:
+  pull_request:
+    paths:
+      - ".factory/**"
+      - "scripts/factory-check.ts"
+      - "docs/factory/**"
+      - ".github/workflows/factory-check.yml"
+      - ".github/workflows/factory-dispatch.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  factory-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run factory:check

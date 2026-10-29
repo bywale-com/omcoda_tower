@@ -69,3 +69,11 @@ Tower is a Vite + React 18 + TypeScript SPA. Optional Hono backend (auth + wire)
 
 - **No** ESLint / Prettier / Vitest / Jest / Playwright. **No** `tsc` (TypeScript is not a dependency). Only build: `npm run build`.
 - Testing is manual on the running SPA at `/prototype-ant`. Distinct screens. Do not commit `.tmp-plates/`.
+
+---
+
+## Software factory
+
+This is how Tower is built. It is not a customer module and it is not the product face.
+
+Front door: [`docs/factory/README.md`](docs/factory/README.md). The controller is inactive. Do not add Cursor Automation triggers. Do not merge, close, or rewrite PR [#135](https://github.com/bywale-com/omcoda_tower/pull/135) (`docs/specification-pass/`). A factory packet on `**Wake:** hold` is not yours to plant. Product work still follows the three seats above until a packet is released and the founder has set repository variable `FACTORY_CONTROLLER` to `active`.

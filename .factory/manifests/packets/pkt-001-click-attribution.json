@@ -1,0 +1,26 @@
+{
+  "id": "pkt-001-click-attribution",
+  "initiativeId": "exec-identity",
+  "title": "An email click advances the enrollment stamped on the message",
+  "release": "draft",
+  "wake": "hold",
+  "releaseEligible": true,
+  "required": false,
+  "stage": "draft",
+  "revision": "rev-0",
+  "claims": [3],
+  "sourceSha": "1f6f43ab2dbe8b0e32b0a344990795bb998c8be3",
+  "gates": {
+    "behaviorEstablished": true,
+    "scopeBounded": true,
+    "dependenciesUnderstood": true,
+    "acceptanceDefined": true,
+    "noBlockingQuestion": true,
+    "noContradictorySpecification": true,
+    "independentlyImplementable": true
+  },
+  "authorization": "Wake stays hold until the founder authorizes factory dispatch. Eligibility is not release.",
+  "acceptanceOracle": ".factory/experiments/click-attribution.ts",
+  "productionPlant": "not started",
+  "systemsChange": "not signed"
+}

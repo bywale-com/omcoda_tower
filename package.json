@@ -29,7 +29,8 @@
     "verify:all-ship": "npm run verify:ship && npm run verify:affordances && npx tsx --env-file=.env scripts/restore-channel-order.ts && VERIFY_LIVE_SEND=1 npm run verify:worker && npm run verify:session-firm && npm run verify:boot-env",
     "ensure:admin": "tsx --env-file=.env scripts/ensure-platform-admin.ts",
     "issue:access": "tsx --env-file=.env scripts/issue-access-link.ts",
-    "verify:access": "tsx --env-file=.env scripts/verify-access-link.ts"
+    "verify:access": "tsx --env-file=.env scripts/verify-access-link.ts",
+    "factory:check": "tsx scripts/factory-check.ts"
   },
   "dependencies": {
     "@ant-design/icons": "^6.3.2",

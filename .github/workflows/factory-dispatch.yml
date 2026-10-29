@@ -1,0 +1,64 @@
+# Tower factory dispatch.
+# This workflow does not listen to pull requests, pushes, or a schedule.
+# workflow_dispatch simulate runs the deterministic check.
+# workflow_dispatch apply still does not add labels and does not call Cursor.
+# Wiring the label actuator is a later change that requires FACTORY_CONTROLLER=active
+# and the founder authorization phrase. Do not add those side effects here.
+
+name: Factory dispatch
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "simulate or apply"
+        required: true
+        default: simulate
+        type: choice
+        options:
+          - simulate
+          - apply
+      authorize:
+        description: "Required only for apply: I_AUTHORIZE_FACTORY_DISPATCH"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Simulate or refuse
+        env:
+          MODE: ${{ inputs.mode }}
+          AUTHORIZE: ${{ inputs.authorize }}
+          FACTORY_CONTROLLER: ${{ vars.FACTORY_CONTROLLER }}
+        run: |
+          set -euo pipefail
+          if [ "$MODE" != "apply" ]; then
+            echo "mode=simulate. No labels. No agents."
+            npm run factory:check
+            exit 0
+          fi
+          if [ "$AUTHORIZE" != "I_AUTHORIZE_FACTORY_DISPATCH" ]; then
+            echo "apply refused: authorization phrase does not match."
+            exit 1
+          fi
+          if [ "$FACTORY_CONTROLLER" != "active" ]; then
+            echo "apply refused: repository variable FACTORY_CONTROLLER is not active."
+            exit 1
+          fi
+          echo "Authorization phrase and FACTORY_CONTROLLER=active are present."
+          echo "The label actuator is not wired. This job does not add labels and does not call Cursor."
+          npm run factory:check
+          exit 0

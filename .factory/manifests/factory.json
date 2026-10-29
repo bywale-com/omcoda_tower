@@ -1,0 +1,50 @@
+{
+  "name": "tower-software-factory",
+  "activation": "inactive",
+  "dispatch": "forbidden",
+  "labelActuator": "not_wired",
+  "reason": "Founder has not authorized Cursor Automation activation. Repository variable FACTORY_CONTROLLER is not set to active. The dispatch workflow refuses apply, and even a matching authorization phrase does not add labels.",
+  "concurrency": {
+    "architect": 1,
+    "analyst": 1,
+    "engineer": 1,
+    "implementationBatches": 1
+  },
+  "session": {
+    "minimumMinutes": null,
+    "checkpointEveryMinutes": [10, 15],
+    "maxUncheckpointedMinutes": 60,
+    "maxUncheckpointedMinutesIs": "operating policy, not a confirmed Cursor platform limit",
+    "continuation": "resume the existing eligible run",
+    "newRun": "only when continuation is unavailable, inappropriate, or the repair budget is exhausted",
+    "stop": "immediately when the work is complete or a real blocker is recorded"
+  },
+  "budget": {
+    "enforceable": false,
+    "providerHardLimit": "not claimed",
+    "illustrativePilotUsd": {
+      "investigationAndPackets": 12,
+      "systemsAnalysis": 5,
+      "engineering": 9,
+      "diagnosticReserve": 4,
+      "total": 30
+    },
+    "note": "These figures are an illustration from the 2026-10-29 architecture note. They are not an authorization and not a measured Cursor price."
+  },
+  "labels": {
+    "wakes": ["factory-wake-sa", "factory-wake-engineer", "factory-repair"],
+    "holds": ["factory-blocked", "factory-hold"],
+    "actor": "WAKE_GITHUB_TOKEN user connected to the Cursor automation. github-actions[bot] must not be the label actor.",
+    "absenceIsNotPermission": true
+  },
+  "secretsRequiredBeforeActivation": [
+    "WAKE_GITHUB_TOKEN",
+    "FACTORY_CONTROLLER"
+  ],
+  "secretsNotRequired": [
+    "CURSOR_API_KEY",
+    "DATABASE_URL",
+    "RESEND_API_KEY",
+    "EMERGE_EMAIL"
+  ]
+}
