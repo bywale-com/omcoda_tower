@@ -281,7 +281,7 @@ export async function dispatchWake(opts: {
     if (!added.ok) {
       return { write: null, result: { ok: false, reason: added.reason, effect: decision.effect, item } };
     }
-    const acknowledged = acknowledgeDispatch(item, decision.effect, { prHead: opts.prHead });
+    const acknowledged = acknowledgeDispatch(item, decision.effect, { prHead: opts.prHead, issuedAt: opts.now });
     return {
       write: {
         ...ledger,

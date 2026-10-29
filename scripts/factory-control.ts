@@ -6,11 +6,13 @@
  * `--apply` reaches the label actuator only when every disarm gate is set
  * and the ledger scope is active. Those gates are unset in this repository.
  */
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { githubContentsRemote, GitHubContentsStore } from "../.factory/controller/contents.ts";
 import { githubLabelActuator, type FactoryLedger } from "../.factory/controller/dispatch.ts";
-import { controlStep, dispatchInitiative } from "../.factory/controller/queue.ts";
+import { commitLedgerEvent, controlStep, dispatchInitiative } from "../.factory/controller/queue.ts";
 import { dispatchWake } from "../.factory/controller/dispatch.ts";
+import type { StateStore } from "../.factory/controller/dispatch.ts";
+import type { World } from "../.factory/controller/machine.ts";
 
 function armed(): boolean {
   return (
@@ -66,7 +68,8 @@ const store = new GitHubContentsStore(
     env: process.env,
   }),
 );
-const ledger = await store.read();
+const loaded = await store.read();
+const ledger = await archiveRanAnalystWork(store, loaded, worldFrom(loaded));
 const step = controlStep(ledger, worldFrom(ledger));
 const wake = step.wakes[0];
 if (!wake) {
@@ -111,3 +114,36 @@ if (!result.ok) {
   process.exit(1);
 }
 console.log(result.reason);
+
+function specificationPath(packet: { id: string; initiativeId: string }): string {
+  return `docs/factory/initiatives/${packet.initiativeId}/systems/SCP-${packet.id}.md`;
+}
+
+/**
+ * An open Analyst dispatch whose systems-change file is already in this checkout ran.
+ * A missing file is not evidence that the worker was absent.
+ */
+async function archiveRanAnalystWork(
+  store: StateStore,
+  ledger: FactoryLedger,
+  world: World,
+): Promise<FactoryLedger> {
+  let current = ledger;
+  const open = Object.values(current.packets)
+    .filter((packet) => packet.dispatch?.effect === "wake_sa" && existsSync(specificationPath(packet)))
+    .sort((a, b) => a.id.localeCompare(b.id));
+  for (const packet of open) {
+    const wrote = await commitLedgerEvent(
+      store,
+      { type: "reconcile_dispatch", packetId: packet.id, workerExecution: "ran" },
+      world,
+    );
+    if (!wrote.ok) {
+      if (wrote.reason === "no_dispatch") continue;
+      console.error(wrote.reason);
+      process.exit(1);
+    }
+    current = await store.read();
+  }
+  return current;
+}

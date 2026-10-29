@@ -63,13 +63,24 @@ export interface Lease {
   revision: string;
 }
 
-/** Written only after a label add succeeds. Workers must match it exactly. */
+/**
+ * Written only after a label add succeeds. Workers must match the current record exactly.
+ * A record moves to history when it is reconciled. History is not authorization.
+ */
 export interface DispatchRecord {
   packetId: string;
   revision: string;
   prHead: string;
   effect: Exclude<WakeEffect, "none">;
   label: (typeof SEAT_LABELS)[number];
+  /** Clock passed by the caller when the label add was confirmed. */
+  issuedAt?: string;
+  /**
+   * Set only when this record leaves the current slot.
+   * `ran` means a worker execution was observed.
+   * `absent` means the dispatch did not start a worker.
+   */
+  workerExecution?: "ran" | "absent";
 }
 
 /** A check that actually ran. A name without a run id is not evidence. */
@@ -110,7 +121,13 @@ export interface WorkItem {
   releaseEligible: boolean;
   integratedSha: string | null;
   reconciliationId: string | null;
+  /** Current authorization. Null when no worker is held to this packet. */
   dispatch: DispatchRecord | null;
+  /**
+   * Earlier dispatches, including ones that never started a worker.
+   * Absent history can be recovered. It does not by itself authorize a run.
+   */
+  dispatchHistory: DispatchRecord[];
   /** Null until a manual record or an automatic verification says how the work ran. */
   execution: ExecutionRecord | null;
 }
@@ -219,6 +236,7 @@ export function freshItem(id = "pkt-001", initiativeId = "exec-identity"): WorkI
     integratedSha: null,
     reconciliationId: null,
     dispatch: null,
+    dispatchHistory: [],
     execution: null,
   };
 }
@@ -239,6 +257,7 @@ function clone(item: WorkItem): WorkItem {
     ...item,
     lease: item.lease ? { ...item.lease } : null,
     dispatch: item.dispatch ? { ...item.dispatch } : null,
+    dispatchHistory: (item.dispatchHistory ?? []).map((record) => ({ ...record })),
     execution: item.execution
       ? { mode: item.execution.mode, checks: item.execution.checks.map((check) => ({ ...check })) }
       : null,
@@ -532,7 +551,7 @@ export function decide(item: WorkItem, world: World): Decision {
 export function acknowledgeDispatch(
   item: WorkItem,
   effect: WakeEffect,
-  record?: { prHead: string },
+  record?: { prHead: string; issuedAt?: string },
 ): WorkItem {
   const next = clone(item);
   if (effect === "wake_sa") next.dispatchedSaRevision = item.revision;
@@ -547,6 +566,7 @@ export function acknowledgeDispatch(
       prHead: record.prHead,
       effect,
       label: LABEL_FOR[effect],
+      ...(record.issuedAt ? { issuedAt: record.issuedAt } : {}),
     };
   }
   return next;

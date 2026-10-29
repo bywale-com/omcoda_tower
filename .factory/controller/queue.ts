@@ -53,7 +53,8 @@ export type LedgerEvent =
       outcome: "continue" | "interrupted" | "packets_released" | "founder_decision" | "external_blocker" | "complete";
       note?: string;
     }
-  | { type: "close_initiative"; initiativeId: string };
+  | { type: "close_initiative"; initiativeId: string }
+  | { type: "reconcile_dispatch"; packetId: string; workerExecution: "ran" | "absent" };
 
 export interface WakeProposal {
   kind: "initiative" | "packet";
@@ -101,6 +102,7 @@ export interface ReadModel {
     integratedSha: string | null;
     reconciliationId: string | null;
     dispatch: DispatchRecord | null;
+    dispatchHistory: DispatchRecord[];
     checks: Array<{ name: string; runId: string; outcome: string }>;
   }>;
 }
@@ -295,6 +297,28 @@ export function applyLedgerEvent(ledger: FactoryLedger, event: LedgerEvent, worl
     return accept("initiative_completed");
   }
 
+  if (event.type === "reconcile_dispatch") {
+    const packet = next.packets[event.packetId];
+    if (!packet) return refuse("unknown_packet");
+    const current = packet.dispatch;
+    if (!current) return refuse("no_dispatch");
+    const refund =
+      event.workerExecution === "absent" &&
+      current.effect === "wake_sa" &&
+      packet.dispatchedSaRevision === current.revision;
+    if (refund && next.usedDispatches < 1) return refuse("spend_missing");
+    packet.dispatchHistory = [
+      ...(packet.dispatchHistory ?? []),
+      { ...current, workerExecution: event.workerExecution },
+    ];
+    packet.dispatch = null;
+    if (refund) {
+      packet.dispatchedSaRevision = null;
+      next.usedDispatches -= 1;
+    }
+    return accept(event.workerExecution === "ran" ? "dispatch_ran" : "dispatch_absent");
+  }
+
   return refuse("unknown_event");
 }
 
@@ -348,6 +372,11 @@ function implementationOccupied(ledger: FactoryLedger, now: string): boolean {
   });
 }
 
+/** True while a Systems Analyst dispatch is the current authorization for some packet. */
+function analystOpen(ledger: FactoryLedger): boolean {
+  return Object.values(ledger.packets).some((packet) => packet.dispatch?.effect === "wake_sa");
+}
+
 /** One deterministic pass. Packet wakes are preferred over another architect session. */
 export function controlStep(ledger: FactoryLedger, world: World): ControlStep {
   const scoped: World = {
@@ -369,15 +398,20 @@ export function controlStep(ledger: FactoryLedger, world: World): ControlStep {
   }
   const packetWorld: World = { ...scoped, scopeStatus: next.scope.status, authorizedDispatches: next.authorizedDispatches, usedDispatches: next.usedDispatches };
   let engineerSlot = world.engineeringBusy || implementationOccupied(next, scoped.now);
+  const saOpen = analystOpen(next);
+  let saProposed = saOpen;
   const packetWakes: WakeProposal[] = [];
   const packets = Object.values(next.packets).sort((a, b) => a.id.localeCompare(b.id));
   for (const packet of packets) {
     const decision = decide(packet, { ...packetWorld, engineeringBusy: engineerSlot });
     if (decision.effect === "none") continue;
+    if (decision.effect === "wake_sa" && saProposed) continue;
     packetWakes.push({ kind: "packet", id: packet.id, decision });
+    if (decision.effect === "wake_sa") saProposed = true;
     if (decision.effect === "wake_engineer" || decision.effect === "wake_repair") engineerSlot = true;
   }
   if (packetWakes.length) return { ledger: next, wakes: packetWakes, reason: packetWakes[0].decision.reason };
+  if (saOpen) return { ledger: next, wakes: [], reason: "analyst_open" };
   const architect = decideScope(next, packetWorld);
   if (architect.effect !== "none" && architect.initiativeId) {
     return {
@@ -426,6 +460,7 @@ export function projectFactory(ledger: FactoryLedger): ReadModel {
       integratedSha: packet.integratedSha,
       reconciliationId: packet.reconciliationId,
       dispatch: packet.dispatch ? { ...packet.dispatch } : null,
+      dispatchHistory: (packet.dispatchHistory ?? []).map((record) => ({ ...record })),
       checks: packet.execution?.checks.map((check) => ({ ...check })) ?? [],
     })),
   };
@@ -487,6 +522,7 @@ export async function dispatchInitiative(opts: {
         prHead: opts.prHead,
         effect: "wake_architect",
         label: "factory-wake-architect",
+        issuedAt: opts.now,
       },
     };
     return {

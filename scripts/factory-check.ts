@@ -46,7 +46,7 @@ import {
   type PursuitMessage,
 } from "../.factory/experiments/click-attribution.ts";
 import { markReleased } from "../.factory/controller/release.ts";
-import { headMatchesDispatch } from "../.factory/controller/wake.ts";
+import { headMatchesDispatch, selectLabeledDispatch } from "../.factory/controller/wake.ts";
 import {
   applyLedgerEvent,
   commitLedgerEvent,
@@ -1012,8 +1012,8 @@ check("T38 through T41 durable dispatch binds the wake and rejects stale or fail
 
   const committed = JSON.parse(read(".factory/state/ledger.json"));
   assert.equal(committed.authorizedDispatches, 4);
-  assert.equal(committed.usedDispatches, 4);
-  assert.equal(committed.stateRevision, 21);
+  assert.ok(committed.usedDispatches >= 2 && committed.usedDispatches <= committed.authorizedDispatches);
+  assert.ok(committed.stateRevision >= 24);
   assert.equal(committed.scope.id, "agents-and-automations");
   assert.equal(committed.scope.status, "active");
   const recorded = committed.packets[packetId];
@@ -1797,7 +1797,7 @@ check("the committed scope is agents-and-automations and PKT-001 stays manual", 
   assert.equal(view.scope.id, "agents-and-automations");
   assert.equal(view.scope.status, "active");
   assert.deepEqual(view.scope.modules, ["Agents and Automations"]);
-  assert.equal(view.stateRevision, 21);
+  assert.ok(view.stateRevision >= 24);
   const packet = view.packets.find((item) => item.id === "pkt-001-click-attribution");
   assert.ok(packet);
   assert.equal(packet.stage, "accepted");
@@ -1816,27 +1816,16 @@ check("the committed scope is agents-and-automations and PKT-001 stays manual", 
   assert.deepEqual(launch?.dependsOn, ["exec-identity"]);
   assert.equal(moduleComplete(committed, "Agents").reason, "coverage_open");
   assert.equal(moduleComplete(committed, "Agents and Automations").reason, "coverage_open");
+  assertRecoveryLedger(committed);
   const step = controlStep(committed, { ...cycleWorld, activation: "active" });
-  assert.equal(step.reason, "dispatch_authorization_exhausted");
-  assert.equal(step.wakes.length, 0);
   assert.equal(step.wakes.some((wake) => wake.decision.effect === "wake_engineer"), false);
-  assert.equal(committed.packets["pkt-001-click-attribution"].execution?.mode, "manual");
-  for (const id of ["pkt-002-open-ask-cursor", "pkt-003-resume-same-run", "pkt-004-firing-handle"]) {
-    assert.equal(committed.packets[id].stage, "released");
-    assert.equal(committed.packets[id].wake, "sa");
-    assert.equal(committed.packets[id].dispatchedSaRevision, "rev-1");
-    assert.equal(committed.packets[id].dispatchedEngineerRevision, null);
-  }
-  assert.equal(committed.packets["pkt-005-audit-row-grain"].stage, "released");
-  assert.equal(committed.packets["pkt-005-audit-row-grain"].dispatchedSaRevision, null);
+  assert.equal(step.wakes.some((wake) => wake.decision.effect === "wake_architect"), false);
   const raised = structuredClone(committed);
   raised.authorizedDispatches = 20;
   const waiting = controlStep(raised, { ...cycleWorld, activation: "active" });
-  assert.equal(waiting.wakes.length, 1);
-  assert.equal(waiting.wakes[0].id, "pkt-005-audit-row-grain");
-  assert.equal(waiting.wakes[0].decision.effect, "wake_sa");
+  assert.equal(waiting.wakes.some((wake) => wake.id === "pkt-002-open-ask-cursor"), false);
+  assert.equal(waiting.wakes.some((wake) => wake.decision.effect === "wake_engineer"), false);
   assert.equal(committed.authorizedDispatches, 4);
-  assert.equal(committed.usedDispatches, 4);
   assert.equal(committed.initiatives["exec-identity"].dispatch, null);
 });
 
@@ -1865,8 +1854,20 @@ check("control and authorize commands do not arm the committed ledger", () => {
   const scoped = runTsx("scripts/factory-control.ts", quietEnv({ FACTORY_CONTROLLER: "active" }));
   assert.equal(scoped.status, 0, scoped.stderr);
   const proposed = JSON.parse(scoped.stdout) as { reason: string; wakes: Array<{ id: string; effect: string }> };
-  assert.equal(proposed.reason, "dispatch_authorization_exhausted");
-  assert.equal(proposed.wakes.length, 0);
+  const committedForDry = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
+  const openAnalyst = Object.values(committedForDry.packets).some((packet) => packet.dispatch?.effect === "wake_sa");
+  if (openAnalyst) {
+    assert.equal(proposed.reason, "analyst_open");
+    assert.equal(proposed.wakes.length, 0);
+  } else if (committedForDry.usedDispatches >= (committedForDry.authorizedDispatches ?? 0)) {
+    assert.equal(proposed.reason, "dispatch_authorization_exhausted");
+    assert.equal(proposed.wakes.length, 0);
+  } else {
+    assert.equal(proposed.wakes.length, 1);
+    assert.equal(proposed.wakes[0].effect, "wake_sa");
+    assert.notEqual(proposed.wakes[0].id, "pkt-002-open-ask-cursor");
+    assert.notEqual(proposed.wakes[0].id, "pkt-001-click-attribution");
+  }
   const planned = runTsx(
     "scripts/factory-authorize-scope.ts",
     quietEnv({ SCOPE_ID: "agents-scope", SCOPE_MODULES: "Agents", AUTHORIZED_DISPATCHES: "4" }),
@@ -1889,8 +1890,9 @@ check("control and authorize commands do not arm the committed ledger", () => {
   assert.equal(committed.scope.status, "active");
   assert.equal(committed.scope.id, "agents-and-automations");
   assert.equal(committed.authorizedDispatches, 4);
-  assert.equal(committed.usedDispatches, 4);
-  assert.equal(committed.stateRevision, 21);
+  assert.ok(committed.usedDispatches >= 2);
+  assert.ok(committed.usedDispatches <= committed.authorizedDispatches);
+  assert.ok(committed.stateRevision >= 24);
   assert.equal(committed.initiatives["exec-identity"].dispatch, null);
   assert.equal(committed.initiatives["exec-identity"].session, "continuation_due");
   assert.equal(committed.packets["pkt-001-click-attribution"].execution?.mode, "manual");
@@ -2161,6 +2163,215 @@ check("a ledger-only commit keeps the authorized head and a product commit does 
     }).reason,
     "pr_head_mismatch",
   );
+});
+
+function assertRecoveryLedger(committed: FactoryLedger) {
+  assert.equal(committed.scope.id, "agents-and-automations");
+  assert.equal(committed.authorizedDispatches, 4);
+  assert.ok(committed.usedDispatches >= 2);
+  assert.ok(committed.usedDispatches <= committed.authorizedDispatches);
+  assert.ok(committed.stateRevision >= 24);
+  const pkt001 = committed.packets["pkt-001-click-attribution"];
+  assert.equal(pkt001.stage, "accepted");
+  assert.equal(pkt001.wake, "hold");
+  assert.equal(pkt001.dispatch, null);
+  assert.equal(pkt001.execution?.mode, "manual");
+  assert.equal(pkt001.verifiedSha, "19c47938d8aa8884b4874999a50667f5677205b3");
+  assert.equal(pkt001.integratedSha, "9c45f19fa1ac9d909247d6be83c9263273b1bcbb");
+  const pkt002 = committed.packets["pkt-002-open-ask-cursor"];
+  assert.equal(pkt002.stage, "released");
+  assert.equal(pkt002.wake, "sa");
+  assert.equal(pkt002.dispatchedSaRevision, "rev-1");
+  assert.equal(pkt002.dispatchedEngineerRevision, null);
+  assert.equal(pkt002.dispatch, null);
+  const ran = (pkt002.dispatchHistory ?? []).find((row) => row.workerExecution === "ran");
+  assert.ok(ran);
+  assert.equal(ran.packetId, "pkt-002-open-ask-cursor");
+  assert.equal(ran.revision, "rev-1");
+  assert.equal(ran.prHead, "a19229352274f07f177619c8d92f689d21d4fdba");
+  assert.equal(ran.effect, "wake_sa");
+  assert.equal(ran.label, "factory-wake-sa");
+  const absentHeads: Record<string, string> = {
+    "pkt-003-resume-same-run": "3d15878496575ff4f40e187a3d8012bc7107b6ae",
+    "pkt-004-firing-handle": "00ec5e7f066e6e491c4b6f3d1f80db360da25675",
+  };
+  for (const [id, prHead] of Object.entries(absentHeads)) {
+    const packet = committed.packets[id];
+    assert.equal(packet.stage, "released");
+    assert.equal(packet.wake, "sa");
+    assert.equal(packet.dispatchedEngineerRevision, null);
+    const absent = (packet.dispatchHistory ?? []).find((row) => row.workerExecution === "absent");
+    assert.ok(absent);
+    assert.equal(absent.packetId, id);
+    assert.equal(absent.revision, "rev-1");
+    assert.equal(absent.prHead, prHead);
+    assert.equal(absent.effect, "wake_sa");
+    assert.equal(absent.label, "factory-wake-sa");
+    if (packet.dispatch) {
+      assert.notEqual(packet.dispatch.prHead, prHead);
+      assert.equal(packet.dispatch.effect, "wake_sa");
+    }
+  }
+  for (const packet of Object.values(committed.packets)) {
+    assert.notEqual(packet.stage, "change_specified");
+  }
+  const step = controlStep(committed, { ...cycleWorld, activation: "active" });
+  const open = Object.values(committed.packets).filter((packet) => packet.dispatch?.effect === "wake_sa");
+  assert.equal(step.wakes.some((wake) => wake.decision.effect === "wake_engineer"), false);
+  assert.equal(step.wakes.some((wake) => wake.decision.effect === "wake_architect"), false);
+  if (open.length > 0) {
+    assert.equal(step.wakes.some((wake) => wake.decision.effect === "wake_sa"), false);
+    if (step.wakes.length === 0) assert.equal(step.reason, "analyst_open");
+  } else if (committed.usedDispatches >= (committed.authorizedDispatches ?? 0)) {
+    assert.equal(step.wakes.length, 0);
+    assert.equal(step.reason, "dispatch_authorization_exhausted");
+  } else {
+    assert.equal(step.wakes.length, 1);
+    assert.equal(step.wakes[0].decision.effect, "wake_sa");
+    assert.notEqual(step.wakes[0].id, "pkt-002-open-ask-cursor");
+  }
+}
+
+check("an absent Analyst dispatch can be recovered and a ran dispatch cannot be repeated", async () => {
+  function released(id: string): WorkItem {
+    return must(
+      applyEvent(freshItem(id, "exec-identity"), { type: "release", wake: "sa", gatesPass: true, revision: "rev-1" }, inactive),
+      "released",
+    );
+  }
+  function stamped(id: string, prHead: string): WorkItem {
+    const item = acknowledgeDispatch(released(id), "wake_sa", { prHead, issuedAt: "2026-10-29T21:28:22.000Z" });
+    delete (item as { dispatchHistory?: unknown }).dispatchHistory;
+    return item;
+  }
+  const ledger = emptyLedger(4);
+  ledger.usedDispatches = 4;
+  ledger.stateRevision = 21;
+  ledger.packets["pkt-002"] = stamped("pkt-002", "head-002");
+  ledger.packets["pkt-003"] = stamped("pkt-003", "head-003");
+  ledger.packets["pkt-004"] = stamped("pkt-004", "head-004");
+  ledger.packets["pkt-005"] = released("pkt-005");
+  ledger.initiatives.alpha = freshInitiative({
+    id: "alpha",
+    module: "test",
+    capability: "alpha",
+    entry: "Operator → Agents → alpha",
+    obligation: "Continue alpha",
+    priority: 1,
+    now: cycleWorld.now,
+  });
+  ledger.initiatives.alpha.queue = "active";
+  ledger.initiatives.alpha.session = "continuation_due";
+  ledger.initiatives.alpha.revision = "rev-1";
+
+  const world: World = { ...cycleWorld, authorizedDispatches: 4, usedDispatches: 4 };
+  const missing = applyLedgerEvent(ledger, { type: "reconcile_dispatch", packetId: "pkt-missing", workerExecution: "absent" }, world);
+  assert.equal(missing.reason, "unknown_packet");
+  assert.equal(missing.ledger.usedDispatches, 4);
+  const bare = applyLedgerEvent(ledger, { type: "reconcile_dispatch", packetId: "pkt-005", workerExecution: "absent" }, world);
+  assert.equal(bare.reason, "no_dispatch");
+  assert.equal(bare.ledger.packets["pkt-005"].dispatch, null);
+  assert.equal(bare.ledger.usedDispatches, 4);
+
+  const ran = applyLedgerEvent(ledger, { type: "reconcile_dispatch", packetId: "pkt-002", workerExecution: "ran" }, world);
+  assert.equal(ran.reason, "dispatch_ran");
+  assert.equal(ran.ledger.usedDispatches, 4);
+  assert.equal(ran.ledger.packets["pkt-002"].dispatchedSaRevision, "rev-1");
+  assert.equal(ran.ledger.packets["pkt-002"].dispatch, null);
+  assert.equal(ran.ledger.packets["pkt-002"].dispatchHistory.length, 1);
+  assert.equal(ran.ledger.packets["pkt-002"].dispatchHistory[0].workerExecution, "ran");
+  assert.equal(ran.ledger.packets["pkt-002"].dispatchHistory[0].prHead, "head-002");
+  assert.equal(ran.ledger.packets["pkt-002"].dispatchHistory[0].effect, "wake_sa");
+  assert.equal(ran.ledger.packets["pkt-002"].dispatchHistory[0].label, "factory-wake-sa");
+  assert.equal(ran.ledger.packets["pkt-002"].dispatchHistory[0].revision, "rev-1");
+  assert.equal(
+    decide(ran.ledger.packets["pkt-002"], { ...world, usedDispatches: 2 }).reason,
+    "no_transition",
+  );
+  const ambiguous = selectLabeledDispatch(Object.values(ran.ledger.packets), "factory-wake-sa");
+  assert.equal(ambiguous.ok, false);
+  if (!ambiguous.ok) assert.equal(ambiguous.reason, "ambiguous_dispatch");
+
+  const absent = applyLedgerEvent(ran.ledger, { type: "reconcile_dispatch", packetId: "pkt-003", workerExecution: "absent" }, world);
+  assert.equal(absent.reason, "dispatch_absent");
+  assert.equal(absent.ledger.usedDispatches, 3);
+  assert.equal(absent.ledger.packets["pkt-003"].dispatchedSaRevision, null);
+  assert.equal(absent.ledger.packets["pkt-003"].dispatch, null);
+  const archived = absent.ledger.packets["pkt-003"].dispatchHistory[0];
+  assert.equal(archived.workerExecution, "absent");
+  assert.equal(archived.packetId, "pkt-003");
+  assert.equal(archived.revision, "rev-1");
+  assert.equal(archived.prHead, "head-003");
+  assert.equal(archived.effect, "wake_sa");
+  assert.equal(archived.label, "factory-wake-sa");
+  assert.equal(
+    decide(absent.ledger.packets["pkt-003"], { ...world, usedDispatches: absent.ledger.usedDispatches }).effect,
+    "wake_sa",
+  );
+
+  const blocked = controlStep(absent.ledger, world);
+  assert.equal(blocked.reason, "analyst_open");
+  assert.equal(blocked.wakes.length, 0);
+  assert.equal(blocked.wakes.some((wake) => wake.decision.effect === "wake_architect"), false);
+
+  const oneOpen = selectLabeledDispatch(Object.values(absent.ledger.packets), "factory-wake-sa");
+  assert.equal(oneOpen.ok, true);
+  if (oneOpen.ok) assert.equal(oneOpen.row.id, "pkt-004");
+  const none = selectLabeledDispatch(
+    Object.values(absent.ledger.packets).map((packet) => ({ ...packet, dispatch: null })),
+    "factory-wake-sa",
+  );
+  assert.equal(none.ok, false);
+  if (!none.ok) assert.equal(none.reason, "no_dispatch_record");
+
+  const closed = applyLedgerEvent(
+    absent.ledger,
+    { type: "reconcile_dispatch", packetId: "pkt-004", workerExecution: "ran" },
+    world,
+  );
+  assert.equal(closed.reason, "dispatch_ran");
+  assert.equal(closed.ledger.usedDispatches, 3);
+  assert.equal(closed.ledger.packets["pkt-004"].dispatchedSaRevision, "rev-1");
+  const next = controlStep(closed.ledger, { ...world, usedDispatches: closed.ledger.usedDispatches });
+  assert.equal(next.wakes.length, 1);
+  assert.equal(next.wakes[0].id, "pkt-003");
+  assert.equal(next.wakes[0].decision.effect, "wake_sa");
+  assert.equal(next.wakes.some((wake) => wake.decision.effect === "wake_architect"), false);
+  const one = selectLabeledDispatch(Object.values(closed.ledger.packets), "factory-wake-sa");
+  assert.equal(one.ok, false);
+  if (!one.ok) assert.equal(one.reason, "no_dispatch_record");
+
+  const store = new MemoryStore(closed.ledger);
+  const recovered = await dispatchWake({
+    store,
+    actuator: scriptedActuator([{ ok: true, reason: "labeled" }], []),
+    packetId: "pkt-003",
+    prHead: "head-003-again",
+    activation: "active",
+    now: "2026-10-29T22:10:00.000Z",
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(recovered.reason, "dispatched");
+  const saved = await store.read();
+  assert.equal(saved.usedDispatches, 4);
+  assert.equal(saved.packets["pkt-003"].dispatch?.prHead, "head-003-again");
+  assert.equal(saved.packets["pkt-003"].dispatch?.issuedAt, "2026-10-29T22:10:00.000Z");
+  assert.equal(saved.packets["pkt-003"].dispatchHistory.length, 1);
+  assert.equal(saved.packets["pkt-003"].dispatchHistory[0].workerExecution, "absent");
+  assert.equal(saved.packets["pkt-003"].dispatchHistory[0].prHead, "head-003");
+  const held = controlStep(saved, world);
+  assert.equal(held.reason, "analyst_open");
+  assert.equal(held.wakes.length, 0);
+
+  const broke = emptyLedger(1);
+  broke.usedDispatches = 0;
+  broke.packets["pkt-x"] = stamped("pkt-x", "head-x");
+  const refused = applyLedgerEvent(broke, { type: "reconcile_dispatch", packetId: "pkt-x", workerExecution: "absent" }, world);
+  assert.equal(refused.reason, "spend_missing");
+  assert.equal(refused.ledger.usedDispatches, 0);
+  assert.equal(refused.ledger.packets["pkt-x"].dispatch?.prHead, "head-x");
+  assert.equal(refused.ledger.packets["pkt-x"].dispatchedSaRevision, "rev-1");
 });
 
 const failures: string[] = [];

@@ -5,7 +5,7 @@
  */
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
-import { headMatchesDispatch } from "../.factory/controller/wake.ts";
+import { headMatchesDispatch, selectLabeledDispatch } from "../.factory/controller/wake.ts";
 import { workerMayRun, type DispatchRecord } from "../.factory/controller/machine.ts";
 import type { FactoryLedger } from "../.factory/controller/dispatch.ts";
 
@@ -31,14 +31,17 @@ if (ledger.authorizedDispatches == null || ledger.authorizedDispatches <= 0) ref
 let dispatch: DispatchRecord | null = null;
 let wake: "hold" | "sa" = "hold";
 if (label === "factory-wake-architect") {
-  const initiative = Object.values(ledger.initiatives).find((item) => item.dispatch?.label === label);
-  dispatch = initiative?.dispatch ?? null;
-  if (initiative && dispatch && initiative.revision !== dispatch.revision) refuse("revision_mismatch");
-  if (initiative && dispatch && initiative.id !== dispatch.packetId) refuse("packet_mismatch");
+  const selected = selectLabeledDispatch(Object.values(ledger.initiatives), label);
+  if (!selected.ok) refuse(selected.reason);
+  const initiative = selected.row;
+  dispatch = initiative.dispatch;
+  if (initiative.revision !== dispatch?.revision) refuse("revision_mismatch");
+  if (initiative.id !== dispatch?.packetId) refuse("packet_mismatch");
 } else {
-  const packet = Object.values(ledger.packets).find((item) => item.dispatch?.label === label);
-  dispatch = packet?.dispatch ?? null;
-  wake = packet?.wake ?? "hold";
+  const selected = selectLabeledDispatch(Object.values(ledger.packets), label);
+  if (!selected.ok) refuse(selected.reason);
+  dispatch = selected.row.dispatch;
+  wake = selected.row.wake;
 }
 
 if (!dispatch) refuse("no_dispatch_record");
