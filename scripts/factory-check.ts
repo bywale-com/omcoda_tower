@@ -44,6 +44,7 @@ import {
   type PursuitMessage,
 } from "../.factory/experiments/click-attribution.ts";
 import { markReleased } from "../.factory/controller/release.ts";
+import { headMatchesDispatch } from "../.factory/controller/wake.ts";
 import {
   applyLedgerEvent,
   commitLedgerEvent,
@@ -588,6 +589,7 @@ check("seat prompts keep the Travis gates that stopped empty boots", () => {
   assert.match(architect, /factory-wake-architect/);
   assert.match(architect, /initiative's id, revision, and prHead/);
   assert.match(architect, /`packetId` in that record is the initiative id/);
+  assert.match(architect, /scripts\/factory-wake-check\.ts factory-wake-architect/);
   assert.match(analyst, /Run only if this commit has this exact line: `\*\*Wake:\*\* sa`/);
   assert.match(analyst, /If this wake is a label removed, stop/);
   assert.match(analyst, /If `factory-blocked` or `factory-hold` is on the PR: stop/);
@@ -599,7 +601,10 @@ check("seat prompts keep the Travis gates that stopped empty boots", () => {
   assert.match(engineer, /You do not open another pull request/);
   assert.equal(analyst.includes("HEAD~1"), false);
   assert.match(analyst, /packetId, revision, and prHead/);
+  assert.match(analyst, /scripts\/factory-wake-check\.ts factory-wake-sa/);
   assert.match(engineer, /packetId, revision, and prHead/);
+  assert.match(engineer, /scripts\/factory-wake-check\.ts factory-wake-engineer/);
+  assert.match(engineer, /scripts\/factory-wake-check\.ts factory-repair/);
   assert.match(architect, /No timer enforces this interval/);
   const packet = read("docs/factory/initiatives/exec-identity/packets/PKT-001-click-attribution.md");
   assert.match(packet, /\*\*Wake:\*\* hold/);
@@ -998,15 +1003,17 @@ check("T38 through T41 durable dispatch binds the wake and rejects stale or fail
   assert.match(read(".factory/controller/dispatch.ts"), /not shared by separate GitHub Actions runners/);
 
   const committed = JSON.parse(read(".factory/state/ledger.json"));
-  assert.equal(committed.authorizedDispatches, null);
+  assert.equal(committed.authorizedDispatches, 4);
   assert.equal(committed.usedDispatches, 0);
-  assert.equal(committed.stateRevision, 1);
+  assert.equal(committed.stateRevision, 6);
+  assert.equal(committed.scope.id, "agents-and-automations");
+  assert.equal(committed.scope.status, "active");
   const recorded = committed.packets[packetId];
-  assert.equal(recorded.stage, "verified");
+  assert.equal(recorded.stage, "accepted");
   assert.equal(recorded.wake, "hold");
   assert.equal(recorded.dispatch, null);
-  assert.equal(recorded.integratedSha, null);
-  assert.equal(recorded.reconciliationId, null);
+  assert.equal(recorded.integratedSha, "9c45f19fa1ac9d909247d6be83c9263273b1bcbb");
+  assert.equal(recorded.reconciliationId, "pr-136-9c45f19fa1ac9d909247d6be83c9263273b1bcbb");
   assert.equal(recorded.candidateSha, "19c47938d8aa8884b4874999a50667f5677205b3");
   assert.equal(recorded.verifiedSha, recorded.candidateSha);
   assert.equal(recorded.execution.mode, "manual");
@@ -1776,17 +1783,20 @@ check("markReleased refuses manual evidence and rewrites a gated packet once", (
   }
 });
 
-check("the committed ledger stays inactive and PKT-001 stays manual", () => {
+check("the committed scope is agents-and-automations and PKT-001 stays manual", () => {
   const committed = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
   const view = projectFactory(committed);
-  assert.equal(view.scope.status, "inactive");
-  assert.equal(view.scope.modules.length, 0);
+  assert.equal(view.scope.id, "agents-and-automations");
+  assert.equal(view.scope.status, "active");
+  assert.deepEqual(view.scope.modules, ["Agents and Automations"]);
+  assert.equal(view.stateRevision, 6);
   const packet = view.packets.find((item) => item.id === "pkt-001-click-attribution");
   assert.ok(packet);
-  assert.equal(packet.stage, "verified");
+  assert.equal(packet.stage, "accepted");
   assert.equal(packet.wake, "hold");
   assert.equal(packet.executionMode, "manual");
-  assert.equal(packet.integratedSha, null);
+  assert.equal(packet.integratedSha, "9c45f19fa1ac9d909247d6be83c9263273b1bcbb");
+  assert.equal(packet.reconciliationId, "pr-136-9c45f19fa1ac9d909247d6be83c9263273b1bcbb");
   assert.equal(packet.dispatch, null);
   assert.equal(packet.candidateSha, "19c47938d8aa8884b4874999a50667f5677205b3");
   const execIdentity = view.initiatives.find((item) => item.id === "exec-identity");
@@ -1796,13 +1806,16 @@ check("the committed ledger stays inactive and PKT-001 stays manual", () => {
   assert.equal(launch?.queue, "discovered");
   assert.deepEqual(launch?.dependsOn, ["exec-identity"]);
   assert.equal(moduleComplete(committed, "Agents").reason, "coverage_open");
-  assert.equal(moduleComplete(committed, "Missing").reason, "no_initiatives");
+  assert.equal(moduleComplete(committed, "Agents and Automations").reason, "coverage_open");
   const step = controlStep(committed, { ...cycleWorld, activation: "active" });
-  assert.equal(step.wakes.length, 0);
-  assert.equal(step.reason, "scope_inactive");
+  assert.equal(step.wakes.length, 1);
+  assert.equal(step.wakes[0].id, "exec-identity");
+  assert.equal(step.wakes[0].decision.label, "factory-wake-architect");
+  assert.equal(step.wakes.some((wake) => wake.id === "pkt-001-click-attribution"), false);
   assert.equal(committed.packets["pkt-001-click-attribution"].execution?.mode, "manual");
-  assert.equal(committed.authorizedDispatches, null);
+  assert.equal(committed.authorizedDispatches, 4);
   assert.equal(committed.usedDispatches, 0);
+  assert.equal(committed.initiatives["exec-identity"].dispatch, null);
 });
 
 function runTsx(script: string, env: NodeJS.ProcessEnv) {
@@ -1829,7 +1842,11 @@ check("control and authorize commands do not arm the committed ledger", () => {
   assert.deepEqual(inactiveBody.wakes, []);
   const scoped = runTsx("scripts/factory-control.ts", quietEnv({ FACTORY_CONTROLLER: "active" }));
   assert.equal(scoped.status, 0, scoped.stderr);
-  assert.equal((JSON.parse(scoped.stdout) as { reason: string }).reason, "scope_inactive");
+  const proposed = JSON.parse(scoped.stdout) as { reason: string; wakes: Array<{ id: string; effect: string }> };
+  assert.equal(proposed.reason, "architect_due");
+  assert.equal(proposed.wakes.length, 1);
+  assert.equal(proposed.wakes[0].id, "exec-identity");
+  assert.equal(proposed.wakes[0].effect, "wake_architect");
   const planned = runTsx(
     "scripts/factory-authorize-scope.ts",
     quietEnv({ SCOPE_ID: "agents-scope", SCOPE_MODULES: "Agents", AUTHORIZED_DISPATCHES: "4" }),
@@ -1849,9 +1866,51 @@ check("control and authorize commands do not arm the committed ledger", () => {
   assert.equal(suspend.status, 0, suspend.stderr);
   assert.equal((JSON.parse(suspend.stdout) as { type: string }).type, "suspend");
   const committed = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
-  assert.equal(committed.scope.status, "inactive");
-  assert.equal(committed.authorizedDispatches, null);
+  assert.equal(committed.scope.status, "active");
+  assert.equal(committed.scope.id, "agents-and-automations");
+  assert.equal(committed.authorizedDispatches, 4);
+  assert.equal(committed.usedDispatches, 0);
+  assert.equal(committed.initiatives["exec-identity"].dispatch, null);
   assert.equal(committed.packets["pkt-001-click-attribution"].execution?.mode, "manual");
+});
+
+check("a ledger-only commit keeps the authorized head and a product commit does not", () => {
+  assert.equal(
+    headMatchesDispatch({
+      dispatchPrHead: "sha-1",
+      head: "sha-1",
+      isAncestor: true,
+      changedPaths: [],
+    }).reason,
+    "authorized",
+  );
+  assert.equal(
+    headMatchesDispatch({
+      dispatchPrHead: "sha-1",
+      head: "sha-2",
+      isAncestor: true,
+      changedPaths: [".factory/state/ledger.json"],
+    }).reason,
+    "authorized",
+  );
+  assert.equal(
+    headMatchesDispatch({
+      dispatchPrHead: "sha-1",
+      head: "sha-2",
+      isAncestor: true,
+      changedPaths: [".factory/state/ledger.json", "server/wire-service/webhooks.ts"],
+    }).reason,
+    "pr_head_moved",
+  );
+  assert.equal(
+    headMatchesDispatch({
+      dispatchPrHead: "sha-1",
+      head: "sha-9",
+      isAncestor: false,
+      changedPaths: [],
+    }).reason,
+    "pr_head_mismatch",
+  );
 });
 
 const failures: string[] = [];

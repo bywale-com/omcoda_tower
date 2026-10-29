@@ -1,11 +1,13 @@
 {
-  "stateRevision": 1,
-  "authorizedDispatches": null,
+  "stateRevision": 6,
+  "authorizedDispatches": 4,
   "usedDispatches": 0,
   "scope": {
-    "id": null,
-    "status": "inactive",
-    "modules": [],
+    "id": "agents-and-automations",
+    "status": "active",
+    "modules": [
+      "Agents and Automations"
+    ],
     "founderDecision": null,
     "blockReason": null
   },
@@ -18,16 +20,22 @@
       "obligation": "Specify and, where a packet is released, implement the identity rules already locked on PR 135.",
       "priority": 10,
       "dependsOn": [],
-      "inheritedSpecifications": ["docs/specification-pass/SPECIFICATION.md"],
+      "inheritedSpecifications": [
+        "docs/specification-pass/SPECIFICATION.md"
+      ],
       "investigation": "investigating",
       "queue": "eligible",
       "coverageComplete": null,
-      "outstanding": ["Claims 4, 6, 7, and 8 have no packets."],
+      "outstanding": [
+        "Claims 4, 6, 7, and 8 have no packets."
+      ],
       "session": "idle",
       "revision": "rev-0",
       "dispatch": null,
       "blockedReason": null,
-      "packetIds": ["pkt-001-click-attribution"],
+      "packetIds": [
+        "pkt-001-click-attribution"
+      ],
       "updatedAt": null
     },
     "launch-agent": {
@@ -37,7 +45,9 @@
       "entry": "Operator → Configuration libraries → Agents → Launch Agent",
       "obligation": "Not opened. Launch Agent is not the controller pilot.",
       "priority": 20,
-      "dependsOn": ["exec-identity"],
+      "dependsOn": [
+        "exec-identity"
+      ],
       "inheritedSpecifications": [],
       "investigation": "discovered",
       "queue": "discovered",
@@ -55,7 +65,7 @@
     "pkt-001-click-attribution": {
       "id": "pkt-001-click-attribution",
       "initiativeId": "exec-identity",
-      "stage": "verified",
+      "stage": "accepted",
       "wake": "hold",
       "revision": "rev-1",
       "hold": false,
@@ -71,8 +81,8 @@
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": false,
-      "integratedSha": null,
-      "reconciliationId": null,
+      "integratedSha": "9c45f19fa1ac9d909247d6be83c9263273b1bcbb",
+      "reconciliationId": "pr-136-9c45f19fa1ac9d909247d6be83c9263273b1bcbb",
       "dispatch": null,
       "execution": {
         "mode": "manual",

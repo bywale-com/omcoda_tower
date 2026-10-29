@@ -22,9 +22,13 @@ Ensure you are on the pull request head branch. Cursor Automations boot with the
 PR_JSON=$(gh pr view --json headRefName,headRefOid --jq '{branch:.headRefName,head:.headRefOid}' 2>/dev/null || true)
 ```
 
-Check out that branch. Then read `.factory/state/ledger.json`.
+Check out that branch. Then run:
 
-Stop unless packetId, revision, and prHead match the dispatch record in that ledger, and the record's label is `factory-wake-sa`. A missing record, a different packet, a different revision, or a different pull request head means this wake is stale. Stop. Do not use the previous commit as the authorization check.
+```bash
+npx tsx scripts/factory-wake-check.ts factory-wake-sa
+```
+
+Stop unless it prints `authorized`. The check matches packetId, revision, and prHead to the dispatch record. A later commit that changes only `.factory/state/ledger.json` is still this wake. Any other file changed after the authorized SHA means this wake is stale. Stop. Do not use the previous commit as the authorization check.
 
 Run only if this commit has this exact line: `**Wake:** sa`
 

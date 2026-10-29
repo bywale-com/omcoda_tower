@@ -39,7 +39,19 @@ If `factory-blocked` or `factory-hold` is on the PR: stop.
 
 If `factory-wake-architect` is not on the PR: stop.
 
-Read `.factory/state/ledger.json`. Stop unless this initiative's id, revision, and prHead match the dispatch record and the record's label is `factory-wake-architect`. For an architect wake, `packetId` in that record is the initiative id. Stop if scope status is not `active`. Stop if `authorizedDispatches` is null. A missing record is not permission. Do not use the previous commit as the authorization check.
+Cursor Automations boot on the default branch. Check out the pull request head before reading the ledger.
+
+```bash
+PR_JSON=$(gh pr view --json headRefName,headRefOid --jq '{branch:.headRefName,head:.headRefOid}')
+```
+
+Check out that branch. Then run:
+
+```bash
+npx tsx scripts/factory-wake-check.ts factory-wake-architect
+```
+
+Stop unless it prints `authorized`. The check matches this initiative's id, revision, and prHead to the dispatch record. For an architect wake, `packetId` in that record is the initiative id. A later commit that changes only `.factory/state/ledger.json` is still this wake. Any other file changed after the authorized SHA means stop. A missing record is not permission. Do not use the previous commit as the authorization check.
 
 ## Packet release
 

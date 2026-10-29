@@ -22,9 +22,15 @@ Switch to the pull request head branch before reading the packet.
 PR_JSON=$(gh pr view --json headRefName,headRefOid --jq '{branch:.headRefName,head:.headRefOid}' 2>/dev/null || true)
 ```
 
-Check out that branch. Then read `.factory/state/ledger.json`.
+Check out that branch. Then run the check for the label that woke you:
 
-Stop unless packetId, revision, and prHead match the dispatch record in that ledger, and the record's label is the label that woke you (`factory-wake-engineer` or `factory-repair`). A missing record or a different head means this wake is stale. Stop.
+```bash
+npx tsx scripts/factory-wake-check.ts factory-wake-engineer
+```
+
+On `factory-repair`, run `npx tsx scripts/factory-wake-check.ts factory-repair` instead.
+
+Stop unless it prints `authorized`. The check matches packetId, revision, and prHead to the dispatch record. A later commit that changes only `.factory/state/ledger.json` is still this wake. A missing record or any other file changed after the authorized SHA means this wake is stale. Stop.
 
 `factory-wake-engineer` requires a signed systems-change packet on this branch for the manifest revision. If it is already planted and nothing specified-and-clear remains, stop.
 
