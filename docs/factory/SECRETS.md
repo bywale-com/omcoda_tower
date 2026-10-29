@@ -28,7 +28,7 @@ These are identified from Travis’s working chain (`.github/workflows/wake-pack
 4. Set the repository variable `FACTORY_CONTROLLER` to `active`.
 5. Only then consider `workflow_dispatch` with mode `apply` and the phrase `I_AUTHORIZE_FACTORY_DISPATCH`.
 
-Step 5 still does not add a label. The workflow prints that the label actuator is not wired and runs `npm run factory:check`. A later change has to wire `gh` label edits to `acknowledgeDispatch` after the API succeeds. That change is not in this branch.
+Step 5 still does not add a label. `githubLabelActuator` returns `actuator_disabled` unless `FACTORY_CONTROLLER` is `active`, `FACTORY_LABELS` is `armed`, and `WAKE_GITHUB_TOKEN` is set. Even then this build returns `actuator_not_connected` and does not spawn `gh`. The command it would use is `gh pr edit <pr> --add-label <label>`, built by `labelEditArgs`. Connecting that spawn is a later change, after the simulated lifecycle has been reviewed.
 
 ## Travis failures this list is answering
 

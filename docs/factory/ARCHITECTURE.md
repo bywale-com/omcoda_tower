@@ -55,7 +55,7 @@ The Architect investigates and writes packets in one sustained role. The Analyst
 
 GitHub Actions is the event-driven controller. Cursor Automations, later and only after authorization, are the workers. An always-on model is not the controller.
 
-Durable identities are git-tracked manifests. Specs and journals are Markdown. Atomic transition rules live in `.factory/controller/machine.ts`. GitHub concurrency groups are not a job queue. The first version does not add a database. The requirement is atomic, durable, idempotent transitions. If GitHub cannot provide that once the actuator is wired, a small transactional store is the next step. It is not the first step.
+Durable identities are the ledger in `.factory/state/ledger.json`. `.factory/controller/dispatch.ts` locks that ledger and compare-and-swaps on `stateRevision`. The state machine stays pure. A wake is written only after the label actuator returns success. In this build the GitHub actuator does not spawn a process. Specs and journals are Markdown. Manifests name the packet. The ledger names the stage. GitHub concurrency groups are not a job queue. There is no new database. If a file lock cannot serialize a later live actuator, a small transactional store is the next step.
 
 ## Activation
 

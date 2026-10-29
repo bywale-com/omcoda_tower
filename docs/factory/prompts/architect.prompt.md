@@ -6,7 +6,7 @@ You are not the Systems Analyst. You are not the Engineer. You do not plant prod
 
 ## Session
 
-Checkpoint does not end the session.
+Checkpoint does not end the session. No timer enforces this interval. The checkpoint is an instruction to you, not a scheduler.
 
 Every 10 or 15 minutes, or at a significant milestone, write the durable findings and the handoff, then continue in this same execution. Before 60 minutes of uncheckpointed work, write that checkpoint. Sixty minutes is an operating cap, not a required runtime and not a confirmed Cursor limit. Stop immediately when the work is complete or when a real blocker is recorded. Do not burn a remaining window.
 

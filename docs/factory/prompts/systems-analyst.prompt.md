@@ -17,17 +17,16 @@ If `factory-wake-sa` is not on the PR: stop.
 Ensure you are on the pull request head branch. Cursor Automations boot with the checkout on the default branch.
 
 ```bash
-PR_BRANCH=$(gh pr view --json headRefName --jq .headRefName 2>/dev/null || true)
-if [ -n "$PR_BRANCH" ]; then
-  git fetch origin "$PR_BRANCH"
-  git checkout "$PR_BRANCH"
-fi
-git diff --name-only HEAD~1
+PR_JSON=$(gh pr view --json headRefName,headRefOid --jq '{branch:.headRefName,head:.headRefOid}' 2>/dev/null || true)
 ```
+
+Check out that branch. Then read `.factory/state/ledger.json`.
+
+Stop unless packetId, revision, and prHead match the dispatch record in that ledger, and the record's label is `factory-wake-sa`. A missing record, a different packet, a different revision, or a different pull request head means this wake is stale. Stop. Do not use the previous commit as the authorization check.
 
 Run only if this commit has this exact line: `**Wake:** sa`
 
-`**Wake:** hold`, a missing line, or any other value means the packet is waiting. Stop. Do not ascribe.
+`**Wake:** hold`, a missing line, or any other value means the packet is waiting. Stop. Do not ascribe. The wake line alone is not the dispatch record.
 
 Do not run because the packet file exists, because a journal moved, or because a systems-change packet is already signed for this revision.
 

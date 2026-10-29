@@ -1,0 +1,30 @@
+{
+  "stateRevision": 0,
+  "authorizedDispatches": null,
+  "usedDispatches": 0,
+  "packets": {
+    "pkt-001-click-attribution": {
+      "id": "pkt-001-click-attribution",
+      "initiativeId": "exec-identity",
+      "stage": "draft",
+      "wake": "hold",
+      "revision": "rev-0",
+      "hold": false,
+      "blockerId": null,
+      "lease": null,
+      "attempts": 0,
+      "maxAttempts": 1,
+      "candidateSha": null,
+      "verifiedSha": null,
+      "lastFailureFingerprint": null,
+      "lastFailureClass": null,
+      "dispatchedSaRevision": null,
+      "dispatchedEngineerRevision": null,
+      "dispatchedRepairFingerprint": null,
+      "releaseEligible": false,
+      "integratedSha": null,
+      "reconciliationId": null,
+      "dispatch": null
+    }
+  }
+}

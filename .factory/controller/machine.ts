@@ -2,9 +2,11 @@
  * Tower software-factory controller.
  *
  * Pure transitions. No GitHub, no Cursor, no clock except the `now` the caller passes.
+ * Persistence and label calls live in dispatch.ts. This file does not perform them.
  * A wake effect is a proposal. It becomes a dispatch only after `acknowledgeDispatch`,
  * and that acknowledgement belongs after the label API succeeds.
  * Absence of a label is not permission to advance.
+ * `budgetUsd` is illustrative. It never authorizes a wake.
  */
 
 export type Stage =
@@ -16,6 +18,9 @@ export type Stage =
   | "candidate"
   | "verifying"
   | "verified"
+  | "integration_authorized"
+  | "integrated"
+  | "reconciled"
   | "accepted"
   | "blocked"
   | "returned_architect"
@@ -57,6 +62,15 @@ export interface Lease {
   revision: string;
 }
 
+/** Written only after a label add succeeds. Workers must match it exactly. */
+export interface DispatchRecord {
+  packetId: string;
+  revision: string;
+  prHead: string;
+  effect: Exclude<WakeEffect, "none">;
+  label: (typeof SEAT_LABELS)[number];
+}
+
 export interface WorkItem {
   id: string;
   initiativeId: string;
@@ -76,6 +90,9 @@ export interface WorkItem {
   dispatchedEngineerRevision: string | null;
   dispatchedRepairFingerprint: string | null;
   releaseEligible: boolean;
+  integratedSha: string | null;
+  reconciliationId: string | null;
+  dispatch: DispatchRecord | null;
 }
 
 export interface World {
@@ -83,8 +100,14 @@ export interface World {
   now: string;
   /** Another implementation batch already owns the single engineering slot. */
   engineeringBusy: boolean;
-  /** Null means the provider did not expose a hard limit. Do not pretend it is enforced. */
+  /** Illustrative dollars. Never read as permission to dispatch. */
   budgetUsd: number | null;
+  /**
+   * Fixed count of worker wakes this pilot may perform.
+   * Null and 0 both refuse. Null is not unlimited.
+   */
+  authorizedDispatches: number | null;
+  usedDispatches: number;
 }
 
 export type FactoryEvent =
@@ -113,6 +136,9 @@ export type FactoryEvent =
       fingerprint?: string;
       justification?: string;
     }
+  | { type: "authorize_integration"; sha: string }
+  | { type: "integrate"; candidateSha: string; mergeSha: string }
+  | { type: "reconcile"; sha: string; reconciliationId: string }
   | { type: "accept"; sha: string }
   | { type: "blocker"; blockerId: string; failureClass: "infrastructure" | "external" }
   | { type: "clear_blocker" }
@@ -152,7 +178,17 @@ export function freshItem(id = "pkt-001", initiativeId = "exec-identity"): WorkI
     dispatchedEngineerRevision: null,
     dispatchedRepairFingerprint: null,
     releaseEligible: false,
+    integratedSha: null,
+    reconciliationId: null,
+    dispatch: null,
   };
+}
+
+export function stageAdmits(stage: Stage, role: Lease["role"]): boolean {
+  if (role === "analyst") return stage === "released" || stage === "analysis";
+  if (role === "engineer") return stage === "change_specified" || stage === "engineering";
+  if (role === "architect") return stage === "draft" || stage === "returned_architect";
+  return false;
 }
 
 export function leaseActive(item: WorkItem, now: string): boolean {
@@ -163,7 +199,14 @@ function clone(item: WorkItem): WorkItem {
   return {
     ...item,
     lease: item.lease ? { ...item.lease } : null,
+    dispatch: item.dispatch ? { ...item.dispatch } : null,
   };
+}
+
+function leaseCovers(item: WorkItem, workerId: string, role: Lease["role"], now: string): string | null {
+  if (!item.lease || item.lease.workerId !== workerId || item.lease.role !== role) return "worker_mismatch";
+  if (item.lease.until <= now || item.lease.revision !== item.revision) return "lease_expired";
+  return null;
 }
 
 function refuse(item: WorkItem, reason: string): ApplyResult {
@@ -218,6 +261,7 @@ export function applyEvent(item: WorkItem, event: FactoryEvent, world: World): A
 
   if (event.type === "acquire_lease") {
     if (event.revision !== item.revision) return refuse(item, "revision_mismatch");
+    if (!stageAdmits(item.stage, event.role)) return refuse(item, "role_not_admitted");
     if (leaseActive(item, world.now) && item.lease!.workerId !== event.workerId) {
       return refuse(item, "lease_held");
     }
@@ -228,8 +272,8 @@ export function applyEvent(item: WorkItem, event: FactoryEvent, world: World): A
       until: event.until,
       revision: event.revision,
     };
-    if (event.role === "analyst" && next.stage === "released") next.stage = "analysis";
-    if (event.role === "engineer" && next.stage === "change_specified") next.stage = "engineering";
+    if (event.role === "analyst" && item.stage === "released") next.stage = "analysis";
+    if (event.role === "engineer" && item.stage === "change_specified") next.stage = "engineering";
     return accept(next, "lease_acquired");
   }
 
@@ -242,9 +286,8 @@ export function applyEvent(item: WorkItem, event: FactoryEvent, world: World): A
   if (event.type === "sign_change") {
     if (item.stage !== "analysis") return refuse(item, "wrong_stage");
     if (event.revision !== item.revision) return refuse(item, "revision_mismatch");
-    if (!item.lease || item.lease.workerId !== event.workerId || item.lease.role !== "analyst") {
-      return refuse(item, "worker_mismatch");
-    }
+    const analystLease = leaseCovers(item, event.workerId, "analyst", world.now);
+    if (analystLease) return refuse(item, analystLease);
     const missing = REQUIRED_CHANGE_SECTIONS.filter((section) => !event.sections.includes(section));
     if (missing.length) return refuse(item, "sections_incomplete");
     next.stage = "change_specified";
@@ -255,9 +298,8 @@ export function applyEvent(item: WorkItem, event: FactoryEvent, world: World): A
   if (event.type === "commit_candidate") {
     if (item.stage !== "engineering") return refuse(item, "wrong_stage");
     if (event.revision !== item.revision) return refuse(item, "revision_mismatch");
-    if (!item.lease || item.lease.workerId !== event.workerId || item.lease.role !== "engineer") {
-      return refuse(item, "worker_mismatch");
-    }
+    const engineerLease = leaseCovers(item, event.workerId, "engineer", world.now);
+    if (engineerLease) return refuse(item, engineerLease);
     if (!event.sha) return refuse(item, "sha_mismatch");
     next.stage = "candidate";
     next.candidateSha = event.sha;
@@ -323,9 +365,36 @@ export function applyEvent(item: WorkItem, event: FactoryEvent, world: World): A
     return accept(next, "repair_ready");
   }
 
-  if (event.type === "accept") {
+  if (event.type === "authorize_integration") {
     if (item.stage !== "verified") return refuse(item, "wrong_stage");
     if (!item.verifiedSha || event.sha !== item.verifiedSha) return refuse(item, "sha_mismatch");
+    next.stage = "integration_authorized";
+    return accept(next, "integration_authorized");
+  }
+
+  if (event.type === "integrate") {
+    if (item.stage !== "integration_authorized") return refuse(item, "wrong_stage");
+    if (!item.verifiedSha || event.candidateSha !== item.verifiedSha) return refuse(item, "sha_mismatch");
+    if (!event.mergeSha) return refuse(item, "integration_evidence_missing");
+    next.stage = "integrated";
+    next.integratedSha = event.mergeSha;
+    return accept(next, "integrated");
+  }
+
+  if (event.type === "reconcile") {
+    if (item.stage !== "integrated") return refuse(item, "wrong_stage");
+    if (!item.verifiedSha || event.sha !== item.verifiedSha) return refuse(item, "sha_mismatch");
+    if (!event.reconciliationId) return refuse(item, "integration_evidence_missing");
+    next.stage = "reconciled";
+    next.reconciliationId = event.reconciliationId;
+    return accept(next, "reconciled");
+  }
+
+  if (event.type === "accept") {
+    if (item.stage !== "reconciled") return refuse(item, "wrong_stage");
+    if (!item.verifiedSha || event.sha !== item.verifiedSha || !item.integratedSha) {
+      return refuse(item, "sha_mismatch");
+    }
     next.stage = "accepted";
     return accept(next, "accepted");
   }
@@ -348,7 +417,12 @@ export function decide(item: WorkItem, world: World): Decision {
     return none(item.stage);
   }
   if (leaseActive(item, world.now)) return none("lease_held");
-  if (world.budgetUsd !== null && world.budgetUsd <= 0) return none("budget_exhausted");
+  if (world.authorizedDispatches == null || world.authorizedDispatches <= 0) {
+    return none("dispatch_not_authorized");
+  }
+  if (world.usedDispatches >= world.authorizedDispatches) {
+    return none("dispatch_authorization_exhausted");
+  }
 
   if (
     item.stage === "released" &&
@@ -380,14 +454,53 @@ export function decide(item: WorkItem, world: World): Decision {
 }
 
 /** Call only after the label API has added `effect`'s label. A failed add must not call this. */
-export function acknowledgeDispatch(item: WorkItem, effect: WakeEffect): WorkItem {
+export function acknowledgeDispatch(
+  item: WorkItem,
+  effect: WakeEffect,
+  record?: { prHead: string },
+): WorkItem {
   const next = clone(item);
   if (effect === "wake_sa") next.dispatchedSaRevision = item.revision;
   if (effect === "wake_engineer") next.dispatchedEngineerRevision = item.revision;
   if (effect === "wake_repair" && item.lastFailureFingerprint) {
     next.dispatchedRepairFingerprint = item.lastFailureFingerprint;
   }
+  if (record && effect !== "none") {
+    next.dispatch = {
+      packetId: item.id,
+      revision: item.revision,
+      prHead: record.prHead,
+      effect,
+      label: LABEL_FOR[effect],
+    };
+  }
   return next;
+}
+
+export function workerMayRun(input: {
+  label: (typeof SEAT_LABELS)[number];
+  packetId: string;
+  revision: string;
+  prHead: string;
+  wake: "hold" | "sa";
+  dispatch: DispatchRecord | null;
+}): { ok: boolean; reason: string } {
+  if (!input.dispatch) return { ok: false, reason: "no_dispatch_record" };
+  if (input.dispatch.packetId !== input.packetId) return { ok: false, reason: "packet_mismatch" };
+  if (input.dispatch.revision !== input.revision) return { ok: false, reason: "revision_mismatch" };
+  if (input.dispatch.prHead !== input.prHead) return { ok: false, reason: "pr_head_mismatch" };
+  if (input.dispatch.label !== input.label) return { ok: false, reason: "label_mismatch" };
+  if (input.label === "factory-wake-sa" && input.wake !== "sa") return { ok: false, reason: "wake_hold" };
+  if (input.dispatch.effect === "wake_sa" && input.label !== "factory-wake-sa") {
+    return { ok: false, reason: "label_mismatch" };
+  }
+  if (input.dispatch.effect === "wake_engineer" && input.label !== "factory-wake-engineer") {
+    return { ok: false, reason: "label_mismatch" };
+  }
+  if (input.dispatch.effect === "wake_repair" && input.label !== "factory-repair") {
+    return { ok: false, reason: "label_mismatch" };
+  }
+  return { ok: true, reason: "authorized" };
 }
 
 export type InitiativeSummary =
@@ -406,6 +519,9 @@ const PRODUCTION = new Set<Stage>([
   "change_specified",
   "engineering",
   "candidate",
+  "integration_authorized",
+  "integrated",
+  "reconciled",
   "returned_architect",
   "returned_analyst",
 ]);
@@ -465,4 +581,15 @@ export const TRANSITION_IDS = [
   "T28",
   "T29",
   "T30",
+  "T31",
+  "T32",
+  "T33",
+  "T34",
+  "T35",
+  "T36",
+  "T37",
+  "T38",
+  "T39",
+  "T40",
+  "T41",
 ] as const;

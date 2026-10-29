@@ -6,7 +6,7 @@
 | --- | --- |
 | Minimum duration | None |
 | Checkpoint | Every 10–15 minutes, or at a significant milestone. The agent keeps working afterward. |
-| Uncheckpointed cap | 60 minutes. This is policy. It is not a measured Cursor limit. |
+| Uncheckpointed cap | 60 minutes. This is policy. It is not a measured Cursor limit. No timer enforces this interval. |
 | Continuation | Resume the eligible run. |
 | New run | Only when continuation is unavailable, inappropriate, or the repair budget is exhausted. |
 | Early completion | Stop. |
@@ -56,6 +56,8 @@ One Architect, one Analyst, and one Engineer at most. One implementation batch i
 ## Verification evidence
 
 Every released packet names the checks that prove its requirements. A green build is not that proof. A passing check proves only the SHA it ran against. The controller refuses a pass whose SHA is not `candidateSha`.
+
+A passing check moves the packet to `verified`. Acceptance is later: `integration_authorized`, then `integrated` with a merge SHA, then `reconciled`, then `accepted`. A green result on one commit does not mean the commit is on the target branch.
 
 Product packets use Tower’s existing checks (`npm run build`, `npm run verify:ship`, and any script the systems-change packet names). They do not import Travis phone walks or `runtime-doors`.
 

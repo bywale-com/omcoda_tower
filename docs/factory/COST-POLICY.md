@@ -10,7 +10,9 @@ Cursor Automations start cloud agents and are billed as cloud-agent usage. Autom
 - Checkpoints do not end the run.
 - Repair returns to the Engineer seat once. The same failure fingerprint does not start another repair without a new justification.
 - External and infrastructure failures do not start an Engineer.
-- `budgetUsd: null` means no hard limit is claimed. A prompt sentence is not a budget.
+- `budgetUsd` is illustrative. A null or zero dollar figure does not authorize a wake, and a large dollar figure does not either.
+- `authorizedDispatches: null` on the ledger is not unlimited. An active controller refuses wakes until that count is a fixed positive number of runs. It is null in this change.
+- No timer enforces the 10–15 minute checkpoint or the 60-minute cap. Those are instructions in the Architect prompt.
 
 ## Illustrative envelope
 

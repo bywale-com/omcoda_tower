@@ -15,6 +15,7 @@
     "checkpointEveryMinutes": [10, 15],
     "maxUncheckpointedMinutes": 60,
     "maxUncheckpointedMinutesIs": "operating policy, not a confirmed Cursor platform limit",
+    "checkpointEnforcement": "worker instruction only. No timer observes or enforces the interval.",
     "continuation": "resume the existing eligible run",
     "newRun": "only when continuation is unavailable, inappropriate, or the repair budget is exhausted",
     "stop": "immediately when the work is complete or a real blocker is recorded"
@@ -29,7 +30,9 @@
       "diagnosticReserve": 4,
       "total": 30
     },
-    "note": "These figures are an illustration from the 2026-10-29 architecture note. They are not an authorization and not a measured Cursor price."
+    "note": "These figures are an illustration from the 2026-10-29 architecture note. They are not an authorization and not a measured Cursor price.",
+    "authorizedDispatches": null,
+    "authorizedDispatchesMeans": "Null does not mean unlimited. While dispatch is active, decide refuses a wake until the ledger carries a fixed positive run count. Illustrative dollars never grant a wake. A provider-side spending limit is still unset and is required before any live worker."
   },
   "labels": {
     "wakes": ["factory-wake-sa", "factory-wake-engineer", "factory-repair"],

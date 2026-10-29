@@ -1,0 +1,26 @@
+# 002 — Durable dispatch, before any worker
+
+**Date:** 2026-10-29  
+**Status:** accepted for this factory
+
+## Decision
+
+The pure state machine stays pure. A dispatch adapter loads the ledger, holds an exclusive lock, and compare-and-swaps on `stateRevision`.
+
+A worker lease is admitted only for the stage that role owns. An expired lease cannot sign a change or commit a candidate.
+
+A wake is stored only after the label actuator succeeds, and the stored record names the packet id, revision, and pull-request head. Workers match that record. They do not treat the previous commit as authorization.
+
+`verified` is not `accepted`. The path is `integration_authorized`, then `integrated` with a merge SHA, then `reconciled`, then `accepted`.
+
+`authorizedDispatches: null` does not mean unlimited. Illustrative dollars do not grant a wake. The GitHub label command is not spawned. `FACTORY_CONTROLLER` stays unset.
+
+Checkpoint intervals remain worker instructions. No timer enforces them.
+
+## Why
+
+The first cut could decide a transition and could not commit one. A lease could be taken by the wrong role. A passing SHA could be called acceptance. A worker gate that looked at `HEAD~1` could miss a valid release or accept a stale one.
+
+## Not decided
+
+Connecting `gh pr edit` to the actuator. Saving the Cursor Automations. The fixed run count for a live PKT-001 pilot. A provider spending limit. Those wait for a person.

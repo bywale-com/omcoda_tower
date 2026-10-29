@@ -10,7 +10,7 @@
     "release": { "enum": ["draft", "released"] },
     "wake": { "enum": ["hold", "sa"] },
     "releaseEligible": { "type": "boolean" },
-    "stage": { "enum": ["draft", "released", "analysis", "change_specified", "engineering", "candidate", "verifying", "verified", "accepted", "blocked", "returned_architect", "returned_analyst"] },
+    "stage": { "enum": ["draft", "released", "analysis", "change_specified", "engineering", "candidate", "verifying", "verified", "integration_authorized", "integrated", "reconciled", "accepted", "blocked", "returned_architect", "returned_analyst"] },
     "revision": { "type": "string" }
   }
 }

@@ -3,7 +3,8 @@
  * Run: npm run factory:check
  */
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -13,9 +14,20 @@ import {
   decide,
   deriveInitiative,
   freshItem,
+  workerMayRun,
   type WorkItem,
   type World,
 } from "../.factory/controller/machine.ts";
+import {
+  FileStore,
+  MemoryStore,
+  commitEvent,
+  dispatchWake,
+  emptyLedger,
+  githubLabelActuator,
+  labelEditArgs,
+  scriptedActuator,
+} from "../.factory/controller/dispatch.ts";
 import {
   clickMatchesEnrollment,
   enrollmentForClick,
@@ -27,10 +39,9 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (path: string) => readFileSync(join(root, path), "utf8");
 
 let passed = 0;
-function check(name: string, fn: () => void) {
-  fn();
-  passed += 1;
-  console.log(`ok  ${name}`);
+const queue: Array<{ name: string; fn: () => void | Promise<void> }> = [];
+function check(name: string, fn: () => void | Promise<void>) {
+  queue.push({ name, fn });
 }
 
 const inactive: World = {
@@ -38,8 +49,14 @@ const inactive: World = {
   now: "2026-10-29T12:00:00Z",
   engineeringBusy: false,
   budgetUsd: null,
+  authorizedDispatches: null,
+  usedDispatches: 0,
 };
-const active: World = { ...inactive, activation: "active" };
+const active: World = {
+  ...inactive,
+  activation: "active",
+  authorizedDispatches: 10,
+};
 
 function must<T extends { ok: boolean; reason: string; item: WorkItem }>(
   result: T,
@@ -252,8 +269,13 @@ check("T25 and T27 budget and concurrency suppress engineering dispatch", () => 
     "change_specified",
   );
   assert.equal(decide(item, { ...active, engineeringBusy: true }).reason, "concurrency");
-  assert.equal(decide(item, { ...active, budgetUsd: 0 }).reason, "budget_exhausted");
-  assert.equal(decide(item, { ...active, budgetUsd: null }).effect, "wake_engineer");
+  assert.equal(decide(item, { ...active, authorizedDispatches: null }).reason, "dispatch_not_authorized");
+  assert.equal(decide(item, { ...active, authorizedDispatches: 0, budgetUsd: 1_000_000 }).reason, "dispatch_not_authorized");
+  assert.equal(
+    decide(item, { ...active, authorizedDispatches: 1, usedDispatches: 1 }).reason,
+    "dispatch_authorization_exhausted",
+  );
+  assert.equal(decide(item, { ...active, budgetUsd: 0 }).effect, "wake_engineer");
 });
 
 check("T10 and T11 verification evidence is bound to the candidate SHA", () => {
@@ -273,6 +295,21 @@ check("T10 and T11 verification evidence is bound to the candidate SHA", () => {
     "verified",
   );
   assert.equal(item.verifiedSha, "sha-1");
+  const premature = applyEvent(item, { type: "accept", sha: "sha-1" }, active);
+  assert.equal(premature.ok, false);
+  assert.equal(premature.reason, "wrong_stage");
+  assert.equal(premature.item.stage, "verified");
+  item = must(applyEvent(item, { type: "authorize_integration", sha: "sha-1" }, active), "integration_authorized");
+  const missingMerge = applyEvent(item, { type: "integrate", candidateSha: "sha-1", mergeSha: "" }, active);
+  assert.equal(missingMerge.reason, "integration_evidence_missing");
+  item = must(
+    applyEvent(item, { type: "integrate", candidateSha: "sha-1", mergeSha: "merge-1" }, active),
+    "integrated",
+  );
+  item = must(
+    applyEvent(item, { type: "reconcile", sha: "sha-1", reconciliationId: "rec-1" }, active),
+    "reconciled",
+  );
   const wrongAccept = applyEvent(item, { type: "accept", sha: "sha-other" }, active);
   assert.equal(wrongAccept.reason, "sha_mismatch");
   item = must(applyEvent(item, { type: "accept", sha: "sha-1" }, active), "accepted");
@@ -408,6 +445,13 @@ check("T30 initiative summary is derived from packet stages", () => {
     "verifying",
   );
   assert.equal(
+    deriveInitiative({
+      investigation: "investigating",
+      packets: [{ stage: "integration_authorized", required: true }],
+    }),
+    "in_production",
+  );
+  assert.equal(
     deriveInitiative({ investigation: "specifying", packets: [{ stage: "accepted", required: true }] }),
     "reconciling",
   );
@@ -518,6 +562,10 @@ check("seat prompts keep the Travis gates that stopped empty boots", () => {
   assert.match(engineer, /If `factory-blocked` or `factory-hold` is on the PR: stop/);
   assert.match(engineer, /On `factory-repair`, recut once, then stop/);
   assert.match(engineer, /You do not open another pull request/);
+  assert.equal(analyst.includes("HEAD~1"), false);
+  assert.match(analyst, /packetId, revision, and prHead/);
+  assert.match(engineer, /packetId, revision, and prHead/);
+  assert.match(architect, /No timer enforces this interval/);
   const packet = read("docs/factory/initiatives/exec-identity/packets/PKT-001-click-attribution.md");
   assert.match(packet, /\*\*Wake:\*\* hold/);
 });
@@ -581,4 +629,337 @@ function verifyingItem(): WorkItem {
   return must(applyEvent(releasedThroughCandidate("sha-1"), { type: "start_verification", sha: "sha-1" }, active), "verifying");
 }
 
+check("T31 a lease is refused when the role does not own the stage", () => {
+  const released = must(
+    applyEvent(freshItem(), { type: "release", wake: "sa", gatesPass: true, revision: "rev-1" }, active),
+    "released",
+  );
+  const engineer = applyEvent(
+    released,
+    { type: "acquire_lease", workerId: "bc-e", role: "engineer", until: "2026-10-29T13:00:00Z", revision: "rev-1" },
+    active,
+  );
+  assert.equal(engineer.reason, "role_not_admitted");
+  assert.equal(engineer.item.stage, "released");
+  assert.equal(engineer.item.lease, null);
+  const analysis = must(
+    applyEvent(
+      released,
+      { type: "acquire_lease", workerId: "bc-a", role: "analyst", until: "2026-10-29T13:00:00Z", revision: "rev-1" },
+      active,
+    ),
+    "lease_acquired",
+  );
+  const analystLater = applyEvent(
+    { ...analysis, stage: "change_specified", lease: null },
+    { type: "acquire_lease", workerId: "bc-a", role: "analyst", until: "2026-10-29T13:00:00Z", revision: "rev-1" },
+    active,
+  );
+  assert.equal(analystLater.reason, "role_not_admitted");
+});
+
+check("T32 an expired lease cannot sign a change or commit a candidate", () => {
+  let item = must(
+    applyEvent(freshItem(), { type: "release", wake: "sa", gatesPass: true, revision: "rev-1" }, active),
+    "released",
+  );
+  item = must(
+    applyEvent(
+      item,
+      { type: "acquire_lease", workerId: "bc-a", role: "analyst", until: "2026-10-29T11:00:00Z", revision: "rev-1" },
+      active,
+    ),
+    "lease_acquired",
+  );
+  const signed = applyEvent(
+    item,
+    {
+      type: "sign_change",
+      revision: "rev-1",
+      sections: [...sections()],
+      workerId: "bc-a",
+    },
+    active,
+  );
+  assert.equal(signed.reason, "lease_expired");
+  assert.equal(signed.item.stage, "analysis");
+  const engineering = {
+    ...item,
+    stage: "engineering" as const,
+    lease: {
+      workerId: "bc-e",
+      role: "engineer" as const,
+      until: "2026-10-29T11:00:00Z",
+      revision: "rev-1",
+    },
+  };
+  const committed = applyEvent(
+    engineering,
+    { type: "commit_candidate", sha: "sha-1", revision: "rev-1", workerId: "bc-e" },
+    active,
+  );
+  assert.equal(committed.reason, "lease_expired");
+});
+
+check("T38 through T41 durable dispatch binds the wake and rejects stale or failed labels", async () => {
+  const calls: string[] = [];
+  const store = new MemoryStore(emptyLedger(3));
+  const world = active;
+  const packetId = "pkt-001-click-attribution";
+  const prHead = "head-1";
+  let result = await commitEvent(
+    store,
+    packetId,
+    { type: "release", wake: "sa", gatesPass: true, revision: "rev-1" },
+    world,
+  );
+  assert.equal(result.reason, "released");
+
+  const failed = await dispatchWake({
+    store,
+    actuator: scriptedActuator([{ ok: false, reason: "label_api_failed" }], calls),
+    packetId,
+    prHead,
+    activation: "active",
+    now: world.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(failed.ok, false);
+  assert.equal(failed.reason, "label_api_failed");
+  let ledger = await store.read();
+  assert.equal(ledger.usedDispatches, 0);
+  assert.equal(ledger.packets[packetId].dispatch, null);
+  assert.equal(ledger.packets[packetId].dispatchedSaRevision, null);
+  assert.equal(ledger.stateRevision, 1);
+
+  const woke = await dispatchWake({
+    store,
+    actuator: scriptedActuator([{ ok: true, reason: "labeled" }], calls),
+    packetId,
+    prHead,
+    activation: "active",
+    now: world.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(woke.reason, "dispatched");
+  assert.equal(woke.effect, "wake_sa");
+  ledger = await store.read();
+  assert.equal(ledger.usedDispatches, 1);
+  assert.equal(ledger.stateRevision, 2);
+  const dispatch = ledger.packets[packetId].dispatch;
+  assert.ok(dispatch);
+  assert.equal(
+    workerMayRun({
+      label: "factory-wake-sa",
+      packetId,
+      revision: "rev-1",
+      prHead,
+      wake: "sa",
+      dispatch,
+    }).ok,
+    true,
+  );
+  assert.equal(
+    workerMayRun({
+      label: "factory-wake-sa",
+      packetId,
+      revision: "rev-1",
+      prHead: "head-2",
+      wake: "sa",
+      dispatch,
+    }).reason,
+    "pr_head_mismatch",
+  );
+  assert.equal(
+    workerMayRun({
+      label: "factory-wake-sa",
+      packetId: "other",
+      revision: "rev-1",
+      prHead,
+      wake: "sa",
+      dispatch,
+    }).reason,
+    "packet_mismatch",
+  );
+  assert.equal(
+    workerMayRun({
+      label: "factory-wake-sa",
+      packetId,
+      revision: "rev-old",
+      prHead,
+      wake: "sa",
+      dispatch,
+    }).reason,
+    "revision_mismatch",
+  );
+  assert.equal(
+    workerMayRun({
+      label: "factory-wake-engineer",
+      packetId,
+      revision: "rev-1",
+      prHead,
+      wake: "sa",
+      dispatch,
+    }).reason,
+    "label_mismatch",
+  );
+
+  const beforeDuplicate = calls.length;
+  const duplicate = await dispatchWake({
+    store,
+    actuator: scriptedActuator([{ ok: true, reason: "labeled" }], calls),
+    packetId,
+    prHead,
+    activation: "active",
+    now: world.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(duplicate.ok, false);
+  assert.equal(duplicate.reason, "no_transition");
+  assert.equal(calls.length, beforeDuplicate);
+
+  result = await commitEvent(
+    store,
+    packetId,
+    { type: "acquire_lease", workerId: "bc-a", role: "analyst", until: "2026-10-29T13:00:00Z", revision: "rev-1" },
+    world,
+  );
+  assert.equal(result.item.stage, "analysis");
+  result = await commitEvent(
+    store,
+    packetId,
+    { type: "sign_change", revision: "rev-1", sections: [...sections()], workerId: "bc-a" },
+    world,
+  );
+  assert.equal(result.reason, "change_specified");
+  const engineerWake = await dispatchWake({
+    store,
+    actuator: scriptedActuator([{ ok: true, reason: "labeled" }], calls),
+    packetId,
+    prHead,
+    activation: "active",
+    now: world.now,
+    engineeringBusy: false,
+    budgetUsd: 0,
+  });
+  assert.equal(engineerWake.effect, "wake_engineer");
+  assert.equal(
+    workerMayRun({
+      label: "factory-wake-engineer",
+      packetId,
+      revision: "rev-1",
+      prHead,
+      wake: "sa",
+      dispatch: (await store.read()).packets[packetId].dispatch,
+    }).ok,
+    true,
+  );
+  result = await commitEvent(
+    store,
+    packetId,
+    { type: "acquire_lease", workerId: "bc-e", role: "engineer", until: "2026-10-29T14:00:00Z", revision: "rev-1" },
+    world,
+  );
+  result = await commitEvent(
+    store,
+    packetId,
+    { type: "commit_candidate", sha: "sha-1", revision: "rev-1", workerId: "bc-e" },
+    world,
+  );
+  assert.equal(result.item.candidateSha, "sha-1");
+  result = await commitEvent(store, packetId, { type: "start_verification", sha: "sha-1" }, world);
+  result = await commitEvent(
+    store,
+    packetId,
+    { type: "verification_result", sha: "sha-1", outcome: "pass" },
+    world,
+  );
+  assert.equal(result.item.stage, "verified");
+  const tooSoon = await commitEvent(store, packetId, { type: "accept", sha: "sha-1" }, world);
+  assert.equal(tooSoon.reason, "wrong_stage");
+  result = await commitEvent(store, packetId, { type: "authorize_integration", sha: "sha-1" }, world);
+  result = await commitEvent(
+    store,
+    packetId,
+    { type: "integrate", candidateSha: "sha-1", mergeSha: "merge-1" },
+    world,
+  );
+  result = await commitEvent(
+    store,
+    packetId,
+    { type: "reconcile", sha: "sha-1", reconciliationId: "rec-pkt-001" },
+    world,
+  );
+  result = await commitEvent(store, packetId, { type: "accept", sha: "sha-1" }, world);
+  assert.equal(result.item.stage, "accepted");
+  assert.equal(result.item.integratedSha, "merge-1");
+  ledger = await store.read();
+  assert.equal(ledger.usedDispatches, 2);
+  assert.equal(ledger.packets[packetId].stage, "accepted");
+
+  const dir = mkdtempSync(join(tmpdir(), "tower-factory-"));
+  const file = join(dir, "ledger.json");
+  writeFileSync(file, `${JSON.stringify(emptyLedger(1), null, 2)}\n`);
+  const files = new FileStore(file);
+  const stale = await files.compareAndSwap(0, { ...emptyLedger(1), stateRevision: 1 });
+  assert.equal(stale, true);
+  const rejected = await files.compareAndSwap(0, { ...emptyLedger(1), stateRevision: 2 });
+  assert.equal(rejected, false);
+  assert.equal((await files.read()).stateRevision, 1);
+
+  const disabled = await githubLabelActuator({}).add({
+    label: "factory-wake-sa",
+    packetId,
+    revision: "rev-1",
+    prHead,
+  });
+  assert.equal(disabled.reason, "actuator_disabled");
+  const armed = await githubLabelActuator({
+    FACTORY_CONTROLLER: "active",
+    FACTORY_LABELS: "armed",
+    WAKE_GITHUB_TOKEN: "present",
+  }).add({ label: "factory-wake-sa", packetId, revision: "rev-1", prHead });
+  assert.equal(armed.reason, "actuator_not_connected");
+  assert.deepEqual(labelEditArgs(136, "factory-wake-sa"), ["pr", "edit", "136", "--add-label", "factory-wake-sa"]);
+
+  const committed = JSON.parse(read(".factory/state/ledger.json"));
+  assert.equal(committed.authorizedDispatches, null);
+  assert.equal(committed.usedDispatches, 0);
+  assert.equal(committed.packets[packetId].stage, "draft");
+  assert.equal(committed.packets[packetId].wake, "hold");
+});
+
+function sections(): string[] {
+  return [
+    "intent",
+    "must",
+    "stores",
+    "runtime",
+    "ports",
+    "verify",
+    "out_of_scope",
+    "impact_manifest",
+    "dependency_reconciliation",
+  ];
+}
+
+const failures: string[] = [];
+for (const item of queue) {
+  try {
+    await item.fn();
+    passed += 1;
+    console.log(`ok  ${item.name}`);
+  } catch (error) {
+    failures.push(item.name);
+    console.error(`fail ${item.name}`);
+    console.error(error);
+  }
+}
+if (failures.length) {
+  console.error(`\n${failures.length} failed, ${passed} passed`);
+  process.exit(1);
+}
 console.log(`\n${passed} checks passed`);

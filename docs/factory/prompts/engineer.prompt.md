@@ -17,12 +17,12 @@ If neither `factory-wake-engineer` nor `factory-repair` is on the PR: stop.
 Switch to the pull request head branch before reading the packet.
 
 ```bash
-PR_BRANCH=$(gh pr view --json headRefName --jq .headRefName 2>/dev/null || true)
-if [ -n "$PR_BRANCH" ]; then
-  git fetch origin "$PR_BRANCH"
-  git checkout "$PR_BRANCH"
-fi
+PR_JSON=$(gh pr view --json headRefName,headRefOid --jq '{branch:.headRefName,head:.headRefOid}' 2>/dev/null || true)
 ```
+
+Check out that branch. Then read `.factory/state/ledger.json`.
+
+Stop unless packetId, revision, and prHead match the dispatch record in that ledger, and the record's label is the label that woke you (`factory-wake-engineer` or `factory-repair`). A missing record or a different head means this wake is stale. Stop.
 
 `factory-wake-engineer` requires a signed systems-change packet on this branch for the manifest revision. If it is already planted and nothing specified-and-clear remains, stop.
 
