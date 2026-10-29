@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tower.factory.packet",
+  "type": "object",
+  "required": ["id", "initiativeId", "release", "wake", "releaseEligible", "stage", "revision"],
+  "additionalProperties": true,
+  "properties": {
+    "id": { "type": "string" },
+    "initiativeId": { "type": "string" },
+    "release": { "enum": ["draft", "released"] },
+    "wake": { "enum": ["hold", "sa"] },
+    "releaseEligible": { "type": "boolean" },
+    "stage": { "enum": ["draft", "released", "analysis", "change_specified", "engineering", "candidate", "verifying", "verified", "integration_authorized", "integrated", "reconciled", "accepted", "blocked", "returned_architect", "returned_analyst"] },
+    "revision": { "type": "string" }
+  }
+}

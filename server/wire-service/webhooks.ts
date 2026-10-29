@@ -100,11 +100,12 @@ export async function handleResendWebhook(c: Context) {
   if (eventClass) {
     // Resolve firm from outbound_messages when possible
     const out = await pool.query(
-      `SELECT firm_id, contact_id FROM outbound_messages WHERE provider_message_id = $1 LIMIT 1`,
+      `SELECT firm_id, contact_id, enrollment_id FROM outbound_messages WHERE provider_message_id = $1 LIMIT 1`,
       [messageId],
     );
     const firmId = (out.rows[0]?.firm_id as string) ?? "unknown";
     const contactId = out.rows[0]?.contact_id as string | null;
+    const enrollmentId = (out.rows[0]?.enrollment_id as string | null) ?? null;
 
     const evtId = id("evt");
     await pool.query(
@@ -122,14 +123,14 @@ export async function handleResendWebhook(c: Context) {
       ],
     );
 
-    if (eventClass === "clicked" && contactId) {
+    // Advance the enrollment stamped on this message. A missing stamp does not
+    // fall through to the newest open enrollment.
+    if (eventClass === "clicked" && enrollmentId) {
       try {
-        const { onCompletionWrite } = await import("./campaignHousing.ts");
-        await onCompletionWrite(pool, {
-          firmId,
-          contactId,
-          table: "messaging_events",
-          rowId: evtId,
+        const { advanceEnrollmentCampaign } = await import("./campaignHousing.ts");
+        await advanceEnrollmentCampaign(pool, enrollmentId, {
+          completionTable: "messaging_events",
+          completionId: evtId,
         });
       } catch (err) {
         console.warn("[webhooks] objective_met on click:", err);

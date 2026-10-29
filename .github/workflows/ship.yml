@@ -86,6 +86,9 @@ jobs:
       - name: verify:ship (spine + deny gates)
         run: npm run verify:ship
 
+      - name: verify:click-attribution (PKT-001)
+        run: npx tsx --env-file=.env scripts/verify-click-attribution.ts
+
       - name: verify:affordances (chosen-value round-trip)
         run: npm run verify:affordances
 
