@@ -21,6 +21,6 @@
   },
   "authorization": "Wake stays hold until the founder authorizes factory dispatch. Eligibility is not release.",
   "acceptanceOracle": ".factory/experiments/click-attribution.ts",
-  "productionPlant": "not started",
-  "systemsChange": "not signed"
+  "productionPlant": "server/wire-service click path on this branch; ledger stays draft until a real merge SHA",
+  "systemsChange": "docs/factory/initiatives/exec-identity/systems/SCP-pkt-001-click-attribution.md"
 }

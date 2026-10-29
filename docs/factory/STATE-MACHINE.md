@@ -6,7 +6,7 @@ A wake is a proposal from `decide`. It is not a label. `acknowledgeDispatch` run
 
 Absence of `factory-wake-sa`, `factory-wake-engineer`, or `factory-repair` is not permission to advance.
 
-`github-actions[bot]` is not a valid label actor. The actuator, when it is later wired, must use `WAKE_GITHUB_TOKEN` for the GitHub user connected to the Cursor automation. That actuator is not wired. See `.github/workflows/factory-dispatch.yml`.
+`github-actions[bot]` is not a valid label actor. When the actuator is armed it sets `GH_TOKEN` and `GITHUB_TOKEN` from `WAKE_GITHUB_TOKEN`, the GitHub user connected to the Cursor automation. It is connected and disarmed. See `.github/workflows/factory-dispatch.yml`.
 
 ## Packet stages
 
@@ -97,8 +97,8 @@ There is no `factory-wake-architect` label. Investigation is a seated execution,
 
 ## Persistence
 
-`.factory/controller/dispatch.ts` loads `.factory/state/ledger.json` shape, locks, and compare-and-swaps on `stateRevision`. A failed label add does not bump the revision and does not increment `usedDispatches`. The committed ledger in this branch is the held draft of PKT-001. Tests use their own ledger. They do not advance the committed file.
+`.factory/controller/dispatch.ts` loads the ledger shape and compare-and-swaps on `stateRevision`. A live runner uses `GitHubContentsStore`: the Contents API blob sha is the compare token, and a stale PUT is a 409. `FileStore` locks a directory on one machine only. A failed label add does not bump the revision and does not increment `usedDispatches`. The committed ledger in this branch is the held draft of PKT-001. Tests use their own ledger. They do not advance the committed file.
 
 ## What is not implemented
 
-`reopen` from `returned_architect` or `returned_analyst` is not an event yet. The label actuator does not spawn `gh` and does not start a Cursor agent. Checkpoint times are not observed by a scheduler. A provider spending limit is not configured.
+`reopen` from `returned_architect` or `returned_analyst` is not an event yet. The label actuator can spawn `gh pr edit` and stays disarmed until spending confirmation, saved Cursor automations, and a positive `authorizedDispatches`. It does not start a Cursor agent by itself. Checkpoint times are not observed by a scheduler. A provider spending limit is not configured.

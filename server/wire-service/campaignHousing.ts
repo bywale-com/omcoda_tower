@@ -733,6 +733,8 @@ async function objectiveSatisfiedBy(
     return { ok: Boolean(r.rowCount), completionId: r.rows[0]?.id ?? null };
   }
 
+  // Claim 3: the click matches enrollment E only when the message is stamped
+  // with E. Sharing campaign_objective_id with another open enrollment is not a match.
   const r = await pool.query<{ id: string }>(
     `SELECT e.id FROM messaging_events e
       WHERE e.firm_id=$1 AND e.contact_id=$2 AND e.event_class = 'clicked'
@@ -741,7 +743,7 @@ async function objectiveSatisfiedBy(
            WHERE contact_id=$2
              AND provider_message_id IS NOT NULL
              AND (
-               campaign_objective_id = $3
+               (campaign_objective_id = $3 AND enrollment_id = $4)
                OR (
                  campaign_objective_id IS NULL
                  AND enrollment_id = $4

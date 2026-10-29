@@ -19,6 +19,12 @@ import {
   type World,
 } from "../.factory/controller/machine.ts";
 import {
+  ContentsBlobRemote,
+  GitHubContentsStore,
+  githubContentsRemote,
+  type ContentsRemote,
+} from "../.factory/controller/contents.ts";
+import {
   FileStore,
   MemoryStore,
   commitEvent,
@@ -27,6 +33,8 @@ import {
   githubLabelActuator,
   labelEditArgs,
   scriptedActuator,
+  type FactoryLedger,
+  type GhRun,
 } from "../.factory/controller/dispatch.ts";
 import {
   clickMatchesEnrollment,
@@ -515,7 +523,7 @@ check("committed manifests stay inactive, held, and pointed at PR 135", () => {
   const factory = JSON.parse(read(".factory/manifests/factory.json"));
   assert.equal(factory.activation, "inactive");
   assert.equal(factory.dispatch, "forbidden");
-  assert.equal(factory.labelActuator, "not_wired");
+  assert.equal(factory.labelActuator, "connected_disarmed");
   const packet = JSON.parse(read(".factory/manifests/packets/pkt-001-click-attribution.json"));
   assert.equal(packet.wake, "hold");
   assert.equal(packet.release, "draft");
@@ -543,7 +551,10 @@ check("dispatch workflow cannot boot from a pull request or a schedule", () => {
   assert.equal(workflow.includes("schedule:"), false);
   assert.ok(workflow.includes("workflow_dispatch:"));
   assert.ok(workflow.includes("I_AUTHORIZE_FACTORY_DISPATCH"));
-  assert.ok(workflow.includes("label actuator is not wired"));
+  assert.ok(workflow.includes("actuator disarmed"));
+  assert.ok(workflow.includes("FACTORY_SPEND_LIMIT_CONFIRMED"));
+  assert.ok(workflow.includes("FACTORY_AUTOMATIONS_SAVED"));
+  assert.equal(workflow.includes("gh pr edit"), false);
 });
 
 check("seat prompts keep the Travis gates that stopped empty boots", () => {
@@ -910,26 +921,202 @@ check("T38 through T41 durable dispatch binds the wake and rejects stale or fail
   assert.equal(rejected, false);
   assert.equal((await files.read()).stateRevision, 1);
 
-  const disabled = await githubLabelActuator({}).add({
-    label: "factory-wake-sa",
-    packetId,
-    revision: "rev-1",
-    prHead,
-  });
+  let spawned = 0;
+  const spy: GhRun = async (args, childEnv) => {
+    spawned += 1;
+    assert.equal(childEnv.GH_TOKEN, "wake-token");
+    assert.equal(childEnv.GITHUB_TOKEN, "wake-token");
+    assert.deepEqual(args, labelEditArgs(136, "factory-wake-sa"));
+    return { status: 0, stdout: "", stderr: "" };
+  };
+  const labelInput = { label: "factory-wake-sa", packetId, revision: "rev-1", prHead };
+  const disabled = await githubLabelActuator({ env: {}, pr: 136, runGh: spy }).add(labelInput);
   assert.equal(disabled.reason, "actuator_disabled");
+  const tokenOnly = await githubLabelActuator({
+    env: {
+      FACTORY_CONTROLLER: "active",
+      FACTORY_LABELS: "armed",
+      WAKE_GITHUB_TOKEN: "wake-token",
+    },
+    pr: 136,
+    runGh: spy,
+  }).add(labelInput);
+  assert.equal(tokenOnly.reason, "actuator_disabled");
+  assert.equal(spawned, 0);
   const armed = await githubLabelActuator({
-    FACTORY_CONTROLLER: "active",
-    FACTORY_LABELS: "armed",
-    WAKE_GITHUB_TOKEN: "present",
-  }).add({ label: "factory-wake-sa", packetId, revision: "rev-1", prHead });
-  assert.equal(armed.reason, "actuator_not_connected");
+    env: {
+      FACTORY_CONTROLLER: "active",
+      FACTORY_LABELS: "armed",
+      WAKE_GITHUB_TOKEN: "wake-token",
+      FACTORY_SPEND_LIMIT_CONFIRMED: "yes",
+      FACTORY_AUTOMATIONS_SAVED: "yes",
+    },
+    pr: 136,
+    runGh: spy,
+  }).add(labelInput);
+  assert.equal(armed.reason, "labeled");
+  assert.equal(spawned, 1);
+  const failedAdd = await githubLabelActuator({
+    env: {
+      FACTORY_CONTROLLER: "active",
+      FACTORY_LABELS: "armed",
+      WAKE_GITHUB_TOKEN: "wake-token",
+      FACTORY_SPEND_LIMIT_CONFIRMED: "yes",
+      FACTORY_AUTOMATIONS_SAVED: "yes",
+    },
+    pr: 136,
+    runGh: async () => ({ status: 1, stdout: "", stderr: "denied" }),
+  }).add(labelInput);
+  assert.equal(failedAdd.reason, "label_add_failed");
   assert.deepEqual(labelEditArgs(136, "factory-wake-sa"), ["pr", "edit", "136", "--add-label", "factory-wake-sa"]);
+  const applyScript = read("scripts/factory-dispatch-apply.ts");
+  assert.match(applyScript, /dispatch_not_authorized/);
+  assert.match(read(".factory/controller/dispatch.ts"), /not shared by separate GitHub Actions runners/);
 
   const committed = JSON.parse(read(".factory/state/ledger.json"));
   assert.equal(committed.authorizedDispatches, null);
   assert.equal(committed.usedDispatches, 0);
   assert.equal(committed.packets[packetId].stage, "draft");
   assert.equal(committed.packets[packetId].wake, "hold");
+});
+
+class BarrierRemote implements ContentsRemote {
+  sha = "blob-0";
+  ledger: FactoryLedger;
+  private gets = 0;
+  private release: (() => void) | null = null;
+
+  constructor(ledger: FactoryLedger) {
+    this.ledger = structuredClone(ledger);
+  }
+
+  async get() {
+    const snap = { sha: this.sha, ledger: structuredClone(this.ledger) };
+    this.gets += 1;
+    if (this.gets === 1) {
+      await new Promise<void>((resolve) => {
+        this.release = resolve;
+      });
+    } else if (this.gets === 2) {
+      this.release?.();
+    }
+    return snap;
+  }
+
+  async put(expectedSha: string, ledger: FactoryLedger) {
+    if (expectedSha !== this.sha) return { ok: false as const, reason: "conflict" as const };
+    this.sha = `blob-${ledger.stateRevision}`;
+    this.ledger = structuredClone(ledger);
+    return { ok: true as const, sha: this.sha };
+  }
+}
+
+check("contents compare-and-swap rejects a stale blob across two clients", async () => {
+  const shared = new ContentsBlobRemote({ sha: "blob-0", ledger: emptyLedger(2) });
+  const left = new GitHubContentsStore(shared);
+  const right = new GitHubContentsStore(shared);
+  const next = { ...emptyLedger(2), stateRevision: 1 };
+  assert.equal(await left.compareAndSwap(0, next), true);
+  assert.equal(await right.compareAndSwap(0, { ...emptyLedger(2), stateRevision: 1 }), false);
+  assert.equal((await right.read()).stateRevision, 1);
+
+  const raced = new BarrierRemote(emptyLedger(3));
+  const a = new GitHubContentsStore(raced);
+  const b = new GitHubContentsStore(raced);
+  const release = {
+    type: "release" as const,
+    wake: "sa" as const,
+    gatesPass: true,
+    revision: "rev-1",
+  };
+  const packetId = "pkt-001-click-attribution";
+  const [first, second] = await Promise.all([
+    commitEvent(a, packetId, release, active),
+    commitEvent(b, packetId, release, active),
+  ]);
+  assert.equal([first.ok, second.ok].filter(Boolean).length, 1);
+  assert.equal((await a.read()).stateRevision, 1);
+  assert.equal((await a.read()).packets[packetId].stage, "released");
+
+  let sha = "blob-0";
+  let body = emptyLedger(1);
+  let putSha = "";
+  const remote = githubContentsRemote({
+    owner: "bywale-com",
+    repo: "omcoda_tower",
+    path: ".factory/state/ledger.json",
+    branch: "cursor/software-factory-33ee",
+    env: { WAKE_GITHUB_TOKEN: "wake-token", GITHUB_TOKEN: "bot-token" },
+    runGh: async (args, childEnv, stdin) => {
+      assert.equal(childEnv.GH_TOKEN, "wake-token");
+      assert.equal(childEnv.GITHUB_TOKEN, "wake-token");
+      if (args.includes("--method")) {
+        const sent = JSON.parse(stdin ?? "{}") as { sha: string; content: string };
+        putSha = sent.sha;
+        if (sent.sha !== sha) return { status: 1, stdout: "", stderr: "409 Conflict" };
+        sha = "blob-after";
+        body = JSON.parse(Buffer.from(sent.content, "base64").toString("utf8")) as FactoryLedger;
+        return { status: 0, stdout: JSON.stringify({ content: { sha } }), stderr: "" };
+      }
+      return {
+        status: 0,
+        stdout: JSON.stringify({
+          sha,
+          content: Buffer.from(JSON.stringify(body)).toString("base64"),
+          encoding: "base64",
+        }),
+        stderr: "",
+      };
+    },
+  });
+  const seen = await remote.get();
+  assert.equal(seen?.sha, "blob-0");
+  const wrote = await remote.put(seen!.sha, { ...emptyLedger(1), stateRevision: 1 });
+  assert.equal(wrote.ok, true);
+  assert.equal(putSha, "blob-0");
+  const stale = await remote.put("blob-0", { ...emptyLedger(1), stateRevision: 1 });
+  assert.equal(stale.ok, false);
+  if (!stale.ok) assert.equal(stale.reason, "conflict");
+  assert.equal((await remote.get())?.ledger.stateRevision, 1);
+});
+
+check("production click path advances the enrollment stamped on the message", () => {
+  const housing = read("server/wire-service/campaignHousing.ts");
+  const clickAt = housing.indexOf("event_class = 'clicked'");
+  assert.ok(clickAt > 0);
+  const clickSql = housing.slice(clickAt, housing.indexOf("ORDER BY e.at DESC", clickAt));
+  assert.match(clickSql, /\(campaign_objective_id = \$3 AND enrollment_id = \$4\)/);
+  assert.match(clickSql, /campaign_objective_id IS NULL/);
+  assert.match(clickSql, /enrollment_id = \$4/);
+  assert.match(clickSql, /created_at >= \$5/);
+  const meetingAt = housing.indexOf('completion_table === "meeting_booked"');
+  const meetingSql = housing.slice(meetingAt, clickAt);
+  assert.equal(meetingSql.includes("campaign_objective_id = $3 AND enrollment_id = $4"), false);
+
+  const hook = read("server/wire-service/webhooks.ts");
+  assert.match(hook, /SELECT firm_id, contact_id, enrollment_id FROM outbound_messages/);
+  const click = hook.slice(hook.indexOf('eventClass === "clicked"'), hook.indexOf('eventClass === "bounce_hard"'));
+  assert.match(click, /advanceEnrollmentCampaign/);
+  assert.match(click, /enrollmentId/);
+  assert.equal(click.includes("onCompletionWrite"), false);
+
+  const scp = read("docs/factory/initiatives/exec-identity/systems/SCP-pkt-001-click-attribution.md");
+  for (const heading of [
+    "## Intent",
+    "## Must / must-not",
+    "## Stores and contracts",
+    "## Runtime",
+    "## Ports",
+    "## Verify",
+    "## Out of scope",
+    "## Impact manifest",
+    "## Dependency reconciliation",
+  ]) {
+    assert.ok(scp.includes(heading), heading);
+  }
+  assert.match(scp, /Form and meeting callers of `onCompletionWrite` stay/);
+  const packet = read("docs/factory/initiatives/exec-identity/packets/PKT-001-click-attribution.md");
+  assert.match(packet, /\*\*Wake:\*\* hold/);
 });
 
 function sections(): string[] {

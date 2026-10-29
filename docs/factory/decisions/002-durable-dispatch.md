@@ -13,7 +13,7 @@ A wake is stored only after the label actuator succeeds, and the stored record n
 
 `verified` is not `accepted`. The path is `integration_authorized`, then `integrated` with a merge SHA, then `reconciled`, then `accepted`.
 
-`authorizedDispatches: null` does not mean unlimited. Illustrative dollars do not grant a wake. The GitHub label command is not spawned. `FACTORY_CONTROLLER` stays unset.
+`authorizedDispatches: null` does not mean unlimited. Illustrative dollars do not grant a wake. `FACTORY_CONTROLLER` stays unset. Decision 003 connects the label command and keeps it disarmed, and moves live compare-and-swap onto the Contents API blob sha.
 
 Checkpoint intervals remain worker instructions. No timer enforces them.
 
@@ -23,4 +23,4 @@ The first cut could decide a transition and could not commit one. A lease could 
 
 ## Not decided
 
-Connecting `gh pr edit` to the actuator. Saving the Cursor Automations. The fixed run count for a live PKT-001 pilot. A provider spending limit. Those wait for a person.
+Saving the Cursor Automations. The fixed run count for a live worker pilot. A provider spending limit. Those wait for a person. The label spawn itself is decision 003.

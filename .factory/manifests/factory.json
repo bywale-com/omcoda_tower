@@ -2,8 +2,8 @@
   "name": "tower-software-factory",
   "activation": "inactive",
   "dispatch": "forbidden",
-  "labelActuator": "not_wired",
-  "reason": "Founder has not authorized Cursor Automation activation. Repository variable FACTORY_CONTROLLER is not set to active. The dispatch workflow refuses apply, and even a matching authorization phrase does not add labels.",
+  "labelActuator": "connected_disarmed",
+  "reason": "The label command can spawn gh pr edit. It stays disarmed until FACTORY_CONTROLLER=active, FACTORY_LABELS=armed, WAKE_GITHUB_TOKEN, FACTORY_SPEND_LIMIT_CONFIRMED=yes, and FACTORY_AUTOMATIONS_SAVED=yes. Those are unset. authorizedDispatches is null, which also refuses a wake. Cursor Automations are not saved.",
   "concurrency": {
     "architect": 1,
     "analyst": 1,

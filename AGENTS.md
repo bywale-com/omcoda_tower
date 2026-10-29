@@ -76,4 +76,4 @@ Tower is a Vite + React 18 + TypeScript SPA. Optional Hono backend (auth + wire)
 
 This is how Tower is built. It is not a customer module and it is not the product face.
 
-Front door: [`docs/factory/README.md`](docs/factory/README.md). The controller is inactive. Do not add Cursor Automation triggers. Do not merge, close, or rewrite PR [#135](https://github.com/bywale-com/omcoda_tower/pull/135) (`docs/specification-pass/`). A factory packet on `**Wake:** hold` is not yours to plant. Product work still follows the three seats above until a packet is released and the founder has set repository variable `FACTORY_CONTROLLER` to `active`.
+Front door: [`docs/factory/README.md`](docs/factory/README.md). The controller is inactive. Do not add Cursor Automation triggers. Do not merge, close, or rewrite PR [#135](https://github.com/bywale-com/omcoda_tower/pull/135) (`docs/specification-pass/`). A factory packet on `**Wake:** hold` is not a label-wake assignment. PKT-001’s click plant on this branch is the founder’s bounded pilot; leave Wake on hold, leave the controller inactive, and do not boot a Cursor seat for it.

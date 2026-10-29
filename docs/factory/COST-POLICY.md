@@ -6,7 +6,7 @@ Cursor Automations start cloud agents and are billed as cloud-agent usage. Autom
 
 - GitHub Actions decides. Cursor boots only from a label, and only after activation.
 - This repository’s dispatch workflow has no pull-request trigger and no schedule.
-- The label actuator is not wired, so a label cannot be added by the workflow today.
+- The label actuator is connected and disarmed. Apply adds a label only when the spend-limit confirmation, the saved-automation confirmation, the controller, the label arm, and the wake token are all present, and the ledger’s `authorizedDispatches` is a positive count. None of that is set.
 - Checkpoints do not end the run.
 - Repair returns to the Engineer seat once. The same failure fingerprint does not start another repair without a new justification.
 - External and infrastructure failures do not start an Engineer.

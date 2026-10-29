@@ -55,7 +55,7 @@ The Architect investigates and writes packets in one sustained role. The Analyst
 
 GitHub Actions is the event-driven controller. Cursor Automations, later and only after authorization, are the workers. An always-on model is not the controller.
 
-Durable identities are the ledger in `.factory/state/ledger.json`. `.factory/controller/dispatch.ts` locks that ledger and compare-and-swaps on `stateRevision`. The state machine stays pure. A wake is written only after the label actuator returns success. In this build the GitHub actuator does not spawn a process. Specs and journals are Markdown. Manifests name the packet. The ledger names the stage. GitHub concurrency groups are not a job queue. There is no new database. If a file lock cannot serialize a later live actuator, a small transactional store is the next step.
+Durable identities are the ledger in `.factory/state/ledger.json`. The state machine stays pure. A wake is written only after the label actuator returns success. Live compare-and-swap is the GitHub Contents API blob sha (`GitHubContentsStore`): the first runner whose PUT still names that sha wins, and a second runner receives 409. `FileStore`’s directory lock is one machine and is not that guarantee. The label command can spawn and stays disarmed. Specs and journals are Markdown. Manifests name the packet. The ledger names the stage. GitHub concurrency groups are not a job queue. There is no new database.
 
 ## Activation
 
@@ -70,7 +70,7 @@ The logical factory is specified now. Activation is progressive.
 | 5 | Release gates | Implemented in the controller and held on PKT-001 |
 | 6 | Deterministic controller | Implemented. Dispatch workflow cannot fire on a pull request |
 | 7 | Agent execution adapters | Prompts only. No Cursor automation saved |
-| 8 | Verification pipeline | `npm run factory:check` for the factory. Product `verify:ship` is unchanged |
+| 8 | Verification pipeline | `npm run factory:check` for the factory. Product ship CI also runs `scripts/verify-click-attribution.ts` |
 | 9 | Repair, retry, escalation | Implemented as failure classes in the state machine |
 | 10 | First production run of a product packet | Not started |
 | 11 | Automatic continuation | Not started |

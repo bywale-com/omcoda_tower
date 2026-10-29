@@ -1,9 +1,9 @@
 # exec-identity handoff
 
-**Established:** The initiative exists. PKT-001 is drafted, release-eligible, and on hold. The acceptance oracle matches claim 3’s click rule and is covered by `npm run factory:check`.
+**Established:** PKT-001 is release-eligible and on hold. The systems-change packet is `systems/SCP-pkt-001-click-attribution.md`. The click plant is in `server/wire-service/webhooks.ts` and the messaging-events arm of `objectiveSatisfiedBy`.
 
-**Verified:** The oracle and the controller. Not the production click path in `server/wire-service`.
+**Verified:** The oracle in `npm run factory:check`. The Postgres cases in `scripts/verify-click-attribution.ts`, run by the ship workflow on this pull request. This session wrote the packet and the plant. Cursor Automations did not run.
 
-**Remaining:** Systems analysis is unsigned. No production plant. Claims 4, 6, 7, and 8 have no packets. Claims 12–88 are title-indexed only.
+**Remaining:** The ledger is still `draft` / `hold` / `authorizedDispatches: null`. Integration is a merge of pull request 136. There is no merge SHA, so the packet is not `accepted`. Claims 4, 6, 7, and 8 have no packets. Claims 12–88 are title-indexed only.
 
-**Next:** Do not release PKT-001 until the founder authorizes factory dispatch. The next investigative move on the product record remains PR #135 `docs/specification-pass/NEXT.md` (the seat’s History after the book). That move is not this factory branch’s job.
+**Next:** Do not flip `**Wake:** sa`. Do not set `FACTORY_CONTROLLER`. Do not Save + Activate the prompts. The next investigative move on the product record remains PR #135 `docs/specification-pass/NEXT.md`. That move is not this factory branch’s job.

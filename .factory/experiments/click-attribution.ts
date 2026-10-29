@@ -1,9 +1,9 @@
 /**
  * Acceptance oracle for packet PKT-001.
  *
- * This is the click rule locked in PR #135 claim 3. It is not planted in
- * `server/wire-service`. Production still uses the newest-enrollment select
- * until a released packet is analysed and engineered.
+ * This is the click rule locked in PR #135 claim 3. The production click
+ * path in `server/wire-service` must agree with it. Postgres proof is
+ * `scripts/verify-click-attribution.ts`. This module stays free of the database.
  *
  * Rule:
  * - The click loads the outbound message and names that message's enrollment.

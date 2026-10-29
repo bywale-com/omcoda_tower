@@ -4,7 +4,7 @@ This is the development system that investigates, specifies, implements, and ver
 
 PR [#135](https://github.com/bywale-com/omcoda_tower/pull/135) stays open. Its specification and journals are a read-only source. This tree does not merge or rewrite `docs/specification-pass/`.
 
-The controller is **inactive**. Cursor Automations for these prompts are **not** activated. The label actuator is **not** wired.
+The controller is **inactive**. Cursor Automations for these prompts are **not** activated. The label actuator is **connected and disarmed**: it can spawn `gh pr edit`, and it does not spawn until spending confirmation and saved automations are both present. Neither is set.
 
 ## Read this order
 

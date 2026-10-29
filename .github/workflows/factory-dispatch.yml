@@ -1,9 +1,9 @@
 # Tower factory dispatch.
 # This workflow does not listen to pull requests, pushes, or a schedule.
 # workflow_dispatch simulate runs the deterministic check.
-# workflow_dispatch apply still does not add labels and does not call Cursor.
-# Wiring the label actuator is a later change that requires FACTORY_CONTROLLER=active
-# and the founder authorization phrase. Do not add those side effects here.
+# workflow_dispatch apply adds a label only when every disarm gate passes
+# and the ledger carries a positive authorizedDispatches count.
+# Those gates are unset in this repository. Apply exits before gh.
 
 name: Factory dispatch
 
@@ -20,6 +20,16 @@ on:
           - apply
       authorize:
         description: "Required only for apply: I_AUTHORIZE_FACTORY_DISPATCH"
+        required: false
+        default: ""
+        type: string
+      pr:
+        description: "Pull request number. Required only when apply is fully armed."
+        required: false
+        default: ""
+        type: string
+      pr_head:
+        description: "Pull request head SHA. Required only when apply is fully armed."
         required: false
         default: ""
         type: string
@@ -43,6 +53,14 @@ jobs:
           MODE: ${{ inputs.mode }}
           AUTHORIZE: ${{ inputs.authorize }}
           FACTORY_CONTROLLER: ${{ vars.FACTORY_CONTROLLER }}
+          FACTORY_LABELS: ${{ vars.FACTORY_LABELS }}
+          FACTORY_SPEND_LIMIT_CONFIRMED: ${{ vars.FACTORY_SPEND_LIMIT_CONFIRMED }}
+          FACTORY_AUTOMATIONS_SAVED: ${{ vars.FACTORY_AUTOMATIONS_SAVED }}
+          WAKE_GITHUB_TOKEN: ${{ secrets.WAKE_GITHUB_TOKEN }}
+          FACTORY_PR: ${{ inputs.pr }}
+          FACTORY_PR_HEAD: ${{ inputs.pr_head }}
+          FACTORY_REPOSITORY: ${{ github.repository }}
+          FACTORY_LEDGER_BRANCH: ${{ github.ref_name }}
         run: |
           set -euo pipefail
           if [ "$MODE" != "apply" ]; then
@@ -58,7 +76,8 @@ jobs:
             echo "apply refused: repository variable FACTORY_CONTROLLER is not active."
             exit 1
           fi
-          echo "Authorization phrase and FACTORY_CONTROLLER=active are present."
-          echo "The label actuator is not wired. This job does not add labels and does not call Cursor."
-          npm run factory:check
-          exit 0
+          if [ "$FACTORY_LABELS" != "armed" ] || [ "$FACTORY_SPEND_LIMIT_CONFIRMED" != "yes" ] || [ "$FACTORY_AUTOMATIONS_SAVED" != "yes" ] || [ -z "${WAKE_GITHUB_TOKEN}" ]; then
+            echo "actuator disarmed: spending limit or Cursor automations are not confirmed. No labels were added."
+            exit 1
+          fi
+          npx tsx scripts/factory-dispatch-apply.ts

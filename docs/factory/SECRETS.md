@@ -28,7 +28,7 @@ These are identified from Travis’s working chain (`.github/workflows/wake-pack
 4. Set the repository variable `FACTORY_CONTROLLER` to `active`.
 5. Only then consider `workflow_dispatch` with mode `apply` and the phrase `I_AUTHORIZE_FACTORY_DISPATCH`.
 
-Step 5 still does not add a label. `githubLabelActuator` returns `actuator_disabled` unless `FACTORY_CONTROLLER` is `active`, `FACTORY_LABELS` is `armed`, and `WAKE_GITHUB_TOKEN` is set. Even then this build returns `actuator_not_connected` and does not spawn `gh`. The command it would use is `gh pr edit <pr> --add-label <label>`, built by `labelEditArgs`. Connecting that spawn is a later change, after the simulated lifecycle has been reviewed.
+Step 5 still does not add a label while any disarm gate is unset. `githubLabelActuator` returns `actuator_disabled` without spawning `gh` unless all of these are present: `FACTORY_CONTROLLER=active`, `FACTORY_LABELS=armed`, `WAKE_GITHUB_TOKEN`, `FACTORY_SPEND_LIMIT_CONFIRMED=yes`, and `FACTORY_AUTOMATIONS_SAVED=yes`. The command is `gh pr edit <pr> --add-label <label>`, built by `labelEditArgs`, with `GH_TOKEN` and `GITHUB_TOKEN` set from `WAKE_GITHUB_TOKEN`. The apply script then refuses when ledger `authorizedDispatches` is null. That count is still null.
 
 ## Travis failures this list is answering
 

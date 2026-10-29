@@ -9,6 +9,10 @@ on:
       - "docs/factory/**"
       - ".github/workflows/factory-check.yml"
       - ".github/workflows/factory-dispatch.yml"
+      - "server/wire-service/webhooks.ts"
+      - "server/wire-service/campaignHousing.ts"
+      - "scripts/verify-click-attribution.ts"
+      - "scripts/factory-dispatch-apply.ts"
   workflow_dispatch:
 
 permissions:

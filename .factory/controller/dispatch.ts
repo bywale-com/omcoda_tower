@@ -1,14 +1,20 @@
 /**
  * Durable dispatch adapter.
  *
- * The state machine decides. This module loads a ledger, takes an exclusive
- * lock, commits a transition only when the state revision still matches, and
- * records a wake only after the label actuator reports success.
+ * The state machine decides. This module loads a ledger, commits a transition
+ * only when the state revision still matches, and records a wake only after
+ * the label actuator reports success.
  *
- * The GitHub process is not spawned. `githubLabelActuator` refuses even when
- * the environment looks armed, so this build cannot add a label or start a
- * Cursor agent. Tests pass a scripted actuator.
+ * `FileStore` locks a directory on one machine. That lock does not exist on
+ * another GitHub Actions runner. Live compare-and-swap is `GitHubContentsStore`
+ * in `contents.ts`: the Contents API blob sha, 409 on a stale write.
+ *
+ * `githubLabelActuator` can spawn `gh pr edit`. It does not spawn unless the
+ * controller is active, labels are armed, the wake token is set, a spending
+ * limit is confirmed, and the Cursor automations are confirmed saved. None of
+ * those are set in this tree. A disabled call does not start a process.
  */
+import { spawn } from "node:child_process";
 import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import {
@@ -119,6 +125,10 @@ async function withLock<T>(lockDir: string, fn: () => Promise<T>): Promise<T> {
   throw new Error("lock_timeout");
 }
 
+/**
+ * Single-machine ledger. The lock directory is not shared by separate GitHub Actions runners.
+ * Do not use this class as the live dispatch store.
+ */
 export class FileStore implements StateStore {
   constructor(private readonly file: string) {}
 
@@ -242,18 +252,78 @@ export async function dispatchWake(opts: {
   });
 }
 
-/** Arguments a future armed actuator would pass to `gh`. This build never spawns it. */
+/** Arguments `gh` receives when the actuator is armed. */
 export function labelEditArgs(pr: number, label: string): string[] {
   return ["pr", "edit", String(pr), "--add-label", label];
 }
 
-export function githubLabelActuator(env: NodeJS.ProcessEnv = process.env): LabelActuator {
+export interface GhResult {
+  status: number;
+  stdout: string;
+  stderr: string;
+}
+
+export type GhRun = (args: string[], env: NodeJS.ProcessEnv, stdin?: string) => Promise<GhResult>;
+
+export function spawnGh(args: string[], env: NodeJS.ProcessEnv, stdin?: string): Promise<GhResult> {
+  return new Promise((resolve, reject) => {
+    const child = spawn("gh", args, { env, stdio: ["pipe", "pipe", "pipe"] });
+    let stdout = "";
+    let stderr = "";
+    child.stdout.setEncoding("utf8");
+    child.stderr.setEncoding("utf8");
+    child.stdout.on("data", (chunk) => {
+      stdout += chunk;
+    });
+    child.stderr.on("data", (chunk) => {
+      stderr += chunk;
+    });
+    child.on("error", reject);
+    child.on("close", (status) => resolve({ status: status ?? 1, stdout, stderr }));
+    if (stdin !== undefined) child.stdin.end(stdin);
+    else child.stdin.end();
+  });
+}
+
+function actuatorArmed(env: NodeJS.ProcessEnv): boolean {
+  return (
+    env.FACTORY_CONTROLLER === "active" &&
+    env.FACTORY_LABELS === "armed" &&
+    Boolean(env.WAKE_GITHUB_TOKEN) &&
+    env.FACTORY_SPEND_LIMIT_CONFIRMED === "yes" &&
+    env.FACTORY_AUTOMATIONS_SAVED === "yes"
+  );
+}
+
+/**
+ * Adds one wake label. Returns `actuator_disabled` without spawning `gh`
+ * until spending confirmation and saved Cursor automations are both present,
+ * along with the controller, the label arm, and `WAKE_GITHUB_TOKEN`.
+ */
+export function githubLabelActuator(opts: {
+  env?: NodeJS.ProcessEnv;
+  pr?: number;
+  runGh?: GhRun;
+} = {}): LabelActuator {
+  const env = opts.env ?? process.env;
+  const runGh = opts.runGh ?? spawnGh;
   return {
-    async add() {
-      if (env.FACTORY_CONTROLLER !== "active" || env.FACTORY_LABELS !== "armed" || !env.WAKE_GITHUB_TOKEN) {
-        return { ok: false, reason: "actuator_disabled" };
+    async add(input) {
+      if (!actuatorArmed(env)) return { ok: false, reason: "actuator_disabled" };
+      const pr = opts.pr ?? Number(env.FACTORY_PR);
+      if (!Number.isInteger(pr) || pr <= 0) return { ok: false, reason: "actuator_pr_unset" };
+      const token = env.WAKE_GITHUB_TOKEN as string;
+      try {
+        const result = await runGh(labelEditArgs(pr, input.label), {
+          ...env,
+          GH_TOKEN: token,
+          GITHUB_TOKEN: token,
+        });
+        if (result.status !== 0) return { ok: false, reason: "label_add_failed" };
+        return { ok: true, reason: "labeled" };
+      } catch {
+        return { ok: false, reason: "label_add_failed" };
       }
-      return { ok: false, reason: "actuator_not_connected" };
     },
   };
 }

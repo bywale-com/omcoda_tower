@@ -5,10 +5,10 @@
 **Wake:** hold  
 **Release:** draft  
 **Release eligible:** yes  
-**Systems change:** not signed  
-**Production plant:** not started
+**Systems change:** [`../systems/SCP-pkt-001-click-attribution.md`](../systems/SCP-pkt-001-click-attribution.md)  
+**Production plant:** `server/wire-service` click path, on this branch  
 
-Eligibility is not authorization. The controller is inactive. Do not flip the Wake line in this file unless `docs/factory/OPERATING-PROTOCOL.md` release procedure is followed and the founder has authorized dispatch.
+Eligibility is not authorization. The controller is inactive. Wake stays `hold`. The systems-change packet and the plant were written in one coding session because Cursor Automations are not configured. That session is not a label wake. Do not flip this Wake line unless the founder authorizes factory dispatch.
 
 ## Intended behavior
 
@@ -26,9 +26,9 @@ This packet does not re-walk the form path or the meeting path. Claim 3 left tho
 
 ## Acceptance
 
-The oracle in `.factory/experiments/click-attribution.ts` is the behavior this packet must satisfy. `npm run factory:check` exercises it. That oracle is not planted in `server/wire-service`.
+The oracle in `.factory/experiments/click-attribution.ts` is the behavior this packet must satisfy. `npm run factory:check` exercises the oracle and checks that the production click SQL and webhook branch match it. Postgres proof is `scripts/verify-click-attribution.ts`.
 
-When this packet is later engineered, the production click path must agree with the oracle on these cases:
+The production click path must agree with the oracle on these cases:
 
 1. Message stamped for A, B enrolled later, same objective id. A matches. B does not. The newest-row shortcut would pick B. That shortcut is the defect.
 2. Message stamped for A, B’s objective id differs. A matches only while A’s current objective is the stamped one. B does not match.
@@ -48,4 +48,4 @@ Form completion, meeting booking, parked-run resume, `payload.writes`, audit-row
 
 ## Handoff
 
-Systems Analyst has not signed a change packet. Engineer has nothing to plant.
+The systems-change packet is signed in this tree. The click plant is in `server/wire-service/webhooks.ts` and the messaging-events arm of `objectiveSatisfiedBy`. Verification is the ship workflow’s click-attribution step. The ledger stays `draft` with Wake `hold` and `authorizedDispatches: null`. Acceptance needs a real merge SHA. This packet does not invent one.
