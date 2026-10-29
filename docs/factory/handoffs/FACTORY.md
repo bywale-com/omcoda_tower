@@ -15,7 +15,7 @@
 
 - `npm run factory:check` locally: 23 checks. The new checks are a two-client contents compare-and-swap (including two releases that both saw the same blob), a scripted Contents API PUT that sends the observed sha and rejects 409, a disarmed actuator that does not spawn, an armed actuator that calls `gh pr edit` only through an injected runner, and a source agreement between the click SQL, the webhook, and the systems-change packet.
 - `scripts/verify-click-attribution.ts` against migrated Postgres: a click stamped for enrollment A advances A; newer enrollment B on the same objective stays, including a direct tick of B; a missing stamp advances nobody; a null objective id matches only at or after `enrolled_at`; a null `campaign_id` does not advance.
-- The ship workflow runs that script. The GitHub Actions run id for this commit is recorded after the pull request check finishes.
+- Those checks passed on GitHub Actions for commit `19c47938d8aa8884b4874999a50667f5677205b3` at 8:32 AM America/Toronto. Factory check run [40873984441](https://github.com/bywale-com/omcoda_tower/actions/runs/40873984441) reported 23 checks passed. Ship run [40873984426](https://github.com/bywale-com/omcoda_tower/actions/runs/40873984426) ran `verify:click-attribution` and printed `Click attribution PASSED`. That SHA is the plant. This handoff commit does not move the click path.
 - Checkpoint timing was not observed. No timer exists. No Cursor Automation booted. No label was added.
 
 **Remaining**
