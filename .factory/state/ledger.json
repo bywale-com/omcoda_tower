@@ -1,7 +1,7 @@
 {
-  "stateRevision": 26,
+  "stateRevision": 27,
   "authorizedDispatches": 4,
-  "usedDispatches": 3,
+  "usedDispatches": 4,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -196,13 +196,20 @@
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
-      "dispatchedSaRevision": null,
+      "dispatchedSaRevision": "rev-1",
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-004-firing-handle",
+        "revision": "rev-1",
+        "prHead": "98ef7825446a5c6ad6a8c98f8d410cb071b311c4",
+        "effect": "wake_sa",
+        "label": "factory-wake-sa",
+        "issuedAt": "2026-10-29T22:16:55.360Z"
+      },
       "execution": null,
       "dispatchHistory": [
         {
