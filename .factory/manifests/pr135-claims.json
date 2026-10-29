@@ -54,7 +54,7 @@
       "component": "pursuit-identity",
       "kind": "defect",
       "read": "full",
-      "packet": null
+      "packet": "pkt-002-open-ask-cursor"
     },
     {
       "n": 5,
@@ -70,7 +70,7 @@
       "component": "walk-handle",
       "kind": "defect",
       "read": "full",
-      "packet": null
+      "packet": "pkt-003-resume-same-run"
     },
     {
       "n": 7,
@@ -78,7 +78,7 @@
       "component": "walk-handle",
       "kind": "defect",
       "read": "full",
-      "packet": null
+      "packet": "pkt-004-firing-handle"
     },
     {
       "n": 8,
@@ -86,7 +86,7 @@
       "component": "walk-handle",
       "kind": "defect",
       "read": "full",
-      "packet": null
+      "packet": "pkt-005-audit-row-grain"
     },
     {
       "n": 9,

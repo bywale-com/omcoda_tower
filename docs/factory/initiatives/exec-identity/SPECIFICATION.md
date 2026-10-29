@@ -8,6 +8,9 @@ What this factory treats as authoritative for the pilot:
 
 - Claim 2: two pursuits may be open for one contact.
 - Claim 3: a completion belongs to the pursuit that asked for it. The email-click consequence is PKT-001, still on hold.
-- Claims 4, 6, 7, and 8: recorded defects. No packet released.
+- Claim 4: opening an ask does not move `enrollment.campaign_id`. PKT-002.
+- Claim 6: a resumed wait rebuilds that run’s stored writes. PKT-003.
+- Claim 7: an `objective_met` listener starts from this firing’s engagement row and enrollment row, and an event dispatch does not force `anyPass`. PKT-004. Claim 11’s array for this firing is part of that packet. Fact and meeting arrays are not.
+- Claim 8: a verdict row and a ready row belong to the audit run that wrote them. PKT-005. The desk and the enroll gate still read the latest row per contact.
 
 Component contracts point at claim numbers. They do not restate the journals.

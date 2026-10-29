@@ -15,8 +15,19 @@
     "journals": "docs/specification-pass/journal/001.md through 060.md",
     "handoff": "docs/specification-pass/NEXT.md"
   },
-  "packets": ["pkt-001-click-attribution"],
-  "requiredPackets": [],
+  "packets": [
+    "pkt-001-click-attribution",
+    "pkt-002-open-ask-cursor",
+    "pkt-003-resume-same-run",
+    "pkt-004-firing-handle",
+    "pkt-005-audit-row-grain"
+  ],
+  "requiredPackets": [
+    "pkt-002-open-ask-cursor",
+    "pkt-003-resume-same-run",
+    "pkt-004-firing-handle",
+    "pkt-005-audit-row-grain"
+  ],
   "founderDecisions": [
     "Who is placed on launch day.",
     "Whether a later reactivation sends the first nurture again.",

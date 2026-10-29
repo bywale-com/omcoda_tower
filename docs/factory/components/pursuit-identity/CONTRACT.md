@@ -1,7 +1,7 @@
 # pursuit-identity
 
 **Responsibility:** Which enrollment a completion advances, inside one firm.  
-**Status:** specification partial on PR #135. Implementation not started. Not verified.
+**Status:** specification partial on PR #135. PKT-001 is held manual evidence. PKT-002 is released and not planted. Not verified.
 
 ## Claims
 
@@ -10,7 +10,7 @@
 | 1 | established | none |
 | 2 | implication | none |
 | 3 | defect | PKT-001, held |
-| 4 | defect | none |
+| 4 | defect | PKT-002, released |
 | 64 | indexed from title | none |
 | 68 | indexed from title | none |
 

@@ -24,7 +24,7 @@ The machine-readable index is `.factory/manifests/pr135-claims.json`. Eighty-eig
 | `contract` | Cross-component contract named in the text that was read | 10, 11 |
 | `indexed` | Grouped for coverage only | 12–88 |
 
-A defect is not a released packet. Only claim 3 has a draft packet: `pkt-001-click-attribution`. Claims 4, 6, 7, and 8 stay on the initiative as known gaps. They are not queued for an agent.
+A defect is not a released packet until the gates pass. Claim 3 has a held packet: `pkt-001-click-attribution`. Claims 4, 6, 7, and 8 are released: PKT-002, PKT-003, PKT-004, and PKT-005. Claim 11’s `objective_met` array is inside PKT-004. The fact and meeting arrays, and claim 10’s other three loaders, are not packets.
 
 ## Components
 
@@ -32,8 +32,8 @@ The index groups claims so coverage can be counted without pretending a module i
 
 | Component | Claims | Coverage in this factory |
 | --- | --- | --- |
-| `pursuit-identity` | 1, 2, 3, 4, 64, 68 | Specification in progress on PR 135. One draft packet. No production plant. |
-| `walk-handle` | 5, 6, 7, 8, 10, 46, 48 | Specification in progress. Not implemented here. |
+| `pursuit-identity` | 1, 2, 3, 4, 64, 68 | Specification in progress on PR 135. PKT-001 held. PKT-002 released. |
+| `walk-handle` | 5, 6, 7, 8, 10, 46, 48 | PKT-003, PKT-004, and PKT-005 released. Claim 10 is only partly in PKT-004. |
 | `firing-pointers` | 11–16 | Indexed. Not packeted. |
 | `halt-send` | 18–22 | Indexed. |
 | `consent-silence` | 23–31, 33, 41, 42, 49 | Indexed. |

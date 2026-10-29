@@ -11,8 +11,12 @@
 | Id | Wake | Stage | Required |
 | --- | --- | --- | --- |
 | pkt-001-click-attribution | hold | draft | no |
+| pkt-002-open-ask-cursor | sa | released | yes |
+| pkt-003-resume-same-run | sa | released | yes |
+| pkt-004-firing-handle | sa | released | yes |
+| pkt-005-audit-row-grain | sa | released | yes |
 
-`required` is no until the packet is released. A held draft does not block the initiative, and it does not complete it.
+`required` is no until the packet is released. A held draft does not block the initiative, and it does not complete it. PKT-001 stays held. The four released packets do not close the initiative.
 
 ## Founder decisions
 

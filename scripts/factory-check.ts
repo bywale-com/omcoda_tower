@@ -1004,8 +1004,8 @@ check("T38 through T41 durable dispatch binds the wake and rejects stale or fail
 
   const committed = JSON.parse(read(".factory/state/ledger.json"));
   assert.equal(committed.authorizedDispatches, 4);
-  assert.equal(committed.usedDispatches, 0);
-  assert.equal(committed.stateRevision, 6);
+  assert.equal(committed.usedDispatches, 1);
+  assert.equal(committed.stateRevision, 18);
   assert.equal(committed.scope.id, "agents-and-automations");
   assert.equal(committed.scope.status, "active");
   const recorded = committed.packets[packetId];
@@ -1789,7 +1789,7 @@ check("the committed scope is agents-and-automations and PKT-001 stays manual", 
   assert.equal(view.scope.id, "agents-and-automations");
   assert.equal(view.scope.status, "active");
   assert.deepEqual(view.scope.modules, ["Agents and Automations"]);
-  assert.equal(view.stateRevision, 6);
+  assert.equal(view.stateRevision, 18);
   const packet = view.packets.find((item) => item.id === "pkt-001-click-attribution");
   assert.ok(packet);
   assert.equal(packet.stage, "accepted");
@@ -1801,20 +1801,25 @@ check("the committed scope is agents-and-automations and PKT-001 stays manual", 
   assert.equal(packet.candidateSha, "19c47938d8aa8884b4874999a50667f5677205b3");
   const execIdentity = view.initiatives.find((item) => item.id === "exec-identity");
   const launch = view.initiatives.find((item) => item.id === "launch-agent");
-  assert.equal(execIdentity?.queue, "eligible");
+  assert.equal(execIdentity?.queue, "active");
+  assert.equal(execIdentity?.session, "continuation_due");
   assert.equal(execIdentity?.packetIds[0], "pkt-001-click-attribution");
   assert.equal(launch?.queue, "discovered");
   assert.deepEqual(launch?.dependsOn, ["exec-identity"]);
   assert.equal(moduleComplete(committed, "Agents").reason, "coverage_open");
   assert.equal(moduleComplete(committed, "Agents and Automations").reason, "coverage_open");
   const step = controlStep(committed, { ...cycleWorld, activation: "active" });
-  assert.equal(step.wakes.length, 1);
-  assert.equal(step.wakes[0].id, "exec-identity");
-  assert.equal(step.wakes[0].decision.label, "factory-wake-architect");
+  assert.equal(step.reason, "released_packet");
+  assert.equal(step.wakes.length, 4);
+  assert.equal(step.wakes[0].id, "pkt-002-open-ask-cursor");
+  assert.equal(step.wakes[0].decision.label, "factory-wake-sa");
   assert.equal(step.wakes.some((wake) => wake.id === "pkt-001-click-attribution"), false);
+  assert.equal(step.wakes.some((wake) => wake.id === "exec-identity"), false);
   assert.equal(committed.packets["pkt-001-click-attribution"].execution?.mode, "manual");
+  assert.equal(committed.packets["pkt-002-open-ask-cursor"].stage, "released");
+  assert.equal(committed.packets["pkt-002-open-ask-cursor"].wake, "sa");
   assert.equal(committed.authorizedDispatches, 4);
-  assert.equal(committed.usedDispatches, 0);
+  assert.equal(committed.usedDispatches, 1);
   assert.equal(committed.initiatives["exec-identity"].dispatch, null);
 });
 
@@ -1843,10 +1848,10 @@ check("control and authorize commands do not arm the committed ledger", () => {
   const scoped = runTsx("scripts/factory-control.ts", quietEnv({ FACTORY_CONTROLLER: "active" }));
   assert.equal(scoped.status, 0, scoped.stderr);
   const proposed = JSON.parse(scoped.stdout) as { reason: string; wakes: Array<{ id: string; effect: string }> };
-  assert.equal(proposed.reason, "architect_due");
-  assert.equal(proposed.wakes.length, 1);
-  assert.equal(proposed.wakes[0].id, "exec-identity");
-  assert.equal(proposed.wakes[0].effect, "wake_architect");
+  assert.equal(proposed.reason, "released_packet");
+  assert.equal(proposed.wakes.length, 4);
+  assert.equal(proposed.wakes[0].id, "pkt-002-open-ask-cursor");
+  assert.equal(proposed.wakes[0].effect, "wake_sa");
   const planned = runTsx(
     "scripts/factory-authorize-scope.ts",
     quietEnv({ SCOPE_ID: "agents-scope", SCOPE_MODULES: "Agents", AUTHORIZED_DISPATCHES: "4" }),
@@ -1869,8 +1874,10 @@ check("control and authorize commands do not arm the committed ledger", () => {
   assert.equal(committed.scope.status, "active");
   assert.equal(committed.scope.id, "agents-and-automations");
   assert.equal(committed.authorizedDispatches, 4);
-  assert.equal(committed.usedDispatches, 0);
+  assert.equal(committed.usedDispatches, 1);
+  assert.equal(committed.stateRevision, 18);
   assert.equal(committed.initiatives["exec-identity"].dispatch, null);
+  assert.equal(committed.initiatives["exec-identity"].session, "continuation_due");
   assert.equal(committed.packets["pkt-001-click-attribution"].execution?.mode, "manual");
 });
 

@@ -1,0 +1,24 @@
+{
+  "id": "pkt-004-firing-handle",
+  "initiativeId": "exec-identity",
+  "title": "An objective_met listener starts from this firing's rows",
+  "release": "released",
+  "wake": "sa",
+  "releaseEligible": true,
+  "required": true,
+  "stage": "released",
+  "revision": "rev-1",
+  "claims": [
+    7
+  ],
+  "sourceSha": "1f6f43ab2dbe8b0e32b0a344990795bb998c8be3",
+  "gates": {
+    "behaviorEstablished": true,
+    "scopeBounded": true,
+    "dependenciesUnderstood": true,
+    "acceptanceDefined": true,
+    "noBlockingQuestion": true,
+    "noContradictorySpecification": true,
+    "independentlyImplementable": true
+  }
+}
