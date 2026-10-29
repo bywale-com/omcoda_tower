@@ -13,8 +13,7 @@
 
 **Verified**
 
-- `npm run factory:check` locally: 21 checks. They cover T01–T41, the click oracle, the inactive manifests, the prompt gates, a simulated PKT-001 path (release, analyst dispatch, signed change, engineer dispatch, candidate SHA, verify, integrate, reconcile, accept), a failed label add, a duplicate dispatch, a stale compare-and-swap, and the disabled GitHub actuator.
-- The earlier GitHub Actions run `40865661945` passed the previous check. This hardening has not been observed on Actions until the next push.
+- `npm run factory:check` locally: 21 checks. GitHub Actions run `40867920958` on pull request #136 passed the same check. It covers T01–T41, the click oracle, the inactive manifests, the prompt gates, a simulated PKT-001 path (release, analyst dispatch, signed change, engineer dispatch, candidate SHA, verify, integrate, reconcile, accept), a failed label add, a duplicate dispatch, a stale compare-and-swap, and the disabled GitHub actuator.
 - The production click path was not executed. No product UI or server code moved, so `/prototype-ant` was not exercised.
 - Checkpoint timing was not observed. No timer exists.
 
