@@ -294,9 +294,24 @@ export async function dispatchWake(opts: {
   });
 }
 
-/** Arguments `gh` receives when the actuator is armed. */
+/** Arguments `gh` receives when the actuator reads the pull request labels. */
+export function labelViewArgs(pr: number): string[] {
+  return ["pr", "view", String(pr), "--json", "labels", "--jq", ".labels[].name"];
+}
+
+/** Arguments `gh` receives when a wake label must leave before it can be added again. */
+export function labelRemoveArgs(pr: number, label: string): string[] {
+  return ["pr", "edit", String(pr), "--remove-label", label];
+}
+
+/** Arguments `gh` receives when the actuator adds the wake label. */
 export function labelEditArgs(pr: number, label: string): string[] {
   return ["pr", "edit", String(pr), "--add-label", label];
+}
+
+/** One label name per line, as `gh pr view --jq '.labels[].name'` prints them. */
+export function parseLabelNames(stdout: string): string[] {
+  return stdout.split("\n").map((line) => line.trim()).filter(Boolean);
 }
 
 export interface GhResult {
@@ -337,10 +352,28 @@ function actuatorArmed(env: NodeJS.ProcessEnv): boolean {
   );
 }
 
+function ghDetail(result: GhResult): string {
+  const text = `${result.stderr}\n${result.stdout}`.replace(/ghp_\S+|github_pat_\S+|gho_\S+/g, "[redacted]");
+  const line = text.split("\n").map((item) => item.trim()).filter(Boolean).at(-1) ?? "";
+  return line.slice(0, 240);
+}
+
+function ghFailed(code: string, result: GhResult): { ok: false; reason: string } {
+  const detail = ghDetail(result);
+  return { ok: false, reason: detail ? `${code}: ${detail}` : code };
+}
+
 /**
  * Adds one wake label. Returns `actuator_disabled` without spawning `gh`
  * until spending confirmation and saved Cursor automations are both present,
  * along with the controller, the label arm, and `WAKE_GITHUB_TOKEN`.
+ *
+ * GitHub emits a labeled event when a label is newly added. Adding a label
+ * that is already on the pull request succeeds and emits nothing, so a
+ * Cursor automation set to Added does not start. This actuator removes that
+ * label, confirms it is gone, and adds it again. The removal is not a wake.
+ * The automation trigger has to be Added, so the removal does not start a
+ * second worker. A dispatch may be recorded only after the add is confirmed.
  */
 export function githubLabelActuator(opts: {
   env?: NodeJS.ProcessEnv;
@@ -355,16 +388,30 @@ export function githubLabelActuator(opts: {
       const pr = opts.pr ?? Number(env.FACTORY_PR);
       if (!Number.isInteger(pr) || pr <= 0) return { ok: false, reason: "actuator_pr_unset" };
       const token = env.WAKE_GITHUB_TOKEN as string;
+      const ghEnv = { ...env, GH_TOKEN: token, GITHUB_TOKEN: token };
       try {
-        const result = await runGh(labelEditArgs(pr, input.label), {
-          ...env,
-          GH_TOKEN: token,
-          GITHUB_TOKEN: token,
-        });
-        if (result.status !== 0) return { ok: false, reason: "label_add_failed" };
+        const listed = await runGh(labelViewArgs(pr), ghEnv);
+        if (listed.status !== 0) return ghFailed("label_read_failed", listed);
+        if (parseLabelNames(listed.stdout).includes(input.label)) {
+          const removed = await runGh(labelRemoveArgs(pr, input.label), ghEnv);
+          if (removed.status !== 0) return ghFailed("label_remove_failed", removed);
+          const after = await runGh(labelViewArgs(pr), ghEnv);
+          if (after.status !== 0) return ghFailed("label_read_failed", after);
+          if (parseLabelNames(after.stdout).includes(input.label)) {
+            return { ok: false, reason: "label_still_present" };
+          }
+        }
+        const added = await runGh(labelEditArgs(pr, input.label), ghEnv);
+        if (added.status !== 0) return ghFailed("label_add_failed", added);
+        const confirmed = await runGh(labelViewArgs(pr), ghEnv);
+        if (confirmed.status !== 0) return ghFailed("label_read_failed", confirmed);
+        if (!parseLabelNames(confirmed.stdout).includes(input.label)) {
+          return { ok: false, reason: "label_add_unconfirmed" };
+        }
         return { ok: true, reason: "labeled" };
-      } catch {
-        return { ok: false, reason: "label_add_failed" };
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "spawn_failed";
+        return { ok: false, reason: `label_add_failed: ${message}` };
       }
     },
   };

@@ -33,6 +33,8 @@ import {
   emptyLedger,
   githubLabelActuator,
   labelEditArgs,
+  labelRemoveArgs,
+  labelViewArgs,
   scriptedActuator,
   type FactoryLedger,
   type GhRun,
@@ -951,11 +953,14 @@ check("T38 through T41 durable dispatch binds the wake and rejects stale or fail
   assert.equal((await files.read()).stateRevision, 1);
 
   let spawned = 0;
+  const names = new Set<string>();
   const spy: GhRun = async (args, childEnv) => {
     spawned += 1;
     assert.equal(childEnv.GH_TOKEN, "wake-token");
     assert.equal(childEnv.GITHUB_TOKEN, "wake-token");
+    if (args[1] === "view") return { status: 0, stdout: [...names].join("\n"), stderr: "" };
     assert.deepEqual(args, labelEditArgs(136, "factory-wake-sa"));
+    names.add("factory-wake-sa");
     return { status: 0, stdout: "", stderr: "" };
   };
   const labelInput = { label: "factory-wake-sa", packetId, revision: "rev-1", prHead };
@@ -984,7 +989,7 @@ check("T38 through T41 durable dispatch binds the wake and rejects stale or fail
     runGh: spy,
   }).add(labelInput);
   assert.equal(armed.reason, "labeled");
-  assert.equal(spawned, 1);
+  assert.equal(spawned, 3);
   const failedAdd = await githubLabelActuator({
     env: {
       FACTORY_CONTROLLER: "active",
@@ -994,9 +999,12 @@ check("T38 through T41 durable dispatch binds the wake and rejects stale or fail
       FACTORY_AUTOMATIONS_SAVED: "yes",
     },
     pr: 136,
-    runGh: async () => ({ status: 1, stdout: "", stderr: "denied" }),
+    runGh: async (args) => {
+      if (args[1] === "view") return { status: 0, stdout: "", stderr: "" };
+      return { status: 1, stdout: "", stderr: "HTTP 403: Resource not accessible by integration" };
+    },
   }).add(labelInput);
-  assert.equal(failedAdd.reason, "label_add_failed");
+  assert.equal(failedAdd.reason, "label_add_failed: HTTP 403: Resource not accessible by integration");
   assert.deepEqual(labelEditArgs(136, "factory-wake-sa"), ["pr", "edit", "136", "--add-label", "factory-wake-sa"]);
   const applyScript = read("scripts/factory-dispatch-apply.ts");
   assert.match(applyScript, /dispatch_not_authorized/);
@@ -1004,8 +1012,8 @@ check("T38 through T41 durable dispatch binds the wake and rejects stale or fail
 
   const committed = JSON.parse(read(".factory/state/ledger.json"));
   assert.equal(committed.authorizedDispatches, 4);
-  assert.equal(committed.usedDispatches, 1);
-  assert.equal(committed.stateRevision, 18);
+  assert.equal(committed.usedDispatches, 4);
+  assert.equal(committed.stateRevision, 21);
   assert.equal(committed.scope.id, "agents-and-automations");
   assert.equal(committed.scope.status, "active");
   const recorded = committed.packets[packetId];
@@ -1789,7 +1797,7 @@ check("the committed scope is agents-and-automations and PKT-001 stays manual", 
   assert.equal(view.scope.id, "agents-and-automations");
   assert.equal(view.scope.status, "active");
   assert.deepEqual(view.scope.modules, ["Agents and Automations"]);
-  assert.equal(view.stateRevision, 18);
+  assert.equal(view.stateRevision, 21);
   const packet = view.packets.find((item) => item.id === "pkt-001-click-attribution");
   assert.ok(packet);
   assert.equal(packet.stage, "accepted");
@@ -1809,17 +1817,26 @@ check("the committed scope is agents-and-automations and PKT-001 stays manual", 
   assert.equal(moduleComplete(committed, "Agents").reason, "coverage_open");
   assert.equal(moduleComplete(committed, "Agents and Automations").reason, "coverage_open");
   const step = controlStep(committed, { ...cycleWorld, activation: "active" });
-  assert.equal(step.reason, "released_packet");
-  assert.equal(step.wakes.length, 4);
-  assert.equal(step.wakes[0].id, "pkt-002-open-ask-cursor");
-  assert.equal(step.wakes[0].decision.label, "factory-wake-sa");
-  assert.equal(step.wakes.some((wake) => wake.id === "pkt-001-click-attribution"), false);
-  assert.equal(step.wakes.some((wake) => wake.id === "exec-identity"), false);
+  assert.equal(step.reason, "dispatch_authorization_exhausted");
+  assert.equal(step.wakes.length, 0);
+  assert.equal(step.wakes.some((wake) => wake.decision.effect === "wake_engineer"), false);
   assert.equal(committed.packets["pkt-001-click-attribution"].execution?.mode, "manual");
-  assert.equal(committed.packets["pkt-002-open-ask-cursor"].stage, "released");
-  assert.equal(committed.packets["pkt-002-open-ask-cursor"].wake, "sa");
+  for (const id of ["pkt-002-open-ask-cursor", "pkt-003-resume-same-run", "pkt-004-firing-handle"]) {
+    assert.equal(committed.packets[id].stage, "released");
+    assert.equal(committed.packets[id].wake, "sa");
+    assert.equal(committed.packets[id].dispatchedSaRevision, "rev-1");
+    assert.equal(committed.packets[id].dispatchedEngineerRevision, null);
+  }
+  assert.equal(committed.packets["pkt-005-audit-row-grain"].stage, "released");
+  assert.equal(committed.packets["pkt-005-audit-row-grain"].dispatchedSaRevision, null);
+  const raised = structuredClone(committed);
+  raised.authorizedDispatches = 20;
+  const waiting = controlStep(raised, { ...cycleWorld, activation: "active" });
+  assert.equal(waiting.wakes.length, 1);
+  assert.equal(waiting.wakes[0].id, "pkt-005-audit-row-grain");
+  assert.equal(waiting.wakes[0].decision.effect, "wake_sa");
   assert.equal(committed.authorizedDispatches, 4);
-  assert.equal(committed.usedDispatches, 1);
+  assert.equal(committed.usedDispatches, 4);
   assert.equal(committed.initiatives["exec-identity"].dispatch, null);
 });
 
@@ -1848,10 +1865,8 @@ check("control and authorize commands do not arm the committed ledger", () => {
   const scoped = runTsx("scripts/factory-control.ts", quietEnv({ FACTORY_CONTROLLER: "active" }));
   assert.equal(scoped.status, 0, scoped.stderr);
   const proposed = JSON.parse(scoped.stdout) as { reason: string; wakes: Array<{ id: string; effect: string }> };
-  assert.equal(proposed.reason, "released_packet");
-  assert.equal(proposed.wakes.length, 4);
-  assert.equal(proposed.wakes[0].id, "pkt-002-open-ask-cursor");
-  assert.equal(proposed.wakes[0].effect, "wake_sa");
+  assert.equal(proposed.reason, "dispatch_authorization_exhausted");
+  assert.equal(proposed.wakes.length, 0);
   const planned = runTsx(
     "scripts/factory-authorize-scope.ts",
     quietEnv({ SCOPE_ID: "agents-scope", SCOPE_MODULES: "Agents", AUTHORIZED_DISPATCHES: "4" }),
@@ -1874,11 +1889,239 @@ check("control and authorize commands do not arm the committed ledger", () => {
   assert.equal(committed.scope.status, "active");
   assert.equal(committed.scope.id, "agents-and-automations");
   assert.equal(committed.authorizedDispatches, 4);
-  assert.equal(committed.usedDispatches, 1);
-  assert.equal(committed.stateRevision, 18);
+  assert.equal(committed.usedDispatches, 4);
+  assert.equal(committed.stateRevision, 21);
   assert.equal(committed.initiatives["exec-identity"].dispatch, null);
   assert.equal(committed.initiatives["exec-identity"].session, "continuation_due");
   assert.equal(committed.packets["pkt-001-click-attribution"].execution?.mode, "manual");
+});
+
+check("a label already on the pull request is pulsed once per Analyst, Architect, and Engineer wake", async () => {
+  const armedEnv = {
+    FACTORY_CONTROLLER: "active",
+    FACTORY_LABELS: "armed",
+    WAKE_GITHUB_TOKEN: "wake-token",
+    FACTORY_SPEND_LIMIT_CONFIRMED: "yes",
+    FACTORY_AUTOMATIONS_SAVED: "yes",
+  };
+  const wakeWorld: World = { ...active, now: "2026-10-29T18:00:00Z", authorizedDispatches: 8, usedDispatches: 0 };
+  function pulse(initial: string[] = []) {
+    const labels = new Set(initial);
+    const calls: string[][] = [];
+    const run: GhRun = async (args) => {
+      calls.push(args);
+      if (args[1] === "view") return { status: 0, stdout: [...labels].join("\n"), stderr: "" };
+      if (args.includes("--remove-label")) {
+        labels.delete(args[args.indexOf("--remove-label") + 1]);
+        return { status: 0, stdout: "", stderr: "" };
+      }
+      if (args.includes("--add-label")) {
+        labels.add(args[args.indexOf("--add-label") + 1]);
+        return { status: 0, stdout: "", stderr: "" };
+      }
+      return { status: 1, stdout: "", stderr: "unexpected" };
+    };
+    return { calls, run, labels };
+  }
+  function verbs(calls: string[][]): string[] {
+    return calls.map((args) => {
+      if (args[1] === "view") return "view";
+      if (args.includes("--remove-label")) return "remove";
+      if (args.includes("--add-label")) return "add";
+      return "other";
+    });
+  }
+  function released(id: string): WorkItem {
+    return must(
+      applyEvent(freshItem(id, "exec-identity"), { type: "release", wake: "sa", gatesPass: true, revision: "rev-1" }, inactive),
+      "released",
+    );
+  }
+  function specified(id: string): WorkItem {
+    const opened = released(id);
+    const leased = must(
+      applyEvent(opened, {
+        type: "acquire_lease",
+        role: "analyst",
+        workerId: "bc-a",
+        revision: "rev-1",
+        until: "2026-10-29T19:00:00Z",
+      }, wakeWorld),
+      "lease_acquired",
+    );
+    return must(
+      applyEvent(leased, { type: "sign_change", revision: "rev-1", sections: [...sections()], workerId: "bc-a" }, wakeWorld),
+      "change_specified",
+    );
+  }
+
+  const analyst = pulse();
+  const analystLedger = emptyLedger(8);
+  analystLedger.packets["pkt-a"] = released("pkt-a");
+  analystLedger.packets["pkt-b"] = released("pkt-b");
+  const analystStore = new MemoryStore(analystLedger);
+  const analystActuator = githubLabelActuator({ env: armedEnv, pr: 137, runGh: analyst.run });
+  const firstSa = await dispatchWake({
+    store: analystStore,
+    actuator: analystActuator,
+    packetId: "pkt-a",
+    prHead: "head-a",
+    activation: "active",
+    now: wakeWorld.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(firstSa.reason, "dispatched");
+  assert.deepEqual(verbs(analyst.calls), ["view", "add", "view"]);
+  const repeatSa = await dispatchWake({
+    store: analystStore,
+    actuator: analystActuator,
+    packetId: "pkt-a",
+    prHead: "head-a",
+    activation: "active",
+    now: wakeWorld.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(repeatSa.reason, "no_transition");
+  assert.equal(verbs(analyst.calls).length, 3);
+  const secondSa = await dispatchWake({
+    store: analystStore,
+    actuator: analystActuator,
+    packetId: "pkt-b",
+    prHead: "head-b",
+    activation: "active",
+    now: wakeWorld.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(secondSa.reason, "dispatched");
+  assert.deepEqual(verbs(analyst.calls), ["view", "add", "view", "view", "remove", "view", "add", "view"]);
+  const analystSaved = await analystStore.read();
+  assert.equal(analystSaved.usedDispatches, 2);
+  assert.equal(analystSaved.packets["pkt-a"].dispatch?.prHead, "head-a");
+  assert.equal(analystSaved.packets["pkt-b"].dispatch?.prHead, "head-b");
+  assert.equal(analystSaved.packets["pkt-a"].dispatchedSaRevision, "rev-1");
+  assert.equal(analystSaved.packets["pkt-b"].dispatchedSaRevision, "rev-1");
+
+  const architect = pulse(["factory-wake-architect"]);
+  const architectStore = new MemoryStore(emptyLedger(8));
+  assert.equal((await commitLedgerEvent(architectStore, initiativeSeed("alpha", "test", 1), wakeWorld)).ok, true);
+  assert.equal((await commitLedgerEvent(architectStore, { type: "select_next" }, wakeWorld)).reason, "selected");
+  const architectActuator = githubLabelActuator({ env: armedEnv, pr: 137, runGh: architect.run });
+  const firstArchitect = await dispatchInitiative({
+    store: architectStore,
+    actuator: architectActuator,
+    initiativeId: "alpha",
+    prHead: "head-1",
+    activation: "active",
+    now: wakeWorld.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(firstArchitect.reason, "dispatched");
+  assert.deepEqual(verbs(architect.calls), ["view", "remove", "view", "add", "view"]);
+  assert.equal(
+    (await commitLedgerEvent(architectStore, { type: "architect_session", initiativeId: "alpha", outcome: "continue" }, wakeWorld)).reason,
+    "architect_continue",
+  );
+  const secondArchitect = await dispatchInitiative({
+    store: architectStore,
+    actuator: architectActuator,
+    initiativeId: "alpha",
+    prHead: "head-2",
+    activation: "active",
+    now: wakeWorld.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(secondArchitect.reason, "dispatched");
+  assert.equal(verbs(architect.calls).filter((verb) => verb === "add").length, 2);
+  assert.equal(verbs(architect.calls).filter((verb) => verb === "remove").length, 2);
+  const architectSaved = await architectStore.read();
+  assert.equal(architectSaved.usedDispatches, 2);
+  assert.equal(architectSaved.initiatives.alpha.dispatch?.revision, "rev-1");
+  assert.equal(architectSaved.initiatives.alpha.dispatch?.prHead, "head-2");
+  assert.equal(architectSaved.initiatives.alpha.session, "running");
+
+  const engineer = pulse();
+  const engineerLedger = emptyLedger(8);
+  engineerLedger.packets.one = specified("one");
+  engineerLedger.packets.two = specified("two");
+  const before = controlStep(engineerLedger, wakeWorld);
+  assert.equal(before.wakes.length, 1);
+  assert.equal(before.wakes[0].decision.effect, "wake_engineer");
+  const engineerStore = new MemoryStore(engineerLedger);
+  const engineerActuator = githubLabelActuator({ env: armedEnv, pr: 137, runGh: engineer.run });
+  assert.equal((await dispatchWake({
+    store: engineerStore,
+    actuator: engineerActuator,
+    packetId: before.wakes[0].id,
+    prHead: "eng-1",
+    activation: "active",
+    now: wakeWorld.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+  })).reason, "dispatched");
+  const occupied = controlStep(await engineerStore.read(), wakeWorld);
+  assert.equal(occupied.wakes.length, 0);
+  const freed = await engineerStore.read();
+  freed.packets[before.wakes[0].id].stage = "candidate";
+  const nextEngineer = controlStep(freed, wakeWorld);
+  assert.equal(nextEngineer.wakes.length, 1);
+  assert.equal(nextEngineer.wakes[0].decision.label, "factory-wake-engineer");
+  const engineerStore2 = new MemoryStore(freed);
+  assert.equal((await dispatchWake({
+    store: engineerStore2,
+    actuator: githubLabelActuator({ env: armedEnv, pr: 137, runGh: engineer.run }),
+    packetId: nextEngineer.wakes[0].id,
+    prHead: "eng-2",
+    activation: "active",
+    now: wakeWorld.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+  })).reason, "dispatched");
+  assert.deepEqual(verbs(engineer.calls), ["view", "add", "view", "view", "remove", "view", "add", "view"]);
+  const engineerSaved = await engineerStore2.read();
+  assert.equal(engineerSaved.usedDispatches, 2);
+  assert.equal(engineerSaved.packets[before.wakes[0].id].dispatch?.prHead, "eng-1");
+  assert.equal(engineerSaved.packets[nextEngineer.wakes[0].id].dispatch?.prHead, "eng-2");
+
+  const unconfirmedLedger = emptyLedger(8);
+  unconfirmedLedger.packets["pkt-a"] = released("pkt-a");
+  const unconfirmedStore = new MemoryStore(unconfirmedLedger);
+  const missed = await dispatchWake({
+    store: unconfirmedStore,
+    actuator: githubLabelActuator({
+      env: armedEnv,
+      pr: 137,
+      runGh: async (args) => {
+        if (args[1] === "view") return { status: 0, stdout: "", stderr: "" };
+        if (args.includes("--add-label")) return { status: 0, stdout: "", stderr: "" };
+        return { status: 1, stdout: "", stderr: "unexpected" };
+      },
+    }),
+    packetId: "pkt-a",
+    prHead: "head-a",
+    activation: "active",
+    now: wakeWorld.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(missed.reason, "label_add_unconfirmed");
+  assert.equal((await unconfirmedStore.read()).packets["pkt-a"].dispatch, null);
+  assert.equal((await unconfirmedStore.read()).usedDispatches, 0);
+  const denied = await githubLabelActuator({
+    env: armedEnv,
+    pr: 137,
+    runGh: async (args) => {
+      if (args[1] === "view") return { status: 0, stdout: "factory-wake-sa\n", stderr: "" };
+      return { status: 1, stdout: "", stderr: "HTTP 403: Resource not accessible by integration" };
+    },
+  }).add({ label: "factory-wake-sa", packetId: "pkt-a", revision: "rev-1", prHead: "head-a" });
+  assert.equal(denied.reason, "label_remove_failed: HTTP 403: Resource not accessible by integration");
+  assert.deepEqual(labelViewArgs(137), ["pr", "view", "137", "--json", "labels", "--jq", ".labels[].name"]);
+  assert.deepEqual(labelRemoveArgs(137, "factory-wake-sa"), ["pr", "edit", "137", "--remove-label", "factory-wake-sa"]);
 });
 
 check("a ledger-only commit keeps the authorized head and a product commit does not", () => {
