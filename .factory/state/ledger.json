@@ -1,5 +1,5 @@
 {
-  "stateRevision": 128,
+  "stateRevision": 129,
   "authorizedDispatches": 50,
   "usedDispatches": 33,
   "scope": {
@@ -1234,7 +1234,7 @@
       "id": "dsp-128-engineer-pkt-004-firing-handle",
       "assignmentId": "asg-dsp-128-engineer-pkt-004-firing-handle",
       "role": "engineer",
-      "phase": "dispatched",
+      "phase": "started",
       "packetIds": [
         "pkt-004-firing-handle"
       ],
@@ -1243,14 +1243,14 @@
       },
       "label": "factory-wake-engineer",
       "prHead": "74d9770bb0d627191b8580225dcb73845ebf0126",
-      "agentId": null,
+      "agentId": "bc-290d8b85-0254-43aa-bc40-d4576053056c",
       "continuation": "fresh",
       "issuedAt": "2026-10-30T18:03:26.103Z",
-      "startedAt": null,
+      "startedAt": "2026-10-30T18:04:35.867Z",
       "runningAt": null,
       "endedAt": null,
       "reserveUntil": "2026-10-30T18:33:26.103Z",
-      "startUntil": null,
+      "startUntil": "2026-10-30T18:19:35.867Z",
       "leaseUntil": null,
       "reason": null
     }
