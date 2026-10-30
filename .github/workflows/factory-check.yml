@@ -11,6 +11,7 @@ on:
       - ".github/workflows/factory-dispatch.yml"
       - "server/wire-service/webhooks.ts"
       - "server/wire-service/campaignHousing.ts"
+      - "server/wire-service/contactSeat.ts"
       - "scripts/verify-click-attribution.ts"
       - "scripts/factory-dispatch-apply.ts"
   workflow_dispatch:

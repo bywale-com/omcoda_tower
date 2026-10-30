@@ -1240,6 +1240,24 @@ check("production click path advances the enrollment stamped on the message", ()
   assert.match(packet, /\*\*Wake:\*\* hold/);
 });
 
+check("opening an ask does not write the enrollment cursor", () => {
+  const seat = read("server/wire-service/contactSeat.ts");
+  const get = seat.slice(
+    seat.indexOf("export async function handleContactSeatGet"),
+    seat.indexOf("export async function handleContactSeatConsent"),
+  );
+  assert.ok(get.includes("handleContactSeatGet"));
+  assert.equal(get.includes("UPDATE enrollment"), false);
+  assert.match(get, /return json\(c, await projectSeat\(resolved\.pool, resolved\.link\)\)/);
+
+  const project = seat.slice(seat.indexOf("async function projectSeat"), seat.indexOf("async function seatFromToken"));
+  assert.match(project, /const campaignId = enrollment\?\.campaign_id \?\? link\.campaign_id;/);
+
+  const routes = read("server/wire-service/routes.ts");
+  assert.match(routes, /wire\.get\("\/machine\/contact-workspaces\/:contactId", handleContactSeatGet\)/);
+  assert.match(routes, /wire\.get\("\/contact-seat\/:token", handleContactSeatGet\)/);
+});
+
 function sections(): string[] {
   return [
     "intent",
@@ -2194,7 +2212,12 @@ function assertRecoveryLedger(committed: FactoryLedger) {
   assert.equal(progressed.has(pkt002.stage), true);
   assert.equal(pkt002.wake, "sa");
   assert.equal(pkt002.dispatchedSaRevision, "rev-1");
-  assert.equal(pkt002.lease, null);
+  if (pkt002.stage === "engineering") {
+    assert.equal(pkt002.lease?.role, "engineer");
+    assert.equal(pkt002.lease?.revision, pkt002.revision);
+  } else {
+    assert.equal(pkt002.lease, null);
+  }
   const ran = (pkt002.dispatchHistory ?? []).find((row) => row.workerExecution === "ran");
   assert.ok(ran);
   assert.equal(ran.packetId, "pkt-002-open-ask-cursor");
