@@ -1,5 +1,5 @@
 {
-  "stateRevision": 126,
+  "stateRevision": 127,
   "authorizedDispatches": 50,
   "usedDispatches": 32,
   "scope": {
@@ -183,20 +183,15 @@
     "pkt-003-resume-same-run": {
       "id": "pkt-003-resume-same-run",
       "initiativeId": "exec-identity",
-      "stage": "engineering",
+      "stage": "candidate",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": {
-        "workerId": "bc-f456e11c-60be-4d08-83b5-e8b01c1574f7",
-        "role": "engineer",
-        "until": "2026-10-30T19:02:57.204Z",
-        "revision": "rev-1"
-      },
+      "lease": null,
       "attempts": 0,
       "maxAttempts": 1,
-      "candidateSha": null,
+      "candidateSha": "e94b1e0bb91c1a1d276eb4e92fff7507075e410f",
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
@@ -206,16 +201,7 @@
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-003-resume-same-run",
-        "revision": "rev-1",
-        "prHead": "e94b1e0bb91c1a1d276eb4e92fff7507075e410f",
-        "effect": "wake_engineer",
-        "label": "factory-wake-engineer",
-        "issuedAt": "2026-10-30T18:02:57.204Z",
-        "executionId": "dsp-126-engineer-pkt-003-resume-same-run",
-        "assignmentId": "asg-dsp-126-engineer-pkt-003-resume-same-run"
-      },
+      "dispatch": null,
       "execution": null,
       "dispatchHistory": [
         {
@@ -245,6 +231,17 @@
           "executionId": "dsp-123-engineer-pkt-003-resume-same-run",
           "assignmentId": "asg-dsp-123-engineer-pkt-003-resume-same-run",
           "workerExecution": "absent"
+        },
+        {
+          "packetId": "pkt-003-resume-same-run",
+          "revision": "rev-1",
+          "prHead": "e94b1e0bb91c1a1d276eb4e92fff7507075e410f",
+          "effect": "wake_engineer",
+          "label": "factory-wake-engineer",
+          "issuedAt": "2026-10-30T18:02:57.204Z",
+          "executionId": "dsp-126-engineer-pkt-003-resume-same-run",
+          "assignmentId": "asg-dsp-126-engineer-pkt-003-resume-same-run",
+          "workerExecution": "ran"
         }
       ],
       "siblings": [
@@ -1203,7 +1200,7 @@
       "id": "dsp-126-engineer-pkt-003-resume-same-run",
       "assignmentId": "asg-dsp-126-engineer-pkt-003-resume-same-run",
       "role": "engineer",
-      "phase": "running",
+      "phase": "completed",
       "packetIds": [
         "pkt-003-resume-same-run"
       ],
@@ -1218,11 +1215,11 @@
       "issuedAt": "2026-10-30T18:02:57.204Z",
       "startedAt": "2026-10-30T18:02:57.204Z",
       "runningAt": "2026-10-30T18:02:57.204Z",
-      "endedAt": null,
+      "endedAt": "2026-10-30T18:03:05.661Z",
       "reserveUntil": "2026-10-30T18:32:57.204Z",
       "startUntil": "2026-10-30T18:17:57.204Z",
       "leaseUntil": "2026-10-30T19:02:57.204Z",
-      "reason": null
+      "reason": "candidate_recorded"
     }
   },
   "assignments": {
