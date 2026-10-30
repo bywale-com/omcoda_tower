@@ -190,9 +190,9 @@
       "n": 21,
       "title": "A denied tick send is its own engagement row",
       "component": "halt-send",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-018-send-denied-engagement"
     },
     {
       "n": 22,

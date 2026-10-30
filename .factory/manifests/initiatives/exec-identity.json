@@ -32,7 +32,8 @@
     "pkt-014-empty-firing-audience",
     "pkt-015-halt-enroll-firm",
     "pkt-016-halt-send-firm",
-    "pkt-017-tick-send-halt"
+    "pkt-017-tick-send-halt",
+    "pkt-018-send-denied-engagement"
   ],
   "requiredPackets": [
     "pkt-002-open-ask-cursor",
@@ -50,7 +51,8 @@
     "pkt-014-empty-firing-audience",
     "pkt-015-halt-enroll-firm",
     "pkt-016-halt-send-firm",
-    "pkt-017-tick-send-halt"
+    "pkt-017-tick-send-halt",
+    "pkt-018-send-denied-engagement"
   ],
   "founderDecisions": [
     "Who is placed on launch day.",
