@@ -1,7 +1,7 @@
 {
-  "stateRevision": 94,
+  "stateRevision": 95,
   "authorizedDispatches": 50,
-  "usedDispatches": 21,
+  "usedDispatches": 22,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -622,13 +622,20 @@
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
-      "dispatchedSaRevision": null,
+      "dispatchedSaRevision": "rev-1",
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-015-halt-enroll-firm",
+        "revision": "rev-1",
+        "prHead": "08f28e36682490c51dd44eb6129e1e7d33a9758d",
+        "effect": "wake_sa",
+        "label": "factory-wake-sa",
+        "issuedAt": "2026-10-30T12:48:55.989Z"
+      },
       "dispatchHistory": [],
       "execution": null
     }
