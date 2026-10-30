@@ -1,5 +1,5 @@
 {
-  "stateRevision": 78,
+  "stateRevision": 79,
   "authorizedDispatches": 50,
   "usedDispatches": 16,
   "scope": {
@@ -476,15 +476,18 @@
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-011-halt-records-writes",
-        "revision": "rev-1",
-        "prHead": "4d4215d2a24bd0ba3874032a0ff706832a07feff",
-        "effect": "wake_sa",
-        "label": "factory-wake-sa",
-        "issuedAt": "2026-10-30T11:51:12.635Z"
-      },
-      "dispatchHistory": [],
+      "dispatch": null,
+      "dispatchHistory": [
+        {
+          "packetId": "pkt-011-halt-records-writes",
+          "revision": "rev-1",
+          "prHead": "4d4215d2a24bd0ba3874032a0ff706832a07feff",
+          "effect": "wake_sa",
+          "label": "factory-wake-sa",
+          "issuedAt": "2026-10-30T11:51:12.635Z",
+          "workerExecution": "ran"
+        }
+      ],
       "execution": null
     },
     "pkt-012-consent-opt-out-writes": {
