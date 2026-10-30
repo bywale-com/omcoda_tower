@@ -1,7 +1,7 @@
 {
-  "stateRevision": 116,
+  "stateRevision": 117,
   "authorizedDispatches": 50,
-  "usedDispatches": 29,
+  "usedDispatches": 30,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -766,13 +766,20 @@
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
-      "dispatchedSaRevision": null,
+      "dispatchedSaRevision": "rev-1",
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-019-first-step-send-denied",
+        "revision": "rev-1",
+        "prHead": "c99c4c91e6fa0af644a3891ae0180edf0f5a6854",
+        "effect": "wake_sa",
+        "label": "factory-wake-sa",
+        "issuedAt": "2026-10-30T14:02:15.786Z"
+      },
       "dispatchHistory": [],
       "execution": null
     }
