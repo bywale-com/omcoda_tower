@@ -29,7 +29,8 @@
     "pkt-011-halt-records-writes",
     "pkt-012-consent-opt-out-writes",
     "pkt-013-firm-provision-writes",
-    "pkt-014-empty-firing-audience"
+    "pkt-014-empty-firing-audience",
+    "pkt-015-halt-enroll-firm"
   ],
   "requiredPackets": [
     "pkt-002-open-ask-cursor",
@@ -44,7 +45,8 @@
     "pkt-011-halt-records-writes",
     "pkt-012-consent-opt-out-writes",
     "pkt-013-firm-provision-writes",
-    "pkt-014-empty-firing-audience"
+    "pkt-014-empty-firing-audience",
+    "pkt-015-halt-enroll-firm"
   ],
   "founderDecisions": [
     "Who is placed on launch day.",

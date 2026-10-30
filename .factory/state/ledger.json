@@ -1,5 +1,5 @@
 {
-  "stateRevision": 86,
+  "stateRevision": 87,
   "authorizedDispatches": 50,
   "usedDispatches": 19,
   "scope": {
@@ -27,18 +27,11 @@
       "queue": "active",
       "coverageComplete": null,
       "outstanding": [
-        "Claim 52 still owns the person split for the four eligibility tables. Claims 18-88 are indexed and have no packets. Coverage is not complete."
+        "Claim 52 still owns the person split for the four eligibility tables. Claims 19-88 are indexed and have no packets. Coverage is not complete."
       ],
-      "session": "running",
+      "session": "continuation_due",
       "revision": "rev-4",
-      "dispatch": {
-        "packetId": "exec-identity",
-        "revision": "rev-4",
-        "prHead": "ca7e35709f4874129e248f22170300c5e1154fa6",
-        "effect": "wake_architect",
-        "label": "factory-wake-architect",
-        "issuedAt": "2026-10-30T12:13:56.330Z"
-      },
+      "dispatch": null,
       "blockedReason": null,
       "packetIds": [
         "pkt-001-click-attribution",
@@ -54,9 +47,10 @@
         "pkt-011-halt-records-writes",
         "pkt-012-consent-opt-out-writes",
         "pkt-013-firm-provision-writes",
-        "pkt-014-empty-firing-audience"
+        "pkt-014-empty-firing-audience",
+        "pkt-015-halt-enroll-firm"
       ],
-      "updatedAt": "2026-10-30T13:05:00.000Z"
+      "updatedAt": "2026-10-30T13:30:00.000Z"
     },
     "launch-agent": {
       "id": "launch-agent",
@@ -573,6 +567,31 @@
     },
     "pkt-014-empty-firing-audience": {
       "id": "pkt-014-empty-firing-audience",
+      "initiativeId": "exec-identity",
+      "stage": "released",
+      "wake": "sa",
+      "revision": "rev-1",
+      "hold": false,
+      "blockerId": null,
+      "lease": null,
+      "attempts": 0,
+      "maxAttempts": 1,
+      "candidateSha": null,
+      "verifiedSha": null,
+      "lastFailureFingerprint": null,
+      "lastFailureClass": null,
+      "dispatchedSaRevision": null,
+      "dispatchedEngineerRevision": null,
+      "dispatchedRepairFingerprint": null,
+      "releaseEligible": true,
+      "integratedSha": null,
+      "reconciliationId": null,
+      "dispatch": null,
+      "dispatchHistory": [],
+      "execution": null
+    },
+    "pkt-015-halt-enroll-firm": {
+      "id": "pkt-015-halt-enroll-firm",
       "initiativeId": "exec-identity",
       "stage": "released",
       "wake": "sa",
