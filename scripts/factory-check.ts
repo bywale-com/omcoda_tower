@@ -1940,6 +1940,177 @@ check("a campaign_failure firing publishes the inserted failure id", () => {
   assert.match(read(".github/workflows/ship.yml"), /verify-campaign-failure-writes\.ts/);
 });
 
+check("a ct_firms firing publishes the provisioned firm id", () => {
+  function sliceFn(source: string, start: string, end: string): string {
+    const at = source.indexOf(start);
+    assert.ok(at >= 0, start);
+    const to = source.indexOf(end, at + start.length);
+    assert.ok(to > at, end);
+    return source.slice(at, to);
+  }
+
+  function objectAt(source: string, braceAt: number): string {
+    let depth = 0;
+    for (let i = braceAt; i < source.length; i += 1) {
+      if (source[i] === "{") depth += 1;
+      else if (source[i] === "}") {
+        depth -= 1;
+        if (depth === 0) return source.slice(braceAt, i + 1);
+      }
+    }
+    assert.fail("unbalanced payload");
+  }
+
+  function bracketAt(source: string, bracketAtIndex: number): string {
+    let depth = 0;
+    for (let i = bracketAtIndex; i < source.length; i += 1) {
+      if (source[i] === "[") depth += 1;
+      else if (source[i] === "]") {
+        depth -= 1;
+        if (depth === 0) return source.slice(bracketAtIndex, i + 1);
+      }
+    }
+    assert.fail("unbalanced writes");
+  }
+
+  const machine = read("server/wire-service/machine.ts");
+  const fn = sliceFn(machine, "export async function handleMachineProvision", "export async function handleMachineAccessInvite");
+  assert.match(fn, /const firm = body\.firmId\?\.trim\(\) \|\| randomUUID\(\)/);
+  const upsertAt = fn.indexOf("INSERT INTO ct_firms (id, name, posture, updated_at)");
+  assert.ok(upsertAt >= 0);
+  const upsert = fn.slice(fn.lastIndexOf("`", upsertAt) + 1, fn.indexOf("`", upsertAt));
+  assert.match(upsert, /VALUES \(\$1,\$2,'Idle',now\(\)\)/);
+  assert.match(upsert, /ON CONFLICT \(id\) DO UPDATE SET name=EXCLUDED\.name, updated_at=now\(\)/);
+  assert.equal(upsert.includes("RETURNING"), false);
+  const conflict = upsert.slice(upsert.indexOf("DO UPDATE"));
+  for (const banned of ["posture", "pool_slug", "pool_domain", "sending_identity_id"]) {
+    assert.equal(conflict.includes(banned), false, banned);
+  }
+  assert.ok(fn.indexOf("[firm, firmName]", upsertAt) > upsertAt);
+  // The kept users insert returns its id. The ct_firms upsert does not.
+  assert.equal(fn.split("RETURNING").length - 1, 1);
+  assert.match(fn, /INSERT INTO users \(firm_id, email\) VALUES \(\$1::uuid, \$2\) RETURNING id/);
+  assert.equal(fn.includes("BEGIN"), false);
+  assert.equal(fn.includes("COMMIT"), false);
+  const missing = fn.indexOf('{ error: "firmName and email required" }');
+  const poolAt = fn.indexOf("getPool()");
+  assert.ok(missing >= 0 && poolAt > missing);
+  const callAt = fn.indexOf("await dispatchEventToWorkflows");
+  const auditAt = fn.indexOf('kind: "firm.provisioned"');
+  assert.ok(fn.indexOf("provision.authUser.failed") < callAt);
+  assert.ok(fn.indexOf("provision.accessLink.failed") < callAt);
+  assert.ok(callAt < auditAt);
+  assert.equal(fn.slice(callAt, auditAt).includes("try"), false);
+  const call = objectAt(fn, fn.indexOf("{", callAt));
+  assert.match(call, /firmId:\s*firm/);
+  assert.match(call, /eventName:\s*"ct_firms"/);
+  assert.equal(call.includes("contactIds"), false);
+  const payload = objectAt(call, call.indexOf("{", call.indexOf("payload:")));
+  assert.match(payload, /firmId:\s*firm/);
+  assert.match(payload, /\bfirmName\b/);
+  assert.match(payload, /\bemail\b/);
+  const writes = bracketAt(payload, payload.indexOf("[", payload.indexOf("writes:")));
+  assert.equal(writes.split("{").length - 1, 1);
+  assert.match(writes, /table:\s*"ct_firms"/);
+  assert.match(writes, /id:\s*firm/);
+  assert.equal(writes.includes("contact_id"), false);
+  const withoutWrites = payload.replace(writes, "");
+  for (const banned of [
+    "posture",
+    "website",
+    "role",
+    "consultant_name",
+    "consultant_email",
+    "contact_id",
+    "contactIds",
+    "anyPass",
+  ]) {
+    assert.equal(withoutWrites.includes(banned), false, banned);
+  }
+  assert.equal(/\bid\s*:/.test(withoutWrites), false);
+
+  const fromPayload = read("server/wire-service/runWrites.ts");
+  const writer = fromPayload.slice(fromPayload.indexOf("export function writesFromPayload"));
+  assert.equal(writer.includes("ct_firms"), false);
+  assert.equal(writer.includes("firmName"), false);
+
+  const walk = read("server/wire-service/workflowWalk.ts");
+  const loader = sliceFn(walk, "export async function loadWriteRow", "async function loadWriteField");
+  const sqlText = "SELECT * FROM ct_firms WHERE id=$1";
+  const sqlAt = loader.indexOf(sqlText);
+  assert.ok(sqlAt >= 0);
+  const statement = loader.slice(loader.lastIndexOf("`", sqlAt) + 1, loader.indexOf("`", sqlAt + sqlText.length));
+  assert.equal(statement.replace(/\s+/g, " ").trim(), sqlText);
+  const stripped = statement.replace(/ct_firms/g, "");
+  for (const banned of ["firm_id", "contact_id", "posture", "ORDER BY", "LIMIT", "firms"]) {
+    assert.equal(stripped.includes(banned), false, banned);
+  }
+  assert.match(loader.slice(sqlAt, sqlAt + sqlText.length + 40), /\[w\.id\]/);
+  assert.match(loader.trimEnd(), /return null;\s*\}$/);
+  const people = sliceFn(walk, "const PERSON_WRITE_TABLES = new Set([", "]);");
+  assert.equal(people.includes("ct_firms"), false);
+  const localRef = sliceFn(walk, "function localRefFromPayload", "function localAxesMatch");
+  assert.match(localRef, /eventName === "ct_firms"\) return payloadString\(payload, \["id", "firm_id", "firmId"\]\)/);
+  const axes = sliceFn(walk, "function localAxesMatch", "export async function dispatchEventToWorkflows");
+  assert.match(axes, /payloadString\(opts\.payload, \["firm_id", "firmId"\]\) \?\? opts\.firmId/);
+  const firmsMod = sliceFn(walk, 'if (module === "firms")', 'if (module === "');
+  assert.match(firmsMod, /table: "ct_firms"/);
+  assert.equal(firmsMod.includes("contact_id"), false);
+
+  const triggerRef = read("src/app/data/automationTriggerSelect.ts");
+  const triggerArm = sliceFn(triggerRef, "export function triggerLocalRefFromPayload", "export function triggerLocalAxesMatch");
+  assert.match(triggerArm, /eventName === "ct_firms"\) return payloadString\(payload, \["id", "firm_id", "firmId"\]\)/);
+  const entryAt = triggerRef.indexOf('id: "ct_firms"');
+  const entry = triggerRef.slice(entryAt, triggerRef.indexOf("id:", entryAt + 12));
+  const layers = entry.match(/layers:\s*\[([\s\S]*?)\]/);
+  assert.ok(layers);
+  assert.equal(layers[1].replace(/\s+/g, ""), '{kind:"firm"}');
+
+  const catalog = read("src/app/data/automationWorkflows.ts");
+  const localSet = sliceFn(catalog, "export const WORKFLOW_EVENTS_WITH_LOCAL = new Set", "]);");
+  assert.ok(localSet.includes('"ct_firms"'));
+
+  assert.match(read("server/wire-service/eventTest.ts"), /SELECT \* FROM ct_firms WHERE id=\$1 LIMIT 1/);
+
+  const poolSrc = read("server/wire-service/pool.ts");
+  const alloc = sliceFn(poolSrc, "export async function handlePoolAllocate", "export async function handlePoolGet");
+  assert.equal(alloc.includes("dispatchEventToWorkflows"), false);
+  const poolConflict = alloc.slice(alloc.indexOf("ON CONFLICT (id)"));
+  assert.match(poolConflict, /pool_slug = EXCLUDED\.pool_slug/);
+  assert.match(poolConflict, /pool_domain = EXCLUDED\.pool_domain/);
+  assert.match(poolConflict, /sending_identity_id = EXCLUDED\.sending_identity_id/);
+  assert.equal(poolConflict.slice(poolConflict.indexOf("DO UPDATE"), poolConflict.indexOf("`")).includes("posture"), false);
+
+  const stores = read("server/wire-service/stores.ts");
+  const auditFn = sliceFn(stores, "export async function appendFirmAudit", "export async function handleAuditAppend");
+  assert.equal(auditFn.includes("dispatchEventToWorkflows"), false);
+
+  const seat = read("server/wire-service/contactSeat.ts");
+  const projected = sliceFn(seat, "async function projectSeat", "async function seatFromToken");
+  assert.match(projected, /UNION ALL/);
+  assert.match(projected, /FROM ct_firms/);
+  assert.match(projected, /FROM firms/);
+
+  const filter = read(".github/workflows/factory-check.yml");
+  for (const path of [
+    "server/wire-service/machine.ts",
+    "server/wire-service/workflowWalk.ts",
+    "server/wire-service/runWrites.ts",
+    "server/wire-service/eventTest.ts",
+    "server/wire-service/pool.ts",
+    "server/wire-service/stores.ts",
+    "server/wire-service/routes.ts",
+    "src/app/data/automationTriggerSelect.ts",
+    "src/app/data/automationWorkflows.ts",
+    "scripts/verify-firm-provision-writes.ts",
+    ".github/workflows/ship.yml",
+    "server/wire-service/contactSeat.ts",
+  ]) {
+    assert.ok(filter.includes(path), path);
+  }
+  assert.match(read(".github/workflows/ship.yml"), /verify-firm-provision-writes\.ts/);
+});
+
 function sections(): string[] {
   return [
     "intent",

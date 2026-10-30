@@ -98,6 +98,9 @@ jobs:
       - name: verify:campaign-failure-writes (PKT-010)
         run: npx tsx --env-file=.env scripts/verify-campaign-failure-writes.ts
 
+      - name: verify:firm-provision-writes (PKT-013)
+        run: npx tsx --env-file=.env scripts/verify-firm-provision-writes.ts
+
       - name: verify:id-keyed-loads (PKT-006)
         run: npx tsx --env-file=.env scripts/verify-id-keyed-loads.ts
 
