@@ -1,5 +1,5 @@
 {
-  "stateRevision": 130,
+  "stateRevision": 131,
   "authorizedDispatches": 50,
   "usedDispatches": 33,
   "scope": {
@@ -183,7 +183,7 @@
     "pkt-003-resume-same-run": {
       "id": "pkt-003-resume-same-run",
       "initiativeId": "exec-identity",
-      "stage": "candidate",
+      "stage": "verified",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
@@ -192,7 +192,7 @@
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": "e94b1e0bb91c1a1d276eb4e92fff7507075e410f",
-      "verifiedSha": null,
+      "verifiedSha": "e94b1e0bb91c1a1d276eb4e92fff7507075e410f",
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
@@ -202,7 +202,21 @@
       "integratedSha": null,
       "reconciliationId": null,
       "dispatch": null,
-      "execution": null,
+      "execution": {
+        "mode": "automatic",
+        "checks": [
+          {
+            "name": "verify-resume-same-run",
+            "runId": "41103501502",
+            "outcome": "pass"
+          },
+          {
+            "name": "factory-check",
+            "runId": "41103501502",
+            "outcome": "pass"
+          }
+        ]
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-003-resume-same-run",
