@@ -1,5 +1,5 @@
 {
-  "stateRevision": 53,
+  "stateRevision": 54,
   "authorizedDispatches": 20,
   "usedDispatches": 9,
   "scope": {
@@ -280,17 +280,12 @@
     "pkt-006-id-keyed-loads": {
       "id": "pkt-006-id-keyed-loads",
       "initiativeId": "exec-identity",
-      "stage": "analysis",
+      "stage": "change_specified",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": {
-        "workerId": "bc-843bc853-c330-4d57-a6c5-f8999b73a335",
-        "role": "analyst",
-        "until": "2026-10-30T14:55:42.724Z",
-        "revision": "rev-1"
-      },
+      "lease": null,
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
