@@ -1,5 +1,5 @@
 {
-  "stateRevision": 80,
+  "stateRevision": 81,
   "authorizedDispatches": 50,
   "usedDispatches": 17,
   "scope": {
@@ -511,15 +511,18 @@
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-012-consent-opt-out-writes",
-        "revision": "rev-1",
-        "prHead": "5f746ffb616d98d6d991ea308609bfa60761bd13",
-        "effect": "wake_sa",
-        "label": "factory-wake-sa",
-        "issuedAt": "2026-10-30T12:02:14.436Z"
-      },
-      "dispatchHistory": [],
+      "dispatch": null,
+      "dispatchHistory": [
+        {
+          "packetId": "pkt-012-consent-opt-out-writes",
+          "revision": "rev-1",
+          "prHead": "5f746ffb616d98d6d991ea308609bfa60761bd13",
+          "effect": "wake_sa",
+          "label": "factory-wake-sa",
+          "issuedAt": "2026-10-30T12:02:14.436Z",
+          "workerExecution": "ran"
+        }
+      ],
       "execution": null
     }
   }
