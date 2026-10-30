@@ -1,6 +1,6 @@
 {
-  "stateRevision": 28,
-  "authorizedDispatches": 4,
+  "stateRevision": 32,
+  "authorizedDispatches": 20,
   "usedDispatches": 4,
   "scope": {
     "id": "agents-and-automations",
@@ -107,7 +107,7 @@
     "pkt-002-open-ask-cursor": {
       "id": "pkt-002-open-ask-cursor",
       "initiativeId": "exec-identity",
-      "stage": "released",
+      "stage": "change_specified",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
@@ -141,7 +141,7 @@
     "pkt-003-resume-same-run": {
       "id": "pkt-003-resume-same-run",
       "initiativeId": "exec-identity",
-      "stage": "released",
+      "stage": "change_specified",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
@@ -184,7 +184,7 @@
     "pkt-004-firing-handle": {
       "id": "pkt-004-firing-handle",
       "initiativeId": "exec-identity",
-      "stage": "released",
+      "stage": "change_specified",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,

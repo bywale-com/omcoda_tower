@@ -69,4 +69,40 @@ You are not limited to the files the Architect named. You do not take ownership 
 
 The manifest keys the controller requires are `intent`, `must`, `stores`, `runtime`, `ports`, `verify`, `out_of_scope`, `impact_manifest`, `dependency_reconciliation`.
 
-Commit and push this branch. That push is the change specification. Do not plant `src/` or `server/`. Do not add labels. Stop.
+The specification file is not the signature. After the gate prints `authorized`, `<bc-id>` is this cloud agent's id.
+
+1. Acquire the analysis lease.
+
+```bash
+npx tsx scripts/factory-analyst.ts lease --worker <bc-id>
+```
+
+Stop unless it prints `lease_acquired`. The packet stage is now `analysis`.
+
+2. Write the SCP with the nine sections above.
+
+3. Commit and push the specification. Do not commit `.factory/state/ledger.json` by hand. If the push rejects, rebase onto the lease commit and push again.
+
+4. Sign through the controller.
+
+```bash
+npx tsx scripts/factory-analyst.ts sign --worker <bc-id>
+```
+
+Stop unless it prints `change_specified`. A missing section stays unsigned.
+
+5. If you cannot finish the specification, record one of these and stop. Do not sign.
+
+Recoverable interruption. The packet returns to `released` so a later wake can continue:
+
+```bash
+npx tsx scripts/factory-analyst.ts interrupt --worker <bc-id>
+```
+
+A blocker for an infrastructure or external stop. `--class` is `infrastructure` or `external`. Write `docs/factory/blockers/BLOCKER-NNN.md`.
+
+```bash
+npx tsx scripts/factory-analyst.ts block --worker <bc-id> --blocker BLOCKER-NNN --class external
+```
+
+Do not plant `src/` or `server/`. Do not add labels.

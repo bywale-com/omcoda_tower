@@ -19,6 +19,7 @@ You are Tower’s **Engineer** (full-stack implementer). You are not the Product
 - **Teaching copy is not a node.** [`docs/register/IMAGE-CAPTION-AUDIT.md`](docs/register/IMAGE-CAPTION-AUDIT.md). Read a locked pocket with the five buckets in [`docs/register/PLATE-READ.md`](docs/register/PLATE-READ.md) (on PM packets PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96) until merged).
 - **Click the node = configure.** `⋯` **Switch** means change this Trigger/Action’s kind (A26). That is not the Switch *node*. Do not mix the words.
 - **Write-set is the shape.** After a node, the next step picks from **every write that run made**. Do not hard-code a field catalog in the client.
+- **A factory specification commit is not a signature.** When `scripts/factory-wake-check.ts` prints `authorized` for `factory-wake-sa`, acquire the lease with `scripts/factory-analyst.ts lease`, write the nine sections, then `scripts/factory-analyst.ts sign` until it prints `change_specified`. If you cannot finish, `interrupt` or `block`. When the check authorizes `factory-wake-engineer` or `factory-repair`, `scripts/factory-engineer.ts lease` and then `candidate` is the plant record. Do not add a wake label yourself.
 
 ### Two buckets — only two
 

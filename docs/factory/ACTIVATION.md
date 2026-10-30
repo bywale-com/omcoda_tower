@@ -207,7 +207,43 @@ You are not limited to the files the Architect named. You do not take ownership 
 
 The manifest keys the controller requires are `intent`, `must`, `stores`, `runtime`, `ports`, `verify`, `out_of_scope`, `impact_manifest`, `dependency_reconciliation`.
 
-Commit and push this branch. That push is the change specification. Do not plant `src/` or `server/`. Do not add labels. Stop.
+The specification file is not the signature. After the gate prints `authorized`, `<bc-id>` is this cloud agent's id.
+
+1. Acquire the analysis lease.
+
+```bash
+npx tsx scripts/factory-analyst.ts lease --worker <bc-id>
+```
+
+Stop unless it prints `lease_acquired`. The packet stage is now `analysis`.
+
+2. Write the SCP with the nine sections above.
+
+3. Commit and push the specification. Do not commit `.factory/state/ledger.json` by hand. If the push rejects, rebase onto the lease commit and push again.
+
+4. Sign through the controller.
+
+```bash
+npx tsx scripts/factory-analyst.ts sign --worker <bc-id>
+```
+
+Stop unless it prints `change_specified`. A missing section stays unsigned.
+
+5. If you cannot finish the specification, record one of these and stop. Do not sign.
+
+Recoverable interruption. The packet returns to `released` so a later wake can continue:
+
+```bash
+npx tsx scripts/factory-analyst.ts interrupt --worker <bc-id>
+```
+
+A blocker for an infrastructure or external stop. `--class` is `infrastructure` or `external`. Write `docs/factory/blockers/BLOCKER-NNN.md`.
+
+```bash
+npx tsx scripts/factory-analyst.ts block --worker <bc-id> --blocker BLOCKER-NNN --class external
+```
+
+Do not plant `src/` or `server/`. Do not add labels.
 ~~~~
 
 ### Tower Factory Engineer
@@ -251,6 +287,14 @@ On `factory-repair`, run `npx tsx scripts/factory-wake-check.ts factory-repair` 
 
 Stop unless it prints `authorized`. The check matches packetId, revision, and prHead to the dispatch record. A later commit that changes only `.factory/state/ledger.json` is still this wake. A missing record or any other file changed after the authorized SHA means this wake is stale. Stop.
 
+`<bc-id>` is this cloud agent's id. Acquire the engineering lease before planting:
+
+```bash
+npx tsx scripts/factory-engineer.ts lease --worker <bc-id>
+```
+
+On `factory-repair`, pass `--label factory-repair`. Stop unless it prints `lease_acquired`.
+
 `factory-wake-engineer` requires a signed systems-change packet on this branch for the manifest revision. If it is already planted and nothing specified-and-clear remains, stop.
 
 On `factory-repair`, recut once, then stop.
@@ -275,7 +319,19 @@ Before you push, run the verification named in the systems-change packet. Record
 - `infrastructure` — the test harness failed. Do not disguise it as a product repair.
 - `external` — credentials, quotas, or an outside service. Stop.
 
-Push the candidate. Do not add labels. Stop.
+Push the candidate. Record that SHA through the controller. `<sha>` is the commit the checks ran against, not a later ledger commit.
+
+```bash
+npx tsx scripts/factory-engineer.ts candidate --worker <bc-id> --sha <sha>
+```
+
+Stop unless it prints `candidate`. If a check needs a secret that is unset, block instead of recording a candidate:
+
+```bash
+npx tsx scripts/factory-engineer.ts block --worker <bc-id> --blocker BLOCKER-NNN --class external
+```
+
+`--class` is `infrastructure` or `external`. Do not add labels. Stop.
 ~~~~
 
 How to verify the automations without spending: each one is listed under Mine, the trigger is the named label, Memories and pull-request creation are off, and you have not added the label. This repository cannot see that page. Set the variable in the next section only after you have seen those settings. Setting the variable does not probe Cursor.

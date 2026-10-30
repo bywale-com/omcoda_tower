@@ -32,6 +32,14 @@ On `factory-repair`, run `npx tsx scripts/factory-wake-check.ts factory-repair` 
 
 Stop unless it prints `authorized`. The check matches packetId, revision, and prHead to the dispatch record. A later commit that changes only `.factory/state/ledger.json` is still this wake. A missing record or any other file changed after the authorized SHA means this wake is stale. Stop.
 
+`<bc-id>` is this cloud agent's id. Acquire the engineering lease before planting:
+
+```bash
+npx tsx scripts/factory-engineer.ts lease --worker <bc-id>
+```
+
+On `factory-repair`, pass `--label factory-repair`. Stop unless it prints `lease_acquired`.
+
 `factory-wake-engineer` requires a signed systems-change packet on this branch for the manifest revision. If it is already planted and nothing specified-and-clear remains, stop.
 
 On `factory-repair`, recut once, then stop.
@@ -56,4 +64,16 @@ Before you push, run the verification named in the systems-change packet. Record
 - `infrastructure` — the test harness failed. Do not disguise it as a product repair.
 - `external` — credentials, quotas, or an outside service. Stop.
 
-Push the candidate. Do not add labels. Stop.
+Push the candidate. Record that SHA through the controller. `<sha>` is the commit the checks ran against, not a later ledger commit.
+
+```bash
+npx tsx scripts/factory-engineer.ts candidate --worker <bc-id> --sha <sha>
+```
+
+Stop unless it prints `candidate`. If a check needs a secret that is unset, block instead of recording a candidate:
+
+```bash
+npx tsx scripts/factory-engineer.ts block --worker <bc-id> --blocker BLOCKER-NNN --class external
+```
+
+`--class` is `infrastructure` or `external`. Do not add labels. Stop.

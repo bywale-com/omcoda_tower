@@ -377,6 +377,11 @@ function analystOpen(ledger: FactoryLedger): boolean {
   return Object.values(ledger.packets).some((packet) => packet.dispatch?.effect === "wake_sa");
 }
 
+/** True while an Analyst lease is still the authority for an unsigned change. */
+function analystLeaseOpen(ledger: FactoryLedger, now: string): boolean {
+  return Object.values(ledger.packets).some((packet) => packet.stage === "analysis" && leaseActive(packet, now));
+}
+
 /** One deterministic pass. Packet wakes are preferred over another architect session. */
 export function controlStep(ledger: FactoryLedger, world: World): ControlStep {
   const scoped: World = {
@@ -412,6 +417,7 @@ export function controlStep(ledger: FactoryLedger, world: World): ControlStep {
   }
   if (packetWakes.length) return { ledger: next, wakes: packetWakes, reason: packetWakes[0].decision.reason };
   if (saOpen) return { ledger: next, wakes: [], reason: "analyst_open" };
+  if (analystLeaseOpen(next, scoped.now)) return { ledger: next, wakes: [], reason: "analysis_open" };
   const architect = decideScope(next, packetWorld);
   if (architect.effect !== "none" && architect.initiativeId) {
     return {
