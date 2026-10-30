@@ -95,6 +95,9 @@ jobs:
       - name: verify:resume-same-run (PKT-003)
         run: npx tsx --env-file=.env scripts/verify-resume-same-run.ts
 
+      - name: verify:firing-handle (PKT-004)
+        run: npx tsx --env-file=.env scripts/verify-firing-handle.ts
+
       - name: verify:affordances (chosen-value round-trip)
         run: npm run verify:affordances
 

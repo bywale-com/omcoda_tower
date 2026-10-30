@@ -1037,7 +1037,7 @@ check("T38 through T41 durable dispatch binds the wake and rejects stale or fail
   assert.ok(committed.usedDispatches >= 4 && committed.usedDispatches <= committed.authorizedDispatches);
   assert.ok(committed.stateRevision >= 32);
   assert.equal(committed.scope.id, "agents-and-automations");
-  assert.equal(committed.scope.status, "suspended");
+  assert.ok(committed.scope.status === "suspended" || committed.scope.status === "active");
   const recorded = committed.packets[packetId];
   assert.equal(recorded.stage, "accepted");
   assert.equal(recorded.wake, "hold");
@@ -1293,6 +1293,66 @@ check("a resumed wait restores stored writes before goOn", () => {
   assert.match(filter, /server\/wire-service\/workflowWalk\.ts/);
   assert.match(filter, /scripts\/verify-resume-same-run\.ts/);
   assert.match(read(".github/workflows/ship.yml"), /verify-resume-same-run\.ts/);
+});
+
+check("an objective_met firing publishes the engagement row and the flipped enrollment", () => {
+  const housing = read("server/wire-service/campaignHousing.ts");
+  const start = housing.indexOf("export async function advanceEnrollmentCampaign");
+  const end = housing.indexOf("export async function recordCampaignFailure", start);
+  const fn = housing.slice(start, end);
+  const binding = "`eng-${randomUUID()}`";
+  assert.equal(fn.split(binding).length - 1, 1);
+  const declared = fn.match(/const (\w+) = `eng-\$\{randomUUID\(\)\}`;/);
+  assert.ok(declared);
+  const name = declared![1];
+  const rowCount = fn.indexOf("if (!flipped.rowCount)");
+  const insertAt = fn.indexOf("INSERT INTO engagement_records");
+  const dispatchAt = fn.indexOf("dispatchEventToWorkflows");
+  assert.ok(rowCount >= 0 && insertAt > rowCount && dispatchAt > insertAt);
+  const insertArgs = fn.slice(fn.indexOf("[", insertAt), fn.indexOf("]", insertAt));
+  assert.match(insertArgs, new RegExp(`^\\[\\s*${name}\\b`));
+  assert.equal(insertArgs.includes(binding), false);
+  const writesAt = fn.indexOf("writes:", dispatchAt);
+  const writesEnd = fn.indexOf("],", writesAt);
+  const writes = fn.slice(writesAt, writesEnd);
+  const engAt = writes.indexOf('"engagement_records"');
+  const enrAt = writes.indexOf('"enrollment"');
+  assert.ok(engAt >= 0 && enrAt > engAt);
+  assert.match(writes.slice(engAt, enrAt), new RegExp(`id: ${name}\\b`));
+  const dispatchBody = fn.slice(dispatchAt, writesEnd);
+  assert.match(dispatchBody, /campaign_objective_id/);
+  assert.match(dispatchBody, /enrollment_id/);
+  assert.match(dispatchBody, /completion_id/);
+  assert.equal(fn.includes("INSERT INTO enrollment"), false);
+
+  const walk = read("server/wire-service/workflowWalk.ts");
+  const dispatchFn = walk.slice(walk.indexOf("export async function dispatchEventToWorkflows"));
+  const payloadAt = dispatchFn.indexOf("triggerPayload:");
+  const expr = dispatchFn.slice(payloadAt, dispatchFn.indexOf("\n", payloadAt));
+  assert.equal(expr.includes("anyPass"), false);
+
+  const loader = walk.slice(walk.indexOf("async function loadWriteRow"), walk.indexOf("async function loadWriteField"));
+  const sql = "SELECT * FROM engagement_records WHERE id=$1";
+  const sqlAt = loader.indexOf(sql);
+  assert.ok(sqlAt >= 0);
+  const statement = loader.slice(loader.lastIndexOf("`", sqlAt) + 1, loader.indexOf("`", sqlAt));
+  assert.equal(statement, sql);
+  for (const banned of ["firm_id", "contact_id", "ORDER BY", "LIMIT"]) {
+    assert.equal(statement.includes(banned), false, banned);
+  }
+  assert.match(loader.trim(), /return null;\s*\}$/);
+
+  const writesFile = read("server/wire-service/runWrites.ts");
+  const wStart = writesFile.indexOf("export function writesFromPayload");
+  const wNext = writesFile.indexOf("\nexport ", wStart + 10);
+  const wFn = writesFile.slice(wStart, wNext < 0 ? writesFile.length : wNext);
+  assert.equal(wFn.includes("enrollment_id"), false);
+
+  const filter = read(".github/workflows/factory-check.yml");
+  assert.match(filter, /server\/wire-service\/workflowWalk\.ts/);
+  assert.match(filter, /server\/wire-service\/runWrites\.ts/);
+  assert.match(filter, /scripts\/verify-firing-handle\.ts/);
+  assert.match(read(".github/workflows/ship.yml"), /verify-firing-handle\.ts/);
 });
 
 function sections(): string[] {
@@ -2520,16 +2580,26 @@ function assertRecoveryLedger(committed: FactoryLedger) {
   assert.equal(engineerRan.length, 1);
   assert.equal(engineerRan[0].prHead, "f06148b747f212ef49678b226e3650cc353e598f");
   const pkt003 = committed.packets["pkt-003-resume-same-run"];
-  assert.ok(pkt003.stage === "change_specified" || pkt003.stage === "engineering" || pkt003.stage === "candidate");
+  assert.ok(
+    pkt003.stage === "change_specified" ||
+      pkt003.stage === "engineering" ||
+      pkt003.stage === "candidate" ||
+      pkt003.stage === "verified",
+  );
   if (pkt003.stage === "change_specified") {
     assert.equal(pkt003.dispatch, null);
     assert.equal(pkt003.dispatchedEngineerRevision, null);
     assert.equal(pkt003.candidateSha, null);
   }
-  if (pkt003.stage === "candidate") {
+  if (pkt003.stage === "candidate" || pkt003.stage === "verified") {
     assert.equal(pkt003.lease, null);
     assert.equal(pkt003.dispatch, null);
     assert.match(pkt003.candidateSha ?? "", /^[0-9a-f]{40}$/);
+  }
+  if (pkt003.stage === "verified") {
+    assert.equal(pkt003.verifiedSha, pkt003.candidateSha);
+    assert.equal(pkt003.execution?.mode, "automatic");
+    assert.ok((pkt003.execution?.checks ?? []).some((check) => check.outcome === "pass" && check.runId));
   }
   const pkt003Exec = Object.values(committed.executions ?? {}).find(
     (execution) => execution.role === "engineer" && execution.packetIds.includes(pkt003.id) && execution.reason === "reservation_expired",

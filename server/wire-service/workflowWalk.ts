@@ -692,6 +692,10 @@ async function loadWriteRow(
     const { rows } = await pool.query(`SELECT * FROM enrollment WHERE id=$1`, [w.id]);
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
+  if (w.table === "engagement_records") {
+    const { rows } = await pool.query(`SELECT * FROM engagement_records WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
   if (w.table === "missing_fact_signals") {
     const { rows } = await pool.query(`SELECT * FROM missing_fact_signals WHERE id=$1`, [w.id]);
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
@@ -1991,7 +1995,7 @@ export async function dispatchEventToWorkflows(
       firmId: opts.firmId,
       runId,
       triggerLabel: `event:${opts.eventName}`,
-      triggerPayload: { ...(opts.payload ?? {}), eventName: opts.eventName, anyPass: true },
+      triggerPayload: { ...(opts.payload ?? {}), eventName: opts.eventName },
       contactIds,
     });
     out.push({
