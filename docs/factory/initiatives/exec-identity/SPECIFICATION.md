@@ -17,5 +17,6 @@ What this factory treats as authoritative for the pilot:
 - Claim 12: an `eligibility.changed` firing’s `writes` is the four inserted rows, table-major, and those four tables load by primary key. PKT-009. The person split for those four tables is claim 52.
 - Claim 13: a `campaign_failure` firing’s `writes` is the inserted row, and the payload carries that row’s `campaign_id`. The row loads by primary key. PKT-010. The table stays out of `PERSON_WRITE_TABLES`.
 - Claim 14: a contact-scope `halt_records` firing’s `writes` is the inserted row. The row loads by primary key. PKT-011. The firm-book branch and the lift do not dispatch. The table stays out of `PERSON_WRITE_TABLES`.
+- Claim 15: a `consent_records.opt_out` firing’s `writes` is the current pair. The pointer’s `id` and `contact_id` are both the contact. The row loads by that contact and the walk’s firm. PKT-012. The table has no `id` column. Basis writes, the workspace opt-out, and the hard bounce do not dispatch.
 
 Component contracts point at claim numbers. They do not restate the journals.

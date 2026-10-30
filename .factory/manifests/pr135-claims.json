@@ -142,9 +142,9 @@
       "n": 15,
       "title": "A live firing of consent_records.opt_out places the current consent pair on payload.writes",
       "component": "firing-pointers",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-012-consent-opt-out-writes"
     },
     {
       "n": 16,

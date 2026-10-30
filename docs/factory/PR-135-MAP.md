@@ -12,19 +12,19 @@ The machine-readable index is `.factory/manifests/pr135-claims.json`. Eighty-eig
 
 | `read` | Meaning | Count |
 | --- | --- | --- |
-| `full` | Claim body read here | 1–8, 10–14 |
+| `full` | Claim body read here | 1–8, 10–15 |
 | `partial` | Heading and the nearby standing paragraph | 9 |
-| `title` | Title only. Not a code verdict | 15–88 |
+| `title` | Title only. Not a code verdict | 16–88 |
 
 | `kind` | Meaning | Count |
 | --- | --- | --- |
 | `established` | Investigation says the behavior is already true | 1, 5, 9 |
 | `implication` | Derived from established behavior | 2 |
-| `defect` | Investigation says the current code does not do the locked rule | 3, 4, 6, 7, 8, 12, 13, 14 |
+| `defect` | Investigation says the current code does not do the locked rule | 3, 4, 6, 7, 8, 12, 13, 14, 15 |
 | `contract` | Cross-component contract named in the text that was read | 10, 11 |
-| `indexed` | Grouped for coverage only | 15–88 |
+| `indexed` | Grouped for coverage only | 16–88 |
 
-A defect is not a released packet until the gates pass. Claim 3 has a held packet: `pkt-001-click-attribution`. Claims 4, 6, 7, and 8 are released: PKT-002, PKT-003, PKT-004, and PKT-005. Claim 10 is PKT-006, except the `engagement_records` load, which stays PKT-004. Claim 11’s `objective_met` array is PKT-004, its fact array is PKT-007, and its meeting array is PKT-008. Claim 12 is PKT-009. Claim 13 is PKT-010. Claim 14 is PKT-011. Claims 15–16 are not packets.
+A defect is not a released packet until the gates pass. Claim 3 has a held packet: `pkt-001-click-attribution`. Claims 4, 6, 7, and 8 are released: PKT-002, PKT-003, PKT-004, and PKT-005. Claim 10 is PKT-006, except the `engagement_records` load, which stays PKT-004. Claim 11’s `objective_met` array is PKT-004, its fact array is PKT-007, and its meeting array is PKT-008. Claim 12 is PKT-009. Claim 13 is PKT-010. Claim 14 is PKT-011. Claim 15 is PKT-012. Claim 16 is not a packet.
 
 ## Components
 
@@ -34,7 +34,7 @@ The index groups claims so coverage can be counted without pretending a module i
 | --- | --- | --- |
 | `pursuit-identity` | 1, 2, 3, 4, 64, 68 | Specification in progress on PR 135. PKT-001 held. PKT-002 released. |
 | `walk-handle` | 5, 6, 7, 8, 10, 46, 48 | PKT-003, PKT-004, PKT-005, and PKT-006 released. |
-| `firing-pointers` | 11–16 | PKT-004, PKT-007, PKT-008, PKT-009, PKT-010, and PKT-011 released. Claims 15–16 indexed. |
+| `firing-pointers` | 11–16 | PKT-004 and PKT-007 through PKT-012 released. Claim 16 indexed. |
 | `halt-send` | 18–22 | Indexed. |
 | `consent-silence` | 23–31, 33, 41, 42, 49 | Indexed. |
 | `fact-form` | 32, 34–36, 61, 62, 69, 74, 88 | Indexed. |
