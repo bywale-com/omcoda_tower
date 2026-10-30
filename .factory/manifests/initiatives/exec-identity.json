@@ -28,7 +28,8 @@
     "pkt-010-campaign-failure-writes",
     "pkt-011-halt-records-writes",
     "pkt-012-consent-opt-out-writes",
-    "pkt-013-firm-provision-writes"
+    "pkt-013-firm-provision-writes",
+    "pkt-014-empty-firing-audience"
   ],
   "requiredPackets": [
     "pkt-002-open-ask-cursor",
@@ -42,7 +43,8 @@
     "pkt-010-campaign-failure-writes",
     "pkt-011-halt-records-writes",
     "pkt-012-consent-opt-out-writes",
-    "pkt-013-firm-provision-writes"
+    "pkt-013-firm-provision-writes",
+    "pkt-014-empty-firing-audience"
   ],
   "founderDecisions": [
     "Who is placed on launch day.",

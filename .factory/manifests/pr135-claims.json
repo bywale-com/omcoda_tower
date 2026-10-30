@@ -158,9 +158,9 @@
       "n": 17,
       "title": "A firing that passes no contact ids walks that automation's audience inside the firing firm",
       "component": "schedule",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-014-empty-firing-audience"
     },
     {
       "n": 18,

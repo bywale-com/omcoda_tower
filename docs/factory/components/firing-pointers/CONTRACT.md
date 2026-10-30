@@ -22,4 +22,4 @@ Walk handle (`walk-handle`) loads a pointer by the predicate claim 10 locked. PK
 
 ## Out of this contract
 
-Launch Agent as a product initiative. Claim 52’s person split. Claim 17’s empty-contact audience. Claim 43’s reactivation enroll. Claim 60’s pathway boolean. `handlePoolAllocate` does not become this firing.
+Launch Agent as a product initiative. Claim 52’s person split. Claim 17’s empty-contact audience is PKT-014. It does not add a person to the `ct_firms` pointer. Claim 43’s reactivation enroll. Claim 60’s pathway boolean. `handlePoolAllocate` does not become this firing.

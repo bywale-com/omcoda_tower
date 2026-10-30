@@ -23,6 +23,7 @@
 | pkt-011-halt-records-writes | sa | released | yes |
 | pkt-012-consent-opt-out-writes | sa | released | yes |
 | pkt-013-firm-provision-writes | sa | released | yes |
+| pkt-014-empty-firing-audience | sa | released | yes |
 
 `required` is no until the packet is released. A held draft does not block the initiative, and it does not complete it. PKT-001 stays held. The released packets do not close the initiative.
 

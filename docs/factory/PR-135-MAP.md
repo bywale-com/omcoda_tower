@@ -12,19 +12,19 @@ The machine-readable index is `.factory/manifests/pr135-claims.json`. Eighty-eig
 
 | `read` | Meaning | Count |
 | --- | --- | --- |
-| `full` | Claim body read here | 1–8, 10–16 |
+| `full` | Claim body read here | 1–8, 10–17 |
 | `partial` | Heading and the nearby standing paragraph | 9 |
-| `title` | Title only. Not a code verdict | 17–88 |
+| `title` | Title only. Not a code verdict | 18–88 |
 
 | `kind` | Meaning | Count |
 | --- | --- | --- |
 | `established` | Investigation says the behavior is already true | 1, 5, 9 |
 | `implication` | Derived from established behavior | 2 |
-| `defect` | Investigation says the current code does not do the locked rule | 3, 4, 6, 7, 8, 12, 13, 14, 15, 16 |
+| `defect` | Investigation says the current code does not do the locked rule | 3, 4, 6, 7, 8, 12, 13, 14, 15, 16, 17 |
 | `contract` | Cross-component contract named in the text that was read | 10, 11 |
-| `indexed` | Grouped for coverage only | 17–88 |
+| `indexed` | Grouped for coverage only | 18–88 |
 
-A defect is not a released packet until the gates pass. Claim 3 has a held packet: `pkt-001-click-attribution`. Claims 4, 6, 7, and 8 are released: PKT-002, PKT-003, PKT-004, and PKT-005. Claim 10 is PKT-006, except the `engagement_records` load, which stays PKT-004. Claim 11’s `objective_met` array is PKT-004, its fact array is PKT-007, and its meeting array is PKT-008. Claim 12 is PKT-009. Claim 13 is PKT-010. Claim 14 is PKT-011. Claim 15 is PKT-012. Claim 16 is PKT-013.
+A defect is not a released packet until the gates pass. Claim 3 has a held packet: `pkt-001-click-attribution`. Claims 4, 6, 7, and 8 are released: PKT-002, PKT-003, PKT-004, and PKT-005. Claim 10 is PKT-006, except the `engagement_records` load, which stays PKT-004. Claim 11’s `objective_met` array is PKT-004, its fact array is PKT-007, and its meeting array is PKT-008. Claim 12 is PKT-009. Claim 13 is PKT-010. Claim 14 is PKT-011. Claim 15 is PKT-012. Claim 16 is PKT-013. Claim 17 is PKT-014.
 
 ## Components
 
@@ -41,7 +41,7 @@ The index groups claims so coverage can be counted without pretending a module i
 | `meeting` | 9, 37–39, 63 | Indexed, except claim 9’s standing paragraph. |
 | `operator-activity` | 40 | Indexed. |
 | `reactivation` | 43–45, 52, 54 | Indexed. |
-| `schedule` | 17, 47 | Indexed. |
+| `schedule` | 17, 47 | Claim 17 is PKT-014. Claim 47 indexed. |
 | `opt-in-ladder` | 51, 65–67, 70–73, 75, 76 | Indexed. |
 | `readiness` | 58–60 | Indexed. |
 | `mail` | 50, 53, 55–57, 83–87 | Indexed. |
