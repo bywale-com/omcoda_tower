@@ -1,5 +1,5 @@
 {
-  "stateRevision": 153,
+  "stateRevision": 154,
   "authorizedDispatches": 50,
   "usedDispatches": 39,
   "scope": {
@@ -668,12 +668,17 @@
     "pkt-010-campaign-failure-writes": {
       "id": "pkt-010-campaign-failure-writes",
       "initiativeId": "exec-identity",
-      "stage": "change_specified",
+      "stage": "engineering",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": null,
+      "lease": {
+        "workerId": "bc-51265dff-9572-40fb-a9cd-be7f3ce5797d",
+        "role": "engineer",
+        "until": "2026-10-30T20:11:09.369Z",
+        "revision": "rev-1"
+      },
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
@@ -1458,7 +1463,7 @@
       "id": "dsp-152-engineer-pkt-010-campaign-failure-writes",
       "assignmentId": "asg-dsp-152-engineer-pkt-010-campaign-failure-writes",
       "role": "engineer",
-      "phase": "started",
+      "phase": "running",
       "packetIds": [
         "pkt-010-campaign-failure-writes"
       ],
@@ -1471,11 +1476,11 @@
       "continuation": "fresh",
       "issuedAt": "2026-10-30T19:08:22.735Z",
       "startedAt": "2026-10-30T19:11:07.570Z",
-      "runningAt": null,
+      "runningAt": "2026-10-30T19:11:09.369Z",
       "endedAt": null,
       "reserveUntil": "2026-10-30T19:38:22.735Z",
       "startUntil": "2026-10-30T19:26:07.570Z",
-      "leaseUntil": null,
+      "leaseUntil": "2026-10-30T20:11:09.369Z",
       "reason": null
     }
   },
