@@ -1,5 +1,5 @@
 {
-  "stateRevision": 36,
+  "stateRevision": 37,
   "authorizedDispatches": 20,
   "usedDispatches": 6,
   "scope": {
@@ -107,20 +107,15 @@
     "pkt-002-open-ask-cursor": {
       "id": "pkt-002-open-ask-cursor",
       "initiativeId": "exec-identity",
-      "stage": "engineering",
+      "stage": "candidate",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": {
-        "workerId": "bc-e2e8d4c7-3e54-4d47-9f65-8d33f7ced3f9",
-        "role": "engineer",
-        "until": "2026-10-30T14:30:25.548Z",
-        "revision": "rev-1"
-      },
+      "lease": null,
       "attempts": 0,
       "maxAttempts": 1,
-      "candidateSha": null,
+      "candidateSha": "3246a074efecd8adb98e4ca232d443b90821173f",
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
