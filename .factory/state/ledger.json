@@ -1,7 +1,7 @@
 {
-  "stateRevision": 127,
+  "stateRevision": 128,
   "authorizedDispatches": 50,
-  "usedDispatches": 32,
+  "usedDispatches": 33,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -268,12 +268,21 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
-      "dispatchedEngineerRevision": null,
+      "dispatchedEngineerRevision": "rev-1",
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-004-firing-handle",
+        "revision": "rev-1",
+        "prHead": "74d9770bb0d627191b8580225dcb73845ebf0126",
+        "effect": "wake_engineer",
+        "label": "factory-wake-engineer",
+        "issuedAt": "2026-10-30T18:03:26.103Z",
+        "executionId": "dsp-128-engineer-pkt-004-firing-handle",
+        "assignmentId": "asg-dsp-128-engineer-pkt-004-firing-handle"
+      },
       "execution": null,
       "dispatchHistory": [
         {
@@ -1220,6 +1229,30 @@
       "startUntil": "2026-10-30T18:17:57.204Z",
       "leaseUntil": "2026-10-30T19:02:57.204Z",
       "reason": "candidate_recorded"
+    },
+    "dsp-128-engineer-pkt-004-firing-handle": {
+      "id": "dsp-128-engineer-pkt-004-firing-handle",
+      "assignmentId": "asg-dsp-128-engineer-pkt-004-firing-handle",
+      "role": "engineer",
+      "phase": "dispatched",
+      "packetIds": [
+        "pkt-004-firing-handle"
+      ],
+      "revisions": {
+        "pkt-004-firing-handle": "rev-1"
+      },
+      "label": "factory-wake-engineer",
+      "prHead": "74d9770bb0d627191b8580225dcb73845ebf0126",
+      "agentId": null,
+      "continuation": "fresh",
+      "issuedAt": "2026-10-30T18:03:26.103Z",
+      "startedAt": null,
+      "runningAt": null,
+      "endedAt": null,
+      "reserveUntil": "2026-10-30T18:33:26.103Z",
+      "startUntil": null,
+      "leaseUntil": null,
+      "reason": null
     }
   },
   "assignments": {
@@ -1269,6 +1302,18 @@
       "basis": null,
       "executionIds": [
         "dsp-126-engineer-pkt-003-resume-same-run"
+      ]
+    },
+    "asg-dsp-128-engineer-pkt-004-firing-handle": {
+      "id": "asg-dsp-128-engineer-pkt-004-firing-handle",
+      "role": "engineer",
+      "initiativeId": "exec-identity",
+      "packetIds": [
+        "pkt-004-firing-handle"
+      ],
+      "basis": null,
+      "executionIds": [
+        "dsp-128-engineer-pkt-004-firing-handle"
       ]
     }
   }
