@@ -1,7 +1,7 @@
 {
-  "stateRevision": 59,
+  "stateRevision": 60,
   "authorizedDispatches": 20,
-  "usedDispatches": 10,
+  "usedDispatches": 11,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -362,13 +362,20 @@
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
-      "dispatchedSaRevision": null,
+      "dispatchedSaRevision": "rev-1",
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-008-meeting-writes",
+        "revision": "rev-1",
+        "prHead": "b9cc3608fba078634ea25ed06c64170a58579f47",
+        "effect": "wake_sa",
+        "label": "factory-wake-sa",
+        "issuedAt": "2026-10-30T11:06:43.404Z"
+      },
       "dispatchHistory": [],
       "execution": null
     },
