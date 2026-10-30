@@ -1,5 +1,5 @@
 {
-  "stateRevision": 102,
+  "stateRevision": 103,
   "authorizedDispatches": 50,
   "usedDispatches": 24,
   "scope": {
@@ -646,17 +646,12 @@
     "pkt-016-halt-send-firm": {
       "id": "pkt-016-halt-send-firm",
       "initiativeId": "exec-identity",
-      "stage": "analysis",
+      "stage": "change_specified",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": {
-        "workerId": "bc-dc618270-51de-46b5-b5ec-9f0014c3e8db",
-        "role": "analyst",
-        "until": "2026-10-30T17:12:14.298Z",
-        "revision": "rev-1"
-      },
+      "lease": null,
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
