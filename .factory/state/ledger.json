@@ -1,5 +1,5 @@
 {
-  "stateRevision": 123,
+  "stateRevision": 124,
   "authorizedDispatches": 50,
   "usedDispatches": 31,
   "scope": {
@@ -29,16 +29,9 @@
       "outstanding": [
         "Claim 52 still owns the person split for the four eligibility tables. Claims 23-88 are indexed and have no packets. Coverage is not complete."
       ],
-      "session": "running",
+      "session": "continuation_due",
       "revision": "rev-4",
-      "dispatch": {
-        "packetId": "exec-identity",
-        "revision": "rev-4",
-        "prHead": "66becb1b39810446b771b36e8bac43df9bfb3bc0",
-        "effect": "wake_architect",
-        "label": "factory-wake-architect",
-        "issuedAt": "2026-10-30T14:11:43.660Z"
-      },
+      "dispatch": null,
       "blockedReason": null,
       "packetIds": [
         "pkt-001-click-attribution",
@@ -61,7 +54,7 @@
         "pkt-018-send-denied-engagement",
         "pkt-019-first-step-send-denied"
       ],
-      "updatedAt": "2026-10-30T17:30:00.000Z"
+      "updatedAt": "2026-10-30T17:50:29.766Z"
     },
     "launch-agent": {
       "id": "launch-agent",
@@ -1150,6 +1143,30 @@
       "startUntil": null,
       "leaseUntil": null,
       "reason": "reservation_expired"
+    },
+    "dsp-124-architect-exec-identity": {
+      "id": "dsp-124-architect-exec-identity",
+      "assignmentId": "asg-dsp-124-architect-exec-identity",
+      "role": "architect",
+      "phase": "interrupted",
+      "packetIds": [
+        "exec-identity"
+      ],
+      "revisions": {
+        "exec-identity": "rev-4"
+      },
+      "label": "factory-wake-architect",
+      "prHead": "66becb1b39810446b771b36e8bac43df9bfb3bc0",
+      "agentId": null,
+      "continuation": "fresh",
+      "issuedAt": "2026-10-30T14:11:43.660Z",
+      "startedAt": null,
+      "runningAt": null,
+      "endedAt": "2026-10-30T17:50:29.766Z",
+      "reserveUntil": "2026-10-30T17:11:43.660Z",
+      "startUntil": null,
+      "leaseUntil": null,
+      "reason": "reservation_expired"
     }
   },
   "assignments": {
@@ -1175,6 +1192,18 @@
       "basis": null,
       "executionIds": [
         "dsp-123-engineer-pkt-003-resume-same-run"
+      ]
+    },
+    "asg-dsp-124-architect-exec-identity": {
+      "id": "asg-dsp-124-architect-exec-identity",
+      "role": "architect",
+      "initiativeId": "exec-identity",
+      "packetIds": [
+        "exec-identity"
+      ],
+      "basis": null,
+      "executionIds": [
+        "dsp-124-architect-exec-identity"
       ]
     }
   }
