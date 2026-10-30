@@ -1,7 +1,7 @@
 {
-  "stateRevision": 143,
+  "stateRevision": 144,
   "authorizedDispatches": 50,
-  "usedDispatches": 36,
+  "usedDispatches": 37,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -458,12 +458,21 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
-      "dispatchedEngineerRevision": null,
+      "dispatchedEngineerRevision": "rev-1",
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-007-fact-writes",
+        "revision": "rev-1",
+        "prHead": "a2bd4bcffd8b202b61fa8659ece4506ed2dfa5d2",
+        "effect": "wake_engineer",
+        "label": "factory-wake-engineer",
+        "issuedAt": "2026-10-30T18:47:15.644Z",
+        "executionId": "dsp-144-engineer-pkt-007-fact-writes",
+        "assignmentId": "asg-dsp-144-engineer-pkt-007-fact-writes"
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-007-fact-writes",
@@ -1374,6 +1383,30 @@
       "startUntil": "2026-10-30T18:55:24.263Z",
       "leaseUntil": "2026-10-30T19:40:26.179Z",
       "reason": "candidate_recorded"
+    },
+    "dsp-144-engineer-pkt-007-fact-writes": {
+      "id": "dsp-144-engineer-pkt-007-fact-writes",
+      "assignmentId": "asg-dsp-144-engineer-pkt-007-fact-writes",
+      "role": "engineer",
+      "phase": "dispatched",
+      "packetIds": [
+        "pkt-007-fact-writes"
+      ],
+      "revisions": {
+        "pkt-007-fact-writes": "rev-1"
+      },
+      "label": "factory-wake-engineer",
+      "prHead": "a2bd4bcffd8b202b61fa8659ece4506ed2dfa5d2",
+      "agentId": null,
+      "continuation": "fresh",
+      "issuedAt": "2026-10-30T18:47:15.644Z",
+      "startedAt": null,
+      "runningAt": null,
+      "endedAt": null,
+      "reserveUntil": "2026-10-30T19:17:15.644Z",
+      "startUntil": null,
+      "leaseUntil": null,
+      "reason": null
     }
   },
   "assignments": {
@@ -1471,6 +1504,18 @@
       "basis": null,
       "executionIds": [
         "dsp-140-engineer-pkt-006-id-keyed-loads"
+      ]
+    },
+    "asg-dsp-144-engineer-pkt-007-fact-writes": {
+      "id": "asg-dsp-144-engineer-pkt-007-fact-writes",
+      "role": "engineer",
+      "initiativeId": "exec-identity",
+      "packetIds": [
+        "pkt-007-fact-writes"
+      ],
+      "basis": null,
+      "executionIds": [
+        "dsp-144-engineer-pkt-007-fact-writes"
       ]
     }
   }
