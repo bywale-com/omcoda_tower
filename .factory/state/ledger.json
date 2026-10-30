@@ -1,5 +1,5 @@
 {
-  "stateRevision": 138,
+  "stateRevision": 139,
   "authorizedDispatches": 50,
   "usedDispatches": 35,
   "scope": {
@@ -394,21 +394,12 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
-      "dispatchedEngineerRevision": "rev-1",
+      "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-006-id-keyed-loads",
-        "revision": "rev-1",
-        "prHead": "62192cabc34dfeb5ef0994b9d1df4a4e775a3168",
-        "effect": "wake_engineer",
-        "label": "factory-wake-engineer",
-        "issuedAt": "2026-10-30T18:30:17.466Z",
-        "executionId": "dsp-137-engineer-pkt-006-id-keyed-loads",
-        "assignmentId": "asg-dsp-137-engineer-pkt-006-id-keyed-loads"
-      },
+      "dispatch": null,
       "dispatchHistory": [
         {
           "packetId": "pkt-006-id-keyed-loads",
@@ -418,6 +409,17 @@
           "label": "factory-wake-sa",
           "issuedAt": "2026-10-30T10:51:23.108Z",
           "workerExecution": "ran"
+        },
+        {
+          "packetId": "pkt-006-id-keyed-loads",
+          "revision": "rev-1",
+          "prHead": "62192cabc34dfeb5ef0994b9d1df4a4e775a3168",
+          "effect": "wake_engineer",
+          "label": "factory-wake-engineer",
+          "issuedAt": "2026-10-30T18:30:17.466Z",
+          "executionId": "dsp-137-engineer-pkt-006-id-keyed-loads",
+          "assignmentId": "asg-dsp-137-engineer-pkt-006-id-keyed-loads",
+          "workerExecution": "absent"
         }
       ],
       "execution": null,
@@ -1318,7 +1320,7 @@
       "id": "dsp-137-engineer-pkt-006-id-keyed-loads",
       "assignmentId": "asg-dsp-137-engineer-pkt-006-id-keyed-loads",
       "role": "engineer",
-      "phase": "started",
+      "phase": "refused",
       "packetIds": [
         "pkt-006-id-keyed-loads"
       ],
@@ -1332,11 +1334,11 @@
       "issuedAt": "2026-10-30T18:30:17.466Z",
       "startedAt": "2026-10-30T18:35:20.983Z",
       "runningAt": null,
-      "endedAt": null,
+      "endedAt": "2026-10-30T18:35:22.716Z",
       "reserveUntil": "2026-10-30T19:00:17.466Z",
       "startUntil": "2026-10-30T18:50:20.983Z",
       "leaseUntil": null,
-      "reason": null
+      "reason": "worker_refused"
     }
   },
   "assignments": {
