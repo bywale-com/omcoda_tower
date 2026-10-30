@@ -1355,6 +1355,74 @@ check("an objective_met firing publishes the engagement row and the flipped enro
   assert.match(read(".github/workflows/ship.yml"), /verify-firing-handle\.ts/);
 });
 
+check("an audit result row belongs to the run that wrote it", () => {
+  const sql = read("supabase/migrations/025_audit_row_grain.sql");
+  for (const banned of [
+    "DELETE FROM reachability_verdicts",
+    "DELETE FROM sequence_ready",
+    "SET verdict",
+    "SET ready",
+  ]) {
+    assert.equal(sql.includes(banned), false, banned);
+  }
+  assert.equal(sql.split("PRIMARY KEY (audit_run_id, contact_id)").length - 1, 2);
+  assert.equal((sql.match(/audit_run_id TEXT/g) ?? []).length >= 2, true);
+  const withoutRunKey = sql.replace(/audit_run_id/g, "runkey");
+  assert.equal(/\bADD COLUMN(?: IF NOT EXISTS)?\s+id\b/i.test(withoutRunKey), false);
+  assert.equal(/\bid\s+TEXT\b/i.test(withoutRunKey), false);
+
+  const audit = read("server/wire-service/auditRun.ts");
+  assert.equal(audit.includes("ON CONFLICT (contact_id, firm_id)"), false);
+  const writer = audit.slice(audit.indexOf("export async function executeAuditRun"));
+  assert.match(writer, /INSERT INTO reachability_verdicts \(audit_run_id/);
+  assert.match(writer, /INSERT INTO sequence_ready \(audit_run_id/);
+  assert.equal(writer.split("id: runId, contact_id: contact.id").length - 1, 2);
+
+  const walk = read("server/wire-service/workflowWalk.ts");
+  const loader = walk.slice(walk.indexOf("async function loadWriteRow"), walk.indexOf("async function loadWriteField"));
+  const predicate = "audit_run_id=$1 AND contact_id=$2 AND firm_id=$3";
+  assert.equal(loader.split(predicate).length - 1, 2);
+  let from = 0;
+  for (let n = 0; n < 2; n += 1) {
+    const at = loader.indexOf(predicate, from);
+    assert.ok(at >= 0);
+    const statement = loader.slice(loader.lastIndexOf("`", at) + 1, loader.indexOf("`", at));
+    assert.equal(statement.includes("ORDER BY"), false);
+    from = at + predicate.length;
+  }
+
+  const machine = read("server/wire-service/machine.ts");
+  const book = machine.slice(
+    machine.indexOf("export async function handleAuditRunGet"),
+    machine.indexOf("export async function handleContactImport"),
+  );
+  assert.match(book, /sr\.audit_run_id = rv\.audit_run_id AND sr\.contact_id = rv\.contact_id/);
+
+  const eventTest = read("server/wire-service/eventTest.ts");
+  const writeFn = eventTest.slice(eventTest.indexOf("function writeId"), eventTest.indexOf("function toWrites"));
+  const auditAt = writeFn.indexOf("audit_run_id");
+  assert.ok(auditAt >= 0);
+  assert.ok(writeFn.indexOf("body.id") > auditAt);
+  assert.ok(writeFn.indexOf("body.contact_id") > auditAt);
+
+  const paths = read(".github/workflows/factory-check.yml");
+  for (const path of [
+    "server/wire-service/auditRun.ts",
+    "server/wire-service/workflowWalk.ts",
+    "server/wire-service/machine.ts",
+    "server/wire-service/eventTest.ts",
+    "scripts/verify-audit-row-grain.ts",
+    "supabase/migrations/025_audit_row_grain.sql",
+    "scripts/close-walk-gaps.ts",
+    "scripts/verify-automations-alive.ts",
+    "scripts/verify-machine-e2e.ts",
+    "scripts/verify-ship-spine.ts",
+  ]) {
+    assert.ok(paths.includes(path), path);
+  }
+  assert.match(read(".github/workflows/ship.yml"), /verify-audit-row-grain\.ts/);
+});
+
 function sections(): string[] {
   return [
     "intent",

@@ -309,7 +309,7 @@ function commitWrites(ctx: WalkContext, nodeId: string, writes: RunWrite[]): voi
   ctx.previousWrites = writes;
 }
 
-async function executeGet(
+export async function executeGet(
   pool: Pool,
   data: Record<string, unknown>,
 ): Promise<{ writes: RunWrite[]; contactIds?: string[] }> {
@@ -337,19 +337,37 @@ async function executeGet(
     const ids = rows.map((r) => r.id);
     const writes: RunWrite[] = ids.map((id) => ({ table: "contact_records", id, contact_id: id }));
     if (ids.length) {
-      const verdicts = await pool.query<{ contact_id: string }>(
-        `SELECT contact_id FROM reachability_verdicts WHERE contact_id = ANY($1::text[])`,
-        [ids],
-      );
+      const firmScoped = select !== "every";
+      const verdictSql = firmScoped
+        ? `SELECT DISTINCT ON (rv.contact_id) rv.contact_id, rv.audit_run_id
+           FROM reachability_verdicts rv
+           JOIN audit_runs ar ON ar.id = rv.audit_run_id
+           WHERE rv.contact_id = ANY($1::text[]) AND rv.firm_id = $2
+           ORDER BY rv.contact_id, rv.updated_at DESC, ar.started_at DESC, rv.audit_run_id DESC`
+        : `SELECT DISTINCT ON (rv.contact_id) rv.contact_id, rv.audit_run_id
+           FROM reachability_verdicts rv
+           JOIN audit_runs ar ON ar.id = rv.audit_run_id
+           WHERE rv.contact_id = ANY($1::text[])
+           ORDER BY rv.contact_id, rv.updated_at DESC, ar.started_at DESC, rv.audit_run_id DESC`;
+      const readySql = firmScoped
+        ? `SELECT DISTINCT ON (sr.contact_id) sr.contact_id, sr.audit_run_id
+           FROM sequence_ready sr
+           JOIN audit_runs ar ON ar.id = sr.audit_run_id
+           WHERE sr.contact_id = ANY($1::text[]) AND sr.firm_id = $2
+           ORDER BY sr.contact_id, sr.updated_at DESC, ar.started_at DESC, sr.audit_run_id DESC`
+        : `SELECT DISTINCT ON (sr.contact_id) sr.contact_id, sr.audit_run_id
+           FROM sequence_ready sr
+           JOIN audit_runs ar ON ar.id = sr.audit_run_id
+           WHERE sr.contact_id = ANY($1::text[])
+           ORDER BY sr.contact_id, sr.updated_at DESC, ar.started_at DESC, sr.audit_run_id DESC`;
+      const markParams = firmScoped ? [ids, class1] : [ids];
+      const verdicts = await pool.query<{ contact_id: string; audit_run_id: string }>(verdictSql, markParams);
       for (const row of verdicts.rows) {
-        writes.push({ table: "reachability_verdicts", id: row.contact_id, contact_id: row.contact_id });
+        writes.push({ table: "reachability_verdicts", id: row.audit_run_id, contact_id: row.contact_id });
       }
-      const ready = await pool.query<{ contact_id: string }>(
-        `SELECT contact_id FROM sequence_ready WHERE contact_id = ANY($1::text[])`,
-        [ids],
-      );
+      const ready = await pool.query<{ contact_id: string; audit_run_id: string }>(readySql, markParams);
       for (const row of ready.rows) {
-        writes.push({ table: "sequence_ready", id: row.contact_id, contact_id: row.contact_id });
+        writes.push({ table: "sequence_ready", id: row.audit_run_id, contact_id: row.contact_id });
       }
     }
     return { writes, contactIds: ids };
@@ -652,23 +670,25 @@ function nestedField(row: Record<string, unknown> | null, field: string): unknow
   return cur;
 }
 
-async function loadWriteRow(
+export async function loadWriteRow(
   pool: Pool,
   firmId: string,
   w: RunWrite,
 ): Promise<Record<string, unknown> | null> {
   const contactId = w.contact_id ?? w.id;
   if (w.table === "sequence_ready") {
+    if (w.contact_id == null || w.contact_id === "") return null;
     const { rows } = await pool.query(
-      `SELECT * FROM sequence_ready WHERE contact_id=$1 AND firm_id=$2`,
-      [contactId, firmId],
+      `SELECT * FROM sequence_ready WHERE audit_run_id=$1 AND contact_id=$2 AND firm_id=$3`,
+      [w.id, w.contact_id, firmId],
     );
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
   if (w.table === "reachability_verdicts") {
+    if (w.contact_id == null || w.contact_id === "") return null;
     const { rows } = await pool.query(
-      `SELECT * FROM reachability_verdicts WHERE contact_id=$1 AND firm_id=$2`,
-      [contactId, firmId],
+      `SELECT * FROM reachability_verdicts WHERE audit_run_id=$1 AND contact_id=$2 AND firm_id=$3`,
+      [w.id, w.contact_id, firmId],
     );
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
