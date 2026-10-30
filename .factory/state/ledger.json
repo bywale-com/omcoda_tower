@@ -1,7 +1,7 @@
 {
-  "stateRevision": 106,
+  "stateRevision": 107,
   "authorizedDispatches": 50,
-  "usedDispatches": 25,
+  "usedDispatches": 26,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -694,13 +694,20 @@
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
-      "dispatchedSaRevision": null,
+      "dispatchedSaRevision": "rev-1",
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-017-tick-send-halt",
+        "revision": "rev-1",
+        "prHead": "968d2ec4fd1dd565a49182f88fd73cc543d815b8",
+        "effect": "wake_sa",
+        "label": "factory-wake-sa",
+        "issuedAt": "2026-10-30T13:25:04.920Z"
+      },
       "dispatchHistory": [],
       "execution": null
     }
