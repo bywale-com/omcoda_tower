@@ -22,9 +22,23 @@ Switch to the pull request head branch before reading the packet.
 PR_JSON=$(gh pr view --json headRefName,headRefOid --jq '{branch:.headRefName,head:.headRefOid}' 2>/dev/null || true)
 ```
 
-Check out that branch. Then read `.factory/state/ledger.json`.
+Check out that branch. Then run the check for the label that woke you:
 
-Stop unless packetId, revision, and prHead match the dispatch record in that ledger, and the record's label is the label that woke you (`factory-wake-engineer` or `factory-repair`). A missing record or a different head means this wake is stale. Stop.
+```bash
+npx tsx scripts/factory-wake-check.ts factory-wake-engineer
+```
+
+On `factory-repair`, run `npx tsx scripts/factory-wake-check.ts factory-repair` instead.
+
+Stop unless it prints `authorized`. The check matches packetId, revision, and prHead to the dispatch record. A later commit that changes only `.factory/state/ledger.json` is still this wake. A missing record or any other file changed after the authorized SHA means this wake is stale. Stop.
+
+`<bc-id>` is this cloud agent's id. Acquire the engineering lease before planting:
+
+```bash
+npx tsx scripts/factory-engineer.ts lease --worker <bc-id>
+```
+
+On `factory-repair`, pass `--label factory-repair`. Stop unless it prints `lease_acquired`.
 
 `factory-wake-engineer` requires a signed systems-change packet on this branch for the manifest revision. If it is already planted and nothing specified-and-clear remains, stop.
 
@@ -50,4 +64,16 @@ Before you push, run the verification named in the systems-change packet. Record
 - `infrastructure` — the test harness failed. Do not disguise it as a product repair.
 - `external` — credentials, quotas, or an outside service. Stop.
 
-Push the candidate. Do not add labels. Stop.
+Push the candidate. Record that SHA through the controller. `<sha>` is the commit the checks ran against, not a later ledger commit.
+
+```bash
+npx tsx scripts/factory-engineer.ts candidate --worker <bc-id> --sha <sha>
+```
+
+Stop unless it prints `candidate`. If a check needs a secret that is unset, block instead of recording a candidate:
+
+```bash
+npx tsx scripts/factory-engineer.ts block --worker <bc-id> --blocker BLOCKER-NNN --class external
+```
+
+`--class` is `infrastructure` or `external`. Do not add labels. Stop.

@@ -63,13 +63,24 @@ export interface Lease {
   revision: string;
 }
 
-/** Written only after a label add succeeds. Workers must match it exactly. */
+/**
+ * Written only after a label add succeeds. Workers must match the current record exactly.
+ * A record moves to history when it is reconciled. History is not authorization.
+ */
 export interface DispatchRecord {
   packetId: string;
   revision: string;
   prHead: string;
   effect: Exclude<WakeEffect, "none">;
   label: (typeof SEAT_LABELS)[number];
+  /** Clock passed by the caller when the label add was confirmed. */
+  issuedAt?: string;
+  /**
+   * Set only when this record leaves the current slot.
+   * `ran` means a worker execution was observed.
+   * `absent` means the dispatch did not start a worker.
+   */
+  workerExecution?: "ran" | "absent";
 }
 
 /** A check that actually ran. A name without a run id is not evidence. */
@@ -110,7 +121,13 @@ export interface WorkItem {
   releaseEligible: boolean;
   integratedSha: string | null;
   reconciliationId: string | null;
+  /** Current authorization. Null when no worker is held to this packet. */
   dispatch: DispatchRecord | null;
+  /**
+   * Earlier dispatches, including ones that never started a worker.
+   * Absent history can be recovered. It does not by itself authorize a run.
+   */
+  dispatchHistory: DispatchRecord[];
   /** Null until a manual record or an automatic verification says how the work ran. */
   execution: ExecutionRecord | null;
 }
@@ -182,7 +199,9 @@ export type FactoryEvent =
   | { type: "clear_blocker" }
   | { type: "hold" }
   | { type: "clear_hold" }
-  | { type: "prose_complete" };
+  | { type: "prose_complete" }
+  | { type: "adopt_existing_change"; sections: string[] }
+  | { type: "interrupt_analysis"; workerId: string };
 
 export interface ApplyResult {
   ok: boolean;
@@ -219,6 +238,7 @@ export function freshItem(id = "pkt-001", initiativeId = "exec-identity"): WorkI
     integratedSha: null,
     reconciliationId: null,
     dispatch: null,
+    dispatchHistory: [],
     execution: null,
   };
 }
@@ -239,6 +259,7 @@ function clone(item: WorkItem): WorkItem {
     ...item,
     lease: item.lease ? { ...item.lease } : null,
     dispatch: item.dispatch ? { ...item.dispatch } : null,
+    dispatchHistory: (item.dispatchHistory ?? []).map((record) => ({ ...record })),
     execution: item.execution
       ? { mode: item.execution.mode, checks: item.execution.checks.map((check) => ({ ...check })) }
       : null,
@@ -470,6 +491,40 @@ export function applyEvent(item: WorkItem, event: FactoryEvent, world: World): A
     return accept(next, "verified_manual");
   }
 
+  if (event.type === "adopt_existing_change") {
+    if (item.stage !== "released") return refuse(item, "wrong_stage");
+    if (item.wake !== "sa") return refuse(item, "wake_hold");
+    if (item.dispatch) return refuse(item, "dispatch_open");
+    if (leaseActive(item, world.now)) return refuse(item, "lease_held");
+    if (item.dispatchedSaRevision !== item.revision) return refuse(item, "execution_not_recorded");
+    const ran = (item.dispatchHistory ?? []).some(
+      (row) => row.effect === "wake_sa" && row.revision === item.revision && row.workerExecution === "ran",
+    );
+    if (!ran) return refuse(item, "execution_not_recorded");
+    const missing = REQUIRED_CHANGE_SECTIONS.filter((section) => !event.sections.includes(section));
+    if (missing.length) return refuse(item, "sections_incomplete");
+    next.stage = "change_specified";
+    next.lease = null;
+    return accept(next, "existing_change_adopted");
+  }
+
+  if (event.type === "interrupt_analysis") {
+    if (item.stage !== "analysis") return refuse(item, "wrong_stage");
+    const covered = leaseCovers(item, event.workerId, "analyst", world.now);
+    if (covered) return refuse(item, covered);
+    next.stage = "released";
+    next.lease = null;
+    next.dispatchedSaRevision = null;
+    if (item.dispatch?.effect === "wake_sa" && item.dispatch.revision === item.revision) {
+      next.dispatchHistory = [
+        ...(next.dispatchHistory ?? []),
+        { ...item.dispatch, workerExecution: "ran" },
+      ];
+      next.dispatch = null;
+    }
+    return accept(next, "analysis_interrupted");
+  }
+
   return refuse(item, "unknown_event");
 }
 
@@ -532,7 +587,7 @@ export function decide(item: WorkItem, world: World): Decision {
 export function acknowledgeDispatch(
   item: WorkItem,
   effect: WakeEffect,
-  record?: { prHead: string },
+  record?: { prHead: string; issuedAt?: string },
 ): WorkItem {
   const next = clone(item);
   if (effect === "wake_sa") next.dispatchedSaRevision = item.revision;
@@ -547,6 +602,7 @@ export function acknowledgeDispatch(
       prHead: record.prHead,
       effect,
       label: LABEL_FOR[effect],
+      ...(record.issuedAt ? { issuedAt: record.issuedAt } : {}),
     };
   }
   return next;
@@ -677,4 +733,6 @@ export const TRANSITION_IDS = [
   "T46",
   "T47",
   "T48",
+  "T49",
+  "T50",
 ] as const;

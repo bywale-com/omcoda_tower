@@ -4,7 +4,7 @@
   "dispatch": "forbidden",
   "labelActuator": "connected_disarmed",
   "integration": "merge_sha_required",
-  "reason": "The label command can spawn gh pr edit. It stays disarmed until FACTORY_CONTROLLER=active, FACTORY_LABELS=armed, WAKE_GITHUB_TOKEN, FACTORY_SPEND_LIMIT_CONFIRMED=yes, and FACTORY_AUTOMATIONS_SAVED=yes. Those are unset. The committed scope is inactive. authorizedDispatches is null, which also refuses a wake. Cursor Automations are not saved.",
+  "reason": "GitHub variables arm the actuator. The committed ledger scope agents-and-automations is active with authorizedDispatches 4. The actuator still returns disabled unless FACTORY_CONTROLLER=active, FACTORY_LABELS=armed, WAKE_GITHUB_TOKEN, FACTORY_SPEND_LIMIT_CONFIRMED=yes, and FACTORY_AUTOMATIONS_SAVED=yes. Cursor Automations are not saved by this repository.",
   "concurrency": {
     "architect": 1,
     "analyst": 1,
@@ -32,8 +32,8 @@
       "total": 30
     },
     "note": "These figures are an illustration from the 2026-10-29 architecture note. They are not an authorization and not a measured Cursor price.",
-    "authorizedDispatches": null,
-    "authorizedDispatchesMeans": "Null does not mean unlimited. While dispatch is active, decide refuses a wake until the ledger carries a fixed positive run count. Illustrative dollars never grant a wake. A provider-side spending limit is still unset and is required before any live worker."
+    "authorizedDispatches": 4,
+    "authorizedDispatchesMeans": "The ledger count is the factory cap. Illustrative dollars never grant a wake. The founder confirmed the Cursor spending control on 2026-10-29. This file does not store that dollar amount."
   },
   "labels": {
     "wakes": ["factory-wake-architect", "factory-wake-sa", "factory-wake-engineer", "factory-repair"],

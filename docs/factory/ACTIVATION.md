@@ -1,15 +1,22 @@
 # Activation
 
-The factory controller on this branch can select an initiative, continue the Architect, release a packet, and dispatch the Analyst and the Engineer. `npm run factory:check` runs that cycle on a test ledger with scripted labels. It does not call GitHub and it does not call Cursor.
+The factory controller selects an initiative, continues the Architect, releases a packet, and dispatches the Analyst and the Engineer. `npm run factory:check` runs that cycle on a test ledger with scripted labels. It does not call GitHub or Cursor.
 
-Nothing below has been turned on.
+Pull request 136 is merged. The operating surface is the open factory pull request on `cursor/factory-agents-scope-33ee`. Its ledger already authorizes scope `agents-and-automations`.
 
-- No Cursor Automation was saved or activated. `/automate` can create one, and this session did not use it, because saving an automation is the step that starts billable cloud-agent runs.
-- `FACTORY_CONTROLLER`, `FACTORY_LABELS`, `FACTORY_SPEND_LIMIT_CONFIRMED`, and `FACTORY_AUTOMATIONS_SAVED` are unset. `WAKE_GITHUB_TOKEN` is unset.
-- The committed ledger scope is `inactive`. `authorizedDispatches` is null. A control pass does not select work.
-- PKT-001 is `verified` by manual evidence. Wake is `hold`. `dispatch` is null. `integratedSha` is null. It is not accepted. The click proof remains GitHub Actions runs [40873984441](https://github.com/bywale-com/omcoda_tower/actions/runs/40873984441) and [40873984426](https://github.com/bywale-com/omcoda_tower/actions/runs/40873984426) on `19c47938d8aa8884b4874999a50667f5677205b3` (8:32 AM America/Toronto). This autonomy work does not replace those runs.
+Confirmed on 2026-10-29 at 11:01 AM America/Toronto:
 
-Integration policy is `merge_sha_required`. The controller does not merge. GitHub’s branch-protection and rulesets APIs returned 403 for this token, so this session cannot tell whether a merge needs a person. It does not invent a merge SHA.
+- `FACTORY_CONTROLLER=active`
+- `FACTORY_LABELS=armed`
+- `FACTORY_SPEND_LIMIT_CONFIRMED=yes`
+- `FACTORY_AUTOMATIONS_SAVED=yes`
+
+`WAKE_GITHUB_TOKEN` was not present in this repository’s Actions secrets at that inspection. The only repository secret name returned was `CRON_SECRET`. The pull-request control job stays disarmed until that secret exists. The founder reported the Cursor Automations are saved and the spending control was checked. This file does not store a dollar amount.
+
+- The committed ledger scope is `agents-and-automations`, status `active`, modules `Agents and Automations`, `authorizedDispatches` 4. `usedDispatches` is 0. `exec-identity` is eligible and has no dispatch record yet.
+- PKT-001 is `accepted` by manual evidence. Wake is `hold`. `dispatch` is null. `verifiedSha` is `19c47938d8aa8884b4874999a50667f5677205b3`. `integratedSha` is `9c45f19fa1ac9d909247d6be83c9263273b1bcbb`, the merge of pull request 136 at 10:44 AM America/Toronto. The click proof remains GitHub Actions runs [40873984441](https://github.com/bywale-com/omcoda_tower/actions/runs/40873984441) and [40873984426](https://github.com/bywale-com/omcoda_tower/actions/runs/40873984426) on the verified SHA (8:32 AM America/Toronto). Coverage for `exec-identity` is still open.
+
+Integration policy is `merge_sha_required`. The controller does not merge.
 
 ## 1. Cursor Automations
 
@@ -83,7 +90,19 @@ If `factory-blocked` or `factory-hold` is on the PR: stop.
 
 If `factory-wake-architect` is not on the PR: stop.
 
-Read `.factory/state/ledger.json`. Stop unless this initiative's id, revision, and prHead match the dispatch record and the record's label is `factory-wake-architect`. For an architect wake, `packetId` in that record is the initiative id. Stop if scope status is not `active`. Stop if `authorizedDispatches` is null. A missing record is not permission. Do not use the previous commit as the authorization check.
+Cursor Automations boot on the default branch. Check out the pull request head before reading the ledger.
+
+```bash
+PR_JSON=$(gh pr view --json headRefName,headRefOid --jq '{branch:.headRefName,head:.headRefOid}')
+```
+
+Check out that branch. Then run:
+
+```bash
+npx tsx scripts/factory-wake-check.ts factory-wake-architect
+```
+
+Stop unless it prints `authorized`. The check matches this initiative's id, revision, and prHead to the dispatch record. For an architect wake, `packetId` in that record is the initiative id. A later commit that changes only `.factory/state/ledger.json` is still this wake. Any other file changed after the authorized SHA means stop. A missing record is not permission. Do not use the previous commit as the authorization check.
 
 ## Packet release
 
@@ -100,6 +119,14 @@ Eligibility is not release. Writing the file is not release. Both of these must 
 ```
 
 and the packet manifest field `"wake": "sa"` with `"release": "released"`. Use `markReleased` in `.factory/controller/release.ts` so the line and the manifest cannot diverge.
+
+Classify the glass on every packet before that call. The packet line `**UI:** none` or `**UI:** changes` and the manifest field `"ui"` must match.
+
+`**UI:** none` requires `## Plates` to be `None`. Do not invent a plate for backend-only work.
+
+`**UI:** changes` requires a screenshot of `/prototype-ant` with only the new hole painted. The artifact is a non-empty image the controller can read (`.png`, `.jpg`, `.jpeg`, `.webp`, or `.gif`). Load it with `readPlateArtifacts` in `.factory/controller/release.ts`. A byte count written by hand is not an artifact. The Plates section carries all five buckets from `docs/register/PLATE-READ.md`: Copy, Do not build, Implied, Completes, Out of scope.
+
+A missing classification, a missing or unreadable plate, or an incomplete five-bucket read prevents `**Wake:** sa`. The seven release gates still all have to pass. Founder approval is not required.
 
 A packet may be released while the rest of the initiative is still open, when all seven gates in `docs/factory/OPERATING-PROTOCOL.md` pass and no unresolved question forces the Engineer to invent product behavior. Record a neighboring capability as a dependency, an affected contract, or a later initiative. Do not investigate that later initiative in this execution.
 
@@ -141,9 +168,13 @@ Ensure you are on the pull request head branch. Cursor Automations boot with the
 PR_JSON=$(gh pr view --json headRefName,headRefOid --jq '{branch:.headRefName,head:.headRefOid}' 2>/dev/null || true)
 ```
 
-Check out that branch. Then read `.factory/state/ledger.json`.
+Check out that branch. Then run:
 
-Stop unless packetId, revision, and prHead match the dispatch record in that ledger, and the record's label is `factory-wake-sa`. A missing record, a different packet, a different revision, or a different pull request head means this wake is stale. Stop. Do not use the previous commit as the authorization check.
+```bash
+npx tsx scripts/factory-wake-check.ts factory-wake-sa
+```
+
+Stop unless it prints `authorized`. The check matches packetId, revision, and prHead to the dispatch record. A later commit that changes only `.factory/state/ledger.json` is still this wake. Any other file changed after the authorized SHA means this wake is stale. Stop. Do not use the previous commit as the authorization check.
 
 Run only if this commit has this exact line: `**Wake:** sa`
 
@@ -184,7 +215,43 @@ You are not limited to the files the Architect named. You do not take ownership 
 
 The manifest keys the controller requires are `intent`, `must`, `stores`, `runtime`, `ports`, `verify`, `out_of_scope`, `impact_manifest`, `dependency_reconciliation`.
 
-Commit and push this branch. That push is the change specification. Do not plant `src/` or `server/`. Do not add labels. Stop.
+The specification file is not the signature. After the gate prints `authorized`, `<bc-id>` is this cloud agent's id.
+
+1. Acquire the analysis lease.
+
+```bash
+npx tsx scripts/factory-analyst.ts lease --worker <bc-id>
+```
+
+Stop unless it prints `lease_acquired`. The packet stage is now `analysis`.
+
+2. Write the SCP with the nine sections above.
+
+3. Commit and push the specification. Do not commit `.factory/state/ledger.json` by hand. If the push rejects, rebase onto the lease commit and push again.
+
+4. Sign through the controller.
+
+```bash
+npx tsx scripts/factory-analyst.ts sign --worker <bc-id>
+```
+
+Stop unless it prints `change_specified`. A missing section stays unsigned.
+
+5. If you cannot finish the specification, record one of these and stop. Do not sign.
+
+Recoverable interruption. The packet returns to `released` so a later wake can continue:
+
+```bash
+npx tsx scripts/factory-analyst.ts interrupt --worker <bc-id>
+```
+
+A blocker for an infrastructure or external stop. `--class` is `infrastructure` or `external`. Write `docs/factory/blockers/BLOCKER-NNN.md`.
+
+```bash
+npx tsx scripts/factory-analyst.ts block --worker <bc-id> --blocker BLOCKER-NNN --class external
+```
+
+Do not plant `src/` or `server/`. Do not add labels.
 ~~~~
 
 ### Tower Factory Engineer
@@ -218,9 +285,23 @@ Switch to the pull request head branch before reading the packet.
 PR_JSON=$(gh pr view --json headRefName,headRefOid --jq '{branch:.headRefName,head:.headRefOid}' 2>/dev/null || true)
 ```
 
-Check out that branch. Then read `.factory/state/ledger.json`.
+Check out that branch. Then run the check for the label that woke you:
 
-Stop unless packetId, revision, and prHead match the dispatch record in that ledger, and the record's label is the label that woke you (`factory-wake-engineer` or `factory-repair`). A missing record or a different head means this wake is stale. Stop.
+```bash
+npx tsx scripts/factory-wake-check.ts factory-wake-engineer
+```
+
+On `factory-repair`, run `npx tsx scripts/factory-wake-check.ts factory-repair` instead.
+
+Stop unless it prints `authorized`. The check matches packetId, revision, and prHead to the dispatch record. A later commit that changes only `.factory/state/ledger.json` is still this wake. A missing record or any other file changed after the authorized SHA means this wake is stale. Stop.
+
+`<bc-id>` is this cloud agent's id. Acquire the engineering lease before planting:
+
+```bash
+npx tsx scripts/factory-engineer.ts lease --worker <bc-id>
+```
+
+On `factory-repair`, pass `--label factory-repair`. Stop unless it prints `lease_acquired`.
 
 `factory-wake-engineer` requires a signed systems-change packet on this branch for the manifest revision. If it is already planted and nothing specified-and-clear remains, stop.
 
@@ -246,7 +327,19 @@ Before you push, run the verification named in the systems-change packet. Record
 - `infrastructure` — the test harness failed. Do not disguise it as a product repair.
 - `external` — credentials, quotas, or an outside service. Stop.
 
-Push the candidate. Do not add labels. Stop.
+Push the candidate. Record that SHA through the controller. `<sha>` is the commit the checks ran against, not a later ledger commit.
+
+```bash
+npx tsx scripts/factory-engineer.ts candidate --worker <bc-id> --sha <sha>
+```
+
+Stop unless it prints `candidate`. If a check needs a secret that is unset, block instead of recording a candidate:
+
+```bash
+npx tsx scripts/factory-engineer.ts block --worker <bc-id> --blocker BLOCKER-NNN --class external
+```
+
+`--class` is `infrastructure` or `external`. Do not add labels. Stop.
 ~~~~
 
 How to verify the automations without spending: each one is listed under Mine, the trigger is the named label, Memories and pull-request creation are off, and you have not added the label. This repository cannot see that page. Set the variable in the next section only after you have seen those settings. Setting the variable does not probe Cursor.
@@ -288,25 +381,11 @@ For the first live run, use a small count such as `4`. That count is the total c
 
 ## 4. The single start action
 
-Do this only after sections 1–3 are done. Run it on branch `cursor/software-factory-33ee` (the branch that contains this workflow). After that branch is merged, run it on the branch that contains the workflow.
+Pull request 136 is merged. Do not pass `136` as `pr`.
 
-GitHub → Actions → **Factory dispatch** → Run workflow:
+The scope is already authorized on this branch: `agents-and-automations`, module `Agents and Automations`, `authorizedDispatches` 4. The pull-request job of Factory dispatch reads that ledger and, when `WAKE_GITHUB_TOKEN` is set, selects `exec-identity` and adds `factory-wake-architect`. It does not add `factory-wake-sa` for PKT-001.
 
-| Input | Value |
-| --- | --- |
-| mode | `authorize` |
-| authorize | `I_AUTHORIZE_FACTORY_DISPATCH` |
-| pr | `136` |
-| pr_head | The pull request head SHA at that moment. `gh pr view 136 --json headRefOid -q .headRefOid` |
-| scope_id | `agents-and-automations` |
-| scope_modules | `Agents and Automations` |
-| authorized_dispatches | `4` |
-
-`Agents and Automations` is the module on `exec-identity`. Authorizing only `Agents` does not start Launch Agent: Launch Agent depends on `exec-identity`, and `exec-identity` would be outside the scope, so nothing is eligible.
-
-That run writes `authorize_scope`, then one control apply. The apply selects `exec-identity` and, when the actuator is armed, adds `factory-wake-architect`. It does not add `factory-wake-sa` for PKT-001. PKT-001 stays `verified`, Wake `hold`, execution `manual`. The Architect continues the open initiative (claims 4, 6, 7, and 8 have no packets; coverage is not complete). It does not replay the click plant.
-
-This session did not run that workflow.
+No workflow inputs are required for that job. `workflow_dispatch` mode `authorize` is only for a later scope. Mode `suspend` still uses the open factory pull request, not 136.
 
 ## 5. After an initiative finishes
 

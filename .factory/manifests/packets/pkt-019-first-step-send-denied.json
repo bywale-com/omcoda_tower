@@ -1,0 +1,26 @@
+{
+  "id": "pkt-019-first-step-send-denied",
+  "initiativeId": "exec-identity",
+  "title": "A denied first step is the same refusal the tick already records",
+  "release": "released",
+  "wake": "sa",
+  "releaseEligible": true,
+  "required": true,
+  "stage": "released",
+  "revision": "rev-1",
+  "claims": [
+    22
+  ],
+  "sourceSha": "1f6f43ab2dbe8b0e32b0a344990795bb998c8be3",
+  "ui": "none",
+  "gates": {
+    "behaviorEstablished": true,
+    "scopeBounded": true,
+    "dependenciesUnderstood": true,
+    "acceptanceDefined": true,
+    "noBlockingQuestion": true,
+    "noContradictorySpecification": true,
+    "independentlyImplementable": true
+  },
+  "plates": "none"
+}

@@ -19,6 +19,7 @@ You are Tower’s **Engineer** (full-stack implementer). You are not the Product
 - **Teaching copy is not a node.** [`docs/register/IMAGE-CAPTION-AUDIT.md`](docs/register/IMAGE-CAPTION-AUDIT.md). Read a locked pocket with the five buckets in [`docs/register/PLATE-READ.md`](docs/register/PLATE-READ.md) (on PM packets PR [#96](https://github.com/bywale-com/omcoda_tower/pull/96) until merged).
 - **Click the node = configure.** `⋯` **Switch** means change this Trigger/Action’s kind (A26). That is not the Switch *node*. Do not mix the words.
 - **Write-set is the shape.** After a node, the next step picks from **every write that run made**. Do not hard-code a field catalog in the client.
+- **A factory specification commit is not a signature.** When `scripts/factory-wake-check.ts` prints `authorized` for `factory-wake-sa`, acquire the lease with `scripts/factory-analyst.ts lease`, write the nine sections, then `scripts/factory-analyst.ts sign` until it prints `change_specified`. If you cannot finish, `interrupt` or `block`. When the check authorizes `factory-wake-engineer` or `factory-repair`, `scripts/factory-engineer.ts lease` and then `candidate` is the plant record. Do not add a wake label yourself.
 
 ### Two buckets — only two
 
@@ -76,4 +77,4 @@ Tower is a Vite + React 18 + TypeScript SPA. Optional Hono backend (auth + wire)
 
 This is how Tower is built. It is not a customer module and it is not the product face.
 
-Front door: [`docs/factory/README.md`](docs/factory/README.md). Founder activation is [`docs/factory/ACTIVATION.md`](docs/factory/ACTIVATION.md). The controller is inactive. Do not add Cursor Automation triggers from an implementation seat. Do not merge, close, or rewrite PR [#135](https://github.com/bywale-com/omcoda_tower/pull/135) (`docs/specification-pass/`). A factory packet on `**Wake:** hold` is not a label-wake assignment. PKT-001’s click plant on this branch is the founder’s bounded pilot; leave Wake on hold, leave the controller inactive, and do not boot a Cursor seat for it.
+Front door: [`docs/factory/README.md`](docs/factory/README.md). Founder activation is [`docs/factory/ACTIVATION.md`](docs/factory/ACTIVATION.md). The founder set the four factory variables. Do not change those variables, `WAKE_GITHUB_TOKEN`, or Cursor Automation triggers from an implementation seat. Do not merge, close, or rewrite PR [#135](https://github.com/bywale-com/omcoda_tower/pull/135) (`docs/specification-pass/`). A factory packet on `**Wake:** hold` is not a label-wake assignment. PKT-001’s click plant stays Wake `hold`. Do not boot a Cursor seat for that packet.

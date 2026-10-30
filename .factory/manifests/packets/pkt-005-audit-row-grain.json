@@ -1,0 +1,24 @@
+{
+  "id": "pkt-005-audit-row-grain",
+  "initiativeId": "exec-identity",
+  "title": "An audit result row belongs to the run that wrote it",
+  "release": "released",
+  "wake": "sa",
+  "releaseEligible": true,
+  "required": true,
+  "stage": "released",
+  "revision": "rev-1",
+  "claims": [
+    8
+  ],
+  "sourceSha": "1f6f43ab2dbe8b0e32b0a344990795bb998c8be3",
+  "gates": {
+    "behaviorEstablished": true,
+    "scopeBounded": true,
+    "dependenciesUnderstood": true,
+    "acceptanceDefined": true,
+    "noBlockingQuestion": true,
+    "noContradictorySpecification": true,
+    "independentlyImplementable": true
+  }
+}

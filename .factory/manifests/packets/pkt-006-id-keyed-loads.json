@@ -1,0 +1,24 @@
+{
+  "id": "pkt-006-id-keyed-loads",
+  "initiativeId": "exec-identity",
+  "title": "Three id-keyed tables load by primary key, and the generic action stores that key",
+  "release": "released",
+  "wake": "sa",
+  "releaseEligible": true,
+  "required": true,
+  "stage": "released",
+  "revision": "rev-1",
+  "claims": [
+    10
+  ],
+  "sourceSha": "1f6f43ab2dbe8b0e32b0a344990795bb998c8be3",
+  "gates": {
+    "behaviorEstablished": true,
+    "scopeBounded": true,
+    "dependenciesUnderstood": true,
+    "acceptanceDefined": true,
+    "noBlockingQuestion": true,
+    "noContradictorySpecification": true,
+    "independentlyImplementable": true
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "id": "pkt-011-halt-records-writes",
+  "initiativeId": "exec-identity",
+  "title": "A contact-scope halt_records firing places the inserted id on payload.writes",
+  "release": "released",
+  "wake": "sa",
+  "releaseEligible": true,
+  "required": true,
+  "stage": "released",
+  "revision": "rev-1",
+  "claims": [
+    14
+  ],
+  "sourceSha": "1f6f43ab2dbe8b0e32b0a344990795bb998c8be3",
+  "ui": "none",
+  "gates": {
+    "behaviorEstablished": true,
+    "scopeBounded": true,
+    "dependenciesUnderstood": true,
+    "acceptanceDefined": true,
+    "noBlockingQuestion": true,
+    "noContradictorySpecification": true,
+    "independentlyImplementable": true
+  },
+  "plates": "none"
+}

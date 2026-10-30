@@ -11,8 +11,26 @@
 | Id | Wake | Stage | Required |
 | --- | --- | --- | --- |
 | pkt-001-click-attribution | hold | draft | no |
+| pkt-002-open-ask-cursor | sa | released | yes |
+| pkt-003-resume-same-run | sa | released | yes |
+| pkt-004-firing-handle | sa | released | yes |
+| pkt-005-audit-row-grain | sa | released | yes |
+| pkt-006-id-keyed-loads | sa | released | yes |
+| pkt-007-fact-writes | sa | released | yes |
+| pkt-008-meeting-writes | sa | released | yes |
+| pkt-009-eligibility-writes | sa | released | yes |
+| pkt-010-campaign-failure-writes | sa | released | yes |
+| pkt-011-halt-records-writes | sa | released | yes |
+| pkt-012-consent-opt-out-writes | sa | released | yes |
+| pkt-013-firm-provision-writes | sa | released | yes |
+| pkt-014-empty-firing-audience | sa | released | yes |
+| pkt-015-halt-enroll-firm | sa | released | yes |
+| pkt-016-halt-send-firm | sa | released | yes |
+| pkt-017-tick-send-halt | sa | released | yes |
+| pkt-018-send-denied-engagement | sa | released | yes |
+| pkt-019-first-step-send-denied | sa | released | yes |
 
-`required` is no until the packet is released. A held draft does not block the initiative, and it does not complete it.
+`required` is no until the packet is released. A held draft does not block the initiative, and it does not complete it. PKT-001 stays held. The released packets do not close the initiative.
 
 ## Founder decisions
 

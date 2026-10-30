@@ -81,10 +81,11 @@ export class GitHubContentsStore {
   }
 }
 
-function childEnv(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv | null {
+function childEnv(env: NodeJS.ProcessEnv, credential: "wake" | "ambient"): NodeJS.ProcessEnv | null {
   const token = env.WAKE_GITHUB_TOKEN;
-  if (!token) return null;
-  return { ...env, GH_TOKEN: token, GITHUB_TOKEN: token };
+  if (token) return { ...env, GH_TOKEN: token, GITHUB_TOKEN: token };
+  if (credential === "wake" || env.GITHUB_ACTIONS) return null;
+  return env;
 }
 
 /**
@@ -98,12 +99,19 @@ export function githubContentsRemote(opts: {
   branch: string;
   env: NodeJS.ProcessEnv;
   runGh?: GhRun;
+  /**
+   * `wake` refuses unless `WAKE_GITHUB_TOKEN` is set.
+   * `ambient` lets a checked-out worker use its own `gh` login.
+   * GitHub Actions never falls through to the job token.
+   */
+  credential?: "wake" | "ambient";
 }): ContentsRemote {
   const runGh = opts.runGh ?? spawnGh;
+  const credential = opts.credential ?? "wake";
   const apiPath = `repos/${opts.owner}/${opts.repo}/contents/${opts.path}`;
   return {
     async get() {
-      const env = childEnv(opts.env);
+      const env = childEnv(opts.env, credential);
       if (!env) return null;
       const result = await runGh(
         ["api", `${apiPath}?ref=${encodeURIComponent(opts.branch)}`],
@@ -116,7 +124,7 @@ export function githubContentsRemote(opts: {
       return { sha: body.sha, ledger };
     },
     async put(expectedSha, ledger) {
-      const env = childEnv(opts.env);
+      const env = childEnv(opts.env, credential);
       if (!env) return { ok: false, reason: "conflict" };
       const payload = JSON.stringify({
         message: `factory ledger ${ledger.stateRevision}`,

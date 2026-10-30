@@ -54,7 +54,7 @@
       "component": "pursuit-identity",
       "kind": "defect",
       "read": "full",
-      "packet": null
+      "packet": "pkt-002-open-ask-cursor"
     },
     {
       "n": 5,
@@ -70,7 +70,7 @@
       "component": "walk-handle",
       "kind": "defect",
       "read": "full",
-      "packet": null
+      "packet": "pkt-003-resume-same-run"
     },
     {
       "n": 7,
@@ -78,7 +78,7 @@
       "component": "walk-handle",
       "kind": "defect",
       "read": "full",
-      "packet": null
+      "packet": "pkt-004-firing-handle"
     },
     {
       "n": 8,
@@ -86,7 +86,7 @@
       "component": "walk-handle",
       "kind": "defect",
       "read": "full",
-      "packet": null
+      "packet": "pkt-005-audit-row-grain"
     },
     {
       "n": 9,
@@ -101,104 +101,106 @@
       "title": "These four tables load by the pointer's id, which is the row's primary key",
       "component": "walk-handle",
       "kind": "contract",
-      "read": "partial",
-      "packet": null
+      "read": "full",
+      "packet": "pkt-006-id-keyed-loads",
+      "also": ["pkt-004-firing-handle"]
     },
     {
       "n": 11,
       "title": "A live firing places this firing's primary keys on payload.writes",
       "component": "firing-pointers",
       "kind": "contract",
-      "read": "partial",
-      "packet": null
+      "read": "full",
+      "packet": "pkt-007-fact-writes",
+      "also": ["pkt-008-meeting-writes", "pkt-004-firing-handle"]
     },
     {
       "n": 12,
       "title": "A live firing of eligibility.changed places each inserted primary key on payload.writes",
       "component": "firing-pointers",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-009-eligibility-writes"
     },
     {
       "n": 13,
       "title": "A live firing of campaign_failure places the inserted primary key on payload.writes, and the payload carries that row's campaign_id",
       "component": "firing-pointers",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-010-campaign-failure-writes"
     },
     {
       "n": 14,
       "title": "A contact-scope firing of halt_records places the inserted primary key on payload.writes",
       "component": "firing-pointers",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-011-halt-records-writes"
     },
     {
       "n": 15,
       "title": "A live firing of consent_records.opt_out places the current consent pair on payload.writes",
       "component": "firing-pointers",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-012-consent-opt-out-writes"
     },
     {
       "n": 16,
       "title": "A live firing of ct_firms places the current firm id on payload.writes",
       "component": "firing-pointers",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-013-firm-provision-writes"
     },
     {
       "n": 17,
       "title": "A firing that passes no contact ids walks that automation's audience inside the firing firm",
       "component": "schedule",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-014-empty-firing-audience"
     },
     {
       "n": 18,
       "title": "A contact halt blocks a new enroll only in the firm stored on that halt row",
       "component": "halt-send",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-015-halt-enroll-firm"
     },
     {
       "n": 19,
       "title": "A contact halt denies a send, and answers the contact check, only in the firm on that row",
       "component": "halt-send",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-016-halt-send-firm"
     },
     {
       "n": 20,
       "title": "A tick send on an open attempt is a new send the halt stops; the attempt is not aborted",
       "component": "halt-send",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "established",
+      "read": "full",
+      "packet": "pkt-017-tick-send-halt"
     },
     {
       "n": 21,
       "title": "A denied tick send is its own engagement row",
       "component": "halt-send",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-018-send-denied-engagement"
     },
     {
       "n": 22,
       "title": "A denied first step is the same refusal the tick already records",
       "component": "halt-send",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-019-first-step-send-denied"
     },
     {
       "n": 23,

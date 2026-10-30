@@ -1,8 +1,9 @@
 # Tower factory dispatch.
 # pull_request runs the deterministic controller and prints the proposal.
 # It adds a label only when every disarm gate below is already set.
-# Those gates are unset in this repository, so the pull request job exits
-# on "actuator disarmed" and does not spawn gh.
+# Those gates are repository variables. They are not stored in git.
+# WAKE_GITHUB_TOKEN is an Actions secret. Without it the job prints
+# "actuator disarmed" and does not spawn gh.
 # workflow_dispatch authorize writes a scope, then one control apply.
 # workflow_dispatch suspend writes a suspension and does not apply.
 # There is no schedule.

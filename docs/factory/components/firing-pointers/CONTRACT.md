@@ -1,0 +1,25 @@
+# firing-pointers
+
+**Responsibility:** Which primary keys a live firing places on `payload.writes`, so the listening run’s handle is that firing’s rows.  
+**Status:** Claim 11’s `objective_met` array is PKT-004. The fact array is PKT-007. The meeting array is PKT-008. Claim 12 is PKT-009. Claim 13 is PKT-010. Claim 14 is PKT-011. Claim 15 is PKT-012. Claim 16 is PKT-013. Not planted. Not verified.
+
+## Claims
+
+| Claim | Kind in the factory index | Packet |
+| --- | --- | --- |
+| 11 | contract | PKT-004 for `objective_met`. PKT-007 for `fact_writebacks`. PKT-008 for `meeting_booked`. |
+| 12 | defect | PKT-009, released. The person split for these four tables is claim 52. |
+| 13 | defect | PKT-010, released. The table stays out of `PERSON_WRITE_TABLES`. |
+| 14 | defect | PKT-011, released. The firm-book branch and the lift do not dispatch. The table stays out of `PERSON_WRITE_TABLES`. |
+| 15 | defect | PKT-012, released. The load is `contact_id` plus the walk’s firm. The table has no `id` column. |
+| 16 | defect | PKT-013, released. The load is `WHERE id = pointer.id`. The pointer has no `contact_id`. The audience fill is claim 17. |
+
+The claim text is on PR #135. This contract does not replace it.
+
+## Dependencies
+
+Walk handle (`walk-handle`) loads a pointer by the predicate claim 10 locked. PKT-006 loads `fact_writebacks` and `meeting_booked`. PKT-009 loads the four eligibility tables. PKT-010 loads `campaign_failure` by that same predicate. PKT-011 loads `halt_records` by that same predicate. PKT-012 loads `consent_records` by `contact_id` and the walk’s firm, because that table has no `id` column. PKT-013 loads `ct_firms` by `pointer.id`. PKT-004 loads `engagement_records`.
+
+## Out of this contract
+
+Launch Agent as a product initiative. Claim 52’s person split. Claim 17’s empty-contact audience is PKT-014. It does not add a person to the `ct_firms` pointer. Claim 43’s reactivation enroll. Claim 60’s pathway boolean. `handlePoolAllocate` does not become this firing.

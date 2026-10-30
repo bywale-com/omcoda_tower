@@ -6,7 +6,7 @@
   "wake": "hold",
   "releaseEligible": true,
   "required": false,
-  "stage": "verified",
+  "stage": "accepted",
   "revision": "rev-1",
   "execution": "manual",
   "verifiedSha": "19c47938d8aa8884b4874999a50667f5677205b3",
@@ -21,8 +21,8 @@
     "noContradictorySpecification": true,
     "independentlyImplementable": true
   },
-  "authorization": "Wake stays hold. Manual evidence is not a release. The committed ledger scope is inactive.",
+  "authorization": "Wake stays hold. Manual evidence is not a release. Accepted after merge 9c45f19fa1ac9d909247d6be83c9263273b1bcbb of pull request 136. Coverage for exec-identity is still open.",
   "acceptanceOracle": ".factory/experiments/click-attribution.ts",
-  "productionPlant": "server/wire-service click path on this branch. Ledger stage is verified by manual evidence. integratedSha is null.",
+  "productionPlant": "server/wire-service click path. verifiedSha 19c47938d8aa8884b4874999a50667f5677205b3. integratedSha 9c45f19fa1ac9d909247d6be83c9263273b1bcbb.",
   "systemsChange": "docs/factory/initiatives/exec-identity/systems/SCP-pkt-001-click-attribution.md"
 }

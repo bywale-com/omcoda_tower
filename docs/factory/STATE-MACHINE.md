@@ -68,6 +68,8 @@ Side stages: `blocked`, `returned_architect`, `returned_analyst`.
 | T46 | Architect session `continue` or `interrupted` | Revision bumps, dispatch clears, session `continuation_due`. The next control pass proposes `factory-wake-architect`. An ordinary ending does not complete the initiative. |
 | T47 | `suspend`, scope `complete`, or a founder decision | No wake. `decide` and `decideScope` return `suspended`, `scope_complete`, or `founder_decision`. |
 | T48 | Accepted packets and `coverageComplete: true`, then `close_initiative` | That initiative is `completed`. The next control pass selects the next eligible initiative without a second scope authorization. Coverage still open refuses the close. |
+| T49 | `adopt_existing_change` on `released` with wake `sa`, a recorded `ran` Analyst dispatch for this revision, no open dispatch, and all nine sections | Stage `change_specified`. No lease and no new dispatch are written. History stays. `usedDispatches` stays. A packet with no `ran` record is refused. |
+| T50 | `interrupt_analysis` by the Analyst who holds the live lease | Stage returns to `released`. The lease and `dispatchedSaRevision` clear. The open Analyst dispatch, when it is this revision, moves to history as `ran`. A later pass may wake the Analyst again. |
 
 ## Required systems-change sections
 
