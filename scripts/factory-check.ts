@@ -1795,6 +1795,151 @@ check("a meeting firing publishes the inserted booking id", () => {
   assert.match(read(".github/workflows/ship.yml"), /verify-meeting-writes\.ts/);
 });
 
+check("a campaign_failure firing publishes the inserted failure id", () => {
+  function sliceFn(source: string, start: string, end: string): string {
+    const at = source.indexOf(start);
+    assert.ok(at >= 0, start);
+    const to = source.indexOf(end, at + start.length);
+    assert.ok(to > at, end);
+    return source.slice(at, to);
+  }
+
+  function objectAt(source: string, braceAt: number): string {
+    let depth = 0;
+    for (let i = braceAt; i < source.length; i += 1) {
+      if (source[i] === "{") depth += 1;
+      else if (source[i] === "}") {
+        depth -= 1;
+        if (depth === 0) return source.slice(braceAt, i + 1);
+      }
+    }
+    assert.fail("unbalanced payload");
+  }
+
+  function payloadOf(fn: string, eventName: string): string {
+    const at = fn.indexOf(`eventName: "${eventName}"`);
+    assert.ok(at >= 0, eventName);
+    const key = fn.indexOf("payload:", at);
+    assert.ok(key > at, eventName);
+    const brace = fn.indexOf("{", key);
+    return objectAt(fn, brace);
+  }
+
+  function writesArray(payload: string): string {
+    const at = payload.indexOf("writes:");
+    assert.ok(at >= 0);
+    const bracket = payload.indexOf("[", at);
+    let depth = 0;
+    for (let i = bracket; i < payload.length; i += 1) {
+      if (payload[i] === "[") depth += 1;
+      else if (payload[i] === "]") {
+        depth -= 1;
+        if (depth === 0) return payload.slice(bracket, i + 1);
+      }
+    }
+    assert.fail("unbalanced writes");
+  }
+
+  const cascade = read("server/wire-service/cascade.ts");
+  const escalate = sliceFn(cascade, "export async function escalateAttemptWindow", "export type ChannelSendInput");
+  const branchAt = escalate.indexOf("if (!toChannel)");
+  assert.ok(branchAt >= 0);
+  const branch = escalate.slice(branchAt);
+  const payload = payloadOf(branch, "campaign_failure");
+  for (const key of [
+    "campaignFailureId: failId",
+    "attemptId: attempt.id",
+    "campaign_id: enr.rows[0]?.campaign_id ?? null",
+  ]) {
+    assert.ok(payload.includes(key), key);
+  }
+  assert.equal(payload.includes("campaign_id: campaignId"), false);
+  const writes = writesArray(payload);
+  assert.equal(writes.split("{").length - 1, 1);
+  assert.match(writes, /table: "campaign_failure"/);
+  assert.match(writes, /id: failId/);
+  assert.match(writes, /contact_id: attempt\.contact_id/);
+  for (const banned of [
+    "firm_id",
+    "active_attempts",
+    "enrollment",
+    "engagement_records",
+    "workflow_run",
+    "send_live",
+    "send_dry_run",
+  ]) {
+    assert.equal(writes.includes(banned), false, banned);
+  }
+  const withoutWrites = payload.replace(writes, "");
+  for (const banned of ["firm_id", "contact_id", "sequence_id", "criteriaId", "setValue", "anyPass"]) {
+    assert.equal(withoutWrites.includes(banned), false, banned);
+  }
+  assert.match(branch, /contactIds: \[attempt\.contact_id\]/);
+  assert.match(branch, /campaignId: enr\.rows\[0\]\?\.campaign_id \?\? null/);
+  assert.match(branch, /payload: \{ attemptId: attempt\.id, criteriaId: criteria\.id, setValue \}/);
+  assert.match(branch, /console\.warn\("\[cascade\] campaign_failure dispatch:", err\)/);
+  const firedAt = escalate.indexOf("if (attempt.fired_criteria?.[criteria.id])");
+  const inboundAt = escalate.indexOf("hasInboundOverride");
+  assert.ok(firedAt >= 0 && firedAt < branchAt);
+  assert.ok(inboundAt >= 0 && inboundAt < branchAt);
+  const firedReturn = escalate.indexOf("return null", firedAt);
+  assert.ok(firedReturn > firedAt && firedReturn < branchAt);
+  const inboundReturn = escalate.indexOf("return null", inboundAt);
+  assert.ok(inboundReturn > inboundAt && inboundReturn < branchAt);
+
+  const housing = read("server/wire-service/campaignHousing.ts");
+  const record = sliceFn(housing, "export async function recordCampaignFailure", "export async function pickAuthoredContent");
+  assert.match(record, /const id = `cfail-\$\{randomUUID\(\)\}`/);
+  assert.match(record, /INSERT INTO campaign_failure \(id, firm_id, contact_id, campaign_id, sequence_id, payload\)/);
+  assert.match(record, /status='exhausted'/);
+  assert.match(record, /WHERE id=\$1 AND status='open'/);
+  const exhaust = record.slice(record.indexOf("UPDATE enrollment"), record.indexOf('query("COMMIT")'));
+  assert.match(exhaust, /pursuit_state='exhausted'/);
+  assert.equal(exhaust.includes("campaign_id"), false);
+  assert.ok(record.indexOf('query("COMMIT")') < record.lastIndexOf("return id"));
+
+  const fromPayload = read("server/wire-service/runWrites.ts");
+  const writerAt = fromPayload.indexOf("export function writesFromPayload");
+  assert.ok(writerAt >= 0);
+  assert.equal(fromPayload.slice(writerAt).includes("campaignFailureId"), false);
+
+  const walk = read("server/wire-service/workflowWalk.ts");
+  const loader = sliceFn(walk, "export async function loadWriteRow", "async function loadWriteField");
+  const statement = loader.match(/SELECT \* FROM campaign_failure WHERE id=\$1/);
+  assert.ok(statement);
+  for (const banned of ["firm_id", "contact_id", "ORDER BY", "LIMIT"]) {
+    assert.equal(statement[0].includes(banned), false, banned);
+  }
+  assert.match(loader.trimEnd(), /return null;\s*\}$/);
+  const people = sliceFn(walk, "const PERSON_WRITE_TABLES = new Set([", "]);");
+  assert.equal(people.includes("campaign_failure"), false);
+  const localRef = sliceFn(walk, "function localRefFromPayload", "function localAxesMatch");
+  assert.match(localRef, /eventName === "campaign_failure"\) return payloadString\(payload, \["campaign_id", "campaignId"\]\)/);
+  const triggerRef = read("src/app/data/automationTriggerSelect.ts");
+  const triggerArm = sliceFn(triggerRef, "export function triggerLocalRefFromPayload", "export function triggerLocalAxesMatch");
+  assert.match(triggerArm, /eventName === "campaign_failure"\) return payloadString\(payload, \["campaign_id", "campaignId"\]\)/);
+
+  const door = read("server/wire-service/eventTest.ts");
+  assert.match(door, /SELECT \* FROM campaign_failure WHERE firm_id=\$1 ORDER BY created_at DESC LIMIT 10/);
+  const tickAt = cascade.indexOf("export async function tickOnce");
+  assert.ok(tickAt >= 0);
+  assert.ok(cascade.indexOf("WHERE status = 'open'", tickAt) > tickAt);
+
+  const filter = read(".github/workflows/factory-check.yml");
+  for (const path of [
+    "server/wire-service/cascade.ts",
+    "server/wire-service/workflowWalk.ts",
+    "server/wire-service/runWrites.ts",
+    "server/wire-service/eventTest.ts",
+    "server/wire-service/campaignHousing.ts",
+    "src/app/data/automationTriggerSelect.ts",
+    "scripts/verify-campaign-failure-writes.ts",
+  ]) {
+    assert.ok(filter.includes(path), path);
+  }
+  assert.match(read(".github/workflows/ship.yml"), /verify-campaign-failure-writes\.ts/);
+});
+
 function sections(): string[] {
   return [
     "intent",
