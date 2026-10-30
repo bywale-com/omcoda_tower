@@ -1,7 +1,7 @@
 {
-  "stateRevision": 155,
+  "stateRevision": 156,
   "authorizedDispatches": 50,
-  "usedDispatches": 39,
+  "usedDispatches": 40,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -893,12 +893,21 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
-      "dispatchedEngineerRevision": null,
+      "dispatchedEngineerRevision": "rev-1",
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-013-firm-provision-writes",
+        "revision": "rev-1",
+        "prHead": "df6ed4d480f564d10e4bd6793762bfc27cef7b42",
+        "effect": "wake_engineer",
+        "label": "factory-wake-engineer",
+        "issuedAt": "2026-10-30T19:17:07.949Z",
+        "executionId": "dsp-156-engineer-pkt-013-firm-provision-writes",
+        "assignmentId": "asg-dsp-156-engineer-pkt-013-firm-provision-writes"
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-013-firm-provision-writes",
@@ -1479,6 +1488,30 @@
       "startUntil": "2026-10-30T19:26:07.570Z",
       "leaseUntil": "2026-10-30T20:11:09.369Z",
       "reason": "candidate_recorded"
+    },
+    "dsp-156-engineer-pkt-013-firm-provision-writes": {
+      "id": "dsp-156-engineer-pkt-013-firm-provision-writes",
+      "assignmentId": "asg-dsp-156-engineer-pkt-013-firm-provision-writes",
+      "role": "engineer",
+      "phase": "dispatched",
+      "packetIds": [
+        "pkt-013-firm-provision-writes"
+      ],
+      "revisions": {
+        "pkt-013-firm-provision-writes": "rev-1"
+      },
+      "label": "factory-wake-engineer",
+      "prHead": "df6ed4d480f564d10e4bd6793762bfc27cef7b42",
+      "agentId": null,
+      "continuation": "fresh",
+      "issuedAt": "2026-10-30T19:17:07.949Z",
+      "startedAt": null,
+      "runningAt": null,
+      "endedAt": null,
+      "reserveUntil": "2026-10-30T19:47:07.949Z",
+      "startUntil": null,
+      "leaseUntil": null,
+      "reason": null
     }
   },
   "assignments": {
@@ -1612,6 +1645,18 @@
       "basis": null,
       "executionIds": [
         "dsp-152-engineer-pkt-010-campaign-failure-writes"
+      ]
+    },
+    "asg-dsp-156-engineer-pkt-013-firm-provision-writes": {
+      "id": "asg-dsp-156-engineer-pkt-013-firm-provision-writes",
+      "role": "engineer",
+      "initiativeId": "exec-identity",
+      "packetIds": [
+        "pkt-013-firm-provision-writes"
+      ],
+      "basis": null,
+      "executionIds": [
+        "dsp-156-engineer-pkt-013-firm-provision-writes"
       ]
     }
   }
