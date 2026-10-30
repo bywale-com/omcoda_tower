@@ -1657,6 +1657,144 @@ check("a fact firing publishes the inserted write-back id", () => {
   assert.match(read(".github/workflows/ship.yml"), /verify-fact-writes\.ts/);
 });
 
+check("a meeting firing publishes the inserted booking id", () => {
+  function sliceFn(source: string, start: string, end: string): string {
+    const at = source.indexOf(start);
+    assert.ok(at >= 0, start);
+    const to = source.indexOf(end, at + start.length);
+    assert.ok(to > at, end);
+    return source.slice(at, to);
+  }
+
+  function objectAt(source: string, braceAt: number): string {
+    let depth = 0;
+    for (let i = braceAt; i < source.length; i += 1) {
+      if (source[i] === "{") depth += 1;
+      else if (source[i] === "}") {
+        depth -= 1;
+        if (depth === 0) return source.slice(braceAt, i + 1);
+      }
+    }
+    assert.fail("unbalanced payload");
+  }
+
+  function payloadOf(fn: string, eventName: string): string {
+    const at = fn.indexOf(`eventName: "${eventName}"`);
+    assert.ok(at >= 0, eventName);
+    const key = fn.indexOf("payload:", at);
+    assert.ok(key > at, eventName);
+    const brace = fn.indexOf("{", key);
+    return objectAt(fn, brace);
+  }
+
+  function writesArray(payload: string): string {
+    const at = payload.indexOf("writes:");
+    assert.ok(at >= 0);
+    const bracket = payload.indexOf("[", at);
+    let depth = 0;
+    for (let i = bracket; i < payload.length; i += 1) {
+      if (payload[i] === "[") depth += 1;
+      else if (payload[i] === "]") {
+        depth -= 1;
+        if (depth === 0) return payload.slice(bracket, i + 1);
+      }
+    }
+    assert.fail("unbalanced writes");
+  }
+
+  const machine = read("server/wire-service/machine.ts");
+  const meeting = sliceFn(machine, "export async function handleMeetingBook", "export async function handleMeetingsList");
+  const payload = payloadOf(meeting, "meeting_booked");
+  for (const key of [
+    "meetingId: id",
+    "contactId",
+    "slot: body.slot ?? null",
+    "campaign_objective_id: campaignObjectiveId",
+  ]) {
+    assert.ok(payload.includes(key), key);
+  }
+  const writes = writesArray(payload);
+  assert.equal(writes.split("{").length - 1, 1);
+  assert.match(writes, /table: "meeting_booked"/);
+  assert.match(writes, /\bid\b/);
+  assert.match(writes, /contact_id: contactId/);
+  for (const banned of [
+    "firm_id",
+    "contactIds",
+    "contact_ids",
+    "source",
+    "engagement_records",
+    "`eng-${randomUUID()}`",
+  ]) {
+    assert.equal(payload.includes(banned), false, banned);
+  }
+  const dispatch = meeting.slice(meeting.indexOf('eventName: "meeting_booked"'));
+  assert.match(dispatch, /contactIds: \[contactId\]/);
+  const required = meeting.indexOf('"contactId required"');
+  const insert = meeting.indexOf("INSERT INTO meeting_booked");
+  assert.ok(required >= 0 && required < insert);
+  assert.equal(meeting.includes('"slot required"'), false);
+  const engagement = meeting.indexOf("INSERT INTO engagement_records");
+  assert.ok(engagement > meeting.indexOf('eventName: "meeting_booked"'));
+  assert.match(meeting, /`eng-\$\{randomUUID\(\)\}`/);
+  const completion = meeting.slice(meeting.indexOf("onCompletionWrite("));
+  assert.match(completion, /table: "meeting_booked"/);
+  assert.match(completion, /rowId: id/);
+  const nullify = meeting.slice(meeting.indexOf("UPDATE active_attempts"));
+  assert.match(nullify, /nullified_at/);
+
+  const seatFile = read("server/wire-service/contactSeat.ts");
+  const seat = sliceFn(seatFile, "export async function handleContactSeatMeeting", "export async function handleContactSeatUpload");
+  const seatPayload = payloadOf(seat, "meeting_booked");
+  const seatWrites = writesArray(seatPayload);
+  assert.equal(seatWrites.split("{").length - 1, 1);
+  assert.match(seatWrites, /table: "meeting_booked"/);
+  assert.match(seatWrites, /\bid\b/);
+  assert.match(seatWrites, /contact_id: resolved\.link\.contact_id/);
+  assert.ok(seatPayload.includes("firm_id: resolved.link.firm_id"));
+  assert.ok(seatPayload.includes("slot"));
+  assert.ok(seatPayload.includes("contact_id: resolved.link.contact_id"));
+  const seatGuard = seat.indexOf("if (!slot)");
+  const seatInsert = seat.indexOf("INSERT INTO meeting_booked");
+  assert.ok(seatGuard >= 0 && seatGuard < seatInsert);
+  assert.equal(seat.includes("INSERT INTO engagement_records"), false);
+  const seatNullify = seat.slice(seat.indexOf("UPDATE active_attempts"));
+  assert.equal(seatNullify.includes("nullified_at"), false);
+  const seatCompletion = seat.slice(seat.indexOf("onCompletionWrite("));
+  assert.match(seatCompletion, /table: "meeting_booked"/);
+  assert.match(seatCompletion, /rowId: id/);
+
+  const fromPayload = read("server/wire-service/runWrites.ts");
+  const writer = fromPayload.slice(fromPayload.indexOf("export function writesFromPayload"));
+  assert.ok(writer.startsWith("export function writesFromPayload"));
+  assert.equal(writer.includes("meetingId"), false);
+
+  const walk = read("server/wire-service/workflowWalk.ts");
+  const localRef = sliceFn(walk, "function localRefFromPayload", "function localAxesMatch");
+  assert.equal(localRef.includes("meeting_booked"), false);
+
+  const housing = read("server/wire-service/campaignHousing.ts");
+  const branch = housing.indexOf('if (objective.completion_table === "meeting_booked")');
+  assert.ok(branch >= 0);
+  const statement = housing.slice(branch, housing.indexOf('if (objective.completion_table === "fact_writebacks")', branch));
+  assert.match(statement, /campaign_objective_id = \$3/);
+  assert.match(statement, /enrollment_id = \$4/);
+  assert.match(statement, /created_at >= \$5/);
+  assert.match(statement, /ORDER BY created_at DESC LIMIT 1/);
+  assert.equal(statement.includes("campaign_objective_id = $3 AND enrollment_id = $4"), false);
+
+  const filter = read(".github/workflows/factory-check.yml");
+  for (const path of [
+    "server/wire-service/machine.ts",
+    "server/wire-service/runWrites.ts",
+    "server/wire-service/workflowWalk.ts",
+    "scripts/verify-meeting-writes.ts",
+  ]) {
+    assert.ok(filter.includes(path), path);
+  }
+  assert.match(read(".github/workflows/ship.yml"), /verify-meeting-writes\.ts/);
+});
+
 function sections(): string[] {
   return [
     "intent",

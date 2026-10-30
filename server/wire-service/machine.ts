@@ -1965,7 +1965,15 @@ export async function handleMeetingBook(c: Context) {
   const dispatched = await dispatchEventToWorkflows(pool, {
     firmId: firm,
     eventName: "meeting_booked",
-    payload: { meetingId: id, contactId, slot: body.slot ?? null, campaign_objective_id: campaignObjectiveId },
+    payload: {
+      meetingId: id,
+      contactId,
+      slot: body.slot ?? null,
+      campaign_objective_id: campaignObjectiveId,
+      writes: [
+        { table: "meeting_booked", id, contact_id: contactId },
+      ],
+    },
     contactIds: [contactId],
   });
 
