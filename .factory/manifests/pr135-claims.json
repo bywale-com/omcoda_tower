@@ -101,24 +101,26 @@
       "title": "These four tables load by the pointer's id, which is the row's primary key",
       "component": "walk-handle",
       "kind": "contract",
-      "read": "partial",
-      "packet": null
+      "read": "full",
+      "packet": "pkt-006-id-keyed-loads",
+      "also": ["pkt-004-firing-handle"]
     },
     {
       "n": 11,
       "title": "A live firing places this firing's primary keys on payload.writes",
       "component": "firing-pointers",
       "kind": "contract",
-      "read": "partial",
-      "packet": null
+      "read": "full",
+      "packet": "pkt-007-fact-writes",
+      "also": ["pkt-008-meeting-writes", "pkt-004-firing-handle"]
     },
     {
       "n": 12,
       "title": "A live firing of eligibility.changed places each inserted primary key on payload.writes",
       "component": "firing-pointers",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-009-eligibility-writes"
     },
     {
       "n": 13,

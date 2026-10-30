@@ -1,5 +1,5 @@
 {
-  "stateRevision": 41,
+  "stateRevision": 51,
   "authorizedDispatches": 20,
   "usedDispatches": 8,
   "scope": {
@@ -27,27 +27,24 @@
       "queue": "active",
       "coverageComplete": null,
       "outstanding": [
-        "Claims 10 and 11 are only partly covered by PKT-004. Claims 12-88 are indexed and have no packets. Coverage is not complete."
+        "Claim 52 owns the person split for the four eligibility tables. Claims 13-88 are indexed and have no packets. Coverage is not complete."
       ],
-      "session": "running",
-      "revision": "rev-1",
-      "dispatch": {
-        "packetId": "exec-identity",
-        "revision": "rev-1",
-        "prHead": "65531837f45c725736b37155198722d5c510808b",
-        "effect": "wake_architect",
-        "label": "factory-wake-architect",
-        "issuedAt": "2026-10-30T10:40:16.935Z"
-      },
+      "session": "continuation_due",
+      "revision": "rev-2",
+      "dispatch": null,
       "blockedReason": null,
       "packetIds": [
         "pkt-001-click-attribution",
         "pkt-002-open-ask-cursor",
         "pkt-003-resume-same-run",
         "pkt-004-firing-handle",
-        "pkt-005-audit-row-grain"
+        "pkt-005-audit-row-grain",
+        "pkt-006-id-keyed-loads",
+        "pkt-007-fact-writes",
+        "pkt-008-meeting-writes",
+        "pkt-009-eligibility-writes"
       ],
-      "updatedAt": "2026-10-29T21:40:00.000Z"
+      "updatedAt": "2026-10-30T11:05:00.000Z"
     },
     "launch-agent": {
       "id": "launch-agent",
@@ -279,6 +276,106 @@
           "workerExecution": "ran"
         }
       ]
+    },
+    "pkt-006-id-keyed-loads": {
+      "id": "pkt-006-id-keyed-loads",
+      "initiativeId": "exec-identity",
+      "stage": "released",
+      "wake": "sa",
+      "revision": "rev-1",
+      "hold": false,
+      "blockerId": null,
+      "lease": null,
+      "attempts": 0,
+      "maxAttempts": 1,
+      "candidateSha": null,
+      "verifiedSha": null,
+      "lastFailureFingerprint": null,
+      "lastFailureClass": null,
+      "dispatchedSaRevision": null,
+      "dispatchedEngineerRevision": null,
+      "dispatchedRepairFingerprint": null,
+      "releaseEligible": true,
+      "integratedSha": null,
+      "reconciliationId": null,
+      "dispatch": null,
+      "dispatchHistory": [],
+      "execution": null
+    },
+    "pkt-007-fact-writes": {
+      "id": "pkt-007-fact-writes",
+      "initiativeId": "exec-identity",
+      "stage": "released",
+      "wake": "sa",
+      "revision": "rev-1",
+      "hold": false,
+      "blockerId": null,
+      "lease": null,
+      "attempts": 0,
+      "maxAttempts": 1,
+      "candidateSha": null,
+      "verifiedSha": null,
+      "lastFailureFingerprint": null,
+      "lastFailureClass": null,
+      "dispatchedSaRevision": null,
+      "dispatchedEngineerRevision": null,
+      "dispatchedRepairFingerprint": null,
+      "releaseEligible": true,
+      "integratedSha": null,
+      "reconciliationId": null,
+      "dispatch": null,
+      "dispatchHistory": [],
+      "execution": null
+    },
+    "pkt-008-meeting-writes": {
+      "id": "pkt-008-meeting-writes",
+      "initiativeId": "exec-identity",
+      "stage": "released",
+      "wake": "sa",
+      "revision": "rev-1",
+      "hold": false,
+      "blockerId": null,
+      "lease": null,
+      "attempts": 0,
+      "maxAttempts": 1,
+      "candidateSha": null,
+      "verifiedSha": null,
+      "lastFailureFingerprint": null,
+      "lastFailureClass": null,
+      "dispatchedSaRevision": null,
+      "dispatchedEngineerRevision": null,
+      "dispatchedRepairFingerprint": null,
+      "releaseEligible": true,
+      "integratedSha": null,
+      "reconciliationId": null,
+      "dispatch": null,
+      "dispatchHistory": [],
+      "execution": null
+    },
+    "pkt-009-eligibility-writes": {
+      "id": "pkt-009-eligibility-writes",
+      "initiativeId": "exec-identity",
+      "stage": "released",
+      "wake": "sa",
+      "revision": "rev-1",
+      "hold": false,
+      "blockerId": null,
+      "lease": null,
+      "attempts": 0,
+      "maxAttempts": 1,
+      "candidateSha": null,
+      "verifiedSha": null,
+      "lastFailureFingerprint": null,
+      "lastFailureClass": null,
+      "dispatchedSaRevision": null,
+      "dispatchedEngineerRevision": null,
+      "dispatchedRepairFingerprint": null,
+      "releaseEligible": true,
+      "integratedSha": null,
+      "reconciliationId": null,
+      "dispatch": null,
+      "dispatchHistory": [],
+      "execution": null
     }
   }
 }

@@ -15,8 +15,12 @@
 | pkt-003-resume-same-run | sa | released | yes |
 | pkt-004-firing-handle | sa | released | yes |
 | pkt-005-audit-row-grain | sa | released | yes |
+| pkt-006-id-keyed-loads | sa | released | yes |
+| pkt-007-fact-writes | sa | released | yes |
+| pkt-008-meeting-writes | sa | released | yes |
+| pkt-009-eligibility-writes | sa | released | yes |
 
-`required` is no until the packet is released. A held draft does not block the initiative, and it does not complete it. PKT-001 stays held. The four released packets do not close the initiative.
+`required` is no until the packet is released. A held draft does not block the initiative, and it does not complete it. PKT-001 stays held. The released packets do not close the initiative.
 
 ## Founder decisions
 

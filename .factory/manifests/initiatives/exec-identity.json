@@ -20,13 +20,21 @@
     "pkt-002-open-ask-cursor",
     "pkt-003-resume-same-run",
     "pkt-004-firing-handle",
-    "pkt-005-audit-row-grain"
+    "pkt-005-audit-row-grain",
+    "pkt-006-id-keyed-loads",
+    "pkt-007-fact-writes",
+    "pkt-008-meeting-writes",
+    "pkt-009-eligibility-writes"
   ],
   "requiredPackets": [
     "pkt-002-open-ask-cursor",
     "pkt-003-resume-same-run",
     "pkt-004-firing-handle",
-    "pkt-005-audit-row-grain"
+    "pkt-005-audit-row-grain",
+    "pkt-006-id-keyed-loads",
+    "pkt-007-fact-writes",
+    "pkt-008-meeting-writes",
+    "pkt-009-eligibility-writes"
   ],
   "founderDecisions": [
     "Who is placed on launch day.",
