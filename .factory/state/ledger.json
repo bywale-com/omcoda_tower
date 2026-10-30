@@ -1,5 +1,5 @@
 {
-  "stateRevision": 95,
+  "stateRevision": 96,
   "authorizedDispatches": 50,
   "usedDispatches": 22,
   "scope": {
@@ -610,12 +610,17 @@
     "pkt-015-halt-enroll-firm": {
       "id": "pkt-015-halt-enroll-firm",
       "initiativeId": "exec-identity",
-      "stage": "released",
+      "stage": "analysis",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": null,
+      "lease": {
+        "workerId": "bc-d47fe03a-22cd-4f17-b25f-2279540699ec",
+        "role": "analyst",
+        "until": "2026-10-30T16:54:14.006Z",
+        "revision": "rev-1"
+      },
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
