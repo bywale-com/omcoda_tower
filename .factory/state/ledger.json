@@ -1,5 +1,5 @@
 {
-  "stateRevision": 137,
+  "stateRevision": 138,
   "authorizedDispatches": 50,
   "usedDispatches": 35,
   "scope": {
@@ -1318,7 +1318,7 @@
       "id": "dsp-137-engineer-pkt-006-id-keyed-loads",
       "assignmentId": "asg-dsp-137-engineer-pkt-006-id-keyed-loads",
       "role": "engineer",
-      "phase": "dispatched",
+      "phase": "started",
       "packetIds": [
         "pkt-006-id-keyed-loads"
       ],
@@ -1327,14 +1327,14 @@
       },
       "label": "factory-wake-engineer",
       "prHead": "62192cabc34dfeb5ef0994b9d1df4a4e775a3168",
-      "agentId": null,
+      "agentId": "bc-aa5f3113-1dcc-4e94-bfc8-447ec18f939b",
       "continuation": "fresh",
       "issuedAt": "2026-10-30T18:30:17.466Z",
-      "startedAt": null,
+      "startedAt": "2026-10-30T18:35:20.983Z",
       "runningAt": null,
       "endedAt": null,
       "reserveUntil": "2026-10-30T19:00:17.466Z",
-      "startUntil": null,
+      "startUntil": "2026-10-30T18:50:20.983Z",
       "leaseUntil": null,
       "reason": null
     }
