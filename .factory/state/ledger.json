@@ -1,15 +1,15 @@
 {
-  "stateRevision": 121,
+  "stateRevision": 122,
   "authorizedDispatches": 50,
   "usedDispatches": 31,
   "scope": {
     "id": "agents-and-automations",
-    "status": "active",
+    "status": "suspended",
     "modules": [
       "Agents and Automations"
     ],
     "founderDecision": null,
-    "blockReason": null
+    "blockReason": "Execution architecture repair. New launches are suspended. Authorization, dispatch cap, and ledger history stay."
   },
   "initiatives": {
     "exec-identity": {
