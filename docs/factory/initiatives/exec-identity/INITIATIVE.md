@@ -26,6 +26,7 @@
 | pkt-014-empty-firing-audience | sa | released | yes |
 | pkt-015-halt-enroll-firm | sa | released | yes |
 | pkt-016-halt-send-firm | sa | released | yes |
+| pkt-017-tick-send-halt | sa | released | yes |
 
 `required` is no until the packet is released. A held draft does not block the initiative, and it does not complete it. PKT-001 stays held. The released packets do not close the initiative.
 

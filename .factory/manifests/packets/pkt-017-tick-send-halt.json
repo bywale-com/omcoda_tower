@@ -1,0 +1,26 @@
+{
+  "id": "pkt-017-tick-send-halt",
+  "initiativeId": "exec-identity",
+  "title": "A tick send on an open attempt is a new send the halt stops; the attempt is not aborted",
+  "release": "released",
+  "wake": "sa",
+  "releaseEligible": true,
+  "required": true,
+  "stage": "released",
+  "revision": "rev-1",
+  "claims": [
+    20
+  ],
+  "sourceSha": "1f6f43ab2dbe8b0e32b0a344990795bb998c8be3",
+  "ui": "none",
+  "gates": {
+    "behaviorEstablished": true,
+    "scopeBounded": true,
+    "dependenciesUnderstood": true,
+    "acceptanceDefined": true,
+    "noBlockingQuestion": true,
+    "noContradictorySpecification": true,
+    "independentlyImplementable": true
+  },
+  "plates": "none"
+}

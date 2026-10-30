@@ -1982,13 +1982,14 @@ check("committed non-UI packets stay released without a generated plate", () => 
     "PKT-014-empty-firing-audience.md",
     "PKT-015-halt-enroll-firm.md",
     "PKT-016-halt-send-firm.md",
+    "PKT-017-tick-send-halt.md",
   ]);
   for (const name of names) {
     const markdown = read(`${dir}/${name}`);
     const id = name.replace(/^PKT-/, "pkt-").replace(/\.md$/, "");
     const manifest = JSON.parse(read(`.factory/manifests/packets/${id}.json`)) as ReleaseManifest;
     assert.equal(markdown.includes("**UI:** changes"), false);
-    if (id === "pkt-010-campaign-failure-writes" || id === "pkt-011-halt-records-writes" || id === "pkt-012-consent-opt-out-writes" || id === "pkt-013-firm-provision-writes" || id === "pkt-014-empty-firing-audience" || id === "pkt-015-halt-enroll-firm" || id === "pkt-016-halt-send-firm") {
+    if (id === "pkt-010-campaign-failure-writes" || id === "pkt-011-halt-records-writes" || id === "pkt-012-consent-opt-out-writes" || id === "pkt-013-firm-provision-writes" || id === "pkt-014-empty-firing-audience" || id === "pkt-015-halt-enroll-firm" || id === "pkt-016-halt-send-firm" || id === "pkt-017-tick-send-halt") {
       assert.equal(manifest.ui, "none");
       assert.equal(manifest.plates, "none");
     } else {

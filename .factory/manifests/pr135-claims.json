@@ -182,9 +182,9 @@
       "n": 20,
       "title": "A tick send on an open attempt is a new send the halt stops; the attempt is not aborted",
       "component": "halt-send",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "established",
+      "read": "full",
+      "packet": "pkt-017-tick-send-halt"
     },
     {
       "n": 21,
