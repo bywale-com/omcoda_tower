@@ -1,5 +1,5 @@
 {
-  "stateRevision": 113,
+  "stateRevision": 114,
   "authorizedDispatches": 50,
   "usedDispatches": 28,
   "scope": {
@@ -736,15 +736,18 @@
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-018-send-denied-engagement",
-        "revision": "rev-1",
-        "prHead": "c0f7d41bd28d79aef36bf6559fb950c6f3d88d74",
-        "effect": "wake_sa",
-        "label": "factory-wake-sa",
-        "issuedAt": "2026-10-30T13:42:40.503Z"
-      },
-      "dispatchHistory": [],
+      "dispatch": null,
+      "dispatchHistory": [
+        {
+          "packetId": "pkt-018-send-denied-engagement",
+          "revision": "rev-1",
+          "prHead": "c0f7d41bd28d79aef36bf6559fb950c6f3d88d74",
+          "effect": "wake_sa",
+          "label": "factory-wake-sa",
+          "issuedAt": "2026-10-30T13:42:40.503Z",
+          "workerExecution": "ran"
+        }
+      ],
       "execution": null
     }
   }
