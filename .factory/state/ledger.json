@@ -1,5 +1,5 @@
 {
-  "stateRevision": 158,
+  "stateRevision": 159,
   "authorizedDispatches": 50,
   "usedDispatches": 40,
   "scope": {
@@ -880,20 +880,15 @@
     "pkt-013-firm-provision-writes": {
       "id": "pkt-013-firm-provision-writes",
       "initiativeId": "exec-identity",
-      "stage": "engineering",
+      "stage": "candidate",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": {
-        "workerId": "bc-4192002b-f944-4eeb-919a-1af83d403f28",
-        "role": "engineer",
-        "until": "2026-10-30T20:18:23.972Z",
-        "revision": "rev-1"
-      },
+      "lease": null,
       "attempts": 0,
       "maxAttempts": 1,
-      "candidateSha": null,
+      "candidateSha": "fcc495b8a2fba8d29b1460179d995e5c1ec3e5eb",
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
@@ -903,16 +898,7 @@
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-013-firm-provision-writes",
-        "revision": "rev-1",
-        "prHead": "df6ed4d480f564d10e4bd6793762bfc27cef7b42",
-        "effect": "wake_engineer",
-        "label": "factory-wake-engineer",
-        "issuedAt": "2026-10-30T19:17:07.949Z",
-        "executionId": "dsp-156-engineer-pkt-013-firm-provision-writes",
-        "assignmentId": "asg-dsp-156-engineer-pkt-013-firm-provision-writes"
-      },
+      "dispatch": null,
       "dispatchHistory": [
         {
           "packetId": "pkt-013-firm-provision-writes",
@@ -930,6 +916,17 @@
           "effect": "wake_sa",
           "label": "factory-wake-sa",
           "issuedAt": "2026-10-30T12:28:08.331Z",
+          "workerExecution": "ran"
+        },
+        {
+          "packetId": "pkt-013-firm-provision-writes",
+          "revision": "rev-1",
+          "prHead": "df6ed4d480f564d10e4bd6793762bfc27cef7b42",
+          "effect": "wake_engineer",
+          "label": "factory-wake-engineer",
+          "issuedAt": "2026-10-30T19:17:07.949Z",
+          "executionId": "dsp-156-engineer-pkt-013-firm-provision-writes",
+          "assignmentId": "asg-dsp-156-engineer-pkt-013-firm-provision-writes",
           "workerExecution": "ran"
         }
       ],
@@ -1498,7 +1495,7 @@
       "id": "dsp-156-engineer-pkt-013-firm-provision-writes",
       "assignmentId": "asg-dsp-156-engineer-pkt-013-firm-provision-writes",
       "role": "engineer",
-      "phase": "running",
+      "phase": "completed",
       "packetIds": [
         "pkt-013-firm-provision-writes"
       ],
@@ -1512,11 +1509,11 @@
       "issuedAt": "2026-10-30T19:17:07.949Z",
       "startedAt": "2026-10-30T19:18:16.209Z",
       "runningAt": "2026-10-30T19:18:23.972Z",
-      "endedAt": null,
+      "endedAt": "2026-10-30T19:26:22.949Z",
       "reserveUntil": "2026-10-30T19:47:07.949Z",
       "startUntil": "2026-10-30T19:33:16.209Z",
       "leaseUntil": "2026-10-30T20:18:23.972Z",
-      "reason": null
+      "reason": "candidate_recorded"
     }
   },
   "assignments": {
