@@ -1,5 +1,5 @@
 {
-  "stateRevision": 35,
+  "stateRevision": 36,
   "authorizedDispatches": 20,
   "usedDispatches": 6,
   "scope": {
@@ -239,12 +239,17 @@
     "pkt-005-audit-row-grain": {
       "id": "pkt-005-audit-row-grain",
       "initiativeId": "exec-identity",
-      "stage": "released",
+      "stage": "analysis",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": null,
+      "lease": {
+        "workerId": "bc-b9898eca-8732-420d-8c33-499764db1ce1",
+        "role": "analyst",
+        "until": "2026-10-30T14:31:54.427Z",
+        "revision": "rev-1"
+      },
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
