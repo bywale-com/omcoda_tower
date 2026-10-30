@@ -1,5 +1,5 @@
 {
-  "stateRevision": 157,
+  "stateRevision": 158,
   "authorizedDispatches": 50,
   "usedDispatches": 40,
   "scope": {
@@ -880,12 +880,17 @@
     "pkt-013-firm-provision-writes": {
       "id": "pkt-013-firm-provision-writes",
       "initiativeId": "exec-identity",
-      "stage": "change_specified",
+      "stage": "engineering",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": null,
+      "lease": {
+        "workerId": "bc-4192002b-f944-4eeb-919a-1af83d403f28",
+        "role": "engineer",
+        "until": "2026-10-30T20:18:23.972Z",
+        "revision": "rev-1"
+      },
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
@@ -1493,7 +1498,7 @@
       "id": "dsp-156-engineer-pkt-013-firm-provision-writes",
       "assignmentId": "asg-dsp-156-engineer-pkt-013-firm-provision-writes",
       "role": "engineer",
-      "phase": "started",
+      "phase": "running",
       "packetIds": [
         "pkt-013-firm-provision-writes"
       ],
@@ -1506,11 +1511,11 @@
       "continuation": "fresh",
       "issuedAt": "2026-10-30T19:17:07.949Z",
       "startedAt": "2026-10-30T19:18:16.209Z",
-      "runningAt": null,
+      "runningAt": "2026-10-30T19:18:23.972Z",
       "endedAt": null,
       "reserveUntil": "2026-10-30T19:47:07.949Z",
       "startUntil": "2026-10-30T19:33:16.209Z",
-      "leaseUntil": null,
+      "leaseUntil": "2026-10-30T20:18:23.972Z",
       "reason": null
     }
   },
