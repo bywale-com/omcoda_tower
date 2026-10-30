@@ -1,7 +1,7 @@
 {
-  "stateRevision": 151,
+  "stateRevision": 152,
   "authorizedDispatches": 50,
-  "usedDispatches": 38,
+  "usedDispatches": 39,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -681,12 +681,21 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
-      "dispatchedEngineerRevision": null,
+      "dispatchedEngineerRevision": "rev-1",
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-010-campaign-failure-writes",
+        "revision": "rev-1",
+        "prHead": "11808a66a5fa55c492d2ef760a2499738a05ed3f",
+        "effect": "wake_engineer",
+        "label": "factory-wake-engineer",
+        "issuedAt": "2026-10-30T19:08:22.735Z",
+        "executionId": "dsp-152-engineer-pkt-010-campaign-failure-writes",
+        "assignmentId": "asg-dsp-152-engineer-pkt-010-campaign-failure-writes"
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-010-campaign-failure-writes",
@@ -1444,6 +1453,30 @@
       "startUntil": "2026-10-30T19:16:57.971Z",
       "leaseUntil": "2026-10-30T20:01:59.777Z",
       "reason": "candidate_recorded"
+    },
+    "dsp-152-engineer-pkt-010-campaign-failure-writes": {
+      "id": "dsp-152-engineer-pkt-010-campaign-failure-writes",
+      "assignmentId": "asg-dsp-152-engineer-pkt-010-campaign-failure-writes",
+      "role": "engineer",
+      "phase": "dispatched",
+      "packetIds": [
+        "pkt-010-campaign-failure-writes"
+      ],
+      "revisions": {
+        "pkt-010-campaign-failure-writes": "rev-1"
+      },
+      "label": "factory-wake-engineer",
+      "prHead": "11808a66a5fa55c492d2ef760a2499738a05ed3f",
+      "agentId": null,
+      "continuation": "fresh",
+      "issuedAt": "2026-10-30T19:08:22.735Z",
+      "startedAt": null,
+      "runningAt": null,
+      "endedAt": null,
+      "reserveUntil": "2026-10-30T19:38:22.735Z",
+      "startUntil": null,
+      "leaseUntil": null,
+      "reason": null
     }
   },
   "assignments": {
@@ -1565,6 +1598,18 @@
       "basis": null,
       "executionIds": [
         "dsp-148-engineer-pkt-008-meeting-writes"
+      ]
+    },
+    "asg-dsp-152-engineer-pkt-010-campaign-failure-writes": {
+      "id": "asg-dsp-152-engineer-pkt-010-campaign-failure-writes",
+      "role": "engineer",
+      "initiativeId": "exec-identity",
+      "packetIds": [
+        "pkt-010-campaign-failure-writes"
+      ],
+      "basis": null,
+      "executionIds": [
+        "dsp-152-engineer-pkt-010-campaign-failure-writes"
       ]
     }
   }
