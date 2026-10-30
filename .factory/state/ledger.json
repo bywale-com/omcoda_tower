@@ -1,5 +1,5 @@
 {
-  "stateRevision": 135,
+  "stateRevision": 136,
   "authorizedDispatches": 50,
   "usedDispatches": 34,
   "scope": {
@@ -335,20 +335,15 @@
     "pkt-005-audit-row-grain": {
       "id": "pkt-005-audit-row-grain",
       "initiativeId": "exec-identity",
-      "stage": "engineering",
+      "stage": "candidate",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": {
-        "workerId": "bc-5bc4801d-c496-4f76-b6b4-db1d838b8aca",
-        "role": "engineer",
-        "until": "2026-10-30T19:22:06.272Z",
-        "revision": "rev-1"
-      },
+      "lease": null,
       "attempts": 0,
       "maxAttempts": 1,
-      "candidateSha": null,
+      "candidateSha": "e325464c5ab8fb356841154bae691f5fc3ea199c",
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
@@ -358,16 +353,7 @@
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-005-audit-row-grain",
-        "revision": "rev-1",
-        "prHead": "9b058e847b3dc04787e355e19ad195f5e3ef95b6",
-        "effect": "wake_engineer",
-        "label": "factory-wake-engineer",
-        "issuedAt": "2026-10-30T18:17:11.042Z",
-        "executionId": "dsp-133-engineer-pkt-005-audit-row-grain",
-        "assignmentId": "asg-dsp-133-engineer-pkt-005-audit-row-grain"
-      },
+      "dispatch": null,
       "execution": null,
       "dispatchHistory": [
         {
@@ -377,6 +363,17 @@
           "effect": "wake_sa",
           "label": "factory-wake-sa",
           "issuedAt": "2026-10-30T10:30:18.281Z",
+          "workerExecution": "ran"
+        },
+        {
+          "packetId": "pkt-005-audit-row-grain",
+          "revision": "rev-1",
+          "prHead": "9b058e847b3dc04787e355e19ad195f5e3ef95b6",
+          "effect": "wake_engineer",
+          "label": "factory-wake-engineer",
+          "issuedAt": "2026-10-30T18:17:11.042Z",
+          "executionId": "dsp-133-engineer-pkt-005-audit-row-grain",
+          "assignmentId": "asg-dsp-133-engineer-pkt-005-audit-row-grain",
           "workerExecution": "ran"
         }
       ]
@@ -1288,7 +1285,7 @@
       "id": "dsp-133-engineer-pkt-005-audit-row-grain",
       "assignmentId": "asg-dsp-133-engineer-pkt-005-audit-row-grain",
       "role": "engineer",
-      "phase": "running",
+      "phase": "completed",
       "packetIds": [
         "pkt-005-audit-row-grain"
       ],
@@ -1302,11 +1299,11 @@
       "issuedAt": "2026-10-30T18:17:11.042Z",
       "startedAt": "2026-10-30T18:22:04.428Z",
       "runningAt": "2026-10-30T18:22:06.272Z",
-      "endedAt": null,
+      "endedAt": "2026-10-30T18:29:50.422Z",
       "reserveUntil": "2026-10-30T18:47:11.042Z",
       "startUntil": "2026-10-30T18:37:04.428Z",
       "leaseUntil": "2026-10-30T19:22:06.272Z",
-      "reason": null
+      "reason": "candidate_recorded"
     }
   },
   "assignments": {
