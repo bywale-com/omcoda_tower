@@ -1,5 +1,5 @@
 {
-  "stateRevision": 34,
+  "stateRevision": 35,
   "authorizedDispatches": 20,
   "usedDispatches": 6,
   "scope": {
@@ -107,12 +107,17 @@
     "pkt-002-open-ask-cursor": {
       "id": "pkt-002-open-ask-cursor",
       "initiativeId": "exec-identity",
-      "stage": "change_specified",
+      "stage": "engineering",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": null,
+      "lease": {
+        "workerId": "bc-e2e8d4c7-3e54-4d47-9f65-8d33f7ced3f9",
+        "role": "engineer",
+        "until": "2026-10-30T14:30:25.548Z",
+        "revision": "rev-1"
+      },
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
