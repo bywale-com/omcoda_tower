@@ -1,7 +1,7 @@
 {
-  "stateRevision": 132,
+  "stateRevision": 133,
   "authorizedDispatches": 50,
-  "usedDispatches": 33,
+  "usedDispatches": 34,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -348,12 +348,21 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
-      "dispatchedEngineerRevision": null,
+      "dispatchedEngineerRevision": "rev-1",
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-005-audit-row-grain",
+        "revision": "rev-1",
+        "prHead": "9b058e847b3dc04787e355e19ad195f5e3ef95b6",
+        "effect": "wake_engineer",
+        "label": "factory-wake-engineer",
+        "issuedAt": "2026-10-30T18:17:11.042Z",
+        "executionId": "dsp-133-engineer-pkt-005-audit-row-grain",
+        "assignmentId": "asg-dsp-133-engineer-pkt-005-audit-row-grain"
+      },
       "execution": null,
       "dispatchHistory": [
         {
@@ -1269,6 +1278,30 @@
       "startUntil": "2026-10-30T18:19:35.867Z",
       "leaseUntil": "2026-10-30T19:04:39.044Z",
       "reason": "candidate_recorded"
+    },
+    "dsp-133-engineer-pkt-005-audit-row-grain": {
+      "id": "dsp-133-engineer-pkt-005-audit-row-grain",
+      "assignmentId": "asg-dsp-133-engineer-pkt-005-audit-row-grain",
+      "role": "engineer",
+      "phase": "dispatched",
+      "packetIds": [
+        "pkt-005-audit-row-grain"
+      ],
+      "revisions": {
+        "pkt-005-audit-row-grain": "rev-1"
+      },
+      "label": "factory-wake-engineer",
+      "prHead": "9b058e847b3dc04787e355e19ad195f5e3ef95b6",
+      "agentId": null,
+      "continuation": "fresh",
+      "issuedAt": "2026-10-30T18:17:11.042Z",
+      "startedAt": null,
+      "runningAt": null,
+      "endedAt": null,
+      "reserveUntil": "2026-10-30T18:47:11.042Z",
+      "startUntil": null,
+      "leaseUntil": null,
+      "reason": null
     }
   },
   "assignments": {
@@ -1330,6 +1363,18 @@
       "basis": null,
       "executionIds": [
         "dsp-128-engineer-pkt-004-firing-handle"
+      ]
+    },
+    "asg-dsp-133-engineer-pkt-005-audit-row-grain": {
+      "id": "asg-dsp-133-engineer-pkt-005-audit-row-grain",
+      "role": "engineer",
+      "initiativeId": "exec-identity",
+      "packetIds": [
+        "pkt-005-audit-row-grain"
+      ],
+      "basis": null,
+      "executionIds": [
+        "dsp-133-engineer-pkt-005-audit-row-grain"
       ]
     }
   }
