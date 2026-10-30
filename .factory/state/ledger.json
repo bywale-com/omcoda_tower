@@ -1,5 +1,5 @@
 {
-  "stateRevision": 144,
+  "stateRevision": 145,
   "authorizedDispatches": 50,
   "usedDispatches": 37,
   "scope": {
@@ -1388,7 +1388,7 @@
       "id": "dsp-144-engineer-pkt-007-fact-writes",
       "assignmentId": "asg-dsp-144-engineer-pkt-007-fact-writes",
       "role": "engineer",
-      "phase": "dispatched",
+      "phase": "started",
       "packetIds": [
         "pkt-007-fact-writes"
       ],
@@ -1397,14 +1397,14 @@
       },
       "label": "factory-wake-engineer",
       "prHead": "a2bd4bcffd8b202b61fa8659ece4506ed2dfa5d2",
-      "agentId": null,
+      "agentId": "bc-3b6c91f0-5a89-44dc-bd8e-1234e11ed9d1",
       "continuation": "fresh",
       "issuedAt": "2026-10-30T18:47:15.644Z",
-      "startedAt": null,
+      "startedAt": "2026-10-30T18:51:38.894Z",
       "runningAt": null,
       "endedAt": null,
       "reserveUntil": "2026-10-30T19:17:15.644Z",
-      "startUntil": null,
+      "startUntil": "2026-10-30T19:06:38.894Z",
       "leaseUntil": null,
       "reason": null
     }
