@@ -126,9 +126,9 @@
       "n": 13,
       "title": "A live firing of campaign_failure places the inserted primary key on payload.writes, and the payload carries that row's campaign_id",
       "component": "firing-pointers",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-010-campaign-failure-writes"
     },
     {
       "n": 14,

@@ -1,5 +1,5 @@
 {
-  "stateRevision": 66,
+  "stateRevision": 69,
   "authorizedDispatches": 20,
   "usedDispatches": 13,
   "scope": {
@@ -27,18 +27,11 @@
       "queue": "active",
       "coverageComplete": null,
       "outstanding": [
-        "Claim 52 owns the person split for the four eligibility tables. Claims 13-88 are indexed and have no packets. Coverage is not complete."
+        "Claim 52 still owns the person split for the four eligibility tables. Claims 14-88 are indexed and have no packets. Coverage is not complete."
       ],
-      "session": "running",
-      "revision": "rev-2",
-      "dispatch": {
-        "packetId": "exec-identity",
-        "revision": "rev-2",
-        "prHead": "b3af8929fbe57a88d84310365064af5e09eedcaa",
-        "effect": "wake_architect",
-        "label": "factory-wake-architect",
-        "issuedAt": "2026-10-30T11:24:39.335Z"
-      },
+      "session": "continuation_due",
+      "revision": "rev-3",
+      "dispatch": null,
       "blockedReason": null,
       "packetIds": [
         "pkt-001-click-attribution",
@@ -49,9 +42,10 @@
         "pkt-006-id-keyed-loads",
         "pkt-007-fact-writes",
         "pkt-008-meeting-writes",
-        "pkt-009-eligibility-writes"
+        "pkt-009-eligibility-writes",
+        "pkt-010-campaign-failure-writes"
       ],
-      "updatedAt": "2026-10-30T11:05:00.000Z"
+      "updatedAt": "2026-10-30T12:10:00.000Z"
     },
     "launch-agent": {
       "id": "launch-agent",
@@ -422,6 +416,31 @@
           "workerExecution": "ran"
         }
       ],
+      "execution": null
+    },
+    "pkt-010-campaign-failure-writes": {
+      "id": "pkt-010-campaign-failure-writes",
+      "initiativeId": "exec-identity",
+      "stage": "released",
+      "wake": "sa",
+      "revision": "rev-1",
+      "hold": false,
+      "blockerId": null,
+      "lease": null,
+      "attempts": 0,
+      "maxAttempts": 1,
+      "candidateSha": null,
+      "verifiedSha": null,
+      "lastFailureFingerprint": null,
+      "lastFailureClass": null,
+      "dispatchedSaRevision": null,
+      "dispatchedEngineerRevision": null,
+      "dispatchedRepairFingerprint": null,
+      "releaseEligible": true,
+      "integratedSha": null,
+      "reconciliationId": null,
+      "dispatch": null,
+      "dispatchHistory": [],
       "execution": null
     }
   }

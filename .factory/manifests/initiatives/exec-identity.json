@@ -24,7 +24,8 @@
     "pkt-006-id-keyed-loads",
     "pkt-007-fact-writes",
     "pkt-008-meeting-writes",
-    "pkt-009-eligibility-writes"
+    "pkt-009-eligibility-writes",
+    "pkt-010-campaign-failure-writes"
   ],
   "requiredPackets": [
     "pkt-002-open-ask-cursor",
@@ -34,7 +35,8 @@
     "pkt-006-id-keyed-loads",
     "pkt-007-fact-writes",
     "pkt-008-meeting-writes",
-    "pkt-009-eligibility-writes"
+    "pkt-009-eligibility-writes",
+    "pkt-010-campaign-failure-writes"
   ],
   "founderDecisions": [
     "Who is placed on launch day.",

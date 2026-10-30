@@ -15,5 +15,6 @@ What this factory treats as authoritative for the pilot:
 - Claim 10: `fact_writebacks`, `meeting_booked`, and `wait_occupancy` load by primary key. The three append tables join the person split. The generic action pointer stores the id `writeEngagement` returns. PKT-006. The `engagement_records` load stays PKT-004.
 - Claim 11: a fact firing’s `writes` is that write-back. PKT-007. A meeting firing’s `writes` is that booking. PKT-008. The meeting side engagement stays off the array.
 - Claim 12: an `eligibility.changed` firing’s `writes` is the four inserted rows, table-major, and those four tables load by primary key. PKT-009. The person split for those four tables is claim 52.
+- Claim 13: a `campaign_failure` firing’s `writes` is the inserted row, and the payload carries that row’s `campaign_id`. The row loads by primary key. PKT-010. The table stays out of `PERSON_WRITE_TABLES`.
 
 Component contracts point at claim numbers. They do not restate the journals.
