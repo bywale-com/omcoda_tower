@@ -1,5 +1,5 @@
 {
-  "stateRevision": 56,
+  "stateRevision": 57,
   "authorizedDispatches": 20,
   "usedDispatches": 10,
   "scope": {
@@ -315,12 +315,17 @@
     "pkt-007-fact-writes": {
       "id": "pkt-007-fact-writes",
       "initiativeId": "exec-identity",
-      "stage": "released",
+      "stage": "analysis",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": null,
+      "lease": {
+        "workerId": "bc-22e98acd-a9a4-41ce-a7ab-50d10f53413c",
+        "role": "analyst",
+        "until": "2026-10-30T15:03:37.306Z",
+        "revision": "rev-1"
+      },
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
