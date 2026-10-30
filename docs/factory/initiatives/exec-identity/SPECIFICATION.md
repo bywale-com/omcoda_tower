@@ -18,5 +18,6 @@ What this factory treats as authoritative for the pilot:
 - Claim 13: a `campaign_failure` firing’s `writes` is the inserted row, and the payload carries that row’s `campaign_id`. The row loads by primary key. PKT-010. The table stays out of `PERSON_WRITE_TABLES`.
 - Claim 14: a contact-scope `halt_records` firing’s `writes` is the inserted row. The row loads by primary key. PKT-011. The firm-book branch and the lift do not dispatch. The table stays out of `PERSON_WRITE_TABLES`.
 - Claim 15: a `consent_records.opt_out` firing’s `writes` is the current pair. The pointer’s `id` and `contact_id` are both the contact. The row loads by that contact and the walk’s firm. PKT-012. The table has no `id` column. Basis writes, the workspace opt-out, and the hard bounce do not dispatch.
+- Claim 16: a `ct_firms` firing’s `writes` is the firm id the upsert stored, with no `contact_id`. The row loads by `id`. PKT-013. `firms`, `campaign_states`, `users`, `access_links`, and the provision audit stay off the array. `handlePoolAllocate` does not dispatch. The audience fill when `contactIds` is omitted is claim 17.
 
 Component contracts point at claim numbers. They do not restate the journals.

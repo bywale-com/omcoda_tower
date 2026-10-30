@@ -1,5 +1,5 @@
 {
-  "stateRevision": 82,
+  "stateRevision": 83,
   "authorizedDispatches": 50,
   "usedDispatches": 18,
   "scope": {
@@ -27,7 +27,7 @@
       "queue": "active",
       "coverageComplete": null,
       "outstanding": [
-        "Claim 52 still owns the person split for the four eligibility tables. Claims 16-88 are indexed and have no packets. Coverage is not complete."
+        "Claim 52 still owns the person split for the four eligibility tables. Claims 17-88 are indexed and have no packets. Coverage is not complete."
       ],
       "session": "running",
       "revision": "rev-4",
@@ -52,9 +52,10 @@
         "pkt-009-eligibility-writes",
         "pkt-010-campaign-failure-writes",
         "pkt-011-halt-records-writes",
-        "pkt-012-consent-opt-out-writes"
+        "pkt-012-consent-opt-out-writes",
+        "pkt-013-firm-provision-writes"
       ],
-      "updatedAt": "2026-10-30T12:10:00.000Z"
+      "updatedAt": "2026-10-30T12:40:00.000Z"
     },
     "launch-agent": {
       "id": "launch-agent",
@@ -530,6 +531,31 @@
           "workerExecution": "ran"
         }
       ],
+      "execution": null
+    },
+    "pkt-013-firm-provision-writes": {
+      "id": "pkt-013-firm-provision-writes",
+      "initiativeId": "exec-identity",
+      "stage": "released",
+      "wake": "sa",
+      "revision": "rev-1",
+      "hold": false,
+      "blockerId": null,
+      "lease": null,
+      "attempts": 0,
+      "maxAttempts": 1,
+      "candidateSha": null,
+      "verifiedSha": null,
+      "lastFailureFingerprint": null,
+      "lastFailureClass": null,
+      "dispatchedSaRevision": null,
+      "dispatchedEngineerRevision": null,
+      "dispatchedRepairFingerprint": null,
+      "releaseEligible": true,
+      "integratedSha": null,
+      "reconciliationId": null,
+      "dispatch": null,
+      "dispatchHistory": [],
       "execution": null
     }
   }

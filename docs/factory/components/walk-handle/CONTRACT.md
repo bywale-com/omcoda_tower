@@ -19,7 +19,7 @@ The claim text is on PR #135. This contract does not replace it.
 
 ## Dependencies
 
-Pursuit identity (`pursuit-identity`) decides which enrollment a completion advances. PKT-004 carries that firing’s enrollment pointer. It does not change PKT-001’s click match. PKT-010 loads `campaign_failure` by claim 10’s id predicate. PKT-011 loads `halt_records` by that same predicate. PKT-012 loads `consent_records` by `contact_id` and the walk’s firm. Those branches are not PKT-006.
+Pursuit identity (`pursuit-identity`) decides which enrollment a completion advances. PKT-004 carries that firing’s enrollment pointer. It does not change PKT-001’s click match. PKT-010 loads `campaign_failure` by claim 10’s id predicate. PKT-011 loads `halt_records` by that same predicate. PKT-012 loads `consent_records` by `contact_id` and the walk’s firm. PKT-013 loads `ct_firms` by that same id predicate. Those branches are not PKT-006.
 
 ## Out of this contract
 

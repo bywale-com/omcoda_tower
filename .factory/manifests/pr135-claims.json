@@ -150,9 +150,9 @@
       "n": 16,
       "title": "A live firing of ct_firms places the current firm id on payload.writes",
       "component": "firing-pointers",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-013-firm-provision-writes"
     },
     {
       "n": 17,

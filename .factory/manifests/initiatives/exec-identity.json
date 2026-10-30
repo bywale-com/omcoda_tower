@@ -27,7 +27,8 @@
     "pkt-009-eligibility-writes",
     "pkt-010-campaign-failure-writes",
     "pkt-011-halt-records-writes",
-    "pkt-012-consent-opt-out-writes"
+    "pkt-012-consent-opt-out-writes",
+    "pkt-013-firm-provision-writes"
   ],
   "requiredPackets": [
     "pkt-002-open-ask-cursor",
@@ -40,7 +41,8 @@
     "pkt-009-eligibility-writes",
     "pkt-010-campaign-failure-writes",
     "pkt-011-halt-records-writes",
-    "pkt-012-consent-opt-out-writes"
+    "pkt-012-consent-opt-out-writes",
+    "pkt-013-firm-provision-writes"
   ],
   "founderDecisions": [
     "Who is placed on launch day.",
