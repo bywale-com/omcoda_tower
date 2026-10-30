@@ -4,7 +4,7 @@
  */
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -45,7 +45,13 @@ import {
   type PursuitEnrollment,
   type PursuitMessage,
 } from "../.factory/experiments/click-attribution.ts";
-import { markReleased } from "../.factory/controller/release.ts";
+import {
+  PLATE_BUCKETS,
+  markReleased,
+  readPlateArtifacts,
+  type PlateEvidence,
+  type ReleaseManifest,
+} from "../.factory/controller/release.ts";
 import { headMatchesDispatch, selectLabeledDispatch } from "../.factory/controller/wake.ts";
 import {
   applyLedgerEvent,
@@ -1804,7 +1810,8 @@ check("markReleased refuses manual evidence and rewrites a gated packet once", (
   const missing = markReleased("no wake line", { gates: { behaviorEstablished: true } });
   assert.equal(missing.ok, false);
   if (!missing.ok) assert.equal(missing.reason, "wake_line_missing");
-  const released = markReleased("**Wake:** hold\n", {
+  const released = markReleased("**Wake:** hold\n**UI:** none\n\n## Plates\n\nNone.\n", {
+    ui: "none",
     gates: { behaviorEstablished: true, scopeBounded: true },
   });
   assert.equal(released.ok, true);
@@ -1812,7 +1819,218 @@ check("markReleased refuses manual evidence and rewrites a gated packet once", (
     assert.match(released.markdown, /\*\*Wake:\*\* sa/);
     assert.equal(released.manifest.wake, "sa");
     assert.equal(released.manifest.release, "released");
+    assert.equal(released.manifest.ui, "none");
+    assert.equal(released.manifest.plates, "none");
   }
+});
+
+check("a glass change needs a plate, five buckets, and founder approval before Wake sa", () => {
+  const gates = {
+    behaviorEstablished: true,
+    scopeBounded: true,
+    dependenciesUnderstood: true,
+    acceptanceDefined: true,
+    noBlockingQuestion: true,
+    noContradictorySpecification: true,
+    independentlyImplementable: true,
+  };
+  const artifact = "docs/factory/plates/pkt-visual.png";
+  const png = Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+  const shot = { bytes: png.length, header: png };
+  const visual = [
+    "**Wake:** hold",
+    "**UI:** changes",
+    "**Approver:** founder",
+    "",
+    "## Plates",
+    "",
+    `Artifact: ${artifact}`,
+    "",
+    ...PLATE_BUCKETS.map((bucket) => `${bucket}: ${bucket} on the new hole.`),
+    "",
+  ].join("\n");
+  const manifest: ReleaseManifest = {
+    id: "pkt-visual",
+    ui: "changes",
+    gates,
+    founderApproved: true,
+    founderPlateApproval: { packetId: "pkt-visual", artifact, approver: "founder" },
+  };
+  const readable: PlateEvidence = { artifacts: { [artifact]: shot }, approvals: [] };
+
+  const undeclared = markReleased(visual, manifest, readable);
+  assert.equal(undeclared.ok, false);
+  if (!undeclared.ok) assert.equal(undeclared.reason, "founder_approval_missing");
+
+  const architectRecord: PlateEvidence = {
+    artifacts: { [artifact]: shot },
+    approvals: [{ packetId: "pkt-visual", artifact, approver: "architect" as "founder" }],
+  };
+  const selfApproved = markReleased(visual, manifest, architectRecord);
+  assert.equal(selfApproved.ok, false);
+  if (!selfApproved.ok) assert.equal(selfApproved.reason, "founder_approval_missing");
+
+  const wrongFile: PlateEvidence = {
+    artifacts: { [artifact]: shot },
+    approvals: [{ packetId: "pkt-visual", artifact: "docs/factory/plates/other.png", approver: "founder" }],
+  };
+  const mismatched = markReleased(visual, manifest, wrongFile);
+  assert.equal(mismatched.ok, false);
+  if (!mismatched.ok) assert.equal(mismatched.reason, "founder_approval_missing");
+
+  const missingFile = markReleased(visual, manifest, { artifacts: {}, approvals: [] });
+  assert.equal(missingFile.ok, false);
+  if (!missingFile.ok) assert.equal(missingFile.reason, "plate_missing");
+  const emptyFile = markReleased(visual, manifest, { artifacts: { [artifact]: { bytes: 0, header: png } } });
+  assert.equal(emptyFile.ok, false);
+  if (!emptyFile.ok) assert.equal(emptyFile.reason, "plate_missing");
+  const countedOnly = markReleased(visual, manifest, { artifacts: { [artifact]: { bytes: png.length } } });
+  assert.equal(countedOnly.ok, false);
+  if (!countedOnly.ok) assert.equal(countedOnly.reason, "plate_missing");
+  const proseFile = visual.replace(artifact, "docs/factory/plates/pkt-visual.md");
+  const notAnImage = markReleased(proseFile, { ...manifest, founderPlateApproval: undefined }, {
+    artifacts: { "docs/factory/plates/pkt-visual.md": shot },
+  });
+  assert.equal(notAnImage.ok, false);
+  if (!notAnImage.ok) assert.equal(notAnImage.reason, "plate_missing");
+  const escaped = visual.replace(artifact, "../pkt-visual.png");
+  const outside = markReleased(escaped, manifest, { artifacts: { "../pkt-visual.png": shot } });
+  assert.equal(outside.ok, false);
+  if (!outside.ok) assert.equal(outside.reason, "plate_missing");
+
+  const thin = visual.replace("Copy: Copy on the new hole.\n", "");
+  const unread = markReleased(thin, manifest, readable);
+  assert.equal(unread.ok, false);
+  if (!unread.ok) assert.equal(unread.reason, "plate_read_incomplete");
+
+  const blocked = markReleased(visual, { ...manifest, gates: { ...gates, scopeBounded: false } }, {
+    artifacts: { [artifact]: shot },
+    approvals: [{ packetId: "pkt-visual", artifact, approver: "founder" }],
+  });
+  assert.equal(blocked.ok, false);
+  if (!blocked.ok) assert.equal(blocked.reason, "gates_failed");
+
+  const unlabeled = markReleased("**Wake:** hold\n\n## Plates\n\nNone.\n", { gates });
+  assert.equal(unlabeled.ok, false);
+  if (!unlabeled.ok) assert.equal(unlabeled.reason, "ui_unclassified");
+  const disagreed = markReleased(visual, { ...manifest, ui: "none" }, readable);
+  assert.equal(disagreed.ok, false);
+  if (!disagreed.ok) assert.equal(disagreed.reason, "ui_classification_mismatch");
+  const paintedNone = markReleased(
+    "**Wake:** hold\n**UI:** none\n\n## Plates\n\nArtifact: docs/factory/plates/pkt-visual.png\n",
+    { ui: "none", gates },
+  );
+  assert.equal(paintedNone.ok, false);
+  if (!paintedNone.ok) assert.equal(paintedNone.reason, "plates_not_none");
+  const nameless = markReleased(visual, { ui: "changes", gates }, readable);
+  assert.equal(nameless.ok, false);
+  if (!nameless.ok) assert.equal(nameless.reason, "packet_id_missing");
+
+  const headed = [
+    "**Wake:** hold",
+    "**UI:** changes",
+    "",
+    "## Plates",
+    "",
+    `Artifact: ${artifact}`,
+    "",
+    "### Copy",
+    "Save is on the glass.",
+    "### Do not build",
+    "The sider stays.",
+    "### Implied",
+    "The closed menu still opens.",
+    "### Completes",
+    "The empty state is in this module.",
+    "### Out of scope",
+    "The catalog column.",
+    "",
+  ].join("\n");
+  const evidence: PlateEvidence = {
+    artifacts: { [artifact]: shot },
+    approvals: [{ packetId: "pkt-visual", artifact, approver: "founder" }],
+  };
+  const approved = markReleased(visual, manifest, evidence);
+  assert.equal(approved.ok, true);
+  if (approved.ok) {
+    assert.match(approved.markdown, /\*\*Wake:\*\* sa/);
+    assert.match(approved.markdown, /\*\*Approver:\*\* founder/);
+    assert.equal(approved.manifest.wake, "sa");
+    assert.equal(approved.manifest.release, "released");
+    assert.equal(approved.manifest.ui, "changes");
+    assert.equal(approved.manifest.plates, artifact);
+    assert.equal(approved.manifest.founderApproved, undefined);
+    assert.deepEqual(approved.manifest.founderPlateApproval, {
+      packetId: "pkt-visual",
+      artifact,
+      approver: "founder",
+    });
+    assert.deepEqual(Object.keys(approved.manifest.gates ?? {}).sort(), Object.keys(gates).sort());
+  }
+  const headedRelease = markReleased(headed, manifest, evidence);
+  assert.equal(headedRelease.ok, true);
+
+  const dir = mkdtempSync(join(tmpdir(), "plate-"));
+  writeFileSync(join(dir, "hole.png"), png);
+  writeFileSync(join(dir, "empty.png"), Buffer.alloc(0));
+  writeFileSync(join(dir, "note.png"), Buffer.from("not an image"));
+  const loaded = readPlateArtifacts(dir, ["hole.png", "empty.png", "note.png", "../hole.png", "missing.png"]);
+  assert.deepEqual(Object.keys(loaded), ["hole.png"]);
+  assert.equal(loaded["hole.png"]?.bytes, png.length);
+  const fromDisk = markReleased(visual.replaceAll(artifact, "hole.png"), manifest, {
+    artifacts: loaded,
+    approvals: [{ packetId: "pkt-visual", artifact: "hole.png", approver: "founder" }],
+  });
+  assert.equal(fromDisk.ok, true);
+
+  const architect = read("docs/factory/prompts/architect.prompt.md");
+  assert.match(architect, /\*\*UI:\*\* none/);
+  assert.match(architect, /\*\*UI:\*\* changes/);
+  assert.match(architect, /readPlateArtifacts/);
+  assert.match(architect, /A byte count written by hand is not an artifact/);
+  assert.match(architect, /A sentence in the packet is not founder approval/);
+  assert.match(architect, /A field you set on the packet manifest is not founder approval/);
+  for (const bucket of PLATE_BUCKETS) assert.equal(architect.includes(bucket), true);
+  assert.match(read("docs/factory/templates/IMPLEMENTATION-PACKET.md"), /\*\*UI:\*\* none/);
+  assert.match(read("docs/factory/OPERATING-PROTOCOL.md"), /refuses to write `\*\*Wake:\*\* sa`/);
+});
+
+check("committed non-UI packets stay released without a generated plate", () => {
+  const dir = "docs/factory/initiatives/exec-identity/packets";
+  const names = readdirSync(join(root, dir))
+    .filter((name) => /^PKT-.*\.md$/.test(name))
+    .sort();
+  assert.deepEqual(names, [
+    "PKT-001-click-attribution.md",
+    "PKT-002-open-ask-cursor.md",
+    "PKT-003-resume-same-run.md",
+    "PKT-004-firing-handle.md",
+    "PKT-005-audit-row-grain.md",
+    "PKT-006-id-keyed-loads.md",
+    "PKT-007-fact-writes.md",
+    "PKT-008-meeting-writes.md",
+    "PKT-009-eligibility-writes.md",
+  ]);
+  for (const name of names) {
+    const markdown = read(`${dir}/${name}`);
+    const id = name.replace(/^PKT-/, "pkt-").replace(/\.md$/, "");
+    const manifest = JSON.parse(read(`.factory/manifests/packets/${id}.json`)) as ReleaseManifest;
+    assert.equal(markdown.includes("**UI:** changes"), false);
+    assert.equal(manifest.ui, undefined);
+    if (id === "pkt-001-click-attribution") {
+      assert.match(markdown, /\*\*Wake:\*\* hold/);
+      assert.match(markdown, /No plate is required/);
+      assert.equal(manifest.wake, "hold");
+      assert.equal(manifest.execution, "manual");
+      assert.equal(manifest.release, "draft");
+      continue;
+    }
+    assert.match(markdown, /\*\*Wake:\*\* sa/);
+    assert.match(markdown, /## Plates\r?\n\r?\nNone\./);
+    assert.equal(manifest.wake, "sa");
+    assert.equal(manifest.release, "released");
+  }
+  assert.equal(existsSync(join(root, "docs/factory/plates")), false);
 });
 
 check("the committed scope is agents-and-automations and PKT-001 stays manual", () => {

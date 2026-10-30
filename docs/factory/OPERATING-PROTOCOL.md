@@ -60,7 +60,15 @@ The factory’s own check is `npm run factory:check`. It proves the controller, 
 
 ## Plates
 
-When a packet changes the glass, the plate is a screenshot of `/prototype-ant` with only the new hole painted. Read it with the five buckets in `docs/register/PLATE-READ.md`: copy, do not build, implied, completes, out of scope. PKT-001 changes no glass and has no plate.
+Every packet classifies the glass before release. The line is `**UI:** none` or `**UI:** changes`, and the manifest field `"ui"` matches it.
+
+`none` keeps `## Plates` as `None`. No screenshot is required. PKT-001 changes no glass and has no plate. Packets already released with that empty plates section stay released. `markReleased` is not run on them again.
+
+`changes` requires a screenshot of `/prototype-ant` with only the new hole painted. `readPlateArtifacts` reads that file from disk. It accepts a non-empty `.png`, `.jpg`, `.jpeg`, `.webp`, or `.gif` whose bytes are a PNG, JPEG, GIF, or WEBP image. A byte count written by hand is not an artifact. The same section carries all five buckets in `docs/register/PLATE-READ.md`: Copy, Do not build, Implied, Completes, Out of scope.
+
+Founder approval of that visual is a separate plate-evidence record: approver `founder`, the packet id, and the same artifact path. `markReleased` reads that record from its evidence argument. A sentence in the packet, and a field the Architect sets on the packet manifest, do not count as approval.
+
+`markReleased` refuses to write `**Wake:** sa` when the classification is missing, the line and the manifest disagree, a no-UI packet's plates section is not `None`, the artifact is missing or unreadable, any of the five buckets is missing or empty, or founder approval is missing. The seven gates above still all have to pass. These plate checks sit beside those gates. They do not replace one.
 
 ## Two buckets
 
