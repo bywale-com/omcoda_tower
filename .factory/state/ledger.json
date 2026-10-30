@@ -1,7 +1,7 @@
 {
-  "stateRevision": 88,
+  "stateRevision": 89,
   "authorizedDispatches": 50,
-  "usedDispatches": 19,
+  "usedDispatches": 20,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -543,13 +543,20 @@
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
-      "dispatchedSaRevision": null,
+      "dispatchedSaRevision": "rev-1",
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-013-firm-provision-writes",
+        "revision": "rev-1",
+        "prHead": "e726a10677be7f8c224d2b4303601c71fbac28d0",
+        "effect": "wake_sa",
+        "label": "factory-wake-sa",
+        "issuedAt": "2026-10-30T12:28:08.331Z"
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-013-firm-provision-writes",
