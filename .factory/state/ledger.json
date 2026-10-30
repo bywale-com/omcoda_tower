@@ -1,7 +1,7 @@
 {
-  "stateRevision": 114,
+  "stateRevision": 115,
   "authorizedDispatches": 50,
-  "usedDispatches": 28,
+  "usedDispatches": 29,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -29,9 +29,16 @@
       "outstanding": [
         "Claim 52 still owns the person split for the four eligibility tables. Claims 22-88 are indexed and have no packets. Coverage is not complete."
       ],
-      "session": "continuation_due",
+      "session": "running",
       "revision": "rev-4",
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "exec-identity",
+        "revision": "rev-4",
+        "prHead": "b42f65073711a1cb00e07d4bd6ca7c3ce5178bef",
+        "effect": "wake_architect",
+        "label": "factory-wake-architect",
+        "issuedAt": "2026-10-30T13:51:46.810Z"
+      },
       "blockedReason": null,
       "packetIds": [
         "pkt-001-click-attribution",
