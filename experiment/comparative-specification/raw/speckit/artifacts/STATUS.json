@@ -1,0 +1,10 @@
+{
+  "contestant_id": "speckit",
+  "sha": "c5bd617b9b1bb9fbd5d73c99da16a973594c6bd7",
+  "framework": "github-spec-kit",
+  "framework_version": "1.2.1",
+  "status": "complete",
+  "completion_claim": "GitHub Spec Kit v1.2.1 was installed and initialized with integration cursor-agent. The installed SDD path was followed: constitution → specify → clarify (no founder answers; silences kept) → plan (research, data-model, contracts, quickstart) → custom checklists → tasks → analyze. Implementation and converge were not run because the experiment forbids product-code changes. The intended Tower product is specified from repository evidence (Seed/World/Story/Outcomes/Phase Two flagship 15:43, Agents/Automations face law, primitives, migrations on this SHA, origin pull/96 packets and pull/86|/110 ascribes). Unclosed founder/Story silences remain explicit (CASL geography, reactivation-worthy criteria, escrow release, and the Named Silences table). No application source was modified.",
+  "blocker": null,
+  "artifact_root": "/home/ubuntu/tower-spec-output/"
+}

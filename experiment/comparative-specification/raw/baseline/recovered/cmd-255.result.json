@@ -1,0 +1,14 @@
+{
+  "resultType": "runTerminalCommandV2Result",
+  "value": {
+    "output": "  1229 /home/ubuntu/tower-spec-output/BUNDLE.md\n    40 /home/ubuntu/tower-spec-output/SPEC/00-HOW-TO-READ.md\n    82 /home/ubuntu/tower-spec-output/SPEC/01-IDENTITY.md\n   101 /home/ubuntu/tower-spec-output/SPEC/02-ACTORS-AND-DESKS.md\n   145 /home/ubuntu/tower-spec-output/SPEC/03-CORE-LOOP-AND-SYSTEMS.md\n    55 /home/ubuntu/tower-spec-output/SPEC/04-CONSULTANT-DESK.md\n    85 /home/ubuntu/tower-spec-output/SPEC/05-OPERATOR-DESK.md\n    40 /home/ubuntu/tower-spec-output/SPEC/06-CONTACT-EXPERIENCE.md\n   119 /home/ubuntu/tower-spec-output/SPEC/07-AGENTS.md\n   150 /home/ubuntu/tower-spec-output/SPEC/08-AUTOMATIONS.md\n    57 /home/ubuntu/tower-spec-output/SPEC/09-ELIGIBILITY-AND-MOTION.md\n   108 /home/ubuntu/tower-spec-output/SPEC/10-DATA-AND-RUNTIME.md\n    51 /home/ubuntu/tower-spec-output/SPEC/11-CONSTRAINTS.md\n    41 /home/ubuntu/tower-spec-output/SPEC/12-GLOSSARY.md\n    78 /home/ubuntu/tower-spec-output/SPEC/13-UNCERTAINTY.md\n  2381 total\n",
+    "exitCode": 0,
+    "poppedOutIntoBackground": false,
+    "isRunningInBackground": false,
+    "notInterrupted": false,
+    "resultingWorkingDirectory": "",
+    "didUserChange": false,
+    "endedReason": "RUN_TERMINAL_COMMAND_ENDED_REASON_UNSPECIFIED",
+    "outputRaw": ""
+  }
+}

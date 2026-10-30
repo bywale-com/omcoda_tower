@@ -1,0 +1,10 @@
+{
+  "contestant_id": "baseline",
+  "sha": "c5bd617b9b1bb9fbd5d73c99da16a973594c6bd7",
+  "framework": "none/general-purpose",
+  "framework_version": "n/a",
+  "status": "complete",
+  "completion_claim": "Intended Tower product is specified from the snapshot: identity and bets, three desks, twelve systems, Agents flagship and canvas law, Automations primitives and DAG, eligibility/Engine 2, data/runtime, and constraints. Named silences and cross-layer conflicts are explicit rather than filled. No application code was changed. Remaining holes are founder/Story silences, not missing reading of available material.",
+  "blocker": null,
+  "artifact_root": "/home/ubuntu/tower-spec-output/"
+}

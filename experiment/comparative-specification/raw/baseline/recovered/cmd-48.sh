@@ -1,0 +1,1 @@
+git -C /workspace branch -a | head -80; echo '---'; git -C /workspace log --oneline -20; echo '---PR refs---'; git -C /workspace ls-remote origin 'pull/*/head' 2>/dev/null | tail -40

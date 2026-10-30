@@ -1,0 +1,43 @@
+schema: spec-driven
+
+context: |
+  Capture the intended Tower product from repository evidence at git SHA
+  c5bd617b9b1bb9fbd5d73c99da16a973594c6bd7. Do not implement application code.
+  Do not invent founder decisions. Named Story silences and Face "Open" items
+  stay unresolved. Product face is /prototype-ant; Hub is reference/plant, not
+  the app. Agents flagship wording in docs/register/PHASE-TWO-LOG.md at
+  2026-08-15 15:43 UTC is law — do not rewrite it into a generated list that
+  puts triggers inside Agents. Specs describe intended behavior and MUST
+  distinguish Seed/World/Story musts, Face laws, SQL-as-stood-up, and named
+  silences. Records that show in a module come from tables; never hard-code
+  demo people into the app. Do not recut server/wire-service/workflowWalk.ts
+  (SA 015). This OpenSpec change is specification capture, not a product
+  implementation.
+
+rules:
+  proposal:
+    - This change is specification capture of the intended product, not an implementation change.
+    - State that application-code apply is out of scope.
+    - Name evidence sources and unresolved silences rather than filling them.
+  specs:
+    - Quote the Agents flagship; do not paraphrase it into a numbered list that includes triggers.
+    - Mark UNRESOLVED where Seed, World, Story, or Face name a silence or open item.
+    - Distinguish intended behavior from as-built migrations/code when they diverge.
+    - Do not invent tables, event catalogs, or action catalogs beyond those already named in the repository.
+    - Each requirement MUST have at least one WHEN/THEN scenario.
+  design:
+    - Record evidence ranking, conflicts, and the twelve-system spine.
+    - Do not propose a second walker or recut 015.
+    - Do not treat Hub as the product face.
+  tasks:
+    - Specification authoring, validation, and spec-sync only.
+    - Do not include application-code implementation tasks.
+    - State that /opsx-apply against Tower application source is out of scope.
+
+operations:
+  apply:
+    guidance:
+      - Do not apply this change to Tower application source. Experiment constraint: specification only.
+  archive:
+    guidance:
+      - Sync delta specs into openspec/specs/ without claiming product implementation shipped.

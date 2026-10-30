@@ -1,0 +1,33 @@
+{
+  "bcId": "bc-f2e15d0c-16e9-5031-b73b-8807264bfa8c",
+  "environment": {
+    "name": null,
+    "environmentPublicId": "dafc2fbe-bf91-11f1-bb68-864e54d14197",
+    "environmentVersionPublicId": "db17dc91-bf91-11f1-bb68-864e54d14197",
+    "source": "Personal",
+    "recordedVia": "RUNTIME_FORWARD_FILL",
+    "createdAtMs": 1791076859209,
+    "repos": [
+      "github.com/bywale-com/omcoda_tower"
+    ],
+    "environmentJsonPath": null,
+    "url": "https://cursor.com/dashboard/cloud-agents/environments/e/dafc2fbe-bf91-11f1-bb68-864e54d14197",
+    "environmentJson": null,
+    "environmentJsonNote": "environment.json is not exposed for personal or override environments (owner-restricted).",
+    "environmentDeleted": false
+  },
+  "egress": {
+    "restricted": false
+  },
+  "build": {
+    "buildId": "bld-20261019-7931bd05-bcbc-4c3b-8d64-3614b0865425",
+    "snapshotId": "bld-20261019-7931bd05-bcbc-4c3b-8d64-3614b0865425",
+    "gitSetup": "reuse",
+    "warmFork": "cold",
+    "resolution": "resolved"
+  },
+  "clientBuildInfo": null,
+  "repos": [
+    "github.com/bywale-com/omcoda_tower"
+  ]
+}

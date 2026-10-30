@@ -1,0 +1,14 @@
+{
+  "resultType": "runTerminalCommandV2Result",
+  "value": {
+    "output": "",
+    "exitCode": 0,
+    "poppedOutIntoBackground": false,
+    "isRunningInBackground": false,
+    "notInterrupted": false,
+    "resultingWorkingDirectory": "",
+    "didUserChange": false,
+    "endedReason": "RUN_TERMINAL_COMMAND_ENDED_REASON_UNSPECIFIED",
+    "outputRaw": ""
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "status": "partial",
+  "intent": "create",
+  "altitude": "initiative",
+  "purpose": "build-substrate",
+  "doc_workspace": "_bmad-output/planning-artifacts/architecture/architecture-Tower-2026-10-19",
+  "spine": "_bmad-output/planning-artifacts/architecture/architecture-Tower-2026-10-19/ARCHITECTURE-SPINE.md",
+  "memlog": "_bmad-output/planning-artifacts/architecture/architecture-Tower-2026-10-19/.memlog.md",
+  "companions": [],
+  "assumptions": [
+    "Brownfield stack from package.json",
+    "AD-11 packet 022 housing",
+    "SQL 001-024 is seed truth on this SHA"
+  ],
+  "open_questions": [
+    "Wait walker vs 024 SQL",
+    "docs/README remap vs SQL filenames",
+    "Multi-consultant roles"
+  ],
+  "conflicts_with_prior_decisions": [
+    "Root README prototype-only vs register wired product — surfaced, not silently merged"
+  ]
+}

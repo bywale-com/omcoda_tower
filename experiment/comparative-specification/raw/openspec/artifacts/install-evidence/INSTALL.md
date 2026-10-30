@@ -1,0 +1,30 @@
+# OpenSpec install evidence
+
+- start_time_utc: 2026-10-19T16:46:32Z
+- intended_command: `npm install -g @fission-ai/openspec@latest`
+- first_attempt: failed with `EACCES` writing `/usr/lib/node_modules`
+- cause: `which node` resolved to `/exec-daemon/node`; `npm prefix -g` was `/`
+- actual_install:
+  - prepended `/home/ubuntu/.nvm/versions/node/v22.23.3/bin` to PATH
+  - ran `npm install -g @fission-ai/openspec@latest` with nvm npm
+  - prefix: `/home/ubuntu/.nvm/versions/node/v22.23.3`
+  - binary: `/home/ubuntu/.nvm/versions/node/v22.23.3/bin/openspec`
+- `openspec --version`: **1.14.3**
+- official website listed v1.14.2; installed package is 1.14.3
+- node: v22.23.3 (meets OpenSpec >= 20.19.0)
+- leftover OpenSpec files before init: none in `/workspace`
+- profile (global): core
+- delivery (global): both
+- workflows: propose, explore, apply, update, sync, archive
+- telemetry: noticeSeen true (CLI default after first run)
+- official sources consulted:
+  - https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/install.md
+  - https://openspec.dev/
+  - https://openspec.dev/llms.txt
+  - https://openspec.dev/docs/setup
+  - https://openspec.dev/docs/quickstart
+  - https://openspec.dev/docs/skills
+  - https://openspec.dev/docs/schemas/spec-driven
+  - https://openspec.dev/docs/stores
+  - https://openspec.dev/docs/configuration/config-yaml
+  - https://openspec.dev/docs/supported-tools
