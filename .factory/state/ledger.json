@@ -1,5 +1,5 @@
 {
-  "stateRevision": 111,
+  "stateRevision": 112,
   "authorizedDispatches": 50,
   "usedDispatches": 28,
   "scope": {
@@ -718,12 +718,17 @@
     "pkt-018-send-denied-engagement": {
       "id": "pkt-018-send-denied-engagement",
       "initiativeId": "exec-identity",
-      "stage": "released",
+      "stage": "analysis",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": null,
+      "lease": {
+        "workerId": "bc-e0a6ce8d-bce7-44bb-b3f8-98fb0aba0265",
+        "role": "analyst",
+        "until": "2026-10-30T17:44:33.015Z",
+        "revision": "rev-1"
+      },
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
