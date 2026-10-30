@@ -1,5 +1,5 @@
 {
-  "stateRevision": 58,
+  "stateRevision": 59,
   "authorizedDispatches": 20,
   "usedDispatches": 10,
   "scope": {
@@ -333,15 +333,18 @@
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-007-fact-writes",
-        "revision": "rev-1",
-        "prHead": "b0abdc52f91e3d68f88a08fa28cbbbaec409b403",
-        "effect": "wake_sa",
-        "label": "factory-wake-sa",
-        "issuedAt": "2026-10-30T10:58:49.970Z"
-      },
-      "dispatchHistory": [],
+      "dispatch": null,
+      "dispatchHistory": [
+        {
+          "packetId": "pkt-007-fact-writes",
+          "revision": "rev-1",
+          "prHead": "b0abdc52f91e3d68f88a08fa28cbbbaec409b403",
+          "effect": "wake_sa",
+          "label": "factory-wake-sa",
+          "issuedAt": "2026-10-30T10:58:49.970Z",
+          "workerExecution": "ran"
+        }
+      ],
       "execution": null
     },
     "pkt-008-meeting-writes": {
