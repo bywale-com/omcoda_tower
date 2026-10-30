@@ -89,6 +89,9 @@ jobs:
       - name: verify:click-attribution (PKT-001)
         run: npx tsx --env-file=.env scripts/verify-click-attribution.ts
 
+      - name: verify:id-keyed-loads (PKT-006)
+        run: npx tsx --env-file=.env scripts/verify-id-keyed-loads.ts
+
       - name: verify:audit-row-grain (PKT-005)
         run: npx tsx --env-file=.env scripts/verify-audit-row-grain.ts
 

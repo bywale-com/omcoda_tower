@@ -1287,8 +1287,7 @@ check("a resumed wait restores stored writes before goOn", () => {
   assert.equal(branch.includes("wait_occupancy"), false);
   assert.match(branch, /SELECT node_status FROM workflow_run WHERE id=\$1/);
   const loader = source.slice(source.indexOf("async function loadWriteRow"), source.indexOf("async function loadWriteField"));
-  assert.equal(loader.includes("wait_occupancy"), false);
-  assert.ok(loader.includes("return null;"));
+  assert.match(loader.trim(), /return null;\s*\}$/);
   const filter = read(".github/workflows/factory-check.yml");
   assert.match(filter, /server\/wire-service\/workflowWalk\.ts/);
   assert.match(filter, /scripts\/verify-resume-same-run\.ts/);
@@ -1421,6 +1420,99 @@ check("an audit result row belongs to the run that wrote it", () => {
     assert.ok(paths.includes(path), path);
   }
   assert.match(read(".github/workflows/ship.yml"), /verify-audit-row-grain\.ts/);
+});
+
+check("three id-keyed tables load by primary key and the generic action stores that key", () => {
+  const walk = read("server/wire-service/workflowWalk.ts");
+  const setStart = walk.indexOf("const PERSON_WRITE_TABLES = new Set([");
+  const setEnd = walk.indexOf("]);", setStart);
+  const set = walk.slice(setStart, setEnd);
+  for (const name of [
+    "sequence_ready",
+    "reachability_verdicts",
+    "contact_records",
+    "contact_tag",
+    "enrollment",
+    "wait_occupancy",
+    "engagement_records",
+    "fact_writebacks",
+    "meeting_booked",
+  ]) {
+    assert.ok(set.includes(`"${name}"`), name);
+  }
+  for (const banned of ["eligibility_evaluations", "eligibility_results", "signals", "motion_decisions"]) {
+    assert.equal(set.includes(`"${banned}"`), false, banned);
+  }
+
+  const loader = walk.slice(walk.indexOf("async function loadWriteRow"), walk.indexOf("async function loadWriteField"));
+  for (const table of ["fact_writebacks", "meeting_booked", "wait_occupancy"]) {
+    const sql = `SELECT * FROM ${table} WHERE id=$1`;
+    const sqlAt = loader.indexOf(sql);
+    assert.ok(sqlAt >= 0, table);
+    const statement = loader.slice(loader.lastIndexOf("`", sqlAt) + 1, loader.indexOf("`", sqlAt));
+    assert.equal(statement, sql);
+    for (const banned of ["firm_id", "contact_id", "ORDER BY", "LIMIT"]) {
+      assert.equal(statement.includes(banned), false, `${table} ${banned}`);
+    }
+  }
+  assert.match(loader.trim(), /return null;\s*\}$/);
+
+  const operand = walk.slice(walk.indexOf("async function resolveOperandText"), walk.indexOf("async function comparePasses"));
+  const find = "row.contact_id === contactId || row.id === contactId";
+  assert.equal(operand.split(find).length - 1, 2);
+
+  const ifFn = walk.slice(walk.indexOf("async function evalIfPick"), walk.indexOf("function switchPathsOf"));
+  assert.match(ifFn, /for \(const cid of ctx\.contactIds\)/);
+  assert.match(ifFn, /personTableOf/);
+  const switchFn = walk.slice(walk.indexOf('if (type === "switch")'), walk.indexOf('if (type === "get")'));
+  assert.match(switchFn, /for \(const cid of ctx\.contactIds\)/);
+  assert.match(switchFn, /personTableOf/);
+
+  const rule = walk.slice(walk.indexOf("async function resolveRuleOperand"), walk.indexOf("async function evaluateRuleConditions"));
+  assert.match(rule, /SELECT value FROM fact_writebacks/);
+  assert.match(rule, /firm_id=\$1 AND contact_id=\$2 AND field_key=\$3/);
+  assert.match(rule, /ORDER BY created_at DESC LIMIT 1/);
+
+  const actionAt = walk.indexOf('if (type === "action")');
+  const engageAt = walk.indexOf("const engagementId = await writeEngagement", actionAt);
+  assert.ok(engageAt > actionAt);
+  const forAt = walk.lastIndexOf("for (const contactId of ctx.contactIds)", engageAt);
+  const beforeLoop = walk.slice(actionAt, forAt);
+  for (const kind of ["call_agent", "ascribe_tag", "run_audit"]) {
+    const at = beforeLoop.indexOf(`if (actionType === "${kind}")`);
+    assert.ok(at >= 0, kind);
+    assert.ok(beforeLoop.indexOf("return;", at) > at, kind);
+  }
+  assert.match(beforeLoop, /rawAction !== "run_audit" && rawAction !== "ascribe_tag"/);
+
+  const loopEnd = walk.indexOf("await persistAction", engageAt);
+  const loop = walk.slice(forAt, loopEnd);
+  assert.match(loop, /const engagementId = await writeEngagement\(/);
+  assert.match(loop, /writes\.push\(\{ table: "engagement_records", id: engagementId, contact_id: contactId \}\)/);
+  assert.equal(/\bid: contactId\b/.test(loop), false);
+
+  const cascade = read("server/wire-service/cascade.ts");
+  const writer = cascade.slice(
+    cascade.indexOf("export async function writeEngagement"),
+    cascade.indexOf("async function hasInboundOverride"),
+  );
+  const binding = "`eng-${randomUUID()}`";
+  assert.equal(writer.split(binding).length - 1, 1);
+  const declared = writer.match(/const (\w+) = `eng-\$\{randomUUID\(\)\}`;/);
+  assert.ok(declared);
+  const name = declared![1];
+  assert.match(writer, new RegExp(`\\[\\s*${name}\\b`));
+  assert.match(writer, new RegExp(`return ${name};`));
+
+  const filter = read(".github/workflows/factory-check.yml");
+  for (const path of [
+    "server/wire-service/workflowWalk.ts",
+    "server/wire-service/cascade.ts",
+    "scripts/verify-id-keyed-loads.ts",
+  ]) {
+    assert.ok(filter.includes(path), path);
+  }
+  assert.match(read(".github/workflows/ship.yml"), /verify-id-keyed-loads\.ts/);
 });
 
 function sections(): string[] {
