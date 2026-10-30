@@ -1,5 +1,5 @@
 {
-  "stateRevision": 152,
+  "stateRevision": 153,
   "authorizedDispatches": 50,
   "usedDispatches": 39,
   "scope": {
@@ -1458,7 +1458,7 @@
       "id": "dsp-152-engineer-pkt-010-campaign-failure-writes",
       "assignmentId": "asg-dsp-152-engineer-pkt-010-campaign-failure-writes",
       "role": "engineer",
-      "phase": "dispatched",
+      "phase": "started",
       "packetIds": [
         "pkt-010-campaign-failure-writes"
       ],
@@ -1467,14 +1467,14 @@
       },
       "label": "factory-wake-engineer",
       "prHead": "11808a66a5fa55c492d2ef760a2499738a05ed3f",
-      "agentId": null,
+      "agentId": "bc-51265dff-9572-40fb-a9cd-be7f3ce5797d",
       "continuation": "fresh",
       "issuedAt": "2026-10-30T19:08:22.735Z",
-      "startedAt": null,
+      "startedAt": "2026-10-30T19:11:07.570Z",
       "runningAt": null,
       "endedAt": null,
       "reserveUntil": "2026-10-30T19:38:22.735Z",
-      "startUntil": null,
+      "startUntil": "2026-10-30T19:26:07.570Z",
       "leaseUntil": null,
       "reason": null
     }
