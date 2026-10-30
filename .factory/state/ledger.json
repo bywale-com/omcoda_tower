@@ -1,7 +1,7 @@
 {
-  "stateRevision": 110,
+  "stateRevision": 111,
   "authorizedDispatches": 50,
-  "usedDispatches": 27,
+  "usedDispatches": 28,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -730,13 +730,20 @@
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
-      "dispatchedSaRevision": null,
+      "dispatchedSaRevision": "rev-1",
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-018-send-denied-engagement",
+        "revision": "rev-1",
+        "prHead": "c0f7d41bd28d79aef36bf6559fb950c6f3d88d74",
+        "effect": "wake_sa",
+        "label": "factory-wake-sa",
+        "issuedAt": "2026-10-30T13:42:40.503Z"
+      },
       "dispatchHistory": [],
       "execution": null
     }
