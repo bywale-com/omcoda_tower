@@ -1,5 +1,5 @@
 {
-  "stateRevision": 134,
+  "stateRevision": 135,
   "authorizedDispatches": 50,
   "usedDispatches": 34,
   "scope": {
@@ -335,12 +335,17 @@
     "pkt-005-audit-row-grain": {
       "id": "pkt-005-audit-row-grain",
       "initiativeId": "exec-identity",
-      "stage": "change_specified",
+      "stage": "engineering",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": null,
+      "lease": {
+        "workerId": "bc-5bc4801d-c496-4f76-b6b4-db1d838b8aca",
+        "role": "engineer",
+        "until": "2026-10-30T19:22:06.272Z",
+        "revision": "rev-1"
+      },
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
@@ -1283,7 +1288,7 @@
       "id": "dsp-133-engineer-pkt-005-audit-row-grain",
       "assignmentId": "asg-dsp-133-engineer-pkt-005-audit-row-grain",
       "role": "engineer",
-      "phase": "started",
+      "phase": "running",
       "packetIds": [
         "pkt-005-audit-row-grain"
       ],
@@ -1296,11 +1301,11 @@
       "continuation": "fresh",
       "issuedAt": "2026-10-30T18:17:11.042Z",
       "startedAt": "2026-10-30T18:22:04.428Z",
-      "runningAt": null,
+      "runningAt": "2026-10-30T18:22:06.272Z",
       "endedAt": null,
       "reserveUntil": "2026-10-30T18:47:11.042Z",
       "startUntil": "2026-10-30T18:37:04.428Z",
-      "leaseUntil": null,
+      "leaseUntil": "2026-10-30T19:22:06.272Z",
       "reason": null
     }
   },
