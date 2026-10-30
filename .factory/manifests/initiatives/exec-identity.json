@@ -33,7 +33,8 @@
     "pkt-015-halt-enroll-firm",
     "pkt-016-halt-send-firm",
     "pkt-017-tick-send-halt",
-    "pkt-018-send-denied-engagement"
+    "pkt-018-send-denied-engagement",
+    "pkt-019-first-step-send-denied"
   ],
   "requiredPackets": [
     "pkt-002-open-ask-cursor",
@@ -52,7 +53,8 @@
     "pkt-015-halt-enroll-firm",
     "pkt-016-halt-send-firm",
     "pkt-017-tick-send-halt",
-    "pkt-018-send-denied-engagement"
+    "pkt-018-send-denied-engagement",
+    "pkt-019-first-step-send-denied"
   ],
   "founderDecisions": [
     "Who is placed on launch day.",

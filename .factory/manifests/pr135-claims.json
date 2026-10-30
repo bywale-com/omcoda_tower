@@ -198,9 +198,9 @@
       "n": 22,
       "title": "A denied first step is the same refusal the tick already records",
       "component": "halt-send",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-019-first-step-send-denied"
     },
     {
       "n": 23,

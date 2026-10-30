@@ -28,6 +28,7 @@
 | pkt-016-halt-send-firm | sa | released | yes |
 | pkt-017-tick-send-halt | sa | released | yes |
 | pkt-018-send-denied-engagement | sa | released | yes |
+| pkt-019-first-step-send-denied | sa | released | yes |
 
 `required` is no until the packet is released. A held draft does not block the initiative, and it does not complete it. PKT-001 stays held. The released packets do not close the initiative.
 
