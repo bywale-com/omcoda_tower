@@ -1,7 +1,7 @@
 {
-  "stateRevision": 75,
+  "stateRevision": 76,
   "authorizedDispatches": 20,
-  "usedDispatches": 15,
+  "usedDispatches": 16,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -469,13 +469,20 @@
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
-      "dispatchedSaRevision": null,
+      "dispatchedSaRevision": "rev-1",
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-011-halt-records-writes",
+        "revision": "rev-1",
+        "prHead": "4d4215d2a24bd0ba3874032a0ff706832a07feff",
+        "effect": "wake_sa",
+        "label": "factory-wake-sa",
+        "issuedAt": "2026-10-30T11:51:12.635Z"
+      },
       "dispatchHistory": [],
       "execution": null
     }
