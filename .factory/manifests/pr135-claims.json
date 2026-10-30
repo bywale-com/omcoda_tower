@@ -134,9 +134,9 @@
       "n": 14,
       "title": "A contact-scope firing of halt_records places the inserted primary key on payload.writes",
       "component": "firing-pointers",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-011-halt-records-writes"
     },
     {
       "n": 15,

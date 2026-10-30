@@ -20,6 +20,7 @@
 | pkt-008-meeting-writes | sa | released | yes |
 | pkt-009-eligibility-writes | sa | released | yes |
 | pkt-010-campaign-failure-writes | sa | released | yes |
+| pkt-011-halt-records-writes | sa | released | yes |
 
 `required` is no until the packet is released. A held draft does not block the initiative, and it does not complete it. PKT-001 stays held. The released packets do not close the initiative.
 

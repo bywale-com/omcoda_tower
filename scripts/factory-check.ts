@@ -2011,13 +2011,14 @@ check("committed non-UI packets stay released without a generated plate", () => 
     "PKT-008-meeting-writes.md",
     "PKT-009-eligibility-writes.md",
     "PKT-010-campaign-failure-writes.md",
+    "PKT-011-halt-records-writes.md",
   ]);
   for (const name of names) {
     const markdown = read(`${dir}/${name}`);
     const id = name.replace(/^PKT-/, "pkt-").replace(/\.md$/, "");
     const manifest = JSON.parse(read(`.factory/manifests/packets/${id}.json`)) as ReleaseManifest;
     assert.equal(markdown.includes("**UI:** changes"), false);
-    if (id === "pkt-010-campaign-failure-writes") {
+    if (id === "pkt-010-campaign-failure-writes" || id === "pkt-011-halt-records-writes") {
       assert.equal(manifest.ui, "none");
       assert.equal(manifest.plates, "none");
     } else {

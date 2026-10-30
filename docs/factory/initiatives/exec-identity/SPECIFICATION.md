@@ -16,5 +16,6 @@ What this factory treats as authoritative for the pilot:
 - Claim 11: a fact firing’s `writes` is that write-back. PKT-007. A meeting firing’s `writes` is that booking. PKT-008. The meeting side engagement stays off the array.
 - Claim 12: an `eligibility.changed` firing’s `writes` is the four inserted rows, table-major, and those four tables load by primary key. PKT-009. The person split for those four tables is claim 52.
 - Claim 13: a `campaign_failure` firing’s `writes` is the inserted row, and the payload carries that row’s `campaign_id`. The row loads by primary key. PKT-010. The table stays out of `PERSON_WRITE_TABLES`.
+- Claim 14: a contact-scope `halt_records` firing’s `writes` is the inserted row. The row loads by primary key. PKT-011. The firm-book branch and the lift do not dispatch. The table stays out of `PERSON_WRITE_TABLES`.
 
 Component contracts point at claim numbers. They do not restate the journals.
