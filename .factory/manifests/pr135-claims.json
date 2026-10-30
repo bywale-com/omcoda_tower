@@ -174,9 +174,9 @@
       "n": 19,
       "title": "A contact halt denies a send, and answers the contact check, only in the firm on that row",
       "component": "halt-send",
-      "kind": "indexed",
-      "read": "title",
-      "packet": null
+      "kind": "defect",
+      "read": "full",
+      "packet": "pkt-016-halt-send-firm"
     },
     {
       "n": 20,

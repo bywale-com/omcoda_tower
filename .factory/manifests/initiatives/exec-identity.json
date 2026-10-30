@@ -30,7 +30,8 @@
     "pkt-012-consent-opt-out-writes",
     "pkt-013-firm-provision-writes",
     "pkt-014-empty-firing-audience",
-    "pkt-015-halt-enroll-firm"
+    "pkt-015-halt-enroll-firm",
+    "pkt-016-halt-send-firm"
   ],
   "requiredPackets": [
     "pkt-002-open-ask-cursor",
@@ -46,7 +47,8 @@
     "pkt-012-consent-opt-out-writes",
     "pkt-013-firm-provision-writes",
     "pkt-014-empty-firing-audience",
-    "pkt-015-halt-enroll-firm"
+    "pkt-015-halt-enroll-firm",
+    "pkt-016-halt-send-firm"
   ],
   "founderDecisions": [
     "Who is placed on launch day.",
