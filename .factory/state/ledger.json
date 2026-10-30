@@ -1,5 +1,5 @@
 {
-  "stateRevision": 60,
+  "stateRevision": 61,
   "authorizedDispatches": 20,
   "usedDispatches": 11,
   "scope": {
@@ -350,12 +350,17 @@
     "pkt-008-meeting-writes": {
       "id": "pkt-008-meeting-writes",
       "initiativeId": "exec-identity",
-      "stage": "released",
+      "stage": "analysis",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": null,
+      "lease": {
+        "workerId": "bc-fd97925e-b844-4102-86d6-f6a9a2b4d609",
+        "role": "analyst",
+        "until": "2026-10-30T15:11:45.087Z",
+        "revision": "rev-1"
+      },
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
