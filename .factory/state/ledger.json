@@ -1,5 +1,5 @@
 {
-  "stateRevision": 87,
+  "stateRevision": 88,
   "authorizedDispatches": 50,
   "usedDispatches": 19,
   "scope": {
@@ -531,38 +531,36 @@
     "pkt-013-firm-provision-writes": {
       "id": "pkt-013-firm-provision-writes",
       "initiativeId": "exec-identity",
-      "stage": "analysis",
+      "stage": "released",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": {
-        "workerId": "bc-98160c37-a32f-42ef-917e-8ace509d6721",
-        "role": "analyst",
-        "until": "2026-10-30T16:22:00.162Z",
-        "revision": "rev-1"
-      },
+      "lease": null,
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
-      "dispatchedSaRevision": "rev-1",
+      "dispatchedSaRevision": null,
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-013-firm-provision-writes",
-        "revision": "rev-1",
-        "prHead": "3d14649ff8a1c6a124be0d04b6917508f88ee73b",
-        "effect": "wake_sa",
-        "label": "factory-wake-sa",
-        "issuedAt": "2026-10-30T12:20:14.544Z"
-      },
-      "dispatchHistory": [],
+      "dispatch": null,
+      "dispatchHistory": [
+        {
+          "packetId": "pkt-013-firm-provision-writes",
+          "revision": "rev-1",
+          "prHead": "3d14649ff8a1c6a124be0d04b6917508f88ee73b",
+          "effect": "wake_sa",
+          "label": "factory-wake-sa",
+          "issuedAt": "2026-10-30T12:20:14.544Z",
+          "workerExecution": "ran"
+        }
+      ],
       "execution": null
     },
     "pkt-014-empty-firing-audience": {
