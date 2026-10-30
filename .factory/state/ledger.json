@@ -1,7 +1,7 @@
 {
-  "stateRevision": 79,
+  "stateRevision": 80,
   "authorizedDispatches": 50,
-  "usedDispatches": 16,
+  "usedDispatches": 17,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -505,13 +505,20 @@
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
-      "dispatchedSaRevision": null,
+      "dispatchedSaRevision": "rev-1",
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-012-consent-opt-out-writes",
+        "revision": "rev-1",
+        "prHead": "5f746ffb616d98d6d991ea308609bfa60761bd13",
+        "effect": "wake_sa",
+        "label": "factory-wake-sa",
+        "issuedAt": "2026-10-30T12:02:14.436Z"
+      },
       "dispatchHistory": [],
       "execution": null
     }
