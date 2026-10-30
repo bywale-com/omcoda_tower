@@ -1,5 +1,5 @@
 {
-  "stateRevision": 124,
+  "stateRevision": 125,
   "authorizedDispatches": 50,
   "usedDispatches": 31,
   "scope": {
@@ -121,7 +121,7 @@
     "pkt-002-open-ask-cursor": {
       "id": "pkt-002-open-ask-cursor",
       "initiativeId": "exec-identity",
-      "stage": "candidate",
+      "stage": "verified",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
@@ -130,7 +130,7 @@
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": "3246a074efecd8adb98e4ca232d443b90821173f",
-      "verifiedSha": null,
+      "verifiedSha": "3246a074efecd8adb98e4ca232d443b90821173f",
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
@@ -140,7 +140,21 @@
       "integratedSha": null,
       "reconciliationId": null,
       "dispatch": null,
-      "execution": null,
+      "execution": {
+        "mode": "automatic",
+        "checks": [
+          {
+            "name": "verify-open-ask-cursor",
+            "runId": "41101931350",
+            "outcome": "pass"
+          },
+          {
+            "name": "seat-handler-shape",
+            "runId": "41101931350",
+            "outcome": "pass"
+          }
+        ]
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-002-open-ask-cursor",
