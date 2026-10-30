@@ -1,7 +1,7 @@
 {
-  "stateRevision": 69,
+  "stateRevision": 70,
   "authorizedDispatches": 20,
-  "usedDispatches": 13,
+  "usedDispatches": 14,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -433,13 +433,20 @@
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
-      "dispatchedSaRevision": null,
+      "dispatchedSaRevision": "rev-1",
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-010-campaign-failure-writes",
+        "revision": "rev-1",
+        "prHead": "fe1e97d0908517101c2d4950ac166f41d7180bfe",
+        "effect": "wake_sa",
+        "label": "factory-wake-sa",
+        "issuedAt": "2026-10-30T11:33:35.045Z"
+      },
       "dispatchHistory": [],
       "execution": null
     }
