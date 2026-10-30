@@ -1,5 +1,5 @@
 {
-  "stateRevision": 118,
+  "stateRevision": 119,
   "authorizedDispatches": 50,
   "usedDispatches": 30,
   "scope": {
@@ -754,17 +754,12 @@
     "pkt-019-first-step-send-denied": {
       "id": "pkt-019-first-step-send-denied",
       "initiativeId": "exec-identity",
-      "stage": "analysis",
+      "stage": "change_specified",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": {
-        "workerId": "bc-5b599030-c71d-46f0-bdfa-58c2eebd84fb",
-        "role": "analyst",
-        "until": "2026-10-30T18:04:16.825Z",
-        "revision": "rev-1"
-      },
+      "lease": null,
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
