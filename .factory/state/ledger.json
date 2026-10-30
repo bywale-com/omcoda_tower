@@ -1,5 +1,5 @@
 {
-  "stateRevision": 70,
+  "stateRevision": 71,
   "authorizedDispatches": 20,
   "usedDispatches": 14,
   "scope": {
@@ -421,12 +421,17 @@
     "pkt-010-campaign-failure-writes": {
       "id": "pkt-010-campaign-failure-writes",
       "initiativeId": "exec-identity",
-      "stage": "released",
+      "stage": "analysis",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": null,
+      "lease": {
+        "workerId": "bc-efddf9ce-3fb5-4f53-9130-cc2c6124e6dc",
+        "role": "analyst",
+        "until": "2026-10-30T15:35:26.919Z",
+        "revision": "rev-1"
+      },
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
