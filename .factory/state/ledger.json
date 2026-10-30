@@ -1,7 +1,7 @@
 {
-  "stateRevision": 136,
+  "stateRevision": 137,
   "authorizedDispatches": 50,
-  "usedDispatches": 34,
+  "usedDispatches": 35,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -394,12 +394,21 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
-      "dispatchedEngineerRevision": null,
+      "dispatchedEngineerRevision": "rev-1",
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-006-id-keyed-loads",
+        "revision": "rev-1",
+        "prHead": "62192cabc34dfeb5ef0994b9d1df4a4e775a3168",
+        "effect": "wake_engineer",
+        "label": "factory-wake-engineer",
+        "issuedAt": "2026-10-30T18:30:17.466Z",
+        "executionId": "dsp-137-engineer-pkt-006-id-keyed-loads",
+        "assignmentId": "asg-dsp-137-engineer-pkt-006-id-keyed-loads"
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-006-id-keyed-loads",
@@ -1304,6 +1313,30 @@
       "startUntil": "2026-10-30T18:37:04.428Z",
       "leaseUntil": "2026-10-30T19:22:06.272Z",
       "reason": "candidate_recorded"
+    },
+    "dsp-137-engineer-pkt-006-id-keyed-loads": {
+      "id": "dsp-137-engineer-pkt-006-id-keyed-loads",
+      "assignmentId": "asg-dsp-137-engineer-pkt-006-id-keyed-loads",
+      "role": "engineer",
+      "phase": "dispatched",
+      "packetIds": [
+        "pkt-006-id-keyed-loads"
+      ],
+      "revisions": {
+        "pkt-006-id-keyed-loads": "rev-1"
+      },
+      "label": "factory-wake-engineer",
+      "prHead": "62192cabc34dfeb5ef0994b9d1df4a4e775a3168",
+      "agentId": null,
+      "continuation": "fresh",
+      "issuedAt": "2026-10-30T18:30:17.466Z",
+      "startedAt": null,
+      "runningAt": null,
+      "endedAt": null,
+      "reserveUntil": "2026-10-30T19:00:17.466Z",
+      "startUntil": null,
+      "leaseUntil": null,
+      "reason": null
     }
   },
   "assignments": {
@@ -1377,6 +1410,18 @@
       "basis": null,
       "executionIds": [
         "dsp-133-engineer-pkt-005-audit-row-grain"
+      ]
+    },
+    "asg-dsp-137-engineer-pkt-006-id-keyed-loads": {
+      "id": "asg-dsp-137-engineer-pkt-006-id-keyed-loads",
+      "role": "engineer",
+      "initiativeId": "exec-identity",
+      "packetIds": [
+        "pkt-006-id-keyed-loads"
+      ],
+      "basis": null,
+      "executionIds": [
+        "dsp-137-engineer-pkt-006-id-keyed-loads"
       ]
     }
   }
