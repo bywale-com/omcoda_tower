@@ -32,11 +32,20 @@ On `factory-repair`, run `npx tsx scripts/factory-wake-check.ts factory-repair` 
 
 Stop unless it prints `authorized`. The check matches packetId, revision, and prHead to the dispatch record. A later commit that changes only `.factory/state/ledger.json` is still this wake. A missing record or any other file changed after the authorized SHA means this wake is stale. Stop.
 
-`<bc-id>` is this cloud agent's id. Acquire the engineering lease before planting:
+`<bc-id>` is this cloud agent's id. Acknowledge the start, then acquire the lease, before planting:
 
 ```bash
+npx tsx scripts/factory-engineer.ts start --worker <bc-id>
 npx tsx scripts/factory-engineer.ts lease --worker <bc-id>
 ```
+
+If the gate fails or you will not plant, refuse the execution so the engineer slot is released. Do not leave the dispatch in place.
+
+```bash
+npx tsx scripts/factory-engineer.ts refuse --worker <bc-id>
+```
+
+A refusal with a candidate SHA already recorded is rejected. Do not clear that SHA.
 
 On `factory-repair`, pass `--label factory-repair`. Stop unless it prints `lease_acquired`.
 

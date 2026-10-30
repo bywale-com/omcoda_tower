@@ -20,5 +20,17 @@
     "noBlockingQuestion": true,
     "noContradictorySpecification": true,
     "independentlyImplementable": true
-  }
+  },
+  "siblings": [
+    {
+      "id": "pkt-003-resume-same-run",
+      "basis": "component",
+      "note": "walk-handle: rows a run may read after a park or a firing"
+    },
+    {
+      "id": "pkt-006-id-keyed-loads",
+      "basis": "dependency",
+      "note": "006 loads fact, meeting, and wait rows by the id predicate; 004 loads engagement_records by that predicate"
+    }
+  ]
 }

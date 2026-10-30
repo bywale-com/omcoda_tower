@@ -1,5 +1,5 @@
 {
-  "stateRevision": 122,
+  "stateRevision": 123,
   "authorizedDispatches": 50,
   "usedDispatches": 31,
   "scope": {
@@ -146,14 +146,7 @@
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-002-open-ask-cursor",
-        "revision": "rev-1",
-        "prHead": "f06148b747f212ef49678b226e3650cc353e598f",
-        "effect": "wake_engineer",
-        "label": "factory-wake-engineer",
-        "issuedAt": "2026-10-30T10:29:42.849Z"
-      },
+      "dispatch": null,
       "execution": null,
       "dispatchHistory": [
         {
@@ -162,6 +155,17 @@
           "prHead": "a19229352274f07f177619c8d92f689d21d4fdba",
           "effect": "wake_sa",
           "label": "factory-wake-sa",
+          "workerExecution": "ran"
+        },
+        {
+          "packetId": "pkt-002-open-ask-cursor",
+          "revision": "rev-1",
+          "prHead": "f06148b747f212ef49678b226e3650cc353e598f",
+          "effect": "wake_engineer",
+          "label": "factory-wake-engineer",
+          "issuedAt": "2026-10-30T10:29:42.849Z",
+          "executionId": "dsp-123-engineer-pkt-002-open-ask-cursor",
+          "assignmentId": "asg-dsp-123-engineer-pkt-002-open-ask-cursor",
           "workerExecution": "ran"
         }
       ]
@@ -182,19 +186,12 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
-      "dispatchedEngineerRevision": "rev-1",
+      "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-003-resume-same-run",
-        "revision": "rev-1",
-        "prHead": "f451cee9422ebfb0fda2b120bfb0f669299c0242",
-        "effect": "wake_engineer",
-        "label": "factory-wake-engineer",
-        "issuedAt": "2026-10-30T10:38:20.846Z"
-      },
+      "dispatch": null,
       "execution": null,
       "dispatchHistory": [
         {
@@ -213,6 +210,24 @@
           "label": "factory-wake-sa",
           "issuedAt": "2026-10-29T22:08:17.332Z",
           "workerExecution": "ran"
+        },
+        {
+          "packetId": "pkt-003-resume-same-run",
+          "revision": "rev-1",
+          "prHead": "f451cee9422ebfb0fda2b120bfb0f669299c0242",
+          "effect": "wake_engineer",
+          "label": "factory-wake-engineer",
+          "issuedAt": "2026-10-30T10:38:20.846Z",
+          "executionId": "dsp-123-engineer-pkt-003-resume-same-run",
+          "assignmentId": "asg-dsp-123-engineer-pkt-003-resume-same-run",
+          "workerExecution": "absent"
+        }
+      ],
+      "siblings": [
+        {
+          "id": "pkt-004-firing-handle",
+          "basis": "component",
+          "note": "walk-handle: rows a run may read after a park or a firing"
         }
       ]
     },
@@ -256,6 +271,18 @@
           "label": "factory-wake-sa",
           "issuedAt": "2026-10-29T22:16:55.360Z",
           "workerExecution": "ran"
+        }
+      ],
+      "siblings": [
+        {
+          "id": "pkt-003-resume-same-run",
+          "basis": "component",
+          "note": "walk-handle: rows a run may read after a park or a firing"
+        },
+        {
+          "id": "pkt-006-id-keyed-loads",
+          "basis": "dependency",
+          "note": "006 loads fact, meeting, and wait rows by the id predicate; 004 loads engagement_records by that predicate"
         }
       ]
     },
@@ -327,7 +354,14 @@
           "workerExecution": "ran"
         }
       ],
-      "execution": null
+      "execution": null,
+      "siblings": [
+        {
+          "id": "pkt-004-firing-handle",
+          "basis": "dependency",
+          "note": "006 loads fact, meeting, and wait rows by the id predicate; 004 loads engagement_records by that predicate"
+        }
+      ]
     },
     "pkt-007-fact-writes": {
       "id": "pkt-007-fact-writes",
@@ -362,7 +396,39 @@
           "workerExecution": "ran"
         }
       ],
-      "execution": null
+      "execution": null,
+      "siblings": [
+        {
+          "id": "pkt-008-meeting-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-009-eligibility-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-010-campaign-failure-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-011-halt-records-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-012-consent-opt-out-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-013-firm-provision-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        }
+      ]
     },
     "pkt-008-meeting-writes": {
       "id": "pkt-008-meeting-writes",
@@ -397,7 +463,39 @@
           "workerExecution": "ran"
         }
       ],
-      "execution": null
+      "execution": null,
+      "siblings": [
+        {
+          "id": "pkt-007-fact-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-009-eligibility-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-010-campaign-failure-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-011-halt-records-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-012-consent-opt-out-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-013-firm-provision-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        }
+      ]
     },
     "pkt-009-eligibility-writes": {
       "id": "pkt-009-eligibility-writes",
@@ -432,7 +530,39 @@
           "workerExecution": "ran"
         }
       ],
-      "execution": null
+      "execution": null,
+      "siblings": [
+        {
+          "id": "pkt-007-fact-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-008-meeting-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-010-campaign-failure-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-011-halt-records-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-012-consent-opt-out-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-013-firm-provision-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        }
+      ]
     },
     "pkt-010-campaign-failure-writes": {
       "id": "pkt-010-campaign-failure-writes",
@@ -467,7 +597,39 @@
           "workerExecution": "ran"
         }
       ],
-      "execution": null
+      "execution": null,
+      "siblings": [
+        {
+          "id": "pkt-007-fact-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-008-meeting-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-009-eligibility-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-011-halt-records-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-012-consent-opt-out-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-013-firm-provision-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        }
+      ]
     },
     "pkt-011-halt-records-writes": {
       "id": "pkt-011-halt-records-writes",
@@ -502,7 +664,39 @@
           "workerExecution": "ran"
         }
       ],
-      "execution": null
+      "execution": null,
+      "siblings": [
+        {
+          "id": "pkt-007-fact-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-008-meeting-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-009-eligibility-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-010-campaign-failure-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-012-consent-opt-out-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-013-firm-provision-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        }
+      ]
     },
     "pkt-012-consent-opt-out-writes": {
       "id": "pkt-012-consent-opt-out-writes",
@@ -537,7 +731,39 @@
           "workerExecution": "ran"
         }
       ],
-      "execution": null
+      "execution": null,
+      "siblings": [
+        {
+          "id": "pkt-007-fact-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-008-meeting-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-009-eligibility-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-010-campaign-failure-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-011-halt-records-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-013-firm-provision-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        }
+      ]
     },
     "pkt-013-firm-provision-writes": {
       "id": "pkt-013-firm-provision-writes",
@@ -581,7 +807,39 @@
           "workerExecution": "ran"
         }
       ],
-      "execution": null
+      "execution": null,
+      "siblings": [
+        {
+          "id": "pkt-007-fact-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-008-meeting-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-009-eligibility-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-010-campaign-failure-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-011-halt-records-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        },
+        {
+          "id": "pkt-012-consent-opt-out-writes",
+          "basis": "component",
+          "note": "firing-pointers: this firing places its own rows on payload.writes"
+        }
+      ]
     },
     "pkt-014-empty-firing-audience": {
       "id": "pkt-014-empty-firing-audience",
@@ -651,7 +909,14 @@
           "workerExecution": "ran"
         }
       ],
-      "execution": null
+      "execution": null,
+      "siblings": [
+        {
+          "id": "pkt-016-halt-send-firm",
+          "basis": "dependency",
+          "note": "016 leaves the enroll predicate 015 specified; both read halt_records by firm"
+        }
+      ]
     },
     "pkt-016-halt-send-firm": {
       "id": "pkt-016-halt-send-firm",
@@ -686,7 +951,19 @@
           "workerExecution": "ran"
         }
       ],
-      "execution": null
+      "execution": null,
+      "siblings": [
+        {
+          "id": "pkt-015-halt-enroll-firm",
+          "basis": "dependency",
+          "note": "016 leaves the enroll predicate 015 specified; both read halt_records by firm"
+        },
+        {
+          "id": "pkt-017-tick-send-halt",
+          "basis": "dependency",
+          "note": "017 denies the tick send with the firm predicate 016 specified"
+        }
+      ]
     },
     "pkt-017-tick-send-halt": {
       "id": "pkt-017-tick-send-halt",
@@ -721,7 +998,19 @@
           "workerExecution": "ran"
         }
       ],
-      "execution": null
+      "execution": null,
+      "siblings": [
+        {
+          "id": "pkt-016-halt-send-firm",
+          "basis": "dependency",
+          "note": "017 denies the tick send with the firm predicate 016 specified"
+        },
+        {
+          "id": "pkt-018-send-denied-engagement",
+          "basis": "dependency",
+          "note": "018 appends send_denied for the tick send 017 left open"
+        }
+      ]
     },
     "pkt-018-send-denied-engagement": {
       "id": "pkt-018-send-denied-engagement",
@@ -756,7 +1045,19 @@
           "workerExecution": "ran"
         }
       ],
-      "execution": null
+      "execution": null,
+      "siblings": [
+        {
+          "id": "pkt-017-tick-send-halt",
+          "basis": "dependency",
+          "note": "018 appends send_denied for the tick send 017 left open"
+        },
+        {
+          "id": "pkt-019-first-step-send-denied",
+          "basis": "dependency",
+          "note": "019 records the send_denied kind 018 required of a denied send"
+        }
+      ]
     },
     "pkt-019-first-step-send-denied": {
       "id": "pkt-019-first-step-send-denied",
@@ -791,7 +1092,90 @@
           "workerExecution": "ran"
         }
       ],
-      "execution": null
+      "execution": null,
+      "siblings": [
+        {
+          "id": "pkt-018-send-denied-engagement",
+          "basis": "dependency",
+          "note": "019 records the send_denied kind 018 required of a denied send"
+        }
+      ]
+    }
+  },
+  "executions": {
+    "dsp-123-engineer-pkt-002-open-ask-cursor": {
+      "id": "dsp-123-engineer-pkt-002-open-ask-cursor",
+      "assignmentId": "asg-dsp-123-engineer-pkt-002-open-ask-cursor",
+      "role": "engineer",
+      "phase": "completed",
+      "packetIds": [
+        "pkt-002-open-ask-cursor"
+      ],
+      "revisions": {
+        "pkt-002-open-ask-cursor": "rev-1"
+      },
+      "label": "factory-wake-engineer",
+      "prHead": "f06148b747f212ef49678b226e3650cc353e598f",
+      "agentId": null,
+      "continuation": "fresh",
+      "issuedAt": "2026-10-30T10:29:42.849Z",
+      "startedAt": null,
+      "runningAt": null,
+      "endedAt": "2026-10-30T15:45:00.000Z",
+      "reserveUntil": "2026-10-30T10:59:42.849Z",
+      "startUntil": null,
+      "leaseUntil": null,
+      "reason": "candidate_recorded"
+    },
+    "dsp-123-engineer-pkt-003-resume-same-run": {
+      "id": "dsp-123-engineer-pkt-003-resume-same-run",
+      "assignmentId": "asg-dsp-123-engineer-pkt-003-resume-same-run",
+      "role": "engineer",
+      "phase": "refused",
+      "packetIds": [
+        "pkt-003-resume-same-run"
+      ],
+      "revisions": {
+        "pkt-003-resume-same-run": "rev-1"
+      },
+      "label": "factory-wake-engineer",
+      "prHead": "f451cee9422ebfb0fda2b120bfb0f669299c0242",
+      "agentId": null,
+      "continuation": "fresh",
+      "issuedAt": "2026-10-30T10:38:20.846Z",
+      "startedAt": null,
+      "runningAt": null,
+      "endedAt": "2026-10-30T15:45:00.000Z",
+      "reserveUntil": "2026-10-30T11:08:20.846Z",
+      "startUntil": null,
+      "leaseUntil": null,
+      "reason": "reservation_expired"
+    }
+  },
+  "assignments": {
+    "asg-dsp-123-engineer-pkt-002-open-ask-cursor": {
+      "id": "asg-dsp-123-engineer-pkt-002-open-ask-cursor",
+      "role": "engineer",
+      "initiativeId": "exec-identity",
+      "packetIds": [
+        "pkt-002-open-ask-cursor"
+      ],
+      "basis": null,
+      "executionIds": [
+        "dsp-123-engineer-pkt-002-open-ask-cursor"
+      ]
+    },
+    "asg-dsp-123-engineer-pkt-003-resume-same-run": {
+      "id": "asg-dsp-123-engineer-pkt-003-resume-same-run",
+      "role": "engineer",
+      "initiativeId": "exec-identity",
+      "packetIds": [
+        "pkt-003-resume-same-run"
+      ],
+      "basis": null,
+      "executionIds": [
+        "dsp-123-engineer-pkt-003-resume-same-run"
+      ]
     }
   }
 }

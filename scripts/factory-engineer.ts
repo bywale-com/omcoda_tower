@@ -11,7 +11,7 @@ import { commitEvent, type FactoryLedger } from "../.factory/controller/dispatch
 import { selectLabeledDispatch } from "../.factory/controller/wake.ts";
 
 const command = process.argv[2] ?? "";
-const commands = new Set(["lease", "candidate", "block"]);
+const commands = new Set(["start", "lease", "candidate", "refuse", "block"]);
 
 function flag(name: string): string {
   const index = process.argv.indexOf(name);
@@ -79,12 +79,16 @@ const packet = packetFor(ledger);
 if (!packet) fail("no_dispatch_record");
 
 let event;
-if (command === "lease") {
+if (command === "start") {
+  event = { type: "acknowledge_start" as const, workerId, executionId: packet.dispatch?.executionId };
+} else if (command === "refuse") {
+  event = { type: "refuse_execution" as const, workerId, executionId: packet.dispatch?.executionId };
+} else if (command === "lease") {
   event = {
     type: "acquire_lease" as const,
     workerId,
     role: "engineer" as const,
-    until: new Date(now.getTime() + 4 * 60 * 60 * 1000).toISOString(),
+    until: new Date(now.getTime() + 60 * 60 * 1000).toISOString(),
     revision: packet.revision,
   };
 } else if (command === "candidate") {

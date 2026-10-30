@@ -9,8 +9,10 @@
 import { existsSync, readFileSync } from "node:fs";
 import { githubContentsRemote, GitHubContentsStore } from "../.factory/controller/contents.ts";
 import { githubLabelActuator, type FactoryLedger } from "../.factory/controller/dispatch.ts";
+import { cursorFollowUp } from "../.factory/controller/cursor.ts";
 import { commitLedgerEvent, controlStep, dispatchInitiative } from "../.factory/controller/queue.ts";
 import { dispatchWake } from "../.factory/controller/dispatch.ts";
+import { recoverExecutions } from "../.factory/controller/execution.ts";
 import type { StateStore } from "../.factory/controller/dispatch.ts";
 import type { World } from "../.factory/controller/machine.ts";
 
@@ -68,6 +70,15 @@ const store = new GitHubContentsStore(
     env: process.env,
   }),
 );
+const loadedBefore = await store.read();
+const stale = recoverExecutions(loadedBefore, new Date().toISOString());
+if (stale.changes.length) {
+  const wrote = await commitLedgerEvent(store, { type: "recover_stale" }, worldFrom(loadedBefore));
+  if (!wrote.ok && wrote.reason !== "nothing_stale") {
+    console.error(wrote.reason);
+    process.exit(1);
+  }
+}
 const loaded = await store.read();
 const ledger = await archiveRanAnalystWork(store, loaded, worldFrom(loaded));
 const step = controlStep(ledger, worldFrom(ledger));
@@ -88,6 +99,7 @@ if (step.ledger !== ledger && step.ledger.initiatives !== ledger.initiatives) {
   }
 }
 const actuator = githubLabelActuator({ env: process.env, pr });
+const resumeSupported = Boolean(process.env.CURSOR_API_KEY);
 const result = wake.kind === "initiative"
   ? await dispatchInitiative({
       store,
@@ -98,11 +110,15 @@ const result = wake.kind === "initiative"
       now: new Date().toISOString(),
       engineeringBusy: false,
       budgetUsd: null,
+      resumeSupported,
+      resume: resumeSupported ? (agentId, text) => cursorFollowUp({ env: process.env }).send(agentId, text) : undefined,
     })
   : await dispatchWake({
       store,
       actuator,
       packetId: wake.id,
+      packetIds: wake.packetIds,
+      basis: wake.basis,
       prHead,
       activation: "active",
       now: new Date().toISOString(),

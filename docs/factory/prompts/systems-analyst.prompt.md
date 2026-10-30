@@ -83,13 +83,13 @@ Stop unless it prints `lease_acquired`. The packet stage is now `analysis`.
 
 3. Commit and push the specification. Do not commit `.factory/state/ledger.json` by hand. If the push rejects, rebase onto the lease commit and push again.
 
-4. Sign through the controller.
+4. Sign through the controller. One execution may name several sibling packets. Each keeps its own file, revision, and nine sections. Pass `--packet` when the assignment lists more than one.
 
 ```bash
-npx tsx scripts/factory-analyst.ts sign --worker <bc-id>
+npx tsx scripts/factory-analyst.ts sign --worker <bc-id> --packet <packet-id>
 ```
 
-Stop unless it prints `change_specified`. A missing section stays unsigned.
+`change_specified` signs that packet. `continue <packet-id>` means lease and sign that sibling next, in this same execution. Do not stop between siblings. Do not merge their sections into one file. Stop when the command prints `change_specified` and does not print `continue`. A missing section stays unsigned.
 
 5. If you cannot finish the specification, record one of these and stop. Do not sign.
 

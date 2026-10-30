@@ -20,5 +20,12 @@
     "noBlockingQuestion": true,
     "noContradictorySpecification": true,
     "independentlyImplementable": true
-  }
+  },
+  "siblings": [
+    {
+      "id": "pkt-004-firing-handle",
+      "basis": "dependency",
+      "note": "006 loads fact, meeting, and wait rows by the id predicate; 004 loads engagement_records by that predicate"
+    }
+  ]
 }

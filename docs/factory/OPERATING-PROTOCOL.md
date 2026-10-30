@@ -42,11 +42,11 @@ PKT-001 is `verified` manual evidence. Its Wake stays `hold`. `markReleased` ref
 
 ## Batching
 
-Related released packets may share one Analyst execution or one Engineer branch when they share architectural context. Their ids, acceptance checks, and manifests stay separate. Do not delay an unrelated ready packet in order to fill a batch.
+An assignment is the schedulable unit. It may name one packet or several. The Architect records a sibling only for a shared contract, dependency, component, runtime behavior, or implementation boundary. Adjacent ids are not a sibling link. The controller builds one Analyst assignment from eligible released packets in that graph. A packet whose sibling is not yet eligible is dispatched alone. The assignment does not wait to grow. Each packet keeps its own identity, revision, nine-section specification, checks, and history. One execution may sign several of them.
 
 ## Concurrency
 
-One Architect, one Analyst, and one Engineer at most. One implementation batch at a time. `controlStep` treats the slot as taken when an engineer dispatch is outstanding, an engineering lease is live, or a repair for the current fingerprint was already woken. One pass proposes at most one `wake_engineer` or `wake_repair`. Packet wakes are preferred over another architect session. Two investigations of different components may exist only after this single-batch path has been observed for real. That observation has not happened.
+One Architect, one Analyst, and one Engineer at most. One implementation batch at a time. The engineer slot is taken by a live lease, a repair fingerprint that was already woken, or a pending engineer dispatch whose reservation has not expired. A dispatched execution that never starts, a refused execution, and an expired lease leave the slot. One pass proposes at most one `wake_engineer` or `wake_repair`. Packet wakes are preferred over another architect session. A new architect launch waits while the engineering queue is two or more packets deep. A running architect execution is not stopped by that hold. Two investigations of different components may exist only after this single-batch path has been observed for real. That observation has not happened.
 
 ## Verification evidence
 

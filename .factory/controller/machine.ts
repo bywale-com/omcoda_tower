@@ -81,6 +81,19 @@ export interface DispatchRecord {
    * `absent` means the dispatch did not start a worker.
    */
   workerExecution?: "ran" | "absent";
+  /** Stable id of the execution this authorization belongs to. */
+  executionId?: string;
+  /** Schedulable assignment. One execution may carry several packets. */
+  assignmentId?: string;
+}
+
+export type SiblingBasis = "contract" | "dependency" | "component" | "runtime" | "boundary";
+
+/** A relationship the Architect recorded. Adjacent ids are not a relationship. */
+export interface SiblingLink {
+  id: string;
+  basis: SiblingBasis;
+  note: string;
 }
 
 /** A check that actually ran. A name without a run id is not evidence. */
@@ -130,6 +143,8 @@ export interface WorkItem {
   dispatchHistory: DispatchRecord[];
   /** Null until a manual record or an automatic verification says how the work ran. */
   execution: ExecutionRecord | null;
+  /** Architect-recorded siblings. Absent means this packet stands alone. */
+  siblings?: SiblingLink[];
 }
 
 export interface World {
@@ -151,6 +166,11 @@ export interface World {
    * `complete` refuse every wake.
    */
   scopeStatus?: "inactive" | "active" | "suspended" | "complete";
+  /**
+   * True only when this pass can send a follow-up to an existing Cursor agent.
+   * A missing flag is a fresh label wake, not a resume.
+   */
+  resumeSupported?: boolean;
 }
 
 export type FactoryEvent =
@@ -201,7 +221,10 @@ export type FactoryEvent =
   | { type: "clear_hold" }
   | { type: "prose_complete" }
   | { type: "adopt_existing_change"; sections: string[] }
-  | { type: "interrupt_analysis"; workerId: string };
+  | { type: "interrupt_analysis"; workerId: string }
+  | { type: "acknowledge_start"; workerId: string; executionId?: string }
+  | { type: "refuse_execution"; workerId: string; executionId?: string }
+  | { type: "record_candidate_checks"; sha: string; checks: CheckEvidence[] };
 
 export interface ApplyResult {
   ok: boolean;
@@ -213,6 +236,11 @@ export interface Decision {
   effect: WakeEffect;
   reason: string;
   label: (typeof SEAT_LABELS)[number] | null;
+  /** `resume` follows up an existing Cursor agent. `label` starts a fresh automation. */
+  delivery?: "label" | "resume";
+  agentId?: string | null;
+  packetIds?: string[];
+  basis?: string | null;
 }
 
 export function freshItem(id = "pkt-001", initiativeId = "exec-identity"): WorkItem {
@@ -263,6 +291,7 @@ function clone(item: WorkItem): WorkItem {
     execution: item.execution
       ? { mode: item.execution.mode, checks: item.execution.checks.map((check) => ({ ...check })) }
       : null,
+    siblings: item.siblings?.map((link) => ({ ...link })),
   };
 }
 
@@ -385,7 +414,13 @@ export function applyEvent(item: WorkItem, event: FactoryEvent, world: World): A
       next.stage = "verified";
       next.verifiedSha = event.sha;
       next.lastFailureClass = null;
-      if (item.dispatch) {
+      const automatic =
+        Boolean(item.dispatch) ||
+        (item.dispatchHistory ?? []).some(
+          (row) =>
+            (row.effect === "wake_engineer" || row.effect === "wake_repair") && row.workerExecution === "ran",
+        );
+      if (automatic) {
         next.execution = { mode: "automatic", checks: [] };
       }
       return accept(next, "verified");
@@ -508,6 +543,40 @@ export function applyEvent(item: WorkItem, event: FactoryEvent, world: World): A
     return accept(next, "existing_change_adopted");
   }
 
+  if (event.type === "acknowledge_start") {
+    if (!item.dispatch) return refuse(item, "no_dispatch_record");
+    if (event.executionId && item.dispatch.executionId && event.executionId !== item.dispatch.executionId) {
+      return refuse(item, "execution_mismatch");
+    }
+    if (item.lease && item.lease.workerId !== event.workerId) return refuse(item, "worker_mismatch");
+    return accept(next, "start_acknowledged");
+  }
+
+  if (event.type === "refuse_execution") {
+    if (item.candidateSha) return refuse(item, "candidate_recorded");
+    if (!item.dispatch && item.dispatchedEngineerRevision == null && item.dispatchedSaRevision == null) {
+      return refuse(item, "no_dispatch_record");
+    }
+    return accept(next, "execution_refused");
+  }
+
+  if (event.type === "record_candidate_checks") {
+    if (item.stage !== "candidate" && item.stage !== "verifying") return refuse(item, "wrong_stage");
+    if (!item.candidateSha || event.sha !== item.candidateSha) return refuse(item, "sha_mismatch");
+    if (!event.checks.length) return refuse(item, "verification_evidence_missing");
+    for (const check of event.checks) {
+      if (!check.name || !check.runId) return refuse(item, "verification_evidence_missing");
+      if (check.outcome !== "pass") return refuse(item, "verification_failed");
+    }
+    next.stage = "verified";
+    next.verifiedSha = event.sha;
+    next.execution = {
+      mode: "automatic",
+      checks: event.checks.map((check) => ({ ...check })),
+    };
+    return accept(next, "verified");
+  }
+
   if (event.type === "interrupt_analysis") {
     if (item.stage !== "analysis") return refuse(item, "wrong_stage");
     const covered = leaseCovers(item, event.workerId, "analyst", world.now);
@@ -615,6 +684,7 @@ export function workerMayRun(input: {
   prHead: string;
   wake: "hold" | "sa";
   dispatch: DispatchRecord | null;
+  executionId?: string;
 }): { ok: boolean; reason: string } {
   if (!input.dispatch) return { ok: false, reason: "no_dispatch_record" };
   if (input.dispatch.packetId !== input.packetId) return { ok: false, reason: "packet_mismatch" };
@@ -633,6 +703,9 @@ export function workerMayRun(input: {
   }
   if (input.dispatch.effect === "wake_architect" && input.label !== "factory-wake-architect") {
     return { ok: false, reason: "label_mismatch" };
+  }
+  if (input.executionId && input.dispatch.executionId && input.executionId !== input.dispatch.executionId) {
+    return { ok: false, reason: "execution_mismatch" };
   }
   return { ok: true, reason: "authorized" };
 }
@@ -735,4 +808,14 @@ export const TRANSITION_IDS = [
   "T48",
   "T49",
   "T50",
+  "T51",
+  "T52",
+  "T53",
+  "T54",
+  "T55",
+  "T56",
+  "T57",
+  "T58",
+  "T59",
+  "T60",
 ] as const;
