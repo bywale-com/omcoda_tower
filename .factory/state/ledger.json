@@ -1,7 +1,7 @@
 {
-  "stateRevision": 40,
+  "stateRevision": 41,
   "authorizedDispatches": 20,
-  "usedDispatches": 7,
+  "usedDispatches": 8,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -29,9 +29,16 @@
       "outstanding": [
         "Claims 10 and 11 are only partly covered by PKT-004. Claims 12-88 are indexed and have no packets. Coverage is not complete."
       ],
-      "session": "continuation_due",
+      "session": "running",
       "revision": "rev-1",
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "exec-identity",
+        "revision": "rev-1",
+        "prHead": "65531837f45c725736b37155198722d5c510808b",
+        "effect": "wake_architect",
+        "label": "factory-wake-architect",
+        "issuedAt": "2026-10-30T10:40:16.935Z"
+      },
       "blockedReason": null,
       "packetIds": [
         "pkt-001-click-attribution",
