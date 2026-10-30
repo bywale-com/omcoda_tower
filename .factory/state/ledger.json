@@ -1,5 +1,5 @@
 {
-  "stateRevision": 84,
+  "stateRevision": 85,
   "authorizedDispatches": 50,
   "usedDispatches": 19,
   "scope": {
@@ -536,12 +536,17 @@
     "pkt-013-firm-provision-writes": {
       "id": "pkt-013-firm-provision-writes",
       "initiativeId": "exec-identity",
-      "stage": "released",
+      "stage": "analysis",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": null,
+      "lease": {
+        "workerId": "bc-98160c37-a32f-42ef-917e-8ace509d6721",
+        "role": "analyst",
+        "until": "2026-10-30T16:22:00.162Z",
+        "revision": "rev-1"
+      },
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
