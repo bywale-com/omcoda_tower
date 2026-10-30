@@ -1,5 +1,5 @@
 {
-  "stateRevision": 93,
+  "stateRevision": 94,
   "authorizedDispatches": 50,
   "usedDispatches": 21,
   "scope": {
@@ -593,15 +593,18 @@
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-014-empty-firing-audience",
-        "revision": "rev-1",
-        "prHead": "b40e42b965f15e97a4e625a16291f5fe43ade3ae",
-        "effect": "wake_sa",
-        "label": "factory-wake-sa",
-        "issuedAt": "2026-10-30T12:38:25.138Z"
-      },
-      "dispatchHistory": [],
+      "dispatch": null,
+      "dispatchHistory": [
+        {
+          "packetId": "pkt-014-empty-firing-audience",
+          "revision": "rev-1",
+          "prHead": "b40e42b965f15e97a4e625a16291f5fe43ade3ae",
+          "effect": "wake_sa",
+          "label": "factory-wake-sa",
+          "issuedAt": "2026-10-30T12:38:25.138Z",
+          "workerExecution": "ran"
+        }
+      ],
       "execution": null
     },
     "pkt-015-halt-enroll-firm": {
