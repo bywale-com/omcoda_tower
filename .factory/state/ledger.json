@@ -1,6 +1,6 @@
 {
-  "stateRevision": 76,
-  "authorizedDispatches": 20,
+  "stateRevision": 77,
+  "authorizedDispatches": 50,
   "usedDispatches": 16,
   "scope": {
     "id": "agents-and-automations",
