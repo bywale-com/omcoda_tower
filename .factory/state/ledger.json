@@ -1,7 +1,7 @@
 {
-  "stateRevision": 147,
+  "stateRevision": 148,
   "authorizedDispatches": 50,
-  "usedDispatches": 37,
+  "usedDispatches": 38,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -536,12 +536,21 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
-      "dispatchedEngineerRevision": null,
+      "dispatchedEngineerRevision": "rev-1",
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-008-meeting-writes",
+        "revision": "rev-1",
+        "prHead": "b86188af3e385bc2c2bb3dcc89a6733a83111967",
+        "effect": "wake_engineer",
+        "label": "factory-wake-engineer",
+        "issuedAt": "2026-10-30T19:00:57.908Z",
+        "executionId": "dsp-148-engineer-pkt-008-meeting-writes",
+        "assignmentId": "asg-dsp-148-engineer-pkt-008-meeting-writes"
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-008-meeting-writes",
@@ -1409,6 +1418,30 @@
       "startUntil": "2026-10-30T19:06:38.894Z",
       "leaseUntil": "2026-10-30T19:51:43.339Z",
       "reason": "candidate_recorded"
+    },
+    "dsp-148-engineer-pkt-008-meeting-writes": {
+      "id": "dsp-148-engineer-pkt-008-meeting-writes",
+      "assignmentId": "asg-dsp-148-engineer-pkt-008-meeting-writes",
+      "role": "engineer",
+      "phase": "dispatched",
+      "packetIds": [
+        "pkt-008-meeting-writes"
+      ],
+      "revisions": {
+        "pkt-008-meeting-writes": "rev-1"
+      },
+      "label": "factory-wake-engineer",
+      "prHead": "b86188af3e385bc2c2bb3dcc89a6733a83111967",
+      "agentId": null,
+      "continuation": "fresh",
+      "issuedAt": "2026-10-30T19:00:57.908Z",
+      "startedAt": null,
+      "runningAt": null,
+      "endedAt": null,
+      "reserveUntil": "2026-10-30T19:30:57.908Z",
+      "startUntil": null,
+      "leaseUntil": null,
+      "reason": null
     }
   },
   "assignments": {
@@ -1518,6 +1551,18 @@
       "basis": null,
       "executionIds": [
         "dsp-144-engineer-pkt-007-fact-writes"
+      ]
+    },
+    "asg-dsp-148-engineer-pkt-008-meeting-writes": {
+      "id": "asg-dsp-148-engineer-pkt-008-meeting-writes",
+      "role": "engineer",
+      "initiativeId": "exec-identity",
+      "packetIds": [
+        "pkt-008-meeting-writes"
+      ],
+      "basis": null,
+      "executionIds": [
+        "dsp-148-engineer-pkt-008-meeting-writes"
       ]
     }
   }
