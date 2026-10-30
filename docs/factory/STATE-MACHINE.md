@@ -80,6 +80,8 @@ Side stages: `blocked`, `returned_architect`, `returned_analyst`.
 | T58 | `record_candidate_checks` whose SHA is `candidateSha`, with at least one passing check that names a run id | Stage `verified`. `verifiedSha` is that SHA. A different SHA is `sha_mismatch` and the stage stays. A failing check is `verification_failed` and the stage stays. |
 | T59 | Engineering queue depth of two or more (`change_specified`, `engineering`, `candidate`, `verifying`) | `decideScope` returns `backpressure`. No architect wake and no new packet release from a fresh architect launch. Analyst and engineer wakes are unchanged. A running architect execution is left in place. |
 | T60 | `workerMayRun` with an execution id | A supplied id that is not the dispatch record's `executionId` is `execution_mismatch`. A dispatch without an execution id stays authorized by packet, revision, head, and label. |
+| T61 | `resume_scope` while suspended, with the same `authorizedDispatches` | Status returns to `active`. The cap and `usedDispatches` stay. A different cap is `cap_changed`. Optional `lanes` withholds any other lane. Absent lanes allow every lane. Downstream wakes follow the existing backlog hold: an engineering queue of two or more still proposes no architect launch. |
+| T62 | Bind an already-running engineer without adding `factory-wake-engineer` | Scope is active, the slot is free, and the packet is `change_specified`. One dispatch is spent. The execution records that agent id, `delivery: bound`, a start, and a one-hour lease. No label is added. A suspended scope, a busy slot, or a different stage is refused. The cap stays. |
 
 ## Required systems-change sections
 

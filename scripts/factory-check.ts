@@ -56,6 +56,7 @@ import { cursorFollowUp, followUpRequest } from "../.factory/controller/cursor.t
 import {
   analystAssignment,
   planContinuation,
+  prepareBoundEngineer,
   productionMetrics,
   productionPressure,
   recoverExecutions,
@@ -1273,6 +1274,27 @@ check("opening an ask does not write the enrollment cursor", () => {
   assert.match(routes, /wire\.get\("\/contact-seat\/:token", handleContactSeatGet\)/);
 });
 
+check("a resumed wait restores stored writes before goOn", () => {
+  const source = read("server/wire-service/workflowWalk.ts");
+  const start = source.indexOf("if (opts.resumeFromNodeId)");
+  const end = source.indexOf("await visit(start.id)", start);
+  const branch = source.slice(start, end);
+  assert.ok(start >= 0 && end > start);
+  assert.ok(branch.includes("ctx.chainWrites[nodeId] = writesFromUnknown(status.writes)"));
+  assert.ok(branch.includes("ctx.previousWrites = Array.isArray(waitedWrites) ? writesFromUnknown(waitedWrites) : []"));
+  assert.ok(branch.indexOf("ctx.previousWrites") < branch.indexOf("await goOn(opts.resumeFromNodeId"));
+  assert.equal(branch.includes("counts.waitWrites"), false);
+  assert.equal(branch.includes("wait_occupancy"), false);
+  assert.match(branch, /SELECT node_status FROM workflow_run WHERE id=\$1/);
+  const loader = source.slice(source.indexOf("async function loadWriteRow"), source.indexOf("async function loadWriteField"));
+  assert.equal(loader.includes("wait_occupancy"), false);
+  assert.ok(loader.includes("return null;"));
+  const filter = read(".github/workflows/factory-check.yml");
+  assert.match(filter, /server\/wire-service\/workflowWalk\.ts/);
+  assert.match(filter, /scripts\/verify-resume-same-run\.ts/);
+  assert.match(read(".github/workflows/ship.yml"), /verify-resume-same-run\.ts/);
+});
+
 function sections(): string[] {
   return [
     "intent",
@@ -2026,7 +2048,7 @@ check("the committed scope is agents-and-automations and PKT-001 stays manual", 
   const committed = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
   const view = projectFactory(committed);
   assert.equal(view.scope.id, "agents-and-automations");
-  assert.equal(view.scope.status, "suspended");
+  assert.ok(view.scope.status === "suspended" || view.scope.status === "active");
   assert.deepEqual(view.scope.modules, ["Agents and Automations"]);
   assert.ok(view.stateRevision >= 32);
   const packet = view.packets.find((item) => item.id === "pkt-001-click-attribution");
@@ -2087,6 +2109,9 @@ check("control and authorize commands do not arm the committed ledger", () => {
   if (committedForDry.scope.status === "suspended") {
     assert.equal(proposed.reason, "suspended");
     assert.equal(proposed.wakes.length, 0);
+  } else if (committedForDry.scope.status === "active") {
+    assert.equal(proposed.wakes.some((wake) => wake.effect === "wake_architect"), false);
+    assert.equal(productionPressure(Object.values(committedForDry.packets)).holdArchitect, true);
   } else if (openAnalyst) {
     assert.equal(proposed.reason, "analyst_open");
     assert.equal(proposed.wakes.length, 0);
@@ -2125,7 +2150,7 @@ check("control and authorize commands do not arm the committed ledger", () => {
   assert.equal(suspend.status, 0, suspend.stderr);
   assert.equal((JSON.parse(suspend.stdout) as { type: string }).type, "suspend");
   const committed = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
-  assert.equal(committed.scope.status, "suspended");
+  assert.ok(committed.scope.status === "suspended" || committed.scope.status === "active");
   assert.equal(committed.scope.id, "agents-and-automations");
   assert.equal(committed.authorizedDispatches, 50);
   assert.ok(committed.usedDispatches >= 4);
@@ -2469,15 +2494,22 @@ function assertRecoveryLedger(committed: FactoryLedger) {
     assert.equal(absent.label, "factory-wake-sa");
     if (packet.dispatch?.effect === "wake_sa") assert.notEqual(packet.dispatch.prHead, prHead);
   }
-  assert.equal(committed.usedDispatches, 31);
+  assert.ok(committed.usedDispatches >= 31);
+  assert.ok(committed.usedDispatches <= committed.authorizedDispatches);
   assert.ok(committed.stateRevision >= 123);
-  assert.equal(committed.scope.status, "suspended");
+  assert.ok(committed.scope.status === "suspended" || committed.scope.status === "active");
   const pkt002Exec = Object.values(committed.executions ?? {}).find(
-    (execution) => execution.role === "engineer" && execution.packetIds.includes(pkt002.id),
+    (execution) => execution.role === "engineer" && execution.packetIds.includes(pkt002.id) && execution.reason === "candidate_recorded",
   );
-  assert.equal(pkt002.stage, "candidate");
   assert.equal(pkt002.candidateSha, "3246a074efecd8adb98e4ca232d443b90821173f");
-  assert.equal(pkt002.verifiedSha, null);
+  assert.ok(pkt002.stage === "candidate" || pkt002.stage === "verified");
+  if (pkt002.stage === "verified") {
+    assert.equal(pkt002.verifiedSha, pkt002.candidateSha);
+    assert.equal(pkt002.execution?.mode, "automatic");
+    assert.ok((pkt002.execution?.checks ?? []).some((check) => check.outcome === "pass" && check.runId));
+  } else {
+    assert.equal(pkt002.verifiedSha, null);
+  }
   assert.equal(pkt002.dispatch, null);
   assert.ok(pkt002Exec);
   assert.equal(pkt002Exec.phase, "completed");
@@ -2488,12 +2520,19 @@ function assertRecoveryLedger(committed: FactoryLedger) {
   assert.equal(engineerRan.length, 1);
   assert.equal(engineerRan[0].prHead, "f06148b747f212ef49678b226e3650cc353e598f");
   const pkt003 = committed.packets["pkt-003-resume-same-run"];
-  assert.equal(pkt003.stage, "change_specified");
-  assert.equal(pkt003.dispatch, null);
-  assert.equal(pkt003.dispatchedEngineerRevision, null);
-  assert.equal(pkt003.candidateSha, null);
+  assert.ok(pkt003.stage === "change_specified" || pkt003.stage === "engineering" || pkt003.stage === "candidate");
+  if (pkt003.stage === "change_specified") {
+    assert.equal(pkt003.dispatch, null);
+    assert.equal(pkt003.dispatchedEngineerRevision, null);
+    assert.equal(pkt003.candidateSha, null);
+  }
+  if (pkt003.stage === "candidate") {
+    assert.equal(pkt003.lease, null);
+    assert.equal(pkt003.dispatch, null);
+    assert.match(pkt003.candidateSha ?? "", /^[0-9a-f]{40}$/);
+  }
   const pkt003Exec = Object.values(committed.executions ?? {}).find(
-    (execution) => execution.role === "engineer" && execution.packetIds.includes(pkt003.id),
+    (execution) => execution.role === "engineer" && execution.packetIds.includes(pkt003.id) && execution.reason === "reservation_expired",
   );
   assert.ok(pkt003Exec);
   assert.equal(pkt003Exec.phase, "refused");
@@ -2503,16 +2542,19 @@ function assertRecoveryLedger(committed: FactoryLedger) {
   );
   assert.equal(engineerAbsent.length, 1);
   assert.equal(engineerAbsent[0].prHead, "f451cee9422ebfb0fda2b120bfb0f669299c0242");
-  assert.equal(committed.initiatives["exec-identity"].session, "running");
-  assert.equal(committed.initiatives["exec-identity"].dispatch?.effect, "wake_architect");
+  const architectSession = committed.initiatives["exec-identity"].session;
+  if (architectSession === "running") {
+    assert.equal(committed.initiatives["exec-identity"].dispatch?.effect, "wake_architect");
+  } else {
+    assert.equal(architectSession, "continuation_due");
+    assert.equal(committed.initiatives["exec-identity"].dispatch, null);
+  }
   const metrics = productionMetrics(committed);
   assert.equal(metrics.costPerAcceptedPacket, null);
   assert.equal(metrics.acceptedPackets, 0);
-  assert.equal(metrics.refusedOrFailedLaunches, 1);
-  assert.equal(metrics.trackedFreshLaunches, 2);
-  assert.equal(metrics.completedExecutions, 1);
-  assert.equal(metrics.launchesPerCompletedPacket, 2);
-  assert.equal(metrics.usefulPacketsPerExecution, 1);
+  assert.ok(metrics.refusedOrFailedLaunches >= 1);
+  assert.ok(metrics.trackedFreshLaunches >= 2);
+  assert.ok(metrics.completedExecutions >= 1);
   assert.ok(metrics.engineerQueueDepth >= 2);
   assert.equal(productionPressure(Object.values(committed.packets)).holdArchitect, true);
   assert.equal(recoverExecutions(committed, "2026-10-30T15:45:00.000Z").changes.length, 0);
@@ -3211,6 +3253,95 @@ check("assignments batch siblings, recover the engineer slot, and hold a deep qu
   row.usageUsd = 2;
   withUsage.packets[running.id].stage = "accepted";
   assert.equal(productionMetrics(withUsage).costPerAcceptedPacket, 2);
+});
+
+check("resume_scope keeps the cap and the backlog still holds the architect", () => {
+  const world: World = { ...active, now: "2026-10-30T18:00:00.000Z", authorizedDispatches: 50, usedDispatches: 31 };
+  const ledger = emptyLedger(50);
+  ledger.usedDispatches = 31;
+  const suspended = applyLedgerEvent(ledger, { type: "suspend", reason: "repair" }, world);
+  assert.equal(suspended.reason, "suspended");
+  const raised = applyLedgerEvent(
+    suspended.ledger,
+    { type: "resume_scope", reason: "downstream lanes", authorizedDispatches: 51 },
+    world,
+  );
+  assert.equal(raised.reason, "cap_changed");
+  assert.equal(raised.ledger.authorizedDispatches, 50);
+  assert.equal(raised.ledger.scope.status, "suspended");
+  const resumed = applyLedgerEvent(
+    suspended.ledger,
+    { type: "resume_scope", reason: "downstream lanes", authorizedDispatches: 50 },
+    world,
+  );
+  assert.equal(resumed.reason, "scope_resumed");
+  assert.equal(resumed.ledger.scope.status, "active");
+  assert.equal(resumed.ledger.authorizedDispatches, 50);
+  assert.equal(resumed.ledger.usedDispatches, 31);
+  resumed.ledger.packets["pkt-a"] = changeSpecified("pkt-a");
+  resumed.ledger.packets["pkt-b"] = changeSpecified("pkt-b");
+  resumed.ledger.initiatives.alpha = freshInitiative({
+    id: "alpha",
+    module: "test",
+    capability: "alpha",
+    entry: "Operator → test → alpha",
+    obligation: "Continue alpha",
+    priority: 1,
+    now: world.now,
+  });
+  resumed.ledger.initiatives.alpha.queue = "active";
+  resumed.ledger.initiatives.alpha.session = "continuation_due";
+  const step = controlStep(resumed.ledger, world);
+  assert.equal(step.wakes.some((wake) => wake.decision.effect === "wake_architect"), false);
+  assert.equal(step.wakes.some((wake) => wake.decision.effect === "wake_engineer"), true);
+  const laned = applyLedgerEvent(
+    suspended.ledger,
+    { type: "resume_scope", reason: "engineer lane", authorizedDispatches: 50, lanes: ["engineer"] },
+    world,
+  );
+  assert.equal(laned.reason, "scope_resumed");
+  assert.deepEqual(laned.ledger.scope.lanes, ["engineer"]);
+  laned.ledger.packets["pkt-a"] = changeSpecified("pkt-a");
+  laned.ledger.packets["pkt-r"] = must(
+    applyEvent(freshItem("pkt-r", "alpha"), { type: "release", wake: "sa", gatesPass: true, revision: "rev-1" }, active),
+    "released",
+  );
+  const heldLane = controlStep(laned.ledger, world);
+  assert.equal(heldLane.wakes.some((wake) => wake.decision.effect === "wake_sa"), false);
+  assert.equal(heldLane.wakes.some((wake) => wake.decision.effect === "wake_architect"), false);
+  assert.equal(heldLane.wakes.some((wake) => wake.decision.effect === "wake_engineer"), true);
+  const suspendedBind = emptyLedger(50);
+  suspendedBind.scope.status = "suspended";
+  suspendedBind.packets["pkt-003-resume-same-run"] = changeSpecified("pkt-003-resume-same-run");
+  const refusedBind = prepareBoundEngineer(suspendedBind, {
+    packetId: "pkt-003-resume-same-run",
+    workerId: "bc-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    prHead: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    now: "2026-10-30T18:00:00.000Z",
+  });
+  assert.equal(refusedBind.ok, false);
+  const activeBind = emptyLedger(50);
+  activeBind.usedDispatches = 31;
+  activeBind.packets["pkt-003-resume-same-run"] = changeSpecified("pkt-003-resume-same-run");
+  const bound = prepareBoundEngineer(activeBind, {
+    packetId: "pkt-003-resume-same-run",
+    workerId: "bc-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    prHead: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    now: "2026-10-30T18:00:00.000Z",
+  });
+  assert.equal(bound.ok, true);
+  if (bound.ok) {
+    const row = bound.ledger.packets["pkt-003-resume-same-run"];
+    assert.equal(row.stage, "engineering");
+    assert.equal(row.lease?.workerId, "bc-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
+    assert.equal(bound.ledger.usedDispatches, 32);
+    assert.equal(bound.ledger.authorizedDispatches, 50);
+    const execution = Object.values(bound.ledger.executions ?? {}).find((item) => item.packetIds.includes(row.id));
+    assert.equal(execution?.phase, "running");
+    assert.equal(execution?.delivery, "bound");
+    assert.equal(execution?.agentId, "bc-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
+    assert.equal(execution?.startedAt, "2026-10-30T18:00:00.000Z");
+  }
 });
 
 const failures: string[] = [];

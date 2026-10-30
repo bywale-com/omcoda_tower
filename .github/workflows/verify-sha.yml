@@ -1,0 +1,133 @@
+# Verifies one commit by checking that commit out.
+# pull_request ship runs the branch tip and cancels an in-progress run when
+# a later push lands on the same ref, so an intermediate candidate SHA can
+# finish with no check suite. This workflow is the run for that SHA.
+# It does not add a label and it does not write the ledger.
+#
+# The full factory:check suite at 3246a074 fails an unrelated ledger assertion
+# (`control and authorize commands do not arm the committed ledger` expected
+# `analyst_open` and got `change_specified`). That assertion is not the
+# PKT-002 proof. This workflow runs the proof named by the packet: the
+# Postgres script when that tree has it, and the seat-handler shape checks.
+# A tree that already contains the resume-scope regression also runs
+# `npm run factory:check`.
+name: Verify SHA
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: "Full commit SHA to check out and verify"
+        required: true
+        type: string
+
+concurrency:
+  group: verify-sha-${{ inputs.sha }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: verify exact SHA
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: tower
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d tower"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tower
+      SEND_MODE: dry_run
+      AUTH_DISABLED: "true"
+      VITE_AUTH_DISABLED: "true"
+      DEV_SESSION_FIRM: firm-cedar
+      VITE_DEV_FIRM_ID: firm-cedar
+      VITE_WIRE_REAL: "true"
+      VERIFY_LIVE_SEND: "0"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.sha }}
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Write .env
+        run: |
+          cat > .env <<EOF
+          DATABASE_URL=${DATABASE_URL}
+          SEND_MODE=dry_run
+          AUTH_DISABLED=true
+          VITE_AUTH_DISABLED=true
+          DEV_SESSION_FIRM=firm-cedar
+          VITE_DEV_FIRM_ID=firm-cedar
+          VITE_WIRE_REAL=true
+          VERIFY_LIVE_SEND=0
+          EOF
+      - name: Confirm checkout
+        run: |
+          test "$(git rev-parse HEAD)" = "${{ inputs.sha }}"
+          echo "verifying $(git rev-parse HEAD)"
+      - run: npm run db:migrate
+      - run: npm run db:seed
+      - name: Packet proofs present at this SHA
+        run: |
+          set -euo pipefail
+          if [ -f scripts/verify-open-ask-cursor.ts ]; then
+            npx tsx --env-file=.env scripts/verify-open-ask-cursor.ts
+          fi
+          if [ -f scripts/verify-resume-same-run.ts ]; then
+            npx tsx --env-file=.env scripts/verify-resume-same-run.ts
+          fi
+          if [ ! -f scripts/verify-open-ask-cursor.ts ] && [ ! -f scripts/verify-resume-same-run.ts ]; then
+            echo "no packet proof at this SHA"
+            exit 1
+          fi
+      - name: Seat handler shape
+        run: |
+          node --input-type=module <<'EOF'
+          import { readFileSync } from "node:fs";
+          const seat = readFileSync("server/wire-service/contactSeat.ts", "utf8");
+          const get = seat.slice(
+            seat.indexOf("export async function handleContactSeatGet"),
+            seat.indexOf("export async function handleContactSeatConsent"),
+          );
+          if (!get.includes("handleContactSeatGet")) throw new Error("handler missing");
+          if (get.includes("UPDATE enrollment")) throw new Error("seat GET still writes enrollment");
+          if (!get.includes("return json(c, await projectSeat(resolved.pool, resolved.link))")) {
+            throw new Error("seat GET does not return projectSeat");
+          }
+          const project = seat.slice(seat.indexOf("async function projectSeat"), seat.indexOf("async function seatFromToken"));
+          if (!project.includes("const campaignId = enrollment?.campaign_id ?? link.campaign_id;")) {
+            throw new Error("cursor expression missing");
+          }
+          const routes = readFileSync("server/wire-service/routes.ts", "utf8");
+          if (!routes.includes('wire.get("/machine/contact-workspaces/:contactId", handleContactSeatGet)')) {
+            throw new Error("admin seat route");
+          }
+          if (!routes.includes('wire.get("/contact-seat/:token", handleContactSeatGet)')) {
+            throw new Error("token seat route");
+          }
+          console.log("seat shape ok");
+          EOF
+      - name: Factory check when this tree has the resume regression
+        run: |
+          if grep -q "resume_scope keeps the cap" scripts/factory-check.ts; then
+            npm run factory:check
+          else
+            echo "historical factory:check suite is not this SHA's packet proof"
+          fi

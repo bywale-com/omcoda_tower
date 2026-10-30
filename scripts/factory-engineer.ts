@@ -39,7 +39,7 @@ function git(args: string[]): string {
 const remote = git(["remote", "get-url", "origin"]);
 const slug = remote.match(/github\.com[:/]([^/]+)\/([^/.]+)/);
 if (!slug) fail("ledger_branch_unset");
-const branch = git(["rev-parse", "--abbrev-ref", "HEAD"]);
+const branch = process.env.FACTORY_LEDGER_BRANCH?.trim() || git(["rev-parse", "--abbrev-ref", "HEAD"]);
 if (!branch || branch === "HEAD") fail("ledger_branch_unset");
 
 const store = new GitHubContentsStore(

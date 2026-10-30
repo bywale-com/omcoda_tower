@@ -10,7 +10,15 @@
  *
  * This module does not call GitHub or Cursor. The caller passes `now`.
  */
-import type { DispatchRecord, SiblingLink, WorkItem } from "./machine.ts";
+import {
+  acknowledgeDispatch,
+  applyEvent,
+  decide,
+  type DispatchRecord,
+  type SiblingLink,
+  type WorkItem,
+  type World,
+} from "./machine.ts";
 
 export const PENDING_RESERVE_MS = 30 * 60 * 1000;
 export const START_HOLD_MS = 15 * 60 * 1000;
@@ -41,6 +49,11 @@ export interface WorkerExecution {
   prHead: string;
   agentId: string | null;
   continuation: "fresh" | "resume";
+  /**
+   * `bound` means an already-running agent was recorded without adding a wake label.
+   * Absent means the label actuator confirmed the wake.
+   */
+  delivery?: "label" | "bound";
   issuedAt: string;
   startedAt: string | null;
   runningAt: string | null;
@@ -120,6 +133,7 @@ export function openExecution(input: {
   continuation: "fresh" | "resume";
   agentId?: string | null;
   reserveMs?: number;
+  delivery?: "label" | "bound";
 }): { execution: WorkerExecution; assignment: Assignment } {
   const primary = input.packetIds[0] ?? input.effect;
   const id = `dsp-${input.stateRevision + 1}-${input.role}-${primary}`;
@@ -135,6 +149,7 @@ export function openExecution(input: {
     prHead: input.prHead,
     agentId: input.agentId ?? null,
     continuation: input.continuation,
+    ...(input.delivery ? { delivery: input.delivery } : {}),
     issuedAt: input.now,
     startedAt: null,
     runningAt: null,
@@ -171,8 +186,86 @@ export function liveExecutionFor(ledger: ExecutionLedger, packetId: string): Wor
   return (
     Object.values(executionsOf(ledger)).find(
       (execution) => execution.packetIds.includes(packetId) && !isTerminal(execution.phase),
-    ) ?? null
+    )     ?? null
   );
+}
+
+/**
+ * Record an engineer assignment for an agent that is already executing.
+ * Does not add a wake label. Spends one dispatch. The cap is unchanged.
+ */
+export function prepareBoundEngineer<T extends ExecutionLedger & { authorizedDispatches: number | null; scope?: { status?: string } }>(
+  ledger: T,
+  opts: { packetId: string; workerId: string; prHead: string; now: string },
+): { ok: true; reason: "bound"; ledger: T } | { ok: false; reason: string; ledger: T } {
+  const refuse = (reason: string) => ({ ok: false as const, reason, ledger });
+  const packet = ledger.packets[opts.packetId];
+  if (!packet) return refuse("unknown_packet");
+  if (!/^bc-[0-9a-f-]{8,}$/i.test(opts.workerId)) return refuse("worker_id_missing");
+  if (!/^[0-9a-f]{7,64}$/i.test(opts.prHead)) return refuse("pr_head_mismatch");
+  const scopeStatus = ledger.scope?.status;
+  const world: World = {
+    activation: "active",
+    now: opts.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+    authorizedDispatches: ledger.authorizedDispatches,
+    usedDispatches: ledger.usedDispatches,
+    scopeStatus:
+      scopeStatus === "active" || scopeStatus === "suspended" || scopeStatus === "inactive" || scopeStatus === "complete"
+        ? scopeStatus
+        : undefined,
+  };
+  const occupied = Object.values(ledger.packets).some((other) => {
+    if (other.id === opts.packetId) return false;
+    if (other.stage === "engineering" && other.lease && other.lease.until > opts.now) return true;
+    if (other.stage === "change_specified" && other.dispatchedEngineerRevision === other.revision) return true;
+    const execution = liveExecutionFor(ledger, other.id);
+    return Boolean(execution && execution.role === "engineer" && executionOccupies(execution, opts.now));
+  });
+  if (occupied) return refuse("concurrency");
+  const decision = decide(packet, world);
+  if (decision.effect !== "wake_engineer") return refuse(decision.reason);
+  const next = structuredClone(ledger) as T;
+  const opened = openExecution({
+    stateRevision: next.stateRevision,
+    role: "engineer",
+    effect: "wake_engineer",
+    packetIds: [packet.id],
+    revisions: { [packet.id]: packet.revision },
+    label: "factory-wake-engineer",
+    prHead: opts.prHead,
+    now: opts.now,
+    continuation: "fresh",
+    agentId: opts.workerId,
+    delivery: "bound",
+  });
+  let stamped = acknowledgeDispatch(next.packets[packet.id], "wake_engineer", { prHead: opts.prHead, issuedAt: opts.now });
+  if (stamped.dispatch) {
+    stamped.dispatch.executionId = opened.execution.id;
+    stamped.dispatch.assignmentId = opened.assignment.id;
+  }
+  const until = plusMs(opts.now, 60 * 60 * 1000);
+  const leased = applyEvent(
+    stamped,
+    { type: "acquire_lease", workerId: opts.workerId, role: "engineer", until, revision: packet.revision },
+    world,
+  );
+  if (!leased.ok) return refuse(leased.reason);
+  stamped = leased.item;
+  next.packets = { ...next.packets, [packet.id]: stamped };
+  next.executions = { ...(next.executions ?? {}), [opened.execution.id]: opened.execution };
+  opened.assignment.initiativeId = packet.initiativeId;
+  next.assignments = { ...(next.assignments ?? {}), [opened.assignment.id]: opened.assignment };
+  next.usedDispatches += 1;
+  let drafted = applyWorkerSignal(next, packet.id, { type: "acknowledge_start", workerId: opts.workerId, now: opts.now });
+  drafted = applyWorkerSignal(drafted, packet.id, {
+    type: "running",
+    workerId: opts.workerId,
+    now: opts.now,
+    leaseUntil: until,
+  });
+  return { ok: true, reason: "bound", ledger: drafted };
 }
 
 /**
@@ -277,7 +370,7 @@ export interface ProductionMetrics {
 
 export function productionMetrics(ledger: ExecutionLedger): ProductionMetrics {
   const executions = Object.values(executionsOf(ledger));
-  const fresh = executions.filter((execution) => execution.continuation !== "resume");
+  const fresh = executions.filter((execution) => execution.continuation !== "resume" && execution.delivery !== "bound");
   const resumed = executions.filter((execution) => execution.continuation === "resume");
   const refusedOrFailed = executions.filter((execution) => execution.phase === "refused" || execution.phase === "failed");
   const completed = executions.filter((execution) => execution.phase === "completed" && execution.packetIds.length > 0);

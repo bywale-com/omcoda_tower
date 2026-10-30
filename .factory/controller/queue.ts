@@ -41,6 +41,12 @@ export type LedgerEvent =
   | { type: "authorize_scope"; id: string; modules: string[]; authorizedDispatches: number }
   | { type: "suspend"; reason: string }
   | {
+      type: "resume_scope";
+      reason: string;
+      authorizedDispatches: number;
+      lanes?: Array<"engineer" | "analyst" | "architect"> | null;
+    }
+  | {
       type: "register_initiative";
       initiative: {
         id: string;
@@ -216,6 +222,22 @@ export function applyLedgerEvent(ledger: FactoryLedger, event: LedgerEvent, worl
     if (!event.reason) return refuse("suspension_reason_missing");
     next.scope = { ...next.scope, status: "suspended", blockReason: event.reason };
     return accept("suspended");
+  }
+
+  if (event.type === "resume_scope") {
+    if (next.scope.status !== "suspended") return refuse("not_suspended");
+    if (!event.reason) return refuse("resume_reason_missing");
+    if (event.authorizedDispatches !== next.authorizedDispatches) return refuse("cap_changed");
+    if (event.lanes?.some((lane) => lane !== "engineer" && lane !== "analyst" && lane !== "architect")) {
+      return refuse("lane_invalid");
+    }
+    next.scope = {
+      ...next.scope,
+      status: "active",
+      blockReason: null,
+      lanes: event.lanes === undefined ? null : event.lanes,
+    };
+    return accept("scope_resumed");
   }
 
   if (event.type === "register_initiative") {
@@ -582,18 +604,34 @@ export function controlStep(ledger: FactoryLedger, world: World): ControlStep {
     packetWakes.push({ kind: "packet", id: packet.id, decision });
     if (decision.effect === "wake_engineer" || decision.effect === "wake_repair") engineerSlot = true;
   }
-  if (packetWakes.length) return { ledger: next, wakes: packetWakes, reason: packetWakes[0].decision.reason };
+  const lanes = next.scope.lanes ?? null;
+  const allowedPackets = filterLanes(packetWakes, lanes);
+  if (packetWakes.length && !allowedPackets.length) return { ledger: next, wakes: [], reason: "lane_held" };
+  if (allowedPackets.length) return { ledger: next, wakes: allowedPackets, reason: allowedPackets[0].decision.reason };
   if (saOpen) return { ledger: next, wakes: [], reason: "analyst_open" };
   if (analystLeaseOpen(next, scoped.now)) return { ledger: next, wakes: [], reason: "analysis_open" };
   const architect = decideScope(next, packetWorld);
   if (architect.effect !== "none" && architect.initiativeId) {
-    return {
-      ledger: next,
-      wakes: [{ kind: "initiative", id: architect.initiativeId, decision: architect }],
-      reason: architect.reason,
-    };
+    const architectWake: WakeProposal = { kind: "initiative", id: architect.initiativeId, decision: architect };
+    const allowedArchitect = filterLanes([architectWake], lanes);
+    if (!allowedArchitect.length) return { ledger: next, wakes: [], reason: "lane_held" };
+    return { ledger: next, wakes: allowedArchitect, reason: architect.reason };
   }
   return { ledger: next, wakes: [], reason: architect.reason };
+}
+
+function filterLanes(
+  wakes: WakeProposal[],
+  lanes: Array<"engineer" | "analyst" | "architect"> | null,
+): WakeProposal[] {
+  if (!lanes) return wakes;
+  return wakes.filter((wake) => {
+    const effect = wake.decision.effect;
+    if (effect === "wake_engineer" || effect === "wake_repair") return lanes.includes("engineer");
+    if (effect === "wake_sa") return lanes.includes("analyst");
+    if (effect === "wake_architect") return lanes.includes("architect");
+    return false;
+  });
 }
 
 export function projectFactory(ledger: FactoryLedger): ReadModel {

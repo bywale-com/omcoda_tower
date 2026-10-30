@@ -47,6 +47,11 @@ export interface ScopeState {
   modules: string[];
   founderDecision: string | null;
   blockReason: string | null;
+  /**
+   * Null or absent allows every lane. A list withholds the lanes it does not name.
+   * It cannot raise the dispatch cap or authorize a wake the machine would refuse.
+   */
+  lanes?: Array<"engineer" | "analyst" | "architect"> | null;
 }
 
 export type InitiativeQueue = "discovered" | "eligible" | "active" | "blocked" | "completed";
