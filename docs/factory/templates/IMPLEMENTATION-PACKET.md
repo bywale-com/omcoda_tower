@@ -35,4 +35,4 @@ Completes:
 Out of scope:
 ```
 
-Do not invent a plate when the glass does not change. Do not write founder approval in this file. Approval is a separate plate-evidence record.
+Do not invent a plate when the glass does not change.

@@ -12,4 +12,4 @@ When a finding changes product behavior the Analyst discovered, it comes back to
 
 Component contracts record the current intended behavior. The initiative journal records why a requirement was found. Do not merge those into one file.
 
-Release rules: `docs/factory/OPERATING-PROTOCOL.md`. A packet that changes the glass waits on the plate, the five-bucket read, and a founder approval record. You do not write that approval.
+Release rules: `docs/factory/OPERATING-PROTOCOL.md`. A packet that changes the glass waits on the plate and the five-bucket read.

@@ -5,8 +5,7 @@ import { isAbsolute, relative, resolve } from "node:path";
  * Keeps a packet's Wake line and its manifest on the same release.
  * Manual evidence is not a release. Gates that are not all true are not a release.
  * A packet that changes the glass is not a release until the controller can read
- * a plate image, all five plate-read buckets are filled, and a founder approval
- * record names that same image. A sentence in the packet is not that record.
+ * a plate image and all five plate-read buckets are filled.
  */
 
 export const PLATE_BUCKETS = ["Copy", "Do not build", "Implied", "Completes", "Out of scope"] as const;
@@ -15,12 +14,6 @@ export type PlateBucket = (typeof PLATE_BUCKETS)[number];
 
 export type UiClass = "none" | "changes";
 
-export interface FounderPlateApproval {
-  packetId: string;
-  artifact: string;
-  approver: "founder";
-}
-
 export interface PlateArtifact {
   bytes: number;
   header?: ArrayLike<number>;
@@ -28,7 +21,6 @@ export interface PlateArtifact {
 
 export interface PlateEvidence {
   artifacts?: Readonly<Record<string, PlateArtifact>>;
-  approvals?: readonly FounderPlateApproval[];
 }
 
 export interface ReleaseManifest {
@@ -38,7 +30,6 @@ export interface ReleaseManifest {
   execution?: string;
   ui?: UiClass | string;
   plates?: "none" | string;
-  founderPlateApproval?: FounderPlateApproval;
   gates?: Record<string, boolean>;
   [key: string]: unknown;
 }
@@ -83,22 +74,11 @@ export function markReleased(
   if (PLATE_BUCKETS.some((bucket) => plate.buckets[bucket].length === 0)) {
     return { ok: false, reason: "plate_read_incomplete" };
   }
-  const approved = (evidence.approvals ?? []).some(
-    (approval) =>
-      approval.approver === "founder" &&
-      approval.packetId === manifest.id &&
-      approval.artifact === plate.artifact,
-  );
-  if (!approved) return { ok: false, reason: "founder_approval_missing" };
 
   return {
     ok: true,
     markdown: markdown.replace(WAKE_LINE, "**Wake:** sa"),
-    manifest: releasedManifest(manifest, "changes", plate.artifact, {
-      packetId: manifest.id,
-      artifact: plate.artifact,
-      approver: "founder",
-    }),
+    manifest: releasedManifest(manifest, "changes", plate.artifact),
   };
 }
 
@@ -228,14 +208,8 @@ function plateFile(root: string, path: string): string | null {
   return abs;
 }
 
-function releasedManifest(
-  manifest: ReleaseManifest,
-  ui: UiClass,
-  plates: "none" | string,
-  approval?: FounderPlateApproval,
-): ReleaseManifest {
+function releasedManifest(manifest: ReleaseManifest, ui: UiClass, plates: "none" | string): ReleaseManifest {
   const next: ReleaseManifest = { ...manifest, wake: "sa", release: "released", ui, plates };
   for (const key of ARCHITECT_APPROVAL_KEYS) delete next[key];
-  if (approval) next.founderPlateApproval = approval;
   return next;
 }

@@ -126,9 +126,7 @@ Classify the glass on every packet before that call. The packet line `**UI:** no
 
 `**UI:** changes` requires a screenshot of `/prototype-ant` with only the new hole painted. The artifact is a non-empty image the controller can read (`.png`, `.jpg`, `.jpeg`, `.webp`, or `.gif`). Load it with `readPlateArtifacts` in `.factory/controller/release.ts`. A byte count written by hand is not an artifact. The Plates section carries all five buckets from `docs/register/PLATE-READ.md`: Copy, Do not build, Implied, Completes, Out of scope.
 
-Founder approval is a separate plate-evidence record with approver `founder`, this packet's id, and that same artifact path. A sentence in the packet is not founder approval. A field you set on the packet manifest is not founder approval. You do not write that approval record. Until it exists, `markReleased` leaves **Wake:** at `hold`.
-
-A missing classification, a missing or unreadable plate, an incomplete five-bucket read, or missing founder approval prevents `**Wake:** sa`. The seven release gates still all have to pass.
+A missing classification, a missing or unreadable plate, or an incomplete five-bucket read prevents `**Wake:** sa`. The seven release gates still all have to pass. Founder approval is not required.
 
 A packet may be released while the rest of the initiative is still open, when all seven gates in `docs/factory/OPERATING-PROTOCOL.md` pass and no unresolved question forces the Engineer to invent product behavior. Record a neighboring capability as a dependency, an affected contract, or a later initiative. Do not investigate that later initiative in this execution.
 

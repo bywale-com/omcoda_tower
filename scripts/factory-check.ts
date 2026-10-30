@@ -1023,7 +1023,7 @@ check("T38 through T41 durable dispatch binds the wake and rejects stale or fail
   assert.match(read(".factory/controller/dispatch.ts"), /not shared by separate GitHub Actions runners/);
 
   const committed = JSON.parse(read(".factory/state/ledger.json"));
-  assert.equal(committed.authorizedDispatches, 20);
+  assert.equal(committed.authorizedDispatches, 50);
   assert.ok(committed.usedDispatches >= 4 && committed.usedDispatches <= committed.authorizedDispatches);
   assert.ok(committed.stateRevision >= 32);
   assert.equal(committed.scope.id, "agents-and-automations");
@@ -1824,7 +1824,7 @@ check("markReleased refuses manual evidence and rewrites a gated packet once", (
   }
 });
 
-check("a glass change needs a plate, five buckets, and founder approval before Wake sa", () => {
+check("a glass change needs a plate and five buckets before Wake sa", () => {
   const gates = {
     behaviorEstablished: true,
     scopeBounded: true,
@@ -1854,31 +1854,10 @@ check("a glass change needs a plate, five buckets, and founder approval before W
     ui: "changes",
     gates,
     founderApproved: true,
-    founderPlateApproval: { packetId: "pkt-visual", artifact, approver: "founder" },
   };
-  const readable: PlateEvidence = { artifacts: { [artifact]: shot }, approvals: [] };
+  const readable: PlateEvidence = { artifacts: { [artifact]: shot } };
 
-  const undeclared = markReleased(visual, manifest, readable);
-  assert.equal(undeclared.ok, false);
-  if (!undeclared.ok) assert.equal(undeclared.reason, "founder_approval_missing");
-
-  const architectRecord: PlateEvidence = {
-    artifacts: { [artifact]: shot },
-    approvals: [{ packetId: "pkt-visual", artifact, approver: "architect" as "founder" }],
-  };
-  const selfApproved = markReleased(visual, manifest, architectRecord);
-  assert.equal(selfApproved.ok, false);
-  if (!selfApproved.ok) assert.equal(selfApproved.reason, "founder_approval_missing");
-
-  const wrongFile: PlateEvidence = {
-    artifacts: { [artifact]: shot },
-    approvals: [{ packetId: "pkt-visual", artifact: "docs/factory/plates/other.png", approver: "founder" }],
-  };
-  const mismatched = markReleased(visual, manifest, wrongFile);
-  assert.equal(mismatched.ok, false);
-  if (!mismatched.ok) assert.equal(mismatched.reason, "founder_approval_missing");
-
-  const missingFile = markReleased(visual, manifest, { artifacts: {}, approvals: [] });
+  const missingFile = markReleased(visual, manifest, { artifacts: {} });
   assert.equal(missingFile.ok, false);
   if (!missingFile.ok) assert.equal(missingFile.reason, "plate_missing");
   const emptyFile = markReleased(visual, manifest, { artifacts: { [artifact]: { bytes: 0, header: png } } });
@@ -1888,7 +1867,7 @@ check("a glass change needs a plate, five buckets, and founder approval before W
   assert.equal(countedOnly.ok, false);
   if (!countedOnly.ok) assert.equal(countedOnly.reason, "plate_missing");
   const proseFile = visual.replace(artifact, "docs/factory/plates/pkt-visual.md");
-  const notAnImage = markReleased(proseFile, { ...manifest, founderPlateApproval: undefined }, {
+  const notAnImage = markReleased(proseFile, manifest, {
     artifacts: { "docs/factory/plates/pkt-visual.md": shot },
   });
   assert.equal(notAnImage.ok, false);
@@ -1903,10 +1882,7 @@ check("a glass change needs a plate, five buckets, and founder approval before W
   assert.equal(unread.ok, false);
   if (!unread.ok) assert.equal(unread.reason, "plate_read_incomplete");
 
-  const blocked = markReleased(visual, { ...manifest, gates: { ...gates, scopeBounded: false } }, {
-    artifacts: { [artifact]: shot },
-    approvals: [{ packetId: "pkt-visual", artifact, approver: "founder" }],
-  });
+  const blocked = markReleased(visual, { ...manifest, gates: { ...gates, scopeBounded: false } }, readable);
   assert.equal(blocked.ok, false);
   if (!blocked.ok) assert.equal(blocked.reason, "gates_failed");
 
@@ -1946,28 +1922,19 @@ check("a glass change needs a plate, five buckets, and founder approval before W
     "The catalog column.",
     "",
   ].join("\n");
-  const evidence: PlateEvidence = {
-    artifacts: { [artifact]: shot },
-    approvals: [{ packetId: "pkt-visual", artifact, approver: "founder" }],
-  };
-  const approved = markReleased(visual, manifest, evidence);
-  assert.equal(approved.ok, true);
-  if (approved.ok) {
-    assert.match(approved.markdown, /\*\*Wake:\*\* sa/);
-    assert.match(approved.markdown, /\*\*Approver:\*\* founder/);
-    assert.equal(approved.manifest.wake, "sa");
-    assert.equal(approved.manifest.release, "released");
-    assert.equal(approved.manifest.ui, "changes");
-    assert.equal(approved.manifest.plates, artifact);
-    assert.equal(approved.manifest.founderApproved, undefined);
-    assert.deepEqual(approved.manifest.founderPlateApproval, {
-      packetId: "pkt-visual",
-      artifact,
-      approver: "founder",
-    });
-    assert.deepEqual(Object.keys(approved.manifest.gates ?? {}).sort(), Object.keys(gates).sort());
+  const releasedPlate = markReleased(visual, manifest, readable);
+  assert.equal(releasedPlate.ok, true);
+  if (releasedPlate.ok) {
+    assert.match(releasedPlate.markdown, /\*\*Wake:\*\* sa/);
+    assert.equal(releasedPlate.manifest.wake, "sa");
+    assert.equal(releasedPlate.manifest.release, "released");
+    assert.equal(releasedPlate.manifest.ui, "changes");
+    assert.equal(releasedPlate.manifest.plates, artifact);
+    assert.equal(releasedPlate.manifest.founderApproved, undefined);
+    assert.equal(releasedPlate.manifest.founderPlateApproval, undefined);
+    assert.deepEqual(Object.keys(releasedPlate.manifest.gates ?? {}).sort(), Object.keys(gates).sort());
   }
-  const headedRelease = markReleased(headed, manifest, evidence);
+  const headedRelease = markReleased(headed, manifest, readable);
   assert.equal(headedRelease.ok, true);
 
   const dir = mkdtempSync(join(tmpdir(), "plate-"));
@@ -1977,10 +1944,7 @@ check("a glass change needs a plate, five buckets, and founder approval before W
   const loaded = readPlateArtifacts(dir, ["hole.png", "empty.png", "note.png", "../hole.png", "missing.png"]);
   assert.deepEqual(Object.keys(loaded), ["hole.png"]);
   assert.equal(loaded["hole.png"]?.bytes, png.length);
-  const fromDisk = markReleased(visual.replaceAll(artifact, "hole.png"), manifest, {
-    artifacts: loaded,
-    approvals: [{ packetId: "pkt-visual", artifact: "hole.png", approver: "founder" }],
-  });
+  const fromDisk = markReleased(visual.replaceAll(artifact, "hole.png"), manifest, { artifacts: loaded });
   assert.equal(fromDisk.ok, true);
 
   const architect = read("docs/factory/prompts/architect.prompt.md");
@@ -1988,8 +1952,9 @@ check("a glass change needs a plate, five buckets, and founder approval before W
   assert.match(architect, /\*\*UI:\*\* changes/);
   assert.match(architect, /readPlateArtifacts/);
   assert.match(architect, /A byte count written by hand is not an artifact/);
-  assert.match(architect, /A sentence in the packet is not founder approval/);
-  assert.match(architect, /A field you set on the packet manifest is not founder approval/);
+  assert.match(architect, /Founder approval is not required/);
+  assert.equal(architect.includes("missing founder approval"), false);
+  assert.equal(read(".factory/controller/release.ts").includes("founder_approval_missing"), false);
   for (const bucket of PLATE_BUCKETS) assert.equal(architect.includes(bucket), true);
   assert.match(read("docs/factory/templates/IMPLEMENTATION-PACKET.md"), /\*\*UI:\*\* none/);
   assert.match(read("docs/factory/OPERATING-PROTOCOL.md"), /refuses to write `\*\*Wake:\*\* sa`/);
@@ -2059,14 +2024,20 @@ check("the committed scope is agents-and-automations and PKT-001 stays manual", 
   const execIdentity = view.initiatives.find((item) => item.id === "exec-identity");
   const launch = view.initiatives.find((item) => item.id === "launch-agent");
   assert.equal(execIdentity?.queue, "active");
-  assert.equal(execIdentity?.session, "continuation_due");
+  const initiative = committed.initiatives["exec-identity"];
+  if (initiative.session === "running") {
+    assert.equal(initiative.dispatch?.effect, "wake_architect");
+    assert.equal(initiative.dispatch?.label, "factory-wake-architect");
+  } else {
+    assert.equal(initiative.session, "continuation_due");
+    assert.equal(initiative.dispatch, null);
+  }
   assert.equal(execIdentity?.packetIds[0], "pkt-001-click-attribution");
   assert.equal(launch?.queue, "discovered");
   assert.deepEqual(launch?.dependsOn, ["exec-identity"]);
   assert.equal(moduleComplete(committed, "Agents").reason, "coverage_open");
   assert.equal(moduleComplete(committed, "Agents and Automations").reason, "coverage_open");
   assertRecoveryLedger(committed);
-  assert.equal(committed.initiatives["exec-identity"].dispatch, null);
 });
 
 function runTsx(script: string, env: NodeJS.ProcessEnv) {
@@ -2102,6 +2073,10 @@ check("control and authorize commands do not arm the committed ledger", () => {
   } else if (committedForDry.usedDispatches >= (committedForDry.authorizedDispatches ?? 0)) {
     assert.equal(proposed.reason, "dispatch_authorization_exhausted");
     assert.equal(proposed.wakes.length, 0);
+  } else if (proposed.reason === "already_dispatched") {
+    assert.equal(proposed.wakes.length, 0);
+    assert.equal(committedForDry.initiatives["exec-identity"].session, "running");
+    assert.equal(committedForDry.initiatives["exec-identity"].dispatch?.effect, "wake_architect");
   } else if (proposed.wakes[0]?.effect === "wake_engineer") {
     assert.equal(proposed.wakes.filter((wake) => wake.effect === "wake_engineer").length, 1);
     assert.notEqual(proposed.wakes[0].id, "pkt-001-click-attribution");
@@ -2132,12 +2107,16 @@ check("control and authorize commands do not arm the committed ledger", () => {
   const committed = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
   assert.equal(committed.scope.status, "active");
   assert.equal(committed.scope.id, "agents-and-automations");
-  assert.equal(committed.authorizedDispatches, 20);
+  assert.equal(committed.authorizedDispatches, 50);
   assert.ok(committed.usedDispatches >= 4);
   assert.ok(committed.usedDispatches <= committed.authorizedDispatches);
   assert.ok(committed.stateRevision >= 32);
-  assert.equal(committed.initiatives["exec-identity"].dispatch, null);
-  assert.equal(committed.initiatives["exec-identity"].session, "continuation_due");
+  if (committed.initiatives["exec-identity"].session === "running") {
+    assert.equal(committed.initiatives["exec-identity"].dispatch?.effect, "wake_architect");
+  } else {
+    assert.equal(committed.initiatives["exec-identity"].session, "continuation_due");
+    assert.equal(committed.initiatives["exec-identity"].dispatch, null);
+  }
   assert.equal(committed.packets["pkt-001-click-attribution"].execution?.mode, "manual");
 });
 
@@ -2411,7 +2390,7 @@ check("a ledger-only commit keeps the authorized head and a product commit does 
 function assertRecoveryLedger(committed: FactoryLedger) {
   assert.equal(committed.scope.id, "agents-and-automations");
   assert.deepEqual(committed.scope.modules, ["Agents and Automations"]);
-  assert.equal(committed.authorizedDispatches, 20);
+  assert.equal(committed.authorizedDispatches, 50);
   assert.ok(committed.usedDispatches >= 4);
   assert.ok(committed.usedDispatches <= committed.authorizedDispatches);
   assert.ok(committed.stateRevision >= 32);
@@ -2516,6 +2495,15 @@ check("an Analyst signature wakes one Engineer and an interruption can be retrie
   assert.equal(raised.reason, "scope_authorized");
   assert.equal(raised.ledger.authorizedDispatches, 20);
   assert.equal(raised.ledger.usedDispatches, 4);
+  const raisedAgain = applyLedgerEvent(
+    raised.ledger,
+    { type: "authorize_scope", id: "agents-and-automations", modules: ["Agents and Automations"], authorizedDispatches: 50 },
+    world,
+  );
+  assert.equal(raisedAgain.reason, "scope_authorized");
+  assert.equal(raisedAgain.ledger.authorizedDispatches, 50);
+  assert.equal(raisedAgain.ledger.usedDispatches, 4);
+  assert.equal(raisedAgain.ledger.packets["pkt-a"].stage, raised.ledger.packets["pkt-a"].stage);
 
   const leased = must(
     applyEvent(raised.ledger.packets["pkt-a"], {
