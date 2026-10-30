@@ -1,5 +1,5 @@
 {
-  "stateRevision": 148,
+  "stateRevision": 149,
   "authorizedDispatches": 50,
   "usedDispatches": 38,
   "scope": {
@@ -1423,7 +1423,7 @@
       "id": "dsp-148-engineer-pkt-008-meeting-writes",
       "assignmentId": "asg-dsp-148-engineer-pkt-008-meeting-writes",
       "role": "engineer",
-      "phase": "dispatched",
+      "phase": "started",
       "packetIds": [
         "pkt-008-meeting-writes"
       ],
@@ -1432,14 +1432,14 @@
       },
       "label": "factory-wake-engineer",
       "prHead": "b86188af3e385bc2c2bb3dcc89a6733a83111967",
-      "agentId": null,
+      "agentId": "bc-85ddf227-1c40-454f-a9ba-260b6dbd6a6d",
       "continuation": "fresh",
       "issuedAt": "2026-10-30T19:00:57.908Z",
-      "startedAt": null,
+      "startedAt": "2026-10-30T19:01:57.971Z",
       "runningAt": null,
       "endedAt": null,
       "reserveUntil": "2026-10-30T19:30:57.908Z",
-      "startUntil": null,
+      "startUntil": "2026-10-30T19:16:57.971Z",
       "leaseUntil": null,
       "reason": null
     }
