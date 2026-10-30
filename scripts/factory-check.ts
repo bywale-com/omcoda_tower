@@ -1515,6 +1515,148 @@ check("three id-keyed tables load by primary key and the generic action stores t
   assert.match(read(".github/workflows/ship.yml"), /verify-id-keyed-loads\.ts/);
 });
 
+check("a fact firing publishes the inserted write-back id", () => {
+  function sliceFn(source: string, start: string, end: string): string {
+    const at = source.indexOf(start);
+    assert.ok(at >= 0, start);
+    const to = source.indexOf(end, at + start.length);
+    assert.ok(to > at, end);
+    return source.slice(at, to);
+  }
+
+  function objectAt(source: string, braceAt: number): string {
+    let depth = 0;
+    for (let i = braceAt; i < source.length; i += 1) {
+      if (source[i] === "{") depth += 1;
+      else if (source[i] === "}") {
+        depth -= 1;
+        if (depth === 0) return source.slice(braceAt, i + 1);
+      }
+    }
+    assert.fail("unbalanced payload");
+  }
+
+  function payloadOf(fn: string, eventName: string): string {
+    const at = fn.indexOf(`eventName: "${eventName}"`);
+    assert.ok(at >= 0, eventName);
+    const key = fn.indexOf("payload:", at);
+    assert.ok(key > at, eventName);
+    const brace = fn.indexOf("{", key);
+    return objectAt(fn, brace);
+  }
+
+  function writesArray(payload: string): string {
+    const at = payload.indexOf("writes:");
+    assert.ok(at >= 0);
+    const bracket = payload.indexOf("[", at);
+    let depth = 0;
+    for (let i = bracket; i < payload.length; i += 1) {
+      if (payload[i] === "[") depth += 1;
+      else if (payload[i] === "]") {
+        depth -= 1;
+        if (depth === 0) return payload.slice(bracket, i + 1);
+      }
+    }
+    assert.fail("unbalanced writes");
+  }
+
+  const machine = read("server/wire-service/machine.ts");
+  const fact = sliceFn(machine, "export async function handleFactWriteback", "export async function handleFactWritebacksList");
+  const payload = payloadOf(fact, "fact_writebacks");
+  for (const key of [
+    "writebackId: writeId",
+    "fieldKey",
+    "contactId",
+    "form_ref: stamp.formRef",
+    "campaign_objective_id: stamp.campaignObjectiveId",
+  ]) {
+    assert.ok(payload.includes(key), key);
+  }
+  const writes = writesArray(payload);
+  assert.equal(writes.split("{").length - 1, 1);
+  assert.match(writes, /table: "fact_writebacks"/);
+  assert.match(writes, /id: writeId/);
+  assert.match(writes, /contact_id: contactId/);
+  for (const banned of [
+    "firm_id",
+    "contactIds",
+    "contact_ids",
+    "...cascade",
+    "missingIds",
+    "eligibility_evaluations",
+    "eligibility_results",
+    "signals",
+    "motion_decisions",
+  ]) {
+    assert.equal(payload.includes(banned), false, banned);
+  }
+  const dispatch = fact.slice(fact.indexOf('eventName: "fact_writebacks"'));
+  assert.match(dispatch, /contactIds: \[contactId\]/);
+  const required = fact.indexOf('"contactId and fieldKey required"');
+  const insert = fact.indexOf("INSERT INTO fact_writebacks");
+  assert.ok(required >= 0 && required < insert);
+
+  const seatFile = read("server/wire-service/contactSeat.ts");
+  const seat = sliceFn(seatFile, "export async function handleContactSeatFacts", "export async function handleContactSeatMeeting");
+  const seatPayload = payloadOf(seat, "fact_writebacks");
+  const seatWrites = writesArray(seatPayload);
+  assert.equal(seatWrites.split("{").length - 1, 1);
+  assert.match(seatWrites, /table: "fact_writebacks"/);
+  assert.match(seatWrites, /id: writeId/);
+  assert.match(seatWrites, /contact_id: resolved\.link\.contact_id/);
+  assert.ok(seatPayload.includes("firm_id: resolved.link.firm_id"));
+  assert.ok(seatPayload.includes("contact_id: resolved.link.contact_id"));
+  for (const banned of [
+    "contactIds",
+    "contact_ids",
+    "...cascade",
+    "missingIds",
+    "eligibility_evaluations",
+    "eligibility_results",
+    "signals",
+    "motion_decisions",
+  ]) {
+    assert.equal(seatPayload.includes(banned), false, banned);
+  }
+  const skip = seat.indexOf("if (!fieldKey) continue");
+  const seatInsert = seat.indexOf("INSERT INTO fact_writebacks");
+  assert.ok(skip >= 0 && skip < seatInsert);
+
+  const cascade = sliceFn(machine, "export async function runContactEligibilityCascade", "export async function handleFactWriteback");
+  const eligibility = payloadOf(cascade, "eligibility.changed");
+  assert.equal(eligibility.includes("writes"), false);
+
+  const writesFile = read("server/wire-service/runWrites.ts");
+  const fromPayload = writesFile.slice(writesFile.indexOf("export function writesFromPayload"));
+  assert.ok(fromPayload.startsWith("export function writesFromPayload"));
+  assert.equal(fromPayload.includes("writebackId"), false);
+
+  for (const fn of [fact, seat]) {
+    const call = fn.indexOf("onCompletionWrite(");
+    assert.ok(call >= 0);
+    const body = fn.slice(call, fn.indexOf(");", call));
+    assert.match(body, /table: "fact_writebacks"/);
+    assert.match(body, /rowId: writeId/);
+  }
+
+  const housing = read("server/wire-service/campaignHousing.ts");
+  const branch = housing.indexOf('if (objective.completion_table === "fact_writebacks")');
+  assert.ok(branch >= 0);
+  const statement = housing.slice(branch, housing.indexOf("return { ok:", branch));
+  assert.match(statement, /campaign_objective_id = \$3/);
+  assert.match(statement, /ORDER BY created_at DESC LIMIT 1/);
+
+  const filter = read(".github/workflows/factory-check.yml");
+  for (const path of [
+    "server/wire-service/machine.ts",
+    "server/wire-service/runWrites.ts",
+    "scripts/verify-fact-writes.ts",
+  ]) {
+    assert.ok(filter.includes(path), path);
+  }
+  assert.match(read(".github/workflows/ship.yml"), /verify-fact-writes\.ts/);
+});
+
 function sections(): string[] {
   return [
     "intent",

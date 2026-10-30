@@ -606,6 +606,9 @@ export async function handleContactSeatFacts(c: Context) {
         firm_id: resolved.link.firm_id,
         form_ref: stamp.formRef,
         campaign_objective_id: stamp.campaignObjectiveId,
+        writes: [
+          { table: "fact_writebacks", id: writeId, contact_id: resolved.link.contact_id },
+        ],
       },
       contactIds: [resolved.link.contact_id],
     });

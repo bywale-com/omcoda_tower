@@ -23,6 +23,7 @@ on:
       - "scripts/verify-resume-same-run.ts"
       - "scripts/verify-firing-handle.ts"
       - "scripts/verify-id-keyed-loads.ts"
+      - "scripts/verify-fact-writes.ts"
       - "scripts/verify-audit-row-grain.ts"
       - "supabase/migrations/025_audit_row_grain.sql"
       - "scripts/close-walk-gaps.ts"

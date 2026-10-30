@@ -495,6 +495,9 @@ export async function handleFactWriteback(c: Context) {
       contactId,
       form_ref: stamp.formRef,
       campaign_objective_id: stamp.campaignObjectiveId,
+      writes: [
+        { table: "fact_writebacks", id: writeId, contact_id: contactId },
+      ],
     },
     contactIds: [contactId],
   });
