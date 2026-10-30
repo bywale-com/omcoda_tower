@@ -1,5 +1,5 @@
 {
-  "stateRevision": 129,
+  "stateRevision": 130,
   "authorizedDispatches": 50,
   "usedDispatches": 33,
   "scope": {
@@ -255,12 +255,17 @@
     "pkt-004-firing-handle": {
       "id": "pkt-004-firing-handle",
       "initiativeId": "exec-identity",
-      "stage": "change_specified",
+      "stage": "engineering",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": null,
+      "lease": {
+        "workerId": "bc-290d8b85-0254-43aa-bc40-d4576053056c",
+        "role": "engineer",
+        "until": "2026-10-30T19:04:39.044Z",
+        "revision": "rev-1"
+      },
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
@@ -1234,7 +1239,7 @@
       "id": "dsp-128-engineer-pkt-004-firing-handle",
       "assignmentId": "asg-dsp-128-engineer-pkt-004-firing-handle",
       "role": "engineer",
-      "phase": "started",
+      "phase": "running",
       "packetIds": [
         "pkt-004-firing-handle"
       ],
@@ -1247,11 +1252,11 @@
       "continuation": "fresh",
       "issuedAt": "2026-10-30T18:03:26.103Z",
       "startedAt": "2026-10-30T18:04:35.867Z",
-      "runningAt": null,
+      "runningAt": "2026-10-30T18:04:39.044Z",
       "endedAt": null,
       "reserveUntil": "2026-10-30T18:33:26.103Z",
       "startUntil": "2026-10-30T18:19:35.867Z",
-      "leaseUntil": null,
+      "leaseUntil": "2026-10-30T19:04:39.044Z",
       "reason": null
     }
   },
