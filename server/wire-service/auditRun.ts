@@ -74,21 +74,22 @@ export async function executeAuditRun(
           : verdict;
 
     await pool.query(
-      `INSERT INTO reachability_verdicts (contact_id, firm_id, verdict, details)
-       VALUES ($1,$2,$3,$4::jsonb)
-       ON CONFLICT (contact_id, firm_id) DO UPDATE SET
-         verdict=EXCLUDED.verdict, details=EXCLUDED.details, updated_at=now()`,
-      [contact.id, opts.firmId, verdict, JSON.stringify({ auditRunId: runId, rationale })],
+      `INSERT INTO reachability_verdicts (audit_run_id, contact_id, firm_id, verdict, details)
+       VALUES ($1,$2,$3,$4,$5::jsonb)
+       ON CONFLICT (audit_run_id, contact_id) DO UPDATE SET
+         verdict=EXCLUDED.verdict, details=EXCLUDED.details, firm_id=EXCLUDED.firm_id, updated_at=now()`,
+      [runId, contact.id, opts.firmId, verdict, JSON.stringify({ auditRunId: runId, rationale })],
     );
-    writes.push({ table: "reachability_verdicts", id: contact.id, contact_id: contact.id });
+    writes.push({ table: "reachability_verdicts", id: runId, contact_id: contact.id });
 
     await pool.query(
-      `INSERT INTO sequence_ready (contact_id, firm_id, ready)
-       VALUES ($1,$2,$3)
-       ON CONFLICT (contact_id, firm_id) DO UPDATE SET ready=EXCLUDED.ready, updated_at=now()`,
-      [contact.id, opts.firmId, ready],
+      `INSERT INTO sequence_ready (audit_run_id, contact_id, firm_id, ready)
+       VALUES ($1,$2,$3,$4)
+       ON CONFLICT (audit_run_id, contact_id) DO UPDATE SET
+         ready=EXCLUDED.ready, firm_id=EXCLUDED.firm_id, updated_at=now()`,
+      [runId, contact.id, opts.firmId, ready],
     );
-    writes.push({ table: "sequence_ready", id: contact.id, contact_id: contact.id });
+    writes.push({ table: "sequence_ready", id: runId, contact_id: contact.id });
 
     verdicts.push({
       contactId: contact.id,
