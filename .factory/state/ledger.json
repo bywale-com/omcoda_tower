@@ -1,5 +1,5 @@
 {
-  "stateRevision": 193,
+  "stateRevision": 194,
   "authorizedDispatches": 50,
   "usedDispatches": 43,
   "scope": {
@@ -1320,9 +1320,9 @@
     "pkt-019-first-step-send-denied": {
       "id": "pkt-019-first-step-send-denied",
       "initiativeId": "exec-identity",
-      "stage": "engineering",
+      "stage": "returned_analyst",
       "wake": "sa",
-      "revision": "rev-1",
+      "revision": "rev-2",
       "hold": false,
       "blockerId": null,
       "lease": null,
@@ -1331,7 +1331,7 @@
       "candidateSha": null,
       "verifiedSha": null,
       "lastFailureFingerprint": null,
-      "lastFailureClass": null,
+      "lastFailureClass": "systems_contract",
       "dispatchedSaRevision": "rev-1",
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
@@ -1368,7 +1368,17 @@
           "basis": "dependency",
           "note": "019 records the send_denied kind 018 required of a denied send"
         }
-      ]
+      ],
+      "specificationBlock": {
+        "blockedRevision": "rev-1",
+        "revision": "rev-2",
+        "failureClass": "systems_contract",
+        "note": "The systems-change packet cites `004_machine_tables.sql`, where `sequence_id` is nullable and has no foreign key. It forbids inserting `sequence_template`, forbids a migration, and forbids changing that insert.",
+        "escalationNote": null,
+        "workerId": "bc-4192002b-f944-4eeb-919a-1af83d403f28",
+        "executionId": "dsp-172-engineer-pkt-018-send-denied-engagement",
+        "authority": "recorded"
+      }
     }
   },
   "executions": {
