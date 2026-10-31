@@ -1,0 +1,142 @@
+# Verifies each candidate SHA by checking that commit out.
+# A later push on this pull request does not cancel a proof already running.
+# The job records the Actions run id on the factory ledger. It does not merge.
+name: Factory verify
+
+on:
+  pull_request:
+    paths:
+      - ".factory/state/ledger.json"
+      - ".factory/controller/verify.ts"
+      - ".github/workflows/factory-verify.yml"
+      - "scripts/factory-verify.ts"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: factory-verify-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      items: ${{ steps.plan.outputs.items }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - id: plan
+        env:
+          FACTORY_CONTROLLER: ${{ vars.FACTORY_CONTROLLER }}
+          WAKE_GITHUB_TOKEN: ${{ secrets.WAKE_GITHUB_TOKEN }}
+          FACTORY_LEDGER_BRANCH: ${{ github.head_ref }}
+          FACTORY_REPOSITORY: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          npx tsx scripts/factory-verify.ts --plan > /tmp/verify-items.json
+          {
+            echo "items<<EOF"
+            cat /tmp/verify-items.json
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+
+  verify:
+    needs: plan
+    if: fromJson(needs.plan.outputs.items)[0] != null
+    name: ${{ matrix.item.sha }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        item: ${{ fromJson(needs.plan.outputs.items) }}
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: tower
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d tower"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tower
+      SEND_MODE: dry_run
+      AUTH_DISABLED: "true"
+      VITE_AUTH_DISABLED: "true"
+      DEV_SESSION_FIRM: firm-cedar
+      VITE_DEV_FIRM_ID: firm-cedar
+      VITE_WIRE_REAL: "true"
+      VERIFY_LIVE_SEND: "0"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.item.sha }}
+          fetch-depth: 1
+      - name: Confirm checkout
+        run: test "$(git rev-parse HEAD)" = "${{ matrix.item.sha }}"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Write .env
+        run: |
+          cat > .env <<EOF
+          DATABASE_URL=${DATABASE_URL}
+          SEND_MODE=dry_run
+          AUTH_DISABLED=true
+          VITE_AUTH_DISABLED=true
+          DEV_SESSION_FIRM=firm-cedar
+          VITE_DEV_FIRM_ID=firm-cedar
+          VITE_WIRE_REAL=true
+          VERIFY_LIVE_SEND=0
+          EOF
+      - run: npm run db:migrate
+      - run: npm run db:seed
+      - name: Packet proof
+        env:
+          PROOFS: ${{ toJson(matrix.item.proofs) }}
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'EOF'
+          import { spawnSync } from "node:child_process";
+          const proofs = JSON.parse(process.env.PROOFS ?? "[]");
+          if (!Array.isArray(proofs) || !proofs.length) process.exit(1);
+          for (const script of proofs) {
+            if (!/^scripts\/verify-[a-z0-9-]+\.ts$/.test(script)) process.exit(1);
+            const result = spawnSync("npx", ["tsx", "--env-file=.env", script], { stdio: "inherit" });
+            if (result.status !== 0) process.exit(result.status ?? 1);
+          }
+          EOF
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: factory-tip
+          fetch-depth: 1
+      - run: npm ci
+        working-directory: factory-tip
+      - name: Record the run
+        working-directory: factory-tip
+        env:
+          WAKE_GITHUB_TOKEN: ${{ secrets.WAKE_GITHUB_TOKEN }}
+          FACTORY_LEDGER_BRANCH: ${{ github.head_ref }}
+          FACTORY_REPOSITORY: ${{ github.repository }}
+          VERIFY_SHA: ${{ matrix.item.sha }}
+          VERIFY_RUN: ${{ github.run_id }}
+        run: npx tsx scripts/factory-verify.ts --record

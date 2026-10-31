@@ -94,6 +94,10 @@ jobs:
           FACTORY_SPEND_LIMIT_CONFIRMED: ${{ vars.FACTORY_SPEND_LIMIT_CONFIRMED }}
           FACTORY_AUTOMATIONS_SAVED: ${{ vars.FACTORY_AUTOMATIONS_SAVED }}
           WAKE_GITHUB_TOKEN: ${{ secrets.WAKE_GITHUB_TOKEN }}
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+          EMERGE_EMAIL: ${{ secrets.EMERGE_EMAIL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM_EMAIL: ${{ secrets.RESEND_FROM_EMAIL }}
           FACTORY_PR: ${{ github.event.pull_request.number }}
           FACTORY_PR_HEAD: ${{ github.event.pull_request.head.sha }}
           FACTORY_REPOSITORY: ${{ github.repository }}
@@ -103,9 +107,13 @@ jobs:
           if [ "$FACTORY_CONTROLLER" != "active" ] || [ "$FACTORY_LABELS" != "armed" ] || [ "$FACTORY_SPEND_LIMIT_CONFIRMED" != "yes" ] || [ "$FACTORY_AUTOMATIONS_SAVED" != "yes" ] || [ -z "${WAKE_GITHUB_TOKEN}" ]; then
             echo "actuator disarmed"
             npx tsx scripts/factory-control.ts
+            npx tsx scripts/factory-emerge.ts
+            npx tsx scripts/factory-explain.ts || echo explain_failed
             exit 0
           fi
           npx tsx scripts/factory-control.ts --apply
+          npx tsx scripts/factory-emerge.ts --apply
+          npx tsx scripts/factory-explain.ts || echo explain_failed
 
   dispatch:
     if: github.event_name == 'workflow_dispatch'

@@ -200,11 +200,12 @@ export async function handleHaltList(c: Context) {
 
 export async function handleHaltIsContact(c: Context) {
   const contactId = c.req.param("contactId");
+  const firmId = c.req.query("firmId");
   const result = await getPool().query(
     `SELECT 1 FROM halt_records
-     WHERE lifted_at IS NULL AND scope = 'contact' AND contact_id = $1
+     WHERE lifted_at IS NULL AND scope = 'contact' AND contact_id = $1 AND firm_id = $2
      LIMIT 1`,
-    [contactId],
+    [contactId, firmId ?? null],
   );
   return c.json({ halted: result.rowCount! > 0 });
 }

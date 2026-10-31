@@ -848,11 +848,12 @@ export async function advanceEnrollmentCampaign(
 
   const completionId = completion?.completionId ?? sat.completionId;
   const completionTable = completion?.completionTable ?? obj.completion_table;
+  const engagementId = `eng-${randomUUID()}`;
   await pool.query(
     `INSERT INTO engagement_records (id, firm_id, contact_id, event_kind, payload)
      VALUES ($1,$2,$3,'objective_met',$4::jsonb)`,
     [
-      `eng-${randomUUID()}`,
+      engagementId,
       row.firm_id,
       row.contact_id,
       JSON.stringify({
@@ -890,6 +891,10 @@ export async function advanceEnrollmentCampaign(
         kind: obj.kind,
         completion_table: completionTable,
         completion_id: completionId,
+        writes: [
+          { table: "engagement_records", id: engagementId, contact_id: row.contact_id },
+          { table: "enrollment", id: row.id, contact_id: row.contact_id },
+        ],
       },
       contactIds: [row.contact_id],
     });

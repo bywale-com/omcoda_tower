@@ -64,6 +64,23 @@ export interface Lease {
 }
 
 /**
+ * An engineer return, or the analyst escalation of that return.
+ * `blockedRevision` stays the revision that could not be implemented.
+ * `revision` is the revision the next seat is asked to sign.
+ */
+export interface SpecificationBlock {
+  blockedRevision: string;
+  revision: string;
+  failureClass: "systems_contract" | "specification";
+  note: string;
+  escalationNote: string | null;
+  workerId: string;
+  executionId: string | null;
+  /** `lease` is a live engineer event. `recorded` is the one-time expired adoption. */
+  authority: "lease" | "recorded";
+}
+
+/**
  * Written only after a label add succeeds. Workers must match the current record exactly.
  * A record moves to history when it is reconciled. History is not authorization.
  */
@@ -81,6 +98,19 @@ export interface DispatchRecord {
    * `absent` means the dispatch did not start a worker.
    */
   workerExecution?: "ran" | "absent";
+  /** Stable id of the execution this authorization belongs to. */
+  executionId?: string;
+  /** Schedulable assignment. One execution may carry several packets. */
+  assignmentId?: string;
+}
+
+export type SiblingBasis = "contract" | "dependency" | "component" | "runtime" | "boundary";
+
+/** A relationship the Architect recorded. Adjacent ids are not a relationship. */
+export interface SiblingLink {
+  id: string;
+  basis: SiblingBasis;
+  note: string;
 }
 
 /** A check that actually ran. A name without a run id is not evidence. */
@@ -130,6 +160,10 @@ export interface WorkItem {
   dispatchHistory: DispatchRecord[];
   /** Null until a manual record or an automatic verification says how the work ran. */
   execution: ExecutionRecord | null;
+  /** Architect-recorded siblings. Absent means this packet stands alone. */
+  siblings?: SiblingLink[];
+  /** Absent until an engineer returns a defective systems contract. */
+  specificationBlock?: SpecificationBlock | null;
 }
 
 export interface World {
@@ -151,6 +185,11 @@ export interface World {
    * `complete` refuse every wake.
    */
   scopeStatus?: "inactive" | "active" | "suspended" | "complete";
+  /**
+   * True only when this pass can send a follow-up to an existing Cursor agent.
+   * A missing flag is a fresh label wake, not a resume.
+   */
+  resumeSupported?: boolean;
 }
 
 export type FactoryEvent =
@@ -201,7 +240,13 @@ export type FactoryEvent =
   | { type: "clear_hold" }
   | { type: "prose_complete" }
   | { type: "adopt_existing_change"; sections: string[] }
-  | { type: "interrupt_analysis"; workerId: string };
+  | { type: "interrupt_analysis"; workerId: string }
+  | { type: "specification_blocked"; workerId: string; note: string }
+  | { type: "requirements_blocked"; workerId: string; note: string }
+  | { type: "saturate_context"; workerId: string }
+  | { type: "acknowledge_start"; workerId: string; executionId?: string }
+  | { type: "refuse_execution"; workerId: string; executionId?: string }
+  | { type: "record_candidate_checks"; sha: string; checks: CheckEvidence[] };
 
 export interface ApplyResult {
   ok: boolean;
@@ -213,6 +258,11 @@ export interface Decision {
   effect: WakeEffect;
   reason: string;
   label: (typeof SEAT_LABELS)[number] | null;
+  /** `resume` follows up an existing Cursor agent. `label` starts a fresh automation. */
+  delivery?: "label" | "resume";
+  agentId?: string | null;
+  packetIds?: string[];
+  basis?: string | null;
 }
 
 export function freshItem(id = "pkt-001", initiativeId = "exec-identity"): WorkItem {
@@ -244,10 +294,44 @@ export function freshItem(id = "pkt-001", initiativeId = "exec-identity"): WorkI
 }
 
 export function stageAdmits(stage: Stage, role: Lease["role"]): boolean {
-  if (role === "analyst") return stage === "released" || stage === "analysis";
+  if (role === "analyst") return stage === "released" || stage === "analysis" || stage === "returned_analyst";
   if (role === "engineer") return stage === "change_specified" || stage === "engineering";
   if (role === "architect") return stage === "draft" || stage === "returned_architect";
   return false;
+}
+
+export function nextRevision(revision: string): string | null {
+  const match = /^rev-(\d+)$/.exec(revision);
+  if (!match) return null;
+  return `rev-${Number(match[1]) + 1}`;
+}
+
+/** The packet shape of a systems-contract return. The caller has already checked authority. */
+export function returnForSpecificationBlock(
+  item: WorkItem,
+  input: { workerId: string; executionId: string | null; note: string; authority: "lease" | "recorded" },
+): WorkItem | null {
+  const revision = nextRevision(item.revision);
+  const note = input.note.trim();
+  if (!revision || !note || note.length > 2000) return null;
+  return {
+    ...item,
+    stage: "returned_analyst",
+    revision,
+    lease: null,
+    dispatchedEngineerRevision: null,
+    lastFailureClass: "systems_contract",
+    specificationBlock: {
+      blockedRevision: item.revision,
+      revision,
+      failureClass: "systems_contract",
+      note,
+      escalationNote: null,
+      workerId: input.workerId,
+      executionId: input.executionId,
+      authority: input.authority,
+    },
+  };
 }
 
 export function leaseActive(item: WorkItem, now: string): boolean {
@@ -263,6 +347,8 @@ function clone(item: WorkItem): WorkItem {
     execution: item.execution
       ? { mode: item.execution.mode, checks: item.execution.checks.map((check) => ({ ...check })) }
       : null,
+    siblings: item.siblings?.map((link) => ({ ...link })),
+    ...(item.specificationBlock ? { specificationBlock: { ...item.specificationBlock } } : {}),
   };
 }
 
@@ -335,7 +421,7 @@ export function applyEvent(item: WorkItem, event: FactoryEvent, world: World): A
       until: event.until,
       revision: event.revision,
     };
-    if (event.role === "analyst" && item.stage === "released") next.stage = "analysis";
+    if (event.role === "analyst" && (item.stage === "released" || item.stage === "returned_analyst")) next.stage = "analysis";
     if (event.role === "engineer" && item.stage === "change_specified") next.stage = "engineering";
     return accept(next, "lease_acquired");
   }
@@ -385,7 +471,13 @@ export function applyEvent(item: WorkItem, event: FactoryEvent, world: World): A
       next.stage = "verified";
       next.verifiedSha = event.sha;
       next.lastFailureClass = null;
-      if (item.dispatch) {
+      const automatic =
+        Boolean(item.dispatch) ||
+        (item.dispatchHistory ?? []).some(
+          (row) =>
+            (row.effect === "wake_engineer" || row.effect === "wake_repair") && row.workerExecution === "ran",
+        );
+      if (automatic) {
         next.execution = { mode: "automatic", checks: [] };
       }
       return accept(next, "verified");
@@ -508,10 +600,81 @@ export function applyEvent(item: WorkItem, event: FactoryEvent, world: World): A
     return accept(next, "existing_change_adopted");
   }
 
+  if (event.type === "acknowledge_start") {
+    if (!item.dispatch) return refuse(item, "no_dispatch_record");
+    if (event.executionId && item.dispatch.executionId && event.executionId !== item.dispatch.executionId) {
+      return refuse(item, "execution_mismatch");
+    }
+    if (item.lease && item.lease.workerId !== event.workerId) return refuse(item, "worker_mismatch");
+    return accept(next, "start_acknowledged");
+  }
+
+  if (event.type === "refuse_execution") {
+    if (item.candidateSha) return refuse(item, "candidate_recorded");
+    if (!item.dispatch && item.dispatchedEngineerRevision == null && item.dispatchedSaRevision == null) {
+      return refuse(item, "no_dispatch_record");
+    }
+    return accept(next, "execution_refused");
+  }
+
+  if (event.type === "record_candidate_checks") {
+    if (item.stage !== "candidate" && item.stage !== "verifying") return refuse(item, "wrong_stage");
+    if (!item.candidateSha || event.sha !== item.candidateSha) return refuse(item, "sha_mismatch");
+    if (!event.checks.length) return refuse(item, "verification_evidence_missing");
+    for (const check of event.checks) {
+      if (!check.name || !check.runId) return refuse(item, "verification_evidence_missing");
+      if (check.outcome !== "pass") return refuse(item, "verification_failed");
+    }
+    next.stage = "verified";
+    next.verifiedSha = event.sha;
+    next.execution = {
+      mode: "automatic",
+      checks: event.checks.map((check) => ({ ...check })),
+    };
+    return accept(next, "verified");
+  }
+
+  if (event.type === "specification_blocked") {
+    if (item.stage !== "engineering") return refuse(item, "wrong_stage");
+    if (item.candidateSha) return refuse(item, "candidate_recorded");
+    if (!event.note.trim()) return refuse(item, "note_missing");
+    if (!leaseActive(item, world.now)) return refuse(item, "lease_expired");
+    const covered = leaseCovers(item, event.workerId, "engineer", world.now);
+    if (covered) return refuse(item, covered);
+    if (!nextRevision(item.revision)) return refuse(item, "revision_mismatch");
+    const returned = returnForSpecificationBlock(next, {
+      workerId: event.workerId,
+      executionId: item.dispatch?.executionId ?? null,
+      note: event.note,
+      authority: "lease",
+    });
+    if (!returned) return refuse(item, "note_missing");
+    return accept(returned, "returned_analyst");
+  }
+
+  if (event.type === "requirements_blocked") {
+    if (item.stage !== "analysis") return refuse(item, "wrong_stage");
+    if (item.specificationBlock?.failureClass !== "systems_contract") return refuse(item, "specification_block_missing");
+    if (!event.note.trim() || event.note.trim().length > 2000) return refuse(item, "note_missing");
+    if (!leaseActive(item, world.now)) return refuse(item, "lease_expired");
+    const covered = leaseCovers(item, event.workerId, "analyst", world.now);
+    if (covered) return refuse(item, covered);
+    next.stage = "returned_architect";
+    next.lease = null;
+    next.lastFailureClass = "specification";
+    next.specificationBlock = {
+      ...item.specificationBlock,
+      failureClass: "specification",
+      escalationNote: event.note.trim(),
+    };
+    return accept(next, "requirements_blocked");
+  }
+
   if (event.type === "interrupt_analysis") {
     if (item.stage !== "analysis") return refuse(item, "wrong_stage");
     const covered = leaseCovers(item, event.workerId, "analyst", world.now);
     if (covered) return refuse(item, covered);
+    if (item.specificationBlock?.failureClass === "systems_contract") return refuse(item, "specification_blocked");
     next.stage = "released";
     next.lease = null;
     next.dispatchedSaRevision = null;
@@ -543,7 +706,10 @@ export function decide(item: WorkItem, world: World): Decision {
   if (world.scopeStatus === "complete") return none("scope_complete");
   if (item.hold) return none("hold");
   if (item.blockerId || item.stage === "blocked") return none("blocked");
-  if (item.stage === "returned_architect" || item.stage === "returned_analyst") {
+  if (item.stage === "returned_architect" && item.specificationBlock?.failureClass === "specification") {
+    return none("requirements_blocked");
+  }
+  if (item.stage === "returned_architect" || (item.stage === "returned_analyst" && item.specificationBlock?.failureClass !== "systems_contract")) {
     return none(item.stage);
   }
   if (leaseActive(item, world.now)) return none("lease_held");
@@ -552,6 +718,16 @@ export function decide(item: WorkItem, world: World): Decision {
   }
   if (world.usedDispatches >= world.authorizedDispatches) {
     return none("dispatch_authorization_exhausted");
+  }
+
+  if (
+    item.stage === "returned_analyst" &&
+    item.specificationBlock?.failureClass === "systems_contract" &&
+    item.specificationBlock.revision === item.revision &&
+    item.wake === "sa" &&
+    item.dispatchedSaRevision !== item.revision
+  ) {
+    return { effect: "wake_sa", reason: "specification_returned", label: LABEL_FOR.wake_sa };
   }
 
   if (
@@ -615,6 +791,7 @@ export function workerMayRun(input: {
   prHead: string;
   wake: "hold" | "sa";
   dispatch: DispatchRecord | null;
+  executionId?: string;
 }): { ok: boolean; reason: string } {
   if (!input.dispatch) return { ok: false, reason: "no_dispatch_record" };
   if (input.dispatch.packetId !== input.packetId) return { ok: false, reason: "packet_mismatch" };
@@ -633,6 +810,9 @@ export function workerMayRun(input: {
   }
   if (input.dispatch.effect === "wake_architect" && input.label !== "factory-wake-architect") {
     return { ok: false, reason: "label_mismatch" };
+  }
+  if (input.executionId && input.dispatch.executionId && input.executionId !== input.dispatch.executionId) {
+    return { ok: false, reason: "execution_mismatch" };
   }
   return { ok: true, reason: "authorized" };
 }
@@ -735,4 +915,24 @@ export const TRANSITION_IDS = [
   "T48",
   "T49",
   "T50",
+  "T51",
+  "T52",
+  "T53",
+  "T54",
+  "T55",
+  "T56",
+  "T57",
+  "T58",
+  "T59",
+  "T60",
+  "T61",
+  "T62",
+  "T63",
+  "T64",
+  "T65",
+  "T66",
+  "T67",
+  "T68",
+  "T69",
+  "T70",
 ] as const;

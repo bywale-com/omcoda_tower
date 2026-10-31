@@ -55,7 +55,7 @@ async function collectReasons(input: SendGateDecideInput): Promise<SendDenyReaso
   }
 
   if (await standInHaltStore.isFirmBookHalted(input.firmId)) reasons.push("halt");
-  if (input.contactId && (await standInHaltStore.isContactHalted(input.contactId))) {
+  if (input.contactId && (await standInHaltStore.isContactHalted(input.contactId, input.firmId))) {
     reasons.push("halt");
   }
 

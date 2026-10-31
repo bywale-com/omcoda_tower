@@ -22,5 +22,17 @@
     "noContradictorySpecification": true,
     "independentlyImplementable": true
   },
-  "plates": "none"
+  "plates": "none",
+  "siblings": [
+    {
+      "id": "pkt-016-halt-send-firm",
+      "basis": "dependency",
+      "note": "017 denies the tick send with the firm predicate 016 specified"
+    },
+    {
+      "id": "pkt-018-send-denied-engagement",
+      "basis": "dependency",
+      "note": "018 appends send_denied for the tick send 017 left open"
+    }
+  ]
 }

@@ -22,5 +22,17 @@
     "noContradictorySpecification": true,
     "independentlyImplementable": true
   },
-  "plates": "none"
+  "plates": "none",
+  "siblings": [
+    {
+      "id": "pkt-015-halt-enroll-firm",
+      "basis": "dependency",
+      "note": "016 leaves the enroll predicate 015 specified; both read halt_records by firm"
+    },
+    {
+      "id": "pkt-017-tick-send-halt",
+      "basis": "dependency",
+      "note": "017 denies the tick send with the firm predicate 016 specified"
+    }
+  ]
 }

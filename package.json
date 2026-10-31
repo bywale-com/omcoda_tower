@@ -30,7 +30,8 @@
     "ensure:admin": "tsx --env-file=.env scripts/ensure-platform-admin.ts",
     "issue:access": "tsx --env-file=.env scripts/issue-access-link.ts",
     "verify:access": "tsx --env-file=.env scripts/verify-access-link.ts",
-    "factory:check": "tsx scripts/factory-check.ts"
+    "factory:check": "tsx scripts/factory-check.ts",
+    "factory:explain": "tsx scripts/factory-explain.ts"
   },
   "dependencies": {
     "@ant-design/icons": "^6.3.2",

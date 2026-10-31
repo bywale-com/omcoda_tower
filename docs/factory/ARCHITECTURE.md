@@ -37,7 +37,8 @@ Spend model use on reasoning, specification, and engineering. Spend ordinary sof
 | Module | A lasting area of Tower, such as Agents | Nothing, by itself, about a capability |
 | Initiative | The development of one capability | Not “the agent run finished” |
 | Packet | One bounded implementation change | Not “the initiative is done” |
-| Agent execution | One run that performs a stage | Not “the packet is done” |
+| Assignment | The schedulable unit. One initiative investigation, or one or more sibling packets | Not “every packet in the initiative is done” |
+| Agent execution | One Cursor run of an assignment. An assignment may span more than one execution | Not “the packet is done” and not “the assignment is done” |
 
 ## Roles
 

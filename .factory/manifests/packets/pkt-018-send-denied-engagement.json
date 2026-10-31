@@ -22,5 +22,17 @@
     "noContradictorySpecification": true,
     "independentlyImplementable": true
   },
-  "plates": "none"
+  "plates": "none",
+  "siblings": [
+    {
+      "id": "pkt-017-tick-send-halt",
+      "basis": "dependency",
+      "note": "018 appends send_denied for the tick send 017 left open"
+    },
+    {
+      "id": "pkt-019-first-step-send-denied",
+      "basis": "dependency",
+      "note": "019 records the send_denied kind 018 required of a denied send"
+    }
+  ]
 }

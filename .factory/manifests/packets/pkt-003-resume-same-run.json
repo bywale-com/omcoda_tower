@@ -20,5 +20,12 @@
     "noBlockingQuestion": true,
     "noContradictorySpecification": true,
     "independentlyImplementable": true
-  }
+  },
+  "siblings": [
+    {
+      "id": "pkt-004-firing-handle",
+      "basis": "component",
+      "note": "walk-handle: rows a run may read after a park or a firing"
+    }
+  ]
 }
