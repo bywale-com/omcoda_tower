@@ -1,5 +1,5 @@
 {
-  "stateRevision": 183,
+  "stateRevision": 184,
   "authorizedDispatches": 50,
   "usedDispatches": 43,
   "scope": {
@@ -336,7 +336,7 @@
     "pkt-005-audit-row-grain": {
       "id": "pkt-005-audit-row-grain",
       "initiativeId": "exec-identity",
-      "stage": "candidate",
+      "stage": "verified",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
@@ -345,7 +345,7 @@
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": "e325464c5ab8fb356841154bae691f5fc3ea199c",
-      "verifiedSha": null,
+      "verifiedSha": "e325464c5ab8fb356841154bae691f5fc3ea199c",
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
@@ -355,7 +355,16 @@
       "integratedSha": null,
       "reconciliationId": null,
       "dispatch": null,
-      "execution": null,
+      "execution": {
+        "mode": "automatic",
+        "checks": [
+          {
+            "name": "verify-audit-row-grain",
+            "runId": "41210884819",
+            "outcome": "pass"
+          }
+        ]
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-005-audit-row-grain",
