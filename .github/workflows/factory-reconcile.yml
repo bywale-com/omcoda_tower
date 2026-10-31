@@ -1,9 +1,12 @@
 # Periodic factory reconcile.
 # GitHub runs a schedule only from the default branch. This job checks out
-# the operating branch and runs one control pass there.
-# The pass expires reservations, reconciles dispatches, and pulses a label
-# whose delivery is unconfirmed. That pulse does not spend a dispatch.
-# The same disarm gates as Factory dispatch apply. A disarmed run exits 0.
+# the operating branch and reconciles that branch. It does not read or write
+# the default branch's ledger. A schedule starts from the default branch; the
+# checkout ref and FACTORY_LEDGER_BRANCH are the operating factory.
+# The control pass expires reservations, reconciles dispatches, and pulses a
+# label whose delivery is unconfirmed. That pulse does not spend a dispatch.
+# The emerge pass records a merged release and opens a ready one. It does not
+# merge. The same disarm gates as Factory dispatch apply. A disarmed run exits 0.
 
 name: Factory reconcile
 
@@ -47,6 +50,7 @@ jobs:
           if [ "$FACTORY_CONTROLLER" != "active" ] || [ "$FACTORY_LABELS" != "armed" ] || [ "$FACTORY_SPEND_LIMIT_CONFIRMED" != "yes" ] || [ "$FACTORY_AUTOMATIONS_SAVED" != "yes" ] || [ -z "${WAKE_GITHUB_TOKEN}" ]; then
             echo "actuator disarmed"
             npx tsx scripts/factory-control.ts
+            npx tsx scripts/factory-emerge.ts
             exit 0
           fi
           export GH_TOKEN="$WAKE_GITHUB_TOKEN"
@@ -58,3 +62,4 @@ jobs:
           export FACTORY_PR="${pr%% *}"
           export FACTORY_PR_HEAD="${pr#* }"
           npx tsx scripts/factory-control.ts --apply
+          npx tsx scripts/factory-emerge.ts --apply
