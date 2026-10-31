@@ -3806,7 +3806,16 @@ function assertRecoveryLedger(committed: FactoryLedger) {
   assert.equal(pkt019.specificationBlock?.authority, "recorded");
   assert.equal(pkt019.specificationBlock?.blockedRevision, "rev-1");
   assert.equal(pkt019.dispatch?.effect, "wake_sa");
-  assert.equal(pkt019.dispatch?.executionId, "dsp-195-analyst-pkt-019-first-step-send-denied");
+  assert.equal(pkt019.dispatch?.revision, "rev-2");
+  const openExecutionId = pkt019.dispatch?.executionId ?? "";
+  const openExecution = recoveredNow.ledger.executions?.[openExecutionId];
+  assert.ok(openExecution);
+  assert.equal(openExecution.phase === "dispatched" || openExecution.phase === "started" || openExecution.phase === "running", true);
+  const expiredReservation = recoveredNow.ledger.executions?.["dsp-195-analyst-pkt-019-first-step-send-denied"];
+  if (openExecutionId !== "dsp-195-analyst-pkt-019-first-step-send-denied") {
+    assert.equal(expiredReservation?.phase, "refused");
+    assert.equal(expiredReservation?.reason, "reservation_expired");
+  }
   const component = "firing-pointers: this firing places its own rows on payload.writes";
   for (const id of [
     "pkt-007-fact-writes",
