@@ -1,5 +1,5 @@
 {
-  "stateRevision": 189,
+  "stateRevision": 190,
   "authorizedDispatches": 50,
   "usedDispatches": 43,
   "scope": {
@@ -400,7 +400,7 @@
     "pkt-006-id-keyed-loads": {
       "id": "pkt-006-id-keyed-loads",
       "initiativeId": "exec-identity",
-      "stage": "candidate",
+      "stage": "verified",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
@@ -409,7 +409,7 @@
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": "e8642a6f0d2f4154f7f766975e06e80d6fddb9d2",
-      "verifiedSha": null,
+      "verifiedSha": "e8642a6f0d2f4154f7f766975e06e80d6fddb9d2",
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
@@ -452,7 +452,16 @@
           "workerExecution": "ran"
         }
       ],
-      "execution": null,
+      "execution": {
+        "mode": "automatic",
+        "checks": [
+          {
+            "name": "verify-id-keyed-loads",
+            "runId": "41210884819",
+            "outcome": "pass"
+          }
+        ]
+      },
       "siblings": [
         {
           "id": "pkt-004-firing-handle",
