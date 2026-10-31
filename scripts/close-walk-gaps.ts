@@ -3,6 +3,7 @@
  * campaign armed / no enrollments / no meeting / Firm B without upload.
  * Agent-driven live API + shared Postgres OTP — no founder.
  */
+import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { createPgPool } from "./pgConnect.ts";
 import { generateOtpCode, sha256 } from "../server/auth-service/crypto.ts";
@@ -132,6 +133,12 @@ try {
     `SELECT id FROM contact_records WHERE firm_id=$1`,
     [firmA],
   );
+  const gapRun = `arun-gap-${randomUUID()}`;
+  await pool.query(
+    `INSERT INTO audit_runs (id, firm_id, status, import_ids, summary, started_at)
+     VALUES ($1,$2,'complete','[]'::jsonb,'{}'::jsonb,now())`,
+    [gapRun, firmA],
+  );
   for (const r of contacts.rows) {
     await pool.query(
       `INSERT INTO consent_records (contact_id, firm_id, basis, silenced, status, updated_at)
@@ -140,9 +147,9 @@ try {
       [r.id, firmA],
     );
     await pool.query(
-      `INSERT INTO sequence_ready (contact_id, firm_id, ready) VALUES ($1,$2,true)
-       ON CONFLICT (contact_id, firm_id) DO UPDATE SET ready=true`,
-      [r.id, firmA],
+      `INSERT INTO sequence_ready (audit_run_id, contact_id, firm_id, ready, updated_at)
+       VALUES ($1,$2,$3,true,now())`,
+      [gapRun, r.id, firmA],
     );
   }
 

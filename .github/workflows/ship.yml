@@ -95,6 +95,9 @@ jobs:
       - name: verify:resume-same-run (PKT-003)
         run: npx tsx --env-file=.env scripts/verify-resume-same-run.ts
 
+      - name: verify:audit-row-grain (PKT-005)
+        run: npx tsx --env-file=.env scripts/verify-audit-row-grain.ts
+
       - name: verify:affordances (chosen-value round-trip)
         run: npm run verify:affordances
 
