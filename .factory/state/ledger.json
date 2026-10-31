@@ -1,5 +1,5 @@
 {
-  "stateRevision": 169,
+  "stateRevision": 170,
   "authorizedDispatches": 50,
   "usedDispatches": 42,
   "scope": {
@@ -1783,6 +1783,16 @@
       "prNumber": 141,
       "prUrl": "https://github.com/bywale-com/omcoda_tower/pull/141",
       "openedAt": "2026-10-31T13:43:15.757Z",
+      "mergeSha": null
+    },
+    "rel-pkt-003-resume-same-run": {
+      "id": "rel-pkt-003-resume-same-run",
+      "packetIds": [
+        "pkt-003-resume-same-run"
+      ],
+      "prNumber": 142,
+      "prUrl": "https://github.com/bywale-com/omcoda_tower/pull/142",
+      "openedAt": "2026-10-31T13:43:22.118Z",
       "mergeSha": null
     }
   }
