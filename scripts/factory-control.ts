@@ -12,7 +12,7 @@ import { githubLabelActuator, type FactoryLedger } from "../.factory/controller/
 import { cursorFollowUp, type FetchLike } from "../.factory/controller/cursor.ts";
 import { commitLedgerEvent, controlStep, dispatchInitiative } from "../.factory/controller/queue.ts";
 import { dispatchWake } from "../.factory/controller/dispatch.ts";
-import { recoverExecutions } from "../.factory/controller/execution.ts";
+import { analystFileCountsAsThisDispatch, recoverExecutions } from "../.factory/controller/execution.ts";
 import type { StateStore } from "../.factory/controller/dispatch.ts";
 import type { World } from "../.factory/controller/machine.ts";
 
@@ -158,7 +158,12 @@ async function archiveRanAnalystWork(
 ): Promise<FactoryLedger> {
   let current = ledger;
   const open = Object.values(current.packets)
-    .filter((packet) => packet.dispatch?.effect === "wake_sa" && existsSync(specificationPath(packet)))
+    .filter(
+      (packet) =>
+        packet.dispatch?.effect === "wake_sa" &&
+        existsSync(specificationPath(packet)) &&
+        analystFileCountsAsThisDispatch(current, packet),
+    )
     .sort((a, b) => a.id.localeCompare(b.id));
   for (const packet of open) {
     const wrote = await commitLedgerEvent(

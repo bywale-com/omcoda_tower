@@ -560,6 +560,43 @@ function adoptRecordedSpecificationBlock(ledger: ExecutionLedger, now: string): 
   return { id: spec.executionId, phase: "interrupted", reason: "recorded_specification_block" };
 }
 
+/**
+ * A systems-change file already in the checkout is not this wake when the
+ * packet was returned, or when the worker has not started.
+ */
+export function analystFileCountsAsThisDispatch(ledger: ExecutionLedger, packet: WorkItem): boolean {
+  if (packet.stage === "returned_analyst") return false;
+  if (packet.specificationBlock && packet.specificationBlock.revision === packet.dispatch?.revision) return false;
+  const execution = packet.dispatch?.executionId ? ledger.executions?.[packet.dispatch.executionId] : null;
+  if (execution?.phase === "dispatched") return false;
+  return true;
+}
+
+function restoreUnstartedAnalystDispatch(ledger: ExecutionLedger, changes: RecoveryChange[]): void {
+  for (const packet of Object.values(ledger.packets)) {
+    if (packet.dispatch || packet.stage !== "returned_analyst") continue;
+    if (packet.specificationBlock?.failureClass !== "systems_contract" || packet.specificationBlock.revision !== packet.revision) continue;
+    const history = packet.dispatchHistory ?? [];
+    let index = -1;
+    for (let i = history.length - 1; i >= 0; i -= 1) {
+      const row = history[i];
+      if (row.effect === "wake_sa" && row.revision === packet.revision && row.workerExecution === "ran" && row.executionId) {
+        index = i;
+        break;
+      }
+    }
+    if (index < 0) continue;
+    const row = history[index];
+    const execution = row.executionId ? ledger.executions?.[row.executionId] : undefined;
+    if (!execution || execution.phase !== "dispatched" || execution.endedAt) continue;
+    const restored = { ...row };
+    delete restored.workerExecution;
+    packet.dispatchHistory = history.filter((_, i) => i !== index);
+    packet.dispatch = restored;
+    changes.push({ id: execution.id, phase: "dispatched", reason: "unstarted_dispatch_restored" });
+  }
+}
+
 function rearmExpiredEngineering(ledger: ExecutionLedger, now: string, changes: RecoveryChange[]): void {
   for (const packet of Object.values(ledger.packets)) {
     if (packet.stage !== "engineering" || packet.candidateSha || packet.specificationBlock) continue;
@@ -597,6 +634,7 @@ export function recoverExecutions<T extends ExecutionLedger>(
   const changes: RecoveryChange[] = [];
   const adopted = adoptRecordedSpecificationBlock(next, now);
   if (adopted) changes.push(adopted);
+  restoreUnstartedAnalystDispatch(next, changes);
   const { executions, assignments } = ensureMaps(next);
 
   for (const packet of Object.values(next.packets)) {
@@ -671,7 +709,7 @@ export function recoverExecutions<T extends ExecutionLedger>(
     if (role === "engineer" && dispatch.effect === "wake_repair") {
       packet.dispatchedRepairFingerprint = null;
     }
-    if (role === "analyst" && packet.dispatchedSaRevision === packet.revision && (packet.stage === "released" || packet.stage === "analysis")) {
+    if (role === "analyst" && packet.dispatchedSaRevision === packet.revision && (packet.stage === "released" || packet.stage === "analysis" || packet.stage === "returned_analyst")) {
       packet.dispatchedSaRevision = null;
       if (!started && next.usedDispatches > 0) next.usedDispatches -= 1;
     }

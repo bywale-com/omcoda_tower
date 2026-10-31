@@ -217,6 +217,30 @@ function explainPacket(
       });
     }
   }
+  if (packet.stage === "returned_analyst" && packet.specificationBlock?.failureClass === "systems_contract") {
+    if (packet.dispatch?.effect === "wake_sa") {
+      return row(packet, {
+        happening: `Returned to the Analyst at ${packet.revision}. The dispatch is open.`,
+        why: packet.specificationBlock.note,
+        next: "Sign the change.",
+        who: "analyst",
+        situation: "proceeding",
+      });
+    }
+    const falseRan = [...(packet.dispatchHistory ?? [])].reverse().find(
+      (row) => row.effect === "wake_sa" && row.revision === packet.revision && row.workerExecution === "ran" && row.executionId,
+    );
+    const unstarted = falseRan?.executionId ? ledger.executions?.[falseRan.executionId] : undefined;
+    if (unstarted?.phase === "dispatched" && !unstarted.endedAt) {
+      return row(packet, {
+        happening: `Returned to the Analyst at ${packet.revision}. The dispatch was recorded as ran before the worker started.`,
+        why: "The systems-change file from the blocked revision is not this wake.",
+        next: "The next Factory dispatch pass restores the unstarted Analyst dispatch.",
+        who: "controller",
+        situation: "held",
+      });
+    }
+  }
 
   const execution = liveExecutionFor(ledger, packet.id);
   const stageStillOpen = packet.stage === "engineering" || packet.stage === "analysis" || packet.stage === "change_specified";
