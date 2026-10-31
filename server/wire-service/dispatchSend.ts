@@ -80,9 +80,9 @@ async function consentAndHaltGate(
   }
   const contactHalted = await pool.query(
     `SELECT 1 FROM halt_records
-     WHERE lifted_at IS NULL AND scope = 'contact' AND contact_id = $1
+     WHERE lifted_at IS NULL AND scope = 'contact' AND contact_id = $1 AND firm_id = $2
      LIMIT 1`,
-    [contactId],
+    [contactId, firmId],
   );
   if (contactHalted.rowCount && contactHalted.rowCount > 0) {
     return { allow: false, deny: "policy", detail: "halt active" };

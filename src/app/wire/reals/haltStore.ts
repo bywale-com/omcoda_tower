@@ -21,9 +21,9 @@ export const realHaltStore: HaltStorePort = {
     const res = await wireFetch<{ records: HaltRecord[] }>(`/halt${q}`);
     return res.records;
   },
-  async isContactHalted(contactId) {
+  async isContactHalted(contactId, firmId) {
     const res = await wireFetch<{ halted: boolean }>(
-      `/halt/contact/${encodeURIComponent(contactId)}`,
+      `/halt/contact/${encodeURIComponent(contactId)}?firmId=${encodeURIComponent(firmId)}`,
     );
     return res.halted;
   },

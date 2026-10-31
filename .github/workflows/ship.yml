@@ -104,6 +104,9 @@ jobs:
       - name: verify:halt-enroll-firm (PKT-015)
         run: npx tsx --env-file=.env scripts/verify-halt-enroll-firm.ts
 
+      - name: verify:halt-send-firm (PKT-016)
+        run: npx tsx --env-file=.env scripts/verify-halt-send-firm.ts
+
       - name: verify:id-keyed-loads (PKT-006)
         run: npx tsx --env-file=.env scripts/verify-id-keyed-loads.ts
 

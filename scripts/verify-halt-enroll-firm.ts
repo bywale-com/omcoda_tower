@@ -5,7 +5,7 @@
  * is the enroll firm. A lifted row does not block. A firm-book halt still
  * blocks that firm with no contact predicate. enrollAndActuate returns
  * blocked "halt" before insert, and an allowed enroll still reaches the
- * unscoped send gate.
+ * firm-scoped send gate.
  *
  * Ship CI runs this after migrate and seed, beside verify-click-attribution.
  */
@@ -192,8 +192,13 @@ async function main() {
   const afterCross = await enrollmentIds();
   const addedCross = afterCross.filter((id) => !beforeCross.includes(id));
   if (addedCross.length !== 1) fail("case5-cross-insert", { beforeCross, afterCross });
-  if (!crossed.send || crossed.send.ok !== false || crossed.send.detail !== "halt active") {
-    fail("case5-send-deny", crossed.send);
+  if (
+    !crossed.send ||
+    crossed.send.ok !== true ||
+    crossed.send.dryRun !== true ||
+    !crossed.send.reason?.includes("SEND_MODE/cohort gate")
+  ) {
+    fail("case5-cross-send", crossed.send);
   }
   if (!(await enrollmentIds()).includes(addedCross[0])) fail("case5-row-remains");
 
