@@ -203,6 +203,9 @@ const PERSON_WRITE_TABLES = new Set([
   "contact_tag",
   "enrollment",
   "wait_occupancy",
+  "engagement_records",
+  "fact_writebacks",
+  "meeting_booked",
 ]);
 
 function waitShapeOf(data: Record<string, unknown> | undefined): "approval" | "duration" {
@@ -309,7 +312,7 @@ function commitWrites(ctx: WalkContext, nodeId: string, writes: RunWrite[]): voi
   ctx.previousWrites = writes;
 }
 
-async function executeGet(
+export async function executeGet(
   pool: Pool,
   data: Record<string, unknown>,
 ): Promise<{ writes: RunWrite[]; contactIds?: string[] }> {
@@ -337,19 +340,37 @@ async function executeGet(
     const ids = rows.map((r) => r.id);
     const writes: RunWrite[] = ids.map((id) => ({ table: "contact_records", id, contact_id: id }));
     if (ids.length) {
-      const verdicts = await pool.query<{ contact_id: string }>(
-        `SELECT contact_id FROM reachability_verdicts WHERE contact_id = ANY($1::text[])`,
-        [ids],
-      );
+      const firmScoped = select !== "every";
+      const verdictSql = firmScoped
+        ? `SELECT DISTINCT ON (rv.contact_id) rv.contact_id, rv.audit_run_id
+           FROM reachability_verdicts rv
+           JOIN audit_runs ar ON ar.id = rv.audit_run_id
+           WHERE rv.contact_id = ANY($1::text[]) AND rv.firm_id = $2
+           ORDER BY rv.contact_id, rv.updated_at DESC, ar.started_at DESC, rv.audit_run_id DESC`
+        : `SELECT DISTINCT ON (rv.contact_id) rv.contact_id, rv.audit_run_id
+           FROM reachability_verdicts rv
+           JOIN audit_runs ar ON ar.id = rv.audit_run_id
+           WHERE rv.contact_id = ANY($1::text[])
+           ORDER BY rv.contact_id, rv.updated_at DESC, ar.started_at DESC, rv.audit_run_id DESC`;
+      const readySql = firmScoped
+        ? `SELECT DISTINCT ON (sr.contact_id) sr.contact_id, sr.audit_run_id
+           FROM sequence_ready sr
+           JOIN audit_runs ar ON ar.id = sr.audit_run_id
+           WHERE sr.contact_id = ANY($1::text[]) AND sr.firm_id = $2
+           ORDER BY sr.contact_id, sr.updated_at DESC, ar.started_at DESC, sr.audit_run_id DESC`
+        : `SELECT DISTINCT ON (sr.contact_id) sr.contact_id, sr.audit_run_id
+           FROM sequence_ready sr
+           JOIN audit_runs ar ON ar.id = sr.audit_run_id
+           WHERE sr.contact_id = ANY($1::text[])
+           ORDER BY sr.contact_id, sr.updated_at DESC, ar.started_at DESC, sr.audit_run_id DESC`;
+      const markParams = firmScoped ? [ids, class1] : [ids];
+      const verdicts = await pool.query<{ contact_id: string; audit_run_id: string }>(verdictSql, markParams);
       for (const row of verdicts.rows) {
-        writes.push({ table: "reachability_verdicts", id: row.contact_id, contact_id: row.contact_id });
+        writes.push({ table: "reachability_verdicts", id: row.audit_run_id, contact_id: row.contact_id });
       }
-      const ready = await pool.query<{ contact_id: string }>(
-        `SELECT contact_id FROM sequence_ready WHERE contact_id = ANY($1::text[])`,
-        [ids],
-      );
+      const ready = await pool.query<{ contact_id: string; audit_run_id: string }>(readySql, markParams);
       for (const row of ready.rows) {
-        writes.push({ table: "sequence_ready", id: row.contact_id, contact_id: row.contact_id });
+        writes.push({ table: "sequence_ready", id: row.audit_run_id, contact_id: row.contact_id });
       }
     }
     return { writes, contactIds: ids };
@@ -652,23 +673,25 @@ function nestedField(row: Record<string, unknown> | null, field: string): unknow
   return cur;
 }
 
-async function loadWriteRow(
+export async function loadWriteRow(
   pool: Pool,
   firmId: string,
   w: RunWrite,
 ): Promise<Record<string, unknown> | null> {
   const contactId = w.contact_id ?? w.id;
   if (w.table === "sequence_ready") {
+    if (w.contact_id == null || w.contact_id === "") return null;
     const { rows } = await pool.query(
-      `SELECT * FROM sequence_ready WHERE contact_id=$1 AND firm_id=$2`,
-      [contactId, firmId],
+      `SELECT * FROM sequence_ready WHERE audit_run_id=$1 AND contact_id=$2 AND firm_id=$3`,
+      [w.id, w.contact_id, firmId],
     );
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
   if (w.table === "reachability_verdicts") {
+    if (w.contact_id == null || w.contact_id === "") return null;
     const { rows } = await pool.query(
-      `SELECT * FROM reachability_verdicts WHERE contact_id=$1 AND firm_id=$2`,
-      [contactId, firmId],
+      `SELECT * FROM reachability_verdicts WHERE audit_run_id=$1 AND contact_id=$2 AND firm_id=$3`,
+      [w.id, w.contact_id, firmId],
     );
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
@@ -692,8 +715,24 @@ async function loadWriteRow(
     const { rows } = await pool.query(`SELECT * FROM enrollment WHERE id=$1`, [w.id]);
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
+  if (w.table === "engagement_records") {
+    const { rows } = await pool.query(`SELECT * FROM engagement_records WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
   if (w.table === "missing_fact_signals") {
     const { rows } = await pool.query(`SELECT * FROM missing_fact_signals WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+  if (w.table === "fact_writebacks") {
+    const { rows } = await pool.query(`SELECT * FROM fact_writebacks WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+  if (w.table === "meeting_booked") {
+    const { rows } = await pool.query(`SELECT * FROM meeting_booked WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+  if (w.table === "wait_occupancy") {
+    const { rows } = await pool.query(`SELECT * FROM wait_occupancy WHERE id=$1`, [w.id]);
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
   return null;
@@ -1122,6 +1161,17 @@ export async function walkValidatedWorkflow(
 
   const goOn = async (fromId: string, list: RfEdge[]) => {
     if (opts.untilNodeId === fromId) return;
+    // A resumed wait's outgoing edges each start from that wait's stored writes.
+    // Sibling commitWrites must not replace the handle the next edge falls through to.
+    if (opts.resumeFromNodeId && fromId === opts.resumeFromNodeId) {
+      const saved = ctx.previousWrites;
+      for (const e of list) {
+        ctx.previousWrites = saved;
+        await visit(e.target);
+      }
+      ctx.previousWrites = saved;
+      return;
+    }
     for (const e of list) await visit(e.target);
   };
 
@@ -1502,13 +1552,13 @@ export async function walkValidatedWorkflow(
         let n = 0;
         const writes: RunWrite[] = [];
         for (const contactId of ctx.contactIds) {
-          await writeEngagement(pool, opts.firmId, contactId, actionType, {
+          const engagementId = await writeEngagement(pool, opts.firmId, contactId, actionType, {
             workflowId: opts.workflowId,
             runId: opts.runId,
             label: data.label ?? null,
             formQuestionIds: data.formQuestionIds ?? [],
           });
-          writes.push({ table: "engagement_records", id: contactId, contact_id: contactId });
+          writes.push({ table: "engagement_records", id: engagementId, contact_id: contactId });
           n += 1;
         }
         await persistAction(null, { contacts: n, formQuestionIds: data.formQuestionIds ?? [] });
@@ -1628,7 +1678,15 @@ export async function walkValidatedWorkflow(
       `SELECT node_status FROM workflow_run WHERE id=$1`,
       [opts.runId],
     );
-    Object.assign(nodeStatus, prior.rows[0]?.node_status ?? {});
+    const loaded = prior.rows[0]?.node_status ?? {};
+    Object.assign(nodeStatus, loaded);
+    for (const [nodeId, status] of Object.entries(loaded)) {
+      if (Array.isArray(status?.writes)) {
+        ctx.chainWrites[nodeId] = writesFromUnknown(status.writes);
+      }
+    }
+    const waitedWrites = loaded[opts.resumeFromNodeId]?.writes;
+    ctx.previousWrites = Array.isArray(waitedWrites) ? writesFromUnknown(waitedWrites) : [];
     nodeStatus[opts.resumeFromNodeId] = {
       status: "success",
       detail: "wait resumed",
@@ -1972,7 +2030,7 @@ export async function dispatchEventToWorkflows(
       firmId: opts.firmId,
       runId,
       triggerLabel: `event:${opts.eventName}`,
-      triggerPayload: { ...(opts.payload ?? {}), eventName: opts.eventName, anyPass: true },
+      triggerPayload: { ...(opts.payload ?? {}), eventName: opts.eventName },
       contactIds,
     });
     out.push({

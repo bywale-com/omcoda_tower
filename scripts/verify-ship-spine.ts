@@ -118,16 +118,14 @@ try {
     [bookContact, firm, "ship-book@example.com", "+15550001111", "Ship Book"],
   );
   await pool.query(
-    `INSERT INTO reachability_verdicts (contact_id, firm_id, verdict, details, updated_at)
-     VALUES ($1,$2,'reachable','{}'::jsonb,now())
-     ON CONFLICT (contact_id, firm_id) DO UPDATE SET verdict='reachable', updated_at=now()`,
-    [bookContact, firm],
+    `INSERT INTO reachability_verdicts (audit_run_id, contact_id, firm_id, verdict, details, updated_at)
+     VALUES ($1,$2,$3,'reachable','{}'::jsonb,now())`,
+    [auditId, bookContact, firm],
   );
   await pool.query(
-    `INSERT INTO sequence_ready (contact_id, firm_id, ready, updated_at)
-     VALUES ($1,$2,true,now())
-     ON CONFLICT (contact_id, firm_id) DO UPDATE SET ready=true, updated_at=now()`,
-    [bookContact, firm],
+    `INSERT INTO sequence_ready (audit_run_id, contact_id, firm_id, ready, updated_at)
+     VALUES ($1,$2,$3,true,now())`,
+    [auditId, bookContact, firm],
   );
   const bookOk =
     (await pool.query(`SELECT 1 FROM audit_runs WHERE id=$1`, [auditId])).rowCount === 1 &&
