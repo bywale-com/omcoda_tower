@@ -108,10 +108,12 @@ jobs:
             echo "actuator disarmed"
             npx tsx scripts/factory-control.ts
             npx tsx scripts/factory-emerge.ts
+            npx tsx scripts/factory-explain.ts || echo explain_failed
             exit 0
           fi
           npx tsx scripts/factory-control.ts --apply
           npx tsx scripts/factory-emerge.ts --apply
+          npx tsx scripts/factory-explain.ts || echo explain_failed
 
   dispatch:
     if: github.event_name == 'workflow_dispatch'

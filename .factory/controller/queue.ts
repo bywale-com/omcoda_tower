@@ -18,6 +18,7 @@ import {
   runsOnAgent,
 } from "./execution.ts";
 import { readyReleases } from "./conclusion.ts";
+import { explainFactory, type FactoryExplanation } from "./explain.ts";
 import {
   applyEvent,
   decide,
@@ -144,6 +145,8 @@ export interface ReadModel {
     dispatchHistory: DispatchRecord[];
     checks: Array<{ name: string; runId: string; outcome: string }>;
   }>;
+  /** Derived. It does not admit a transition. `now` empty leaves lease validity Unknown. */
+  explanation: FactoryExplanation;
 }
 
 function cloneLedger(ledger: FactoryLedger): FactoryLedger {
@@ -736,7 +739,7 @@ function filterLanes(
   });
 }
 
-export function projectFactory(ledger: FactoryLedger): ReadModel {
+export function projectFactory(ledger: FactoryLedger, now = ""): ReadModel {
   return {
     stateRevision: ledger.stateRevision,
     scope: structuredClone(ledger.scope),
@@ -776,6 +779,7 @@ export function projectFactory(ledger: FactoryLedger): ReadModel {
       dispatchHistory: (packet.dispatchHistory ?? []).map((record) => ({ ...record })),
       checks: packet.execution?.checks.map((check) => ({ ...check })) ?? [],
     })),
+    explanation: explainFactory(ledger, now),
   };
 }
 

@@ -19,6 +19,7 @@ import {
   type WorkItem,
   type World,
 } from "../.factory/controller/machine.ts";
+import { explainFactory } from "../.factory/controller/explain.ts";
 import { planVerifications, proofScript, verifyJobName } from "../.factory/controller/verify.ts";
 import {
   ContentsBlobRemote,
@@ -3305,7 +3306,13 @@ check("control and authorize commands do not arm the committed ledger", () => {
     assert.equal(proposed.wakes.length, 0);
   } else if (committedForDry.scope.status === "active") {
     assert.equal(proposed.wakes.some((wake) => wake.effect === "wake_architect"), false);
-    assert.equal(productionPressure(Object.values(committedForDry.packets)).holdArchitect, true);
+    const pressureNow = productionPressure(Object.values(committedForDry.packets));
+    assert.equal(pressureNow.holdArchitect, pressureNow.engineerQueueDepth >= 2);
+    const architectLane = !committedForDry.scope.lanes || committedForDry.scope.lanes.includes("architect");
+    if (!pressureNow.holdArchitect && !architectLane) {
+      assert.equal(proposed.reason, "lane_held");
+      assert.equal(proposed.wakes.length, 0);
+    }
   } else if (openAnalyst) {
     assert.equal(proposed.reason, "analyst_open");
     assert.equal(proposed.wakes.length, 0);
@@ -3759,8 +3766,9 @@ function assertRecoveryLedger(committed: FactoryLedger) {
   assert.ok(metrics.refusedOrFailedLaunches >= 1);
   assert.ok(metrics.trackedFreshLaunches >= 2);
   assert.ok(metrics.completedExecutions >= 1);
-  assert.ok(metrics.engineerQueueDepth >= 2);
-  assert.equal(productionPressure(Object.values(committed.packets)).holdArchitect, true);
+  const pressure = productionPressure(Object.values(committed.packets));
+  assert.equal(metrics.engineerQueueDepth, pressure.engineerQueueDepth);
+  assert.equal(pressure.holdArchitect, pressure.engineerQueueDepth >= 2);
   assert.equal(recoverExecutions(committed, "2026-10-30T15:45:00.000Z").changes.length, 0);
   const component = "firing-pointers: this firing places its own rows on payload.writes";
   for (const id of [
@@ -4842,6 +4850,264 @@ check("a candidate SHA is verified by a workflow for that commit", () => {
   assert.match(workflow, /factory-verify\.ts --plan/);
   assert.match(workflow, /factory-verify\.ts --record/);
   assert.match(workflow, /git rev-parse HEAD/);
+});
+
+check("a packet explains why it is waiting and what advances it", () => {
+  const now = "2026-10-31T14:00:00.000Z";
+  const later = "2026-10-31T16:00:00.000Z";
+  const sha = "3246a074efecd8adb98e4ca232d443b90821173f";
+  const other = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+  const worker = "bc-4192002b-f944-4eeb-919a-1af83d403f28";
+
+  function ranAnalyst(packetId: string) {
+    return {
+      packetId,
+      revision: "rev-1",
+      prHead: "head",
+      effect: "wake_sa" as const,
+      label: "factory-wake-sa" as const,
+      issuedAt: "2026-10-30T12:00:00.000Z",
+      workerExecution: "ran" as const,
+    };
+  }
+
+  function execution(id: string, packetIds: string[], phase: "dispatched" | "running" | "completed" | "refused" | "interrupted", issuedAt: string) {
+    return {
+      id,
+      assignmentId: `asg-${id}`,
+      role: "engineer" as const,
+      phase,
+      packetIds,
+      revisions: Object.fromEntries(packetIds.map((packetId) => [packetId, "rev-1"])),
+      label: "factory-wake-engineer" as const,
+      prHead: "head",
+      agentId: worker,
+      continuation: "fresh" as const,
+      issuedAt,
+      startedAt: phase === "running" || phase === "completed" ? issuedAt : null,
+      runningAt: phase === "running" ? issuedAt : null,
+      endedAt: phase === "completed" || phase === "refused" || phase === "interrupted" ? issuedAt : null,
+      reserveUntil: "2026-10-31T15:00:00.000Z",
+      startUntil: null,
+      leaseUntil: phase === "running" ? "2026-10-31T15:00:00.000Z" : null,
+      reason: phase === "completed" ? "candidate_recorded" : phase === "refused" ? "reservation_expired" : phase === "interrupted" ? "lease_expired" : null,
+    };
+  }
+
+  const founder = emptyLedger(50);
+  founder.usedDispatches = 50;
+  founder.scope.lanes = ["engineer", "analyst"];
+  const released = freshItem("pkt-009-eligibility-writes", "exec-identity");
+  released.stage = "released";
+  released.wake = "sa";
+  released.revision = "rev-1";
+  released.dispatchedSaRevision = "rev-1";
+  released.dispatchHistory = [ranAnalyst(released.id)];
+  const component = freshItem("pkt-007-fact-writes", "exec-identity");
+  component.stage = "verified";
+  component.verifiedSha = other;
+  component.candidateSha = other;
+  component.siblings = [{ id: released.id, basis: "component", note: "writes" }];
+  const waiting = freshItem("pkt-017-tick-send-halt", "exec-identity");
+  const held = freshItem("pkt-015-halt-enroll-firm", "exec-identity");
+  held.stage = "verified";
+  held.verifiedSha = sha;
+  held.candidateSha = sha;
+  held.siblings = [{ id: waiting.id, basis: "dependency", note: "halt" }];
+  waiting.stage = "released";
+  waiting.wake = "sa";
+  waiting.revision = "rev-1";
+  waiting.dispatchedSaRevision = "rev-1";
+  waiting.dispatchHistory = [ranAnalyst(waiting.id)];
+  waiting.siblings = [{ id: held.id, basis: "dependency", note: "halt" }];
+  const offered = freshItem("pkt-002-open-ask-cursor", "exec-identity");
+  offered.stage = "verified";
+  offered.verifiedSha = sha;
+  offered.candidateSha = sha;
+  const specified = freshItem("pkt-014-empty-firing-audience", "exec-identity");
+  specified.stage = "change_specified";
+  specified.revision = "rev-1";
+  specified.wake = "sa";
+  const done = freshItem("pkt-001-click-attribution", "exec-identity");
+  done.stage = "accepted";
+  done.wake = "hold";
+  const candidate = freshItem("pkt-004-firing-handle", "exec-identity");
+  candidate.stage = "candidate";
+  candidate.candidateSha = other;
+  founder.packets = {
+    [released.id]: released,
+    [component.id]: component,
+    [held.id]: held,
+    [waiting.id]: waiting,
+    [offered.id]: offered,
+    [specified.id]: specified,
+    [done.id]: done,
+    [candidate.id]: candidate,
+  };
+  founder.releases = {
+    "rel-pkt-002-open-ask-cursor": {
+      id: "rel-pkt-002-open-ask-cursor",
+      packetIds: [offered.id],
+      prNumber: 141,
+      prUrl: "https://github.com/bywale-com/omcoda_tower/pull/141",
+      openedAt: "2026-10-31T13:43:15.757Z",
+      mergeSha: null,
+    },
+  };
+  const capped = explainFactory(founder, now);
+  const offer = capped.packets.find((packet) => packet.id === offered.id);
+  assert.equal(offer?.who, "founder");
+  assert.equal(offer?.situation, "external");
+  assert.equal(offer?.next, "Merge release pull request 141.");
+  const exhausted = capped.packets.find((packet) => packet.id === specified.id);
+  assert.equal(exhausted?.who, "founder");
+  assert.equal(exhausted?.situation, "held");
+  assert.match(exhausted?.why ?? "", /exhausted \(50\/50\)/);
+  const alone = capped.packets.find((packet) => packet.id === component.id);
+  assert.equal(alone?.who, "controller");
+  assert.equal(alone?.situation, "proceeding");
+  assert.equal(alone?.next, "The next Factory dispatch pass opens a release pull request.");
+  const chain = capped.packets.find((packet) => packet.id === held.id);
+  assert.equal(chain?.situation, "held");
+  assert.equal(chain?.next, "pkt-017-tick-send-halt reaches verified.");
+  const unsigned = capped.packets.find((packet) => packet.id === released.id);
+  assert.equal(unsigned?.situation, "intervention");
+  assert.equal(unsigned?.next, "Unknown");
+  assert.match(unsigned?.why ?? "", /No sign_change/);
+  const finished = capped.packets.find((packet) => packet.id === done.id);
+  assert.equal(finished?.situation, "complete");
+  assert.equal(finished?.next, "Nothing.");
+  const unverified = capped.packets.find((packet) => packet.id === candidate.id);
+  assert.equal(unverified?.who, "github_actions");
+  assert.equal(unverified?.situation, "external");
+  assert.match(unverified?.happening ?? "", /Unknown/);
+  assert.equal(unverified?.next, `GitHub Actions must verify commit ${other}.`);
+
+  const live = emptyLedger(50);
+  live.scope.lanes = ["engineer", "analyst"];
+  live.usedDispatches = 43;
+  const running = freshItem("pkt-019-first-step-send-denied", "exec-identity");
+  running.stage = "engineering";
+  running.revision = "rev-1";
+  running.wake = "sa";
+  running.dispatchedEngineerRevision = "rev-1";
+  running.lease = { workerId: worker, role: "engineer", until: "2026-10-31T15:00:00.000Z", revision: "rev-1" };
+  running.dispatch = {
+    packetId: running.id,
+    revision: "rev-1",
+    prHead: "head",
+    effect: "wake_engineer",
+    label: "factory-wake-engineer",
+    issuedAt: "2026-10-31T13:45:40.987Z",
+  };
+  live.packets = { [running.id]: running };
+  live.executions = { "dsp-live": execution("dsp-live", [running.id], "running", "2026-10-31T13:51:21.603Z") };
+  live.initiatives = {
+    "exec-identity": {
+      ...freshInitiative({ id: "exec-identity", module: "Agents", capability: "identity", entry: "claim", obligation: "packet", priority: 1 }),
+      queue: "active",
+      session: "continuation_due",
+    },
+  };
+  const active = explainFactory(live, now);
+  const current = active.packets.find((packet) => packet.id === running.id);
+  assert.equal(current?.situation, "proceeding");
+  assert.equal(current?.who, "engineer");
+  assert.match(current?.happening ?? "", new RegExp(worker));
+  assert.match(current?.happening ?? "", /Lease valid until/);
+  assert.match(current?.why ?? "", /Unknown/);
+  assert.equal(current?.next, "Record a candidate SHA.");
+  assert.equal(/stalled|progress observed/i.test(JSON.stringify(current)), false);
+  const slot = structuredClone(live);
+  const queued = freshItem("pkt-020-next", "exec-identity");
+  queued.stage = "change_specified";
+  queued.revision = "rev-1";
+  queued.wake = "sa";
+  slot.packets[queued.id] = queued;
+  const blocked = explainFactory(slot, now).packets.find((packet) => packet.id === queued.id);
+  assert.equal(blocked?.situation, "held");
+  assert.match(blocked?.why ?? "", new RegExp(running.id));
+  const architect = active.initiatives.find((item) => item.id === "exec-identity");
+  assert.equal(architect?.who, "founder");
+  assert.match(architect?.why ?? "", /architect lane is off/);
+  assert.match(architect?.why ?? "", /not backpressure/);
+  assert.equal(active.summary.engineersRunning, 1);
+  assert.match(active.summary.headline, /Factory operating · 1 Engineer active · 0 packets awaiting verification · 0 releases awaiting your review/);
+  const view = projectFactory(live, now);
+  assert.equal(view.explanation.packets.find((packet) => packet.id === running.id)?.next, "Record a candidate SHA.");
+
+  const elapsed = explainFactory(live, later).packets.find((packet) => packet.id === running.id);
+  assert.equal(elapsed?.who, "controller");
+  assert.equal(elapsed?.situation, "held");
+  assert.match(elapsed?.why ?? "", /Recovery has not run/);
+  const shared = structuredClone(live);
+  const donePkt = freshItem("pkt-018-send-denied-engagement", "exec-identity");
+  donePkt.stage = "verified";
+  donePkt.verifiedSha = sha;
+  donePkt.candidateSha = sha;
+  donePkt.siblings = [{ id: running.id, basis: "dependency", note: "halt" }];
+  shared.packets[donePkt.id] = donePkt;
+  shared.executions?.["dsp-live"].packetIds.push(donePkt.id);
+  const finishedSibling = explainFactory(shared, later).packets.find((packet) => packet.id === donePkt.id);
+  assert.equal(/Recovery has not run/.test(finishedSibling?.why ?? ""), false);
+  assert.match(finishedSibling?.next ?? "", new RegExp(running.id));
+
+  const recovered = structuredClone(live);
+  const recoveredPacket = recovered.packets[running.id];
+  recoveredPacket.lease = null;
+  recoveredPacket.dispatchedEngineerRevision = null;
+  recoveredPacket.dispatch = null;
+  const recoveredExecution = recovered.executions?.["dsp-live"];
+  if (!recoveredExecution) throw new Error("execution missing");
+  recoveredExecution.phase = "interrupted";
+  recoveredExecution.endedAt = later;
+  recoveredExecution.reason = "lease_expired";
+  recoveredExecution.leaseUntil = "2026-10-31T15:00:00.000Z";
+  const stuck = explainFactory(recovered, later).packets.find((packet) => packet.id === running.id);
+  assert.equal(stuck?.situation, "intervention");
+  assert.equal(stuck?.next, "Unknown");
+  assert.match(stuck?.why ?? "", /change_specified/);
+
+  const history = emptyLedger(50);
+  const oldPacket = freshItem("pkt-003-resume-same-run", "exec-identity");
+  oldPacket.stage = "verified";
+  oldPacket.verifiedSha = sha;
+  oldPacket.candidateSha = sha;
+  const freshPacket = freshItem("pkt-021-open", "exec-identity");
+  freshPacket.stage = "change_specified";
+  freshPacket.revision = "rev-1";
+  freshPacket.wake = "sa";
+  history.packets = { [oldPacket.id]: oldPacket, [freshPacket.id]: freshPacket };
+  history.executions = {
+    "dsp-old": execution("dsp-old", [oldPacket.id], "refused", "2026-10-30T10:38:20.846Z"),
+    "dsp-open": execution("dsp-open", [freshPacket.id], "dispatched", "2026-10-31T14:00:00.000Z"),
+  };
+  const executions = explainFactory(history, now).executions;
+  const obsolete = executions.find((item) => item.id === "dsp-old");
+  const unconfirmed = executions.find((item) => item.id === "dsp-open");
+  assert.equal(obsolete?.alert, false);
+  assert.equal(obsolete?.historical, true);
+  assert.equal(unconfirmed?.alert, true);
+  assert.equal(unconfirmed?.historical, false);
+
+  const pressure = structuredClone(live);
+  const second = freshItem("pkt-022-also", "exec-identity");
+  second.stage = "change_specified";
+  second.revision = "rev-1";
+  second.wake = "sa";
+  pressure.packets[second.id] = second;
+  const pressed = explainFactory(pressure, now).initiatives.find((item) => item.id === "exec-identity");
+  assert.match(pressed?.why ?? "", /This is backpressure/);
+  assert.equal(pressed?.next, "The engineer queue drops below 2.");
+  assert.equal(/lane is off/.test(pressed?.why ?? ""), false);
+
+  const source = read("scripts/factory-explain.ts");
+  assert.equal(source.includes("compareAndSwap"), false);
+  assert.equal(source.includes("commitLedgerEvent"), false);
+  assert.equal(source.includes("--apply"), false);
+  assert.equal(read(".factory/controller/explain.ts").includes("readFileSync"), false);
+  assert.match(read(".github/workflows/factory-dispatch.yml"), /factory-explain\.ts/);
+  assert.equal(read(".github/workflows/factory-dispatch.yml").includes("schedule:"), false);
 });
 
 const failures: string[] = [];
