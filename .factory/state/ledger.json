@@ -1,5 +1,5 @@
 {
-  "stateRevision": 187,
+  "stateRevision": 188,
   "authorizedDispatches": 50,
   "usedDispatches": 43,
   "scope": {
@@ -1956,6 +1956,16 @@
       "prNumber": 145,
       "prUrl": "https://github.com/bywale-com/omcoda_tower/pull/145",
       "openedAt": "2026-10-31T14:39:05.208Z",
+      "mergeSha": null
+    },
+    "rel-pkt-010-campaign-failure-writes": {
+      "id": "rel-pkt-010-campaign-failure-writes",
+      "packetIds": [
+        "pkt-010-campaign-failure-writes"
+      ],
+      "prNumber": 146,
+      "prUrl": "https://github.com/bywale-com/omcoda_tower/pull/146",
+      "openedAt": "2026-10-31T14:39:12.353Z",
       "mergeSha": null
     }
   }
