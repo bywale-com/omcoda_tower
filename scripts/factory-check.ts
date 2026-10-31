@@ -19,6 +19,7 @@ import {
   type WorkItem,
   type World,
 } from "../.factory/controller/machine.ts";
+import { planVerifications, proofScript, verifyJobName } from "../.factory/controller/verify.ts";
 import {
   ContentsBlobRemote,
   GitHubContentsStore,
@@ -4797,6 +4798,50 @@ check("a worker keeps one agent and a release is a verified dependency set", asy
   assert.match(emerge, /x-access-token/);
   assert.match(emerge, /release_push_failed/);
   assert.match(read(".github/workflows/factory-dispatch.yml"), /scripts\/factory-emerge\.ts --apply/);
+});
+
+check("a candidate SHA is verified by a workflow for that commit", () => {
+  const sha = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+  const other = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+  assert.equal(proofScript("pkt-004-firing-handle"), "scripts/verify-firing-handle.ts");
+  assert.equal(proofScript("pkt-015-halt-enroll-firm"), "scripts/verify-halt-enroll-firm.ts");
+  assert.equal(proofScript("not-a-packet"), null);
+  const candidates = [
+    { packetId: "pkt-004-firing-handle", sha },
+    { packetId: "pkt-006-id-keyed-loads", sha: other },
+  ];
+  const fresh = planVerifications(candidates, []);
+  assert.deepEqual(fresh.record, []);
+  assert.deepEqual(
+    fresh.start.map((item) => item.sha),
+    [sha, other].sort(),
+  );
+  assert.deepEqual(fresh.start.find((item) => item.sha === sha)?.proofs, ["scripts/verify-firing-handle.ts"]);
+  const open = planVerifications(candidates, [
+    { name: verifyJobName(sha), status: "in_progress", conclusion: null, runId: "9" },
+  ]);
+  assert.equal(open.start.some((item) => item.sha === sha), false);
+  assert.equal(open.record.some((item) => item.sha === sha), false);
+  assert.equal(open.start.some((item) => item.sha === other), true);
+  const failed = planVerifications(candidates, [
+    { name: verifyJobName(sha), status: "completed", conclusion: "failure", runId: "9" },
+  ]);
+  assert.equal(failed.start.some((item) => item.sha === sha), false);
+  assert.equal(failed.record.some((item) => item.sha === sha), false);
+  const passed = planVerifications(candidates, [
+    { name: verifyJobName(sha), status: "completed", conclusion: "success", runId: "11" },
+  ]);
+  assert.equal(passed.start.some((item) => item.sha === sha), false);
+  assert.equal(passed.record[0]?.packetId, "pkt-004-firing-handle");
+  assert.equal(passed.record[0]?.runId, "11");
+  assert.equal(passed.record[0]?.checkName, "verify-firing-handle");
+  const workflow = read(".github/workflows/factory-verify.yml");
+  assert.equal(workflow.includes("schedule:"), false);
+  assert.equal(workflow.includes("cancel-in-progress: false"), true);
+  assert.match(workflow, /ref: \$\{\{ matrix\.item\.sha \}\}/);
+  assert.match(workflow, /factory-verify\.ts --plan/);
+  assert.match(workflow, /factory-verify\.ts --record/);
+  assert.match(workflow, /git rev-parse HEAD/);
 });
 
 const failures: string[] = [];

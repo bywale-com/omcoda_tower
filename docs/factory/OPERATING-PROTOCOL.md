@@ -58,6 +58,8 @@ When that set is verified, `scripts/factory-emerge.ts` opens one pull request wh
 
 Every released packet names the checks that prove its requirements. A green build is not that proof. A passing check proves only the SHA it ran against. The controller refuses a pass whose SHA is not `candidateSha`.
 
+A packet at `candidate` is verified by `.github/workflows/factory-verify.yml`. That workflow checks out `candidateSha`, runs `scripts/verify-<packet>.ts` from that commit, and records the Actions run id. It does not start a Cursor agent. A run already open, already recorded, or already failed for that SHA is not started again. A new candidate SHA is a new run. The dispatch pass then opens a release pull request when the dependency set is verified. It still does not merge.
+
 A passing check moves the packet to `verified`. Acceptance is later: `integration_authorized`, then `integrated` with a merge SHA, then `reconciled`, then `accepted`. A green result on one commit does not mean the commit is on the target branch.
 
 Product packets use Tower’s existing checks (`npm run build`, `npm run verify:ship`, and any script the systems-change packet names). They do not import Travis phone walks or `runtime-doors`.
