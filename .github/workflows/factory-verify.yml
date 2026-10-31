@@ -39,11 +39,13 @@ jobs:
           WAKE_GITHUB_TOKEN: ${{ secrets.WAKE_GITHUB_TOKEN }}
           FACTORY_LEDGER_BRANCH: ${{ github.head_ref }}
           FACTORY_REPOSITORY: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          npx tsx scripts/factory-verify.ts --plan > /tmp/verify-items.json
           {
             echo "items<<EOF"
-            npx tsx scripts/factory-verify.ts --plan
+            cat /tmp/verify-items.json
             echo EOF
           } >> "$GITHUB_OUTPUT"
 
