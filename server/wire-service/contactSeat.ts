@@ -662,6 +662,9 @@ export async function handleContactSeatMeeting(c: Context) {
       firm_id: resolved.link.firm_id,
       slot,
       campaign_objective_id: campaignObjectiveId,
+      writes: [
+        { table: "meeting_booked", id, contact_id: resolved.link.contact_id },
+      ],
     },
     contactIds: [resolved.link.contact_id],
   });
