@@ -100,7 +100,7 @@ export async function isHaltBlockingNew(
     `SELECT 1 FROM halt_records
      WHERE lifted_at IS NULL
        AND ((scope = 'firm-book' AND firm_id = $1)
-         OR ($2::text IS NOT NULL AND scope = 'contact' AND contact_id = $2))
+         OR ($2::text IS NOT NULL AND scope = 'contact' AND contact_id = $2 AND firm_id = $1))
      LIMIT 1`,
     [firmId, contactId ?? null],
   );

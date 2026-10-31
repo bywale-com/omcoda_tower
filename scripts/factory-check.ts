@@ -2114,6 +2114,112 @@ check("a ct_firms firing publishes the provisioned firm id", () => {
   assert.match(read(".github/workflows/ship.yml"), /verify-firm-provision-writes\.ts/);
 });
 
+check("a contact halt blocks a new enroll only in the firm stored on that halt row", () => {
+  function sliceFn(source: string, start: string, end: string): string {
+    const at = source.indexOf(start);
+    assert.ok(at >= 0, start);
+    const to = source.indexOf(end, at + start.length);
+    assert.ok(to > at, end);
+    return source.slice(at, to);
+  }
+
+  const send = read("server/wire-service/dispatchSend.ts");
+  const haltFn = sliceFn(send, "export async function isHaltBlockingNew", "export async function dispatchEmailLive");
+  const flat = haltFn.replace(/\s+/g, "");
+  for (const needle of [
+    "scope = 'firm-book' AND firm_id = $1",
+    "$2::text IS NOT NULL",
+    "scope = 'contact' AND contact_id = $2 AND firm_id = $1",
+    "LIMIT 1",
+    "[firmId, contactId ?? null]",
+  ]) {
+    assert.ok(flat.includes(needle.replace(/\s+/g, "")), needle);
+  }
+  assert.equal(haltFn.includes("ORDER BY"), false);
+  assert.equal(haltFn.includes("UNIQUE"), false);
+
+  const gate = sliceFn(send, "async function consentAndHaltGate", "export async function isHaltBlockingNew");
+  const contactAt = gate.indexOf("scope = 'contact'");
+  assert.ok(contactAt >= 0);
+  const contactStmt = gate.slice(contactAt, gate.indexOf(");", contactAt) + 2);
+  assert.match(contactStmt, /scope = 'contact' AND contact_id = \$1/);
+  assert.match(contactStmt, /\[contactId\]/);
+  assert.equal(contactStmt.includes("firm_id"), false);
+  assert.match(gate, /scope = 'firm-book' AND firm_id = \$1/);
+
+  const stores = read("server/wire-service/stores.ts");
+  const isContact = sliceFn(stores, "export async function handleHaltIsContact", "export async function handleHaltIsFirmBook");
+  assert.match(isContact, /scope = 'contact' AND contact_id = \$1/);
+  assert.match(isContact, /\[contactId\]/);
+  assert.equal(isContact.includes("firm_id"), false);
+
+  const standIn = read("src/app/wire/standins/haltStore.ts");
+  const standInFn = sliceFn(standIn, "async isContactHalted", "async isFirmBookHalted");
+  assert.match(standInFn, /h\.scope === "contact" && h\.contactId === contactId/);
+  assert.equal(standInFn.includes("firmId"), false);
+
+  const real = read("src/app/wire/reals/haltStore.ts");
+  const realFn = sliceFn(real, "async isContactHalted", "async isFirmBookHalted");
+  assert.match(realFn, /`\/halt\/contact\/\$\{encodeURIComponent\(contactId\)\}`/);
+
+  const walk = read("server/wire-service/workflowWalk.ts");
+  const callAgent = walk.slice(walk.indexOf('actionType === "call_agent"'));
+  const enrollAt = callAgent.indexOf("enrollAndActuate(");
+  assert.ok(enrollAt >= 0);
+  const braceAt = callAgent.indexOf("{", enrollAt);
+  let depth = 0;
+  let enrollObj = "";
+  for (let i = braceAt; i < callAgent.length; i += 1) {
+    if (callAgent[i] === "{") depth += 1;
+    else if (callAgent[i] === "}") {
+      depth -= 1;
+      if (depth === 0) {
+        enrollObj = callAgent.slice(braceAt, i + 1);
+        break;
+      }
+    }
+  }
+  assert.match(enrollObj, /firmId:\s*opts\.firmId/);
+  assert.match(enrollObj, /fireFirstStep:\s*true/);
+
+  const cascade = read("server/wire-service/cascade.ts");
+  const enroll = sliceFn(cascade, "export async function enrollAndActuate", "export async function advanceTemplateCellIfDue");
+  const callAt = enroll.indexOf("isHaltBlockingNew(input.firmId, input.contactId)");
+  const insertAt = enroll.indexOf("INSERT INTO enrollment");
+  assert.ok(callAt >= 0 && insertAt > callAt);
+  assert.match(enroll, /blocked:\s*"halt"/);
+
+  const machine = read("server/wire-service/machine.ts");
+  const sequence = sliceFn(machine, "export async function handleSequenceEnrollContacts", "export async function handleRulePackUpsert");
+  const everyAt = sequence.indexOf("`SELECT id, firm_id FROM contact_records`");
+  assert.ok(everyAt >= 0);
+  assert.equal(sequence.slice(everyAt, everyAt + 60).includes("WHERE"), false);
+  assert.match(sequence, /firmId:\s*row\.firm_id/);
+
+  const indexSql = read("supabase/migrations/003_ct_wire_stores.sql");
+  const indexAt = indexSql.indexOf("halt_records_contact_active_idx");
+  assert.ok(indexAt >= 0);
+  const index = indexSql.slice(indexAt, indexSql.indexOf(";", indexAt));
+  assert.match(index, /ON halt_records \(contact_id\)\s+WHERE lifted_at IS NULL AND scope = 'contact'/);
+  assert.equal(index.includes("UNIQUE"), false);
+
+  const filter = read(".github/workflows/factory-check.yml");
+  for (const path of [
+    "server/wire-service/dispatchSend.ts",
+    "server/wire-service/cascade.ts",
+    "server/wire-service/machine.ts",
+    "server/wire-service/stores.ts",
+    "server/wire-service/workflowWalk.ts",
+    "src/app/wire/standins/haltStore.ts",
+    "src/app/wire/reals/haltStore.ts",
+    "scripts/verify-halt-enroll-firm.ts",
+    ".github/workflows/ship.yml",
+  ]) {
+    assert.ok(filter.includes(path), path);
+  }
+  assert.match(read(".github/workflows/ship.yml"), /scripts\/verify-halt-enroll-firm\.ts/);
+});
+
 function sections(): string[] {
   return [
     "intent",
