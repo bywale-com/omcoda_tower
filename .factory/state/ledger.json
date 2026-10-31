@@ -1,5 +1,5 @@
 {
-  "stateRevision": 199,
+  "stateRevision": 200,
   "authorizedDispatches": 50,
   "usedDispatches": 44,
   "scope": {
@@ -125,7 +125,7 @@
     "pkt-002-open-ask-cursor": {
       "id": "pkt-002-open-ask-cursor",
       "initiativeId": "exec-identity",
-      "stage": "verified",
+      "stage": "accepted",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
@@ -141,8 +141,8 @@
       "dispatchedEngineerRevision": "rev-1",
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
-      "integratedSha": null,
-      "reconciliationId": null,
+      "integratedSha": "f7c8f8587739031bdbf3f3fd3fb42246a3df425a",
+      "reconciliationId": "pr-141-f7c8f8587739031bdbf3f3fd3fb42246a3df425a",
       "dispatch": null,
       "execution": {
         "mode": "automatic",
@@ -2034,7 +2034,7 @@
       "prNumber": 141,
       "prUrl": "https://github.com/bywale-com/omcoda_tower/pull/141",
       "openedAt": "2026-10-31T13:43:15.757Z",
-      "mergeSha": null
+      "mergeSha": "f7c8f8587739031bdbf3f3fd3fb42246a3df425a"
     },
     "rel-pkt-003-resume-same-run": {
       "id": "rel-pkt-003-resume-same-run",
