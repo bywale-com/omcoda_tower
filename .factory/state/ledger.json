@@ -1,5 +1,5 @@
 {
-  "stateRevision": 192,
+  "stateRevision": 193,
   "authorizedDispatches": 50,
   "usedDispatches": 43,
   "scope": {
@@ -1325,12 +1325,7 @@
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": {
-        "workerId": "bc-4192002b-f944-4eeb-919a-1af83d403f28",
-        "role": "engineer",
-        "until": "2026-10-31T14:51:21.603Z",
-        "revision": "rev-1"
-      },
+      "lease": null,
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
@@ -1338,21 +1333,12 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
-      "dispatchedEngineerRevision": "rev-1",
+      "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-019-first-step-send-denied",
-        "revision": "rev-1",
-        "prHead": "00283ac4b875c28cc3cab35592f98e5144d39b44",
-        "effect": "wake_engineer",
-        "label": "factory-wake-engineer",
-        "issuedAt": "2026-10-31T13:45:40.987Z",
-        "executionId": "dsp-172-engineer-pkt-018-send-denied-engagement",
-        "assignmentId": "asg-dsp-172-engineer-pkt-018-send-denied-engagement"
-      },
+      "dispatch": null,
       "dispatchHistory": [
         {
           "packetId": "pkt-019-first-step-send-denied",
@@ -1361,6 +1347,17 @@
           "effect": "wake_sa",
           "label": "factory-wake-sa",
           "issuedAt": "2026-10-30T14:02:15.786Z",
+          "workerExecution": "ran"
+        },
+        {
+          "packetId": "pkt-019-first-step-send-denied",
+          "revision": "rev-1",
+          "prHead": "00283ac4b875c28cc3cab35592f98e5144d39b44",
+          "effect": "wake_engineer",
+          "label": "factory-wake-engineer",
+          "issuedAt": "2026-10-31T13:45:40.987Z",
+          "executionId": "dsp-172-engineer-pkt-018-send-denied-engagement",
+          "assignmentId": "asg-dsp-172-engineer-pkt-018-send-denied-engagement",
           "workerExecution": "ran"
         }
       ],
@@ -1718,7 +1715,7 @@
       "id": "dsp-172-engineer-pkt-018-send-denied-engagement",
       "assignmentId": "asg-dsp-172-engineer-pkt-018-send-denied-engagement",
       "role": "engineer",
-      "phase": "running",
+      "phase": "interrupted",
       "packetIds": [
         "pkt-018-send-denied-engagement",
         "pkt-019-first-step-send-denied"
@@ -1734,11 +1731,11 @@
       "issuedAt": "2026-10-31T13:45:40.987Z",
       "startedAt": "2026-10-31T13:48:02.104Z",
       "runningAt": "2026-10-31T13:51:21.603Z",
-      "endedAt": null,
+      "endedAt": "2026-10-31T15:06:12.539Z",
       "reserveUntil": "2026-10-31T14:15:40.987Z",
       "startUntil": "2026-10-31T14:03:02.104Z",
       "leaseUntil": "2026-10-31T14:51:21.603Z",
-      "reason": null
+      "reason": "lease_expired"
     }
   },
   "assignments": {
