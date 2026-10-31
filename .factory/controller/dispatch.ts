@@ -17,7 +17,7 @@
 import { spawn } from "node:child_process";
 import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
-import { applyWorkerSignal, openExecution, type Assignment, type WorkerExecution } from "./execution.ts";
+import { applyWorkerSignal, liveExecutionFor, openExecution, planPacketContinuation, type Assignment, type WorkerExecution } from "./execution.ts";
 import {
   acknowledgeDispatch,
   applyEvent,
@@ -39,6 +39,18 @@ export interface FactoryLedger {
   packets: Record<string, WorkItem>;
   executions?: Record<string, WorkerExecution>;
   assignments?: Record<string, Assignment>;
+  /** Founder releases already opened. Absent until the first one is recorded. */
+  releases?: Record<string, ReleaseRecord>;
+}
+
+/** One dependency-closed set that has been offered for merge. The controller does not merge it. */
+export interface ReleaseRecord {
+  id: string;
+  packetIds: string[];
+  prNumber: number | null;
+  prUrl: string | null;
+  openedAt: string;
+  mergeSha: string | null;
 }
 
 export interface ScopeState {
@@ -249,6 +261,25 @@ export async function commitEvent(
     if (!item) {
       return { write: null, result: { ok: false, reason: "unknown_packet", item: freshItem(packetId) } };
     }
+    if (event.type === "saturate_context") {
+      const execution = liveExecutionFor(ledger, packetId);
+      if (!execution || execution.phase === "completed" || execution.phase === "failed" || execution.phase === "refused" || execution.phase === "interrupted") {
+        return { write: null, result: { ok: false, reason: "no_dispatch_record", item } };
+      }
+      if (execution.agentId && execution.agentId !== event.workerId) {
+        return { write: null, result: { ok: false, reason: "worker_mismatch", item } };
+      }
+      const drafted = applyWorkerSignal(structuredClone(ledger), packetId, {
+        type: "context_saturated",
+        workerId: event.workerId,
+        now: world.now,
+      });
+      const stored = drafted.packets[packetId] ?? item;
+      return {
+        write: { ...drafted, stateRevision: ledger.stateRevision + 1 },
+        result: { ok: true, reason: "context_saturated", item: stored },
+      };
+    }
     const applied = applyEvent(item, event, world);
     if (!applied.ok) return { write: null, result: applied };
     let drafted: FactoryLedger = {
@@ -295,6 +326,8 @@ export async function dispatchWake(opts: {
   now: string;
   engineeringBusy: boolean;
   budgetUsd: number | null;
+  resumeSupported?: boolean;
+  resume?: (agentId: string, text: string) => Promise<{ ok: boolean; reason: string }>;
 }): Promise<DispatchResult> {
   return opts.store.transact(async (ledger) => {
     const ids = opts.packetIds?.length ? opts.packetIds : [opts.packetId];
@@ -319,16 +352,42 @@ export async function dispatchWake(opts: {
         return { write: null, result: { ok: false, reason: "assignment_mismatch", effect: "none", item } };
       }
     }
-    const added = await opts.actuator.add({
-      label: decision.label,
-      packetId: ids.join(","),
-      revision: item.revision,
-      prHead: opts.prHead,
-    });
-    if (!added.ok) {
-      return { write: null, result: { ok: false, reason: added.reason, effect: decision.effect, item } };
-    }
     const role = decision.effect === "wake_sa" ? "analyst" : "engineer";
+    const plan =
+      decision.effect === "wake_repair"
+        ? { mode: "fresh" as const, agentId: null as string | null }
+        : planPacketContinuation({
+            ledger,
+            role,
+            packetIds: ids,
+            resumeSupported: opts.resumeSupported === true,
+          });
+    let continuation: "fresh" | "resume" = "fresh";
+    let agentId: string | null = null;
+    if (plan.mode === "resume" && plan.agentId) {
+      if (!opts.resume) {
+        return { write: null, result: { ok: false, reason: "continuation_unavailable", effect: decision.effect, item } };
+      }
+      const sent = await opts.resume(
+        plan.agentId,
+        `Continue the ${role} assignment. Packets: ${ids.join(", ")}. Finish each packet in this assignment before stopping.`,
+      );
+      if (!sent.ok) {
+        return { write: null, result: { ok: false, reason: sent.reason, effect: decision.effect, item } };
+      }
+      continuation = "resume";
+      agentId = plan.agentId;
+    } else {
+      const added = await opts.actuator.add({
+        label: decision.label,
+        packetId: ids.join(","),
+        revision: item.revision,
+        prHead: opts.prHead,
+      });
+      if (!added.ok) {
+        return { write: null, result: { ok: false, reason: added.reason, effect: decision.effect, item } };
+      }
+    }
     const opened = openExecution({
       stateRevision: ledger.stateRevision,
       role,
@@ -338,7 +397,8 @@ export async function dispatchWake(opts: {
       label: decision.label,
       prHead: opts.prHead,
       now: opts.now,
-      continuation: "fresh",
+      continuation,
+      agentId,
     });
     const packets = { ...ledger.packets };
     let acknowledged = item;
@@ -362,7 +422,7 @@ export async function dispatchWake(opts: {
         executions: { ...(ledger.executions ?? {}), [opened.execution.id]: opened.execution },
         assignments: { ...(ledger.assignments ?? {}), [opened.assignment.id]: opened.assignment },
       },
-      result: { ok: true, reason: "dispatched", effect: decision.effect, item: acknowledged },
+      result: { ok: true, reason: continuation === "resume" ? "resumed" : "dispatched", effect: decision.effect, item: acknowledged },
     };
   });
 }

@@ -8,10 +8,9 @@
 import { execFileSync } from "node:child_process";
 import { GitHubContentsStore, githubContentsRemote } from "../.factory/controller/contents.ts";
 import { commitEvent, type FactoryLedger } from "../.factory/controller/dispatch.ts";
-import { selectLabeledDispatch } from "../.factory/controller/wake.ts";
 
 const command = process.argv[2] ?? "";
-const commands = new Set(["start", "lease", "candidate", "refuse", "block"]);
+const commands = new Set(["start", "lease", "candidate", "refuse", "block", "saturate"]);
 
 function flag(name: string): string {
   const index = process.argv.indexOf(name);
@@ -65,17 +64,26 @@ const world = {
   scopeStatus: ledger.scope.status,
 };
 
-function packetFor(current: FactoryLedger) {
-  const selected = selectLabeledDispatch(Object.values(current.packets), label);
-  if (!selected.ok && selected.reason === "ambiguous_dispatch") fail("ambiguous_dispatch");
-  if (selected.ok) return selected.row;
-  const leased = Object.values(current.packets).find(
-    (packet) => packet.lease?.workerId === workerId && packet.lease.role === "engineer",
-  );
-  return leased ?? null;
+function assignmentPackets(current: FactoryLedger) {
+  const matches = Object.values(current.packets)
+    .filter((packet) => packet.dispatch?.label === label)
+    .sort((a, b) => a.id.localeCompare(b.id));
+  if (!matches.length) {
+    const leased = Object.values(current.packets).find(
+      (packet) => packet.lease?.workerId === workerId && packet.lease.role === "engineer",
+    );
+    return leased ? [leased] : [];
+  }
+  const executionIds = new Set(matches.map((packet) => packet.dispatch?.executionId ?? packet.id));
+  if (executionIds.size > 1) fail("ambiguous_dispatch");
+  return matches;
 }
 
-const packet = packetFor(ledger);
+const packets = assignmentPackets(ledger);
+const requested = flag("--packet");
+const packet = requested
+  ? packets.find((item) => item.id === requested) ?? null
+  : packets.find((item) => !item.candidateSha) ?? packets[0] ?? null;
 if (!packet) fail("no_dispatch_record");
 
 let event;
@@ -95,6 +103,8 @@ if (command === "start") {
   const sha = flag("--sha");
   if (!/^[0-9a-f]{7,64}$/i.test(sha)) fail("sha_mismatch");
   event = { type: "commit_candidate" as const, sha, revision: packet.revision, workerId };
+} else if (command === "saturate") {
+  event = { type: "saturate_context" as const, workerId };
 } else {
   const blockerId = flag("--blocker");
   const failureClass = flag("--class");
@@ -103,6 +113,19 @@ if (command === "start") {
   event = { type: "blocker" as const, blockerId, failureClass };
 }
 
+const executionId = packet.dispatch?.executionId;
 const wrote = await commitEvent(store, packet.id, event, world);
 if (!wrote.ok) fail(wrote.reason);
+if (command === "candidate" && executionId) {
+  const again = await store.read();
+  const execution = again.executions?.[executionId];
+  const remaining = (execution?.packetIds ?? [])
+    .map((id) => again.packets[id])
+    .filter((item) => item && !item.candidateSha)
+    .sort((a, b) => a.id.localeCompare(b.id));
+  if (remaining.length) {
+    console.log(`continue ${remaining[0].id}`);
+    process.exit(0);
+  }
+}
 console.log(wrote.reason);

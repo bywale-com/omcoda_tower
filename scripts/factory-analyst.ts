@@ -13,7 +13,7 @@ import { commitEvent, type FactoryLedger } from "../.factory/controller/dispatch
 import { sectionsFromSpecification } from "../.factory/controller/specification.ts";
 
 const command = process.argv[2] ?? "";
-const commands = new Set(["lease", "sign", "interrupt", "block"]);
+const commands = new Set(["lease", "sign", "interrupt", "block", "saturate"]);
 
 function flag(name: string): string {
   const index = process.argv.indexOf(name);
@@ -110,6 +110,8 @@ if (command === "lease") {
   };
 } else if (command === "interrupt") {
   event = { type: "interrupt_analysis" as const, workerId };
+} else if (command === "saturate") {
+  event = { type: "saturate_context" as const, workerId };
 } else {
   const blockerId = flag("--blocker");
   const failureClass = flag("--class");

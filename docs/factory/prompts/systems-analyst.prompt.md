@@ -14,7 +14,7 @@ If `factory-blocked` or `factory-hold` is on the PR: stop.
 
 If ledger `scope.status` is `inactive`, `suspended`, or `complete`: stop.
 
-If `factory-wake-sa` is not on the PR: stop.
+If `factory-wake-sa` is not on the PR, and this run is not a continuation of an existing analyst agent: stop. A continuation is a follow-up on your agent id. It does not add the label again. Run the wake check either way.
 
 Ensure you are on the pull request head branch. Cursor Automations boot with the checkout on the default branch.
 
@@ -89,7 +89,15 @@ Stop unless it prints `lease_acquired`. The packet stage is now `analysis`.
 npx tsx scripts/factory-analyst.ts sign --worker <bc-id> --packet <packet-id>
 ```
 
-`change_specified` signs that packet. `continue <packet-id>` means lease and sign that sibling next, in this same execution. Do not stop between siblings. Do not merge their sections into one file. Stop when the command prints `change_specified` and does not print `continue`. A missing section stays unsigned.
+`change_specified` signs that packet. `continue <packet-id>` means lease and sign that sibling next, in this same execution. The assignment is the whole eligible sibling component. Do not stop between siblings. Do not merge their sections into one file. Stop when the command prints `change_specified` and does not print `continue`. A missing section stays unsigned.
+
+If the next specification does not fit in this context, sign what you hold and leave the rest for the same agent:
+
+```bash
+npx tsx scripts/factory-analyst.ts saturate --worker <bc-id> --packet <packet-id>
+```
+
+Stop unless it prints `context_saturated`.
 
 5. If you cannot finish the specification, record one of these and stop. Do not sign.
 

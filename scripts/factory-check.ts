@@ -55,12 +55,15 @@ import {
 import { cursorFollowUp, followUpRequest } from "../.factory/controller/cursor.ts";
 import {
   analystAssignment,
+  engineerAssignment,
   planContinuation,
+  planPacketContinuation,
   prepareBoundEngineer,
   productionMetrics,
   productionPressure,
   recoverExecutions,
 } from "../.factory/controller/execution.ts";
+import { readyReleases } from "../.factory/controller/conclusion.ts";
 import { headMatchesDispatch, selectLabeledDispatch } from "../.factory/controller/wake.ts";
 import {
   applyLedgerEvent,
@@ -4168,6 +4171,254 @@ check("resume_scope keeps the cap and the backlog still holds the architect", ()
     assert.equal(execution?.agentId, "bc-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
     assert.equal(execution?.startedAt, "2026-10-30T18:00:00.000Z");
   }
+});
+
+check("a worker keeps one agent and a release is a verified dependency set", async () => {
+  const world: World = { ...active, now: "2026-10-31T12:00:00.000Z", authorizedDispatches: 8, usedDispatches: 0, resumeSupported: true };
+  function released(id: string): WorkItem {
+    return must(
+      applyEvent(freshItem(id, "exec-identity"), { type: "release", wake: "sa", gatesPass: true, revision: "rev-1" }, active),
+      "released",
+    );
+  }
+  const link = { basis: "component" as const, note: "one component" };
+  const ids = ["pkt-a", "pkt-b", "pkt-c", "pkt-d"];
+  const rows = ids.map((id) => released(id));
+  for (const row of rows) {
+    row.siblings = rows.filter((other) => other.id !== row.id).map((other) => ({ id: other.id, ...link }));
+  }
+  const ledger = emptyLedger(8);
+  ledger.packets = Object.fromEntries(rows.map((row) => [row.id, row]));
+  const batch = analystAssignment(Object.values(ledger.packets));
+  assert.deepEqual(batch?.packetIds, ids);
+  const step = controlStep(ledger, world);
+  const analysts = step.wakes.filter((wake) => wake.decision.effect === "wake_sa");
+  assert.equal(analysts.length, 1);
+  assert.deepEqual(analysts[0].packetIds, ids);
+
+  const specified = rows.map((row) => {
+    const next = structuredClone(row);
+    next.stage = "change_specified";
+    next.dispatchedSaRevision = "rev-1";
+    return next;
+  });
+  const engineering = emptyLedger(8);
+  engineering.packets = Object.fromEntries(specified.map((row) => [row.id, row]));
+  const engineer = engineerAssignment(Object.values(engineering.packets));
+  assert.deepEqual(engineer?.packetIds, ids);
+  const engineerStep = controlStep(engineering, world);
+  const engineers = engineerStep.wakes.filter((wake) => wake.decision.effect === "wake_engineer");
+  assert.equal(engineers.length, 1);
+  assert.deepEqual(engineers[0].packetIds, ids);
+
+  const calls: string[] = [];
+  const resumed: string[] = [];
+  engineering.executions = {
+    "dsp-old": {
+      id: "dsp-old",
+      assignmentId: "asg-old",
+      role: "engineer",
+      phase: "refused",
+      packetIds: ["pkt-a"],
+      revisions: { "pkt-a": "rev-1" },
+      label: "factory-wake-engineer",
+      prHead: "head-old",
+      agentId: "bc-engineer-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      continuation: "fresh",
+      issuedAt: "2026-10-31T11:00:00.000Z",
+      startedAt: "2026-10-31T11:01:00.000Z",
+      runningAt: null,
+      endedAt: "2026-10-31T11:02:00.000Z",
+      reserveUntil: "2026-10-31T11:30:00.000Z",
+      startUntil: null,
+      leaseUntil: null,
+      reason: "worker_refused",
+    },
+  };
+  const store = new MemoryStore(engineering);
+  const plan = planPacketContinuation({
+    ledger: engineering,
+    role: "engineer",
+    packetIds: ids,
+    resumeSupported: true,
+  });
+  assert.equal(plan.mode, "resume");
+  assert.equal(plan.agentId, "bc-engineer-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
+  const woke = await dispatchWake({
+    store,
+    actuator: scriptedActuator([{ ok: true, reason: "labeled" }], calls),
+    packetId: "pkt-a",
+    packetIds: ids,
+    prHead: "head-next",
+    activation: "active",
+    now: world.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+    resumeSupported: true,
+    resume: async (agentId) => {
+      resumed.push(agentId);
+      return { ok: true, reason: "resumed" };
+    },
+  });
+  assert.equal(woke.reason, "resumed");
+  assert.deepEqual(calls, []);
+  assert.deepEqual(resumed, ["bc-engineer-aaaa-4aaa-8aaa-aaaaaaaaaaaa"]);
+  const saved = await store.read();
+  assert.equal(saved.usedDispatches, 1);
+  const executionId = saved.packets["pkt-a"].dispatch?.executionId as string;
+  const worker = "bc-engineer-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+  const until = "2026-10-31T13:00:00.000Z";
+  const leasedFirst = await commitEvent(
+    store,
+    "pkt-a",
+    { type: "acquire_lease", workerId: worker, role: "engineer", until, revision: "rev-1" },
+    world,
+  );
+  assert.equal(leasedFirst.reason, "lease_acquired");
+  const first = await commitEvent(
+    store,
+    "pkt-a",
+    { type: "commit_candidate", sha: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", revision: "rev-1", workerId: worker },
+    world,
+  );
+  assert.equal(first.reason, "candidate");
+  const mid = await store.read();
+  assert.equal(mid.executions?.[executionId]?.phase, "running");
+  assert.equal(mid.packets["pkt-b"].stage, "change_specified");
+  for (const id of ["pkt-b", "pkt-c", "pkt-d"]) {
+    const leased = await commitEvent(
+      store,
+      id,
+      { type: "acquire_lease", workerId: worker, role: "engineer", until, revision: "rev-1" },
+      world,
+    );
+    assert.equal(leased.reason, "lease_acquired");
+    const recorded = await commitEvent(
+      store,
+      id,
+      { type: "commit_candidate", sha: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", revision: "rev-1", workerId: worker },
+      world,
+    );
+    assert.equal(recorded.reason, "candidate");
+  }
+  const done = await store.read();
+  assert.equal(done.executions?.[executionId]?.phase, "completed");
+  assert.equal(done.executions?.[executionId]?.reason, "candidate_recorded");
+
+  const saturated = structuredClone(engineering);
+  saturated.packets = Object.fromEntries(specified.map((row) => [row.id, structuredClone(row)]));
+  saturated.executions = {
+    "dsp-full": {
+      id: "dsp-full",
+      assignmentId: "asg-full",
+      role: "analyst",
+      phase: "completed",
+      packetIds: ids,
+      revisions: Object.fromEntries(ids.map((id) => [id, "rev-1"])),
+      label: "factory-wake-sa",
+      prHead: "head-sa",
+      agentId: "bc-analyst-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      continuation: "fresh",
+      issuedAt: "2026-10-31T10:00:00.000Z",
+      startedAt: "2026-10-31T10:01:00.000Z",
+      runningAt: null,
+      endedAt: "2026-10-31T10:05:00.000Z",
+      reserveUntil: "2026-10-31T10:30:00.000Z",
+      startUntil: null,
+      leaseUntil: null,
+      reason: "context_saturated",
+    },
+  };
+  const analystPlan = planPacketContinuation({
+    ledger: saturated,
+    role: "analyst",
+    packetIds: ids,
+    resumeSupported: true,
+  });
+  assert.equal(analystPlan.mode, "resume");
+  assert.equal(analystPlan.limit, 3);
+  const limited = analystAssignment(rows, { limit: analystPlan.limit });
+  assert.equal(limited?.packetIds.length, 3);
+
+  function verified(id: string, sha: string): WorkItem {
+    const item = freshItem(id, "exec-identity");
+    item.stage = "verified";
+    item.verifiedSha = sha;
+    item.candidateSha = sha;
+    return item;
+  }
+  const alone = verified("pkt-002-open-ask-cursor", "3246a074efecd8adb98e4ca232d443b90821173f");
+  const haltA = verified("pkt-015-halt-enroll-firm", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+  const haltB = verified("pkt-016-halt-send-firm", "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
+  haltA.siblings = [{ id: haltB.id, basis: "dependency", note: "halt chain" }];
+  const waiting = verified("pkt-017-tick-send-halt", "cccccccccccccccccccccccccccccccccccccccc");
+  waiting.stage = "change_specified";
+  waiting.verifiedSha = null;
+  haltB.siblings = [
+    { id: haltA.id, basis: "dependency", note: "halt chain" },
+    { id: waiting.id, basis: "dependency", note: "halt chain" },
+  ];
+  const held = readyReleases([alone, haltA, haltB, waiting]);
+  assert.deepEqual(held.map((release) => release.packetIds), [["pkt-002-open-ask-cursor"]]);
+  waiting.stage = "verified";
+  waiting.verifiedSha = "cccccccccccccccccccccccccccccccccccccccc";
+  const chain = readyReleases([alone, haltA, haltB, waiting]);
+  assert.deepEqual(
+    chain.map((release) => release.id),
+    [
+      "rel-pkt-002-open-ask-cursor",
+      "rel-pkt-015-halt-enroll-firm--pkt-016-halt-send-firm--pkt-017-tick-send-halt",
+    ],
+  );
+  const recorded = applyLedgerEvent(
+    emptyLedger(8),
+    {
+      type: "record_release",
+      id: chain[0].id,
+      packetIds: chain[0].packetIds,
+      prNumber: 200,
+      prUrl: "https://github.com/bywale-com/omcoda_tower/pull/200",
+      openedAt: world.now,
+    },
+    world,
+  );
+  recorded.ledger.packets[alone.id] = alone;
+  const opened = applyLedgerEvent(
+    recorded.ledger,
+    {
+      type: "record_release",
+      id: chain[0].id,
+      packetIds: chain[0].packetIds,
+      prNumber: 200,
+      prUrl: "https://github.com/bywale-com/omcoda_tower/pull/200",
+      openedAt: world.now,
+    },
+    world,
+  );
+  assert.equal(opened.reason, "release_recorded");
+  const missingSha = applyLedgerEvent(
+    opened.ledger,
+    { type: "conclude_release", id: chain[0].id, mergeSha: "", reconciliationId: "pr-200" },
+    world,
+  );
+  assert.equal(missingSha.reason, "integration_evidence_missing");
+  const concluded = applyLedgerEvent(
+    opened.ledger,
+    {
+      type: "conclude_release",
+      id: chain[0].id,
+      mergeSha: "dddddddddddddddddddddddddddddddddddddddd",
+      reconciliationId: "pr-200-dddddddddddddddddddddddddddddddddddddddd",
+    },
+    world,
+  );
+  assert.equal(concluded.reason, "release_concluded");
+  assert.equal(concluded.ledger.packets[alone.id].stage, "accepted");
+  assert.equal(concluded.ledger.packets[alone.id].integratedSha, "dddddddddddddddddddddddddddddddddddddddd");
+  const emerge = read("scripts/factory-emerge.ts");
+  assert.equal(emerge.includes("gh pr merge"), false);
+  assert.match(emerge, /mail_unconfigured/);
+  assert.match(read(".github/workflows/factory-dispatch.yml"), /scripts\/factory-emerge\.ts --apply/);
 });
 
 const failures: string[] = [];

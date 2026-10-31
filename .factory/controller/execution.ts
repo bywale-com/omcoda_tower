@@ -268,24 +268,11 @@ export function prepareBoundEngineer<T extends ExecutionLedger & { authorizedDis
   return { ok: true, reason: "bound", ledger: drafted };
 }
 
-/**
- * Eligible released packets that share an Architect-recorded sibling link.
- * The lowest eligible id is the seed. A packet whose sibling is not eligible
- * is dispatched alone. The cap limits one execution; it does not delay a singleton.
- */
-export function analystAssignment(
+function componentFrom(
   packets: readonly WorkItem[],
+  admit: (packet: WorkItem) => boolean,
 ): { packetIds: string[]; basis: string | null } | null {
-  const eligible = packets
-    .filter(
-      (packet) =>
-        packet.stage === "released" &&
-        packet.wake === "sa" &&
-        packet.dispatchedSaRevision !== packet.revision &&
-        !packet.hold &&
-        !packet.blockerId,
-    )
-    .sort((a, b) => a.id.localeCompare(b.id));
+  const eligible = packets.filter(admit).sort((a, b) => a.id.localeCompare(b.id));
   if (!eligible.length) return null;
   const byId = new Map(eligible.map((packet) => [packet.id, packet]));
   const seen = new Set<string>([eligible[0].id]);
@@ -300,8 +287,47 @@ export function analystAssignment(
       queue.push(link.id);
     }
   }
-  const packetIds = [...seen].sort().slice(0, MAX_ANALYST_PACKETS);
+  const packetIds = [...seen].sort();
   return { packetIds, basis: packetIds.length > 1 ? (notes[0] ?? "sibling") : null };
+}
+
+/**
+ * Eligible released packets that share an Architect-recorded sibling link.
+ * The lowest eligible id is the seed. The assignment is that whole component.
+ * `limit` is the size fuse after a run has already ended `context_saturated`.
+ * A packet whose sibling is not eligible is dispatched alone.
+ */
+export function analystAssignment(
+  packets: readonly WorkItem[],
+  opts?: { limit?: number | null },
+): { packetIds: string[]; basis: string | null } | null {
+  const batch = componentFrom(
+    packets,
+    (packet) =>
+      packet.stage === "released" &&
+      packet.wake === "sa" &&
+      packet.dispatchedSaRevision !== packet.revision &&
+      !packet.hold &&
+      !packet.blockerId,
+  );
+  if (!batch) return null;
+  if (opts?.limit == null) return batch;
+  const packetIds = batch.packetIds.slice(0, opts.limit);
+  return { packetIds, basis: packetIds.length > 1 ? batch.basis : null };
+}
+
+/** Eligible change_specified packets in one sibling component. The lowest id is the seed. */
+export function engineerAssignment(
+  packets: readonly WorkItem[],
+): { packetIds: string[]; basis: string | null } | null {
+  return componentFrom(
+    packets,
+    (packet) =>
+      packet.stage === "change_specified" &&
+      packet.dispatchedEngineerRevision !== packet.revision &&
+      !packet.hold &&
+      !packet.blockerId,
+  );
 }
 
 export function planContinuation(input: {
@@ -309,12 +335,81 @@ export function planContinuation(input: {
   runsOnAgent: number;
   resumeSupported: boolean;
   contextSaturated: boolean;
+  reason?: string;
 }): { mode: "resume" | "fresh"; reason: string; agentId: string | null } {
   if (input.contextSaturated) return { mode: "fresh", reason: "context_saturated", agentId: null };
   if (!input.agentId) return { mode: "fresh", reason: "no_agent", agentId: null };
   if (!input.resumeSupported) return { mode: "fresh", reason: "continuation_unavailable", agentId: null };
   if (input.runsOnAgent >= MAX_RUNS_PER_AGENT) return { mode: "fresh", reason: "agent_run_cap", agentId: null };
-  return { mode: "resume", reason: "architect_resume", agentId: input.agentId };
+  return { mode: "resume", reason: input.reason ?? "architect_resume", agentId: input.agentId };
+}
+
+function relatedPacketIds(ledger: ExecutionLedger, packetIds: readonly string[]): Set<string> {
+  const seen = new Set<string>(packetIds);
+  const queue = [...packetIds];
+  while (queue.length) {
+    const id = queue.shift() as string;
+    const packet = ledger.packets[id];
+    for (const link of packet?.siblings ?? []) {
+      if (seen.has(link.id) || !ledger.packets[link.id]) continue;
+      seen.add(link.id);
+      queue.push(link.id);
+    }
+    for (const other of Object.values(ledger.packets)) {
+      if (seen.has(other.id)) continue;
+      if ((other.siblings ?? []).some((link) => link.id === id)) {
+        seen.add(other.id);
+        queue.push(other.id);
+      }
+    }
+  }
+  return seen;
+}
+
+function latestMatching(
+  ledger: ExecutionLedger,
+  admit: (execution: WorkerExecution) => boolean,
+): WorkerExecution | null {
+  const rows = Object.values(executionsOf(ledger))
+    .filter(admit)
+    .sort((a, b) => (a.issuedAt < b.issuedAt ? 1 : a.issuedAt > b.issuedAt ? -1 : 0));
+  return rows[0] ?? null;
+}
+
+/**
+ * The next packet wake reuses an agent when one is still eligible.
+ * An engineer follows the latest engineer agent until the context is full,
+ * the agent has four runs, or there is no agent id. A refusal uses that same agent.
+ * An analyst follows the same agent only to finish a component that stopped
+ * because the context was full. That follow-up is capped at `MAX_ANALYST_PACKETS`.
+ */
+export function planPacketContinuation(input: {
+  ledger: ExecutionLedger;
+  role: "analyst" | "engineer";
+  packetIds: readonly string[];
+  resumeSupported: boolean;
+}): { mode: "resume" | "fresh"; reason: string; agentId: string | null; limit: number | null } {
+  const wanted = relatedPacketIds(input.ledger, input.packetIds);
+  const latest =
+    input.role === "engineer"
+      ? latestMatching(input.ledger, (execution) => execution.role === "engineer" && Boolean(execution.agentId))
+      : latestMatching(
+          input.ledger,
+          (execution) => execution.role === "analyst" && execution.packetIds.some((id) => wanted.has(id)),
+        );
+  const saturated = latest?.reason === "context_saturated";
+  const limit = input.role === "analyst" && saturated ? MAX_ANALYST_PACKETS : null;
+  if (input.role === "analyst" && !saturated) {
+    return { mode: "fresh", reason: "fresh", agentId: null, limit };
+  }
+  const plan = planContinuation({
+    agentId: latest?.agentId ?? null,
+    runsOnAgent: runsOnAgent(input.ledger, latest?.agentId ?? null),
+    resumeSupported: input.resumeSupported,
+    contextSaturated: input.role === "engineer" && saturated,
+    reason: "worker_resume",
+  });
+  return { ...plan, limit };
 }
 
 export function runsOnAgent(ledger: ExecutionLedger, agentId: string | null): number {
@@ -550,7 +645,8 @@ export function applyWorkerSignal<T extends ExecutionLedger>(
     | { type: "refuse_execution"; workerId: string; now: string }
     | { type: "signed"; now: string }
     | { type: "candidate"; now: string }
-    | { type: "interrupted"; now: string },
+    | { type: "interrupted"; now: string }
+    | { type: "context_saturated"; workerId: string; now: string },
 ): T {
   const next = structuredClone(ledger) as T;
   const packet = next.packets[packetId];
@@ -612,8 +708,40 @@ export function applyWorkerSignal<T extends ExecutionLedger>(
   }
 
   if (signal.type === "candidate") {
-    if (execution && !isTerminal(execution.phase)) finish(execution, "completed", signal.now, "candidate_recorded");
     if (packet.dispatch?.effect === "wake_engineer" || packet.dispatch?.effect === "wake_repair") archiveDispatch(packet, "ran");
+    if (!execution) return next;
+    const waiting = execution.packetIds.some((id) => {
+      const member = next.packets[id];
+      return Boolean(member && !member.candidateSha);
+    });
+    if (!waiting && !isTerminal(execution.phase)) finish(execution, "completed", signal.now, "candidate_recorded");
+    else if (!isTerminal(execution.phase) && (execution.phase === "dispatched" || execution.phase === "started")) {
+      execution.phase = "running";
+      execution.runningAt = execution.runningAt ?? signal.now;
+    }
+    return next;
+  }
+
+  if (signal.type === "context_saturated") {
+    if (!execution || isTerminal(execution.phase)) return next;
+    if (execution.agentId && execution.agentId !== signal.workerId) return next;
+    execution.agentId = execution.agentId ?? signal.workerId;
+    finish(execution, "completed", signal.now, "context_saturated");
+    for (const id of execution.packetIds) {
+      const member = next.packets[id];
+      if (!member) continue;
+      if (execution.role === "analyst" && (member.stage === "released" || member.stage === "analysis")) {
+        member.stage = "released";
+        member.lease = null;
+        if (member.dispatchedSaRevision === member.revision) member.dispatchedSaRevision = null;
+        if (member.dispatch) archiveDispatch(member, "ran");
+      }
+      if (execution.role === "engineer" && !member.candidateSha) {
+        member.lease = null;
+        if (member.dispatchedEngineerRevision === member.revision) member.dispatchedEngineerRevision = null;
+        if (member.dispatch) archiveDispatch(member, "ran");
+      }
+    }
     return next;
   }
 

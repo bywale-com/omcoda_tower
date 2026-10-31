@@ -222,6 +222,7 @@ export type FactoryEvent =
   | { type: "prose_complete" }
   | { type: "adopt_existing_change"; sections: string[] }
   | { type: "interrupt_analysis"; workerId: string }
+  | { type: "saturate_context"; workerId: string }
   | { type: "acknowledge_start"; workerId: string; executionId?: string }
   | { type: "refuse_execution"; workerId: string; executionId?: string }
   | { type: "record_candidate_checks"; sha: string; checks: CheckEvidence[] };
@@ -820,4 +821,8 @@ export const TRANSITION_IDS = [
   "T60",
   "T61",
   "T62",
+  "T63",
+  "T64",
+  "T65",
+  "T66",
 ] as const;

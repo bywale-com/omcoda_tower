@@ -9,7 +9,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { githubContentsRemote, GitHubContentsStore } from "../.factory/controller/contents.ts";
 import { githubLabelActuator, type FactoryLedger } from "../.factory/controller/dispatch.ts";
-import { cursorFollowUp } from "../.factory/controller/cursor.ts";
+import { cursorFollowUp, type FetchLike } from "../.factory/controller/cursor.ts";
 import { commitLedgerEvent, controlStep, dispatchInitiative } from "../.factory/controller/queue.ts";
 import { dispatchWake } from "../.factory/controller/dispatch.ts";
 import { recoverExecutions } from "../.factory/controller/execution.ts";
@@ -35,7 +35,17 @@ function worldFrom(ledger: FactoryLedger) {
     authorizedDispatches: ledger.authorizedDispatches,
     usedDispatches: ledger.usedDispatches,
     scopeStatus: ledger.scope.status,
+    resumeSupported: Boolean(process.env.CURSOR_API_KEY),
   };
+}
+
+const fetchImpl: FetchLike = async (url, init) => {
+  const response = await fetch(url, init);
+  return { status: response.status, body: await response.text() };
+};
+
+function resumeAgent(agentId: string, text: string): Promise<{ ok: boolean; reason: string }> {
+  return cursorFollowUp({ env: process.env, fetchImpl }).send(agentId, text);
 }
 
 const apply = process.argv.includes("--apply");
@@ -111,7 +121,7 @@ const result = wake.kind === "initiative"
       engineeringBusy: false,
       budgetUsd: null,
       resumeSupported,
-      resume: resumeSupported ? (agentId, text) => cursorFollowUp({ env: process.env }).send(agentId, text) : undefined,
+      resume: resumeSupported ? resumeAgent : undefined,
     })
   : await dispatchWake({
       store,
@@ -124,6 +134,8 @@ const result = wake.kind === "initiative"
       now: new Date().toISOString(),
       engineeringBusy: false,
       budgetUsd: null,
+      resumeSupported,
+      resume: resumeSupported ? resumeAgent : undefined,
     });
 if (!result.ok) {
   console.error(result.reason);

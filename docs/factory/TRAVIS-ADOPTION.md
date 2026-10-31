@@ -33,7 +33,7 @@ Source: `bywale-com/travis` default branch, cloned 2026-10-29. The tree’s last
 | One packet, one PR, as an immutable law | Default remains one branch. Sharing a branch is allowed only under the batch rules. |
 | `green_light` on any `src/` or handoff push | A candidate SHA plus a verification result for that SHA. A push is not a pass. |
 | Fourth red starts `outside-look` | Same fingerprint blocks. A new agent needs new evidence or an explicit justification. |
-| Emerge email as the human test | Not part of Tower’s factory. No Resend secrets. |
+| Emerge email as the human test | Tower mails once for a verified release, not for a Vercel door check. The doors workflow stays out. Mail waits on `EMERGE_EMAIL` and the Resend secrets. The pull request to `main` is still opened when those secrets are unset. |
 | SA number and PM number as global house counters in `docs/register/` | Factory packets live under the initiative. They do not consume Tower’s product SA packet numbers (015, 022, and the rest). |
 
 ## Rejected

@@ -7,15 +7,19 @@
  */
 import {
   analystAssignment,
+  engineerAssignment,
   latestArchitectExecution,
   liveExecutionFor,
   openExecution,
   planContinuation,
+  planPacketContinuation,
   productionPressure,
   recoverExecutions,
   runsOnAgent,
 } from "./execution.ts";
+import { readyReleases } from "./conclusion.ts";
 import {
+  applyEvent,
   decide,
   freshItem,
   leaseActive,
@@ -74,6 +78,15 @@ export type LedgerEvent =
   | { type: "close_initiative"; initiativeId: string }
   | { type: "reconcile_dispatch"; packetId: string; workerExecution: "ran" | "absent" }
   | { type: "recover_stale" }
+  | {
+      type: "record_release";
+      id: string;
+      packetIds: string[];
+      prNumber: number;
+      prUrl: string;
+      openedAt: string;
+    }
+  | { type: "conclude_release"; id: string; mergeSha: string; reconciliationId: string }
   | {
       type: "record_siblings";
       packetId: string;
@@ -429,6 +442,57 @@ export function applyLedgerEvent(ledger: FactoryLedger, event: LedgerEvent, worl
     return accept("recovered");
   }
 
+  if (event.type === "record_release") {
+    const ready = readyReleases(Object.values(next.packets)).find((release) => release.id === event.id);
+    if (!ready) return refuse("release_not_ready");
+    if (event.packetIds.join("\n") !== ready.packetIds.join("\n")) return refuse("release_mismatch");
+    if (next.releases?.[event.id]) return refuse("release_exists");
+    if (!Number.isInteger(event.prNumber) || event.prNumber <= 0 || !event.prUrl) return refuse("release_pr_missing");
+    next.releases = {
+      ...(next.releases ?? {}),
+      [event.id]: {
+        id: event.id,
+        packetIds: [...ready.packetIds],
+        prNumber: event.prNumber,
+        prUrl: event.prUrl,
+        openedAt: event.openedAt,
+        mergeSha: null,
+      },
+    };
+    return accept("release_recorded");
+  }
+
+  if (event.type === "conclude_release") {
+    const release = next.releases?.[event.id];
+    if (!release) return refuse("release_missing");
+    if (!/^[0-9a-f]{40}$/i.test(event.mergeSha)) return refuse("integration_evidence_missing");
+    if (!event.reconciliationId) return refuse("integration_evidence_missing");
+    for (const id of release.packetIds) {
+      let item = next.packets[id];
+      if (!item) return refuse("unknown_packet");
+      if (item.stage === "accepted" && item.integratedSha === event.mergeSha) continue;
+      const sha = item.verifiedSha;
+      if (!sha) return refuse("sha_mismatch");
+      const steps = [
+        { type: "authorize_integration" as const, sha },
+        { type: "integrate" as const, candidateSha: sha, mergeSha: event.mergeSha },
+        { type: "reconcile" as const, sha, reconciliationId: event.reconciliationId },
+        { type: "accept" as const, sha },
+      ];
+      for (const step of steps) {
+        const applied = applyEvent(item, step, world);
+        if (!applied.ok) return refuse(applied.reason);
+        item = applied.item;
+      }
+      next.packets[id] = item;
+    }
+    next.releases = {
+      ...next.releases,
+      [event.id]: { ...release, mergeSha: event.mergeSha },
+    };
+    return accept("release_concluded");
+  }
+
   if (event.type === "record_siblings") {
     const packet = next.packets[event.packetId];
     if (!packet) return refuse("unknown_packet");
@@ -584,21 +648,59 @@ export function controlStep(ledger: FactoryLedger, world: World): ControlStep {
   const saOpen = analystOpen(next);
   let saProposed = saOpen;
   const packetWakes: WakeProposal[] = [];
+  const claimed = new Set<string>();
   const packets = Object.values(next.packets).sort((a, b) => a.id.localeCompare(b.id));
   for (const packet of packets) {
+    if (claimed.has(packet.id)) continue;
     const decision = decide(packet, { ...packetWorld, engineeringBusy: engineerSlot });
     if (decision.effect === "none") continue;
     if (decision.effect === "wake_sa" && saProposed) continue;
     if (decision.effect === "wake_sa") {
-      const batch = analystAssignment(Object.values(next.packets)) ?? { packetIds: [packet.id], basis: null };
+      const full = analystAssignment(Object.values(next.packets)) ?? { packetIds: [packet.id], basis: null };
+      const plan = planPacketContinuation({
+        ledger: next,
+        role: "analyst",
+        packetIds: full.packetIds,
+        resumeSupported: packetWorld.resumeSupported === true,
+      });
+      const batch = analystAssignment(Object.values(next.packets), { limit: plan.limit }) ?? full;
       packetWakes.push({
         kind: "packet",
         id: batch.packetIds[0] ?? packet.id,
         packetIds: batch.packetIds,
         basis: batch.basis,
-        decision: { ...decision, packetIds: batch.packetIds, basis: batch.basis },
+        decision: {
+          ...decision,
+          packetIds: batch.packetIds,
+          basis: batch.basis,
+          ...(plan.mode === "resume" ? { delivery: "resume" as const, agentId: plan.agentId, label: null } : {}),
+        },
       });
       saProposed = true;
+      continue;
+    }
+    if (decision.effect === "wake_engineer") {
+      const batch = engineerAssignment(Object.values(next.packets)) ?? { packetIds: [packet.id], basis: null };
+      const plan = planPacketContinuation({
+        ledger: next,
+        role: "engineer",
+        packetIds: batch.packetIds,
+        resumeSupported: packetWorld.resumeSupported === true,
+      });
+      for (const id of batch.packetIds) claimed.add(id);
+      packetWakes.push({
+        kind: "packet",
+        id: batch.packetIds[0] ?? packet.id,
+        packetIds: batch.packetIds,
+        basis: batch.basis,
+        decision: {
+          ...decision,
+          packetIds: batch.packetIds,
+          basis: batch.basis,
+          ...(plan.mode === "resume" ? { delivery: "resume" as const, agentId: plan.agentId, label: null } : {}),
+        },
+      });
+      engineerSlot = true;
       continue;
     }
     packetWakes.push({ kind: "packet", id: packet.id, decision });
