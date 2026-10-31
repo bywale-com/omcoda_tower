@@ -735,6 +735,10 @@ export async function loadWriteRow(
     const { rows } = await pool.query(`SELECT * FROM wait_occupancy WHERE id=$1`, [w.id]);
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
+  if (w.table === "campaign_failure") {
+    const { rows } = await pool.query(`SELECT * FROM campaign_failure WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
   return null;
 }
 

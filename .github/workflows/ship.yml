@@ -110,6 +110,9 @@ jobs:
       - name: verify:meeting-writes (PKT-008)
         run: npx tsx --env-file=.env scripts/verify-meeting-writes.ts
 
+      - name: verify:campaign-failure-writes (PKT-010)
+        run: npx tsx --env-file=.env scripts/verify-campaign-failure-writes.ts
+
       - name: verify:affordances (chosen-value round-trip)
         run: npm run verify:affordances
 
