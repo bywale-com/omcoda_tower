@@ -12,10 +12,7 @@ on:
       - "server/wire-service/webhooks.ts"
       - "server/wire-service/campaignHousing.ts"
       - "server/wire-service/contactSeat.ts"
-      - "server/wire-service/workflowWalk.ts"
       - "scripts/verify-click-attribution.ts"
-      - "scripts/verify-open-ask-cursor.ts"
-      - "scripts/verify-resume-same-run.ts"
       - "scripts/factory-dispatch-apply.ts"
   workflow_dispatch:
 
