@@ -1,5 +1,5 @@
 {
-  "stateRevision": 203,
+  "stateRevision": 204,
   "authorizedDispatches": 50,
   "usedDispatches": 44,
   "scope": {
@@ -560,7 +560,7 @@
     "pkt-008-meeting-writes": {
       "id": "pkt-008-meeting-writes",
       "initiativeId": "exec-identity",
-      "stage": "verified",
+      "stage": "accepted",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
@@ -576,8 +576,8 @@
       "dispatchedEngineerRevision": "rev-1",
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
-      "integratedSha": null,
-      "reconciliationId": null,
+      "integratedSha": "08fa34082cb9d95f17f70d6aa959647a23e93358",
+      "reconciliationId": "pr-145-08fa34082cb9d95f17f70d6aa959647a23e93358",
       "dispatch": null,
       "dispatchHistory": [
         {
@@ -2074,7 +2074,7 @@
       "prNumber": 145,
       "prUrl": "https://github.com/bywale-com/omcoda_tower/pull/145",
       "openedAt": "2026-10-31T14:39:05.208Z",
-      "mergeSha": null
+      "mergeSha": "08fa34082cb9d95f17f70d6aa959647a23e93358"
     },
     "rel-pkt-010-campaign-failure-writes": {
       "id": "rel-pkt-010-campaign-failure-writes",
