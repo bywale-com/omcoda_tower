@@ -1,5 +1,5 @@
 {
-  "stateRevision": 177,
+  "stateRevision": 178,
   "authorizedDispatches": 50,
   "usedDispatches": 43,
   "scope": {
@@ -446,7 +446,7 @@
     "pkt-007-fact-writes": {
       "id": "pkt-007-fact-writes",
       "initiativeId": "exec-identity",
-      "stage": "candidate",
+      "stage": "verified",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
@@ -455,7 +455,7 @@
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": "385b173dc6a6bbdb0eff858c5347451f9358730b",
-      "verifiedSha": null,
+      "verifiedSha": "385b173dc6a6bbdb0eff858c5347451f9358730b",
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
@@ -487,7 +487,16 @@
           "workerExecution": "ran"
         }
       ],
-      "execution": null,
+      "execution": {
+        "mode": "automatic",
+        "checks": [
+          {
+            "name": "verify-fact-writes",
+            "runId": "41210884819",
+            "outcome": "pass"
+          }
+        ]
+      },
       "siblings": [
         {
           "id": "pkt-008-meeting-writes",
