@@ -495,6 +495,9 @@ export async function handleFactWriteback(c: Context) {
       contactId,
       form_ref: stamp.formRef,
       campaign_objective_id: stamp.campaignObjectiveId,
+      writes: [
+        { table: "fact_writebacks", id: writeId, contact_id: contactId },
+      ],
     },
     contactIds: [contactId],
   });
@@ -634,8 +637,8 @@ export async function handleAuditRunGet(c: Context) {
     `SELECT rv.contact_id, rv.verdict, rv.details, cr.email, cr.phone, cr.name, sr.ready
      FROM reachability_verdicts rv
      LEFT JOIN contact_records cr ON cr.id = rv.contact_id
-     LEFT JOIN sequence_ready sr ON sr.contact_id = rv.contact_id AND sr.firm_id = rv.firm_id
-     WHERE rv.firm_id=$1 AND COALESCE(rv.details->>'auditRunId', '') = $2
+     LEFT JOIN sequence_ready sr ON sr.audit_run_id = rv.audit_run_id AND sr.contact_id = rv.contact_id
+     WHERE rv.audit_run_id = $2 AND rv.firm_id = $1
      ORDER BY cr.name ASC NULLS LAST, rv.contact_id ASC`,
     [firm, runId],
   );
@@ -800,7 +803,15 @@ export async function handleOnboardingFire(c: Context) {
   const agentRef = bind.rows[0]?.template_id ?? "tpl.optin_launch.v1";
 
   const ready = await pool.query<{ contact_id: string }>(
-    `SELECT contact_id FROM sequence_ready WHERE firm_id=$1 AND ready=true`,
+    `SELECT latest.contact_id
+     FROM (
+       SELECT DISTINCT ON (sr.contact_id) sr.contact_id, sr.ready
+       FROM sequence_ready sr
+       JOIN audit_runs ar ON ar.id = sr.audit_run_id
+       WHERE sr.firm_id = $1
+       ORDER BY sr.contact_id, sr.updated_at DESC, ar.started_at DESC, sr.audit_run_id DESC
+     ) latest
+     WHERE latest.ready = true`,
     [firm],
   );
 
@@ -1839,8 +1850,22 @@ export async function handleContactRecordsList(c: Context) {
             sr.ready AS sequence_ready
          FROM contact_records c
          LEFT JOIN ct_firms f ON f.id = c.firm_id
-         LEFT JOIN reachability_verdicts rv ON rv.contact_id = c.id AND rv.firm_id = c.firm_id
-         LEFT JOIN sequence_ready sr ON sr.contact_id = c.id AND sr.firm_id = c.firm_id
+         LEFT JOIN LATERAL (
+           SELECT rv.verdict
+           FROM reachability_verdicts rv
+           JOIN audit_runs ar ON ar.id = rv.audit_run_id
+           WHERE rv.contact_id = c.id AND rv.firm_id = c.firm_id
+           ORDER BY rv.updated_at DESC, ar.started_at DESC, rv.audit_run_id DESC
+           LIMIT 1
+         ) rv ON true
+         LEFT JOIN LATERAL (
+           SELECT sr.ready
+           FROM sequence_ready sr
+           JOIN audit_runs ar ON ar.id = sr.audit_run_id
+           WHERE sr.contact_id = c.id AND sr.firm_id = c.firm_id
+           ORDER BY sr.updated_at DESC, ar.started_at DESC, sr.audit_run_id DESC
+           LIMIT 1
+         ) sr ON true
          ORDER BY f.name ASC NULLS LAST, c.name ASC NULLS LAST, c.id ASC`
       : `SELECT c.id, c.firm_id, c.email, c.phone, c.name, c.notes, f.name AS firm_name, c.created_at,
             COALESCE((
@@ -1851,8 +1876,22 @@ export async function handleContactRecordsList(c: Context) {
             sr.ready AS sequence_ready
          FROM contact_records c
          LEFT JOIN ct_firms f ON f.id = c.firm_id
-         LEFT JOIN reachability_verdicts rv ON rv.contact_id = c.id AND rv.firm_id = c.firm_id
-         LEFT JOIN sequence_ready sr ON sr.contact_id = c.id AND sr.firm_id = c.firm_id
+         LEFT JOIN LATERAL (
+           SELECT rv.verdict
+           FROM reachability_verdicts rv
+           JOIN audit_runs ar ON ar.id = rv.audit_run_id
+           WHERE rv.contact_id = c.id AND rv.firm_id = c.firm_id
+           ORDER BY rv.updated_at DESC, ar.started_at DESC, rv.audit_run_id DESC
+           LIMIT 1
+         ) rv ON true
+         LEFT JOIN LATERAL (
+           SELECT sr.ready
+           FROM sequence_ready sr
+           JOIN audit_runs ar ON ar.id = sr.audit_run_id
+           WHERE sr.contact_id = c.id AND sr.firm_id = c.firm_id
+           ORDER BY sr.updated_at DESC, ar.started_at DESC, sr.audit_run_id DESC
+           LIMIT 1
+         ) sr ON true
          WHERE c.firm_id=$1 ORDER BY c.updated_at DESC NULLS LAST, c.id ASC`,
     scope === "every_firm" ? [] : [firm],
   );
