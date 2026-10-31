@@ -1,7 +1,7 @@
 {
-  "stateRevision": 197,
+  "stateRevision": 198,
   "authorizedDispatches": 50,
-  "usedDispatches": 44,
+  "usedDispatches": 43,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -1332,22 +1332,13 @@
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": "systems_contract",
-      "dispatchedSaRevision": "rev-2",
+      "dispatchedSaRevision": null,
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-019-first-step-send-denied",
-        "revision": "rev-2",
-        "prHead": "2d5141d6cc162f2f2182ea8fbbf4d77b96e93ea9",
-        "effect": "wake_sa",
-        "label": "factory-wake-sa",
-        "issuedAt": "2026-10-31T15:29:18.613Z",
-        "executionId": "dsp-195-analyst-pkt-019-first-step-send-denied",
-        "assignmentId": "asg-dsp-195-analyst-pkt-019-first-step-send-denied"
-      },
+      "dispatch": null,
       "dispatchHistory": [
         {
           "packetId": "pkt-019-first-step-send-denied",
@@ -1368,6 +1359,17 @@
           "executionId": "dsp-172-engineer-pkt-018-send-denied-engagement",
           "assignmentId": "asg-dsp-172-engineer-pkt-018-send-denied-engagement",
           "workerExecution": "ran"
+        },
+        {
+          "packetId": "pkt-019-first-step-send-denied",
+          "revision": "rev-2",
+          "prHead": "2d5141d6cc162f2f2182ea8fbbf4d77b96e93ea9",
+          "effect": "wake_sa",
+          "label": "factory-wake-sa",
+          "issuedAt": "2026-10-31T15:29:18.613Z",
+          "executionId": "dsp-195-analyst-pkt-019-first-step-send-denied",
+          "assignmentId": "asg-dsp-195-analyst-pkt-019-first-step-send-denied",
+          "workerExecution": "absent"
         }
       ],
       "execution": null,
@@ -1760,7 +1762,7 @@
       "id": "dsp-195-analyst-pkt-019-first-step-send-denied",
       "assignmentId": "asg-dsp-195-analyst-pkt-019-first-step-send-denied",
       "role": "analyst",
-      "phase": "dispatched",
+      "phase": "refused",
       "packetIds": [
         "pkt-019-first-step-send-denied"
       ],
@@ -1774,11 +1776,11 @@
       "issuedAt": "2026-10-31T15:29:18.613Z",
       "startedAt": null,
       "runningAt": null,
-      "endedAt": null,
+      "endedAt": "2026-10-31T20:22:38.713Z",
       "reserveUntil": "2026-10-31T15:59:18.613Z",
       "startUntil": null,
       "leaseUntil": null,
-      "reason": null
+      "reason": "reservation_expired"
     }
   },
   "assignments": {
