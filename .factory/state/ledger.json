@@ -1,7 +1,7 @@
 {
-  "stateRevision": 211,
+  "stateRevision": 212,
   "authorizedDispatches": 50,
-  "usedDispatches": 44,
+  "usedDispatches": 45,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -1333,12 +1333,22 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": "systems_contract",
       "dispatchedSaRevision": "rev-2",
-      "dispatchedEngineerRevision": null,
+      "dispatchedEngineerRevision": "rev-2",
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-019-first-step-send-denied",
+        "revision": "rev-2",
+        "prHead": "c8a59fdbaed0707101238c7e2f536584499c8b1f",
+        "effect": "wake_engineer",
+        "label": "factory-wake-engineer",
+        "issuedAt": "2026-10-31T22:11:26.752Z",
+        "deliveredAt": "2026-10-31T22:11:26.752Z",
+        "executionId": "dsp-212-engineer-pkt-019-first-step-send-denied",
+        "assignmentId": "asg-dsp-212-engineer-pkt-019-first-step-send-denied"
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-019-first-step-send-denied",
@@ -1853,6 +1863,30 @@
       "startUntil": null,
       "leaseUntil": "2026-10-31T23:10:53.153Z",
       "reason": "specifications_signed"
+    },
+    "dsp-212-engineer-pkt-019-first-step-send-denied": {
+      "id": "dsp-212-engineer-pkt-019-first-step-send-denied",
+      "assignmentId": "asg-dsp-212-engineer-pkt-019-first-step-send-denied",
+      "role": "engineer",
+      "phase": "dispatched",
+      "packetIds": [
+        "pkt-019-first-step-send-denied"
+      ],
+      "revisions": {
+        "pkt-019-first-step-send-denied": "rev-2"
+      },
+      "label": "factory-wake-engineer",
+      "prHead": "c8a59fdbaed0707101238c7e2f536584499c8b1f",
+      "agentId": "bc-4192002b-f944-4eeb-919a-1af83d403f28",
+      "continuation": "resume",
+      "issuedAt": "2026-10-31T22:11:26.752Z",
+      "startedAt": null,
+      "runningAt": null,
+      "endedAt": null,
+      "reserveUntil": "2026-10-31T22:41:26.752Z",
+      "startUntil": null,
+      "leaseUntil": null,
+      "reason": null
     }
   },
   "assignments": {
@@ -2072,6 +2106,18 @@
       "basis": null,
       "executionIds": [
         "dsp-209-analyst-pkt-019-first-step-send-denied"
+      ]
+    },
+    "asg-dsp-212-engineer-pkt-019-first-step-send-denied": {
+      "id": "asg-dsp-212-engineer-pkt-019-first-step-send-denied",
+      "role": "engineer",
+      "initiativeId": "exec-identity",
+      "packetIds": [
+        "pkt-019-first-step-send-denied"
+      ],
+      "basis": null,
+      "executionIds": [
+        "dsp-212-engineer-pkt-019-first-step-send-denied"
       ]
     }
   },
