@@ -6,9 +6,10 @@
  * those ids. A return before the flip does not dispatch. The newest
  * objective_met row for the contact is not the handle.
  *
- * ifEng is not a person table, so its detail is branch → true or branch → false.
- * ifEnr reads enrollment, which is already a person table. evalIfPick stays as
- * it is, so a passing enrollment compare reports
+ * PKT-006 puts engagement_records in the person set, so ifEng and ifKind report
+ * an if-pick split. A matching contact is then=1 else=0. A missing engagement
+ * row is then=0 else=1. ifEnr reads enrollment, which was already a person
+ * table, so a passing enrollment compare reports
  * if pick enrollment.campaign_id then=1 else=0. That is the true edge.
  * Case 6 is the factory-check shape guard: this walk does not store triggerPayload.
  *
@@ -266,7 +267,9 @@ try {
   const status = primaryRuns[primaryRuns.length - 1].node_status;
   const handle = writesOf(status);
   assertHandle("case1", handle, engagementId, primaryEnr);
-  if (status.ifEng?.detail !== "branch → true") fail("case1-ifEng", status.ifEng);
+  if (status.ifEng?.detail !== "if pick engagement_records.payload.campaignId then=1 else=0") {
+    fail("case1-ifEng", status.ifEng);
+  }
   if (status.ifEnr?.detail !== "if pick enrollment.campaign_id then=1 else=0") fail("case1-ifEnr", status.ifEnr);
   if ((await campaignOf(primaryEnr)) !== primary.camps[1]) fail("case1-cursor", await campaignOf(primaryEnr));
   if ((await newestEngagement()) !== decoyId) fail("case4-newest", await newestEngagement());
@@ -315,8 +318,12 @@ try {
   assertHandle("case5-a", writesOf(runA.node_status), rowsA[0].id, enrA);
   assertHandle("case5-b", writesOf(runB.node_status), rowsB[0].id, enrB);
   if (rowsA[0].payload.enrollmentId !== enrA || rowsB[0].payload.enrollmentId !== enrB) fail("case5-owner", { rowsA, rowsB });
-  if (runA.node_status.ifEng?.detail !== "branch → true") fail("case5-ifA", runA.node_status.ifEng);
-  if (runB.node_status.ifEng?.detail !== "branch → true") fail("case5-ifB", runB.node_status.ifEng);
+  if (runA.node_status.ifEng?.detail !== "if pick engagement_records.payload.campaignId then=1 else=0") {
+    fail("case5-ifA", runA.node_status.ifEng);
+  }
+  if (runB.node_status.ifEng?.detail !== "if pick engagement_records.payload.campaignId then=1 else=0") {
+    fail("case5-ifB", runB.node_status.ifEng);
+  }
   if ((await newestEngagement()) !== decoyId) fail("case5-newest", await newestEngagement());
 
   const absentWf = `wf-pkt004-${run}-absent`;
@@ -336,7 +343,9 @@ try {
   const absentHit = dispatched.find((row) => row.workflowId === absentWf);
   if (!absentHit) fail("case7-dispatch", dispatched);
   const absentStatus = (await runsFor(absentWf)).find((row) => row.id === absentHit.runId)?.node_status;
-  if (absentStatus?.ifKind?.detail !== "branch → false") fail("case7-if", absentStatus?.ifKind);
+  if (absentStatus?.ifKind?.detail !== "if pick engagement_records.event_kind then=0 else=1") {
+    fail("case7-if", absentStatus?.ifKind);
+  }
   const directRun = `run-pkt004-${run}-direct`;
   await pool.query(
     `INSERT INTO workflow_run (id, workflow_id, firm_id, status, trigger_label) VALUES ($1,$2,$3,'running',$4)`,
@@ -350,7 +359,9 @@ try {
     triggerPayload: { ...absentPayload, eventName: "objective_met" },
     contactIds: [contact],
   });
-  if (walked.nodeStatus.ifKind?.detail !== "branch → false") fail("case7-walk", walked.nodeStatus.ifKind);
+  if (walked.nodeStatus.ifKind?.detail !== "if pick engagement_records.event_kind then=0 else=1") {
+    fail("case7-walk", walked.nodeStatus.ifKind);
+  }
 
   const last = await housing("last", 1);
   const lastEnr = `enr-pkt004-${run}-last`;
