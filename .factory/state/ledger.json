@@ -1,5 +1,5 @@
 {
-  "stateRevision": 184,
+  "stateRevision": 185,
   "authorizedDispatches": 50,
   "usedDispatches": 43,
   "scope": {
@@ -270,7 +270,7 @@
     "pkt-004-firing-handle": {
       "id": "pkt-004-firing-handle",
       "initiativeId": "exec-identity",
-      "stage": "candidate",
+      "stage": "verified",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
@@ -279,7 +279,7 @@
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": "c8fb14e78f7d9f81aa68d15a5050ae73650cbcc3",
-      "verifiedSha": null,
+      "verifiedSha": "c8fb14e78f7d9f81aa68d15a5050ae73650cbcc3",
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
@@ -289,7 +289,16 @@
       "integratedSha": null,
       "reconciliationId": null,
       "dispatch": null,
-      "execution": null,
+      "execution": {
+        "mode": "automatic",
+        "checks": [
+          {
+            "name": "verify-firing-handle",
+            "runId": "41210884819",
+            "outcome": "pass"
+          }
+        ]
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-004-firing-handle",
