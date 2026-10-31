@@ -203,6 +203,9 @@ const PERSON_WRITE_TABLES = new Set([
   "contact_tag",
   "enrollment",
   "wait_occupancy",
+  "engagement_records",
+  "fact_writebacks",
+  "meeting_booked",
 ]);
 
 function waitShapeOf(data: Record<string, unknown> | undefined): "approval" | "duration" {
@@ -718,6 +721,18 @@ export async function loadWriteRow(
   }
   if (w.table === "missing_fact_signals") {
     const { rows } = await pool.query(`SELECT * FROM missing_fact_signals WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+  if (w.table === "fact_writebacks") {
+    const { rows } = await pool.query(`SELECT * FROM fact_writebacks WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+  if (w.table === "meeting_booked") {
+    const { rows } = await pool.query(`SELECT * FROM meeting_booked WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+  if (w.table === "wait_occupancy") {
+    const { rows } = await pool.query(`SELECT * FROM wait_occupancy WHERE id=$1`, [w.id]);
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
   return null;
@@ -1537,13 +1552,13 @@ export async function walkValidatedWorkflow(
         let n = 0;
         const writes: RunWrite[] = [];
         for (const contactId of ctx.contactIds) {
-          await writeEngagement(pool, opts.firmId, contactId, actionType, {
+          const engagementId = await writeEngagement(pool, opts.firmId, contactId, actionType, {
             workflowId: opts.workflowId,
             runId: opts.runId,
             label: data.label ?? null,
             formQuestionIds: data.formQuestionIds ?? [],
           });
-          writes.push({ table: "engagement_records", id: contactId, contact_id: contactId });
+          writes.push({ table: "engagement_records", id: engagementId, contact_id: contactId });
           n += 1;
         }
         await persistAction(null, { contacts: n, formQuestionIds: data.formQuestionIds ?? [] });
