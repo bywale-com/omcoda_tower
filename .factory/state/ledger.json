@@ -1,5 +1,5 @@
 {
-  "stateRevision": 172,
+  "stateRevision": 173,
   "authorizedDispatches": 50,
   "usedDispatches": 43,
   "scope": {
@@ -1621,7 +1621,7 @@
       "id": "dsp-172-engineer-pkt-018-send-denied-engagement",
       "assignmentId": "asg-dsp-172-engineer-pkt-018-send-denied-engagement",
       "role": "engineer",
-      "phase": "dispatched",
+      "phase": "started",
       "packetIds": [
         "pkt-018-send-denied-engagement",
         "pkt-019-first-step-send-denied"
@@ -1635,11 +1635,11 @@
       "agentId": "bc-4192002b-f944-4eeb-919a-1af83d403f28",
       "continuation": "resume",
       "issuedAt": "2026-10-31T13:45:40.987Z",
-      "startedAt": null,
+      "startedAt": "2026-10-31T13:48:02.104Z",
       "runningAt": null,
       "endedAt": null,
       "reserveUntil": "2026-10-31T14:15:40.987Z",
-      "startUntil": null,
+      "startUntil": "2026-10-31T14:03:02.104Z",
       "leaseUntil": null,
       "reason": null
     }
