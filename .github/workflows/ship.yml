@@ -89,6 +89,12 @@ jobs:
       - name: verify:click-attribution (PKT-001)
         run: npx tsx --env-file=.env scripts/verify-click-attribution.ts
 
+      - name: verify:open-ask-cursor (PKT-002)
+        run: npx tsx --env-file=.env scripts/verify-open-ask-cursor.ts
+
+      - name: verify:resume-same-run (PKT-003)
+        run: npx tsx --env-file=.env scripts/verify-resume-same-run.ts
+
       - name: verify:affordances (chosen-value round-trip)
         run: npm run verify:affordances
 
