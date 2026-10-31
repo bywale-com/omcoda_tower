@@ -65,16 +65,14 @@ try {
     [contactId, firm, "verify@example.com", "Verify Contact"],
   );
   await pool.query(
-    `INSERT INTO reachability_verdicts (contact_id, firm_id, verdict, details)
-     VALUES ($1,$2,'reachable',$3::jsonb)
-     ON CONFLICT (contact_id, firm_id) DO UPDATE SET verdict='reachable'`,
-    [contactId, firm, JSON.stringify({ auditId })],
+    `INSERT INTO reachability_verdicts (audit_run_id, contact_id, firm_id, verdict, details)
+     VALUES ($1,$2,$3,'reachable',$4::jsonb)`,
+    [auditId, contactId, firm, JSON.stringify({ auditId })],
   );
   await pool.query(
-    `INSERT INTO sequence_ready (contact_id, firm_id, ready)
-     VALUES ($1,$2,true)
-     ON CONFLICT (contact_id, firm_id) DO UPDATE SET ready=true`,
-    [contactId, firm],
+    `INSERT INTO sequence_ready (audit_run_id, contact_id, firm_id, ready)
+     VALUES ($1,$2,$3,true)`,
+    [auditId, contactId, firm],
   );
   await pool.query(
     `UPDATE audit_runs SET status='complete', finished_at=now() WHERE id=$1`,

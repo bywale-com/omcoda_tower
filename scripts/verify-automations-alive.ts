@@ -63,11 +63,16 @@ try {
      ON CONFLICT (id) DO UPDATE SET email=EXCLUDED.email`,
     [contactId, firm, "alive@example.com", "Alive Contact"],
   );
+  const readyRun = `arun-alive-${randomUUID()}`;
   await pool.query(
-    `INSERT INTO sequence_ready (contact_id, firm_id, ready)
-     VALUES ($1,$2,true)
-     ON CONFLICT (contact_id, firm_id) DO UPDATE SET ready=true`,
-    [contactId, firm],
+    `INSERT INTO audit_runs (id, firm_id, status, import_ids, summary)
+     VALUES ($1,$2,'complete','[]'::jsonb,'{}'::jsonb)`,
+    [readyRun, firm],
+  );
+  await pool.query(
+    `INSERT INTO sequence_ready (audit_run_id, contact_id, firm_id, ready, updated_at)
+     VALUES ($1,$2,$3,true,now())`,
+    [readyRun, contactId, firm],
   );
 
   // Activate eligibility workflow + materialize triggers
