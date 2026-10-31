@@ -1,5 +1,5 @@
 {
-  "stateRevision": 209,
+  "stateRevision": 210,
   "authorizedDispatches": 50,
   "usedDispatches": 44,
   "scope": {
@@ -1320,12 +1320,17 @@
     "pkt-019-first-step-send-denied": {
       "id": "pkt-019-first-step-send-denied",
       "initiativeId": "exec-identity",
-      "stage": "returned_analyst",
+      "stage": "analysis",
       "wake": "sa",
       "revision": "rev-2",
       "hold": false,
       "blockerId": null,
-      "lease": null,
+      "lease": {
+        "workerId": "bc-b5803fad-df50-4726-a033-2955cfea0945",
+        "role": "analyst",
+        "until": "2026-10-31T23:10:53.153Z",
+        "revision": "rev-2"
+      },
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
@@ -1832,7 +1837,7 @@
       "id": "dsp-209-analyst-pkt-019-first-step-send-denied",
       "assignmentId": "asg-dsp-209-analyst-pkt-019-first-step-send-denied",
       "role": "analyst",
-      "phase": "dispatched",
+      "phase": "running",
       "packetIds": [
         "pkt-019-first-step-send-denied"
       ],
@@ -1841,15 +1846,15 @@
       },
       "label": "factory-wake-sa",
       "prHead": "8ffc27781c95d54322665c53c935fee3194ab99b",
-      "agentId": null,
+      "agentId": "bc-b5803fad-df50-4726-a033-2955cfea0945",
       "continuation": "fresh",
       "issuedAt": "2026-10-31T22:07:18.955Z",
-      "startedAt": null,
-      "runningAt": null,
+      "startedAt": "2026-10-31T22:10:53.153Z",
+      "runningAt": "2026-10-31T22:10:53.153Z",
       "endedAt": null,
       "reserveUntil": "2026-10-31T22:37:18.955Z",
       "startUntil": null,
-      "leaseUntil": null,
+      "leaseUntil": "2026-10-31T23:10:53.153Z",
       "reason": null
     }
   },
