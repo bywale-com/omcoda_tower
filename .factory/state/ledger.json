@@ -1,17 +1,18 @@
 {
-  "stateRevision": 162,
+  "stateRevision": 163,
   "authorizedDispatches": 50,
   "usedDispatches": 41,
   "scope": {
     "id": "agents-and-automations",
-    "status": "suspended",
+    "status": "active",
     "modules": [
       "Agents and Automations"
     ],
     "founderDecision": null,
-    "blockReason": "Founder pause: stop all development.",
+    "blockReason": null,
     "lanes": [
-      "engineer"
+      "engineer",
+      "analyst"
     ]
   },
   "initiatives": {
