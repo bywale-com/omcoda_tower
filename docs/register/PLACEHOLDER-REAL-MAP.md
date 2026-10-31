@@ -145,6 +145,7 @@ Escrow · Meta stay stand-in until product opens them.
 
 ## Related docs
 
+- `HUB-STRUCTURE-SYSTEM-BIND.md` — **systems first:** Hub structures into Ant = tables/workers bind or chrome; new tables Y/N
 - `APP-ELEVATION-GAP.md` — UI translation gap called out
 - `FIRM-BINDING.md` — Contacts empty-book contract
 - `MAGIC-ACCESS-LINK.md` — access entry
