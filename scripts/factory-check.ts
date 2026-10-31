@@ -5274,7 +5274,7 @@ check("PKT-019's expired contradiction returns to the analyst and is not re-arme
   assert.equal(recorded.specificationBlock?.note, RECORDED_SPECIFICATION_BLOCK.note);
   assert.equal(recorded.specificationBlock?.workerId, RECORDED_SPECIFICATION_BLOCK.workerId);
   assert.equal(recorded.specificationBlock?.executionId, RECORDED_SPECIFICATION_BLOCK.executionId);
-  assert.equal(analystFileCountsAsThisDispatch(committed, recorded), false);
+  assert.equal(analystFileCountsAsThisDispatch(committed, recorded), recorded.stage === "candidate");
   const releasedBefore = Object.values(committed.packets)
     .filter((packet) => packet.stage === "released")
     .map((packet) => packet.id)
