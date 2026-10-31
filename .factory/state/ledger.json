@@ -1,5 +1,5 @@
 {
-  "stateRevision": 215,
+  "stateRevision": 216,
   "authorizedDispatches": 50,
   "usedDispatches": 45,
   "scope": {
@@ -1320,7 +1320,7 @@
     "pkt-019-first-step-send-denied": {
       "id": "pkt-019-first-step-send-denied",
       "initiativeId": "exec-identity",
-      "stage": "candidate",
+      "stage": "verified",
       "wake": "sa",
       "revision": "rev-2",
       "hold": false,
@@ -1329,7 +1329,7 @@
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": "ddae2f9005334720e9c52d9b3e13ab2bdbcb918b",
-      "verifiedSha": null,
+      "verifiedSha": "ddae2f9005334720e9c52d9b3e13ab2bdbcb918b",
       "lastFailureFingerprint": null,
       "lastFailureClass": "systems_contract",
       "dispatchedSaRevision": "rev-2",
@@ -1408,7 +1408,16 @@
           "workerExecution": "ran"
         }
       ],
-      "execution": null,
+      "execution": {
+        "mode": "automatic",
+        "checks": [
+          {
+            "name": "verify-first-step-send-denied",
+            "runId": "41247719797",
+            "outcome": "pass"
+          }
+        ]
+      },
       "siblings": [
         {
           "id": "pkt-018-send-denied-engagement",
