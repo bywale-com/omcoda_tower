@@ -1,7 +1,7 @@
 {
-  "stateRevision": 163,
+  "stateRevision": 164,
   "authorizedDispatches": 50,
-  "usedDispatches": 41,
+  "usedDispatches": 42,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -1016,12 +1016,21 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
-      "dispatchedEngineerRevision": null,
+      "dispatchedEngineerRevision": "rev-1",
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-015-halt-enroll-firm",
+        "revision": "rev-1",
+        "prHead": "86022c517931e4ef24cb0bd5395ac8f606f6acfe",
+        "effect": "wake_engineer",
+        "label": "factory-wake-engineer",
+        "issuedAt": "2026-10-31T13:34:37.616Z",
+        "executionId": "dsp-164-engineer-pkt-015-halt-enroll-firm",
+        "assignmentId": "asg-dsp-164-engineer-pkt-015-halt-enroll-firm"
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-015-halt-enroll-firm",
@@ -1069,12 +1078,21 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
-      "dispatchedEngineerRevision": null,
+      "dispatchedEngineerRevision": "rev-1",
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-016-halt-send-firm",
+        "revision": "rev-1",
+        "prHead": "86022c517931e4ef24cb0bd5395ac8f606f6acfe",
+        "effect": "wake_engineer",
+        "label": "factory-wake-engineer",
+        "issuedAt": "2026-10-31T13:34:37.616Z",
+        "executionId": "dsp-164-engineer-pkt-015-halt-enroll-firm",
+        "assignmentId": "asg-dsp-164-engineer-pkt-015-halt-enroll-firm"
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-016-halt-send-firm",
@@ -1550,6 +1568,32 @@
       "startUntil": null,
       "leaseUntil": null,
       "reason": "reservation_expired"
+    },
+    "dsp-164-engineer-pkt-015-halt-enroll-firm": {
+      "id": "dsp-164-engineer-pkt-015-halt-enroll-firm",
+      "assignmentId": "asg-dsp-164-engineer-pkt-015-halt-enroll-firm",
+      "role": "engineer",
+      "phase": "dispatched",
+      "packetIds": [
+        "pkt-015-halt-enroll-firm",
+        "pkt-016-halt-send-firm"
+      ],
+      "revisions": {
+        "pkt-015-halt-enroll-firm": "rev-1",
+        "pkt-016-halt-send-firm": "rev-1"
+      },
+      "label": "factory-wake-engineer",
+      "prHead": "86022c517931e4ef24cb0bd5395ac8f606f6acfe",
+      "agentId": "bc-4192002b-f944-4eeb-919a-1af83d403f28",
+      "continuation": "resume",
+      "issuedAt": "2026-10-31T13:34:37.616Z",
+      "startedAt": null,
+      "runningAt": null,
+      "endedAt": null,
+      "reserveUntil": "2026-10-31T14:04:37.616Z",
+      "startUntil": null,
+      "leaseUntil": null,
+      "reason": null
     }
   },
   "assignments": {
@@ -1707,6 +1751,19 @@
       "basis": null,
       "executionIds": [
         "dsp-160-engineer-pkt-015-halt-enroll-firm"
+      ]
+    },
+    "asg-dsp-164-engineer-pkt-015-halt-enroll-firm": {
+      "id": "asg-dsp-164-engineer-pkt-015-halt-enroll-firm",
+      "role": "engineer",
+      "initiativeId": "exec-identity",
+      "packetIds": [
+        "pkt-015-halt-enroll-firm",
+        "pkt-016-halt-send-firm"
+      ],
+      "basis": "dependency: 016 leaves the enroll predicate 015 specified; both read halt_records by firm",
+      "executionIds": [
+        "dsp-164-engineer-pkt-015-halt-enroll-firm"
       ]
     }
   }
