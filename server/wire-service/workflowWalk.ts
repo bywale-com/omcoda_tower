@@ -1122,6 +1122,17 @@ export async function walkValidatedWorkflow(
 
   const goOn = async (fromId: string, list: RfEdge[]) => {
     if (opts.untilNodeId === fromId) return;
+    // A resumed wait's outgoing edges each start from that wait's stored writes.
+    // Sibling commitWrites must not replace the handle the next edge falls through to.
+    if (opts.resumeFromNodeId && fromId === opts.resumeFromNodeId) {
+      const saved = ctx.previousWrites;
+      for (const e of list) {
+        ctx.previousWrites = saved;
+        await visit(e.target);
+      }
+      ctx.previousWrites = saved;
+      return;
+    }
     for (const e of list) await visit(e.target);
   };
 
@@ -1628,7 +1639,15 @@ export async function walkValidatedWorkflow(
       `SELECT node_status FROM workflow_run WHERE id=$1`,
       [opts.runId],
     );
-    Object.assign(nodeStatus, prior.rows[0]?.node_status ?? {});
+    const loaded = prior.rows[0]?.node_status ?? {};
+    Object.assign(nodeStatus, loaded);
+    for (const [nodeId, status] of Object.entries(loaded)) {
+      if (Array.isArray(status?.writes)) {
+        ctx.chainWrites[nodeId] = writesFromUnknown(status.writes);
+      }
+    }
+    const waitedWrites = loaded[opts.resumeFromNodeId]?.writes;
+    ctx.previousWrites = Array.isArray(waitedWrites) ? writesFromUnknown(waitedWrites) : [];
     nodeStatus[opts.resumeFromNodeId] = {
       status: "success",
       detail: "wait resumed",
