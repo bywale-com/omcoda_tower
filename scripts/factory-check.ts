@@ -4526,6 +4526,8 @@ check("a worker keeps one agent and a release is a verified dependency set", asy
   assert.match(emerge, /mail_unconfigured/);
   assert.match(emerge, /"fetch", "--depth=2", "origin"/);
   assert.match(emerge, /"config", "--unset-all", "http\.https:\/\/github\.com\/\.extraheader"/);
+  assert.match(emerge, /x-access-token/);
+  assert.match(emerge, /release_push_failed/);
   assert.match(read(".github/workflows/factory-dispatch.yml"), /scripts\/factory-emerge\.ts --apply/);
 });
 

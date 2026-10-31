@@ -262,22 +262,29 @@ async function sendLetter(
 function gitPush(refspecs: string[], cwd: string): void {
   const token = process.env.WAKE_GITHUB_TOKEN;
   if (token) {
-    // actions/checkout already stores an Authorization extraheader. A second one is rejected.
+    // actions/checkout stores its own Authorization header. Replace it with the wake token.
+    // A one-shot env header was not used for this push, and a second header is rejected.
     try {
       execFileSync("git", ["config", "--unset-all", "http.https://github.com/.extraheader"], { cwd, encoding: "utf8" });
     } catch {
       // The header is absent outside Actions.
     }
+    const basic = Buffer.from(`x-access-token:${token}`).toString("base64");
+    try {
+      execFileSync(
+        "git",
+        ["config", "--local", "http.https://github.com/.extraheader", `AUTHORIZATION: basic ${basic}`],
+        { cwd, encoding: "utf8" },
+      );
+    } catch {
+      fail("release_push_auth");
+    }
   }
-  const env = token
-    ? {
-        ...process.env,
-        GIT_CONFIG_COUNT: "1",
-        GIT_CONFIG_KEY_0: "http.https://github.com/.extraheader",
-        GIT_CONFIG_VALUE_0: `AUTHORIZATION: bearer ${token}`,
-      }
-    : process.env;
-  execFileSync("git", ["push", "origin", ...refspecs], { cwd, env, encoding: "utf8" });
+  try {
+    execFileSync("git", ["push", "origin", ...refspecs], { cwd, encoding: "utf8" });
+  } catch {
+    fail("release_push_failed");
+  }
 }
 
 function gh(args: string[]): string {
