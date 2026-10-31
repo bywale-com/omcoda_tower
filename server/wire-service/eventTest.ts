@@ -13,6 +13,10 @@ type WriteRow = Record<string, unknown> & {
 };
 
 function writeId(table: string, body: Record<string, unknown>): string {
+  if (table === "reachability_verdicts" || table === "sequence_ready") {
+    if (typeof body.audit_run_id === "string" && body.audit_run_id) return body.audit_run_id;
+    return `${table}-specimen`;
+  }
   if (typeof body.id === "string" && body.id) return body.id;
   if (typeof body.contact_id === "string" && body.contact_id) return body.contact_id;
   return `${table}-specimen`;
@@ -110,8 +114,8 @@ async function door1(
         `SELECT rv.*, cr.name, cr.email, cr.phone
          FROM reachability_verdicts rv
          LEFT JOIN contact_records cr ON cr.id = rv.contact_id
-         WHERE rv.firm_id=$1 AND COALESCE(rv.details->>'auditRunId','')=$2`,
-        [firm, runId],
+         WHERE rv.audit_run_id=$1 AND rv.firm_id=$2`,
+        [runId, firm],
       );
       const ids = verdicts.rows.map((row) => row.contact_id);
       if (ids.length) {
@@ -122,13 +126,11 @@ async function door1(
         out.push(...toWrites("contact_records", contacts.rows as Record<string, unknown>[]));
       }
       out.push(...toWrites("reachability_verdicts", verdicts.rows as Record<string, unknown>[]));
-      if (ids.length) {
-        const ready = await pool.query(
-          `SELECT * FROM sequence_ready WHERE firm_id=$1 AND contact_id = ANY($2::text[])`,
-          [firm, ids],
-        );
-        out.push(...toWrites("sequence_ready", ready.rows as Record<string, unknown>[]));
-      }
+      const ready = await pool.query(
+        `SELECT * FROM sequence_ready WHERE audit_run_id=$1 AND firm_id=$2`,
+        [runId, firm],
+      );
+      out.push(...toWrites("sequence_ready", ready.rows as Record<string, unknown>[]));
       return out;
     }
     if (eventName === "eligibility.changed") {
