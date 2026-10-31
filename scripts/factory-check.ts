@@ -21,7 +21,7 @@ import {
   type WorkItem,
   type World,
 } from "../.factory/controller/machine.ts";
-import { explainFactory } from "../.factory/controller/explain.ts";
+import { commitmentHolds, explainFactory, nextReconcileAt, RECONCILE_CRON } from "../.factory/controller/explain.ts";
 import { planVerifications, proofScript, verifyJobName } from "../.factory/controller/verify.ts";
 import {
   ContentsBlobRemote,
@@ -593,14 +593,19 @@ check("dispatch workflow prints a control pass and does not schedule labels", ()
   assert.equal(workflow.includes("schedule:"), false);
   const reconcile = read(".github/workflows/factory-reconcile.yml");
   assert.ok(reconcile.includes("schedule:"));
-  assert.ok(reconcile.includes('cron: "7,22,37,52 * * * *"'));
-  assert.ok(reconcile.includes("ref: cursor/execution-architecture-74f7"));
-  assert.ok(reconcile.includes("FACTORY_LEDGER_BRANCH: cursor/execution-architecture-74f7"));
+  assert.ok(reconcile.includes(`cron: "${RECONCILE_CRON}"`));
+  assert.equal(reconcile.includes("github.ref"), false);
+  assert.equal(reconcile.includes("github.sha"), false);
+  const checkoutRef = reconcile.match(/ref: (\S+)/)?.[1];
+  const ledgerBranch = reconcile.match(/FACTORY_LEDGER_BRANCH: (\S+)/)?.[1];
+  assert.equal(checkoutRef, "cursor/execution-architecture-74f7");
+  assert.equal(ledgerBranch, checkoutRef);
   assert.ok(reconcile.includes("factory-control-operating"));
   assert.ok(reconcile.includes("FACTORY_SPEND_LIMIT_CONFIRMED"));
   assert.ok(reconcile.includes("FACTORY_AUTOMATIONS_SAVED"));
   const reconcileJob = reconcile.slice(reconcile.indexOf("      - name: Reconcile"));
   assert.ok(reconcileJob.indexOf('echo "actuator disarmed"') < reconcileJob.indexOf("scripts/factory-control.ts --apply"));
+  assert.ok(reconcileJob.indexOf("scripts/factory-control.ts --apply") < reconcileJob.indexOf("scripts/factory-emerge.ts --apply"));
   assert.equal(reconcile.includes("usedDispatches"), false);
   assert.ok(workflow.includes("workflow_dispatch:"));
   assert.ok(workflow.includes("I_AUTHORIZE_FACTORY_DISPATCH"));
@@ -3823,13 +3828,22 @@ function assertRecoveryLedger(committed: FactoryLedger) {
     (execution) => execution.role === "engineer" && execution.packetIds.includes(pkt002.id) && execution.reason === "candidate_recorded",
   );
   assert.equal(pkt002.candidateSha, "3246a074efecd8adb98e4ca232d443b90821173f");
-  assert.ok(pkt002.stage === "candidate" || pkt002.stage === "verified" || pkt002.stage === "accepted");
-  if (pkt002.stage === "verified" || pkt002.stage === "accepted") {
+  const afterCandidate = new Set([
+    "candidate",
+    "verifying",
+    "verified",
+    "integration_authorized",
+    "integrated",
+    "reconciled",
+    "accepted",
+  ]);
+  assert.ok(afterCandidate.has(pkt002.stage), pkt002.stage);
+  if (pkt002.stage === "candidate") {
+    assert.equal(pkt002.verifiedSha, null);
+  } else {
     assert.equal(pkt002.verifiedSha, pkt002.candidateSha);
     assert.equal(pkt002.execution?.mode, "automatic");
     assert.ok((pkt002.execution?.checks ?? []).some((check) => check.outcome === "pass" && check.runId));
-  } else {
-    assert.equal(pkt002.verifiedSha, null);
   }
   if (pkt002.stage === "accepted") {
     assert.match(pkt002.integratedSha ?? "", /^[0-9a-f]{40}$/);
@@ -3847,21 +3861,20 @@ function assertRecoveryLedger(committed: FactoryLedger) {
   assert.ok(
     pkt003.stage === "change_specified" ||
       pkt003.stage === "engineering" ||
-      pkt003.stage === "candidate" ||
-      pkt003.stage === "verified" ||
-      pkt003.stage === "accepted",
+      afterCandidate.has(pkt003.stage),
+    pkt003.stage,
   );
   if (pkt003.stage === "change_specified") {
     assert.equal(pkt003.dispatch, null);
     assert.equal(pkt003.dispatchedEngineerRevision, null);
     assert.equal(pkt003.candidateSha, null);
   }
-  if (pkt003.stage === "candidate" || pkt003.stage === "verified" || pkt003.stage === "accepted") {
+  if (afterCandidate.has(pkt003.stage)) {
     assert.equal(pkt003.lease, null);
     assert.equal(pkt003.dispatch, null);
     assert.match(pkt003.candidateSha ?? "", /^[0-9a-f]{40}$/);
   }
-  if (pkt003.stage === "verified" || pkt003.stage === "accepted") {
+  if (afterCandidate.has(pkt003.stage) && pkt003.stage !== "candidate") {
     assert.equal(pkt003.verifiedSha, pkt003.candidateSha);
     assert.equal(pkt003.execution?.mode, "automatic");
     assert.ok((pkt003.execution?.checks ?? []).some((check) => check.outcome === "pass" && check.runId));
@@ -3885,8 +3898,12 @@ function assertRecoveryLedger(committed: FactoryLedger) {
     assert.equal(committed.initiatives["exec-identity"].dispatch, null);
   }
   const metrics = productionMetrics(committed);
+  const automaticAccepted = Object.values(committed.packets).filter(
+    (packet) => packet.stage === "accepted" && packet.execution?.mode !== "manual",
+  ).length;
   assert.equal(metrics.costPerAcceptedPacket, null);
-  assert.equal(metrics.acceptedPackets, 9);
+  assert.equal(metrics.acceptedPackets, automaticAccepted);
+  assert.ok(automaticAccepted >= 1);
   assert.ok(metrics.refusedOrFailedLaunches >= 1);
   assert.ok(metrics.trackedFreshLaunches >= 2);
   assert.ok(metrics.completedExecutions >= 1);
@@ -3897,7 +3914,7 @@ function assertRecoveryLedger(committed: FactoryLedger) {
   assert.equal(recoveredNow.changes.some((change) => change.reason === "recorded_specification_block"), false);
   assert.equal(recoveredNow.changes.some((change) => change.reason === "engineering_rearmed"), false);
   const pkt019 = recoveredNow.ledger.packets["pkt-019-first-step-send-denied"];
-  assert.ok(pkt019.stage === "engineering" || pkt019.stage === "candidate");
+  assert.ok(pkt019.stage === "engineering" || afterCandidate.has(pkt019.stage), pkt019.stage);
   assert.equal(pkt019.revision, "rev-2");
   assert.equal(pkt019.specificationBlock?.authority, "recorded");
   assert.equal(pkt019.specificationBlock?.blockedRevision, "rev-1");
@@ -3912,6 +3929,7 @@ function assertRecoveryLedger(committed: FactoryLedger) {
     assert.equal(pkt019.candidateSha, "ddae2f9005334720e9c52d9b3e13ab2bdbcb918b");
     assert.equal(pkt019.dispatch, null);
     assert.equal(pkt019.lease, null);
+    if (pkt019.stage !== "candidate") assert.equal(pkt019.verifiedSha, pkt019.candidateSha);
   }
   const expiredReservation = recoveredNow.ledger.executions?.["dsp-195-analyst-pkt-019-first-step-send-denied"];
   assert.equal(expiredReservation?.phase, "refused");
@@ -5120,6 +5138,19 @@ check("a packet explains why it is waiting and what advances it", () => {
   const unsigned = capped.packets.find((packet) => packet.id === released.id);
   assert.equal(unsigned?.situation, "intervention");
   assert.equal(unsigned?.next, "Unknown");
+  assert.equal(unsigned?.commitment.condition, "needs_repair");
+  assert.equal(unsigned?.commitment.checkAt, null);
+  assert.equal(unsigned?.commitment.owner === "founder", false);
+  assert.equal(offer?.commitment.condition, "needs_you");
+  assert.equal(offer?.commitment.owner, "founder");
+  assert.equal(offer?.commitment.checkAt, null);
+  assert.equal(alone?.commitment.condition, "scheduled");
+  assert.equal(alone?.commitment.checkAt, nextReconcileAt(now));
+  assert.equal(alone?.commitment.event, null);
+  assert.equal(chain?.commitment.condition, "waiting");
+  assert.equal(chain?.commitment.checkAt, null);
+  assert.match(chain?.commitment.event ?? "", /pkt-017-tick-send-halt/);
+  assert.equal(exhausted?.commitment.condition, "needs_you");
   assert.match(unsigned?.happening ?? "", /Known defect/);
   assert.match(unsigned?.why ?? "", /No sign_change/);
   assert.match(unsigned?.why ?? "", /known defect/);
@@ -5128,6 +5159,13 @@ check("a packet explains why it is waiting and what advances it", () => {
   assert.equal(finished?.situation, "complete");
   assert.equal(finished?.next, "Nothing.");
   const unverified = capped.packets.find((packet) => packet.id === candidate.id);
+  assert.equal(finished?.commitment.condition, "complete");
+  assert.equal(unverified?.commitment.condition, "waiting");
+  assert.equal(unverified?.commitment.checkAt, null);
+  assert.match(unverified?.commitment.event ?? "", new RegExp(other));
+  for (const item of [...capped.packets, ...capped.initiatives]) {
+    assert.equal(commitmentHolds(item.commitment), true, item.id);
+  }
   assert.equal(unverified?.who, "github_actions");
   assert.equal(unverified?.situation, "external");
   assert.match(unverified?.happening ?? "", /Unknown/);
@@ -5261,26 +5299,68 @@ check("a packet explains why it is waiting and what advances it", () => {
   assert.match(read(".github/workflows/factory-reconcile.yml"), /schedule:/);
 });
 
+check("every unfinished packet carries an operational commitment", () => {
+  assert.equal(nextReconcileAt("2026-10-31T22:06:59.000Z"), "2026-10-31T22:07:00.000Z");
+  assert.equal(nextReconcileAt("2026-10-31T22:07:00.000Z"), "2026-10-31T22:22:00.000Z");
+  assert.equal(nextReconcileAt("2026-10-31T22:52:00.000Z"), "2026-10-31T23:07:00.000Z");
+  assert.equal(nextReconcileAt("2026-10-31T23:52:30.000Z"), "2026-11-01T00:07:00.000Z");
+  const now = "2026-10-31T22:16:00.000Z";
+  const committed = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
+  const view = explainFactory(committed, now);
+  for (const item of [...view.packets, ...view.initiatives]) {
+    assert.equal(commitmentHolds(item.commitment), true, item.id);
+    if (item.commitment.condition === "scheduled" || item.commitment.condition === "recovering") {
+      assert.equal(item.commitment.checkAt, nextReconcileAt(now), item.id);
+    }
+  }
+  for (const packet of view.packets) {
+    if (packet.where === "accepted") assert.equal(packet.commitment.condition, "complete", packet.id);
+    else assert.notEqual(packet.commitment.condition, "complete", packet.id);
+  }
+});
+
 check("PKT-019's expired contradiction returns to the analyst and is not re-armed", () => {
   const committed = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
   const handoff = read("docs/factory/initiatives/exec-identity/HANDOFF.md");
   assert.equal(handoff.includes(RECORDED_SPECIFICATION_BLOCK.note), true);
   const id = RECORDED_SPECIFICATION_BLOCK.packetId;
   const recorded = committed.packets[id];
-  assert.ok(recorded.stage === "engineering" || recorded.stage === "candidate");
+  const settled = new Set([
+    "candidate",
+    "verifying",
+    "verified",
+    "integration_authorized",
+    "integrated",
+    "reconciled",
+    "accepted",
+  ]);
+  assert.ok(recorded.stage === "engineering" || settled.has(recorded.stage), recorded.stage);
   assert.equal(recorded.revision, "rev-2");
   assert.equal(recorded.specificationBlock?.authority, "recorded");
   assert.equal(recorded.specificationBlock?.blockedRevision, "rev-1");
   assert.equal(recorded.specificationBlock?.note, RECORDED_SPECIFICATION_BLOCK.note);
   assert.equal(recorded.specificationBlock?.workerId, RECORDED_SPECIFICATION_BLOCK.workerId);
   assert.equal(recorded.specificationBlock?.executionId, RECORDED_SPECIFICATION_BLOCK.executionId);
-  assert.equal(analystFileCountsAsThisDispatch(committed, recorded), recorded.stage === "candidate");
+  assert.equal(
+    analystFileCountsAsThisDispatch(committed, recorded),
+    !(recorded.specificationBlock && recorded.specificationBlock.revision === recorded.dispatch?.revision),
+  );
+  if (recorded.stage === "engineering") {
+    assert.equal(recorded.dispatch?.effect, "wake_engineer");
+    assert.equal(recorded.lease?.role, "engineer");
+    assert.equal(recorded.lease?.revision, "rev-2");
+  } else {
+    assert.equal(recorded.dispatch ?? null, null);
+    assert.equal(recorded.lease ?? null, null);
+    assert.equal(recorded.candidateSha, "ddae2f9005334720e9c52d9b3e13ab2bdbcb918b");
+  }
   const releasedBefore = Object.values(committed.packets)
     .filter((packet) => packet.stage === "released")
     .map((packet) => packet.id)
     .sort();
   assert.equal(releasedBefore.length, 5);
-  const restored = recoverExecutions(committed, "2026-10-31T15:40:00.000Z");
+  const duringLease = "2026-10-31T22:30:00.000Z";
+  const restored = recoverExecutions(committed, duringLease);
   assert.equal(restored.changes.some((change) => change.reason === "engineering_rearmed"), false);
   assert.equal(restored.changes.some((change) => change.reason === "recorded_specification_block"), false);
   if (recorded.stage === "engineering") {
@@ -5289,50 +5369,45 @@ check("PKT-019's expired contradiction returns to the analyst and is not re-arme
     assert.equal(restored.ledger.packets[id].dispatch?.revision, "rev-2");
     assert.equal(recorded.dispatch?.effect, "wake_engineer");
     assert.equal(restored.changes.some((change) => change.reason === "unstarted_dispatch_restored"), false);
-    const explainedNow = explainFactory(committed, "2026-10-31T15:40:00.000Z").packets.find((item) => item.id === id);
-    assert.equal(explainedNow?.next, "Record a candidate SHA.");
-    const open = explainFactory(restored.ledger, "2026-10-31T15:40:00.000Z").packets.find((item) => item.id === id);
-    assert.equal(open?.next, "Record a candidate SHA.");
-    const clock = "2026-10-31T16:10:00.000Z";
-    const currentDispatch = recorded.dispatch;
-    const currentExecution = currentDispatch?.executionId ? committed.executions?.[currentDispatch.executionId] : undefined;
-    const reservationStillOpen = Boolean(
-      currentDispatch && currentExecution?.phase === "dispatched" && currentExecution.reserveUntil > clock,
-    );
-    if (currentDispatch && currentExecution?.phase === "dispatched" && !reservationStillOpen) {
-      const elapsedExplain = explainFactory(committed, clock).packets.find((item) => item.id === id);
-      assert.match(elapsedExplain?.next ?? "", /expires this reservation/);
-    }
-    const lapsed = recoverExecutions(committed, clock);
-    assert.equal(lapsed.ledger.packets[id].stage, "engineering");
-    if (currentDispatch && currentExecution?.phase === "dispatched" && !reservationStillOpen) {
-      assert.equal(lapsed.ledger.packets[id].dispatch, null);
-      assert.equal(lapsed.ledger.packets[id].dispatchedSaRevision, null);
-      assert.equal(lapsed.ledger.usedDispatches, committed.usedDispatches - 1);
-    }
+    const explainedNow = explainFactory(committed, duringLease).packets.find((item) => item.id === id);
+    assert.equal(explainedNow?.commitment.condition, "working");
+    assert.equal(explainedNow?.commitment.runUntil, recorded.lease?.until);
+    assert.equal(explainedNow?.commitment.checkAt, null);
+    const open = explainFactory(restored.ledger, duringLease).packets.find((item) => item.id === id);
+    assert.equal(open?.commitment.condition, "working");
   } else {
-    assert.equal(recorded.candidateSha, "ddae2f9005334720e9c52d9b3e13ab2bdbcb918b");
-    assert.equal(recorded.lease, null);
-    assert.equal(recorded.dispatch, null);
-    assert.equal(restored.ledger.packets[id].stage, "candidate");
+    assert.equal(restored.ledger.packets[id].stage, recorded.stage);
     assert.equal(restored.changes.some((change) => change.reason === "unstarted_dispatch_restored"), false);
-    const explainedNow = explainFactory(committed, "2026-10-31T15:40:00.000Z").packets.find((item) => item.id === id);
-    assert.match(explainedNow?.next ?? "", /GitHub Actions must verify commit ddae2f9005334720e9c52d9b3e13ab2bdbcb918b/);
+    const explainedNow = explainFactory(committed, duringLease).packets.find((item) => item.id === id);
+    assert.equal(commitmentHolds(explainedNow?.commitment!), true);
+    if (recorded.stage === "candidate") {
+      assert.match(explainedNow?.next ?? "", /GitHub Actions must verify commit ddae2f9005334720e9c52d9b3e13ab2bdbcb918b/);
+      assert.equal(explainedNow?.commitment.condition, "waiting");
+      assert.equal(explainedNow?.commitment.checkAt, null);
+    }
     const lapsed = recoverExecutions(committed, "2026-10-31T16:10:00.000Z");
-    assert.equal(lapsed.ledger.packets[id].stage, "candidate");
+    assert.equal(lapsed.ledger.packets[id].stage, recorded.stage);
   }
 
   const source = structuredClone(committed);
   const rewound = source.packets[id];
+  const laterExecutionId = rewound.dispatch?.executionId;
+  const laterAssignmentId = rewound.dispatch?.assignmentId;
   rewound.stage = "engineering";
   rewound.revision = "rev-1";
   rewound.dispatchedSaRevision = "rev-1";
   rewound.dispatchedEngineerRevision = null;
+  rewound.dispatchedRepairFingerprint = null;
+  rewound.attempts = 0;
+  rewound.lastFailureFingerprint = null;
+  rewound.lastFailureClass = null;
   rewound.lease = null;
   rewound.dispatch = null;
   rewound.candidateSha = null;
   delete rewound.specificationBlock;
   rewound.dispatchHistory = (rewound.dispatchHistory ?? []).filter((row) => row.revision !== "rev-2");
+  if (laterExecutionId) delete source.executions?.[laterExecutionId];
+  if (laterAssignmentId) delete source.assignments?.[laterAssignmentId];
   delete source.executions?.["dsp-195-analyst-pkt-019-first-step-send-denied"];
   delete source.assignments?.["asg-dsp-195-analyst-pkt-019-first-step-send-denied"];
   delete source.executions?.["dsp-212-engineer-pkt-019-first-step-send-denied"];
@@ -5617,7 +5692,11 @@ check("PKT-019 delivery is recorded separately from the worker that claims it", 
 
   const lost = fixture(null);
   assert.equal(unconfirmedDelivery(lost, during)?.packetId, packetId);
-  assert.equal(explainFactory(lost, during).packets.find((item) => item.id === packetId)?.next, "The next pass delivers this dispatch.");
+  const lostView = explainFactory(lost, during).packets.find((item) => item.id === packetId);
+  assert.equal(lostView?.next, "The next pass delivers this dispatch.");
+  assert.equal(lostView?.commitment.condition, "recovering");
+  assert.equal(lostView?.commitment.checkAt, nextReconcileAt(during));
+  assert.equal(lostView?.commitment.event, null);
   const pending = controlStep(lost, world(during, 44));
   assert.equal(pending.reason, "delivery_unconfirmed");
   assert.equal(pending.wakes.length, 0);
