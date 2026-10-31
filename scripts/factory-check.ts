@@ -3897,21 +3897,25 @@ function assertRecoveryLedger(committed: FactoryLedger) {
   assert.equal(recoveredNow.changes.some((change) => change.reason === "recorded_specification_block"), false);
   assert.equal(recoveredNow.changes.some((change) => change.reason === "engineering_rearmed"), false);
   const pkt019 = recoveredNow.ledger.packets["pkt-019-first-step-send-denied"];
-  assert.equal(pkt019.stage, "engineering");
+  assert.ok(pkt019.stage === "engineering" || pkt019.stage === "candidate");
   assert.equal(pkt019.revision, "rev-2");
   assert.equal(pkt019.specificationBlock?.authority, "recorded");
   assert.equal(pkt019.specificationBlock?.blockedRevision, "rev-1");
-  assert.equal(pkt019.dispatch?.effect, "wake_engineer");
-  assert.equal(pkt019.dispatch?.revision, "rev-2");
-  const openExecutionId = pkt019.dispatch?.executionId ?? "";
-  const openExecution = recoveredNow.ledger.executions?.[openExecutionId];
-  assert.ok(openExecution);
-  assert.equal(openExecution.phase === "dispatched" || openExecution.phase === "started" || openExecution.phase === "running", true);
-  const expiredReservation = recoveredNow.ledger.executions?.["dsp-195-analyst-pkt-019-first-step-send-denied"];
-  if (openExecutionId !== "dsp-195-analyst-pkt-019-first-step-send-denied") {
-    assert.equal(expiredReservation?.phase, "refused");
-    assert.equal(expiredReservation?.reason, "reservation_expired");
+  if (pkt019.stage === "engineering") {
+    assert.equal(pkt019.dispatch?.effect, "wake_engineer");
+    assert.equal(pkt019.dispatch?.revision, "rev-2");
+    const openExecutionId = pkt019.dispatch?.executionId ?? "";
+    const openExecution = recoveredNow.ledger.executions?.[openExecutionId];
+    assert.ok(openExecution);
+    assert.equal(openExecution.phase === "dispatched" || openExecution.phase === "started" || openExecution.phase === "running", true);
+  } else {
+    assert.equal(pkt019.candidateSha, "ddae2f9005334720e9c52d9b3e13ab2bdbcb918b");
+    assert.equal(pkt019.dispatch, null);
+    assert.equal(pkt019.lease, null);
   }
+  const expiredReservation = recoveredNow.ledger.executions?.["dsp-195-analyst-pkt-019-first-step-send-denied"];
+  assert.equal(expiredReservation?.phase, "refused");
+  assert.equal(expiredReservation?.reason, "reservation_expired");
   const component = "firing-pointers: this firing places its own rows on payload.writes";
   for (const id of [
     "pkt-007-fact-writes",
@@ -5263,7 +5267,7 @@ check("PKT-019's expired contradiction returns to the analyst and is not re-arme
   assert.equal(handoff.includes(RECORDED_SPECIFICATION_BLOCK.note), true);
   const id = RECORDED_SPECIFICATION_BLOCK.packetId;
   const recorded = committed.packets[id];
-  assert.equal(recorded.stage, "engineering");
+  assert.ok(recorded.stage === "engineering" || recorded.stage === "candidate");
   assert.equal(recorded.revision, "rev-2");
   assert.equal(recorded.specificationBlock?.authority, "recorded");
   assert.equal(recorded.specificationBlock?.blockedRevision, "rev-1");
@@ -5279,40 +5283,43 @@ check("PKT-019's expired contradiction returns to the analyst and is not re-arme
   const restored = recoverExecutions(committed, "2026-10-31T15:40:00.000Z");
   assert.equal(restored.changes.some((change) => change.reason === "engineering_rearmed"), false);
   assert.equal(restored.changes.some((change) => change.reason === "recorded_specification_block"), false);
-  assert.equal(restored.ledger.packets[id].stage, "engineering");
-  assert.equal(restored.ledger.packets[id].dispatch?.effect, "wake_engineer");
-  assert.equal(restored.ledger.packets[id].dispatch?.revision, "rev-2");
-  if (recorded.dispatch) {
-    assert.equal(recorded.dispatch.effect, "wake_engineer");
+  if (recorded.stage === "engineering") {
+    assert.equal(restored.ledger.packets[id].stage, "engineering");
+    assert.equal(restored.ledger.packets[id].dispatch?.effect, "wake_engineer");
+    assert.equal(restored.ledger.packets[id].dispatch?.revision, "rev-2");
+    assert.equal(recorded.dispatch?.effect, "wake_engineer");
     assert.equal(restored.changes.some((change) => change.reason === "unstarted_dispatch_restored"), false);
-  } else {
-    assert.equal(restored.changes.some((change) => change.reason === "unstarted_dispatch_restored"), true);
-  }
-  const explainedNow = explainFactory(committed, "2026-10-31T15:40:00.000Z").packets.find((item) => item.id === id);
-  if (recorded.dispatch) {
+    const explainedNow = explainFactory(committed, "2026-10-31T15:40:00.000Z").packets.find((item) => item.id === id);
     assert.equal(explainedNow?.next, "Record a candidate SHA.");
+    const open = explainFactory(restored.ledger, "2026-10-31T15:40:00.000Z").packets.find((item) => item.id === id);
+    assert.equal(open?.next, "Record a candidate SHA.");
+    const clock = "2026-10-31T16:10:00.000Z";
+    const currentDispatch = recorded.dispatch;
+    const currentExecution = currentDispatch?.executionId ? committed.executions?.[currentDispatch.executionId] : undefined;
+    const reservationStillOpen = Boolean(
+      currentDispatch && currentExecution?.phase === "dispatched" && currentExecution.reserveUntil > clock,
+    );
+    if (currentDispatch && currentExecution?.phase === "dispatched" && !reservationStillOpen) {
+      const elapsedExplain = explainFactory(committed, clock).packets.find((item) => item.id === id);
+      assert.match(elapsedExplain?.next ?? "", /expires this reservation/);
+    }
+    const lapsed = recoverExecutions(committed, clock);
+    assert.equal(lapsed.ledger.packets[id].stage, "engineering");
+    if (currentDispatch && currentExecution?.phase === "dispatched" && !reservationStillOpen) {
+      assert.equal(lapsed.ledger.packets[id].dispatch, null);
+      assert.equal(lapsed.ledger.packets[id].dispatchedSaRevision, null);
+      assert.equal(lapsed.ledger.usedDispatches, committed.usedDispatches - 1);
+    }
   } else {
-    assert.equal(explainedNow?.situation, "held");
-    assert.match(explainedNow?.next ?? "", /restores the unstarted Analyst dispatch/);
-  }
-  const open = explainFactory(restored.ledger, "2026-10-31T15:40:00.000Z").packets.find((item) => item.id === id);
-  assert.equal(open?.next, "Record a candidate SHA.");
-  const clock = "2026-10-31T16:10:00.000Z";
-  const currentDispatch = recorded.dispatch;
-  const currentExecution = currentDispatch?.executionId ? committed.executions?.[currentDispatch.executionId] : undefined;
-  const reservationStillOpen = Boolean(
-    currentDispatch && currentExecution?.phase === "dispatched" && currentExecution.reserveUntil > clock,
-  );
-  if (currentDispatch && currentExecution?.phase === "dispatched" && !reservationStillOpen) {
-    const elapsedExplain = explainFactory(committed, clock).packets.find((item) => item.id === id);
-    assert.match(elapsedExplain?.next ?? "", /expires this reservation/);
-  }
-  const lapsed = recoverExecutions(committed, clock);
-  assert.equal(lapsed.ledger.packets[id].stage, "engineering");
-  if (currentDispatch && currentExecution?.phase === "dispatched" && !reservationStillOpen) {
-    assert.equal(lapsed.ledger.packets[id].dispatch, null);
-    assert.equal(lapsed.ledger.packets[id].dispatchedSaRevision, null);
-    assert.equal(lapsed.ledger.usedDispatches, committed.usedDispatches - 1);
+    assert.equal(recorded.candidateSha, "ddae2f9005334720e9c52d9b3e13ab2bdbcb918b");
+    assert.equal(recorded.lease, null);
+    assert.equal(recorded.dispatch, null);
+    assert.equal(restored.ledger.packets[id].stage, "candidate");
+    assert.equal(restored.changes.some((change) => change.reason === "unstarted_dispatch_restored"), false);
+    const explainedNow = explainFactory(committed, "2026-10-31T15:40:00.000Z").packets.find((item) => item.id === id);
+    assert.match(explainedNow?.next ?? "", /GitHub Actions must verify commit ddae2f9005334720e9c52d9b3e13ab2bdbcb918b/);
+    const lapsed = recoverExecutions(committed, "2026-10-31T16:10:00.000Z");
+    assert.equal(lapsed.ledger.packets[id].stage, "candidate");
   }
 
   const source = structuredClone(committed);
