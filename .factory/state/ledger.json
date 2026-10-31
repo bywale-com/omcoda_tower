@@ -1,5 +1,5 @@
 {
-  "stateRevision": 214,
+  "stateRevision": 215,
   "authorizedDispatches": 50,
   "usedDispatches": 45,
   "scope": {
@@ -1320,20 +1320,15 @@
     "pkt-019-first-step-send-denied": {
       "id": "pkt-019-first-step-send-denied",
       "initiativeId": "exec-identity",
-      "stage": "engineering",
+      "stage": "candidate",
       "wake": "sa",
       "revision": "rev-2",
       "hold": false,
       "blockerId": null,
-      "lease": {
-        "workerId": "bc-4192002b-f944-4eeb-919a-1af83d403f28",
-        "role": "engineer",
-        "until": "2026-10-31T23:12:45.000Z",
-        "revision": "rev-2"
-      },
+      "lease": null,
       "attempts": 0,
       "maxAttempts": 1,
-      "candidateSha": null,
+      "candidateSha": "ddae2f9005334720e9c52d9b3e13ab2bdbcb918b",
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": "systems_contract",
@@ -1343,17 +1338,7 @@
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-019-first-step-send-denied",
-        "revision": "rev-2",
-        "prHead": "c8a59fdbaed0707101238c7e2f536584499c8b1f",
-        "effect": "wake_engineer",
-        "label": "factory-wake-engineer",
-        "issuedAt": "2026-10-31T22:11:26.752Z",
-        "deliveredAt": "2026-10-31T22:11:26.752Z",
-        "executionId": "dsp-212-engineer-pkt-019-first-step-send-denied",
-        "assignmentId": "asg-dsp-212-engineer-pkt-019-first-step-send-denied"
-      },
+      "dispatch": null,
       "dispatchHistory": [
         {
           "packetId": "pkt-019-first-step-send-denied",
@@ -1408,6 +1393,18 @@
           "deliveredAt": "2026-10-31T22:07:18.955Z",
           "executionId": "dsp-209-analyst-pkt-019-first-step-send-denied",
           "assignmentId": "asg-dsp-209-analyst-pkt-019-first-step-send-denied",
+          "workerExecution": "ran"
+        },
+        {
+          "packetId": "pkt-019-first-step-send-denied",
+          "revision": "rev-2",
+          "prHead": "c8a59fdbaed0707101238c7e2f536584499c8b1f",
+          "effect": "wake_engineer",
+          "label": "factory-wake-engineer",
+          "issuedAt": "2026-10-31T22:11:26.752Z",
+          "deliveredAt": "2026-10-31T22:11:26.752Z",
+          "executionId": "dsp-212-engineer-pkt-019-first-step-send-denied",
+          "assignmentId": "asg-dsp-212-engineer-pkt-019-first-step-send-denied",
           "workerExecution": "ran"
         }
       ],
@@ -1873,7 +1870,7 @@
       "id": "dsp-212-engineer-pkt-019-first-step-send-denied",
       "assignmentId": "asg-dsp-212-engineer-pkt-019-first-step-send-denied",
       "role": "engineer",
-      "phase": "running",
+      "phase": "completed",
       "packetIds": [
         "pkt-019-first-step-send-denied"
       ],
@@ -1887,11 +1884,11 @@
       "issuedAt": "2026-10-31T22:11:26.752Z",
       "startedAt": "2026-10-31T22:12:43.563Z",
       "runningAt": "2026-10-31T22:12:45.000Z",
-      "endedAt": null,
+      "endedAt": "2026-10-31T22:20:11.681Z",
       "reserveUntil": "2026-10-31T22:41:26.752Z",
       "startUntil": "2026-10-31T22:27:43.563Z",
       "leaseUntil": "2026-10-31T23:12:45.000Z",
-      "reason": null
+      "reason": "candidate_recorded"
     }
   },
   "assignments": {
