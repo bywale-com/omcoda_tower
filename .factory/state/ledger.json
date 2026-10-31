@@ -1,5 +1,5 @@
 {
-  "stateRevision": 196,
+  "stateRevision": 197,
   "authorizedDispatches": 50,
   "usedDispatches": 44,
   "scope": {
@@ -1338,7 +1338,16 @@
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-019-first-step-send-denied",
+        "revision": "rev-2",
+        "prHead": "2d5141d6cc162f2f2182ea8fbbf4d77b96e93ea9",
+        "effect": "wake_sa",
+        "label": "factory-wake-sa",
+        "issuedAt": "2026-10-31T15:29:18.613Z",
+        "executionId": "dsp-195-analyst-pkt-019-first-step-send-denied",
+        "assignmentId": "asg-dsp-195-analyst-pkt-019-first-step-send-denied"
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-019-first-step-send-denied",
@@ -1358,17 +1367,6 @@
           "issuedAt": "2026-10-31T13:45:40.987Z",
           "executionId": "dsp-172-engineer-pkt-018-send-denied-engagement",
           "assignmentId": "asg-dsp-172-engineer-pkt-018-send-denied-engagement",
-          "workerExecution": "ran"
-        },
-        {
-          "packetId": "pkt-019-first-step-send-denied",
-          "revision": "rev-2",
-          "prHead": "2d5141d6cc162f2f2182ea8fbbf4d77b96e93ea9",
-          "effect": "wake_sa",
-          "label": "factory-wake-sa",
-          "issuedAt": "2026-10-31T15:29:18.613Z",
-          "executionId": "dsp-195-analyst-pkt-019-first-step-send-denied",
-          "assignmentId": "asg-dsp-195-analyst-pkt-019-first-step-send-denied",
           "workerExecution": "ran"
         }
       ],
