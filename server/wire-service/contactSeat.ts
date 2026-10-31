@@ -520,19 +520,6 @@ export async function handleContactWorkspacesList(c: Context) {
 export async function handleContactSeatGet(c: Context) {
   const resolved = await seatFromContext(c);
   if ("refuse" in resolved) return jsonRefuse(c, resolved);
-  const openAsk = c.req.query("campaignId")?.trim() || null;
-  if (openAsk) {
-    await resolved.pool.query(
-      `UPDATE enrollment SET campaign_id=$3
-       WHERE id = (
-         SELECT id FROM enrollment
-         WHERE firm_id=$1 AND contact_id=$2
-         ORDER BY enrolled_at DESC
-         LIMIT 1
-       )`,
-      [resolved.link.firm_id, resolved.link.contact_id, openAsk],
-    );
-  }
   return json(c, await projectSeat(resolved.pool, resolved.link));
 }
 
@@ -619,6 +606,9 @@ export async function handleContactSeatFacts(c: Context) {
         firm_id: resolved.link.firm_id,
         form_ref: stamp.formRef,
         campaign_objective_id: stamp.campaignObjectiveId,
+        writes: [
+          { table: "fact_writebacks", id: writeId, contact_id: resolved.link.contact_id },
+        ],
       },
       contactIds: [resolved.link.contact_id],
     });
