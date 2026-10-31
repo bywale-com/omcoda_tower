@@ -1,5 +1,5 @@
 {
-  "stateRevision": 178,
+  "stateRevision": 179,
   "authorizedDispatches": 50,
   "usedDispatches": 43,
   "scope": {
@@ -1190,7 +1190,7 @@
     "pkt-018-send-denied-engagement": {
       "id": "pkt-018-send-denied-engagement",
       "initiativeId": "exec-identity",
-      "stage": "candidate",
+      "stage": "verified",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
@@ -1199,7 +1199,7 @@
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": "13e6c14d0531cc1b583449b38c9a007056d8174f",
-      "verifiedSha": null,
+      "verifiedSha": "13e6c14d0531cc1b583449b38c9a007056d8174f",
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
@@ -1231,7 +1231,16 @@
           "workerExecution": "ran"
         }
       ],
-      "execution": null,
+      "execution": {
+        "mode": "automatic",
+        "checks": [
+          {
+            "name": "verify-send-denied-engagement",
+            "runId": "41210884819",
+            "outcome": "pass"
+          }
+        ]
+      },
       "siblings": [
         {
           "id": "pkt-017-tick-send-halt",
