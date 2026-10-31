@@ -1,0 +1,60 @@
+# Periodic factory reconcile.
+# GitHub runs a schedule only from the default branch. This job checks out
+# the operating branch and runs one control pass there.
+# The pass expires reservations, reconciles dispatches, and pulses a label
+# whose delivery is unconfirmed. That pulse does not spend a dispatch.
+# The same disarm gates as Factory dispatch apply. A disarmed run exits 0.
+
+name: Factory reconcile
+
+on:
+  schedule:
+    - cron: "7,22,37,52 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: factory-control-operating
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: cursor/execution-architecture-74f7
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Reconcile
+        env:
+          FACTORY_CONTROLLER: ${{ vars.FACTORY_CONTROLLER }}
+          FACTORY_LABELS: ${{ vars.FACTORY_LABELS }}
+          FACTORY_SPEND_LIMIT_CONFIRMED: ${{ vars.FACTORY_SPEND_LIMIT_CONFIRMED }}
+          FACTORY_AUTOMATIONS_SAVED: ${{ vars.FACTORY_AUTOMATIONS_SAVED }}
+          WAKE_GITHUB_TOKEN: ${{ secrets.WAKE_GITHUB_TOKEN }}
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+          FACTORY_REPOSITORY: ${{ github.repository }}
+          FACTORY_LEDGER_BRANCH: cursor/execution-architecture-74f7
+        run: |
+          set -euo pipefail
+          if [ "$FACTORY_CONTROLLER" != "active" ] || [ "$FACTORY_LABELS" != "armed" ] || [ "$FACTORY_SPEND_LIMIT_CONFIRMED" != "yes" ] || [ "$FACTORY_AUTOMATIONS_SAVED" != "yes" ] || [ -z "${WAKE_GITHUB_TOKEN}" ]; then
+            echo "actuator disarmed"
+            npx tsx scripts/factory-control.ts
+            exit 0
+          fi
+          export GH_TOKEN="$WAKE_GITHUB_TOKEN"
+          pr=$(gh pr list --repo "$FACTORY_REPOSITORY" --head "$FACTORY_LEDGER_BRANCH" --state open --json number,headRefOid --jq '.[0] | "\(.number) \(.headRefOid)"')
+          if [ -z "$pr" ] || [ "$pr" = " " ]; then
+            echo "reconcile_pr_missing"
+            exit 0
+          fi
+          export FACTORY_PR="${pr%% *}"
+          export FACTORY_PR_HEAD="${pr#* }"
+          npx tsx scripts/factory-control.ts --apply
