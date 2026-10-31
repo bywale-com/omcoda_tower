@@ -1,5 +1,5 @@
 {
-  "stateRevision": 210,
+  "stateRevision": 211,
   "authorizedDispatches": 50,
   "usedDispatches": 44,
   "scope": {
@@ -1320,17 +1320,12 @@
     "pkt-019-first-step-send-denied": {
       "id": "pkt-019-first-step-send-denied",
       "initiativeId": "exec-identity",
-      "stage": "analysis",
+      "stage": "change_specified",
       "wake": "sa",
       "revision": "rev-2",
       "hold": false,
       "blockerId": null,
-      "lease": {
-        "workerId": "bc-b5803fad-df50-4726-a033-2955cfea0945",
-        "role": "analyst",
-        "until": "2026-10-31T23:10:53.153Z",
-        "revision": "rev-2"
-      },
+      "lease": null,
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
@@ -1343,17 +1338,7 @@
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-019-first-step-send-denied",
-        "revision": "rev-2",
-        "prHead": "8ffc27781c95d54322665c53c935fee3194ab99b",
-        "effect": "wake_sa",
-        "label": "factory-wake-sa",
-        "issuedAt": "2026-10-31T22:07:18.955Z",
-        "deliveredAt": "2026-10-31T22:07:18.955Z",
-        "executionId": "dsp-209-analyst-pkt-019-first-step-send-denied",
-        "assignmentId": "asg-dsp-209-analyst-pkt-019-first-step-send-denied"
-      },
+      "dispatch": null,
       "dispatchHistory": [
         {
           "packetId": "pkt-019-first-step-send-denied",
@@ -1397,6 +1382,18 @@
           "executionId": "dsp-199-analyst-pkt-019-first-step-send-denied",
           "assignmentId": "asg-dsp-199-analyst-pkt-019-first-step-send-denied",
           "workerExecution": "absent"
+        },
+        {
+          "packetId": "pkt-019-first-step-send-denied",
+          "revision": "rev-2",
+          "prHead": "8ffc27781c95d54322665c53c935fee3194ab99b",
+          "effect": "wake_sa",
+          "label": "factory-wake-sa",
+          "issuedAt": "2026-10-31T22:07:18.955Z",
+          "deliveredAt": "2026-10-31T22:07:18.955Z",
+          "executionId": "dsp-209-analyst-pkt-019-first-step-send-denied",
+          "assignmentId": "asg-dsp-209-analyst-pkt-019-first-step-send-denied",
+          "workerExecution": "ran"
         }
       ],
       "execution": null,
@@ -1837,7 +1834,7 @@
       "id": "dsp-209-analyst-pkt-019-first-step-send-denied",
       "assignmentId": "asg-dsp-209-analyst-pkt-019-first-step-send-denied",
       "role": "analyst",
-      "phase": "running",
+      "phase": "completed",
       "packetIds": [
         "pkt-019-first-step-send-denied"
       ],
@@ -1851,11 +1848,11 @@
       "issuedAt": "2026-10-31T22:07:18.955Z",
       "startedAt": "2026-10-31T22:10:53.153Z",
       "runningAt": "2026-10-31T22:10:53.153Z",
-      "endedAt": null,
+      "endedAt": "2026-10-31T22:11:03.725Z",
       "reserveUntil": "2026-10-31T22:37:18.955Z",
       "startUntil": null,
       "leaseUntil": "2026-10-31T23:10:53.153Z",
-      "reason": null
+      "reason": "specifications_signed"
     }
   },
   "assignments": {
