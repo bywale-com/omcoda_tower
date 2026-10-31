@@ -15,6 +15,8 @@ import {
   decide,
   deriveInitiative,
   freshItem,
+  nextRevision,
+  REQUIRED_CHANGE_SECTIONS,
   workerMayRun,
   type WorkItem,
   type World,
@@ -63,6 +65,7 @@ import {
   prepareBoundEngineer,
   productionMetrics,
   productionPressure,
+  RECORDED_SPECIFICATION_BLOCK,
   recoverExecutions,
 } from "../.factory/controller/execution.ts";
 import { readyReleases } from "../.factory/controller/conclusion.ts";
@@ -634,6 +637,10 @@ check("seat prompts keep the Travis gates that stopped empty boots", () => {
   assert.match(engineer, /scripts\/factory-wake-check\.ts factory-repair/);
   assert.match(engineer, /scripts\/factory-engineer\.ts lease --worker/);
   assert.match(engineer, /scripts\/factory-engineer\.ts candidate --worker/);
+  assert.match(engineer, /scripts\/factory-engineer\.ts specification-blocked --worker/);
+  assert.match(engineer, /returned_analyst/);
+  assert.match(analyst, /scripts\/factory-analyst\.ts requirements-blocked --worker/);
+  assert.match(analyst, /requirements_blocked/);
   assert.match(architect, /No timer enforces this interval/);
   const packet = read("docs/factory/initiatives/exec-identity/packets/PKT-001-click-attribution.md");
   assert.match(packet, /\*\*Wake:\*\* hold/);
@@ -3309,7 +3316,12 @@ check("control and authorize commands do not arm the committed ledger", () => {
     const pressureNow = productionPressure(Object.values(committedForDry.packets));
     assert.equal(pressureNow.holdArchitect, pressureNow.engineerQueueDepth >= 2);
     const architectLane = !committedForDry.scope.lanes || committedForDry.scope.lanes.includes("architect");
-    if (!pressureNow.holdArchitect && !architectLane) {
+    const returned = proposed.wakes.filter((wake) => wake.effect === "wake_sa" && wake.id === "pkt-019-first-step-send-denied");
+    if (returned.length) {
+      assert.equal(proposed.reason, "specification_returned");
+      assert.equal(returned.length, 1);
+      assert.equal(proposed.wakes.some((wake) => wake.effect === "wake_engineer"), false);
+    } else if (!pressureNow.holdArchitect && !architectLane) {
       assert.equal(proposed.reason, "lane_held");
       assert.equal(proposed.wakes.length, 0);
     }
@@ -3769,7 +3781,13 @@ function assertRecoveryLedger(committed: FactoryLedger) {
   const pressure = productionPressure(Object.values(committed.packets));
   assert.equal(metrics.engineerQueueDepth, pressure.engineerQueueDepth);
   assert.equal(pressure.holdArchitect, pressure.engineerQueueDepth >= 2);
-  assert.equal(recoverExecutions(committed, "2026-10-30T15:45:00.000Z").changes.length, 0);
+  const recoveredNow = recoverExecutions(committed, "2026-10-30T15:45:00.000Z");
+  assert.deepEqual(
+    recoveredNow.changes.map((change) => change.reason),
+    ["recorded_specification_block"],
+  );
+  assert.equal(recoveredNow.ledger.packets["pkt-019-first-step-send-denied"].stage, "returned_analyst");
+  assert.equal(recoveredNow.changes.some((change) => change.reason === "engineering_rearmed"), false);
   const component = "firing-pointers: this firing places its own rows on payload.writes";
   for (const id of [
     "pkt-007-fact-writes",
@@ -4436,6 +4454,7 @@ check("assignments batch siblings, recover the engineer slot, and hold a deep qu
   assert.equal(interrupted.changes[0]?.phase, "interrupted");
   assert.equal(interrupted.changes[0]?.reason, "lease_expired");
   assert.equal(interrupted.ledger.packets[running.id].lease, null);
+  assert.equal(interrupted.ledger.packets[running.id].stage, "change_specified");
   assert.equal(interrupted.ledger.packets[running.id].dispatchedEngineerRevision, null);
   assert.equal(interrupted.ledger.executions?.["dsp-leased"].phase, "interrupted");
 
@@ -4973,7 +4992,10 @@ check("a packet explains why it is waiting and what advances it", () => {
   const unsigned = capped.packets.find((packet) => packet.id === released.id);
   assert.equal(unsigned?.situation, "intervention");
   assert.equal(unsigned?.next, "Unknown");
+  assert.match(unsigned?.happening ?? "", /Known defect/);
   assert.match(unsigned?.why ?? "", /No sign_change/);
+  assert.match(unsigned?.why ?? "", /known defect/);
+  assert.equal(capped.summary.knownDefects.includes(released.id), true);
   const finished = capped.packets.find((packet) => packet.id === done.id);
   assert.equal(finished?.situation, "complete");
   assert.equal(finished?.next, "Nothing.");
@@ -5064,9 +5086,9 @@ check("a packet explains why it is waiting and what advances it", () => {
   recoveredExecution.reason = "lease_expired";
   recoveredExecution.leaseUntil = "2026-10-31T15:00:00.000Z";
   const stuck = explainFactory(recovered, later).packets.find((packet) => packet.id === running.id);
-  assert.equal(stuck?.situation, "intervention");
-  assert.equal(stuck?.next, "Unknown");
-  assert.match(stuck?.why ?? "", /change_specified/);
+  assert.equal(stuck?.situation, "held");
+  assert.equal(stuck?.who, "controller");
+  assert.match(stuck?.next ?? "", /change_specified/);
 
   const history = emptyLedger(50);
   const oldPacket = freshItem("pkt-003-resume-same-run", "exec-identity");
@@ -5108,6 +5130,166 @@ check("a packet explains why it is waiting and what advances it", () => {
   assert.equal(read(".factory/controller/explain.ts").includes("readFileSync"), false);
   assert.match(read(".github/workflows/factory-dispatch.yml"), /factory-explain\.ts/);
   assert.equal(read(".github/workflows/factory-dispatch.yml").includes("schedule:"), false);
+});
+
+check("PKT-019's expired contradiction returns to the analyst and is not re-armed", () => {
+  const committed = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
+  const handoff = read("docs/factory/initiatives/exec-identity/HANDOFF.md");
+  assert.equal(handoff.includes(RECORDED_SPECIFICATION_BLOCK.note), true);
+  const id = RECORDED_SPECIFICATION_BLOCK.packetId;
+  const before = committed.packets[id];
+  assert.equal(before.stage, "engineering");
+  assert.equal(before.revision, "rev-1");
+  assert.equal(before.candidateSha, null);
+  assert.equal(before.lease, null);
+  const releasedBefore = Object.values(committed.packets)
+    .filter((packet) => packet.stage === "released")
+    .map((packet) => packet.id)
+    .sort();
+  assert.equal(releasedBefore.length, 5);
+  const world: World = {
+    ...active,
+    now: "2026-10-31T16:00:00.000Z",
+    authorizedDispatches: committed.authorizedDispatches,
+    usedDispatches: committed.usedDispatches,
+    scopeStatus: committed.scope.status,
+  };
+  const prose = applyEvent(before, { type: "prose_complete" }, world);
+  assert.equal(prose.reason, "prose_is_not_evidence");
+  assert.equal(prose.item.stage, "engineering");
+  const bare = applyEvent(
+    before,
+    { type: "specification_blocked", workerId: RECORDED_SPECIFICATION_BLOCK.workerId, note: RECORDED_SPECIFICATION_BLOCK.note },
+    world,
+  );
+  assert.equal(bare.reason, "lease_expired");
+  assert.equal(bare.item.stage, "engineering");
+  assert.equal(bare.item.revision, "rev-1");
+
+  const adopted = recoverExecutions(committed, world.now);
+  assert.equal(adopted.changes.some((change) => change.reason === "recorded_specification_block"), true);
+  assert.equal(adopted.changes.some((change) => change.reason === "engineering_rearmed"), false);
+  const packet = adopted.ledger.packets[id];
+  assert.equal(packet.stage, "returned_analyst");
+  assert.equal(packet.revision, nextRevision("rev-1"));
+  assert.equal(packet.specificationBlock?.blockedRevision, "rev-1");
+  assert.equal(packet.specificationBlock?.revision, "rev-2");
+  assert.equal(packet.specificationBlock?.authority, "recorded");
+  assert.equal(packet.specificationBlock?.note, RECORDED_SPECIFICATION_BLOCK.note);
+  assert.equal(packet.specificationBlock?.workerId, RECORDED_SPECIFICATION_BLOCK.workerId);
+  assert.equal(packet.specificationBlock?.executionId, RECORDED_SPECIFICATION_BLOCK.executionId);
+  assert.equal(packet.dispatchedSaRevision, "rev-1");
+  assert.equal(packet.dispatchedEngineerRevision, null);
+  assert.equal(adopted.ledger.executions?.[RECORDED_SPECIFICATION_BLOCK.executionId]?.reason, "lease_expired");
+  assert.equal(adopted.ledger.packets["pkt-018-send-denied-engagement"].stage, committed.packets["pkt-018-send-denied-engagement"].stage);
+  for (const releasedId of releasedBefore) {
+    assert.equal(adopted.ledger.packets[releasedId].stage, "released");
+    assert.equal(adopted.ledger.packets[releasedId].revision, committed.packets[releasedId].revision);
+  }
+  assert.equal(recoverExecutions(adopted.ledger, world.now).changes.length, 0);
+  const waiting = explainFactory(committed, world.now).packets.find((item) => item.id === id);
+  assert.equal(waiting?.situation, "held");
+  assert.match(waiting?.next ?? "", /returns this packet to the Analyst/);
+  const returned = explainFactory(adopted.ledger, world.now).packets.find((item) => item.id === id);
+  assert.equal(returned?.situation, "proceeding");
+  assert.equal(returned?.next, "The next pass wakes the Analyst.");
+  assert.deepEqual(explainFactory(adopted.ledger, world.now).summary.knownDefects, releasedBefore);
+
+  const wrongWorker = structuredClone(committed);
+  const execution = wrongWorker.executions?.[RECORDED_SPECIFICATION_BLOCK.executionId];
+  if (!execution) throw new Error("execution missing");
+  execution.agentId = "bc-00000000-0000-4000-8000-000000000000";
+  const rearmed = recoverExecutions(wrongWorker, world.now);
+  assert.equal(rearmed.ledger.packets[id].stage, "change_specified");
+  assert.equal(rearmed.ledger.packets[id].revision, "rev-1");
+  assert.equal(rearmed.ledger.packets[id].specificationBlock, undefined);
+  assert.equal(rearmed.changes.some((change) => change.reason === "recorded_specification_block"), false);
+
+  const live = structuredClone(committed);
+  live.packets[id].lease = {
+    workerId: RECORDED_SPECIFICATION_BLOCK.workerId,
+    role: "engineer",
+    until: "2026-10-31T18:00:00.000Z",
+    revision: "rev-1",
+  };
+  const held = recoverExecutions(live, world.now);
+  assert.equal(held.ledger.packets[id].stage, "engineering");
+  assert.equal(held.ledger.packets[id].specificationBlock, undefined);
+  assert.equal(held.changes.some((change) => change.reason === "engineering_rearmed"), false);
+  assert.equal(held.changes.some((change) => change.reason === "recorded_specification_block"), false);
+
+  const analyst = must(
+    applyEvent(
+      packet,
+      {
+        type: "acquire_lease",
+        workerId: "bc-analyst",
+        role: "analyst",
+        until: "2026-10-31T17:00:00.000Z",
+        revision: packet.revision,
+      },
+      world,
+    ),
+    "lease_acquired",
+  );
+  assert.equal(analyst.stage, "analysis");
+  const interrupted = applyEvent(analyst, { type: "interrupt_analysis", workerId: "bc-analyst" }, world);
+  assert.equal(interrupted.reason, "specification_blocked");
+  assert.equal(interrupted.item.stage, "analysis");
+  const escalated = must(
+    applyEvent(
+      analyst,
+      { type: "requirements_blocked", workerId: "bc-analyst", note: "The no-template enroll needs a product change." },
+      world,
+    ),
+    "requirements_blocked",
+  );
+  assert.equal(escalated.stage, "returned_architect");
+  assert.equal(escalated.revision, "rev-2");
+  assert.equal(escalated.specificationBlock?.blockedRevision, "rev-1");
+  assert.equal(escalated.specificationBlock?.failureClass, "specification");
+  assert.equal(decide(escalated, world).reason, "requirements_blocked");
+  const signed = must(
+    applyEvent(
+      analyst,
+      { type: "sign_change", revision: analyst.revision, sections: [...REQUIRED_CHANGE_SECTIONS], workerId: "bc-analyst" },
+      world,
+    ),
+    "change_specified",
+  );
+  assert.equal(signed.revision, "rev-2");
+  const resumedLedger = structuredClone(adopted.ledger);
+  resumedLedger.packets[id] = signed;
+  const plan = planPacketContinuation({ ledger: resumedLedger, role: "engineer", packetIds: [id], resumeSupported: true });
+  assert.equal(plan.mode, "resume");
+  assert.equal(plan.agentId, RECORDED_SPECIFICATION_BLOCK.workerId);
+
+  const ordinary = freshItem("pkt-ordinary");
+  ordinary.stage = "engineering";
+  ordinary.revision = "rev-1";
+  ordinary.wake = "sa";
+  ordinary.lease = { workerId: "bc-engineer", role: "engineer", until: "2026-10-31T17:00:00.000Z", revision: "rev-1" };
+  const missing = applyEvent(ordinary, { type: "specification_blocked", workerId: "bc-engineer", note: " " }, world);
+  assert.equal(missing.reason, "note_missing");
+  const expiredLease = structuredClone(ordinary);
+  expiredLease.lease = { workerId: "bc-engineer", role: "engineer", until: "2026-10-31T15:00:00.000Z", revision: "rev-1" };
+  const refused = applyEvent(
+    expiredLease,
+    { type: "specification_blocked", workerId: "bc-engineer", note: "The contract names a column the store does not have." },
+    world,
+  );
+  assert.equal(refused.reason, "lease_expired");
+  const blocked = must(
+    applyEvent(
+      ordinary,
+      { type: "specification_blocked", workerId: "bc-engineer", note: "The contract names a column the store does not have." },
+      world,
+    ),
+    "returned_analyst",
+  );
+  assert.equal(blocked.revision, "rev-2");
+  assert.equal(blocked.specificationBlock?.authority, "lease");
+  assert.equal(blocked.specificationBlock?.blockedRevision, "rev-1");
 });
 
 const failures: string[] = [];

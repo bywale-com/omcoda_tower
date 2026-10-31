@@ -303,6 +303,10 @@ export async function commitEvent(
       drafted = applyWorkerSignal(drafted, packetId, { type: "candidate", now: world.now });
     } else if (event.type === "interrupt_analysis") {
       drafted = applyWorkerSignal(drafted, packetId, { type: "interrupted", now: world.now });
+    } else if (event.type === "specification_blocked") {
+      drafted = applyWorkerSignal(drafted, packetId, { type: "specification_blocked", now: world.now });
+    } else if (event.type === "requirements_blocked") {
+      drafted = applyWorkerSignal(drafted, packetId, { type: "requirements_blocked", now: world.now });
     }
     const stored = drafted.packets[packetId] ?? applied.item;
     return {

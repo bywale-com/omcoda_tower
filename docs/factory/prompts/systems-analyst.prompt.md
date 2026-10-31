@@ -101,11 +101,19 @@ Stop unless it prints `context_saturated`.
 
 5. If you cannot finish the specification, record one of these and stop. Do not sign.
 
-Recoverable interruption. The packet returns to `released` so a later wake can continue:
+Recoverable interruption. The packet returns to `released` so a later wake can continue. A systems-contract return cannot be interrupted this way:
 
 ```bash
 npx tsx scripts/factory-analyst.ts interrupt --worker <bc-id>
 ```
+
+If this revision carries a systems-contract block, sign the corrected specification when the contract can be reconciled. If the contradiction requires a product change, record that and stop:
+
+```bash
+npx tsx scripts/factory-analyst.ts requirements-blocked --worker <bc-id> --packet <packet-id> --note "<what the requirements must change>"
+```
+
+Stop unless it prints `requirements_blocked`. The revision does not advance again. The packet returns to the Architect.
 
 A blocker for an infrastructure or external stop. `--class` is `infrastructure` or `external`. Write `docs/factory/blockers/BLOCKER-NNN.md`.
 

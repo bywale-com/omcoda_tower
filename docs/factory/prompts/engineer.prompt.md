@@ -96,3 +96,11 @@ npx tsx scripts/factory-engineer.ts block --worker <bc-id> --blocker BLOCKER-NNN
 ```
 
 `--class` is `infrastructure` or `external`. Do not add labels. Stop.
+
+If the systems-change packet contradicts the store, and a candidate would require a recut the packet forbids, do not record a candidate and do not recut it. A note in the handoff is not the return. Record the block while the lease is live:
+
+```bash
+npx tsx scripts/factory-engineer.ts specification-blocked --worker <bc-id> --packet <packet-id> --note "<the contradiction>"
+```
+
+Stop unless it prints `returned_analyst`. The class is `systems_contract`. The revision advances. The blocked revision stays on the block. The Analyst signs the next revision.

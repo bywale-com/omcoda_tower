@@ -14,11 +14,25 @@ import {
   acknowledgeDispatch,
   applyEvent,
   decide,
+  returnForSpecificationBlock,
   type DispatchRecord,
   type SiblingLink,
   type WorkItem,
   type World,
 } from "./machine.ts";
+
+/**
+ * The one expired return this recovery pass may adopt.
+ * The note is the engineer's recorded contradiction. A different note,
+ * worker, or execution does not match, and the live lease event stays required.
+ */
+export const RECORDED_SPECIFICATION_BLOCK = {
+  packetId: "pkt-019-first-step-send-denied",
+  executionId: "dsp-172-engineer-pkt-018-send-denied-engagement",
+  workerId: "bc-4192002b-f944-4eeb-919a-1af83d403f28",
+  revision: "rev-1",
+  note: "The systems-change packet cites `004_machine_tables.sql`, where `sequence_id` is nullable and has no foreign key. It forbids inserting `sequence_template`, forbids a migration, and forbids changing that insert.",
+} as const;
 
 export const PENDING_RESERVE_MS = 30 * 60 * 1000;
 export const START_HOLD_MS = 15 * 60 * 1000;
@@ -177,6 +191,17 @@ function executionsOf(ledger: ExecutionLedger): Record<string, WorkerExecution> 
 export function executionById(ledger: ExecutionLedger, id: string | undefined): WorkerExecution | null {
   if (!id) return null;
   return executionsOf(ledger)[id] ?? null;
+}
+
+/** True only for the expired PKT-019 facts. A live lease makes this false. */
+export function recordedSpecificationReturn(packet: WorkItem, execution: WorkerExecution | undefined, now: string): boolean {
+  const spec = RECORDED_SPECIFICATION_BLOCK;
+  if (packet.id !== spec.packetId || packet.stage !== "engineering" || packet.revision !== spec.revision) return false;
+  if (packet.candidateSha || packet.specificationBlock || packet.dispatch) return false;
+  if (packet.lease && packet.lease.until > now) return false;
+  if (!execution || execution.id !== spec.executionId || execution.agentId !== spec.workerId) return false;
+  if (execution.role !== "engineer" || execution.phase !== "interrupted" || execution.reason !== "lease_expired") return false;
+  return execution.packetIds.includes(packet.id) && execution.revisions[packet.id] === spec.revision;
 }
 
 export function liveExecutionFor(ledger: ExecutionLedger, packetId: string): WorkerExecution | null {
@@ -519,10 +544,50 @@ function finish(
   execution.reason = reason;
 }
 
+function adoptRecordedSpecificationBlock(ledger: ExecutionLedger, now: string): RecoveryChange | null {
+  const spec = RECORDED_SPECIFICATION_BLOCK;
+  const packet = ledger.packets[spec.packetId];
+  const execution = ledger.executions?.[spec.executionId];
+  if (!packet || !recordedSpecificationReturn(packet, execution, now)) return null;
+  const returned = returnForSpecificationBlock(packet, {
+    workerId: spec.workerId,
+    executionId: spec.executionId,
+    note: spec.note,
+    authority: "recorded",
+  });
+  if (!returned) return null;
+  ledger.packets[packet.id] = returned;
+  return { id: spec.executionId, phase: "interrupted", reason: "recorded_specification_block" };
+}
+
+function rearmExpiredEngineering(ledger: ExecutionLedger, now: string, changes: RecoveryChange[]): void {
+  for (const packet of Object.values(ledger.packets)) {
+    if (packet.stage !== "engineering" || packet.candidateSha || packet.specificationBlock) continue;
+    if (packet.attempts > 0 || packet.lastFailureFingerprint) continue;
+    if (packet.lease && packet.lease.until > now) continue;
+    const execution = Object.values(ledger.executions ?? {}).find(
+      (row) =>
+        row.role === "engineer" &&
+        row.packetIds.includes(packet.id) &&
+        isTerminal(row.phase) &&
+        (row.reason === "lease_expired" || row.reason === "reservation_expired"),
+    );
+    if (!execution) continue;
+    if (recordedSpecificationReturn(packet, execution, now)) continue;
+    if (packet.dispatch) archiveDispatch(packet, "ran");
+    packet.stage = "change_specified";
+    packet.lease = null;
+    packet.dispatchedEngineerRevision = null;
+    changes.push({ id: packet.id, phase: "interrupted", reason: "engineering_rearmed" });
+  }
+}
+
 /**
  * Release reservations and leases the clock has already ended.
  * A candidate SHA is kept. A refused engineer does not stay in the slot.
  * History stays on the execution and on the packet's dispatch history.
+ * The recorded PKT-019 contradiction is adopted before any engineering packet
+ * is returned to `change_specified`, and that packet is not re-armed.
  */
 export function recoverExecutions<T extends ExecutionLedger>(
   ledger: T,
@@ -530,6 +595,8 @@ export function recoverExecutions<T extends ExecutionLedger>(
 ): { ledger: T; changes: RecoveryChange[] } {
   const next = structuredClone(ledger) as T;
   const changes: RecoveryChange[] = [];
+  const adopted = adoptRecordedSpecificationBlock(next, now);
+  if (adopted) changes.push(adopted);
   const { executions, assignments } = ensureMaps(next);
 
   for (const packet of Object.values(next.packets)) {
@@ -587,6 +654,17 @@ export function recoverExecutions<T extends ExecutionLedger>(
     finish(execution, phase, now, reason);
     archiveDispatch(packet, started ? "ran" : "absent");
     packet.lease = null;
+    if (
+      role === "engineer" &&
+      packet.stage === "engineering" &&
+      !packet.candidateSha &&
+      !packet.specificationBlock &&
+      packet.attempts === 0 &&
+      !packet.lastFailureFingerprint &&
+      !recordedSpecificationReturn(packet, execution, now)
+    ) {
+      packet.stage = "change_specified";
+    }
     if (role === "engineer" && packet.dispatchedEngineerRevision === packet.revision && !packet.candidateSha) {
       packet.dispatchedEngineerRevision = null;
     }
@@ -632,6 +710,7 @@ export function recoverExecutions<T extends ExecutionLedger>(
     changes.push({ id: execution.id, phase: "interrupted", reason: "reservation_expired" });
   }
 
+  rearmExpiredEngineering(next, now, changes);
   if (!changes.length) return { ledger, changes };
   return { ledger: next, changes };
 }
@@ -646,6 +725,8 @@ export function applyWorkerSignal<T extends ExecutionLedger>(
     | { type: "signed"; now: string }
     | { type: "candidate"; now: string }
     | { type: "interrupted"; now: string }
+    | { type: "specification_blocked"; now: string }
+    | { type: "requirements_blocked"; now: string }
     | { type: "context_saturated"; workerId: string; now: string },
 ): T {
   const next = structuredClone(ledger) as T;
@@ -762,6 +843,28 @@ export function applyWorkerSignal<T extends ExecutionLedger>(
 
   if (signal.type === "interrupted") {
     if (execution && !isTerminal(execution.phase)) finish(execution, "interrupted", signal.now, "worker_interrupted");
+    return next;
+  }
+
+  if (signal.type === "specification_blocked") {
+    if (packet.dispatch) archiveDispatch(packet, "ran");
+    if (!execution || isTerminal(execution.phase)) return next;
+    const stillEngineering = execution.packetIds.some((id) => {
+      const member = next.packets[id];
+      return Boolean(member && member.stage === "engineering" && !member.candidateSha && !member.specificationBlock);
+    });
+    if (!stillEngineering) finish(execution, "interrupted", signal.now, "specification_blocked");
+    return next;
+  }
+
+  if (signal.type === "requirements_blocked") {
+    if (packet.dispatch?.effect === "wake_sa") archiveDispatch(packet, "ran");
+    if (!execution || isTerminal(execution.phase)) return next;
+    const waiting = execution.packetIds.some((id) => {
+      const stage = next.packets[id]?.stage;
+      return stage === "released" || stage === "analysis" || stage === "returned_analyst";
+    });
+    if (!waiting) finish(execution, "interrupted", signal.now, "requirements_blocked");
     return next;
   }
 

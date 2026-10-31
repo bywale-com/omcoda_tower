@@ -10,7 +10,7 @@ import { GitHubContentsStore, githubContentsRemote } from "../.factory/controlle
 import { commitEvent, type FactoryLedger } from "../.factory/controller/dispatch.ts";
 
 const command = process.argv[2] ?? "";
-const commands = new Set(["start", "lease", "candidate", "refuse", "block", "saturate"]);
+const commands = new Set(["start", "lease", "candidate", "refuse", "block", "saturate", "specification-blocked"]);
 
 function flag(name: string): string {
   const index = process.argv.indexOf(name);
@@ -105,6 +105,10 @@ if (command === "start") {
   event = { type: "commit_candidate" as const, sha, revision: packet.revision, workerId };
 } else if (command === "saturate") {
   event = { type: "saturate_context" as const, workerId };
+} else if (command === "specification-blocked") {
+  const note = flag("--note");
+  if (!note.trim()) fail("note_missing");
+  event = { type: "specification_blocked" as const, workerId, note };
 } else {
   const blockerId = flag("--blocker");
   const failureClass = flag("--class");

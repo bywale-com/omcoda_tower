@@ -16,6 +16,7 @@ import {
   liveExecutionFor,
   PENDING_RESERVE_MS,
   plusMs,
+  recordedSpecificationReturn,
   type WorkerExecution,
 } from "./execution.ts";
 import { decide, type WakeEffect, type WorkItem, type World } from "./machine.ts";
@@ -69,6 +70,7 @@ export interface FactoryExplanation {
     awaitingVerification: number;
     founderInbox: Array<{ id: string; prNumber: number; prUrl: string | null; packetIds: string[] }>;
     intervention: string[];
+    knownDefects: string[];
   };
   packets: WorkExplanation[];
   executions: ExecutionExplanation[];
@@ -108,6 +110,7 @@ export function explainFactory(
   ).length;
   const awaitingVerification = packets.filter((packet) => packet.where === "candidate").length;
   const intervention = packets.filter((packet) => packet.situation === "intervention").map((packet) => packet.id);
+  const knownDefects = packets.filter((packet) => packet.happening.startsWith("Known defect")).map((packet) => packet.id);
   const summary = {
     headline: "",
     scopeStatus: ledger.scope.status,
@@ -117,6 +120,7 @@ export function explainFactory(
     awaitingVerification,
     founderInbox,
     intervention,
+    knownDefects,
   };
   summary.headline = headline(summary);
   return { summary, packets, executions, initiatives };
@@ -124,12 +128,16 @@ export function explainFactory(
 
 function headline(summary: FactoryExplanation["summary"]): string {
   const scope = summary.scopeStatus === "active" ? "Factory operating" : `Factory ${summary.scopeStatus}`;
-  return [
+  const parts = [
     scope,
     countPhrase(summary.engineersRunning, "Engineer active", "Engineers active"),
     countPhrase(summary.awaitingVerification, "packet awaiting verification", "packets awaiting verification"),
     countPhrase(summary.founderInbox.length, "release awaiting your review", "releases awaiting your review"),
-  ].join(" · ");
+  ];
+  if (summary.knownDefects.length) {
+    parts.push(countPhrase(summary.knownDefects.length, "known defect", "known defects"));
+  }
+  return parts.join(" · ");
 }
 
 function countPhrase(count: number, singular: string, plural: string): string {
@@ -186,14 +194,28 @@ function explainPacket(
       situation: "held",
     });
   }
-  if (packet.stage === "returned_analyst" || packet.stage === "returned_architect") {
+  if (packet.stage === "returned_architect" && packet.specificationBlock?.failureClass === "specification") {
+    const architectLane = !ledger.scope.lanes || ledger.scope.lanes.includes("architect");
     return row(packet, {
-      happening: `Stage is ${packet.stage}.`,
-      why: `Reopen from ${packet.stage} is not an event.`,
-      next: "Unknown",
-      who: packet.stage === "returned_analyst" ? "analyst" : "architect",
-      situation: "intervention",
+      happening: `Returned to the Architect. ${packet.revision} is unsigned.`,
+      why: packet.specificationBlock.escalationNote
+        ? `Requirements blocked. ${packet.specificationBlock.escalationNote}`
+        : "Requirements blocked.",
+      next: architectLane ? "The next architect session can revise this packet." : "Include the architect lane.",
+      who: architectLane ? "architect" : "founder",
+      situation: architectLane ? "proceeding" : "held",
     });
+  }
+  if (!(packet.stage === "returned_analyst" && packet.specificationBlock?.failureClass === "systems_contract")) {
+    if (packet.stage === "returned_analyst" || packet.stage === "returned_architect") {
+      return row(packet, {
+        happening: `Stage is ${packet.stage}.`,
+        why: `Reopen from ${packet.stage} is not an event.`,
+        next: "Unknown",
+        who: packet.stage === "returned_analyst" ? "analyst" : "architect",
+        situation: "intervention",
+      });
+    }
   }
 
   const execution = liveExecutionFor(ledger, packet.id);
@@ -257,9 +279,11 @@ function explainPacket(
     const issued = (packet.dispatchHistory ?? []).find((record) => record.effect === "wake_sa" && record.issuedAt)?.issuedAt;
     return row(packet, {
       happening: ran
-        ? `Released. The Analyst dispatch for ${packet.revision} is recorded as ran.`
+        ? `Known defect. Released. The Analyst dispatch for ${packet.revision} is recorded as ran.`
         : `Released. ${packet.revision} was already dispatched to the Analyst.`,
-      why: "No sign_change is recorded, and this revision is not dispatched again.",
+      why: ran
+        ? "No sign_change is recorded, and this revision is not dispatched again. This is a known defect."
+        : "No sign_change is recorded, and this revision is not dispatched again.",
       next: "Unknown",
       who: "unknown",
       situation: "intervention",
@@ -326,6 +350,16 @@ function explainPacket(
       situation: "proceeding",
     });
   }
+  if (decision.effect === "wake_sa" && decision.reason === "specification_returned") {
+    const blocked = packet.specificationBlock?.blockedRevision ?? "the prior revision";
+    return row(packet, {
+      happening: `Returned to the Analyst at ${packet.revision}. ${blocked} stays in history.`,
+      why: packet.specificationBlock?.note ?? "The engineer recorded a systems-contract block.",
+      next: "The next pass wakes the Analyst.",
+      who: "analyst",
+      situation: "proceeding",
+    });
+  }
   if (decision.effect === "wake_sa") {
     return row(packet, {
       happening: "Released. This revision has not been dispatched to the Analyst.",
@@ -336,6 +370,33 @@ function explainPacket(
     });
   }
   if (decision.reason === "no_transition" && packet.stage === "engineering") {
+    const expired = Object.values(ledger.executions ?? {}).find(
+      (execution) =>
+        execution.role === "engineer" &&
+        execution.packetIds.includes(packet.id) &&
+        isTerminal(execution.phase) &&
+        (execution.reason === "lease_expired" || execution.reason === "reservation_expired"),
+    );
+    if (!packet.candidateSha && !packet.specificationBlock && !packet.dispatch && packet.attempts === 0 && !packet.lastFailureFingerprint && !packet.lease && expired) {
+      if (recordedSpecificationReturn(packet, expired, now)) {
+        return row(packet, {
+          happening: `Engineering. The lease on ${expired.id} expired before a candidate.`,
+          why: "The recorded contradiction matches this execution and worker. Recovery adopts it before any re-arm.",
+          next: "The next Factory dispatch pass returns this packet to the Analyst.",
+          who: "controller",
+          situation: "held",
+          clocks: clocks(expired, expired.leaseUntil, packet),
+        });
+      }
+      return row(packet, {
+        happening: `Engineering. The lease on ${expired.id} expired before a candidate.`,
+        why: "An expired engineering execution cannot leave the packet here.",
+        next: "The next Factory dispatch pass returns this packet to change_specified.",
+        who: "controller",
+        situation: "held",
+        clocks: clocks(expired, expired.leaseUntil, packet),
+      });
+    }
     return row(packet, {
       happening: "Engineering. No live lease and no classified failure.",
       why: "An engineer wake requires change_specified. A repair wake requires a classified failure.",
