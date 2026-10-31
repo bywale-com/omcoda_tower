@@ -1,5 +1,5 @@
 {
-  "stateRevision": 167,
+  "stateRevision": 168,
   "authorizedDispatches": 50,
   "usedDispatches": 42,
   "scope": {
@@ -1067,12 +1067,17 @@
     "pkt-016-halt-send-firm": {
       "id": "pkt-016-halt-send-firm",
       "initiativeId": "exec-identity",
-      "stage": "change_specified",
+      "stage": "engineering",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": null,
+      "lease": {
+        "workerId": "bc-4192002b-f944-4eeb-919a-1af83d403f28",
+        "role": "engineer",
+        "until": "2026-10-31T14:41:54.990Z",
+        "revision": "rev-1"
+      },
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
@@ -1590,11 +1595,11 @@
       "continuation": "resume",
       "issuedAt": "2026-10-31T13:34:37.616Z",
       "startedAt": "2026-10-31T13:36:00.126Z",
-      "runningAt": "2026-10-31T13:36:01.843Z",
+      "runningAt": "2026-10-31T13:41:54.990Z",
       "endedAt": null,
       "reserveUntil": "2026-10-31T14:04:37.616Z",
       "startUntil": "2026-10-31T13:51:00.126Z",
-      "leaseUntil": "2026-10-31T14:36:01.843Z",
+      "leaseUntil": "2026-10-31T14:41:54.990Z",
       "reason": null
     }
   },
