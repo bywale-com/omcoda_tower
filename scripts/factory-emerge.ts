@@ -168,6 +168,7 @@ function releasePaths(packets: WorkItem[]): Array<{ path: string; sha: string }>
   for (const packet of packets) {
     const sha = packet.verifiedSha;
     if (!sha) continue;
+    ensureRevision(sha);
     let names = "";
     try {
       names = git(["diff-tree", "--no-commit-id", "--name-only", "-r", `${sha}^`, sha]);
@@ -187,6 +188,25 @@ function releasePaths(packets: WorkItem[]): Array<{ path: string; sha: string }>
     }
   }
   return [...chosen.entries()].map(([path, picked]) => ({ path, sha: picked.sha }));
+}
+
+/** A dispatch checkout is shallow. The verified commit and its parent must be present before the diff. */
+function ensureRevision(sha: string): void {
+  const present = (rev: string): boolean => {
+    try {
+      git(["rev-parse", "--verify", "--quiet", rev]);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  if (present(`${sha}^{commit}`) && present(`${sha}^`)) return;
+  try {
+    git(["fetch", "--depth=2", "origin", sha]);
+  } catch {
+    fail("sha_missing");
+  }
+  if (!present(`${sha}^{commit}`) || !present(`${sha}^`)) fail("sha_missing");
 }
 
 function letterBody(
