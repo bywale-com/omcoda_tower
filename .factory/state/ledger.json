@@ -1,7 +1,7 @@
 {
-  "stateRevision": 194,
+  "stateRevision": 195,
   "authorizedDispatches": 50,
-  "usedDispatches": 43,
+  "usedDispatches": 44,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -1332,13 +1332,22 @@
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": "systems_contract",
-      "dispatchedSaRevision": "rev-1",
+      "dispatchedSaRevision": "rev-2",
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-019-first-step-send-denied",
+        "revision": "rev-2",
+        "prHead": "2d5141d6cc162f2f2182ea8fbbf4d77b96e93ea9",
+        "effect": "wake_sa",
+        "label": "factory-wake-sa",
+        "issuedAt": "2026-10-31T15:29:18.613Z",
+        "executionId": "dsp-195-analyst-pkt-019-first-step-send-denied",
+        "assignmentId": "asg-dsp-195-analyst-pkt-019-first-step-send-denied"
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-019-first-step-send-denied",
@@ -1746,6 +1755,30 @@
       "startUntil": "2026-10-31T14:03:02.104Z",
       "leaseUntil": "2026-10-31T14:51:21.603Z",
       "reason": "lease_expired"
+    },
+    "dsp-195-analyst-pkt-019-first-step-send-denied": {
+      "id": "dsp-195-analyst-pkt-019-first-step-send-denied",
+      "assignmentId": "asg-dsp-195-analyst-pkt-019-first-step-send-denied",
+      "role": "analyst",
+      "phase": "dispatched",
+      "packetIds": [
+        "pkt-019-first-step-send-denied"
+      ],
+      "revisions": {
+        "pkt-019-first-step-send-denied": "rev-2"
+      },
+      "label": "factory-wake-sa",
+      "prHead": "2d5141d6cc162f2f2182ea8fbbf4d77b96e93ea9",
+      "agentId": null,
+      "continuation": "fresh",
+      "issuedAt": "2026-10-31T15:29:18.613Z",
+      "startedAt": null,
+      "runningAt": null,
+      "endedAt": null,
+      "reserveUntil": "2026-10-31T15:59:18.613Z",
+      "startUntil": null,
+      "leaseUntil": null,
+      "reason": null
     }
   },
   "assignments": {
@@ -1929,6 +1962,18 @@
       "basis": "dependency: 019 records the send_denied kind 018 required of a denied send",
       "executionIds": [
         "dsp-172-engineer-pkt-018-send-denied-engagement"
+      ]
+    },
+    "asg-dsp-195-analyst-pkt-019-first-step-send-denied": {
+      "id": "asg-dsp-195-analyst-pkt-019-first-step-send-denied",
+      "role": "analyst",
+      "initiativeId": "exec-identity",
+      "packetIds": [
+        "pkt-019-first-step-send-denied"
+      ],
+      "basis": null,
+      "executionIds": [
+        "dsp-195-analyst-pkt-019-first-step-send-denied"
       ]
     }
   },
