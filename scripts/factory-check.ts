@@ -4419,6 +4419,7 @@ check("a worker keeps one agent and a release is a verified dependency set", asy
   assert.equal(emerge.includes("gh pr merge"), false);
   assert.match(emerge, /mail_unconfigured/);
   assert.match(emerge, /"fetch", "--depth=2", "origin"/);
+  assert.match(emerge, /"config", "--unset-all", "http\.https:\/\/github\.com\/\.extraheader"/);
   assert.match(read(".github/workflows/factory-dispatch.yml"), /scripts\/factory-emerge\.ts --apply/);
 });
 

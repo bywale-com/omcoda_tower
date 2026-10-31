@@ -261,6 +261,14 @@ async function sendLetter(
 
 function gitPush(refspecs: string[], cwd: string): void {
   const token = process.env.WAKE_GITHUB_TOKEN;
+  if (token) {
+    // actions/checkout already stores an Authorization extraheader. A second one is rejected.
+    try {
+      execFileSync("git", ["config", "--unset-all", "http.https://github.com/.extraheader"], { cwd, encoding: "utf8" });
+    } catch {
+      // The header is absent outside Actions.
+    }
+  }
   const env = token
     ? {
         ...process.env,
