@@ -6,7 +6,8 @@
 # "actuator disarmed" and does not spawn gh.
 # workflow_dispatch authorize writes a scope, then one control apply.
 # workflow_dispatch suspend writes a suspension and does not apply.
-# There is no schedule.
+# This file has no schedule. Factory reconcile is the periodic pass.
+# GitHub runs that schedule from the default branch.
 
 name: Factory dispatch
 
@@ -72,7 +73,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: factory-control-${{ github.ref }}
+  group: factory-control-operating
   cancel-in-progress: false
 
 jobs:

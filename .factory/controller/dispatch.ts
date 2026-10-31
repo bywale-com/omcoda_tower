@@ -17,7 +17,7 @@
 import { spawn } from "node:child_process";
 import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
-import { applyWorkerSignal, liveExecutionFor, openExecution, planPacketContinuation, type Assignment, type WorkerExecution } from "./execution.ts";
+import { applyWorkerSignal, liveExecutionFor, openExecution, planPacketContinuation, unconfirmedDelivery, type Assignment, type WorkerExecution } from "./execution.ts";
 import {
   acknowledgeDispatch,
   applyEvent,
@@ -427,6 +427,61 @@ export async function dispatchWake(opts: {
         assignments: { ...(ledger.assignments ?? {}), [opened.assignment.id]: opened.assignment },
       },
       result: { ok: true, reason: continuation === "resume" ? "resumed" : "dispatched", effect: decision.effect, item: acknowledged },
+    };
+  });
+}
+
+/**
+ * Pulse the label for an authorization that was recorded and not delivered.
+ * Does not spend a dispatch and does not open a second execution.
+ * A worker that already holds the lease is left alone.
+ */
+export async function redeliverDispatch(opts: {
+  store: StateStore;
+  actuator: LabelActuator;
+  packetId: string;
+  now: string;
+}): Promise<DispatchResult> {
+  return opts.store.transact(async (ledger) => {
+    const item = ledger.packets[opts.packetId];
+    if (!item) {
+      return { write: null, result: { ok: false, reason: "unknown_packet", effect: "none", item: freshItem(opts.packetId) } };
+    }
+    const pending = unconfirmedDelivery(ledger, opts.now);
+    if (!pending || pending.packetId !== opts.packetId) {
+      const dispatch = item.dispatch;
+      let reason = "delivery_confirmed";
+      if (dispatch?.deliveredAt === null) {
+        if (item.lease && item.lease.until > opts.now) reason = "lease_held";
+        else {
+          const execution = dispatch.executionId ? ledger.executions?.[dispatch.executionId] : undefined;
+          if (execution && execution.phase !== "dispatched") reason = "lease_held";
+          else reason = "reservation_expired";
+        }
+      }
+      return { write: null, result: { ok: false, reason, effect: dispatch?.effect ?? "none", item } };
+    }
+    const dispatch = item.dispatch;
+    if (!dispatch) {
+      return { write: null, result: { ok: false, reason: "no_dispatch", effect: "none", item } };
+    }
+    const added = await opts.actuator.add({
+      label: dispatch.label,
+      packetId: item.id,
+      revision: dispatch.revision,
+      prHead: dispatch.prHead,
+    });
+    if (!added.ok) {
+      return { write: null, result: { ok: false, reason: added.reason, effect: dispatch.effect, item } };
+    }
+    const stamped = { ...item, dispatch: { ...dispatch, deliveredAt: opts.now } };
+    return {
+      write: {
+        ...ledger,
+        stateRevision: ledger.stateRevision + 1,
+        packets: { ...ledger.packets, [item.id]: stamped },
+      },
+      result: { ok: true, reason: "delivered", effect: dispatch.effect, item: stamped },
     };
   });
 }

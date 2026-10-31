@@ -81,8 +81,9 @@ export interface SpecificationBlock {
 }
 
 /**
- * Written only after a label add succeeds. Workers must match the current record exactly.
+ * The current authorization. Workers must match this record exactly.
  * A record moves to history when it is reconciled. History is not authorization.
+ * Recording this record is not the same as delivering it to the automation.
  */
 export interface DispatchRecord {
   packetId: string;
@@ -90,8 +91,14 @@ export interface DispatchRecord {
   prHead: string;
   effect: Exclude<WakeEffect, "none">;
   label: (typeof SEAT_LABELS)[number];
-  /** Clock passed by the caller when the label add was confirmed. */
+  /** Clock passed by the caller when the record was written. */
   issuedAt?: string;
+  /**
+   * Clock when the label actuator confirmed a pulse for this occupancy.
+   * Null means the authorization was restored and has not been pulsed.
+   * Absent means a record written before this field, after a confirmed add.
+   */
+  deliveredAt?: string | null;
   /**
    * Set only when this record leaves the current slot.
    * `ran` means a worker execution was observed.
@@ -778,7 +785,7 @@ export function acknowledgeDispatch(
       prHead: record.prHead,
       effect,
       label: LABEL_FOR[effect],
-      ...(record.issuedAt ? { issuedAt: record.issuedAt } : {}),
+      ...(record.issuedAt ? { issuedAt: record.issuedAt, deliveredAt: record.issuedAt } : {}),
     };
   }
   return next;
@@ -935,4 +942,5 @@ export const TRANSITION_IDS = [
   "T68",
   "T69",
   "T70",
+  "T71",
 ] as const;

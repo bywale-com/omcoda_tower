@@ -16,6 +16,8 @@ import {
   productionPressure,
   recoverExecutions,
   runsOnAgent,
+  unconfirmedDelivery,
+  type UnconfirmedDelivery,
 } from "./execution.ts";
 import { readyReleases } from "./conclusion.ts";
 import { explainFactory, type FactoryExplanation } from "./explain.ts";
@@ -106,6 +108,8 @@ export interface ControlStep {
   ledger: FactoryLedger;
   wakes: WakeProposal[];
   reason: string;
+  /** Set when an open authorization still needs its label pulse. Not a new spend. */
+  redelivery?: UnconfirmedDelivery | null;
 }
 
 export interface ReadModel {
@@ -512,6 +516,10 @@ export function applyLedgerEvent(ledger: FactoryLedger, event: LedgerEvent, worl
     if (!packet) return refuse("unknown_packet");
     const current = packet.dispatch;
     if (!current) return refuse("no_dispatch");
+    if (event.workerExecution === "ran" && current.executionId) {
+      const execution = next.executions?.[current.executionId];
+      if (execution?.phase === "dispatched") return refuse("lease_not_claimed");
+    }
     const refund =
       event.workerExecution === "absent" &&
       current.effect === "wake_sa" &&
@@ -647,6 +655,8 @@ export function controlStep(ledger: FactoryLedger, world: World): ControlStep {
     if (selected.ok) next = selected.ledger;
   }
   const packetWorld: World = { ...scoped, scopeStatus: next.scope.status, authorizedDispatches: next.authorizedDispatches, usedDispatches: next.usedDispatches };
+  const redelivery = unconfirmedDelivery(next, packetWorld.now);
+  if (redelivery) return { ledger: next, wakes: [], reason: "delivery_unconfirmed", redelivery };
   let engineerSlot = world.engineeringBusy || implementationOccupied(next, scoped.now);
   const saOpen = analystOpen(next);
   let saProposed = saOpen;

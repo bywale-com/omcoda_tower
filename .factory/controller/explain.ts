@@ -219,6 +219,25 @@ function explainPacket(
   }
   if (packet.stage === "returned_analyst" && packet.specificationBlock?.failureClass === "systems_contract") {
     if (packet.dispatch?.effect === "wake_sa") {
+      const execution = packet.dispatch.executionId ? ledger.executions?.[packet.dispatch.executionId] : undefined;
+      if (execution?.phase === "dispatched" && execution.reserveUntil <= now) {
+        return row(packet, {
+          happening: `Returned to the Analyst at ${packet.revision}. The reservation elapsed at ${execution.reserveUntil}.`,
+          why: "The dispatch is still open because recovery has not run.",
+          next: "The next reconcile pass expires this reservation.",
+          who: "controller",
+          situation: "held",
+        });
+      }
+      if (packet.dispatch.deliveredAt === null) {
+        return row(packet, {
+          happening: `Returned to the Analyst at ${packet.revision}. The dispatch is recorded and not delivered.`,
+          why: packet.specificationBlock.note,
+          next: "The next pass delivers this dispatch.",
+          who: "controller",
+          situation: "held",
+        });
+      }
       return row(packet, {
         happening: `Returned to the Analyst at ${packet.revision}. The dispatch is open.`,
         why: packet.specificationBlock.note,
@@ -249,7 +268,7 @@ function explainPacket(
   if (stageStillOpen && execution?.phase === "running" && window === "elapsed" && leaseUntil) {
     return row(packet, {
       happening: `Execution phase is running. The lease elapsed at ${leaseUntil}.`,
-      why: "Recovery has not run. Factory dispatch has no schedule.",
+      why: "Recovery has not run. The reconcile pass has not run.",
       next: "The next Factory dispatch pass recovers this execution.",
       who: "controller",
       situation: "held",

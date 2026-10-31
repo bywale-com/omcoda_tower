@@ -8,7 +8,7 @@
  */
 import { existsSync, readFileSync } from "node:fs";
 import { githubContentsRemote, GitHubContentsStore } from "../.factory/controller/contents.ts";
-import { githubLabelActuator, type FactoryLedger } from "../.factory/controller/dispatch.ts";
+import { githubLabelActuator, redeliverDispatch, type FactoryLedger } from "../.factory/controller/dispatch.ts";
 import { cursorFollowUp, type FetchLike } from "../.factory/controller/cursor.ts";
 import { commitLedgerEvent, controlStep, dispatchInitiative } from "../.factory/controller/queue.ts";
 import { dispatchWake } from "../.factory/controller/dispatch.ts";
@@ -57,7 +57,11 @@ if (apply && !armed()) {
 if (!apply) {
   const ledger = JSON.parse(readFileSync(".factory/state/ledger.json", "utf8")) as FactoryLedger;
   const step = controlStep(ledger, worldFrom(ledger));
-  console.log(JSON.stringify({ reason: step.reason, wakes: step.wakes.map((wake) => ({ id: wake.id, effect: wake.decision.effect, reason: wake.decision.reason })) }));
+  console.log(JSON.stringify({
+    reason: step.reason,
+    wakes: step.wakes.map((wake) => ({ id: wake.id, effect: wake.decision.effect, reason: wake.decision.reason })),
+    redelivery: step.redelivery ?? null,
+  }));
   process.exit(0);
 }
 
@@ -90,8 +94,24 @@ if (stale.changes.length) {
   }
 }
 const loaded = await store.read();
+const now = new Date().toISOString();
 const ledger = await archiveRanAnalystWork(store, loaded, worldFrom(loaded));
-const step = controlStep(ledger, worldFrom(ledger));
+const step = controlStep(ledger, { ...worldFrom(ledger), now });
+if (step.redelivery) {
+  const actuator = githubLabelActuator({ env: process.env, pr });
+  const delivered = await redeliverDispatch({
+    store,
+    actuator,
+    packetId: step.redelivery.packetId,
+    now,
+  });
+  if (!delivered.ok) {
+    console.error(delivered.reason);
+    process.exit(1);
+  }
+  console.log(delivered.reason);
+  process.exit(0);
+}
 const wake = step.wakes[0];
 if (!wake) {
   console.log(step.reason);

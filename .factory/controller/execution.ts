@@ -560,6 +560,33 @@ function adoptRecordedSpecificationBlock(ledger: ExecutionLedger, now: string): 
   return { id: spec.executionId, phase: "interrupted", reason: "recorded_specification_block" };
 }
 
+export interface UnconfirmedDelivery {
+  packetId: string;
+  label: DispatchRecord["label"];
+  executionId: string | null;
+}
+
+/**
+ * An open authorization whose label pulse was not confirmed.
+ * A live lease, a worker that has left `dispatched`, or a reservation
+ * the clock has already ended is not pulsed again.
+ * A missing `deliveredAt` is a record written after a confirmed add.
+ */
+export function unconfirmedDelivery(ledger: ExecutionLedger, now: string): UnconfirmedDelivery | null {
+  const packets = Object.values(ledger.packets).sort((a, b) => a.id.localeCompare(b.id));
+  for (const packet of packets) {
+    const dispatch = packet.dispatch;
+    if (!dispatch || dispatch.deliveredAt !== null) continue;
+    if (packet.lease && packet.lease.until > now) continue;
+    const execution = dispatch.executionId ? ledger.executions?.[dispatch.executionId] : undefined;
+    if (execution && (execution.phase !== "dispatched" || execution.endedAt)) continue;
+    const reserveUntil = execution?.reserveUntil ?? (dispatch.issuedAt ? plusMs(dispatch.issuedAt, PENDING_RESERVE_MS) : "");
+    if (!reserveUntil || reserveUntil <= now) continue;
+    return { packetId: packet.id, label: dispatch.label, executionId: dispatch.executionId ?? null };
+  }
+  return null;
+}
+
 /**
  * A systems-change file already in the checkout is not this wake when the
  * packet was returned, or when the worker has not started.
@@ -589,7 +616,7 @@ function restoreUnstartedAnalystDispatch(ledger: ExecutionLedger, changes: Recov
     const row = history[index];
     const execution = row.executionId ? ledger.executions?.[row.executionId] : undefined;
     if (!execution || execution.phase !== "dispatched" || execution.endedAt) continue;
-    const restored = { ...row };
+    const restored = { ...row, deliveredAt: null };
     delete restored.workerExecution;
     packet.dispatchHistory = history.filter((_, i) => i !== index);
     packet.dispatch = restored;

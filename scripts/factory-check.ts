@@ -36,6 +36,7 @@ import {
   dispatchWake,
   emptyLedger,
   githubLabelActuator,
+  redeliverDispatch,
   labelEditArgs,
   labelRemoveArgs,
   labelViewArgs,
@@ -68,6 +69,7 @@ import {
   RECORDED_SPECIFICATION_BLOCK,
   analystFileCountsAsThisDispatch,
   recoverExecutions,
+  unconfirmedDelivery,
 } from "../.factory/controller/execution.ts";
 import { readyReleases } from "../.factory/controller/conclusion.ts";
 import { headMatchesDispatch, selectLabeledDispatch } from "../.factory/controller/wake.ts";
@@ -589,6 +591,17 @@ check("dispatch workflow prints a control pass and does not schedule labels", ()
   const workflow = read(".github/workflows/factory-dispatch.yml");
   assert.ok(workflow.includes("pull_request:"));
   assert.equal(workflow.includes("schedule:"), false);
+  const reconcile = read(".github/workflows/factory-reconcile.yml");
+  assert.ok(reconcile.includes("schedule:"));
+  assert.ok(reconcile.includes('cron: "7,22,37,52 * * * *"'));
+  assert.ok(reconcile.includes("ref: cursor/execution-architecture-74f7"));
+  assert.ok(reconcile.includes("FACTORY_LEDGER_BRANCH: cursor/execution-architecture-74f7"));
+  assert.ok(reconcile.includes("factory-control-operating"));
+  assert.ok(reconcile.includes("FACTORY_SPEND_LIMIT_CONFIRMED"));
+  assert.ok(reconcile.includes("FACTORY_AUTOMATIONS_SAVED"));
+  const reconcileJob = reconcile.slice(reconcile.indexOf("      - name: Reconcile"));
+  assert.ok(reconcileJob.indexOf('echo "actuator disarmed"') < reconcileJob.indexOf("scripts/factory-control.ts --apply"));
+  assert.equal(reconcile.includes("usedDispatches"), false);
   assert.ok(workflow.includes("workflow_dispatch:"));
   assert.ok(workflow.includes("I_AUTHORIZE_FACTORY_DISPATCH"));
   assert.ok(workflow.includes("actuator disarmed"));
@@ -5136,6 +5149,7 @@ check("a packet explains why it is waiting and what advances it", () => {
   assert.equal(read(".factory/controller/explain.ts").includes("readFileSync"), false);
   assert.match(read(".github/workflows/factory-dispatch.yml"), /factory-explain\.ts/);
   assert.equal(read(".github/workflows/factory-dispatch.yml").includes("schedule:"), false);
+  assert.match(read(".github/workflows/factory-reconcile.yml"), /schedule:/);
 });
 
 check("PKT-019's expired contradiction returns to the analyst and is not re-armed", () => {
@@ -5178,11 +5192,23 @@ check("PKT-019's expired contradiction returns to the analyst and is not re-arme
   }
   const open = explainFactory(restored.ledger, "2026-10-31T15:40:00.000Z").packets.find((item) => item.id === id);
   assert.equal(open?.next, "Sign the change.");
-  const lapsed = recoverExecutions(committed, "2026-10-31T16:10:00.000Z");
+  const clock = "2026-10-31T16:10:00.000Z";
+  const currentDispatch = recorded.dispatch;
+  const currentExecution = currentDispatch?.executionId ? committed.executions?.[currentDispatch.executionId] : undefined;
+  const reservationStillOpen = Boolean(
+    currentDispatch && currentExecution?.phase === "dispatched" && currentExecution.reserveUntil > clock,
+  );
+  if (currentDispatch && currentExecution?.phase === "dispatched" && !reservationStillOpen) {
+    const elapsedExplain = explainFactory(committed, clock).packets.find((item) => item.id === id);
+    assert.match(elapsedExplain?.next ?? "", /expires this reservation/);
+  }
+  const lapsed = recoverExecutions(committed, clock);
   assert.equal(lapsed.ledger.packets[id].stage, "returned_analyst");
-  assert.equal(lapsed.ledger.packets[id].dispatch, null);
-  assert.equal(lapsed.ledger.packets[id].dispatchedSaRevision, null);
-  assert.equal(lapsed.ledger.usedDispatches, committed.usedDispatches - 1);
+  if (currentDispatch && currentExecution?.phase === "dispatched" && !reservationStillOpen) {
+    assert.equal(lapsed.ledger.packets[id].dispatch, null);
+    assert.equal(lapsed.ledger.packets[id].dispatchedSaRevision, null);
+    assert.equal(lapsed.ledger.usedDispatches, committed.usedDispatches - 1);
+  }
 
   const source = structuredClone(committed);
   const rewound = source.packets[id];
@@ -5340,6 +5366,229 @@ check("PKT-019's expired contradiction returns to the analyst and is not re-arme
   assert.equal(blocked.revision, "rev-2");
   assert.equal(blocked.specificationBlock?.authority, "lease");
   assert.equal(blocked.specificationBlock?.blockedRevision, "rev-1");
+});
+
+check("PKT-019 delivery is recorded separately from the worker that claims it", async () => {
+  const packetId = "pkt-019-first-step-send-denied";
+  const executionId = "dsp-195-analyst-pkt-019-first-step-send-denied";
+  const worker = "bc-45cfcfbf-d48e-4507-9466-107009009569";
+  const other = "bc-11111111-1111-1111-1111-111111111111";
+  const issuedAt = "2026-10-31T15:29:18.613Z";
+  const reserveUntil = "2026-10-31T15:59:18.613Z";
+  const during = "2026-10-31T15:40:00.000Z";
+  const after = "2026-10-31T16:10:00.000Z";
+  const head = "2d5141d6cc162f2f2182ea8fbbf4d77b96e93ea9";
+  function world(now: string, used: number): World {
+    return { ...active, now, authorizedDispatches: 50, usedDispatches: used, scopeStatus: "active" };
+  }
+  function fixture(deliveredAt: string | null): FactoryLedger {
+    const ledger = emptyLedger(50);
+    ledger.usedDispatches = 44;
+    ledger.stateRevision = 197;
+    ledger.scope.lanes = ["engineer", "analyst"];
+    ledger.scope.modules = ["Agents and Automations"];
+    const packet = freshItem(packetId, "exec-identity");
+    packet.stage = "returned_analyst";
+    packet.revision = "rev-2";
+    packet.wake = "sa";
+    packet.dispatchedSaRevision = "rev-2";
+    packet.specificationBlock = {
+      blockedRevision: "rev-1",
+      revision: "rev-2",
+      failureClass: "systems_contract",
+      note: RECORDED_SPECIFICATION_BLOCK.note,
+      escalationNote: null,
+      workerId: RECORDED_SPECIFICATION_BLOCK.workerId,
+      executionId: RECORDED_SPECIFICATION_BLOCK.executionId,
+      authority: "recorded",
+    };
+    packet.dispatch = {
+      packetId,
+      revision: "rev-2",
+      prHead: head,
+      effect: "wake_sa",
+      label: "factory-wake-sa",
+      issuedAt,
+      deliveredAt,
+      executionId,
+      assignmentId: "asg-dsp-195-analyst-pkt-019-first-step-send-denied",
+    };
+    ledger.packets[packetId] = packet;
+    ledger.executions = {
+      [executionId]: {
+        id: executionId,
+        assignmentId: "asg-dsp-195-analyst-pkt-019-first-step-send-denied",
+        role: "analyst",
+        phase: "dispatched",
+        packetIds: [packetId],
+        revisions: { [packetId]: "rev-2" },
+        label: "factory-wake-sa",
+        prHead: head,
+        agentId: null,
+        continuation: "fresh",
+        issuedAt,
+        startedAt: null,
+        runningAt: null,
+        endedAt: null,
+        reserveUntil,
+        startUntil: null,
+        leaseUntil: null,
+        reason: null,
+      },
+    };
+    const initiative = freshInitiative({
+      id: "exec-identity",
+      module: "Agents and Automations",
+      capability: "identity",
+      entry: "claim",
+      obligation: "packet",
+      priority: 1,
+      now: issuedAt,
+    });
+    initiative.queue = "active";
+    initiative.session = "continuation_due";
+    ledger.initiatives["exec-identity"] = initiative;
+    return ledger;
+  }
+
+  const recorded = fixture(issuedAt);
+  const open = recorded.packets[packetId];
+  const authorized = workerMayRun({
+    label: "factory-wake-sa",
+    packetId,
+    revision: "rev-2",
+    prHead: head,
+    wake: "sa",
+    dispatch: open.dispatch ?? null,
+    executionId,
+  });
+  assert.equal(authorized.reason, "authorized");
+  assert.equal(analystFileCountsAsThisDispatch(recorded, open), false);
+  const competed = applyLedgerEvent(
+    recorded,
+    { type: "reconcile_dispatch", packetId, workerExecution: "ran" },
+    world(during, 44),
+  );
+  assert.equal(competed.reason, "lease_not_claimed");
+  assert.equal(competed.ledger.usedDispatches, 44);
+  assert.equal(competed.ledger.packets[packetId].dispatch?.executionId, executionId);
+  assert.equal(competed.ledger.stateRevision, recorded.stateRevision);
+
+  const claimed = new MemoryStore(recorded);
+  const lease = await commitEvent(
+    claimed,
+    packetId,
+    { type: "acquire_lease", workerId: worker, role: "analyst", until: "2026-10-31T16:40:00.000Z", revision: "rev-2" },
+    world(during, 44),
+  );
+  assert.equal(lease.reason, "lease_acquired");
+  const held = await claimed.read();
+  assert.equal(held.usedDispatches, 44);
+  assert.equal(held.packets[packetId].stage, "analysis");
+  assert.equal(held.packets[packetId].lease?.workerId, worker);
+  assert.equal(held.executions?.[executionId].phase, "running");
+  assert.equal(held.executions?.[executionId].agentId, worker);
+  assert.equal(held.packets[packetId].dispatch?.executionId, executionId);
+  const quiet = controlStep(held, world(during, 44));
+  assert.equal(quiet.wakes.length, 0);
+  assert.equal(quiet.redelivery ?? null, null);
+  const duplicate = await commitEvent(
+    claimed,
+    packetId,
+    { type: "acquire_lease", workerId: other, role: "analyst", until: "2026-10-31T16:40:00.000Z", revision: "rev-2" },
+    world(during, 44),
+  );
+  assert.equal(duplicate.reason, "lease_held");
+  assert.equal((await claimed.read()).usedDispatches, 44);
+
+  const lost = fixture(null);
+  assert.equal(unconfirmedDelivery(lost, during)?.packetId, packetId);
+  assert.equal(explainFactory(lost, during).packets.find((item) => item.id === packetId)?.next, "The next pass delivers this dispatch.");
+  const pending = controlStep(lost, world(during, 44));
+  assert.equal(pending.reason, "delivery_unconfirmed");
+  assert.equal(pending.wakes.length, 0);
+  assert.equal(pending.redelivery?.executionId, executionId);
+  assert.equal(pending.ledger.usedDispatches, 44);
+  const calls: string[] = [];
+  const actuator = scriptedActuator([{ ok: true, reason: "labeled" }], calls);
+  const restoring = new MemoryStore(lost);
+  const delivered = await redeliverDispatch({ store: restoring, actuator, packetId, now: during });
+  assert.equal(delivered.reason, "delivered");
+  assert.equal(calls.length, 1);
+  const once = await restoring.read();
+  assert.equal(once.usedDispatches, 44);
+  assert.equal(once.packets[packetId].dispatch?.deliveredAt, during);
+  assert.equal(once.packets[packetId].dispatch?.executionId, executionId);
+  assert.equal(once.stateRevision, 198);
+  const repeat = await redeliverDispatch({ store: restoring, actuator, packetId, now: during });
+  assert.equal(repeat.reason, "delivery_confirmed");
+  assert.equal(calls.length, 1);
+  const leased = await commitEvent(
+    restoring,
+    packetId,
+    { type: "acquire_lease", workerId: worker, role: "analyst", until: "2026-10-31T16:40:00.000Z", revision: "rev-2" },
+    world(during, 44),
+  );
+  assert.equal(leased.reason, "lease_acquired");
+  const running = await restoring.read();
+  if (!running.packets[packetId].dispatch) throw new Error("dispatch missing");
+  running.packets[packetId].dispatch.deliveredAt = null;
+  const guarded = new MemoryStore(running);
+  const blockedPulse = await redeliverDispatch({ store: guarded, actuator, packetId, now: during });
+  assert.equal(blockedPulse.reason, "lease_held");
+  assert.equal(calls.length, 1);
+  assert.equal((await guarded.read()).usedDispatches, 44);
+
+  const expired = controlStep(fixture(null), world(after, 44));
+  assert.equal(expired.ledger.packets[packetId].dispatch, null);
+  assert.equal(expired.ledger.packets[packetId].dispatchedSaRevision, null);
+  assert.equal(expired.ledger.executions?.[executionId].phase, "refused");
+  assert.equal(expired.ledger.executions?.[executionId].reason, "reservation_expired");
+  assert.equal(expired.ledger.usedDispatches, 43);
+  assert.equal(expired.wakes.length, 1);
+  assert.equal(expired.wakes[0].decision.effect, "wake_sa");
+  assert.equal(expired.wakes[0].decision.reason, "specification_returned");
+  assert.equal(expired.redelivery ?? null, null);
+  const renewalCalls: string[] = [];
+  const renewal = scriptedActuator([{ ok: true, reason: "labeled" }], renewalCalls);
+  const renewedStore = new MemoryStore(expired.ledger);
+  const woken = await dispatchWake({
+    store: renewedStore,
+    actuator: renewal,
+    packetId,
+    prHead: head,
+    activation: "active",
+    now: after,
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(woken.reason, "dispatched");
+  assert.equal(renewalCalls.length, 1);
+  const renewed = await renewedStore.read();
+  assert.equal(renewed.usedDispatches, 44);
+  assert.equal(renewed.packets[packetId].dispatch?.deliveredAt, after);
+  assert.notEqual(renewed.packets[packetId].dispatch?.executionId, executionId);
+  const nextClaim = await commitEvent(
+    renewedStore,
+    packetId,
+    { type: "acquire_lease", workerId: worker, role: "analyst", until: "2026-10-31T17:10:00.000Z", revision: "rev-2" },
+    world(after, 44),
+  );
+  assert.equal(nextClaim.reason, "lease_acquired");
+  const finished = await renewedStore.read();
+  assert.equal(finished.usedDispatches, 44);
+  assert.equal(finished.executions?.[renewed.packets[packetId].dispatch?.executionId ?? ""]?.phase, "running");
+  const secondWorker = await commitEvent(
+    renewedStore,
+    packetId,
+    { type: "acquire_lease", workerId: other, role: "analyst", until: "2026-10-31T17:10:00.000Z", revision: "rev-2" },
+    world(after, 44),
+  );
+  assert.equal(secondWorker.reason, "lease_held");
+  assert.equal((await renewedStore.read()).usedDispatches, 44);
+  const settled = controlStep(finished, world(after, 44));
+  assert.equal(settled.wakes.length, 0);
+  assert.equal(settled.redelivery ?? null, null);
 });
 
 const failures: string[] = [];
