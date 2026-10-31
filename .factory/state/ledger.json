@@ -1,5 +1,5 @@
 {
-  "stateRevision": 190,
+  "stateRevision": 191,
   "authorizedDispatches": 50,
   "usedDispatches": 43,
   "scope": {
@@ -1984,6 +1984,17 @@
       "prNumber": 146,
       "prUrl": "https://github.com/bywale-com/omcoda_tower/pull/146",
       "openedAt": "2026-10-31T14:39:12.353Z",
+      "mergeSha": null
+    },
+    "rel-pkt-004-firing-handle--pkt-006-id-keyed-loads": {
+      "id": "rel-pkt-004-firing-handle--pkt-006-id-keyed-loads",
+      "packetIds": [
+        "pkt-004-firing-handle",
+        "pkt-006-id-keyed-loads"
+      ],
+      "prNumber": 147,
+      "prUrl": "https://github.com/bywale-com/omcoda_tower/pull/147",
+      "openedAt": "2026-10-31T14:39:56.529Z",
       "mergeSha": null
     }
   }
