@@ -557,7 +557,18 @@ export async function escalateAttemptWindow(
       await dispatchEventToWorkflows(pool, {
         firmId: attempt.firm_id,
         eventName: "campaign_failure",
-        payload: { campaignFailureId: failId, attemptId: attempt.id },
+        payload: {
+          campaignFailureId: failId,
+          attemptId: attempt.id,
+          campaign_id: enr.rows[0]?.campaign_id ?? null,
+          writes: [
+            {
+              table: "campaign_failure",
+              id: failId,
+              contact_id: attempt.contact_id,
+            },
+          ],
+        },
         contactIds: [attempt.contact_id],
       });
     } catch (err) {
