@@ -2511,6 +2511,98 @@ check("a denied tick send is its own engagement row", () => {
   assert.match(read(".github/workflows/ship.yml"), /scripts\/verify-send-denied-engagement\.ts/);
 });
 
+check("a denied first step is the same refusal the tick already records", () => {
+  function sliceFn(source: string, start: string, end: string): string {
+    const at = source.indexOf(start);
+    assert.ok(at >= 0, start);
+    const to = source.indexOf(end, at + start.length);
+    assert.ok(to > at, end);
+    return source.slice(at, to);
+  }
+
+  function objectAt(source: string, braceAt: number): string {
+    let depth = 0;
+    for (let i = braceAt; i < source.length; i += 1) {
+      if (source[i] === "{") depth += 1;
+      else if (source[i] === "}") {
+        depth -= 1;
+        if (depth === 0) return source.slice(braceAt, i + 1);
+      }
+    }
+    assert.fail("unbalanced");
+  }
+
+  function objectFor(source: string, kind: string): string {
+    const at = source.indexOf(kind);
+    assert.ok(at >= 0, kind);
+    const brace = source.indexOf("{", at);
+    assert.ok(brace > at, kind);
+    return objectAt(source, brace);
+  }
+
+  const cascade = read("server/wire-service/cascade.ts");
+  const enroll = sliceFn(cascade, "export async function enrollAndActuate", "export async function advanceTemplateCellIfDue");
+  const slice = sliceFn(enroll, "send = await actuateChannelSend", "dryRun: !live");
+  for (const bit of [
+    '"send_denied"',
+    '"send_live"',
+    '"send_dry_run"',
+    "send.ok && !send.dryRun",
+    "send.ok && send.dryRun",
+  ]) {
+    assert.ok(slice.includes(bit), bit);
+  }
+  assert.equal(slice.includes('live ? "send_live" : "send_dry_run"'), false);
+  assert.equal(slice.includes("send.detail"), false);
+  assert.equal(slice.includes("send.deny"), false);
+  assert.equal((slice.match(/writeEngagement/g) ?? []).length, 3);
+  const denied = objectFor(slice, '"send_denied"');
+  for (const key of ["enrollmentId", "attemptId", "channel", "templateId", "cellId", "cellIndex", "send"]) {
+    assert.ok(denied.includes(key), key);
+  }
+  for (const banned of ["subject", "bodyText", "bodyHtml", "messageId", "reason"]) {
+    assert.equal(denied.includes(banned), false, banned);
+  }
+  const live = objectFor(slice, '"send_live"');
+  for (const key of ["messageId", "subject", "bodyText", "send", "enrollmentId", "attemptId", "channel", "templateId", "cellId", "cellIndex"]) {
+    assert.ok(live.includes(key), key);
+  }
+  const dry = objectFor(slice, '"send_dry_run"');
+  for (const key of ["reason", "subject", "bodyText", "send", "enrollmentId", "attemptId", "channel", "templateId", "cellId", "cellIndex"]) {
+    assert.ok(dry.includes(key), key);
+  }
+  assert.ok(enroll.includes('purpose: input.purpose ?? "opt-in"'));
+  assert.ok(enroll.includes("subject"));
+  assert.ok(enroll.includes("bodyText"));
+  assert.ok(enroll.includes("const live = shouldLiveSend(input.contactId)"));
+  assert.ok(enroll.includes("dryRun: !live"));
+  assert.ok(enroll.includes("if (input.fireFirstStep !== false)"));
+  assert.ok(enroll.includes("INSERT INTO enrollment"));
+  assert.ok(enroll.includes('blocked: "halt"'));
+
+  const projection = read("src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts");
+  const title = sliceFn(projection, "function titleFor", "function waitMsFrom");
+  assert.equal(title.includes('case "send_denied"'), false);
+  const kind = sliceFn(projection, "function kindOf", "function titleFor");
+  assert.match(kind, /eventKind === "send_live" \|\| eventKind === "send_dry_run"/);
+  const prose = sliceFn(read("src/app/register/prototype-ant/operator/channelRuleGrain.ts"), "export function eventKindProse", "export function");
+  assert.match(prose, /kind\.includes\("send"\)/);
+  assert.match(prose, /return "Sent"/);
+  assert.equal(prose.includes("send_denied"), false);
+  const inbound = sliceFn(cascade, "async function hasInboundOverride", "function clockAnchor");
+  const list = inbound.slice(inbound.indexOf("event_kind IN"), inbound.indexOf(")", inbound.indexOf("event_kind IN")));
+  assert.equal(list.includes("send_denied"), false);
+  const callAgent = sliceFn(read("server/wire-service/workflowWalk.ts"), 'if (actionType === "call_agent")', "enrolled += 1");
+  assert.ok(callAgent.includes("enrollments.push(result.enrollmentId)"));
+  assert.equal(callAgent.includes("result.engagementId"), false);
+
+  const migrations = readdirSync(join(root, "supabase/migrations")).filter((name) => name.endsWith(".sql")).sort();
+  assert.equal(migrations.length, 25);
+  assert.equal(migrations.at(-1), "025_audit_row_grain.sql");
+  assert.ok(read(".github/workflows/factory-check.yml").includes("scripts/verify-first-step-send-denied.ts"));
+  assert.match(read(".github/workflows/ship.yml"), /scripts\/verify-first-step-send-denied\.ts/);
+});
+
 function sections(): string[] {
   return [
     "intent",
@@ -3731,13 +3823,16 @@ function assertRecoveryLedger(committed: FactoryLedger) {
     (execution) => execution.role === "engineer" && execution.packetIds.includes(pkt002.id) && execution.reason === "candidate_recorded",
   );
   assert.equal(pkt002.candidateSha, "3246a074efecd8adb98e4ca232d443b90821173f");
-  assert.ok(pkt002.stage === "candidate" || pkt002.stage === "verified");
-  if (pkt002.stage === "verified") {
+  assert.ok(pkt002.stage === "candidate" || pkt002.stage === "verified" || pkt002.stage === "accepted");
+  if (pkt002.stage === "verified" || pkt002.stage === "accepted") {
     assert.equal(pkt002.verifiedSha, pkt002.candidateSha);
     assert.equal(pkt002.execution?.mode, "automatic");
     assert.ok((pkt002.execution?.checks ?? []).some((check) => check.outcome === "pass" && check.runId));
   } else {
     assert.equal(pkt002.verifiedSha, null);
+  }
+  if (pkt002.stage === "accepted") {
+    assert.match(pkt002.integratedSha ?? "", /^[0-9a-f]{40}$/);
   }
   assert.equal(pkt002.dispatch, null);
   assert.ok(pkt002Exec);
@@ -3753,19 +3848,20 @@ function assertRecoveryLedger(committed: FactoryLedger) {
     pkt003.stage === "change_specified" ||
       pkt003.stage === "engineering" ||
       pkt003.stage === "candidate" ||
-      pkt003.stage === "verified",
+      pkt003.stage === "verified" ||
+      pkt003.stage === "accepted",
   );
   if (pkt003.stage === "change_specified") {
     assert.equal(pkt003.dispatch, null);
     assert.equal(pkt003.dispatchedEngineerRevision, null);
     assert.equal(pkt003.candidateSha, null);
   }
-  if (pkt003.stage === "candidate" || pkt003.stage === "verified") {
+  if (pkt003.stage === "candidate" || pkt003.stage === "verified" || pkt003.stage === "accepted") {
     assert.equal(pkt003.lease, null);
     assert.equal(pkt003.dispatch, null);
     assert.match(pkt003.candidateSha ?? "", /^[0-9a-f]{40}$/);
   }
-  if (pkt003.stage === "verified") {
+  if (pkt003.stage === "verified" || pkt003.stage === "accepted") {
     assert.equal(pkt003.verifiedSha, pkt003.candidateSha);
     assert.equal(pkt003.execution?.mode, "automatic");
     assert.ok((pkt003.execution?.checks ?? []).some((check) => check.outcome === "pass" && check.runId));
@@ -3790,7 +3886,7 @@ function assertRecoveryLedger(committed: FactoryLedger) {
   }
   const metrics = productionMetrics(committed);
   assert.equal(metrics.costPerAcceptedPacket, null);
-  assert.equal(metrics.acceptedPackets, 0);
+  assert.equal(metrics.acceptedPackets, 9);
   assert.ok(metrics.refusedOrFailedLaunches >= 1);
   assert.ok(metrics.trackedFreshLaunches >= 2);
   assert.ok(metrics.completedExecutions >= 1);
@@ -3801,11 +3897,11 @@ function assertRecoveryLedger(committed: FactoryLedger) {
   assert.equal(recoveredNow.changes.some((change) => change.reason === "recorded_specification_block"), false);
   assert.equal(recoveredNow.changes.some((change) => change.reason === "engineering_rearmed"), false);
   const pkt019 = recoveredNow.ledger.packets["pkt-019-first-step-send-denied"];
-  assert.equal(pkt019.stage, "returned_analyst");
+  assert.equal(pkt019.stage, "engineering");
   assert.equal(pkt019.revision, "rev-2");
   assert.equal(pkt019.specificationBlock?.authority, "recorded");
   assert.equal(pkt019.specificationBlock?.blockedRevision, "rev-1");
-  assert.equal(pkt019.dispatch?.effect, "wake_sa");
+  assert.equal(pkt019.dispatch?.effect, "wake_engineer");
   assert.equal(pkt019.dispatch?.revision, "rev-2");
   const openExecutionId = pkt019.dispatch?.executionId ?? "";
   const openExecution = recoveredNow.ledger.executions?.[openExecutionId];
@@ -5167,7 +5263,7 @@ check("PKT-019's expired contradiction returns to the analyst and is not re-arme
   assert.equal(handoff.includes(RECORDED_SPECIFICATION_BLOCK.note), true);
   const id = RECORDED_SPECIFICATION_BLOCK.packetId;
   const recorded = committed.packets[id];
-  assert.equal(recorded.stage, "returned_analyst");
+  assert.equal(recorded.stage, "engineering");
   assert.equal(recorded.revision, "rev-2");
   assert.equal(recorded.specificationBlock?.authority, "recorded");
   assert.equal(recorded.specificationBlock?.blockedRevision, "rev-1");
@@ -5183,24 +5279,24 @@ check("PKT-019's expired contradiction returns to the analyst and is not re-arme
   const restored = recoverExecutions(committed, "2026-10-31T15:40:00.000Z");
   assert.equal(restored.changes.some((change) => change.reason === "engineering_rearmed"), false);
   assert.equal(restored.changes.some((change) => change.reason === "recorded_specification_block"), false);
-  assert.equal(restored.ledger.packets[id].stage, "returned_analyst");
-  assert.equal(restored.ledger.packets[id].dispatch?.effect, "wake_sa");
+  assert.equal(restored.ledger.packets[id].stage, "engineering");
+  assert.equal(restored.ledger.packets[id].dispatch?.effect, "wake_engineer");
   assert.equal(restored.ledger.packets[id].dispatch?.revision, "rev-2");
   if (recorded.dispatch) {
-    assert.equal(recorded.dispatch.effect, "wake_sa");
+    assert.equal(recorded.dispatch.effect, "wake_engineer");
     assert.equal(restored.changes.some((change) => change.reason === "unstarted_dispatch_restored"), false);
   } else {
     assert.equal(restored.changes.some((change) => change.reason === "unstarted_dispatch_restored"), true);
   }
   const explainedNow = explainFactory(committed, "2026-10-31T15:40:00.000Z").packets.find((item) => item.id === id);
   if (recorded.dispatch) {
-    assert.equal(explainedNow?.next, "Sign the change.");
+    assert.equal(explainedNow?.next, "Record a candidate SHA.");
   } else {
     assert.equal(explainedNow?.situation, "held");
     assert.match(explainedNow?.next ?? "", /restores the unstarted Analyst dispatch/);
   }
   const open = explainFactory(restored.ledger, "2026-10-31T15:40:00.000Z").packets.find((item) => item.id === id);
-  assert.equal(open?.next, "Sign the change.");
+  assert.equal(open?.next, "Record a candidate SHA.");
   const clock = "2026-10-31T16:10:00.000Z";
   const currentDispatch = recorded.dispatch;
   const currentExecution = currentDispatch?.executionId ? committed.executions?.[currentDispatch.executionId] : undefined;
@@ -5212,7 +5308,7 @@ check("PKT-019's expired contradiction returns to the analyst and is not re-arme
     assert.match(elapsedExplain?.next ?? "", /expires this reservation/);
   }
   const lapsed = recoverExecutions(committed, clock);
-  assert.equal(lapsed.ledger.packets[id].stage, "returned_analyst");
+  assert.equal(lapsed.ledger.packets[id].stage, "engineering");
   if (currentDispatch && currentExecution?.phase === "dispatched" && !reservationStillOpen) {
     assert.equal(lapsed.ledger.packets[id].dispatch, null);
     assert.equal(lapsed.ledger.packets[id].dispatchedSaRevision, null);
@@ -5232,6 +5328,8 @@ check("PKT-019's expired contradiction returns to the analyst and is not re-arme
   rewound.dispatchHistory = (rewound.dispatchHistory ?? []).filter((row) => row.revision !== "rev-2");
   delete source.executions?.["dsp-195-analyst-pkt-019-first-step-send-denied"];
   delete source.assignments?.["asg-dsp-195-analyst-pkt-019-first-step-send-denied"];
+  delete source.executions?.["dsp-212-engineer-pkt-019-first-step-send-denied"];
+  delete source.assignments?.["asg-dsp-212-engineer-pkt-019-first-step-send-denied"];
   const world: World = {
     ...active,
     now: "2026-10-31T16:00:00.000Z",

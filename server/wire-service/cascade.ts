@@ -814,19 +814,43 @@ export async function enrollAndActuate(input: EnrollActuateInput) {
       campaignObjectiveId,
       attemptId,
     });
-    await writeEngagement(pool, input.firmId, input.contactId, live ? "send_live" : "send_dry_run", {
-      enrollmentId: id,
-      attemptId,
-      channel: owner,
-      templateId: state.templateId,
-      cellId: state.cellId,
-      cellIndex: 0,
-      subject,
-      bodyText,
-      messageId: send.ok && !send.dryRun ? send.messageId : undefined,
-      reason: send.ok && send.dryRun ? send.reason : undefined,
-      send,
-    });
+    if (!send.ok) {
+      await writeEngagement(pool, input.firmId, input.contactId, "send_denied", {
+        enrollmentId: id,
+        attemptId,
+        channel: owner,
+        templateId: state.templateId,
+        cellId: state.cellId,
+        cellIndex: 0,
+        send,
+      });
+    } else if (send.ok && !send.dryRun) {
+      await writeEngagement(pool, input.firmId, input.contactId, "send_live", {
+        enrollmentId: id,
+        attemptId,
+        channel: owner,
+        templateId: state.templateId,
+        cellId: state.cellId,
+        cellIndex: 0,
+        messageId: send.messageId,
+        subject,
+        bodyText,
+        send,
+      });
+    } else if (send.ok && send.dryRun) {
+      await writeEngagement(pool, input.firmId, input.contactId, "send_dry_run", {
+        enrollmentId: id,
+        attemptId,
+        channel: owner,
+        templateId: state.templateId,
+        cellId: state.cellId,
+        cellIndex: 0,
+        reason: send.reason,
+        subject,
+        bodyText,
+        send,
+      });
+    }
   }
 
   return {

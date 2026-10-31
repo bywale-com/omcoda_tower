@@ -92,6 +92,9 @@ jobs:
       - name: verify:send-denied-engagement (PKT-018)
         run: npx tsx --env-file=.env scripts/verify-send-denied-engagement.ts
 
+      - name: verify:first-step-send-denied (PKT-019)
+        run: npx tsx --env-file=.env scripts/verify-first-step-send-denied.ts
+
       - name: verify:fact-writes (PKT-007)
         run: npx tsx --env-file=.env scripts/verify-fact-writes.ts
 

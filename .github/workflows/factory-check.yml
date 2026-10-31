@@ -17,6 +17,7 @@ on:
       - "src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts"
       - "src/app/register/prototype-ant/operator/channelRuleGrain.ts"
       - "scripts/verify-send-denied-engagement.ts"
+      - "scripts/verify-first-step-send-denied.ts"
       - "server/wire-service/runWrites.ts"
       - "server/wire-service/auditRun.ts"
       - "server/wire-service/machine.ts"
