@@ -1,5 +1,5 @@
 {
-  "stateRevision": 168,
+  "stateRevision": 169,
   "authorizedDispatches": 50,
   "usedDispatches": 42,
   "scope": {
@@ -1772,6 +1772,18 @@
       "executionIds": [
         "dsp-164-engineer-pkt-015-halt-enroll-firm"
       ]
+    }
+  },
+  "releases": {
+    "rel-pkt-002-open-ask-cursor": {
+      "id": "rel-pkt-002-open-ask-cursor",
+      "packetIds": [
+        "pkt-002-open-ask-cursor"
+      ],
+      "prNumber": 141,
+      "prUrl": "https://github.com/bywale-com/omcoda_tower/pull/141",
+      "openedAt": "2026-10-31T13:43:15.757Z",
+      "mergeSha": null
     }
   }
 }
