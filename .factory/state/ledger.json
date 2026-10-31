@@ -1,5 +1,5 @@
 {
-  "stateRevision": 165,
+  "stateRevision": 166,
   "authorizedDispatches": 50,
   "usedDispatches": 42,
   "scope": {
@@ -1003,12 +1003,17 @@
     "pkt-015-halt-enroll-firm": {
       "id": "pkt-015-halt-enroll-firm",
       "initiativeId": "exec-identity",
-      "stage": "change_specified",
+      "stage": "engineering",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": null,
+      "lease": {
+        "workerId": "bc-4192002b-f944-4eeb-919a-1af83d403f28",
+        "role": "engineer",
+        "until": "2026-10-31T14:36:01.843Z",
+        "revision": "rev-1"
+      },
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
@@ -1573,7 +1578,7 @@
       "id": "dsp-164-engineer-pkt-015-halt-enroll-firm",
       "assignmentId": "asg-dsp-164-engineer-pkt-015-halt-enroll-firm",
       "role": "engineer",
-      "phase": "started",
+      "phase": "running",
       "packetIds": [
         "pkt-015-halt-enroll-firm",
         "pkt-016-halt-send-firm"
@@ -1588,11 +1593,11 @@
       "continuation": "resume",
       "issuedAt": "2026-10-31T13:34:37.616Z",
       "startedAt": "2026-10-31T13:36:00.126Z",
-      "runningAt": null,
+      "runningAt": "2026-10-31T13:36:01.843Z",
       "endedAt": null,
       "reserveUntil": "2026-10-31T14:04:37.616Z",
       "startUntil": "2026-10-31T13:51:00.126Z",
-      "leaseUntil": null,
+      "leaseUntil": "2026-10-31T14:36:01.843Z",
       "reason": null
     }
   },
