@@ -1,5 +1,5 @@
 {
-  "stateRevision": 166,
+  "stateRevision": 167,
   "authorizedDispatches": 50,
   "usedDispatches": 42,
   "scope": {
@@ -1003,20 +1003,15 @@
     "pkt-015-halt-enroll-firm": {
       "id": "pkt-015-halt-enroll-firm",
       "initiativeId": "exec-identity",
-      "stage": "engineering",
+      "stage": "candidate",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": {
-        "workerId": "bc-4192002b-f944-4eeb-919a-1af83d403f28",
-        "role": "engineer",
-        "until": "2026-10-31T14:36:01.843Z",
-        "revision": "rev-1"
-      },
+      "lease": null,
       "attempts": 0,
       "maxAttempts": 1,
-      "candidateSha": null,
+      "candidateSha": "06abd74b9427fb03f6968861848e96e38483940c",
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
@@ -1026,16 +1021,7 @@
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-015-halt-enroll-firm",
-        "revision": "rev-1",
-        "prHead": "86022c517931e4ef24cb0bd5395ac8f606f6acfe",
-        "effect": "wake_engineer",
-        "label": "factory-wake-engineer",
-        "issuedAt": "2026-10-31T13:34:37.616Z",
-        "executionId": "dsp-164-engineer-pkt-015-halt-enroll-firm",
-        "assignmentId": "asg-dsp-164-engineer-pkt-015-halt-enroll-firm"
-      },
+      "dispatch": null,
       "dispatchHistory": [
         {
           "packetId": "pkt-015-halt-enroll-firm",
@@ -1056,6 +1042,17 @@
           "executionId": "dsp-160-engineer-pkt-015-halt-enroll-firm",
           "assignmentId": "asg-dsp-160-engineer-pkt-015-halt-enroll-firm",
           "workerExecution": "absent"
+        },
+        {
+          "packetId": "pkt-015-halt-enroll-firm",
+          "revision": "rev-1",
+          "prHead": "86022c517931e4ef24cb0bd5395ac8f606f6acfe",
+          "effect": "wake_engineer",
+          "label": "factory-wake-engineer",
+          "issuedAt": "2026-10-31T13:34:37.616Z",
+          "executionId": "dsp-164-engineer-pkt-015-halt-enroll-firm",
+          "assignmentId": "asg-dsp-164-engineer-pkt-015-halt-enroll-firm",
+          "workerExecution": "ran"
         }
       ],
       "execution": null,
