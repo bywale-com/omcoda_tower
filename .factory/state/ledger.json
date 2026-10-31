@@ -1,5 +1,5 @@
 {
-  "stateRevision": 161,
+  "stateRevision": 162,
   "authorizedDispatches": 50,
   "usedDispatches": 41,
   "scope": {
@@ -1015,21 +1015,12 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
-      "dispatchedEngineerRevision": "rev-1",
+      "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-015-halt-enroll-firm",
-        "revision": "rev-1",
-        "prHead": "9297b03fa8322a9a5a5d79f53cf3a1576c9510a6",
-        "effect": "wake_engineer",
-        "label": "factory-wake-engineer",
-        "issuedAt": "2026-10-30T19:26:43.997Z",
-        "executionId": "dsp-160-engineer-pkt-015-halt-enroll-firm",
-        "assignmentId": "asg-dsp-160-engineer-pkt-015-halt-enroll-firm"
-      },
+      "dispatch": null,
       "dispatchHistory": [
         {
           "packetId": "pkt-015-halt-enroll-firm",
@@ -1039,6 +1030,17 @@
           "label": "factory-wake-sa",
           "issuedAt": "2026-10-30T12:48:55.989Z",
           "workerExecution": "ran"
+        },
+        {
+          "packetId": "pkt-015-halt-enroll-firm",
+          "revision": "rev-1",
+          "prHead": "9297b03fa8322a9a5a5d79f53cf3a1576c9510a6",
+          "effect": "wake_engineer",
+          "label": "factory-wake-engineer",
+          "issuedAt": "2026-10-30T19:26:43.997Z",
+          "executionId": "dsp-160-engineer-pkt-015-halt-enroll-firm",
+          "assignmentId": "asg-dsp-160-engineer-pkt-015-halt-enroll-firm",
+          "workerExecution": "absent"
         }
       ],
       "execution": null,
@@ -1528,7 +1530,7 @@
       "id": "dsp-160-engineer-pkt-015-halt-enroll-firm",
       "assignmentId": "asg-dsp-160-engineer-pkt-015-halt-enroll-firm",
       "role": "engineer",
-      "phase": "dispatched",
+      "phase": "refused",
       "packetIds": [
         "pkt-015-halt-enroll-firm"
       ],
@@ -1542,11 +1544,11 @@
       "issuedAt": "2026-10-30T19:26:43.997Z",
       "startedAt": null,
       "runningAt": null,
-      "endedAt": null,
+      "endedAt": "2026-10-31T12:24:31.081Z",
       "reserveUntil": "2026-10-30T19:56:43.997Z",
       "startUntil": null,
       "leaseUntil": null,
-      "reason": null
+      "reason": "reservation_expired"
     }
   },
   "assignments": {
