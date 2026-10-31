@@ -1,5 +1,5 @@
 {
-  "stateRevision": 213,
+  "stateRevision": 214,
   "authorizedDispatches": 50,
   "usedDispatches": 45,
   "scope": {
@@ -1320,12 +1320,17 @@
     "pkt-019-first-step-send-denied": {
       "id": "pkt-019-first-step-send-denied",
       "initiativeId": "exec-identity",
-      "stage": "change_specified",
+      "stage": "engineering",
       "wake": "sa",
       "revision": "rev-2",
       "hold": false,
       "blockerId": null,
-      "lease": null,
+      "lease": {
+        "workerId": "bc-4192002b-f944-4eeb-919a-1af83d403f28",
+        "role": "engineer",
+        "until": "2026-10-31T23:12:45.000Z",
+        "revision": "rev-2"
+      },
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
@@ -1868,7 +1873,7 @@
       "id": "dsp-212-engineer-pkt-019-first-step-send-denied",
       "assignmentId": "asg-dsp-212-engineer-pkt-019-first-step-send-denied",
       "role": "engineer",
-      "phase": "started",
+      "phase": "running",
       "packetIds": [
         "pkt-019-first-step-send-denied"
       ],
@@ -1881,11 +1886,11 @@
       "continuation": "resume",
       "issuedAt": "2026-10-31T22:11:26.752Z",
       "startedAt": "2026-10-31T22:12:43.563Z",
-      "runningAt": null,
+      "runningAt": "2026-10-31T22:12:45.000Z",
       "endedAt": null,
       "reserveUntil": "2026-10-31T22:41:26.752Z",
       "startUntil": "2026-10-31T22:27:43.563Z",
-      "leaseUntil": null,
+      "leaseUntil": "2026-10-31T23:12:45.000Z",
       "reason": null
     }
   },
