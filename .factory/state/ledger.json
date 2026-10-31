@@ -1,5 +1,5 @@
 {
-  "stateRevision": 164,
+  "stateRevision": 165,
   "authorizedDispatches": 50,
   "usedDispatches": 42,
   "scope": {
@@ -1573,7 +1573,7 @@
       "id": "dsp-164-engineer-pkt-015-halt-enroll-firm",
       "assignmentId": "asg-dsp-164-engineer-pkt-015-halt-enroll-firm",
       "role": "engineer",
-      "phase": "dispatched",
+      "phase": "started",
       "packetIds": [
         "pkt-015-halt-enroll-firm",
         "pkt-016-halt-send-firm"
@@ -1587,11 +1587,11 @@
       "agentId": "bc-4192002b-f944-4eeb-919a-1af83d403f28",
       "continuation": "resume",
       "issuedAt": "2026-10-31T13:34:37.616Z",
-      "startedAt": null,
+      "startedAt": "2026-10-31T13:36:00.126Z",
       "runningAt": null,
       "endedAt": null,
       "reserveUntil": "2026-10-31T14:04:37.616Z",
-      "startUntil": null,
+      "startUntil": "2026-10-31T13:51:00.126Z",
       "leaseUntil": null,
       "reason": null
     }
