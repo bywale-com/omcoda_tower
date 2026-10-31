@@ -1691,7 +1691,12 @@ export async function handleMachineProvision(c: Context) {
   const dispatched = await dispatchEventToWorkflows(pool, {
     firmId: firm,
     eventName: "ct_firms",
-    payload: { firmId: firm, firmName, email },
+    payload: {
+      firmId: firm,
+      firmName,
+      email,
+      writes: [{ table: "ct_firms", id: firm }],
+    },
   });
 
   await appendFirmAudit({
