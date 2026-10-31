@@ -1,7 +1,7 @@
 {
-  "stateRevision": 171,
+  "stateRevision": 172,
   "authorizedDispatches": 50,
-  "usedDispatches": 42,
+  "usedDispatches": 43,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -1185,12 +1185,21 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
-      "dispatchedEngineerRevision": null,
+      "dispatchedEngineerRevision": "rev-1",
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-018-send-denied-engagement",
+        "revision": "rev-1",
+        "prHead": "00283ac4b875c28cc3cab35592f98e5144d39b44",
+        "effect": "wake_engineer",
+        "label": "factory-wake-engineer",
+        "issuedAt": "2026-10-31T13:45:40.987Z",
+        "executionId": "dsp-172-engineer-pkt-018-send-denied-engagement",
+        "assignmentId": "asg-dsp-172-engineer-pkt-018-send-denied-engagement"
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-018-send-denied-engagement",
@@ -1232,12 +1241,21 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
-      "dispatchedEngineerRevision": null,
+      "dispatchedEngineerRevision": "rev-1",
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-019-first-step-send-denied",
+        "revision": "rev-1",
+        "prHead": "00283ac4b875c28cc3cab35592f98e5144d39b44",
+        "effect": "wake_engineer",
+        "label": "factory-wake-engineer",
+        "issuedAt": "2026-10-31T13:45:40.987Z",
+        "executionId": "dsp-172-engineer-pkt-018-send-denied-engagement",
+        "assignmentId": "asg-dsp-172-engineer-pkt-018-send-denied-engagement"
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-019-first-step-send-denied",
@@ -1598,6 +1616,32 @@
       "startUntil": "2026-10-31T13:51:00.126Z",
       "leaseUntil": "2026-10-31T14:41:54.990Z",
       "reason": "candidate_recorded"
+    },
+    "dsp-172-engineer-pkt-018-send-denied-engagement": {
+      "id": "dsp-172-engineer-pkt-018-send-denied-engagement",
+      "assignmentId": "asg-dsp-172-engineer-pkt-018-send-denied-engagement",
+      "role": "engineer",
+      "phase": "dispatched",
+      "packetIds": [
+        "pkt-018-send-denied-engagement",
+        "pkt-019-first-step-send-denied"
+      ],
+      "revisions": {
+        "pkt-018-send-denied-engagement": "rev-1",
+        "pkt-019-first-step-send-denied": "rev-1"
+      },
+      "label": "factory-wake-engineer",
+      "prHead": "00283ac4b875c28cc3cab35592f98e5144d39b44",
+      "agentId": "bc-4192002b-f944-4eeb-919a-1af83d403f28",
+      "continuation": "resume",
+      "issuedAt": "2026-10-31T13:45:40.987Z",
+      "startedAt": null,
+      "runningAt": null,
+      "endedAt": null,
+      "reserveUntil": "2026-10-31T14:15:40.987Z",
+      "startUntil": null,
+      "leaseUntil": null,
+      "reason": null
     }
   },
   "assignments": {
@@ -1768,6 +1812,19 @@
       "basis": "dependency: 016 leaves the enroll predicate 015 specified; both read halt_records by firm",
       "executionIds": [
         "dsp-164-engineer-pkt-015-halt-enroll-firm"
+      ]
+    },
+    "asg-dsp-172-engineer-pkt-018-send-denied-engagement": {
+      "id": "asg-dsp-172-engineer-pkt-018-send-denied-engagement",
+      "role": "engineer",
+      "initiativeId": "exec-identity",
+      "packetIds": [
+        "pkt-018-send-denied-engagement",
+        "pkt-019-first-step-send-denied"
+      ],
+      "basis": "dependency: 019 records the send_denied kind 018 required of a denied send",
+      "executionIds": [
+        "dsp-172-engineer-pkt-018-send-denied-engagement"
       ]
     }
   },
