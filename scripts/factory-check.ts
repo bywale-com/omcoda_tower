@@ -2350,6 +2350,144 @@ check("a contact halt denies a send only in the firm stored on that halt row", (
   assert.match(read(".github/workflows/ship.yml"), /scripts\/verify-halt-send-firm\.ts/);
 });
 
+check("a denied tick send is its own engagement row", () => {
+  function sliceFn(source: string, start: string, end: string): string {
+    const at = source.indexOf(start);
+    assert.ok(at >= 0, start);
+    const to = source.indexOf(end, at + start.length);
+    assert.ok(to > at, end);
+    return source.slice(at, to);
+  }
+
+  function bareSend(text: string): boolean {
+    if (text.includes("send,")) return true;
+    return text.split("\n").some((line) => line.trim() === "send");
+  }
+
+  const cascade = read("server/wire-service/cascade.ts");
+  const advance = sliceFn(cascade, "export async function advanceTemplateCellIfDue", "async function loadTemplateCellsCached");
+  assert.equal(advance.includes("shouldLiveSend"), false);
+  assert.equal(advance.includes("const live"), false);
+  assert.ok(advance.includes('"send_denied"'));
+  assert.ok(advance.includes("send.ok && !send.dryRun"));
+  assert.ok(advance.includes("send.ok && send.dryRun"));
+
+  const writers = [
+    sliceFn(cascade, "export async function escalateAttemptWindow", "export type ChannelSendInput"),
+    sliceFn(cascade, "export async function advanceTemplateCellIfDue", "const templateCache"),
+    cascade.slice(cascade.indexOf("export async function tickOnce")),
+  ];
+  for (const body of writers) {
+    for (const bit of ["firmId: attempt.firm_id", "contactId: attempt.contact_id", 'purpose: "cem"']) {
+      assert.ok(body.includes(bit), bit);
+    }
+  }
+
+  const tick = cascade.slice(cascade.indexOf("export async function tickOnce"));
+  const armAt = tick.indexOf('if (owner === "email" || owner === "text")');
+  assert.ok(armAt >= 0);
+  const arm = tick.slice(armAt, tick.indexOf("for (const row of criteria)", armAt));
+  assert.ok(arm.includes("send = await actuateChannelSend"));
+  for (const bit of [
+    '"send_denied"',
+    '"send_live"',
+    '"send_dry_run"',
+    "send.ok && !send.dryRun",
+    "send.ok && send.dryRun",
+    "messageId: send.messageId",
+    "reason: send.reason",
+    "attempt_n",
+  ]) {
+    assert.ok(arm.includes(bit), bit);
+  }
+  assert.equal(arm.includes("send.detail"), false);
+  assert.equal(arm.includes("send.deny"), false);
+  assert.equal(arm.includes("shouldLiveSend"), false);
+  const deniedAt = arm.indexOf('"send_denied"');
+  const denied = arm.slice(deniedAt, arm.indexOf("writeEngagement", deniedAt));
+  for (const banned of ["subject", "bodyText", "bodyHtml", "messageId", "reason"]) {
+    assert.equal(denied.includes(banned), false, banned);
+  }
+  assert.ok(denied.includes("send"));
+  assert.ok(denied.includes("attempt_n"));
+  const liveAt = arm.indexOf('"send_live"');
+  const dryAt = arm.indexOf('"send_dry_run"');
+  const live = arm.slice(liveAt, dryAt);
+  assert.ok(live.includes("messageId") && live.includes("subject") && live.includes("bodyText"));
+  assert.equal(live.includes("reason:"), false);
+  assert.equal(bareSend(live), false);
+  const dry = arm.slice(dryAt);
+  assert.ok(dry.includes("reason") && dry.includes("subject") && dry.includes("bodyText"));
+  assert.equal(dry.includes("messageId"), false);
+  assert.equal(bareSend(dry), false);
+
+  const projection = read("src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts");
+  const title = sliceFn(projection, "function titleFor", "function waitMsFrom");
+  assert.equal(title.includes('case "send_denied"'), false);
+  assert.match(title, /eventKind\.replace\(\/_\/g, " "\)/);
+  const kind = sliceFn(projection, "function kindOf", "function titleFor");
+  assert.match(kind, /eventKind === "send_live" \|\| eventKind === "send_dry_run"/);
+  assert.equal(kind.includes("send_denied"), false);
+  const outcome = sliceFn(projection, "function outcomeFrom", "function signalsFrom");
+  assert.match(outcome, /kind === "send"/);
+  const thought = sliceFn(projection, "function thoughtFrom", "function outcomeFrom");
+  assert.match(thought, /payload\.reason/);
+  assert.equal(thought.includes("send_denied"), false);
+  const signals = sliceFn(projection, "function signalsFrom", "function chronologyStatusFor");
+  assert.match(signals, /kind === "send"/);
+  const prose = sliceFn(read("src/app/register/prototype-ant/operator/channelRuleGrain.ts"), "export function eventKindProse", "export function");
+  assert.match(prose, /kind\.includes\("send"\)/);
+  assert.match(prose, /return "Sent"/);
+  assert.equal(prose.includes("send_denied"), false);
+  const inbound = sliceFn(cascade, "async function hasInboundOverride", "function clockAnchor");
+  const list = inbound.slice(inbound.indexOf("event_kind IN"), inbound.indexOf(")", inbound.indexOf("event_kind IN")));
+  assert.equal(list.includes("send_denied"), false);
+  const gate = sliceFn(read("server/wire-service/dispatchSend.ts"), "async function consentAndHaltGate", "export async function isHaltBlockingNew");
+  assert.equal(gate.includes("send_denied"), false);
+
+  const migrations = readdirSync(join(root, "supabase/migrations")).filter((name) => name.endsWith(".sql")).sort();
+  assert.deepEqual(migrations, [
+    "001_auth_tables.sql",
+    "002_applied_seeds.sql",
+    "003_ct_wire_stores.sql",
+    "004_machine_tables.sql",
+    "005_actuation.sql",
+    "006_workflow_trigger.sql",
+    "007_meeting_booked.sql",
+    "008_access_links.sql",
+    "009_outbound_message_content.sql",
+    "010_sequence_campaign_housing.sql",
+    "011_channel_variations.sql",
+    "012_grain_audience_one_timer.sql",
+    "013_operator_book_people.sql",
+    "014_contact_import.sql",
+    "015_house_notes_handle.sql",
+    "016_trigger_local_cascade.sql",
+    "017_event_test_contract.sql",
+    "018_collectible_fields.sql",
+    "019_contact_seat.sql",
+    "020_workspace_opt_out.sql",
+    "021_objective_local_axis.sql",
+    "022_pursuit_exhausted.sql",
+    "023_operator_panes.sql",
+    "024_wait_occupancy.sql",
+    "025_audit_row_grain.sql",
+  ]);
+
+  const filter = read(".github/workflows/factory-check.yml");
+  for (const path of [
+    "server/wire-service/cascade.ts",
+    "server/wire-service/dispatchSend.ts",
+    "src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts",
+    "src/app/register/prototype-ant/operator/channelRuleGrain.ts",
+    "scripts/verify-send-denied-engagement.ts",
+    ".github/workflows/ship.yml",
+  ]) {
+    assert.ok(filter.includes(path), path);
+  }
+  assert.match(read(".github/workflows/ship.yml"), /scripts\/verify-send-denied-engagement\.ts/);
+});
+
 function sections(): string[] {
   return [
     "intent",

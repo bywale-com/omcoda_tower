@@ -510,7 +510,16 @@ export async function escalateAttemptWindow(
       campaignObjectiveId: stamp.campaignObjectiveId,
       attemptId: stamp.attemptId,
     });
-    if (send.ok && !send.dryRun) {
+    if (!send.ok) {
+      await writeEngagement(pool, attempt.firm_id, attempt.contact_id, "send_denied", {
+        attemptId: attempt.id,
+        channel: toChannel,
+        runId,
+        criteriaId: criteria.id,
+        criteriaLabel: criteria.label,
+        send,
+      });
+    } else if (send.ok && !send.dryRun) {
       await writeEngagement(pool, attempt.firm_id, attempt.contact_id, "send_live", {
         attemptId: attempt.id,
         channel: toChannel,
@@ -941,25 +950,40 @@ export async function advanceTemplateCellIfDue(
       campaignObjectiveId: stamp.campaignObjectiveId,
       attemptId: stamp.attemptId,
     });
-    const live = shouldLiveSend(attempt.contact_id);
-    await writeEngagement(
-      pool,
-      attempt.firm_id,
-      attempt.contact_id,
-      live && send.ok && !send.dryRun ? "send_live" : "send_dry_run",
-      {
+    if (!send.ok) {
+      await writeEngagement(pool, attempt.firm_id, attempt.contact_id, "send_denied", {
+        attemptId: attempt.id,
+        cellId: next.id,
+        cellLabel: next.label,
+        channel: toChannel,
+        runId,
+        send,
+      });
+    } else if (send.ok && !send.dryRun) {
+      await writeEngagement(pool, attempt.firm_id, attempt.contact_id, "send_live", {
         attemptId: attempt.id,
         cellId: next.id,
         cellLabel: next.label,
         channel: toChannel,
         subject,
         bodyText,
-        messageId: send.ok && !send.dryRun ? send.messageId : undefined,
-        reason: send.ok && send.dryRun ? send.reason : undefined,
+        messageId: send.messageId,
         send,
         runId,
-      },
-    );
+      });
+    } else if (send.ok && send.dryRun) {
+      await writeEngagement(pool, attempt.firm_id, attempt.contact_id, "send_dry_run", {
+        attemptId: attempt.id,
+        cellId: next.id,
+        cellLabel: next.label,
+        channel: toChannel,
+        subject,
+        bodyText,
+        reason: send.reason,
+        send,
+        runId,
+      });
+    }
   }
 
   return {
@@ -1088,7 +1112,7 @@ export async function tickOnce(now = new Date()): Promise<{
           (typeof content.body_text === "string" && content.body_text) ||
           `Attempt ${Number(cleared.attempt_n ?? 1)}`;
         const stamp = await pursuitForAttempt(pool, attempt);
-        await actuateChannelSend({
+        const send = await actuateChannelSend({
           firmId: attempt.firm_id,
           contactId: attempt.contact_id,
           channel: owner,
@@ -1100,13 +1124,32 @@ export async function tickOnce(now = new Date()): Promise<{
           campaignObjectiveId: stamp.campaignObjectiveId,
           attemptId: stamp.attemptId,
         });
-        await writeEngagement(pool, attempt.firm_id, attempt.contact_id, "send_dry_run", {
-          attemptId: attempt.id,
-          channel: owner,
-          subject,
-          bodyText,
-          attempt_n: cleared.attempt_n,
-        });
+        if (!send.ok) {
+          await writeEngagement(pool, attempt.firm_id, attempt.contact_id, "send_denied", {
+            attemptId: attempt.id,
+            channel: owner,
+            attempt_n: cleared.attempt_n,
+            send,
+          });
+        } else if (send.ok && !send.dryRun) {
+          await writeEngagement(pool, attempt.firm_id, attempt.contact_id, "send_live", {
+            attemptId: attempt.id,
+            channel: owner,
+            subject,
+            bodyText,
+            attempt_n: cleared.attempt_n,
+            messageId: send.messageId,
+          });
+        } else if (send.ok && send.dryRun) {
+          await writeEngagement(pool, attempt.firm_id, attempt.contact_id, "send_dry_run", {
+            attemptId: attempt.id,
+            channel: owner,
+            subject,
+            bodyText,
+            attempt_n: cleared.attempt_n,
+            reason: send.reason,
+          });
+        }
       }
     }
 
