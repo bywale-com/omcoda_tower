@@ -20,7 +20,7 @@ The keys already on the payload stay: `haltId` and `contactId`. `contactId` rema
 
 `localRefFromPayload` and `triggerLocalRefFromPayload` gain no `halt_records` case. Both still return null for this event. `localAxesMatch` compares `local_ref` only when `local_ref` is set, so a trigger with no `local_ref` still matches, and a trigger with `local_ref` set does not. The firm compare still falls back to `opts.firmId` because the payload has no `firm_id`. The contact compare still reads `payload.contactId`, then `contactIds`. This packet does not add Halt to `TRIGGER_SELECT_EVENTS`. The comment on that list still says not to add halt. `WORKFLOW_EVENTS_WITH_LOCAL` still omits `halt_records`. The Hub catalog label is not the product face.
 
-`dispatchEventToWorkflows` is not edited. It still copies the payload and still sets `anyPass: true` on the walked trigger. `writes` has to be on the object passed in, because the copy is what `writesFromPayload` reads. Claim 7’s refusal of `anyPass` is not recut. This packet does not put `anyPass` on the halt payload. PKT-004 removes the forced copy. Implementing PKT-004 must not delete `writes`.
+`dispatchEventToWorkflows` is not edited. It copies the payload and sets `eventName`. It does not set `anyPass`. PKT-004 already removed that forced copy. This packet does not put it back and does not put `anyPass` on the halt payload. `writes` has to be on the object passed in, because the copy is what `writesFromPayload` reads. Implementing a later edit of this function must not delete `writes`.
 
 `loadWriteRow` gains a `halt_records` branch: `SELECT * FROM halt_records WHERE id=$1` bound to `w.id`. No `firm_id`, no `contact_id`, no `lifted_at`, no `ORDER BY`, no “latest”. No row with that id returns null. A miss does not try `contact_id`. That is the predicate claim 10 locked. This packet adds the branch. It does not change the predicate. A later node reads `consultant_id`, `scope`, `reason`, `halted_at`, and `lifted_at` from that row. On this firing `scope` is `contact` and `lifted_at` is null until a lift. Those columns are not copied onto the dispatch.
 
@@ -34,7 +34,7 @@ The contact-scope `audit_events` insert stays off `writes`. The kind is `halt.co
 
 The HTTP body returned by `handleHaltCommit` stays the halt record. The in-memory stand-in commit does not call the dispatcher. This firing is the server handler. `confirmHalt` in `ConsultantAntScene` still returns before the commit when the scope is contact and there is no active client. A contact-scope body that omits `contactId` still inserts and still dispatches. The audience fill that runs when `contactIds` is omitted is claim 17. This packet does not specify it and does not edit that fill. The pointer on that body is still this insert’s id.
 
-`consentAndHaltGate`’s contact arm, `isHaltBlockingNew`’s contact arm, and `handleHaltIsContact` still omit `firm_id`. Claims 18 and 19 decide those readers. This packet does not edit them.
+`consentAndHaltGate`’s contact arm, `isHaltBlockingNew`’s contact arm, and `handleHaltIsContact` already include `firm_id`. PKT-015 and PKT-016 planted that predicate. This packet does not edit those readers and does not remove `firm_id`.
 
 ## Must / must-not
 
@@ -77,14 +77,14 @@ if (w.table === "halt_records") {
 }
 ```
 
-  No `firm_id`, no `contact_id`, no `lifted_at`, no `ORDER BY`, no `LIMIT`. No row returns null. Do not interpolate the table name. Do not query again by `contact_id` when `rows[0]` is missing. Do not use `w.contact_id ?? w.id` on this branch. Leave the `const contactId = w.contact_id ?? w.id` that the earlier branches already use. Leave every other branch, including a `campaign_failure`, `fact_writebacks`, `meeting_booked`, `wait_occupancy`, `engagement_records`, `consent_records`, or eligibility branch another packet may already have added. PKT-012’s consent load is `contact_id` plus the walk’s firm. It is not this branch. Do not export `loadWriteRow`. If it is already exported, leave the export.
+  No `firm_id`, no `contact_id`, no `lifted_at`, no `ORDER BY`, no `LIMIT`. No row returns null. Do not interpolate the table name. Do not query again by `contact_id` when `rows[0]` is missing. Do not use `w.contact_id ?? w.id` on this branch. Leave the `const contactId = w.contact_id ?? w.id` declaration. The current branches do not use it. Leave every other branch. The function already loads `engagement_records`, `missing_fact_signals`, `fact_writebacks`, `meeting_booked`, `wait_occupancy`, `campaign_failure`, and `ct_firms` by `id`. A `consent_records` or eligibility branch another packet adds is not this branch. PKT-012’s consent load is `contact_id` plus the walk’s firm. Do not export `loadWriteRow`. It is already exported. Leave the export.
 - Do not add `halt_records` to `PERSON_WRITE_TABLES`. Do not remove a name that is already there. Do not edit `personTableOf`, `evalIfPick`, `personIdsFromWrites`, `pickWrites`, or either `find` in `resolveOperandText`.
 - Do not edit `writesFromPayload`. Do not teach it to read `haltId`. Do not teach it to read singular `contactId` as a `contact_records` id.
 - Do not edit `localRefFromPayload`, `triggerLocalRefFromPayload`, `localAxesMatch`, or `triggerLocalAxesMatch`. Do not add a `halt_records` arm. Both ref readers still fall through to `return null`.
 - Do not edit `dispatchEventToWorkflows`, including the `anyPass` copy and the empty-list book fill. Stripping `anyPass` is PKT-004. The empty-contact audience is claim 17.
 - Do not edit `TRIGGER_SELECT_EVENTS` or its comment `Do not add eligibility / halt / meeting.` Do not add `halt_records` to `WORKFLOW_EVENTS_WITH_LOCAL`. Do not edit `WORKFLOW_EVENT_CATALOG`.
 - Do not bump `event_write_set`. Do not read `event_write_set` or `event_test_data` to build this payload. Do not edit `eventTest.ts`. Door 1 for this event stays `SELECT * FROM halt_records WHERE firm_id=$1 AND lifted_at IS NULL ORDER BY halted_at DESC LIMIT 10`. Do not add a migration.
-- Do not edit `consentAndHaltGate`, `isHaltBlockingNew`, `handleHaltIsContact`, or `handleHaltIsFirmBook`. Do not edit `confirmHalt` or `standInHaltStore`. Do not edit `routes.ts`.
+- Do not edit `consentAndHaltGate`, `isHaltBlockingNew`, `handleHaltIsContact`, or `handleHaltIsFirmBook`. Do not remove `firm_id` from the contact predicates those functions already have. Do not edit `confirmHalt` or `standInHaltStore`. Do not edit `routes.ts`.
 
 ## Stores and contracts
 
@@ -178,31 +178,35 @@ export function writesFromPayload(payload: Record<string, unknown> | undefined):
 
 The lines after the array return push `import_batch` and then one `contact_records` pointer per id in `payload.contact_ids` or `payload.contactIds`. They never read `haltId` or singular `contactId`. Today’s halt payload has neither array, so a missing `writes` key yields an empty handle. Adding `writes` is what publishes the pointer.
 
-`loadWriteRow` returns null after the tables it already knows. `halt_records` is not among them. The function begins with the pair loads and continues through `contact_records`, `contact_tag`, `audit_runs`, `import_batch`, and `enrollment`. It ends at `missing_fact_signals`, then `return null`.
+`loadWriteRow` is already exported and returns null after the tables it already knows. `halt_records` is not among them. The pair loads select by `audit_run_id`, `contact_id`, and `firm_id`. The function then continues through `contact_records`, `contact_tag`, `audit_runs`, `import_batch`, `enrollment`, `engagement_records`, `missing_fact_signals`, `fact_writebacks`, `meeting_booked`, `wait_occupancy`, `campaign_failure`, and `ct_firms`, then `return null`. `const contactId = w.contact_id ?? w.id` is still declared and is not used by those branches.
 
-```655:667:server/wire-service/workflowWalk.ts
-async function loadWriteRow(
+```676:689:server/wire-service/workflowWalk.ts
+export async function loadWriteRow(
   pool: Pool,
   firmId: string,
   w: RunWrite,
 ): Promise<Record<string, unknown> | null> {
   const contactId = w.contact_id ?? w.id;
   if (w.table === "sequence_ready") {
+    if (w.contact_id == null || w.contact_id === "") return null;
     const { rows } = await pool.query(
-      `SELECT * FROM sequence_ready WHERE contact_id=$1 AND firm_id=$2`,
-      [contactId, firmId],
+      `SELECT * FROM sequence_ready WHERE audit_run_id=$1 AND contact_id=$2 AND firm_id=$3`,
+      [w.id, w.contact_id, firmId],
     );
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
 ```
 
-```695:700:server/wire-service/workflowWalk.ts
-  if (w.table === "missing_fact_signals") {
-    const { rows } = await pool.query(`SELECT * FROM missing_fact_signals WHERE id=$1`, [w.id]);
+```738:746:server/wire-service/workflowWalk.ts
+  if (w.table === "campaign_failure") {
+    const { rows } = await pool.query(`SELECT * FROM campaign_failure WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+  if (w.table === "ct_firms") {
+    const { rows } = await pool.query(`SELECT * FROM ct_firms WHERE id=$1`, [w.id]);
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
   return null;
-}
 ```
 
 `audit_events.id` is `TEXT PRIMARY KEY`. The halt insert already writes `kind`, `subject_type`, `subject_id`, `firm_id`, and a jsonb `{ haltId, reason }`. That row is not a write-set element.
@@ -336,7 +340,7 @@ export async function handleHaltLift(c: Context) {
 
 `PERSON_WRITE_TABLES` does not contain `halt_records`. `personIdsFromWrites` uses `contact_id` before it consults that set. A null `contact_id` therefore becomes null, and `uniqueIds` drops it. The `halt-` id is not a person. Adding the table name is what would publish that id when `contact_id` is null, and what would person-split an If once `ctx.contactIds` is non-empty.
 
-```199:206:server/wire-service/workflowWalk.ts
+```199:209:server/wire-service/workflowWalk.ts
 const PERSON_WRITE_TABLES = new Set([
   "sequence_ready",
   "reachability_verdicts",
@@ -344,10 +348,13 @@ const PERSON_WRITE_TABLES = new Set([
   "contact_tag",
   "enrollment",
   "wait_occupancy",
+  "engagement_records",
+  "fact_writebacks",
+  "meeting_booked",
 ]);
 ```
 
-```264:268:server/wire-service/workflowWalk.ts
+```267:271:server/wire-service/workflowWalk.ts
 function personIdsFromWrites(writes: RunWrite[]): string[] {
   return uniqueIds(
     writes.map((w) => w.contact_id ?? (PERSON_WRITE_TABLES.has(w.table) ? w.id : null)),
@@ -357,7 +364,7 @@ function personIdsFromWrites(writes: RunWrite[]): string[] {
 
 `evalIfPick` person-splits only when `personTableOf` finds the pick table in that set and `ctx.contactIds` is non-empty. An empty contact list hides a set change: the detail stays `branch →`. The load walks that prove the set pass a non-empty `contactIds`.
 
-```917:940:server/wire-service/workflowWalk.ts
+```964:987:server/wire-service/workflowWalk.ts
 async function evalIfPick(
   pool: Pool,
   ctx: WalkContext,
@@ -386,7 +393,7 @@ async function evalIfPick(
 
 Neither local-ref reader names this event. A set `local_ref` compares against null and fails. The functions stay.
 
-```1853:1871:server/wire-service/workflowWalk.ts
+```1919:1937:server/wire-service/workflowWalk.ts
 function localRefFromPayload(
   eventName: string,
   payload: Record<string, unknown> | undefined,
@@ -435,7 +442,7 @@ export function triggerLocalRefFromPayload(
 
 `localAxesMatch` compares `local_ref` only when it is set. The firm compare uses a root `firm_id` / `firmId` when that string is present, and otherwise `opts.firmId`. The contact compare uses a root `contact_id` / `contactId` when that string is present, and otherwise `opts.contactIds`. `payloadString` returns null for a null or blank value. This caller passes `firmId` and `contactIds` as arguments. The payload’s `contactId` is what the contact compare sees first.
 
-```1873:1902:server/wire-service/workflowWalk.ts
+```1939:1968:server/wire-service/workflowWalk.ts
 function localAxesMatch(
   row: {
     grain: string;
@@ -468,22 +475,22 @@ function localAxesMatch(
 }
 ```
 
-The walked trigger still receives the forced copy. This packet leaves that line. The spread copies `writes` only when `writes` is already on `opts.payload`.
+The walked trigger receives the spread payload plus `eventName`. It does not receive a forced `anyPass`. This packet leaves that line. The spread copies `writes` only when `writes` is already on `opts.payload`.
 
-```1970:1977:server/wire-service/workflowWalk.ts
+```2036:2043:server/wire-service/workflowWalk.ts
     const walked = await walkValidatedWorkflow(pool, {
       workflowId: row.workflow_id,
       firmId: opts.firmId,
       runId,
       triggerLabel: `event:${opts.eventName}`,
-      triggerPayload: { ...(opts.payload ?? {}), eventName: opts.eventName, anyPass: true },
+      triggerPayload: { ...(opts.payload ?? {}), eventName: opts.eventName },
       contactIds,
     });
 ```
 
 When the caller omits `contactIds`, the every-firm audience fills the book before that walk. This packet does not edit the fill. A `select_from` audience is a different branch of the same function. The fixture workflows leave `audience_scope` at its default `every_firm`.
 
-```1950:1962:server/wire-service/workflowWalk.ts
+```2016:2028:server/wire-service/workflowWalk.ts
     let contactIds = opts.contactIds;
     const scope = row.audience_scope === "select_from" ? "select_from" : "every_firm";
     if (scope === "select_from") {
@@ -501,7 +508,7 @@ When the caller omits `contactIds`, the every-firm audience fills the book befor
 
 The walk does not store `triggerPayload`. It stores `writesFromPayload`’s output on the trigger node. That stored array is the handle this packet proves. `haltId`, `contactId`, and `anyPass` are not on `node_status`. When the caller list is empty, the walk fills `contactIds` from `personIdsFromWrites`. A null pointer `contact_id` on a table outside the set leaves that list empty.
 
-```1091:1104:server/wire-service/workflowWalk.ts
+```1138:1151:server/wire-service/workflowWalk.ts
   let contactIds = opts.contactIds ?? [];
   const triggerWrites = writesFromPayload(opts.triggerPayload);
   if (!contactIds.length) {
@@ -518,7 +525,7 @@ The walk does not store `triggerPayload`. It stores `writesFromPayload`’s outp
     previousWrites: triggerWrites,
 ```
 
-```1145:1152:server/wire-service/workflowWalk.ts
+```1203:1210:server/wire-service/workflowWalk.ts
       if (type === "trigger") {
         commitWrites(ctx, nodeId, ctx.previousWrites);
         nodeStatus[nodeId] = {
@@ -531,7 +538,7 @@ The walk does not store `triggerPayload`. It stores `writesFromPayload`’s outp
 
 `node_status` and `counts.contacts` are written onto `workflow_run` at the end of the walk. `counts.contacts` is `ctx.contactIds.length`. The verify reads those columns. `walkValidatedWorkflow` updates the run. It does not insert it. `dispatchEventToWorkflows` inserts the run before the walk. A direct load walk inserts the run first.
 
-```1666:1682:server/wire-service/workflowWalk.ts
+```1732:1748:server/wire-service/workflowWalk.ts
   const failed = Object.values(nodeStatus).some((s) => s.status === "failed");
   await pool.query(
     `UPDATE workflow_run
@@ -553,7 +560,7 @@ The walk does not store `triggerPayload`. It stores `writesFromPayload`’s outp
 
 The If detail when this table is not in the set is `branch → ${ctx.branchTaken}`. A detail that starts with `if pick ` means the set was changed.
 
-```1173:1184:server/wire-service/workflowWalk.ts
+```1231:1242:server/wire-service/workflowWalk.ts
       if (type === "branch" || type === "if") {
         const picked = await evalIfPick(pool, ctx, data);
         ctx.branchTaken = picked.pass ? "true" : "false";
@@ -570,7 +577,7 @@ The If detail when this table is not in the set is `branch → ${ctx.branchTaken
 
 The legacy pick becomes one compare. `resolveOperandText` takes `picked[0]` when no `contactId` is passed, and otherwise the pointer whose `contact_id` or `id` equals that contact, then `picked[0]`. `nestedField` walks a dotted path. node-pg returns `timestamptz` as a `Date`. `String` of that value is non-empty, so `exists` passes after a lift. A null column becomes `undefined`, and `exists` fails. This packet does not add a parser and does not change `comparePasses`.
 
-```828:846:server/wire-service/workflowWalk.ts
+```875:893:server/wire-service/workflowWalk.ts
 function comparesForIf(data: Record<string, unknown>): WalkCompare[] {
   const main = parseCompare(data.compare);
   const extra = Array.isArray(data.and)
@@ -594,7 +601,7 @@ function comparesForIf(data: Record<string, unknown>): WalkCompare[] {
 
 Door 1 for this event still takes the newest ten active rows for the firm, both scopes. That reader is not the run handle. A later `halted_at` on a decoy is how the load walks show the handle is the pointer id.
 
-```160:167:server/wire-service/eventTest.ts
+```162:169:server/wire-service/eventTest.ts
     if (eventName === "halt_records") {
       const ok = await push(
         "halt_records",
@@ -625,36 +632,39 @@ export const WORKFLOW_EVENTS_WITH_LOCAL = new Set<WorkflowTriggerEvent>([
 ]);
 ```
 
-The contact arms that claims 18 and 19 still own omit `firm_id`. The firm-book arms keep `firm_id`. This packet does not retune either.
+The contact arms already include `firm_id`, and the firm-book arms keep `firm_id`. PKT-015 and PKT-016 planted the contact predicate. This packet does not retune either.
 
 ```81:86:server/wire-service/dispatchSend.ts
   const contactHalted = await pool.query(
     `SELECT 1 FROM halt_records
-     WHERE lifted_at IS NULL AND scope = 'contact' AND contact_id = $1
+     WHERE lifted_at IS NULL AND scope = 'contact' AND contact_id = $1 AND firm_id = $2
      LIMIT 1`,
-    [contactId],
+    [contactId, firmId],
   );
 ```
 
-```99:106:server/wire-service/dispatchSend.ts
+```99:108:server/wire-service/dispatchSend.ts
   const halted = await pool.query(
     `SELECT 1 FROM halt_records
      WHERE lifted_at IS NULL
        AND ((scope = 'firm-book' AND firm_id = $1)
-         OR ($2::text IS NOT NULL AND scope = 'contact' AND contact_id = $2))
+         OR ($2::text IS NOT NULL AND scope = 'contact' AND contact_id = $2 AND firm_id = $1))
      LIMIT 1`,
     [firmId, contactId ?? null],
   );
+  return Boolean(halted.rowCount && halted.rowCount > 0);
+}
 ```
 
-```201:210:server/wire-service/stores.ts
+```201:211:server/wire-service/stores.ts
 export async function handleHaltIsContact(c: Context) {
   const contactId = c.req.param("contactId");
+  const firmId = c.req.query("firmId");
   const result = await getPool().query(
     `SELECT 1 FROM halt_records
-     WHERE lifted_at IS NULL AND scope = 'contact' AND contact_id = $1
+     WHERE lifted_at IS NULL AND scope = 'contact' AND contact_id = $1 AND firm_id = $2
      LIMIT 1`,
-    [contactId],
+    [contactId, firmId ?? null],
   );
   return c.json({ halted: result.rowCount! > 0 });
 }
@@ -760,7 +770,7 @@ Listener graphs are a trigger plus an `exit`, with an edge from the trigger to t
 
 `workflow_trigger_local_ref` was dropped in `supabase/migrations/016_trigger_local_cascade.sql`, so a local row may store a null `local_ref`.
 
-The load walks call `walkValidatedWorkflow` directly. Each one inserts its `workflow_run` (`status` `running`) before the call, because the walker only updates that row. `loadWriteRow` stays unexported. Each graph is a trigger plus an `if` plus an `exit`. The If uses the legacy pick: `pickTable` `"halt_records"`, `pickOp` `"eq"` or `"exists"`, `pickValue` the passing text when the op is `eq`. `configured` is not `false`. `contactIds` on a field walk is a one-element list, so a set change is visible. Trigger `payload.writes` is the one pointer the case states. The If detail is `branch → true` or `branch → false`. A detail that starts with `if pick ` means `halt_records` was added to `PERSON_WRITE_TABLES`, and that case fails.
+The load walks call `walkValidatedWorkflow` directly. Each one inserts its `workflow_run` (`status` `running`) before the call, because the walker only updates that row. `loadWriteRow` is already exported. Leave the export. Each graph is a trigger plus an `if` plus an `exit`. The If uses the legacy pick: `pickTable` `"halt_records"`, `pickOp` `"eq"` or `"exists"`, `pickValue` the passing text when the op is `eq`. `configured` is not `false`. `contactIds` on a field walk is a one-element list, so a set change is visible. Trigger `payload.writes` is the one pointer the case states. The If detail is `branch → true` or `branch → false`. A detail that starts with `if pick ` means `halt_records` was added to `PERSON_WRITE_TABLES`, and that case fails.
 
 The walk does not store `triggerPayload`. `haltId` and the root `contactId` are proved by the HTTP body, the row, the local-contact listener, and the shape guard. A null `contactId` and a missing key both return null from `payloadString`, so the listener cannot tell them apart. The object literal is the proof the key is present when the value is null. `anyPass` is not on `node_status`. The shape guard is the proof the caller payload does not set it.
 
@@ -772,13 +782,13 @@ The walk does not store `triggerPayload`. `haltId` and the root `contactId` are 
 6. `handleHaltLift` of the case-1 id. The response record’s id is that id and `liftedAt` is set. The row’s `lifted_at` is set. The case-5 row and the case-3 row still have `lifted_at` null. No new `event:halt_records` run exists. One new audit row has kind `halt.lift`. A load walk of the same pointer with `lifted_at` op `"exists"` is now `branch → true`. A loader that required `lifted_at` null fails this walk. A load walk whose `writes[0].id` is `halt-absent`, while the case-5 row still has reason `"second"`, and whose If compares `reason` to `"second"`, is `branch → false`. A loader that ignored `id` and took the latest contact row would take `true`.
 7. A direct walk inserts its own run. `contactIds` is omitted. `payload.writes` is one pointer whose `table` is `halt_records`, whose `id` is the case-3 id, and whose `contact_id` is null. `counts.contacts` is 0. A count of 1 means the `halt-` id was published as a person.
 
-`npm run factory:check` reads the contact-scope dispatch in `handleHaltCommit` and fails unless that payload object contains `haltId`, `contactId: body.contactId ?? null`, and a `writes` element whose `table` is `"halt_records"`, whose `id` is `haltId`, and whose `contact_id` is `body.contactId ?? null`. It fails unless `contactIds: body.contactId ? [body.contactId] : undefined` is the dispatch argument. It fails if that payload object contains `firm_id`, `scope`, `reason`, `consultant_id`, `consultant_name`, `contact_name`, `firm`, `contactIds`, or `anyPass`. It fails if that `writes` element contains `firm_id` or `audit_events`. It fails unless the dispatch stays inside `if (body.scope === "contact")`, stays `await dispatchEventToWorkflows(getPool(), …)`, and is not inside `try`. It fails if `handleHaltCommit` contains `BEGIN` or `COMMIT`. It fails unless `const haltId = id("halt")` is the insert id and the pointer id, and unless `id` is still `` `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}` ``. It fails unless the insert column list is still `id, consultant_id, contact_id, firm_id, scope, reason, halted_at` and the firm-book `UPDATE` remains only in the firm-book branch. It fails unless `handleHaltLift` still has no `dispatchEventToWorkflows` call. It reads `writesFromPayload` and fails if that function contains `haltId`. It reads `loadWriteRow` and fails unless it contains `SELECT * FROM halt_records WHERE id=$1` bound to `w.id`, ignoring whitespace, and fails if that statement contains `firm_id`, `contact_id`, `lifted_at`, `ORDER BY`, or `LIMIT`. It fails unless the function still ends at `return null`. It reads the `PERSON_WRITE_TABLES` initializer and fails if that initializer contains `halt_records`. It reads `localRefFromPayload` and `triggerLocalRefFromPayload` and fails if either function contains `halt_records`. It reads `eventTest.ts` and fails unless the `halt_records` door is `SELECT * FROM halt_records WHERE firm_id=$1 AND lifted_at IS NULL ORDER BY halted_at DESC LIMIT 10`. It reads `TRIGGER_SELECT_EVENTS` and fails if any entry’s `eventName` or `id` is `halt_records`, and fails if the comment `Do not add eligibility / halt / meeting.` is gone. It reads the `WORKFLOW_EVENTS_WITH_LOCAL` initializer and fails if it contains `halt_records`. It reads `ConsultantAntScene.tsx` and fails unless `if (portScope === "contact" && !activeClientId) return;` still precedes `haltStore.commit`. It reads `standInHaltStore.commit` and fails if that function contains `dispatchEventToWorkflows`. It reads the contact-scope query in `handleHaltIsContact`, the contact-scope query in `consentAndHaltGate`, and the contact arm of `isHaltBlockingNew`, and fails if those contact predicates contain `firm_id`. The firm-book arms still have `firm_id`. It does not assert on `anyPass` inside `dispatchEventToWorkflows`. It does not require or forbid the book-fill query. It reads `.github/workflows/ship.yml` and fails unless it invokes `scripts/verify-halt-records-writes.ts`. Add `server/wire-service/stores.ts`, `server/wire-service/workflowWalk.ts`, `server/wire-service/runWrites.ts`, `server/wire-service/eventTest.ts`, `server/wire-service/dispatchSend.ts`, `src/app/data/automationTriggerSelect.ts`, `src/app/data/automationWorkflows.ts`, `src/app/wire/standins/haltStore.ts`, `src/app/register/prototype-ant/consultant/ConsultantAntScene.tsx`, `scripts/verify-halt-records-writes.ts`, and `.github/workflows/ship.yml` to the path filter in `.github/workflows/factory-check.yml` if they are not already listed.
+`npm run factory:check` reads the contact-scope dispatch in `handleHaltCommit` and fails unless that payload object contains `haltId`, `contactId: body.contactId ?? null`, and a `writes` element whose `table` is `"halt_records"`, whose `id` is `haltId`, and whose `contact_id` is `body.contactId ?? null`. It fails unless `contactIds: body.contactId ? [body.contactId] : undefined` is the dispatch argument. It fails if that payload object contains `firm_id`, `scope`, `reason`, `consultant_id`, `consultant_name`, `contact_name`, `firm`, `contactIds`, or `anyPass`. It fails if that `writes` element contains `firm_id` or `audit_events`. It fails unless the dispatch stays inside `if (body.scope === "contact")`, stays `await dispatchEventToWorkflows(getPool(), …)`, and is not inside `try`. It fails if `handleHaltCommit` contains `BEGIN` or `COMMIT`. It fails unless `const haltId = id("halt")` is the insert id and the pointer id, and unless `id` is still `` `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}` ``. It fails unless the insert column list is still `id, consultant_id, contact_id, firm_id, scope, reason, halted_at` and the firm-book `UPDATE` remains only in the firm-book branch. It fails unless `handleHaltLift` still has no `dispatchEventToWorkflows` call. It reads `writesFromPayload` and fails if that function contains `haltId`. It reads `loadWriteRow` and fails unless it contains `SELECT * FROM halt_records WHERE id=$1` bound to `w.id`, ignoring whitespace, and fails if that statement contains `firm_id`, `contact_id`, `lifted_at`, `ORDER BY`, or `LIMIT`. It fails unless the function still ends at `return null`. It reads the `PERSON_WRITE_TABLES` initializer and fails if that initializer contains `halt_records`. It reads `localRefFromPayload` and `triggerLocalRefFromPayload` and fails if either function contains `halt_records`. It reads `eventTest.ts` and fails unless the `halt_records` door is `SELECT * FROM halt_records WHERE firm_id=$1 AND lifted_at IS NULL ORDER BY halted_at DESC LIMIT 10`. It reads `TRIGGER_SELECT_EVENTS` and fails if any entry’s `eventName` or `id` is `halt_records`, and fails if the comment `Do not add eligibility / halt / meeting.` is gone. It reads the `WORKFLOW_EVENTS_WITH_LOCAL` initializer and fails if it contains `halt_records`. It reads `ConsultantAntScene.tsx` and fails unless `if (portScope === "contact" && !activeClientId) return;` still precedes `haltStore.commit`. It reads `standInHaltStore.commit` and fails if that function contains `dispatchEventToWorkflows`. It does not read `handleHaltIsContact`, `consentAndHaltGate`, or `isHaltBlockingNew`. Those contact predicates already contain `firm_id`, and the planted enroll and send checks require that predicate. This packet does not add a guard that fails when `firm_id` is present. It does not assert on `anyPass` inside `dispatchEventToWorkflows`. It does not require or forbid the book-fill query. It reads `.github/workflows/ship.yml` and fails unless it invokes `scripts/verify-halt-records-writes.ts`. Add `server/wire-service/stores.ts`, `server/wire-service/workflowWalk.ts`, `server/wire-service/runWrites.ts`, `server/wire-service/eventTest.ts`, `server/wire-service/dispatchSend.ts`, `src/app/data/automationTriggerSelect.ts`, `src/app/data/automationWorkflows.ts`, `src/app/wire/standins/haltStore.ts`, `src/app/register/prototype-ant/consultant/ConsultantAntScene.tsx`, `scripts/verify-halt-records-writes.ts`, and `.github/workflows/ship.yml` to the path filter in `.github/workflows/factory-check.yml` if they are not already listed.
 
 A pass is evidence only for the candidate SHA that ran. A pass on an older SHA does not verify a newer commit.
 
 ## Out of scope
 
-Door 1’s newest ten, beyond the shape guard that keeps the current statement. The two `event_test_data` specimen bodies, including `consultant_name`, `contact_name`, and `firm`. Adding `halt_records` to `PERSON_WRITE_TABLES`. Teaching `writesFromPayload` to read `haltId`. Adding a `localRefFromPayload` or `triggerLocalRefFromPayload` case. Adding Halt to `TRIGGER_SELECT_EVENTS`. Editing `WORKFLOW_EVENT_CATALOG`. Stripping `anyPass` (PKT-004). Dispatching the firm-book branch or the lift. Putting `audit_events` on `writes`. Enriching the row or the payload with `consultant_name`, `contact_name`, or `firm`. A transaction around the dispatch. The stand-in store, beyond the shape guard that it still does not dispatch. `handleHaltList`. Claims 15 and 16. Claims 18–22’s gate predicates, beyond the shape guard that the contact arms still omit `firm_id`. Claim 17’s audience fill, beyond leaving it in place and not asserting its cardinality. `ConsultantPrototypeScene.tsx`. Launch Agent. No plate. `src/` product UI, beyond the two shape guards on `confirmHalt` and the A26 list.
+Door 1’s newest ten, beyond the shape guard that keeps the current statement. The two `event_test_data` specimen bodies, including `consultant_name`, `contact_name`, and `firm`. Adding `halt_records` to `PERSON_WRITE_TABLES`. Teaching `writesFromPayload` to read `haltId`. Adding a `localRefFromPayload` or `triggerLocalRefFromPayload` case. Adding Halt to `TRIGGER_SELECT_EVENTS`. Editing `WORKFLOW_EVENT_CATALOG`. Stripping `anyPass` (PKT-004). Dispatching the firm-book branch or the lift. Putting `audit_events` on `writes`. Enriching the row or the payload with `consultant_name`, `contact_name`, or `firm`. A transaction around the dispatch. The stand-in store, beyond the shape guard that it still does not dispatch. `handleHaltList`. Claims 15 and 16. Claims 18–22’s gate predicates. The contact arms already include `firm_id`. This packet does not remove it. Claim 17’s audience fill, beyond leaving it in place and not asserting its cardinality. `ConsultantPrototypeScene.tsx`. Launch Agent. No plate. `src/` product UI, beyond the two shape guards on `confirmHalt` and the A26 list.
 
 ## Impact manifest
 
@@ -796,13 +806,13 @@ Door 1’s newest ten, beyond the shape guard that keeps the current statement. 
 | `writesFromPayload` | Unchanged. `payload.writes` is the handle. No `haltId` reader | Every trigger, including this event | Only verified |
 | `RunWrite` | Unchanged. No `firm_id` field | This pointer’s `contact_id`, including null | Only verified |
 | `localRefFromPayload`, `triggerLocalRefFromPayload`, `localAxesMatch` | Unchanged. This event still has no local-ref case. Firm compare still falls back to `opts.firmId`. Contact compare still reads `payload.contactId`, then `contactIds` | Local `halt_records` listeners | Only verified |
-| `dispatchEventToWorkflows` | Unchanged. Still copies the payload and sets `eventName` and `anyPass`. The book fill stays | This event’s listeners | Only verified |
+| `dispatchEventToWorkflows` | Unchanged. Copies the payload and sets `eventName`. Does not set `anyPass`. The book fill stays | This event’s listeners | Only verified |
 | `event_write_set` `halt_records` v1 | Already ord 0 for this table. Not read at fire time | Live payload literal | Only verified |
 | `eventTest.ts` door 1 | Still the newest ten active rows for the firm, both scopes | Test door | Only verified |
 | `TRIGGER_SELECT_EVENTS`, `WORKFLOW_EVENTS_WITH_LOCAL` | Unchanged. Halt stays off both | A26 list, local-axis catalog | Only verified |
 | `POST /halt`, `POST /halt/:haltId/lift` | Same handlers. The commit response stays the halt record | Ant desk, wire client | Only verified |
 | `confirmHalt`, `standInHaltStore` | Unchanged. The Ant contact scope with no active client returns before commit. The stand-in does not dispatch | Ant halt modal | Only verified |
-| Contact halt gates | Unchanged. The contact arms still omit `firm_id` | Enroll, send, `GET /halt/contact/:contactId` | Only verified |
+| Contact halt gates | Unchanged. The contact arms already include `firm_id`. This packet does not remove it | Enroll, send, `GET /halt/contact/:contactId` | Only verified |
 | `scripts/verify-halt-records-writes.ts`, `ship.yml`, `factory-check.ts`, `factory-check.yml` | Postgres cases and the shape guard | Ship CI, factory check | Modified |
 
 ## Dependency reconciliation
@@ -811,16 +821,16 @@ Door 1’s newest ten, beyond the shape guard that keeps the current statement. 
 | --- | --- |
 | The contact-scope dispatch omits `writes`, so `writesFromPayload` returns no pointer. `haltId` is already the `id("halt")` string the insert stored. That same binding is `writes[0].id`. A second `id("halt")` would publish a pointer that matches no row. `contact_id` on the pointer is the insert bind `body.contactId ?? null`. The `contactIds` argument stays the existing ternary, `undefined` when `contactId` is omitted and one element when it is a non-empty string. | necessary |
 | `writesFromPayload` returns the array and then stops. It does not read `haltId` or singular `contactId`. A reader for `haltId` would invent a pointer when `writes` is absent, which case 2 forbids. The payload must not gain `contactIds`, or a missing `writes` array would publish `contact_records`. `contactIds` stays the dispatch argument. A null `contact_id` is not a string, so the reader stores `null`. The source literal still has the key. The stored `RunWrite` cannot tell a missing key from null. | necessary |
-| `loadWriteRow` returns null for `halt_records`. The primary key is already `id`. The load is `WHERE id=$1` on `w.id`. A second query by `contact_id`, or `firm_id`, `lifted_at`, or `ORDER BY` on that statement, is a different predicate than claim 10. `consultant_id`, `scope`, `reason`, `halted_at`, and `lifted_at` stay columns. The walk’s `firmId` argument stays unused on this branch. Other branches in the function stay, including any PKT-006, PKT-009, PKT-010, or PKT-012 branch already present. PKT-012 loads `consent_records` by `contact_id` and the walk’s firm. That predicate is not this id load. The function stays unexported unless an earlier packet exported it. | necessary |
+| `loadWriteRow` returns null for `halt_records`. The primary key is already `id`. The load is `WHERE id=$1` on `w.id`. A second query by `contact_id`, or `firm_id`, `lifted_at`, or `ORDER BY` on that statement, is a different predicate than claim 10. `consultant_id`, `scope`, `reason`, `halted_at`, and `lifted_at` stay columns. The walk’s `firmId` argument stays unused on this branch. Other branches in the function stay, including any PKT-006, PKT-009, PKT-010, or PKT-012 branch already present. PKT-012 loads `consent_records` by `contact_id` and the walk’s firm. That predicate is not this id load. The function is already exported. Leave the export. | necessary |
 | `PERSON_WRITE_TABLES` omits `halt_records`. `personIdsFromWrites` then drops a null `contact_id`, so the `halt-` id is not a person. `evalIfPick` person-splits only when the set contains the table and `ctx.contactIds` is non-empty, so the field walks pass a one-element `contactIds` and expect `branch →`. An empty list would hide the set change. Case 7 is the empty list, and `counts.contacts` 0 is the proof the id was not published. Adding the name would fail both. This packet does not add the name. | necessary |
 | `localRefFromPayload` and `triggerLocalRefFromPayload` have no `halt_records` arm and return null. A trigger with `local_ref` set never matches this firing. An unset `local_ref` still matches. Putting a case on either reader would recut the axis. The firm compare falls back to `opts.firmId` because the payload has no `firm_id`. A listener for this firm matches, and a listener for another firm does not. That pair does not prove the key is absent. The shape guard proves the key is absent. The contact compare reads `payload.contactId` before `contactIds`, so a matching local-contact listener proves the payload string. `counts.contacts` 1 on a firm with two contacts proves the caller list was that one contact and was not replaced by the book. When `contactId` is omitted, `payloadString` returns null and the omitted argument makes the local-contact listener miss. That miss is the runtime proof for the omitted argument. | necessary |
 | The halt insert and the audit insert are separate statements, already completed before the await. There is no transaction and no `try/catch`. A dispatch error leaves both rows and does not return the HTTP body. Wrapping the await, or rolling the row back, would change that. The firm-book `UPDATE` stays in its own branch, before the insert, so the new firm-book row is not lifted by its own commit, and a contact commit does not run it. | necessary |
 | The walk stores `writes` and does not store `triggerPayload`. `haltId`, root `contactId`, and `anyPass` are not on `node_status`. The row, the HTTP `id`, the listeners, and the shape guard prove the first two. `payloadString` treats null and a missing key the same, so case 3’s listener cannot prove the payload key is present. The object literal proves it. `comparePasses` treats a null `lifted_at` as a failed `exists`, so case 5 proves the column is null and case 6 proves the same id shows the timestamp after the lift. | necessary |
 | `walkValidatedWorkflow` updates `workflow_run` and does not insert it. `dispatchEventToWorkflows` inserts before the walk. A direct load walk that skips the insert updates zero rows, and the case cannot read `node_status`. The script inserts the run first. `counts.contacts` is the stored length, not the id list. Case 7 uses that length because the only candidate person id is the `halt-` id. | necessary |
 | Door 1 selects the newest ten active `halt_records` rows for the firm, both scopes. A decoy with a later `halted_at` is how the load walks show the handle is the pointer id. The door stays. `event_write_set` version 1 already names this table at ord 0. The payload is a literal. It does not read that registry. The specimen keys `consultant_name`, `contact_name`, and `firm` stay on `event_test_data`. The live insert does not copy them. The second specimen is not a second element of this firing’s array. | adjacent |
-| PKT-004’s change specification says the current `halt_records` caller payload is unchanged apart from the forced `anyPass` copy, and its shape guard fails if `dispatchEventToWorkflows` still contains `anyPass`. This packet adds `writes` to that caller and does not edit `dispatchEventToWorkflows`. Implementing PKT-004 must not delete `writes`. This packet’s shape guard does not require `anyPass` to remain on the walked copy, so the two guards do not deadlock. Acceptance that the walked trigger still receives `anyPass` holds because this packet does not edit that function. This packet does not edit `SCP-pkt-004-firing-handle.md`. | adjacent |
+| PKT-004’s change specification says the current `halt_records` caller payload is unchanged apart from the forced `anyPass` copy, and its shape guard fails if `dispatchEventToWorkflows` still contains `anyPass`. This packet adds `writes` to that caller and does not edit `dispatchEventToWorkflows`. Implementing PKT-004 must not delete `writes`. This packet’s shape guard does not require `anyPass` to remain on the walked copy, so the two guards do not deadlock. The walked trigger does not receive a forced `anyPass`, because PKT-004 already removed that copy and this caller does not set the field. This packet does not edit `SCP-pkt-004-firing-handle.md`. | adjacent |
 | PKT-006 adds other `loadWriteRow` branches and does not add this one. If those branches are already present, leave them. This packet does not edit `SCP-pkt-006-id-keyed-loads.md`. | adjacent |
 | Claim 17 specifies the empty-contact audience inside `dispatchEventToWorkflows`. A contact-scope body that omits `contactId` still reaches that fill, because `contactIds` is `undefined` and the fixture audience is `every_firm`. The pointer is this insert’s id. Case 3 does not lock `counts.contacts`. This packet does not edit that function and does not use `select_from` in the fixture. | adjacent |
-| Claims 18 and 19 decide the contact arm’s `firm_id` predicate on the enroll, the send, and `handleHaltIsContact`. The pointer is unchanged. The shape guard locks the current contact SQL, which has no `firm_id`. The firm-book arms stay. This packet does not add a send or enroll behavior test. | adjacent |
+| Claims 18 and 19, planted as PKT-015 and PKT-016, put `firm_id` on the contact arm of `isHaltBlockingNew`, `consentAndHaltGate`, and `handleHaltIsContact`. The current SQL is `contact_id` and `firm_id`. The pointer is unchanged. A shape guard that fails when those predicates contain `firm_id` would undo those packets and would fail the checks they already planted. This packet does not edit the predicates and does not add that guard. It does not add a send or enroll behavior test. | adjacent |
 | The stand-in commit does not insert `halt_records` and does not dispatch. Its id tail is the map size, not `Math.random().toString(36).slice(2, 8)`. Aligning that formula with `id("halt")` is not this packet. `confirmHalt` in `ConsultantAntScene.tsx` is the early return the packet names. `ConsultantPrototypeScene.tsx` has a different `confirmHalt` and no early return. This packet does not add one. `handleHaltList` is a third reader, active rows for a firm with no limit of ten. It is not door 1 and not the id load. | adjacent |
 | The packet file still says `**Release:** draft`. The ledger stage for this revision was `released` when this wake was authorized, and this wake is the dispatch record. The behavior text is the same either way. | adjacent |

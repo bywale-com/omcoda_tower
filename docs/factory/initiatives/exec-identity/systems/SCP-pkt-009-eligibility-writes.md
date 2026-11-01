@@ -53,7 +53,7 @@ contactIds: opts.contactIds,
 - Do not put `enrollment`, `active_attempts`, `engagement_records`, `fact_writebacks`, `missing_fact_signals`, `reference_versions`, or `contact_records` on this array.
 - Leave the column bindings. `any_pathway_pass` stays the variable `anyPass`, and that variable stays `const anyPass = true`. The motion column stays `const motion = anyPass ? "reactivation" : "nudge"`. The payload’s `motion` stays the string `"reactivation"`. The payload’s `anyPass` stays the boolean `true`.
 - Leave the response object. It is still `{ contactId, evaluationId, resultId, signalId, motionId, motion }`. When `dispatched.length === 0`, the enroll loop stays, including the halt push `{ contactId, blocked: "halt", fallback: true }` and the success push `{ contactId, enrollmentId, fallback: true }`.
-- Add four `loadWriteRow` branches, as literal SQL, before the final `return null`. Each is `SELECT * FROM <table> WHERE id=$1` bound to `[w.id]`, for `eligibility_evaluations`, `eligibility_results`, `signals`, and `motion_decisions`. No `firm_id`, no `contact_id`, no `ORDER BY`, no `LIMIT`. No row returns null. Do not interpolate the table name. Do not query again by `contact_id` when `rows[0]` is missing. Do not filter `signals` by `kind`. Leave every other branch, including a `fact_writebacks`, `meeting_booked`, `wait_occupancy`, or `engagement_records` branch PKT-006 or PKT-004 may already have added. Do not export `loadWriteRow`. If it is already exported, leave the export.
+- Add four `loadWriteRow` branches, as literal SQL, before the final `return null`. Each is `SELECT * FROM <table> WHERE id=$1` bound to `[w.id]`, for `eligibility_evaluations`, `eligibility_results`, `signals`, and `motion_decisions`. No `firm_id`, no `contact_id`, no `ORDER BY`, no `LIMIT`. No row returns null. Do not interpolate the table name. Do not query again by `contact_id` when `rows[0]` is missing. Do not filter `signals` by `kind`. Leave every other branch. The function already loads `engagement_records`, `missing_fact_signals`, `fact_writebacks`, `meeting_booked`, `wait_occupancy`, `campaign_failure`, and `ct_firms` by `id`. Do not export `loadWriteRow`. It is already exported. Leave the export.
 - Do not add these four names to `PERSON_WRITE_TABLES`. Do not remove a name that is already there. Do not edit `personTableOf`, `evalIfPick`, `personIdsFromWrites`, `pickWrites`, or either `find` in `resolveOperandText`. The find stays `row.contact_id === contactId || row.id === contactId`, then `[0]`. The no-contact arm stays `picked[0]`.
 - Do not edit `writesFromPayload`. Do not teach it to read `evaluationId`, `resultId`, `signalId`, or `motionId`.
 - Do not edit `localRefFromPayload`. Do not add an `eligibility.changed` case.
@@ -175,40 +175,40 @@ The lines after that array return push `import_batch` and then one `contact_reco
 
 `loadWriteRow` returns null after the tables it already knows. The four eligibility tables are not among them. `const contactId = w.contact_id ?? w.id` stays for the branches that already use it. The new branches do not use `contactId`.
 
-The function begins with the pair loads, continues through `contact_records`, `contact_tag`, `audit_runs`, `import_batch`, and `enrollment`, and ends at the signal branch. The four eligibility tables are not in that list.
+The function is already exported. It begins with the pair loads, which select `sequence_ready` and `reachability_verdicts` by `audit_run_id`, `contact_id`, and `firm_id`, and return null when `contact_id` is blank. It continues through `contact_records`, `contact_tag`, `audit_runs`, `import_batch`, `enrollment`, `engagement_records`, `missing_fact_signals`, `fact_writebacks`, `meeting_booked`, `wait_occupancy`, `campaign_failure`, and `ct_firms`, then `return null`. The four eligibility tables are not in that list. `const contactId = w.contact_id ?? w.id` is still declared and is not used by those branches. The new branches do not use it.
 
-```655:667:server/wire-service/workflowWalk.ts
-async function loadWriteRow(
+```676:689:server/wire-service/workflowWalk.ts
+export async function loadWriteRow(
   pool: Pool,
   firmId: string,
   w: RunWrite,
 ): Promise<Record<string, unknown> | null> {
   const contactId = w.contact_id ?? w.id;
   if (w.table === "sequence_ready") {
+    if (w.contact_id == null || w.contact_id === "") return null;
     const { rows } = await pool.query(
-      `SELECT * FROM sequence_ready WHERE contact_id=$1 AND firm_id=$2`,
-      [contactId, firmId],
+      `SELECT * FROM sequence_ready WHERE audit_run_id=$1 AND contact_id=$2 AND firm_id=$3`,
+      [w.id, w.contact_id, firmId],
     );
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
 ```
 
-```691:700:server/wire-service/workflowWalk.ts
-  if (w.table === "enrollment") {
-    const { rows } = await pool.query(`SELECT * FROM enrollment WHERE id=$1`, [w.id]);
+```738:746:server/wire-service/workflowWalk.ts
+  if (w.table === "campaign_failure") {
+    const { rows } = await pool.query(`SELECT * FROM campaign_failure WHERE id=$1`, [w.id]);
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
-  if (w.table === "missing_fact_signals") {
-    const { rows } = await pool.query(`SELECT * FROM missing_fact_signals WHERE id=$1`, [w.id]);
+  if (w.table === "ct_firms") {
+    const { rows } = await pool.query(`SELECT * FROM ct_firms WHERE id=$1`, [w.id]);
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
   return null;
-}
 ```
 
 `PERSON_WRITE_TABLES` does not contain the four names. `personIdsFromWrites` uses `contact_id` when the pointer sets it, so these row ids do not become people while the pointer carries `contact_id`. Membership is what `personTableOf` consults. Leaving the names out keeps `evalIfPick` on the single compare.
 
-```199:206:server/wire-service/workflowWalk.ts
+```199:209:server/wire-service/workflowWalk.ts
 const PERSON_WRITE_TABLES = new Set([
   "sequence_ready",
   "reachability_verdicts",
@@ -216,10 +216,13 @@ const PERSON_WRITE_TABLES = new Set([
   "contact_tag",
   "enrollment",
   "wait_occupancy",
+  "engagement_records",
+  "fact_writebacks",
+  "meeting_booked",
 ]);
 ```
 
-```264:268:server/wire-service/workflowWalk.ts
+```267:271:server/wire-service/workflowWalk.ts
 function personIdsFromWrites(writes: RunWrite[]): string[] {
   return uniqueIds(
     writes.map((w) => w.contact_id ?? (PERSON_WRITE_TABLES.has(w.table) ? w.id : null)),
@@ -227,7 +230,7 @@ function personIdsFromWrites(writes: RunWrite[]): string[] {
 }
 ```
 
-```848:856:server/wire-service/workflowWalk.ts
+```895:903:server/wire-service/workflowWalk.ts
 function personTableOf(data: Record<string, unknown>, compares: WalkCompare[]): string | null {
   for (const cmp of compares) {
     if (cmp.left.mode !== "chip") continue;
@@ -241,7 +244,7 @@ function personTableOf(data: Record<string, unknown>, compares: WalkCompare[]): 
 
 When that table is unset, `evalIfPick` runs one compare with no contact id. A pass sends every `ctx.contactIds` down the true branch. The detail is `branch → true` or `branch → false`, not the person-split `then=` / `else=` string. Do not edit this function.
 
-```917:940:server/wire-service/workflowWalk.ts
+```964:987:server/wire-service/workflowWalk.ts
 async function evalIfPick(
   pool: Pool,
   ctx: WalkContext,
@@ -270,7 +273,7 @@ async function evalIfPick(
 
 The no-contact arm of `resolveOperandText` reads `picked[0]`. The `find` runs only when a contact id is passed, which is the person-split path these four tables do not take. Both arms stay.
 
-```866:880:server/wire-service/workflowWalk.ts
+```913:927:server/wire-service/workflowWalk.ts
   if (operand.slot === "__legacy") {
     const pickTable = String(data.pickTable ?? "").trim();
     const pickField = String(data.pickField ?? "").trim();
@@ -290,7 +293,7 @@ The no-contact arm of `resolveOperandText` reads `picked[0]`. The `find` runs on
 
 `pickWrites` by table does not depend on cross-table order. The array still follows the registered ord so one firing’s handle matches the write-set.
 
-```254:258:server/wire-service/workflowWalk.ts
+```257:261:server/wire-service/workflowWalk.ts
 function pickWrites(writes: RunWrite[], pickTable?: string, pickId?: string): RunWrite[] {
   if (pickId) return writes.filter((w) => w.id === pickId);
   if (pickTable) return writes.filter((w) => w.table === pickTable);
@@ -300,7 +303,7 @@ function pickWrites(writes: RunWrite[], pickTable?: string, pickId?: string): Ru
 
 `localRefFromPayload` has no `eligibility.changed` branch and returns null. `anyPass`, `motion`, `form_ref`, `campaign_objective_id`, and `referenceId` do not start a local trigger.
 
-```1853:1871:server/wire-service/workflowWalk.ts
+```1919:1937:server/wire-service/workflowWalk.ts
 function localRefFromPayload(
   eventName: string,
   payload: Record<string, unknown> | undefined,
@@ -324,7 +327,7 @@ function localRefFromPayload(
 
 When no workflow fires, `enrollAndActuate` inserts `enrollment` and `active_attempts`, then `writeEngagement` inserts `engagement_records`, because the cascade omits `fireFirstStep`. A halt returns before those inserts. Those three tables stay off `writes`. This packet does not retune the enroll.
 
-```720:733:server/wire-service/cascade.ts
+```740:753:server/wire-service/cascade.ts
   await pool.query(
     `INSERT INTO enrollment (id, firm_id, contact_id, agent_ref, sequence_id, workflow_run_id, payload, campaign_id)
      VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8)`,
@@ -341,7 +344,7 @@ When no workflow fires, `enrollAndActuate` inserts `enrollment` and `active_atte
   );
 ```
 
-```755:768:server/wire-service/cascade.ts
+```775:788:server/wire-service/cascade.ts
   await pool.query(
     `INSERT INTO active_attempts
        (id, firm_id, contact_id, enrollment_id, owner_channel, status, state, window_started_at, fired_criteria)
@@ -446,9 +449,9 @@ The cascade binds the four ids, pushes the response object, then dispatches with
 
 Collect the four pointer lists during that same loop. Add `writes` on that one dispatch. Leave the inserts, the response push, the `contactIds` argument, and the enroll block in that order. One dispatch carries every contact. Do not dispatch inside the loop.
 
-The fact caller passes the fact scalars, including `contactId`, and dispatches `fact_writebacks` only after the cascade returns. That second payload does not gain this quartet.
+The fact caller passes the fact scalars, including `contactId`, and dispatches `fact_writebacks` only after the cascade returns. That second payload already carries one `fact_writebacks` pointer. It does not gain this quartet.
 
-```475:500:server/wire-service/machine.ts
+```475:503:server/wire-service/machine.ts
   const { cascade, workflowsFired } = await runContactEligibilityCascade({
     firm,
     contactIds: [contactId],
@@ -472,14 +475,17 @@ The fact caller passes the fact scalars, including `contactId`, and dispatches `
       contactId,
       form_ref: stamp.formRef,
       campaign_objective_id: stamp.campaignObjectiveId,
+      writes: [
+        { table: "fact_writebacks", id: writeId, contact_id: contactId },
+      ],
     },
     contactIds: [contactId],
   });
 ```
 
-The seat caller does the same inside the answer loop. Its cascade `eventPayload` has `contactId` and no `firm_id`. Its later `fact_writebacks` payload has `firm_id`. Do not copy `firm_id` onto the cascade payload.
+The seat caller does the same inside the answer loop. Its cascade `eventPayload` has `contactId` and no `firm_id`. Its later `fact_writebacks` payload has `firm_id` and one `fact_writebacks` pointer. Do not copy `firm_id` onto the cascade payload, and do not put this quartet on that fact payload.
 
-```586:611:server/wire-service/contactSeat.ts
+```586:614:server/wire-service/contactSeat.ts
     await runContactEligibilityCascade({
       firm: resolved.link.firm_id,
       contactIds: [resolved.link.contact_id],
@@ -503,6 +509,9 @@ The seat caller does the same inside the answer loop. Its cascade `eventPayload`
         firm_id: resolved.link.firm_id,
         form_ref: stamp.formRef,
         campaign_objective_id: stamp.campaignObjectiveId,
+        writes: [
+          { table: "fact_writebacks", id: writeId, contact_id: resolved.link.contact_id },
+        ],
       },
       contactIds: [resolved.link.contact_id],
     });
@@ -529,9 +538,9 @@ The reference caller passes `{ referenceId: id }` and the body’s `contactIds`,
   });
 ```
 
-`dispatchEventToWorkflows` copies the caller payload onto the walk and also sets `eventName` and `anyPass`. This packet does not change that copy. `writesFromPayload` reads `writes` and ignores those two keys. When `contactIds` is empty and the audience is the whole firm, the dispatcher loads every `contact_records` id for the firm onto the walk. That list is not `writes`. This packet does not change that branch.
+`dispatchEventToWorkflows` copies the caller payload onto the walk and sets `eventName`. It does not set `anyPass`. PKT-004 already removed that forced copy. This packet does not put it back. The caller payload still sets `anyPass: true`, and the spread copies that field. `writesFromPayload` reads `writes` and ignores `eventName` and `anyPass`. When `contactIds` is empty and the audience is the whole firm, the dispatcher loads every `contact_records` id for the firm onto the walk. That list is not `writes`. This packet does not change that branch.
 
-```1950:1977:server/wire-service/workflowWalk.ts
+```2016:2043:server/wire-service/workflowWalk.ts
     let contactIds = opts.contactIds;
     const scope = row.audience_scope === "select_from" ? "select_from" : "every_firm";
     if (scope === "select_from") {
@@ -557,14 +566,14 @@ The reference caller passes `{ referenceId: id }` and the body’s `contactIds`,
       firmId: opts.firmId,
       runId,
       triggerLabel: `event:${opts.eventName}`,
-      triggerPayload: { ...(opts.payload ?? {}), eventName: opts.eventName, anyPass: true },
+      triggerPayload: { ...(opts.payload ?? {}), eventName: opts.eventName },
       contactIds,
     });
 ```
 
 The walk does not store `triggerPayload`. It stores `writesFromPayload`’s output on the trigger node. That stored array is the handle this packet proves.
 
-```1091:1095:server/wire-service/workflowWalk.ts
+```1138:1142:server/wire-service/workflowWalk.ts
   let contactIds = opts.contactIds ?? [];
   const triggerWrites = writesFromPayload(opts.triggerPayload);
   if (!contactIds.length) {
@@ -572,7 +581,7 @@ The walk does not store `triggerPayload`. It stores `writesFromPayload`’s outp
   }
 ```
 
-```1145:1152:server/wire-service/workflowWalk.ts
+```1203:1210:server/wire-service/workflowWalk.ts
       if (type === "trigger") {
         commitWrites(ctx, nodeId, ctx.previousWrites);
         nodeStatus[nodeId] = {
@@ -585,7 +594,7 @@ The walk does not store `triggerPayload`. It stores `writesFromPayload`’s outp
 
 `node_status` is written onto `workflow_run` at the end of the walk. The verify reads that column. `counts.contacts` is `ctx.contactIds.length`, which for an empty caller list is the book size, not the length of `writes`.
 
-```1667:1682:server/wire-service/workflowWalk.ts
+```1733:1748:server/wire-service/workflowWalk.ts
   await pool.query(
     `UPDATE workflow_run
      SET status=$2, waiting_node_id=NULL, resume_at=NULL,
@@ -606,7 +615,7 @@ The walk does not store `triggerPayload`. It stores `writesFromPayload`’s outp
 
 Door 1 for this event still takes the newest eight evaluations for the firm and the related result, signal, and motion rows. That reader is not the run handle.
 
-```134:159:server/wire-service/eventTest.ts
+```136:161:server/wire-service/eventTest.ts
     if (eventName === "eligibility.changed") {
       const evals = await pool.query(
         `SELECT * FROM eligibility_evaluations WHERE firm_id=$1 ORDER BY created_at DESC LIMIT 8`,
@@ -637,7 +646,7 @@ Door 1 for this event still takes the newest eight evaluations for the firm and 
 
 The Board still takes the newest row per contact. That reader is not this load.
 
-```739:753:server/wire-service/machine.ts
+```742:756:server/wire-service/machine.ts
       `SELECT DISTINCT ON (contact_id) *
        FROM eligibility_results WHERE firm_id=$1
        ORDER BY contact_id, created_at DESC`,
@@ -657,7 +666,7 @@ The Board still takes the newest row per contact. That reader is not this load.
 
 The If detail when these tables are not in the set is `branch → ${ctx.branchTaken}`.
 
-```1173:1184:server/wire-service/workflowWalk.ts
+```1231:1242:server/wire-service/workflowWalk.ts
       if (type === "branch" || type === "if") {
         const picked = await evalIfPick(pool, ctx, data);
         ctx.branchTaken = picked.pass ? "true" : "false";
@@ -718,7 +727,7 @@ Graphs for the listener are a trigger plus an `exit`, with an edge from the trig
 
 The empty-list case runs before any `contact_records` row exists for the listener firm, so the dispatcher’s book fill has nothing to copy. Later cases insert the contacts.
 
-The load walks call `walkValidatedWorkflow` directly. `loadWriteRow` stays unexported. Each graph is a trigger plus an `if` plus an `exit`. The If uses the legacy pick: `pickTable`, `pickField`, `pickOp` `"eq"`, `pickValue`. `configured` is not `false`. `contactIds` on that walk is one contact. Trigger `payload.writes` is the pointer list the case states. The If detail is `branch → true` or `branch → false`, because these tables are not in `PERSON_WRITE_TABLES`. A detail of `if pick … then=` means the set was changed, and that case fails.
+The load walks call `walkValidatedWorkflow` directly. `loadWriteRow` is already exported. Leave the export. Each graph is a trigger plus an `if` plus an `exit`. The If uses the legacy pick: `pickTable`, `pickField`, `pickOp` `"eq"`, `pickValue`. `configured` is not `false`. `contactIds` on that walk is one contact. Trigger `payload.writes` is the pointer list the case states. The If detail is `branch → true` or `branch → false`, because these tables are not in `PERSON_WRITE_TABLES`. A detail of `if pick … then=` means the set was changed, and that case fails.
 
 Columns the load walks compare:
 
@@ -742,7 +751,7 @@ One `POST /machine/fact-writebacks` with `contactId` and `fieldKey` `"keep"`. Th
 
 One `POST /machine/reference` with `key`, `payload`, and `contactIds` of two contacts. One new global eligibility run. `writes` has length 8 in table order. No element has table `reference_versions`. The returned `referenceId` is the `reference_versions` row. The body’s contact list is the list the cascade received. This case does not omit `contactIds`, so the `LIMIT 50` fill does not run.
 
-`npm run factory:check` reads `runContactEligibilityCascade` and fails unless the `eligibility.changed` payload expression contains `...opts.eventPayload`, `anyPass: true`, `motion: "reactivation"`, and `writes`. It fails unless `contactIds: opts.contactIds` is the dispatch argument. It fails unless `const anyPass = true` and `anyPass ? "reactivation" : "nudge"` remain. It fails unless the loop is `for (const contactId of opts.contactIds)`. It fails if that payload object contains `firm_id`, `contactIds`, `contact_ids`, `evaluationId`, `resultId`, `signalId`, or `motionId`. It fails if the `writes` construction contains `enrollment`, `active_attempts`, `engagement_records`, `fact_writebacks`, `missing_fact_signals`, `reference_versions`, or `contact_records`. It fails if the pointer `id` for a table is not the insert’s `evalId`, `resultId`, `signalId`, or `motionId`. It fails if a check already in this file fails because that payload expression contains `writes`: replace that refusal with this requirement. It reads `handleFactWriteback` and fails if the `fact_writebacks` payload object contains `eligibility_evaluations`, `eligibility_results`, `signals`, or `motion_decisions`, and fails if the cascade `eventPayload` loses `writebackId`, `fieldKey`, `contactId`, `form_ref`, or `campaign_objective_id`. It reads `handleContactSeatFacts` and fails unless `runContactEligibilityCascade` stays inside the answer loop, and fails if that cascade `eventPayload` loses those same keys or gains `firm_id`. It reads `handleReferenceUpsert` and fails if `eventPayload` loses `referenceId`, and fails if the `LIMIT 50` contact fill is removed. It reads `writesFromPayload` and fails if that function contains `evaluationId`, `resultId`, `signalId`, or `motionId`. It reads `localRefFromPayload` and fails if that function contains `eligibility.changed`. It reads `loadWriteRow` and fails unless it contains `SELECT * FROM eligibility_evaluations WHERE id=$1`, `SELECT * FROM eligibility_results WHERE id=$1`, `SELECT * FROM signals WHERE id=$1`, and `SELECT * FROM motion_decisions WHERE id=$1`, and fails if any of those four statements contains `firm_id`, `contact_id`, `ORDER BY`, or `LIMIT`. It fails unless the function still ends at `return null`. It reads `PERSON_WRITE_TABLES` and fails if the set contains `eligibility_evaluations`, `eligibility_results`, `signals`, or `motion_decisions`. It reads `resolveOperandText` and fails if either `find` drops `row.contact_id === contactId || row.id === contactId`. It does not assert on `anyPass` inside `dispatchEventToWorkflows`. It does not require or forbid the book-fill query. Add `server/wire-service/machine.ts`, `server/wire-service/workflowWalk.ts`, `server/wire-service/runWrites.ts`, and `scripts/verify-eligibility-writes.ts` to the path filter in `.github/workflows/factory-check.yml`. `server/wire-service/contactSeat.ts` is already listed.
+`npm run factory:check` reads `runContactEligibilityCascade` and fails unless the `eligibility.changed` payload expression contains `...opts.eventPayload`, `anyPass: true`, `motion: "reactivation"`, and `writes`. It fails unless `contactIds: opts.contactIds` is the dispatch argument. It fails unless `const anyPass = true` and `anyPass ? "reactivation" : "nudge"` remain. It fails unless the loop is `for (const contactId of opts.contactIds)`. It fails if that payload object contains `firm_id`, `contactIds`, `contact_ids`, `evaluationId`, `resultId`, `signalId`, or `motionId`. It fails if the `writes` construction contains `enrollment`, `active_attempts`, `engagement_records`, `fact_writebacks`, `missing_fact_signals`, `reference_versions`, or `contact_records`. It fails if the pointer `id` for a table is not the insert’s `evalId`, `resultId`, `signalId`, or `motionId`. It fails if a check already in this file fails because that payload expression contains `writes`: replace that refusal with this requirement. It reads `handleFactWriteback` and fails if the `fact_writebacks` payload object contains `eligibility_evaluations`, `eligibility_results`, `signals`, or `motion_decisions`, and fails if the cascade `eventPayload` loses `writebackId`, `fieldKey`, `contactId`, `form_ref`, or `campaign_objective_id`. It reads `handleContactSeatFacts` and fails unless `runContactEligibilityCascade` stays inside the answer loop, and fails if that cascade `eventPayload` loses those same keys or gains `firm_id`. It reads `handleReferenceUpsert` and fails if `eventPayload` loses `referenceId`, and fails if the `LIMIT 50` contact fill is removed. It reads `writesFromPayload` and fails if that function contains `evaluationId`, `resultId`, `signalId`, or `motionId`. It reads `localRefFromPayload` and fails if that function contains `eligibility.changed`. It reads `loadWriteRow` and fails unless it contains `SELECT * FROM eligibility_evaluations WHERE id=$1`, `SELECT * FROM eligibility_results WHERE id=$1`, `SELECT * FROM signals WHERE id=$1`, and `SELECT * FROM motion_decisions WHERE id=$1`, and fails if any of those four statements contains `firm_id`, `contact_id`, `ORDER BY`, or `LIMIT`. It fails unless the function still ends at `return null`. It reads `PERSON_WRITE_TABLES` and fails if the set contains `eligibility_evaluations`, `eligibility_results`, `signals`, or `motion_decisions`. It reads `resolveOperandText` and fails if either `find` drops `row.contact_id === contactId || row.id === contactId`. The planted fact check asserts `eligibility.includes("writes")` is false. Replace that assertion. Do not delete the fact-payload ban on the four table names. `scripts/verify-fact-writes.ts` case `case1-eligibility` requires trigger `writes` length 0. Change that case to this quartet. It does not assert on `anyPass` inside `dispatchEventToWorkflows`. It does not require or forbid the book-fill query. Add `server/wire-service/machine.ts`, `server/wire-service/workflowWalk.ts`, `server/wire-service/runWrites.ts`, and `scripts/verify-eligibility-writes.ts` to the path filter in `.github/workflows/factory-check.yml`. `server/wire-service/contactSeat.ts` is already listed.
 
 A pass is evidence only for the candidate SHA that ran. A pass on an older SHA does not verify a newer commit.
 
@@ -762,7 +771,7 @@ A pass is evidence only for the candidate SHA that ran. A pass on an older SHA d
 | `evalIfPick`, `resolveOperandText` | Unchanged. No split. No-contact pick is `picked[0]`. The `find` stays | If detail `branch →` | Only verified |
 | `writesFromPayload` | Unchanged. `payload.writes` is the handle. No scalar-id reader | Every trigger, including this event | Only verified |
 | `localRefFromPayload` | Unchanged. No `eligibility.changed` case | Local eligibility listener | Only verified |
-| `dispatchEventToWorkflows` | Unchanged. Still copies payload, sets `eventName` and `anyPass`, and fills an empty list from the firm book | Eligibility listener `node_status` | Only verified |
+| `dispatchEventToWorkflows` | Unchanged. Copies the payload and sets `eventName`. Does not set `anyPass`. Fills an empty list from the firm book | Eligibility listener `node_status` | Only verified |
 | Cascade return | Still `{ contactId, evaluationId, resultId, signalId, motionId, motion }` per contact | Fact and reference HTTP `cascade` | Only verified |
 | Fact and seat `fact_writebacks` dispatch | Unchanged. The quartet is not on that payload. Seat call stays inside the answer loop | Fact listener | Only verified |
 | Reference contact fill | Unchanged. Body `contactIds`, else `LIMIT 50` | `POST /machine/reference` | Only verified |
@@ -777,16 +786,16 @@ A pass is evidence only for the candidate SHA that ran. A pass on an older SHA d
 | --- | --- |
 | The cascade dispatch omits `writes`, so `writesFromPayload` returns no pointer and the trigger handle is empty. The four ids are already bound on the inserts. Those same strings are the pointer ids. A second `randomUUID()` would publish a pointer that matches no row. The array is built after the loop, in table order, so two contacts group by table. Insert order inside one contact stays evaluation, result, signal, motion. | necessary |
 | `writesFromPayload` returns the array and then stops. It does not read `evaluationId`, `resultId`, `signalId`, or `motionId`. A reader for those scalars would invent pointers when `writes` is absent, which case 5 forbids. The cascade return uses those key names and is not the dispatch argument. The payload must not gain `contactIds`, or a missing `writes` array would publish `contact_records`. The fact and seat `eventPayload` already carry singular `contactId`. That string does not feed the fallthrough. | necessary |
-| `loadWriteRow` returns null for these four tables. Each primary key is already `id`. The load is `WHERE id=$1` on `w.id`. A second query by `contact_id`, or `firm_id` / `ORDER BY` on that statement, is a different predicate than claim 10. The result’s `evaluation_id` and the signal’s `payload.resultId` stay columns. They are not the pointer id. Other branches in the function stay, including any PKT-004 or PKT-006 branch already present. The function stays unexported unless an earlier packet exported it. | necessary |
+| `loadWriteRow` returns null for these four tables. Each primary key is already `id`. The load is `WHERE id=$1` on `w.id`. A second query by `contact_id`, or `firm_id` / `ORDER BY` on that statement, is a different predicate than claim 10. The result’s `evaluation_id` and the signal’s `payload.resultId` stay columns. They are not the pointer id. Other branches in the function stay, including any PKT-004 or PKT-006 branch already present. The function is already exported. Leave the export. | necessary |
 | `PERSON_WRITE_TABLES` omits the four names. `evalIfPick` then runs one compare and, on a pass, sends every `ctx.contactIds` down the true branch. The detail is `branch → true` or `branch → false`. The no-contact arm reads `picked[0]`. Adding the names would person-split this firing. Claim 52 is that split. This packet does not add the names, and it does not retune the `find`. | necessary |
 | The fact dispatch and the seat fact dispatch run after the cascade returns. Their payloads do not list these four tables. Putting the quartet on those payloads would make the fact firing carry rows that belong to `eligibility.changed`. The seat cascade call is inside the answer loop, so each answer is its own quartet. Moving that call outside the loop would collapse two answers onto one firing. | necessary |
-| `dispatchEventToWorkflows` still forces `anyPass: true` after the spread, and on an empty `contactIds` it fills the walk from `contact_records` for the firm. `writesFromPayload` does not read `anyPass`. An empty `writes` array stays empty when the book fills the person list. Removing the flag is PKT-004. Specifying the audience branch is claim 17. This packet does not edit that function. The caller payload still sets `anyPass: true`, so the field remains if the forced copy is later removed. The empty-list verify uses a firm with no contacts, so `counts.contacts` is 0 and `writes` is `[]`. | necessary |
+| `dispatchEventToWorkflows` no longer forces `anyPass: true`. PKT-004 removed that copy. On an empty `contactIds` it still fills the walk from `contact_records` for the firm. `writesFromPayload` does not read `anyPass`. An empty `writes` array stays empty when the book fills the person list. This packet does not edit that function and does not restore the forced copy. The caller payload still sets `anyPass: true`, and the spread copies it onto the walk. Specifying the audience branch is claim 17. The empty-list verify uses a firm with no contacts, so `counts.contacts` is 0 and `writes` is `[]`. | necessary |
 | When `dispatched.length === 0`, `enrollAndActuate` inserts `enrollment` and `active_attempts`, and `writeEngagement` inserts `engagement_records`, because `fireFirstStep` is omitted. Those rows exist only when no listener ran, so no trigger `writes` holds them. The `writes` array is assembled before that call and names only the four tables. A halt still returns before the inserts. The enroll call stays. Claim 43 specifies the enroll. This packet does not edit `enrollAndActuate`. | necessary |
 | `localRefFromPayload` has no `eligibility.changed` branch and returns null. Keeping `form_ref`, `campaign_objective_id`, `referenceId`, `anyPass`, and `motion` does not start a local trigger. Adding a case would make the local listener in case 1 start. The scalars stay because the packet keeps them. The shape guard is the proof they remain. The walk does not store them. | necessary |
 | Door 1 selects the newest eight evaluations and the signals and motions of those contacts, not the ids this loop bound. `handleBoardDetections` selects `DISTINCT ON (contact_id) … created_at DESC`. Both stay. A decoy with a later `created_at` is how the load walks show the handle is the pointer id. | adjacent |
 | PKT-006 adds other `loadWriteRow` branches and other `PERSON_WRITE_TABLES` names, and its shape guard fails if these four names are in the set. It also says to leave these four branches if they are already present. This packet adds the branches and does not add the names. If PKT-006’s branches are already present, leave them. This packet does not edit `SCP-pkt-006-id-keyed-loads.md`. | adjacent |
-| PKT-007’s change specification tells `factory-check` to fail if the `eligibility.changed` payload expression contains `writes`, and tells its verify to expect that listener’s `writes` to be `[]`. That freeze kept PKT-007 from planting this array. The Architect’s PKT-007 text says the quartet belongs on `eligibility.changed`. This packet is that array. A refusal of `writes` on this payload contradicts this packet and is replaced by the requirement above. `scripts/verify-fact-writes.ts` is not on this tree. Do not create it. If it is present and requires an empty eligibility handle, change that assertion to this quartet. Do not otherwise retune the fact cases. This packet does not edit `SCP-pkt-007-fact-writes.md`. The fact payload still must not contain the four table names. | necessary |
-| PKT-004 removes the forced `anyPass` copy inside `dispatchEventToWorkflows` and leaves the caller’s `anyPass: true` in place. This packet does not edit that function and does not strip the caller field. Implementing PKT-004 must not delete this `writes` array. This packet does not edit `SCP-pkt-004-firing-handle.md`. | adjacent |
+| PKT-007 is planted. `scripts/factory-check.ts` slices `runContactEligibilityCascade` and asserts `eligibility.includes("writes")` is false. `scripts/verify-fact-writes.ts` case `case1-eligibility` fails unless that listener’s trigger `writes` length is 0. Those freezes kept the fact packet from planting this array. This packet is that array. Replace the factory-check refusal with the requirement that the `eligibility.changed` payload expression contains `writes`. Change the verify case so the eligibility listener’s `writes` are this quartet for that contact. Do not otherwise retune the fact cases. Keep the fact-payload ban on `eligibility_evaluations`, `eligibility_results`, `signals`, and `motion_decisions`. This packet does not edit `SCP-pkt-007-fact-writes.md`. | necessary |
+| PKT-004 is planted. `dispatchEventToWorkflows` no longer writes `anyPass: true` onto the walked trigger. The caller’s `anyPass: true` remains, and the spread copies it. This packet does not edit that function, does not restore the forced copy, and does not strip the caller field. A later edit of the dispatcher must not delete this `writes` array. This packet does not edit `SCP-pkt-004-firing-handle.md`. | adjacent |
 | Claim 52 adds these four tables to the set `evalIfPick` consults. Until that packet, a two-contact firing does not split, and the If reads the first pointer of the named table. This packet’s load proof expects `branch →`. A later packet that adds the names will change that detail. This packet does not implement that split. | adjacent |
 | The reference route still selects up to 50 contacts when the body omits `contactIds`. The order proof passes an explicit list. The `LIMIT 50` fill stays. Claim 17 specifies the dispatcher’s empty audience. This packet’s empty `opts.contactIds` is a different input: the caller passed `[]`, and `writes` is `[]`. | adjacent |
 | The packet file still says `**Release:** draft`. The ledger stage for this revision was `released` when this wake was authorized, and this wake is the dispatch record. The behavior text is the same either way. | adjacent |
