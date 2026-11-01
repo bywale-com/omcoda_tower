@@ -1,5 +1,5 @@
 {
-  "stateRevision": 235,
+  "stateRevision": 236,
   "authorizedDispatches": 50,
   "usedDispatches": 50,
   "scope": {
@@ -950,7 +950,7 @@
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
-      "dispatchedSaRevision": "rev-1",
+      "dispatchedSaRevision": null,
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
