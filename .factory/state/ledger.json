@@ -1,5 +1,5 @@
 {
-  "stateRevision": 229,
+  "stateRevision": 230,
   "authorizedDispatches": 50,
   "usedDispatches": 47,
   "scope": {
@@ -813,7 +813,7 @@
     "pkt-011-halt-records-writes": {
       "id": "pkt-011-halt-records-writes",
       "initiativeId": "exec-identity",
-      "stage": "analysis",
+      "stage": "released",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
@@ -830,7 +830,7 @@
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
-      "dispatchedSaRevision": "rev-1",
+      "dispatchedSaRevision": null,
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
