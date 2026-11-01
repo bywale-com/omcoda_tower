@@ -70,6 +70,7 @@ import {
   analystFileCountsAsThisDispatch,
   recoverExecutions,
   unconfirmedDelivery,
+  unsignedAnalystRecovery,
 } from "../.factory/controller/execution.ts";
 import { readyReleases } from "../.factory/controller/conclusion.ts";
 import { headMatchesDispatch, selectLabeledDispatch } from "../.factory/controller/wake.ts";
@@ -3360,6 +3361,9 @@ check("committed non-UI packets stay released without a generated plate", () => 
 check("the committed scope is agents-and-automations and PKT-001 stays manual", () => {
   const committed = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
   const view = projectFactory(committed);
+  for (const item of [...view.explanation.packets, ...view.explanation.initiatives]) {
+    assert.equal(commitmentHolds(item.commitment), true, item.id);
+  }
   assert.equal(view.scope.id, "agents-and-automations");
   assert.ok(view.scope.status === "suspended" || view.scope.status === "active");
   assert.deepEqual(view.scope.modules, ["Agents and Automations"]);
@@ -3427,6 +3431,10 @@ check("control and authorize commands do not arm the committed ledger", () => {
     const pressureNow = productionPressure(Object.values(committedForDry.packets));
     assert.equal(pressureNow.holdArchitect, pressureNow.engineerQueueDepth >= 2);
     const architectLane = !committedForDry.scope.lanes || committedForDry.scope.lanes.includes("architect");
+    const analystLane = !committedForDry.scope.lanes || committedForDry.scope.lanes.includes("analyst");
+    const unsignedOpen = Object.values(committedForDry.packets).some((packet) =>
+      unsignedAnalystRecovery(packet, "2026-11-01T14:00:00.000Z"),
+    );
     const returned = proposed.wakes.filter((wake) => wake.effect === "wake_sa" && wake.id === "pkt-019-first-step-send-denied");
     if (returned.length) {
       assert.equal(proposed.reason, "specification_returned");
@@ -3434,6 +3442,15 @@ check("control and authorize commands do not arm the committed ledger", () => {
       assert.equal(proposed.wakes.some((wake) => wake.effect === "wake_engineer"), false);
     } else if (proposed.reason === "analyst_open") {
       assert.equal(proposed.wakes.length, 0);
+    } else if (
+      unsignedOpen &&
+      analystLane &&
+      committedForDry.usedDispatches < (committedForDry.authorizedDispatches ?? 0)
+    ) {
+      assert.equal(proposed.reason, "released_packet");
+      assert.equal(proposed.wakes.length, 1);
+      assert.equal(proposed.wakes[0].effect, "wake_sa");
+      assert.equal(proposed.wakes[0].id, "pkt-009-eligibility-writes");
     } else if (!pressureNow.holdArchitect && !architectLane) {
       assert.equal(proposed.reason, "lane_held");
       assert.equal(proposed.wakes.length, 0);
@@ -4159,7 +4176,7 @@ check("an Analyst signature wakes one Engineer and an interruption can be retrie
   assert.match(disarmed.stderr, /actuator disarmed/);
 });
 
-check("an absent Analyst dispatch can be recovered and a ran dispatch cannot be repeated", async () => {
+check("an absent Analyst dispatch can be recovered and a ran dispatch without sign_change stays open", async () => {
   function released(id: string): WorkItem {
     return must(
       applyEvent(freshItem(id, "exec-identity"), { type: "release", wake: "sa", gatesPass: true, revision: "rev-1" }, inactive),
@@ -4261,8 +4278,13 @@ check("an absent Analyst dispatch can be recovered and a ran dispatch cannot be 
   assert.equal(closed.ledger.packets["pkt-004"].dispatchedSaRevision, "rev-1");
   const next = controlStep(closed.ledger, { ...world, usedDispatches: closed.ledger.usedDispatches });
   assert.equal(next.wakes.length, 1);
-  assert.equal(next.wakes[0].id, "pkt-003");
+  assert.equal(next.wakes[0].id, "pkt-002");
   assert.equal(next.wakes[0].decision.effect, "wake_sa");
+  assert.equal(next.ledger.usedDispatches, closed.ledger.usedDispatches);
+  assert.equal(next.ledger.packets["pkt-002"].dispatchedSaRevision, null);
+  assert.equal(next.ledger.packets["pkt-002"].dispatchHistory[0].workerExecution, "ran");
+  assert.equal(next.ledger.packets["pkt-004"].dispatchedSaRevision, null);
+  assert.equal(next.ledger.packets["pkt-004"].dispatchHistory[0].workerExecution, "ran");
   assert.equal(next.wakes.some((wake) => wake.decision.effect === "wake_architect"), false);
   const one = selectLabeledDispatch(Object.values(closed.ledger.packets), "factory-wake-sa");
   assert.equal(one.ok, false);
@@ -5136,11 +5158,12 @@ check("a packet explains why it is waiting and what advances it", () => {
   assert.equal(chain?.situation, "held");
   assert.equal(chain?.next, "pkt-017-tick-send-halt reaches verified.");
   const unsigned = capped.packets.find((packet) => packet.id === released.id);
-  assert.equal(unsigned?.situation, "intervention");
+  assert.equal(unsigned?.situation, "held");
   assert.equal(unsigned?.next, "Unknown");
-  assert.equal(unsigned?.commitment.condition, "needs_repair");
+  assert.equal(unsigned?.commitment.condition, "needs_you");
   assert.equal(unsigned?.commitment.checkAt, null);
-  assert.equal(unsigned?.commitment.owner === "founder", false);
+  assert.equal(unsigned?.commitment.owner, "founder");
+  assert.match(unsigned?.why ?? "", /exhausted \(50\/50\)/);
   assert.equal(offer?.commitment.condition, "needs_you");
   assert.equal(offer?.commitment.owner, "founder");
   assert.equal(offer?.commitment.checkAt, null);
@@ -5151,10 +5174,8 @@ check("a packet explains why it is waiting and what advances it", () => {
   assert.equal(chain?.commitment.checkAt, null);
   assert.match(chain?.commitment.event ?? "", /pkt-017-tick-send-halt/);
   assert.equal(exhausted?.commitment.condition, "needs_you");
-  assert.match(unsigned?.happening ?? "", /Known defect/);
-  assert.match(unsigned?.why ?? "", /No sign_change/);
-  assert.match(unsigned?.why ?? "", /known defect/);
-  assert.equal(capped.summary.knownDefects.includes(released.id), true);
+  assert.match(unsigned?.happening ?? "", /no sign_change/);
+  assert.equal(capped.summary.knownDefects.includes(released.id), false);
   const finished = capped.packets.find((packet) => packet.id === done.id);
   assert.equal(finished?.situation, "complete");
   assert.equal(finished?.next, "Nothing.");
@@ -5319,6 +5340,124 @@ check("every unfinished packet carries an operational commitment", () => {
   }
 });
 
+check("T72 a closed Analyst run without sign_change leaves the revision open", () => {
+  const now = "2026-11-01T14:00:00.000Z";
+  const ledger = emptyLedger(50);
+  ledger.usedDispatches = 45;
+  ledger.scope.status = "active";
+  ledger.scope.lanes = ["engineer", "analyst"];
+  function ran(id: string) {
+    return {
+      packetId: id,
+      revision: "rev-1",
+      prHead: "head",
+      effect: "wake_sa" as const,
+      label: "factory-wake-sa" as const,
+      issuedAt: "2026-10-30T13:25:04.920Z",
+      workerExecution: "ran" as const,
+    };
+  }
+  const ids = ["pkt-009-eligibility-writes", "pkt-011-halt-records-writes", "pkt-012-consent-opt-out-writes"];
+  for (const id of ids) {
+    const packet = freshItem(id, "exec-identity");
+    packet.stage = "released";
+    packet.wake = "sa";
+    packet.revision = "rev-1";
+    packet.dispatchedSaRevision = "rev-1";
+    packet.dispatchHistory = [ran(id)];
+    packet.siblings = ids
+      .filter((other) => other !== id)
+      .map((other) => ({ id: other, basis: "component" as const, note: "writes" }));
+    ledger.packets[id] = packet;
+  }
+  const alone = freshItem("pkt-014-empty-firing-audience", "exec-identity");
+  alone.stage = "released";
+  alone.wake = "sa";
+  alone.revision = "rev-1";
+  alone.dispatchedSaRevision = "rev-1";
+  alone.dispatchHistory = [ran(alone.id)];
+  ledger.packets[alone.id] = alone;
+  const signed = freshItem("pkt-007-fact-writes", "exec-identity");
+  signed.stage = "change_specified";
+  signed.wake = "sa";
+  signed.revision = "rev-1";
+  signed.dispatchedSaRevision = "rev-1";
+  ledger.packets[signed.id] = signed;
+  const stopped = freshItem("pkt-099-external-stop", "exec-identity");
+  stopped.stage = "blocked";
+  stopped.wake = "sa";
+  stopped.revision = "rev-1";
+  stopped.dispatchedSaRevision = "rev-1";
+  stopped.lastFailureClass = "external";
+  ledger.packets[stopped.id] = stopped;
+  const before = explainFactory(ledger, now).packets.find((packet) => packet.id === ids[0]);
+  assert.equal(before?.commitment.condition, "recovering");
+  assert.equal(before?.commitment.checkAt, nextReconcileAt(now));
+  assert.equal(before?.commitment.event, null);
+  const world: World = {
+    activation: "active",
+    now,
+    engineeringBusy: false,
+    budgetUsd: null,
+    authorizedDispatches: 50,
+    usedDispatches: 45,
+    scopeStatus: "active",
+  };
+  const recovered = recoverExecutions(ledger, now);
+  assert.equal(recovered.ledger.usedDispatches, 45);
+  for (const id of [...ids, alone.id]) {
+    const packet = recovered.ledger.packets[id];
+    assert.equal(packet.stage, "released");
+    assert.equal(packet.revision, "rev-1");
+    assert.equal(packet.dispatchedSaRevision, null);
+    assert.equal(packet.dispatchHistory?.[0]?.workerExecution, "ran");
+    assert.equal(decide(packet, world).effect, "wake_sa");
+  }
+  assert.equal(recovered.ledger.packets[signed.id].stage, "change_specified");
+  assert.equal(recovered.ledger.packets[signed.id].dispatchedSaRevision, "rev-1");
+  assert.equal(recovered.ledger.packets[stopped.id].stage, "blocked");
+  assert.equal(recovered.ledger.packets[stopped.id].dispatchedSaRevision, "rev-1");
+  assert.deepEqual(analystAssignment(Object.values(recovered.ledger.packets))?.packetIds, ids);
+  assert.equal(recoverExecutions(recovered.ledger, now).changes.length, 0);
+
+  const leased = freshItem("pkt-018-live-analysis", "exec-identity");
+  leased.stage = "analysis";
+  leased.wake = "sa";
+  leased.revision = "rev-1";
+  leased.dispatchedSaRevision = "rev-1";
+  leased.lease = { workerId: "bc-analyst", role: "analyst", until: "2026-11-01T15:00:00.000Z", revision: "rev-1" };
+  const openLedger = emptyLedger(50);
+  openLedger.usedDispatches = 1;
+  openLedger.packets[leased.id] = leased;
+  const untouched = recoverExecutions(openLedger, now);
+  assert.equal(untouched.changes.some((change) => change.reason === "unsigned_analyst"), false);
+  assert.equal(untouched.ledger.packets[leased.id].stage, "analysis");
+  assert.equal(untouched.ledger.packets[leased.id].dispatchedSaRevision, "rev-1");
+
+  const committed = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
+  const live = recoverExecutions(committed, now);
+  for (const id of [
+    "pkt-009-eligibility-writes",
+    "pkt-011-halt-records-writes",
+    "pkt-012-consent-opt-out-writes",
+    "pkt-014-empty-firing-audience",
+    "pkt-017-tick-send-halt",
+  ]) {
+    assert.equal(live.ledger.packets[id].stage, "released", id);
+    assert.equal(live.ledger.packets[id].dispatchedSaRevision, null, id);
+    assert.equal(live.ledger.packets[id].dispatchHistory?.some((row) => row.workerExecution === "ran"), true, id);
+    const view = explainFactory(committed, now).packets.find((packet) => packet.id === id);
+    assert.equal(view?.commitment.condition, "recovering", id);
+    assert.equal(view?.commitment.checkAt, nextReconcileAt(now), id);
+    assert.equal(view?.next, "The next reconcile pass dispatches the Analyst for this revision.", id);
+  }
+  assert.equal(live.ledger.usedDispatches, committed.usedDispatches);
+  const behind = explainFactory(committed, now).packets.find((packet) => packet.id === "pkt-015-halt-enroll-firm");
+  assert.equal(behind?.commitment.condition, "waiting");
+  assert.equal(behind?.commitment.checkAt, null);
+  assert.match(behind?.commitment.event ?? "", /pkt-017-tick-send-halt/);
+});
+
 check("PKT-019's expired contradiction returns to the analyst and is not re-armed", () => {
   const committed = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
   const handoff = read("docs/factory/initiatives/exec-identity/HANDOFF.md");
@@ -5458,7 +5597,7 @@ check("PKT-019's expired contradiction returns to the analyst and is not re-arme
   const returned = explainFactory(adopted.ledger, world.now).packets.find((item) => item.id === id);
   assert.equal(returned?.situation, "proceeding");
   assert.equal(returned?.next, "The next pass wakes the Analyst.");
-  assert.deepEqual(explainFactory(adopted.ledger, world.now).summary.knownDefects, releasedBefore);
+  assert.deepEqual(explainFactory(adopted.ledger, world.now).summary.knownDefects, []);
 
   const wrongWorker = structuredClone(source);
   const execution = wrongWorker.executions?.[RECORDED_SPECIFICATION_BLOCK.executionId];

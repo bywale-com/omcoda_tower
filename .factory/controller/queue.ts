@@ -659,7 +659,8 @@ export function controlStep(ledger: FactoryLedger, world: World): ControlStep {
   if (redelivery) return { ledger: next, wakes: [], reason: "delivery_unconfirmed", redelivery };
   let engineerSlot = world.engineeringBusy || implementationOccupied(next, scoped.now);
   const saOpen = analystOpen(next);
-  let saProposed = saOpen;
+  const analysisLease = analystLeaseOpen(next, scoped.now);
+  let saProposed = saOpen || analysisLease;
   const packetWakes: WakeProposal[] = [];
   const claimed = new Set<string>();
   const packets = Object.values(next.packets).sort((a, b) => a.id.localeCompare(b.id));

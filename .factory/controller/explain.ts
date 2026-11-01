@@ -17,6 +17,7 @@ import {
   PENDING_RESERVE_MS,
   plusMs,
   recordedSpecificationReturn,
+  unsignedAnalystRecovery,
   type WorkerExecution,
 } from "./execution.ts";
 import { decide, type WakeEffect, type WorkItem, type World } from "./machine.ts";
@@ -54,6 +55,10 @@ export interface Commitment {
 
 /** GitHub cron on the default branch. The job checks out the operating factory. */
 export const RECONCILE_CRON = "7,22,37,52 * * * *";
+
+function clocked(nowIso: string): boolean {
+  return Number.isFinite(Date.parse(nowIso));
+}
 
 export function nextReconcileAt(nowIso: string): string {
   const now = Date.parse(nowIso);
@@ -331,7 +336,7 @@ function explainPacket(
         commitment: waiting(
           execution?.id ? `claim ${execution.id}` : "analyst claim",
           "analyst",
-          nextReconcileAt(now),
+          clocked(now) ? nextReconcileAt(now) : null,
         ),
       });
     }
@@ -403,28 +408,45 @@ function explainPacket(
   ) {
     return explainVerified(ledger, packet, now);
   }
-  if (
-    packet.stage === "released" &&
-    packet.wake === "sa" &&
-    packet.dispatchedSaRevision === packet.revision &&
-    !packet.dispatch
-  ) {
-    const ran = (packet.dispatchHistory ?? []).some(
-      (record) => record.effect === "wake_sa" && record.revision === packet.revision && record.workerExecution === "ran",
-    );
+  if (unsignedAnalystRecovery(packet, now)) {
     const issued = (packet.dispatchHistory ?? []).find((record) => record.effect === "wake_sa" && record.issuedAt)?.issuedAt;
+    const lanes = ledger.scope.lanes ?? null;
+    const clocks = issued ? [{ name: "dispatch_attempted", at: issued }] : [];
+    const happening = `The Analyst dispatch for ${packet.revision} has no sign_change.`;
+    if (lanes && !lanes.includes("analyst")) {
+      return row(packet, {
+        happening,
+        why: "The analyst lane is off.",
+        next: "Include the analyst lane.",
+        who: "founder",
+        situation: "held",
+        commitment: needsYou(),
+        clocks,
+      });
+    }
+    const cap = ledger.authorizedDispatches;
+    if (cap == null || cap <= 0 || ledger.usedDispatches >= cap) {
+      const why = cap == null || cap <= 0
+        ? "Dispatch is not authorized."
+        : `Dispatch authorization is exhausted (${ledger.usedDispatches}/${cap}).`;
+      return row(packet, {
+        happening,
+        why,
+        next: "Unknown",
+        who: "founder",
+        situation: "held",
+        commitment: needsYou(),
+        clocks,
+      });
+    }
     return row(packet, {
-      happening: ran
-        ? `Known defect. Released. The Analyst dispatch for ${packet.revision} is recorded as ran.`
-        : `Released. ${packet.revision} was already dispatched to the Analyst.`,
-      why: ran
-        ? "No sign_change is recorded, and this revision is not dispatched again. This is a known defect."
-        : "No sign_change is recorded, and this revision is not dispatched again.",
-      next: "Unknown",
-      who: "unknown",
-      situation: "intervention",
-      commitment: needsRepair("controller"),
-      clocks: issued ? [{ name: "dispatch_attempted", at: issued }] : [],
+      happening,
+      why: "A recorded Analyst run without sign_change leaves this revision open.",
+      next: "The next reconcile pass dispatches the Analyst for this revision.",
+      who: "controller",
+      situation: "proceeding",
+      commitment: recovering(now, "controller"),
+      clocks,
     });
   }
   if (packet.stage === "draft" && packet.wake === "hold") {
@@ -458,7 +480,7 @@ function explainPacket(
       next: "That execution records its result.",
       who: "engineer",
       situation: "held",
-      commitment: waiting(owner ? `engineer result ${owner}` : "engineer result", "engineer", nextReconcileAt(now)),
+      commitment: waiting(owner ? `engineer result ${owner}` : "engineer result", "engineer", clocked(now) ? nextReconcileAt(now) : null),
     });
   }
   if (decision.reason === "dispatch_authorization_exhausted" || decision.reason === "dispatch_not_authorized") {
@@ -758,7 +780,7 @@ function explainInitiative(ledger: FactoryLedger, initiative: InitiativeRecord, 
         who: "controller",
         clocks: [],
         situation: "held",
-        commitment: waiting("engineer queue below 2", "controller", nextReconcileAt(now)),
+        commitment: waiting("engineer queue below 2", "controller", clocked(now) ? nextReconcileAt(now) : null),
       };
     }
     if (!architectAllowed) {
@@ -942,10 +964,12 @@ function title(role: "architect" | "analyst" | "engineer"): string {
 }
 
 function scheduled(now: string, owner: Actor): Commitment {
+  if (!clocked(now)) return waiting("controller reconcile", owner);
   return { condition: "scheduled", checkAt: nextReconcileAt(now), runUntil: null, event: null, owner };
 }
 
 function recovering(now: string, owner: Actor): Commitment {
+  if (!clocked(now)) return waiting("controller reconcile", owner);
   return { condition: "recovering", checkAt: nextReconcileAt(now), runUntil: null, event: null, owner };
 }
 
