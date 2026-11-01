@@ -1,7 +1,7 @@
 {
-  "stateRevision": 224,
+  "stateRevision": 225,
   "authorizedDispatches": 50,
-  "usedDispatches": 46,
+  "usedDispatches": 47,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -825,13 +825,23 @@
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
-      "dispatchedSaRevision": null,
+      "dispatchedSaRevision": "rev-1",
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-011-halt-records-writes",
+        "revision": "rev-1",
+        "prHead": "7b4df4dc82131dfb81a813334cb3b96bef356901",
+        "effect": "wake_sa",
+        "label": "factory-wake-sa",
+        "issuedAt": "2026-11-01T14:30:08.595Z",
+        "deliveredAt": "2026-11-01T14:30:08.595Z",
+        "executionId": "dsp-225-analyst-pkt-011-halt-records-writes",
+        "assignmentId": "asg-dsp-225-analyst-pkt-011-halt-records-writes"
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-011-halt-records-writes",
@@ -904,13 +914,23 @@
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
-      "dispatchedSaRevision": null,
+      "dispatchedSaRevision": "rev-1",
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-012-consent-opt-out-writes",
+        "revision": "rev-1",
+        "prHead": "7b4df4dc82131dfb81a813334cb3b96bef356901",
+        "effect": "wake_sa",
+        "label": "factory-wake-sa",
+        "issuedAt": "2026-11-01T14:30:08.595Z",
+        "deliveredAt": "2026-11-01T14:30:08.595Z",
+        "executionId": "dsp-225-analyst-pkt-011-halt-records-writes",
+        "assignmentId": "asg-dsp-225-analyst-pkt-011-halt-records-writes"
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-012-consent-opt-out-writes",
@@ -1962,6 +1982,32 @@
       "startUntil": null,
       "leaseUntil": "2026-11-01T15:27:01.069Z",
       "reason": null
+    },
+    "dsp-225-analyst-pkt-011-halt-records-writes": {
+      "id": "dsp-225-analyst-pkt-011-halt-records-writes",
+      "assignmentId": "asg-dsp-225-analyst-pkt-011-halt-records-writes",
+      "role": "analyst",
+      "phase": "dispatched",
+      "packetIds": [
+        "pkt-011-halt-records-writes",
+        "pkt-012-consent-opt-out-writes"
+      ],
+      "revisions": {
+        "pkt-011-halt-records-writes": "rev-1",
+        "pkt-012-consent-opt-out-writes": "rev-1"
+      },
+      "label": "factory-wake-sa",
+      "prHead": "7b4df4dc82131dfb81a813334cb3b96bef356901",
+      "agentId": null,
+      "continuation": "fresh",
+      "issuedAt": "2026-11-01T14:30:08.595Z",
+      "startedAt": null,
+      "runningAt": null,
+      "endedAt": null,
+      "reserveUntil": "2026-11-01T15:00:08.595Z",
+      "startUntil": null,
+      "leaseUntil": null,
+      "reason": null
     }
   },
   "assignments": {
@@ -2207,6 +2253,19 @@
       "basis": "component: firing-pointers: this firing places its own rows on payload.writes",
       "executionIds": [
         "dsp-218-analyst-pkt-009-eligibility-writes"
+      ]
+    },
+    "asg-dsp-225-analyst-pkt-011-halt-records-writes": {
+      "id": "asg-dsp-225-analyst-pkt-011-halt-records-writes",
+      "role": "analyst",
+      "initiativeId": "exec-identity",
+      "packetIds": [
+        "pkt-011-halt-records-writes",
+        "pkt-012-consent-opt-out-writes"
+      ],
+      "basis": "component: firing-pointers: this firing places its own rows on payload.writes",
+      "executionIds": [
+        "dsp-225-analyst-pkt-011-halt-records-writes"
       ]
     }
   },
