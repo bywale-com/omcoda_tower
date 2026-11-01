@@ -1,5 +1,5 @@
 {
-  "stateRevision": 225,
+  "stateRevision": 226,
   "authorizedDispatches": 50,
   "usedDispatches": 47,
   "scope": {
@@ -813,12 +813,17 @@
     "pkt-011-halt-records-writes": {
       "id": "pkt-011-halt-records-writes",
       "initiativeId": "exec-identity",
-      "stage": "released",
+      "stage": "analysis",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": null,
+      "lease": {
+        "workerId": "bc-d1659f95-32e6-41ee-b515-b164739495e3",
+        "role": "analyst",
+        "until": "2026-11-01T15:32:32.665Z",
+        "revision": "rev-1"
+      },
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
@@ -1987,7 +1992,7 @@
       "id": "dsp-225-analyst-pkt-011-halt-records-writes",
       "assignmentId": "asg-dsp-225-analyst-pkt-011-halt-records-writes",
       "role": "analyst",
-      "phase": "dispatched",
+      "phase": "running",
       "packetIds": [
         "pkt-011-halt-records-writes",
         "pkt-012-consent-opt-out-writes"
@@ -1998,15 +2003,15 @@
       },
       "label": "factory-wake-sa",
       "prHead": "7b4df4dc82131dfb81a813334cb3b96bef356901",
-      "agentId": null,
+      "agentId": "bc-d1659f95-32e6-41ee-b515-b164739495e3",
       "continuation": "fresh",
       "issuedAt": "2026-11-01T14:30:08.595Z",
-      "startedAt": null,
-      "runningAt": null,
+      "startedAt": "2026-11-01T14:32:32.665Z",
+      "runningAt": "2026-11-01T14:32:32.665Z",
       "endedAt": null,
       "reserveUntil": "2026-11-01T15:00:08.595Z",
       "startUntil": null,
-      "leaseUntil": null,
+      "leaseUntil": "2026-11-01T15:32:32.665Z",
       "reason": null
     }
   },
