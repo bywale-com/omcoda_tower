@@ -1,5 +1,5 @@
 {
-  "stateRevision": 218,
+  "stateRevision": 219,
   "authorizedDispatches": 50,
   "usedDispatches": 46,
   "scope": {
@@ -647,12 +647,17 @@
     "pkt-009-eligibility-writes": {
       "id": "pkt-009-eligibility-writes",
       "initiativeId": "exec-identity",
-      "stage": "released",
+      "stage": "analysis",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": null,
+      "lease": {
+        "workerId": "bc-c713b85e-18f2-408e-af89-da3ebd37f7dd",
+        "role": "analyst",
+        "until": "2026-11-01T15:27:01.069Z",
+        "revision": "rev-1"
+      },
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
@@ -1933,7 +1938,7 @@
       "id": "dsp-218-analyst-pkt-009-eligibility-writes",
       "assignmentId": "asg-dsp-218-analyst-pkt-009-eligibility-writes",
       "role": "analyst",
-      "phase": "dispatched",
+      "phase": "running",
       "packetIds": [
         "pkt-009-eligibility-writes",
         "pkt-011-halt-records-writes",
@@ -1946,15 +1951,15 @@
       },
       "label": "factory-wake-sa",
       "prHead": "29cd6fec6b2ad57470e8dea909d1728cfac33d10",
-      "agentId": null,
+      "agentId": "bc-c713b85e-18f2-408e-af89-da3ebd37f7dd",
       "continuation": "fresh",
       "issuedAt": "2026-11-01T14:21:27.821Z",
-      "startedAt": null,
-      "runningAt": null,
+      "startedAt": "2026-11-01T14:27:01.069Z",
+      "runningAt": "2026-11-01T14:27:01.069Z",
       "endedAt": null,
       "reserveUntil": "2026-11-01T14:51:27.821Z",
       "startUntil": null,
-      "leaseUntil": null,
+      "leaseUntil": "2026-11-01T15:27:01.069Z",
       "reason": null
     }
   },
