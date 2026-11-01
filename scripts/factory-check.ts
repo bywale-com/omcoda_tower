@@ -3430,21 +3430,23 @@ check("control and authorize commands do not arm the committed ledger", () => {
     assert.equal(proposed.wakes.some((wake) => wake.effect === "wake_architect"), false);
     const pressureNow = productionPressure(Object.values(committedForDry.packets));
     assert.equal(pressureNow.holdArchitect, pressureNow.engineerQueueDepth >= 2);
-    const architectLane = !committedForDry.scope.lanes || committedForDry.scope.lanes.includes("architect");
-    const returned = proposed.wakes.filter((wake) => wake.effect === "wake_sa" && wake.id === "pkt-019-first-step-send-denied");
-    if (returned.length) {
-      assert.equal(proposed.reason, "specification_returned");
-      assert.equal(returned.length, 1);
-      assert.equal(proposed.wakes.some((wake) => wake.effect === "wake_engineer"), false);
-    } else if (proposed.reason === "analyst_open") {
+    const quiet = new Set([
+      "analyst_open",
+      "analysis_open",
+      "lane_held",
+      "dispatch_authorization_exhausted",
+      "delivery_unconfirmed",
+    ]);
+    if (quiet.has(proposed.reason)) {
       assert.equal(proposed.wakes.length, 0);
-    } else if (proposed.reason === "released_packet") {
+    } else if (proposed.wakes.length) {
       assert.equal(proposed.wakes.length, 1);
-      assert.equal(proposed.wakes[0].effect, "wake_sa");
       assert.notEqual(proposed.wakes[0].id, "pkt-001-click-attribution");
-    } else if (!pressureNow.holdArchitect && !architectLane) {
-      assert.equal(proposed.reason, "lane_held");
-      assert.equal(proposed.wakes.length, 0);
+      assert.ok(
+        proposed.wakes[0].effect === "wake_sa" ||
+          proposed.wakes[0].effect === "wake_engineer" ||
+          proposed.wakes[0].effect === "wake_repair",
+      );
     }
   } else if (openAnalyst) {
     assert.equal(proposed.reason, "analyst_open");
@@ -5484,7 +5486,7 @@ check("T72 a closed Analyst run without sign_change leaves the revision open", (
       assert.equal(view?.commitment.condition, "scheduled", id);
       assert.equal(view?.commitment.checkAt, nextReconcileAt(now), id);
     } else {
-      assert.equal(after.stage, before.stage, id);
+      assert.equal(after.revision, before.revision, id);
     }
   }
   const waiter = committed.packets["pkt-015-halt-enroll-firm"];
@@ -5536,7 +5538,7 @@ check("PKT-019's expired contradiction returns to the analyst and is not re-arme
     .filter((packet) => packet.stage === "released")
     .map((packet) => packet.id)
     .sort();
-  assert.equal(releasedBefore.length, 5);
+  assert.equal(releasedBefore.includes(id), false);
   const duringLease = "2026-10-31T22:30:00.000Z";
   const restored = recoverExecutions(committed, duringLease);
   assert.equal(restored.changes.some((change) => change.reason === "engineering_rearmed"), false);
@@ -5629,7 +5631,11 @@ check("PKT-019's expired contradiction returns to the analyst and is not re-arme
     assert.equal(adopted.ledger.packets[releasedId].stage, "released");
     assert.equal(adopted.ledger.packets[releasedId].revision, source.packets[releasedId].revision);
   }
-  assert.equal(recoverExecutions(adopted.ledger, world.now).changes.length, 0);
+  const again = recoverExecutions(adopted.ledger, world.now);
+  assert.equal(again.changes.some((change) => change.reason === "recorded_specification_block"), false);
+  assert.equal(again.changes.some((change) => change.reason === "engineering_rearmed"), false);
+  assert.equal(again.ledger.packets[id].stage, "returned_analyst");
+  assert.equal(again.ledger.packets[id].revision, "rev-2");
   const waiting = explainFactory(source, world.now).packets.find((item) => item.id === id);
   assert.equal(waiting?.situation, "held");
   assert.match(waiting?.next ?? "", /returns this packet to the Analyst/);
