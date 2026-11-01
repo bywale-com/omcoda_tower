@@ -943,4 +943,5 @@ export const TRANSITION_IDS = [
   "T69",
   "T70",
   "T71",
+  "T72",
 ] as const;

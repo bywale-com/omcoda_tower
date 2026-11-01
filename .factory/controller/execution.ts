@@ -776,8 +776,41 @@ export function recoverExecutions<T extends ExecutionLedger>(
   }
 
   rearmExpiredEngineering(next, now, changes);
+  recoverUnsignedAnalyst(next, now, changes);
   if (!changes.length) return { ledger, changes };
   return { ledger: next, changes };
+}
+
+/**
+ * T72. A closed Analyst assignment with no sign_change does not finish the revision.
+ * History stays. The spend stays. The latch clears so the existing Analyst wake can run.
+ * A live lease or an open dispatch is left to the dispatch loop. A requirements return
+ * stays with the Architect. A classified external or infrastructure stop stays stopped.
+ */
+export function unsignedAnalystRecovery(packet: WorkItem, now: string): boolean {
+  if (packet.wake !== "sa" || packet.hold || packet.blockerId || packet.stage === "blocked") return false;
+  if (packet.stage === "returned_architect") return false;
+  if (packet.specificationBlock?.failureClass === "specification") return false;
+  if (packet.lastFailureClass === "external" || packet.lastFailureClass === "infrastructure") return false;
+  if (packet.stage !== "released" && packet.stage !== "analysis" && packet.stage !== "returned_analyst") return false;
+  if (packet.lease && now && packet.lease.until > now) return false;
+  if (packet.dispatch) return false;
+  const latchHeld = packet.dispatchedSaRevision === packet.revision;
+  if (packet.stage === "analysis") return true;
+  if (packet.stage === "returned_analyst" && packet.specificationBlock?.failureClass !== "systems_contract") return true;
+  return latchHeld;
+}
+
+function recoverUnsignedAnalyst(ledger: ExecutionLedger, now: string, changes: RecoveryChange[]): void {
+  for (const packet of Object.values(ledger.packets)) {
+    if (!unsignedAnalystRecovery(packet, now)) continue;
+    if (packet.stage === "analysis") packet.stage = "released";
+    if (packet.stage === "returned_analyst" && packet.specificationBlock?.failureClass !== "systems_contract") {
+      packet.stage = "released";
+    }
+    if (packet.dispatchedSaRevision === packet.revision) packet.dispatchedSaRevision = null;
+    changes.push({ id: packet.id, phase: "interrupted", reason: "unsigned_analyst" });
+  }
 }
 
 export function applyWorkerSignal<T extends ExecutionLedger>(
