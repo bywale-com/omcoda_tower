@@ -1,5 +1,5 @@
 {
-  "stateRevision": 233,
+  "stateRevision": 234,
   "authorizedDispatches": 50,
   "usedDispatches": 49,
   "scope": {
@@ -946,17 +946,7 @@
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-012-consent-opt-out-writes",
-        "revision": "rev-1",
-        "prHead": "4912fa9263a9175e8ae5d31d8556a73f0b0a53e8",
-        "effect": "wake_sa",
-        "label": "factory-wake-sa",
-        "issuedAt": "2026-11-01T19:32:53.756Z",
-        "deliveredAt": "2026-11-01T19:32:53.756Z",
-        "executionId": "dsp-232-analyst-pkt-011-halt-records-writes",
-        "assignmentId": "asg-dsp-232-analyst-pkt-011-halt-records-writes"
-      },
+      "dispatch": null,
       "dispatchHistory": [
         {
           "packetId": "pkt-012-consent-opt-out-writes",
@@ -989,6 +979,18 @@
           "deliveredAt": "2026-11-01T14:30:08.595Z",
           "executionId": "dsp-225-analyst-pkt-011-halt-records-writes",
           "assignmentId": "asg-dsp-225-analyst-pkt-011-halt-records-writes",
+          "workerExecution": "ran"
+        },
+        {
+          "packetId": "pkt-012-consent-opt-out-writes",
+          "revision": "rev-1",
+          "prHead": "4912fa9263a9175e8ae5d31d8556a73f0b0a53e8",
+          "effect": "wake_sa",
+          "label": "factory-wake-sa",
+          "issuedAt": "2026-11-01T19:32:53.756Z",
+          "deliveredAt": "2026-11-01T19:32:53.756Z",
+          "executionId": "dsp-232-analyst-pkt-011-halt-records-writes",
+          "assignmentId": "asg-dsp-232-analyst-pkt-011-halt-records-writes",
           "workerExecution": "ran"
         }
       ],
