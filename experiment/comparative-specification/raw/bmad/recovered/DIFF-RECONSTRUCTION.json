@@ -1,0 +1,267 @@
+{
+  "n_files": 26,
+  "written": [
+    {
+      "src": "/home/ubuntu/tower-spec-output/BMAD-HELP-ROUTING.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/BMAD-HELP-ROUTING.md",
+      "bytes": 3303
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/EXPERIMENT-RECORD.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/EXPERIMENT-RECORD.md",
+      "bytes": 5891
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/FRAMEWORK.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/FRAMEWORK.md",
+      "bytes": 1307
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/START.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/START.md",
+      "bytes": 538
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/STATUS.json",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/STATUS.json",
+      "bytes": 1013
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/UNRESOLVED-QUESTIONS.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/UNRESOLVED-QUESTIONS.md",
+      "bytes": 1164
+    },
+    {
+      "src": "/workspace/_bmad-output/BMAD-HELP-AFTER.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/BMAD-HELP-AFTER.md",
+      "bytes": 940
+    },
+    {
+      "src": "/workspace/_bmad-output/planning-artifacts/SKIP-BUILD.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/planning-artifacts/SKIP-BUILD.md",
+      "bytes": 772
+    },
+    {
+      "src": "/workspace/_bmad-output/planning-artifacts/architecture/architecture-Tower-2026-10-19/ARCHITECTURE-SPINE.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/planning-artifacts/architecture/architecture-Tower-2026-10-19/ARCHITECTURE-SPINE.md",
+      "bytes": 11429
+    },
+    {
+      "src": "/workspace/_bmad-output/planning-artifacts/architecture/architecture-Tower-2026-10-19/headless-status.json",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/planning-artifacts/architecture/architecture-Tower-2026-10-19/headless-status.json",
+      "bytes": 843
+    },
+    {
+      "src": "/workspace/_bmad-output/planning-artifacts/briefs/brief-Tower-2026-10-19/addendum.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/planning-artifacts/briefs/brief-Tower-2026-10-19/addendum.md",
+      "bytes": 4069
+    },
+    {
+      "src": "/workspace/_bmad-output/planning-artifacts/briefs/brief-Tower-2026-10-19/brief.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/planning-artifacts/briefs/brief-Tower-2026-10-19/brief.md",
+      "bytes": 7424
+    },
+    {
+      "src": "/workspace/_bmad-output/planning-artifacts/briefs/brief-Tower-2026-10-19/headless-status.json",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/planning-artifacts/briefs/brief-Tower-2026-10-19/headless-status.json",
+      "bytes": 497
+    },
+    {
+      "src": "/workspace/_bmad-output/planning-artifacts/epics.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/planning-artifacts/epics.md",
+      "bytes": 9957
+    },
+    {
+      "src": "/workspace/_bmad-output/planning-artifacts/prds/prd-Tower-2026-10-19/addendum.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/planning-artifacts/prds/prd-Tower-2026-10-19/addendum.md",
+      "bytes": 3179
+    },
+    {
+      "src": "/workspace/_bmad-output/planning-artifacts/prds/prd-Tower-2026-10-19/headless-status.json",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/planning-artifacts/prds/prd-Tower-2026-10-19/headless-status.json",
+      "bytes": 874
+    },
+    {
+      "src": "/workspace/_bmad-output/planning-artifacts/prds/prd-Tower-2026-10-19/prd.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/planning-artifacts/prds/prd-Tower-2026-10-19/prd.md",
+      "bytes": 29452
+    },
+    {
+      "src": "/workspace/_bmad-output/planning-artifacts/prds/prd-Tower-2026-10-19/review-structure-prose.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/planning-artifacts/prds/prd-Tower-2026-10-19/review-structure-prose.md",
+      "bytes": 1247
+    },
+    {
+      "src": "/workspace/_bmad-output/planning-artifacts/ux-designs/ux-Tower-2026-10-19/DESIGN.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/planning-artifacts/ux-designs/ux-Tower-2026-10-19/DESIGN.md",
+      "bytes": 4830
+    },
+    {
+      "src": "/workspace/_bmad-output/planning-artifacts/ux-designs/ux-Tower-2026-10-19/EXPERIENCE.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/planning-artifacts/ux-designs/ux-Tower-2026-10-19/EXPERIENCE.md",
+      "bytes": 7794
+    },
+    {
+      "src": "/workspace/_bmad-output/planning-artifacts/ux-designs/ux-Tower-2026-10-19/headless-status.json",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/planning-artifacts/ux-designs/ux-Tower-2026-10-19/headless-status.json",
+      "bytes": 637
+    },
+    {
+      "src": "/workspace/_bmad-output/specs/spec-tower/SPEC.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/specs/spec-tower/SPEC.md",
+      "bytes": 7138
+    },
+    {
+      "src": "/workspace/_bmad-output/specs/spec-tower/brownfield.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/specs/spec-tower/brownfield.md",
+      "bytes": 1682
+    },
+    {
+      "src": "/workspace/_bmad-output/specs/spec-tower/glossary.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/specs/spec-tower/glossary.md",
+      "bytes": 1413
+    },
+    {
+      "src": "/workspace/_bmad-output/specs/spec-tower/headless-status.json",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/specs/spec-tower/headless-status.json",
+      "bytes": 291
+    },
+    {
+      "src": "/workspace/_bmad-output/specs/spec-tower/open-questions.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/bmad/artifacts/_workspace/_bmad-output/specs/spec-tower/open-questions.md",
+      "bytes": 1155
+    }
+  ],
+  "events": [
+    {
+      "path": "/home/ubuntu/tower-spec-output/START.md",
+      "kind": "create",
+      "added": 14
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/BMAD-HELP-ROUTING.md",
+      "kind": "create",
+      "added": 53
+    },
+    {
+      "path": "/workspace/_bmad-output/planning-artifacts/briefs/brief-Tower-2026-10-19/brief.md",
+      "kind": "create",
+      "added": 90
+    },
+    {
+      "path": "/workspace/_bmad-output/planning-artifacts/briefs/brief-Tower-2026-10-19/addendum.md",
+      "kind": "create",
+      "added": 61
+    },
+    {
+      "path": "/workspace/_bmad-output/planning-artifacts/prds/prd-Tower-2026-10-19/prd.md",
+      "kind": "create",
+      "added": 409
+    },
+    {
+      "path": "/workspace/_bmad-output/planning-artifacts/prds/prd-Tower-2026-10-19/addendum.md",
+      "kind": "create",
+      "added": 61
+    },
+    {
+      "path": "/workspace/_bmad-output/planning-artifacts/ux-designs/ux-Tower-2026-10-19/DESIGN.md",
+      "kind": "create",
+      "added": 93
+    },
+    {
+      "path": "/workspace/_bmad-output/planning-artifacts/ux-designs/ux-Tower-2026-10-19/EXPERIENCE.md",
+      "kind": "create",
+      "added": 124
+    },
+    {
+      "path": "/workspace/_bmad-output/planning-artifacts/architecture/architecture-Tower-2026-10-19/ARCHITECTURE-SPINE.md",
+      "kind": "create",
+      "added": 264
+    },
+    {
+      "path": "/workspace/_bmad-output/specs/spec-tower/SPEC.md",
+      "kind": "create",
+      "added": 103
+    },
+    {
+      "path": "/workspace/_bmad-output/specs/spec-tower/glossary.md",
+      "kind": "create",
+      "added": 23
+    },
+    {
+      "path": "/workspace/_bmad-output/specs/spec-tower/brownfield.md",
+      "kind": "create",
+      "added": 36
+    },
+    {
+      "path": "/workspace/_bmad-output/specs/spec-tower/open-questions.md",
+      "kind": "create",
+      "added": 20
+    },
+    {
+      "path": "/workspace/_bmad-output/planning-artifacts/epics.md",
+      "kind": "create",
+      "added": 223
+    },
+    {
+      "path": "/workspace/_bmad-output/planning-artifacts/prds/prd-Tower-2026-10-19/headless-status.json",
+      "kind": "create",
+      "added": 22
+    },
+    {
+      "path": "/workspace/_bmad-output/planning-artifacts/briefs/brief-Tower-2026-10-19/headless-status.json",
+      "kind": "create",
+      "added": 12
+    },
+    {
+      "path": "/workspace/_bmad-output/planning-artifacts/ux-designs/ux-Tower-2026-10-19/headless-status.json",
+      "kind": "create",
+      "added": 17
+    },
+    {
+      "path": "/workspace/_bmad-output/planning-artifacts/architecture/architecture-Tower-2026-10-19/headless-status.json",
+      "kind": "create",
+      "added": 23
+    },
+    {
+      "path": "/workspace/_bmad-output/specs/spec-tower/headless-status.json",
+      "kind": "create",
+      "added": 10
+    },
+    {
+      "path": "/workspace/_bmad-output/planning-artifacts/prds/prd-Tower-2026-10-19/review-structure-prose.md",
+      "kind": "create",
+      "added": 26
+    },
+    {
+      "path": "/workspace/_bmad-output/planning-artifacts/SKIP-BUILD.md",
+      "kind": "create",
+      "added": 13
+    },
+    {
+      "path": "/workspace/_bmad-output/BMAD-HELP-AFTER.md",
+      "kind": "create",
+      "added": 18
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/UNRESOLVED-QUESTIONS.md",
+      "kind": "create",
+      "added": 19
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/FRAMEWORK.md",
+      "kind": "create",
+      "added": 28
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/STATUS.json",
+      "kind": "create",
+      "added": 10
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/EXPERIMENT-RECORD.md",
+      "kind": "create",
+      "added": 100
+    }
+  ]
+}

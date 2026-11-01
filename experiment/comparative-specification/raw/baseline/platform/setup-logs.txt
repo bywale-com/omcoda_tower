@@ -1,0 +1,27 @@
+[2026-10-19T16:46:29.058Z] [INSTALL] Exit code: 0
+[2026-10-19T16:46:29.077Z] [SPAN] Started: environmentSetup id=bd58f6bf-0fae-4788-90ac-3ee2486c3600
+[2026-10-19T16:46:29.086Z] [INSTALL] Command: create-artifacts-dir - <system command body hidden>
+[2026-10-19T16:46:29.092Z] [SPAN] Started: install:create-artifacts-dir id=92d17224-69d7-4c4c-8b15-ba7e653e0e47 parent=bd58f6bf-0fae-4788-90ac-3ee2486c3600
+[2026-10-19T16:46:29.177Z] [INSTALL] Exit code: 0
+[2026-10-19T16:46:29.182Z] [SPAN] Ended: id=92d17224-69d7-4c4c-8b15-ba7e653e0e47
+[2026-10-19T16:46:29.190Z] [SPAN] Started: start:core-dumps id=ecca590d-6a78-455d-bddc-c722f2e362b1 parent=bd58f6bf-0fae-4788-90ac-3ee2486c3600
+[2026-10-19T16:46:29.191Z] [SPAN] Started: start:desktop-init id=b1593ea5-6b1e-4f61-822e-81aaaf76f8f6 parent=bd58f6bf-0fae-4788-90ac-3ee2486c3600
+[2026-10-19T16:46:29.191Z] [SPAN] Started: start:exec-daemon id=f4c90185-566d-4d4f-ac18-5a6be302b6b3 parent=bd58f6bf-0fae-4788-90ac-3ee2486c3600
+[2026-10-19T16:46:29.198Z] Starting detached setup start command: start:core-dumps
+[2026-10-19T16:46:29.200Z] Starting detached setup start command: start:desktop-init
+[2026-10-19T16:46:29.202Z] Starting detached setup start command: start:exec-daemon
+[2026-10-19T16:46:29.235Z] Started detached setup start command: start:exec-daemon
+[2026-10-19T16:46:29.239Z] Started detached setup start command: start:desktop-init
+[2026-10-19T16:46:29.241Z] [SPAN] Ended: id=f4c90185-566d-4d4f-ac18-5a6be302b6b3
+[2026-10-19T16:46:29.242Z] [SPAN] Ended: id=b1593ea5-6b1e-4f61-822e-81aaaf76f8f6
+[2026-10-19T16:46:29.256Z] Started detached setup start command: start:core-dumps
+[2026-10-19T16:46:29.260Z] [SPAN] Ended: id=ecca590d-6a78-455d-bddc-c722f2e362b1
+[2026-10-19T16:46:29.267Z] [SPAN] Ended: id=bd58f6bf-0fae-4788-90ac-3ee2486c3600
+[2026-10-19T16:46:29.425Z] [SPAN] Started: waitForVmConnectionAndMarkRunning id=79525098-91f5-4e76-93f0-f24668f60a5f
+[2026-10-19T16:46:31.309Z] [SPAN] Ended: id=79525098-91f5-4e76-93f0-f24668f60a5f
+[2026-10-19T16:46:31.394Z] [SPAN] Started: registerAgentStoreForHandoff id=2608181b-ee18-425d-95f9-2e1dc7717a2c
+[2026-10-19T16:46:32.719Z] [SPAN] Ended: id=2608181b-ee18-425d-95f9-2e1dc7717a2c
+[2026-10-19T16:46:33.064Z] [SPAN] Started: podFinalization id=ec27c58d-13b0-474b-8c2b-f74e885a680f
+[2026-10-19T16:46:33.411Z] [SPAN] Started: provisionCloudManagedSkills id=5b9adaac-c2a1-42cb-a236-80de4a76c698 parent=ec27c58d-13b0-474b-8c2b-f74e885a680f
+[2026-10-19T16:46:33.749Z] [SPAN] Ended: id=5b9adaac-c2a1-42cb-a236-80de4a76c698
+[2026-10-19T16:46:33.754Z] [SPAN] Ended: id=ec27c58d-13b0-474b-8c2b-f74e885a680f

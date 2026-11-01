@@ -1,0 +1,10 @@
+{
+  "contestant_id": "openspec",
+  "sha": "c5bd617b9b1bb9fbd5d73c99da16a973594c6bd7",
+  "framework": "openspec",
+  "framework_version": "1.14.3",
+  "status": "complete",
+  "completion_claim": "Installed genuine OpenSpec CLI 1.14.3, initialized with --tools cursor (core profile, spec-driven schema), explored the SHA snapshot, proposed change specify-intended-tower-product, wrote 18 capability specs (103 requirements) plus proposal/design/tasks, strict-validated, synced main openspec/specs/, then folded selected living-packet laws from origin pull/96/head into Automations and Contact specs and re-synced. Application source was not modified. Named Story silences and remaining Face/packet chrome stay UNRESOLVED rather than invented. /opsx-apply against Tower was not run.",
+  "blocker": null,
+  "artifact_root": "/home/ubuntu/tower-spec-output/"
+}

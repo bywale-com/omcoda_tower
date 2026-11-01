@@ -1,0 +1,1 @@
+mkdir -p /home/ubuntu/tower-spec-output && date -u +"%Y-%m-%dT%H:%M:%SZ" && git -C /workspace rev-parse HEAD && git -C /workspace log -1 --oneline && git -C /workspace status -sb

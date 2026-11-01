@@ -1,0 +1,9 @@
+[2026-10-19T16:46:27.317Z] [SPAN] Started: start:core-dumps id=1f4db58c-68da-481a-9aa5-c4239c12a6f6 parent=a666a0bf-ad17-4805-8fcc-f565ebe324e1
+[2026-10-19T16:46:27.318Z] [SPAN] Started: start:desktop-init id=734adfaa-237f-4dc1-a6fa-e55662b5c541 parent=a666a0bf-ad17-4805-8fcc-f565ebe324e1
+[2026-10-19T16:46:27.318Z] [SPAN] Started: start:exec-daemon id=65e06346-5466-4b09-82aa-6b442c2e9024 parent=a666a0bf-ad17-4805-8fcc-f565ebe324e1
+[2026-10-19T16:46:27.328Z] Starting detached setup start command: start:core-dumps
+[2026-10-19T16:46:27.329Z] Starting detached setup start command: start:desktop-init
+[2026-10-19T16:46:27.330Z] Starting detached setup start command: start:exec-daemon
+[2026-10-19T16:46:27.347Z] Started detached setup start command: start:core-dumps
+[2026-10-19T16:46:27.397Z] Started detached setup start command: start:exec-daemon
+[2026-10-19T16:46:27.398Z] Started detached setup start command: start:desktop-init

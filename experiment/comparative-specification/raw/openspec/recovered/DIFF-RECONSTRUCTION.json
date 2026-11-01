@@ -1,0 +1,377 @@
+{
+  "n_files": 30,
+  "written": [
+    {
+      "src": "/home/ubuntu/tower-spec-output/CROSS-REFERENCES.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/CROSS-REFERENCES.md",
+      "bytes": 1470
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/EXPERIMENT-RECORD.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/EXPERIMENT-RECORD.md",
+      "bytes": 7553
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/OFF-SNAPSHOT-PACKETS.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/OFF-SNAPSHOT-PACKETS.md",
+      "bytes": 2245
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/START.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/START.md",
+      "bytes": 415
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/STATUS.json",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/STATUS.json",
+      "bytes": 854
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/UNRESOLVED.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/UNRESOLVED.md",
+      "bytes": 2718
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/explore/00-EXPLORE-NOTES.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/explore/00-EXPLORE-NOTES.md",
+      "bytes": 11418
+    },
+    {
+      "src": "/home/ubuntu/tower-spec-output/install-evidence/INSTALL.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/install-evidence/INSTALL.md",
+      "bytes": 1398
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/design.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/design.md",
+      "bytes": 5865
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/proposal.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/proposal.md",
+      "bytes": 3981
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/specs/acquisition-seed-capture/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/specs/acquisition-seed-capture/spec.md",
+      "bytes": 2247
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/specs/automations-orchestration/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/specs/automations-orchestration/spec.md",
+      "bytes": 9778
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/specs/commercial-hard-input/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/specs/commercial-hard-input/spec.md",
+      "bytes": 2088
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/specs/consent-suppression/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/specs/consent-suppression/spec.md",
+      "bytes": 2238
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/specs/consultant-desk/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/specs/consultant-desk/spec.md",
+      "bytes": 2540
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/specs/contact-touchpoints/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/specs/contact-touchpoints/spec.md",
+      "bytes": 2650
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/specs/eligibility-evaluation/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/specs/eligibility-evaluation/spec.md",
+      "bytes": 2840
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/specs/engagement-sequencing/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/specs/engagement-sequencing/spec.md",
+      "bytes": 5504
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/specs/fact-refresh/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/specs/fact-refresh/spec.md",
+      "bytes": 1948
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/specs/meeting-loop-closer/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/specs/meeting-loop-closer/spec.md",
+      "bytes": 2393
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/specs/operator-house/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/specs/operator-house/spec.md",
+      "bytes": 2981
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/specs/outbound-actuation/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/specs/outbound-actuation/spec.md",
+      "bytes": 2675
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/specs/product-purpose/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/specs/product-purpose/spec.md",
+      "bytes": 4205
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/specs/provision-forward-deploy/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/specs/provision-forward-deploy/spec.md",
+      "bytes": 1509
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/specs/reachability-audit/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/specs/reachability-audit/spec.md",
+      "bytes": 1960
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/specs/reference-currency/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/specs/reference-currency/spec.md",
+      "bytes": 2017
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/specs/signal-motion/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/specs/signal-motion/spec.md",
+      "bytes": 2274
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/specs/tenancy-access/spec.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/specs/tenancy-access/spec.md",
+      "bytes": 2235
+    },
+    {
+      "src": "/workspace/openspec/changes/specify-intended-tower-product/tasks.md",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/changes/specify-intended-tower-product/tasks.md",
+      "bytes": 1873
+    },
+    {
+      "src": "/workspace/openspec/config.yaml",
+      "dest": "/cursor/stores/self/tower-spec-experiment/raw/openspec/artifacts/_workspace/openspec/config.yaml",
+      "bytes": 2239
+    }
+  ],
+  "events": [
+    {
+      "path": "/home/ubuntu/tower-spec-output/START.md",
+      "kind": "create",
+      "added": 11
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/install-evidence/INSTALL.md",
+      "kind": "create",
+      "added": 30
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/explore/00-EXPLORE-NOTES.md",
+      "kind": "create",
+      "added": 151
+    },
+    {
+      "path": "/workspace/openspec/config.yaml",
+      "kind": "create",
+      "added": 39
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/proposal.md",
+      "kind": "create",
+      "added": 45
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/product-purpose/spec.md",
+      "kind": "create",
+      "added": 61
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/acquisition-seed-capture/spec.md",
+      "kind": "create",
+      "added": 39
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/provision-forward-deploy/spec.md",
+      "kind": "create",
+      "added": 28
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/commercial-hard-input/spec.md",
+      "kind": "create",
+      "added": 35
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/tenancy-access/spec.md",
+      "kind": "create",
+      "added": 42
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/reachability-audit/spec.md",
+      "kind": "create",
+      "added": 35
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/consent-suppression/spec.md",
+      "kind": "create",
+      "added": 42
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/engagement-sequencing/spec.md",
+      "kind": "create",
+      "added": 81
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/fact-refresh/spec.md",
+      "kind": "create",
+      "added": 35
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/reference-currency/spec.md",
+      "kind": "create",
+      "added": 35
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/eligibility-evaluation/spec.md",
+      "kind": "create",
+      "added": 49
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/signal-motion/spec.md",
+      "kind": "create",
+      "added": 39
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/meeting-loop-closer/spec.md",
+      "kind": "create",
+      "added": 42
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/automations-orchestration/spec.md",
+      "kind": "create",
+      "added": 77
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/consultant-desk/spec.md",
+      "kind": "create",
+      "added": 49
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/operator-house/spec.md",
+      "kind": "create",
+      "added": 49
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/contact-touchpoints/spec.md",
+      "kind": "create",
+      "added": 42
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/outbound-actuation/spec.md",
+      "kind": "create",
+      "added": 46
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/design.md",
+      "kind": "create",
+      "added": 93
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/tasks.md",
+      "kind": "create",
+      "added": 25
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/consent-suppression/spec.md",
+      "kind": "edit",
+      "added": 1
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/engagement-sequencing/spec.md",
+      "kind": "edit",
+      "added": 1
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/fact-refresh/spec.md",
+      "kind": "edit",
+      "added": 1
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/meeting-loop-closer/spec.md",
+      "kind": "edit",
+      "added": 1
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/reachability-audit/spec.md",
+      "kind": "edit",
+      "added": 1
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/reference-currency/spec.md",
+      "kind": "edit",
+      "added": 1
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/signal-motion/spec.md",
+      "kind": "edit",
+      "added": 1
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/tenancy-access/spec.md",
+      "kind": "edit",
+      "added": 1
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/tasks.md",
+      "kind": "edit",
+      "added": 5
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/automations-orchestration/spec.md",
+      "kind": "edit",
+      "added": 50
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/specs/contact-touchpoints/spec.md",
+      "kind": "edit",
+      "added": 7
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/proposal.md",
+      "kind": "edit",
+      "added": 1
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/design.md",
+      "kind": "edit",
+      "added": 1
+    },
+    {
+      "path": "/workspace/openspec/changes/specify-intended-tower-product/design.md",
+      "kind": "edit",
+      "added": 3
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/UNRESOLVED.md",
+      "kind": "create",
+      "added": 47
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/OFF-SNAPSHOT-PACKETS.md",
+      "kind": "create",
+      "added": 38
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/CROSS-REFERENCES.md",
+      "kind": "create",
+      "added": 28
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/STATUS.json",
+      "kind": "create",
+      "added": 10
+    },
+    {
+      "path": "/home/ubuntu/tower-spec-output/EXPERIMENT-RECORD.md",
+      "kind": "create",
+      "added": 145
+    }
+  ]
+}

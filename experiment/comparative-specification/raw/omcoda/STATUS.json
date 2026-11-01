@@ -1,0 +1,10 @@
+{
+  "contestant_id": "omcoda",
+  "sha": "c5bd617b9b1bb9fbd5d73c99da16a973594c6bd7",
+  "framework": "omcoda",
+  "framework_version": "pinned SHA c5bd617b9b1bb9fbd5d73c99da16a973594c6bd7; operating docs: docs/README.md, docs/method/00-INDEX.md, docs/method/DECISION-CONSTITUTION.md, docs/method/TWO-COLUMN-SYNTHESIS.md, docs/sme/DOCTRINE-sme-cto-implementation.md, docs/sme/METHODOLOGY.md, docs/sme/SURFACE-INTENT.md, docs/sme/AGENT-VS-HUMAN-PROVISIONING.md, docs/register/PASS-FORK-MAP.md, docs/register/THREE-SURFACE-MODEL.md, docs/register/ORCHESTRATION.md, docs/register/SYSTEMS-REQUIREMENTS.md, docs/register/SEED.md, docs/register/WORLD.md, docs/register/OUTCOMES.md, docs/register/how/00-INDEX.md, docs/build-foundation/01-ui-first-and-how.md, docs/build-foundation/cursor-rules/how-analysis.mdc, docs/sme/capability/00-ROSTER.md, docs/wiring/WIRING-METHOD.md, docs/wiring/NODE-DEFINITION.md, docs/register/PHASE-TWO.md",
+  "status": "complete",
+  "completion_claim": "Walked Om Coda's Register spine on the pinned snapshot without implementing Tower or inventing founder decisions. Seed and World are confirmed as locked dump/derivation. Machine track (twelve systems, fused states, table-first) and face track (human outcomes, How DNA, operator authorship/bind) are joined. Practice SME modifies existing commitments; capability SME additions (Sending infrastructure, Conversations, pipelines) are folded into intended product and marked as in-repo Register-absorb not started. Phase Two Agents flagship 15:43 and Automations definite-middle/primitives are included without overwriting Seed or promoting parked expansions (SYSTEMS-GOAL, OBJECTIVE-ESCROW, attempt windows) into Story. Remaining holes sit in named silences, KUs, BLOCKED(counsel), and the founder-only class. Under this method that is a complete specification of the intended product, not a claim that KUs are closed or that the snapshot is shipped.",
+  "blocker": null,
+  "artifact_root": "/home/ubuntu/tower-spec-output/"
+}

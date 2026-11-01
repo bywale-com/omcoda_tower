@@ -1,0 +1,14 @@
+{
+  "resultType": "runTerminalCommandV2Result",
+  "value": {
+    "output": "## ADD-TAG-PACKET.md\n# Add tag packet \u2014 A35 Parameters + the four revisions\n\n## AUDIT-FIELD-PACKET.md\n# Audit field packet \u2014 A34 on Contacts. Hardcoded. Not an Action.\n\n## CONTACT-UPLOAD-PACKET.md\n# Contact Upload packet \u2014 put in \u00b7 kind \u00b7 Files \u00b7 search\n\n## CONTACT-UPLOADED-EVENT-PACKET.md\n# Contact uploaded information packet \u2014 A41\u2013A44\n\n## CONTACT-WORKSPACE-PACKET.md\n# Contact workspace packet \u2014 the seat \u00b7 Now \u00b7 History\n\n## FORM-CLASS-PACKET.md\n# Form class occupies the form \u2014 A40\n\n## GET-PACKET.md\n# Get packet \u2014 A22 canvas \u00b7 A23 interior\n\n## IF-SWITCH-PACKET.md\n# If / Switch packet \u2014 two kinds. Four plates. Paths are wires.\n\n## IN-APP-ACTION-PACKET.md\n# In-app Action packet \u2014 module affordances as the inventory\n\n## INPUT-LOOK-PACKET.md\n# Input look packet \u2014 A29\n\n## MAPPED-BOX-PACKET.md\n# Mapped box packet \u2014 A31 value in the box \u00b7 A32 close Input / resize\n\n## NODE-INTERIOR.md\n# Node interior \u2014 shared vs kind\n\n## NODE-PLACE-PACKET.md\n# Node place packet \u2014 A27 options \u00b7 A28 wire +\n\n## PLATE-READ.md\n# How to read a plate when we build\n\n## RULE-OUTCOMES-PACKET.md\n# Rule Outcomes packet \u2014 A21\n\n## RULE-OUTPUT-PACKET.md\n# Rule Output packet \u2014 A20\n\n## RUN-PACKET.md\n# Run packet \u2014 execute now vs arm the event\n\n## SHELL-CHROME-PACKET.md\n# Shell chrome packet \u2014 Consultant \u25be \u00b7 Operator \u00b7 Contact \u25be\n\n## TEST-PACKET.md\n# Test packet \u2014 provide data on the trigger\n\n## TRIGGER-SELECT-PACKET.md\n# Trigger select packet \u2014 A26\n\n## WAIT-NOTE-PACKET.md\n# Wait note packet \u2014 W1\u2013W3 \u00b7 N1 \u00b7 N1b \u00b7 N2\n\n## WAIT-NOTE-APPROVER-PACKET.md\n# Wait note \u2014 Approver packet \u2014 W2b\n\n## WORKSPACE-UNTIL-OPT-OUT-PACKET.md\n# Workspace until they opt out \u2014 evolution of SHELL-CHROME + CONTACT-WORKSPACE\n\n",
+    "exitCode": 0,
+    "poppedOutIntoBackground": false,
+    "isRunningInBackground": false,
+    "notInterrupted": false,
+    "resultingWorkingDirectory": "",
+    "didUserChange": false,
+    "endedReason": "RUN_TERMINAL_COMMAND_ENDED_REASON_UNSPECIFIED",
+    "outputRaw": ""
+  }
+}
