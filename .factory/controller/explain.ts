@@ -449,6 +449,47 @@ function explainPacket(
       clocks,
     });
   }
+  if (packet.dispatch?.effect === "wake_sa" && packet.dispatchedSaRevision === packet.revision) {
+    const openExecution = packet.dispatch.executionId
+      ? ledger.executions?.[packet.dispatch.executionId]
+      : liveExecutionFor(ledger, packet.id);
+    const openClocks = clocks(openExecution ?? null, null, packet);
+    if (openExecution?.phase === "dispatched" && openExecution.reserveUntil <= now) {
+      return row(packet, {
+        happening: `The Analyst dispatch for ${packet.revision} is open. The reservation elapsed at ${openExecution.reserveUntil}.`,
+        why: "The dispatch is still open because recovery has not run.",
+        next: "The next reconcile pass expires this reservation.",
+        who: "controller",
+        situation: "held",
+        commitment: recovering(now, "controller"),
+        clocks: openClocks,
+      });
+    }
+    if (packet.dispatch.deliveredAt == null) {
+      return row(packet, {
+        happening: `The Analyst dispatch for ${packet.revision} is recorded and not delivered.`,
+        why: "Delivery is separate from the wake.",
+        next: "The next pass delivers this dispatch.",
+        who: "controller",
+        situation: "held",
+        commitment: recovering(now, "controller"),
+        clocks: openClocks,
+      });
+    }
+    return row(packet, {
+      happening: `The Analyst dispatch for ${packet.revision} is open.`,
+      why: "This assignment is the current authorization.",
+      next: "Sign the change.",
+      who: "analyst",
+      situation: "proceeding",
+      commitment: waiting(
+        openExecution?.id ? `claim ${openExecution.id}` : "analyst claim",
+        "analyst",
+        clocked(now) ? nextReconcileAt(now) : null,
+      ),
+      clocks: openClocks,
+    });
+  }
   if (packet.stage === "draft" && packet.wake === "hold") {
     return row(packet, {
       happening: "Draft. Wake is hold.",
