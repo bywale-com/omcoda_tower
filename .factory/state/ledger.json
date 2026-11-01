@@ -1,5 +1,5 @@
 {
-  "stateRevision": 223,
+  "stateRevision": 224,
   "authorizedDispatches": 50,
   "usedDispatches": 46,
   "scope": {
@@ -647,17 +647,12 @@
     "pkt-009-eligibility-writes": {
       "id": "pkt-009-eligibility-writes",
       "initiativeId": "exec-identity",
-      "stage": "analysis",
+      "stage": "change_specified",
       "wake": "sa",
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": {
-        "workerId": "bc-c713b85e-18f2-408e-af89-da3ebd37f7dd",
-        "role": "analyst",
-        "until": "2026-11-01T15:27:01.069Z",
-        "revision": "rev-1"
-      },
+      "lease": null,
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
