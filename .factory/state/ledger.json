@@ -1,7 +1,7 @@
 {
-  "stateRevision": 234,
+  "stateRevision": 235,
   "authorizedDispatches": 50,
-  "usedDispatches": 49,
+  "usedDispatches": 50,
   "scope": {
     "id": "agents-and-automations",
     "status": "active",
@@ -660,12 +660,22 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
-      "dispatchedEngineerRevision": null,
+      "dispatchedEngineerRevision": "rev-1",
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": null,
+      "dispatch": {
+        "packetId": "pkt-009-eligibility-writes",
+        "revision": "rev-1",
+        "prHead": "320a27902b02b6ff3f1be65cf17848502859bb35",
+        "effect": "wake_engineer",
+        "label": "factory-wake-engineer",
+        "issuedAt": "2026-11-01T23:00:16.801Z",
+        "deliveredAt": "2026-11-01T23:00:16.801Z",
+        "executionId": "dsp-235-engineer-pkt-009-eligibility-writes",
+        "assignmentId": "asg-dsp-235-engineer-pkt-009-eligibility-writes"
+      },
       "dispatchHistory": [
         {
           "packetId": "pkt-009-eligibility-writes",
@@ -2098,6 +2108,30 @@
       "startUntil": null,
       "leaseUntil": null,
       "reason": "lease_expired"
+    },
+    "dsp-235-engineer-pkt-009-eligibility-writes": {
+      "id": "dsp-235-engineer-pkt-009-eligibility-writes",
+      "assignmentId": "asg-dsp-235-engineer-pkt-009-eligibility-writes",
+      "role": "engineer",
+      "phase": "dispatched",
+      "packetIds": [
+        "pkt-009-eligibility-writes"
+      ],
+      "revisions": {
+        "pkt-009-eligibility-writes": "rev-1"
+      },
+      "label": "factory-wake-engineer",
+      "prHead": "320a27902b02b6ff3f1be65cf17848502859bb35",
+      "agentId": null,
+      "continuation": "fresh",
+      "issuedAt": "2026-11-01T23:00:16.801Z",
+      "startedAt": null,
+      "runningAt": null,
+      "endedAt": null,
+      "reserveUntil": "2026-11-01T23:30:16.801Z",
+      "startUntil": null,
+      "leaseUntil": null,
+      "reason": null
     }
   },
   "assignments": {
@@ -2381,6 +2415,18 @@
       "basis": "component: firing-pointers: this firing places its own rows on payload.writes",
       "executionIds": [
         "dsp-232-analyst-pkt-011-halt-records-writes"
+      ]
+    },
+    "asg-dsp-235-engineer-pkt-009-eligibility-writes": {
+      "id": "asg-dsp-235-engineer-pkt-009-eligibility-writes",
+      "role": "engineer",
+      "initiativeId": "exec-identity",
+      "packetIds": [
+        "pkt-009-eligibility-writes"
+      ],
+      "basis": null,
+      "executionIds": [
+        "dsp-235-engineer-pkt-009-eligibility-writes"
       ]
     }
   },
