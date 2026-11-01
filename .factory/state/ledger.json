@@ -1,5 +1,5 @@
 {
-  "stateRevision": 232,
+  "stateRevision": 233,
   "authorizedDispatches": 50,
   "usedDispatches": 49,
   "scope": {
@@ -660,22 +660,12 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
-      "dispatchedEngineerRevision": "rev-1",
+      "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-009-eligibility-writes",
-        "revision": "rev-1",
-        "prHead": "a2974415dfef9f5372797bf49e070023bc04d7e7",
-        "effect": "wake_engineer",
-        "label": "factory-wake-engineer",
-        "issuedAt": "2026-11-01T19:32:16.541Z",
-        "deliveredAt": "2026-11-01T19:32:16.541Z",
-        "executionId": "dsp-231-engineer-pkt-009-eligibility-writes",
-        "assignmentId": "asg-dsp-231-engineer-pkt-009-eligibility-writes"
-      },
+      "dispatch": null,
       "dispatchHistory": [
         {
           "packetId": "pkt-009-eligibility-writes",
@@ -697,6 +687,18 @@
           "executionId": "dsp-218-analyst-pkt-009-eligibility-writes",
           "assignmentId": "asg-dsp-218-analyst-pkt-009-eligibility-writes",
           "workerExecution": "ran"
+        },
+        {
+          "packetId": "pkt-009-eligibility-writes",
+          "revision": "rev-1",
+          "prHead": "a2974415dfef9f5372797bf49e070023bc04d7e7",
+          "effect": "wake_engineer",
+          "label": "factory-wake-engineer",
+          "issuedAt": "2026-11-01T19:32:16.541Z",
+          "deliveredAt": "2026-11-01T19:32:16.541Z",
+          "executionId": "dsp-231-engineer-pkt-009-eligibility-writes",
+          "assignmentId": "asg-dsp-231-engineer-pkt-009-eligibility-writes",
+          "workerExecution": "absent"
         }
       ],
       "execution": null,
@@ -828,35 +830,20 @@
       "revision": "rev-1",
       "hold": false,
       "blockerId": null,
-      "lease": {
-        "workerId": "bc-d1659f95-32e6-41ee-b515-b164739495e3",
-        "role": "analyst",
-        "until": "2026-11-01T15:32:32.665Z",
-        "revision": "rev-1"
-      },
+      "lease": null,
       "attempts": 0,
       "maxAttempts": 1,
       "candidateSha": null,
       "verifiedSha": null,
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
-      "dispatchedSaRevision": "rev-1",
+      "dispatchedSaRevision": null,
       "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-011-halt-records-writes",
-        "revision": "rev-1",
-        "prHead": "4912fa9263a9175e8ae5d31d8556a73f0b0a53e8",
-        "effect": "wake_sa",
-        "label": "factory-wake-sa",
-        "issuedAt": "2026-11-01T19:32:53.756Z",
-        "deliveredAt": "2026-11-01T19:32:53.756Z",
-        "executionId": "dsp-232-analyst-pkt-011-halt-records-writes",
-        "assignmentId": "asg-dsp-232-analyst-pkt-011-halt-records-writes"
-      },
+      "dispatch": null,
       "dispatchHistory": [
         {
           "packetId": "pkt-011-halt-records-writes",
@@ -889,6 +876,18 @@
           "deliveredAt": "2026-11-01T14:30:08.595Z",
           "executionId": "dsp-225-analyst-pkt-011-halt-records-writes",
           "assignmentId": "asg-dsp-225-analyst-pkt-011-halt-records-writes",
+          "workerExecution": "ran"
+        },
+        {
+          "packetId": "pkt-011-halt-records-writes",
+          "revision": "rev-1",
+          "prHead": "4912fa9263a9175e8ae5d31d8556a73f0b0a53e8",
+          "effect": "wake_sa",
+          "label": "factory-wake-sa",
+          "issuedAt": "2026-11-01T19:32:53.756Z",
+          "deliveredAt": "2026-11-01T19:32:53.756Z",
+          "executionId": "dsp-232-analyst-pkt-011-halt-records-writes",
+          "assignmentId": "asg-dsp-232-analyst-pkt-011-halt-records-writes",
           "workerExecution": "ran"
         }
       ],
@@ -2052,7 +2051,7 @@
       "id": "dsp-231-engineer-pkt-009-eligibility-writes",
       "assignmentId": "asg-dsp-231-engineer-pkt-009-eligibility-writes",
       "role": "engineer",
-      "phase": "dispatched",
+      "phase": "refused",
       "packetIds": [
         "pkt-009-eligibility-writes"
       ],
@@ -2066,17 +2065,17 @@
       "issuedAt": "2026-11-01T19:32:16.541Z",
       "startedAt": null,
       "runningAt": null,
-      "endedAt": null,
+      "endedAt": "2026-11-01T23:00:12.454Z",
       "reserveUntil": "2026-11-01T20:02:16.541Z",
       "startUntil": null,
       "leaseUntil": null,
-      "reason": null
+      "reason": "reservation_expired"
     },
     "dsp-232-analyst-pkt-011-halt-records-writes": {
       "id": "dsp-232-analyst-pkt-011-halt-records-writes",
       "assignmentId": "asg-dsp-232-analyst-pkt-011-halt-records-writes",
       "role": "analyst",
-      "phase": "dispatched",
+      "phase": "interrupted",
       "packetIds": [
         "pkt-011-halt-records-writes",
         "pkt-012-consent-opt-out-writes"
@@ -2092,11 +2091,11 @@
       "issuedAt": "2026-11-01T19:32:53.756Z",
       "startedAt": null,
       "runningAt": null,
-      "endedAt": null,
+      "endedAt": "2026-11-01T23:00:12.454Z",
       "reserveUntil": "2026-11-01T20:02:53.756Z",
       "startUntil": null,
       "leaseUntil": null,
-      "reason": null
+      "reason": "lease_expired"
     }
   },
   "assignments": {
