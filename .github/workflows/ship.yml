@@ -89,8 +89,44 @@ jobs:
       - name: verify:click-attribution (PKT-001)
         run: npx tsx --env-file=.env scripts/verify-click-attribution.ts
 
+      - name: verify:send-denied-engagement (PKT-018)
+        run: npx tsx --env-file=.env scripts/verify-send-denied-engagement.ts
+
+      - name: verify:first-step-send-denied (PKT-019)
+        run: npx tsx --env-file=.env scripts/verify-first-step-send-denied.ts
+
+      - name: verify:fact-writes (PKT-007)
+        run: npx tsx --env-file=.env scripts/verify-fact-writes.ts
+
+      - name: verify:meeting-writes (PKT-008)
+        run: npx tsx --env-file=.env scripts/verify-meeting-writes.ts
+
+      - name: verify:campaign-failure-writes (PKT-010)
+        run: npx tsx --env-file=.env scripts/verify-campaign-failure-writes.ts
+
+      - name: verify:firm-provision-writes (PKT-013)
+        run: npx tsx --env-file=.env scripts/verify-firm-provision-writes.ts
+
+      - name: verify:halt-enroll-firm (PKT-015)
+        run: npx tsx --env-file=.env scripts/verify-halt-enroll-firm.ts
+
+      - name: verify:halt-send-firm (PKT-016)
+        run: npx tsx --env-file=.env scripts/verify-halt-send-firm.ts
+
+      - name: verify:id-keyed-loads (PKT-006)
+        run: npx tsx --env-file=.env scripts/verify-id-keyed-loads.ts
+
+      - name: verify:audit-row-grain (PKT-005)
+        run: npx tsx --env-file=.env scripts/verify-audit-row-grain.ts
+
       - name: verify:open-ask-cursor (PKT-002)
         run: npx tsx --env-file=.env scripts/verify-open-ask-cursor.ts
+
+      - name: verify:resume-same-run (PKT-003)
+        run: npx tsx --env-file=.env scripts/verify-resume-same-run.ts
+
+      - name: verify:firing-handle (PKT-004)
+        run: npx tsx --env-file=.env scripts/verify-firing-handle.ts
 
       - name: verify:affordances (chosen-value round-trip)
         run: npm run verify:affordances

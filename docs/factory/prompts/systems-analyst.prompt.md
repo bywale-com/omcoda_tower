@@ -14,7 +14,7 @@ If `factory-blocked` or `factory-hold` is on the PR: stop.
 
 If ledger `scope.status` is `inactive`, `suspended`, or `complete`: stop.
 
-If `factory-wake-sa` is not on the PR: stop.
+If `factory-wake-sa` is not on the PR, and this run is not a continuation of an existing analyst agent: stop. A continuation is a follow-up on your agent id. It does not add the label again. Run the wake check either way.
 
 Ensure you are on the pull request head branch. Cursor Automations boot with the checkout on the default branch.
 
@@ -83,21 +83,37 @@ Stop unless it prints `lease_acquired`. The packet stage is now `analysis`.
 
 3. Commit and push the specification. Do not commit `.factory/state/ledger.json` by hand. If the push rejects, rebase onto the lease commit and push again.
 
-4. Sign through the controller.
+4. Sign through the controller. One execution may name several sibling packets. Each keeps its own file, revision, and nine sections. Pass `--packet` when the assignment lists more than one.
 
 ```bash
-npx tsx scripts/factory-analyst.ts sign --worker <bc-id>
+npx tsx scripts/factory-analyst.ts sign --worker <bc-id> --packet <packet-id>
 ```
 
-Stop unless it prints `change_specified`. A missing section stays unsigned.
+`change_specified` signs that packet. `continue <packet-id>` means lease and sign that sibling next, in this same execution. The assignment is the whole eligible sibling component. Do not stop between siblings. Do not merge their sections into one file. Stop when the command prints `change_specified` and does not print `continue`. A missing section stays unsigned.
+
+If the next specification does not fit in this context, sign what you hold and leave the rest for the same agent:
+
+```bash
+npx tsx scripts/factory-analyst.ts saturate --worker <bc-id> --packet <packet-id>
+```
+
+Stop unless it prints `context_saturated`.
 
 5. If you cannot finish the specification, record one of these and stop. Do not sign.
 
-Recoverable interruption. The packet returns to `released` so a later wake can continue:
+Recoverable interruption. The packet returns to `released` so a later wake can continue. A systems-contract return cannot be interrupted this way:
 
 ```bash
 npx tsx scripts/factory-analyst.ts interrupt --worker <bc-id>
 ```
+
+If this revision carries a systems-contract block, sign the corrected specification when the contract can be reconciled. If the contradiction requires a product change, record that and stop:
+
+```bash
+npx tsx scripts/factory-analyst.ts requirements-blocked --worker <bc-id> --packet <packet-id> --note "<what the requirements must change>"
+```
+
+Stop unless it prints `requirements_blocked`. The revision does not advance again. The packet returns to the Architect.
 
 A blocker for an infrastructure or external stop. `--class` is `infrastructure` or `external`. Write `docs/factory/blockers/BLOCKER-NNN.md`.
 

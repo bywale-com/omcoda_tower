@@ -17,7 +17,13 @@ export function selectLabeledDispatch<T extends { dispatch: DispatchRecord | nul
 ): { ok: true; row: T } | { ok: false; reason: "no_dispatch_record" | "ambiguous_dispatch" } {
   const matches = rows.filter((row) => row.dispatch?.label === label);
   if (matches.length === 0) return { ok: false, reason: "no_dispatch_record" };
-  if (matches.length > 1) return { ok: false, reason: "ambiguous_dispatch" };
+  if (matches.length > 1) {
+    const executionIds = new Set(matches.map((row) => row.dispatch?.executionId ?? ""));
+    const shared = executionIds.size === 1 ? [...executionIds][0] : "";
+    if (!shared) return { ok: false, reason: "ambiguous_dispatch" };
+    const sorted = [...matches].sort((a, b) => (a.dispatch?.packetId ?? "").localeCompare(b.dispatch?.packetId ?? ""));
+    return { ok: true, row: sorted[0] };
+  }
   return { ok: true, row: matches[0] };
 }
 

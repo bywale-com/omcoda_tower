@@ -79,7 +79,25 @@ A missing classification, a missing or unreadable plate, or an incomplete five-b
 
 A packet may be released while the rest of the initiative is still open, when all seven gates in `docs/factory/OPERATING-PROTOCOL.md` pass and no unresolved question forces the Engineer to invent product behavior. Record a neighboring capability as a dependency, an affected contract, or a later initiative. Do not investigate that later initiative in this execution.
 
-When the session ends and the initiative still has authorized investigation left, write the handoff and stop. The controller dispatches the continuation. Do not ask the founder to paste a prompt. A founder decision, an external blocker, or a suspended scope ends the session without a continuation.
+Releasing a packet is a checkpoint. It does not end this execution. After the release commit, record the checkpoint and keep investigating:
+
+```bash
+npx tsx scripts/factory-architect.ts checkpoint --worker <bc-id>
+```
+
+Before `markReleased`, run `npx tsx scripts/factory-architect.ts release-gate`. `hold_release` or `suspended` means do not release another packet. Write the journal and keep investigating. `release_clear` means a release is still allowed.
+
+When two packets share a contract, a dependency, a component, a runtime behavior, or an implementation boundary, record that on each manifest as `siblings`: `{ "id", "basis", "note" }`. `basis` is `contract`, `dependency`, `component`, `runtime`, or `boundary`. Adjacent packet numbers are not a relationship. Do not group them for that reason.
+
+Stay in this execution until coverage is complete, the scope is suspended, a real blocker is recorded, or the context cannot hold another pass. Do not stop because a packet was released. Do not ask for a new cloud agent because a checkpoint was written.
+
+If you must leave with coverage still open, record this agent id and yield. The controller resumes this agent when a follow-up is available and the run count on this agent is still under the cap. A fresh agent is only for a missing id, a saturated context, an exhausted run cap, or a follow-up the API cannot send.
+
+```bash
+npx tsx scripts/factory-architect.ts yield --worker <bc-id>
+```
+
+Add `--context saturated` when another follow-up would not fit. A founder decision, an external blocker, or a suspended scope ends the session without a continuation.
 
 ## Out of seat
 

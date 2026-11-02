@@ -2,7 +2,7 @@
 
 **Packet:** PKT-019 `pkt-019-first-step-send-denied`  
 **Initiative:** `exec-identity`  
-**Revision:** rev-1  
+**Revision:** rev-2  
 **Source:** PR #135 claim 22, at `1f6f43ab2dbe8b0e32b0a344990795bb998c8be3`. The claim text is the same at `807e1ca21735b764d77132602e8b9f5942c00c0d`.  
 **Contract:** The packet names no component contract. `halt-send` has no component contract. This packet does not open one. `docs/factory/components/firing-pointers/CONTRACT.md` ends at claim 16. `docs/factory/components/walk-handle/CONTRACT.md` and `docs/factory/components/pursuit-identity/CONTRACT.md` do not list claim 22. This packet does not edit those files.
 
@@ -16,18 +16,21 @@ The writer is the `writeEngagement` that already follows the first `actuateChann
 
 `enrollment.payload.dryRun` stays `!shouldLiveSend`, written before the send returns. The return’s `dryRun` is that same boolean. A denied live-cohort enroll keeps `dryRun` false on the enrollment and on the return, and `send_denied` on the engagement. This packet does not rewrite either flag from `send.ok`.
 
+The enrollment insert writes `sequence_id`. After migration 010 that column references `sequence_template(id)`. A verify that calls `enrollAndActuate` with an agent ref and no template row fails that foreign key before `writeEngagement` runs. The fixture inserts one empty-cells `sequence_template` whose id is the agent ref. It does not insert a campaign or a binding, and it does not change the insert.
+
 ## Must / must-not
 
 - Replace the one first-step `writeEngagement` with three calls. `!send.ok` writes `send_denied`. `send.ok && !send.dryRun` writes `send_live`. `send.ok && send.dryRun` writes `send_dry_run`. One write per result. A deny is not also a `send_live` or a `send_dry_run`.
 - Do not choose the kind with `live ? "send_live" : "send_dry_run"` or with `shouldLiveSend`. The `const live = shouldLiveSend(input.contactId)` binding stays. It still feeds `dryRun: !live` on the enrollment payload and on the return.
 - Do not read `send.detail` or `send.deny` in `enrollAndActuate`. A halt deny, a silenced deny, a consent-missing deny, and a throughput deny are the same kind. A deny that also carries `dryRun: false` or `dryRun: true` is still `send_denied`.
 - Do not edit the `actuateChannelSend` call. `purpose` stays `input.purpose ?? "opt-in"`. `subject` and `bodyText` still go into that call. They stay off the deny row.
-- Do not edit `writeEngagement`, `isHaltBlockingNew`, `consentAndHaltGate`, `dispatchEmail`, `dispatchSms`, `dispatchEmailLive`, `dispatchSmsLive`, `actuateChannelSend`, `shouldLiveSend`, `escalateAttemptWindow`, `advanceTemplateCellIfDue`, or `tickOnce`.
+- Do not edit `writeEngagement`, `isHaltBlockingNew`, `consentAndHaltGate`, `dispatchEmail`, `dispatchSms`, `dispatchEmailLive`, `dispatchSmsLive`, `actuateChannelSend`, `shouldLiveSend`, `resolveBoundTemplate`, `loadTemplateCells`, `firstCampaignId`, `escalateAttemptWindow`, `advanceTemplateCellIfDue`, or `tickOnce`.
+- Do not edit the `INSERT INTO enrollment` in `enrollAndActuate`. Do not drop `enrollment_sequence_id_fkey`. Do not add a migration, a table, or a column.
 - Do not edit `titleFor`, `kindOf`, `outcomeFrom`, `thoughtFrom`, `signalsFrom`, `eventKindProse`, or `ActivityInspectDrawer`. Do not add a `send_denied` case.
 - Do not set `active_attempts.status` from the send. Do not change `state.delivered`. Do not add `send_denied` to the `event_kind IN` list inside `hasInboundOverride`. The deny does not nullify the attempt.
 - Do not put this row on `payload.writes`. Do not add the engagement id to the return or to `call_agent`’s writes. `call_agent` still pushes `result.enrollmentId`.
 - Do not rewrite `enrollment.payload.dryRun` or the return’s `dryRun` from `send.ok`. `fireFirstStep === false` still writes no engagement. The halt return before the inserts stays `blocked: "halt"`.
-- Do not add a migration, a table, or a column. Do not edit a route. `npm run build` is not the proof. Do not fold the check into `npm run verify:ship`.
+- Do not edit a route. `npm run build` is not the proof. Do not fold the check into `npm run verify:ship`.
 
 `DispatchResult` already has the deny shape. The writer stores that object. It does not narrow it.
 
@@ -40,7 +43,7 @@ export type DispatchResult =
 
 The planted first step is one write. The kind is `live`. A deny for a live-cohort contact is `send_live` with the copy present and no `messageId`. A deny for any other contact is `send_dry_run` with the copy present and no `reason`.
 
-```770:820:server/wire-service/cascade.ts
+```790:840:server/wire-service/cascade.ts
   let send: DispatchResult | undefined;
   if (input.fireFirstStep !== false) {
     const authoredContent = (authored?.content ?? {}) as Record<string, unknown>;
@@ -111,7 +114,7 @@ The step keys on every arm are `enrollmentId`, `attemptId`, `channel`, `template
 
 A missing address with no live test fallback, and a channel that is neither email nor text, stay `ok: true` and `dryRun: true`. They are `send_dry_run`. They are not this row. Do not edit those returns. The engagement `channel` is `owner`. The no-dispatcher `DispatchResult` still says `channel: "email"`. The check asserts the payload’s `channel`, not `send.channel`.
 
-```613:624:server/wire-service/cascade.ts
+```633:644:server/wire-service/cascade.ts
   if (channel === "email") {
     const to =
       row?.email ||
@@ -123,9 +126,10 @@ A missing address with no live test fallback, and a channel that is neither emai
         reason: "no email on contact — dry-run intent only",
         channel: "email",
       };
+    }
 ```
 
-```664:669:server/wire-service/cascade.ts
+```684:689:server/wire-service/cascade.ts
   return {
     ok: true,
     dryRun: true,
@@ -138,7 +142,7 @@ A missing address with no live test fallback, and a channel that is neither emai
 
 When `isHaltBlockingNew` is already true, the function returns before either insert and writes no engagement row. A deny the gate returns after the insert, including a halt the enroll check did not see, is this row. This packet does not make that ordering a second rule.
 
-```689:702:server/wire-service/cascade.ts
+```710:722:server/wire-service/cascade.ts
   if (await isHaltBlockingNew(input.firmId, input.contactId)) {
     return {
       enrollmentId: "",
@@ -156,7 +160,7 @@ When `isHaltBlockingNew` is already true, the function returns before either ins
 
 The attempt insert stays `status` `open` and `state.delivered` true. The deny does not nullify the attempt and does not enter `hasInboundOverride`.
 
-The forbid in `SCP-pkt-018-send-denied-engagement.md` is removed by this specification. The tick writers, their payloads, and their `purpose: "cem"` calls in that file stay. Do not edit `PKT-018-send-denied-engagement.md`. On this commit `scripts/verify-send-denied-engagement.ts` is not planted, and `scripts/factory-check.ts` has no predicate that fails when `enrollAndActuate` contains `"send_denied"`. If that script is present when this packet is planted, the engineer removes only the `enrollAndActuate` kind guard. The rest of that script stays.
+On this commit `SCP-pkt-018-send-denied-engagement.md` already says it does not forbid `send_denied` inside `enrollAndActuate` and does not require `live ? "send_live" : "send_dry_run"`. `scripts/verify-send-denied-engagement.ts` and the `factory:check` predicate for that packet do not read `enrollAndActuate` for a kind. This specification does not edit those files. Do not put the forbid back. If a later plant adds an `enrollAndActuate` kind guard, the engineer removes only that guard. The tick writers, their payloads, and their `purpose: "cem"` calls stay. Do not edit `PKT-018-send-denied-engagement.md`.
 
 ## Stores and contracts
 
@@ -173,7 +177,7 @@ CREATE TABLE IF NOT EXISTS engagement_records (
 );
 ```
 
-```223:236:server/wire-service/cascade.ts
+```223:237:server/wire-service/cascade.ts
 export async function writeEngagement(
   pool: Pool,
   firmId: string,
@@ -191,7 +195,7 @@ export async function writeEngagement(
 }
 ```
 
-`enrollment` is the row inserted before the send. `payload` is jsonb. `campaign_id` is nullable. This packet does not change that insert. `dryRun: !live` is already inside the payload object, written before `actuateChannelSend` returns.
+Migration 004 creates `enrollment.sequence_id` as nullable text with no foreign key. That is not the constraint a migrated database enforces. Migration 010 adds `campaign_id` and `enrollment_sequence_id_fkey`.
 
 ```70:79:supabase/migrations/004_machine_tables.sql
 CREATE TABLE IF NOT EXISTS enrollment (
@@ -206,7 +210,154 @@ CREATE TABLE IF NOT EXISTS enrollment (
 );
 ```
 
-`active_attempts.enrollment_id` references `enrollment`. The insert writes `status` `'open'`, `state` with `delivered: true`, and `fired_criteria` `'{}'`. `window_started_at` is the column migration 005 added. This packet does not change that insert.
+```218:229:supabase/migrations/010_sequence_campaign_housing.sql
+ALTER TABLE enrollment ADD COLUMN IF NOT EXISTS campaign_id TEXT REFERENCES campaign(id) ON DELETE SET NULL;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'enrollment_sequence_id_fkey'
+  ) THEN
+    ALTER TABLE enrollment
+      ADD CONSTRAINT enrollment_sequence_id_fkey
+      FOREIGN KEY (sequence_id) REFERENCES sequence_template(id) ON DELETE SET NULL;
+  END IF;
+END $$;
+```
+
+Migration 011 sets `sequence_id` NOT NULL only when, after a backfill that copies `agent_ref` solely for ids that already exist in `sequence_template`, no enrollment row still has a null `sequence_id`. The fixture does not write null. It writes the agent ref, and the template row makes that value legal whether or not the column is NOT NULL.
+
+```43:53:supabase/migrations/011_channel_variations.sql
+-- Leftover from 010: enrollment.sequence_id NOT NULL once backfill has no nulls.
+UPDATE enrollment SET sequence_id = agent_ref
+WHERE sequence_id IS NULL AND agent_ref IS NOT NULL
+  AND EXISTS (SELECT 1 FROM sequence_template t WHERE t.id = enrollment.agent_ref);
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM enrollment WHERE sequence_id IS NULL) THEN
+    ALTER TABLE enrollment ALTER COLUMN sequence_id SET NOT NULL;
+  END IF;
+END $$;
+```
+
+The insert this packet leaves in place writes that `sequence_id`. With no bound template and no loaded cells it is `input.agentRef`. `campaign_id` is null when no campaign row exists. Null satisfies the campaign foreign key. A missing `sequence_template` id does not satisfy `enrollment_sequence_id_fkey`.
+
+```724:753:server/wire-service/cascade.ts
+  const live = shouldLiveSend(input.contactId);
+  const id = `enr-${randomUUID()}`;
+  const tpl = await resolveBoundTemplate(pool, input.firmId, input.agentRef);
+  const sequenceId = input.sequenceId ?? tpl?.templateId ?? input.agentRef;
+  const { firstCampaignId, firstAuthoredChannel } = await import("./campaignHousing.ts");
+  const campaignId = await firstCampaignId(pool, sequenceId);
+  const authored = await firstAuthoredChannel(pool, campaignId);
+  const firstCell: NormalizedCell | null = tpl?.cells[0] ?? null;
+  const payload = {
+    ...(input.payload ?? {}),
+    dryRun: !live,
+    templateId: tpl?.templateId ?? input.agentRef,
+    cellId: firstCell?.id ?? null,
+    campaignId,
+  };
+
+  await pool.query(
+    `INSERT INTO enrollment (id, firm_id, contact_id, agent_ref, sequence_id, workflow_run_id, payload, campaign_id)
+     VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8)`,
+    [
+      id,
+      input.firmId,
+      input.contactId,
+      input.agentRef,
+      sequenceId,
+      input.workflowRunId ?? null,
+      JSON.stringify(payload),
+      campaignId,
+    ],
+  );
+```
+
+`sequence_template` requires `sequence_class`, `variant`, and `label`. `cells` defaults to `[]`. Migration 010 drops every check whose definition mentions `sequence_class`, then adds `sequence_template_sequence_class_check` for `optin`, `reengagement`, and `reactivation`. `firm_id` on the template is a later nullable column. The fixture omits it.
+
+```83:95:supabase/migrations/004_machine_tables.sql
+CREATE TABLE IF NOT EXISTS sequence_template (
+  id TEXT PRIMARY KEY,
+  sequence_class TEXT NOT NULL
+    CHECK (sequence_class IN ('optin_launch', 'launch_day', 'reengagement', 'reactivation')),
+  variant TEXT NOT NULL DEFAULT 'v1',
+  label TEXT NOT NULL,
+  cells JSONB NOT NULL DEFAULT '[]'::jsonb,
+  source TEXT,
+  silences JSONB NOT NULL DEFAULT '[]'::jsonb,
+  version INT NOT NULL DEFAULT 1,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+```
+
+```177:185:supabase/migrations/010_sequence_campaign_housing.sql
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'sequence_template_sequence_class_check'
+  ) THEN
+    ALTER TABLE sequence_template
+      ADD CONSTRAINT sequence_template_sequence_class_check
+      CHECK (sequence_class IN ('optin', 'reengagement', 'reactivation'));
+  END IF;
+```
+
+The verify inserts one row before the enrolls: `id` is the agent ref, `sequence_class` is `optin`, `variant` is `v1`, `label` is non-empty, `cells` is `[]`. It does not insert `firm_sequence_binding`. It does not insert `campaign`. `resolveBoundTemplate` then loads that id. `cells` is empty, so `firstCell` is null, `state.cellId` is `undefined`, and `templateId` is the agent ref. `firstCampaignId` returns null. Subject and body stay the agent-ref fallbacks. The enrollment insert’s `sequence_id` equals that template id.
+
+```90:122:server/wire-service/templateWalk.ts
+export async function loadTemplateCells(
+  pool: Pool,
+  templateId: string,
+): Promise<{ templateId: string; label: string; cells: NormalizedCell[] } | null> {
+  const r = await pool.query<{ id: string; label: string; cells: unknown }>(
+    `SELECT id, label, cells FROM sequence_template WHERE id=$1 LIMIT 1`,
+    [templateId],
+  );
+  if (!r.rowCount) return null;
+  const row = r.rows[0];
+  const raw = Array.isArray(row.cells) ? row.cells : [];
+  return {
+    templateId: row.id,
+    label: row.label,
+    cells: normalizeTemplateCells(raw),
+  };
+}
+
+/** Resolve bound template for firm+class, else treat agentRef as template id. */
+export async function resolveBoundTemplate(
+  pool: Pool,
+  firmId: string,
+  agentRef: string,
+): Promise<{ templateId: string; label: string; cells: NormalizedCell[] } | null> {
+  const bind = await pool.query<{ template_id: string }>(
+    `SELECT template_id FROM firm_sequence_binding
+     WHERE firm_id=$1 AND template_id=$2
+     LIMIT 1`,
+    [firmId, agentRef],
+  );
+  const templateId = bind.rows[0]?.template_id ?? agentRef;
+  return loadTemplateCells(pool, templateId);
+}
+```
+
+```102:111:server/wire-service/campaignHousing.ts
+export async function firstCampaignId(
+  pool: Pool,
+  sequenceId: string,
+): Promise<string | null> {
+  const row = await pool.query<{ id: string }>(
+    `SELECT id FROM campaign WHERE sequence_id=$1 ORDER BY ord ASC, id ASC LIMIT 1`,
+    [sequenceId],
+  );
+  return row.rows[0]?.id ?? null;
+}
+```
+
+`active_attempts.enrollment_id` references `enrollment`. The insert writes `status` `'open'`, `state` with `delivered: true`, and `fired_criteria` `'{}'`. `window_started_at` is the column migration 005 added. `pursuit_state` on `enrollment` defaults to `pursuing`. This packet does not change either insert.
 
 ```345:355:supabase/migrations/004_machine_tables.sql
 CREATE TABLE IF NOT EXISTS active_attempts (
@@ -279,7 +430,7 @@ The packet names no component contract. The firing-pointers contract ends at cla
 
 ## Runtime
 
-The enroll predicate is unchanged. A firm-book halt for this firm returns before the inserts. The contact arm matches `contact_id` with no `firm_id` predicate. PKT-015 owns that statement. Case 9 uses the firm-book arm, which already requires `firm_id = $1`.
+The enroll predicate is unchanged. A firm-book halt for this firm returns before the inserts. The contact arm matches `contact_id` and `firm_id`. PKT-015 owns that statement. Case 9 uses the firm-book arm, which requires `firm_id = $1`.
 
 ```94:108:server/wire-service/dispatchSend.ts
 export async function isHaltBlockingNew(
@@ -291,7 +442,7 @@ export async function isHaltBlockingNew(
     `SELECT 1 FROM halt_records
      WHERE lifted_at IS NULL
        AND ((scope = 'firm-book' AND firm_id = $1)
-         OR ($2::text IS NOT NULL AND scope = 'contact' AND contact_id = $2))
+         OR ($2::text IS NOT NULL AND scope = 'contact' AND contact_id = $2 AND firm_id = $1))
      LIMIT 1`,
     [firmId, contactId ?? null],
   );
@@ -323,7 +474,7 @@ The gate the first send already reaches is unchanged. A silenced row returns bef
   }
 ```
 
-```284:297:server/wire-service/dispatchSend.ts
+```284:298:server/wire-service/dispatchSend.ts
 export async function dispatchEmail(input: DispatchEmailInput): Promise<DispatchResult> {
   const halt = await consentAndHaltGate(input.contactId, input.firmId, input.purpose);
   if (!halt.allow) {
@@ -343,7 +494,7 @@ export async function dispatchEmail(input: DispatchEmailInput): Promise<Dispatch
 
 `shouldLiveSend` is true only when `SEND_MODE` is `live` and the contact is in a non-empty `SEND_TEST_COHORT`. That boolean still labels the enrollment and the return. It does not label the engagement.
 
-```33:38:server/wire-service/sendMode.ts
+```33:39:server/wire-service/sendMode.ts
 export function shouldLiveSend(contactId: string | undefined | null): boolean {
   if (!contactId) return false;
   if (getSendMode() !== "live") return false;
@@ -353,11 +504,9 @@ export function shouldLiveSend(contactId: string | undefined | null): boolean {
 }
 ```
 
-With no `sequence_template` row, `resolveBoundTemplate` returns null because `loadTemplateCells` returns null when the id is missing. `templateId` on the attempt state and on the engagement is then `input.agentRef`. `firstCell` is null, so `state.cellId` is `undefined`. With no `campaign` row, `firstCampaignId` returns null, `firstAuthoredChannel` returns null, and `campaignObjectiveIdForCampaign` returns null. The subject falls through to `` `Tower — ${input.agentRef}` `` and the body to `` `Sequence start via ${input.agentRef}` ``. `ownerChannel` wins over `loadChannelOrder`. The platform ladder is not the channel when the case passes `ownerChannel`.
-
 `hasInboundOverride` still does not list `send_denied`. A deny row does not nullify the attempt.
 
-```245:249:server/wire-service/cascade.ts
+```246:250:server/wire-service/cascade.ts
     `SELECT 1 FROM engagement_records
      WHERE firm_id=$1 AND contact_id=$2
        AND event_kind IN ('inbound_reply','form_visit','inbound_override')
@@ -365,11 +514,25 @@ With no `sequence_template` row, `resolveBoundTemplate` returns null because `lo
      LIMIT 1`,
 ```
 
-The readers stay. `kindOf` has no `send_denied` case, so that kind is `other`. `outcomeFrom` leaves the outcome line empty because the kind is not `send`. `titleFor` has no `send_denied` case, so the complaint-desk title is the kind with underscores turned into spaces. `thoughtFrom` still reads `payload.reason` and does not read `payload.send`. The deny payload has no top-level `reason`, so that reader does not surface `send.detail`. `eventKindProse` still returns `Sent` when the lowercased kind contains `send`. Claim 40 owns that column. `signalsFrom` and `ActivityInspectDrawer` still light Sent and Delivered from `kind === "send"` or from attempt state. The attempt insert sets `delivered: true` before the deny row, so those tags stay a reading of that state. This packet does not retune them. The inspector replays when `subject`, `bodyText`, or `bodyHtml` is on the projected row. Those keys are absent on the deny payload, so this row does not replay. The drawer is not edited.
+The readers stay. `kindOf` has no `send_denied` case, so that kind is `other`. `outcomeFrom` leaves the outcome line empty because the kind is not `send`. `titleFor` has no `send_denied` case, so the complaint-desk title is the kind with underscores turned into spaces. `thoughtFrom` still reads `payload.reason` and does not read `payload.send`. The deny payload has no top-level `reason`, so that reader does not surface `send.detail`. `eventKindProse` still returns `Sent` when the lowercased kind contains `send`. Claim 40 owns that column. `signalsFrom` still lights Sent and Delivered from `kind === "send"` or from attempt state. The attempt insert sets `delivered: true` before the deny row, so those tags stay a reading of that state. This packet does not retune them. The inspector replays when `subject`, `bodyText`, or `bodyHtml` is on the projected row. Those keys are absent on the deny payload, so this row does not replay. The drawer is not edited.
 
-```83:84:src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts
+```83:98:src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts
 function kindOf(eventKind: string): ActivityRowKind {
   if (eventKind === "send_live" || eventKind === "send_dry_run") return "send";
+  if (eventKind === "window_fired") return "window";
+  if (eventKind === "cell_advanced") return "cell";
+  if (eventKind === "form_visit") return "form_visit";
+  if (
+    eventKind === "inbound_reply" ||
+    eventKind === "inbound_override" ||
+    eventKind === "email_opened" ||
+    eventKind === "link_clicked"
+  ) {
+    return "inbound";
+  }
+  if (eventKind === "attempt_nullified") return "nullify";
+  if (eventKind === "meeting_booked") return "meeting";
+  return "other";
 ```
 
 ```104:107:src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts
@@ -384,12 +547,37 @@ function kindOf(eventKind: string): ActivityRowKind {
       return eventKind.replace(/_/g, " ");
 ```
 
+```144:153:src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts
+function thoughtFrom(
+  payload: Record<string, unknown>,
+  attempt: ActiveAttemptRow | undefined,
+): string | null {
+  const direct =
+    str(payload.thought) ??
+    str(payload.reason) ??
+    str(payload.setValue) ??
+    str(payload.cellLabel);
+  if (direct) return direct;
+```
+
 ```165:169:src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts
 function outcomeFrom(payload: Record<string, unknown>, kind: ActivityRowKind): string | null {
   if (kind === "send") {
     if (payload.reason) return `Outcome · dry-run (${str(payload.reason)})`;
     if (payload.messageId) return "Outcome · accepted";
   }
+```
+
+```176:184:src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts
+function signalsFrom(
+  kind: ActivityRowKind,
+  state: Record<string, unknown> | null | undefined,
+): ActivitySignal[] {
+  const s = state ?? {};
+  const sent = kind === "send" || Boolean(s.delivered || s.delivered_at || s.opened || s.opened_at);
+  return [
+    { key: "sent", label: "Sent", on: sent },
+    { key: "delivered", label: "Delivered", on: Boolean(s.delivered || s.delivered_at) },
 ```
 
 ```138:143:src/app/register/prototype-ant/operator/channelRuleGrain.ts
@@ -405,9 +593,9 @@ export function eventKindProse(eventKind: string): string {
   const hasReplay = Boolean(row?.subject || row?.bodyText || row?.bodyHtml);
 ```
 
-`call_agent` still pushes the enrollment id and passes `fireFirstStep: true`. It does not push an engagement id. `handleEnrollmentCreate`, `handleOnboardingFire`, `handleSequenceEnrollContacts`, and `runContactEligibilityCascade` also call `enrollAndActuate` and omit `fireFirstStep`, so the first step runs. This packet does not edit those callers. The kind they store is the kind this function writes.
+`call_agent` still pushes the enrollment id and passes `fireFirstStep: true` and `sequenceId: agentRef`. It does not push an engagement id. `handleEnrollmentCreate`, `handleOnboardingFire`, `handleSequenceEnrollContacts`, and `runContactEligibilityCascade` also call `enrollAndActuate` and omit `fireFirstStep`, so the first step runs. This packet does not edit those callers. The kind they store is the kind this function writes.
 
-```1356:1378:server/wire-service/workflowWalk.ts
+```1414:1436:server/wire-service/workflowWalk.ts
             const result = await enrollAndActuate({
               firmId: opts.firmId,
               contactId,
@@ -439,55 +627,60 @@ No new port. No route change. No stand-in change.
 
 These stay on the same functions:
 
-- `enrollAndActuate(input: EnrollActuateInput)`. Same input. Same return keys: `enrollmentId`, `attemptId`, `dryRun`, `send`, `templateId`, `cellId`, `cellIndex`, and `blocked` on the halt return. No engagement id. The first-step engagement kind changes. The call’s `purpose` stays `input.purpose ?? "opt-in"`.
+- `enrollAndActuate(input: EnrollActuateInput)`. Same input. Same return keys: `enrollmentId`, `attemptId`, `dryRun`, `send`, `templateId`, `cellId`, `cellIndex`, and `blocked` on the halt return. No engagement id. The first-step engagement kind changes. The call’s `purpose` stays `input.purpose ?? "opt-in"`. The enrollment `INSERT` stays, including `sequence_id`.
 - `writeEngagement(pool, firmId, contactId, eventKind, payload)`. Same signature. `send_denied` is a value of `eventKind`.
 - `actuateChannelSend(input: ChannelSendInput)`. Same input. Unchanged.
 - `isHaltBlockingNew`, `consentAndHaltGate`, `dispatchEmail`, `dispatchSms`, `dispatchEmailLive`. Unchanged.
+- `resolveBoundTemplate`, `loadTemplateCells`, `firstCampaignId`. Unchanged. The fixture supplies the template row they already read.
 - `escalateAttemptWindow`, `advanceTemplateCellIfDue`, `tickOnce`. Unchanged by this packet. PKT-018 owns their post-send kinds.
 - `call_agent` inside `workflowWalk.ts`. Same arguments. Still pushes `result.enrollmentId`.
 - `handleEnrollmentCreate`, `handleOnboardingFire`, `handleSequenceEnrollContacts`, and `runContactEligibilityCascade`. Unchanged callers.
 
 ## Verify
 
-`scripts/verify-first-step-send-denied.ts` on a migrated Postgres, invoked from `.github/workflows/ship.yml` in job `verify-ship`, after migrate and seed, as its own step `npx tsx --env-file=.env scripts/verify-first-step-send-denied.ts`. On this commit `scripts/verify-send-denied-engagement.ts` is not a step. Place this step after `scripts/verify-click-attribution.ts`. If that send-denied step is already present, place this step after it. Do not fold it into `npm run verify:ship`. Do not remove a step. `npm run build` is not that proof.
+`scripts/verify-first-step-send-denied.ts` on a migrated Postgres, invoked from `.github/workflows/ship.yml` in job `verify-ship`, after migrate and seed, as its own step `npx tsx --env-file=.env scripts/verify-first-step-send-denied.ts`. On this commit that step is absent and `scripts/verify-send-denied-engagement.ts` is the step after `scripts/verify-click-attribution.ts`. Place this step after `scripts/verify-send-denied-engagement.ts`. Do not fold it into `npm run verify:ship`. Do not remove a step. `npm run build` is not that proof.
 
 The script uses `getPool()` the way `scripts/verify-click-attribution.ts` does. It imports `enrollAndActuate` from `server/wire-service/cascade.ts`. It exits 2 when `DATABASE_URL` is missing. It deletes `RESEND_API_KEY`, `RESEND_WEBHOOK_SECRET`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER`, `TWILIO_PHONE_NUMBER`, `SEND_MODE`, `SEND_TEST_COHORT`, `TEST_EMAIL_TO`, and `TEST_SMS_TO` for the process, and it restores that deletion after each case that sets `SEND_MODE` and `SEND_TEST_COHORT`. It does not call `tickOnce`, `escalateAttemptWindow`, `advanceTemplateCellIfDue`, `dispatchEmailLive`, `dispatchSmsLive`, `getResend`, or `getTwilio`. It does not boot Vite. It does not build a workflow graph. It does not read `supabase/migrations`. It reads the source files named in acceptance 10.
 
-The firm id is `firm-pkt019-` plus a run token. The contact id for each enroll is `cr-pkt019-` plus that token plus a case suffix, so earlier rows do not leak into the count. The firm is not the seeded Harbor firm and not `firm-cedar`. The agent ref is `agt-pkt019-` plus that token, with no `sequence_template` row and no `campaign` row. `ownerChannel` is passed by the case. Halt inserts use `consultant_id` `pkt019` and an id unique to the run. The script deletes the rows it inserts, in a `finally`, in foreign-key order, including `engagement_records`, `active_attempts`, `enrollment`, `halt_records`, `consent_records`, `contact_records`, `messaging_events`, and `outbound_messages`, by this firm id and this contact id. An open attempt left behind would be scanned by a worker that calls `tickOnce`. A firm-book halt blocks every later contact of this firm. Run acceptance 9 after acceptances 1–8, and do not enroll again on this firm while that halt is active.
+The firm id is `firm-pkt019-` plus a run token. The contact id for each enroll is `cr-pkt019-` plus that token plus a case suffix, so earlier rows do not leak into the count. The firm is not the seeded Harbor firm and not `firm-cedar`. The agent ref is `agt-pkt019-` plus that token. Before the first enroll, the script inserts one `sequence_template` row: `id` is that agent ref, `sequence_class` is `optin`, `variant` is `v1`, `label` is non-empty, and `cells` is `'[]'::jsonb`. It does not insert `firm_sequence_binding`, `campaign`, `ct_firms`, or a firm row. `ownerChannel` is passed by the case. The enroll calls omit `sequenceId` and `workflowRunId`. Halt inserts use `consultant_id` `pkt019` and an id unique to the run.
 
-The stored payload is parsed from jsonb. A forbidden key fails when `key in payload`. A key stored as null fails that test. With no template and no campaign, an allowed row’s `subject` is `Tower — ${agentRef}` and its `bodyText` is `Sequence start via ${agentRef}`. `templateId` is the agent ref. `cellIndex` is `0`. `cellId` is absent. `outbound_messages` for this firm is empty after every case. The return has no engagement id: it has no `engagementId` key, and no property equal to the `eng-` id. `enrollmentId` on the return is the `enr-` id and stays.
+The script deletes the rows it inserts, in a `finally`, in foreign-key order: `engagement_records`, `active_attempts`, `enrollment`, `halt_records`, `consent_records`, `contact_records`, `messaging_events`, and `outbound_messages`, by this firm id and this contact id, and then `sequence_template` by this agent ref. Enrollment rows go before the template. `enrollment_sequence_id_fkey` is `ON DELETE SET NULL`, and migration 011 may have set the column NOT NULL, so deleting the template while an enrollment still points at it fails. An open attempt left behind would be scanned by a worker that calls `tickOnce`. A firm-book halt blocks every later contact of this firm. Run acceptance 9 after acceptances 1–8, and do not enroll again on this firm while that halt is active.
 
-1. `SEND_MODE` is unset. The contact has an email. Consent is `basis` `express`, `silenced` true, `status` `silenced`. No halt. `ownerChannel` is `email`. `purpose` is omitted. `fireFirstStep` is omitted. One `send_denied` row is written, and no `send_live` or `send_dry_run`. `send.ok` is false, `send.deny` is `policy`, and `send.detail` is `silenced`. The payload has `enrollmentId`, `attemptId`, `channel` `email`, `templateId`, `cellIndex` `0`, and `send`. It has no `subject`, `bodyText`, `bodyHtml`, `messageId`, `reason`, or `cellId`. The id starts with `eng-`. `firm_id` is the enroll firm and `contact_id` is this contact. The enrollment row exists. Its `payload.dryRun` is true. The return’s `dryRun` is true. The return has no engagement id. `active_attempts.status` is `open`. `state.delivered` is true. The attempt’s `owner_channel` is `email`. The silenced deny’s `send` object has no `dryRun` key. The check does not require one.
+The stored payload is parsed from jsonb. A forbidden key fails when `key in payload`. A key stored as null fails that test. With the empty-cells template and no campaign, an allowed row’s `subject` is `Tower — ${agentRef}` and its `bodyText` is `Sequence start via ${agentRef}`. `templateId` is the agent ref. `cellIndex` is `0`. `cellId` is absent. The check does not fail because the `sequence_template` row exists. It fails if `cells` is not empty, if a `campaign` row exists for this agent ref, or if a `firm_sequence_binding` row exists for this firm and this agent ref. `outbound_messages` for this firm is empty after every case. The return has no engagement id: it has no `engagementId` key, and no property equal to the `eng-` id. `enrollmentId` on the return is the `enr-` id and stays.
+
+1. `SEND_MODE` is unset. The contact has an email. Consent is `basis` `express`, `silenced` true, `status` `silenced`. No halt. `ownerChannel` is `email`. `purpose` is omitted. `fireFirstStep` is omitted. One `send_denied` row is written, and no `send_live` or `send_dry_run`. `send.ok` is false, `send.deny` is `policy`, and `send.detail` is `silenced`. The payload has `enrollmentId`, `attemptId`, `channel` `email`, `templateId`, `cellIndex` `0`, and `send`. It has no `subject`, `bodyText`, `bodyHtml`, `messageId`, `reason`, or `cellId`. The id starts with `eng-`. `firm_id` is the enroll firm and `contact_id` is this contact. The enrollment row exists. Its `sequence_id` is the agent ref. Its `payload.dryRun` is true. Its `payload.cellId` is null. That null is the enrollment payload, not the engagement. The return’s `dryRun` is true. The return has no engagement id. `active_attempts.status` is `open`. `state.delivered` is true. The attempt’s `owner_channel` is `email`. The silenced deny’s `send` object has no `dryRun` key. The check does not require one.
 2. The same shape, with no consent row and `purpose` `cem`, is one `send_denied` row. `send.detail` is `consent missing`. No `send_live` and no `send_dry_run`. The payload keys match case 1. The writer does not branch on `detail`.
 3. `SEND_MODE` is `live` and `SEND_TEST_COHORT` contains this contact only. Consent is silenced, as in case 1. The contact has an email. `ownerChannel` is `email`. `purpose` is `opt-in`. One `send_denied` row, and no `send_live` or `send_dry_run`. The enrollment `payload.dryRun` is false. The return’s `dryRun` is false. `send.ok` is false. The payload has no `subject` or `bodyText`. Delete `SEND_MODE` and `SEND_TEST_COHORT` again before the next case.
 4. `SEND_MODE` is `live` and the contact is in the cohort. Consent is `basis` `express`, `silenced` false. The contact has an email. `ownerChannel` is `email`. `purpose` is `opt-in`. No Resend key is set. One `send_denied` row. `send.ok` is false, `send.deny` is `policy`, `send.detail` is `RESEND_API_KEY missing`, and `send.dryRun` is false. No `send_live` and no `send_dry_run`. The payload has no `subject`, `bodyText`, `bodyHtml`, `messageId`, or `reason`. The enrollment `payload.dryRun` is false. Delete `SEND_MODE` and `SEND_TEST_COHORT` again before the next case.
 5. `SEND_MODE` is unset. Consent is `basis` `express` and `silenced` false. No consent row is also enough for purpose `opt-in`. The contact has an email. `ownerChannel` is `email`. One `send_dry_run` and no `send_denied`. `send.ok` is true and `send.dryRun` is true. The payload has `reason` `SEND_MODE/cohort gate — fail closed`, `subject`, `bodyText`, and `send`, plus `enrollmentId`, `attemptId`, `channel` `email`, `templateId`, and `cellIndex` `0`. It has no `messageId` and no `cellId`. The enrollment `payload.dryRun` is true.
 6. `SEND_MODE` is `live` and the contact is in the cohort. Consent is `basis` `express` and `silenced` false. The contact email is null and the phone is null. `TEST_EMAIL_TO` is unset. `ownerChannel` is `email`. One `send_dry_run` and no `send_denied` and no `send_live`. `reason` is `no email on contact — dry-run intent only`. The payload has `subject`, `bodyText`, and `send`, plus the same step keys as case 5. The enrollment `payload.dryRun` is false. The return’s `dryRun` is false. Delete `SEND_MODE` and `SEND_TEST_COHORT` again before the next case.
 7. `SEND_MODE` is unset. Consent is `basis` `express` and `silenced` false. `ownerChannel` is `call`. One `send_dry_run` and no `send_denied`. `send.ok` is true and `send.dryRun` is true. `reason` contains `no live dispatcher`. `channel` on the payload is `call`. The check does not require `send.channel` to be `call`.
-8. `fireFirstStep` is false. `SEND_MODE` is unset. Consent is `basis` `express` and `silenced` false. `ownerChannel` is `email`. No engagement row is written. The enrollment row exists. The attempt `status` is `open`. The return’s `send` is undefined. The return’s `dryRun` is true, which is `!shouldLiveSend` for that contact.
-9. An active `scope = 'firm-book'` halt has `firm_id` equal to the enroll firm. `enrollAndActuate` returns `blocked` `"halt"` and `enrollmentId` `""`. No enrollment row, no attempt row, and no engagement row are written for this contact.
-10. The script reads the first-step writer inside `enrollAndActuate`, from `send = await actuateChannelSend` through the `return` that contains `dryRun: !live`. It fails unless that slice contains `"send_denied"`, `"send_live"`, `"send_dry_run"`, `send.ok && !send.dryRun`, and `send.ok && send.dryRun`. It fails if that slice contains `live ? "send_live" : "send_dry_run"`, `send.detail`, or `send.deny`. There are three `writeEngagement` calls in that slice. The object of the `"send_denied"` call contains `enrollmentId`, `attemptId`, `channel`, `templateId`, `cellId`, `cellIndex`, and `send`, and does not contain `subject`, `bodyText`, `bodyHtml`, `messageId`, or `reason`. The object of the `"send_live"` call contains `messageId`, `subject`, `bodyText`, `send`, and those step keys. The object of the `"send_dry_run"` call contains `reason`, `subject`, `bodyText`, `send`, and those step keys. The `actuateChannelSend` call in that function still contains `purpose: input.purpose ?? "opt-in"`, `subject`, and `bodyText`. The function still contains `const live = shouldLiveSend(input.contactId)`, `dryRun: !live`, and `if (input.fireFirstStep !== false)`. The early return still contains `blocked: "halt"`. `titleFor` has no `case "send_denied"`. `kindOf`’s send test stays `eventKind === "send_live" || eventKind === "send_dry_run"`. `eventKindProse` still returns `Sent` from `kind.includes("send")` and does not contain `send_denied`. `hasInboundOverride`’s `event_kind IN` list does not contain `send_denied`. `call_agent` still pushes `result.enrollmentId` and does not push an engagement id.
+8. `fireFirstStep` is false. `SEND_MODE` is unset. Consent is `basis` `express` and `silenced` false. `ownerChannel` is `email`. No engagement row is written. The enrollment row exists. Its `sequence_id` is the agent ref. The attempt `status` is `open`. The return’s `send` is undefined. The return’s `dryRun` is true, which is `!shouldLiveSend` for that contact.
+9. An active `scope = 'firm-book'` halt has `firm_id` equal to the enroll firm. `enrollAndActuate` returns `blocked` `"halt"` and `enrollmentId` `""`. No enrollment row, no attempt row, and no engagement row are written for this contact. The template row is still present. The halt returns before the insert, so this case does not need the foreign key.
+10. The script reads the first-step writer inside `enrollAndActuate`, from `send = await actuateChannelSend` through the `return` that contains `dryRun: !live`. It fails unless that slice contains `"send_denied"`, `"send_live"`, `"send_dry_run"`, `send.ok && !send.dryRun`, and `send.ok && send.dryRun`. It fails if that slice contains `live ? "send_live" : "send_dry_run"`, `send.detail`, or `send.deny`. There are three `writeEngagement` calls in that slice. The object of the `"send_denied"` call contains `enrollmentId`, `attemptId`, `channel`, `templateId`, `cellId`, `cellIndex`, and `send`, and does not contain `subject`, `bodyText`, `bodyHtml`, `messageId`, or `reason`. The object of the `"send_live"` call contains `messageId`, `subject`, `bodyText`, `send`, and those step keys. The object of the `"send_dry_run"` call contains `reason`, `subject`, `bodyText`, `send`, and those step keys. The `actuateChannelSend` call in that function still contains `purpose: input.purpose ?? "opt-in"`, `subject`, and `bodyText`. The function still contains `const live = shouldLiveSend(input.contactId)`, `dryRun: !live`, `if (input.fireFirstStep !== false)`, and `INSERT INTO enrollment`. The early return still contains `blocked: "halt"`. `titleFor` has no `case "send_denied"`. `kindOf`’s send test stays `eventKind === "send_live" || eventKind === "send_dry_run"`. `eventKindProse` still returns `Sent` from `kind.includes("send")` and does not contain `send_denied`. `hasInboundOverride`’s `event_kind IN` list does not contain `send_denied`. `call_agent` still pushes `result.enrollmentId` and does not push an engagement id.
 
-`npm run factory:check` reads the same source and fails on the same predicates as acceptance 10. It fails unless `.github/workflows/ship.yml` invokes `scripts/verify-first-step-send-denied.ts`. It fails if this packet adds a file under `supabase/migrations`. It does not fail when the tick writers gain `send_denied`. PKT-018’s check is the one that requires those writers. This packet’s check does not require `live ? "send_live" : "send_dry_run"` anywhere in `enrollAndActuate`. Add `server/wire-service/cascade.ts`, `server/wire-service/workflowWalk.ts`, `src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts`, `src/app/register/prototype-ant/operator/channelRuleGrain.ts`, `scripts/verify-first-step-send-denied.ts`, and `.github/workflows/ship.yml` to the path filter in `.github/workflows/factory-check.yml` if they are not already listed.
+`npm run factory:check` reads the same source and fails on the same predicates as acceptance 10. It fails unless `.github/workflows/ship.yml` invokes `scripts/verify-first-step-send-denied.ts`. It fails if this packet adds a file under `supabase/migrations`. It does not fail when the verify script inserts `sequence_template`. It does not fail when the tick writers contain `send_denied`. PKT-018’s check is the one that requires those writers. This packet’s check does not require `live ? "send_live" : "send_dry_run"` anywhere in `enrollAndActuate`. Add `scripts/verify-first-step-send-denied.ts` to the path filter in `.github/workflows/factory-check.yml`. `.github/workflows/ship.yml`, `server/wire-service/cascade.ts`, `server/wire-service/workflowWalk.ts`, `src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts`, and `src/app/register/prototype-ant/operator/channelRuleGrain.ts` are already on that filter.
 
 A pass is evidence only for the candidate SHA that ran. A pass on an older SHA does not verify a newer commit.
 
 ## Out of scope
 
-The tick writers and their deny payloads (PKT-018). The open attempt and the pre-send writes (PKT-017). The enroll predicate (PKT-015). The firm predicate (PKT-016). The consent select (claim 23). The operator column (claim 40). A new `titleFor` case. Retuning `kindOf`, `outcomeFrom`, `thoughtFrom`, `signalsFrom`, or the Activity tags. The opt-in purpose (claim 45). Whether a caller invokes `enrollAndActuate` (claim 43 and claim 44). Rewriting `enrollment.payload.dryRun` or the return’s `dryRun` from `send.ok`. Adding the engagement id to the return or to `call_agent`’s writes. Aborting an in-flight attempt. Reading `detail` to split the kind. Adding this row to `payload.writes`. `dispatchScheduleTriggers` and `resumeDueWaitingRuns`. Launch Agent. No plate.
+The tick writers and their deny payloads (PKT-018). The open attempt and the pre-send writes (PKT-017). The enroll predicate (PKT-015). The firm predicate (PKT-016). The consent select (claim 23). The operator column (claim 40). A new `titleFor` case. Retuning `kindOf`, `outcomeFrom`, `thoughtFrom`, `signalsFrom`, or the Activity tags. The opt-in purpose (claim 45). Whether a caller invokes `enrollAndActuate` (claim 43 and claim 44). Rewriting `enrollment.payload.dryRun` or the return’s `dryRun` from `send.ok`. Adding the engagement id to the return or to `call_agent`’s writes. Aborting an in-flight attempt. Reading `detail` to split the kind. Adding this row to `payload.writes`. Dropping `enrollment_sequence_id_fkey` or making `sequence_id` nullable again. `dispatchScheduleTriggers` and `resumeDueWaitingRuns`. Launch Agent. No plate.
 
 ## Impact manifest
 
 | Contract | Change | Consumers to re-check | Modified or only verified |
 | --- | --- | --- | --- |
 | `enrollAndActuate` first-step engagement | `!send.ok` appends one `send_denied` with the step keys and `send`, and without subject or body. `send.ok && !send.dryRun` is `send_live`. `send.ok && send.dryRun` is `send_dry_run`. Both allowed rows keep subject, body, and `send` | `call_agent`, `handleEnrollmentCreate`, `handleOnboardingFire`, `handleSequenceEnrollContacts`, `runContactEligibilityCascade` | Modified |
-| `enrollAndActuate` return and enrollment payload | `dryRun` stays `!shouldLiveSend`. No engagement id on the return. Halt return stays `blocked: "halt"` before the inserts | `scripts/verify-deny-gates.ts`, `scripts/verify-author-runtime.ts` | Only verified |
+| `enrollAndActuate` return and enrollment payload | `dryRun` stays `!shouldLiveSend`. No engagement id on the return. Halt return stays `blocked: "halt"` before the inserts. The `INSERT INTO enrollment` stays | `scripts/verify-deny-gates.ts`, `scripts/verify-author-runtime.ts` | Only verified |
+| `enrollment.sequence_id` | Unchanged insert. The verify inserts one empty-cells `sequence_template` whose id is the agent ref so `enrollment_sequence_id_fkey` holds. No campaign. No binding. No migration | The first-step writer | Only verified |
 | `actuateChannelSend` call inside `enrollAndActuate` | Same arguments. `purpose` stays `input.purpose ?? "opt-in"`. Subject and body still go into the call | The gate it already reaches | Only verified |
 | `actuateChannelSend` no-address and no-dispatcher returns | Stay `ok: true`, `dryRun: true`. Those results stay `send_dry_run`. Payload `channel` stays `owner` | The first-step writer | Only verified |
 | `writeEngagement` | Same insert. `send_denied` is a value of unconstrained `event_kind` | The first-step writer and the tick writers | Only verified |
-| `isHaltBlockingNew` | Unchanged. Firm-book arm still matches `firm_id = $1` | The early return | Only verified |
+| `isHaltBlockingNew` | Unchanged. Firm-book arm still matches `firm_id = $1`. Contact arm still matches `contact_id` and `firm_id` | The early return | Only verified |
 | `consentAndHaltGate`, `dispatchEmail`, `dispatchEmailLive` | Unchanged. Silence and missing consent return `ok: false` before `shouldLiveSend`. Missing Resend returns `ok: false` and `dryRun: false` | The first-step writer | Only verified |
 | `shouldLiveSend` | Unchanged. Still labels the enrollment and the return. Does not label the engagement | `enrollAndActuate` | Only verified |
+| `resolveBoundTemplate`, `loadTemplateCells`, `firstCampaignId` | Unchanged. Empty `cells` and no campaign keep `cellId` absent and the agent-ref subject and body | The enrollment insert | Only verified |
 | Tick post-send writers | Not edited. PKT-018 owns `send_denied` on those three | `tickOnce` | Only verified |
 | `hasInboundOverride` | The inbound list does not gain `send_denied`. A deny does not nullify | The nullify branches | Only verified |
 | Attempt insert | Stays `open` with `state.delivered` true. The deny does not update it | Activity tags | Only verified |
@@ -498,27 +691,27 @@ The tick writers and their deny payloads (PKT-018). The open attempt and the pre
 | `payload.writes` | This row is not added | Firing pointers | Only verified |
 | `engagement_records` | No new column. No migration | Existing readers | Only verified |
 | Component contracts | None named. Claim 22 is not in the three contracts. `halt-send` is not opened | Firing pointers, walk handle, pursuit identity | Only verified |
-| `SCP-pkt-018-send-denied-engagement.md` | The forbid on `send_denied` inside `enrollAndActuate`, the freeze of `live ? "send_live" : "send_dry_run"`, and the matching verify predicates are removed. Tick writers and `purpose: "cem"` stay | PKT-018’s plant | Modified |
-| `scripts/verify-first-step-send-denied.ts`, `ship.yml`, `factory-check.ts`, `factory-check.yml` | Postgres cases for `enrollAndActuate`, and the source read for the three first-step objects and the non-edits | Ship CI, factory check | Modified |
+| `SCP-pkt-018-send-denied-engagement.md` | Already leaves `enrollAndActuate` unfrozen. This packet does not edit that file and does not restore the forbid | PKT-018’s plant | Only verified |
+| `scripts/verify-first-step-send-denied.ts`, `ship.yml`, `factory-check.ts`, `factory-check.yml` | Postgres cases for `enrollAndActuate`, the empty-cells template fixture, and the source read for the three first-step objects and the non-edits | Ship CI, factory check | Modified |
 
 ## Dependency reconciliation
 
 | Finding | Class |
 | --- | --- |
 | The planted first step is one `writeEngagement`. The kind is `live ? "send_live" : "send_dry_run"`, so a live-cohort deny is `send_live` and every other deny is `send_dry_run`, and both store `subject` and `bodyText`. The call, the enrollment `dryRun: !live`, the attempt insert, and the return already exist. The plant replaces that one write with three branches on `send.ok` and `send.dryRun` and leaves the call and the flags in place. | necessary |
-| `SCP-pkt-018-send-denied-engagement.md` forbade `send_denied` from `enrollAndActuate` and its verify failed if that function contained `"send_denied"` or lost `live ? "send_live" : "send_dry_run"`. PKT-018 said claim 22 owns that row. This packet is that row. This specification removes those clauses and the matching verify predicates, including the factory-check predicate that would have failed on that kind. The tick writers, their payloads, and their `purpose: "cem"` calls stay. `PKT-018-send-denied-engagement.md` is not edited. On this commit `scripts/verify-send-denied-engagement.ts` does not exist and `scripts/factory-check.ts` does not contain that guard, so there is no planted guard to delete. If the script is present at plant time, the engineer removes only that guard. | necessary |
-| The deny payload must omit `subject`, `bodyText`, `bodyHtml`, `messageId`, and `reason`. `JSON.stringify` drops `undefined` and stores `null`. The check fails when the key is present, including when the value is null. `cellId: state.cellId` is passed on every arm. With no template, the key is absent. The enrollment insert still stores `cellId: firstCell?.id ?? null` on its own payload. That null is not copied onto the engagement. | necessary |
+| Rev-1 cited `enrollment.sequence_id` from `004_machine_tables.sql`, where the column is nullable and has no foreign key, and it forbade inserting `sequence_template`, a migration, and a change to the insert. Migration 010 adds `enrollment_sequence_id_fkey` to `sequence_template(id)`. The insert writes `sequence_id = input.sequenceId ?? tpl?.templateId ?? input.agentRef`. With no template row that value is the agent ref and the insert fails before `writeEngagement`. This revision does not change the insert and does not add a migration. The verify inserts one `sequence_template` row whose id is the agent ref, `sequence_class` is `optin`, and `cells` is `[]`, and it inserts no `campaign` and no `firm_sequence_binding`. Empty cells keep `firstCell` null, so `templateId` is the agent ref, the engagement has no `cellId`, and subject and body stay the agent-ref fallbacks. `firstCampaignId` returns null. `campaign_id` null satisfies its foreign key. Delete enrollments before the template. The check does not treat the template row as a failure. | necessary |
+| On this commit `SCP-pkt-018-send-denied-engagement.md` does not forbid `send_denied` in `enrollAndActuate` and does not require `live ? "send_live" : "send_dry_run"`. `scripts/verify-send-denied-engagement.ts` and the matching `factory:check` block do not read that function for a kind. This specification does not edit those files and does not restore the forbid. If a later plant adds that guard, the engineer removes only the guard. The tick writers, their payloads, and their `purpose: "cem"` calls stay. `PKT-018-send-denied-engagement.md` is not edited. | necessary |
+| The deny payload must omit `subject`, `bodyText`, `bodyHtml`, `messageId`, and `reason`. `JSON.stringify` drops `undefined` and stores `null`. The check fails when the key is present, including when the value is null. `cellId: state.cellId` is passed on every arm. With empty cells, the key is absent on the engagement. The enrollment insert still stores `cellId: firstCell?.id ?? null`, which is null. That null is not copied onto the engagement. | necessary |
 | A silenced deny and a consent-missing deny return `{ ok: false, deny, detail }` with no `dryRun` key, before `shouldLiveSend`. A missing Resend key returns `{ ok: false, deny: "policy", detail: "RESEND_API_KEY missing", dryRun: false }` from `dispatchEmailLive` after the cohort gate has already allowed the contact. The kind expression does not read `deny`, `detail`, or `dryRun` on an `ok: false` result, so both are `send_denied`. The enrollment flag stays `!shouldLiveSend`, so case 3 and case 4 keep `dryRun` false while the engagement is `send_denied`. | necessary |
 | The no-address return and the no-dispatcher return are `ok: true` and `dryRun: true` before the gate. They are `send_dry_run`. The no-dispatcher `DispatchResult.channel` stays `"email"`. The engagement `channel` is `owner`, so a `call` owner stores `channel` `call`. The check does not require `send.channel` to be `call` and does not edit the return. | necessary |
-| `fireFirstStep === false` skips the guard. `let send` stays `undefined`. The enrollment and the attempt still insert. With `SEND_MODE` unset, the return’s `dryRun` is true. The firm-book halt returns `blocked: "halt"` and `enrollmentId` `""` before either insert. A firm-book row blocks later contacts of the same firm, so acceptance 9 runs after the other enrolls. | necessary |
+| `fireFirstStep === false` skips the guard. `let send` stays `undefined`. The enrollment and the attempt still insert, and the template row makes `sequence_id` legal. With `SEND_MODE` unset, the return’s `dryRun` is true. The firm-book halt returns `blocked: "halt"` and `enrollmentId` `""` before either insert. A firm-book row blocks later contacts of the same firm, so acceptance 9 runs after the other enrolls. | necessary |
 | `hasInboundOverride` does not list `send_denied`. Adding it would nullify an open attempt this packet leaves `open`. The source guard keeps the existing `IN` list. The attempt insert sets `delivered: true` before the send. The Activity tags read that state. This packet does not retune them. | necessary |
-| With no template and no campaign, `resolveBoundTemplate`, `firstCampaignId`, and `firstAuthoredChannel` return null. `templateId` is the agent ref. Subject and body are the agent-ref fallbacks. `contact_records` has no foreign key to a firm table. The fixture does not insert `ct_firms`, `sequence_template`, or `campaign`. `ownerChannel` is passed on every asserted channel so the platform ladder in `loadChannelOrder` is not the owner. | necessary |
-| `scripts/verify-deny-gates.ts` asserts the firm-book return is `blocked: "halt"` and that `send.ok` is not true. `scripts/verify-author-runtime.ts` asserts the returned `cellId` and the attempt cursor. `scripts/verify-worker-actuation.ts` skips the live enroll when `VERIFY_LIVE_SEND` is `0`, which ship sets. Those scripts do not read `event_kind`. The early return and the return shape stay, so they keep passing. This packet does not edit them. The `finally` delete keeps this script’s open attempt out of `tickOnce`. | necessary |
+| `scripts/verify-deny-gates.ts` asserts the firm-book return is blocked and that `send.ok` is not true. `scripts/verify-author-runtime.ts` asserts the returned `cellId` and the attempt cursor. It does not assert the first-step `event_kind`. `scripts/verify-worker-actuation.ts` skips the live enroll when `VERIFY_LIVE_SEND` is `0`, which ship sets. The early return and the return shape stay, so they keep passing. This packet does not edit them. The `finally` delete keeps this script’s open attempt out of `tickOnce`. | necessary |
 | `eventKindProse` returns `Sent` for `send_denied` because the kind contains `send`. Claim 40 owns that column. `titleFor`, `kindOf`, `outcomeFrom`, `thoughtFrom`, and `signalsFrom` stay. `send_denied` is `other`, the outcome line stays empty, and `thoughtFrom` does not read `payload.send`. | adjacent |
 | The consent select is `WHERE contact_id = $1 LIMIT 1` on a table keyed by `(contact_id, firm_id)`. Claim 23 owns that select. The verify inserts one row for this contact and this firm. This packet does not add `firm_id` to the select. | adjacent |
-| Claim 45 owns the purpose string when `sequence_template.sequence_class` is `optin`. The call stays `input.purpose ?? "opt-in"`. `call_agent` still chooses `opt-in` or `cem` from `sequenceClassForAgent`. `runContactEligibilityCascade` still passes `purpose: "reactivation"`. This packet does not edit those callers. | adjacent |
-| Claim 43 and claim 44 own whether `call_agent`, `handleEnrollmentCreate`, `handleOnboardingFire`, and `handleSequenceEnrollContacts` make this call. Each already calls `enrollAndActuate`. Omitting `fireFirstStep` means the first step runs. This packet does not add or remove a call. | adjacent |
-| `isHaltBlockingNew` still matches a contact halt by `contact_id` with no `firm_id` predicate. PKT-015 owns that statement. The firm-book arm already matches `firm_id`. This packet does not edit the function. | adjacent |
+| Claim 45 owns the purpose string when `sequence_template.sequence_class` is `optin`. The call stays `input.purpose ?? "opt-in"`. `call_agent` still chooses `opt-in` or `cem` from `sequenceClassForAgent`. This packet does not edit those callers. The fixture’s `sequence_class` `optin` is the row the foreign key requires. It is not a change to that purpose string. | adjacent |
+| Claim 43 and claim 44 own whether `call_agent`, `handleEnrollmentCreate`, `handleOnboardingFire`, and `handleSequenceEnrollContacts` make this call. Each already calls `enrollAndActuate`. Omitting `fireFirstStep` means the first step runs. `call_agent` already passes `sequenceId: agentRef`. This packet does not add or remove a call. | adjacent |
+| `isHaltBlockingNew` matches a contact halt by `contact_id` and `firm_id`. PKT-015 owns that statement. The firm-book arm matches `firm_id`. This packet does not edit the function. The packet’s older quote of the contact arm omitted `firm_id`. The live statement is the one quoted above. | adjacent |
 | `dispatchSmsLive` can return `deny: "throughput"`. The kind expression does not read `deny`. That result is `send_denied` when this writer stores it. This check does not call the live SMS function. | adjacent |
 | The three component contracts do not list claim 22. `halt-send` has no component contract. This packet does not edit the three files and does not open one. | adjacent |
-| The packet file still says `**Release:** draft`. The ledger stage for this revision was `released` when this wake was authorized, and this wake is the dispatch record. The behavior text is the same either way. | adjacent |
+| The packet file still says `**Release:** draft` and still says the agent ref has no `sequence_template` row. The ledger wake for rev-2 is `sa`, and this file is the change specification. The empty-cells row is how that agent ref satisfies `enrollment_sequence_id_fkey` without changing the asserted engagement fields. | necessary |

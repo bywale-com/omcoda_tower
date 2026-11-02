@@ -1195,7 +1195,7 @@ export const standInMachineApi: MachineApiPort = {
   async createEnrollment(input) {
     if (
       (await standInHaltStore.isFirmBookHalted(standInFirm())) ||
-      (await standInHaltStore.isContactHalted(input.contactId))
+      (await standInHaltStore.isContactHalted(input.contactId, standInFirm()))
     ) {
       throw new Error("halt active — new enrollments suppressed (H1)");
     }

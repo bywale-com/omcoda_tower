@@ -22,5 +22,12 @@
     "noContradictorySpecification": true,
     "independentlyImplementable": true
   },
-  "plates": "none"
+  "plates": "none",
+  "siblings": [
+    {
+      "id": "pkt-018-send-denied-engagement",
+      "basis": "dependency",
+      "note": "019 records the send_denied kind 018 required of a denied send"
+    }
+  ]
 }

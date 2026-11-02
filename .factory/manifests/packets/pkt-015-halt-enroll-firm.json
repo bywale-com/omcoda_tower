@@ -22,5 +22,12 @@
     "noContradictorySpecification": true,
     "independentlyImplementable": true
   },
-  "plates": "none"
+  "plates": "none",
+  "siblings": [
+    {
+      "id": "pkt-016-halt-send-firm",
+      "basis": "dependency",
+      "note": "016 leaves the enroll predicate 015 specified; both read halt_records by firm"
+    }
+  ]
 }

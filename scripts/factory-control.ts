@@ -8,9 +8,11 @@
  */
 import { existsSync, readFileSync } from "node:fs";
 import { githubContentsRemote, GitHubContentsStore } from "../.factory/controller/contents.ts";
-import { githubLabelActuator, type FactoryLedger } from "../.factory/controller/dispatch.ts";
+import { githubLabelActuator, redeliverDispatch, type FactoryLedger } from "../.factory/controller/dispatch.ts";
+import { cursorFollowUp, type FetchLike } from "../.factory/controller/cursor.ts";
 import { commitLedgerEvent, controlStep, dispatchInitiative } from "../.factory/controller/queue.ts";
 import { dispatchWake } from "../.factory/controller/dispatch.ts";
+import { analystFileCountsAsThisDispatch, recoverExecutions } from "../.factory/controller/execution.ts";
 import type { StateStore } from "../.factory/controller/dispatch.ts";
 import type { World } from "../.factory/controller/machine.ts";
 
@@ -33,7 +35,17 @@ function worldFrom(ledger: FactoryLedger) {
     authorizedDispatches: ledger.authorizedDispatches,
     usedDispatches: ledger.usedDispatches,
     scopeStatus: ledger.scope.status,
+    resumeSupported: Boolean(process.env.CURSOR_API_KEY),
   };
+}
+
+const fetchImpl: FetchLike = async (url, init) => {
+  const response = await fetch(url, init);
+  return { status: response.status, body: await response.text() };
+};
+
+function resumeAgent(agentId: string, text: string): Promise<{ ok: boolean; reason: string }> {
+  return cursorFollowUp({ env: process.env, fetchImpl }).send(agentId, text);
 }
 
 const apply = process.argv.includes("--apply");
@@ -45,7 +57,11 @@ if (apply && !armed()) {
 if (!apply) {
   const ledger = JSON.parse(readFileSync(".factory/state/ledger.json", "utf8")) as FactoryLedger;
   const step = controlStep(ledger, worldFrom(ledger));
-  console.log(JSON.stringify({ reason: step.reason, wakes: step.wakes.map((wake) => ({ id: wake.id, effect: wake.decision.effect, reason: wake.decision.reason })) }));
+  console.log(JSON.stringify({
+    reason: step.reason,
+    wakes: step.wakes.map((wake) => ({ id: wake.id, effect: wake.decision.effect, reason: wake.decision.reason })),
+    redelivery: step.redelivery ?? null,
+  }));
   process.exit(0);
 }
 
@@ -68,9 +84,34 @@ const store = new GitHubContentsStore(
     env: process.env,
   }),
 );
+const loadedBefore = await store.read();
+const stale = recoverExecutions(loadedBefore, new Date().toISOString());
+if (stale.changes.length) {
+  const wrote = await commitLedgerEvent(store, { type: "recover_stale" }, worldFrom(loadedBefore));
+  if (!wrote.ok && wrote.reason !== "nothing_stale") {
+    console.error(wrote.reason);
+    process.exit(1);
+  }
+}
 const loaded = await store.read();
+const now = new Date().toISOString();
 const ledger = await archiveRanAnalystWork(store, loaded, worldFrom(loaded));
-const step = controlStep(ledger, worldFrom(ledger));
+const step = controlStep(ledger, { ...worldFrom(ledger), now });
+if (step.redelivery) {
+  const actuator = githubLabelActuator({ env: process.env, pr });
+  const delivered = await redeliverDispatch({
+    store,
+    actuator,
+    packetId: step.redelivery.packetId,
+    now,
+  });
+  if (!delivered.ok) {
+    console.error(delivered.reason);
+    process.exit(1);
+  }
+  console.log(delivered.reason);
+  process.exit(0);
+}
 const wake = step.wakes[0];
 if (!wake) {
   console.log(step.reason);
@@ -88,6 +129,7 @@ if (step.ledger !== ledger && step.ledger.initiatives !== ledger.initiatives) {
   }
 }
 const actuator = githubLabelActuator({ env: process.env, pr });
+const resumeSupported = Boolean(process.env.CURSOR_API_KEY);
 const result = wake.kind === "initiative"
   ? await dispatchInitiative({
       store,
@@ -98,16 +140,22 @@ const result = wake.kind === "initiative"
       now: new Date().toISOString(),
       engineeringBusy: false,
       budgetUsd: null,
+      resumeSupported,
+      resume: resumeSupported ? resumeAgent : undefined,
     })
   : await dispatchWake({
       store,
       actuator,
       packetId: wake.id,
+      packetIds: wake.packetIds,
+      basis: wake.basis,
       prHead,
       activation: "active",
       now: new Date().toISOString(),
       engineeringBusy: false,
       budgetUsd: null,
+      resumeSupported,
+      resume: resumeSupported ? resumeAgent : undefined,
     });
 if (!result.ok) {
   console.error(result.reason);
@@ -130,7 +178,12 @@ async function archiveRanAnalystWork(
 ): Promise<FactoryLedger> {
   let current = ledger;
   const open = Object.values(current.packets)
-    .filter((packet) => packet.dispatch?.effect === "wake_sa" && existsSync(specificationPath(packet)))
+    .filter(
+      (packet) =>
+        packet.dispatch?.effect === "wake_sa" &&
+        existsSync(specificationPath(packet)) &&
+        analystFileCountsAsThisDispatch(current, packet),
+    )
     .sort((a, b) => a.id.localeCompare(b.id));
   for (const packet of open) {
     const wrote = await commitLedgerEvent(

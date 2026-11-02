@@ -22,5 +22,37 @@
     "noContradictorySpecification": true,
     "independentlyImplementable": true
   },
-  "plates": "none"
+  "plates": "none",
+  "siblings": [
+    {
+      "id": "pkt-007-fact-writes",
+      "basis": "component",
+      "note": "firing-pointers: this firing places its own rows on payload.writes"
+    },
+    {
+      "id": "pkt-008-meeting-writes",
+      "basis": "component",
+      "note": "firing-pointers: this firing places its own rows on payload.writes"
+    },
+    {
+      "id": "pkt-009-eligibility-writes",
+      "basis": "component",
+      "note": "firing-pointers: this firing places its own rows on payload.writes"
+    },
+    {
+      "id": "pkt-010-campaign-failure-writes",
+      "basis": "component",
+      "note": "firing-pointers: this firing places its own rows on payload.writes"
+    },
+    {
+      "id": "pkt-011-halt-records-writes",
+      "basis": "component",
+      "note": "firing-pointers: this firing places its own rows on payload.writes"
+    },
+    {
+      "id": "pkt-013-firm-provision-writes",
+      "basis": "component",
+      "note": "firing-pointers: this firing places its own rows on payload.writes"
+    }
+  ]
 }

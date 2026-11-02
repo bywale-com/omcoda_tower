@@ -42,15 +42,23 @@ PKT-001 is `verified` manual evidence. Its Wake stays `hold`. `markReleased` ref
 
 ## Batching
 
-Related released packets may share one Analyst execution or one Engineer branch when they share architectural context. Their ids, acceptance checks, and manifests stay separate. Do not delay an unrelated ready packet in order to fill a batch.
+An assignment is the schedulable unit. It may name one packet or several. The Architect records a sibling only for a shared contract, dependency, component, runtime behavior, or implementation boundary. Adjacent ids are not a sibling link. The controller builds one Analyst assignment from eligible released packets in that graph. A packet whose sibling is not yet eligible is dispatched alone. The assignment does not wait to grow. Each packet keeps its own identity, revision, nine-section specification, checks, and history. One execution may sign several of them.
 
 ## Concurrency
 
-One Architect, one Analyst, and one Engineer at most. One implementation batch at a time. `controlStep` treats the slot as taken when an engineer dispatch is outstanding, an engineering lease is live, or a repair for the current fingerprint was already woken. One pass proposes at most one `wake_engineer` or `wake_repair`. Packet wakes are preferred over another architect session. Two investigations of different components may exist only after this single-batch path has been observed for real. That observation has not happened.
+One Architect, one Analyst, and one Engineer at most. One implementation batch at a time. The engineer slot is taken by a live lease, a repair fingerprint that was already woken, or a pending engineer dispatch whose reservation has not expired. A dispatched execution that never starts, a refused execution, and an expired lease leave the slot. One pass proposes at most one `wake_engineer` or `wake_repair`. Packet wakes are preferred over another architect session. A new architect launch waits while the engineering queue is two or more packets deep. A running architect execution is not stopped by that hold. Two investigations of different components may exist only after this single-batch path has been observed for real. That observation has not happened.
+
+## Release
+
+A release is the smallest set that is true on its own. Sibling basis `dependency` closes the set. Every dependency is already accepted or inside the set, and every packet still open in the set is `verified`. An assignment is not a release. An initiative is not a release.
+
+When that set is verified, `scripts/factory-emerge.ts` opens one pull request whose base is `main` and whose diff is the product paths in those verified commits. It mails that sheet when `EMERGE_EMAIL`, `RESEND_API_KEY`, and `RESEND_FROM_EMAIL` are set. It does not merge. Merging that pull request is the founder's conclusion. The next pass records the merge SHA and accepts the packets in the release. The factory branch is not the branch that lands on `main`.
 
 ## Verification evidence
 
 Every released packet names the checks that prove its requirements. A green build is not that proof. A passing check proves only the SHA it ran against. The controller refuses a pass whose SHA is not `candidateSha`.
+
+A packet at `candidate` is verified by `.github/workflows/factory-verify.yml`. That workflow checks out `candidateSha`, runs `scripts/verify-<packet>.ts` from that commit, and records the Actions run id. It does not start a Cursor agent. A run already open, already recorded, or already failed for that SHA is not started again. A new candidate SHA is a new run. The dispatch pass then opens a release pull request when the dependency set is verified. It still does not merge.
 
 A passing check moves the packet to `verified`. Acceptance is later: `integration_authorized`, then `integrated` with a merge SHA, then `reconciled`, then `accepted`. A green result on one commit does not mean the commit is on the target branch.
 

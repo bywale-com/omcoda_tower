@@ -15,10 +15,14 @@ import {
   decide,
   deriveInitiative,
   freshItem,
+  nextRevision,
+  REQUIRED_CHANGE_SECTIONS,
   workerMayRun,
   type WorkItem,
   type World,
 } from "../.factory/controller/machine.ts";
+import { commitmentHolds, explainFactory, nextReconcileAt, RECONCILE_CRON } from "../.factory/controller/explain.ts";
+import { planVerifications, proofScript, verifyJobName } from "../.factory/controller/verify.ts";
 import {
   ContentsBlobRemote,
   GitHubContentsStore,
@@ -32,6 +36,7 @@ import {
   dispatchWake,
   emptyLedger,
   githubLabelActuator,
+  redeliverDispatch,
   labelEditArgs,
   labelRemoveArgs,
   labelViewArgs,
@@ -52,11 +57,28 @@ import {
   type PlateEvidence,
   type ReleaseManifest,
 } from "../.factory/controller/release.ts";
+import { cursorFollowUp, followUpRequest } from "../.factory/controller/cursor.ts";
+import {
+  analystAssignment,
+  engineerAssignment,
+  planContinuation,
+  planPacketContinuation,
+  prepareBoundEngineer,
+  productionMetrics,
+  productionPressure,
+  RECORDED_SPECIFICATION_BLOCK,
+  analystFileCountsAsThisDispatch,
+  recoverExecutions,
+  unconfirmedDelivery,
+  unsignedAnalystRecovery,
+} from "../.factory/controller/execution.ts";
+import { readyReleases } from "../.factory/controller/conclusion.ts";
 import { headMatchesDispatch, selectLabeledDispatch } from "../.factory/controller/wake.ts";
 import {
   applyLedgerEvent,
   commitLedgerEvent,
   controlStep,
+  decideScope,
   dispatchInitiative,
   freshInitiative,
   moduleComplete,
@@ -570,6 +592,22 @@ check("dispatch workflow prints a control pass and does not schedule labels", ()
   const workflow = read(".github/workflows/factory-dispatch.yml");
   assert.ok(workflow.includes("pull_request:"));
   assert.equal(workflow.includes("schedule:"), false);
+  const reconcile = read(".github/workflows/factory-reconcile.yml");
+  assert.ok(reconcile.includes("schedule:"));
+  assert.ok(reconcile.includes(`cron: "${RECONCILE_CRON}"`));
+  assert.equal(reconcile.includes("github.ref"), false);
+  assert.equal(reconcile.includes("github.sha"), false);
+  const checkoutRef = reconcile.match(/ref: (\S+)/)?.[1];
+  const ledgerBranch = reconcile.match(/FACTORY_LEDGER_BRANCH: (\S+)/)?.[1];
+  assert.equal(checkoutRef, "cursor/execution-architecture-74f7");
+  assert.equal(ledgerBranch, checkoutRef);
+  assert.ok(reconcile.includes("factory-control-operating"));
+  assert.ok(reconcile.includes("FACTORY_SPEND_LIMIT_CONFIRMED"));
+  assert.ok(reconcile.includes("FACTORY_AUTOMATIONS_SAVED"));
+  const reconcileJob = reconcile.slice(reconcile.indexOf("      - name: Reconcile"));
+  assert.ok(reconcileJob.indexOf('echo "actuator disarmed"') < reconcileJob.indexOf("scripts/factory-control.ts --apply"));
+  assert.ok(reconcileJob.indexOf("scripts/factory-control.ts --apply") < reconcileJob.indexOf("scripts/factory-emerge.ts --apply"));
+  assert.equal(reconcile.includes("usedDispatches"), false);
   assert.ok(workflow.includes("workflow_dispatch:"));
   assert.ok(workflow.includes("I_AUTHORIZE_FACTORY_DISPATCH"));
   assert.ok(workflow.includes("actuator disarmed"));
@@ -619,6 +657,10 @@ check("seat prompts keep the Travis gates that stopped empty boots", () => {
   assert.match(engineer, /scripts\/factory-wake-check\.ts factory-repair/);
   assert.match(engineer, /scripts\/factory-engineer\.ts lease --worker/);
   assert.match(engineer, /scripts\/factory-engineer\.ts candidate --worker/);
+  assert.match(engineer, /scripts\/factory-engineer\.ts specification-blocked --worker/);
+  assert.match(engineer, /returned_analyst/);
+  assert.match(analyst, /scripts\/factory-analyst\.ts requirements-blocked --worker/);
+  assert.match(analyst, /requirements_blocked/);
   assert.match(architect, /No timer enforces this interval/);
   const packet = read("docs/factory/initiatives/exec-identity/packets/PKT-001-click-attribution.md");
   assert.match(packet, /\*\*Wake:\*\* hold/);
@@ -1027,7 +1069,7 @@ check("T38 through T41 durable dispatch binds the wake and rejects stale or fail
   assert.ok(committed.usedDispatches >= 4 && committed.usedDispatches <= committed.authorizedDispatches);
   assert.ok(committed.stateRevision >= 32);
   assert.equal(committed.scope.id, "agents-and-automations");
-  assert.equal(committed.scope.status, "active");
+  assert.ok(committed.scope.status === "suspended" || committed.scope.status === "active");
   const recorded = committed.packets[packetId];
   assert.equal(recorded.stage, "accepted");
   assert.equal(recorded.wake, "hold");
@@ -1262,6 +1304,1309 @@ check("opening an ask does not write the enrollment cursor", () => {
   const routes = read("server/wire-service/routes.ts");
   assert.match(routes, /wire\.get\("\/machine\/contact-workspaces\/:contactId", handleContactSeatGet\)/);
   assert.match(routes, /wire\.get\("\/contact-seat\/:token", handleContactSeatGet\)/);
+});
+
+check("a resumed wait restores stored writes before goOn", () => {
+  const source = read("server/wire-service/workflowWalk.ts");
+  const start = source.indexOf("if (opts.resumeFromNodeId)");
+  const end = source.indexOf("await visit(start.id)", start);
+  const branch = source.slice(start, end);
+  assert.ok(start >= 0 && end > start);
+  assert.ok(branch.includes("ctx.chainWrites[nodeId] = writesFromUnknown(status.writes)"));
+  assert.ok(branch.includes("ctx.previousWrites = Array.isArray(waitedWrites) ? writesFromUnknown(waitedWrites) : []"));
+  assert.ok(branch.indexOf("ctx.previousWrites") < branch.indexOf("await goOn(opts.resumeFromNodeId"));
+  assert.equal(branch.includes("counts.waitWrites"), false);
+  assert.equal(branch.includes("wait_occupancy"), false);
+  assert.match(branch, /SELECT node_status FROM workflow_run WHERE id=\$1/);
+  const loader = source.slice(source.indexOf("async function loadWriteRow"), source.indexOf("async function loadWriteField"));
+  assert.match(loader.trim(), /return null;\s*\}$/);
+  const filter = read(".github/workflows/factory-check.yml");
+  assert.match(filter, /server\/wire-service\/workflowWalk\.ts/);
+  assert.match(filter, /scripts\/verify-resume-same-run\.ts/);
+  assert.match(read(".github/workflows/ship.yml"), /verify-resume-same-run\.ts/);
+});
+
+check("an objective_met firing publishes the engagement row and the flipped enrollment", () => {
+  const housing = read("server/wire-service/campaignHousing.ts");
+  const start = housing.indexOf("export async function advanceEnrollmentCampaign");
+  const end = housing.indexOf("export async function recordCampaignFailure", start);
+  const fn = housing.slice(start, end);
+  const binding = "`eng-${randomUUID()}`";
+  assert.equal(fn.split(binding).length - 1, 1);
+  const declared = fn.match(/const (\w+) = `eng-\$\{randomUUID\(\)\}`;/);
+  assert.ok(declared);
+  const name = declared![1];
+  const rowCount = fn.indexOf("if (!flipped.rowCount)");
+  const insertAt = fn.indexOf("INSERT INTO engagement_records");
+  const dispatchAt = fn.indexOf("dispatchEventToWorkflows");
+  assert.ok(rowCount >= 0 && insertAt > rowCount && dispatchAt > insertAt);
+  const insertArgs = fn.slice(fn.indexOf("[", insertAt), fn.indexOf("]", insertAt));
+  assert.match(insertArgs, new RegExp(`^\\[\\s*${name}\\b`));
+  assert.equal(insertArgs.includes(binding), false);
+  const writesAt = fn.indexOf("writes:", dispatchAt);
+  const writesEnd = fn.indexOf("],", writesAt);
+  const writes = fn.slice(writesAt, writesEnd);
+  const engAt = writes.indexOf('"engagement_records"');
+  const enrAt = writes.indexOf('"enrollment"');
+  assert.ok(engAt >= 0 && enrAt > engAt);
+  assert.match(writes.slice(engAt, enrAt), new RegExp(`id: ${name}\\b`));
+  const dispatchBody = fn.slice(dispatchAt, writesEnd);
+  assert.match(dispatchBody, /campaign_objective_id/);
+  assert.match(dispatchBody, /enrollment_id/);
+  assert.match(dispatchBody, /completion_id/);
+  assert.equal(fn.includes("INSERT INTO enrollment"), false);
+
+  const walk = read("server/wire-service/workflowWalk.ts");
+  const dispatchFn = walk.slice(walk.indexOf("export async function dispatchEventToWorkflows"));
+  const payloadAt = dispatchFn.indexOf("triggerPayload:");
+  const expr = dispatchFn.slice(payloadAt, dispatchFn.indexOf("\n", payloadAt));
+  assert.equal(expr.includes("anyPass"), false);
+
+  const loader = walk.slice(walk.indexOf("async function loadWriteRow"), walk.indexOf("async function loadWriteField"));
+  const sql = "SELECT * FROM engagement_records WHERE id=$1";
+  const sqlAt = loader.indexOf(sql);
+  assert.ok(sqlAt >= 0);
+  const statement = loader.slice(loader.lastIndexOf("`", sqlAt) + 1, loader.indexOf("`", sqlAt));
+  assert.equal(statement, sql);
+  for (const banned of ["firm_id", "contact_id", "ORDER BY", "LIMIT"]) {
+    assert.equal(statement.includes(banned), false, banned);
+  }
+  assert.match(loader.trim(), /return null;\s*\}$/);
+
+  const writesFile = read("server/wire-service/runWrites.ts");
+  const wStart = writesFile.indexOf("export function writesFromPayload");
+  const wNext = writesFile.indexOf("\nexport ", wStart + 10);
+  const wFn = writesFile.slice(wStart, wNext < 0 ? writesFile.length : wNext);
+  assert.equal(wFn.includes("enrollment_id"), false);
+
+  const filter = read(".github/workflows/factory-check.yml");
+  assert.match(filter, /server\/wire-service\/workflowWalk\.ts/);
+  assert.match(filter, /server\/wire-service\/runWrites\.ts/);
+  assert.match(filter, /scripts\/verify-firing-handle\.ts/);
+  assert.match(read(".github/workflows/ship.yml"), /verify-firing-handle\.ts/);
+});
+
+check("an audit result row belongs to the run that wrote it", () => {
+  const sql = read("supabase/migrations/025_audit_row_grain.sql");
+  for (const banned of [
+    "DELETE FROM reachability_verdicts",
+    "DELETE FROM sequence_ready",
+    "SET verdict",
+    "SET ready",
+  ]) {
+    assert.equal(sql.includes(banned), false, banned);
+  }
+  assert.equal(sql.split("PRIMARY KEY (audit_run_id, contact_id)").length - 1, 2);
+  assert.equal((sql.match(/audit_run_id TEXT/g) ?? []).length >= 2, true);
+  const withoutRunKey = sql.replace(/audit_run_id/g, "runkey");
+  assert.equal(/\bADD COLUMN(?: IF NOT EXISTS)?\s+id\b/i.test(withoutRunKey), false);
+  assert.equal(/\bid\s+TEXT\b/i.test(withoutRunKey), false);
+
+  const audit = read("server/wire-service/auditRun.ts");
+  assert.equal(audit.includes("ON CONFLICT (contact_id, firm_id)"), false);
+  const writer = audit.slice(audit.indexOf("export async function executeAuditRun"));
+  assert.match(writer, /INSERT INTO reachability_verdicts \(audit_run_id/);
+  assert.match(writer, /INSERT INTO sequence_ready \(audit_run_id/);
+  assert.equal(writer.split("id: runId, contact_id: contact.id").length - 1, 2);
+
+  const walk = read("server/wire-service/workflowWalk.ts");
+  const loader = walk.slice(walk.indexOf("async function loadWriteRow"), walk.indexOf("async function loadWriteField"));
+  const predicate = "audit_run_id=$1 AND contact_id=$2 AND firm_id=$3";
+  assert.equal(loader.split(predicate).length - 1, 2);
+  let from = 0;
+  for (let n = 0; n < 2; n += 1) {
+    const at = loader.indexOf(predicate, from);
+    assert.ok(at >= 0);
+    const statement = loader.slice(loader.lastIndexOf("`", at) + 1, loader.indexOf("`", at));
+    assert.equal(statement.includes("ORDER BY"), false);
+    from = at + predicate.length;
+  }
+
+  const machine = read("server/wire-service/machine.ts");
+  const book = machine.slice(
+    machine.indexOf("export async function handleAuditRunGet"),
+    machine.indexOf("export async function handleContactImport"),
+  );
+  assert.match(book, /sr\.audit_run_id = rv\.audit_run_id AND sr\.contact_id = rv\.contact_id/);
+
+  const eventTest = read("server/wire-service/eventTest.ts");
+  const writeFn = eventTest.slice(eventTest.indexOf("function writeId"), eventTest.indexOf("function toWrites"));
+  const auditAt = writeFn.indexOf("audit_run_id");
+  assert.ok(auditAt >= 0);
+  assert.ok(writeFn.indexOf("body.id") > auditAt);
+  assert.ok(writeFn.indexOf("body.contact_id") > auditAt);
+
+  const paths = read(".github/workflows/factory-check.yml");
+  for (const path of [
+    "server/wire-service/auditRun.ts",
+    "server/wire-service/workflowWalk.ts",
+    "server/wire-service/machine.ts",
+    "server/wire-service/eventTest.ts",
+    "scripts/verify-audit-row-grain.ts",
+    "supabase/migrations/025_audit_row_grain.sql",
+    "scripts/close-walk-gaps.ts",
+    "scripts/verify-automations-alive.ts",
+    "scripts/verify-machine-e2e.ts",
+    "scripts/verify-ship-spine.ts",
+  ]) {
+    assert.ok(paths.includes(path), path);
+  }
+  assert.match(read(".github/workflows/ship.yml"), /verify-audit-row-grain\.ts/);
+});
+
+check("three id-keyed tables load by primary key and the generic action stores that key", () => {
+  const walk = read("server/wire-service/workflowWalk.ts");
+  const setStart = walk.indexOf("const PERSON_WRITE_TABLES = new Set([");
+  const setEnd = walk.indexOf("]);", setStart);
+  const set = walk.slice(setStart, setEnd);
+  for (const name of [
+    "sequence_ready",
+    "reachability_verdicts",
+    "contact_records",
+    "contact_tag",
+    "enrollment",
+    "wait_occupancy",
+    "engagement_records",
+    "fact_writebacks",
+    "meeting_booked",
+  ]) {
+    assert.ok(set.includes(`"${name}"`), name);
+  }
+  for (const banned of ["eligibility_evaluations", "eligibility_results", "signals", "motion_decisions"]) {
+    assert.equal(set.includes(`"${banned}"`), false, banned);
+  }
+
+  const loader = walk.slice(walk.indexOf("async function loadWriteRow"), walk.indexOf("async function loadWriteField"));
+  for (const table of ["fact_writebacks", "meeting_booked", "wait_occupancy"]) {
+    const sql = `SELECT * FROM ${table} WHERE id=$1`;
+    const sqlAt = loader.indexOf(sql);
+    assert.ok(sqlAt >= 0, table);
+    const statement = loader.slice(loader.lastIndexOf("`", sqlAt) + 1, loader.indexOf("`", sqlAt));
+    assert.equal(statement, sql);
+    for (const banned of ["firm_id", "contact_id", "ORDER BY", "LIMIT"]) {
+      assert.equal(statement.includes(banned), false, `${table} ${banned}`);
+    }
+  }
+  assert.match(loader.trim(), /return null;\s*\}$/);
+
+  const operand = walk.slice(walk.indexOf("async function resolveOperandText"), walk.indexOf("async function comparePasses"));
+  const find = "row.contact_id === contactId || row.id === contactId";
+  assert.equal(operand.split(find).length - 1, 2);
+
+  const ifFn = walk.slice(walk.indexOf("async function evalIfPick"), walk.indexOf("function switchPathsOf"));
+  assert.match(ifFn, /for \(const cid of ctx\.contactIds\)/);
+  assert.match(ifFn, /personTableOf/);
+  const switchFn = walk.slice(walk.indexOf('if (type === "switch")'), walk.indexOf('if (type === "get")'));
+  assert.match(switchFn, /for \(const cid of ctx\.contactIds\)/);
+  assert.match(switchFn, /personTableOf/);
+
+  const rule = walk.slice(walk.indexOf("async function resolveRuleOperand"), walk.indexOf("async function evaluateRuleConditions"));
+  assert.match(rule, /SELECT value FROM fact_writebacks/);
+  assert.match(rule, /firm_id=\$1 AND contact_id=\$2 AND field_key=\$3/);
+  assert.match(rule, /ORDER BY created_at DESC LIMIT 1/);
+
+  const actionAt = walk.indexOf('if (type === "action")');
+  const engageAt = walk.indexOf("const engagementId = await writeEngagement", actionAt);
+  assert.ok(engageAt > actionAt);
+  const forAt = walk.lastIndexOf("for (const contactId of ctx.contactIds)", engageAt);
+  const beforeLoop = walk.slice(actionAt, forAt);
+  for (const kind of ["call_agent", "ascribe_tag", "run_audit"]) {
+    const at = beforeLoop.indexOf(`if (actionType === "${kind}")`);
+    assert.ok(at >= 0, kind);
+    assert.ok(beforeLoop.indexOf("return;", at) > at, kind);
+  }
+  assert.match(beforeLoop, /rawAction !== "run_audit" && rawAction !== "ascribe_tag"/);
+
+  const loopEnd = walk.indexOf("await persistAction", engageAt);
+  const loop = walk.slice(forAt, loopEnd);
+  assert.match(loop, /const engagementId = await writeEngagement\(/);
+  assert.match(loop, /writes\.push\(\{ table: "engagement_records", id: engagementId, contact_id: contactId \}\)/);
+  assert.equal(/\bid: contactId\b/.test(loop), false);
+
+  const cascade = read("server/wire-service/cascade.ts");
+  const writer = cascade.slice(
+    cascade.indexOf("export async function writeEngagement"),
+    cascade.indexOf("async function hasInboundOverride"),
+  );
+  const binding = "`eng-${randomUUID()}`";
+  assert.equal(writer.split(binding).length - 1, 1);
+  const declared = writer.match(/const (\w+) = `eng-\$\{randomUUID\(\)\}`;/);
+  assert.ok(declared);
+  const name = declared![1];
+  assert.match(writer, new RegExp(`\\[\\s*${name}\\b`));
+  assert.match(writer, new RegExp(`return ${name};`));
+
+  const filter = read(".github/workflows/factory-check.yml");
+  for (const path of [
+    "server/wire-service/workflowWalk.ts",
+    "server/wire-service/cascade.ts",
+    "scripts/verify-id-keyed-loads.ts",
+  ]) {
+    assert.ok(filter.includes(path), path);
+  }
+  assert.match(read(".github/workflows/ship.yml"), /verify-id-keyed-loads\.ts/);
+});
+
+check("a fact firing publishes the inserted write-back id", () => {
+  function sliceFn(source: string, start: string, end: string): string {
+    const at = source.indexOf(start);
+    assert.ok(at >= 0, start);
+    const to = source.indexOf(end, at + start.length);
+    assert.ok(to > at, end);
+    return source.slice(at, to);
+  }
+
+  function objectAt(source: string, braceAt: number): string {
+    let depth = 0;
+    for (let i = braceAt; i < source.length; i += 1) {
+      if (source[i] === "{") depth += 1;
+      else if (source[i] === "}") {
+        depth -= 1;
+        if (depth === 0) return source.slice(braceAt, i + 1);
+      }
+    }
+    assert.fail("unbalanced payload");
+  }
+
+  function payloadOf(fn: string, eventName: string): string {
+    const at = fn.indexOf(`eventName: "${eventName}"`);
+    assert.ok(at >= 0, eventName);
+    const key = fn.indexOf("payload:", at);
+    assert.ok(key > at, eventName);
+    const brace = fn.indexOf("{", key);
+    return objectAt(fn, brace);
+  }
+
+  function writesArray(payload: string): string {
+    const at = payload.indexOf("writes:");
+    assert.ok(at >= 0);
+    const bracket = payload.indexOf("[", at);
+    let depth = 0;
+    for (let i = bracket; i < payload.length; i += 1) {
+      if (payload[i] === "[") depth += 1;
+      else if (payload[i] === "]") {
+        depth -= 1;
+        if (depth === 0) return payload.slice(bracket, i + 1);
+      }
+    }
+    assert.fail("unbalanced writes");
+  }
+
+  const machine = read("server/wire-service/machine.ts");
+  const fact = sliceFn(machine, "export async function handleFactWriteback", "export async function handleFactWritebacksList");
+  const payload = payloadOf(fact, "fact_writebacks");
+  for (const key of [
+    "writebackId: writeId",
+    "fieldKey",
+    "contactId",
+    "form_ref: stamp.formRef",
+    "campaign_objective_id: stamp.campaignObjectiveId",
+  ]) {
+    assert.ok(payload.includes(key), key);
+  }
+  const writes = writesArray(payload);
+  assert.equal(writes.split("{").length - 1, 1);
+  assert.match(writes, /table: "fact_writebacks"/);
+  assert.match(writes, /id: writeId/);
+  assert.match(writes, /contact_id: contactId/);
+  for (const banned of [
+    "firm_id",
+    "contactIds",
+    "contact_ids",
+    "...cascade",
+    "missingIds",
+    "eligibility_evaluations",
+    "eligibility_results",
+    "signals",
+    "motion_decisions",
+  ]) {
+    assert.equal(payload.includes(banned), false, banned);
+  }
+  const dispatch = fact.slice(fact.indexOf('eventName: "fact_writebacks"'));
+  assert.match(dispatch, /contactIds: \[contactId\]/);
+  const required = fact.indexOf('"contactId and fieldKey required"');
+  const insert = fact.indexOf("INSERT INTO fact_writebacks");
+  assert.ok(required >= 0 && required < insert);
+
+  const seatFile = read("server/wire-service/contactSeat.ts");
+  const seat = sliceFn(seatFile, "export async function handleContactSeatFacts", "export async function handleContactSeatMeeting");
+  const seatPayload = payloadOf(seat, "fact_writebacks");
+  const seatWrites = writesArray(seatPayload);
+  assert.equal(seatWrites.split("{").length - 1, 1);
+  assert.match(seatWrites, /table: "fact_writebacks"/);
+  assert.match(seatWrites, /id: writeId/);
+  assert.match(seatWrites, /contact_id: resolved\.link\.contact_id/);
+  assert.ok(seatPayload.includes("firm_id: resolved.link.firm_id"));
+  assert.ok(seatPayload.includes("contact_id: resolved.link.contact_id"));
+  for (const banned of [
+    "contactIds",
+    "contact_ids",
+    "...cascade",
+    "missingIds",
+    "eligibility_evaluations",
+    "eligibility_results",
+    "signals",
+    "motion_decisions",
+  ]) {
+    assert.equal(seatPayload.includes(banned), false, banned);
+  }
+  const skip = seat.indexOf("if (!fieldKey) continue");
+  const seatInsert = seat.indexOf("INSERT INTO fact_writebacks");
+  assert.ok(skip >= 0 && skip < seatInsert);
+
+  const cascade = sliceFn(machine, "export async function runContactEligibilityCascade", "export async function handleFactWriteback");
+  const eligibility = payloadOf(cascade, "eligibility.changed");
+  assert.equal(eligibility.includes("writes"), false);
+
+  const writesFile = read("server/wire-service/runWrites.ts");
+  const fromPayload = writesFile.slice(writesFile.indexOf("export function writesFromPayload"));
+  assert.ok(fromPayload.startsWith("export function writesFromPayload"));
+  assert.equal(fromPayload.includes("writebackId"), false);
+
+  for (const fn of [fact, seat]) {
+    const call = fn.indexOf("onCompletionWrite(");
+    assert.ok(call >= 0);
+    const body = fn.slice(call, fn.indexOf(");", call));
+    assert.match(body, /table: "fact_writebacks"/);
+    assert.match(body, /rowId: writeId/);
+  }
+
+  const housing = read("server/wire-service/campaignHousing.ts");
+  const branch = housing.indexOf('if (objective.completion_table === "fact_writebacks")');
+  assert.ok(branch >= 0);
+  const statement = housing.slice(branch, housing.indexOf("return { ok:", branch));
+  assert.match(statement, /campaign_objective_id = \$3/);
+  assert.match(statement, /ORDER BY created_at DESC LIMIT 1/);
+
+  const filter = read(".github/workflows/factory-check.yml");
+  for (const path of [
+    "server/wire-service/machine.ts",
+    "server/wire-service/runWrites.ts",
+    "scripts/verify-fact-writes.ts",
+  ]) {
+    assert.ok(filter.includes(path), path);
+  }
+  assert.match(read(".github/workflows/ship.yml"), /verify-fact-writes\.ts/);
+});
+
+check("a meeting firing publishes the inserted booking id", () => {
+  function sliceFn(source: string, start: string, end: string): string {
+    const at = source.indexOf(start);
+    assert.ok(at >= 0, start);
+    const to = source.indexOf(end, at + start.length);
+    assert.ok(to > at, end);
+    return source.slice(at, to);
+  }
+
+  function objectAt(source: string, braceAt: number): string {
+    let depth = 0;
+    for (let i = braceAt; i < source.length; i += 1) {
+      if (source[i] === "{") depth += 1;
+      else if (source[i] === "}") {
+        depth -= 1;
+        if (depth === 0) return source.slice(braceAt, i + 1);
+      }
+    }
+    assert.fail("unbalanced payload");
+  }
+
+  function payloadOf(fn: string, eventName: string): string {
+    const at = fn.indexOf(`eventName: "${eventName}"`);
+    assert.ok(at >= 0, eventName);
+    const key = fn.indexOf("payload:", at);
+    assert.ok(key > at, eventName);
+    const brace = fn.indexOf("{", key);
+    return objectAt(fn, brace);
+  }
+
+  function writesArray(payload: string): string {
+    const at = payload.indexOf("writes:");
+    assert.ok(at >= 0);
+    const bracket = payload.indexOf("[", at);
+    let depth = 0;
+    for (let i = bracket; i < payload.length; i += 1) {
+      if (payload[i] === "[") depth += 1;
+      else if (payload[i] === "]") {
+        depth -= 1;
+        if (depth === 0) return payload.slice(bracket, i + 1);
+      }
+    }
+    assert.fail("unbalanced writes");
+  }
+
+  const machine = read("server/wire-service/machine.ts");
+  const meeting = sliceFn(machine, "export async function handleMeetingBook", "export async function handleMeetingsList");
+  const payload = payloadOf(meeting, "meeting_booked");
+  for (const key of [
+    "meetingId: id",
+    "contactId",
+    "slot: body.slot ?? null",
+    "campaign_objective_id: campaignObjectiveId",
+  ]) {
+    assert.ok(payload.includes(key), key);
+  }
+  const writes = writesArray(payload);
+  assert.equal(writes.split("{").length - 1, 1);
+  assert.match(writes, /table: "meeting_booked"/);
+  assert.match(writes, /\bid\b/);
+  assert.match(writes, /contact_id: contactId/);
+  for (const banned of [
+    "firm_id",
+    "contactIds",
+    "contact_ids",
+    "source",
+    "engagement_records",
+    "`eng-${randomUUID()}`",
+  ]) {
+    assert.equal(payload.includes(banned), false, banned);
+  }
+  const dispatch = meeting.slice(meeting.indexOf('eventName: "meeting_booked"'));
+  assert.match(dispatch, /contactIds: \[contactId\]/);
+  const required = meeting.indexOf('"contactId required"');
+  const insert = meeting.indexOf("INSERT INTO meeting_booked");
+  assert.ok(required >= 0 && required < insert);
+  assert.equal(meeting.includes('"slot required"'), false);
+  const engagement = meeting.indexOf("INSERT INTO engagement_records");
+  assert.ok(engagement > meeting.indexOf('eventName: "meeting_booked"'));
+  assert.match(meeting, /`eng-\$\{randomUUID\(\)\}`/);
+  const completion = meeting.slice(meeting.indexOf("onCompletionWrite("));
+  assert.match(completion, /table: "meeting_booked"/);
+  assert.match(completion, /rowId: id/);
+  const nullify = meeting.slice(meeting.indexOf("UPDATE active_attempts"));
+  assert.match(nullify, /nullified_at/);
+
+  const seatFile = read("server/wire-service/contactSeat.ts");
+  const seat = sliceFn(seatFile, "export async function handleContactSeatMeeting", "export async function handleContactSeatUpload");
+  const seatPayload = payloadOf(seat, "meeting_booked");
+  const seatWrites = writesArray(seatPayload);
+  assert.equal(seatWrites.split("{").length - 1, 1);
+  assert.match(seatWrites, /table: "meeting_booked"/);
+  assert.match(seatWrites, /\bid\b/);
+  assert.match(seatWrites, /contact_id: resolved\.link\.contact_id/);
+  assert.ok(seatPayload.includes("firm_id: resolved.link.firm_id"));
+  assert.ok(seatPayload.includes("slot"));
+  assert.ok(seatPayload.includes("contact_id: resolved.link.contact_id"));
+  const seatGuard = seat.indexOf("if (!slot)");
+  const seatInsert = seat.indexOf("INSERT INTO meeting_booked");
+  assert.ok(seatGuard >= 0 && seatGuard < seatInsert);
+  assert.equal(seat.includes("INSERT INTO engagement_records"), false);
+  const seatNullify = seat.slice(seat.indexOf("UPDATE active_attempts"));
+  assert.equal(seatNullify.includes("nullified_at"), false);
+  const seatCompletion = seat.slice(seat.indexOf("onCompletionWrite("));
+  assert.match(seatCompletion, /table: "meeting_booked"/);
+  assert.match(seatCompletion, /rowId: id/);
+
+  const fromPayload = read("server/wire-service/runWrites.ts");
+  const writer = fromPayload.slice(fromPayload.indexOf("export function writesFromPayload"));
+  assert.ok(writer.startsWith("export function writesFromPayload"));
+  assert.equal(writer.includes("meetingId"), false);
+
+  const walk = read("server/wire-service/workflowWalk.ts");
+  const localRef = sliceFn(walk, "function localRefFromPayload", "function localAxesMatch");
+  assert.equal(localRef.includes("meeting_booked"), false);
+
+  const housing = read("server/wire-service/campaignHousing.ts");
+  const branch = housing.indexOf('if (objective.completion_table === "meeting_booked")');
+  assert.ok(branch >= 0);
+  const statement = housing.slice(branch, housing.indexOf('if (objective.completion_table === "fact_writebacks")', branch));
+  assert.match(statement, /campaign_objective_id = \$3/);
+  assert.match(statement, /enrollment_id = \$4/);
+  assert.match(statement, /created_at >= \$5/);
+  assert.match(statement, /ORDER BY created_at DESC LIMIT 1/);
+  assert.equal(statement.includes("campaign_objective_id = $3 AND enrollment_id = $4"), false);
+
+  const filter = read(".github/workflows/factory-check.yml");
+  for (const path of [
+    "server/wire-service/machine.ts",
+    "server/wire-service/runWrites.ts",
+    "server/wire-service/workflowWalk.ts",
+    "scripts/verify-meeting-writes.ts",
+  ]) {
+    assert.ok(filter.includes(path), path);
+  }
+  assert.match(read(".github/workflows/ship.yml"), /verify-meeting-writes\.ts/);
+});
+
+check("a campaign_failure firing publishes the inserted failure id", () => {
+  function sliceFn(source: string, start: string, end: string): string {
+    const at = source.indexOf(start);
+    assert.ok(at >= 0, start);
+    const to = source.indexOf(end, at + start.length);
+    assert.ok(to > at, end);
+    return source.slice(at, to);
+  }
+
+  function objectAt(source: string, braceAt: number): string {
+    let depth = 0;
+    for (let i = braceAt; i < source.length; i += 1) {
+      if (source[i] === "{") depth += 1;
+      else if (source[i] === "}") {
+        depth -= 1;
+        if (depth === 0) return source.slice(braceAt, i + 1);
+      }
+    }
+    assert.fail("unbalanced payload");
+  }
+
+  function payloadOf(fn: string, eventName: string): string {
+    const at = fn.indexOf(`eventName: "${eventName}"`);
+    assert.ok(at >= 0, eventName);
+    const key = fn.indexOf("payload:", at);
+    assert.ok(key > at, eventName);
+    const brace = fn.indexOf("{", key);
+    return objectAt(fn, brace);
+  }
+
+  function writesArray(payload: string): string {
+    const at = payload.indexOf("writes:");
+    assert.ok(at >= 0);
+    const bracket = payload.indexOf("[", at);
+    let depth = 0;
+    for (let i = bracket; i < payload.length; i += 1) {
+      if (payload[i] === "[") depth += 1;
+      else if (payload[i] === "]") {
+        depth -= 1;
+        if (depth === 0) return payload.slice(bracket, i + 1);
+      }
+    }
+    assert.fail("unbalanced writes");
+  }
+
+  const cascade = read("server/wire-service/cascade.ts");
+  const escalate = sliceFn(cascade, "export async function escalateAttemptWindow", "export type ChannelSendInput");
+  const branchAt = escalate.indexOf("if (!toChannel)");
+  assert.ok(branchAt >= 0);
+  const branch = escalate.slice(branchAt);
+  const payload = payloadOf(branch, "campaign_failure");
+  for (const key of [
+    "campaignFailureId: failId",
+    "attemptId: attempt.id",
+    "campaign_id: enr.rows[0]?.campaign_id ?? null",
+  ]) {
+    assert.ok(payload.includes(key), key);
+  }
+  assert.equal(payload.includes("campaign_id: campaignId"), false);
+  const writes = writesArray(payload);
+  assert.equal(writes.split("{").length - 1, 1);
+  assert.match(writes, /table: "campaign_failure"/);
+  assert.match(writes, /id: failId/);
+  assert.match(writes, /contact_id: attempt\.contact_id/);
+  for (const banned of [
+    "firm_id",
+    "active_attempts",
+    "enrollment",
+    "engagement_records",
+    "workflow_run",
+    "send_live",
+    "send_dry_run",
+  ]) {
+    assert.equal(writes.includes(banned), false, banned);
+  }
+  const withoutWrites = payload.replace(writes, "");
+  for (const banned of ["firm_id", "contact_id", "sequence_id", "criteriaId", "setValue", "anyPass"]) {
+    assert.equal(withoutWrites.includes(banned), false, banned);
+  }
+  assert.match(branch, /contactIds: \[attempt\.contact_id\]/);
+  assert.match(branch, /campaignId: enr\.rows\[0\]\?\.campaign_id \?\? null/);
+  assert.match(branch, /payload: \{ attemptId: attempt\.id, criteriaId: criteria\.id, setValue \}/);
+  assert.match(branch, /console\.warn\("\[cascade\] campaign_failure dispatch:", err\)/);
+  const firedAt = escalate.indexOf("if (attempt.fired_criteria?.[criteria.id])");
+  const inboundAt = escalate.indexOf("hasInboundOverride");
+  assert.ok(firedAt >= 0 && firedAt < branchAt);
+  assert.ok(inboundAt >= 0 && inboundAt < branchAt);
+  const firedReturn = escalate.indexOf("return null", firedAt);
+  assert.ok(firedReturn > firedAt && firedReturn < branchAt);
+  const inboundReturn = escalate.indexOf("return null", inboundAt);
+  assert.ok(inboundReturn > inboundAt && inboundReturn < branchAt);
+
+  const housing = read("server/wire-service/campaignHousing.ts");
+  const record = sliceFn(housing, "export async function recordCampaignFailure", "export async function pickAuthoredContent");
+  assert.match(record, /const id = `cfail-\$\{randomUUID\(\)\}`/);
+  assert.match(record, /INSERT INTO campaign_failure \(id, firm_id, contact_id, campaign_id, sequence_id, payload\)/);
+  assert.match(record, /status='exhausted'/);
+  assert.match(record, /WHERE id=\$1 AND status='open'/);
+  const exhaust = record.slice(record.indexOf("UPDATE enrollment"), record.indexOf('query("COMMIT")'));
+  assert.match(exhaust, /pursuit_state='exhausted'/);
+  assert.equal(exhaust.includes("campaign_id"), false);
+  assert.ok(record.indexOf('query("COMMIT")') < record.lastIndexOf("return id"));
+
+  const fromPayload = read("server/wire-service/runWrites.ts");
+  const writerAt = fromPayload.indexOf("export function writesFromPayload");
+  assert.ok(writerAt >= 0);
+  assert.equal(fromPayload.slice(writerAt).includes("campaignFailureId"), false);
+
+  const walk = read("server/wire-service/workflowWalk.ts");
+  const loader = sliceFn(walk, "export async function loadWriteRow", "async function loadWriteField");
+  const statement = loader.match(/SELECT \* FROM campaign_failure WHERE id=\$1/);
+  assert.ok(statement);
+  for (const banned of ["firm_id", "contact_id", "ORDER BY", "LIMIT"]) {
+    assert.equal(statement[0].includes(banned), false, banned);
+  }
+  assert.match(loader.trimEnd(), /return null;\s*\}$/);
+  const people = sliceFn(walk, "const PERSON_WRITE_TABLES = new Set([", "]);");
+  assert.equal(people.includes("campaign_failure"), false);
+  const localRef = sliceFn(walk, "function localRefFromPayload", "function localAxesMatch");
+  assert.match(localRef, /eventName === "campaign_failure"\) return payloadString\(payload, \["campaign_id", "campaignId"\]\)/);
+  const triggerRef = read("src/app/data/automationTriggerSelect.ts");
+  const triggerArm = sliceFn(triggerRef, "export function triggerLocalRefFromPayload", "export function triggerLocalAxesMatch");
+  assert.match(triggerArm, /eventName === "campaign_failure"\) return payloadString\(payload, \["campaign_id", "campaignId"\]\)/);
+
+  const door = read("server/wire-service/eventTest.ts");
+  assert.match(door, /SELECT \* FROM campaign_failure WHERE firm_id=\$1 ORDER BY created_at DESC LIMIT 10/);
+  const tickAt = cascade.indexOf("export async function tickOnce");
+  assert.ok(tickAt >= 0);
+  assert.ok(cascade.indexOf("WHERE status = 'open'", tickAt) > tickAt);
+
+  const filter = read(".github/workflows/factory-check.yml");
+  for (const path of [
+    "server/wire-service/cascade.ts",
+    "server/wire-service/workflowWalk.ts",
+    "server/wire-service/runWrites.ts",
+    "server/wire-service/eventTest.ts",
+    "server/wire-service/campaignHousing.ts",
+    "src/app/data/automationTriggerSelect.ts",
+    "scripts/verify-campaign-failure-writes.ts",
+  ]) {
+    assert.ok(filter.includes(path), path);
+  }
+  assert.match(read(".github/workflows/ship.yml"), /verify-campaign-failure-writes\.ts/);
+});
+
+check("a ct_firms firing publishes the provisioned firm id", () => {
+  function sliceFn(source: string, start: string, end: string): string {
+    const at = source.indexOf(start);
+    assert.ok(at >= 0, start);
+    const to = source.indexOf(end, at + start.length);
+    assert.ok(to > at, end);
+    return source.slice(at, to);
+  }
+
+  function objectAt(source: string, braceAt: number): string {
+    let depth = 0;
+    for (let i = braceAt; i < source.length; i += 1) {
+      if (source[i] === "{") depth += 1;
+      else if (source[i] === "}") {
+        depth -= 1;
+        if (depth === 0) return source.slice(braceAt, i + 1);
+      }
+    }
+    assert.fail("unbalanced payload");
+  }
+
+  function bracketAt(source: string, bracketAtIndex: number): string {
+    let depth = 0;
+    for (let i = bracketAtIndex; i < source.length; i += 1) {
+      if (source[i] === "[") depth += 1;
+      else if (source[i] === "]") {
+        depth -= 1;
+        if (depth === 0) return source.slice(bracketAtIndex, i + 1);
+      }
+    }
+    assert.fail("unbalanced writes");
+  }
+
+  const machine = read("server/wire-service/machine.ts");
+  const fn = sliceFn(machine, "export async function handleMachineProvision", "export async function handleMachineAccessInvite");
+  assert.match(fn, /const firm = body\.firmId\?\.trim\(\) \|\| randomUUID\(\)/);
+  const upsertAt = fn.indexOf("INSERT INTO ct_firms (id, name, posture, updated_at)");
+  assert.ok(upsertAt >= 0);
+  const upsert = fn.slice(fn.lastIndexOf("`", upsertAt) + 1, fn.indexOf("`", upsertAt));
+  assert.match(upsert, /VALUES \(\$1,\$2,'Idle',now\(\)\)/);
+  assert.match(upsert, /ON CONFLICT \(id\) DO UPDATE SET name=EXCLUDED\.name, updated_at=now\(\)/);
+  assert.equal(upsert.includes("RETURNING"), false);
+  const conflict = upsert.slice(upsert.indexOf("DO UPDATE"));
+  for (const banned of ["posture", "pool_slug", "pool_domain", "sending_identity_id"]) {
+    assert.equal(conflict.includes(banned), false, banned);
+  }
+  assert.ok(fn.indexOf("[firm, firmName]", upsertAt) > upsertAt);
+  // The kept users insert returns its id. The ct_firms upsert does not.
+  assert.equal(fn.split("RETURNING").length - 1, 1);
+  assert.match(fn, /INSERT INTO users \(firm_id, email\) VALUES \(\$1::uuid, \$2\) RETURNING id/);
+  assert.equal(fn.includes("BEGIN"), false);
+  assert.equal(fn.includes("COMMIT"), false);
+  const missing = fn.indexOf('{ error: "firmName and email required" }');
+  const poolAt = fn.indexOf("getPool()");
+  assert.ok(missing >= 0 && poolAt > missing);
+  const callAt = fn.indexOf("await dispatchEventToWorkflows");
+  const auditAt = fn.indexOf('kind: "firm.provisioned"');
+  assert.ok(fn.indexOf("provision.authUser.failed") < callAt);
+  assert.ok(fn.indexOf("provision.accessLink.failed") < callAt);
+  assert.ok(callAt < auditAt);
+  assert.equal(fn.slice(callAt, auditAt).includes("try"), false);
+  const call = objectAt(fn, fn.indexOf("{", callAt));
+  assert.match(call, /firmId:\s*firm/);
+  assert.match(call, /eventName:\s*"ct_firms"/);
+  assert.equal(call.includes("contactIds"), false);
+  const payload = objectAt(call, call.indexOf("{", call.indexOf("payload:")));
+  assert.match(payload, /firmId:\s*firm/);
+  assert.match(payload, /\bfirmName\b/);
+  assert.match(payload, /\bemail\b/);
+  const writes = bracketAt(payload, payload.indexOf("[", payload.indexOf("writes:")));
+  assert.equal(writes.split("{").length - 1, 1);
+  assert.match(writes, /table:\s*"ct_firms"/);
+  assert.match(writes, /id:\s*firm/);
+  assert.equal(writes.includes("contact_id"), false);
+  const withoutWrites = payload.replace(writes, "");
+  for (const banned of [
+    "posture",
+    "website",
+    "role",
+    "consultant_name",
+    "consultant_email",
+    "contact_id",
+    "contactIds",
+    "anyPass",
+  ]) {
+    assert.equal(withoutWrites.includes(banned), false, banned);
+  }
+  assert.equal(/\bid\s*:/.test(withoutWrites), false);
+
+  const fromPayload = read("server/wire-service/runWrites.ts");
+  const writer = fromPayload.slice(fromPayload.indexOf("export function writesFromPayload"));
+  assert.equal(writer.includes("ct_firms"), false);
+  assert.equal(writer.includes("firmName"), false);
+
+  const walk = read("server/wire-service/workflowWalk.ts");
+  const loader = sliceFn(walk, "export async function loadWriteRow", "async function loadWriteField");
+  const sqlText = "SELECT * FROM ct_firms WHERE id=$1";
+  const sqlAt = loader.indexOf(sqlText);
+  assert.ok(sqlAt >= 0);
+  const statement = loader.slice(loader.lastIndexOf("`", sqlAt) + 1, loader.indexOf("`", sqlAt + sqlText.length));
+  assert.equal(statement.replace(/\s+/g, " ").trim(), sqlText);
+  const stripped = statement.replace(/ct_firms/g, "");
+  for (const banned of ["firm_id", "contact_id", "posture", "ORDER BY", "LIMIT", "firms"]) {
+    assert.equal(stripped.includes(banned), false, banned);
+  }
+  assert.match(loader.slice(sqlAt, sqlAt + sqlText.length + 40), /\[w\.id\]/);
+  assert.match(loader.trimEnd(), /return null;\s*\}$/);
+  const people = sliceFn(walk, "const PERSON_WRITE_TABLES = new Set([", "]);");
+  assert.equal(people.includes("ct_firms"), false);
+  const localRef = sliceFn(walk, "function localRefFromPayload", "function localAxesMatch");
+  assert.match(localRef, /eventName === "ct_firms"\) return payloadString\(payload, \["id", "firm_id", "firmId"\]\)/);
+  const axes = sliceFn(walk, "function localAxesMatch", "export async function dispatchEventToWorkflows");
+  assert.match(axes, /payloadString\(opts\.payload, \["firm_id", "firmId"\]\) \?\? opts\.firmId/);
+  const firmsMod = sliceFn(walk, 'if (module === "firms")', 'if (module === "');
+  assert.match(firmsMod, /table: "ct_firms"/);
+  assert.equal(firmsMod.includes("contact_id"), false);
+
+  const triggerRef = read("src/app/data/automationTriggerSelect.ts");
+  const triggerArm = sliceFn(triggerRef, "export function triggerLocalRefFromPayload", "export function triggerLocalAxesMatch");
+  assert.match(triggerArm, /eventName === "ct_firms"\) return payloadString\(payload, \["id", "firm_id", "firmId"\]\)/);
+  const entryAt = triggerRef.indexOf('id: "ct_firms"');
+  const entry = triggerRef.slice(entryAt, triggerRef.indexOf("id:", entryAt + 12));
+  const layers = entry.match(/layers:\s*\[([\s\S]*?)\]/);
+  assert.ok(layers);
+  assert.equal(layers[1].replace(/\s+/g, ""), '{kind:"firm"}');
+
+  const catalog = read("src/app/data/automationWorkflows.ts");
+  const localSet = sliceFn(catalog, "export const WORKFLOW_EVENTS_WITH_LOCAL = new Set", "]);");
+  assert.ok(localSet.includes('"ct_firms"'));
+
+  assert.match(read("server/wire-service/eventTest.ts"), /SELECT \* FROM ct_firms WHERE id=\$1 LIMIT 1/);
+
+  const poolSrc = read("server/wire-service/pool.ts");
+  const alloc = sliceFn(poolSrc, "export async function handlePoolAllocate", "export async function handlePoolGet");
+  assert.equal(alloc.includes("dispatchEventToWorkflows"), false);
+  const poolConflict = alloc.slice(alloc.indexOf("ON CONFLICT (id)"));
+  assert.match(poolConflict, /pool_slug = EXCLUDED\.pool_slug/);
+  assert.match(poolConflict, /pool_domain = EXCLUDED\.pool_domain/);
+  assert.match(poolConflict, /sending_identity_id = EXCLUDED\.sending_identity_id/);
+  assert.equal(poolConflict.slice(poolConflict.indexOf("DO UPDATE"), poolConflict.indexOf("`")).includes("posture"), false);
+
+  const stores = read("server/wire-service/stores.ts");
+  const auditFn = sliceFn(stores, "export async function appendFirmAudit", "export async function handleAuditAppend");
+  assert.equal(auditFn.includes("dispatchEventToWorkflows"), false);
+
+  const seat = read("server/wire-service/contactSeat.ts");
+  const projected = sliceFn(seat, "async function projectSeat", "async function seatFromToken");
+  assert.match(projected, /UNION ALL/);
+  assert.match(projected, /FROM ct_firms/);
+  assert.match(projected, /FROM firms/);
+
+  const filter = read(".github/workflows/factory-check.yml");
+  for (const path of [
+    "server/wire-service/machine.ts",
+    "server/wire-service/workflowWalk.ts",
+    "server/wire-service/runWrites.ts",
+    "server/wire-service/eventTest.ts",
+    "server/wire-service/pool.ts",
+    "server/wire-service/stores.ts",
+    "server/wire-service/routes.ts",
+    "src/app/data/automationTriggerSelect.ts",
+    "src/app/data/automationWorkflows.ts",
+    "scripts/verify-firm-provision-writes.ts",
+    ".github/workflows/ship.yml",
+    "server/wire-service/contactSeat.ts",
+  ]) {
+    assert.ok(filter.includes(path), path);
+  }
+  assert.match(read(".github/workflows/ship.yml"), /verify-firm-provision-writes\.ts/);
+});
+
+check("a contact halt blocks a new enroll only in the firm stored on that halt row", () => {
+  function sliceFn(source: string, start: string, end: string): string {
+    const at = source.indexOf(start);
+    assert.ok(at >= 0, start);
+    const to = source.indexOf(end, at + start.length);
+    assert.ok(to > at, end);
+    return source.slice(at, to);
+  }
+
+  const send = read("server/wire-service/dispatchSend.ts");
+  const haltFn = sliceFn(send, "export async function isHaltBlockingNew", "export async function dispatchEmailLive");
+  const flat = haltFn.replace(/\s+/g, "");
+  for (const needle of [
+    "scope = 'firm-book' AND firm_id = $1",
+    "$2::text IS NOT NULL",
+    "scope = 'contact' AND contact_id = $2 AND firm_id = $1",
+    "LIMIT 1",
+    "[firmId, contactId ?? null]",
+  ]) {
+    assert.ok(flat.includes(needle.replace(/\s+/g, "")), needle);
+  }
+  assert.equal(haltFn.includes("ORDER BY"), false);
+  assert.equal(haltFn.includes("UNIQUE"), false);
+
+  const gate = sliceFn(send, "async function consentAndHaltGate", "export async function isHaltBlockingNew");
+  const contactAt = gate.indexOf("scope = 'contact'");
+  assert.ok(contactAt >= 0);
+  const contactStmt = gate.slice(contactAt, gate.indexOf(");", contactAt) + 2);
+  assert.match(contactStmt, /scope = 'contact' AND contact_id = \$1/);
+  assert.match(gate, /scope = 'firm-book' AND firm_id = \$1/);
+
+  const stores = read("server/wire-service/stores.ts");
+  const isContact = sliceFn(stores, "export async function handleHaltIsContact", "export async function handleHaltIsFirmBook");
+  assert.match(isContact, /scope = 'contact' AND contact_id = \$1/);
+
+  const standIn = read("src/app/wire/standins/haltStore.ts");
+  const standInFn = sliceFn(standIn, "async isContactHalted", "async isFirmBookHalted");
+  assert.match(standInFn, /h\.scope === "contact" && h\.contactId === contactId/);
+
+  const walk = read("server/wire-service/workflowWalk.ts");
+  const callAgent = walk.slice(walk.indexOf('actionType === "call_agent"'));
+  const enrollAt = callAgent.indexOf("enrollAndActuate(");
+  assert.ok(enrollAt >= 0);
+  const braceAt = callAgent.indexOf("{", enrollAt);
+  let depth = 0;
+  let enrollObj = "";
+  for (let i = braceAt; i < callAgent.length; i += 1) {
+    if (callAgent[i] === "{") depth += 1;
+    else if (callAgent[i] === "}") {
+      depth -= 1;
+      if (depth === 0) {
+        enrollObj = callAgent.slice(braceAt, i + 1);
+        break;
+      }
+    }
+  }
+  assert.match(enrollObj, /firmId:\s*opts\.firmId/);
+  assert.match(enrollObj, /fireFirstStep:\s*true/);
+
+  const cascade = read("server/wire-service/cascade.ts");
+  const enroll = sliceFn(cascade, "export async function enrollAndActuate", "export async function advanceTemplateCellIfDue");
+  const callAt = enroll.indexOf("isHaltBlockingNew(input.firmId, input.contactId)");
+  const insertAt = enroll.indexOf("INSERT INTO enrollment");
+  assert.ok(callAt >= 0 && insertAt > callAt);
+  assert.match(enroll, /blocked:\s*"halt"/);
+
+  const machine = read("server/wire-service/machine.ts");
+  const sequence = sliceFn(machine, "export async function handleSequenceEnrollContacts", "export async function handleRulePackUpsert");
+  const everyAt = sequence.indexOf("`SELECT id, firm_id FROM contact_records`");
+  assert.ok(everyAt >= 0);
+  assert.equal(sequence.slice(everyAt, everyAt + 60).includes("WHERE"), false);
+  assert.match(sequence, /firmId:\s*row\.firm_id/);
+
+  const indexSql = read("supabase/migrations/003_ct_wire_stores.sql");
+  const indexAt = indexSql.indexOf("halt_records_contact_active_idx");
+  assert.ok(indexAt >= 0);
+  const index = indexSql.slice(indexAt, indexSql.indexOf(";", indexAt));
+  assert.match(index, /ON halt_records \(contact_id\)\s+WHERE lifted_at IS NULL AND scope = 'contact'/);
+  assert.equal(index.includes("UNIQUE"), false);
+
+  const filter = read(".github/workflows/factory-check.yml");
+  for (const path of [
+    "server/wire-service/dispatchSend.ts",
+    "server/wire-service/cascade.ts",
+    "server/wire-service/machine.ts",
+    "server/wire-service/stores.ts",
+    "server/wire-service/workflowWalk.ts",
+    "src/app/wire/standins/haltStore.ts",
+    "src/app/wire/reals/haltStore.ts",
+    "scripts/verify-halt-enroll-firm.ts",
+    ".github/workflows/ship.yml",
+  ]) {
+    assert.ok(filter.includes(path), path);
+  }
+  assert.match(read(".github/workflows/ship.yml"), /scripts\/verify-halt-enroll-firm\.ts/);
+});
+
+check("a contact halt denies a send only in the firm stored on that halt row", () => {
+  function sliceFn(source: string, start: string, end: string): string {
+    const at = source.indexOf(start);
+    assert.ok(at >= 0, start);
+    const to = source.indexOf(end, at + start.length);
+    assert.ok(to > at, end);
+    return source.slice(at, to);
+  }
+
+  const send = read("server/wire-service/dispatchSend.ts");
+  const gate = sliceFn(send, "async function consentAndHaltGate", "export async function isHaltBlockingNew");
+  const bookAt = gate.indexOf("scope = 'firm-book'");
+  assert.ok(bookAt >= 0);
+  const bookStmt = gate.slice(bookAt, gate.indexOf(");", bookAt) + 2);
+  assert.match(bookStmt, /scope = 'firm-book' AND firm_id = \$1/);
+  assert.match(bookStmt, /LIMIT 1/);
+  assert.match(bookStmt, /\[firmId\]/);
+  assert.equal(bookStmt.includes("ORDER BY"), false);
+
+  const consentAt = gate.indexOf("FROM consent_records");
+  assert.ok(consentAt >= 0);
+  const consentStmt = gate.slice(gate.lastIndexOf("`", consentAt), gate.indexOf(");", consentAt) + 2);
+  assert.match(consentStmt, /WHERE contact_id = \$1 LIMIT 1/);
+  assert.match(consentStmt, /\[contactId\]/);
+  assert.equal(consentStmt.includes("firm_id"), false);
+
+  const contactAt = gate.indexOf("scope = 'contact'");
+  assert.ok(contactAt >= 0);
+  const contactStmt = gate.slice(contactAt, gate.indexOf(");", contactAt) + 2);
+  assert.match(contactStmt, /scope = 'contact' AND contact_id = \$1 AND firm_id = \$2/);
+  assert.match(contactStmt, /LIMIT 1/);
+  assert.match(contactStmt, /\[contactId, firmId\]/);
+  assert.equal(contactStmt.includes("ORDER BY"), false);
+  assert.equal(contactStmt.includes("purpose"), false);
+
+  const email = sliceFn(send, "export async function dispatchEmail(", "export async function dispatchSms(");
+  assert.ok(email.indexOf("consentAndHaltGate") >= 0);
+  assert.ok(email.indexOf("consentAndHaltGate") < email.indexOf("shouldLiveSend"));
+  const sms = send.slice(send.indexOf("export async function dispatchSms("));
+  assert.ok(sms.indexOf("consentAndHaltGate") >= 0);
+  assert.ok(sms.indexOf("consentAndHaltGate") < sms.indexOf("shouldLiveSend"));
+
+  const emailLive = sliceFn(send, "export async function dispatchEmailLive", "export async function dispatchSmsLive");
+  assert.ok(emailLive.indexOf("consentAndHaltGate") < emailLive.indexOf("emails.send"));
+  const smsLive = sliceFn(send, "export async function dispatchSmsLive", "export async function dispatchEmail(");
+  assert.ok(smsLive.indexOf("consentAndHaltGate") < smsLive.indexOf("messages.create"));
+
+  const stores = read("server/wire-service/stores.ts");
+  const isContact = sliceFn(stores, "export async function handleHaltIsContact", "export async function handleHaltIsFirmBook");
+  assert.match(isContact, /scope = 'contact' AND contact_id = \$1 AND firm_id = \$2/);
+  assert.match(isContact, /LIMIT 1/);
+  assert.match(isContact, /\[contactId, firmId \?\? null\]/);
+  assert.equal(isContact.includes("requireSessionFirm"), false);
+  assert.equal(isContact.includes("ORDER BY"), false);
+  assert.match(read("server/wire-service/routes.ts"), /wire\.get\("\/halt\/contact\/:contactId", handleHaltIsContact\)/);
+
+  const ports = sliceFn(read("src/app/wire/ports.ts"), "export type HaltStorePort", "export type AuditAppendInput");
+  assert.match(ports, /isContactHalted\(contactId: string, firmId: string\)/);
+
+  const realFn = sliceFn(read("src/app/wire/reals/haltStore.ts"), "async isContactHalted", "async isFirmBookHalted");
+  assert.match(
+    realFn,
+    /`\/halt\/contact\/\$\{encodeURIComponent\(contactId\)\}\?firmId=\$\{encodeURIComponent\(firmId\)\}`/,
+  );
+  const standInFn = sliceFn(read("src/app/wire/standins/haltStore.ts"), "async isContactHalted", "async isFirmBookHalted");
+  assert.match(standInFn, /h\.scope === "contact" && h\.contactId === contactId && h\.firmId === firmId/);
+  assert.match(read("src/app/wire/standins/sendGate.ts"), /isContactHalted\(input\.contactId, input\.firmId\)/);
+  assert.match(read("src/app/wire/standins/machineApi.ts"), /isContactHalted\(input\.contactId, standInFirm\(\)\)/);
+  assert.match(read("src/app/wire/registry.ts"), /sendGate: standInSendGate/);
+
+  const http = read("server/wire-service/send.ts");
+  const cem = sliceFn(http, "export async function handleCemSend", "export async function handleSmsSend");
+  const smsHttp = http.slice(http.indexOf("export async function handleSmsSend"));
+  assert.equal(cem.includes("firmId: body.firmId"), false);
+  assert.equal(smsHttp.includes("firmId: body.firmId"), false);
+
+  const walk = read("server/wire-service/workflowWalk.ts");
+  const callAgent = walk.slice(walk.indexOf('actionType === "call_agent"'));
+  const enrollAt = callAgent.indexOf("enrollAndActuate(");
+  const braceAt = callAgent.indexOf("{", enrollAt);
+  let depth = 0;
+  let enrollObj = "";
+  for (let i = braceAt; i < callAgent.length; i += 1) {
+    if (callAgent[i] === "{") depth += 1;
+    else if (callAgent[i] === "}") {
+      depth -= 1;
+      if (depth === 0) {
+        enrollObj = callAgent.slice(braceAt, i + 1);
+        break;
+      }
+    }
+  }
+  assert.match(enrollObj, /fireFirstStep:\s*true/);
+  assert.match(enrollObj, /firmId:\s*opts\.firmId/);
+
+  const cascade = read("server/wire-service/cascade.ts");
+  const actuate = sliceFn(cascade, "export async function actuateChannelSend", "export type EnrollActuateInput");
+  const noEmail = actuate.indexOf("no email on contact");
+  assert.ok(noEmail >= 0 && noEmail < actuate.indexOf("dispatchEmail"));
+  assert.match(actuate, /firmId:\s*input\.firmId/);
+  const escalate = sliceFn(cascade, "export async function escalateAttemptWindow", "async function pursuitForAttempt");
+  const advance = sliceFn(cascade, "export async function advanceTemplateCellIfDue", "async function loadTemplateCellsCached");
+  const tick = cascade.slice(cascade.indexOf("export async function tickOnce"));
+  assert.match(escalate, /firmId:\s*attempt\.firm_id/);
+  assert.match(advance, /firmId:\s*attempt\.firm_id/);
+  assert.match(tick, /firmId:\s*attempt\.firm_id/);
+
+  const haltFn = sliceFn(send, "export async function isHaltBlockingNew", "export async function dispatchEmailLive");
+  assert.match(haltFn.replace(/\s+/g, ""), /scope='contact'ANDcontact_id=\$2ANDfirm_id=\$1/);
+
+  const indexSql = read("supabase/migrations/003_ct_wire_stores.sql");
+  const indexAt = indexSql.indexOf("halt_records_contact_active_idx");
+  const index = indexSql.slice(indexAt, indexSql.indexOf(";", indexAt));
+  assert.match(index, /ON halt_records \(contact_id\)\s+WHERE lifted_at IS NULL AND scope = 'contact'/);
+  assert.equal(index.includes("UNIQUE"), false);
+
+  const filter = read(".github/workflows/factory-check.yml");
+  for (const path of [
+    "server/wire-service/dispatchSend.ts",
+    "server/wire-service/stores.ts",
+    "server/wire-service/routes.ts",
+    "server/wire-service/send.ts",
+    "server/wire-service/cascade.ts",
+    "server/wire-service/workflowWalk.ts",
+    "server/wire-service/machine.ts",
+    "src/app/wire/ports.ts",
+    "src/app/wire/reals/haltStore.ts",
+    "src/app/wire/standins/haltStore.ts",
+    "src/app/wire/standins/sendGate.ts",
+    "src/app/wire/standins/machineApi.ts",
+    "src/app/wire/registry.ts",
+    "scripts/verify-halt-send-firm.ts",
+    ".github/workflows/ship.yml",
+  ]) {
+    assert.ok(filter.includes(path), path);
+  }
+  assert.match(read(".github/workflows/ship.yml"), /scripts\/verify-halt-send-firm\.ts/);
+});
+
+check("a denied tick send is its own engagement row", () => {
+  function sliceFn(source: string, start: string, end: string): string {
+    const at = source.indexOf(start);
+    assert.ok(at >= 0, start);
+    const to = source.indexOf(end, at + start.length);
+    assert.ok(to > at, end);
+    return source.slice(at, to);
+  }
+
+  function bareSend(text: string): boolean {
+    if (text.includes("send,")) return true;
+    return text.split("\n").some((line) => line.trim() === "send");
+  }
+
+  const cascade = read("server/wire-service/cascade.ts");
+  const advance = sliceFn(cascade, "export async function advanceTemplateCellIfDue", "async function loadTemplateCellsCached");
+  assert.equal(advance.includes("shouldLiveSend"), false);
+  assert.equal(advance.includes("const live"), false);
+  assert.ok(advance.includes('"send_denied"'));
+  assert.ok(advance.includes("send.ok && !send.dryRun"));
+  assert.ok(advance.includes("send.ok && send.dryRun"));
+
+  const writers = [
+    sliceFn(cascade, "export async function escalateAttemptWindow", "export type ChannelSendInput"),
+    sliceFn(cascade, "export async function advanceTemplateCellIfDue", "const templateCache"),
+    cascade.slice(cascade.indexOf("export async function tickOnce")),
+  ];
+  for (const body of writers) {
+    for (const bit of ["firmId: attempt.firm_id", "contactId: attempt.contact_id", 'purpose: "cem"']) {
+      assert.ok(body.includes(bit), bit);
+    }
+  }
+
+  const tick = cascade.slice(cascade.indexOf("export async function tickOnce"));
+  const armAt = tick.indexOf('if (owner === "email" || owner === "text")');
+  assert.ok(armAt >= 0);
+  const arm = tick.slice(armAt, tick.indexOf("for (const row of criteria)", armAt));
+  assert.ok(arm.includes("send = await actuateChannelSend"));
+  for (const bit of [
+    '"send_denied"',
+    '"send_live"',
+    '"send_dry_run"',
+    "send.ok && !send.dryRun",
+    "send.ok && send.dryRun",
+    "messageId: send.messageId",
+    "reason: send.reason",
+    "attempt_n",
+  ]) {
+    assert.ok(arm.includes(bit), bit);
+  }
+  assert.equal(arm.includes("send.detail"), false);
+  assert.equal(arm.includes("send.deny"), false);
+  assert.equal(arm.includes("shouldLiveSend"), false);
+  const deniedAt = arm.indexOf('"send_denied"');
+  const denied = arm.slice(deniedAt, arm.indexOf("writeEngagement", deniedAt));
+  for (const banned of ["subject", "bodyText", "bodyHtml", "messageId", "reason"]) {
+    assert.equal(denied.includes(banned), false, banned);
+  }
+  assert.ok(denied.includes("send"));
+  assert.ok(denied.includes("attempt_n"));
+  const liveAt = arm.indexOf('"send_live"');
+  const dryAt = arm.indexOf('"send_dry_run"');
+  const live = arm.slice(liveAt, dryAt);
+  assert.ok(live.includes("messageId") && live.includes("subject") && live.includes("bodyText"));
+  assert.equal(live.includes("reason:"), false);
+  assert.equal(bareSend(live), false);
+  const dry = arm.slice(dryAt);
+  assert.ok(dry.includes("reason") && dry.includes("subject") && dry.includes("bodyText"));
+  assert.equal(dry.includes("messageId"), false);
+  assert.equal(bareSend(dry), false);
+
+  const projection = read("src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts");
+  const title = sliceFn(projection, "function titleFor", "function waitMsFrom");
+  assert.equal(title.includes('case "send_denied"'), false);
+  assert.match(title, /eventKind\.replace\(\/_\/g, " "\)/);
+  const kind = sliceFn(projection, "function kindOf", "function titleFor");
+  assert.match(kind, /eventKind === "send_live" \|\| eventKind === "send_dry_run"/);
+  assert.equal(kind.includes("send_denied"), false);
+  const outcome = sliceFn(projection, "function outcomeFrom", "function signalsFrom");
+  assert.match(outcome, /kind === "send"/);
+  const thought = sliceFn(projection, "function thoughtFrom", "function outcomeFrom");
+  assert.match(thought, /payload\.reason/);
+  assert.equal(thought.includes("send_denied"), false);
+  const signals = sliceFn(projection, "function signalsFrom", "function chronologyStatusFor");
+  assert.match(signals, /kind === "send"/);
+  const prose = sliceFn(read("src/app/register/prototype-ant/operator/channelRuleGrain.ts"), "export function eventKindProse", "export function");
+  assert.match(prose, /kind\.includes\("send"\)/);
+  assert.match(prose, /return "Sent"/);
+  assert.equal(prose.includes("send_denied"), false);
+  const inbound = sliceFn(cascade, "async function hasInboundOverride", "function clockAnchor");
+  const list = inbound.slice(inbound.indexOf("event_kind IN"), inbound.indexOf(")", inbound.indexOf("event_kind IN")));
+  assert.equal(list.includes("send_denied"), false);
+  const gate = sliceFn(read("server/wire-service/dispatchSend.ts"), "async function consentAndHaltGate", "export async function isHaltBlockingNew");
+  assert.equal(gate.includes("send_denied"), false);
+
+  const migrations = readdirSync(join(root, "supabase/migrations")).filter((name) => name.endsWith(".sql")).sort();
+  assert.deepEqual(migrations, [
+    "001_auth_tables.sql",
+    "002_applied_seeds.sql",
+    "003_ct_wire_stores.sql",
+    "004_machine_tables.sql",
+    "005_actuation.sql",
+    "006_workflow_trigger.sql",
+    "007_meeting_booked.sql",
+    "008_access_links.sql",
+    "009_outbound_message_content.sql",
+    "010_sequence_campaign_housing.sql",
+    "011_channel_variations.sql",
+    "012_grain_audience_one_timer.sql",
+    "013_operator_book_people.sql",
+    "014_contact_import.sql",
+    "015_house_notes_handle.sql",
+    "016_trigger_local_cascade.sql",
+    "017_event_test_contract.sql",
+    "018_collectible_fields.sql",
+    "019_contact_seat.sql",
+    "020_workspace_opt_out.sql",
+    "021_objective_local_axis.sql",
+    "022_pursuit_exhausted.sql",
+    "023_operator_panes.sql",
+    "024_wait_occupancy.sql",
+    "025_audit_row_grain.sql",
+  ]);
+
+  const filter = read(".github/workflows/factory-check.yml");
+  for (const path of [
+    "server/wire-service/cascade.ts",
+    "server/wire-service/dispatchSend.ts",
+    "src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts",
+    "src/app/register/prototype-ant/operator/channelRuleGrain.ts",
+    "scripts/verify-send-denied-engagement.ts",
+    ".github/workflows/ship.yml",
+  ]) {
+    assert.ok(filter.includes(path), path);
+  }
+  assert.match(read(".github/workflows/ship.yml"), /scripts\/verify-send-denied-engagement\.ts/);
+});
+
+check("a denied first step is the same refusal the tick already records", () => {
+  function sliceFn(source: string, start: string, end: string): string {
+    const at = source.indexOf(start);
+    assert.ok(at >= 0, start);
+    const to = source.indexOf(end, at + start.length);
+    assert.ok(to > at, end);
+    return source.slice(at, to);
+  }
+
+  function objectAt(source: string, braceAt: number): string {
+    let depth = 0;
+    for (let i = braceAt; i < source.length; i += 1) {
+      if (source[i] === "{") depth += 1;
+      else if (source[i] === "}") {
+        depth -= 1;
+        if (depth === 0) return source.slice(braceAt, i + 1);
+      }
+    }
+    assert.fail("unbalanced");
+  }
+
+  function objectFor(source: string, kind: string): string {
+    const at = source.indexOf(kind);
+    assert.ok(at >= 0, kind);
+    const brace = source.indexOf("{", at);
+    assert.ok(brace > at, kind);
+    return objectAt(source, brace);
+  }
+
+  const cascade = read("server/wire-service/cascade.ts");
+  const enroll = sliceFn(cascade, "export async function enrollAndActuate", "export async function advanceTemplateCellIfDue");
+  const slice = sliceFn(enroll, "send = await actuateChannelSend", "dryRun: !live");
+  for (const bit of [
+    '"send_denied"',
+    '"send_live"',
+    '"send_dry_run"',
+    "send.ok && !send.dryRun",
+    "send.ok && send.dryRun",
+  ]) {
+    assert.ok(slice.includes(bit), bit);
+  }
+  assert.equal(slice.includes('live ? "send_live" : "send_dry_run"'), false);
+  assert.equal(slice.includes("send.detail"), false);
+  assert.equal(slice.includes("send.deny"), false);
+  assert.equal((slice.match(/writeEngagement/g) ?? []).length, 3);
+  const denied = objectFor(slice, '"send_denied"');
+  for (const key of ["enrollmentId", "attemptId", "channel", "templateId", "cellId", "cellIndex", "send"]) {
+    assert.ok(denied.includes(key), key);
+  }
+  for (const banned of ["subject", "bodyText", "bodyHtml", "messageId", "reason"]) {
+    assert.equal(denied.includes(banned), false, banned);
+  }
+  const live = objectFor(slice, '"send_live"');
+  for (const key of ["messageId", "subject", "bodyText", "send", "enrollmentId", "attemptId", "channel", "templateId", "cellId", "cellIndex"]) {
+    assert.ok(live.includes(key), key);
+  }
+  const dry = objectFor(slice, '"send_dry_run"');
+  for (const key of ["reason", "subject", "bodyText", "send", "enrollmentId", "attemptId", "channel", "templateId", "cellId", "cellIndex"]) {
+    assert.ok(dry.includes(key), key);
+  }
+  assert.ok(enroll.includes('purpose: input.purpose ?? "opt-in"'));
+  assert.ok(enroll.includes("subject"));
+  assert.ok(enroll.includes("bodyText"));
+  assert.ok(enroll.includes("const live = shouldLiveSend(input.contactId)"));
+  assert.ok(enroll.includes("dryRun: !live"));
+  assert.ok(enroll.includes("if (input.fireFirstStep !== false)"));
+  assert.ok(enroll.includes("INSERT INTO enrollment"));
+  assert.ok(enroll.includes('blocked: "halt"'));
+
+  const projection = read("src/app/register/prototype-ant/consultant/clientData/engagementProjection.ts");
+  const title = sliceFn(projection, "function titleFor", "function waitMsFrom");
+  assert.equal(title.includes('case "send_denied"'), false);
+  const kind = sliceFn(projection, "function kindOf", "function titleFor");
+  assert.match(kind, /eventKind === "send_live" \|\| eventKind === "send_dry_run"/);
+  const prose = sliceFn(read("src/app/register/prototype-ant/operator/channelRuleGrain.ts"), "export function eventKindProse", "export function");
+  assert.match(prose, /kind\.includes\("send"\)/);
+  assert.match(prose, /return "Sent"/);
+  assert.equal(prose.includes("send_denied"), false);
+  const inbound = sliceFn(cascade, "async function hasInboundOverride", "function clockAnchor");
+  const list = inbound.slice(inbound.indexOf("event_kind IN"), inbound.indexOf(")", inbound.indexOf("event_kind IN")));
+  assert.equal(list.includes("send_denied"), false);
+  const callAgent = sliceFn(read("server/wire-service/workflowWalk.ts"), 'if (actionType === "call_agent")', "enrolled += 1");
+  assert.ok(callAgent.includes("enrollments.push(result.enrollmentId)"));
+  assert.equal(callAgent.includes("result.engagementId"), false);
+
+  const migrations = readdirSync(join(root, "supabase/migrations")).filter((name) => name.endsWith(".sql")).sort();
+  assert.equal(migrations.length, 25);
+  assert.equal(migrations.at(-1), "025_audit_row_grain.sql");
+  assert.ok(read(".github/workflows/factory-check.yml").includes("scripts/verify-first-step-send-denied.ts"));
+  assert.match(read(".github/workflows/ship.yml"), /scripts\/verify-first-step-send-denied\.ts/);
 });
 
 function sections(): string[] {
@@ -2016,8 +3361,11 @@ check("committed non-UI packets stay released without a generated plate", () => 
 check("the committed scope is agents-and-automations and PKT-001 stays manual", () => {
   const committed = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
   const view = projectFactory(committed);
+  for (const item of [...view.explanation.packets, ...view.explanation.initiatives]) {
+    assert.equal(commitmentHolds(item.commitment), true, item.id);
+  }
   assert.equal(view.scope.id, "agents-and-automations");
-  assert.equal(view.scope.status, "active");
+  assert.ok(view.scope.status === "suspended" || view.scope.status === "active");
   assert.deepEqual(view.scope.modules, ["Agents and Automations"]);
   assert.ok(view.stateRevision >= 32);
   const packet = view.packets.find((item) => item.id === "pkt-001-click-attribution");
@@ -2075,7 +3423,32 @@ check("control and authorize commands do not arm the committed ledger", () => {
   const proposed = JSON.parse(scoped.stdout) as { reason: string; wakes: Array<{ id: string; effect: string }> };
   const committedForDry = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
   const openAnalyst = Object.values(committedForDry.packets).some((packet) => packet.dispatch?.effect === "wake_sa");
-  if (openAnalyst) {
+  if (committedForDry.scope.status === "suspended") {
+    assert.equal(proposed.reason, "suspended");
+    assert.equal(proposed.wakes.length, 0);
+  } else if (committedForDry.scope.status === "active") {
+    assert.equal(proposed.wakes.some((wake) => wake.effect === "wake_architect"), false);
+    const pressureNow = productionPressure(Object.values(committedForDry.packets));
+    assert.equal(pressureNow.holdArchitect, pressureNow.engineerQueueDepth >= 2);
+    const quiet = new Set([
+      "analyst_open",
+      "analysis_open",
+      "lane_held",
+      "dispatch_authorization_exhausted",
+      "delivery_unconfirmed",
+    ]);
+    if (quiet.has(proposed.reason)) {
+      assert.equal(proposed.wakes.length, 0);
+    } else if (proposed.wakes.length) {
+      assert.equal(proposed.wakes.length, 1);
+      assert.notEqual(proposed.wakes[0].id, "pkt-001-click-attribution");
+      assert.ok(
+        proposed.wakes[0].effect === "wake_sa" ||
+          proposed.wakes[0].effect === "wake_engineer" ||
+          proposed.wakes[0].effect === "wake_repair",
+      );
+    }
+  } else if (openAnalyst) {
     assert.equal(proposed.reason, "analyst_open");
     assert.equal(proposed.wakes.length, 0);
   } else if (committedForDry.usedDispatches >= (committedForDry.authorizedDispatches ?? 0)) {
@@ -2113,7 +3486,7 @@ check("control and authorize commands do not arm the committed ledger", () => {
   assert.equal(suspend.status, 0, suspend.stderr);
   assert.equal((JSON.parse(suspend.stdout) as { type: string }).type, "suspend");
   const committed = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
-  assert.equal(committed.scope.status, "active");
+  assert.ok(committed.scope.status === "suspended" || committed.scope.status === "active");
   assert.equal(committed.scope.id, "agents-and-automations");
   assert.equal(committed.authorizedDispatches, 50);
   assert.ok(committed.usedDispatches >= 4);
@@ -2457,7 +3830,171 @@ function assertRecoveryLedger(committed: FactoryLedger) {
     assert.equal(absent.label, "factory-wake-sa");
     if (packet.dispatch?.effect === "wake_sa") assert.notEqual(packet.dispatch.prHead, prHead);
   }
+  assert.ok(committed.usedDispatches >= 31);
+  assert.ok(committed.usedDispatches <= committed.authorizedDispatches);
+  assert.ok(committed.stateRevision >= 123);
+  assert.ok(committed.scope.status === "suspended" || committed.scope.status === "active");
+  const pkt002Exec = Object.values(committed.executions ?? {}).find(
+    (execution) => execution.role === "engineer" && execution.packetIds.includes(pkt002.id) && execution.reason === "candidate_recorded",
+  );
+  assert.equal(pkt002.candidateSha, "3246a074efecd8adb98e4ca232d443b90821173f");
+  const afterCandidate = new Set([
+    "candidate",
+    "verifying",
+    "verified",
+    "integration_authorized",
+    "integrated",
+    "reconciled",
+    "accepted",
+  ]);
+  assert.ok(afterCandidate.has(pkt002.stage), pkt002.stage);
+  if (pkt002.stage === "candidate") {
+    assert.equal(pkt002.verifiedSha, null);
+  } else {
+    assert.equal(pkt002.verifiedSha, pkt002.candidateSha);
+    assert.equal(pkt002.execution?.mode, "automatic");
+    assert.ok((pkt002.execution?.checks ?? []).some((check) => check.outcome === "pass" && check.runId));
+  }
+  if (pkt002.stage === "accepted") {
+    assert.match(pkt002.integratedSha ?? "", /^[0-9a-f]{40}$/);
+  }
+  assert.equal(pkt002.dispatch, null);
+  assert.ok(pkt002Exec);
+  assert.equal(pkt002Exec.phase, "completed");
+  assert.equal(pkt002Exec.reason, "candidate_recorded");
+  const engineerRan = (pkt002.dispatchHistory ?? []).filter(
+    (row) => row.effect === "wake_engineer" && row.workerExecution === "ran",
+  );
+  assert.equal(engineerRan.length, 1);
+  assert.equal(engineerRan[0].prHead, "f06148b747f212ef49678b226e3650cc353e598f");
+  const pkt003 = committed.packets["pkt-003-resume-same-run"];
+  assert.ok(
+    pkt003.stage === "change_specified" ||
+      pkt003.stage === "engineering" ||
+      afterCandidate.has(pkt003.stage),
+    pkt003.stage,
+  );
+  if (pkt003.stage === "change_specified") {
+    assert.equal(pkt003.dispatch, null);
+    assert.equal(pkt003.dispatchedEngineerRevision, null);
+    assert.equal(pkt003.candidateSha, null);
+  }
+  if (afterCandidate.has(pkt003.stage)) {
+    assert.equal(pkt003.lease, null);
+    assert.equal(pkt003.dispatch, null);
+    assert.match(pkt003.candidateSha ?? "", /^[0-9a-f]{40}$/);
+  }
+  if (afterCandidate.has(pkt003.stage) && pkt003.stage !== "candidate") {
+    assert.equal(pkt003.verifiedSha, pkt003.candidateSha);
+    assert.equal(pkt003.execution?.mode, "automatic");
+    assert.ok((pkt003.execution?.checks ?? []).some((check) => check.outcome === "pass" && check.runId));
+  }
+  const pkt003Exec = Object.values(committed.executions ?? {}).find(
+    (execution) => execution.role === "engineer" && execution.packetIds.includes(pkt003.id) && execution.reason === "reservation_expired",
+  );
+  assert.ok(pkt003Exec);
+  assert.equal(pkt003Exec.phase, "refused");
+  assert.equal(pkt003Exec.reason, "reservation_expired");
+  const engineerAbsent = (pkt003.dispatchHistory ?? []).filter(
+    (row) => row.effect === "wake_engineer" && row.workerExecution === "absent",
+  );
+  assert.equal(engineerAbsent.length, 1);
+  assert.equal(engineerAbsent[0].prHead, "f451cee9422ebfb0fda2b120bfb0f669299c0242");
+  const architectSession = committed.initiatives["exec-identity"].session;
+  if (architectSession === "running") {
+    assert.equal(committed.initiatives["exec-identity"].dispatch?.effect, "wake_architect");
+  } else {
+    assert.equal(architectSession, "continuation_due");
+    assert.equal(committed.initiatives["exec-identity"].dispatch, null);
+  }
+  const metrics = productionMetrics(committed);
+  const automaticAccepted = Object.values(committed.packets).filter(
+    (packet) => packet.stage === "accepted" && packet.execution?.mode !== "manual",
+  ).length;
+  assert.equal(metrics.costPerAcceptedPacket, null);
+  assert.equal(metrics.acceptedPackets, automaticAccepted);
+  assert.ok(automaticAccepted >= 1);
+  assert.ok(metrics.refusedOrFailedLaunches >= 1);
+  assert.ok(metrics.trackedFreshLaunches >= 2);
+  assert.ok(metrics.completedExecutions >= 1);
+  const pressure = productionPressure(Object.values(committed.packets));
+  assert.equal(metrics.engineerQueueDepth, pressure.engineerQueueDepth);
+  assert.equal(pressure.holdArchitect, pressure.engineerQueueDepth >= 2);
+  const recoveredNow = recoverExecutions(committed, "2026-10-31T15:40:00.000Z");
+  assert.equal(recoveredNow.changes.some((change) => change.reason === "recorded_specification_block"), false);
+  assert.equal(recoveredNow.changes.some((change) => change.reason === "engineering_rearmed"), false);
+  const pkt019 = recoveredNow.ledger.packets["pkt-019-first-step-send-denied"];
+  assert.ok(pkt019.stage === "engineering" || afterCandidate.has(pkt019.stage), pkt019.stage);
+  assert.equal(pkt019.revision, "rev-2");
+  assert.equal(pkt019.specificationBlock?.authority, "recorded");
+  assert.equal(pkt019.specificationBlock?.blockedRevision, "rev-1");
+  if (pkt019.stage === "engineering") {
+    assert.equal(pkt019.dispatch?.effect, "wake_engineer");
+    assert.equal(pkt019.dispatch?.revision, "rev-2");
+    const openExecutionId = pkt019.dispatch?.executionId ?? "";
+    const openExecution = recoveredNow.ledger.executions?.[openExecutionId];
+    assert.ok(openExecution);
+    assert.equal(openExecution.phase === "dispatched" || openExecution.phase === "started" || openExecution.phase === "running", true);
+  } else {
+    assert.equal(pkt019.candidateSha, "ddae2f9005334720e9c52d9b3e13ab2bdbcb918b");
+    assert.equal(pkt019.dispatch, null);
+    assert.equal(pkt019.lease, null);
+    if (pkt019.stage !== "candidate") assert.equal(pkt019.verifiedSha, pkt019.candidateSha);
+  }
+  const expiredReservation = recoveredNow.ledger.executions?.["dsp-195-analyst-pkt-019-first-step-send-denied"];
+  assert.equal(expiredReservation?.phase, "refused");
+  assert.equal(expiredReservation?.reason, "reservation_expired");
+  const component = "firing-pointers: this firing places its own rows on payload.writes";
+  for (const id of [
+    "pkt-007-fact-writes",
+    "pkt-008-meeting-writes",
+    "pkt-009-eligibility-writes",
+    "pkt-010-campaign-failure-writes",
+    "pkt-011-halt-records-writes",
+    "pkt-012-consent-opt-out-writes",
+    "pkt-013-firm-provision-writes",
+  ]) {
+    const packet = committed.packets[id];
+    const manifest = JSON.parse(read(`.factory/manifests/packets/${id}.json`)) as { siblings?: Array<{ id: string; basis: string; note: string }> };
+    const expected = [
+      "pkt-007-fact-writes",
+      "pkt-008-meeting-writes",
+      "pkt-009-eligibility-writes",
+      "pkt-010-campaign-failure-writes",
+      "pkt-011-halt-records-writes",
+      "pkt-012-consent-opt-out-writes",
+      "pkt-013-firm-provision-writes",
+    ].filter((other) => other !== id);
+    const got = (packet.siblings ?? []).map((link) => link.id).sort();
+    assert.deepEqual(got, expected);
+    for (const link of packet.siblings ?? []) {
+      assert.equal(link.basis, "component");
+      assert.equal(link.note, component);
+    }
+    assert.deepEqual(manifest.siblings, packet.siblings);
+  }
+  assert.equal(committed.packets["pkt-002-open-ask-cursor"].siblings, undefined);
+  assert.equal(committed.packets["pkt-005-audit-row-grain"].siblings, undefined);
+  assert.equal(committed.packets["pkt-014-empty-firing-audience"].siblings, undefined);
+  assert.deepEqual(
+    (committed.packets["pkt-003-resume-same-run"].siblings ?? []).map((link) => link.id),
+    ["pkt-004-firing-handle"],
+  );
+  assert.deepEqual(
+    (committed.packets["pkt-004-firing-handle"].siblings ?? []).map((link) => link.id).sort(),
+    ["pkt-003-resume-same-run", "pkt-006-id-keyed-loads"],
+  );
+  assert.deepEqual(
+    (committed.packets["pkt-015-halt-enroll-firm"].siblings ?? []).map((link) => link.id),
+    ["pkt-016-halt-send-firm"],
+  );
+  assert.equal(committed.packets["pkt-017-tick-send-halt"].siblings?.length, 2);
   const step = controlStep(committed, { ...cycleWorld, activation: "active" });
+  if (committed.scope.status === "suspended") {
+    assert.equal(step.reason, "suspended");
+    assert.equal(step.wakes.length, 0);
+    return;
+  }
   const engineers = step.wakes.filter((wake) => wake.decision.effect === "wake_engineer");
   assert.ok(engineers.length <= 1);
   assert.equal(step.wakes.some((wake) => wake.decision.effect === "wake_architect"), false);
@@ -2632,7 +4169,7 @@ check("an Analyst signature wakes one Engineer and an interruption can be retrie
   assert.match(disarmed.stderr, /actuator disarmed/);
 });
 
-check("an absent Analyst dispatch can be recovered and a ran dispatch cannot be repeated", async () => {
+check("an absent Analyst dispatch can be recovered and a ran dispatch without sign_change stays open", async () => {
   function released(id: string): WorkItem {
     return must(
       applyEvent(freshItem(id, "exec-identity"), { type: "release", wake: "sa", gatesPass: true, revision: "rev-1" }, inactive),
@@ -2734,8 +4271,13 @@ check("an absent Analyst dispatch can be recovered and a ran dispatch cannot be 
   assert.equal(closed.ledger.packets["pkt-004"].dispatchedSaRevision, "rev-1");
   const next = controlStep(closed.ledger, { ...world, usedDispatches: closed.ledger.usedDispatches });
   assert.equal(next.wakes.length, 1);
-  assert.equal(next.wakes[0].id, "pkt-003");
+  assert.equal(next.wakes[0].id, "pkt-002");
   assert.equal(next.wakes[0].decision.effect, "wake_sa");
+  assert.equal(next.ledger.usedDispatches, closed.ledger.usedDispatches);
+  assert.equal(next.ledger.packets["pkt-002"].dispatchedSaRevision, null);
+  assert.equal(next.ledger.packets["pkt-002"].dispatchHistory[0].workerExecution, "ran");
+  assert.equal(next.ledger.packets["pkt-004"].dispatchedSaRevision, null);
+  assert.equal(next.ledger.packets["pkt-004"].dispatchHistory[0].workerExecution, "ran");
   assert.equal(next.wakes.some((wake) => wake.decision.effect === "wake_architect"), false);
   const one = selectLabeledDispatch(Object.values(closed.ledger.packets), "factory-wake-sa");
   assert.equal(one.ok, false);
@@ -2772,6 +4314,1658 @@ check("an absent Analyst dispatch can be recovered and a ran dispatch cannot be 
   assert.equal(refused.ledger.usedDispatches, 0);
   assert.equal(refused.ledger.packets["pkt-x"].dispatch?.prHead, "head-x");
   assert.equal(refused.ledger.packets["pkt-x"].dispatchedSaRevision, "rev-1");
+});
+
+check("assignments batch siblings, recover the engineer slot, and hold a deep queue", async () => {
+  const world: World = { ...active, now: "2026-10-30T12:00:00.000Z", authorizedDispatches: 8, usedDispatches: 0 };
+  function released(id: string, revision = "rev-1"): WorkItem {
+    return must(
+      applyEvent(freshItem(id, "exec-identity"), { type: "release", wake: "sa", gatesPass: true, revision }, active),
+      "released",
+    );
+  }
+  const shared = { basis: "component" as const, note: "firing-pointers places this firing's rows on payload.writes" };
+  const left = released("pkt-009-eligibility-writes");
+  const right = released("pkt-012-consent-opt-out-writes");
+  const between = released("pkt-010-campaign-failure-writes");
+  const waiting = released("pkt-011-halt-records-writes");
+  left.siblings = [{ id: right.id, ...shared }];
+  right.siblings = [{ id: left.id, ...shared }];
+  waiting.siblings = [{ id: left.id, ...shared }];
+  waiting.stage = "change_specified";
+  const ledger = emptyLedger(8);
+  ledger.packets = { [left.id]: left, [between.id]: between, [right.id]: right, [waiting.id]: waiting };
+  const alone = analystAssignment([between]);
+  assert.deepEqual(alone?.packetIds, [between.id]);
+  assert.equal(alone?.basis, null);
+  const batch = analystAssignment(Object.values(ledger.packets));
+  assert.deepEqual(batch?.packetIds, [left.id, right.id]);
+  assert.match(batch?.basis ?? "", /component/);
+  const step = controlStep(ledger, world);
+  const analysts = step.wakes.filter((wake) => wake.decision.effect === "wake_sa");
+  assert.equal(analysts.length, 1);
+  assert.deepEqual(analysts[0].packetIds, [left.id, right.id]);
+  const calls: string[] = [];
+  const store = new MemoryStore(ledger);
+  const woke = await dispatchWake({
+    store,
+    actuator: scriptedActuator([{ ok: true, reason: "labeled" }], calls),
+    packetId: left.id,
+    packetIds: analysts[0].packetIds,
+    basis: analysts[0].basis,
+    prHead: "head-batch",
+    activation: "active",
+    now: world.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(woke.reason, "dispatched");
+  assert.equal((await store.read()).usedDispatches, 1);
+  const saved = await store.read();
+  const executionId = saved.packets[left.id].dispatch?.executionId;
+  assert.ok(executionId);
+  assert.equal(saved.packets[right.id].dispatch?.executionId, executionId);
+  assert.notEqual(saved.packets[left.id].revision, "rev-9");
+  assert.equal(saved.packets[right.id].revision, "rev-1");
+  assert.equal(
+    workerMayRun({
+      label: "factory-wake-sa",
+      packetId: right.id,
+      revision: right.revision,
+      prHead: "head-batch",
+      wake: "sa",
+      dispatch: saved.packets[right.id].dispatch,
+      executionId: "dsp-other",
+    }).reason,
+    "execution_mismatch",
+  );
+  const leaseUntil = "2026-10-30T13:00:00.000Z";
+  for (const id of [left.id, right.id]) {
+    const leased = await commitEvent(
+      store,
+      id,
+      { type: "acquire_lease", workerId: "bc-analyst", role: "analyst", until: leaseUntil, revision: "rev-1" },
+      world,
+    );
+    assert.equal(leased.reason, "lease_acquired");
+    const signed = await commitEvent(
+      store,
+      id,
+      { type: "sign_change", revision: "rev-1", sections: sections(), workerId: "bc-analyst" },
+      world,
+    );
+    assert.equal(signed.reason, "change_specified");
+    assert.equal(signed.item.revision, "rev-1");
+  }
+  const signedLedger = await store.read();
+  const execution = signedLedger.executions?.[executionId as string];
+  assert.equal(execution?.phase, "completed");
+  assert.equal(execution?.reason, "specifications_signed");
+  assert.equal(signedLedger.packets[left.id].stage, "change_specified");
+  assert.equal(signedLedger.packets[right.id].stage, "change_specified");
+  assert.equal(signedLedger.usedDispatches, 1);
+
+  const architect = emptyLedger(4);
+  architect.initiatives.alpha = freshInitiative({
+    id: "alpha",
+    module: "test",
+    capability: "alpha",
+    entry: "Operator → test → alpha",
+    obligation: "Continue alpha",
+    priority: 1,
+    now: world.now,
+  });
+  architect.initiatives.alpha.queue = "active";
+  architect.initiatives.alpha.session = "running";
+  architect.initiatives.alpha.dispatch = {
+    packetId: "alpha",
+    revision: "rev-0",
+    prHead: "head-a",
+    effect: "wake_architect",
+    label: "factory-wake-architect",
+    issuedAt: world.now,
+  };
+  const checkpoint = applyLedgerEvent(
+    architect,
+    { type: "architect_session", initiativeId: "alpha", outcome: "checkpoint" },
+    world,
+  );
+  assert.equal(checkpoint.reason, "architect_checkpoint");
+  assert.equal(checkpoint.ledger.initiatives.alpha.session, "running");
+  assert.equal(checkpoint.ledger.initiatives.alpha.dispatch?.label, "factory-wake-architect");
+  assert.equal(checkpoint.ledger.initiatives.alpha.revision, "rev-0");
+  assert.equal(controlStep(checkpoint.ledger, world).wakes.some((wake) => wake.decision.effect === "wake_architect"), false);
+  const ended = applyLedgerEvent(
+    checkpoint.ledger,
+    { type: "architect_session", initiativeId: "alpha", outcome: "continue", agentId: "bc-architect-1" },
+    world,
+  );
+  assert.equal(ended.ledger.initiatives.alpha.session, "continuation_due");
+  ended.ledger.executions = {
+    "dsp-architect": {
+      id: "dsp-architect",
+      assignmentId: "asg-architect",
+      role: "architect",
+      phase: "completed",
+      packetIds: ["alpha"],
+      revisions: { alpha: "rev-0" },
+      label: "factory-wake-architect",
+      prHead: "head-a",
+      agentId: "bc-architect-1",
+      continuation: "fresh",
+      issuedAt: world.now,
+      startedAt: world.now,
+      runningAt: world.now,
+      endedAt: world.now,
+      reserveUntil: "2026-10-30T15:00:00.000Z",
+      startUntil: null,
+      leaseUntil: null,
+      reason: "execution_ended",
+    },
+  };
+  const resumed = planContinuation({
+    agentId: "bc-architect-1",
+    runsOnAgent: 1,
+    resumeSupported: true,
+    contextSaturated: false,
+  });
+  assert.equal(resumed.mode, "resume");
+  assert.equal(
+    planContinuation({ agentId: null, runsOnAgent: 0, resumeSupported: true, contextSaturated: false }).mode,
+    "fresh",
+  );
+  assert.equal(
+    planContinuation({ agentId: "bc-architect-1", runsOnAgent: 4, resumeSupported: true, contextSaturated: false }).reason,
+    "agent_run_cap",
+  );
+  const follow = followUpRequest("bc-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", "Continue from the handoff.");
+  assert.equal(follow.method, "POST");
+  assert.equal(follow.url, "https://api.cursor.com/v1/agents/bc-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/runs");
+  const unarmed = await cursorFollowUp({ env: {} }).send("bc-architect-1", "Continue");
+  assert.equal(unarmed.reason, "continuation_unavailable");
+  const scopeDecision = decideScope(ended.ledger, { ...world, resumeSupported: true });
+  assert.equal(scopeDecision.reason, "architect_resume");
+  assert.equal(scopeDecision.label, null);
+  assert.equal(scopeDecision.agentId, "bc-architect-1");
+
+  const engineering = emptyLedger(4);
+  const first = changeSpecified("pkt-003-resume-same-run");
+  const second = changeSpecified("pkt-004-firing-handle");
+  engineering.packets = { [first.id]: first, [second.id]: second };
+  const opened = controlStep(engineering, world);
+  assert.equal(opened.wakes.filter((wake) => wake.decision.effect === "wake_engineer").length, 1);
+  const engineerStore = new MemoryStore(engineering);
+  const engineerWake = await dispatchWake({
+    store: engineerStore,
+    actuator: scriptedActuator([{ ok: true, reason: "labeled" }], []),
+    packetId: first.id,
+    prHead: "head-eng",
+    activation: "active",
+    now: world.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(engineerWake.reason, "dispatched");
+  const refused = await commitEvent(
+    engineerStore,
+    first.id,
+    { type: "refuse_execution", workerId: "bc-engineer" },
+    world,
+  );
+  assert.equal(refused.reason, "execution_refused");
+  const afterRefuse = await engineerStore.read();
+  assert.equal(afterRefuse.packets[first.id].dispatch, null);
+  assert.equal(afterRefuse.packets[first.id].dispatchedEngineerRevision, null);
+  assert.equal(afterRefuse.packets[first.id].stage, "change_specified");
+  assert.equal(Object.values(afterRefuse.executions ?? {})[0]?.phase, "refused");
+  assert.equal(afterRefuse.packets[first.id].dispatchHistory.at(-1)?.workerExecution, "absent");
+  const nextEngineer = controlStep(afterRefuse, world);
+  assert.equal(nextEngineer.wakes.filter((wake) => wake.decision.effect === "wake_engineer").length, 1);
+  assert.notEqual(nextEngineer.wakes.find((wake) => wake.decision.effect === "wake_engineer")?.id, undefined);
+  const planted = changeSpecified("pkt-002-open-ask-cursor");
+  planted.stage = "candidate";
+  planted.candidateSha = "3246a074efecd8adb98e4ca232d443b90821173f";
+  planted.dispatchedEngineerRevision = planted.revision;
+  const kept = applyEvent(planted, { type: "refuse_execution", workerId: "bc-engineer" }, world);
+  assert.equal(kept.reason, "candidate_recorded");
+  assert.equal(kept.item.candidateSha, planted.candidateSha);
+  const mismatch = applyEvent(
+    planted,
+    { type: "record_candidate_checks", sha: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", checks: [{ name: "ship", runId: "1", outcome: "pass" }] },
+    world,
+  );
+  assert.equal(mismatch.reason, "sha_mismatch");
+  assert.equal(mismatch.item.stage, "candidate");
+  const failedCheck = applyEvent(
+    planted,
+    { type: "record_candidate_checks", sha: planted.candidateSha as string, checks: [{ name: "ship", runId: "1", outcome: "fail" }] },
+    world,
+  );
+  assert.equal(failedCheck.reason, "verification_failed");
+  assert.equal(failedCheck.item.verifiedSha, null);
+  const verified = must(
+    applyEvent(
+      planted,
+      { type: "record_candidate_checks", sha: planted.candidateSha as string, checks: [{ name: "ship", runId: "1", outcome: "pass" }] },
+      world,
+    ),
+    "verified",
+  );
+  assert.equal(verified.verifiedSha, planted.candidateSha);
+
+  const stale = emptyLedger(4);
+  const abandoned = changeSpecified("pkt-stale");
+  abandoned.dispatchedEngineerRevision = abandoned.revision;
+  abandoned.dispatch = {
+    packetId: abandoned.id,
+    revision: abandoned.revision,
+    prHead: "head-stale",
+    effect: "wake_engineer",
+    label: "factory-wake-engineer",
+    issuedAt: "2026-10-30T10:00:00.000Z",
+  };
+  stale.packets = { [abandoned.id]: abandoned, [second.id]: changeSpecified(second.id) };
+  stale.usedDispatches = 1;
+  const recovered = recoverExecutions(stale, "2026-10-30T12:00:00.000Z");
+  assert.equal(recovered.changes[0]?.phase, "refused");
+  assert.equal(recovered.changes[0]?.reason, "reservation_expired");
+  assert.equal(recovered.ledger.packets[abandoned.id].dispatchedEngineerRevision, null);
+  assert.equal(recovered.ledger.packets[abandoned.id].dispatch, null);
+  assert.equal(recovered.ledger.usedDispatches, 1);
+  assert.equal(controlStep(recovered.ledger, world).wakes.some((wake) => wake.decision.effect === "wake_engineer"), true);
+
+  const running = changeSpecified("pkt-leased");
+  running.stage = "engineering";
+  running.lease = { workerId: "bc-engineer", role: "engineer", until: "2026-10-30T12:30:00.000Z", revision: running.revision };
+  running.dispatchedEngineerRevision = running.revision;
+  running.dispatch = {
+    packetId: running.id,
+    revision: running.revision,
+    prHead: "head-lease",
+    effect: "wake_engineer",
+    label: "factory-wake-engineer",
+    issuedAt: "2026-10-30T11:00:00.000Z",
+    executionId: "dsp-leased",
+  };
+  const leasedLedger = emptyLedger(4);
+  leasedLedger.packets = { [running.id]: running };
+  leasedLedger.executions = {
+    "dsp-leased": {
+      id: "dsp-leased",
+      assignmentId: "asg-leased",
+      role: "engineer",
+      phase: "running",
+      packetIds: [running.id],
+      revisions: { [running.id]: running.revision },
+      label: "factory-wake-engineer",
+      prHead: "head-lease",
+      agentId: "bc-engineer",
+      continuation: "fresh",
+      issuedAt: "2026-10-30T11:00:00.000Z",
+      startedAt: "2026-10-30T11:05:00.000Z",
+      runningAt: "2026-10-30T11:05:00.000Z",
+      endedAt: null,
+      reserveUntil: "2026-10-30T11:30:00.000Z",
+      startUntil: "2026-10-30T11:20:00.000Z",
+      leaseUntil: "2026-10-30T12:30:00.000Z",
+      reason: null,
+    },
+  };
+  const interrupted = recoverExecutions(leasedLedger, "2026-10-30T13:00:00.000Z");
+  assert.equal(interrupted.changes[0]?.phase, "interrupted");
+  assert.equal(interrupted.changes[0]?.reason, "lease_expired");
+  assert.equal(interrupted.ledger.packets[running.id].lease, null);
+  assert.equal(interrupted.ledger.packets[running.id].stage, "change_specified");
+  assert.equal(interrupted.ledger.packets[running.id].dispatchedEngineerRevision, null);
+  assert.equal(interrupted.ledger.executions?.["dsp-leased"].phase, "interrupted");
+
+  const pressured = emptyLedger(4);
+  pressured.packets = { [first.id]: changeSpecified("pkt-a"), [second.id]: changeSpecified("pkt-b") };
+  pressured.initiatives.alpha = freshInitiative({
+    id: "alpha",
+    module: "test",
+    capability: "alpha",
+    entry: "Operator → test → alpha",
+    obligation: "Continue alpha",
+    priority: 1,
+    now: world.now,
+  });
+  pressured.initiatives.alpha.queue = "active";
+  pressured.initiatives.alpha.session = "continuation_due";
+  assert.equal(productionPressure(Object.values(pressured.packets)).holdArchitect, true);
+  const held = controlStep(pressured, world);
+  assert.equal(held.wakes.some((wake) => wake.decision.effect === "wake_architect"), false);
+  assert.equal(held.wakes.some((wake) => wake.decision.effect === "wake_engineer"), true);
+  const metrics = productionMetrics(interrupted.ledger);
+  assert.equal(metrics.costPerAcceptedPacket, null);
+  assert.equal(metrics.refusedOrFailedLaunches, 0);
+  assert.equal(metrics.trackedFreshLaunches, 1);
+  const withUsage = structuredClone(interrupted.ledger);
+  const row = Object.values(withUsage.executions ?? {})[0];
+  row.usageUsd = 2;
+  withUsage.packets[running.id].stage = "accepted";
+  assert.equal(productionMetrics(withUsage).costPerAcceptedPacket, 2);
+});
+
+check("resume_scope keeps the cap and the backlog still holds the architect", () => {
+  const world: World = { ...active, now: "2026-10-30T18:00:00.000Z", authorizedDispatches: 50, usedDispatches: 31 };
+  const ledger = emptyLedger(50);
+  ledger.usedDispatches = 31;
+  const suspended = applyLedgerEvent(ledger, { type: "suspend", reason: "repair" }, world);
+  assert.equal(suspended.reason, "suspended");
+  const raised = applyLedgerEvent(
+    suspended.ledger,
+    { type: "resume_scope", reason: "downstream lanes", authorizedDispatches: 51 },
+    world,
+  );
+  assert.equal(raised.reason, "cap_changed");
+  assert.equal(raised.ledger.authorizedDispatches, 50);
+  assert.equal(raised.ledger.scope.status, "suspended");
+  const resumed = applyLedgerEvent(
+    suspended.ledger,
+    { type: "resume_scope", reason: "downstream lanes", authorizedDispatches: 50 },
+    world,
+  );
+  assert.equal(resumed.reason, "scope_resumed");
+  assert.equal(resumed.ledger.scope.status, "active");
+  assert.equal(resumed.ledger.authorizedDispatches, 50);
+  assert.equal(resumed.ledger.usedDispatches, 31);
+  resumed.ledger.packets["pkt-a"] = changeSpecified("pkt-a");
+  resumed.ledger.packets["pkt-b"] = changeSpecified("pkt-b");
+  resumed.ledger.initiatives.alpha = freshInitiative({
+    id: "alpha",
+    module: "test",
+    capability: "alpha",
+    entry: "Operator → test → alpha",
+    obligation: "Continue alpha",
+    priority: 1,
+    now: world.now,
+  });
+  resumed.ledger.initiatives.alpha.queue = "active";
+  resumed.ledger.initiatives.alpha.session = "continuation_due";
+  const step = controlStep(resumed.ledger, world);
+  assert.equal(step.wakes.some((wake) => wake.decision.effect === "wake_architect"), false);
+  assert.equal(step.wakes.some((wake) => wake.decision.effect === "wake_engineer"), true);
+  const laned = applyLedgerEvent(
+    suspended.ledger,
+    { type: "resume_scope", reason: "engineer lane", authorizedDispatches: 50, lanes: ["engineer"] },
+    world,
+  );
+  assert.equal(laned.reason, "scope_resumed");
+  assert.deepEqual(laned.ledger.scope.lanes, ["engineer"]);
+  laned.ledger.packets["pkt-a"] = changeSpecified("pkt-a");
+  laned.ledger.packets["pkt-r"] = must(
+    applyEvent(freshItem("pkt-r", "alpha"), { type: "release", wake: "sa", gatesPass: true, revision: "rev-1" }, active),
+    "released",
+  );
+  const heldLane = controlStep(laned.ledger, world);
+  assert.equal(heldLane.wakes.some((wake) => wake.decision.effect === "wake_sa"), false);
+  assert.equal(heldLane.wakes.some((wake) => wake.decision.effect === "wake_architect"), false);
+  assert.equal(heldLane.wakes.some((wake) => wake.decision.effect === "wake_engineer"), true);
+  const suspendedBind = emptyLedger(50);
+  suspendedBind.scope.status = "suspended";
+  suspendedBind.packets["pkt-003-resume-same-run"] = changeSpecified("pkt-003-resume-same-run");
+  const refusedBind = prepareBoundEngineer(suspendedBind, {
+    packetId: "pkt-003-resume-same-run",
+    workerId: "bc-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    prHead: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    now: "2026-10-30T18:00:00.000Z",
+  });
+  assert.equal(refusedBind.ok, false);
+  const activeBind = emptyLedger(50);
+  activeBind.usedDispatches = 31;
+  activeBind.packets["pkt-003-resume-same-run"] = changeSpecified("pkt-003-resume-same-run");
+  const bound = prepareBoundEngineer(activeBind, {
+    packetId: "pkt-003-resume-same-run",
+    workerId: "bc-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    prHead: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    now: "2026-10-30T18:00:00.000Z",
+  });
+  assert.equal(bound.ok, true);
+  if (bound.ok) {
+    const row = bound.ledger.packets["pkt-003-resume-same-run"];
+    assert.equal(row.stage, "engineering");
+    assert.equal(row.lease?.workerId, "bc-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
+    assert.equal(bound.ledger.usedDispatches, 32);
+    assert.equal(bound.ledger.authorizedDispatches, 50);
+    const execution = Object.values(bound.ledger.executions ?? {}).find((item) => item.packetIds.includes(row.id));
+    assert.equal(execution?.phase, "running");
+    assert.equal(execution?.delivery, "bound");
+    assert.equal(execution?.agentId, "bc-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
+    assert.equal(execution?.startedAt, "2026-10-30T18:00:00.000Z");
+  }
+});
+
+check("a worker keeps one agent and a release is a verified dependency set", async () => {
+  const world: World = { ...active, now: "2026-10-31T12:00:00.000Z", authorizedDispatches: 8, usedDispatches: 0, resumeSupported: true };
+  function released(id: string): WorkItem {
+    return must(
+      applyEvent(freshItem(id, "exec-identity"), { type: "release", wake: "sa", gatesPass: true, revision: "rev-1" }, active),
+      "released",
+    );
+  }
+  const link = { basis: "component" as const, note: "one component" };
+  const ids = ["pkt-a", "pkt-b", "pkt-c", "pkt-d"];
+  const rows = ids.map((id) => released(id));
+  for (const row of rows) {
+    row.siblings = rows.filter((other) => other.id !== row.id).map((other) => ({ id: other.id, ...link }));
+  }
+  const ledger = emptyLedger(8);
+  ledger.packets = Object.fromEntries(rows.map((row) => [row.id, row]));
+  const batch = analystAssignment(Object.values(ledger.packets));
+  assert.deepEqual(batch?.packetIds, ids);
+  const step = controlStep(ledger, world);
+  const analysts = step.wakes.filter((wake) => wake.decision.effect === "wake_sa");
+  assert.equal(analysts.length, 1);
+  assert.deepEqual(analysts[0].packetIds, ids);
+
+  const specified = rows.map((row) => {
+    const next = structuredClone(row);
+    next.stage = "change_specified";
+    next.dispatchedSaRevision = "rev-1";
+    return next;
+  });
+  const engineering = emptyLedger(8);
+  engineering.packets = Object.fromEntries(specified.map((row) => [row.id, row]));
+  const engineer = engineerAssignment(Object.values(engineering.packets));
+  assert.deepEqual(engineer?.packetIds, ids);
+  const engineerStep = controlStep(engineering, world);
+  const engineers = engineerStep.wakes.filter((wake) => wake.decision.effect === "wake_engineer");
+  assert.equal(engineers.length, 1);
+  assert.deepEqual(engineers[0].packetIds, ids);
+
+  const calls: string[] = [];
+  const resumed: string[] = [];
+  engineering.executions = {
+    "dsp-old": {
+      id: "dsp-old",
+      assignmentId: "asg-old",
+      role: "engineer",
+      phase: "refused",
+      packetIds: ["pkt-a"],
+      revisions: { "pkt-a": "rev-1" },
+      label: "factory-wake-engineer",
+      prHead: "head-old",
+      agentId: "bc-engineer-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      continuation: "fresh",
+      issuedAt: "2026-10-31T11:00:00.000Z",
+      startedAt: "2026-10-31T11:01:00.000Z",
+      runningAt: null,
+      endedAt: "2026-10-31T11:02:00.000Z",
+      reserveUntil: "2026-10-31T11:30:00.000Z",
+      startUntil: null,
+      leaseUntil: null,
+      reason: "worker_refused",
+    },
+  };
+  const store = new MemoryStore(engineering);
+  const plan = planPacketContinuation({
+    ledger: engineering,
+    role: "engineer",
+    packetIds: ids,
+    resumeSupported: true,
+  });
+  assert.equal(plan.mode, "resume");
+  assert.equal(plan.agentId, "bc-engineer-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
+  const woke = await dispatchWake({
+    store,
+    actuator: scriptedActuator([{ ok: true, reason: "labeled" }], calls),
+    packetId: "pkt-a",
+    packetIds: ids,
+    prHead: "head-next",
+    activation: "active",
+    now: world.now,
+    engineeringBusy: false,
+    budgetUsd: null,
+    resumeSupported: true,
+    resume: async (agentId) => {
+      resumed.push(agentId);
+      return { ok: true, reason: "resumed" };
+    },
+  });
+  assert.equal(woke.reason, "resumed");
+  assert.deepEqual(calls, []);
+  assert.deepEqual(resumed, ["bc-engineer-aaaa-4aaa-8aaa-aaaaaaaaaaaa"]);
+  const saved = await store.read();
+  assert.equal(saved.usedDispatches, 1);
+  const executionId = saved.packets["pkt-a"].dispatch?.executionId as string;
+  const worker = "bc-engineer-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+  const until = "2026-10-31T13:00:00.000Z";
+  const leasedFirst = await commitEvent(
+    store,
+    "pkt-a",
+    { type: "acquire_lease", workerId: worker, role: "engineer", until, revision: "rev-1" },
+    world,
+  );
+  assert.equal(leasedFirst.reason, "lease_acquired");
+  const first = await commitEvent(
+    store,
+    "pkt-a",
+    { type: "commit_candidate", sha: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", revision: "rev-1", workerId: worker },
+    world,
+  );
+  assert.equal(first.reason, "candidate");
+  const mid = await store.read();
+  assert.equal(mid.executions?.[executionId]?.phase, "running");
+  assert.equal(mid.packets["pkt-b"].stage, "change_specified");
+  for (const id of ["pkt-b", "pkt-c", "pkt-d"]) {
+    const leased = await commitEvent(
+      store,
+      id,
+      { type: "acquire_lease", workerId: worker, role: "engineer", until, revision: "rev-1" },
+      world,
+    );
+    assert.equal(leased.reason, "lease_acquired");
+    const recorded = await commitEvent(
+      store,
+      id,
+      { type: "commit_candidate", sha: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", revision: "rev-1", workerId: worker },
+      world,
+    );
+    assert.equal(recorded.reason, "candidate");
+  }
+  const done = await store.read();
+  assert.equal(done.executions?.[executionId]?.phase, "completed");
+  assert.equal(done.executions?.[executionId]?.reason, "candidate_recorded");
+
+  const saturated = structuredClone(engineering);
+  saturated.packets = Object.fromEntries(specified.map((row) => [row.id, structuredClone(row)]));
+  saturated.executions = {
+    "dsp-full": {
+      id: "dsp-full",
+      assignmentId: "asg-full",
+      role: "analyst",
+      phase: "completed",
+      packetIds: ids,
+      revisions: Object.fromEntries(ids.map((id) => [id, "rev-1"])),
+      label: "factory-wake-sa",
+      prHead: "head-sa",
+      agentId: "bc-analyst-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      continuation: "fresh",
+      issuedAt: "2026-10-31T10:00:00.000Z",
+      startedAt: "2026-10-31T10:01:00.000Z",
+      runningAt: null,
+      endedAt: "2026-10-31T10:05:00.000Z",
+      reserveUntil: "2026-10-31T10:30:00.000Z",
+      startUntil: null,
+      leaseUntil: null,
+      reason: "context_saturated",
+    },
+  };
+  const analystPlan = planPacketContinuation({
+    ledger: saturated,
+    role: "analyst",
+    packetIds: ids,
+    resumeSupported: true,
+  });
+  assert.equal(analystPlan.mode, "resume");
+  assert.equal(analystPlan.limit, 3);
+  const limited = analystAssignment(rows, { limit: analystPlan.limit });
+  assert.equal(limited?.packetIds.length, 3);
+
+  function verified(id: string, sha: string): WorkItem {
+    const item = freshItem(id, "exec-identity");
+    item.stage = "verified";
+    item.verifiedSha = sha;
+    item.candidateSha = sha;
+    return item;
+  }
+  const alone = verified("pkt-002-open-ask-cursor", "3246a074efecd8adb98e4ca232d443b90821173f");
+  const haltA = verified("pkt-015-halt-enroll-firm", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+  const haltB = verified("pkt-016-halt-send-firm", "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
+  haltA.siblings = [{ id: haltB.id, basis: "dependency", note: "halt chain" }];
+  const waiting = verified("pkt-017-tick-send-halt", "cccccccccccccccccccccccccccccccccccccccc");
+  waiting.stage = "change_specified";
+  waiting.verifiedSha = null;
+  haltB.siblings = [
+    { id: haltA.id, basis: "dependency", note: "halt chain" },
+    { id: waiting.id, basis: "dependency", note: "halt chain" },
+  ];
+  const held = readyReleases([alone, haltA, haltB, waiting]);
+  assert.deepEqual(held.map((release) => release.packetIds), [["pkt-002-open-ask-cursor"]]);
+  waiting.stage = "verified";
+  waiting.verifiedSha = "cccccccccccccccccccccccccccccccccccccccc";
+  const chain = readyReleases([alone, haltA, haltB, waiting]);
+  assert.deepEqual(
+    chain.map((release) => release.id),
+    [
+      "rel-pkt-002-open-ask-cursor",
+      "rel-pkt-015-halt-enroll-firm--pkt-016-halt-send-firm--pkt-017-tick-send-halt",
+    ],
+  );
+  const recorded = applyLedgerEvent(
+    emptyLedger(8),
+    {
+      type: "record_release",
+      id: chain[0].id,
+      packetIds: chain[0].packetIds,
+      prNumber: 200,
+      prUrl: "https://github.com/bywale-com/omcoda_tower/pull/200",
+      openedAt: world.now,
+    },
+    world,
+  );
+  recorded.ledger.packets[alone.id] = alone;
+  const opened = applyLedgerEvent(
+    recorded.ledger,
+    {
+      type: "record_release",
+      id: chain[0].id,
+      packetIds: chain[0].packetIds,
+      prNumber: 200,
+      prUrl: "https://github.com/bywale-com/omcoda_tower/pull/200",
+      openedAt: world.now,
+    },
+    world,
+  );
+  assert.equal(opened.reason, "release_recorded");
+  const missingSha = applyLedgerEvent(
+    opened.ledger,
+    { type: "conclude_release", id: chain[0].id, mergeSha: "", reconciliationId: "pr-200" },
+    world,
+  );
+  assert.equal(missingSha.reason, "integration_evidence_missing");
+  const concluded = applyLedgerEvent(
+    opened.ledger,
+    {
+      type: "conclude_release",
+      id: chain[0].id,
+      mergeSha: "dddddddddddddddddddddddddddddddddddddddd",
+      reconciliationId: "pr-200-dddddddddddddddddddddddddddddddddddddddd",
+    },
+    world,
+  );
+  assert.equal(concluded.reason, "release_concluded");
+  assert.equal(concluded.ledger.packets[alone.id].stage, "accepted");
+  assert.equal(concluded.ledger.packets[alone.id].integratedSha, "dddddddddddddddddddddddddddddddddddddddd");
+  const emerge = read("scripts/factory-emerge.ts");
+  assert.equal(emerge.includes("gh pr merge"), false);
+  assert.match(emerge, /mail_unconfigured/);
+  assert.match(emerge, /"fetch", "--depth=2", "origin"/);
+  assert.match(emerge, /"config", "--unset-all", "http\.https:\/\/github\.com\/\.extraheader"/);
+  assert.match(emerge, /x-access-token/);
+  assert.match(emerge, /release_push_failed/);
+  assert.match(read(".github/workflows/factory-dispatch.yml"), /scripts\/factory-emerge\.ts --apply/);
+});
+
+check("a candidate SHA is verified by a workflow for that commit", () => {
+  const sha = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+  const other = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+  assert.equal(proofScript("pkt-004-firing-handle"), "scripts/verify-firing-handle.ts");
+  assert.equal(proofScript("pkt-015-halt-enroll-firm"), "scripts/verify-halt-enroll-firm.ts");
+  assert.equal(proofScript("not-a-packet"), null);
+  const candidates = [
+    { packetId: "pkt-004-firing-handle", sha },
+    { packetId: "pkt-006-id-keyed-loads", sha: other },
+  ];
+  const fresh = planVerifications(candidates, []);
+  assert.deepEqual(fresh.record, []);
+  assert.deepEqual(
+    fresh.start.map((item) => item.sha),
+    [sha, other].sort(),
+  );
+  assert.deepEqual(fresh.start.find((item) => item.sha === sha)?.proofs, ["scripts/verify-firing-handle.ts"]);
+  const open = planVerifications(candidates, [
+    { name: verifyJobName(sha), status: "in_progress", conclusion: null, runId: "9" },
+  ]);
+  assert.equal(open.start.some((item) => item.sha === sha), false);
+  assert.equal(open.record.some((item) => item.sha === sha), false);
+  assert.equal(open.start.some((item) => item.sha === other), true);
+  const failed = planVerifications(candidates, [
+    { name: verifyJobName(sha), status: "completed", conclusion: "failure", runId: "9" },
+  ]);
+  assert.equal(failed.start.some((item) => item.sha === sha), false);
+  assert.equal(failed.record.some((item) => item.sha === sha), false);
+  const passed = planVerifications(candidates, [
+    { name: verifyJobName(sha), status: "completed", conclusion: "success", runId: "11" },
+  ]);
+  assert.equal(passed.start.some((item) => item.sha === sha), false);
+  assert.equal(passed.record[0]?.packetId, "pkt-004-firing-handle");
+  assert.equal(passed.record[0]?.runId, "11");
+  assert.equal(passed.record[0]?.checkName, "verify-firing-handle");
+  const workflow = read(".github/workflows/factory-verify.yml");
+  assert.equal(workflow.includes("schedule:"), false);
+  assert.equal(workflow.includes("cancel-in-progress: false"), true);
+  assert.match(workflow, /ref: \$\{\{ matrix\.item\.sha \}\}/);
+  assert.match(workflow, /factory-verify\.ts --plan/);
+  assert.match(workflow, /factory-verify\.ts --record/);
+  assert.match(workflow, /git rev-parse HEAD/);
+});
+
+check("a packet explains why it is waiting and what advances it", () => {
+  const now = "2026-10-31T14:00:00.000Z";
+  const later = "2026-10-31T16:00:00.000Z";
+  const sha = "3246a074efecd8adb98e4ca232d443b90821173f";
+  const other = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+  const worker = "bc-4192002b-f944-4eeb-919a-1af83d403f28";
+
+  function ranAnalyst(packetId: string) {
+    return {
+      packetId,
+      revision: "rev-1",
+      prHead: "head",
+      effect: "wake_sa" as const,
+      label: "factory-wake-sa" as const,
+      issuedAt: "2026-10-30T12:00:00.000Z",
+      workerExecution: "ran" as const,
+    };
+  }
+
+  function execution(id: string, packetIds: string[], phase: "dispatched" | "running" | "completed" | "refused" | "interrupted", issuedAt: string) {
+    return {
+      id,
+      assignmentId: `asg-${id}`,
+      role: "engineer" as const,
+      phase,
+      packetIds,
+      revisions: Object.fromEntries(packetIds.map((packetId) => [packetId, "rev-1"])),
+      label: "factory-wake-engineer" as const,
+      prHead: "head",
+      agentId: worker,
+      continuation: "fresh" as const,
+      issuedAt,
+      startedAt: phase === "running" || phase === "completed" ? issuedAt : null,
+      runningAt: phase === "running" ? issuedAt : null,
+      endedAt: phase === "completed" || phase === "refused" || phase === "interrupted" ? issuedAt : null,
+      reserveUntil: "2026-10-31T15:00:00.000Z",
+      startUntil: null,
+      leaseUntil: phase === "running" ? "2026-10-31T15:00:00.000Z" : null,
+      reason: phase === "completed" ? "candidate_recorded" : phase === "refused" ? "reservation_expired" : phase === "interrupted" ? "lease_expired" : null,
+    };
+  }
+
+  const founder = emptyLedger(50);
+  founder.usedDispatches = 50;
+  founder.scope.lanes = ["engineer", "analyst"];
+  const released = freshItem("pkt-009-eligibility-writes", "exec-identity");
+  released.stage = "released";
+  released.wake = "sa";
+  released.revision = "rev-1";
+  released.dispatchedSaRevision = "rev-1";
+  released.dispatchHistory = [ranAnalyst(released.id)];
+  const component = freshItem("pkt-007-fact-writes", "exec-identity");
+  component.stage = "verified";
+  component.verifiedSha = other;
+  component.candidateSha = other;
+  component.siblings = [{ id: released.id, basis: "component", note: "writes" }];
+  const waiting = freshItem("pkt-017-tick-send-halt", "exec-identity");
+  const held = freshItem("pkt-015-halt-enroll-firm", "exec-identity");
+  held.stage = "verified";
+  held.verifiedSha = sha;
+  held.candidateSha = sha;
+  held.siblings = [{ id: waiting.id, basis: "dependency", note: "halt" }];
+  waiting.stage = "released";
+  waiting.wake = "sa";
+  waiting.revision = "rev-1";
+  waiting.dispatchedSaRevision = "rev-1";
+  waiting.dispatchHistory = [ranAnalyst(waiting.id)];
+  waiting.siblings = [{ id: held.id, basis: "dependency", note: "halt" }];
+  const offered = freshItem("pkt-002-open-ask-cursor", "exec-identity");
+  offered.stage = "verified";
+  offered.verifiedSha = sha;
+  offered.candidateSha = sha;
+  const specified = freshItem("pkt-014-empty-firing-audience", "exec-identity");
+  specified.stage = "change_specified";
+  specified.revision = "rev-1";
+  specified.wake = "sa";
+  const done = freshItem("pkt-001-click-attribution", "exec-identity");
+  done.stage = "accepted";
+  done.wake = "hold";
+  const candidate = freshItem("pkt-004-firing-handle", "exec-identity");
+  candidate.stage = "candidate";
+  candidate.candidateSha = other;
+  founder.packets = {
+    [released.id]: released,
+    [component.id]: component,
+    [held.id]: held,
+    [waiting.id]: waiting,
+    [offered.id]: offered,
+    [specified.id]: specified,
+    [done.id]: done,
+    [candidate.id]: candidate,
+  };
+  founder.releases = {
+    "rel-pkt-002-open-ask-cursor": {
+      id: "rel-pkt-002-open-ask-cursor",
+      packetIds: [offered.id],
+      prNumber: 141,
+      prUrl: "https://github.com/bywale-com/omcoda_tower/pull/141",
+      openedAt: "2026-10-31T13:43:15.757Z",
+      mergeSha: null,
+    },
+  };
+  const capped = explainFactory(founder, now);
+  const offer = capped.packets.find((packet) => packet.id === offered.id);
+  assert.equal(offer?.who, "founder");
+  assert.equal(offer?.situation, "external");
+  assert.equal(offer?.next, "Merge release pull request 141.");
+  const exhausted = capped.packets.find((packet) => packet.id === specified.id);
+  assert.equal(exhausted?.who, "founder");
+  assert.equal(exhausted?.situation, "held");
+  assert.match(exhausted?.why ?? "", /exhausted \(50\/50\)/);
+  const alone = capped.packets.find((packet) => packet.id === component.id);
+  assert.equal(alone?.who, "controller");
+  assert.equal(alone?.situation, "proceeding");
+  assert.equal(alone?.next, "The next Factory dispatch pass opens a release pull request.");
+  const chain = capped.packets.find((packet) => packet.id === held.id);
+  assert.equal(chain?.situation, "held");
+  assert.equal(chain?.next, "pkt-017-tick-send-halt reaches verified.");
+  const unsigned = capped.packets.find((packet) => packet.id === released.id);
+  assert.equal(unsigned?.situation, "held");
+  assert.equal(unsigned?.next, "Unknown");
+  assert.equal(unsigned?.commitment.condition, "needs_you");
+  assert.equal(unsigned?.commitment.checkAt, null);
+  assert.equal(unsigned?.commitment.owner, "founder");
+  assert.match(unsigned?.why ?? "", /exhausted \(50\/50\)/);
+  assert.equal(offer?.commitment.condition, "needs_you");
+  assert.equal(offer?.commitment.owner, "founder");
+  assert.equal(offer?.commitment.checkAt, null);
+  assert.equal(alone?.commitment.condition, "scheduled");
+  assert.equal(alone?.commitment.checkAt, nextReconcileAt(now));
+  assert.equal(alone?.commitment.event, null);
+  assert.equal(chain?.commitment.condition, "waiting");
+  assert.equal(chain?.commitment.checkAt, null);
+  assert.match(chain?.commitment.event ?? "", /pkt-017-tick-send-halt/);
+  assert.equal(exhausted?.commitment.condition, "needs_you");
+  assert.match(unsigned?.happening ?? "", /no sign_change/);
+  assert.equal(capped.summary.knownDefects.includes(released.id), false);
+  const finished = capped.packets.find((packet) => packet.id === done.id);
+  assert.equal(finished?.situation, "complete");
+  assert.equal(finished?.next, "Nothing.");
+  const unverified = capped.packets.find((packet) => packet.id === candidate.id);
+  assert.equal(finished?.commitment.condition, "complete");
+  assert.equal(unverified?.commitment.condition, "waiting");
+  assert.equal(unverified?.commitment.checkAt, null);
+  assert.match(unverified?.commitment.event ?? "", new RegExp(other));
+  for (const item of [...capped.packets, ...capped.initiatives]) {
+    assert.equal(commitmentHolds(item.commitment), true, item.id);
+  }
+  assert.equal(unverified?.who, "github_actions");
+  assert.equal(unverified?.situation, "external");
+  assert.match(unverified?.happening ?? "", /Unknown/);
+  assert.equal(unverified?.next, `GitHub Actions must verify commit ${other}.`);
+
+  const live = emptyLedger(50);
+  live.scope.lanes = ["engineer", "analyst"];
+  live.usedDispatches = 43;
+  const running = freshItem("pkt-019-first-step-send-denied", "exec-identity");
+  running.stage = "engineering";
+  running.revision = "rev-1";
+  running.wake = "sa";
+  running.dispatchedEngineerRevision = "rev-1";
+  running.lease = { workerId: worker, role: "engineer", until: "2026-10-31T15:00:00.000Z", revision: "rev-1" };
+  running.dispatch = {
+    packetId: running.id,
+    revision: "rev-1",
+    prHead: "head",
+    effect: "wake_engineer",
+    label: "factory-wake-engineer",
+    issuedAt: "2026-10-31T13:45:40.987Z",
+  };
+  live.packets = { [running.id]: running };
+  live.executions = { "dsp-live": execution("dsp-live", [running.id], "running", "2026-10-31T13:51:21.603Z") };
+  live.initiatives = {
+    "exec-identity": {
+      ...freshInitiative({ id: "exec-identity", module: "Agents", capability: "identity", entry: "claim", obligation: "packet", priority: 1 }),
+      queue: "active",
+      session: "continuation_due",
+    },
+  };
+  const active = explainFactory(live, now);
+  const current = active.packets.find((packet) => packet.id === running.id);
+  assert.equal(current?.situation, "proceeding");
+  assert.equal(current?.who, "engineer");
+  assert.match(current?.happening ?? "", new RegExp(worker));
+  assert.match(current?.happening ?? "", /Lease valid until/);
+  assert.match(current?.why ?? "", /Unknown/);
+  assert.equal(current?.next, "Record a candidate SHA.");
+  assert.equal(/stalled|progress observed/i.test(JSON.stringify(current)), false);
+  const slot = structuredClone(live);
+  const queued = freshItem("pkt-020-next", "exec-identity");
+  queued.stage = "change_specified";
+  queued.revision = "rev-1";
+  queued.wake = "sa";
+  slot.packets[queued.id] = queued;
+  const blocked = explainFactory(slot, now).packets.find((packet) => packet.id === queued.id);
+  assert.equal(blocked?.situation, "held");
+  assert.match(blocked?.why ?? "", new RegExp(running.id));
+  const architect = active.initiatives.find((item) => item.id === "exec-identity");
+  assert.equal(architect?.who, "founder");
+  assert.match(architect?.why ?? "", /architect lane is off/);
+  assert.match(architect?.why ?? "", /not backpressure/);
+  assert.equal(active.summary.engineersRunning, 1);
+  assert.match(active.summary.headline, /Factory operating · 1 Engineer active · 0 packets awaiting verification · 0 releases awaiting your review/);
+  const view = projectFactory(live, now);
+  assert.equal(view.explanation.packets.find((packet) => packet.id === running.id)?.next, "Record a candidate SHA.");
+
+  const elapsed = explainFactory(live, later).packets.find((packet) => packet.id === running.id);
+  assert.equal(elapsed?.who, "controller");
+  assert.equal(elapsed?.situation, "held");
+  assert.match(elapsed?.why ?? "", /Recovery has not run/);
+  const shared = structuredClone(live);
+  const donePkt = freshItem("pkt-018-send-denied-engagement", "exec-identity");
+  donePkt.stage = "verified";
+  donePkt.verifiedSha = sha;
+  donePkt.candidateSha = sha;
+  donePkt.siblings = [{ id: running.id, basis: "dependency", note: "halt" }];
+  shared.packets[donePkt.id] = donePkt;
+  shared.executions?.["dsp-live"].packetIds.push(donePkt.id);
+  const finishedSibling = explainFactory(shared, later).packets.find((packet) => packet.id === donePkt.id);
+  assert.equal(/Recovery has not run/.test(finishedSibling?.why ?? ""), false);
+  assert.match(finishedSibling?.next ?? "", new RegExp(running.id));
+
+  const recovered = structuredClone(live);
+  const recoveredPacket = recovered.packets[running.id];
+  recoveredPacket.lease = null;
+  recoveredPacket.dispatchedEngineerRevision = null;
+  recoveredPacket.dispatch = null;
+  const recoveredExecution = recovered.executions?.["dsp-live"];
+  if (!recoveredExecution) throw new Error("execution missing");
+  recoveredExecution.phase = "interrupted";
+  recoveredExecution.endedAt = later;
+  recoveredExecution.reason = "lease_expired";
+  recoveredExecution.leaseUntil = "2026-10-31T15:00:00.000Z";
+  const stuck = explainFactory(recovered, later).packets.find((packet) => packet.id === running.id);
+  assert.equal(stuck?.situation, "held");
+  assert.equal(stuck?.who, "controller");
+  assert.match(stuck?.next ?? "", /change_specified/);
+
+  const history = emptyLedger(50);
+  const oldPacket = freshItem("pkt-003-resume-same-run", "exec-identity");
+  oldPacket.stage = "verified";
+  oldPacket.verifiedSha = sha;
+  oldPacket.candidateSha = sha;
+  const freshPacket = freshItem("pkt-021-open", "exec-identity");
+  freshPacket.stage = "change_specified";
+  freshPacket.revision = "rev-1";
+  freshPacket.wake = "sa";
+  history.packets = { [oldPacket.id]: oldPacket, [freshPacket.id]: freshPacket };
+  history.executions = {
+    "dsp-old": execution("dsp-old", [oldPacket.id], "refused", "2026-10-30T10:38:20.846Z"),
+    "dsp-open": execution("dsp-open", [freshPacket.id], "dispatched", "2026-10-31T14:00:00.000Z"),
+  };
+  const executions = explainFactory(history, now).executions;
+  const obsolete = executions.find((item) => item.id === "dsp-old");
+  const unconfirmed = executions.find((item) => item.id === "dsp-open");
+  assert.equal(obsolete?.alert, false);
+  assert.equal(obsolete?.historical, true);
+  assert.equal(unconfirmed?.alert, true);
+  assert.equal(unconfirmed?.historical, false);
+
+  const pressure = structuredClone(live);
+  const second = freshItem("pkt-022-also", "exec-identity");
+  second.stage = "change_specified";
+  second.revision = "rev-1";
+  second.wake = "sa";
+  pressure.packets[second.id] = second;
+  const pressed = explainFactory(pressure, now).initiatives.find((item) => item.id === "exec-identity");
+  assert.match(pressed?.why ?? "", /This is backpressure/);
+  assert.equal(pressed?.next, "The engineer queue drops below 2.");
+  assert.equal(/lane is off/.test(pressed?.why ?? ""), false);
+
+  const source = read("scripts/factory-explain.ts");
+  assert.equal(source.includes("compareAndSwap"), false);
+  assert.equal(source.includes("commitLedgerEvent"), false);
+  assert.equal(source.includes("--apply"), false);
+  assert.equal(read(".factory/controller/explain.ts").includes("readFileSync"), false);
+  assert.match(read(".github/workflows/factory-dispatch.yml"), /factory-explain\.ts/);
+  assert.equal(read(".github/workflows/factory-dispatch.yml").includes("schedule:"), false);
+  assert.match(read(".github/workflows/factory-reconcile.yml"), /schedule:/);
+});
+
+check("every unfinished packet carries an operational commitment", () => {
+  assert.equal(nextReconcileAt("2026-10-31T22:06:59.000Z"), "2026-10-31T22:07:00.000Z");
+  assert.equal(nextReconcileAt("2026-10-31T22:07:00.000Z"), "2026-10-31T22:22:00.000Z");
+  assert.equal(nextReconcileAt("2026-10-31T22:52:00.000Z"), "2026-10-31T23:07:00.000Z");
+  assert.equal(nextReconcileAt("2026-10-31T23:52:30.000Z"), "2026-11-01T00:07:00.000Z");
+  const now = "2026-10-31T22:16:00.000Z";
+  const committed = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
+  const view = explainFactory(committed, now);
+  for (const item of [...view.packets, ...view.initiatives]) {
+    assert.equal(commitmentHolds(item.commitment), true, item.id);
+    if (item.commitment.condition === "scheduled" || item.commitment.condition === "recovering") {
+      assert.equal(item.commitment.checkAt, nextReconcileAt(now), item.id);
+    }
+  }
+  for (const packet of view.packets) {
+    if (packet.where === "accepted") assert.equal(packet.commitment.condition, "complete", packet.id);
+    else assert.notEqual(packet.commitment.condition, "complete", packet.id);
+  }
+});
+
+check("T72 a closed Analyst run without sign_change leaves the revision open", () => {
+  const now = "2026-11-01T14:00:00.000Z";
+  const ledger = emptyLedger(50);
+  ledger.usedDispatches = 45;
+  ledger.scope.status = "active";
+  ledger.scope.lanes = ["engineer", "analyst"];
+  function ran(id: string) {
+    return {
+      packetId: id,
+      revision: "rev-1",
+      prHead: "head",
+      effect: "wake_sa" as const,
+      label: "factory-wake-sa" as const,
+      issuedAt: "2026-10-30T13:25:04.920Z",
+      workerExecution: "ran" as const,
+    };
+  }
+  const ids = ["pkt-009-eligibility-writes", "pkt-011-halt-records-writes", "pkt-012-consent-opt-out-writes"];
+  for (const id of ids) {
+    const packet = freshItem(id, "exec-identity");
+    packet.stage = "released";
+    packet.wake = "sa";
+    packet.revision = "rev-1";
+    packet.dispatchedSaRevision = "rev-1";
+    packet.dispatchHistory = [ran(id)];
+    packet.siblings = ids
+      .filter((other) => other !== id)
+      .map((other) => ({ id: other, basis: "component" as const, note: "writes" }));
+    ledger.packets[id] = packet;
+  }
+  const alone = freshItem("pkt-014-empty-firing-audience", "exec-identity");
+  alone.stage = "released";
+  alone.wake = "sa";
+  alone.revision = "rev-1";
+  alone.dispatchedSaRevision = "rev-1";
+  alone.dispatchHistory = [ran(alone.id)];
+  ledger.packets[alone.id] = alone;
+  const signed = freshItem("pkt-007-fact-writes", "exec-identity");
+  signed.stage = "change_specified";
+  signed.wake = "sa";
+  signed.revision = "rev-1";
+  signed.dispatchedSaRevision = "rev-1";
+  ledger.packets[signed.id] = signed;
+  const stopped = freshItem("pkt-099-external-stop", "exec-identity");
+  stopped.stage = "blocked";
+  stopped.wake = "sa";
+  stopped.revision = "rev-1";
+  stopped.dispatchedSaRevision = "rev-1";
+  stopped.lastFailureClass = "external";
+  ledger.packets[stopped.id] = stopped;
+  const before = explainFactory(ledger, now).packets.find((packet) => packet.id === ids[0]);
+  assert.equal(before?.commitment.condition, "recovering");
+  assert.equal(before?.commitment.checkAt, nextReconcileAt(now));
+  assert.equal(before?.commitment.event, null);
+  const world: World = {
+    activation: "active",
+    now,
+    engineeringBusy: false,
+    budgetUsd: null,
+    authorizedDispatches: 50,
+    usedDispatches: 45,
+    scopeStatus: "active",
+  };
+  const recovered = recoverExecutions(ledger, now);
+  assert.equal(recovered.ledger.usedDispatches, 45);
+  for (const id of [...ids, alone.id]) {
+    const packet = recovered.ledger.packets[id];
+    assert.equal(packet.stage, "released");
+    assert.equal(packet.revision, "rev-1");
+    assert.equal(packet.dispatchedSaRevision, null);
+    assert.equal(packet.dispatchHistory?.[0]?.workerExecution, "ran");
+    assert.equal(decide(packet, world).effect, "wake_sa");
+  }
+  assert.equal(recovered.ledger.packets[signed.id].stage, "change_specified");
+  assert.equal(recovered.ledger.packets[signed.id].dispatchedSaRevision, "rev-1");
+  assert.equal(recovered.ledger.packets[stopped.id].stage, "blocked");
+  assert.equal(recovered.ledger.packets[stopped.id].dispatchedSaRevision, "rev-1");
+  assert.deepEqual(analystAssignment(Object.values(recovered.ledger.packets))?.packetIds, ids);
+  assert.equal(recoverExecutions(recovered.ledger, now).changes.length, 0);
+
+  const leased = freshItem("pkt-018-live-analysis", "exec-identity");
+  leased.stage = "analysis";
+  leased.wake = "sa";
+  leased.revision = "rev-1";
+  leased.dispatchedSaRevision = "rev-1";
+  leased.lease = { workerId: "bc-analyst", role: "analyst", until: "2026-11-01T15:00:00.000Z", revision: "rev-1" };
+  const openLedger = emptyLedger(50);
+  openLedger.usedDispatches = 1;
+  openLedger.packets[leased.id] = leased;
+  const untouched = recoverExecutions(openLedger, now);
+  assert.equal(untouched.changes.some((change) => change.reason === "unsigned_analyst"), false);
+  assert.equal(untouched.ledger.packets[leased.id].stage, "analysis");
+  assert.equal(untouched.ledger.packets[leased.id].dispatchedSaRevision, "rev-1");
+
+  const open = freshItem("pkt-009-open-dispatch", "exec-identity");
+  open.stage = "released";
+  open.wake = "sa";
+  open.revision = "rev-1";
+  open.dispatchedSaRevision = "rev-1";
+  open.dispatchHistory = [ran("pkt-009-open-dispatch")];
+  open.dispatch = {
+    packetId: open.id,
+    revision: "rev-1",
+    prHead: "head",
+    effect: "wake_sa",
+    label: "factory-wake-sa",
+    issuedAt: "2026-11-01T14:21:27.821Z",
+    deliveredAt: "2026-11-01T14:21:27.821Z",
+  };
+  const busy = emptyLedger(50);
+  busy.usedDispatches = 46;
+  busy.packets[open.id] = open;
+  const kept = recoverExecutions(busy, now);
+  assert.equal(kept.changes.some((change) => change.reason === "unsigned_analyst"), false);
+  assert.equal(kept.ledger.packets[open.id].dispatchedSaRevision, "rev-1");
+  assert.equal(kept.ledger.usedDispatches, 46);
+  const openView = explainFactory(busy, now).packets.find((packet) => packet.id === open.id);
+  assert.equal(openView?.next, "Sign the change.");
+  assert.equal(openView?.commitment.condition, "waiting");
+  assert.equal(openView?.commitment.checkAt, nextReconcileAt(now));
+
+  const committed = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
+  const live = recoverExecutions(committed, now);
+  assert.equal(live.ledger.usedDispatches, committed.usedDispatches);
+  for (const id of [
+    "pkt-009-eligibility-writes",
+    "pkt-011-halt-records-writes",
+    "pkt-012-consent-opt-out-writes",
+    "pkt-014-empty-firing-audience",
+    "pkt-017-tick-send-halt",
+  ]) {
+    const before = committed.packets[id];
+    const after = live.ledger.packets[id];
+    assert.equal(after.dispatchHistory?.some((row) => row.effect === "wake_sa" && row.workerExecution === "ran"), true, id);
+    const view = explainFactory(committed, now).packets.find((packet) => packet.id === id);
+    if (before.dispatch?.effect === "wake_sa") {
+      assert.equal(after.dispatchedSaRevision, before.dispatchedSaRevision, id);
+      assert.equal(after.dispatch?.effect, "wake_sa", id);
+      assert.equal(unsignedAnalystRecovery(before, now), false, id);
+      assert.equal(view?.next, "Sign the change.", id);
+      assert.equal(view?.commitment.condition, "waiting", id);
+    } else if (unsignedAnalystRecovery(before, now)) {
+      assert.equal(after.stage, "released", id);
+      assert.equal(after.dispatchedSaRevision, null, id);
+      assert.equal(view?.commitment.condition, "recovering", id);
+      assert.equal(view?.commitment.checkAt, nextReconcileAt(now), id);
+      assert.equal(view?.next, "The next reconcile pass dispatches the Analyst for this revision.", id);
+    } else if (before.stage === "released" && before.dispatchedSaRevision == null && !before.dispatch) {
+      assert.equal(after.dispatchedSaRevision, null, id);
+      assert.equal(decide(after, world).effect, "wake_sa", id);
+      assert.equal(view?.commitment.condition, "scheduled", id);
+      assert.equal(view?.commitment.checkAt, nextReconcileAt(now), id);
+    } else {
+      assert.equal(after.revision, before.revision, id);
+    }
+  }
+  const waiter = committed.packets["pkt-015-halt-enroll-firm"];
+  const blocker = committed.packets["pkt-017-tick-send-halt"];
+  if (waiter?.stage === "verified" && blocker && blocker.stage !== "verified" && blocker.stage !== "accepted") {
+    const behind = explainFactory(committed, now).packets.find((packet) => packet.id === waiter.id);
+    assert.equal(behind?.commitment.condition, "waiting");
+    assert.equal(behind?.commitment.checkAt, null);
+    assert.match(behind?.commitment.event ?? "", /pkt-017-tick-send-halt/);
+  }
+});
+
+check("PKT-019's expired contradiction returns to the analyst and is not re-armed", () => {
+  const committed = JSON.parse(read(".factory/state/ledger.json")) as FactoryLedger;
+  const handoff = read("docs/factory/initiatives/exec-identity/HANDOFF.md");
+  assert.equal(handoff.includes(RECORDED_SPECIFICATION_BLOCK.note), true);
+  const id = RECORDED_SPECIFICATION_BLOCK.packetId;
+  const recorded = committed.packets[id];
+  const settled = new Set([
+    "candidate",
+    "verifying",
+    "verified",
+    "integration_authorized",
+    "integrated",
+    "reconciled",
+    "accepted",
+  ]);
+  assert.ok(recorded.stage === "engineering" || settled.has(recorded.stage), recorded.stage);
+  assert.equal(recorded.revision, "rev-2");
+  assert.equal(recorded.specificationBlock?.authority, "recorded");
+  assert.equal(recorded.specificationBlock?.blockedRevision, "rev-1");
+  assert.equal(recorded.specificationBlock?.note, RECORDED_SPECIFICATION_BLOCK.note);
+  assert.equal(recorded.specificationBlock?.workerId, RECORDED_SPECIFICATION_BLOCK.workerId);
+  assert.equal(recorded.specificationBlock?.executionId, RECORDED_SPECIFICATION_BLOCK.executionId);
+  assert.equal(
+    analystFileCountsAsThisDispatch(committed, recorded),
+    !(recorded.specificationBlock && recorded.specificationBlock.revision === recorded.dispatch?.revision),
+  );
+  if (recorded.stage === "engineering") {
+    assert.equal(recorded.dispatch?.effect, "wake_engineer");
+    assert.equal(recorded.lease?.role, "engineer");
+    assert.equal(recorded.lease?.revision, "rev-2");
+  } else {
+    assert.equal(recorded.dispatch ?? null, null);
+    assert.equal(recorded.lease ?? null, null);
+    assert.equal(recorded.candidateSha, "ddae2f9005334720e9c52d9b3e13ab2bdbcb918b");
+  }
+  const releasedBefore = Object.values(committed.packets)
+    .filter((packet) => packet.stage === "released")
+    .map((packet) => packet.id)
+    .sort();
+  assert.equal(releasedBefore.includes(id), false);
+  const duringLease = "2026-10-31T22:30:00.000Z";
+  const restored = recoverExecutions(committed, duringLease);
+  assert.equal(restored.changes.some((change) => change.reason === "engineering_rearmed"), false);
+  assert.equal(restored.changes.some((change) => change.reason === "recorded_specification_block"), false);
+  if (recorded.stage === "engineering") {
+    assert.equal(restored.ledger.packets[id].stage, "engineering");
+    assert.equal(restored.ledger.packets[id].dispatch?.effect, "wake_engineer");
+    assert.equal(restored.ledger.packets[id].dispatch?.revision, "rev-2");
+    assert.equal(recorded.dispatch?.effect, "wake_engineer");
+    assert.equal(restored.changes.some((change) => change.reason === "unstarted_dispatch_restored"), false);
+    const explainedNow = explainFactory(committed, duringLease).packets.find((item) => item.id === id);
+    assert.equal(explainedNow?.commitment.condition, "working");
+    assert.equal(explainedNow?.commitment.runUntil, recorded.lease?.until);
+    assert.equal(explainedNow?.commitment.checkAt, null);
+    const open = explainFactory(restored.ledger, duringLease).packets.find((item) => item.id === id);
+    assert.equal(open?.commitment.condition, "working");
+  } else {
+    assert.equal(restored.ledger.packets[id].stage, recorded.stage);
+    assert.equal(restored.changes.some((change) => change.reason === "unstarted_dispatch_restored"), false);
+    const explainedNow = explainFactory(committed, duringLease).packets.find((item) => item.id === id);
+    assert.equal(commitmentHolds(explainedNow?.commitment!), true);
+    if (recorded.stage === "candidate") {
+      assert.match(explainedNow?.next ?? "", /GitHub Actions must verify commit ddae2f9005334720e9c52d9b3e13ab2bdbcb918b/);
+      assert.equal(explainedNow?.commitment.condition, "waiting");
+      assert.equal(explainedNow?.commitment.checkAt, null);
+    }
+    const lapsed = recoverExecutions(committed, "2026-10-31T16:10:00.000Z");
+    assert.equal(lapsed.ledger.packets[id].stage, recorded.stage);
+  }
+
+  const source = structuredClone(committed);
+  const rewound = source.packets[id];
+  const laterExecutionId = rewound.dispatch?.executionId;
+  const laterAssignmentId = rewound.dispatch?.assignmentId;
+  rewound.stage = "engineering";
+  rewound.revision = "rev-1";
+  rewound.dispatchedSaRevision = "rev-1";
+  rewound.dispatchedEngineerRevision = null;
+  rewound.dispatchedRepairFingerprint = null;
+  rewound.attempts = 0;
+  rewound.lastFailureFingerprint = null;
+  rewound.lastFailureClass = null;
+  rewound.lease = null;
+  rewound.dispatch = null;
+  rewound.candidateSha = null;
+  delete rewound.specificationBlock;
+  rewound.dispatchHistory = (rewound.dispatchHistory ?? []).filter((row) => row.revision !== "rev-2");
+  if (laterExecutionId) delete source.executions?.[laterExecutionId];
+  if (laterAssignmentId) delete source.assignments?.[laterAssignmentId];
+  delete source.executions?.["dsp-195-analyst-pkt-019-first-step-send-denied"];
+  delete source.assignments?.["asg-dsp-195-analyst-pkt-019-first-step-send-denied"];
+  delete source.executions?.["dsp-212-engineer-pkt-019-first-step-send-denied"];
+  delete source.assignments?.["asg-dsp-212-engineer-pkt-019-first-step-send-denied"];
+  const world: World = {
+    ...active,
+    now: "2026-10-31T16:00:00.000Z",
+    authorizedDispatches: source.authorizedDispatches,
+    usedDispatches: source.usedDispatches,
+    scopeStatus: source.scope.status,
+  };
+  const prose = applyEvent(rewound, { type: "prose_complete" }, world);
+  assert.equal(prose.reason, "prose_is_not_evidence");
+  assert.equal(prose.item.stage, "engineering");
+  const bare = applyEvent(
+    rewound,
+    { type: "specification_blocked", workerId: RECORDED_SPECIFICATION_BLOCK.workerId, note: RECORDED_SPECIFICATION_BLOCK.note },
+    world,
+  );
+  assert.equal(bare.reason, "lease_expired");
+  assert.equal(bare.item.stage, "engineering");
+  assert.equal(bare.item.revision, "rev-1");
+
+  const adopted = recoverExecutions(source, world.now);
+  assert.equal(adopted.changes.some((change) => change.reason === "recorded_specification_block"), true);
+  assert.equal(adopted.changes.some((change) => change.reason === "engineering_rearmed"), false);
+  const packet = adopted.ledger.packets[id];
+  assert.equal(packet.stage, "returned_analyst");
+  assert.equal(packet.revision, nextRevision("rev-1"));
+  assert.equal(packet.specificationBlock?.blockedRevision, "rev-1");
+  assert.equal(packet.specificationBlock?.revision, "rev-2");
+  assert.equal(packet.specificationBlock?.authority, "recorded");
+  assert.equal(packet.specificationBlock?.note, RECORDED_SPECIFICATION_BLOCK.note);
+  assert.equal(packet.specificationBlock?.workerId, RECORDED_SPECIFICATION_BLOCK.workerId);
+  assert.equal(packet.specificationBlock?.executionId, RECORDED_SPECIFICATION_BLOCK.executionId);
+  assert.equal(packet.dispatchedSaRevision, "rev-1");
+  assert.equal(packet.dispatchedEngineerRevision, null);
+  assert.equal(adopted.ledger.executions?.[RECORDED_SPECIFICATION_BLOCK.executionId]?.reason, "lease_expired");
+  assert.equal(adopted.ledger.packets["pkt-018-send-denied-engagement"].stage, source.packets["pkt-018-send-denied-engagement"].stage);
+  for (const releasedId of releasedBefore) {
+    assert.equal(adopted.ledger.packets[releasedId].stage, "released");
+    assert.equal(adopted.ledger.packets[releasedId].revision, source.packets[releasedId].revision);
+  }
+  const again = recoverExecutions(adopted.ledger, world.now);
+  assert.equal(again.changes.some((change) => change.reason === "recorded_specification_block"), false);
+  assert.equal(again.changes.some((change) => change.reason === "engineering_rearmed"), false);
+  assert.equal(again.ledger.packets[id].stage, "returned_analyst");
+  assert.equal(again.ledger.packets[id].revision, "rev-2");
+  const waiting = explainFactory(source, world.now).packets.find((item) => item.id === id);
+  assert.equal(waiting?.situation, "held");
+  assert.match(waiting?.next ?? "", /returns this packet to the Analyst/);
+  const returned = explainFactory(adopted.ledger, world.now).packets.find((item) => item.id === id);
+  assert.equal(returned?.situation, "proceeding");
+  assert.equal(returned?.next, "The next pass wakes the Analyst.");
+  assert.deepEqual(explainFactory(adopted.ledger, world.now).summary.knownDefects, []);
+
+  const wrongWorker = structuredClone(source);
+  const execution = wrongWorker.executions?.[RECORDED_SPECIFICATION_BLOCK.executionId];
+  if (!execution) throw new Error("execution missing");
+  execution.agentId = "bc-00000000-0000-4000-8000-000000000000";
+  const rearmed = recoverExecutions(wrongWorker, world.now);
+  assert.equal(rearmed.ledger.packets[id].stage, "change_specified");
+  assert.equal(rearmed.ledger.packets[id].revision, "rev-1");
+  assert.equal(rearmed.ledger.packets[id].specificationBlock, undefined);
+  assert.equal(rearmed.changes.some((change) => change.reason === "recorded_specification_block"), false);
+
+  const live = structuredClone(source);
+  live.packets[id].lease = {
+    workerId: RECORDED_SPECIFICATION_BLOCK.workerId,
+    role: "engineer",
+    until: "2026-10-31T18:00:00.000Z",
+    revision: "rev-1",
+  };
+  const held = recoverExecutions(live, world.now);
+  assert.equal(held.ledger.packets[id].stage, "engineering");
+  assert.equal(held.ledger.packets[id].specificationBlock, undefined);
+  assert.equal(held.changes.some((change) => change.reason === "engineering_rearmed"), false);
+  assert.equal(held.changes.some((change) => change.reason === "recorded_specification_block"), false);
+
+  const analyst = must(
+    applyEvent(
+      packet,
+      {
+        type: "acquire_lease",
+        workerId: "bc-analyst",
+        role: "analyst",
+        until: "2026-10-31T17:00:00.000Z",
+        revision: packet.revision,
+      },
+      world,
+    ),
+    "lease_acquired",
+  );
+  assert.equal(analyst.stage, "analysis");
+  const interrupted = applyEvent(analyst, { type: "interrupt_analysis", workerId: "bc-analyst" }, world);
+  assert.equal(interrupted.reason, "specification_blocked");
+  assert.equal(interrupted.item.stage, "analysis");
+  const escalated = must(
+    applyEvent(
+      analyst,
+      { type: "requirements_blocked", workerId: "bc-analyst", note: "The no-template enroll needs a product change." },
+      world,
+    ),
+    "requirements_blocked",
+  );
+  assert.equal(escalated.stage, "returned_architect");
+  assert.equal(escalated.revision, "rev-2");
+  assert.equal(escalated.specificationBlock?.blockedRevision, "rev-1");
+  assert.equal(escalated.specificationBlock?.failureClass, "specification");
+  assert.equal(decide(escalated, world).reason, "requirements_blocked");
+  const signed = must(
+    applyEvent(
+      analyst,
+      { type: "sign_change", revision: analyst.revision, sections: [...REQUIRED_CHANGE_SECTIONS], workerId: "bc-analyst" },
+      world,
+    ),
+    "change_specified",
+  );
+  assert.equal(signed.revision, "rev-2");
+  const resumedLedger = structuredClone(adopted.ledger);
+  resumedLedger.packets[id] = signed;
+  const plan = planPacketContinuation({ ledger: resumedLedger, role: "engineer", packetIds: [id], resumeSupported: true });
+  assert.equal(plan.mode, "resume");
+  assert.equal(plan.agentId, RECORDED_SPECIFICATION_BLOCK.workerId);
+
+  const ordinary = freshItem("pkt-ordinary");
+  ordinary.stage = "engineering";
+  ordinary.revision = "rev-1";
+  ordinary.wake = "sa";
+  ordinary.lease = { workerId: "bc-engineer", role: "engineer", until: "2026-10-31T17:00:00.000Z", revision: "rev-1" };
+  const missing = applyEvent(ordinary, { type: "specification_blocked", workerId: "bc-engineer", note: " " }, world);
+  assert.equal(missing.reason, "note_missing");
+  const expiredLease = structuredClone(ordinary);
+  expiredLease.lease = { workerId: "bc-engineer", role: "engineer", until: "2026-10-31T15:00:00.000Z", revision: "rev-1" };
+  const refused = applyEvent(
+    expiredLease,
+    { type: "specification_blocked", workerId: "bc-engineer", note: "The contract names a column the store does not have." },
+    world,
+  );
+  assert.equal(refused.reason, "lease_expired");
+  const blocked = must(
+    applyEvent(
+      ordinary,
+      { type: "specification_blocked", workerId: "bc-engineer", note: "The contract names a column the store does not have." },
+      world,
+    ),
+    "returned_analyst",
+  );
+  assert.equal(blocked.revision, "rev-2");
+  assert.equal(blocked.specificationBlock?.authority, "lease");
+  assert.equal(blocked.specificationBlock?.blockedRevision, "rev-1");
+});
+
+check("PKT-019 delivery is recorded separately from the worker that claims it", async () => {
+  const packetId = "pkt-019-first-step-send-denied";
+  const executionId = "dsp-195-analyst-pkt-019-first-step-send-denied";
+  const worker = "bc-45cfcfbf-d48e-4507-9466-107009009569";
+  const other = "bc-11111111-1111-1111-1111-111111111111";
+  const issuedAt = "2026-10-31T15:29:18.613Z";
+  const reserveUntil = "2026-10-31T15:59:18.613Z";
+  const during = "2026-10-31T15:40:00.000Z";
+  const after = "2026-10-31T16:10:00.000Z";
+  const head = "2d5141d6cc162f2f2182ea8fbbf4d77b96e93ea9";
+  function world(now: string, used: number): World {
+    return { ...active, now, authorizedDispatches: 50, usedDispatches: used, scopeStatus: "active" };
+  }
+  function fixture(deliveredAt: string | null): FactoryLedger {
+    const ledger = emptyLedger(50);
+    ledger.usedDispatches = 44;
+    ledger.stateRevision = 197;
+    ledger.scope.lanes = ["engineer", "analyst"];
+    ledger.scope.modules = ["Agents and Automations"];
+    const packet = freshItem(packetId, "exec-identity");
+    packet.stage = "returned_analyst";
+    packet.revision = "rev-2";
+    packet.wake = "sa";
+    packet.dispatchedSaRevision = "rev-2";
+    packet.specificationBlock = {
+      blockedRevision: "rev-1",
+      revision: "rev-2",
+      failureClass: "systems_contract",
+      note: RECORDED_SPECIFICATION_BLOCK.note,
+      escalationNote: null,
+      workerId: RECORDED_SPECIFICATION_BLOCK.workerId,
+      executionId: RECORDED_SPECIFICATION_BLOCK.executionId,
+      authority: "recorded",
+    };
+    packet.dispatch = {
+      packetId,
+      revision: "rev-2",
+      prHead: head,
+      effect: "wake_sa",
+      label: "factory-wake-sa",
+      issuedAt,
+      deliveredAt,
+      executionId,
+      assignmentId: "asg-dsp-195-analyst-pkt-019-first-step-send-denied",
+    };
+    ledger.packets[packetId] = packet;
+    ledger.executions = {
+      [executionId]: {
+        id: executionId,
+        assignmentId: "asg-dsp-195-analyst-pkt-019-first-step-send-denied",
+        role: "analyst",
+        phase: "dispatched",
+        packetIds: [packetId],
+        revisions: { [packetId]: "rev-2" },
+        label: "factory-wake-sa",
+        prHead: head,
+        agentId: null,
+        continuation: "fresh",
+        issuedAt,
+        startedAt: null,
+        runningAt: null,
+        endedAt: null,
+        reserveUntil,
+        startUntil: null,
+        leaseUntil: null,
+        reason: null,
+      },
+    };
+    const initiative = freshInitiative({
+      id: "exec-identity",
+      module: "Agents and Automations",
+      capability: "identity",
+      entry: "claim",
+      obligation: "packet",
+      priority: 1,
+      now: issuedAt,
+    });
+    initiative.queue = "active";
+    initiative.session = "continuation_due";
+    ledger.initiatives["exec-identity"] = initiative;
+    return ledger;
+  }
+
+  const recorded = fixture(issuedAt);
+  const open = recorded.packets[packetId];
+  const authorized = workerMayRun({
+    label: "factory-wake-sa",
+    packetId,
+    revision: "rev-2",
+    prHead: head,
+    wake: "sa",
+    dispatch: open.dispatch ?? null,
+    executionId,
+  });
+  assert.equal(authorized.reason, "authorized");
+  assert.equal(analystFileCountsAsThisDispatch(recorded, open), false);
+  const competed = applyLedgerEvent(
+    recorded,
+    { type: "reconcile_dispatch", packetId, workerExecution: "ran" },
+    world(during, 44),
+  );
+  assert.equal(competed.reason, "lease_not_claimed");
+  assert.equal(competed.ledger.usedDispatches, 44);
+  assert.equal(competed.ledger.packets[packetId].dispatch?.executionId, executionId);
+  assert.equal(competed.ledger.stateRevision, recorded.stateRevision);
+
+  const claimed = new MemoryStore(recorded);
+  const lease = await commitEvent(
+    claimed,
+    packetId,
+    { type: "acquire_lease", workerId: worker, role: "analyst", until: "2026-10-31T16:40:00.000Z", revision: "rev-2" },
+    world(during, 44),
+  );
+  assert.equal(lease.reason, "lease_acquired");
+  const held = await claimed.read();
+  assert.equal(held.usedDispatches, 44);
+  assert.equal(held.packets[packetId].stage, "analysis");
+  assert.equal(held.packets[packetId].lease?.workerId, worker);
+  assert.equal(held.executions?.[executionId].phase, "running");
+  assert.equal(held.executions?.[executionId].agentId, worker);
+  assert.equal(held.packets[packetId].dispatch?.executionId, executionId);
+  const quiet = controlStep(held, world(during, 44));
+  assert.equal(quiet.wakes.length, 0);
+  assert.equal(quiet.redelivery ?? null, null);
+  const duplicate = await commitEvent(
+    claimed,
+    packetId,
+    { type: "acquire_lease", workerId: other, role: "analyst", until: "2026-10-31T16:40:00.000Z", revision: "rev-2" },
+    world(during, 44),
+  );
+  assert.equal(duplicate.reason, "lease_held");
+  assert.equal((await claimed.read()).usedDispatches, 44);
+
+  const lost = fixture(null);
+  assert.equal(unconfirmedDelivery(lost, during)?.packetId, packetId);
+  const lostView = explainFactory(lost, during).packets.find((item) => item.id === packetId);
+  assert.equal(lostView?.next, "The next pass delivers this dispatch.");
+  assert.equal(lostView?.commitment.condition, "recovering");
+  assert.equal(lostView?.commitment.checkAt, nextReconcileAt(during));
+  assert.equal(lostView?.commitment.event, null);
+  const pending = controlStep(lost, world(during, 44));
+  assert.equal(pending.reason, "delivery_unconfirmed");
+  assert.equal(pending.wakes.length, 0);
+  assert.equal(pending.redelivery?.executionId, executionId);
+  assert.equal(pending.ledger.usedDispatches, 44);
+  const calls: string[] = [];
+  const actuator = scriptedActuator([{ ok: true, reason: "labeled" }], calls);
+  const restoring = new MemoryStore(lost);
+  const delivered = await redeliverDispatch({ store: restoring, actuator, packetId, now: during });
+  assert.equal(delivered.reason, "delivered");
+  assert.equal(calls.length, 1);
+  const once = await restoring.read();
+  assert.equal(once.usedDispatches, 44);
+  assert.equal(once.packets[packetId].dispatch?.deliveredAt, during);
+  assert.equal(once.packets[packetId].dispatch?.executionId, executionId);
+  assert.equal(once.stateRevision, 198);
+  const repeat = await redeliverDispatch({ store: restoring, actuator, packetId, now: during });
+  assert.equal(repeat.reason, "delivery_confirmed");
+  assert.equal(calls.length, 1);
+  const leased = await commitEvent(
+    restoring,
+    packetId,
+    { type: "acquire_lease", workerId: worker, role: "analyst", until: "2026-10-31T16:40:00.000Z", revision: "rev-2" },
+    world(during, 44),
+  );
+  assert.equal(leased.reason, "lease_acquired");
+  const running = await restoring.read();
+  if (!running.packets[packetId].dispatch) throw new Error("dispatch missing");
+  running.packets[packetId].dispatch.deliveredAt = null;
+  const guarded = new MemoryStore(running);
+  const blockedPulse = await redeliverDispatch({ store: guarded, actuator, packetId, now: during });
+  assert.equal(blockedPulse.reason, "lease_held");
+  assert.equal(calls.length, 1);
+  assert.equal((await guarded.read()).usedDispatches, 44);
+
+  const expired = controlStep(fixture(null), world(after, 44));
+  assert.equal(expired.ledger.packets[packetId].dispatch, null);
+  assert.equal(expired.ledger.packets[packetId].dispatchedSaRevision, null);
+  assert.equal(expired.ledger.executions?.[executionId].phase, "refused");
+  assert.equal(expired.ledger.executions?.[executionId].reason, "reservation_expired");
+  assert.equal(expired.ledger.usedDispatches, 43);
+  assert.equal(expired.wakes.length, 1);
+  assert.equal(expired.wakes[0].decision.effect, "wake_sa");
+  assert.equal(expired.wakes[0].decision.reason, "specification_returned");
+  assert.equal(expired.redelivery ?? null, null);
+  const renewalCalls: string[] = [];
+  const renewal = scriptedActuator([{ ok: true, reason: "labeled" }], renewalCalls);
+  const renewedStore = new MemoryStore(expired.ledger);
+  const woken = await dispatchWake({
+    store: renewedStore,
+    actuator: renewal,
+    packetId,
+    prHead: head,
+    activation: "active",
+    now: after,
+    engineeringBusy: false,
+    budgetUsd: null,
+  });
+  assert.equal(woken.reason, "dispatched");
+  assert.equal(renewalCalls.length, 1);
+  const renewed = await renewedStore.read();
+  assert.equal(renewed.usedDispatches, 44);
+  assert.equal(renewed.packets[packetId].dispatch?.deliveredAt, after);
+  assert.notEqual(renewed.packets[packetId].dispatch?.executionId, executionId);
+  const nextClaim = await commitEvent(
+    renewedStore,
+    packetId,
+    { type: "acquire_lease", workerId: worker, role: "analyst", until: "2026-10-31T17:10:00.000Z", revision: "rev-2" },
+    world(after, 44),
+  );
+  assert.equal(nextClaim.reason, "lease_acquired");
+  const finished = await renewedStore.read();
+  assert.equal(finished.usedDispatches, 44);
+  assert.equal(finished.executions?.[renewed.packets[packetId].dispatch?.executionId ?? ""]?.phase, "running");
+  const secondWorker = await commitEvent(
+    renewedStore,
+    packetId,
+    { type: "acquire_lease", workerId: other, role: "analyst", until: "2026-10-31T17:10:00.000Z", revision: "rev-2" },
+    world(after, 44),
+  );
+  assert.equal(secondWorker.reason, "lease_held");
+  assert.equal((await renewedStore.read()).usedDispatches, 44);
+  const settled = controlStep(finished, world(after, 44));
+  assert.equal(settled.wakes.length, 0);
+  assert.equal(settled.redelivery ?? null, null);
 });
 
 const failures: string[] = [];

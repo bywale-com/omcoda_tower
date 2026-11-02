@@ -14,7 +14,7 @@ If `factory-blocked` or `factory-hold` is on the PR: stop.
 
 If ledger `scope.status` is `inactive`, `suspended`, or `complete`: stop.
 
-If neither `factory-wake-engineer` nor `factory-repair` is on the PR: stop.
+If neither `factory-wake-engineer` nor `factory-repair` is on the PR, and this run is not a continuation of an existing engineer agent: stop. A continuation is a follow-up on your agent id. It does not add the label again. Run the wake check either way.
 
 Switch to the pull request head branch before reading the packet.
 
@@ -32,11 +32,20 @@ On `factory-repair`, run `npx tsx scripts/factory-wake-check.ts factory-repair` 
 
 Stop unless it prints `authorized`. The check matches packetId, revision, and prHead to the dispatch record. A later commit that changes only `.factory/state/ledger.json` is still this wake. A missing record or any other file changed after the authorized SHA means this wake is stale. Stop.
 
-`<bc-id>` is this cloud agent's id. Acquire the engineering lease before planting:
+`<bc-id>` is this cloud agent's id. Acknowledge the start, then acquire the lease, before planting:
 
 ```bash
+npx tsx scripts/factory-engineer.ts start --worker <bc-id>
 npx tsx scripts/factory-engineer.ts lease --worker <bc-id>
 ```
+
+If the gate fails or you will not plant, refuse the execution so the engineer slot is released. Do not leave the dispatch in place.
+
+```bash
+npx tsx scripts/factory-engineer.ts refuse --worker <bc-id>
+```
+
+A refusal with a candidate SHA already recorded is rejected. Do not clear that SHA.
 
 On `factory-repair`, pass `--label factory-repair`. Stop unless it prints `lease_acquired`.
 
@@ -64,16 +73,34 @@ Before you push, run the verification named in the systems-change packet. Record
 - `infrastructure` — the test harness failed. Do not disguise it as a product repair.
 - `external` — credentials, quotas, or an outside service. Stop.
 
-Push the candidate. Record that SHA through the controller. `<sha>` is the commit the checks ran against, not a later ledger commit.
+Push the candidate. Record that SHA through the controller. `<sha>` is the commit the checks ran against, not a later ledger commit. One assignment may name several linked packets. Record a candidate for each. Pass `--packet` when it lists more than one.
 
 ```bash
-npx tsx scripts/factory-engineer.ts candidate --worker <bc-id> --sha <sha>
+npx tsx scripts/factory-engineer.ts candidate --worker <bc-id> --sha <sha> --packet <packet-id>
 ```
 
-Stop unless it prints `candidate`. If a check needs a secret that is unset, block instead of recording a candidate:
+`candidate` records that packet. `continue <packet-id>` means lease and plant that sibling next, in this same execution. Do not stop between siblings. Stop when the command prints `candidate` and does not print `continue`.
+
+If the next packet does not fit in this context, stop this run and leave the rest for the same agent:
+
+```bash
+npx tsx scripts/factory-engineer.ts saturate --worker <bc-id> --packet <packet-id>
+```
+
+Stop unless it prints `context_saturated`. Do not record a candidate for a packet you did not plant.
+
+If a check needs a secret that is unset, block instead of recording a candidate:
 
 ```bash
 npx tsx scripts/factory-engineer.ts block --worker <bc-id> --blocker BLOCKER-NNN --class external
 ```
 
 `--class` is `infrastructure` or `external`. Do not add labels. Stop.
+
+If the systems-change packet contradicts the store, and a candidate would require a recut the packet forbids, do not record a candidate and do not recut it. A note in the handoff is not the return. Record the block while the lease is live:
+
+```bash
+npx tsx scripts/factory-engineer.ts specification-blocked --worker <bc-id> --packet <packet-id> --note "<the contradiction>"
+```
+
+Stop unless it prints `returned_analyst`. The class is `systems_contract`. The revision advances. The blocked revision stays on the block. The Analyst signs the next revision.

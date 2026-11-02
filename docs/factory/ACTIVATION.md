@@ -130,14 +130,32 @@ A missing classification, a missing or unreadable plate, or an incomplete five-b
 
 A packet may be released while the rest of the initiative is still open, when all seven gates in `docs/factory/OPERATING-PROTOCOL.md` pass and no unresolved question forces the Engineer to invent product behavior. Record a neighboring capability as a dependency, an affected contract, or a later initiative. Do not investigate that later initiative in this execution.
 
-When the session ends and the initiative still has authorized investigation left, write the handoff and stop. The controller dispatches the continuation. Do not ask the founder to paste a prompt. A founder decision, an external blocker, or a suspended scope ends the session without a continuation.
+Releasing a packet is a checkpoint. It does not end this execution. After the release commit, record the checkpoint and keep investigating:
+
+```bash
+npx tsx scripts/factory-architect.ts checkpoint --worker <bc-id>
+```
+
+Before `markReleased`, run `npx tsx scripts/factory-architect.ts release-gate`. `hold_release` or `suspended` means do not release another packet. Write the journal and keep investigating. `release_clear` means a release is still allowed.
+
+When two packets share a contract, a dependency, a component, a runtime behavior, or an implementation boundary, record that on each manifest as `siblings`: `{ "id", "basis", "note" }`. `basis` is `contract`, `dependency`, `component`, `runtime`, or `boundary`. Adjacent packet numbers are not a relationship. Do not group them for that reason.
+
+Stay in this execution until coverage is complete, the scope is suspended, a real blocker is recorded, or the context cannot hold another pass. Do not stop because a packet was released. Do not ask for a new cloud agent because a checkpoint was written.
+
+If you must leave with coverage still open, record this agent id and yield. The controller resumes this agent when a follow-up is available and the run count on this agent is still under the cap. A fresh agent is only for a missing id, a saturated context, an exhausted run cap, or a follow-up the API cannot send.
+
+```bash
+npx tsx scripts/factory-architect.ts yield --worker <bc-id>
+```
+
+Add `--context saturated` when another follow-up would not fit. A founder decision, an external blocker, or a suspended scope ends the session without a continuation.
 
 ## Out of seat
 
 Do not mint tables. Do not sign a systems-change packet. Do not open a product pull request for the plant. Do not add GitHub labels. Do not activate a Cursor Automation.
 ~~~~
 
-There is no Cursor API in this repo that resumes an agent id. A checkpoint stays inside the running execution. When that execution ends and the initiative is still open, the controller adds `factory-wake-architect` again. The new run reads the handoff. That is the continuation.
+A checkpoint stays inside the running execution and does not spend a dispatch. When that execution actually ends, the controller resumes it with `POST https://api.cursor.com/v1/agents/{id}/runs` when the ledger has the agent id, `CURSOR_API_KEY` is set, the factory is armed, the context is not saturated, and that agent has fewer than four stored runs. A GitHub label does not resume an agent. The label is the fresh start, used when resume is unavailable. The published run object reports `durationMs` only after the run ends, and it can end `EXPIRED`. This repository does not treat that as a known minute cap.
 
 ### Tower Factory Analyst
 
@@ -229,13 +247,13 @@ Stop unless it prints `lease_acquired`. The packet stage is now `analysis`.
 
 3. Commit and push the specification. Do not commit `.factory/state/ledger.json` by hand. If the push rejects, rebase onto the lease commit and push again.
 
-4. Sign through the controller.
+4. Sign through the controller. One execution may name several sibling packets. Each keeps its own file, revision, and nine sections. Pass `--packet` when the assignment lists more than one.
 
 ```bash
-npx tsx scripts/factory-analyst.ts sign --worker <bc-id>
+npx tsx scripts/factory-analyst.ts sign --worker <bc-id> --packet <packet-id>
 ```
 
-Stop unless it prints `change_specified`. A missing section stays unsigned.
+`change_specified` signs that packet. `continue <packet-id>` means lease and sign that sibling next, in this same execution. Do not stop between siblings. Do not merge their sections into one file. Stop when the command prints `change_specified` and does not print `continue`. A missing section stays unsigned.
 
 5. If you cannot finish the specification, record one of these and stop. Do not sign.
 
@@ -295,11 +313,20 @@ On `factory-repair`, run `npx tsx scripts/factory-wake-check.ts factory-repair` 
 
 Stop unless it prints `authorized`. The check matches packetId, revision, and prHead to the dispatch record. A later commit that changes only `.factory/state/ledger.json` is still this wake. A missing record or any other file changed after the authorized SHA means this wake is stale. Stop.
 
-`<bc-id>` is this cloud agent's id. Acquire the engineering lease before planting:
+`<bc-id>` is this cloud agent's id. Acknowledge the start, then acquire the lease, before planting:
 
 ```bash
+npx tsx scripts/factory-engineer.ts start --worker <bc-id>
 npx tsx scripts/factory-engineer.ts lease --worker <bc-id>
 ```
+
+If the gate fails or you will not plant, refuse the execution so the engineer slot is released. Do not leave the dispatch in place.
+
+```bash
+npx tsx scripts/factory-engineer.ts refuse --worker <bc-id>
+```
+
+A refusal with a candidate SHA already recorded is rejected. Do not clear that SHA.
 
 On `factory-repair`, pass `--label factory-repair`. Stop unless it prints `lease_acquired`.
 
@@ -363,7 +390,7 @@ Repository variables (Settings → Secrets and variables → Actions → Variabl
 | `FACTORY_SPEND_LIMIT_CONFIRMED` | `yes` | After the spending step below. |
 | `FACTORY_AUTOMATIONS_SAVED` | `yes` | After the three automations are saved with the settings above. |
 
-All four plus the secret are required before a label is added. None of them is set by this change.
+All four plus the secret are required before a label is added. The founder already set the four variables. This repair does not change them, and it does not change `WAKE_GITHUB_TOKEN`.
 
 ## 3. Spending
 
@@ -383,7 +410,7 @@ For the first live run, use a small count such as `4`. That count is the total c
 
 Pull request 136 is merged. Do not pass `136` as `pr`.
 
-The scope is already authorized on this branch: `agents-and-automations`, module `Agents and Automations`, `authorizedDispatches` 4. The pull-request job of Factory dispatch reads that ledger and, when `WAKE_GITHUB_TOKEN` is set, selects `exec-identity` and adds `factory-wake-architect`. It does not add `factory-wake-sa` for PKT-001.
+The scope on this branch is `agents-and-automations`, module `Agents and Automations`. `authorizedDispatches` is 50 and `usedDispatches` is 31. The execution-architecture repair leaves that cap where it is. Scope status is `suspended`. While it is suspended, the control pass proposes no wake. Do not unsuspend from an implementation seat, and do not raise the cap. PKT-001 stays Wake `hold`.
 
 No workflow inputs are required for that job. `workflow_dispatch` mode `authorize` is only for a later scope. Mode `suspend` still uses the open factory pull request, not 136.
 

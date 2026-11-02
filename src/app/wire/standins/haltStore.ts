@@ -58,11 +58,10 @@ export const standInHaltStore: HaltStorePort = {
       (h) => !h.liftedAt && (firmId == null || h.firmId === firmId),
     );
   },
-  async isContactHalted(contactId: string): Promise<boolean> {
+  async isContactHalted(contactId: string, firmId: string): Promise<boolean> {
     for (const h of halts.values()) {
       if (h.liftedAt) continue;
-      if (h.scope === "contact" && h.contactId === contactId) return true;
-      // firm-book halt covers all contacts of that firm — callers pass firm separately
+      if (h.scope === "contact" && h.contactId === contactId && h.firmId === firmId) return true;
     }
     return false;
   },

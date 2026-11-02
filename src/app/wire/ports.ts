@@ -73,7 +73,7 @@ export type HaltStorePort = {
   commit(input: HaltCommitInput): Promise<HaltRecord>;
   lift(haltId: string): Promise<HaltRecord | null>;
   listActive(firmId?: string): Promise<HaltRecord[]>;
-  isContactHalted(contactId: string): Promise<boolean>;
+  isContactHalted(contactId: string, firmId: string): Promise<boolean>;
   isFirmBookHalted(firmId: string): Promise<boolean>;
 };
 

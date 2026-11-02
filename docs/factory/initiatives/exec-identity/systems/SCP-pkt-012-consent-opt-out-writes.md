@@ -22,7 +22,7 @@ The keys already on the payload stay: `contactId` and `source`. `contactIds` sta
 
 `localRefFromPayload("consent_records.opt_out")` and `triggerLocalRefFromPayload` stay as they are. Both return `contact_id` or `contactId` when that value is a non-empty string. This packet does not add a payload key and does not remove the case. `localAxesMatch` compares `local_contact_ids` to `payload.contactId`, then falls back to `contactIds`, and compares the firm to `opts.firmId` when `local_firm_id` is set and the payload has no firm key. `local_ref` is compared only when it is set. A stored `local_ref` matches when it equals this contact id. `WORKFLOW_EVENTS_WITH_LOCAL` still omits `consent_records.opt_out`. This packet does not add a `consent_records.sequenced` firing. Claim 27 owns that name.
 
-`dispatchEventToWorkflows` is not edited. It still copies the payload and still sets `anyPass: true` on the walked trigger. `writes` has to be on the object passed in, because the copy is what `writesFromPayload` reads. Claim 7’s refusal of `anyPass` is not recut. This packet does not put `anyPass` on the silence payload. PKT-004 removes the forced copy. Implementing PKT-004 must not delete `writes`.
+`dispatchEventToWorkflows` is not edited. It copies the payload and sets `eventName`. It does not set `anyPass`. PKT-004 already removed that forced copy. This packet does not put it back and does not put `anyPass` on the silence payload. `writes` has to be on the object passed in, because the copy is what `writesFromPayload` reads. Implementing a later edit of this function must not delete `writes`.
 
 `loadWriteRow` gains a `consent_records` branch: `SELECT * FROM consent_records WHERE contact_id=$1 AND firm_id=$2`, bound to `w.contact_id` and the `firmId` argument already passed into `loadWriteRow`. No `ORDER BY`. No “latest”. No `silenced` filter. No `status` filter. No `LIMIT`. A miss returns null. The predicate does not use `w.id` and does not look for a column named `id`. It does not use the `const contactId = w.contact_id ?? w.id` that the earlier branches already use. When `w.contact_id` is not a non-empty string, the branch returns null and does not query. On this firing `w.contact_id` and `w.id` are the same contact, and the firm argument is the walk’s firm, which is `body.firmId`. That pair is the primary key. This is not claim 10’s `WHERE id = pointer.id`. This packet does not change that predicate for tables that have an `id` column. It does not change claim 8’s `(audit_run_id, contact_id)` load.
 
@@ -85,7 +85,7 @@ if (w.table === "consent_records") {
 }
 ```
 
-  Bind `w.contact_id` and the function’s `firmId`. Do not bind `w.id`. Do not bind the local `contactId` from `w.contact_id ?? w.id`. Leave that local for the branches that already use it. No `ORDER BY`, no `LIMIT`, no `silenced`, no `status`. A missing pair returns null. Do not query again by `id`. Do not interpolate the table name. Leave every other branch, including a `fact_writebacks`, `meeting_booked`, `wait_occupancy`, `engagement_records`, `campaign_failure`, `halt_records`, or eligibility branch another packet may already have added. Do not export `loadWriteRow`. If it is already exported, leave the export.
+  Bind `w.contact_id` and the function’s `firmId`. Do not bind `w.id`. Do not bind the local `contactId` from `w.contact_id ?? w.id`. Leave that local. The pair branches no longer use it. No `ORDER BY`, no `LIMIT`, no `silenced`, no `status`. A missing pair returns null. Do not query again by `id`. Do not interpolate the table name. Leave every other branch. The function already loads `engagement_records`, `missing_fact_signals`, `fact_writebacks`, `meeting_booked`, `wait_occupancy`, `campaign_failure`, and `ct_firms` by `id`. A `halt_records` or eligibility branch another packet adds is not this branch. Do not export `loadWriteRow`. It is already exported. Leave the export.
 - Do not add `consent_records` to `PERSON_WRITE_TABLES`. Do not remove a name that is already there. Do not edit `personTableOf`, `evalIfPick`, `personIdsFromWrites`, `pickWrites`, or either `find` in `resolveOperandText`.
 - Do not edit `writesFromPayload`. Do not teach it to map `contactId` or `source` onto `consent_records`. Do not teach it to keep an empty-string `id`.
 - Do not edit `localRefFromPayload`, `triggerLocalRefFromPayload`, `localAxesMatch`, or `triggerLocalAxesMatch`. The `consent_records.opt_out` arm stays `payloadString(payload, ["contact_id", "contactId"])` in both ref readers.
@@ -158,7 +158,7 @@ export type RunWrite = {
 
 The silence route upserts, then dispatches `{ contactId, source }` and no `writes`. That payload is the gap. The statement is the one this packet keeps.
 
-```256:276:server/wire-service/stores.ts
+```257:277:server/wire-service/stores.ts
 export async function handleConsentSilence(c: Context) {
   const body = await c.req.json<{
     contactId: string;
@@ -184,7 +184,7 @@ export async function handleConsentSilence(c: Context) {
 
 `handleConsentSet` upserts the same pair and returns. The conflict assigns `basis` and keeps an omitted `source`. It does not assign `silenced`. It does not dispatch.
 
-```236:254:server/wire-service/stores.ts
+```237:255:server/wire-service/stores.ts
 export async function handleConsentSet(c: Context) {
   const body = await c.req.json<{
     contactId: string;
@@ -235,7 +235,7 @@ The fallthrough, used only when `writes` is absent, publishes `contact_records` 
 
 `PERSON_WRITE_TABLES` does not contain `consent_records`. `personIdsFromWrites` uses `contact_id` first, and uses `id` only for a table in the set. This firing’s person id is the pointer’s `contact_id`.
 
-```199:206:server/wire-service/workflowWalk.ts
+```199:209:server/wire-service/workflowWalk.ts
 const PERSON_WRITE_TABLES = new Set([
   "sequence_ready",
   "reachability_verdicts",
@@ -243,10 +243,13 @@ const PERSON_WRITE_TABLES = new Set([
   "contact_tag",
   "enrollment",
   "wait_occupancy",
+  "engagement_records",
+  "fact_writebacks",
+  "meeting_booked",
 ]);
 ```
 
-```264:268:server/wire-service/workflowWalk.ts
+```267:271:server/wire-service/workflowWalk.ts
 function personIdsFromWrites(writes: RunWrite[]): string[] {
   return uniqueIds(
     writes.map((w) => w.contact_id ?? (PERSON_WRITE_TABLES.has(w.table) ? w.id : null)),
@@ -254,26 +257,28 @@ function personIdsFromWrites(writes: RunWrite[]): string[] {
 }
 ```
 
-`loadWriteRow` has no `consent_records` branch. The function falls through to null. The local `contactId` is `w.contact_id ?? w.id`, and the `sequence_ready` and `reachability_verdicts` branches use it. The new branch does not.
+`loadWriteRow` is already exported and has no `consent_records` branch. The function falls through to null after `ct_firms`. The local `contactId` is still `w.contact_id ?? w.id`. The pair branches no longer use it: each returns null when `w.contact_id` is blank and selects by `audit_run_id`, `w.contact_id`, and `firmId`. The new branch does not use that local.
 
-```655:700:server/wire-service/workflowWalk.ts
-async function loadWriteRow(
+```676:746:server/wire-service/workflowWalk.ts
+export async function loadWriteRow(
   pool: Pool,
   firmId: string,
   w: RunWrite,
 ): Promise<Record<string, unknown> | null> {
   const contactId = w.contact_id ?? w.id;
   if (w.table === "sequence_ready") {
+    if (w.contact_id == null || w.contact_id === "") return null;
     const { rows } = await pool.query(
-      `SELECT * FROM sequence_ready WHERE contact_id=$1 AND firm_id=$2`,
-      [contactId, firmId],
+      `SELECT * FROM sequence_ready WHERE audit_run_id=$1 AND contact_id=$2 AND firm_id=$3`,
+      [w.id, w.contact_id, firmId],
     );
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
   if (w.table === "reachability_verdicts") {
+    if (w.contact_id == null || w.contact_id === "") return null;
     const { rows } = await pool.query(
-      `SELECT * FROM reachability_verdicts WHERE contact_id=$1 AND firm_id=$2`,
-      [contactId, firmId],
+      `SELECT * FROM reachability_verdicts WHERE audit_run_id=$1 AND contact_id=$2 AND firm_id=$3`,
+      [w.id, w.contact_id, firmId],
     );
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
@@ -297,30 +302,53 @@ async function loadWriteRow(
     const { rows } = await pool.query(`SELECT * FROM enrollment WHERE id=$1`, [w.id]);
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
+  if (w.table === "engagement_records") {
+    const { rows } = await pool.query(`SELECT * FROM engagement_records WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
   if (w.table === "missing_fact_signals") {
     const { rows } = await pool.query(`SELECT * FROM missing_fact_signals WHERE id=$1`, [w.id]);
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
+  if (w.table === "fact_writebacks") {
+    const { rows } = await pool.query(`SELECT * FROM fact_writebacks WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+  if (w.table === "meeting_booked") {
+    const { rows } = await pool.query(`SELECT * FROM meeting_booked WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+  if (w.table === "wait_occupancy") {
+    const { rows } = await pool.query(`SELECT * FROM wait_occupancy WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+  if (w.table === "campaign_failure") {
+    const { rows } = await pool.query(`SELECT * FROM campaign_failure WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+  if (w.table === "ct_firms") {
+    const { rows } = await pool.query(`SELECT * FROM ct_firms WHERE id=$1`, [w.id]);
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
   return null;
-}
 ```
 
-The walker copies `opts.payload` and then sets `eventName` and `anyPass`. `writes` survives only when it is already on `opts.payload`. `firmId` passed into the walk is `opts.firmId`, which this caller sets from `body.firmId`.
+The walker copies `opts.payload` and then sets `eventName`. It does not set `anyPass`. `writes` survives only when it is already on `opts.payload`. `firmId` passed into the walk is `opts.firmId`, which this caller sets from `body.firmId`.
 
-```1970:1977:server/wire-service/workflowWalk.ts
+```2036:2043:server/wire-service/workflowWalk.ts
     const walked = await walkValidatedWorkflow(pool, {
       workflowId: row.workflow_id,
       firmId: opts.firmId,
       runId,
       triggerLabel: `event:${opts.eventName}`,
-      triggerPayload: { ...(opts.payload ?? {}), eventName: opts.eventName, anyPass: true },
+      triggerPayload: { ...(opts.payload ?? {}), eventName: opts.eventName },
       contactIds,
     });
 ```
 
 The trigger node stores `writesFromPayload(triggerPayload)` on `node_status`. It does not store `triggerPayload`. `contactId`, `source`, and `anyPass` are not on that record. When the caller omits `contactIds`, the walk fills them from `personIdsFromWrites`. `counts.contacts` is that length.
 
-```1091:1104:server/wire-service/workflowWalk.ts
+```1138:1151:server/wire-service/workflowWalk.ts
   let contactIds = opts.contactIds ?? [];
   const triggerWrites = writesFromPayload(opts.triggerPayload);
   if (!contactIds.length) {
@@ -341,7 +369,7 @@ The trigger node stores `writesFromPayload(triggerPayload)` on `node_status`. It
 
 Both local-ref readers already resolve this event from `contact_id` or `contactId`. The payload carries `contactId`. A stored `local_ref` equal to that contact matches. This packet leaves both functions.
 
-```1853:1861:server/wire-service/workflowWalk.ts
+```1919:1927:server/wire-service/workflowWalk.ts
 function localRefFromPayload(
   eventName: string,
   payload: Record<string, unknown> | undefined,
@@ -367,7 +395,7 @@ export function triggerLocalRefFromPayload(
 
 `localAxesMatch` compares `local_ref` only when it is set. The firm compare uses a root `firm_id` / `firmId` when that string is present, and otherwise `opts.firmId`. This caller passes `firmId` and does not put a firm key on the payload, so the compare sees `opts.firmId`. The contact compare uses a root `contact_id` / `contactId` when that string is present, and otherwise `opts.contactIds`.
 
-```1873:1902:server/wire-service/workflowWalk.ts
+```1939:1968:server/wire-service/workflowWalk.ts
 function localAxesMatch(
   row: {
     grain: string;
@@ -413,17 +441,21 @@ export const WORKFLOW_EVENTS_WITH_LOCAL = new Set<WorkflowTriggerEvent>([
 ]);
 ```
 
-Door 1 is the newest ten silenced rows for the firm. `writeId` uses `id` when that string is present, and otherwise `contact_id`. The specimen has no `id`, so door 1’s handle id is `contact_id`. The live pointer is still the literal `body.contactId`, not this function.
+Door 1 is the newest ten silenced rows for the firm. `writeId` returns `audit_run_id` for `reachability_verdicts` and `sequence_ready`. That prefix does not apply to `consent_records`. For this table it uses `id` when that string is present, and otherwise `contact_id`. The specimen has no `id`, so door 1’s handle id is `contact_id`. The live pointer is still the literal `body.contactId`, not this function. This packet does not edit `writeId`.
 
-```15:19:server/wire-service/eventTest.ts
+```15:23:server/wire-service/eventTest.ts
 function writeId(table: string, body: Record<string, unknown>): string {
+  if (table === "reachability_verdicts" || table === "sequence_ready") {
+    if (typeof body.audit_run_id === "string" && body.audit_run_id) return body.audit_run_id;
+    return `${table}-specimen`;
+  }
   if (typeof body.id === "string" && body.id) return body.id;
   if (typeof body.contact_id === "string" && body.contact_id) return body.contact_id;
   return `${table}-specimen`;
 }
 ```
 
-```89:96:server/wire-service/eventTest.ts
+```93:100:server/wire-service/eventTest.ts
     if (eventName === "consent_records.opt_out") {
       const ok = await push(
         "consent_records",
@@ -566,7 +598,7 @@ The matching `localRef` is the proof `localRefFromPayload` still returns this co
 
 `workflow_trigger_local_ref` was dropped in `supabase/migrations/016_trigger_local_cascade.sql`, so a local row may store a null `local_ref`.
 
-The load walks call `walkValidatedWorkflow` directly. Each one inserts its `workflow_run` (`status` `running`) before the call, because the walker only updates that row. `loadWriteRow` stays unexported. Each graph is a trigger plus an `if` plus an `exit`. The If uses the legacy pick: `pickTable` `"consent_records"`, `pickField` the column, `pickOp` `"eq"` or `"exists"`, `pickValue` the passing text when the op is `eq`. Boolean columns compare as `"true"` and `"false"`. `configured` is not `false`. `contactIds` on a field walk is a one-element list, so a set change is visible. Trigger `payload.writes` is the one pointer the case states. The If detail is `branch → true` or `branch → false`. A detail that starts with `if pick ` means `consent_records` was added to `PERSON_WRITE_TABLES`, and that case fails.
+The load walks call `walkValidatedWorkflow` directly. Each one inserts its `workflow_run` (`status` `running`) before the call, because the walker only updates that row. `loadWriteRow` is already exported. Leave the export. Each graph is a trigger plus an `if` plus an `exit`. The If uses the legacy pick: `pickTable` `"consent_records"`, `pickField` the column, `pickOp` `"eq"` or `"exists"`, `pickValue` the passing text when the op is `eq`. Boolean columns compare as `"true"` and `"false"`. `configured` is not `false`. `contactIds` on a field walk is a one-element list, so a set change is visible. Trigger `payload.writes` is the one pointer the case states. The If detail is `branch → true` or `branch → false`. A detail that starts with `if pick ` means `consent_records` was added to `PERSON_WRITE_TABLES`, and that case fails.
 
 The walk does not store `triggerPayload`. `contactId`, `source`, and `anyPass` are not on `node_status`. The row, the matching local-ref listener, and the shape guard prove the payload. A listener whose `local_contact_ids` is this contact matches from `payload.contactId` or from the `contactIds` argument, so that listener alone does not prove the payload key. The object literal is the proof the forbidden keys are absent. `anyPass` is not on `node_status`. The shape guard is the proof the caller payload does not set it, and this packet does not require `anyPass` to remain inside `dispatchEventToWorkflows`.
 
@@ -606,7 +638,7 @@ Door 1’s newest ten, beyond the shape guard that keeps the current statement. 
 | `writesFromPayload` | Unchanged. `payload.writes` is the handle. No `contactId` or `source` reader | Every trigger, including this event | Only verified |
 | `RunWrite` | Unchanged. No `firm_id` field | This pointer’s `id` and `contact_id` | Only verified |
 | `localRefFromPayload`, `triggerLocalRefFromPayload`, `localAxesMatch` | Unchanged. This event still returns `contact_id` or `contactId`. Firm compare still falls back to `opts.firmId` | Local `consent_records.opt_out` listeners | Only verified |
-| `dispatchEventToWorkflows` | Unchanged. Still copies the payload and sets `eventName` and `anyPass`. The book fill stays | This event’s listeners | Only verified |
+| `dispatchEventToWorkflows` | Unchanged. Copies the payload and sets `eventName`. Does not set `anyPass`. The book fill stays | This event’s listeners | Only verified |
 | `event_write_set` `consent_records.opt_out` v1 | Already ord 0 for this table. Not read at fire time | Live payload literal | Only verified |
 | `eventTest.ts` door 1 | Still the newest ten silenced rows for the firm | Test door | Only verified |
 | `WORKFLOW_EVENTS_WITH_LOCAL` | Unchanged. `consent_records.opt_out` stays out. `consent_records.sequenced` stays in | Local-axis catalog | Only verified |
@@ -622,7 +654,7 @@ Door 1’s newest ten, beyond the shape guard that keeps the current statement. 
 | --- | --- |
 | The silence dispatch omits `writes`, so `writesFromPayload` returns no pointer. The upsert has no `RETURNING` and the table has no `id` column. `writes[0].id` and `writes[0].contact_id` are both `body.contactId`, the person half of the primary key the statement already bound. The firm half is `body.firmId` on the dispatch argument, which the walk passes into `loadWriteRow`. `RunWrite` has no `firm_id` field. A second id, or a pair encoded into one string, would not be the key the load uses. | necessary |
 | `writesFromPayload` returns the array and then stops. It does not read `contactId` or `source`. A reader for either would invent a `consent_records` pointer when `writes` is absent, which case 3 forbids. The payload must not gain `contactIds`, or a missing `writes` array would publish `contact_records`. `contactIds` stays the dispatch argument `[body.contactId]`. The existing `!id` drop also rejects `""`. This firing uses a non-empty contact id. This packet does not retune that drop. | necessary |
-| `loadWriteRow` returns null for `consent_records`. The primary key is `(contact_id, firm_id)`. The load binds `w.contact_id` and the function’s `firmId`. `w.id` is the same contact on this firing and is not the predicate. The local `contactId = w.contact_id ?? w.id` stays for `sequence_ready` and `reachability_verdicts`. Using it here would select by `w.id` when `contact_id` is absent, which case 4 forbids. An empty `contact_id` returns null before the query. No `ORDER BY` and no `LIMIT`: the pair is unique, and door 1’s newest-ten is a different read. Case 5 is that difference. Case 1 is the firm predicate: the other firm’s row exists first, and the first firm’s walk misses. Case 6 is the re-read. `basis`, `silenced`, `source`, `status`, and `workspace_opted_out` stay columns. Other branches in the function stay, including any PKT-006, PKT-009, PKT-010, or PKT-011 branch already present. Those packets do not add this branch. The function stays unexported unless an earlier packet exported it. | necessary |
+| `loadWriteRow` returns null for `consent_records`. The primary key is `(contact_id, firm_id)`. The load binds `w.contact_id` and the function’s `firmId`. `w.id` is the same contact on this firing and is not the predicate. The local `contactId = w.contact_id ?? w.id` stays declared. The pair branches no longer use it. They return null when `w.contact_id` is blank and select by `audit_run_id`, `w.contact_id`, and `firmId`. Using the local on this branch would select by `w.id` when `contact_id` is absent, which case 4 forbids. An empty `contact_id` returns null before the query. No `ORDER BY` and no `LIMIT`: the pair is unique, and door 1’s newest-ten is a different read. Case 5 is that difference. Case 1 is the firm predicate: the other firm’s row exists first, and the first firm’s walk misses. Case 6 is the re-read. `basis`, `silenced`, `source`, `status`, and `workspace_opted_out` stay columns. Other branches in the function stay, including any PKT-006, PKT-009, PKT-010, or PKT-011 branch already present. Those packets do not add this branch. The function is already exported. Leave the export. | necessary |
 | `PERSON_WRITE_TABLES` omits `consent_records`. `personIdsFromWrites` then uses `contact_id` and does not publish `id` for this table. `evalIfPick` person-splits only when the set contains the table and `ctx.contactIds` is non-empty, so the field walks pass a one-element `contactIds` and expect `branch →`. An empty list would hide the set change. Case 13 is the empty caller list: `counts.contacts` 1 when `contact_id` is set, and 0 when only `id` is set. Adding the name would fail both the detail and the second count. This packet does not add the name. | necessary |
 | `localRefFromPayload` and `triggerLocalRefFromPayload` already return `contact_id` or `contactId` for this event. The payload keeps `contactId` and does not gain `contact_id`. A listener whose `localRef` is this contact runs, which fails if the arm is removed, because null does not equal the contact id. An unset `localRef` still matches. `other-axis` does not match. The firm compare falls back to `opts.firmId` because the payload has no firm key. A listener for this firm matches, and a listener for the other firm does not. That pair does not prove the key is absent. The shape guard proves the key is absent. `counts.contacts` 1 on a firm with more than one contact proves the caller list was that one contact and was not replaced by the book. | necessary |
 | The upsert completes before the await. There is no transaction and no `try/catch`. A dispatch error leaves the row and does not return `{ ok: true }`. Wrapping the await, or rolling the row back, would change that. The columns a later node reads are not copied onto the payload. | necessary |
