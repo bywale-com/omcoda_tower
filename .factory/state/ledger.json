@@ -1,5 +1,5 @@
 {
-  "stateRevision": 236,
+  "stateRevision": 237,
   "authorizedDispatches": 50,
   "usedDispatches": 50,
   "scope": {
@@ -660,22 +660,12 @@
       "lastFailureFingerprint": null,
       "lastFailureClass": null,
       "dispatchedSaRevision": "rev-1",
-      "dispatchedEngineerRevision": "rev-1",
+      "dispatchedEngineerRevision": null,
       "dispatchedRepairFingerprint": null,
       "releaseEligible": true,
       "integratedSha": null,
       "reconciliationId": null,
-      "dispatch": {
-        "packetId": "pkt-009-eligibility-writes",
-        "revision": "rev-1",
-        "prHead": "320a27902b02b6ff3f1be65cf17848502859bb35",
-        "effect": "wake_engineer",
-        "label": "factory-wake-engineer",
-        "issuedAt": "2026-11-01T23:00:16.801Z",
-        "deliveredAt": "2026-11-01T23:00:16.801Z",
-        "executionId": "dsp-235-engineer-pkt-009-eligibility-writes",
-        "assignmentId": "asg-dsp-235-engineer-pkt-009-eligibility-writes"
-      },
+      "dispatch": null,
       "dispatchHistory": [
         {
           "packetId": "pkt-009-eligibility-writes",
@@ -708,6 +698,18 @@
           "deliveredAt": "2026-11-01T19:32:16.541Z",
           "executionId": "dsp-231-engineer-pkt-009-eligibility-writes",
           "assignmentId": "asg-dsp-231-engineer-pkt-009-eligibility-writes",
+          "workerExecution": "absent"
+        },
+        {
+          "packetId": "pkt-009-eligibility-writes",
+          "revision": "rev-1",
+          "prHead": "320a27902b02b6ff3f1be65cf17848502859bb35",
+          "effect": "wake_engineer",
+          "label": "factory-wake-engineer",
+          "issuedAt": "2026-11-01T23:00:16.801Z",
+          "deliveredAt": "2026-11-01T23:00:16.801Z",
+          "executionId": "dsp-235-engineer-pkt-009-eligibility-writes",
+          "assignmentId": "asg-dsp-235-engineer-pkt-009-eligibility-writes",
           "workerExecution": "absent"
         }
       ],
@@ -2113,7 +2115,7 @@
       "id": "dsp-235-engineer-pkt-009-eligibility-writes",
       "assignmentId": "asg-dsp-235-engineer-pkt-009-eligibility-writes",
       "role": "engineer",
-      "phase": "dispatched",
+      "phase": "refused",
       "packetIds": [
         "pkt-009-eligibility-writes"
       ],
@@ -2127,11 +2129,11 @@
       "issuedAt": "2026-11-01T23:00:16.801Z",
       "startedAt": null,
       "runningAt": null,
-      "endedAt": null,
+      "endedAt": "2026-11-02T02:22:48.403Z",
       "reserveUntil": "2026-11-01T23:30:16.801Z",
       "startUntil": null,
       "leaseUntil": null,
-      "reason": null
+      "reason": "reservation_expired"
     }
   },
   "assignments": {
